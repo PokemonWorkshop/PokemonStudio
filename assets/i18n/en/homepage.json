@@ -1,0 +1,14 @@
+{
+  "version_current_version_editor": "Version {{current_version_editor}}",
+  "new_project": "New project",
+  "import_a_project": "Import a project",
+  "recent_projects": "Recent projects",
+  "project_name": "{{project_name}}",
+  "project_version_psdk": "{{project_version_psdk}}",
+  "documentation": "Documentation",
+  "getting_started": "Getting started",
+  "whats_up": "What's up?",
+  "discord": "Discord",
+  "twitter": "Twitter",
+  "a_pokemon_workshop_project": "A Pokémon Workshop project"
+}

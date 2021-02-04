@@ -1,0 +1,20 @@
+{
+  "name": "psdk-editor-react",
+  "productName": "psdk-editor-react",
+  "version": "0.0.0",
+  "description": "PSDK is a Pokémon Game editor !",
+  "main": "./main.prod.js",
+  "author": {
+    "name": "Corentin Jacob",
+    "email": "corentin.jacob.pro@gmail.com"
+  },
+  "scripts": {
+    "electron-rebuild": "node -r ../.erb/scripts/BabelRegister.js ../.erb/scripts/ElectronRebuild.js",
+    "postinstall": "yarn electron-rebuild"
+  },
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/styled-components": "^5.1.11"
+  }
+}

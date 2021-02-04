@@ -1,0 +1,10 @@
+{
+  "search": "Search",
+  "dashboard": "Dashboard",
+  "update": "Update",
+  "database": "Database",
+  "event_editor": "Event editor",
+  "text_editor": "Text editor",
+  "deployment": "Deployment",
+  "parameters": "Parameters"
+}

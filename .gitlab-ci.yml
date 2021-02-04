@@ -1,0 +1,55 @@
+default:
+  image: ubuntu:20.04
+
+stages:
+  - test
+  - build
+
+linux-test:
+  stage: test
+  image: node:14
+  script:
+    - curl -o- -L https://yarnpkg.com/install.sh | bash
+    - export PATH=$HOME/.yarn/bin:$PATH
+    - yarn install --ignore-optional --no-lockfile
+    - yarn build
+    - yarn test
+  only:
+    - develop
+
+linux-build:
+  stage: build
+  image: node:14
+  script:
+    - curl -o- -L https://yarnpkg.com/install.sh | bash
+    - export PATH=$HOME/.yarn/bin:$PATH
+    - yarn install --ignore-optional --no-lockfile
+    - yarn build
+    - yarn package
+    - ls release/
+  only:
+    - develop
+
+win-build:
+  stage: build
+  image: electronuserland/builder:wine
+  script:
+    - yarn install
+    - yarn build
+    - yarn package:win
+    - ls release/
+  only:
+    - develop
+#osx-build:
+#  stage: build
+#  script:
+#    - curl -o- -L https://yarnpkg.com/install.sh | bash
+#    - export PATH=$HOME/.yarn/bin:$PATH
+#    - yarn install --ignore-optional --no-lockfile
+#    - yarn build
+#    - yarn package:mac
+#    - ls release/
+#  tags:
+#    - shared-macos-amd64
+#  only:
+#    - develop
