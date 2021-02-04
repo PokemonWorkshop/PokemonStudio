@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Pokémon Studio</title>
+    <base href="." />
+    <script>
+      (() => {
+        if (process?.env?.NODE_ENV !== 'development') {
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = './dist/style.css';
+          // HACK: Writing the script path should be done with webpack
+          document.getElementsByTagName('head')[0].appendChild(link);
+        }
+      })();
+    </script>
+    <!-- Fonts should not be defined by styled components -->
+    <!-- https://github.com/styled-components/styled-components/issues/2227#issuecomment-520824925 -->
+    <link
+      rel="preload"
+      href="../assets/fonts/AvenirNext-Regular.ttf"
+      as="font"
+    />
+    <link
+      rel="preload"
+      href="../assets/fonts/AvenirNext-Medium.ttf"
+      as="font"
+    />
+    <link
+      rel="preload"
+      href="../assets/fonts/AvenirNext-DemiBold.ttf"
+      as="font"
+    />
+    <link rel="preload" href="../assets/fonts/Gilroy-SemiBold.ttf" as="font" />
+    <link rel="preload" href="../assets/fonts/Gilroy-Bold.ttf" as="font" />
+    <style>
+      @font-face {
+        font-family: Avenir Next;
+        src: url(../assets/fonts/AvenirNext-Regular.ttf);
+        font-weight: 400;
+      }
+
+      @font-face {
+        font-family: Avenir Next;
+        src: url(../assets/fonts/AvenirNext-Medium.ttf);
+        font-weight: 500;
+      }
+
+      @font-face {
+        font-family: Avenir Next;
+        src: url(../assets/fonts/AvenirNext-DemiBold.ttf);
+        font-weight: 600;
+      }
+
+      @font-face {
+        font-family: Gilroy;
+        src: url(../assets/fonts/Gilroy-SemiBold.ttf);
+        font-weight: 600;
+      }
+
+      @font-face {
+        font-family: Gilroy;
+        src: url(../assets/fonts/Gilroy-Bold.ttf);
+        font-weight: 700;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      const scripts = [];
+
+      if (process.env.NODE_ENV === 'development') {
+        // Dynamically insert the DLL script in development env in the
+        // renderer process
+        scripts.push('../.erb/dll/renderer.dev.dll.js');
+
+        // Dynamically insert the bundled app script in the renderer process
+        const port = process.env.PORT || 1212;
+        scripts.push(`http://localhost:${port}/dist/renderer.dev.js`);
+      } else {
+        scripts.push('./dist/renderer.prod.js');
+      }
+
+      if (scripts.length) {
+        document.write(
+          scripts
+            .map((script) => `<script defer src="${script}"><\/script>`)
+            .join('')
+        );
+      }
+    </script>
+  </body>
+</html>
