@@ -12,13 +12,13 @@ linux-test:
     - curl -o- -L https://yarnpkg.com/install.sh | bash
     - export PATH=$HOME/.yarn/bin:$PATH
     - yarn install --ignore-optional --no-lockfile
-    - yarn build
     - yarn test
   only:
     - develop
 
 linux-build:
   stage: build
+  when: manual
   image: node:14
   script:
     - curl -o- -L https://yarnpkg.com/install.sh | bash
@@ -32,6 +32,7 @@ linux-build:
 
 win-build:
   stage: build
+  when: manual
   image: electronuserland/builder:wine
   script:
     - yarn install

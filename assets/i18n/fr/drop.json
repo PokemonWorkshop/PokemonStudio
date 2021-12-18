@@ -1,0 +1,10 @@
+{
+  "drop_your_file_or": "Glissez votre fichier ou",
+  "drop_your_file_here_or": "Glissez votre fichier ici, ou",
+  "drop_your_file_here": "Glissez votre fichier ici",
+  "or": "ou",
+  "recommanded_size": "La taille d'image recommandée est de {{width}}*{{height}}px",
+  "explore": "Parcourir",
+  "explore_your_files": "Parcourez vos fichiers",
+  "or_explore_your_files": "parcourez vos fichiers"
+}

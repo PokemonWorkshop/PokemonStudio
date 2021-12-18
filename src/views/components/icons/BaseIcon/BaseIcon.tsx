@@ -1,4 +1,5 @@
-import React, { FunctionComponent } from 'react';
+import React from 'react';
+import theme from '@src/AppTheme';
 import SvgContainer from './SvgContainer';
 import { ReactComponent as TopIcon } from '../../../../../assets/icons/navigation/top-icon.svg';
 import { ReactComponent as DashboardIcon } from '../../../../../assets/icons/navigation/dashboard-icon.svg';
@@ -11,6 +12,9 @@ import { ReactComponent as SettingsIcon } from '../../../../../assets/icons/navi
 import { ReactComponent as AccountIcon } from '../../../../../assets/icons/navigation/account-icon.svg';
 import { ReactComponent as PlusIcon } from '../../../../../assets/icons/global/plus-icon.svg';
 import { ReactComponent as DeleteIcon } from '../../../../../assets/icons/global/delete-icon.svg';
+import { ReactComponent as SaveIcon } from '../../../../../assets/icons/navigation/save-icon.svg';
+import { ReactComponent as EditIcon } from '../../../../../assets/icons/global/edit-icon.svg';
+import { ReactComponent as ClearIcon } from '../../../../../assets/icons/global/clear-icon.svg';
 
 type IconName =
   | 'top'
@@ -24,9 +28,12 @@ type IconName =
   | 'settings'
   | 'account'
   | 'plus'
-  | 'delete';
+  | 'delete'
+  | 'save'
+  | 'edit'
+  | 'clear';
 
-const iconNameToIcon: Record<IconName, React.FunctionComponent> = {
+const iconNameToIcon: Record<IconName, typeof TopIcon> = {
   top: TopIcon,
   dashboard: DashboardIcon,
   update: UpdateIcon,
@@ -38,18 +45,23 @@ const iconNameToIcon: Record<IconName, React.FunctionComponent> = {
   account: AccountIcon,
   plus: PlusIcon,
   delete: DeleteIcon,
+  save: SaveIcon,
+  edit: EditIcon,
+  clear: ClearIcon,
 };
 
-type Size = 's' | 'm';
+type Size = 's' | 'm' | 'l';
 const sizeToPx: Record<Size, string> = {
   s: '20px',
-  m: '32px',
+  m: '24px',
+  l: '32px',
 };
 
 interface IconProps {
   color: string;
   icon: IconName;
   size: Size;
+  disabled?: boolean;
 }
 
 /**
@@ -58,14 +70,12 @@ interface IconProps {
  * @param icon the icon name
  * @param size the size of the icon
  */
-const BaseIcon: FunctionComponent<IconProps> = (iconProps) => {
-  const { color, icon, size } = iconProps;
-  const Renderer: React.FunctionComponent<React.SVGProps<SVGSVGElement>> =
-    iconNameToIcon[icon];
+const BaseIcon = ({ color, icon, size, disabled }: IconProps) => {
+  const Renderer = iconNameToIcon[icon];
 
   return (
     <SvgContainer size={sizeToPx[size]}>
-      <Renderer color={color} width="100%" />
+      <Renderer color={disabled ? theme.colors.text700 : color} width="100%" />
     </SvgContainer>
   );
 };

@@ -11,8 +11,6 @@ export default abstract class AbstractIpcChannel {
   abstract handle(event: IpcMainEvent, request: IpcRequest): void;
 
   registerChannel(ipcMain: IpcMain): void {
-    ipcMain.on(this.channelName, (event, request) =>
-      this.handle(event, request)
-    );
+    ipcMain.on(this.channelName, (event, request) => this.handle(event, request));
   }
 }

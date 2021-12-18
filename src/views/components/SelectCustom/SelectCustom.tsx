@@ -1,28 +1,50 @@
-import React, { FunctionComponent } from 'react';
+import { ListElement, SelectElement } from '@components/SelectCustom/SelectCustomStyle';
+import React, { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SelectOption, SelectCustomProps } from './SelectCustomPropsInterface';
-import { SelectElementStyle, SelectCustomStyle } from './SelectCustomStyle';
+import { MenuListProps } from 'react-select';
+import { SelectCustomProps, SelectOption } from './SelectCustomPropsInterface';
 
-export const SelectCustom: FunctionComponent<SelectCustomProps> = (
-  props: SelectCustomProps
-) => {
-  const { label, options, noOptionsText, defaultValue, onChange } = props;
+type RowRenderType = {
+  key: string;
+  index: number;
+  style: never;
+};
+
+export const SelectCustom = ({ options, noOptionsText, defaultValue, onChange, value, error }: SelectCustomProps) => {
   const { t } = useTranslation('select');
 
-  return (
-    <SelectCustomStyle>
-      <span id="label">{label}</span>
-      <SelectElementStyle
-        classNamePrefix="react-select"
-        options={options}
-        onChange={(data) => onChange(data as SelectOption)}
-        defaultValue={defaultValue || options[0]}
-        noOptionsMessage={(input) =>
-          noOptionsText
-            ? `${noOptionsText} «\u00a0${input.inputValue}\u00a0»`
-            : `${t('no_option')} «\u00a0${input.inputValue}\u00a0»`
-        }
+  const MenuList = (props: MenuListProps) => {
+    const width = 232;
+    const rows = props.children as ReactNode[];
+    const rowRenderer = ({ key, index, style }: RowRenderType) => (
+      <div key={key} style={style}>
+        {rows[index]}
+      </div>
+    );
+
+    return !rows.length ? (
+      <p className="no-option">{noOptionsText ? noOptionsText : t('no_option')}</p>
+    ) : (
+      <ListElement
+        width={width}
+        height={Math.min(39 * (rows.length || 0), 191)}
+        rowHeight={39}
+        rowCount={rows.length || 0}
+        rowRenderer={rowRenderer}
       />
-    </SelectCustomStyle>
+    );
+  };
+
+  return (
+    <SelectElement
+      classNamePrefix="react-select"
+      options={options}
+      onChange={(data) => onChange(data as SelectOption)}
+      defaultValue={defaultValue || options[0]}
+      components={{ MenuList }}
+      value={value}
+      height={options.length >= 5 ? '207px' : `${12 + options.length * 39}px`}
+      error={error || false}
+    />
   );
 };

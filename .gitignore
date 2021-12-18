@@ -38,6 +38,8 @@ src/renderer.prod.js
 src/renderer.prod.js.map
 src/style.css
 src/style.css.map
+src/preload.prod.js
+src/main.prod.js.LICENSE.txt
 dist
 dll
 main.js
@@ -48,3 +50,12 @@ npm-debug.log.*
 *.css.d.ts
 *.sass.d.ts
 *.scss.d.ts
+
+package-lock.json
+
+psdk-binaries/lib
+psdk-binaries/ruby_builtin_dlls
+psdk-binaries/Game.rb
+psdk-binaries/*.dll
+psdk-binaries/*.exe
+psdk-binaries/psdk.bat

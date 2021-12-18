@@ -1,0 +1,6 @@
+{
+  "successTitle": "Save",
+  "successMessage": "Your modifications has been successfuly saved.",
+  "errorTitle": "Save",
+  "errorMessage": "An error occurred!"
+}

@@ -5,6 +5,7 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 
 import translationEN from '../assets/i18n/en';
 import translationFR from '../assets/i18n/fr';
+import translationIT from '../assets/i18n/it';
 // import translationXX from '../assets/i18n/xx';
 
 i18n
@@ -23,6 +24,7 @@ i18n
     resources: {
       en: translationEN,
       fr: translationFR,
+      it: translationIT,
       // XX: translationXX,
     },
   });

@@ -13,7 +13,7 @@ describe('TrainerModel', () => {
       bags: [],
       battleId: 0,
       ai: 0,
-      parties: [
+      party: [
         [
           {
             specie: 'bulbasaur',

@@ -22,14 +22,17 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "allowJs": true,
-    "types": ["jest", "node"]
+    "types": ["jest", "node"],
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["src/views/components/*"],
+      "@pages/*": ["src/views/pages/*"],
+      "@modelEntities/*": ["src/models/entities/*"],
+      "@services/*": ["src/services/*"],
+      "@utils/*": ["src/utils/*"],
+      "@assets/*": ["assets/*"],
+      "@src/*": ["src/*"]
+    }
   },
-  "exclude": [
-    "test",
-    "release",
-    "src/main.prod.js",
-    "src/renderer.prod.js",
-    "src/dist",
-    ".erb/dll"
-  ]
+  "exclude": ["test", "release", "src/main.prod.js", "src/renderer.prod.js", "src/dist", ".erb/dll"]
 }

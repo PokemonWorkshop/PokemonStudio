@@ -1,3 +1,6 @@
 [submodule "psdk-lite"]
 	path = psdk-lite
 	url = git@gitlab.com:pokemonsdk/psdk-lite.git
+[submodule "psdk-binaries/pokemonsdk"]
+	path = psdk-binaries/pokemonsdk
+	url = git@gitlab.com:pokemonsdk/pokemonsdk.git

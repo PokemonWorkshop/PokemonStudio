@@ -1,36 +1,16 @@
-import { AnyT, jsonArrayMember, jsonMember, jsonObject } from 'typedjson';
-import Encounter from '../Encounter.model';
+import { ProjectData, TextsWithLanguageConfig } from '@src/GlobalStateProvider';
+import { cleanNaNValue } from '@utils/cleanNaNValue';
+import { getText, setText } from '@utils/ReadingProjectText';
+import { AnyT, jsonArrayMember, jsonMember, jsonObject, TypedJSON } from 'typedjson';
 import PSDKEntity from '../PSDKEntity';
 
-/**
- * This interface represents a wild group.
- */
-interface WildGroup {
-  /**
-   * The system_tag zone in which the Roaming Pokemon will appear.
-   */
-  systemTag: string;
+// 0 = None, 1 = Rain, 2 = Sun/Zenith, 3 = Sandstorm, 4 = Hail, 5 = Foggy
+export const WeatherCategories = [0, 1, 2, 3, 4, 5] as const;
 
-  /**
-   * If the battle is the double battle.
-   */
-  isDoubleBattle: boolean;
-
-  /**
-   * If the battle is the horde battle.
-   */
-  isHordeBattle: boolean;
-
-  /**
-   * Custom condition.
-   */
-  customCondition: any;
-
-  /**
-   * The list of the wilds encounters
-   */
-  encounters: Encounter[];
-}
+type MapCoordinate = {
+  x: number | null;
+  y: number | null;
+};
 
 /**
  * This class represents a zone.
@@ -54,8 +34,8 @@ export default class ZoneModel implements PSDKEntity {
   /**
    * The db_symbol of the zone.
    */
-  @jsonMember(String, { preserveNull: true })
-  dbSymbol!: string | null;
+  @jsonMember(String)
+  dbSymbol!: string;
 
   /**
    * List of MAP ID the zone is related to.
@@ -73,31 +53,19 @@ export default class ZoneModel implements PSDKEntity {
    * Number at the end of the Panel file (Graphics/Windowskins/Panel_#panel_id).
    */
   @jsonMember(Number)
-  pannelId!: number;
+  panelId!: number;
 
   /**
-   * X position of the Warp when using Dig, Teleport or Fly.
+   * Position of the Warp when using Dig, Teleport or Fly.
    */
-  @jsonMember(Number, { preserveNull: true })
-  warpX!: number | null;
+  @jsonMember(AnyT, { preserveNull: true })
+  warp!: MapCoordinate;
 
   /**
-   * Y position of the Warp when using Dig, Teleport or Fly.
+   * Position of the player on the World Map.
    */
-  @jsonMember(Number, { preserveNull: true })
-  warpY!: number | null;
-
-  /**
-   * X position of the player on the World Map.
-   */
-  @jsonMember(Number, { preserveNull: true })
-  positionX!: number | null;
-
-  /**
-   * Y position of the player on the World Map.
-   */
-  @jsonMember(Number, { preserveNull: true })
-  positionY!: number | null;
+  @jsonMember(AnyT, { preserveNull: true })
+  position!: MapCoordinate;
 
   /**
    * If the player can use fly in this zone (otherwise he can use Dig).
@@ -118,14 +86,116 @@ export default class ZoneModel implements PSDKEntity {
   forcedWeather!: number | null;
 
   /**
-   * Unused.
+   * The dbSymbols of groups of Wild Pokemon.
    */
-  @jsonArrayMember(AnyT)
-  subZones!: any[];
+  @jsonArrayMember(String)
+  wildGroups!: string[];
 
   /**
-   * The groups of Wild Pokemon.
+   * Text of the project
    */
-  @jsonArrayMember(AnyT)
-  wildGroups!: WildGroup[];
+  public projectText?: TextsWithLanguageConfig;
+
+  /**
+   * Get the description of the zone
+   * @returns The description of the zone
+   */
+  descr = () => {
+    if (!this.projectText) return `description of zone ${this.id}`;
+    return getText(this.projectText, 64, this.id);
+  };
+
+  /**
+   * Set the description of the zone
+   */
+  setDescr = (descr: string) => {
+    if (!this.projectText) return;
+    return setText(this.projectText, 64, this.id, descr);
+  };
+
+  /**
+   * Get the name of the zone
+   * @returns The name of the zone
+   */
+  name = () => {
+    if (!this.projectText) return `name of zone ${this.id}`;
+    return getText(this.projectText, 10, this.id);
+  };
+
+  /**
+   * Set the name of the zone
+   * @param name
+   * @returns
+   */
+  setName = (name: string) => {
+    if (!this.projectText) return;
+    return setText(this.projectText, 10, this.id, name);
+  };
+
+  /**
+   * Get the default values
+   */
+  static defaultValues = () => ({
+    klass: ZoneModel.klass,
+    id: 0,
+    dbSymbol: 'zone_0',
+    maps: [],
+    worldmaps: [],
+    panelId: 0,
+    warp: { x: null, y: null },
+    position: { x: null, y: null },
+    isFlyAllowed: false,
+    isWarpDisallowed: false,
+    forcedWeather: null,
+    wildGroups: [],
+  });
+
+  /**
+   * Clone the object
+   */
+  clone = (): ZoneModel => {
+    const newObject = new TypedJSON(ZoneModel).parse(JSON.stringify(this));
+    if (!newObject) throw new Error('Could not clone object');
+
+    newObject.projectText = this.projectText;
+    return newObject as ZoneModel;
+  };
+
+  /**
+   * Create a new zone with default values
+   * @param allZones The project data containing the zones
+   * @returns The new zone
+   */
+  static createZone = (allZones: ProjectData['zones']): ZoneModel => {
+    const newZone = new ZoneModel();
+    Object.assign(newZone, ZoneModel.defaultValues());
+    newZone.id =
+      Object.entries(allZones)
+        .map(([, zoneData]) => zoneData)
+        .sort((a, b) => b.id - a.id)[0].id + 1;
+    newZone.dbSymbol = `zone_${newZone.id}`;
+    return newZone;
+  };
+
+  /**
+   * Replace NaN value by null
+   * @param value The coordinate
+   * @returns The coordinate without NaN
+   */
+  static cleanCoordinate = (value: number | null) => {
+    if (value === null) return null;
+
+    return isNaN(value) ? null : value;
+  };
+
+  /**
+   * Cleaning NaN values in number properties
+   */
+  cleaningNaNValues = () => {
+    this.panelId = cleanNaNValue(this.panelId);
+    this.position.x = ZoneModel.cleanCoordinate(this.position.x);
+    this.position.y = ZoneModel.cleanCoordinate(this.position.y);
+    this.warp.x = ZoneModel.cleanCoordinate(this.warp.x);
+    this.warp.y = ZoneModel.cleanCoordinate(this.warp.y);
+  };
 }

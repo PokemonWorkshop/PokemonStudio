@@ -1,14 +1,47 @@
-import { jsonMember, jsonObject, jsonArrayMember, AnyT } from 'typedjson';
+import { ProjectData, TextsWithLanguageConfig, State } from '@src/GlobalStateProvider';
+import { cleanNaNValue } from '@utils/cleanNaNValue';
+import { getText, setText } from '@utils/ReadingProjectText';
+import { jsonMember, jsonObject, jsonArrayMember, AnyT, TypedJSON } from 'typedjson';
 import PSDKEntity from '../PSDKEntity';
+
+export const MoveCategories = ['physical', 'special', 'status'] as const;
+export const MoveCriticalRate = [0, 1, 2, 3, 4] as const;
+export const MoveTarget = [
+  'adjacent_pokemon',
+  'adjacent_foe',
+  'adjacent_all_foe',
+  'all_foe',
+  'adjacent_all_pokemon',
+  'all_pokemon',
+  'user',
+  'user_or_adjacent_ally',
+  'adjacent_ally',
+  'all_ally',
+  'any_other_pokemon',
+  'random_foe',
+] as const;
+export const MoveBattleEngineMethod = [
+  's_basic',
+  's_stat',
+  's_status',
+  's_multi_hit',
+  's_2hits',
+  's_ohko',
+  's_2turns',
+  's_self_stat',
+  's_self_statut',
+] as const;
+export const MoveStatusList = ['POISONED', 'PARALYZED', 'BURN', 'ASLEEP', 'FROZEN', 'TOXIC', 'CONFUSED', 'DEATH', 'FLINCH'] as const;
+export type BattleStageType = 'ATK_STAGE' | 'DFE_STAGE' | 'ATS_STAGE' | 'DFS_STAGE' | 'SPD_STAGE' | 'EVA_STAGE' | 'ACC_STAGE';
 
 /**
  * This interface represents the stat change effect.
  */
-interface BattleStageMod {
+export interface BattleStageMod {
   /**
    * The stat modified (example: DFS_STAGE)
    */
-  battleStage: string;
+  battleStage: BattleStageType;
 
   /**
    * Value of the modificator (example: -1, 1, etc.)
@@ -19,11 +52,11 @@ interface BattleStageMod {
 /**
  * This interface represents the move status.
  */
-interface MoveStatus {
+export interface MoveStatus {
   /**
    * The status effect.
    */
-  status: string;
+  status: string | null;
 
   /**
    * Value of the modificator (example: -1, 1, etc.)
@@ -53,8 +86,8 @@ export default class MoveModel implements PSDKEntity {
   /**
    * The db_symbol of the move.
    */
-  @jsonMember(String, { preserveNull: true })
-  dbSymbol!: string | null;
+  @jsonMember(String)
+  dbSymbol!: string;
 
   /**
    * ID of the common event called when used on map.
@@ -65,14 +98,14 @@ export default class MoveModel implements PSDKEntity {
   /**
    * Symbol of the method to call in the Battle Engine to perform the move (be_method).
    */
-  @jsonMember(String, { preserveNull: true })
-  battleEngineMethod!: string | null;
+  @jsonMember(String)
+  battleEngineMethod!: string;
 
   /**
    * Type of the move.
    */
-  @jsonMember(Number)
-  type!: number;
+  @jsonMember(String)
+  type!: string;
 
   /**
    * Power of the move.
@@ -121,6 +154,12 @@ export default class MoveModel implements PSDKEntity {
    */
   @jsonMember(Boolean)
   isCharge!: boolean;
+
+  /**
+   * If the move requires recharging turn PokeAPI Prose : The turn after this move is used, the Pokemon's action is skipped so it can recharge.
+   */
+  @jsonMember(Boolean)
+  isRecharge!: boolean;
 
   /**
    * If the move is affected by Detect or Protect PokeAPI Prose : This move will not work if the target has used detect move or protect move this turn.
@@ -231,6 +270,12 @@ export default class MoveModel implements PSDKEntity {
   isKingRockUtility!: boolean;
 
   /**
+   * If the move is a powder move PokeAPI Prose : Pokemon with overcoat ability and grass-type Pokemon are immune to this move.
+   */
+  @jsonMember(Boolean)
+  isPowder!: boolean;
+
+  /**
    * If the chance of the effect (stat/status) can trigger.
    */
   @jsonMember(Boolean)
@@ -251,6 +296,250 @@ export default class MoveModel implements PSDKEntity {
   /**
    * The status effect.
    */
-  @jsonArrayMember(AnyT, { preserveNull: true })
-  moveStatus!: MoveStatus[] | null;
+  @jsonArrayMember(AnyT)
+  moveStatus!: MoveStatus[];
+
+  /**
+   * Text of the project
+   */
+  public projectText?: TextsWithLanguageConfig;
+
+  /**
+   * Get the default values
+   */
+  static defaultValues = () => ({
+    klass: MoveModel.klass,
+    id: 0,
+    dbSymbol: 'new_move',
+    type: 'normal',
+    category: 'physical',
+    isAuthentic: false,
+    isBallistics: false,
+    isBite: false,
+    isBlocable: false,
+    isCharge: false,
+    isDance: false,
+    isDirect: false,
+    isDistance: false,
+    isEffectChance: false,
+    isGravity: false,
+    isHeal: false,
+    isKingRockUtility: false,
+    isMagicCoatAffected: false,
+    isMental: false,
+    isMirrorMove: false,
+    isNonSkyBattle: false,
+    isPowder: false,
+    isPulse: false,
+    isPunch: false,
+    isRecharge: false,
+    isSnatchable: false,
+    isSoundAttack: false,
+    isUnfreeze: false,
+    power: 0,
+    pp: 0,
+    priority: 0,
+    accuracy: 0,
+    movecriticalRate: 1,
+    moveStatus: [],
+    battleEngineMethod: 's_basic',
+    battleStageMod: [],
+    battleEngineAimedTarget: 'adjacent_pokemon',
+    mapUse: 0,
+  });
+
+  /**
+   * Get the description of the move
+   * @returns The description of the move
+   */
+  descr = () => {
+    if (!this.projectText) return `description of ${this.dbSymbol}`;
+    return getText(this.projectText, 7, this.id);
+  };
+
+  /**
+   * Set the description of the move
+   */
+  setDescr = (descr: string) => {
+    if (!this.projectText) return;
+    return setText(this.projectText, 7, this.id, descr);
+  };
+
+  /**
+   * Get the name of the move
+   * @returns The name of the move
+   */
+  name = () => {
+    if (!this.projectText) return `name of ${this.dbSymbol}`;
+    return getText(this.projectText, 6, this.id);
+  };
+
+  /**
+   * Set the name of the move
+   */
+  setName = (name: string) => {
+    if (!this.projectText) return;
+    return setText(this.projectText, 6, this.id, name);
+  };
+
+  /**
+   * Get all the Pokemon with the current level learnable move
+   */
+  getAllPokemonWithCurrentLevelLearnableMove = (state: State) => {
+    return Object.values(state.projectData.pokemon).filter((pokemon) =>
+      pokemon.forms.find((form) => form.levelLearnableMove.find((llm) => llm.move === this.dbSymbol))
+    );
+  };
+
+  /**
+   * Get all the Pokemon with the current tutor learnable move
+   */
+  getAllPokemonWithCurrentTutorLearnableMove = (state: State) => {
+    return Object.values(state.projectData.pokemon).filter((pokemon) =>
+      pokemon.forms.find((form) => form.tutorLearnableMove.find((tlm) => tlm.move === this.dbSymbol))
+    );
+  };
+
+  /**
+   * Get all the Pokemon with the current tech learnable move
+   */
+  getAllPokemonWithCurrentTechLearnableMove = (state: State) => {
+    return Object.values(state.projectData.pokemon).filter((pokemon) =>
+      pokemon.forms.find((form) => form.techLearnableMove.find((tlm) => tlm.move === this.dbSymbol))
+    );
+  };
+
+  /**
+   * Get all the Pokemon with the current breed learnable move
+   */
+  getAllPokemonWithCurrentBreedLearnableMove = (state: State) => {
+    return Object.values(state.projectData.pokemon).filter((pokemon) =>
+      pokemon.forms.find((form) => form.breedLearnableMove.find((blm) => blm.move === this.dbSymbol))
+    );
+  };
+
+  /**
+   * Get all the Pokemon with the current evolution learnable move
+   */
+  getAllPokemonWithCurrentEvolutionLearnableMove = (state: State) => {
+    return Object.values(state.projectData.pokemon).filter((pokemon) =>
+      pokemon.forms.find((form) => form.evolutionLearnableMove.find((elm) => elm.move === this.dbSymbol))
+    );
+  };
+
+  /**
+   * Clone the object
+   */
+  clone = (): MoveModel => {
+    const newObject = new TypedJSON(MoveModel).parse(JSON.stringify(this));
+    if (!newObject) throw new Error('Could not clone object');
+
+    newObject.projectText = this.projectText;
+    return newObject as MoveModel;
+  };
+
+  /**
+   * Remove useless move status
+   * @param index The index of the status in move status
+   */
+  removeUselessMoveStatus = (index: number) => {
+    if (this.moveStatus[index].status || this.moveStatus[index].luckRate !== 0) return;
+    if (index === 0) this.moveStatus = [{ status: null, luckRate: 0 }];
+    if (index === 1) this.moveStatus = [{ status: this.moveStatus[0].status, luckRate: this.moveStatus[0].luckRate }];
+    if (index === 2) this.moveStatus.pop();
+  };
+
+  /**
+   * Set the move status of the move
+   * @param index The index of the status in move status
+   * @param status The status to set
+   */
+  setMoveStatus = (index: number, status: string) => {
+    if (index < this.moveStatus.length) this.moveStatus[index].status = status === '' ? null : status;
+    else this.moveStatus.push({ status: status, luckRate: 0 });
+    this.removeUselessMoveStatus(index);
+  };
+
+  /**
+   * Set the luck rate of the move status of the move
+   * @param index The index of the status in move status
+   * @param luckRate The luck rate to set
+   */
+  setMoveStatusLuckRate = (index: number, luckRate: number) => {
+    if (index < this.moveStatus.length) this.moveStatus[index].luckRate = luckRate;
+    else this.moveStatus.push({ status: null, luckRate: luckRate });
+    this.removeUselessMoveStatus(index);
+  };
+
+  /**
+   * Create a default status if moveStatus array is empty
+   */
+  createDefaultStatus = () => {
+    if (this.moveStatus.length === 0) this.moveStatus.push({ status: null, luckRate: 0 });
+  };
+
+  /**
+   * Clean status
+   */
+  cleanStatus = () => {
+    this.moveStatus = this.moveStatus.filter((moveStatus) => moveStatus.status !== null);
+  };
+
+  /**
+   * Get the battle stage mod modificator
+   * @param stageType The type of the battle stage
+   * @returns The modificator of the battle stage
+   */
+  getBattleStageModModificator = (stageType: BattleStageType) => {
+    if (this.battleStageMod.length === 0) return 0;
+    const battleStage = this.battleStageMod.find((stat) => stat.battleStage === stageType);
+    if (!battleStage) return 0;
+    return battleStage.modificator;
+  };
+
+  /**
+   * Set the battle stage mod modificator
+   * @param stageType The type of the battle stage
+   * @param modificator The modificator of the battle stage
+   */
+  setBattleStageMod = (stageType: BattleStageType, modificator: number) => {
+    const currentStageMod = this.battleStageMod.find((stat) => stat.battleStage === stageType);
+    if (!currentStageMod) {
+      if (modificator !== 0) this.battleStageMod.push({ battleStage: stageType, modificator: modificator });
+      return;
+    }
+    if (modificator !== 0) {
+      currentStageMod.modificator = modificator;
+      return;
+    }
+    this.battleStageMod.splice(this.battleStageMod.indexOf(currentStageMod), 1);
+  };
+
+  /**
+   * Create a new move with default values
+   * @param allMoves The project data containing the moves
+   * @returns The new move
+   */
+  static createMove = (allMoves: ProjectData['moves']): MoveModel => {
+    const newMove = new MoveModel();
+    Object.assign(newMove, MoveModel.defaultValues());
+    newMove.id =
+      Object.entries(allMoves)
+        .map(([, moveData]) => moveData)
+        .sort((a, b) => b.id - a.id)[0].id + 1;
+    newMove.dbSymbol = '';
+    return newMove;
+  };
+
+  /**
+   * Cleaning NaN values in number properties
+   */
+  cleaningNaNValues = () => {
+    this.power = cleanNaNValue(this.power);
+    this.accuracy = cleanNaNValue(this.accuracy);
+    this.pp = cleanNaNValue(this.pp);
+    this.priority = cleanNaNValue(this.priority);
+    this.moveStatus.forEach((status) => (status.luckRate = cleanNaNValue(status.luckRate)));
+    this.battleStageMod.forEach((bsm) => (bsm.modificator = cleanNaNValue(bsm.modificator)));
+  };
 }

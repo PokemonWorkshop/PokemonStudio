@@ -1,6 +1,6 @@
 import * as fs from 'fs';
-import path, { join } from 'path';
-import { dialog } from 'electron';
+import path from 'path';
+import { IpcMainEvent } from 'electron';
 import log from 'electron-log';
 import AbstractIpcChannel from './IPC/abstract.ipc.channel';
 import { IpcRequest } from './IPC/ipc.request';
@@ -10,13 +10,10 @@ interface ProjectLoadingParameters extends IpcRequest {
   path: string;
 }
 
-async function readFiles(
-  dir: string,
-  files: string[]
-): Promise<{ [x: string]: PSDKEntity }> {
+export const readFiles = async (dir: string, files: string[]): Promise<{ [x: string]: PSDKEntity }> => {
   const promises = files.map((f) => {
     return fs.promises
-      .readFile(join(dir, f), 'utf8')
+      .readFile(path.join(dir, f), 'utf8')
       .then((content) => {
         return { [path.parse(f).name]: JSON.parse(content) };
       })
@@ -28,35 +25,23 @@ async function readFiles(
   return Promise.all(promises).then((r) => {
     return { [path.basename(dir)]: Object.assign({}, ...r) };
   });
-}
-
-async function getProjectPath(): Promise<string> {
-  const projectPath = await dialog
-    .showOpenDialog({ properties: ['openDirectory'] })
-    .then((result) => result.filePaths[0])
-    .catch((err) => log.error(err));
-  return projectPath || '';
-}
+};
 
 export default class ProjectLoadingChannelService extends AbstractIpcChannel {
   channelName = 'project-loading';
 
-  async handle(
-    event: Electron.IpcMainEvent,
-    request: ProjectLoadingParameters
-  ): Promise<void> {
-    if (!request.responseChannel) {
-      request.responseChannel = `${this.name}_response`;
-    }
+  async handle(event: IpcMainEvent, request: ProjectLoadingParameters): Promise<void> {
+    const responseChannel = request.responseChannel || `${this.name}_response`;
+    request.responseChannel = responseChannel;
 
-    const projectPath = await getProjectPath();
+    const projectDataPath = path.join(request.path, 'Data/Studio');
 
     Promise.all(
       fs
-        .readdirSync(projectPath, { withFileTypes: true })
+        .readdirSync(projectDataPath, { withFileTypes: true })
         .filter((dirent) => dirent.isDirectory())
         .map(async (dirent) => {
-          const dir = join(projectPath || '', dirent.name);
+          const dir = path.join(projectDataPath || '', dirent.name);
           return readFiles(
             dir,
             fs.readdirSync(dir).filter((f) => {
@@ -66,13 +51,15 @@ export default class ProjectLoadingChannelService extends AbstractIpcChannel {
         })
     )
       .then((r) => {
-        return event.sender.send(request.responseChannel!, {
+        return event.sender.send(responseChannel, {
           projectData: Object.assign({}, ...r),
-          path: projectPath,
         });
       })
       .catch((r) => {
         log.error(r);
+        return event.sender.send(responseChannel, {
+          error: `Failed to load project data ${r}`,
+        });
       });
   }
 }

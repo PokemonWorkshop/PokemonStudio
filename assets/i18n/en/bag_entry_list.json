@@ -1,0 +1,11 @@
+{
+  "import_item": "Import items",
+  "import": "Import",
+  "add_item": "Add an item",
+  "no_item": "No item",
+  "item": "Item",
+  "amount": "Amount",
+  "add_the_item": "Add the item",
+  "cancel": "Cancel",
+  "fields_asterisk_required": "Fields with an asterisk are required."
+}

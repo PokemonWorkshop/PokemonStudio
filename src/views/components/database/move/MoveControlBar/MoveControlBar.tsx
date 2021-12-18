@@ -1,9 +1,23 @@
-import React, { FunctionComponent } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { MoveControlBarStyle } from './MoveControlBarStyle';
+import { SecondaryButtonWithPlusIcon } from '@components/buttons';
+import { MoveControlBarProps } from './MoveControlBarPropsInterface';
+import { ControlBar } from '@components/ControlBar';
+import { SelectMove } from '@components/selects';
 
-export const MoveControlBar: FunctionComponent = () => {
+export const MoveControlBar = ({ onMoveChange, move, onClickNewMove }: MoveControlBarProps) => {
   const { t } = useTranslation(['database_moves']);
 
-  return <MoveControlBarStyle />;
+  return (
+    <ControlBar>
+      {onClickNewMove ? (
+        <SecondaryButtonWithPlusIcon onClick={onClickNewMove}>
+          <span>{t('database_moves:new')}</span>
+        </SecondaryButtonWithPlusIcon>
+      ) : (
+        <div />
+      )}
+      <SelectMove dbSymbol={move.dbSymbol} onChange={onMoveChange} />
+    </ControlBar>
+  );
 };

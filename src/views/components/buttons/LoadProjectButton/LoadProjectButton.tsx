@@ -1,63 +1,26 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { ReactNode } from 'react';
 import { useHistory } from 'react-router-dom';
-import {
-  ProjectData,
-  State,
-  useGlobalState,
-} from '../../../../GlobalStateProvider';
-import IpcService from '../../../../services/IPC/ipc.service';
-import ButtonProps from '../BaseButton/ButtonPropsInterface';
-import { PrimaryButton } from '../PrimaryButton';
-import { deserialize } from '../../../../utils/SerializationUtils';
-import PSDKEntity from '../../../../models/entities/PSDKEntity';
+import { SecondaryButton } from '../GenericButtons';
+import { useLoaderRef } from '@utils/loaderContext';
+import { useProjectLoadV2 } from '@utils/useProjectLoadV2';
 
-type ProjectDialogReturnValue = State & { path: string };
-export const LoadProjectButton: FunctionComponent<ButtonProps> = (
-  props: ButtonProps
-) => {
-  const { text, disabled } = props;
-  const IPC = new IpcService();
-  const [state, setState] = useGlobalState();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+type LoadProjectButtonProps = { children: ReactNode };
+
+export const LoadProjectButton = ({ children }: LoadProjectButtonProps) => {
   const history = useHistory();
+  const loaderRef = useLoaderRef();
+  const projectLoadV2 = useProjectLoadV2();
 
-  return (
-    <PrimaryButton
-      onClick={async () => {
-        setIsDialogOpen(true);
-        return IPC.send<ProjectDialogReturnValue>('project-loading')
-          .then((data) => {
-            const projectData: ProjectData = {
-              items: {},
-              moves: {},
-              pokemon: {},
-              quests: {},
-              trainers: {},
-              types: {},
-              zones: {},
-            };
-            Object.keys(data.projectData).forEach((k) => {
-              const entities: { [k: string]: PSDKEntity } = {};
-              Object.keys(data.projectData[k]).forEach((id) => {
-                const entity = deserialize(data.projectData[k][id]);
-                if (entity) {
-                  entities[id] = entity;
-                }
-              });
-              projectData[k] = entities;
-            });
-            return setState((prev) => ({
-              ...prev,
-              projectData,
-              projectPath: data.path,
-            }));
-          })
-          .then(() => setIsDialogOpen(false))
-          .catch(() => setIsDialogOpen(false))
-          .finally(() => history.push('/dashboard'));
-      }}
-      disabled={isDialogOpen}
-      text={text}
-    />
-  );
+  const handleClick = async () => {
+    projectLoadV2(
+      {},
+      () => {
+        loaderRef.current.close();
+        history.push('/dashboard');
+      },
+      ({ errorMessage }) => loaderRef.current.setError('loading_project_error', errorMessage)
+    );
+  };
+
+  return <SecondaryButton onClick={handleClick}>{children}</SecondaryButton>;
 };

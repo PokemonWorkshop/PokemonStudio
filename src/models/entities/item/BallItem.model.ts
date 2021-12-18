@@ -1,10 +1,11 @@
-import { AnyT, jsonMember, jsonObject } from 'typedjson';
-import ItemModel from './Item.model';
+import { cleanNaNValue } from '@utils/cleanNaNValue';
+import { AnyT, jsonMember, jsonObject, TypedJSON } from 'typedjson';
+import ItemModel, { ItemCategory, ItemEditors } from './Item.model';
 
 /**
  * This interface represents the color of the ball
  */
-interface Color {
+export interface Color {
   red: number;
   green: number;
   blue: number;
@@ -17,6 +18,10 @@ interface Color {
 @jsonObject
 export default class BallItemModel extends ItemModel {
   static klass = 'BallItem';
+
+  public category: ItemCategory = 'ball';
+
+  public lockedEditors: ItemEditors[] = ['exploration', 'battle', 'progress', 'heal', 'berries', 'cooking'];
 
   /**
    * The image of the ball.
@@ -35,4 +40,34 @@ export default class BallItemModel extends ItemModel {
    */
   @jsonMember(AnyT)
   color!: Color;
+
+  /**
+   * Get the default values
+   */
+  static defaultValues = () => ({
+    ...ItemModel.defaultValues(),
+    klass: BallItemModel.klass,
+    spriteFilename: 'ball_1',
+    catchRate: 1,
+    color: { red: 255, green: 0, blue: 0, alpha: 255 },
+  });
+
+  /**
+   * Cleaning NaN values in number properties
+   */
+  cleaningNaNValues() {
+    super.cleaningNaNValues();
+    this.catchRate = cleanNaNValue(this.catchRate);
+  }
+
+  /**
+   * Clone the object
+   */
+  clone = (): BallItemModel => {
+    const newObject = new TypedJSON(BallItemModel).parse(JSON.stringify(this));
+    if (!newObject) throw new Error('Could not clone object');
+
+    newObject.projectText = this.projectText;
+    return newObject as BallItemModel;
+  };
 }

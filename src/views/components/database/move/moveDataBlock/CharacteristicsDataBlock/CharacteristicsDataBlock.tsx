@@ -1,163 +1,71 @@
-import React, { FunctionComponent } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { MoveDataBlock } from '../MoveDataBlock';
-import { CharacteristicsDataBlockFieldsetField } from './CharacteristicDataBlockFieldsetField';
-import { CharacteristicsDataBlockProps } from './CharacteristicsDataBlockPropsInterface';
+import { DataBlockWithTitle } from '../../../dataBlocks';
+import { CharacteristicsDataBlockStyle, NoCharacteristic } from './CharacteristicsDataBlockStyle';
+import { CharacteristicElement } from './CharacteristicElement';
+import { MoveDataProps } from '../../MoveDataPropsInterface';
+import MoveModel from '@modelEntities/move/Move.model';
 
-export const CharacteristicsDataBlock: FunctionComponent<CharacteristicsDataBlockProps> = (
-  props: CharacteristicsDataBlockProps
-) => {
-  const { move } = props;
-  const { t } = useTranslation('database_moves');
+const atLeastOneCharacteristic = (move: MoveModel) => {
+  return (
+    move.isDirect ||
+    move.isDistance ||
+    move.isBlocable ||
+    move.isAuthentic ||
+    move.isKingRockUtility ||
+    move.isMagicCoatAffected ||
+    move.isMirrorMove ||
+    move.isSnatchable ||
+    move.isMental ||
+    move.isCharge ||
+    move.isRecharge ||
+    move.isSoundAttack ||
+    move.isBite ||
+    move.isBallistics ||
+    move.isPulse ||
+    move.isPunch ||
+    move.isPowder ||
+    move.isDance ||
+    move.isUnfreeze ||
+    move.isHeal ||
+    move.isGravity ||
+    move.isNonSkyBattle
+  );
+};
 
-  function authentic() {
-    if (move?.isAuthentic)
-      return <CharacteristicsDataBlockFieldsetField name={t('authentic')} />;
-    return undefined;
-  }
-
-  function ballistics() {
-    if (move?.isBallistics)
-      return <CharacteristicsDataBlockFieldsetField name={t('ballistics')} />;
-    return undefined;
-  }
-
-  function bite() {
-    if (move?.isBite)
-      return <CharacteristicsDataBlockFieldsetField name={t('bite')} />;
-    return undefined;
-  }
-
-  function blocable() {
-    if (move?.isBlocable)
-      return <CharacteristicsDataBlockFieldsetField name={t('blocable')} />;
-    return undefined;
-  }
-
-  function charge() {
-    if (move?.isCharge)
-      return <CharacteristicsDataBlockFieldsetField name={t('charge')} />;
-    return undefined;
-  }
-
-  function dance() {
-    if (move?.isDance)
-      return <CharacteristicsDataBlockFieldsetField name={t('dance')} />;
-    return undefined;
-  }
-
-  function direct() {
-    if (move?.isDirect)
-      return <CharacteristicsDataBlockFieldsetField name={t('contact')} />;
-    return undefined;
-  }
-
-  function distance() {
-    if (move?.isDistance)
-      return <CharacteristicsDataBlockFieldsetField name={t('distance')} />;
-    return undefined;
-  }
-
-  function gravity() {
-    if (move?.isGravity)
-      return <CharacteristicsDataBlockFieldsetField name={t('gravity')} />;
-    return undefined;
-  }
-
-  function heal() {
-    if (move?.isHeal)
-      return <CharacteristicsDataBlockFieldsetField name={t('heal')} />;
-    return undefined;
-  }
-
-  function kingRock() {
-    if (move?.isKingRockUtility)
-      return <CharacteristicsDataBlockFieldsetField name={t('king_rock')} />;
-    return undefined;
-  }
-
-  function magicCoat() {
-    if (move?.isMagicCoatAffected)
-      return <CharacteristicsDataBlockFieldsetField name={t('magic_coat')} />;
-    return undefined;
-  }
-
-  function mental() {
-    if (move?.isMental)
-      return <CharacteristicsDataBlockFieldsetField name={t('mental')} />;
-    return undefined;
-  }
-
-  function mirrorMove() {
-    if (move?.isMirrorMove)
-      return <CharacteristicsDataBlockFieldsetField name={t('mirror_move')} />;
-    return undefined;
-  }
-
-  function nonSkyBattle() {
-    if (move?.isNonSkyBattle)
-      return (
-        <CharacteristicsDataBlockFieldsetField name={t('non_sky_battle')} />
-      );
-    return undefined;
-  }
-
-  function pulse() {
-    if (move?.isPulse)
-      return <CharacteristicsDataBlockFieldsetField name={t('pulse')} />;
-    return undefined;
-  }
-
-  function punch() {
-    if (move?.isPunch)
-      return <CharacteristicsDataBlockFieldsetField name={t('punch')} />;
-    return undefined;
-  }
-
-  function snatch() {
-    if (move?.isSnatchable)
-      return <CharacteristicsDataBlockFieldsetField name={t('snatch')} />;
-    return undefined;
-  }
-
-  function sound() {
-    if (move?.isSoundAttack)
-      return <CharacteristicsDataBlockFieldsetField name={t('sound')} />;
-    return undefined;
-  }
-
-  function unfreeze() {
-    if (move?.isUnfreeze)
-      return <CharacteristicsDataBlockFieldsetField name={t('unfreeze')} />;
-    return undefined;
-  }
+export const CharacteristicsDataBlock = ({ move, onClick }: MoveDataProps) => {
+  const { t } = useTranslation(['database_moves']);
 
   return (
-    <MoveDataBlock title={t('characteristics')} size="xl">
-      <div>
-        {authentic()}
-        {ballistics()}
-        {bite()}
-        {blocable()}
-        {charge()}
-        {dance()}
-        {direct()}
-        {distance()}
-        {gravity()}
-        {heal()}
-        {kingRock()}
-        {magicCoat()}
-        {mental()}
-      </div>
-      <div>
-        {mirrorMove()}
-        {nonSkyBattle()}
-        {pulse()}
-        {punch()}
-        {snatch()}
-        {sound()}
-        {unfreeze()}
-      </div>
-    </MoveDataBlock>
+    <DataBlockWithTitle size="full" title={t('database_moves:characteristics')} onClick={onClick}>
+      {atLeastOneCharacteristic(move) ? (
+        <CharacteristicsDataBlockStyle>
+          <CharacteristicElement label={t('database_moves:contact')} visible={move.isDirect} />
+          <CharacteristicElement label={t('database_moves:distance')} visible={move.isDistance} />
+          <CharacteristicElement label={t('database_moves:blocable')} visible={move.isBlocable} />
+          <CharacteristicElement label={t('database_moves:authentic')} visible={move.isAuthentic} />
+          <CharacteristicElement label={t('database_moves:king_rock')} visible={move.isKingRockUtility} />
+          <CharacteristicElement label={t('database_moves:magic_coat')} visible={move.isMagicCoatAffected} />
+          <CharacteristicElement label={t('database_moves:mirror_move')} visible={move.isMirrorMove} />
+          <CharacteristicElement label={t('database_moves:snatch')} visible={move.isSnatchable} />
+          <CharacteristicElement label={t('database_moves:mental')} visible={move.isMental} />
+          <CharacteristicElement label={t('database_moves:charge')} visible={move.isCharge} />
+          <CharacteristicElement label={t('database_moves:recharge')} visible={move.isRecharge} />
+          <CharacteristicElement label={t('database_moves:sound')} visible={move.isSoundAttack} />
+          <CharacteristicElement label={t('database_moves:bite')} visible={move.isBite} />
+          <CharacteristicElement label={t('database_moves:ballistics')} visible={move.isBallistics} />
+          <CharacteristicElement label={t('database_moves:pulse')} visible={move.isPulse} />
+          <CharacteristicElement label={t('database_moves:punch')} visible={move.isPunch} />
+          <CharacteristicElement label={t('database_moves:powder')} visible={move.isPowder} />
+          <CharacteristicElement label={t('database_moves:dance')} visible={move.isDance} />
+          <CharacteristicElement label={t('database_moves:unfreeze')} visible={move.isUnfreeze} />
+          <CharacteristicElement label={t('database_moves:heal')} visible={move.isHeal} />
+          <CharacteristicElement label={t('database_moves:gravity')} visible={move.isGravity} />
+          <CharacteristicElement label={t('database_moves:non_sky_battle')} visible={move.isNonSkyBattle} />
+        </CharacteristicsDataBlockStyle>
+      ) : (
+        <NoCharacteristic>{t('database_moves:no_characteristic')}</NoCharacteristic>
+      )}
+    </DataBlockWithTitle>
   );
 };
