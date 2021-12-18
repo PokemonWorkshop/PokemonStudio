@@ -1,7 +1,7 @@
 {
-  "version_current_version_sdk": "",
-  "update": "",
-  "uptodate": "",
-  "latest_version__latest_version_sdk": "",
-  "see_the_changelog": ""
+  "version_current_version_sdk": "Versione {{CURRENT_VERSION_SDK}}",
+  "update": "Aggiorna",
+  "uptodate": "Aggiornato",
+  "latest_version__latest_version_sdk": "Ultima versione : {{LATEST_VERSION_SDK}}",
+  "see_the_changelog": "Vedi il registro dei cambiamenti"
 }

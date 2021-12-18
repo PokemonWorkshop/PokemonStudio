@@ -1,6 +1,10 @@
 import styled from 'styled-components';
 
-export const NavigationBarItemContainer = styled.div`
+type NavigationBarItemContainerProps = {
+  disabled?: boolean;
+};
+
+export const NavigationBarItemContainer = styled.div<NavigationBarItemContainerProps>`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -10,6 +14,6 @@ export const NavigationBarItemContainer = styled.div`
   margin-bottom: 4px;
 
   &:hover {
-    background-color: rgba(101, 98, 248, 0.12);
+    ${({ disabled, theme }) => !disabled && `background-color: ${theme.colors.dark18};`}
   }
 `;

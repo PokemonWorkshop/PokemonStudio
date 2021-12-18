@@ -5,10 +5,10 @@ export const PageContainerStyle = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow-y: auto;
+  overflow-y: scroll;
   margin: 0 4px;
 
-  @media screen and (max-width: 1366px) {
+  @media ${(props) => props.theme.breakpoints.smallScreen} {
     display: block;
     margin: 0 auto;
     overflow-x: auto;
@@ -39,4 +39,12 @@ export const PageContainerStyle = styled.div`
     background-color: ${(props) => props.theme.colors.dark15};
     border: 1px solid ${(props) => props.theme.colors.text400};
   }
+`;
+
+export const PageDataConstrainerStyle = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  margin-bottom: 24px;
+  max-width: 1024px;
 `;

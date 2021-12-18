@@ -1,25 +1,26 @@
-import React, { FunctionComponent } from 'react';
-import { NavigationDatabaseGroupSeparator } from '../NavigationDatabaseGroupSeparator/NavigationDatabaseGroupSeparator';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { NavigationDatabaseGroup } from '../NavigationDatabaseGroup';
 import { NavigationDatabaseItem } from '../NavigationDatabaseItem';
-import { NavigationDatabaseContainer } from './NavigationDatabaseContainer';
+import { NavigationDatabaseStyle } from './NavigationDatabaseStyle';
 
-export const NavigationDatabaseComponent: FunctionComponent = () => {
+export const NavigationDatabase = () => {
+  const { t } = useTranslation(['submenu_database']);
   return (
-    <NavigationDatabaseContainer>
-      <NavigationDatabaseGroupSeparator text="data" />
-
-      <NavigationDatabaseItem path="/database/moves" text="moves" />
-      <NavigationDatabaseItem path="/database/pokemon" text="pokemon" />
-      <NavigationDatabaseItem path="/database/items" text="items" />
-      <NavigationDatabaseItem path="/database/abilities" text="abilities" />
-      <NavigationDatabaseItem path="/database/types" text="types" />
-
-      <NavigationDatabaseGroupSeparator text="level_design" />
-
-      <NavigationDatabaseItem path="/database/trainers" text="trainers" />
-      <NavigationDatabaseItem path="/database/groups" text="groups" />
-      <NavigationDatabaseItem path="/database/quests" text="quests" />
-      <NavigationDatabaseItem path="/database/zones" text="zones" />
-    </NavigationDatabaseContainer>
+    <NavigationDatabaseStyle>
+      <NavigationDatabaseGroup title={t('submenu_database:data')}>
+        <NavigationDatabaseItem path="/database/pokemon" label={t('submenu_database:pokemon')} />
+        <NavigationDatabaseItem path="/database/moves" label={t('submenu_database:moves')} />
+        <NavigationDatabaseItem path="/database/abilities" label={t('submenu_database:abilities')} />
+        <NavigationDatabaseItem path="/database/types" label={t('submenu_database:types')} />
+        <NavigationDatabaseItem path="/database/items" label={t('submenu_database:items')} />
+      </NavigationDatabaseGroup>
+      <NavigationDatabaseGroup title={t('submenu_database:level_design')}>
+        <NavigationDatabaseItem path="/database/zones" label={t('submenu_database:zones')} />
+        <NavigationDatabaseItem path="/database/groups" label={t('submenu_database:groups')} />
+        <NavigationDatabaseItem path="/database/trainers" label={t('submenu_database:trainers')} />
+        <NavigationDatabaseItem path="/database/quests" label={t('submenu_database:quests')} />
+      </NavigationDatabaseGroup>
+    </NavigationDatabaseStyle>
   );
 };

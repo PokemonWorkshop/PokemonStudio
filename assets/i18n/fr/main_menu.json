@@ -1,10 +1,13 @@
 {
+  "home": "Accueil",
   "search": "Recherche",
-  "dashboard": "Dashboard",
-  "update": "Mise à jour",
+  "dashboard": "Vue d'ensemble",
+  "update": "Mise à jour de PSDK",
   "database": "Base de données",
   "event_editor": "Éditeur d'événements",
   "text_editor": "Éditeur de texte",
   "deployment": "Déploiement",
-  "parameters": "Paramètres"
+  "parameters": "Paramètres",
+  "test": "Tester le projet",
+  "save": "Sauvegarder les modifications"
 }

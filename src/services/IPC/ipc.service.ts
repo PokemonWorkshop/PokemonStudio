@@ -18,21 +18,16 @@ export default class IpcService {
       this.initializeIpcRenderer();
     }
     // If there's no responseChannel let's auto-generate it
-    if (!request.responseChannel) {
-      request.responseChannel = `${channel}_response_${new Date().getTime()}`;
-    }
+    const responseChannel = request.responseChannel || `${channel}_response_${new Date().getTime()}`;
+    request.responseChannel = responseChannel;
 
     const { ipcRenderer } = this;
     ipcRenderer?.send(channel, request);
-    log.debug(
-      `Starting service ${channel} with args ${JSON.stringify(request)}.`
-    );
+    log.debug(`Starting service ${channel} with args ${JSON.stringify(request)}.`);
 
     // This method returns a promise which will be resolved when the response has arrived.
     return new Promise((resolve) => {
-      ipcRenderer?.once(request.responseChannel!, (_event, response) =>
-        resolve(response)
-      );
+      ipcRenderer?.once(responseChannel, (_event, response) => resolve(response));
     });
   }
 }

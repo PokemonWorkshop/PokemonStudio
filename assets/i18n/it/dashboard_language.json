@@ -1,0 +1,14 @@
+{
+  "language": "Lingua",
+  "settings": "Impostazioni",
+  "supported_languages": "Lingue supportate",
+  "default_language": "Lingua predefinita",
+  "prefix": "Prefisso",
+  "fields_asterisk_required": "I campi con l'asterisco sono obbligatori.",
+  "add_language": "Aggiungi lingua",
+  "cancel": "Annulla",
+  "code_error": "Il prefisso è già in uso.",
+  "code_info": "Il prefisso è usato nei file CSV per stabilire la colonna utilizzata.",
+  "placeholder_language": "Es: Japanese",
+  "placeholder_prefix": "Es: jp"
+}

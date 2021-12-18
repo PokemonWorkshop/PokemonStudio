@@ -1,0 +1,11 @@
+{
+  "import_item": "Importer des objets",
+  "import": "Importer",
+  "add_item": "Ajouter un objet",
+  "no_item": "Aucun objet",
+  "item": "Objet",
+  "amount": "Quantité",
+  "add_the_item": "Ajouter l'objet",
+  "cancel": "Annuler",
+  "fields_asterisk_required": "Les champs avec un astérisque sont requis."
+}

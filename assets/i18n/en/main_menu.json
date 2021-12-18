@@ -1,10 +1,13 @@
 {
+  "home": "Home",
   "search": "Search",
   "dashboard": "Dashboard",
-  "update": "Update",
+  "update": "PSDK Update",
   "database": "Database",
   "event_editor": "Event editor",
   "text_editor": "Text editor",
   "deployment": "Deployment",
-  "parameters": "Parameters"
+  "parameters": "Parameters",
+  "test": "Test the project",
+  "save": "Save changes"
 }

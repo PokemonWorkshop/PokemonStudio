@@ -16,14 +16,38 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import TimeInfoChannelService from './services/time.info.channel.service';
-import AbstractIpcChannel from './services/IPC/abstract.ipc.channel';
 import ProjectLoadingChannelService from './services/project.loading.channel.service';
+import TextLoadingChannelService from './services/text.loading.channel.service';
+import ProjectOpenChannelService from '@services/project.open.channel.service';
+import FileOpenChannelService from '@services/file.open.channel.service';
+import { PSDKExecChannelService } from '@services/PSDKIPC/psdk.exec.channel.service';
+import { PSDKDecodeDownloadedScriptsChannelService } from '@services/PSDKIPC/psdk.decodeDownloadedScripts.channel.service';
+import ProjectSavingChannelService from '@services/project.saving.channel.service';
+import ProjectStudioFileChannelService from '@services/project.studio.file.channel.service';
+import TextSavingChannelService from '@services/text.saving.channel.service';
+import VersionsChannelService from '@services/versions.channel.service';
+import ProjectCreateChannelService from '@services/project.create.channel.service';
+import FileExistsChannelService from '@services/file.exists.channel.service';
+import PSDKConfigsLoadingChannelService from '@services/psdk.configs.loading.channel.service';
+import PSDKConfigsSavingChannelService from '@services/psdk.configs.saving.channel.service';
+import { getPSDKBinariesPath, getPSDKVersion } from '@services/getPSDKVersion';
+import { getLastPSDKVersion } from '@services/getLastPSDKVersion';
+import { updatePSDK } from '@services/updatePSDK';
+import { startPSDK } from '@services/startPSDK';
+import { registergetStudioVersion } from './backendTasks/getStudioVersion';
+import { registerChooseProjectFileToOpen } from './backendTasks/chooseProjectFileToOpen';
+import { registerGetProjectInfo } from './backendTasks/getProjectInfo';
+import { registerWriteProjectMetadata } from './backendTasks/writeProjectMetadata';
+import { registerReadProjectMetadata } from './backendTasks/readProjectMetadata';
+import { registerReadProjectConfigs } from './backendTasks/readProjectConfigs';
+import { registerReadProjectData } from './backendTasks/readProjectData';
+import { registerReadProjectTexts } from './backendTasks/readProjectTexts';
 
 export default class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
     autoUpdater.logger = log;
-    autoUpdater.checkForUpdatesAndNotify();
+    autoUpdater.checkForUpdatesAndNotify().catch((err) => log.info('Failed to check for update', err));
   }
 }
 
@@ -34,10 +58,7 @@ if (process.env.NODE_ENV === 'production') {
   sourceMapSupport.install();
 }
 
-if (
-  process.env.NODE_ENV === 'development' ||
-  process.env.DEBUG_PROD === 'true'
-) {
+if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
   require('electron-debug')();
 }
 
@@ -55,16 +76,11 @@ const installExtensions = async () => {
 };
 
 const createWindow = async () => {
-  if (
-    process.env.NODE_ENV === 'development' ||
-    process.env.DEBUG_PROD === 'true'
-  ) {
+  if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
     await installExtensions();
   }
 
-  const RESOURCES_PATH = app.isPackaged
-    ? path.join(process.resourcesPath, 'assets')
-    : path.join(__dirname, '../assets');
+  const RESOURCES_PATH = app.isPackaged ? path.join(process.resourcesPath, 'assets') : path.join(__dirname, '../assets');
 
   const getAssetPath = (...paths: string[]): string => {
     return path.join(RESOURCES_PATH, ...paths);
@@ -72,11 +88,17 @@ const createWindow = async () => {
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1024,
-    height: 728,
+    width: 1280,
+    height: 720,
+    minWidth: 960,
+    minHeight: 640,
+    useContentSize: true,
     icon: getAssetPath('icon.png'),
+    titleBarStyle: process.platform === 'win32' ? 'hidden' : 'default',
     webPreferences: {
       nodeIntegration: true,
+      contextIsolation: false,
+      preload: path.join(__dirname, app.isPackaged ? 'preload.prod.js' : 'preload.js'),
     },
   });
 
@@ -92,9 +114,15 @@ const createWindow = async () => {
       mainWindow.minimize();
     } else {
       mainWindow.show();
+      if (process.platform === 'win32') mainWindow.maximize();
       mainWindow.focus();
     }
     mainWindow.removeMenu();
+  });
+
+  mainWindow.on('close', (event) => {
+    mainWindow?.webContents.send('request-window-close');
+    event.preventDefault();
   });
 
   mainWindow.on('closed', () => {
@@ -135,9 +163,67 @@ app.on('activate', () => {
   if (mainWindow === null) createWindow();
 });
 
-const ipcChannels: AbstractIpcChannel[] = [
+app.on('will-quit', (event) => {
+  const wins = BrowserWindow.getAllWindows();
+  if (wins.length) {
+    wins.forEach((win) => win.webContents.send('request-window-close'));
+    event.preventDefault();
+  }
+});
+
+ipcMain.on('window-minimize', (event) => {
+  BrowserWindow.fromWebContents(event.sender)?.minimize();
+});
+
+ipcMain.on('window-maximize', (event) => {
+  const window = BrowserWindow.fromWebContents(event.sender);
+  if (!window) return;
+  if (window.isMaximized()) window.unmaximize();
+  else window.maximize();
+});
+
+ipcMain.on('window-close', (event) => {
+  event.sender.send('request-window-close');
+});
+
+ipcMain.on('window-safe-close', (event) => {
+  BrowserWindow.fromWebContents(event.sender)?.destroy();
+});
+
+ipcMain.on('window-is-maximized', (event) => {
+  event.returnValue = BrowserWindow.fromWebContents(event.sender)?.isMaximized();
+});
+
+const ipcChannels = [
   new TimeInfoChannelService(),
   new ProjectLoadingChannelService(),
+  new ProjectSavingChannelService(),
+  new TextSavingChannelService(),
+  new TextLoadingChannelService(),
+  new ProjectOpenChannelService(),
+  new FileOpenChannelService(),
+  new ProjectStudioFileChannelService(),
+  new PSDKExecChannelService(),
+  new PSDKDecodeDownloadedScriptsChannelService(),
+  new VersionsChannelService(),
+  new ProjectCreateChannelService(),
+  new FileExistsChannelService(),
+  new PSDKConfigsLoadingChannelService(),
+  new PSDKConfigsSavingChannelService(),
 ];
 
 ipcChannels.forEach((channel) => channel.registerChannel(ipcMain));
+ipcMain.handle('get-psdk-binaries-path', () => getPSDKBinariesPath());
+ipcMain.handle('get-psdk-version', () => getPSDKVersion());
+ipcMain.handle('get-app-version', () => app.getVersion());
+ipcMain.on('get-last-psdk-version', getLastPSDKVersion);
+ipcMain.on('update-psdk', updatePSDK);
+ipcMain.on('start-psdk', (_, projectPath: string) => startPSDK(projectPath));
+registergetStudioVersion(ipcMain);
+registerChooseProjectFileToOpen(ipcMain);
+registerGetProjectInfo(ipcMain);
+registerWriteProjectMetadata(ipcMain);
+registerReadProjectMetadata(ipcMain);
+registerReadProjectConfigs(ipcMain);
+registerReadProjectData(ipcMain);
+registerReadProjectTexts(ipcMain);

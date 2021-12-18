@@ -1,40 +1,84 @@
-import React, { FunctionComponent } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Header } from '../components/home/Header';
 import { ProjectCard } from '../components/home/ProjectCard';
-import { Footer } from '../components/home/Footer';
-import HomeStyle from './HomeStyle';
-import { SecondaryButton } from '../components/buttons/SecondaryButton';
-import { LoadProjectButton } from '../components/buttons/LoadProjectButton';
-import { useGlobalState } from '../../GlobalStateProvider';
+import { LoadProjectButton, PrimaryButton } from '@components/buttons';
+import {
+  HomePageContainer,
+  Header,
+  Footer,
+  ActionContainer,
+  BrandingActionContainer,
+  BrandingTitleContainer,
+  BrandingTitle,
+  ProjectCardContainer,
+} from '@components/home';
+import { ReactComponent as StudioIcon } from '@assets/icons/global/StudioIcon.svg';
+import { RecentProjectContainer } from '@components/home/ActionContainer';
+import { HomePageNewEditor } from './editors';
+import { EditorOverlay } from '@components/editor';
+import { deleteProjectToList, getProjectList } from '@utils/projectList';
 
-const HomePageComponent: FunctionComponent = () => {
+const HomePageComponent = () => {
+  const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
+  const [appVersion, setAppVersion] = useState('');
+  const [projectList, setProjectList] = useState(getProjectList());
+
+  const onCloseEditor = () => {
+    setCurrentEditor(undefined);
+  };
+
+  const onDeleteProjectToList = (event: React.MouseEvent<HTMLSpanElement>, projectPath: string) => {
+    event.stopPropagation();
+    deleteProjectToList(projectPath);
+    setProjectList(getProjectList());
+  };
+
+  const editors = {
+    informationsEditor: <HomePageNewEditor />,
+  };
+
   const { t } = useTranslation(['homepage']);
-  const [state, setState] = useGlobalState();
+
+  useEffect(() => {
+    window.api.getAppVersion().then((version) => setAppVersion(version));
+
+    return () => {};
+  });
+
   return (
-    <HomeStyle>
-      <Header />
-      <div id="main">
-        <div id="appName">
-          <h1>Pokémon Studio</h1>
-        </div>
-        <div id="buttons">
-          <button type="button" onClick={() => console.log(state)}>
-            test
-          </button>
-          <LoadProjectButton text={t('homepage:import_a_project')} />
-          <SecondaryButton text={t('homepage:new_project')} />
-        </div>
-        <div id="recentProjects">
-          <span>{t('homepage:recent_projects')}</span>
-          <div id="recentProjectsRow">
-            <ProjectCard projectId="1" />
-            <ProjectCard projectId="2" />
-          </div>
-        </div>
-      </div>
+    <HomePageContainer>
+      <Header>
+        {t('homepage:version_current_version_editor', {
+          current_version_editor: appVersion,
+        })}
+      </Header>
+      <ActionContainer>
+        <BrandingActionContainer>
+          <BrandingTitleContainer>
+            <StudioIcon />
+            <BrandingTitle>Pokémon Studio</BrandingTitle>
+          </BrandingTitleContainer>
+          <LoadProjectButton>{t('homepage:open_a_project')}</LoadProjectButton>
+          <PrimaryButton onClick={() => setCurrentEditor('informationsEditor')}>{t('homepage:new_project')}</PrimaryButton>
+        </BrandingActionContainer>
+        <RecentProjectContainer>
+          <div>{projectList.length !== 0 && t('homepage:recent_projects')}</div>
+          <ProjectCardContainer>
+            {projectList.map((project) => (
+              <ProjectCard
+                projectStudio={project.projectStudio}
+                lastEdit={project.lastEdit}
+                projectPath={project.projectPath}
+                key={project.projectPath}
+                onDeleteProjectToList={onDeleteProjectToList}
+              />
+            ))}
+          </ProjectCardContainer>
+        </RecentProjectContainer>
+      </ActionContainer>
       <Footer />
-    </HomeStyle>
+      <EditorOverlay editors={editors} currentEditor={currentEditor} onClose={onCloseEditor} />
+    </HomePageContainer>
   );
 };
 

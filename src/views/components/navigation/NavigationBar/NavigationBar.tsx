@@ -1,14 +1,19 @@
-import React, { FunctionComponent, useContext } from 'react';
+import React, { useContext } from 'react';
 import { ThemeContext } from 'styled-components';
 import { NavigationBarItem } from '../NavigationBarItem';
 import { NavigationBarGroupSeparator } from '../NavigationBarGroupSeparator';
 import { BaseIcon } from '../../icons/BaseIcon';
 import { NavigationBarContainer } from './NavigationBarContainer';
 import { useGlobalState } from '../../../../GlobalStateProvider';
+import { SaveProjectButton } from '@components/buttons/SaveProjectButton';
+import { NavigationBarItemContainer } from '../NavigationBarItem/NavigationBarItemContainer';
+import { ReactComponent as PlayIcon } from '@assets/icons/global/play.svg';
+import { StyledNavLinkActionItem } from '../NavigationBarItem/StyledNavLink';
 
-export const NavigationBarComponent: FunctionComponent = () => {
+export const NavigationBarComponent = () => {
   const theme = useContext(ThemeContext);
   const [state] = useGlobalState();
+  const needUpdate = state.projectData && state.currentPSDKVersion.int < state.lastPSDKVersion.int;
 
   return !state.projectData ? (
     <div />
@@ -16,74 +21,51 @@ export const NavigationBarComponent: FunctionComponent = () => {
     <NavigationBarContainer>
       <div id="navigation-bar-top">
         <NavigationBarItem path="/home">
-          <BaseIcon
-            color={theme.colors.navigationTopIconColor}
-            size="s"
-            icon="top"
-          />
+          <BaseIcon color={theme.colors.navigationTopIconColor} size="m" icon="top" />
         </NavigationBarItem>
 
         <NavigationBarGroupSeparator />
 
         <NavigationBarItem path="/dashboard">
-          <BaseIcon
-            color={theme.colors.navigationIconColor}
-            size="s"
-            icon="dashboard"
-          />
+          <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="dashboard" />
         </NavigationBarItem>
-        <NavigationBarItem path="/update">
-          <BaseIcon
-            color={theme.colors.navigationIconColor}
-            size="s"
-            icon="update"
-          />
+        <NavigationBarItem path="/psdkupdate">
+          <BaseIcon color={needUpdate ? theme.colors.successBase : theme.colors.navigationIconColor} size="s" icon="update" />
         </NavigationBarItem>
 
         <NavigationBarGroupSeparator />
 
         <NavigationBarItem path="/database">
-          <BaseIcon
-            color={theme.colors.navigationIconColor}
-            size="s"
-            icon="database"
-          />
+          <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="database" />
         </NavigationBarItem>
-        <NavigationBarItem path="/map">
-          <BaseIcon
-            color={theme.colors.navigationIconColor}
-            size="s"
-            icon="map"
-          />
+        <NavigationBarItem path="/map" disabled>
+          <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="map" disabled />
         </NavigationBarItem>
-        <NavigationBarItem path="/code">
-          <BaseIcon
-            color={theme.colors.navigationIconColor}
-            size="s"
-            icon="code"
-          />
+        <NavigationBarItem path="/code" disabled>
+          <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="code" disabled />
         </NavigationBarItem>
       </div>
       <div id="navigation-bar-bottom">
-        <NavigationBarItem path="/help">
-          <BaseIcon
-            color={theme.colors.navigationIconColor}
-            size="s"
-            icon="help"
-          />
+        <StyledNavLinkActionItem
+          onClick={() => window.api.platform === 'win32' && window.api.startPSDK(state.projectPath || '')}
+          data-disabled={(window.api.platform !== 'win32').toString()}
+        >
+          <NavigationBarItemContainer disabled={window.api.platform !== 'win32'}>
+            <PlayIcon />
+          </NavigationBarItemContainer>
+        </StyledNavLinkActionItem>
+        {/* <NavigationBarItem path="/help">
+          <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="help" />
         </NavigationBarItem>
         <NavigationBarItem path="/settings">
-          <BaseIcon
-            color={theme.colors.navigationIconColor}
-            size="s"
-            icon="settings"
-          />
-        </NavigationBarItem>
+          <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="settings" />
+        </NavigationBarItem> */}
 
         <NavigationBarGroupSeparator />
 
-        <NavigationBarItem path="/account">
-          <BaseIcon color="" size="m" icon="account" />
+        <SaveProjectButton />
+        <NavigationBarItem path="/account" disabled>
+          <BaseIcon color="" size="l" icon="account" />
         </NavigationBarItem>
       </div>
     </NavigationBarContainer>

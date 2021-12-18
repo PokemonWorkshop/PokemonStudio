@@ -1,10 +1,6 @@
 import React from 'react';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Redirect,
-} from 'react-router-dom';
+import ReactNotification from 'react-notifications-component';
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import GlobalStyle from './AppGlobalStyle';
 import theme from './AppTheme';
@@ -12,28 +8,40 @@ import { GlobalStateProvider } from './GlobalStateProvider';
 import { NavigationBarComponent } from './views/components/navigation/NavigationBar';
 import HomePage from './views/pages/Home.page';
 import DatabasePage from './views/pages/database/Database/Database.page';
+import PSDKUpdatePage from './views/pages/PSDKUpdate.page';
+import DashboardRouter from '@pages/dashboard/Dashboard.Router.page';
+import { Loader } from '@components/Loader';
+import { LoaderContextProvider } from '@utils/loaderContext';
+import { UnsavedWarningModal } from '@components/modals/UnsavedWarningModal';
 
-export default function App() {
+const App = () => {
   return (
     <GlobalStateProvider>
-      <ThemeProvider theme={theme}>
-        <GlobalStyle />
-        <Router>
-          <NavigationBarComponent />
-          <Switch>
-            <Route exact strict path="/home" component={HomePage} />
-            <Route exact strict path="/dashboard" />
-            <Route exact strict path="/update" />
-            <Route strict path="/database" component={DatabasePage} />
-            <Route exact strict path="/map" />
-            <Route exact strict path="/code" />
-            <Route exact strict path="/help" />
-            <Route exact strict path="/settings" />
-            <Route exact strict path="/account" />
-            <Redirect exact strict path="*" to="/home" />
-          </Switch>
-        </Router>
-      </ThemeProvider>
+      <LoaderContextProvider>
+        <ThemeProvider theme={theme}>
+          <GlobalStyle />
+          <UnsavedWarningModal />
+          <Router>
+            <NavigationBarComponent />
+            <Switch>
+              <Route exact strict path="/home" component={HomePage} />
+              <Route strict path="/dashboard" component={DashboardRouter} />
+              <Route exact strict path="/psdkupdate" component={PSDKUpdatePage} />
+              <Route strict path="/database" component={DatabasePage} />
+              <Route exact strict path="/map" />
+              <Route exact strict path="/code" />
+              <Route exact strict path="/help" />
+              <Route exact strict path="/settings" />
+              <Route exact strict path="/account" />
+              <Redirect exact strict path="*" to="/home" />
+            </Switch>
+          </Router>
+          <Loader />
+          <ReactNotification />
+        </ThemeProvider>
+      </LoaderContextProvider>
     </GlobalStateProvider>
   );
-}
+};
+
+export default App;

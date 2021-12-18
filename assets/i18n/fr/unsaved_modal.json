@@ -1,0 +1,7 @@
+{
+  "title": "Modifications non enregistrées",
+  "description": "Enregistrer les modifications apportées au projet avant de quitter ?",
+  "cancel": "Annuler",
+  "quit": "Quitter sans enregistrer",
+  "save": "Enregistrer"
+}

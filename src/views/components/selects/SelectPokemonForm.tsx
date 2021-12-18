@@ -1,0 +1,65 @@
+import React from 'react';
+import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { TFunction, useTranslation } from 'react-i18next';
+import { useGlobalState } from '@src/GlobalStateProvider';
+import PokemonForm from '@modelEntities/pokemon/PokemonForm';
+import { SelectDataGeneric } from './SelectDataGeneric';
+import { SelectDataProps } from './SelectDataProps';
+
+type SelectPokemonFormProps = {
+  form: number;
+} & SelectDataProps;
+
+const getFormOptions = (t: TFunction<'database_pokemon'>, forms: PokemonForm[]): SelectOption[] =>
+  Object.entries(forms).map(([value, formData]) => ({ value, label: t('form#') + formData.form }));
+
+/**
+ * Component to show a select Pokémon form.
+ * @param dbSymbol The dbSymbol of the Pokémon
+ * @param form The current form of the Pokémon. Can be obtained by example: pokemon.forms[0].form
+ * @param onChange Set this function to get the value selected in the select
+ * @param noLabel If true, the label is not shown
+ * @param rejected List of dbSymbol who no must be show in the select
+ * @param breakpoint Set the breakpoint for hide the label if necessary
+ * @param noneValue Add on the top of the select 'None' value
+ * @param noneValueIsError The noneValue is considered as error
+ * @param overwriteNoneValue Overwrite the label of the 'None'
+ */
+export const SelectPokemonForm = ({
+  dbSymbol,
+  form,
+  onChange,
+  noLabel,
+  rejected,
+  breakpoint,
+  noneValue,
+  noneValueIsError,
+  overwriteNoneValue,
+}: SelectPokemonFormProps) => {
+  const { t } = useTranslation('database_pokemon');
+  const [state] = useGlobalState();
+  const currentPokemon = state.projectData.pokemon[dbSymbol];
+  const currentForm = currentPokemon?.forms.find((_form) => _form.form === form);
+  const options = currentPokemon ? getFormOptions(t, currentPokemon.forms) : [];
+
+  const getData = (): SelectOption => {
+    if (!currentPokemon) return { value: dbSymbol, label: t('pokemon_deleted') };
+    if (!currentForm) return { value: form.toString(), label: t('form_deleted') };
+    return { value: form.toString(), label: t('form#') + form };
+  };
+
+  return (
+    <SelectDataGeneric
+      data={getData()}
+      options={options}
+      label={noLabel ? undefined : t('form')}
+      noOptionsText={t('no_option_form')}
+      error={(!currentPokemon || !currentForm) && (noneValueIsError ? true : dbSymbol !== '__undef__' || form !== -1)}
+      onChange={onChange}
+      rejected={rejected}
+      breakpoint={breakpoint}
+      noneValue={noneValue}
+      overwriteNoneValue={overwriteNoneValue}
+    />
+  );
+};

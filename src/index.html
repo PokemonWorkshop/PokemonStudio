@@ -4,17 +4,6 @@
     <meta charset="utf-8" />
     <title>Pokémon Studio</title>
     <base href="." />
-    <script>
-      (() => {
-        if (process?.env?.NODE_ENV !== 'development') {
-          const link = document.createElement('link');
-          link.rel = 'stylesheet';
-          link.href = './dist/style.css';
-          // HACK: Writing the script path should be done with webpack
-          document.getElementsByTagName('head')[0].appendChild(link);
-        }
-      })();
-    </script>
     <!-- Fonts should not be defined by styled components -->
     <!-- https://github.com/styled-components/styled-components/issues/2227#issuecomment-520824925 -->
     <link
@@ -34,6 +23,7 @@
     />
     <link rel="preload" href="../assets/fonts/Gilroy-SemiBold.ttf" as="font" />
     <link rel="preload" href="../assets/fonts/Gilroy-Bold.ttf" as="font" />
+    <link rel="preload" href="../assets/fonts/SourceCodePro-Regular.ttf" as="font" />
     <style>
       @font-face {
         font-family: Avenir Next;
@@ -63,6 +53,12 @@
         font-family: Gilroy;
         src: url(../assets/fonts/Gilroy-Bold.ttf);
         font-weight: 700;
+      }
+
+      @font-face {
+        font-family: Source Code Pro;
+        src: url(../assets/fonts/SourceCodePro-Regular.ttf);
+        font-weight: 400;
       }
     </style>
   </head>

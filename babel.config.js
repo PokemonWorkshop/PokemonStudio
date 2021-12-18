@@ -33,13 +33,26 @@ module.exports = (api) => {
       [require('@babel/plugin-proposal-class-properties'), { loose: true }],
       require('@babel/plugin-proposal-json-strings'),
       [require('@babel/plugin-proposal-private-methods'), { loose: true }],
+      [require('@babel/plugin-proposal-private-property-in-object'), { loose: true }],
 
       // Styled Components config
-      [
-        require('babel-plugin-styled-components'),
-        { displayName: true, ssr: false },
-      ],
+      [require('babel-plugin-styled-components'), { displayName: true, ssr: false }],
 
+      // Resolving alias path
+      [
+        'module-resolver',
+        {
+          alias: {
+            '@components': './src/views/components',
+            '@pages': './src/views/pages/',
+            '@modelEntities': './src/models/entities',
+            '@services': './src/services',
+            '@utils': './src/utils',
+            '@assets': './assets',
+            '@src': './src',
+          },
+        },
+      ],
       // Other plugins
       ...(development ? developmentPlugins : productionPlugins),
     ],

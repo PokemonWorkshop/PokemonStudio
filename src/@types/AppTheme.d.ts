@@ -1,110 +1,32 @@
 import 'styled-components';
 
 interface Colors {
-  darkGrey: string;
-  mediumGrey: string;
-  lightGrey: string;
-  lightYellow: string;
-  darkYellow: string;
-  lightRed: string;
-  darkRed: string;
-  lightGreen: string;
-  darkGreen: string;
-  textColor: string;
-
   primaryBase: string;
+  primaryHover: string;
   primarySoft: string;
+  secondaryHover: string;
 
   dangerBase: string;
+  dangerHover: string;
   dangerSoft: string;
+
+  infoBase: string;
+  infoHover: string;
+  infoSoft: string;
+
+  warningBase: string;
+  warningHover: string;
+  warningSoft: string;
+
+  successBase: string;
+  successHover: string;
+  successSoft: string;
 
   navigationTopIconColor: string;
   navigationIconColor: string;
 
-  typeNormalBase: string;
-  typeNormalSoft: string;
-
-  typeFireBase: string;
-  typeFireSoft: string;
-
-  typeGrassBase: string;
-  typeGrassSoft: string;
-
-  typeWaterBase: string;
-  typeWaterSoft: string;
-
-  typeElectricBase: string;
-  typeElectricSoft: string;
-
-  typeIceBase: string;
-  typeIceSoft: string;
-
-  typeFightingBase: string;
-  typeFightingSoft: string;
-
-  typePoisonBase: string;
-  typePoisonSoft: string;
-
-  typeGroundBase: string;
-  typeGroundSoft: string;
-
-  typeFlyingBase: string;
-  typeFlyingSoft: string;
-
-  typePsychicBase: string;
-  typePsychicSoft: string;
-
-  typeBugBase: string;
-  typeBugSoft: string;
-
-  typeRockBase: string;
-  typeRockSoft: string;
-
-  typeGhostBase: string;
-  typeGhostSoft: string;
-
-  typeDarkBase: string;
-  typeDarkSoft: string;
-
-  typeDragonBase: string;
-  typeDragonSoft: string;
-
-  typeSteelBase: string;
-  typeSteelSoft: string;
-
-  typeFairyBase: string;
-  typeFairySoft: string;
-
-  typePhysicalBase: string;
-  typePhysicalSoft: string;
-
-  typeSpecialBase: string;
-  typeSpecialSoft: string;
-
-  typeStatusBase: string;
-  typeStatusSoft: string;
-
-  typeBallBase: string;
-  typeBallSoft: string;
-
-  typeHealBase: string;
-  typeHealSoft: string;
-
-  typeRepelBase: string;
-  typeRepelSoft: string;
-
-  typeFleeingBase: string;
-  typeFleeingSoft: string;
-
-  typeEventBase: string;
-  typeEventSoft: string;
-
-  typeStoneBase: string;
-  typeStoneSoft: string;
-
-  typeTechBase: string;
-  typeTechSoft: string;
-
+  overlay: string;
+  dark8: string;
   dark12: string;
   dark14: string;
   dark15: string;
@@ -119,6 +41,8 @@ interface Colors {
   text100: string;
   text400: string;
   text500: string;
+  text600: string;
+  text700: string;
 }
 
 interface Fonts {
@@ -129,11 +53,37 @@ interface Fonts {
   normalRegular: string;
   normalMedium: string;
   normalSmall: string;
+  codeRegular: string;
+}
+
+interface Breakpoints {
+  smallScreen: string;
+  dataBox422: string;
+}
+
+interface Size {
+  min: number;
+  max: number;
+  middle: number;
+}
+interface Sizes {
+  full: Size;
+  half: Size;
+  fourth: Size;
+  dashboard: Size;
+}
+
+interface Calc {
+  height: string;
+  titleBarHeight: string;
 }
 
 declare module 'styled-components' {
   export interface DefaultTheme {
     colors: Colors;
     fonts: Fonts;
+    breakpoints: Breakpoints;
+    sizes: Sizes;
+    calc: Calc;
   }
 }

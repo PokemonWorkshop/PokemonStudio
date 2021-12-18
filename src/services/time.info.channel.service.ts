@@ -1,3 +1,4 @@
+import { IpcMainEvent } from 'electron';
 import AbstractIpcChannel from './IPC/abstract.ipc.channel';
 import { IpcRequest } from './IPC/ipc.request';
 
@@ -7,7 +8,7 @@ import { IpcRequest } from './IPC/ipc.request';
 export default class TimeInfoChannelService extends AbstractIpcChannel {
   channelName = 'time-info';
 
-  handle(event: Electron.IpcMainEvent, request: IpcRequest): void {
+  handle(event: IpcMainEvent, request: IpcRequest): void {
     if (!request.responseChannel) {
       request.responseChannel = `${this.name}_response`;
     }

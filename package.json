@@ -1,16 +1,18 @@
 {
   "name": "psdk-studio",
-  "productName": "PSDK Studio",
-  "description": "PSDK is a Pokémon Game editor !",
+  "productName": "Pokémon Studio",
+  "description": "Pokémon Studio is a monster taming game editor which help you to bring your ideas to life, in just a few clicks.",
+  "version": "0.1.3",
   "scripts": {
-    "build": "concurrently \"yarn build:main\" \"yarn build:renderer\"",
+    "build": "concurrently \"yarn build:main\" \"yarn build:renderer\" \"yarn build:preload\"",
     "build:main": "cross-env NODE_ENV=production webpack --config ./.erb/configs/webpack.config.main.prod.babel.js",
+    "build:preload": "cross-env NODE_ENV=production webpack --config ./.erb/configs/webpack.config.preload.prod.babel.js",
     "build:renderer": "cross-env NODE_ENV=production webpack --config ./.erb/configs/webpack.config.renderer.prod.babel.js",
     "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir src",
     "lint": "cross-env NODE_ENV=development eslint . --cache --ext .js,.jsx,.ts,.tsx",
-    "package": "rm -rf src/dist && yarn build && electron-builder build --publish never",
-    "package:win": "rm -rf src/dist && yarn build && electron-builder build -w --publish never",
-    "package:mac": "rm -rf src/dist && yarn build && electron-builder build -m --publish never",
+    "package": "rimraf src/dist && yarn build && electron-builder build --publish never",
+    "package:win": "rimraf src/dist && yarn build && electron-builder build -w --publish never",
+    "package:mac": "rimraf src/dist && yarn build && electron-builder build -m --publish never",
     "postinstall": "node -r @babel/register .erb/scripts/CheckNativeDep.js && electron-builder install-app-deps && yarn cross-env NODE_ENV=development webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.babel.js && opencollective-postinstall && yarn-deduplicate yarn.lock",
     "start": "node -r @babel/register ./.erb/scripts/CheckPortInUse.js && cross-env yarn start:renderer",
     "start:main": "cross-env NODE_ENV=development electron -r ./.erb/scripts/BabelRegister ./src/main.dev.ts",
@@ -32,7 +34,7 @@
     ]
   },
   "build": {
-    "productName": "PSDK-Editor",
+    "productName": "Pokémon Studio",
     "appId": "org.erb.PSDKEditor",
     "files": [
       "dist/",
@@ -40,7 +42,12 @@
       "index.html",
       "main.prod.js",
       "main.prod.js.map",
-      "package.json"
+      "package.json",
+      "preload.prod.js"
+    ],
+    "extraFiles": [
+      "psdk-binaries",
+      "new-project.zip"
     ],
     "afterSign": ".erb/scripts/Notarize.js",
     "mac": {
@@ -51,9 +58,16 @@
       "hardenedRuntime": true,
       "entitlements": "assets/entitlements.mac.plist",
       "entitlementsInherit": "assets/entitlements.mac.plist",
-      "gatekeeperAssess": false
+      "gatekeeperAssess": false,
+      "icon": "assets/icon.icns"
     },
     "dmg": {
+      "icon": "assets/icon.icns",
+      "backgroundColor": "#6462f8",
+      "window": {
+        "width": 540,
+        "height": 380
+      },
       "contents": [
         {
           "x": 130,
@@ -88,17 +102,17 @@
     ],
     "publish": {
       "provider": "github",
-      "owner": "electron-react-boilerplate",
-      "repo": "electron-react-boilerplate"
+      "owner": "PokemonWorkshop",
+      "repo": "PokemonStudio"
     }
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/pokemonsdk/psdk-editor-react.git"
+    "url": "git+https://github.com/PokemonWorkshop/PokemonStudio.git"
   },
   "author": {
-    "name": "Corentin Jacob",
-    "email": "corentin.jacob.pro@gmail.com"
+    "name": "Pokémon Workshop",
+    "email": "hostmaster@pokemonworkshop.com"
   },
   "keywords": [
     "electron",
@@ -113,6 +127,7 @@
   ],
   "homepage": "https://github.com/electron-react-boilerplate/electron-react-boilerplate#readme",
   "jest": {
+    "testEnvironment": "jsdom",
     "preset": "ts-jest",
     "roots": [
       "<rootDir>/src"
@@ -121,12 +136,10 @@
     "testURL": "http://localhost/",
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/.erb/mocks/fileMock.js",
-      "\\.(css|less|sass|scss)$": "identity-obj-proxy",
-      "\\.svg": "jest-svg-transformer"
+      "\\.(css|less|sass|scss)$": "identity-obj-proxy"
     },
     "transform": {
-      "^.+\\.(t|j)sx?$": "babel-jest",
-      "^.+\\.svg$": "jest-svg-transformer"
+      "^.+\\.(t|j)sx?$": "babel-jest"
     },
     "moduleFileExtensions": [
       "js",
@@ -139,18 +152,17 @@
       "node_modules",
       "src/node_modules"
     ],
-    "setupFiles": [
-      "./.erb/scripts/CheckBuildsExist.js"
-    ],
     "setupFilesAfterEnv": [
       "<rootDir>/src/__tests__/matchers.ts"
     ]
   },
   "devDependencies": {
-    "@babel/core": "^7.12.9",
+    "@babel/core": "^7.16.5",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
     "@babel/plugin-proposal-decorators": "^7.12.1",
     "@babel/plugin-proposal-json-strings": "^7.12.1",
+    "@babel/plugin-proposal-private-methods": "^7.16.5",
+    "@babel/plugin-proposal-private-property-in-object": "^7.16.5",
     "@babel/plugin-transform-react-constant-elements": "^7.12.1",
     "@babel/plugin-transform-react-inline-elements": "^7.12.1",
     "@babel/plugin-transform-runtime": "^7.12.1",
@@ -158,78 +170,71 @@
     "@babel/preset-react": "^7.12.7",
     "@babel/preset-typescript": "^7.15.0",
     "@babel/register": "^7.12.1",
-    "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
-    "@svgr/webpack": "^5.5.0",
-    "@teamsupercell/typings-for-css-modules-loader": "^2.4.0",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.4",
+    "@svgr/webpack": "^6.1.2",
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.2.2",
-    "@types/enzyme": "^3.10.5",
-    "@types/enzyme-adapter-react-16": "^1.0.6",
     "@types/history": "4.7.6",
-    "@types/jest": "^27.0.2",
+    "@types/jest": "^27.0.3",
+    "@types/json-diff": "^0.5.2",
+    "@types/marshal": "^0.5.1",
     "@types/node": "14.14.10",
     "@types/react": "^16.9.44",
+    "@types/react-beautiful-dnd": "^13.1.2",
     "@types/react-dom": "^16.9.9",
+    "@types/react-notifications-component": "^3.1.1",
     "@types/react-router-dom": "^5.1.6",
     "@types/react-test-renderer": "^16.9.3",
+    "@types/react-virtualized": "^9.21.20",
     "@types/styled-components": "^5.1.14",
     "@types/webpack-env": "^1.15.2",
-    "@typescript-eslint/eslint-plugin": "^4.8.1",
-    "@typescript-eslint/parser": "^4.8.1",
-    "babel-eslint": "^10.1.0",
-    "babel-jest": "^26.1.0",
+    "@typescript-eslint/eslint-plugin": "^5.8.0",
+    "@typescript-eslint/parser": "^5.8.0",
+    "babel-jest": "^27.4.5",
     "babel-loader": "^8.2.2",
-    "babel-plugin-dev-expression": "^0.2.2",
+    "babel-plugin-dev-expression": "^0.2.3",
+    "babel-plugin-module-resolver": "^4.1.0",
+    "babel-plugin-styled-components": "^2.0.2",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
-    "browserslist-config-erb": "^0.0.1",
     "chalk": "^4.1.0",
     "concurrently": "^5.3.0",
     "core-js": "^3.6.5",
     "cross-env": "^7.0.2",
-    "css-loader": "^5.0.1",
-    "css-minimizer-webpack-plugin": "^1.1.5",
+    "css-minimizer-webpack-plugin": "^3.3.1",
     "detect-port": "^1.3.0",
-    "electron": "^11.0.1",
-    "electron-builder": "^22.3.6",
-    "electron-devtools-installer": "^3.1.1",
-    "electron-notarize": "^1.0.0",
-    "electron-rebuild": "^2.3.2",
-    "enzyme": "^3.11.0",
-    "enzyme-adapter-react-16": "^1.15.3",
-    "enzyme-to-json": "^3.5.0",
-    "eslint": "^7.5.0",
-    "eslint-config-airbnb": "^18.2.0",
-    "eslint-config-airbnb-typescript": "^12.0.0",
-    "eslint-config-erb": "^2.0.0",
-    "eslint-config-prettier": "^6.11.0",
-    "eslint-import-resolver-webpack": "^0.13.0",
-    "eslint-plugin-compat": "^3.8.0",
-    "eslint-plugin-import": "^2.22.0",
-    "eslint-plugin-jest": "^24.1.3",
-    "eslint-plugin-jsx-a11y": "6.4.1",
-    "eslint-plugin-prettier": "^3.1.4",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-react": "^7.20.6",
-    "eslint-plugin-react-hooks": "^4.0.8",
+    "electron": "^16.0.5",
+    "electron-builder": "23.0.2",
+    "electron-devtools-installer": "^3.2.0",
+    "electron-notarize": "^1.1.1",
+    "electron-rebuild": "^3.2.5",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb": "^19.0.0",
+    "eslint-config-airbnb-typescript": "^15.0.0",
+    "eslint-config-erb": "^4.0.0-alpha.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-import-resolver-typescript": "^2.5.0",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-jest": "^25.2.4",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.27.0",
+    "eslint-plugin-react-hooks": "^4.3.0",
     "file-loader": "^6.0.0",
-    "husky": "^4.2.5",
     "identity-obj-proxy": "^3.0.0",
-    "jest": "^26.1.0",
+    "jest": "^27.4.5",
     "jest-svg-transformer": "^1.0.0",
     "json-diff": "^0.5.4",
     "lint-staged": "^10.2.11",
     "mini-css-extract-plugin": "^1.3.1",
-    "node-sass": "^6.0.1",
     "opencollective-postinstall": "^2.0.3",
-    "prettier": "^2.0.5",
-    "react-refresh": "^0.9.0",
+    "prettier": "^2.5.1",
+    "react-refresh": "^0.11.0",
     "react-test-renderer": "^17.0.2",
-    "rimraf": "^3.0.0",
-    "sass-loader": "^12.1.0",
-    "style-loader": "^2.0.0",
+    "rimraf": "^3.0.2",
+    "sass": "^1.45.1",
     "terser-webpack-plugin": "^5.0.3",
-    "ts-jest": "^27.0.5",
-    "typescript": "^4.0.5",
+    "ts-jest": "^27.1.2",
+    "typescript": "^4.5.4",
     "url-loader": "^4.1.0",
     "webpack": "^5.5.1",
     "webpack-bundle-analyzer": "^4.1.0",
@@ -239,25 +244,37 @@
     "yarn-deduplicate": "^3.1.0"
   },
   "dependencies": {
-    "babel-plugin-styled-components": "^2.0.2",
+    "caniuse-lite": "^1.0.30001359",
+    "csv-parse": "^5.0.3",
+    "csv-stringify": "^6.0.5",
+    "custom-electron-titlebar": "^4.0.1",
     "electron-debug": "^3.1.0",
     "electron-log": "^4.2.4",
     "electron-updater": "^4.3.4",
+    "extract-zip": "^2.0.1",
     "glob": "^7.1.7",
     "history": "^5.0.0",
     "i18next": "^19.9.0",
     "i18next-browser-languagedetector": "^6.0.1",
     "i18next-http-backend": "^1.1.1",
     "immutability-helper": "^3.1.1",
+    "marshal": "^0.5.3",
     "react": "^17.0.1",
+    "react-beautiful-dnd": "^13.1.0",
     "react-dom": "^17.0.1",
     "react-i18next": "^11.12.0",
+    "react-is": "^17.0.2",
+    "react-notifications-component": "^3.1.0",
     "react-router-dom": "^5.2.0",
     "react-select": "^5.2.1",
+    "react-textarea-autosize": "^8.3.3",
+    "react-tooltip": "^4.2.21",
     "react-tracked": "^1.7.4",
+    "react-virtualized": "^9.22.3",
     "regenerator-runtime": "^0.13.5",
+    "scheduler": "^0.20.2",
     "source-map-support": "^0.5.19",
-    "styled-components": "^5.3.0",
+    "styled-components": "^5.3.3",
     "typedjson": "^1.7.0"
   },
   "devEngines": {
@@ -289,9 +306,7 @@
       "next"
     ]
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
+  "resolutions": {
+    "graceful-fs": "^4.2.4"
   }
 }

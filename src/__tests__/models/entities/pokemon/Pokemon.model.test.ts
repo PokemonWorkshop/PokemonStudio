@@ -24,9 +24,7 @@ describe('PokemonModel', () => {
           evSpd: 0,
           evAts: 0,
           evDfs: 1,
-          evolutionId: 0,
-          evolutionLevel: 0,
-          specialEvolutions: [
+          evolutions: [
             {
               dbSymbol: 'vaporeon',
               stone: 'water_stone',
@@ -70,7 +68,8 @@ describe('PokemonModel', () => {
           femaleRate: 12,
           breedGroups: [5, 5],
           hatchSteps: 8960,
-          babyId: 133,
+          babyDbSymbol: 'eevee',
+          babyForm: 0,
           itemHeld: [],
           abilities: ['run_away', 'adaptability', 'anticipation'],
           frontOffsetY: 24,

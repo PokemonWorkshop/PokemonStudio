@@ -13,23 +13,17 @@ Load and save a project, update PokémonSDK (the Starter Kit), import maps from 
 
 - Repo GitLab (Angular) Deprecated: https://gitlab.com/pokemonsdk/psdk-editor
 
+## Get the PSDK binaries (windows)
+
+1. Download the binary archive from https://www.mediafire.com/file/4lzb21b5tqte8ya/psdk-binaries.7z/file
+2. Extract the content of the archive to the root of this project
+
+The PSDK binaries are important, they let Studio start PSDK projects and perform operations over them.
+
 ## Get JSON Files from PSDK
 
-Prerequisite : **Having a PSDK Project**
-
-Launch Game.exe of a PSDK Project.
-
-To get access to this script write in the Game.exe console :
-
-```bash
-  ScriptLoader.load_tool('PSDKEditor')
-```
-
-To execute this script write :
-
-```bash
-  PSDKEditor.convert
-```
+1. Have a PSDK project or make sure `psdk-lite` has been pulled using `git submodule update --init --recursive`
+2. Import the PSDK project (unless you have pulled `psdk-lite`)
 
 ## Install
 
@@ -236,9 +230,9 @@ Fonts : .svg, .ttf, .eot
 ```js
 import catImage from './cat.jpg';
 
-function CatComponent() {
+const CatComponent = () => {
   return <img src={catImage} />;
-}
+};
 ```
 
 ## Adding Dependencies
@@ -302,10 +296,10 @@ In each language directory the `index.js` file is used to group all the .json fi
 ```js
 import { useTranslation } from 'react-i18next';
 ...
-function MyHook() {
+const MyHook = () => {
   const { t } = useTranslation(['namespace1', 'namespace2']); // You must choose the namespaces to be used in the Hook here
   return <p>{t('namespace1:key')}</p>
-}
+};
 ```
 
 Where `namespace` is the file where the text is defined and `key` is the key to the text to be translated.

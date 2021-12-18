@@ -1,51 +1,55 @@
-import React, { FunctionComponent } from 'react';
+import React from 'react';
+import { SecondaryButtonWithPlusIconResponsive } from '@components/buttons';
+import { DarkButtonWithPlusIconResponsive } from '@components/buttons/DarkButtonWithPlusIcon';
+import { ControlBar, ControlBarButtonContainer, ControlBarLabelContainer } from '@components/ControlBar';
 import { useTranslation } from 'react-i18next';
-import { useGlobalState } from '../../../../../GlobalStateProvider';
-import { ControlBar } from '../../../BaseControlBar';
-import { SecondaryButton } from '../../../buttons/SecondaryButton';
-import { SelectCustom } from '../../../SelectCustom';
-import { SelectOption } from '../../../SelectCustom/SelectCustomPropsInterface';
 import { PokemonControlBarProps } from './PokemonControlBarPropsInterface';
+import { SelectPokemon, SelectPokemonForm } from '@components/selects';
 
-export const PokemonControlBar: FunctionComponent<PokemonControlBarProps> = (
-  props: PokemonControlBarProps
-) => {
-  const { onPokemonChange } = props;
-  const [state] = useGlobalState();
-  const { t } = useTranslation('database_pokemon');
-
-  function pokemonList() {
-    const options: SelectOption[] = [];
-    Object.entries(state.projectData.pokemon)
-      .map(([key, pokemon]) => {
-        return {
-          value: key,
-          label: pokemon.dbSymbol || '',
-          id: pokemon.id,
-        };
-      })
-      .sort((a, b) => (a.id > b.id ? 1 : -1))
-      .forEach((option) =>
-        options.push({ value: option.value, label: option.label })
-      );
-    return options;
-  }
+export const PokemonControlBar = ({
+  onPokemonChange,
+  onFormChange,
+  onClickNewPokemon,
+  onClickNewForm,
+  currentPokemonWithForm,
+}: PokemonControlBarProps) => {
+  const { t } = useTranslation(['database_pokemon']);
 
   return (
     <ControlBar>
-      <SecondaryButton>
-        <span>Nouveau Pokémon</span>
-      </SecondaryButton>
-      <SelectCustom
-        options={pokemonList()}
-        label={t('pokemon')}
-        onChange={onPokemonChange}
-        noOptionsText={t('no_option')}
-        defaultValue={{
-          value: 'bulbasaur',
-          label: 'bulbasaur',
-        }}
-      />
+      {onClickNewPokemon ? (
+        <SecondaryButtonWithPlusIconResponsive
+          tooltip={{ left: '100%', top: '100%' }}
+          breakpoint="screen and (max-width: 1050px)"
+          onClick={onClickNewPokemon}
+        >
+          {t('database_pokemon:newPokemon')}
+        </SecondaryButtonWithPlusIconResponsive>
+      ) : (
+        <div />
+      )}
+      <ControlBarButtonContainer>
+        <ControlBarLabelContainer>
+          <SelectPokemon dbSymbol={currentPokemonWithForm.species.dbSymbol} onChange={onPokemonChange} breakpoint="screen and (max-width: 1180px)" />
+        </ControlBarLabelContainer>
+        <ControlBarLabelContainer>
+          <SelectPokemonForm
+            dbSymbol={currentPokemonWithForm.species.dbSymbol}
+            form={currentPokemonWithForm.form.form}
+            onChange={onFormChange}
+            breakpoint="screen and (max-width: 1180px)"
+          />
+          {onClickNewForm && (
+            <DarkButtonWithPlusIconResponsive
+              tooltip={{ right: '100%', top: '100%' }}
+              breakpoint="screen and (max-width: 1280px)"
+              onClick={onClickNewForm}
+            >
+              <span>{t('database_pokemon:newForm')}</span>
+            </DarkButtonWithPlusIconResponsive>
+          )}
+        </ControlBarLabelContainer>
+      </ControlBarButtonContainer>
     </ControlBar>
   );
 };

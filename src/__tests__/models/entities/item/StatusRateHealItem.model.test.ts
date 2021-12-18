@@ -17,16 +17,7 @@ describe('StatusRateHealItemModel', () => {
       flingPower: 30,
       loyaltyMalus: 0,
       hpRate: 1,
-      statusList: [
-        'POISONED',
-        'PARALYZED',
-        'BURN',
-        'ASLEEP',
-        'FROZEN',
-        'CONFUSED',
-        'FLINCH',
-        'TOXIC',
-      ],
+      statusList: ['POISONED', 'PARALYZED', 'BURN', 'ASLEEP', 'FROZEN', 'CONFUSED', 'FLINCH', 'TOXIC'],
     };
 
     expect(obj).toKeepIntegrity(StatusRateHealItemModel);
