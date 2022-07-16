@@ -74,7 +74,7 @@ const updateGivenName = (battler: Encounter, species: ProjectData['pokemon']) =>
 
 const updateRareness = (battler: Encounter, species: ProjectData['pokemon']) => {
   const rarenessSetup = battler.expandPokemonSetup.find((eps) => eps.type === 'rareness');
-  if (rarenessSetup) rarenessSetup.value = species[battler.specie]?.forms[battler.form].catchRate || 0;
+  if (rarenessSetup) rarenessSetup.value = species[battler.specie]?.forms.find((form) => form.form === battler.form)?.catchRate || 0;
 };
 
 const updateNature = (battler: Encounter, nature: string) => {
@@ -167,7 +167,7 @@ export const PokemonBattlerListEditor = ({ type, model, currentBattler, onClose 
               </Label>
               <SelectPokemon onChange={(value) => refreshUI(onChangePokemon(value))} dbSymbol={battler.specie} noLabel noneValue noneValueIsError />
             </InputWithTopLabelContainer>
-            {species[battler.specie].forms.length > 1 && (
+            {(species[battler.specie].forms.length > 1 || !species[battler.specie].forms.find((form) => form.form === battler.form)) && (
               <InputWithTopLabelContainer>
                 <Label htmlFor="select-form">{t('database_pokemon:form')}</Label>
                 <SelectPokemonForm

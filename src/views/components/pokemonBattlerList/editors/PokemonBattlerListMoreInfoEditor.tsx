@@ -35,7 +35,7 @@ const determineShinyValue = (shinySetup: ShinySetup): ShinyCategory => {
 
 const determineRareness = (battler: Encounter, species: ProjectData['pokemon']) => {
   const rareness = battler.expandPokemonSetup.find((eps) => eps.type === 'rareness')?.value as number;
-  if (rareness === -1) return species[battler.specie]?.forms[battler.form].catchRate || 0;
+  if (rareness === -1) return species[battler.specie]?.forms.find((form) => form.form === battler.form)?.catchRate || 0;
   return rareness;
 };
 
