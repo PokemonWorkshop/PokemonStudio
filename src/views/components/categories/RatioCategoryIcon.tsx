@@ -15,10 +15,11 @@ type RatioCategoryIconProps = {
   defensiveType: TypeModel;
   allTypes: TypeModel[];
   editType: (type: TypeModel) => void;
+  setHoveredDefensiveType: (value: string) => void;
   ratio?: string;
 };
 
-type RatioCategoryIconStyleProps = Omit<RatioCategoryIconProps, 'allTypes' | 'editType'>;
+type RatioCategoryIconStyleProps = Omit<RatioCategoryIconProps, 'allTypes' | 'editType' | 'setHoveredDefensiveType'>;
 
 const RatioCategoryIconStyle = styled(CategoryIcon).attrs<RatioCategoryIconStyleProps>((props) => ({
   'data-ratio': props.ratio,
@@ -107,7 +108,7 @@ const getRatio = (offensiveType: TypeModel, defensiveType: TypeModel, allTypes: 
   return 'neutral';
 };
 
-export const RatioCategoryIcon = ({ offensiveType, defensiveType, allTypes, editType }: RatioCategoryIconProps) => {
+export const RatioCategoryIcon = ({ offensiveType, defensiveType, allTypes, editType, setHoveredDefensiveType }: RatioCategoryIconProps) => {
   const ratio = useMemo(() => getRatio(offensiveType, defensiveType, allTypes), [offensiveType, defensiveType, allTypes]);
 
   const leftClick = () => {
@@ -172,6 +173,7 @@ export const RatioCategoryIcon = ({ offensiveType, defensiveType, allTypes, edit
         e.preventDefault();
         rightClick();
       }}
+      onMouseEnter={() => setHoveredDefensiveType(defensiveType.dbSymbol)}
     >
       {renderSVGIcon(ratio)}
     </RatioCategoryIconStyle>

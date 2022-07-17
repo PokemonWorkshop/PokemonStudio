@@ -4,6 +4,7 @@ import { DataBlockContainer } from '@components/database/dataBlocks';
 
 export const TypeTableContainer = styled(DataBlockContainer)`
   width: calc(${({ theme, size }) => theme.sizes[size].middle}%);
+  max-height: calc(100vh - 300px);
   margin: 0;
   background-color: ${({ theme }) => theme.colors.dark16};
   gap: 0px;
@@ -20,10 +21,18 @@ export const TypeTableRowContainer = styled.div`
   flex-wrap: nowrap;
   column-gap: 16px;
   row-gap: 8px;
+  &:hover > .type-indicator > span {
+    box-shadow: 0px 0px 0px 2px ${({ theme }) => theme.colors.primaryHover};
+  }
 `;
 
 export const TypeTableHeadContainer = styled(TypeTableRowContainer)`
+  position: sticky;
+  top: 0;
   margin-bottom: 16px;
+  &:hover {
+    filter: none;
+  }
 `;
 
 export const TypeTableHeadTitleContainer = styled.span`
@@ -31,9 +40,13 @@ export const TypeTableHeadTitleContainer = styled.span`
   ${({ theme }) => theme.fonts.normalRegular}
   color: ${(props) => props.theme.colors.text400};
   margin-bottom: -4px;
-  margin-top: auto;
   text-align: center;
+  position: sticky;
+  left: 0;
+  display: flex;
+  flex-direction: column-reverse;
   flex-shrink: 0;
+  background-color: ${({ theme }) => theme.colors.dark16};
 `;
 
 export const TypeIconListContainer = styled.div`
@@ -46,6 +59,8 @@ export const TypeIconListContainer = styled.div`
 export const TableTypeContainer = styled.div`
   overflow-x: auto;
   max-width: calc(100vw - 400px);
+  padding-left: 2px;
+  margin-left: -2px;
 
   padding-bottom: 8px;
 

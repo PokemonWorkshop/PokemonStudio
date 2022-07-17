@@ -25,6 +25,7 @@ import { ReactComponent as FairyIcon } from '@assets/icons/types/fairy.svg';
 
 type TypeCategoryIconProps = {
   type: string;
+  className?: string;
 };
 
 const hexToRgba = (type: string, alpha: number) => {
@@ -36,6 +37,10 @@ const hexToRgba = (type: string, alpha: number) => {
 const TypeCategoryIconStyle = styled(CategoryIcon).attrs<TypeCategoryIconProps>((props) => ({
   'data-type': props.type,
 }))<TypeCategoryIconProps>`
+  &.hovered-defensive-type {
+    box-shadow: 0px 0px 0px 2px ${({ theme }) => theme.colors.primaryHover};
+  }
+
   &[data-type='normal'] {
     background: rgba(196, 181, 178, 0.12);
     color: rgba(196, 181, 178, 1);
@@ -175,10 +180,14 @@ const renderSVGIcon = (type: string) => {
   }
 };
 
-export const TypeCategoryIcon = ({ type }: TypeCategoryIconProps) => {
+export const TypeCategoryIcon = ({ type, className }: TypeCategoryIconProps) => {
   const { projectDataValues: types } = useProjectTypes();
   const currentType = types[type];
-  return <TypeCategoryIconStyle type={currentType ? currentType.getColor() : 'normal'}>{renderSVGIcon(type)}</TypeCategoryIconStyle>;
+  return (
+    <TypeCategoryIconStyle type={currentType ? currentType.getColor() : 'normal'} className={className}>
+      {renderSVGIcon(type)}
+    </TypeCategoryIconStyle>
+  );
 };
 
 // TypeCategoryIconPreview (future feature?)
