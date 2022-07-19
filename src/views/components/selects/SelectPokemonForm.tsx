@@ -11,7 +11,7 @@ type SelectPokemonFormProps = {
 } & SelectDataProps;
 
 const getFormOptions = (t: TFunction<'database_pokemon'>, forms: PokemonForm[]): SelectOption[] =>
-  Object.entries(forms).map(([value, formData]) => ({ value, label: t('form#') + formData.form }));
+  Object.entries(forms).map(([, formData]) => ({ value: formData.form.toString(), label: t('form#') + formData.form }));
 
 /**
  * Component to show a select Pokémon form.

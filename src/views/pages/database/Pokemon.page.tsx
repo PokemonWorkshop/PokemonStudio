@@ -55,7 +55,7 @@ export const PokemonPage = () => {
     setSelectedDataIdentifier({
       pokemon: {
         specie: currentPokemon.specie,
-        form: Number(selected.value),
+        form: pokemons[currentPokemon.specie].forms.findIndex((f) => f.form === Number(selected.value)),
       },
     });
     setEvolutionIndex(0);

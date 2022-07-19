@@ -171,7 +171,7 @@ export const PokemonBattlerListEditor = ({ type, model, currentBattler, onClose 
               <InputWithTopLabelContainer>
                 <Label htmlFor="select-form">{t('database_pokemon:form')}</Label>
                 <SelectPokemonForm
-                  onChange={(value) => refreshUI((battler.form = species[battler.specie].forms[Number(value.value)].form))}
+                  onChange={(value) => refreshUI((battler.form = Number(value.value)))}
                   dbSymbol={battler.specie}
                   form={battler.form}
                   noLabel
