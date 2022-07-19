@@ -31,7 +31,6 @@ import { EditorOverlay } from '@components/editor';
 import { EncounterDataBlock } from '@components/database/pokemon/pokemonDataBlock/EncounterDataBlock';
 import { EvolutionEditor } from '@components/database/pokemon/editors/EvolutionEditor';
 import { Deletion, DeletionOverlay } from '@components/deletion';
-import { wrongDbSymbol } from '@utils/dbSymbolCheck';
 
 export const PokemonPage = () => {
   const [evolutionIndex, setEvolutionIndex] = useState(0);
@@ -68,11 +67,7 @@ export const PokemonPage = () => {
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
 
   const onCloseEditor = () => {
-    if (
-      currentEditor === 'informationsEditor' &&
-      (currentEditedPokemon.name() === '' || currentEditedPokemon.dbSymbol === '' || wrongDbSymbol(currentEditedPokemon.dbSymbol))
-    )
-      return;
+    if (currentEditor === 'informationsEditor' && currentEditedPokemon.name() === '') return;
     if (currentEditor === 'newPokemonEditor' || currentEditor === 'newPokemonFormEditor') return setCurrentEditor(undefined);
     currentEditedPokemon.forms[currentPokemon.form].changeDefaultValueItemHeld('none');
     currentEditedPokemon.forms[currentPokemon.form].cleaningNaNValues();
