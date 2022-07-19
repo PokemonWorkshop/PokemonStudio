@@ -99,9 +99,9 @@ export const EvolutionEditor = ({ currentPokemon, currentFormIndex, evolutionInd
 
   const onChooseForm = ({ value }: SelectOption) => {
     if (evolutionDbSymbol) {
-      const formIndex = Number(value);
-      if (!pokemon[evolutionDbSymbol] || !pokemon[evolutionDbSymbol].forms[formIndex]) return;
-      refreshUI((form.evolutions[evolutionIndex] = { ...evolution, form: Number(pokemon[evolutionDbSymbol].forms[formIndex].form) }));
+      const formId = Number(value);
+      if (!pokemon[evolutionDbSymbol] || !pokemon[evolutionDbSymbol].forms.find((f) => f.form === formId)) return;
+      refreshUI((form.evolutions[evolutionIndex] = { ...evolution, form: formId }));
     }
   };
 
