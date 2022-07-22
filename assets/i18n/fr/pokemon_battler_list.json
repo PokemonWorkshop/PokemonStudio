@@ -34,5 +34,6 @@
   "by_default": "Par défaut",
   "ivs_title": "Potentiel (IV)",
   "evs_title": "Points d’efforts (EV)",
-  "pokemon_first_position": "Pokémon en première position"
+  "pokemon_first_position": "Pokémon en première position",
+  "none": "Aucune"
 }
