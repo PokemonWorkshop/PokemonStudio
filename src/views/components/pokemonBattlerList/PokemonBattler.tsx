@@ -182,13 +182,14 @@ type PokemonBattlerMovesetProps = {
 const PokemonBattlerMoveset = ({ moveset, onClick }: PokemonBattlerMovesetProps) => {
   const { projectDataValues: moves } = useProjectMoves();
   const { t } = useTranslation('database_moves');
-  return moveset.filter((move) => move === '__undef__').length === moveset.length ? (
+  return moveset.filter((move) => move === '__undef__' || move === '__remove__').length === moveset.length ? (
     <></>
   ) : (
     <PokemonBattlerMovesetContainer onClick={onClick} data-has-hover>
       {moveset.map(
         (move, index) =>
           move !== '__undef__' &&
+          move !== '__remove__' &&
           (moves[move] ? (
             <TypeCategoryPokemonBattler key={`moveset-${move}-${index}`} type={moves[move].type}>
               {moves[move].name()}

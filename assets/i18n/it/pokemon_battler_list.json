@@ -34,5 +34,6 @@
   "by_default": "Predefinito",
   "ivs_title": "Punti Individuali (IV)",
   "evs_title": "Punti Allenamento (EV)",
-  "pokemon_first_position": "Pokémon al primo posto"
+  "pokemon_first_position": "Pokémon al primo posto",
+  "none": "Nessuna"
 }
