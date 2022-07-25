@@ -25,7 +25,9 @@ export interface BagEntry {
 /**
  * This class represents a trainer.
  */
-@jsonObject
+@jsonObject({
+  onDeserialized: 'onDeserialized',
+})
 export default class TrainerModel implements PSDKEntity {
   static klass = 'TrainerBattleSetup';
 
@@ -221,6 +223,13 @@ export default class TrainerModel implements PSDKEntity {
 
     newObject.projectText = this.projectText;
     return newObject as TrainerModel;
+  };
+
+  /**
+   * Call when the object is deserialized
+   */
+  onDeserialized = (): void => {
+    this.ai ||= 1;
   };
 
   /**

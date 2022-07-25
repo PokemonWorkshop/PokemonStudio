@@ -55,7 +55,7 @@ const MoneyContainer = styled.div`
 `;
 
 const aiCategoryEntries = (t: TFunction<'database_trainers'>) =>
-  AiCategories.map((category, index) => ({ value: index.toString(), label: `${padStr(index + 1, 2)} - ${t(category)}` }));
+  AiCategories.map((category, index) => ({ value: (index + 1).toString(), label: `${padStr(index + 1, 2)} - ${t(category)}` }));
 
 const vsTypeCategoryEntries = (t: TFunction<'database_trainers'>) =>
   VsTypeCategories.map((category) => ({ value: category.toString(), label: t(`vs_type${category}`) }));

@@ -235,14 +235,13 @@ export type Evolution = {
   conditions: EvolutionCondition[];
 };
 
+/**
+ * This class represents the form of the Pokémon.
+ */
 @jsonObject({
   beforeSerialization: 'beforeSerializationMoveSet',
   onDeserialized: 'onDeserializedMoveSet',
 })
-/**
- * This class represents the form of the Pokémon.
- */
-@jsonObject
 export default class PokemonForm {
   /**
    * Current form of the Pokemon.
