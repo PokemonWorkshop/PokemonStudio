@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { Editor, useRefreshUI } from '@components/editor';
 import MoveModel, { MoveCriticalRate } from '@modelEntities/move/Move.model';
 import { TFunction, useTranslation } from 'react-i18next';
-import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
+import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PercentInput } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 
@@ -86,6 +86,22 @@ export const MoveDataEditor = ({ move }: MoveDataEditorProps) => {
             value={move.movecriticalRate.toString()}
           />
         </InputWithTopLabelContainer>
+        <InputWithLeftLabelContainer>
+          <Label htmlFor="battle_stat_chance">{t('database_moves:effect_chance')}</Label>
+          <PercentInput
+            type="number"
+            name="battle_stat_chance"
+            min="0"
+            max="100"
+            value={isNaN(move.effectChance) ? '' : move.effectChance}
+            onChange={(event) => {
+              const newValue = event.target.value === '' ? Number.NaN : Number(event.target.value);
+              if (newValue < 0 || newValue > 100) return event.preventDefault();
+              refreshUI((move.effectChance = newValue));
+            }}
+            onBlur={() => refreshUI((move.effectChance = cleanNaNValue(move.effectChance)))}
+          />
+        </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
           <Label htmlFor="priority">{t('database_moves:priority')}</Label>
           <Input

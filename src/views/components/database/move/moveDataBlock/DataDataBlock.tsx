@@ -31,6 +31,7 @@ export const DataDataBlock = ({ move, onClick }: MoveDataProps) => {
         <DataFieldsetField label={t('database_moves:accuracy')} data={move.accuracy} />
         <DataFieldsetField label={t('database_moves:pp')} data={move.pp} />
         <DataFieldsetField label={t('database_moves:critical_rate')} data={getTextCriticalRate()} />
+        {move.effectChance > 0 && <DataFieldsetField label={t('database_moves:effect_chance')} data={`${move.effectChance} %`} />}
         <DataFieldsetField label={t('database_moves:priority')} data={getPriority()} />
       </DataGrid>
     </DataBlockWithTitle>

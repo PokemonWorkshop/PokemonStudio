@@ -68,7 +68,9 @@ export interface MoveStatus {
 /**
  * This class represents the model of the move.
  */
-@jsonObject
+@jsonObject({
+  onDeserialized: 'onDeserialized',
+})
 export default class MoveModel implements PSDKEntity {
   static klass = 'Move';
 
@@ -277,12 +279,6 @@ export default class MoveModel implements PSDKEntity {
   isPowder!: boolean;
 
   /**
-   * If the chance of the effect (stat/status) can trigger.
-   */
-  @jsonMember(Boolean)
-  isEffectChance!: boolean;
-
-  /**
    * The Pokemon targeted by the move.
    */
   @jsonMember(String)
@@ -299,6 +295,12 @@ export default class MoveModel implements PSDKEntity {
    */
   @jsonArrayMember(AnyT)
   moveStatus!: MoveStatus[];
+
+  /**
+   * Chance that the secondary effect trigger.
+   */
+  @jsonMember(Number)
+  effectChance!: number;
 
   /**
    * Text of the project
@@ -342,6 +344,7 @@ export default class MoveModel implements PSDKEntity {
     priority: 0,
     accuracy: 0,
     movecriticalRate: 1,
+    effectChance: 100,
     moveStatus: [],
     battleEngineMethod: 's_basic',
     battleStageMod: [],
@@ -437,6 +440,10 @@ export default class MoveModel implements PSDKEntity {
 
     newObject.projectText = this.projectText;
     return newObject as MoveModel;
+  };
+
+  onDeserialized = (): void => {
+    this.effectChance ??= 100;
   };
 
   /**
@@ -537,6 +544,7 @@ export default class MoveModel implements PSDKEntity {
     this.accuracy = cleanNaNValue(this.accuracy);
     this.pp = cleanNaNValue(this.pp);
     this.priority = cleanNaNValue(this.priority);
+    this.effectChance = cleanNaNValue(this.effectChance);
     this.moveStatus.forEach((status) => (status.luckRate = cleanNaNValue(status.luckRate)));
     this.battleStageMod.forEach((bsm) => (bsm.modificator = cleanNaNValue(bsm.modificator)));
   };
