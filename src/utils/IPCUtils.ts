@@ -62,13 +62,20 @@ export const createProject = async (
   languageConfig: string,
   projectTitle: string,
   iconPath: string | undefined,
+  multiLanguage: boolean,
   loaderRef: React.MutableRefObject<LoaderContext>,
   t: TFunction<'loader'>
 ) => {
   // TODO: Improve the same way as loading / importing project
   loaderRef.current.open('creating_project', 1, 3, t('creating_project_opening_path'));
   window.api.registerProjectCreationListener((step, total, stepText) => loaderRef.current.setProgress(step, total, t(stepText)));
-  const result = await IPC.send<CreateProjectResponse>('project-create', { projectData: projectData, languageConfig, projectTitle, iconPath });
+  const result = await IPC.send<CreateProjectResponse>('project-create', {
+    projectData: projectData,
+    languageConfig,
+    projectTitle,
+    iconPath,
+    multiLanguage,
+  });
   if ('error' in result) {
     window.api.unregisterProjectCreationListener();
     throw new Error(result.error);

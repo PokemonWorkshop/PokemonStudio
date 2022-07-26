@@ -151,6 +151,7 @@ export const useProjectLoadV2 = () => {
                 scene_title_config: deserializeConfig(JSON.parse(configs.scene_title_config)),
                 settings_config: deserializeConfig(JSON.parse(configs.settings_config)),
                 texts_config: deserializeConfig(JSON.parse(configs.texts_config)),
+                game_options_config: deserializeConfig(JSON.parse(configs.game_options_config)),
                 natures: deserializeConfig(JSON.parse(configs.natures)),
               };
               setState({ ...state, state: 'readProjectData', projectConfigs });

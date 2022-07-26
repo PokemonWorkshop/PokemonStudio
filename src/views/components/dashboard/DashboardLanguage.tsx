@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { EditorOverlay, useRefreshUI } from '@components/editor';
-import { useConfigLanguage } from '@utils/useProjectConfig';
+import { EditorOverlay } from '@components/editor';
 import { useTranslation } from 'react-i18next';
 import { DashboardEditor } from './DashboardEditor';
 import { Input, InputWithTopLabelContainer, Label } from '@components/inputs';
@@ -9,6 +8,7 @@ import LanguageConfigModel from '@modelEntities/config/LanguageConfig.model';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import { TagWithDeletion } from '@components/Tag';
 import { DashboardLanguageEditor, DashboardLanguageNewEditor } from './editors';
+import { useConfigGameOptions, useConfigLanguage } from '@utils/useProjectConfig';
 
 type TagLanguageContainerProps = {
   noHideCode: boolean;
@@ -54,13 +54,14 @@ const updateDefaultLanguage = (language: LanguageConfigModel) => {
 
 export const DashboardLanguage = () => {
   const { projectConfigValues: language, setProjectConfigValues: setLanguage } = useConfigLanguage();
+  const { projectConfigValues: gameOption, setProjectConfigValues: setGameOption } = useConfigGameOptions();
   const currentEditedLanguage = useMemo(() => language.clone(), [language]);
+  const currentEditedGameOption = useMemo(() => gameOption.clone(), [gameOption]);
   const languageDefaultOptions = useMemo(() => languageDefaultEntries(language), [language]);
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const [newLanguage, setNewLanguage] = useState('');
   const [languageIndex, setLanguageIndex] = useState(0);
   const { t } = useTranslation('dashboard_language');
-  const refreshUI = useRefreshUI();
 
   const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (event) => {
     if (event.key === 'Enter') {
@@ -80,13 +81,15 @@ export const DashboardLanguage = () => {
   const onDeleteLanguage = (index: number) => {
     currentEditedLanguage.choosableLanguageCode.splice(index, 1);
     currentEditedLanguage.choosableLanguageTexts.splice(index, 1);
+    if (currentEditedLanguage.choosableLanguageCode.length <= 1) currentEditedGameOption.removeKeyOfOrder('language');
     updateDefaultLanguage(currentEditedLanguage);
-    refreshUI(setLanguage(currentEditedLanguage));
+    setLanguage(currentEditedLanguage);
+    setGameOption(currentEditedGameOption);
   };
 
   const onChangeDefaultLanguage = (defaultLanguage: string) => {
     currentEditedLanguage.defaultLanguage = defaultLanguage;
-    refreshUI(setLanguage(currentEditedLanguage));
+    setLanguage(currentEditedLanguage);
   };
 
   const onCloseEditor = () => {
@@ -126,7 +129,7 @@ export const DashboardLanguage = () => {
           type="text"
           name="supported-language"
           value={newLanguage}
-          onChange={(event) => refreshUI(setNewLanguage(event.target.value))}
+          onChange={(event) => setNewLanguage(event.target.value)}
           onKeyDown={handleKeyDown}
         />
         <TagLanguageContainer noHideCode={language.choosableLanguageCode.length === 1}>

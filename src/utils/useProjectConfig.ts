@@ -17,16 +17,16 @@ export const useProjectConfig = <Key extends keyof PSDKConfigs>(key: Key) => {
 
   const setProjectConfigValues = (newConfigValues: PSDKConfigs[typeof key]) => {
     if (JSON.stringify(newConfigValues) !== JSON.stringify(projectConfigValues)) {
-      setState({
-        ...state,
-        projectConfig: { ...state.projectConfig, [key]: newConfigValues },
+      setState((currentState) => ({
+        ...currentState,
+        projectConfig: { ...currentState.projectConfig, [key]: newConfigValues },
         savingConfig: new SavingConfigMap(state.savingConfig.set(key, 'UPDATE')),
-      });
+      }));
     } else {
-      setState({
-        ...state,
-        projectConfig: { ...state.projectConfig, [key]: newConfigValues },
-      });
+      setState((currentState) => ({
+        ...currentState,
+        projectConfig: { ...currentState.projectConfig, [key]: newConfigValues },
+      }));
     }
   };
 
@@ -57,3 +57,5 @@ export const useConfigSettings = () => useProjectConfig('settings_config');
 export type UseConfigSettingsReturnType = ReturnType<typeof useConfigSettings>;
 export const useConfigTexts = () => useProjectConfig('texts_config');
 export type UseConfigTextsReturnType = ReturnType<typeof useConfigTexts>;
+export const useConfigGameOptions = () => useProjectConfig('game_options_config');
+export type UseConfigGameOptionsReturnType = ReturnType<typeof useConfigGameOptions>;

@@ -7,7 +7,8 @@ import { useGlobalState } from '@src/GlobalStateProvider';
 import { useTranslation } from 'react-i18next';
 import { DashboardEditor } from './DashboardEditor';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
-import { useInfosConfigProjectStudio } from '@utils/useInfosConfigProjectStudio';
+import { useProjectStudio } from '@utils/useProjectStudio';
+import { useConfigInfos } from '@utils/useProjectConfig';
 
 const InputVersion = styled(Input)`
   text-align: left;
@@ -16,7 +17,8 @@ const InputVersion = styled(Input)`
 export const DashboardInfos = () => {
   const { t } = useTranslation(['dashboard', 'dashboard_infos']);
   const [state] = useGlobalState();
-  const { projectStudioValues: projectStudio, infosConfigValues: infos, setValues: setValues } = useInfosConfigProjectStudio();
+  const { projectConfigValues: infos, setProjectConfigValues: setInfos } = useConfigInfos();
+  const { projectStudioValues: projectStudio, setProjectStudioValues: setProjectStudio } = useProjectStudio();
   const currentEditedInfos = useMemo(() => infos.clone(), [infos]);
   const currentEditedProjectStudio = useMemo(() => projectStudio.clone(), [projectStudio]);
   const [gameTitleVersion, setGameTitleVersion] = useState({ gameTitle: infos.gameTitle, gameVersion: infos.gameVersion });
@@ -28,7 +30,8 @@ export const DashboardInfos = () => {
   const onBlurGameTitle = (gameTitle: string) => {
     currentEditedInfos.gameTitle = gameTitle.length === 0 ? 'Pokémon SDK' : gameTitle;
     currentEditedProjectStudio.title = currentEditedInfos.gameTitle;
-    setValues(currentEditedInfos, currentEditedProjectStudio);
+    setInfos(currentEditedInfos);
+    setProjectStudio(currentEditedProjectStudio);
   };
 
   const onChangeGameVersion = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,17 +44,17 @@ export const DashboardInfos = () => {
     const gameVersion = cleanNaNValue(parseInt(event.target.value), 1);
     if (gameVersion < 1 || gameVersion > 99999) return event.preventDefault();
     currentEditedInfos.gameVersion = gameVersion;
-    setValues(currentEditedInfos, currentEditedProjectStudio);
+    setInfos(currentEditedInfos);
   };
 
   const onIconChoosen = (iconPath: string) => {
     currentEditedProjectStudio.iconPath = iconPath.substring((state.projectPath || '').length);
-    setValues(currentEditedInfos, currentEditedProjectStudio);
+    setProjectStudio(currentEditedProjectStudio);
   };
 
   const onIconClear = () => {
     currentEditedProjectStudio.iconPath = '';
-    setValues(currentEditedInfos, currentEditedProjectStudio);
+    setProjectStudio(currentEditedProjectStudio);
   };
 
   return (

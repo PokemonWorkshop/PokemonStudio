@@ -56,6 +56,7 @@ export const CreateProjectButton = ({ projectData, children, disabled, onBusy }:
       getLanguageConfig(projectData),
       projectData.title,
       projectData.icon,
+      projectData.multiLanguage,
       loaderRef,
       t
     )

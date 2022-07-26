@@ -52,6 +52,7 @@ export const loadProject = async (
     scene_title_config: deserializeConfig(projectConfigValue.projectConfig.scene_title_config),
     settings_config: deserializeConfig(projectConfigValue.projectConfig.settings_config),
     texts_config: deserializeConfig(projectConfigValue.projectConfig.texts_config),
+    game_options_config: deserializeConfig(projectConfigValue.projectConfig.game_options_config),
     natures: deserializeConfig(projectConfigValue.projectConfig.natures),
   };
 

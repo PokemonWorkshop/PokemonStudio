@@ -24,7 +24,7 @@ export type DefaultLanguageType = typeof DefaultLanguage[number];
 export interface ProjectCreationData extends ProjectStudioModel {
   icon?: string;
   defaultLanguage: DefaultLanguageType;
-  multiLanguage?: boolean;
+  multiLanguage: boolean;
 }
 
 const languageEntries = (t: TFunction<'homepage'>) => DefaultLanguage.map((language) => ({ value: language, label: t(language) }));
