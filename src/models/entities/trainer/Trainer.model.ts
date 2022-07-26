@@ -1,5 +1,6 @@
 import { ProjectData, TextsWithLanguageConfig } from '@src/GlobalStateProvider';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
+import { findFirstAvailableId } from '@utils/ModelUtils';
 import { getText, setText } from '@utils/ReadingProjectText';
 import { AnyT, jsonArrayMember, jsonMember, jsonObject, TypedJSON } from 'typedjson';
 import Encounter from '../Encounter';
@@ -240,10 +241,7 @@ export default class TrainerModel implements PSDKEntity {
   static createTrainer = (allTrainers: ProjectData['trainers']): TrainerModel => {
     const newTrainer = new TrainerModel();
     Object.assign(newTrainer, TrainerModel.defaultValues());
-    newTrainer.id =
-      Object.entries(allTrainers)
-        .map(([, trainerData]) => trainerData)
-        .sort((a, b) => b.id - a.id)[0].id + 1;
+    newTrainer.id = findFirstAvailableId(allTrainers, 0);
     newTrainer.dbSymbol = `trainer_${newTrainer.id}`;
     return newTrainer;
   };

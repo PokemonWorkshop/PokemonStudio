@@ -17,3 +17,20 @@ export const findFirstAvailableTextId = (allData: ProjectData['abilities'] | Pro
 
   return abilitySortTextId[holeIndex - 1].textId + 1;
 };
+
+/**
+ * Find the first available id
+ * @param allData The project data containing the data (items, moves, etc.)
+ * @param startId The first id usable
+ * @returns The first available id
+ */
+export const findFirstAvailableId = (allData: ProjectData[''], startId: number) => {
+  const dataSort = Object.entries(allData)
+    .map(([, data]) => data)
+    .sort((a, b) => a.id - b.id);
+  const holeIndex = dataSort.findIndex((data, index) => data.id !== index + startId && index >= startId);
+  if (holeIndex === -1) return dataSort[dataSort.length - 1].id + 1;
+  if (holeIndex === startId) return startId;
+
+  return dataSort[holeIndex - 1].id + 1;
+};

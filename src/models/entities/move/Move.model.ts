@@ -1,5 +1,6 @@
 import { ProjectData, TextsWithLanguageConfig, State } from '@src/GlobalStateProvider';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
+import { findFirstAvailableId } from '@utils/ModelUtils';
 import { getText, setText } from '@utils/ReadingProjectText';
 import { jsonMember, jsonObject, jsonArrayMember, AnyT, TypedJSON } from 'typedjson';
 import PSDKEntity from '../PSDKEntity';
@@ -523,10 +524,7 @@ export default class MoveModel implements PSDKEntity {
   static createMove = (allMoves: ProjectData['moves']): MoveModel => {
     const newMove = new MoveModel();
     Object.assign(newMove, MoveModel.defaultValues());
-    newMove.id =
-      Object.entries(allMoves)
-        .map(([, moveData]) => moveData)
-        .sort((a, b) => b.id - a.id)[0].id + 1;
+    newMove.id = findFirstAvailableId(allMoves, 1);
     newMove.dbSymbol = '';
     return newMove;
   };
