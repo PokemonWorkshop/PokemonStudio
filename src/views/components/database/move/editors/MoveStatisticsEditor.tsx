@@ -2,7 +2,7 @@ import React from 'react';
 import { Editor, useRefreshUI } from '@components/editor';
 import MoveModel, { BattleStageType } from '@modelEntities/move/Move.model';
 import { useTranslation } from 'react-i18next';
-import { Input, InputContainer, InputWithLeftLabelContainer, Label } from '@components/inputs';
+import { Input, InputContainer, InputWithLeftLabelContainer, Label, PercentInput } from '@components/inputs';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 
 type MoveStatisticsEditorProps = {

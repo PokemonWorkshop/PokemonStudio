@@ -58,6 +58,7 @@
   "status_2": "Stato 2",
   "status_3": "Stato 3",
   "chance": "Probabilità",
+  "effect_chance": "Effetto probabilità",
   "none": "Nessuno",
   "POISONED": "Avvelenamento",
   "PARALYZED": "Paralisi",
