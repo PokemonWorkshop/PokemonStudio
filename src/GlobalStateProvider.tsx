@@ -25,6 +25,7 @@ import TextsConfigModel from '@modelEntities/config/TextsConfig.model';
 import type { PSDKVersion } from '@services/getPSDKVersion';
 import NaturesConfigModel from '@modelEntities/config/NaturesConfig.model';
 import DexModel from '@modelEntities/dex/Dex.model';
+import GameOptionsConfigModel from '@modelEntities/config/GameOptionsConfig.model';
 
 export interface ProjectData {
   items: {
@@ -106,6 +107,7 @@ export const psdkConfigKeys: (keyof PSDKConfigs)[] = [
   'scene_title_config',
   'settings_config',
   'texts_config',
+  'game_options_config',
   'natures',
 ];
 
@@ -120,6 +122,7 @@ export interface PSDKConfigs {
   scene_title_config: SceneTitleConfigModel;
   settings_config: SettingsConfigModel;
   texts_config: TextsConfigModel;
+  game_options_config: GameOptionsConfigModel;
   natures: NaturesConfigModel;
 }
 

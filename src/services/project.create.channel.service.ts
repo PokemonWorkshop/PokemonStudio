@@ -8,6 +8,7 @@ import { generatePSDKBatFileContent } from './generatePSDKBatFileContent';
 import { TypedJSON } from 'typedjson';
 import InfosConfigModel from '@modelEntities/config/InfosConfig.model';
 import log from 'electron-log';
+import GameOptionsConfigModel from '@modelEntities/config/GameOptionsConfig.model';
 
 const PSDK_PROJECT_PATH = 'new-project.zip';
 
@@ -23,11 +24,24 @@ const updateInfosConfig = (infosConfigPath: string, projectTitle: string) => {
   writeFileSync(infosConfigPath, serializer.stringify(infosConfig));
 };
 
+const updateGameOptionsConfig = (gameOptionsConfigPath: string) => {
+  if (!existsSync(gameOptionsConfigPath)) throw new Error('game_options_config.json file not found');
+
+  const gameOptionsConfigContent = readFileSync(gameOptionsConfigPath).toString('utf-8');
+  const serializer = new TypedJSON(GameOptionsConfigModel);
+  const gameOptionsConfig = serializer.parse(gameOptionsConfigContent);
+  if (!gameOptionsConfig) throw new Error('Fail to parse game_options_config.json');
+
+  gameOptionsConfig.removeKeyOfOrder('language');
+  writeFileSync(gameOptionsConfigPath, serializer.stringify(gameOptionsConfig));
+};
+
 interface ProjectCreateParameters extends IpcRequest {
   projectData: string;
   languageConfig: string;
   projectTitle: string;
   iconPath: string | undefined;
+  multiLanguage: boolean;
 }
 
 const getAppPath = () => {
@@ -67,6 +81,7 @@ export default class ProjectCreateChannelService extends AbstractIpcChannel {
         copyFileSync(request.iconPath || path.join(dir, 'graphics/icons/game.png'), path.join(dir, 'project_icon.png'));
         writeFileSync(path.join(dir, 'psdk.bat'), generatePSDKBatFileContent());
         updateInfosConfig(path.join(dir, 'Data/configs/infos_config.json'), request.projectTitle);
+        if (!request.multiLanguage) updateGameOptionsConfig(path.join(dir, 'Data/configs/game_options_config.json'));
         log.info('create-project success');
         return dir;
       })

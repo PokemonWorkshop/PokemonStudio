@@ -14,18 +14,18 @@ export const useProjectStudio = () => {
   const [state, setState] = useGlobalState();
   const projectStudioValues = state.projectStudio;
 
-  const setProjectStudioValues = (newStudioValues: Partial<ProjectStudioModel>) => {
+  const setProjectStudioValues = (newStudioValues: ProjectStudioModel) => {
     if (JSON.stringify(newStudioValues) !== JSON.stringify(projectStudioValues)) {
-      setState({
-        ...state,
-        projectStudio: { ...projectStudioValues, ...newStudioValues },
+      setState((currentState) => ({
+        ...currentState,
+        projectStudio: newStudioValues,
         savingProjectStudio: true,
-      });
+      }));
     } else {
-      setState({
-        ...state,
-        projectStudio: { ...projectStudioValues, ...newStudioValues },
-      });
+      setState((currentState) => ({
+        ...currentState,
+        projectStudio: newStudioValues,
+      }));
     }
   };
 

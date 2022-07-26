@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Editor, useRefreshUI } from '@components/editor';
+import { Editor } from '@components/editor';
 import { useTranslation } from 'react-i18next';
 import { Input, InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
-import { useConfigLanguage } from '@utils/useProjectConfig';
+import { useConfigGameOptions, useConfigLanguage } from '@utils/useProjectConfig';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -37,15 +37,19 @@ type DashboardLanguageNewEditorProps = {
 
 export const DashboardLanguageNewEditor = ({ defaultValue, onClose, onCloseNew }: DashboardLanguageNewEditorProps) => {
   const { projectConfigValues: language, setProjectConfigValues: setLanguage } = useConfigLanguage();
+  const { projectConfigValues: gameOption, setProjectConfigValues: setGameOption } = useConfigGameOptions();
   const [languageText, setLanguageText] = useState<LanguageDefaultValue>(defaultValue);
   const { t } = useTranslation('dashboard_language');
-  const refreshUI = useRefreshUI();
 
   const onClickNew = () => {
     const currentEditedLanguage = language.clone();
+    const currentEditedGameOption = gameOption.clone();
     currentEditedLanguage.choosableLanguageTexts.push(languageText.text);
     currentEditedLanguage.choosableLanguageCode.push(languageText.code);
+    if (currentEditedLanguage.choosableLanguageCode.length > 1 && !currentEditedGameOption.order.includes('language'))
+      currentEditedGameOption.addKeyOfOrder('language');
     setLanguage(currentEditedLanguage);
+    setGameOption(currentEditedGameOption);
     onCloseNew();
   };
 
@@ -70,7 +74,7 @@ export const DashboardLanguageNewEditor = ({ defaultValue, onClose, onCloseNew }
             type="text"
             name="language-text"
             value={languageText.text}
-            onChange={(event) => refreshUI(setLanguageText({ ...languageText, text: event.target.value }))}
+            onChange={(event) => setLanguageText({ ...languageText, text: event.target.value })}
             placeholder={t('placeholder_language')}
           />
         </InputWithTopLabelContainer>
@@ -82,7 +86,7 @@ export const DashboardLanguageNewEditor = ({ defaultValue, onClose, onCloseNew }
             type="text"
             name="language-prefix"
             value={languageText.code}
-            onChange={(event) => refreshUI(onChangePrefix(event))}
+            onChange={(event) => onChangePrefix(event)}
             error={!isCodeUnique()}
             placeholder={t('placeholder_prefix')}
           />
