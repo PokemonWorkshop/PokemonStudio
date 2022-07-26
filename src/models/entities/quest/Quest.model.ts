@@ -1,6 +1,7 @@
 import { ProjectData, TextsWithLanguageConfig } from '@src/GlobalStateProvider';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
+import { findFirstAvailableId } from '@utils/ModelUtils';
 import { getText, setText } from '@utils/ReadingProjectText';
 import { AnyT, jsonArrayMember, jsonMember, jsonObject, TypedJSON } from 'typedjson';
 import PSDKEntity from '../PSDKEntity';
@@ -197,10 +198,7 @@ export default class QuestModel implements PSDKEntity {
   static createQuest = (allQuests: ProjectData['quests']): QuestModel => {
     const newQuest = new QuestModel();
     Object.assign(newQuest, QuestModel.defaultValues());
-    newQuest.id =
-      Object.entries(allQuests)
-        .map(([, questData]) => questData)
-        .sort((a, b) => b.id - a.id)[0].id + 1;
+    newQuest.id = findFirstAvailableId(allQuests, 0);
     newQuest.dbSymbol = `quest_${newQuest.id}`;
     return newQuest;
   };

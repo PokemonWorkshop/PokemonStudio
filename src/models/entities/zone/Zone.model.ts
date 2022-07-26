@@ -1,5 +1,6 @@
 import { ProjectData, TextsWithLanguageConfig } from '@src/GlobalStateProvider';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
+import { findFirstAvailableId } from '@utils/ModelUtils';
 import { getText, setText } from '@utils/ReadingProjectText';
 import { AnyT, jsonArrayMember, jsonMember, jsonObject, TypedJSON } from 'typedjson';
 import PSDKEntity from '../PSDKEntity';
@@ -169,10 +170,7 @@ export default class ZoneModel implements PSDKEntity {
   static createZone = (allZones: ProjectData['zones']): ZoneModel => {
     const newZone = new ZoneModel();
     Object.assign(newZone, ZoneModel.defaultValues());
-    newZone.id =
-      Object.entries(allZones)
-        .map(([, zoneData]) => zoneData)
-        .sort((a, b) => b.id - a.id)[0].id + 1;
+    newZone.id = findFirstAvailableId(allZones, 0);
     newZone.dbSymbol = `zone_${newZone.id}`;
     return newZone;
   };

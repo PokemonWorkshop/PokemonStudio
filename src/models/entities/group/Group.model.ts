@@ -1,6 +1,7 @@
 import Encounter from '@modelEntities/Encounter';
 import PSDKEntity from '@modelEntities/PSDKEntity';
 import { ProjectData, TextsWithLanguageConfig } from '@src/GlobalStateProvider';
+import { findFirstAvailableId } from '@utils/ModelUtils';
 import { getText, setText } from '@utils/ReadingProjectText';
 import { AnyT, jsonArrayMember, jsonMember, jsonObject, TypedJSON } from 'typedjson';
 
@@ -164,10 +165,7 @@ export default class GroupModel implements PSDKEntity {
   static createGroup = (allGroups: ProjectData['groups']): GroupModel => {
     const newGroup = new GroupModel();
     Object.assign(newGroup, GroupModel.defaultValues());
-    newGroup.id =
-      Object.entries(allGroups)
-        .map(([, groupData]) => groupData)
-        .sort((a, b) => b.id - a.id)[0].id + 1;
+    newGroup.id = findFirstAvailableId(allGroups, 0);
     newGroup.dbSymbol = `group_${newGroup.id}`;
     return newGroup;
   };

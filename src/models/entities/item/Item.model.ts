@@ -1,5 +1,6 @@
 import { ProjectData, TextsWithLanguageConfig } from '@src/GlobalStateProvider';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
+import { findFirstAvailableId } from '@utils/ModelUtils';
 import { getDialogMessage, getText, setText } from '@utils/ReadingProjectText';
 import { jsonMember, jsonObject, TypedJSON } from 'typedjson';
 import { entitiesSerializer } from '..';
@@ -214,10 +215,7 @@ export default class ItemModel implements PSDKEntity {
   static createItem = (allItems: ProjectData['items']): ItemModel => {
     const newItem = new ItemModel();
     Object.assign(newItem, ItemModel.defaultValues());
-    newItem.id =
-      Object.entries(allItems)
-        .map(([, itemData]) => itemData)
-        .sort((a, b) => b.id - a.id)[0].id + 1;
+    newItem.id = findFirstAvailableId(allItems, 1);
     newItem.dbSymbol = '';
     newItem.icon = '';
     return newItem;

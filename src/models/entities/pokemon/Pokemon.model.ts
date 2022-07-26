@@ -5,6 +5,7 @@ import PSDKEntity from '../PSDKEntity';
 import { ProjectData, State, TextsWithLanguageConfig } from '@src/GlobalStateProvider';
 import { getText, setText } from '@utils/ReadingProjectText';
 import { padStr } from '@utils/PadStr';
+import { findFirstAvailableId } from '@utils/ModelUtils';
 
 export const FormCategories = ['classic', 'mega-evolution'] as const;
 export type FormCategory = typeof FormCategories[number];
@@ -169,10 +170,7 @@ export default class PokemonModel implements PSDKEntity {
     const newPokemon = new PokemonModel();
     Object.assign(newPokemon, PokemonModel.defaultValues());
     newPokemon.forms[0].onDeserializedMoveSet();
-    newPokemon.id =
-      Object.entries(allPokemon)
-        .map(([, pokemonData]) => pokemonData)
-        .sort((a, b) => b.id - a.id)[0].id + 1;
+    newPokemon.id = findFirstAvailableId(allPokemon, 1);
     newPokemon.dbSymbol = '';
     newPokemon.forms[0].babyDbSymbol = '';
     return newPokemon;

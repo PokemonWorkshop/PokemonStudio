@@ -1,7 +1,7 @@
 import MoveModel from '@modelEntities/move/Move.model';
 import PokemonModel from '@modelEntities/pokemon/Pokemon.model';
 import { ProjectData, TextsWithLanguageConfig, State } from '@src/GlobalStateProvider';
-import { findFirstAvailableTextId } from '@utils/ModelUtils';
+import { findFirstAvailableId, findFirstAvailableTextId } from '@utils/ModelUtils';
 import { getText, setText } from '@utils/ReadingProjectText';
 import { AnyT, jsonArrayMember, jsonMember, jsonObject, TypedJSON } from 'typedjson';
 import PSDKEntity from '../PSDKEntity';
@@ -180,10 +180,7 @@ export default class TypeModel implements PSDKEntity {
   static createType = (allTypes: ProjectData['types']): TypeModel => {
     const newType = new TypeModel();
     Object.assign(newType, TypeModel.defaultValues());
-    newType.id =
-      Object.entries(allTypes)
-        .map(([, typeData]) => typeData)
-        .sort((a, b) => b.id - a.id)[0].id + 1;
+    newType.id = findFirstAvailableId(allTypes, 1);
     newType.textId = findFirstAvailableTextId(allTypes);
     newType.dbSymbol = '';
     return newType;

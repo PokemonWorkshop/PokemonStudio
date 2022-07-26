@@ -3,7 +3,7 @@ import PokemonModel from '@modelEntities/pokemon/Pokemon.model';
 import { ProjectData, TextsWithLanguageConfig, State } from '@src/GlobalStateProvider';
 import { getText, setText } from '@utils/ReadingProjectText';
 import { jsonMember, jsonObject, TypedJSON } from 'typedjson';
-import { findFirstAvailableTextId } from '@utils/ModelUtils';
+import { findFirstAvailableId, findFirstAvailableTextId } from '@utils/ModelUtils';
 
 export type AbilityEditors = 'generic' | 'parameters';
 
@@ -125,10 +125,7 @@ export default class AbilityModel implements PSDKEntity {
   static createAbility = (allAbilities: ProjectData['abilities']): AbilityModel => {
     const newAbility = new AbilityModel();
     Object.assign(newAbility, AbilityModel.defaultValues());
-    newAbility.id =
-      Object.entries(allAbilities)
-        .map(([, abilityData]) => abilityData)
-        .sort((a, b) => b.id - a.id)[0].id + 1;
+    newAbility.id = findFirstAvailableId(allAbilities, 1);
     newAbility.dbSymbol = '';
     newAbility.textId = findFirstAvailableTextId(allAbilities);
     return newAbility;
