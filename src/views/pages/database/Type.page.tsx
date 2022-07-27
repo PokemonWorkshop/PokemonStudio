@@ -15,6 +15,7 @@ import { TypeNewEditor, TypeFrameEditor } from '@components/database/type/editor
 import { EditorOverlay } from '@components/editor';
 import { Deletion, DeletionOverlay } from '@components/deletion';
 import { useProjectTypes } from '@utils/useProjectData';
+import { useTranslationEditor } from '@utils/useTranslationEditor';
 
 type TypePageParams = {
   typeDbSymbol?: string;
@@ -35,6 +36,13 @@ export const TypePage = () => {
   const currentEditedType = useMemo(() => currentType.clone(), [currentType]);
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
+  const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
+    {
+      translation_name: { fileId: 3 },
+    },
+    currentEditedType.textId,
+    currentEditedType.name()
+  );
   const allTypes = Object.values(types);
 
   const onChange = (selected: SelectOption) => {
@@ -49,6 +57,7 @@ export const TypePage = () => {
     if (currentEditor === 'frame' && currentEditedType.name() === '') return;
     setTypes({ [currentType.dbSymbol]: currentEditedType });
     setCurrentEditor(undefined);
+    closeTranslationEditor();
   };
 
   const onClickDelete = () => {
@@ -62,7 +71,7 @@ export const TypePage = () => {
   };
 
   const editors = {
-    frame: <TypeFrameEditor type={currentEditedType} />,
+    frame: <TypeFrameEditor type={currentEditedType} openTranslationEditor={openTranslationEditor} />,
     new: <TypeNewEditor from="type" onClose={() => setCurrentEditor(undefined)} />,
   };
 
@@ -108,7 +117,7 @@ export const TypePage = () => {
               </DataBlockWithAction>
             )}
           </DataBlockWrapper>
-          <EditorOverlay currentEditor={currentEditor} editors={editors} onClose={onCloseEditor} />
+          <EditorOverlay currentEditor={currentEditor} editors={editors} subEditor={translationEditor} onClose={onCloseEditor} />
           <DeletionOverlay currentDeletion={currentDeletion} deletions={deletions} onClose={() => setCurrentDeletion(undefined)} />
         </PageDataConstrainerStyle>
       </PageContainerStyle>

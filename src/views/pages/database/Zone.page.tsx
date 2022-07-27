@@ -21,6 +21,7 @@ import {
 
 import GroupModel from '@modelEntities/group/Group.model';
 import { useProjectZonesGroups } from '@utils/useProjectDoubleData';
+import { useTranslationEditor } from '@utils/useTranslationEditor';
 
 export const ZonePage = () => {
   const {
@@ -40,6 +41,14 @@ export const ZonePage = () => {
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
   const [currentGroupIndex, setCurrentGroupIndex] = useState(0);
   const [currentEditedGroup, setCurrentEditedGroup] = useState<{ data: GroupModel } | undefined>(undefined);
+  const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
+    {
+      translation_name: { fileId: 10 },
+      translation_description: { fileId: 64, isMultiline: true },
+    },
+    currentEditedZone.id,
+    currentEditedZone.name()
+  );
 
   const onCloseEditor = () => {
     if (currentEditor === 'frame' && currentEditedZone.name() === '') return;
@@ -53,6 +62,7 @@ export const ZonePage = () => {
     currentEditedZone.cleaningNaNValues();
     setZone({ [zone.dbSymbol]: currentEditedZone });
     setCurrentEditor(undefined);
+    closeTranslationEditor();
   };
 
   const onAddGroup = (editedGroup: GroupModel) => {
@@ -85,7 +95,7 @@ export const ZonePage = () => {
 
   const editors = {
     new: <ZoneNewEditor onClose={() => setCurrentEditor(undefined)} />,
-    frame: <ZoneFrameEditor zone={currentEditedZone} />,
+    frame: <ZoneFrameEditor zone={currentEditedZone} openTranslationEditor={openTranslationEditor} />,
     settings: <ZoneSettingsEditor zone={currentEditedZone} />,
     travel: <ZoneTravelEditor zone={currentEditedZone} />,
     addGroup: <ZoneAddGroupEditor zone={currentEditedZone} groups={groups} onAddGroup={onAddGroup} onClose={() => setCurrentEditor(undefined)} />,
@@ -139,7 +149,7 @@ export const ZonePage = () => {
               </DeleteButtonWithIcon>
             </DataBlockWithAction>
           </DataBlockWrapper>
-          <EditorOverlay currentEditor={currentEditor} editors={editors} onClose={onCloseEditor} />
+          <EditorOverlay currentEditor={currentEditor} editors={editors} subEditor={translationEditor} onClose={onCloseEditor} />
           <DeletionOverlay currentDeletion={currentDeletion} deletions={deletions} onClose={() => setCurrentDeletion(undefined)} />
         </PageDataConstrainerStyle>
       </PageContainerStyle>

@@ -13,6 +13,7 @@ import { Deletion, DeletionOverlay } from '@components/deletion';
 
 import { useProjectAbilities } from '@utils/useProjectData';
 import { useHistory } from 'react-router-dom';
+import { useTranslationEditor } from '@utils/useTranslationEditor';
 
 export const AbilityPage = () => {
   const {
@@ -31,10 +32,20 @@ export const AbilityPage = () => {
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
 
+  const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
+    {
+      translation_name: { fileId: 4 },
+      translation_description: { fileId: 5, isMultiline: true },
+    },
+    currentEditedAbility.textId,
+    currentEditedAbility.name()
+  );
+
   const onCloseEditor = () => {
     if (currentEditor === 'frame' && ability.name() === '') return;
     setAbilities({ [ability.dbSymbol]: currentEditedAbility });
     setCurrentEditor(undefined);
+    closeTranslationEditor();
   };
 
   const onClickDelete = () => {
@@ -47,7 +58,7 @@ export const AbilityPage = () => {
   };
 
   const editors = {
-    frame: <AbilityFrameEditor ability={ability} />,
+    frame: <AbilityFrameEditor ability={ability} openTranslationEditor={openTranslationEditor} />,
     new: <AbilityNewEditor onClose={() => setCurrentEditor(undefined)} />,
   };
 
@@ -81,7 +92,7 @@ export const AbilityPage = () => {
               </DeleteButtonWithIcon>
             </DataBlockWithAction>
           </DataBlockWrapper>
-          <EditorOverlay currentEditor={currentEditor} editors={editors} onClose={onCloseEditor} />
+          <EditorOverlay currentEditor={currentEditor} editors={editors} subEditor={translationEditor} onClose={onCloseEditor} />
           <DeletionOverlay currentDeletion={currentDeletion} deletions={deletions} onClose={() => setCurrentDeletion(undefined)} />
         </PageDataConstrainerStyle>
       </PageContainerStyle>

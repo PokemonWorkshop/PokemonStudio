@@ -49,6 +49,7 @@ export const EditorOverlayContainer = styled.div`
 type EditorOverlayProps = {
   currentEditor: string | undefined;
   editors: Record<string, ReactNode>;
+  subEditor?: ReactNode;
   onClose: () => void;
 };
 
@@ -69,7 +70,7 @@ type EditorOverlayProps = {
  * @note When changing currentEditor to undefined or any key of editors it will show the corresponding editor or nothing.
  * @note When showing an editor the back is not clickable.
  */
-export const EditorOverlay = ({ currentEditor, editors, onClose }: EditorOverlayProps) => {
+export const EditorOverlay = ({ currentEditor, editors, subEditor, onClose }: EditorOverlayProps) => {
   const isActive = currentEditor && editors[currentEditor];
   useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
@@ -85,6 +86,7 @@ export const EditorOverlay = ({ currentEditor, editors, onClose }: EditorOverlay
     return (
       <EditorOverlayContainer className="active" onMouseDown={(event) => event.target === event.currentTarget && onClose()} tabIndex={-1}>
         {editors[currentEditor]}
+        {subEditor}
       </EditorOverlayContainer>
     );
   }

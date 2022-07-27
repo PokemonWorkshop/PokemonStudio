@@ -31,6 +31,7 @@ import { EditorOverlay } from '@components/editor';
 import { EncounterDataBlock } from '@components/database/pokemon/pokemonDataBlock/EncounterDataBlock';
 import { EvolutionEditor } from '@components/database/pokemon/editors/EvolutionEditor';
 import { Deletion, DeletionOverlay } from '@components/deletion';
+import { useTranslationEditor } from '@utils/useTranslationEditor';
 
 export const PokemonPage = () => {
   const [evolutionIndex, setEvolutionIndex] = useState(0);
@@ -66,6 +67,16 @@ export const PokemonPage = () => {
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
 
+  const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
+    {
+      translation_name: { fileId: 0 },
+      translation_description: { fileId: 2, isMultiline: true },
+      translation_species: { fileId: 1 },
+    },
+    currentEditedPokemon.id,
+    currentEditedPokemon.name()
+  );
+
   const onCloseEditor = () => {
     if (currentEditor === 'informationsEditor' && currentEditedPokemon.name() === '') return;
     if (currentEditor === 'newPokemonEditor' || currentEditor === 'newPokemonFormEditor') return setCurrentEditor(undefined);
@@ -73,6 +84,7 @@ export const PokemonPage = () => {
     currentEditedPokemon.forms[currentPokemon.form].cleaningNaNValues();
     setPokemonDex({ [currentPokemonModel.dbSymbol]: currentEditedPokemon }, { [currentEditedDex.dbSymbol]: currentEditedDex });
     setCurrentEditor(undefined);
+    closeTranslationEditor();
   };
 
   const onAddEvolution = () => {
@@ -102,8 +114,17 @@ export const PokemonPage = () => {
   };
 
   const editors = {
-    informationsEditor: <InformationsEditor currentPokemon={currentEditedPokemon} currentFormIndex={currentPokemon.form} dex={currentEditedDex} />,
-    pokedexEditor: <PokedexEditor currentPokemon={currentEditedPokemon} currentFormIndex={currentPokemon.form} />,
+    informationsEditor: (
+      <InformationsEditor
+        currentPokemon={currentEditedPokemon}
+        currentFormIndex={currentPokemon.form}
+        dex={currentEditedDex}
+        openTranslationEditor={openTranslationEditor}
+      />
+    ),
+    pokedexEditor: (
+      <PokedexEditor currentPokemon={currentEditedPokemon} currentFormIndex={currentPokemon.form} openTranslationEditor={openTranslationEditor} />
+    ),
     experienceEditor: <ExperienceEditor currentPokemon={currentEditedPokemon} currentFormIndex={currentPokemon.form} />,
     talentsEditor: <TalentsEditor currentPokemon={currentEditedPokemon} currentFormIndex={currentPokemon.form} />,
     breedingEditor: <BreedingEditor currentPokemon={currentEditedPokemon} currentFormIndex={currentPokemon.form} />,
@@ -185,7 +206,7 @@ export const PokemonPage = () => {
               )}
             </DataBlockWithAction>
           </DataBlockWrapper>
-          <EditorOverlay editors={editors} currentEditor={currentEditor} onClose={onCloseEditor} />
+          <EditorOverlay editors={editors} currentEditor={currentEditor} subEditor={translationEditor} onClose={onCloseEditor} />
           <DeletionOverlay currentDeletion={currentDeletion} deletions={deletions} onClose={() => setCurrentDeletion(undefined)} />
         </PageDataConstrainerStyle>
       </PageContainerStyle>

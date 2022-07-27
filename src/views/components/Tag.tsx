@@ -12,6 +12,11 @@ export const Tag = styled.span`
   color: ${({ theme }) => theme.colors.text100};
 `;
 
+export const SecondaryTag = styled(Tag)`
+  background-color: ${({ theme }) => theme.colors.primarySoft};
+  color: ${({ theme }) => theme.colors.primaryBase};
+`;
+
 export const TagWithAction = styled(Tag)`
   cursor: pointer;
   outline-offset: -2px;

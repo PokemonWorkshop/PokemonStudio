@@ -6,12 +6,15 @@ import { EditorChildWithSubEditorContainer, SubEditorContainer, SubEditorSeparat
 import { SecondaryButtonWithPlusIcon } from '@components/buttons';
 import { InputWithTopLabelContainer, Label, MultiLineInput, PaddedInputContainer } from '@components/inputs';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
+import type { OpenTranslationEditorFunction } from '@utils/useTranslationEditor';
+import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 
 type TrainerDialogEditorProps = {
   trainer: TrainerModel;
+  openTranslationEditor: OpenTranslationEditorFunction;
 };
 
-export const TrainerDialogEditor = ({ trainer }: TrainerDialogEditorProps) => {
+export const TrainerDialogEditor = ({ trainer, openTranslationEditor }: TrainerDialogEditorProps) => {
   const { t } = useTranslation('database_trainers');
   const refreshUI = useRefreshUI();
 
@@ -21,21 +24,25 @@ export const TrainerDialogEditor = ({ trainer }: TrainerDialogEditorProps) => {
         <PaddedInputContainer>
           <InputWithTopLabelContainer>
             <Label htmlFor="victory">{t('trainer_victory')}</Label>
-            <MultiLineInput
-              name="victory"
-              value={trainer.victorySentence()}
-              onChange={(event) => refreshUI(trainer.setVictorySentence(event.target.value))}
-              placeholder={t('example_victory_sentence')}
-            />
+            <TranslateInputContainer onTranslateClick={() => openTranslationEditor('translation_victory')}>
+              <MultiLineInput
+                name="victory"
+                value={trainer.victorySentence()}
+                onChange={(event) => refreshUI(trainer.setVictorySentence(event.target.value))}
+                placeholder={t('example_victory_sentence')}
+              />
+            </TranslateInputContainer>
           </InputWithTopLabelContainer>
           <InputWithTopLabelContainer>
             <Label htmlFor="defeat">{t('trainer_defeat')}</Label>
-            <MultiLineInput
-              name="defeat"
-              value={trainer.defeatSentence()}
-              onChange={(event) => refreshUI(trainer.setDefeatSentence(event.target.value))}
-              placeholder={t('example_defeat_sentence')}
-            />
+            <TranslateInputContainer onTranslateClick={() => openTranslationEditor('translation_defeat')}>
+              <MultiLineInput
+                name="defeat"
+                value={trainer.defeatSentence()}
+                onChange={(event) => refreshUI(trainer.setDefeatSentence(event.target.value))}
+                placeholder={t('example_defeat_sentence')}
+              />
+            </TranslateInputContainer>
           </InputWithTopLabelContainer>
         </PaddedInputContainer>
         <SubEditorContainer>

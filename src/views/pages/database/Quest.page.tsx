@@ -22,6 +22,7 @@ import {
   QuestNewEditor,
   QuestNewGoalEditor,
 } from '@components/database/quest/editors';
+import { useTranslationEditor } from '@utils/useTranslationEditor';
 
 export const QuestPage = () => {
   const {
@@ -38,6 +39,14 @@ export const QuestPage = () => {
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
   const [currentObjectiveIndex, setObjectiveIndex] = useState(0);
   const [currentEarningIndex, setEarningIndex] = useState(0);
+  const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
+    {
+      translation_name: { fileId: 45 },
+      translation_description: { fileId: 46, isMultiline: true },
+    },
+    currentEditedQuest.id,
+    currentEditedQuest.name()
+  );
 
   const onCloseEditor = () => {
     if (currentEditor === 'frame' && quest.name() === '') return;
@@ -52,6 +61,7 @@ export const QuestPage = () => {
     currentEditedQuest.updateIndexSpeakToBeatNpc();
     setQuest({ [quest.dbSymbol]: currentEditedQuest });
     setCurrentEditor(undefined);
+    closeTranslationEditor();
   };
 
   const onCloseDeletion = () => {
@@ -70,7 +80,7 @@ export const QuestPage = () => {
 
   const editors = {
     new: <QuestNewEditor onClose={() => setCurrentEditor(undefined)} />,
-    frame: <QuestFrameEditor quest={currentEditedQuest} />,
+    frame: <QuestFrameEditor quest={currentEditedQuest} openTranslationEditor={openTranslationEditor} />,
     importGoal: <QuestGoalImportEditor quest={currentEditedQuest} onClose={() => setCurrentEditor(undefined)} />,
     editGoal: <QuestGoalEditor quest={currentEditedQuest} objectiveIndex={currentObjectiveIndex} />,
     newGoal: <QuestNewGoalEditor quest={currentEditedQuest} onClose={() => setCurrentEditor(undefined)} />,
@@ -116,7 +126,7 @@ export const QuestPage = () => {
               </DeleteButtonWithIcon>
             </DataBlockWithAction>
           </DataBlockWrapper>
-          <EditorOverlay currentEditor={currentEditor} editors={editors} onClose={onCloseEditor} />
+          <EditorOverlay currentEditor={currentEditor} editors={editors} subEditor={translationEditor} onClose={onCloseEditor} />
           <DeletionOverlay currentDeletion={currentDeletion} deletions={deletions} onClose={() => setCurrentDeletion(undefined)} />
         </PageDataConstrainerStyle>
       </PageContainerStyle>

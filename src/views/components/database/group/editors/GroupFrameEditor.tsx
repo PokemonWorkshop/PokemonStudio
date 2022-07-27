@@ -14,6 +14,8 @@ import {
   onSwitchInputChange,
   onVariationChange,
 } from '@utils/GroupUtils';
+import { OpenTranslationEditorFunction } from '@utils/useTranslationEditor';
+import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 
 const groupActivationEntries = (t: TFunction<'database_groups'>) =>
   GroupActivationsMap.map((option) => ({ value: option.value, label: t(option.label as never) }));
@@ -24,9 +26,10 @@ const groupVariationEntries = (t: TFunction<'database_groups'>) =>
 
 type GroupFrameEditorProps = {
   group: GroupModel;
+  openTranslationEditor: OpenTranslationEditorFunction;
 };
 
-export const GroupFrameEditor = ({ group }: GroupFrameEditorProps) => {
+export const GroupFrameEditor = ({ group, openTranslationEditor }: GroupFrameEditorProps) => {
   const { t } = useTranslation('database_groups');
   const activationOptions = useMemo(() => groupActivationEntries(t), [t]);
   const battleTypeOptions = useMemo(() => groupBattleTypeEntries(t), [t]);
@@ -41,13 +44,15 @@ export const GroupFrameEditor = ({ group }: GroupFrameEditorProps) => {
           <Label htmlFor="name" required>
             {t('group_name')}
           </Label>
-          <Input
-            type="text"
-            name="name"
-            value={group.name()}
-            onChange={(event) => refreshUI(group.setName(event.target.value))}
-            placeholder={t('example_name')}
-          />
+          <TranslateInputContainer onTranslateClick={() => openTranslationEditor('translation_name')}>
+            <Input
+              type="text"
+              name="name"
+              value={group.name()}
+              onChange={(event) => refreshUI(group.setName(event.target.value))}
+              placeholder={t('example_name')}
+            />
+          </TranslateInputContainer>
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="select-activation">{t('activation')}</Label>

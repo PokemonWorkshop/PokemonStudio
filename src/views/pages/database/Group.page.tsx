@@ -19,6 +19,7 @@ import { GroupBattlerImportEditor } from '@components/database/group/editors/Gro
 import { PokemonBattlerListEditor } from '@components/pokemonBattlerList/editors';
 import { cleanExpandPokemonSetup } from '@modelEntities/Encounter';
 import { CurrentBattlerType } from '@components/pokemonBattlerList/PokemonBattlerList';
+import { useTranslationEditor } from '@utils/useTranslationEditor';
 
 export const GroupPage = () => {
   const {
@@ -39,6 +40,13 @@ export const GroupPage = () => {
     index: undefined,
     kind: undefined,
   });
+  const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
+    {
+      translation_name: { fileId: 61 },
+    },
+    currentEditedGroup.id,
+    currentEditedGroup.name()
+  );
 
   const onCloseEditor = () => {
     if (currentEditor === 'frame' && currentEditedGroup.name() === '') return;
@@ -54,6 +62,7 @@ export const GroupPage = () => {
     if (currentEditor === 'newBattler') return setCurrentEditor(undefined);
     setGroup({ [group.dbSymbol]: currentEditedGroup });
     setCurrentEditor(undefined);
+    closeTranslationEditor();
   };
 
   const onCloseDeletion = () => {
@@ -67,7 +76,7 @@ export const GroupPage = () => {
 
   const editors = {
     new: <GroupNewEditor onClose={() => setCurrentEditor(undefined)} />,
-    frame: <GroupFrameEditor group={currentEditedGroup} />,
+    frame: <GroupFrameEditor group={currentEditedGroup} openTranslationEditor={openTranslationEditor} />,
     importBattler: <GroupBattlerImportEditor group={currentEditedGroup} onClose={() => setCurrentEditor(undefined)} />,
     editBattler: <PokemonBattlerListEditor type="edit" model={currentEditedGroup} currentBattler={currentBattler} />,
     newBattler: <PokemonBattlerListEditor type="creation" model={currentEditedGroup} onClose={() => setCurrentEditor(undefined)} />,
@@ -108,7 +117,7 @@ export const GroupPage = () => {
               </DeleteButtonWithIcon>
             </DataBlockWithAction>
           </DataBlockWrapper>
-          <EditorOverlay currentEditor={currentEditor} editors={editors} onClose={onCloseEditor} />
+          <EditorOverlay currentEditor={currentEditor} editors={editors} subEditor={translationEditor} onClose={onCloseEditor} />
           <DeletionOverlay currentDeletion={currentDeletion} deletions={deletions} onClose={() => setCurrentDeletion(undefined)} />
         </PageDataConstrainerStyle>
       </PageContainerStyle>

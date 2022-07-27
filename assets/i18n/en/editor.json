@@ -9,5 +9,12 @@
   "zone": "Zone",
   "infos": "Information",
   "all_delete": "Delete all",
-  "importation": "Import"
+  "importation": "Import",
+  "translation": "Translation",
+  "translation_name": "Name of {{name}}",
+  "translation_description": "Description of {{name}}",
+  "translation_species": "Species of {{name}}",
+  "translation_class": "Class of {{name}}",
+  "translation_victory": "Victory of {{name}}",
+  "translation_defeat": "Defeat of {{name}}"
 }

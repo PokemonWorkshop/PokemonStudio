@@ -33,6 +33,7 @@ import {
 import { EditorOverlay } from '@components/editor';
 import { Deletion, DeletionOverlay } from '@components/deletion';
 import BallItemModel from '@modelEntities/item/BallItem.model';
+import { useTranslationEditor } from '@utils/useTranslationEditor';
 
 export const ItemPage = () => {
   const {
@@ -48,6 +49,14 @@ export const ItemPage = () => {
   const currentEditedItem = useMemo(() => item.clone(), [item]);
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
+  const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
+    {
+      translation_name: { fileId: 12 },
+      translation_description: { fileId: 13, isMultiline: true },
+    },
+    currentEditedItem.id,
+    currentEditedItem.name()
+  );
 
   const blockCloseEditor = () => {
     if (currentEditor === 'frame') {
@@ -66,6 +75,7 @@ export const ItemPage = () => {
     if (currentEditor === 'new') return;
     currentEditedItem.cleaningNaNValues();
     setItems({ [item.dbSymbol]: currentEditedItem });
+    closeTranslationEditor();
   };
 
   const onClickDelete = () => {
@@ -79,7 +89,7 @@ export const ItemPage = () => {
 
   const editors = {
     new: <ItemNewEditor onClose={() => setCurrentEditor(undefined)} />,
-    frame: <ItemFrameEditor item={currentEditedItem} setItems={setItems} />,
+    frame: <ItemFrameEditor item={currentEditedItem} setItems={setItems} openTranslationEditor={openTranslationEditor} />,
     generic: <ItemGenericDataEditor item={currentEditedItem} />,
     parameters: <ItemParametersDataEditor item={currentEditedItem} />,
     tech: <ItemTechDataEditor item={currentEditedItem} />,
@@ -124,7 +134,7 @@ export const ItemPage = () => {
               </DeleteButtonWithIcon>
             </DataBlockWithAction>
           </DataBlockWrapper>
-          <EditorOverlay currentEditor={currentEditor} editors={editors} onClose={onCloseEditor} />
+          <EditorOverlay currentEditor={currentEditor} editors={editors} subEditor={translationEditor} onClose={onCloseEditor} />
           <DeletionOverlay currentDeletion={currentDeletion} deletions={deletions} onClose={() => setCurrentDeletion(undefined)} />
         </PageDataConstrainerStyle>
       </PageContainerStyle>
