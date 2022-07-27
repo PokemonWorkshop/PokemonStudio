@@ -9,3 +9,4 @@ export { SelectQuest } from './SelectQuest';
 export { SelectTrainer } from './SelectTrainer';
 export { SelectType } from './SelectType';
 export { SelectZone } from './SelectZone';
+export { SelectDex } from './SelectDex';

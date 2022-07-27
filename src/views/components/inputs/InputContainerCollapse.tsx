@@ -14,6 +14,7 @@ type InputGroupCollapseProps = {
   title: string;
   children?: ReactNode;
   gap?: string;
+  noMargin?: true;
   collapseByDefault?: true;
 };
 
@@ -56,6 +57,7 @@ const CollapseGroupTitle: FunctionComponent<CollapseGroupTitleStyleProps> = ({ t
 
 type CollapseGroupChildrenProps = {
   gap?: string;
+  noMargin: boolean;
   collapse: boolean;
 };
 
@@ -63,7 +65,7 @@ const CollapseGroupChildren = styled.div<CollapseGroupChildrenProps>`
   display: flex;
   flex-direction: column;
   gap: ${({ gap }) => gap || '12px'};
-  margin-bottom: ${({ collapse }) => (collapse ? '16px' : '0')};
+  margin-bottom: ${({ collapse, noMargin }) => (collapse && !noMargin ? '16px' : '0')};
 `;
 
 const InputGroupCollapseContainer = styled.div`
@@ -81,6 +83,7 @@ export const InputGroupCollapse: FunctionComponent<InputGroupCollapseProps> = ({
   title,
   children,
   gap,
+  noMargin,
   collapseByDefault,
 }: InputGroupCollapseProps) => {
   const [collapse, setCollapse] = useState(collapseByDefault || false);
@@ -91,7 +94,7 @@ export const InputGroupCollapse: FunctionComponent<InputGroupCollapseProps> = ({
     <InputGroupCollapseContainer>
       <CollapseGroupTitle title={title} collapse={collapse} onClick={onClickedCollapse} />
       {collapse && (
-        <CollapseGroupChildren gap={gap} collapse={collapse}>
+        <CollapseGroupChildren gap={gap} noMargin={noMargin || false} collapse={collapse}>
           {children}
         </CollapseGroupChildren>
       )}

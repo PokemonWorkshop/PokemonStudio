@@ -17,6 +17,7 @@ import { QuestPage } from '../Quest.page';
 import { TrainerPage } from '../Trainer.page';
 import { GroupPage } from '../Group.page';
 import { ZonePage } from '../Zone.page';
+import { DexPage } from '../Dex.page';
 
 const DatabasePageStyle = styled.div`
   display: flex;
@@ -73,6 +74,9 @@ const DatabasePageComponent = () => {
         </Route>
         <Route path={`${path}/zones`}>
           <ZonePage />
+        </Route>
+        <Route path={`${path}/dex`}>
+          <DexPage />
         </Route>
       </Switch>
     </DatabasePageStyle>

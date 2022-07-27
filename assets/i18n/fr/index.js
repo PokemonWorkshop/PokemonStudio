@@ -10,6 +10,7 @@ import database_groups from './database_groups.json';
 import database_quests from './database_quests.json';
 import database_trainers from './database_trainers.json';
 import database_zones from './database_zones.json';
+import database_dex from './database_dex.json';
 import homepage from './homepage.json';
 import main_menu from './main_menu.json';
 import select from './select.json';
@@ -39,6 +40,7 @@ export default {
   database_quests,
   database_trainers,
   database_zones,
+  database_dex,
   editor,
   error,
   loader,
