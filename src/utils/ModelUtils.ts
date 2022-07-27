@@ -8,14 +8,14 @@ import { ProjectData } from '@src/GlobalStateProvider';
  * @returns The text id
  */
 export const findFirstAvailableTextId = (allData: ProjectData['abilities'] | ProjectData['types']) => {
-  const abilitySortTextId: TypeModel[] | AbilityModel[] = Object.entries(allData)
+  const dataSortTextId: TypeModel[] | AbilityModel[] = Object.entries(allData)
     .map(([, data]) => data)
     .sort((a, b) => a.textId - b.textId);
-  const holeIndex = abilitySortTextId.findIndex((ability, index) => ability.textId !== index);
-  if (holeIndex === -1) return abilitySortTextId[abilitySortTextId.length - 1].textId + 1;
+  const holeIndex = dataSortTextId.findIndex((data, index) => data.textId !== index);
+  if (holeIndex === -1) return dataSortTextId[dataSortTextId.length - 1].textId + 1;
   if (holeIndex === 0) return 0;
 
-  return abilitySortTextId[holeIndex - 1].textId + 1;
+  return dataSortTextId[holeIndex - 1].textId + 1;
 };
 
 /**

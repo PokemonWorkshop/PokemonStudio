@@ -7,3 +7,4 @@ export { EarningCategory } from './EarningCategory';
 export { TrainerCategory } from './TrainerCategory';
 export { RatioCategoryIcon } from './RatioCategoryIcon';
 export { TypeCategoryIcon } from './TypeCategoryIcon';
+export { DexCategory } from './DexCategory';

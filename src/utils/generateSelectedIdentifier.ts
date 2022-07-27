@@ -22,5 +22,6 @@ export const generateSelectedIdentifier = (projectData: ProjectData): SelectedDa
     zone: firstById(projectData.zones),
     ability: firstByName(projectData.abilities),
     group: firstById(projectData.groups),
+    dex: firstById(projectData.dex),
   };
 };

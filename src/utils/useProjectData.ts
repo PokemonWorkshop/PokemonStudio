@@ -107,3 +107,5 @@ export const useProjectAbilities = () => useProjectData('abilities', 'ability');
 export type UseProjectAbilitiesReturnType = ReturnType<typeof useProjectAbilities>;
 export const useProjectGroups = () => useProjectData('groups', 'group');
 export type UseProjectGroupsReturnType = ReturnType<typeof useProjectGroups>;
+export const useProjectDex = () => useProjectData('dex', 'dex');
+export type UseProjectDexReturnType = ReturnType<typeof useProjectDex>;

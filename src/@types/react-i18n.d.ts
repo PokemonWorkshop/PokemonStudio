@@ -13,6 +13,7 @@ import database_groups from '../../assets/i18n/en/database_groups.json';
 import database_quests from '../../assets/i18n/en/database_quests.json';
 import database_trainers from '../../assets/i18n/en/database_trainers.json';
 import database_zones from '../../assets/i18n/en/database_zones.json';
+import database_dex from '../../assets/i18n/en/database_dex.json';
 import homepage from '../../assets/i18n/en/homepage.json';
 import main_menu from '../../assets/i18n/en/main_menu.json';
 import select from '../../assets/i18n/en/select.json';
@@ -47,6 +48,7 @@ declare module 'react-i18next' {
       database_quests: typeof database_quests;
       database_trainers: typeof database_trainers;
       database_zones: typeof database_zones;
+      database_dex: typeof database_dex;
       homepage: typeof homepage;
       main_menu: typeof main_menu;
       select: typeof select;
