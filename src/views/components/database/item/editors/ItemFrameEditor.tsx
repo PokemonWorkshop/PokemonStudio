@@ -9,6 +9,8 @@ import { mutateItemToCategory } from './mutateItemToCategory';
 import { DropInput } from '@components/inputs/DropInput';
 import path from 'path';
 import { useGlobalState } from '@src/GlobalStateProvider';
+import type { OpenTranslationEditorFunction } from '@utils/useTranslationEditor';
+import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 
 const itemCategoryEntries = (t: TFunction<('database_items' | 'database_types')[]>) =>
   ItemCategories.map((category) => ({ value: category, label: t(`database_types:${category}`) })).sort((a, b) => a.label.localeCompare(b.label));
@@ -16,9 +18,10 @@ const itemCategoryEntries = (t: TFunction<('database_items' | 'database_types')[
 type ItemFrameEditorProps = {
   item: ItemModel;
   setItems: UseProjectItemReturnType['setProjectDataValues'];
+  openTranslationEditor: OpenTranslationEditorFunction;
 };
 
-export const ItemFrameEditor = ({ item, setItems }: ItemFrameEditorProps) => {
+export const ItemFrameEditor = ({ item, setItems, openTranslationEditor }: ItemFrameEditorProps) => {
   const { t } = useTranslation(['database_items', 'database_types']);
   const options = useMemo(() => itemCategoryEntries(t), [t]);
   const refreshUI = useRefreshUI();
@@ -39,22 +42,26 @@ export const ItemFrameEditor = ({ item, setItems }: ItemFrameEditorProps) => {
           <Label htmlFor="name" required>
             {t('database_items:name')}
           </Label>
-          <Input
-            type="text"
-            name="name"
-            value={item.name()}
-            onChange={(event) => refreshUI(item.setName(event.target.value))}
-            placeholder={t('database_items:example_name')}
-          />
+          <TranslateInputContainer onTranslateClick={() => openTranslationEditor('translation_name')}>
+            <Input
+              type="text"
+              name="name"
+              value={item.name()}
+              onChange={(event) => refreshUI(item.setName(event.target.value))}
+              placeholder={t('database_items:example_name')}
+            />
+          </TranslateInputContainer>
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="descr">{t('database_items:description')}</Label>
-          <MultiLineInput
-            id="descr"
-            value={item.descr()}
-            onChange={(event) => refreshUI(item.setDescr(event.target.value))}
-            placeholder={t('database_items:example_description')}
-          />
+          <TranslateInputContainer onTranslateClick={() => openTranslationEditor('translation_description')}>
+            <MultiLineInput
+              id="descr"
+              value={item.descr()}
+              onChange={(event) => refreshUI(item.setDescr(event.target.value))}
+              placeholder={t('database_items:example_description')}
+            />
+          </TranslateInputContainer>
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="icon" required>

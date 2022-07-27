@@ -11,8 +11,10 @@ import {
 } from '@components/inputs';
 import { TypeCategoryPreview } from '@components/categories';
 import { TypeFrameProps } from '../TypeDataPropsInterface';
+import type { OpenTranslationEditorFunction } from '@utils/useTranslationEditor';
+import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 
-export const TypeFrameEditor = ({ type }: TypeFrameProps) => {
+export const TypeFrameEditor = ({ type, openTranslationEditor }: TypeFrameProps & { openTranslationEditor: OpenTranslationEditorFunction }) => {
   const { t } = useTranslation(['database_types', 'database_moves']);
   const refreshUI = useRefreshUI();
 
@@ -23,13 +25,15 @@ export const TypeFrameEditor = ({ type }: TypeFrameProps) => {
           <Label htmlFor="name" required>
             {t('database_moves:name')}
           </Label>
-          <Input
-            type="text"
-            name="name"
-            value={type.name()}
-            onChange={(event) => refreshUI(type.setName(event.target.value))}
-            placeholder={t('database_types:example_name')}
-          />
+          <TranslateInputContainer onTranslateClick={() => openTranslationEditor('translation_name')}>
+            <Input
+              type="text"
+              name="name"
+              value={type.name()}
+              onChange={(event) => refreshUI(type.setName(event.target.value))}
+              placeholder={t('database_types:example_name')}
+            />
+          </TranslateInputContainer>
         </InputWithTopLabelContainer>
         <InputWithColorLabelContainer>
           <Label htmlFor="color">{t('database_types:color')}</Label>

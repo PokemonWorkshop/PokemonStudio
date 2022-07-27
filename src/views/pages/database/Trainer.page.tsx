@@ -16,6 +16,7 @@ import { PokemonBattlerListEditor } from '@components/pokemonBattlerList/editors
 import { cleanExpandPokemonSetup } from '@modelEntities/Encounter';
 import { CurrentBattlerType } from '@components/pokemonBattlerList/PokemonBattlerList';
 import { BagEntryList, BagEntryListEditor } from '@components/bagEntryList';
+import { useTranslationEditor } from '@utils/useTranslationEditor';
 
 export const TrainerPage = () => {
   const {
@@ -37,6 +38,16 @@ export const TrainerPage = () => {
   });
   const [currentBagEntry, setCurrentBagEntry] = useState<number | undefined>(undefined);
   const [state] = useGlobalState();
+  const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
+    {
+      translation_name: { fileId: 62 },
+      translation_class: { fileId: 29 },
+      translation_victory: { fileId: 47, isMultiline: true },
+      translation_defeat: { fileId: 48, isMultiline: true },
+    },
+    currentEditedTrainer.id,
+    currentEditedTrainer.name()
+  );
 
   const onCloseEditor = () => {
     if (
@@ -64,6 +75,7 @@ export const TrainerPage = () => {
     if (currentEditor === 'battlerNew' || currentEditor === 'bagEntryNew') return setCurrentEditor(undefined);
     setTrainer({ [trainer.dbSymbol]: currentEditedTrainer });
     setCurrentEditor(undefined);
+    closeTranslationEditor();
   };
 
   const onCloseDeletion = () => setCurrentDeletion(undefined);
@@ -85,9 +97,9 @@ export const TrainerPage = () => {
 
   const editors = {
     new: <TrainerNewEditor onClose={() => setCurrentEditor(undefined)} />,
-    frame: <TrainerFrameEditor trainer={currentEditedTrainer} />,
+    frame: <TrainerFrameEditor trainer={currentEditedTrainer} openTranslationEditor={openTranslationEditor} />,
     battlerImport: <TrainerImportEditor type="battler" trainer={currentEditedTrainer} onClose={() => setCurrentEditor(undefined)} />,
-    dialog: <TrainerDialogEditor trainer={currentEditedTrainer} />,
+    dialog: <TrainerDialogEditor trainer={currentEditedTrainer} openTranslationEditor={openTranslationEditor} />,
     battlerEdit: <PokemonBattlerListEditor type="edit" currentBattler={currentBattler} model={currentEditedTrainer} />,
     battlerNew: <PokemonBattlerListEditor type="creation" model={currentEditedTrainer} onClose={() => setCurrentEditor(undefined)} />,
     bagEntryImport: <TrainerImportEditor type="item" trainer={currentEditedTrainer} onClose={() => setCurrentEditor(undefined)} />,
@@ -142,7 +154,7 @@ export const TrainerPage = () => {
               </DeleteButtonWithIcon>
             </DataBlockWithAction>
           </DataBlockWrapper>
-          <EditorOverlay currentEditor={currentEditor} editors={editors} onClose={onCloseEditor} />
+          <EditorOverlay currentEditor={currentEditor} editors={editors} subEditor={translationEditor} onClose={onCloseEditor} />
           <DeletionOverlay currentDeletion={currentDeletion} deletions={deletions} onClose={() => setCurrentDeletion(undefined)} />
         </PageDataConstrainerStyle>
       </PageContainerStyle>

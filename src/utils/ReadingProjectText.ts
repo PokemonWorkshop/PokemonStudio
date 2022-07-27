@@ -14,14 +14,15 @@ const getLanguage = (fileText: string[][], defaultLanguage: string) => {
  * @param projectText The text of the project
  * @param fileId id of the dialog file
  * @param textId id of the dialog message in the file (0 = 2nd line of csv, 1 = 3rd line of csv)
+ * @param language language code of the language to get
  * @return the text
  */
-export const getDialogMessage = (projectText: TextsWithLanguageConfig, fileId: number, textId: number) => {
+export const getDialogMessage = (projectText: TextsWithLanguageConfig, fileId: number, textId: number, language?: string) => {
   const fileText = projectText.texts[fileId as KeyProjectText];
   if (!fileText) return `Unable to find dialog file ${fileId}.`;
   const dialog = fileText[textId + 1];
   if (!dialog) return `Unable to find text ${textId} in dialog file ${fileId}.`;
-  return dialog[getLanguage(fileText, projectText.config.defaultLanguage)];
+  return dialog[getLanguage(fileText, language ?? projectText.config.defaultLanguage)];
 };
 
 /**
@@ -29,10 +30,11 @@ export const getDialogMessage = (projectText: TextsWithLanguageConfig, fileId: n
  * @param projectText The text of the project
  * @param fileId ID of the text file
  * @param textId ID of the text in the file
+ * @param language language code of the language to get
  * @returns the text
  */
-export const getText = (projectText: TextsWithLanguageConfig, fileId: number, textId: number) => {
-  return getDialogMessage(projectText, CSV_BASE + fileId, textId);
+export const getText = (projectText: TextsWithLanguageConfig, fileId: number, textId: number, language?: string) => {
+  return getDialogMessage(projectText, CSV_BASE + fileId, textId, language);
 };
 
 export const getNatureText = (state: State, natureDbSymbol: string) => {
@@ -49,8 +51,9 @@ export const getNatureText = (state: State, natureDbSymbol: string) => {
  * @param fileId id of the dialog file
  * @param textId id of the dialog message in the file (0 = 2nd line of csv, 1 = 3rd line of csv)
  * @param text text to set
+ * @param language language code of the language to get
  */
-export const setDialogMessage = (projectText: TextsWithLanguageConfig, fileId: number, textId: number, text: string) => {
+export const setDialogMessage = (projectText: TextsWithLanguageConfig, fileId: number, textId: number, text: string, language?: string) => {
   projectTextSave[projectTextKeys.indexOf(fileId as KeyProjectText)] = true;
   const fileText = projectText.texts[fileId as KeyProjectText];
   if (!fileText) return;
@@ -58,7 +61,7 @@ export const setDialogMessage = (projectText: TextsWithLanguageConfig, fileId: n
   if (!fileText[textId + 1]) fileText[textId + 1] = new Array(fileText[0].length);
   const dialog = fileText[textId + 1];
 
-  dialog[getLanguage(fileText, projectText.config.defaultLanguage)] = text;
+  dialog[getLanguage(fileText, language ?? projectText.config.defaultLanguage)] = text;
 };
 
 /**
@@ -67,7 +70,8 @@ export const setDialogMessage = (projectText: TextsWithLanguageConfig, fileId: n
  * @param fileId ID of the text file
  * @param textId ID of the text in the file
  * @param text text to set
+ * @param language language code of the language to get
  */
-export const setText = (projectText: TextsWithLanguageConfig, fileId: number, textId: number, text: string) => {
-  return setDialogMessage(projectText, CSV_BASE + fileId, textId, text);
+export const setText = (projectText: TextsWithLanguageConfig, fileId: number, textId: number, text: string, language?: string) => {
+  return setDialogMessage(projectText, CSV_BASE + fileId, textId, text, language);
 };

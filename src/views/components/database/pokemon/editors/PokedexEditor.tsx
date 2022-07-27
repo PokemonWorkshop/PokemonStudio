@@ -1,16 +1,23 @@
 import { Editor, useRefreshUI } from '@components/editor';
 import { Input, InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { EmbeddedUnitInput } from '@components/inputs/EmbeddedUnitInput';
+import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 import PokemonModel from '@modelEntities/pokemon/Pokemon.model';
+import type { OpenTranslationEditorFunction } from '@utils/useTranslationEditor';
 import React, { FunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type PokedexEditorProps = {
   currentPokemon: PokemonModel;
   currentFormIndex: number;
+  openTranslationEditor: OpenTranslationEditorFunction;
 };
 
-export const PokedexEditor: FunctionComponent<PokedexEditorProps> = ({ currentPokemon, currentFormIndex }: PokedexEditorProps) => {
+export const PokedexEditor: FunctionComponent<PokedexEditorProps> = ({
+  currentPokemon,
+  currentFormIndex,
+  openTranslationEditor,
+}: PokedexEditorProps) => {
   const { t } = useTranslation('database_pokemon');
   const refreshUI = useRefreshUI();
   const form = currentPokemon.forms[currentFormIndex];
@@ -43,12 +50,14 @@ export const PokedexEditor: FunctionComponent<PokedexEditorProps> = ({ currentPo
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="species">{t('species')}</Label>
-          <Input
-            name="species"
-            type="text"
-            value={currentPokemon.species()}
-            onChange={(event) => refreshUI(currentPokemon.setSpecies(event.target.value))}
-          />
+          <TranslateInputContainer onTranslateClick={() => openTranslationEditor('translation_species')}>
+            <Input
+              name="species"
+              type="text"
+              value={currentPokemon.species()}
+              onChange={(event) => refreshUI(currentPokemon.setSpecies(event.target.value))}
+            />
+          </TranslateInputContainer>
         </InputWithTopLabelContainer>
       </InputContainer>
     </Editor>

@@ -24,6 +24,8 @@ import { useGlobalState } from '@src/GlobalStateProvider';
 import { fileExists } from '@utils/IPCUtils';
 import IpcService from '@services/IPC/ipc.service';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
+import type { OpenTranslationEditorFunction } from '@utils/useTranslationEditor';
+import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 
 const BaseMoneyInfoContainer = styled.span`
   ${({ theme }) => theme.fonts.normalSmall}
@@ -62,9 +64,10 @@ const vsTypeCategoryEntries = (t: TFunction<'database_trainers'>) =>
 
 type TrainerFrameEditorProps = {
   trainer: TrainerModel;
+  openTranslationEditor: OpenTranslationEditorFunction;
 };
 
-export const TrainerFrameEditor = ({ trainer }: TrainerFrameEditorProps) => {
+export const TrainerFrameEditor = ({ trainer, openTranslationEditor }: TrainerFrameEditorProps) => {
   const [state] = useGlobalState();
   const { t } = useTranslation('database_trainers');
   const aiOptions = useMemo(() => aiCategoryEntries(t), [t]);
@@ -118,25 +121,29 @@ export const TrainerFrameEditor = ({ trainer }: TrainerFrameEditorProps) => {
             <Label htmlFor="trainer-name" required>
               {t('trainer_name')}
             </Label>
-            <Input
-              type="text"
-              name="name"
-              value={trainer.trainerName()}
-              onChange={(event) => refreshUI(trainer.setTrainerName(event.target.value))}
-              placeholder={t('example_trainer_name')}
-            />
+            <TranslateInputContainer onTranslateClick={() => openTranslationEditor('translation_name')}>
+              <Input
+                type="text"
+                name="name"
+                value={trainer.trainerName()}
+                onChange={(event) => refreshUI(trainer.setTrainerName(event.target.value))}
+                placeholder={t('example_trainer_name')}
+              />
+            </TranslateInputContainer>
           </InputWithTopLabelContainer>
           <InputWithTopLabelContainer>
             <Label htmlFor="trainer-class" required>
               {t('trainer_class')}
             </Label>
-            <Input
-              type="text"
-              name="name"
-              value={trainer.trainerClassName()}
-              onChange={(event) => refreshUI(trainer.setTrainerClassName(event.target.value))}
-              placeholder={t('example_trainer_class')}
-            />
+            <TranslateInputContainer onTranslateClick={() => openTranslationEditor('translation_class')}>
+              <Input
+                type="text"
+                name="name"
+                value={trainer.trainerClassName()}
+                onChange={(event) => refreshUI(trainer.setTrainerClassName(event.target.value))}
+                placeholder={t('example_trainer_class')}
+              />
+            </TranslateInputContainer>
           </InputWithTopLabelContainer>
           <InputWithTopLabelContainer>
             <Label htmlFor="select-ai-level">{t('ai_level')}</Label>
