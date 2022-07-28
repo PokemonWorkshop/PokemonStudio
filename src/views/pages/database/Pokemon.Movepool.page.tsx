@@ -34,7 +34,12 @@ export const PokemonMovepoolPage = () => {
     setSelectedDataIdentifier({ pokemon: { specie: selected.value, form: 0 } });
   };
   const onChangeForm = (selected: SelectOption) => {
-    setSelectedDataIdentifier({ pokemon: { specie: pokemonIdentifier.specie, form: Number(selected.value) } });
+    setSelectedDataIdentifier({
+      pokemon: {
+        specie: pokemonIdentifier.specie,
+        form: pokemon[pokemonIdentifier.specie].forms.findIndex((f) => f.form === Number(selected.value)),
+      },
+    });
   };
 
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
