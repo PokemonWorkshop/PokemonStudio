@@ -39,7 +39,7 @@ export const PokemonPage = () => {
   const history = useHistory();
   const onClickedMovepool = () => history.push(`/database/pokemon/movepool`);
   const {
-    projectDataValues: pokemons,
+    projectDataValues: pokemon,
     projectDataValues2: dex,
     selectedDataIdentifier: currentPokemon,
     setSelectedDataIdentifier,
@@ -55,13 +55,13 @@ export const PokemonPage = () => {
     setSelectedDataIdentifier({
       pokemon: {
         specie: currentPokemon.specie,
-        form: pokemons[currentPokemon.specie].forms.findIndex((f) => f.form === Number(selected.value)),
+        form: pokemon[currentPokemon.specie].forms.findIndex((f) => f.form === Number(selected.value)),
       },
     });
     setEvolutionIndex(0);
   };
 
-  const currentPokemonModel = pokemons[currentPokemon.specie];
+  const currentPokemonModel = pokemon[currentPokemon.specie];
   const currentEditedPokemon = useMemo(() => currentPokemonModel.clone(), [currentPokemonModel]);
   const currentEditedDex = useMemo(() => dex.regional.clone(), [dex]);
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
@@ -99,7 +99,7 @@ export const PokemonPage = () => {
   };
 
   const onClickDeletePokemon = () => {
-    const firstDbSymbol = Object.entries(pokemons)
+    const firstDbSymbol = Object.entries(pokemon)
       .map(([value, pokemonData]) => ({ value, index: pokemonData.id }))
       .filter((d) => d.value !== currentPokemon.specie)
       .sort((a, b) => a.index - b.index)[0].value;
@@ -163,8 +163,8 @@ export const PokemonPage = () => {
   };
 
   const pokemonWithForm: PokemonWithForm = {
-    species: pokemons[currentPokemon.specie],
-    form: pokemons[currentPokemon.specie].forms[currentPokemon.form],
+    species: pokemon[currentPokemon.specie],
+    form: pokemon[currentPokemon.specie].forms[currentPokemon.form],
   };
 
   return (
