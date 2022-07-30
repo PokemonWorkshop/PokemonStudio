@@ -1,4 +1,5 @@
 import { DataBlockContainer } from '@components/database/dataBlocks';
+import { DataBlockContainerColor } from '@components/database/dataBlocks/DataBlockContainer';
 import styled from 'styled-components';
 
 export const DataBlockEditorContainer = styled(DataBlockContainer)`
@@ -33,10 +34,14 @@ export const TitleContainer = styled.div`
   }
 `;
 
-export const ButtonContainer = styled.div`
+type ButtonContainerProps = {
+  color?: DataBlockContainerColor;
+};
+
+export const ButtonContainer = styled.div<ButtonContainerProps>`
   display: flex;
   flex-direction: row;
-  border-top: 1px solid ${({ theme }) => theme.colors.dark18};
+  border-top: 1px solid ${({ theme, color }) => (color === 'light' ? theme.colors.dark20 : theme.colors.dark18)};
   padding: 16px 0 0 0;
   margin-top: 4px;
   justify-content: space-between;

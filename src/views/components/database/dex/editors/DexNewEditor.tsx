@@ -46,7 +46,7 @@ export const DexNewEditor = ({ onClose }: DexNewEditorProps) => {
   };
 
   return (
-    <EditorWithCollapse type="dex" title={t('database_dex:new')}>
+    <EditorWithCollapse type="creation" title={t('database_dex:new')}>
       <InputContainer size="l">
         <PaddedInputContainer size="m">
           <InputWithTopLabelContainer>

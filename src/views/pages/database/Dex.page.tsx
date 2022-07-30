@@ -8,14 +8,21 @@ import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterfac
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { EditorOverlay } from '@components/editor';
-import { Deletion, DeletionOverlay } from '@components/deletion';
+import { DeletionOverlay } from '@components/deletion';
 
 import { useProjectDex, useProjectPokemon } from '@utils/useProjectData';
-import { DexControlBar, DexFrame, DexResetNational, DexResetNationalPopUp } from '@components/database/dex';
-import { DexFrameEditor, DexNewEditor } from '@components/database/dex/editors';
+import { DexControlBar, DexDeletion, DexFrame, DexPokemonList, DexResetNational, DexResetNationalPopUp } from '@components/database/dex';
+import {
+  DexFrameEditor,
+  DexNewEditor,
+  DexPokemonListAddEditor,
+  DexPokemonListEditEditor,
+  DexPokemonListImportEditor,
+} from '@components/database/dex/editors';
 import { ProjectData } from '@src/GlobalStateProvider';
-import DexModel from '@modelEntities/dex/Dex.model';
+import DexModel, { DexCreature } from '@modelEntities/dex/Dex.model';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
+import PokemonForm from '@modelEntities/pokemon/PokemonForm';
 
 const isResetAvailable = (dex: DexModel, pokemon: ProjectData['pokemon']): boolean => {
   if (dex.dbSymbol !== 'national') return false;
@@ -29,20 +36,42 @@ const isResetAvailable = (dex: DexModel, pokemon: ProjectData['pokemon']): boole
   return !sortDexCreatures.some((dexCreature, index) => dexCreature.dbSymbol === sortPokemonDbSymbol[index]);
 };
 
+const searchEvolutionPokemon = (creature: DexCreature, allPokemon: ProjectData['pokemon'], currentCreatures: DexCreature[]): DexCreature[] => {
+  const pokemonForm = allPokemon[creature.dbSymbol]?.forms.find((form) => form.form === creature.form);
+  if (!pokemonForm || pokemonForm.evolutions.length === 0) return [];
+
+  const creatures = pokemonForm.evolutions
+    .filter(
+      (evolution) => evolution.dbSymbol && currentCreatures.find((currentCreature) => currentCreature.dbSymbol === evolution.dbSymbol) === undefined
+    )
+    .map((evolution) => ({ dbSymbol: evolution.dbSymbol as string, form: evolution.form }));
+  currentCreatures.push(...creatures);
+  creatures.forEach((c) => creatures.push(...searchEvolutionPokemon(c, allPokemon, currentCreatures)));
+  return creatures;
+};
+
+const searchUnderAndEvolutions = (pokemonForm: PokemonForm, creature: DexCreature, allPokemon: ProjectData['pokemon']): DexCreature[] => {
+  const babyCreature = { dbSymbol: pokemonForm.babyDbSymbol, form: pokemonForm.babyForm };
+  const evolutionCreatures = searchEvolutionPokemon(creature, allPokemon, [creature]);
+  const creatures =
+    babyCreature.dbSymbol === '__undef__' || babyCreature.dbSymbol === creature.dbSymbol
+      ? []
+      : searchEvolutionPokemon(babyCreature, allPokemon, Object.assign([], evolutionCreatures));
+  creatures.push(...evolutionCreatures);
+  if (!creatures.find((c) => c.dbSymbol === creature.dbSymbol)) creatures.push(creature);
+  creatures.unshift(babyCreature.dbSymbol === '__undef__' ? creature : babyCreature);
+  return creatures;
+};
+
 export const DexPage = () => {
-  const {
-    projectDataValues: dexs,
-    selectedDataIdentifier: dexDbSymbol,
-    setSelectedDataIdentifier,
-    setProjectDataValues: setDex,
-    removeProjectDataValue: deleteDex,
-  } = useProjectDex();
-  const { projectDataValues: pokemon } = useProjectPokemon();
+  const { projectDataValues: allDex, selectedDataIdentifier: dexDbSymbol, setSelectedDataIdentifier, setProjectDataValues: setDex } = useProjectDex();
+  const { projectDataValues: allPokemon } = useProjectPokemon();
   const { t } = useTranslation('database_dex');
   const onChange = (selected: SelectOption) => setSelectedDataIdentifier({ dex: selected.value });
-  const dex = dexs[dexDbSymbol];
+  const dex = allDex[dexDbSymbol];
   const currentEditedDex = useMemo(() => dex.clone(), [dex]);
 
+  const [creatureIndex, setCreatureIndex] = useState<number>(0);
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
   const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
@@ -55,7 +84,7 @@ export const DexPage = () => {
 
   const onCloseEditor = () => {
     if (currentEditor === 'frame' && currentEditedDex.name() === '') return;
-    if (currentEditor === 'new') return setCurrentEditor(undefined);
+    if (currentEditor === 'new' || currentEditor === 'addPokemon' || currentEditor === 'importPokemonList') return setCurrentEditor(undefined);
 
     currentEditedDex.cleaningNaNValues();
     setDex({ [dex.dbSymbol]: currentEditedDex });
@@ -63,17 +92,8 @@ export const DexPage = () => {
     closeTranslationEditor();
   };
 
-  const onClickDelete = () => {
-    const firstDbSymbol = Object.entries(dexs)
-      .map(([value, dexData]) => ({ value, index: dexData.id }))
-      .filter((d) => d.value !== dexDbSymbol)
-      .sort((a, b) => a.index - b.index)[0].value;
-    deleteDex(dexDbSymbol, { dex: firstDbSymbol });
-    setCurrentDeletion(undefined);
-  };
-
   const onClickReset = () => {
-    currentEditedDex.creatures = Object.entries(pokemon)
+    currentEditedDex.creatures = Object.entries(allPokemon)
       .map(([dbSymbol, pokemonData]) => ({ dbSymbol, index: pokemonData.id }))
       .sort((a, b) => a.index - b.index)
       .map((data) => ({ dbSymbol: data.dbSymbol, form: 0 }));
@@ -81,20 +101,34 @@ export const DexPage = () => {
     setCurrentDeletion(undefined);
   };
 
+  const onEditPokemonList = (index: number) => {
+    setCreatureIndex(index);
+    setCurrentEditor('editPokemon');
+  };
+
+  const onAddEvolution = (index: number) => {
+    const creature = currentEditedDex.creatures[index];
+    const pokemonForm = allPokemon[creature.dbSymbol]?.forms.find((form) => form.form === creature.form);
+    if (!pokemonForm) return;
+
+    const creatures = searchUnderAndEvolutions(pokemonForm, creature, allPokemon);
+    creatures.forEach((c, i) => currentEditedDex.creatures.splice(index + i + 1, 0, c));
+    if (creatures.length !== 0) currentEditedDex.creatures.splice(index, 1);
+    currentEditedDex.creatures = currentEditedDex.creatures.filter((dexc, i, self) => self.findIndex((c) => c.dbSymbol === dexc.dbSymbol) === i);
+    setDex({ [dex.dbSymbol]: currentEditedDex });
+  };
+
   const editors = {
     new: <DexNewEditor onClose={() => setCurrentEditor(undefined)} />,
     frame: <DexFrameEditor dex={currentEditedDex} openTranslationEditor={openTranslationEditor} />,
+    addPokemon: <DexPokemonListAddEditor dex={currentEditedDex} onClose={() => setCurrentEditor(undefined)} />,
+    editPokemon: <DexPokemonListEditEditor dex={currentEditedDex} creature={currentEditedDex.creatures[creatureIndex]} />,
+    importPokemonList: <DexPokemonListImportEditor dex={currentEditedDex} onClose={() => setCurrentEditor(undefined)} />,
   };
 
   const deletions = {
-    dex: (
-      <Deletion
-        title={t('dex_deletion_of', { dex: dex.name() })}
-        message={t('dex_deletion_message', { dex: dex.name() })}
-        onClickDelete={onClickDelete}
-        onClose={() => setCurrentDeletion(undefined)}
-      />
-    ),
+    dex: <DexDeletion type="dex" onClose={() => setCurrentDeletion(undefined)} />,
+    list: <DexDeletion type="list" onClose={() => setCurrentDeletion(undefined)} />,
     reset: <DexResetNationalPopUp onClickReset={onClickReset} onClose={() => setCurrentDeletion(undefined)} />,
   };
 
@@ -105,7 +139,19 @@ export const DexPage = () => {
         <PageDataConstrainerStyle>
           <DataBlockWrapper>
             <DexFrame dex={dex} onClick={() => setCurrentEditor('frame')} />
-            {isResetAvailable(dex, pokemon) && <DexResetNational onClickReset={() => setCurrentDeletion('reset')} />}
+            {isResetAvailable(dex, allPokemon) && <DexResetNational onClickReset={() => setCurrentDeletion('reset')} />}
+          </DataBlockWrapper>
+          <DataBlockWrapper>
+            <DexPokemonList
+              dex={dex}
+              allDex={allDex}
+              allPokemon={allPokemon}
+              onDelete={() => setCurrentDeletion('list')}
+              onImport={() => setCurrentEditor('importPokemonList')}
+              onNew={() => setCurrentEditor('addPokemon')}
+              onEdit={onEditPokemonList}
+              onAddEvolution={onAddEvolution}
+            />
           </DataBlockWrapper>
           <DataBlockWrapper>
             {dex.dbSymbol === 'national' ? (
@@ -116,7 +162,7 @@ export const DexPage = () => {
               </DataBlockWithActionTooltip>
             ) : (
               <DataBlockWithAction size="full" title={t('deleting')}>
-                <DeleteButtonWithIcon onClick={() => setCurrentDeletion('dex')} disabled={Object.entries(dexs).length === 1}>
+                <DeleteButtonWithIcon onClick={() => setCurrentDeletion('dex')} disabled={Object.entries(allDex).length === 1}>
                   {t('delete')}
                 </DeleteButtonWithIcon>
               </DataBlockWithAction>
