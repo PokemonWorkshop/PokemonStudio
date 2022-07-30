@@ -1,0 +1,1 @@
+export { DexPokemonListTable } from './DexPokemonListTable';

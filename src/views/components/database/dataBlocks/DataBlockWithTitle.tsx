@@ -19,6 +19,11 @@ export const DataBlockWithTitleStyle = styled(DataBlockContainer)`
     margin-bottom: 20px;
   }
 
+  & img {
+    max-width: 32px;
+    max-height: 32px;
+  }
+
   // TODO: Remove h2 rule from global style & remove '#root ' from here!
   #root &[data-disabled='true'] h2 {
     color: ${({ theme }) => theme.colors.dark20};

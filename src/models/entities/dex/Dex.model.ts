@@ -10,7 +10,7 @@ type DexText = {
   csvTextIndex: number;
 };
 
-type DexCreature = {
+export type DexCreature = {
   dbSymbol: string;
   form: number;
 };

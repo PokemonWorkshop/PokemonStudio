@@ -17,15 +17,16 @@ export const DataBlockEditor = ({
   disabledDeletion,
   disabledImport,
   disabledAdd,
+  color,
 }: DataBlockEditorProps) => {
   const { t } = useTranslation('editor');
   return (
-    <DataBlockEditorContainer size={size} data-disabled={disabled && 'true'} data-noactive>
+    <DataBlockEditorContainer size={size} color={color} data-disabled={disabled && 'true'} data-noactive>
       <TitleContainer>
         <h3>{title}</h3>
       </TitleContainer>
       {children}
-      <ButtonContainer>
+      <ButtonContainer color={color}>
         <DeleteButtonWithIcon onClick={onClickDelete} disabled={disabledDeletion || false}>
           {t('all_delete')}
         </DeleteButtonWithIcon>
