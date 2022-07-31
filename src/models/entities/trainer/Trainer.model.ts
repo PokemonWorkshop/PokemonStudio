@@ -208,7 +208,7 @@ export default class TrainerModel implements PSDKEntity {
     vsType: 1,
     isCouple: false,
     baseMoney: 0,
-    ai: 0,
+    ai: 1,
     battlers: [],
     party: [],
     bagEntries: [],
