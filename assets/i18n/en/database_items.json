@@ -36,7 +36,7 @@
   "heal_category": "Category",
   "statistic": "Modified statistic",
   "value": "Value",
-  "hapiness_malus": "Happiness malus",
+  "hapiness_malus": "Happiness penalty",
   "repel": "Repel",
   "step_number": "Step number (Repel)",
   "event": "Exploration",
