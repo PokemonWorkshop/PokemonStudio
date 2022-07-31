@@ -13,7 +13,7 @@ import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterfac
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { PokemonWithForm } from '@components/database/pokemon/PokemonDataPropsInterface';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
-import { useProjectPokemonDex } from '@utils/useProjectDoubleData';
+import { useProjectPokemon } from '@utils/useProjectData';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -40,13 +40,11 @@ export const PokemonPage = () => {
   const onClickedMovepool = () => history.push(`/database/pokemon/movepool`);
   const {
     projectDataValues: pokemon,
-    projectDataValues2: dex,
     selectedDataIdentifier: currentPokemon,
     setSelectedDataIdentifier,
-    setProjectDoubleDataValues: setPokemonDex,
     setProjectDataValues: setPokemon,
     removeProjectDataValue: deletePokemon,
-  } = useProjectPokemonDex();
+  } = useProjectPokemon();
   const onPokemonChange = (selected: SelectOption) => {
     setSelectedDataIdentifier({ pokemon: { specie: selected.value, form: 0 } });
     setEvolutionIndex(0);
@@ -63,7 +61,6 @@ export const PokemonPage = () => {
 
   const currentPokemonModel = pokemon[currentPokemon.specie];
   const currentEditedPokemon = useMemo(() => currentPokemonModel.clone(), [currentPokemonModel]);
-  const currentEditedDex = useMemo(() => dex.regional.clone(), [dex]);
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
 
@@ -82,7 +79,7 @@ export const PokemonPage = () => {
     if (currentEditor === 'newPokemonEditor' || currentEditor === 'newPokemonFormEditor') return setCurrentEditor(undefined);
     currentEditedPokemon.forms[currentPokemon.form].changeDefaultValueItemHeld('none');
     currentEditedPokemon.forms[currentPokemon.form].cleaningNaNValues();
-    setPokemonDex({ [currentPokemonModel.dbSymbol]: currentEditedPokemon }, { [currentEditedDex.dbSymbol]: currentEditedDex });
+    setPokemon({ [currentPokemonModel.dbSymbol]: currentEditedPokemon });
     setCurrentEditor(undefined);
     closeTranslationEditor();
   };
@@ -118,7 +115,6 @@ export const PokemonPage = () => {
       <InformationsEditor
         currentPokemon={currentEditedPokemon}
         currentFormIndex={currentPokemon.form}
-        dex={currentEditedDex}
         openTranslationEditor={openTranslationEditor}
       />
     ),
