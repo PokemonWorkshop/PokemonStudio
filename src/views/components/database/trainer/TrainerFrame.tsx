@@ -132,7 +132,7 @@ export const TrainerFrame = ({ trainer, onClick }: TrainerFrameProps) => {
           </DataInfoContainerHeader>
           <TrainerSubInfoContainer>
             <DataFieldsetField label={t('trainer_class')} data={trainer.trainerClassName()} />
-            <DataFieldsetField label={t('ai_level')} data={t(AiCategories[trainer.ai])} />
+            <DataFieldsetField label={t('ai_level')} data={t(AiCategories[trainer.ai - 1])} />
             <DataFieldsetField label={t('money_given')} data={`${trainer.money()} P$`} />
           </TrainerSubInfoContainer>
         </TrainerInfoContainer>
