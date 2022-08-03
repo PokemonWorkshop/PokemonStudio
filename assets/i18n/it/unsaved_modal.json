@@ -1,7 +1,7 @@
 {
-  "title": "Unregistered changes",
-  "description": "Save changes made to the project before quitting?",
-  "cancel": "Cancel",
-  "quit": "Quit without saving",
-  "save": "Save"
+  "title": "Modifiche non salvate",
+  "description": "Salvare le modifiche al progetto prima di uscire?",
+  "cancel": "Annulla",
+  "quit": "Esci senza salvare",
+  "save": "Salva"
 }
