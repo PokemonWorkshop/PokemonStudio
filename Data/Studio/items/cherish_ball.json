@@ -1,0 +1,1 @@
+{"klass":"BallItem","id":16,"dbSymbol":"cherish_ball","icon":"016","price":0,"socket":2,"position":0,"isBattleUsable":true,"isMapUsable":false,"isLimited":true,"isHoldable":true,"flingPower":0,"spriteFilename":"ball_6","catchRate":1.0,"color":{"red":255,"green":0,"blue":0,"alpha":255}}

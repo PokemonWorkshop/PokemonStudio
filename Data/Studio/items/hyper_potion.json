@@ -1,0 +1,1 @@
+{"klass":"ConstantHealItem","id":25,"dbSymbol":"hyper_potion","icon":"025","price":1500,"socket":6,"position":3,"isBattleUsable":true,"isMapUsable":true,"isLimited":true,"isHoldable":true,"flingPower":30,"loyaltyMalus":0,"hpCount":200}

@@ -1,0 +1,1 @@
+{"klass":"StatusHealItem","id":150,"dbSymbol":"chesto_berry","icon":"150","price":20,"socket":4,"position":0,"isBattleUsable":true,"isMapUsable":true,"isLimited":true,"isHoldable":true,"flingPower":10,"loyaltyMalus":0,"statusList":["ASLEEP"]}

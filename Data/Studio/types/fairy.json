@@ -1,0 +1,1 @@
+{"textId":17,"klass":"Type","id":18,"dbSymbol":"fairy","color":"#e981a4","damageTo":[{"defensiveType":"fire","factor":0.5},{"defensiveType":"fighting","factor":2},{"defensiveType":"poison","factor":0.5},{"defensiveType":"dragon","factor":2},{"defensiveType":"steel","factor":0.5},{"defensiveType":"dark","factor":2}]}

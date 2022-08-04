@@ -1,0 +1,1 @@
+{"klass":"RateHealItem","id":24,"dbSymbol":"max_potion","icon":"024","price":2500,"socket":6,"position":4,"isBattleUsable":true,"isMapUsable":true,"isLimited":true,"isHoldable":true,"flingPower":30,"loyaltyMalus":0,"hpRate":1.0}

@@ -1,0 +1,1 @@
+{"klass":"ConstantHealItem","id":30,"dbSymbol":"fresh_water","icon":"030","price":200,"socket":6,"position":10,"isBattleUsable":true,"isMapUsable":true,"isLimited":true,"isHoldable":true,"flingPower":30,"loyaltyMalus":-1,"hpCount":50}

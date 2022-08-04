@@ -1,0 +1,1 @@
+{"textId":5,"klass":"Type","id":13,"dbSymbol":"rock","color":"#cb8b3e","damageTo":[{"defensiveType":"fire","factor":2},{"defensiveType":"ice","factor":2},{"defensiveType":"fighting","factor":0.5},{"defensiveType":"ground","factor":0.5},{"defensiveType":"flying","factor":2},{"defensiveType":"bug","factor":2},{"defensiveType":"steel","factor":0.5}]}

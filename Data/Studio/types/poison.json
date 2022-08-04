@@ -1,0 +1,1 @@
+{"textId":3,"klass":"Type","id":8,"dbSymbol":"poison","color":"#b292f7","damageTo":[{"defensiveType":"grass","factor":2},{"defensiveType":"poison","factor":0.5},{"defensiveType":"ground","factor":0.5},{"defensiveType":"rock","factor":0.5},{"defensiveType":"steel","factor":0},{"defensiveType":"fairy","factor":2}]}

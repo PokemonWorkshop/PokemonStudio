@@ -1,0 +1,1 @@
+{"klass":"BallItem","id":6,"dbSymbol":"net_ball","icon":"006","price":1000,"socket":2,"position":0,"isBattleUsable":true,"isMapUsable":false,"isLimited":true,"isHoldable":true,"flingPower":0,"spriteFilename":"ball_9","catchRate":1,"color":{"red":255,"green":0,"blue":0,"alpha":255}}

@@ -1,0 +1,1 @@
+{"klass":"StatusHealItem","id":36,"dbSymbol":"heal_powder","icon":"036","price":450,"socket":6,"position":200,"isBattleUsable":true,"isMapUsable":true,"isLimited":true,"isHoldable":true,"flingPower":30,"loyaltyMalus":5,"statusList":["POISONED","PARALYZED","BURN","ASLEEP","FROZEN","CONFUSED","FLINCH","TOXIC"]}

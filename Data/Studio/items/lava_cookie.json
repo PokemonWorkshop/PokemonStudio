@@ -1,0 +1,1 @@
+{"klass":"StatusHealItem","id":42,"dbSymbol":"lava_cookie","icon":"042","price":200,"socket":6,"position":200,"isBattleUsable":true,"isMapUsable":true,"isLimited":true,"isHoldable":true,"flingPower":30,"loyaltyMalus":0,"statusList":["POISONED","PARALYZED","BURN","ASLEEP","FROZEN","CONFUSED","FLINCH","TOXIC"]}

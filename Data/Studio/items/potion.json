@@ -1,0 +1,1 @@
+{"klass":"ConstantHealItem","id":17,"dbSymbol":"potion","icon":"017","price":300,"socket":6,"position":1,"isBattleUsable":true,"isMapUsable":true,"isLimited":true,"isHoldable":true,"flingPower":30,"loyaltyMalus":0,"hpCount":20}

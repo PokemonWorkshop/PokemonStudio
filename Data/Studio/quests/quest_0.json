@@ -1,0 +1,1 @@
+{"klass":"Quest","id":0,"dbSymbol":"quest_0","isPrimary":false,"resolution":"default","objectives":[{"objectiveMethodName":"objective_speak_to","objectiveMethodArgs":[0,"Intello"],"textFormatMethodName":"text_speak_to","hiddenByDefault":false}],"earnings":[]}

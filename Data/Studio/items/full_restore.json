@@ -1,0 +1,1 @@
+{"klass":"StatusRateHealItem","id":23,"dbSymbol":"full_restore","icon":"023","price":3000,"socket":6,"position":5,"isBattleUsable":true,"isMapUsable":true,"isLimited":true,"isHoldable":true,"flingPower":30,"loyaltyMalus":0,"hpRate":1.0,"statusList":["POISONED","PARALYZED","BURN","ASLEEP","FROZEN","CONFUSED","FLINCH","TOXIC"]}

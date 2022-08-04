@@ -1,0 +1,1 @@
+{"klass":"StatusRateHealItem","id":29,"dbSymbol":"max_revive","icon":"029","price":4000,"socket":6,"position":202,"isBattleUsable":true,"isMapUsable":true,"isLimited":true,"isHoldable":true,"flingPower":30,"loyaltyMalus":0,"hpRate":1.0,"statusList":["DEATH"]}

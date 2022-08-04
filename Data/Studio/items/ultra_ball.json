@@ -1,0 +1,1 @@
+{"klass":"BallItem","id":2,"dbSymbol":"ultra_ball","icon":"002","price":1200,"socket":2,"position":3,"isBattleUsable":true,"isMapUsable":false,"isLimited":true,"isHoldable":true,"flingPower":0,"spriteFilename":"ball_3","catchRate":2.0,"color":{"red":255,"green":0,"blue":0,"alpha":255}}

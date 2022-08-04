@@ -1,0 +1,1 @@
+{"klass":"BallItem","id":500,"dbSymbol":"park_ball","icon":"500","price":0,"socket":2,"position":0,"isBattleUsable":true,"isMapUsable":false,"isLimited":true,"isHoldable":false,"flingPower":0,"spriteFilename":"ball_26","catchRate":255,"color":{"red":255,"green":0,"blue":0,"alpha":255}}

@@ -1,0 +1,1 @@
+{"klass":"StatusHealItem","id":19,"dbSymbol":"burn_heal","icon":"019","price":250,"socket":6,"position":101,"isBattleUsable":true,"isMapUsable":true,"isLimited":true,"isHoldable":true,"flingPower":30,"loyaltyMalus":0,"statusList":["BURN"]}

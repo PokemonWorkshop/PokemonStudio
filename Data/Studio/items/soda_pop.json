@@ -1,0 +1,1 @@
+{"klass":"ConstantHealItem","id":31,"dbSymbol":"soda_pop","icon":"031","price":300,"socket":6,"position":11,"isBattleUsable":true,"isMapUsable":true,"isLimited":true,"isHoldable":true,"flingPower":30,"loyaltyMalus":-1,"hpCount":60}

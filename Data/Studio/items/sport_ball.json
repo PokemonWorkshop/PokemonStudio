@@ -1,0 +1,1 @@
+{"klass":"BallItem","id":499,"dbSymbol":"sport_ball","icon":"499","price":300,"socket":2,"position":0,"isBattleUsable":true,"isMapUsable":false,"isLimited":true,"isHoldable":true,"flingPower":0,"spriteFilename":"ball_27","catchRate":1.5,"color":{"red":255,"green":0,"blue":0,"alpha":255}}

@@ -1,0 +1,1 @@
+{"klass":"BallItem","id":494,"dbSymbol":"lure_ball","icon":"494","price":300,"socket":2,"position":0,"isBattleUsable":true,"isMapUsable":false,"isLimited":true,"isHoldable":true,"flingPower":0,"spriteFilename":"ball_20","catchRate":1,"color":{"red":255,"green":0,"blue":0,"alpha":255}}

@@ -1,0 +1,1 @@
+{"klass":"StatusRateHealItem","id":37,"dbSymbol":"revival_herb","icon":"037","price":2800,"socket":6,"position":204,"isBattleUsable":true,"isMapUsable":true,"isLimited":true,"isHoldable":true,"flingPower":30,"loyaltyMalus":15,"hpRate":1.0,"statusList":["DEATH"]}

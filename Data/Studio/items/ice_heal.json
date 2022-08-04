@@ -1,0 +1,1 @@
+{"klass":"StatusHealItem","id":20,"dbSymbol":"ice_heal","icon":"020","price":250,"socket":6,"position":102,"isBattleUsable":true,"isMapUsable":true,"isLimited":true,"isHoldable":true,"flingPower":30,"loyaltyMalus":0,"statusList":["FROZEN"]}

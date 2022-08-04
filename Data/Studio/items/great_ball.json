@@ -1,0 +1,1 @@
+{"klass":"BallItem","id":3,"dbSymbol":"great_ball","icon":"003","price":600,"socket":2,"position":2,"isBattleUsable":true,"isMapUsable":false,"isLimited":true,"isHoldable":true,"flingPower":0,"spriteFilename":"ball_2","catchRate":1.5,"color":{"red":255,"green":0,"blue":0,"alpha":255}}

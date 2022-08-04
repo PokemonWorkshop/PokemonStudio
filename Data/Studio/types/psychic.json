@@ -1,0 +1,1 @@
+{"textId":13,"klass":"Type","id":11,"dbSymbol":"psychic","color":"#dd7db4","damageTo":[{"defensiveType":"fighting","factor":2},{"defensiveType":"poison","factor":2},{"defensiveType":"psychic","factor":0.5},{"defensiveType":"steel","factor":0.5},{"defensiveType":"dark","factor":0}]}
