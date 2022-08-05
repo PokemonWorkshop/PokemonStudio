@@ -1,7 +1,7 @@
-import { app } from 'electron';
 import path from 'path';
 import fs from 'fs';
 import { versionIntToString } from '@utils/versionIntToString';
+import { getAppRootPath } from '@src/backendTasks/getAppRootPath';
 
 export const PSDK_DOWNLOADS_URL = 'https://download.psdk.pokemonworkshop.com/downloads';
 
@@ -11,8 +11,7 @@ export type PSDKVersion = {
 };
 
 export const getPSDKBinariesPath = (): string => {
-  if (!app.isPackaged) return path.join(__dirname, '../../psdk-binaries');
-  return path.join(path.dirname(app.getPath('exe')), 'psdk-binaries');
+  return path.join(getAppRootPath(), 'psdk-binaries');
 };
 
 export const getPSDKVersion = (): PSDKVersion => {
