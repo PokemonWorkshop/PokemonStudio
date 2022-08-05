@@ -1,4 +1,4 @@
-import { app, dialog, IpcMainEvent } from 'electron';
+import { dialog, IpcMainEvent } from 'electron';
 import AbstractIpcChannel from './IPC/abstract.ipc.channel';
 import { IpcRequest } from './IPC/ipc.request';
 import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
@@ -9,6 +9,7 @@ import { TypedJSON } from 'typedjson';
 import InfosConfigModel from '@modelEntities/config/InfosConfig.model';
 import log from 'electron-log';
 import GameOptionsConfigModel from '@modelEntities/config/GameOptionsConfig.model';
+import { getAppRootPath } from '@src/backendTasks/getAppRootPath';
 
 const PSDK_PROJECT_PATH = 'new-project.zip';
 
@@ -43,14 +44,6 @@ interface ProjectCreateParameters extends IpcRequest {
   iconPath: string | undefined;
   multiLanguage: boolean;
 }
-
-const getAppPath = () => {
-  const appPath = app.getAppPath().replaceAll('\\', '/');
-  if (appPath.endsWith('resources/app.asar')) return appPath.replace(/resources\/app\.asar$/, '');
-  if (appPath.endsWith('src')) return appPath.replace(/src$/, '');
-
-  return appPath;
-};
 export default class ProjectCreateChannelService extends AbstractIpcChannel {
   channelName = 'project-create';
 
@@ -73,7 +66,7 @@ export default class ProjectCreateChannelService extends AbstractIpcChannel {
         event.sender.send('project-create/status', 2, 3, 'creating_project_extraction');
         log.info('create-project extraction');
 
-        await extract(path.join(getAppPath(), PSDK_PROJECT_PATH), { dir: dir });
+        await extract(path.join(getAppRootPath(), PSDK_PROJECT_PATH), { dir: dir });
         event.sender.send('project-create/status', 3, 3, 'creating_project_configuration');
         log.info('create-project writing configurations');
         writeFileSync(path.join(dir, 'project.studio'), request.projectData);
