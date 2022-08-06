@@ -4,6 +4,7 @@
   "saving_project": "Saving project in progress...",
   "loading_project": "Loading project in progress...",
   "updating_psdk": "Updating PSDK in progress...",
+  "migrating_data": "Migrating project data...",
   "creating_project_error": "Error while creating project",
   "importing_project_error": "Error while importing project",
   "saving_project_error": "Error while saving project",

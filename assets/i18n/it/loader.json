@@ -4,6 +4,7 @@
   "saving_project": "Salvataggio del progetto corrente...",
   "loading_project": "Caricamento progetto in corso...",
   "updating_psdk": "Aggiornamento PSDK in corso...",
+  "migrating_data": "Migrazione dei dati di progetto...",
   "creating_project_error": "Errore durante la creazione del progetto",
   "importing_project_error": "Errore durante l'importazione del progetto",
   "saving_project_error": "Errore durante il salvataggio del progetto",

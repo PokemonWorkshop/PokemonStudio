@@ -42,6 +42,7 @@ import { registerReadProjectMetadata } from './backendTasks/readProjectMetadata'
 import { registerReadProjectConfigs } from './backendTasks/readProjectConfigs';
 import { registerReadProjectData } from './backendTasks/readProjectData';
 import { registerReadProjectTexts } from './backendTasks/readProjectTexts';
+import { registerMigrateData } from './backendTasks/migrateData';
 
 export default class AppUpdater {
   constructor() {
@@ -227,3 +228,4 @@ registerReadProjectMetadata(ipcMain);
 registerReadProjectConfigs(ipcMain);
 registerReadProjectData(ipcMain);
 registerReadProjectTexts(ipcMain);
+registerMigrateData(ipcMain);

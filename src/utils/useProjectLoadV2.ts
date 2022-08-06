@@ -68,6 +68,7 @@ export const useProjectLoadV2 = () => {
         window.api.cleanupReadProjectData();
         window.api.cleanupReadProjectMetadata();
         window.api.cleanupReadProjectTexts();
+        window.api.cleanupMigrateData();
         return;
       case 'choosingProjectFile':
         loaderRef.current.open('loading_project', 0, 0, tl('importing_project_choose_project'));
@@ -111,8 +112,20 @@ export const useProjectLoadV2 = () => {
                 setState({ state: 'done' });
                 return;
               }
-              projectMetaData.studioVersion = state.studioVersion;
-              setState({ ...state, state: 'writeProjectMetadata', projectMetaData });
+              window.api.migrateData(
+                { projectPath: state.projectDirName, projectVersion: projectMetaData.studioVersion },
+                () => {
+                  projectMetaData.studioVersion = state.studioVersion;
+                  setState({ ...state, state: 'writeProjectMetadata', projectMetaData });
+                },
+                ({ errorMessage }) => {
+                  setState({ state: 'done' });
+                  fail(callbacks, errorMessage);
+                },
+                (payload) => {
+                  loaderRef.current.open('migrating_data', payload.step, payload.total, payload.stepText);
+                }
+              );
             }
           },
           ({ errorMessage }) => {
@@ -121,7 +134,7 @@ export const useProjectLoadV2 = () => {
           }
         );
       case 'writeProjectMetadata':
-        loaderRef.current.setProgress(4, 12, tl('importing_project_writing_meta'));
+        loaderRef.current.open('loading_project', 4, 12, tl('importing_project_writing_meta'));
         const { clone: _, ...metaData } = state.projectMetaData;
         return window.api.writeProjectMetadata(
           { path: state.projectDirName, metaData },
