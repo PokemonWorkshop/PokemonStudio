@@ -48,6 +48,7 @@ import DevicesConfigModel from './config/DevicesConfig.model';
 import NaturesConfigModel from './config/NaturesConfig.model';
 import DexModel from './dex/Dex.model';
 import GameOptionsConfigModel from './config/GameOptionsConfig.model';
+import MapLinkModel from './maplinks/MapLink.model';
 
 export const entitiesMap: {
   [klass: string]: Serializable<PSDKEntity>;
@@ -82,6 +83,7 @@ export const entitiesMap: {
     AbilityModel,
     GroupModel,
     DexModel,
+    MapLinkModel,
   ].map((m) => ({ [m.klass]: m }))
 );
 

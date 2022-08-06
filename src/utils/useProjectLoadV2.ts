@@ -218,6 +218,7 @@ export const useProjectLoadV2 = () => {
             abilities: deserializeDataArray(state.projectData.abilities, projectText, languageConfig),
             groups: deserializeDataArray(state.projectData.groups, projectText, languageConfig),
             dex: deserializeDataArray(state.projectData.dex, projectText, languageConfig),
+            mapLinks: deserializeDataArray(state.projectData.maplinks, projectText, languageConfig),
           };
           setState({
             ...state,
@@ -228,6 +229,7 @@ export const useProjectLoadV2 = () => {
               projectPath: state.projectDirName,
               projectStudio: state.projectMetaData,
               projectText,
+              rmxpMaps: state.projectData.rmxpMaps,
             },
           });
         } catch (error) {
