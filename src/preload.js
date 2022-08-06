@@ -215,4 +215,27 @@ window.api = {
     ipcRenderer.removeAllListeners(`read-project-texts/failure`);
     ipcRenderer.removeAllListeners(`read-project-texts/progress`);
   },
+  migrateData: (taskPayload, onSuccess, onFailure, onProgress) => {
+    // Register success event
+    ipcRenderer.once(`migrate-data/success`, (_, payload) => {
+      ipcRenderer.removeAllListeners(`migrate-data/failure`);
+      ipcRenderer.removeAllListeners(`migrate-data/progress`);
+      onSuccess(payload);
+    });
+    // Register failure event
+    ipcRenderer.once(`migrate-data/failure`, (_, error) => {
+      ipcRenderer.removeAllListeners(`migrate-data/success`);
+      ipcRenderer.removeAllListeners(`migrate-data/progress`);
+      onFailure(error);
+    });
+    // Register progress event
+    if (onProgress) ipcRenderer.on(`migrate-data/progress`, (_, payload) => onProgress(payload));
+    // Call service
+    ipcRenderer.send('migrate-data', taskPayload);
+  },
+  cleanupMigrateData: () => {
+    ipcRenderer.removeAllListeners(`migrate-data/success`);
+    ipcRenderer.removeAllListeners(`migrate-data/failure`);
+    ipcRenderer.removeAllListeners(`migrate-data/progress`);
+  },
 };

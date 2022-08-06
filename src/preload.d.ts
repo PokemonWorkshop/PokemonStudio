@@ -43,6 +43,8 @@ declare global {
       cleanupReadProjectData: () => void;
       readProjectTexts: BackendTaskWithGenericError<{ path: string }, ProjectText, GenericBackendProgress>;
       cleanupReadProjectTexts: () => void;
+      migrateData: BackendTaskWithGenericError<{ projectPath: string; projectVersion: string }, ProjectText, GenericBackendProgress>;
+      cleanupMigrateData: () => void;
     };
   }
 }
