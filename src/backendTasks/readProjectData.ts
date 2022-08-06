@@ -4,10 +4,24 @@ import path from 'path';
 import fs from 'fs';
 import fsPromises from 'fs/promises';
 import { batchArray } from '@utils/batchArray';
+import { RMXPMap } from '@modelEntities/maplinks/RMXPMap';
 
-const projectDataKeys = ['abilities', 'dex', 'groups', 'items', 'moves', 'pokemon', 'quests', 'trainers', 'types', 'worldmaps', 'zones'] as const;
+const projectDataKeys = [
+  'abilities',
+  'dex',
+  'groups',
+  'items',
+  'moves',
+  'pokemon',
+  'quests',
+  'trainers',
+  'types',
+  'worldmaps',
+  'maplinks',
+  'zones',
+] as const;
 type ProjectDataFromBackEndKey = typeof projectDataKeys[number];
-export type ProjectDataFromBackEnd = Record<ProjectDataFromBackEndKey, string[]>;
+export type ProjectDataFromBackEnd = Record<ProjectDataFromBackEndKey, string[]> & { rmxpMaps: RMXPMap[] };
 
 const readProjectFolder = async (projectPath: string, key: ProjectDataFromBackEndKey): Promise<string[]> => {
   const folderName = path.join(projectPath, 'Data/Studio', key);
@@ -41,13 +55,15 @@ const readProjectFolder = async (projectPath: string, key: ProjectDataFromBackEn
 const readProjectData = async (event: IpcMainEvent, payload: { path: string }) => {
   log.info('read-project-data');
   try {
+    const rmxpMapsJson = await fsPromises.readFile(path.join(payload.path, 'Data/Studio', 'rmxp_maps.json'), { encoding: 'utf-8' });
+    const rmxpMaps: RMXPMap[] = JSON.parse(rmxpMapsJson);
     const projectData = await projectDataKeys.reduce(async (prev, curr, index) => {
       const prevData = await prev;
       log.info('read-project-data/progress', curr);
       event.sender.send('read-project-data/progress', { step: index + 1, total: projectDataKeys.length, stepText: curr });
       const data = await readProjectFolder(payload.path, curr);
       return { ...prevData, [curr]: data };
-    }, Promise.resolve({} as ProjectDataFromBackEnd));
+    }, Promise.resolve({ rmxpMaps } as ProjectDataFromBackEnd));
 
     log.info('read-project-data/success');
     event.sender.send('read-project-data/success', projectData);

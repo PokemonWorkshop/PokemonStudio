@@ -78,6 +78,7 @@ export const loadProject = async (
     abilities: deserializeDataEntries(projectDataValue.projectData.abilities, projectText, projectConfig.language_config),
     groups: deserializeDataEntries(projectDataValue.projectData.groups, projectText, projectConfig.language_config),
     dex: deserializeDataEntries(projectDataValue.projectData.dex, projectText, projectConfig.language_config),
+    mapLinks: deserializeDataEntries(projectDataValue.projectData.mapLinks, projectText, projectConfig.language_config),
   };
 
   loaderRef.current.setProgress(8, 10, t('loading_project_psdk_version'));

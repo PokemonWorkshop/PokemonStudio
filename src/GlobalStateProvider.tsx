@@ -26,6 +26,8 @@ import type { PSDKVersion } from '@services/getPSDKVersion';
 import NaturesConfigModel from '@modelEntities/config/NaturesConfig.model';
 import DexModel from '@modelEntities/dex/Dex.model';
 import GameOptionsConfigModel from '@modelEntities/config/GameOptionsConfig.model';
+import MapLinkModel from '@modelEntities/maplinks/MapLink.model';
+import { RMXPMap } from '@modelEntities/maplinks/RMXPMap';
 
 export interface ProjectData {
   items: {
@@ -57,6 +59,9 @@ export interface ProjectData {
   };
   dex: {
     [dex: string]: DexModel;
+  };
+  mapLinks: {
+    [mapLink: string]: MapLinkModel;
   };
   [other: string]: {
     [k: string]: PSDKEntity;
@@ -154,6 +159,7 @@ export interface State {
   savingProjectStudio: boolean;
   currentPSDKVersion: PSDKVersion;
   lastPSDKVersion: PSDKVersion;
+  rmxpMaps: RMXPMap[];
   tmpHackHasTextToSave?: boolean;
 }
 
@@ -175,6 +181,7 @@ const initialState = {
   },
   savingData: new SavingMap(),
   savingConfig: new SavingConfigMap(),
+  rmxpMaps: [] as RMXPMap[],
   savingProjectStudio: false,
 };
 
