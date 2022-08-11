@@ -1,4 +1,4 @@
-import { useGlobalState, projectTextSave } from '@src/GlobalStateProvider';
+import { useGlobalState, projectTextSave, ProjectText, projectTextKeys } from '@src/GlobalStateProvider';
 import IpcService from '@services/IPC/ipc.service';
 import { updateProjectStudio } from '@utils/IPCUtils';
 import { updateProjectEditDate } from '@utils/projectList';
@@ -23,14 +23,36 @@ export const useProjectSaving = () => {
   const isDataToSave = state.savingData.map.size > 0 || state.savingConfig.map.size > 0 || state.savingProjectStudio || isProjectTextSave;
 
   const resetSaving = () =>
-    setState({ ...state, savingData: new SavingMap(), savingConfig: new SavingConfigMap(), savingProjectStudio: false, tmpHackHasTextToSave: false });
+    setState({
+      ...state,
+      savingData: new SavingMap(),
+      savingConfig: new SavingConfigMap(),
+      savingProjectStudio: false,
+      tmpHackHasTextToSave: false,
+      savingLanguage: [],
+    });
 
   const saveProject = async () => {
-    if (isProjectTextSave) {
+    const newProjectText = Object.assign({}, state.projectText);
+    const newProjectTextSave = [...projectTextSave];
+    let modified = false;
+    state.savingLanguage.forEach((code) => {
+      projectTextKeys.forEach((k, saveIndex) => {
+        if (newProjectText[k] !== undefined && !newProjectText[k][0].includes(code)) {
+          const defaultIndex = newProjectText[k][0].indexOf(state.projectConfig.language_config.defaultLanguage);
+          newProjectText[k] = newProjectText[k].map((line, i) => [...line, i == 0 ? code : line[defaultIndex === -1 ? 0 : defaultIndex]]);
+          modified = true;
+          newProjectTextSave[saveIndex] = true;
+        }
+      });
+    });
+
+    if (isProjectTextSave || modified) {
+      if (modified) setState({ ...state, projectText: newProjectText });
       await ipc.send('text-saving', {
-        projectText: JSON.stringify(state.projectText),
+        projectText: JSON.stringify(newProjectText),
         path: state.projectPath,
-        projectTextSave: projectTextSave,
+        projectTextSave: newProjectTextSave,
       });
       projectTextSave.fill(false);
     }
