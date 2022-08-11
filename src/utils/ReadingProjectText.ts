@@ -58,10 +58,11 @@ export const setDialogMessage = (projectText: TextsWithLanguageConfig, fileId: n
   const fileText = projectText.texts[fileId as KeyProjectText];
   if (!fileText) return;
 
-  if (!fileText[textId + 1]) fileText[textId + 1] = new Array(fileText[0].length);
-  const dialog = fileText[textId + 1];
-
-  dialog[getLanguage(fileText, language ?? projectText.config.defaultLanguage)] = text;
+  if (!fileText[textId + 1]) {
+    fileText[textId + 1] = new Array(fileText[0].length).fill(text);
+  } else {
+    fileText[textId + 1][getLanguage(fileText, language ?? projectText.config.defaultLanguage)] = text;
+  }
 };
 
 /**

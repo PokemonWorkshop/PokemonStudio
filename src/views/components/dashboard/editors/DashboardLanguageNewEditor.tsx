@@ -6,6 +6,7 @@ import { Input, InputContainer, InputWithTopLabelContainer, Label } from '@compo
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { useConfigGameOptions, useConfigLanguage } from '@utils/useProjectConfig';
+import { useProjectSavingLanguage } from '@utils/useProjectSavingLanguage';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -40,6 +41,7 @@ export const DashboardLanguageNewEditor = ({ defaultValue, onClose, onCloseNew }
   const { projectConfigValues: gameOption, setProjectConfigValues: setGameOption } = useConfigGameOptions();
   const [languageText, setLanguageText] = useState<LanguageDefaultValue>(defaultValue);
   const { t } = useTranslation('dashboard_language');
+  const { savingLanguage, setSavingLanguage } = useProjectSavingLanguage();
 
   const onClickNew = () => {
     const currentEditedLanguage = language.clone();
@@ -48,6 +50,7 @@ export const DashboardLanguageNewEditor = ({ defaultValue, onClose, onCloseNew }
     currentEditedLanguage.choosableLanguageCode.push(languageText.code);
     if (currentEditedLanguage.choosableLanguageCode.length > 1 && !currentEditedGameOption.order.includes('language'))
       currentEditedGameOption.addKeyOfOrder('language');
+    setSavingLanguage([...savingLanguage, languageText.code]);
     setLanguage(currentEditedLanguage);
     setGameOption(currentEditedGameOption);
     onCloseNew();

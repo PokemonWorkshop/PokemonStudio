@@ -9,6 +9,8 @@ import { SelectCustomSimple } from '@components/SelectCustom';
 import { TagWithDeletion } from '@components/Tag';
 import { DashboardLanguageEditor, DashboardLanguageNewEditor } from './editors';
 import { useConfigGameOptions, useConfigLanguage } from '@utils/useProjectConfig';
+import { useGlobalState } from '@src/GlobalStateProvider';
+import { useProjectSavingLanguage } from '@utils/useProjectSavingLanguage';
 
 type TagLanguageContainerProps = {
   noHideCode: boolean;
@@ -62,6 +64,7 @@ export const DashboardLanguage = () => {
   const [newLanguage, setNewLanguage] = useState('');
   const [languageIndex, setLanguageIndex] = useState(0);
   const { t } = useTranslation('dashboard_language');
+  const { savingLanguage, setSavingLanguage } = useProjectSavingLanguage();
 
   const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (event) => {
     if (event.key === 'Enter') {
@@ -79,6 +82,9 @@ export const DashboardLanguage = () => {
   };
 
   const onDeleteLanguage = (index: number) => {
+    const currentCode = currentEditedLanguage.choosableLanguageCode[index];
+    setSavingLanguage(savingLanguage.filter((code) => code != currentCode));
+
     currentEditedLanguage.choosableLanguageCode.splice(index, 1);
     currentEditedLanguage.choosableLanguageTexts.splice(index, 1);
     if (currentEditedLanguage.choosableLanguageCode.length <= 1) currentEditedGameOption.removeKeyOfOrder('language');
