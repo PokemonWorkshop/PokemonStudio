@@ -73,6 +73,10 @@ export const ZoneSettingsEditor = ({ zone }: ZoneSettingsEditorProps) => {
     refreshUI(zone.maps.splice(index, 1));
   };
 
+  const onChangeForcedWeather = (value: number) => {
+    refreshUI((zone.forcedWeather = value === -1 ? null : value));
+  };
+
   return (
     <Editor type="edit" title={t('settings')}>
       <InputContainer>
@@ -126,8 +130,8 @@ export const ZoneSettingsEditor = ({ zone }: ZoneSettingsEditorProps) => {
           <SelectCustomSimple
             id="select-weather"
             options={weatherOptions}
-            onChange={(value) => refreshUI((zone.forcedWeather = Number(value)))}
-            value={String(zone.forcedWeather === null ? 0 : zone.forcedWeather)}
+            onChange={(value) => onChangeForcedWeather(Number(value))}
+            value={String(zone.forcedWeather === null ? -1 : zone.forcedWeather)}
             noTooltip
           />
         </InputWithTopLabelContainer>
