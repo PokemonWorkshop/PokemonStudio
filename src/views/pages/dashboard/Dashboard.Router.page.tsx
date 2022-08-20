@@ -4,6 +4,11 @@ import { Switch, useRouteMatch, Route } from 'react-router';
 import styled from 'styled-components';
 import { DashboardInfosPage } from './Dashboard.Infos.page';
 import { DashboardLanguagePage } from './Dashboard.Language.page';
+import { DashboardSettingsPage } from './Dashboard.Settings.page';
+import { DashboardDevicesPage } from './Dashboard.Devices.page';
+import { DashboardGraphicsPage } from './Dashboard.Graphics.page';
+import { DashboardDisplayPage } from './Dashboard.Display.page';
+import { DashboardSavePage } from './Dashboard.Save.page';
 import { DashboardPage } from './Dashboard.page';
 
 const DashboardRouterPageStyle = styled.div`
@@ -44,7 +49,7 @@ const DashboardRouterComponent = () => {
       </Route>
       <Route path={`${path}/settings`}>
         <DashboardPageWithMenu>
-          <div>Settings</div>
+          <DashboardSettingsPage />
         </DashboardPageWithMenu>
       </Route>
       <Route path={`${path}/texts`}>
@@ -59,7 +64,22 @@ const DashboardRouterComponent = () => {
       </Route>
       <Route path={`${path}/devices`}>
         <DashboardPageWithMenu>
-          <div>Devices</div>
+          <DashboardDevicesPage />
+        </DashboardPageWithMenu>
+      </Route>
+      <Route path={`${path}/display`}>
+        <DashboardPageWithMenu>
+          <DashboardDisplayPage />
+        </DashboardPageWithMenu>
+      </Route>
+      <Route path={`${path}/graphics`}>
+        <DashboardPageWithMenu>
+          <DashboardGraphicsPage />
+        </DashboardPageWithMenu>
+      </Route>
+      <Route path={`${path}/save`}>
+        <DashboardPageWithMenu>
+          <DashboardSavePage />
         </DashboardPageWithMenu>
       </Route>
     </Switch>

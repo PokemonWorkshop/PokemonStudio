@@ -1,0 +1,7 @@
+{
+  "devices": "Dispositivi",
+  "mouse": "Mouse",
+  "use_mouse": "Utilizzo del mouse in gioco",
+  "mouse_image": "Immagine del cursore del mouse",
+  "info_mouse_image": "L'immagine deve trovarsi nella cartella «\u00a0graphics/windowskins\u00a0»."
+}

@@ -2,8 +2,13 @@
 import 'react-i18next';
 // import all namespaces (for the default language, only)
 import dashboard from '../../assets/i18n/en/dashboard.json';
+import dashboard_devices from '../../assets/i18n/en/dashboard_devices.json';
+import dashboard_display from '../../assets/i18n/en/dashboard_display.json';
+import dashboard_graphics from '../../assets/i18n/en/dashboard_graphics.json';
 import dashboard_infos from '../../assets/i18n/en/dashboard_infos.json';
 import dashboard_language from '../../assets/i18n/en/dashboard_language.json';
+import dashboard_save from '../../assets/i18n/en/dashboard_save.json';
+import dashboard_settings from '../../assets/i18n/en/dashboard_settings.json';
 import database_abilities from '../../assets/i18n/en/database_abilities.json';
 import database_items from '../../assets/i18n/en/database_items.json';
 import database_moves from '../../assets/i18n/en/database_moves.json';
@@ -37,8 +42,13 @@ declare module 'react-i18next' {
     // custom resources type
     resources: {
       dashboard: typeof dashboard;
+      dashboard_devices: typeof dashboard_devices;
+      dashboard_display: typeof dashboard_display;
+      dashboard_graphics: typeof dashboard_graphics;
       dashboard_infos: typeof dashboard_infos;
       dashboard_language: typeof dashboard_language;
+      dashboard_save: typeof dashboard_save;
+      dashboard_settings: typeof dashboard_settings;
       database_abilities: typeof database_abilities;
       database_items: typeof database_items;
       database_moves: typeof database_moves;

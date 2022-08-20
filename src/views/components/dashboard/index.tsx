@@ -4,3 +4,8 @@ export { DashboardTemplate } from './DashboardTemplate';
 export { DashboardEditor } from './DashboardEditor';
 export { DashboardInfos } from './DashboardInfos';
 export { DashboardLanguage } from './DashboardLanguage';
+export { DashboardSettings } from './DashboardSettings';
+export { DashboardDevices } from './DashboardDevices';
+export { DashboardGraphics } from './DashboardGraphics';
+export { DashboardDisplay } from './DashboardDisplay';
+export { DashboardSave } from './DashboardSave';

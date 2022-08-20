@@ -1,0 +1,7 @@
+{
+  "settings": "Impostazioni",
+  "evolution": "Evoluzione",
+  "max_pokemon_level": "Livello massimo dei Pokémon",
+  "evolution_form": "Usa sempre la forma base per le evoluzioni",
+  "evolution_form_no_data": "Usa la forma base se nessuna informazione sull'evoluzione è disponibile"
+}

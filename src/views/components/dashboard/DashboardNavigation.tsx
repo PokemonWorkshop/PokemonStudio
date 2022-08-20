@@ -11,10 +11,17 @@ export const DashboardNavigation = () => {
       <NavigationDatabaseGroup title={t('general_settings')}>
         <NavigationDatabaseItem path="/dashboard/infos" label={t('infos')} />
         <NavigationDatabaseItem path="/dashboard/language" label={t('language')} />
-        {/* <NavigationDatabaseItem path="/dashboard/settings" label={t('settings')} />
-        <NavigationDatabaseItem path="/dashboard/texts" label={t('texts')} />
-        <NavigationDatabaseItem path="/dashboard/options" label={t('options')} />
-        <NavigationDatabaseItem path="/dashboard/devices" label={t('devices')} /> */}
+        <NavigationDatabaseItem path="/dashboard/settings" label={t('settings')} />
+        {/*<NavigationDatabaseItem path="/dashboard/texts" label={t('texts')} />
+        <NavigationDatabaseItem path="/dashboard/options" label={t('options')} /> */}
+        <NavigationDatabaseItem path="/dashboard/devices" label={t('devices')} />
+      </NavigationDatabaseGroup>
+      <NavigationDatabaseGroup title={t('appearance')}>
+        <NavigationDatabaseItem path="/dashboard/display" label={t('display')} />
+        <NavigationDatabaseItem path="/dashboard/graphics" label={t('graphic_settings')} />
+      </NavigationDatabaseGroup>
+      <NavigationDatabaseGroup title={t('config')}>
+        <NavigationDatabaseItem path="/dashboard/save" label={t('save')} />
       </NavigationDatabaseGroup>
     </NavigationDatabaseStyle>
   );

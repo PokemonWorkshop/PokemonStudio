@@ -8,5 +8,10 @@
   "settings": "Settings",
   "texts": "Texts",
   "options": "Game options",
-  "devices": "Devices"
+  "devices": "Devices",
+  "appearance": "Appearance",
+  "display": "Display",
+  "graphic_settings": "Graphic settings",
+  "config": "Configurations",
+  "save": "Save"
 }

@@ -1,4 +1,5 @@
 import PSDKConfig from '@modelEntities/PSDKConfig';
+import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { jsonMember, jsonObject, TypedJSON } from 'typedjson';
 
 /**
@@ -46,5 +47,13 @@ export default class SettingsConfigModel implements PSDKConfig {
     if (!newObject) throw new Error('Could not clone object');
 
     return newObject as SettingsConfigModel;
+  };
+
+  /**
+   * Cleaning NaN values in number properties
+   */
+  cleaningNaNValues = () => {
+    this.pokemonMaxLevel = cleanNaNValue(this.pokemonMaxLevel, 100);
+    this.maxBagItemCount = cleanNaNValue(this.maxBagItemCount);
   };
 }

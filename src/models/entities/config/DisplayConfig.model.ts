@@ -1,4 +1,5 @@
 import PSDKConfig from '@modelEntities/PSDKConfig';
+import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { AnyT, jsonMember, jsonObject, TypedJSON } from 'typedjson';
 
 type XY = {
@@ -99,5 +100,23 @@ export default class DisplayConfigModel implements PSDKConfig {
     if (!newObject) throw new Error('Could not clone object');
 
     return newObject as DisplayConfigModel;
+  };
+
+  /**
+   * Cleaning NaN values in number properties
+   */
+  cleaningNaNValues = () => {
+    this.gameResolution.x = cleanNaNValue(this.gameResolution.x, 320);
+    this.gameResolution.y = cleanNaNValue(this.gameResolution.y, 240);
+    this.windowScale = cleanNaNValue(this.windowScale, 1);
+    this.tilemapSettings.tilemapSize.x = cleanNaNValue(this.tilemapSettings.tilemapSize.x, 22);
+    this.tilemapSettings.tilemapSize.y = cleanNaNValue(this.tilemapSettings.tilemapSize.y, 17);
+    this.tilemapSettings.autotileIdleFrameCount = cleanNaNValue(this.tilemapSettings.autotileIdleFrameCount, 1);
+    this.tilemapSettings.characterTileZoom = cleanNaNValue(this.tilemapSettings.characterTileZoom, 0.5);
+    this.tilemapSettings.characterSpriteZoom = cleanNaNValue(this.tilemapSettings.characterSpriteZoom, 0.5);
+    this.tilemapSettings.center.x = cleanNaNValue(this.tilemapSettings.center.x);
+    this.tilemapSettings.center.y = cleanNaNValue(this.tilemapSettings.center.y);
+    this.tilemapSettings.maplinkerOffset.x = cleanNaNValue(this.tilemapSettings.maplinkerOffset.x);
+    this.tilemapSettings.maplinkerOffset.y = cleanNaNValue(this.tilemapSettings.maplinkerOffset.y);
   };
 }

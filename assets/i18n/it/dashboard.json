@@ -8,5 +8,10 @@
   "settings": "Impostazioni",
   "texts": "Testi",
   "options": "Opzioni di gioco",
-  "devices": "Periferiche"
+  "devices": "Periferiche",
+  "appearance": "Aspetto",
+  "display": "Schermo",
+  "graphic_settings": "Impostazioni grafiche",
+  "config": "Configurazioni",
+  "save": "Salvataggio"
 }
