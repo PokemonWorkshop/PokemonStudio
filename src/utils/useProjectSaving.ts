@@ -1,7 +1,7 @@
-import { useGlobalState, projectTextSave, ProjectText, projectTextKeys } from '@src/GlobalStateProvider';
+import { useGlobalState, projectTextSave, projectTextKeys } from '@src/GlobalStateProvider';
 import IpcService from '@services/IPC/ipc.service';
 import { updateProjectStudio } from '@utils/IPCUtils';
-import { updateProjectEditDate } from '@utils/projectList';
+import { updateProjectEditDate, updateProjectStudio as updateProjectStudioLocalStorage } from '@utils/projectList';
 import { SavingConfigMap, SavingMap } from './SavingUtils';
 
 export const useProjectSaving = () => {
@@ -60,6 +60,7 @@ export const useProjectSaving = () => {
     if (state.savingConfig.map.size > 0) await ipc.send<unknown>('psdk-configs-saving', getSavingConfig());
     if (state.savingProjectStudio) await updateProjectStudio(ipc, state.projectPath, state.projectStudio);
     updateProjectEditDate(state.projectPath || '');
+    updateProjectStudioLocalStorage(state.projectPath || '', state.projectStudio);
     resetSaving();
   };
 
