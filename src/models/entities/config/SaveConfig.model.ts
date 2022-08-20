@@ -1,4 +1,5 @@
 import PSDKConfig from '@modelEntities/PSDKConfig';
+import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { jsonMember, jsonObject, TypedJSON } from 'typedjson';
 
 /**
@@ -52,5 +53,13 @@ export default class SaveConfigModel implements PSDKConfig {
     if (!newObject) throw new Error('Could not clone object');
 
     return newObject as SaveConfigModel;
+  };
+
+  /**
+   * Cleaning NaN values in number properties
+   */
+  cleaningNaNValues = () => {
+    this.maximumSave = cleanNaNValue(this.maximumSave);
+    this.saveKey = cleanNaNValue(this.saveKey);
   };
 }

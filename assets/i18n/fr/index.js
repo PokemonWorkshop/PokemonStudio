@@ -1,6 +1,11 @@
 import dashboard from './dashboard.json';
+import dashboard_devices from './dashboard_devices.json';
+import dashboard_display from './dashboard_display.json';
+import dashboard_graphics from './dashboard_graphics.json';
 import dashboard_infos from './dashboard_infos.json';
 import dashboard_language from './dashboard_language.json';
+import dashboard_save from './dashboard_save.json';
+import dashboard_settings from './dashboard_settings.json';
 import database_abilities from './database_abilities.json';
 import database_items from './database_items.json';
 import database_moves from './database_moves.json';
@@ -29,8 +34,13 @@ import unsaved_modal from './unsaved_modal.json';
 
 export default {
   dashboard,
+  dashboard_devices,
+  dashboard_display,
+  dashboard_graphics,
   dashboard_infos,
   dashboard_language,
+  dashboard_save,
+  dashboard_settings,
   database_abilities,
   database_items,
   database_moves,

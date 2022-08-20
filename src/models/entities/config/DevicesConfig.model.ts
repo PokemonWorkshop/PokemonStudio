@@ -1,4 +1,5 @@
 import PSDKConfig from '@modelEntities/PSDKConfig';
+import path from 'path';
 import { jsonMember, jsonObject, TypedJSON } from 'typedjson';
 
 /**
@@ -34,5 +35,14 @@ export default class DevicesConfigModel implements PSDKConfig {
     if (!newObject) throw new Error('Could not clone object');
 
     return newObject as DevicesConfigModel;
+  };
+
+  /**
+   * Get the url of the mouse skin
+   * @param projectPath The project path
+   * @returns The url of the mouse skin
+   */
+  mouseSkinUrl = (projectPath: string) => {
+    return path.join(projectPath, `graphics/windowskins/${this.mouseSkin}.png`);
   };
 }

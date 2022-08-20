@@ -1,0 +1,16 @@
+{
+  "display": "Display",
+  "resolution": "Resolution",
+  "game_resolution": "Game resolution",
+  "game_resolution_advice": "The resolution of the game is more complicated to edit than it seem, as you will have to modify every UI to fit your new resolution. So be careful before modifying these values.",
+  "window_scale": "Window scale",
+  "full_screen": "Full screen",
+  "game_window_centered": "The player is always in the center of the screen",
+  "tilemap": "Tilemap",
+  "class": "Class",
+  "tilemap_size": "Tilemap size",
+  "tile_zoom": "Tile zoom",
+  "scale_characters": "Characters' scale on map",
+  "images_per_animation": "Number of frames per animation",
+  "old_map_linker": "Use the old map linking system"
+}

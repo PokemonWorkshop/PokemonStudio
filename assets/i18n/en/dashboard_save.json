@@ -1,0 +1,10 @@
+{
+  "save": "Save",
+  "settings": "Settings",
+  "save_filename": "Save base filename",
+  "save_header": "Save header",
+  "save_key": "Save key",
+  "save_any_location": "Can save in any location",
+  "save_unlimited_count": "Unlimited saves",
+  "save_max_count": "Max number of saves"
+}

@@ -1,0 +1,7 @@
+{
+  "devices": "Périphériques",
+  "mouse": "Souris",
+  "use_mouse": "Utilisation de la souris",
+  "mouse_image": "Image du curseur de la souris",
+  "info_mouse_image": "L'image doit être dans le dossier «\u00a0graphics/windowskins\u00a0»."
+}

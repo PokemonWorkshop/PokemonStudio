@@ -8,5 +8,10 @@
   "settings": "Réglages",
   "texts": "Textes",
   "options": "Options",
-  "devices": "Périphériques"
+  "devices": "Périphériques",
+  "appearance": "Apparence",
+  "display": "Affichage",
+  "graphic_settings": "Paramètres graphiques",
+  "config": "Configurations",
+  "save": "Sauvegarde"
 }

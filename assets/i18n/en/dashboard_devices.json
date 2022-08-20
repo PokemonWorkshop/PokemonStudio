@@ -1,0 +1,7 @@
+{
+  "devices": "Devices",
+  "mouse": "Mouse",
+  "use_mouse": "Use mouse in game",
+  "mouse_image": "Mouse cursor image",
+  "info_mouse_image": "The image must be in the «\u00a0graphics/windowskins\u00a0» folder."
+}

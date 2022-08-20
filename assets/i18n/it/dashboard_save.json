@@ -1,0 +1,10 @@
+{
+  "save": "Salvataggio",
+  "settings": "Impostazioni",
+  "save_filename": "Nome di base del salvataggio",
+  "save_header": "Testata del salvataggio",
+  "save_key": "Chiave del salvataggio",
+  "save_any_location": "Possibilità di salvare in qualunque posizione",
+  "save_unlimited_count": "Salvataggi illimitati",
+  "save_max_count": "Numero massimo di salvataggi"
+}
