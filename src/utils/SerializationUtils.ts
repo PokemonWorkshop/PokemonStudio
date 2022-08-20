@@ -18,6 +18,7 @@ const deserialize = (obj: PSDKEntity) => {
 
 export const serialize = (obj: PSDKEntity) => {
   if (entitiesSerializer[obj.klass]) {
+    entitiesSerializer[obj.klass].config({ indent: 2 });
     return entitiesSerializer[obj.klass].stringify(obj);
   }
   log.warn(`Unknown class ${obj.klass}.`);
@@ -53,6 +54,7 @@ export const deserializeProjectStudio = (projectStudioData: string) => {
 
 export const serializeProjectStudio = (projectStudio: ProjectStudioModel) => {
   const serializer = new TypedJSON(ProjectStudioModel);
+  serializer.config({ indent: 2 });
   return serializer.stringify(projectStudio);
 };
 
@@ -64,6 +66,7 @@ export const deserializePSDKConfig = (psdkConfig: string) => {
 
 export const serializeLanguageConfig = (languageConfig: LanguageConfigModel) => {
   const serializer = new TypedJSON(LanguageConfigModel);
+  serializer.config({ indent: 2 });
   return serializer.stringify(languageConfig);
 };
 
@@ -77,6 +80,7 @@ export const deserializeConfig = <T extends PSDKConfig>(obj: PSDKConfig) => {
 
 export const serializeConfig = (obj: PSDKConfig) => {
   if (entitiesConfigSerializer[obj.klass]) {
+    entitiesConfigSerializer[obj.klass].config({ indent: 2 });
     return entitiesConfigSerializer[obj.klass].stringify(obj as PSDKConfig);
   }
   log.warn(`Unknown class ${obj.klass}.`);
