@@ -41,8 +41,8 @@ export const ZoneSettings = ({ zone, onClick }: ZoneSettingsProps) => {
         <DataFieldsetFieldCode label={t('displayed_panel')} data={`#${padStr(zone.panelId, 2)}`} size="m" />
         <DataFieldsetField
           label={t('forced_weather')}
-          data={zone.forcedWeather === null || zone.forcedWeather === 0 ? t('none') : t(`weather${zone.forcedWeather}` as never)}
-          disabled={zone.forcedWeather === null || zone.forcedWeather === 0}
+          data={zone.forcedWeather === null ? t('weather-1') : t(`weather${zone.forcedWeather}` as never)}
+          disabled={zone.forcedWeather === null}
         />
       </DataGrid>
     </DataBlockWithTitle>

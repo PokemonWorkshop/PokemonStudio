@@ -5,8 +5,8 @@ import { getText, setText } from '@utils/ReadingProjectText';
 import { AnyT, jsonArrayMember, jsonMember, jsonObject, TypedJSON } from 'typedjson';
 import PSDKEntity from '../PSDKEntity';
 
-// 0 = None, 1 = Rain, 2 = Sun/Zenith, 3 = Sandstorm, 4 = Hail, 5 = Foggy
-export const WeatherCategories = [0, 1, 2, 3, 4, 5] as const;
+// -1 = By default, 0 = None, 1 = Rain, 2 = Sun/Zenith, 3 = Sandstorm, 4 = Hail, 5 = Foggy
+export const WeatherCategories = [-1, 0, 1, 2, 3, 4, 5] as const;
 
 type MapCoordinate = {
   x: number | null;
