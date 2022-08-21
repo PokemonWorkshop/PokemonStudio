@@ -50,7 +50,7 @@ export const SelectElement = styled(Select)<SelectElementType>`
     border: 2px solid ${({ theme }) => theme.colors.primaryBase};
 
     .react-select__single-value {
-      color: ${({ theme, error }) => (error ? theme.colors.dangerBase : theme.colors.text100)};
+      color: ${({ theme, error }) => (error ? theme.colors.dangerBase : theme.colors.text400)};
       ${({ theme }) => theme.fonts.normalMedium}
       line-height: 19px;
       padding-left: 8px;
