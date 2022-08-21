@@ -10,6 +10,7 @@ import { DarkButton, PrimaryButton, SecondaryButton } from '@components/buttons'
 import { TagWithSelection } from '@components/Tag';
 import { padStr } from '@utils/PadStr';
 import GroupModel from '@modelEntities/group/Group.model';
+import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 
 const GroupContainer = styled.div`
   display: flex;
@@ -42,7 +43,7 @@ type ZoneAddGroupEditorProps = {
 };
 
 export const ZoneAddGroupEditor = ({ zone, groups, onAddGroup, onClose }: ZoneAddGroupEditorProps) => {
-  const { t } = useTranslation(['database_zones', 'database_groups']);
+  const { t } = useTranslation(['database_zones', 'database_groups', 'database_trainers']);
   const firstDbSymbol = Object.entries(groups)
     .map(([value, groupData]) => ({ value, index: groupData.id }))
     .filter((d) => !zone.wildGroups.includes(d.value))
@@ -65,7 +66,10 @@ export const ZoneAddGroupEditor = ({ zone, groups, onAddGroup, onClose }: ZoneAd
           <Label htmlFor="groups">{t('database_groups:group')}</Label>
           <GroupContainer>
             <SelectGroup dbSymbol={group.dbSymbol} onChange={(selected) => setSelectedGroup(selected.value)} rejected={zone.wildGroups} noLabel />
-            <SecondaryButton disabled>{t('database_zones:create_new_group')}</SecondaryButton>
+            <ToolTipContainer>
+              <ToolTip bottom="100%">{t('database_trainers:available_future_release')}</ToolTip>
+              <SecondaryButton disabled>{t('database_zones:create_new_group')}</SecondaryButton>
+            </ToolTipContainer>
           </GroupContainer>
         </InputWithTopLabelContainer>
         {zone.maps.length !== 0 && (
