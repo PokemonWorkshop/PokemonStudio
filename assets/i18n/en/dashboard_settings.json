@@ -1,7 +1,9 @@
 {
   "settings": "Settings",
-  "evolution": "Evolution",
+  "general": "General",
   "max_pokemon_level": "Max Pokémon level",
   "evolution_form": "Always use base forms for evolutions",
-  "evolution_form_no_data": "Use base form if no evolution data is available"
+  "evolution_form_no_data": "Use base form if no evolution data is available",
+  "max_bag_item_count": "Maximum number of the same item",
+  "unlimited_items": "You can set this to 0 if you do not want the maximum number of the same item to be limited."
 }
