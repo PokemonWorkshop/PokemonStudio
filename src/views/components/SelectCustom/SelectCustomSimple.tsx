@@ -112,7 +112,7 @@ const DropDownContainer = styled.div`
 
   &.open,
   &.open:hover {
-    color: ${({ theme }) => theme.colors.text100};
+    color: ${({ theme }) => theme.colors.text400};
     border: 2px solid ${({ theme }) => theme.colors.primaryBase};
     background-color: ${({ theme }) => theme.colors.dark12};
     svg {
