@@ -1,18 +1,26 @@
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { InputWithLeftLabelContainer, Input, Label, Toggle } from '@components/inputs';
+import { InputWithLeftLabelContainer, Input, Label, Toggle, InputContainer } from '@components/inputs';
 import { DashboardEditor } from './DashboardEditor';
 import { useConfigSettings } from '@utils/useProjectConfig';
+import styled from 'styled-components';
+
+const UnlimitedItemsInfoContainer = styled.span`
+  ${({ theme }) => theme.fonts.normalSmall}
+  color: ${({ theme }) => theme.colors.text400};
+`;
 
 export const DashboardSettings = () => {
   const { t } = useTranslation('dashboard_settings');
   const { projectConfigValues: settings, setProjectConfigValues: setSettings } = useConfigSettings();
   const [maxLevel, setMaxLevel] = useState(settings.pokemonMaxLevel);
+  const [maxItemCount, setMaxBagItemCount] = useState(settings.maxBagItemCount);
   const currentEditedSettings = useMemo(() => settings.clone(), [settings]);
 
   const updateSettingsConfig = () => {
     currentEditedSettings.cleaningNaNValues();
     setMaxLevel(currentEditedSettings.pokemonMaxLevel);
+    setMaxBagItemCount(currentEditedSettings.maxBagItemCount);
     setSettings(currentEditedSettings);
   };
 
@@ -29,8 +37,21 @@ export const DashboardSettings = () => {
     updateSettingsConfig();
   };
 
+  const onChangeMaxBagItemCount = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const maxBagItem = parseInt(event.target.value);
+    if (maxBagItem < 0 || maxBagItem > 9999) return event.preventDefault();
+    setMaxBagItemCount(maxBagItem);
+  };
+
+  const onBlurMaxBagItemCount = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const maxBagItem = parseInt(event.target.value);
+    if (maxBagItem < 0 || maxBagItem > 9999) return event.preventDefault();
+    currentEditedSettings.maxBagItemCount = maxBagItem;
+    updateSettingsConfig();
+  };
+
   return (
-    <DashboardEditor editorTitle={t('settings')} title={t('evolution')}>
+    <DashboardEditor editorTitle={t('settings')} title={t('general')}>
       <InputWithLeftLabelContainer>
         <Label htmlFor="max-level">{t('max_pokemon_level')}</Label>
         <Input
@@ -66,6 +87,22 @@ export const DashboardSettings = () => {
           }}
         />
       </InputWithLeftLabelContainer>
+      <InputContainer size="s">
+        <InputWithLeftLabelContainer>
+          <Label htmlFor="max-bag-item-count">{t('max_bag_item_count')}</Label>
+          <Input
+            type="number"
+            name="max-bag-item-count"
+            min="0"
+            max="9999"
+            value={isNaN(maxItemCount) ? '' : maxItemCount}
+            onChange={onChangeMaxBagItemCount}
+            onBlur={onBlurMaxBagItemCount}
+            placeholder="99"
+          />
+        </InputWithLeftLabelContainer>
+        <UnlimitedItemsInfoContainer>{t('unlimited_items')}</UnlimitedItemsInfoContainer>
+      </InputContainer>
     </DashboardEditor>
   );
 };
