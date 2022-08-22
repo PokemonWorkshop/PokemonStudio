@@ -283,7 +283,7 @@ export const EvolutionConditionEditor = ({ condition, allConditions, index, onCh
     <EvolutionConditionEditorContainer>
       <TitleContainer>
         <span>{t('evolutionCondition', { number: index + 1 })}</span>
-        <DeleteIcon onClick={() => onChange(undefined, index)} />
+        {allConditions.length > 1 && <DeleteIcon onClick={() => onChange(undefined, index)} />}
       </TitleContainer>
       <ConditionFields condition={condition} allConditions={allConditions} index={index} onChange={onChange} />
       {shouldShowAddCondition && (
