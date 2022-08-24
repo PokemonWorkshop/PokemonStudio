@@ -4,7 +4,7 @@ import MoveModel, { MoveBattleEngineMethod, MoveTarget } from '@modelEntities/mo
 import { TFunction, useTranslation } from 'react-i18next';
 import { Input, InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
-import { wrongDbSymbol } from '@utils/dbSymbolCheck';
+import { wrongDbSymbol } from '@utils/dbSymbolUtils';
 import { TextInputError } from '@components/inputs/Input';
 import { SelectCustomSimple } from '@components/SelectCustom/SelectCustomSimple';
 

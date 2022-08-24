@@ -6,7 +6,7 @@ import { DarkButton, PrimaryButton } from '@components/buttons';
 import { TextInputError } from '@components/inputs/Input';
 import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
-import { checkDbSymbolExist, wrongDbSymbol } from '@utils/dbSymbolCheck';
+import { checkDbSymbolExist, generateDefaultDbSymbol, wrongDbSymbol } from '@utils/dbSymbolUtils';
 import { useProjectAbilities } from '@utils/useProjectData';
 import AbilityModel from '@modelEntities/ability/Ability.model';
 
@@ -35,6 +35,13 @@ export const AbilityNewEditor = ({ onClose }: AbilityNewEditorProps) => {
     onClose();
   };
 
+  const onChangeName = (name: string) => {
+    if (newAbility.dbSymbol === '' || newAbility.dbSymbol === generateDefaultDbSymbol(abilityText.name)) {
+      newAbility.dbSymbol = generateDefaultDbSymbol(name);
+    }
+    abilityText.name = name;
+  };
+
   const checkDisabled = () => {
     return (
       abilityText.name.length === 0 ||
@@ -55,7 +62,7 @@ export const AbilityNewEditor = ({ onClose }: AbilityNewEditorProps) => {
             type="text"
             name="name"
             value={abilityText.name}
-            onChange={(event) => refreshUI((abilityText.name = event.target.value))}
+            onChange={(event) => refreshUI(onChangeName(event.target.value))}
             placeholder={t('example_name')}
           />
         </InputWithTopLabelContainer>

@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { TextInputError } from '@components/inputs/Input';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
-import { checkDbSymbolExist, wrongDbSymbol } from '@utils/dbSymbolCheck';
+import { checkDbSymbolExist, generateDefaultDbSymbol, wrongDbSymbol } from '@utils/dbSymbolUtils';
 import { SelectType } from '@components/selects';
 
 const moveCategoryEntries = (t: TFunction<('database_moves' | 'database_types')[]>) =>
@@ -41,6 +41,13 @@ export const MoveNewEditor = ({ onClose }: MoveNewEditorProps) => {
     onClose();
   };
 
+  const onChangeName = (name: string) => {
+    if (newMove.dbSymbol === '' || newMove.dbSymbol === generateDefaultDbSymbol(moveText.name)) {
+      newMove.dbSymbol = generateDefaultDbSymbol(name);
+    }
+    moveText.name = name;
+  };
+
   const checkDisabled = () => {
     return (
       moveText.name.length === 0 || newMove.dbSymbol.length === 0 || wrongDbSymbol(newMove.dbSymbol) || checkDbSymbolExist(moves, newMove.dbSymbol)
@@ -58,7 +65,7 @@ export const MoveNewEditor = ({ onClose }: MoveNewEditorProps) => {
             type="text"
             name="name"
             value={moveText.name}
-            onChange={(event) => refreshUI((moveText.name = event.target.value))}
+            onChange={(event) => refreshUI(onChangeName(event.target.value))}
             placeholder={t('database_moves:example_name')}
           />
         </InputWithTopLabelContainer>

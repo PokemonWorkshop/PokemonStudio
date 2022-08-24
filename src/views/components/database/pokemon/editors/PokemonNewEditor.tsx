@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { TextInputError } from '@components/inputs/Input';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
-import { checkDbSymbolExist, wrongDbSymbol } from '@utils/dbSymbolCheck';
+import { checkDbSymbolExist, generateDefaultDbSymbol, wrongDbSymbol } from '@utils/dbSymbolUtils';
 import { SelectType } from '@components/selects';
 import { useProjectPokemonDex } from '@utils/useProjectDoubleData';
 
@@ -44,6 +44,13 @@ export const PokemonNewEditor = ({ onClose }: PokemonNewEditorProps) => {
     onClose();
   };
 
+  const onChangeName = (name: string) => {
+    if (newPokemon.dbSymbol === '' || newPokemon.dbSymbol === generateDefaultDbSymbol(pokemonText.name)) {
+      newPokemon.dbSymbol = generateDefaultDbSymbol(name);
+    }
+    pokemonText.name = name;
+  };
+
   const checkDisabled = () => {
     return (
       pokemonText.name.length === 0 ||
@@ -64,7 +71,7 @@ export const PokemonNewEditor = ({ onClose }: PokemonNewEditorProps) => {
             type="text"
             name="name"
             value={pokemonText.name}
-            onChange={(event) => refreshUI((pokemonText.name = event.target.value))}
+            onChange={(event) => refreshUI(onChangeName(event.target.value))}
             placeholder={t('database_pokemon:example_name')}
           />
         </InputWithTopLabelContainer>
