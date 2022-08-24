@@ -9,6 +9,7 @@ import { ReactComponent as ImmuneIcon } from '@assets/icons/ratios/immune.svg';
 
 import TypeModel from '@modelEntities/type/Type.model';
 import { assertUnreachable } from '@utils/assertUnreachable';
+import { HelperSelectedType } from '@components/database/type/TypeHelper';
 
 type RatioCategoryIconProps = {
   offensiveType: TypeModel;
@@ -16,10 +17,11 @@ type RatioCategoryIconProps = {
   allTypes: TypeModel[];
   editType: (type: TypeModel) => void;
   setHoveredDefensiveType: (value: string) => void;
+  setTypeHelperSelected: (typeHelperSelected: HelperSelectedType) => void;
   ratio?: string;
 };
 
-type RatioCategoryIconStyleProps = Omit<RatioCategoryIconProps, 'allTypes' | 'editType' | 'setHoveredDefensiveType'>;
+type RatioCategoryIconStyleProps = Omit<RatioCategoryIconProps, 'allTypes' | 'editType' | 'setHoveredDefensiveType' | 'setTypeHelperSelected'>;
 
 const RatioCategoryIconStyle = styled(CategoryIcon).attrs<RatioCategoryIconStyleProps>((props) => ({
   'data-ratio': props.ratio,
@@ -100,16 +102,15 @@ const renderSVGIcon = (ratio: string) => {
   }
 };
 
-const getRatio = (offensiveType: TypeModel, defensiveType: TypeModel, allTypes: TypeModel[]) => {
-  const { high, low, zero } = offensiveType.getEfficiencies(allTypes);
-  if (high.includes(defensiveType)) return 'high_efficience';
-  if (low.includes(defensiveType)) return 'low_efficience';
-  if (zero.includes(defensiveType)) return 'zero_efficience';
-  return 'neutral';
-};
-
-export const RatioCategoryIcon = ({ offensiveType, defensiveType, allTypes, editType, setHoveredDefensiveType }: RatioCategoryIconProps) => {
-  const ratio = useMemo(() => getRatio(offensiveType, defensiveType, allTypes), [offensiveType, defensiveType, allTypes]);
+export const RatioCategoryIcon = ({
+  offensiveType,
+  defensiveType,
+  allTypes,
+  editType,
+  setHoveredDefensiveType,
+  setTypeHelperSelected,
+}: RatioCategoryIconProps) => {
+  const ratio = useMemo(() => TypeModel.getEfficiency(offensiveType, defensiveType, allTypes), [offensiveType, defensiveType, allTypes]);
 
   const leftClick = () => {
     // left-click-cycle
@@ -135,6 +136,7 @@ export const RatioCategoryIcon = ({ offensiveType, defensiveType, allTypes, edit
       }
     }
     editType(offType);
+    setTypeHelperSelected({ offensiveType: offType, defensiveType });
   };
 
   const rightClick = () => {
@@ -161,6 +163,12 @@ export const RatioCategoryIcon = ({ offensiveType, defensiveType, allTypes, edit
       }
     }
     editType(offType);
+    setTypeHelperSelected({ offensiveType: offType, defensiveType });
+  };
+
+  const onMouseEnter = (offType: TypeModel, defType: TypeModel) => {
+    setHoveredDefensiveType(defType.dbSymbol);
+    setTypeHelperSelected({ offensiveType: offType, defensiveType: defType });
   };
 
   return (
@@ -173,7 +181,7 @@ export const RatioCategoryIcon = ({ offensiveType, defensiveType, allTypes, edit
         e.preventDefault();
         rightClick();
       }}
-      onMouseEnter={() => setHoveredDefensiveType(defensiveType.dbSymbol)}
+      onMouseEnter={() => onMouseEnter(offensiveType, defensiveType)}
     >
       {renderSVGIcon(ratio)}
     </RatioCategoryIconStyle>

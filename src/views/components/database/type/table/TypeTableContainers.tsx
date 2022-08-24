@@ -2,6 +2,12 @@ import styled from 'styled-components';
 
 import { DataBlockContainer } from '@components/database/dataBlocks';
 
+export const TypeTableMainContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+
 export const TypeTableContainer = styled(DataBlockContainer)`
   width: calc(${({ theme, size }) => theme.sizes[size].middle}%);
   max-height: calc(100vh - 300px);

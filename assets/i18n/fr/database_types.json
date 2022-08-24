@@ -57,5 +57,9 @@
   "table": "Table des types",
   "edit": "Édition",
   "defensive": "Type défensif",
-  "offensive": "Type offensif"
+  "offensive": "Type offensif",
+  "high_efficience_helper": "Le type {{offensiveType}} est super efficace contre le type {{defensiveType}}.",
+  "low_efficience_helper": "Le type {{offensiveType}} n'est pas très efficace contre le type {{defensiveType}}.",
+  "neutral_helper": "Le type {{offensiveType}} inflige des dégâts normaux contre le type {{defensiveType}}.",
+  "zero_efficience_helper": "Le type {{offensiveType}} est inefficace contre le type {{defensiveType}}."
 }
