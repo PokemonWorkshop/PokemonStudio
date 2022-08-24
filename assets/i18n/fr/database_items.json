@@ -109,5 +109,6 @@
   "icon_of_the_item": "Icône de l'objet",
   "deletion_of": "Suppression de l'objet {{item}}",
   "deletion_message": "Vous êtes sur le point de supprimer définitivement l'objet {{item}}.",
-  "item_deleted": "Objet supprimé"
+  "item_deleted": "Objet supprimé",
+  "no_parameter": "Aucun paramètre"
 }
