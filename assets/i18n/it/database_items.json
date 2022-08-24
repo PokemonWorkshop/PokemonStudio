@@ -109,5 +109,6 @@
   "icon_of_the_item": "Icona dello strumento",
   "deletion_of": "Rimozione dello strumento {{item}}",
   "deletion_message": "Stai per rimuovere per sempre lo strumento {{item}}.",
-  "item_deleted": "Strumento rimosso"
+  "item_deleted": "Strumento rimosso",
+  "no_parameter": "Nessuna impostazione"
 }

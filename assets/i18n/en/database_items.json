@@ -109,5 +109,6 @@
   "icon_of_the_item": "Icon of the item",
   "deletion_of": "Deletion of the item {{item}}",
   "deletion_message": "You are about to permanently delete the item {{item}}.",
-  "item_deleted": "Item deleted"
+  "item_deleted": "Item deleted",
+  "no_parameter": "No parameter"
 }
