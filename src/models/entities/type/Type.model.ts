@@ -27,6 +27,8 @@ type TypeFactorList = {
   zero: TypeModel[];
 };
 
+type EfficiencyType = 'high_efficience' | 'low_efficience' | 'zero_efficience' | 'neutral';
+
 const getTypesFromFactor = (allTypes: TypeModel[], damageTo: DamageTo[], factor: number) =>
   damageTo
     .filter((dmg) => dmg.factor === factor)
@@ -184,5 +186,20 @@ export default class TypeModel implements PSDKEntity {
     newType.textId = findFirstAvailableTextId(allTypes);
     newType.dbSymbol = '';
     return newType;
+  };
+
+  /**
+   * The efficiency of offensive type againt defensive type
+   * @param offensiveType The offensive type
+   * @param defensiveType The defensive type
+   * @param allTypes The project data containing the types
+   * @returns The efficiency
+   */
+  static getEfficiency = (offensiveType: TypeModel, defensiveType: TypeModel, allTypes: TypeModel[]): EfficiencyType => {
+    const { high, low, zero } = offensiveType.getEfficiencies(allTypes);
+    if (high.includes(defensiveType)) return 'high_efficience';
+    if (low.includes(defensiveType)) return 'low_efficience';
+    if (zero.includes(defensiveType)) return 'zero_efficience';
+    return 'neutral';
   };
 }

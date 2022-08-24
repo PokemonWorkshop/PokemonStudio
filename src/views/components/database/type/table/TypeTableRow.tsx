@@ -4,20 +4,14 @@ import TypeModel from '@modelEntities/type/Type.model';
 import { TypeTableRowContainer, TypeIconListContainer } from './TypeTableContainers';
 import { TypeTableCategory, RatioCategoryIcon } from '@components/categories';
 import styled from 'styled-components';
+import { HelperSelectedType } from '../TypeHelper';
 
 type TypeTableRowProps = {
   currentType: TypeModel;
   allTypes: TypeModel[];
   editType: (type: TypeModel) => void;
   setHoveredDefensiveType: (value: string) => void;
-};
-
-const getRatio = (currentType: TypeModel, type: TypeModel, allTypes: TypeModel[]) => {
-  const { high, low, zero } = currentType.getEfficiencies(allTypes);
-  if (high.includes(type)) return 'high_efficience';
-  if (low.includes(type)) return 'low_efficience';
-  if (zero.includes(type)) return 'zero_efficience';
-  return 'neutral';
+  setTypeHelperSelected: (typeHelperSelected: HelperSelectedType) => void;
 };
 
 const TypeCategoryContainer = styled.span`
@@ -27,21 +21,27 @@ const TypeCategoryContainer = styled.span`
   display: flex;
 `;
 
-export const TypeTableRow = ({ currentType, allTypes, editType, setHoveredDefensiveType }: TypeTableRowProps) => {
+export const TypeTableRow = ({ currentType, allTypes, editType, setHoveredDefensiveType, setTypeHelperSelected }: TypeTableRowProps) => {
+  const onMouseEnter = () => {
+    setHoveredDefensiveType('__undef__');
+    setTypeHelperSelected({ offensiveType: undefined, defensiveType: undefined });
+  };
+
   return (
     <TypeTableRowContainer>
-      <TypeCategoryContainer className="type-indicator" onMouseEnter={() => setHoveredDefensiveType('__undef__')}>
+      <TypeCategoryContainer className="type-indicator" onMouseEnter={onMouseEnter}>
         <TypeTableCategory type={currentType.dbSymbol}>{currentType.name()}</TypeTableCategory>
       </TypeCategoryContainer>
       <TypeIconListContainer>
         {allTypes.map((type) => (
           <RatioCategoryIcon
-            ratio={getRatio(currentType, type, allTypes)}
+            ratio={TypeModel.getEfficiency(currentType, type, allTypes)}
             offensiveType={currentType}
             defensiveType={type}
             allTypes={allTypes}
             editType={editType}
             setHoveredDefensiveType={setHoveredDefensiveType}
+            setTypeHelperSelected={setTypeHelperSelected}
             key={`${currentType.name()}-${type.name()}`}
           />
         ))}
