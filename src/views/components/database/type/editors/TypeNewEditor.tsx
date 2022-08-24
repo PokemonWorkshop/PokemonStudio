@@ -14,7 +14,7 @@ import styled from 'styled-components';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { TextInputError } from '@components/inputs/Input';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
-import { checkDbSymbolExist, wrongDbSymbol } from '@utils/dbSymbolCheck';
+import { checkDbSymbolExist, generateDefaultDbSymbol, wrongDbSymbol } from '@utils/dbSymbolUtils';
 import TypeModel from '@modelEntities/type/Type.model';
 import { TypeCategoryPreview } from '@components/categories';
 import { useHistory } from 'react-router-dom';
@@ -47,6 +47,13 @@ export const TypeNewEditor = ({ from, onClose }: TypeNewEditorProps) => {
     onClose();
   };
 
+  const onChangeName = (name: string) => {
+    if (newType.dbSymbol === '' || newType.dbSymbol === generateDefaultDbSymbol(typeText)) {
+      newType.dbSymbol = generateDefaultDbSymbol(name);
+    }
+    setTypeText(name);
+  };
+
   const checkDisabled = () => {
     return typeText.length === 0 || newType.dbSymbol.length === 0 || wrongDbSymbol(newType.dbSymbol) || checkDbSymbolExist(types, newType.dbSymbol);
   };
@@ -62,7 +69,7 @@ export const TypeNewEditor = ({ from, onClose }: TypeNewEditorProps) => {
             type="text"
             name="name"
             value={typeText}
-            onChange={(event) => refreshUI(setTypeText(event.target.value))}
+            onChange={(event) => refreshUI(onChangeName(event.target.value))}
             placeholder={t('database_types:example_name')}
           />
         </InputWithTopLabelContainer>

@@ -8,7 +8,7 @@ import DexModel from '@modelEntities/dex/Dex.model';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { useProjectDex } from '@utils/useProjectData';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
-import { checkDbSymbolExist, wrongDbSymbol } from '@utils/dbSymbolCheck';
+import { checkDbSymbolExist, generateDefaultDbSymbol, wrongDbSymbol } from '@utils/dbSymbolUtils';
 import { TextInputError } from '@components/inputs/Input';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
@@ -45,6 +45,13 @@ export const DexNewEditor = ({ onClose }: DexNewEditorProps) => {
     onClose();
   };
 
+  const onChangeName = (name: string) => {
+    if (newDex.dbSymbol === '' || newDex.dbSymbol === generateDefaultDbSymbol(dexName)) {
+      newDex.dbSymbol = generateDefaultDbSymbol(name);
+    }
+    setDexName(name);
+  };
+
   return (
     <EditorWithCollapse type="creation" title={t('database_dex:new')}>
       <InputContainer size="l">
@@ -57,7 +64,7 @@ export const DexNewEditor = ({ onClose }: DexNewEditorProps) => {
               type="text"
               name="name"
               value={dexName}
-              onChange={(event) => setDexName(event.target.value)}
+              onChange={(event) => refreshUI(onChangeName(event.target.value))}
               placeholder={t('database_dex:example_name')}
             />
           </InputWithTopLabelContainer>

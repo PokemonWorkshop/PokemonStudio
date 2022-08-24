@@ -27,7 +27,7 @@ import {
 } from '@components/database/move/editors';
 import { EditorOverlay } from '@components/editor';
 import { Deletion, DeletionOverlay } from '@components/deletion';
-import { wrongDbSymbol } from '@utils/dbSymbolCheck';
+import { wrongDbSymbol } from '@utils/dbSymbolUtils';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
 
 export const MovePage = () => {

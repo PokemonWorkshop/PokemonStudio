@@ -8,7 +8,7 @@ import { useProjectItems } from '@utils/useProjectData';
 import { mutateItemToCategory } from './mutateItemToCategory';
 import styled from 'styled-components';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
-import { checkDbSymbolExist, wrongDbSymbol } from '@utils/dbSymbolCheck';
+import { checkDbSymbolExist, generateDefaultDbSymbol, wrongDbSymbol } from '@utils/dbSymbolUtils';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { TextInputError } from '@components/inputs/Input';
 import { DropInput } from '@components/inputs/DropInput';
@@ -63,6 +63,13 @@ export const ItemNewEditor = ({ onClose }: ItemNewEditorProps) => {
     refreshUI((newItem.icon = ''));
   };
 
+  const onChangeName = (name: string) => {
+    if (newItem.dbSymbol === '' || newItem.dbSymbol === generateDefaultDbSymbol(itemText.name)) {
+      newItem.dbSymbol = generateDefaultDbSymbol(name);
+    }
+    itemText.name = name;
+  };
+
   return (
     <Editor type="creation" title={t('database_items:new')}>
       <InputContainer>
@@ -74,7 +81,7 @@ export const ItemNewEditor = ({ onClose }: ItemNewEditorProps) => {
             type="text"
             name="name"
             value={itemText.name}
-            onChange={(event) => refreshUI((itemText.name = event.target.value))}
+            onChange={(event) => refreshUI(onChangeName(event.target.value))}
             placeholder={t('database_items:example_name')}
           />
         </InputWithTopLabelContainer>
