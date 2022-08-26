@@ -104,6 +104,10 @@ const GlobalStyle = createGlobalStyle`
   .cet-container {
     top: 26px !important;
   }
+
+  .react-flow__attribution {
+    display: none;
+  }
 `;
 
 export default GlobalStyle;
