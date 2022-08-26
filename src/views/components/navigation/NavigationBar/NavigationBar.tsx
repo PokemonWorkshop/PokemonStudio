@@ -38,8 +38,8 @@ export const NavigationBarComponent = () => {
         <NavigationBarItem path="/database">
           <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="database" />
         </NavigationBarItem>
-        <NavigationBarItem path="/map" disabled>
-          <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="map" disabled />
+        <NavigationBarItem path="/map">
+          <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="map" />
         </NavigationBarItem>
         <NavigationBarItem path="/code" disabled>
           <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="code" disabled />

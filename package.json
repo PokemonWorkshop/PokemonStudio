@@ -262,6 +262,7 @@
     "react": "^17.0.1",
     "react-beautiful-dnd": "^13.1.0",
     "react-dom": "^17.0.1",
+    "react-flow-renderer": "^10.3.14",
     "react-i18next": "^11.12.0",
     "react-is": "^17.0.2",
     "react-notifications-component": "^3.1.0",

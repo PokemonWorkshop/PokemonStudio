@@ -9,6 +9,7 @@ import { NavigationBarComponent } from './views/components/navigation/Navigation
 import HomePage from './views/pages/Home.page';
 import DatabasePage from './views/pages/database/Database/Database.page';
 import PSDKUpdatePage from './views/pages/PSDKUpdate.page';
+import MapLinkPage from './views/pages/mapLink/MapLink.page';
 import DashboardRouter from '@pages/dashboard/Dashboard.Router.page';
 import { Loader } from '@components/Loader';
 import { LoaderContextProvider } from '@utils/loaderContext';
@@ -28,7 +29,7 @@ const App = () => {
               <Route strict path="/dashboard" component={DashboardRouter} />
               <Route exact strict path="/psdkupdate" component={PSDKUpdatePage} />
               <Route strict path="/database" component={DatabasePage} />
-              <Route exact strict path="/map" />
+              <Route exact strict path="/map" component={MapLinkPage} />
               <Route exact strict path="/code" />
               <Route exact strict path="/help" />
               <Route exact strict path="/settings" />
