@@ -1,4 +1,5 @@
 import { TypeCategory } from '@components/categories';
+import { CopyIdentifier } from '@components/Copy';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { getNameType } from '@utils/getNameType';
 import { padStr } from '@utils/PadStr';
@@ -35,6 +36,7 @@ export const PokemonFrame = ({ pokemonWithForm, onClick }: PokemonDataProps) => 
                 {species?.name()}
                 <span className="data-id">#{padStr(species?.id, 3)}</span>
               </h1>
+              <CopyIdentifier dataToCopy={species.dbSymbol} />
             </DataInfoContainerHeaderTitle>
             <DataInfoContainerHeaderBadges>
               <TypeCategory type={form.type1}>{getNameType(types, form.type1)}</TypeCategory>

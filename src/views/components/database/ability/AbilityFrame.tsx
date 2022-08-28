@@ -1,6 +1,7 @@
 import React from 'react';
 import { DataBlockContainer, DataGrid, DataInfoContainer, DataInfoContainerHeader, DataInfoContainerHeaderTitle } from '../dataBlocks';
 import { AbilityDataProps } from './AbilityDataPropsInterface';
+import { CopyIdentifier } from '@components/Copy';
 
 export const AbilityFrame = ({ ability, onClick }: AbilityDataProps) => {
   return (
@@ -10,6 +11,7 @@ export const AbilityFrame = ({ ability, onClick }: AbilityDataProps) => {
           <DataInfoContainerHeader>
             <DataInfoContainerHeaderTitle>
               <h1>{ability.name()}</h1>
+              <CopyIdentifier dataToCopy={ability.dbSymbol} />
             </DataInfoContainerHeaderTitle>
             <p>{ability.descr()}</p>
           </DataInfoContainerHeader>

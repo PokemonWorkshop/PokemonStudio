@@ -1,4 +1,5 @@
 import { MoveCategory, TypeCategory } from '@components/categories';
+import { CopyIdentifier } from '@components/Copy';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { getNameType } from '@utils/getNameType';
 import React from 'react';
@@ -24,6 +25,7 @@ export const MoveFrame = ({ move, onClick }: MoveDataProps) => {
           <DataInfoContainerHeader>
             <DataInfoContainerHeaderTitle>
               <h1>{move.name()}</h1>
+              <CopyIdentifier dataToCopy={move.dbSymbol} />
             </DataInfoContainerHeaderTitle>
             <DataInfoContainerHeaderBadges>
               <TypeCategory type={move.type}>{getNameType(state.projectData.types, move.type)}</TypeCategory>

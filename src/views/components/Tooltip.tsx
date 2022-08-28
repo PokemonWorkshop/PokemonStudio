@@ -74,6 +74,10 @@ export const ToolTipForResponsive = styled(ToolTip)`
   }
 `;
 
+export const ToolTipContainerForCopy = styled(ToolTipContainer)`
+  white-space: nowrap;
+`;
+
 export const ToolTipMainMenu = styled(ToolTip)`
   width: max-content;
 

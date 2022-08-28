@@ -34,6 +34,7 @@ import save from '../../assets/i18n/en/save.json';
 import pokemon_battler_list from '../../assets/i18n/en/pokemon_battler_list.json';
 import bag_entry_list from '../../assets/i18n/en/bag_entry_list.json';
 import unsaved_modal from '../../assets/i18n/en/unsaved_modal.json';
+import copy from '../../assets/i18n/en/copy.json';
 
 // react-i18next versions higher than 11.11.0
 declare module 'react-i18next' {
@@ -74,6 +75,7 @@ declare module 'react-i18next' {
       pokemon_battler_list: typeof pokemon_battler_list;
       bag_entry_list: typeof bag_entry_list;
       unsaved_modal: typeof unsaved_modal;
+      copy: typeof copy;
     };
   }
 }

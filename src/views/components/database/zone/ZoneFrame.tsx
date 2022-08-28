@@ -2,6 +2,7 @@ import React from 'react';
 import { DataBlockContainer, DataGrid, DataInfoContainer, DataInfoContainerHeaderTitle } from '../dataBlocks';
 import ZoneModel from '@modelEntities/zone/Zone.model';
 import styled from 'styled-components';
+import { padStr } from '@utils/PadStr';
 
 const DataZoneContainer = styled(DataInfoContainer)`
   gap: 8px;
@@ -18,7 +19,10 @@ export const ZoneFrame = ({ zone, onClick }: ZoneFrameProps) => {
       <DataGrid columns="minmax(min-content, 1024px)">
         <DataZoneContainer>
           <DataInfoContainerHeaderTitle>
-            <h1>{zone.name()}</h1>
+            <h1>
+              {zone.name()}
+              <span className="data-id">#{padStr(zone.id, 3)}</span>
+            </h1>
           </DataInfoContainerHeaderTitle>
           <p>{zone.descr()}</p>
         </DataZoneContainer>

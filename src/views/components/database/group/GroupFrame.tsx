@@ -4,6 +4,7 @@ import { DataBlockContainer, DataFieldsetField, DataGrid, DataInfoContainer, Dat
 import GroupModel from '@modelEntities/group/Group.model';
 import { getActivationLabel } from '@utils/GroupUtils';
 import styled from 'styled-components';
+import { padStr } from '@utils/PadStr';
 
 type GroupFrameProps = {
   group: GroupModel;
@@ -28,7 +29,10 @@ export const GroupFrame = ({ group, onClick }: GroupFrameProps) => {
       <DataGrid columns="440px minmax(min-content, 1024px)">
         <GroupInfoContainer>
           <DataInfoContainerHeaderTitle>
-            <h1>{group.name()}</h1>
+            <h1>
+              {group.name()}
+              <span className="data-id">#{padStr(group.id, 3)}</span>
+            </h1>
           </DataInfoContainerHeaderTitle>
           <GroupSubInfoContainer>
             <DataFieldsetField label={t('activation')} data={t(getActivationLabel(group) as never)} disabled={false} />
