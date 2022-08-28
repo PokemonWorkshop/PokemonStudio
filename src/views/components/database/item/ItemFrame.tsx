@@ -1,4 +1,5 @@
 import { ItemCategory } from '@components/categories';
+import { CopyIdentifier } from '@components/Copy';
 import ItemModel from '@modelEntities/item/Item.model';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import React from 'react';
@@ -29,6 +30,7 @@ export const ItemFrame = ({ item, onClick }: ItemFrameProps) => {
           <DataInfoContainerHeader>
             <DataInfoContainerHeaderTitle>
               <h1>{item.name()}</h1>
+              <CopyIdentifier dataToCopy={item.dbSymbol} />
             </DataInfoContainerHeaderTitle>
             <DataInfoContainerHeaderBadges>
               <ItemCategory category={item.category}>{t(`database_types:${item.category}`)}</ItemCategory>

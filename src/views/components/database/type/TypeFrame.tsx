@@ -10,6 +10,7 @@ import {
   DataInfoContainerHeaderTitle,
 } from '../dataBlocks';
 import { TypeFrameProps } from './TypeDataPropsInterface';
+import { CopyIdentifier } from '@components/Copy';
 
 export const TypeFrame = ({ type, onClick }: TypeFrameProps) => {
   return (
@@ -19,6 +20,7 @@ export const TypeFrame = ({ type, onClick }: TypeFrameProps) => {
           <DataInfoContainerHeader>
             <DataInfoContainerHeaderTitle>
               <h1>{type.name()}</h1>
+              <CopyIdentifier dataToCopy={type.dbSymbol} />
             </DataInfoContainerHeaderTitle>
             <DataInfoContainerHeaderBadges>
               <TypeCategory type={type.dbSymbol}>{type.name()}</TypeCategory>

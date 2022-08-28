@@ -31,6 +31,7 @@ import bag_entry_list from './bag_entry_list.json';
 import error from './error.json';
 import loader from './loader.json';
 import unsaved_modal from './unsaved_modal.json';
+import copy from './copy.json';
 
 export default {
   dashboard,
@@ -66,4 +67,5 @@ export default {
   pokemon_battler_list,
   bag_entry_list,
   unsaved_modal,
+  copy,
 };

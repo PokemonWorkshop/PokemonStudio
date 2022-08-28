@@ -3,6 +3,7 @@ import { DexCategory } from '@components/categories';
 import DexModel from '@modelEntities/dex/Dex.model';
 import { DataBlockContainer, DataGrid, DataInfoContainer, DataInfoContainerHeader, DataInfoContainerHeaderTitle } from '../dataBlocks';
 import { useTranslation } from 'react-i18next';
+import { CopyIdentifier } from '@components/Copy';
 
 type DexFrameProps = {
   dex: DexModel;
@@ -18,6 +19,7 @@ export const DexFrame = ({ dex, onClick }: DexFrameProps) => {
           <DataInfoContainerHeader>
             <DataInfoContainerHeaderTitle>
               <h1>{dex.name()}</h1>
+              <CopyIdentifier dataToCopy={dex.dbSymbol} />
             </DataInfoContainerHeaderTitle>
             <DexCategory category={dex.getTypeDex()}>{t(dex.getTypeDex())}</DexCategory>
           </DataInfoContainerHeader>
