@@ -169,12 +169,17 @@ export const SelectCustomSimple = ({ id, value, options, noTooltip, onChange }: 
     return () => window.removeEventListener('click', eventFunction);
   }, [isOpen]);
 
+  const onClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    setIsOpen(!isOpen);
+  };
+
   const getHeight = () => {
     return isOpen ? (options.length >= 5 ? 207 : 4 + options.length * 39) : 0;
   };
 
   return (
-    <DropDownContainer id={id} className={isOpen ? 'open' : notOpenClass} onClick={() => setIsOpen(!isOpen)}>
+    <DropDownContainer id={id} className={isOpen ? 'open' : notOpenClass} onClick={onClick}>
       <span className="value">{label}</span>
       <DownIcon />
       <DropDownOptions>
