@@ -33,7 +33,7 @@ import PSDKConfigsSavingChannelService from '@services/psdk.configs.saving.chann
 import { getPSDKBinariesPath, getPSDKVersion } from '@services/getPSDKVersion';
 import { getLastPSDKVersion } from '@services/getLastPSDKVersion';
 import { updatePSDK } from '@services/updatePSDK';
-import { startPSDK } from '@services/startPSDK';
+import { startPSDK, startPSDKDebug, startPSDKTags, startPSDKWorldmap } from '@services/startPSDK';
 import { registergetStudioVersion } from './backendTasks/getStudioVersion';
 import { registerChooseProjectFileToOpen } from './backendTasks/chooseProjectFileToOpen';
 import { registerGetProjectInfo } from './backendTasks/getProjectInfo';
@@ -220,6 +220,9 @@ ipcMain.handle('get-app-version', () => app.getVersion());
 ipcMain.on('get-last-psdk-version', getLastPSDKVersion);
 ipcMain.on('update-psdk', updatePSDK);
 ipcMain.on('start-psdk', (_, projectPath: string) => startPSDK(projectPath));
+ipcMain.on('start-psdk-debug', (_, projectPath: string) => startPSDKDebug(projectPath));
+ipcMain.on('start-psdk-tags', (_, projectPath: string) => startPSDKTags(projectPath));
+ipcMain.on('start-psdk-worldmap', (_, projectPath: string) => startPSDKWorldmap(projectPath));
 registergetStudioVersion(ipcMain);
 registerChooseProjectFileToOpen(ipcMain);
 registerGetProjectInfo(ipcMain);
