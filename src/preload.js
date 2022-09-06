@@ -49,6 +49,15 @@ window.api = {
   startPSDK: (projectPath) => {
     ipcRenderer.send('start-psdk', projectPath);
   },
+  startPSDKDebug: (projectPath) => {
+    ipcRenderer.send('start-psdk-debug', projectPath);
+  },
+  startPSDKTags: (projectPath) => {
+    ipcRenderer.send('start-psdk-tags', projectPath);
+  },
+  startPSDKWorldmap: (projectPath) => {
+    ipcRenderer.send('start-psdk-worldmap', projectPath);
+  },
   registerProjectCreationListener: (listener) => {
     ipcRenderer.on('project-create/status', (_, ...args) => listener(...args));
   },

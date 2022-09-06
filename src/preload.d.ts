@@ -1,6 +1,6 @@
 import type ProjectStudioModel from '@modelEntities/ProjectStudio.model';
 import type { PSDKVersion } from '@services/getPSDKVersion';
-import type { BackendTask, BackendTaskWithGenericError, BackendTaskWithGenericErrorAndNoProgress, GenericBackendProgress } from '@utils/BackendTask';
+import type { BackendTaskWithGenericError, BackendTaskWithGenericErrorAndNoProgress, GenericBackendProgress } from '@utils/BackendTask';
 import type { ProjectFileType } from './backendTasks/chooseProjectFileToOpen';
 import { ProjectConfigsFromBackEnd } from './backendTasks/readProjectConfigs';
 import { ProjectDataFromBackEnd } from './backendTasks/readProjectData';
@@ -24,6 +24,9 @@ declare global {
       ) => void;
       unregisterPSDKUpdateEvents: () => void;
       startPSDK: (projectPath: string) => void;
+      startPSDKDebug: (projectPath: string) => void;
+      startPSDKTags: (projectPath: string) => void;
+      startPSDKWorldmap: (projectPath: string) => void;
       registerProjectCreationListener: (listener: (step: number, total: number, stepText: ProjectCreationStepText) => void) => void;
       unregisterProjectCreationListener: () => void;
       platform: string;

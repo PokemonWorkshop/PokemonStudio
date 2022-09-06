@@ -16,3 +16,13 @@ export const startPSDK = (projectPath: string) => {
   const childProcess = spawn(...getSpawnArgs(projectPath), { cwd: projectPath, shell: true, detached: true, stdio: 'ignore' });
   childProcess.unref();
 };
+
+const startPSDKWithArgs = (projectPath: string, ...args: string[]) => {
+  RMXP2StudioSafetyNet(projectPath);
+  const childProcess = spawn(...getSpawnArgs(projectPath, ...args), { cwd: projectPath, shell: true, detached: true, stdio: 'ignore' });
+  childProcess.unref();
+};
+
+export const startPSDKDebug = (projectPath: string) => startPSDKWithArgs(projectPath, 'debug');
+export const startPSDKTags = (projectPath: string) => startPSDKWithArgs(projectPath, '--tags');
+export const startPSDKWorldmap = (projectPath: string) => startPSDKWithArgs(projectPath, '--worldmap');

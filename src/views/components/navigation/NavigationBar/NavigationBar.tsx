@@ -47,7 +47,7 @@ export const NavigationBarComponent = () => {
       </div>
       <div id="navigation-bar-bottom">
         <StyledNavLinkActionItem
-          onClick={() => window.api.platform === 'win32' && window.api.startPSDK(state.projectPath || '')}
+          onClick={() => window.api.platform === 'win32' && window.api.startPSDKDebug(state.projectPath || '')}
           data-disabled={(window.api.platform !== 'win32').toString()}
         >
           <NavigationBarItemContainer disabled={window.api.platform !== 'win32'}>
