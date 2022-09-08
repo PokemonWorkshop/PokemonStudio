@@ -36,7 +36,7 @@ export const DexPokemonList = ({ dex, allDex, allPokemon, onDelete, onImport, on
     <DataBlockEditor
       size="full"
       color="light"
-      title={t('dex_pokemon_list_title', { name: dex.name() })}
+      title={t('dex_pokemon_list_title')}
       onClickDelete={onDelete}
       importation={{ label: t('import_a_pokemon_list'), onClick: onImport }}
       add={{ label: t('add_a_pokemon'), onClick: onNew }}
