@@ -26,7 +26,7 @@
   "reset_national_action": "Reset",
   "reset_national_warning_message": "You are about to reset the National Pokédex.",
   "deletion_disabled": "You cannot delete the National Pokédex.",
-  "dex_pokemon_list_title": "Pokémon in the {{name}}",
+  "dex_pokemon_list_title": "Pokémon in the Pokédex",
   "import_a_pokemon_list": "Import a list of Pokémon",
   "import_the_list": "Import the list",
   "add_a_pokemon": "Add a Pokémon",

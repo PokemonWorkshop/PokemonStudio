@@ -26,7 +26,7 @@
   "reset_national_action": "Remettre à zéro",
   "reset_national_warning_message": "Vous êtes sur le point de remettre à zéro le Pokédex National.",
   "deletion_disabled": "Vous ne pouvez pas supprimer le Pokédex National.",
-  "dex_pokemon_list_title": "Pokémon présents dans le {{name}}",
+  "dex_pokemon_list_title": "Pokémon présents dans le Pokédex",
   "import_a_pokemon_list": "Importer une liste de Pokémon",
   "import_the_list": "Importer la liste",
   "add_a_pokemon": "Ajouter un Pokémon",
