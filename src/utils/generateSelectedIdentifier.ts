@@ -11,6 +11,7 @@ const firstById = <T extends { id: number; dbSymbol: string }>(data: Record<stri
 
 export const generateSelectedIdentifier = (preState: PreGlobalState): SelectedDataIdentifier => {
   const projectData = preState.projectData;
+  const validMaps = Object.values(projectData.zones).filter(zone => zone.isFlyAllowed && !zone.isWarpDisallowed).flatMap(zone => zone.maps);
   return {
     pokemon: {
       specie: firstById(projectData.pokemon),
@@ -26,6 +27,7 @@ export const generateSelectedIdentifier = (preState: PreGlobalState): SelectedDa
     group: firstById(projectData.groups),
     dex: firstById(projectData.dex),
     mapLink: Object.values(preState.rmxpMaps)
+      .filter(({ id }) => validMaps.includes(id))
       .sort((a, b) => a.id - b.id)[0]
       .id.toString(),
   };

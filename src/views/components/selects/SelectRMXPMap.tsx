@@ -4,13 +4,15 @@ import { State, useGlobalState } from '@src/GlobalStateProvider';
 import { TFunction, useTranslation } from 'react-i18next';
 import { SelectCustom, SelectCustomWithLabel } from '@components/SelectCustom';
 
-const getRMXPMapOptions = (state: State, excludeMaps: number[]): SelectOption[] =>
-  Object.entries(state.rmxpMaps)
-    .filter(([, rmxpMap]) => !excludeMaps.includes(rmxpMap.id))
+const getRMXPMapOptions = (state: State, excludeMaps: number[]): SelectOption[] => {
+  const validMaps = Object.values(state.projectData.zones).filter(zone => zone.isFlyAllowed && !zone.isWarpDisallowed).flatMap(zone => zone.maps);
+  return Object.entries(state.rmxpMaps)
+    .filter(([, { id }]) => !excludeMaps.includes(id) && validMaps.includes(id))
     .map(([, rmxpMap]) => ({
       value: rmxpMap.id.toString(),
       label: rmxpMap.name,
     }));
+}
 
 const getValue = (options: SelectOption[], id: string, t: TFunction<'database_maplinks'>): SelectOption => {
   const option = options.find(({ value }) => value === id);
