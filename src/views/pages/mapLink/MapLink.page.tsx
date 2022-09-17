@@ -408,7 +408,7 @@ const MapLinkPage = () => {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-        attributionPosition="top-right"
+        attributionPosition="bottom-right"
         nodesDraggable={false}
         nodesConnectable={false}
         fitView

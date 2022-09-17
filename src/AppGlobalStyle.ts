@@ -106,7 +106,15 @@ const GlobalStyle = createGlobalStyle`
   }
 
   .react-flow__attribution {
-    display: none;
+    &:before {
+      content: 'powered by '
+    }
+    margin-right: 52px;
+    margin-bottom: 16px;
+    background-color: transparent;
+    color: ${(props) => props.theme.colors.text600};
+    font-size: 12px;
+    font-weight: 600;
   }
 
   .react-flow__controls {
