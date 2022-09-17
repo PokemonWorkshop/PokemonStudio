@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ToolTip, ToolTipContainerForCopy } from './Tooltip';
 import { ReactComponent as CopyIcon } from '@assets/icons/global/copy.svg';
 
-const CopyStyle = styled.button`
+export const CopyStyle = styled.button`
   padding: 0px;
   background: none;
   color: inherit;

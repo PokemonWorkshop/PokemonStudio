@@ -3,6 +3,7 @@ import { DataBlockContainer, DataGrid, DataInfoContainer, DataInfoContainerHeade
 import ZoneModel from '@modelEntities/zone/Zone.model';
 import styled from 'styled-components';
 import { padStr } from '@utils/PadStr';
+import { CopyIdentifier } from '@components/Copy';
 
 const DataZoneContainer = styled(DataInfoContainer)`
   gap: 8px;
@@ -23,6 +24,7 @@ export const ZoneFrame = ({ zone, onClick }: ZoneFrameProps) => {
               {zone.name()}
               <span className="data-id">#{padStr(zone.id, 3)}</span>
             </h1>
+            <CopyIdentifier dataToCopy={zone.dbSymbol} />
           </DataInfoContainerHeaderTitle>
           <p>{zone.descr()}</p>
         </DataZoneContainer>
