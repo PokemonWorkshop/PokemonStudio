@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { ActiveContainer } from '@components/ActiveContainer';
+import { CopyStyle } from '@components/Copy';
 
 export type DataBlockCOntainerSize = 'full' | 'half' | 'fourth' | 'dashboard';
 export type DataBlockContainerColor = 'light' | 'dark';
@@ -18,10 +19,21 @@ export const DataBlockContainer = styled(ActiveContainer)<DataBlockContainerProp
   min-width: ${({ theme, size }) => theme.sizes[size].min}px;
   width: calc(${({ theme, size }) => theme.sizes[size].middle}% - 16px);
   user-select: none;
+
   ${({ theme, color }) =>
     color === 'light' &&
     `
     background-color: ${theme.colors.dark16};
     border: none;
   `};
+
+  ${CopyStyle} {
+    display: none;
+  }
+
+  :hover {
+    ${CopyStyle} {
+      display: inline-block;
+    }
+  }
 `;
