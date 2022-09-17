@@ -19,49 +19,8 @@ import {
   DexPokemonListEditEditor,
   DexPokemonListImportEditor,
 } from '@components/database/dex/editors';
-import { ProjectData } from '@src/GlobalStateProvider';
-import DexModel, { DexCreature } from '@modelEntities/dex/Dex.model';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
-import PokemonForm from '@modelEntities/pokemon/PokemonForm';
-
-const isResetAvailable = (dex: DexModel, pokemon: ProjectData['pokemon']): boolean => {
-  if (dex.dbSymbol !== 'national') return false;
-
-  const sortPokemonDbSymbol = Object.entries(pokemon)
-    .map(([dbSymbol]) => dbSymbol)
-    .sort((a, b) => a.localeCompare(b));
-  const sortDexCreatures = dex.clone().creatures.sort((a, b) => a.dbSymbol.localeCompare(b.dbSymbol));
-  if (sortPokemonDbSymbol.length !== sortDexCreatures.length) return true;
-
-  return !sortDexCreatures.some((dexCreature, index) => dexCreature.dbSymbol === sortPokemonDbSymbol[index]);
-};
-
-const searchEvolutionPokemon = (creature: DexCreature, allPokemon: ProjectData['pokemon'], currentCreatures: DexCreature[]): DexCreature[] => {
-  const pokemonForm = allPokemon[creature.dbSymbol]?.forms.find((form) => form.form === creature.form);
-  if (!pokemonForm || pokemonForm.evolutions.length === 0) return [];
-
-  const creatures = pokemonForm.evolutions
-    .filter(
-      (evolution) => evolution.dbSymbol && currentCreatures.find((currentCreature) => currentCreature.dbSymbol === evolution.dbSymbol) === undefined
-    )
-    .map((evolution) => ({ dbSymbol: evolution.dbSymbol as string, form: evolution.form }));
-  currentCreatures.push(...creatures);
-  creatures.forEach((c) => creatures.push(...searchEvolutionPokemon(c, allPokemon, currentCreatures)));
-  return creatures;
-};
-
-const searchUnderAndEvolutions = (pokemonForm: PokemonForm, creature: DexCreature, allPokemon: ProjectData['pokemon']): DexCreature[] => {
-  const babyCreature = { dbSymbol: pokemonForm.babyDbSymbol, form: pokemonForm.babyForm };
-  const evolutionCreatures = searchEvolutionPokemon(creature, allPokemon, [creature]);
-  const creatures =
-    babyCreature.dbSymbol === '__undef__' || babyCreature.dbSymbol === creature.dbSymbol
-      ? []
-      : searchEvolutionPokemon(babyCreature, allPokemon, Object.assign([], evolutionCreatures));
-  creatures.push(...evolutionCreatures);
-  if (!creatures.find((c) => c.dbSymbol === creature.dbSymbol)) creatures.push(creature);
-  creatures.unshift(babyCreature.dbSymbol === '__undef__' ? creature : babyCreature);
-  return creatures;
-};
+import { isResetAvailable, searchUnderAndEvolutions } from '@utils/dex';
 
 export const DexPage = () => {
   const { projectDataValues: allDex, selectedDataIdentifier: dexDbSymbol, setSelectedDataIdentifier, setProjectDataValues: setDex } = useProjectDex();

@@ -32,5 +32,6 @@
   "add_a_pokemon": "Ajouter un Pokémon",
   "add_the_pokemon": "Ajouter le Pokémon",
   "no_creature": "Aucun Pokémon",
-  "evolutions": "Évolutions"
+  "evolutions": "Évolutions",
+  "add_all_evolution": "Ajouter les évolutions"
 }
