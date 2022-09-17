@@ -1,0 +1,20 @@
+{
+  "maplinks": "Maps link",
+  "maplink_deleted": "Map link deleted",
+  "no_option": "No map found",
+  "maplink_new": "New map link",
+  "maps": "Maps",
+  "map": "Map",
+  "map_deleted": "Map deleted",
+  "none": "None",
+  "map_located": "Map located in the {{cardinal}}",
+  "north": "North",
+  "east": "East",
+  "south": "South",
+  "west": "West",
+  "offset": "Offset",
+  "offset_info": "The offset is expressed in the number of tiles. A positive value suggests a {{shift}}.",
+  "offset_shift_right": "shift to the right",
+  "offset_downward_shift": "downward shift",
+  "add_link": "Add the link"
+}

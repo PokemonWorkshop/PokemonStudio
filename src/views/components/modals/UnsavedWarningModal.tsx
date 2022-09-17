@@ -14,6 +14,7 @@ const OverlayContainer = styled(EditorOverlayContainer)`
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 8001;
 `;
 
 const TitleWithIconContainer = styled.div`

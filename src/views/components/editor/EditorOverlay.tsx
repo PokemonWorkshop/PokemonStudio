@@ -10,7 +10,7 @@ export const EditorOverlayContainer = styled.div`
   height: ${({ theme }) => theme.calc.height};
   background-color: rgba(10, 9, 11, 0.3);
   visibility: hidden;
-  z-index: 1;
+  z-index: 8000;
   opacity: 0;
   transition: 0.2s;
 

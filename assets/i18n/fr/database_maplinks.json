@@ -1,0 +1,20 @@
+{
+  "maplinks": "Liaison des cartes",
+  "maplink_deleted": "Liaison des cartes supprimée",
+  "no_option": "Aucune carte trouvée",
+  "maplink_new": "Nouvelle liaison de cartes",
+  "maps": "Cartes",
+  "map": "Carte",
+  "map_deleted": "Carte supprimée",
+  "none": "Aucune",
+  "map_located": "Carte {{cardinal}}",
+  "north": "au Nord",
+  "east": "à l'Est",
+  "south": "au Sud",
+  "west": "à l'Ouest",
+  "offset": "Décalage",
+  "offset_info": "Le décalage est exprimé en nombre de tuiles. Une valeur positive suggère un décalage vers {{shift}}.",
+  "offset_shift_right": "la droite",
+  "offset_downward_shift": "le bas",
+  "add_link": "Ajouter la liaison"
+}

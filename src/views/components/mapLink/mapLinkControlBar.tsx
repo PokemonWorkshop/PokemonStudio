@@ -1,21 +1,25 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { ControlBar } from '@components/ControlBar';
-import ZoneModel from '@modelEntities/zone/Zone.model';
-import { SelectZone } from '@components/selects';
+import { SelectRMXPMap } from '@components/selects';
+import { useTranslation } from 'react-i18next';
+
+const MapLinkControlBarContainer = styled(ControlBar)`
+  display: flex;
+  justify-content: center;
+`;
 
 type MapLinkControlBarProps = {
   onChange: (selected: SelectOption) => void;
-  zone: ZoneModel;
+  mapId: string;
 };
 
-export const MapLinkControlBar = ({ onChange, zone }: MapLinkControlBarProps) => {
-  const { t } = useTranslation('database_zones');
-
+export const MapLinkControlBar = ({ onChange, mapId }: MapLinkControlBarProps) => {
+  const { t } = useTranslation('database_maplinks');
   return (
-    <ControlBar>
-      <SelectZone noLabel dbSymbol={zone.dbSymbol} onChange={onChange} />
-    </ControlBar>
+    <MapLinkControlBarContainer>
+      <SelectRMXPMap mapId={mapId} onChange={onChange} label={t('map')} />
+    </MapLinkControlBarContainer>
   );
 };

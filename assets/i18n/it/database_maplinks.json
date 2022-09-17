@@ -1,0 +1,20 @@
+{
+  "maplinks": "Link alla mappe",
+  "maplink_deleted": "Link alla mappe rimosso",
+  "no_option": "Nessuna mappe trovata",
+  "maplink_new": "Nuovo link alla mappe",
+  "maps": "Mappe",
+  "map": "Mappa",
+  "map_deleted": "Mappa rimossa",
+  "none": "None",
+  "map_located": "Map located in the {{cardinal}}",
+  "north": "North",
+  "east": "East",
+  "south": "South",
+  "west": "West",
+  "offset": "Offset",
+  "offset_info": "The offset is expressed in the number of tiles. A positive value suggests a {{shift}}.",
+  "offset_shift_right": "shift to the right",
+  "offset_downward_shift": "downward shift",
+  "add_link": "Add the link"
+}

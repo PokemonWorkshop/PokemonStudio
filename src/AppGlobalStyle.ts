@@ -108,6 +108,32 @@ const GlobalStyle = createGlobalStyle`
   .react-flow__attribution {
     display: none;
   }
+
+  .react-flow__controls {
+    bottom: 16px;
+    right: 16px;
+    left: auto;
+    background: ${({ theme }) => theme.colors.dark16};
+    border-radius: 4px;
+  }
+
+  .react-flow__controls-button {
+    background: ${({ theme }) => theme.colors.dark16};
+    border-bottom: 1px solid ${({ theme }) => theme.colors.dark16};
+    border-radius: 4px;
+
+    :hover {
+      background: ${({ theme }) => theme.colors.dark18};
+
+      & svg {
+        fill: ${({ theme }) => theme.colors.text100};
+      }
+    }
+
+    & svg {
+      fill: ${({ theme }) => theme.colors.text400};
+    }
+  }
 `;
 
 export default GlobalStyle;

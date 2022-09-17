@@ -8,6 +8,7 @@ const SelectCustomWithLabelContainer = styled.div`
   flex-direction: row;
   gap: 12px;
   align-items: center;
+  z-index: 10;
 
   & span {
     ${({ theme }) => theme.fonts.normalRegular};
