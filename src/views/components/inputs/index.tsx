@@ -11,3 +11,4 @@ export { InputWithSeparatorContainer } from './InputWithSeparatorContainer';
 export { CoordinateInput } from './CoordinateInput';
 export { InputWithCoordinateLabelContainer } from './InputWithCoordinateLabelContainer';
 export { PictureInput } from './PictureInput';
+export { InputOffset } from './InputOffset';

@@ -8,6 +8,9 @@ export type MapLinkLink = {
   offset: number;
 };
 
+export const CardinalCategory = ['north', 'east', 'south', 'west'] as const;
+export type Cardinal = typeof CardinalCategory[number];
+
 /**
  * This class represents the model of a map link.
  */
@@ -68,9 +71,13 @@ export default class MapLinkModel implements PSDKEntity {
    */
   projectText?: TextsWithLanguageConfig;
 
-  name() {
-    return '';
-  }
+  /**
+   * Get the name of the map link (a maplink entity has not a name, so this method returns the dbSymbol)
+   * @returns The name of the map link
+   */
+  name = () => {
+    return this.dbSymbol;
+  };
 
   /**
    * Get the default values
@@ -107,12 +114,12 @@ export default class MapLinkModel implements PSDKEntity {
     Object.assign(newMapLink, MapLinkModel.defaultValues());
     newMapLink.id = findFirstAvailableId(allMapLinks, 0);
     newMapLink.mapId = mapId;
-    newMapLink.dbSymbol = '';
+    newMapLink.dbSymbol = `maplink_${newMapLink.id}`;
     return newMapLink;
   };
 }
 
-export const getLinksFromMapLink = (mapLink: MapLinkModel, cardinal: 'north' | 'east' | 'south' | 'west'): MapLinkLink[] => {
+export const getLinksFromMapLink = (mapLink: MapLinkModel, cardinal: Cardinal): MapLinkLink[] => {
   switch (cardinal) {
     case 'north':
       return mapLink.northMaps;
@@ -125,7 +132,7 @@ export const getLinksFromMapLink = (mapLink: MapLinkModel, cardinal: 'north' | '
   }
 };
 
-export const setLinksFromMapLink = (mapLink: MapLinkModel, links: MapLinkLink[], cardinal: 'north' | 'east' | 'south' | 'west'): void => {
+export const setLinksFromMapLink = (mapLink: MapLinkModel, links: MapLinkLink[], cardinal: Cardinal): void => {
   switch (cardinal) {
     case 'north':
       mapLink.northMaps = links.filter(Boolean);

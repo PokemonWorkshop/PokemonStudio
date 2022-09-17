@@ -10,3 +10,5 @@ export { SelectTrainer } from './SelectTrainer';
 export { SelectType } from './SelectType';
 export { SelectZone } from './SelectZone';
 export { SelectDex } from './SelectDex';
+export { SelectMapLink } from './SelectMapLink';
+export { SelectRMXPMap } from './SelectRMXPMap';

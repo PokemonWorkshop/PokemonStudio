@@ -145,6 +145,7 @@ export type SelectedDataIdentifier = {
   ability: string;
   group: string;
   dex: string;
+  mapLink: string;
 };
 
 export interface State {
@@ -179,6 +180,7 @@ const initialState = {
     ability: 'overgrow',
     group: 'group_0',
     dex: 'national',
+    mapLink: '1', // id of the first map
   },
   savingData: new SavingMap(),
   savingConfig: new SavingConfigMap(),

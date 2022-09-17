@@ -1,4 +1,5 @@
-import { ProjectData, SelectedDataIdentifier } from '@src/GlobalStateProvider';
+import { SelectedDataIdentifier } from '@src/GlobalStateProvider';
+import { PreGlobalState } from './useProjectLoadV2';
 
 const firstByName = <T extends { name: () => string; dbSymbol: string }>(data: Record<string, T>): string => {
   return Object.values(data).sort((a, b) => a.name().localeCompare(b.name()))[0].dbSymbol;
@@ -8,7 +9,8 @@ const firstById = <T extends { id: number; dbSymbol: string }>(data: Record<stri
   return Object.values(data).sort((a, b) => a.id - b.id)[0].dbSymbol;
 };
 
-export const generateSelectedIdentifier = (projectData: ProjectData): SelectedDataIdentifier => {
+export const generateSelectedIdentifier = (preState: PreGlobalState): SelectedDataIdentifier => {
+  const projectData = preState.projectData;
   return {
     pokemon: {
       specie: firstById(projectData.pokemon),
@@ -23,5 +25,8 @@ export const generateSelectedIdentifier = (projectData: ProjectData): SelectedDa
     ability: firstByName(projectData.abilities),
     group: firstById(projectData.groups),
     dex: firstById(projectData.dex),
+    mapLink: Object.values(preState.rmxpMaps)
+      .sort((a, b) => a.id - b.id)[0]
+      .id.toString(),
   };
 };

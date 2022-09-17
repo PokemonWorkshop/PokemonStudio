@@ -109,3 +109,5 @@ export const useProjectGroups = () => useProjectData('groups', 'group');
 export type UseProjectGroupsReturnType = ReturnType<typeof useProjectGroups>;
 export const useProjectDex = () => useProjectData('dex', 'dex');
 export type UseProjectDexReturnType = ReturnType<typeof useProjectDex>;
+export const useProjectMapLinks = () => useProjectData('mapLinks', 'mapLink');
+export type UseProjectMapLinksReturnType = ReturnType<typeof useProjectMapLinks>;

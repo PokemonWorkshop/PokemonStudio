@@ -5,12 +5,12 @@ import ProjectStudioModel from '@modelEntities/ProjectStudio.model';
 import type { ProjectDataFromBackEnd } from '@src/backendTasks/readProjectData';
 import { ProjectData, ProjectText, PSDKConfigs, State, useGlobalState } from '@src/GlobalStateProvider';
 import { TypedJSON } from 'typedjson';
-import { deserializeConfig, deserializeDataArray } from './SerializationUtils';
+import { deserializeConfig, deserializeDataArray, deserializeDataArrayMaplink } from './SerializationUtils';
 import { generateSelectedIdentifier } from './generateSelectedIdentifier';
 import { SavingConfigMap, SavingMap } from './SavingUtils';
 import { addProjectToList, updateProjectStudio } from './projectList';
 
-type PreGlobalState = Omit<
+export type PreGlobalState = Omit<
   State,
   'selectedDataIdentifier' | 'savingData' | 'savingConfig' | 'savingProjectStudio' | 'currentPSDKVersion' | 'lastPSDKVersion' | 'projectPath'
 > & { projectPath: string };
@@ -248,7 +248,7 @@ export const useProjectLoadV2 = () => {
               .getLastPSDKVersion()
               .then((lastPSDKVersion) => {
                 loaderRef.current.setProgress(12, 12, tl('loading_project_identifier'));
-                const selectedDataIdentifier = generateSelectedIdentifier(state.preState.projectData);
+                const selectedDataIdentifier = generateSelectedIdentifier(state.preState);
                 setGlobalState({
                   ...state.preState,
                   currentPSDKVersion,
