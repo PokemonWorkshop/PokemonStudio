@@ -28,9 +28,6 @@ export const MapLinkCard = ({ mapLinkLink, index, cardinal, mapData, onDeleteLin
   const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (event) => {
     if (event.key === 'Enter') {
       const target = event.target as HTMLInputElement;
-      const value = cleanNaNValue(Number(target.value));
-      setOffset(value);
-      onEditOffset(index, cardinal, value);
       target.blur();
     }
   };
