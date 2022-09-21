@@ -30,11 +30,25 @@ type DexPokemonListTableProps = {
 };
 
 export const DexPokemonListTable = ({ dex, onEdit, onAddEvolution }: DexPokemonListTableProps) => {
-  const { setProjectDataValues: setDex } = useProjectDex();
-  const { projectDataValues: pokemon } = useProjectPokemon();
+  const { selectedDataIdentifier: selectedDex, setProjectDataValues: setDex } = useProjectDex();
+  const { projectDataValues: allPokemon } = useProjectPokemon();
   const currentEditedDex = useMemo(() => dex.clone(), [dex]);
   const { t } = useTranslation(['database_dex', 'database_pokemon', 'database_types']);
   const [dragOn, setDragOn] = useState(false);
+  const [scrollToRow, setScrollToRow] = useState<number | undefined>(undefined);
+
+  useMemo(() => {
+    setScrollToRow(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDex]);
+
+  const onEditId = (index: number, id: number) => {
+    if (index === id - dex.startId) return;
+
+    currentEditedDex.changeId(index, id);
+    setDex({ [dex.dbSymbol]: currentEditedDex });
+    setScrollToRow(id - dex.startId);
+  };
 
   return dex.creatures.length === 0 ? (
     <TableEmpty>{t('database_dex:no_creature')}</TableEmpty>
@@ -72,16 +86,24 @@ export const DexPokemonListTable = ({ dex, onEdit, onAddEvolution }: DexPokemonL
                     <RenderPokemon
                       ref={provided.innerRef}
                       style={{ height: 40 }}
-                      pokemon={{ data: pokemon[creature.dbSymbol], form: creature.form, id: index + dex.startId }}
+                      pokemon={{
+                        data: allPokemon[creature.dbSymbol],
+                        form: creature.form,
+                        id: index + dex.startId,
+                        undef: creature.dbSymbol === '__undef__',
+                      }}
                       provided={provided}
                       isDragging={snapshot.isDragging}
                       dragOn={dragOn}
+                      index={index}
+                      dex={dex}
                       onClickEdit={() => onEdit(index)}
                       onClickDelete={() => {
                         currentEditedDex.creatures.splice(index, 1);
                         setDex({ [dex.dbSymbol]: currentEditedDex });
                       }}
                       onClickAddEvolution={() => onAddEvolution(index)}
+                      onEditId={onEditId}
                     />
                   );
                 }}
@@ -101,6 +123,10 @@ export const DexPokemonListTable = ({ dex, onEdit, onAddEvolution }: DexPokemonL
                         if (whatHasMyLifeComeTo instanceof HTMLElement) {
                           droppableProvided.innerRef(whatHasMyLifeComeTo);
                         }
+                        if (scrollToRow !== undefined) {
+                          ref.scrollToRow(scrollToRow);
+                          setScrollToRow(undefined);
+                        }
                       }
                     }}
                     rowRenderer={({ key, index, style }: RowRendererType) => {
@@ -114,16 +140,24 @@ export const DexPokemonListTable = ({ dex, onEdit, onAddEvolution }: DexPokemonL
                               key={key}
                               style={style}
                               ref={provided.innerRef}
-                              pokemon={{ data: pokemon[creature.dbSymbol], form: creature.form, id: index + dex.startId }}
+                              pokemon={{
+                                data: allPokemon[creature.dbSymbol],
+                                form: creature.form,
+                                id: index + dex.startId,
+                                undef: creature.dbSymbol === '__undef__',
+                              }}
                               provided={provided}
                               isDragging={snapshot.isDragging}
                               dragOn={dragOn}
+                              index={index}
+                              dex={dex}
                               onClickEdit={() => onEdit(index)}
                               onClickDelete={() => {
                                 currentEditedDex.creatures.splice(index, 1);
                                 setDex({ [dex.dbSymbol]: currentEditedDex });
                               }}
                               onClickAddEvolution={() => onAddEvolution(index)}
+                              onEditId={onEditId}
                             />
                           )}
                         </Draggable>

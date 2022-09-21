@@ -2,7 +2,7 @@ export * from './GenericButtons';
 export { LoadProjectButton } from './LoadProjectButton';
 export { DeleteButtonWithIcon, DeleteButtonWithIconResponsive } from './DeleteButtonWithIcon';
 export { SecondaryButtonWithPlusIcon, SecondaryButtonWithPlusIconResponsive } from './SecondaryButtonWithPlusIcon';
-export { DarkButtonWithPlusIcon, DarkButtonWithPlusIconResponsive } from './DarkButtonWithPlusIcon';
+export { DarkButtonWithPlusIcon, DarkButtonWithPlusIconResponsive, DarkButtonImportResponsive } from './DarkButtonWithPlusIcon';
 export { DeleteButtonOnlyIcon } from './DeleteButtonOnlyIcon';
 export { SaveProjectButton } from './SaveProjectButton';
 export { EditButtonOnlyIcon } from './EditButtonOnlyIcon';

@@ -137,5 +137,6 @@ export const SelectElement = styled(Select)<SelectElementType>`
     text-overflow: ellipsis;
     padding: 8px 16px;
     margin: 4px;
+    cursor: default;
   }
 `;

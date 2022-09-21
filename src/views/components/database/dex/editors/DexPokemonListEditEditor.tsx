@@ -36,15 +36,17 @@ export const DexPokemonListEditEditor = ({ dex, creature }: DexPokemonListEditEd
               rejected={pokemonUnavailable}
             />
           </InputWithTopLabelContainer>
-          <InputWithTopLabelContainer>
-            <Label htmlFor="form">{t('database_pokemon:form')}</Label>
-            <SelectPokemonForm
-              dbSymbol={creature.dbSymbol}
-              form={creature.form}
-              onChange={(selected) => refreshUI((creature.form = Number(selected.value)))}
-              noLabel
-            />
-          </InputWithTopLabelContainer>
+          {creature.dbSymbol !== '__undef__' && (
+            <InputWithTopLabelContainer>
+              <Label htmlFor="form">{t('database_pokemon:form')}</Label>
+              <SelectPokemonForm
+                dbSymbol={creature.dbSymbol}
+                form={creature.form}
+                onChange={(selected) => refreshUI((creature.form = Number(selected.value)))}
+                noLabel
+              />
+            </InputWithTopLabelContainer>
+          )}
         </InputContainer>
       </InputContainer>
     </Editor>

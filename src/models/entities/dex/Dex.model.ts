@@ -140,34 +140,14 @@ export default class DexModel implements PSDKEntity {
   };
 
   /**
-   * Get the id of the creature
-   * @param dbSymbol The db_symbol of the creature
-   * @param form The form of the creature
-   * @returns The id of the creature
-   */
-  getId = (dbSymbol: string, form: number) => {
-    const index = this.creatures.findIndex((dexCreature) => dexCreature.dbSymbol === dbSymbol && dexCreature.form === form);
-    if (index === -1) return 0;
-
-    return index + this.startId;
-  };
-
-  /**
    * Change the id of the creature
-   * @param dbSymbol The db_symbol of the creature
-   * @param form The form of the creature
+   * @param currentIndex The current index of the creature
    * @param newId The new id of the creature
    */
-  changeId = (dbSymbol: string, form: number, newId: number) => {
-    const index = this.creatures.findIndex((dexCreature) => dexCreature.dbSymbol === dbSymbol && dexCreature.form === form);
-    if (index !== -1) this.creatures.splice(index, 1);
-    if (newId === 0) return;
-
-    if (newId > this.creatures.length) {
-      this.creatures = this.creatures.concat(Array.from({ length: newId - this.creatures.length }).map(() => ({ dbSymbol: '__undef__', form: 0 })));
-    }
-    this.creatures.splice(newId - this.startId, 0, { dbSymbol, form });
-    while (this.creatures.length > 0 && this.creatures[this.creatures.length - 1].dbSymbol === '__undef__') this.creatures.pop();
+  changeId = (currentIndex: number, newId: number) => {
+    const creature = this.creatures[currentIndex];
+    this.creatures.splice(currentIndex, 1);
+    this.creatures.splice(newId - this.startId, 0, creature);
   };
 
   /**
@@ -177,16 +157,6 @@ export default class DexModel implements PSDKEntity {
    */
   addCreature = (dbSymbol: string, form: number) => {
     this.creatures.push({ dbSymbol, form });
-  };
-
-  /**
-   * Delete a creature of the dex
-   * @param dbSymbol The dbSymbol of the creature
-   * @param form The form of the creature
-   */
-  deleteCreature = (dbSymbol: string, form: number) => {
-    const index = this.creatures.findIndex((dexCreature) => dexCreature.dbSymbol === dbSymbol && dexCreature.form === form);
-    this.creatures.splice(index, 1);
   };
 
   /**
