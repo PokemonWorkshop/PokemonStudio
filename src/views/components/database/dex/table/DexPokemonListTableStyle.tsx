@@ -28,7 +28,7 @@ export const DataPokemonGrid = styled(DataGrid).attrs<DataCreatureGridProps>((pr
 }))<DataCreatureGridProps>`
   ${({ theme }) => theme.fonts.normalRegular};
   color: ${({ theme }) => theme.colors.text400};
-  grid-template-columns: 18px 33px 32px 172px 158px auto;
+  grid-template-columns: 18px 58px 32px 172px 158px auto;
   align-items: center;
 
   &[data-drag-off] {
@@ -40,7 +40,7 @@ export const DataPokemonGrid = styled(DataGrid).attrs<DataCreatureGridProps>((pr
   }
 
   @media ${({ theme }) => theme.breakpoints.dataBox422} {
-    grid-template-columns: 18px 33px 32px 102px auto;
+    grid-template-columns: 18px 58px 32px 102px auto;
 
     span:nth-child(5) {
       display: none;

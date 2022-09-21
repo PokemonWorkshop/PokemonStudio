@@ -33,5 +33,6 @@
   "add_the_pokemon": "Ajouter le Pokémon",
   "no_creature": "Aucun Pokémon",
   "evolutions": "Évolutions",
-  "add_all_evolution": "Ajouter les évolutions"
+  "add_all_evolution": "Ajouter les évolutions",
+  "free_slot": "Emplacement libre"
 }

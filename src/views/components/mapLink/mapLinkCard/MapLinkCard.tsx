@@ -55,8 +55,9 @@ export const MapLinkCard = ({ mapLinkLink, index, cardinal, mapData, onDeleteLin
           setOffset(newValue);
         }}
         onBlur={() => {
-          setOffset(cleanNaNValue(offset));
-          onEditOffset(index, cardinal, offset);
+          const value = cleanNaNValue(offset, mapLinkLink.offset);
+          setOffset(value);
+          onEditOffset(index, cardinal, value);
         }}
         onKeyDown={handleKeyDown}
         cardinal={cardinal}

@@ -4,6 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { MenuListProps } from 'react-select';
 import { SelectCustomProps, SelectOption } from './SelectCustomPropsInterface';
 
+const getHeight = (length: number) => {
+  if (length === 0) return '59px';
+  else if (length >= 5) return '207px';
+
+  return `${12 + length * 39}px`;
+};
+
 type RowRenderType = {
   key: string;
   index: number;
@@ -43,7 +50,7 @@ export const SelectCustom = ({ options, noOptionsText, defaultValue, onChange, v
       defaultValue={defaultValue || options[0]}
       components={{ MenuList }}
       value={value}
-      height={options.length >= 5 ? '207px' : `${12 + options.length * 39}px`}
+      height={getHeight(options.length)}
       error={error || false}
     />
   );
