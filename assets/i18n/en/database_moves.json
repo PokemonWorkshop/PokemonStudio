@@ -146,5 +146,7 @@
   "deletion_of": "Deletion of {{move}}",
   "deletion_message": "You are about to permanently delete {{move}}.",
   "move_deleted": "Move deleted",
-  "no_characteristic": "No characteristic"
+  "no_characteristic": "No characteristic",
+  "common_event": "Common event",
+  "always": "Always"
 }

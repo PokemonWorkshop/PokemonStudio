@@ -14,7 +14,7 @@ const textCriticalRate = [
   'database_moves:guaranteed',
 ];
 
-const moveCrititalRateEntries = (t: TFunction<'database_moves'[]>) =>
+const moveCrititalRateEntries = (t: TFunction<('database_moves' | 'database_items')[]>) =>
   MoveCriticalRate.map((critialRate) => ({ value: critialRate.toString(), label: t(textCriticalRate[critialRate] as never) }));
 
 type MoveDataEditorProps = {
@@ -22,7 +22,7 @@ type MoveDataEditorProps = {
 };
 
 export const MoveDataEditor = ({ move }: MoveDataEditorProps) => {
-  const { t } = useTranslation(['database_moves']);
+  const { t } = useTranslation(['database_moves', 'database_items']);
   const criticalRateOptions = useMemo(() => moveCrititalRateEntries(t), [t]);
   const refreshUI = useRefreshUI();
 
@@ -116,6 +116,22 @@ export const MoveDataEditor = ({ move }: MoveDataEditorProps) => {
               refreshUI((move.priority = newValue));
             }}
             onBlur={() => refreshUI((move.priority = cleanNaNValue(move.priority)))}
+          />
+        </InputWithLeftLabelContainer>
+        <InputWithLeftLabelContainer>
+          <Label htmlFor="map-use">{t('database_moves:common_event')}</Label>
+          <Input
+            type="number"
+            name="map-use"
+            min="0"
+            max="999"
+            value={isNaN(move.mapUse) ? '' : move.mapUse}
+            onChange={(event) => {
+              const newValue = parseInt(event.target.value);
+              if (newValue < 0 || newValue > 999) return event.preventDefault();
+              refreshUI((move.mapUse = newValue));
+            }}
+            onBlur={() => refreshUI((move.mapUse = cleanNaNValue(move.mapUse)))}
           />
         </InputWithLeftLabelContainer>
       </InputContainer>
