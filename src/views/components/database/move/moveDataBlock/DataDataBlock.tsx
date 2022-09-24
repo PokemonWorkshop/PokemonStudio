@@ -12,7 +12,7 @@ const textCriticalRate = [
 ];
 
 export const DataDataBlock = ({ move, onClick }: MoveDataProps) => {
-  const { t } = useTranslation(['database_moves']);
+  const { t } = useTranslation(['database_moves', 'database_items']);
 
   const getTextCriticalRate = () => {
     if (move.movecriticalRate > 3) return t(`${textCriticalRate[4]}` as never);
@@ -26,13 +26,17 @@ export const DataDataBlock = ({ move, onClick }: MoveDataProps) => {
 
   return (
     <DataBlockWithTitle size="half" title={t('database_moves:data')} onClick={onClick}>
-      <DataGrid columns="140px 1fr" rows="1fr 1fr 1fr">
+      <DataGrid columns="1fr 1fr 1fr" rows="1fr 1fr 1fr">
         <DataFieldsetField label={t('database_moves:power')} data={move.power} />
         <DataFieldsetField label={t('database_moves:accuracy')} data={move.accuracy} />
         <DataFieldsetField label={t('database_moves:pp')} data={move.pp} />
         <DataFieldsetField label={t('database_moves:critical_rate')} data={getTextCriticalRate()} />
-        {move.effectChance > 0 && <DataFieldsetField label={t('database_moves:effect_chance')} data={`${move.effectChance} %`} />}
+        <DataFieldsetField
+          label={t('database_moves:effect_chance')}
+          data={move.effectChance === 0 ? t('database_moves:always') : `${move.effectChance} %`}
+        />
         <DataFieldsetField label={t('database_moves:priority')} data={getPriority()} />
+        <DataFieldsetField label={t('database_moves:common_event')} data={move.mapUse || t('database_moves:none')} disabled={move.mapUse === 0} />
       </DataGrid>
     </DataBlockWithTitle>
   );

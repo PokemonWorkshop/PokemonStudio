@@ -146,5 +146,7 @@
   "deletion_of": "Rimozione di {{move}}",
   "deletion_message": "Stai per rimuovere per sempre la mossa {{move}}.",
   "move_deleted": "Mossa rimossa",
-  "no_characteristic": "Nessuna caratteristica"
+  "no_characteristic": "Nessuna caratteristica",
+  "common_event": "Evento comune",
+  "always": "Sempre"
 }

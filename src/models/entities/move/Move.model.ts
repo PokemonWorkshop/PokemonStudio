@@ -545,6 +545,7 @@ export default class MoveModel implements PSDKEntity {
     this.pp = cleanNaNValue(this.pp);
     this.priority = cleanNaNValue(this.priority);
     this.effectChance = cleanNaNValue(this.effectChance);
+    this.mapUse = cleanNaNValue(this.mapUse);
     this.moveStatus.forEach((status) => (status.luckRate = cleanNaNValue(status.luckRate)));
     this.battleStageMod.forEach((bsm) => (bsm.modificator = cleanNaNValue(bsm.modificator)));
   };

@@ -146,5 +146,7 @@
   "deletion_of": "Suppression de {{move}}",
   "deletion_message": "Vous êtes sur le point de supprimer définitivement {{move}}.",
   "move_deleted": "Attaque supprimée",
-  "no_characteristic": "Aucune caractéristique"
+  "no_characteristic": "Aucune caractéristique",
+  "common_event": "Événement commun",
+  "always": "Toujours"
 }
