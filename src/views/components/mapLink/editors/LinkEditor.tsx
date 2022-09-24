@@ -63,12 +63,12 @@ export const LinkEditor = ({ mapLink, cardinal, index }: NewLinkEditorProps) => 
             <Input
               type="number"
               name="offset"
-              min="-99999"
-              max="99999"
+              min="-999"
+              max="999"
               value={isNaN(link.offset) ? '' : link.offset}
               onChange={(event) => {
                 const newValue = parseInt(event.target.value);
-                if (newValue < -99999 || newValue > 99999) return event.preventDefault();
+                if (newValue < -999 || newValue > 999) return event.preventDefault();
                 refreshUI((link.offset = newValue));
               }}
               onBlur={() => refreshUI((link.offset = cleanNaNValue(link.offset)))}
