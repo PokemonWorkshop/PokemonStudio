@@ -19,11 +19,12 @@ type MapLinkCardProps = {
 export const MapLinkCard = ({ mapLinkLink, index, cardinal, mapData, onDeleteLink, onEditOffset, onEditLink }: MapLinkCardProps) => {
   const mapName = mapData.get(mapLinkLink.mapId);
   const [offset, setOffset] = useState<number>(mapLinkLink.offset);
+  const [lockEdit, setLockEdit] = useState<boolean>(false);
   const { t } = useTranslation('database_maplinks');
 
   useEffect(() => {
     setOffset(mapLinkLink.offset);
-  }, [mapLinkLink.offset]);
+  }, [mapLinkLink]);
 
   const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (event) => {
     if (event.key === 'Enter') {
@@ -38,7 +39,7 @@ export const MapLinkCard = ({ mapLinkLink, index, cardinal, mapData, onDeleteLin
   };
 
   return (
-    <MapLinkCardWithClearButtonContainer data-type="link" onClick={() => onEditLink(index, cardinal)}>
+    <MapLinkCardWithClearButtonContainer data-type="link" onClick={() => !lockEdit && onEditLink(index, cardinal)}>
       <MapLinkTitleContainer data-type="link">
         {mapName ? <span className="map-name">{mapName}</span> : <span className="map-name-error">{t('map_deleted')}</span>}
         <span className="map-id">#{mapLinkLink.mapId}</span>
@@ -46,20 +47,22 @@ export const MapLinkCard = ({ mapLinkLink, index, cardinal, mapData, onDeleteLin
       <InputOffset
         type="number"
         name="offset"
-        min="-99999"
-        max="99999"
+        min="-999"
+        max="999"
         value={isNaN(offset) ? '' : offset}
         onChange={(event) => {
           const newValue = parseInt(event.target.value);
-          if (newValue < -99999 || newValue > 99999) return event.preventDefault();
+          if (newValue < -999 || newValue > 999) return event.preventDefault();
           setOffset(newValue);
         }}
         onBlur={() => {
           const value = cleanNaNValue(offset, mapLinkLink.offset);
+          setLockEdit(false);
           setOffset(value);
           onEditOffset(index, cardinal, value);
         }}
         onKeyDown={handleKeyDown}
+        onFocus={() => setLockEdit(true)}
         cardinal={cardinal}
       />
       <button className="clear-button">

@@ -34,7 +34,7 @@ const InputOffsetContainer = styled.div`
 
   ${Input} {
     height: 26px;
-    width: 60px;
+    width: 64px;
     padding: 5px 8px 5px 28px;
     ${({ theme }) => theme.fonts.normalSmall};
 
@@ -55,7 +55,7 @@ type InputOffsetProps = {
 } & InputHTMLAttributes<HTMLInputElement>;
 
 export const InputOffset = ({ cardinal, ...props }: InputOffsetProps) => (
-  <InputOffsetContainer data-type={cardinal} onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => event.stopPropagation()}>
+  <InputOffsetContainer data-type={cardinal} onClick={(event) => event.stopPropagation()}>
     <OffsetIcon className="icon" />
     <Input {...props} />
   </InputOffsetContainer>
