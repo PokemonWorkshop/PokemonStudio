@@ -258,6 +258,7 @@ export const useProjectLoadV2 = () => {
                   savingConfig: new SavingConfigMap(),
                   savingProjectStudio: false,
                   savingLanguage: [],
+                  savingImage: {},
                 });
                 addProjectToList({
                   projectStudio: state.preState.projectStudio,

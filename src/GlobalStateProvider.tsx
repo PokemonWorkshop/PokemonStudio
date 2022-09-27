@@ -163,6 +163,7 @@ export interface State {
   rmxpMaps: RMXPMap[];
   tmpHackHasTextToSave?: boolean;
   savingLanguage: string[];
+  savingImage: { [path: string]: string };
 }
 
 const initialState = {
@@ -187,6 +188,7 @@ const initialState = {
   rmxpMaps: [] as RMXPMap[],
   savingProjectStudio: false,
   savingLanguage: [] as string[],
+  savingImage: {},
 };
 
 export type TextsWithLanguageConfig = {

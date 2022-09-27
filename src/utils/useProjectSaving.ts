@@ -20,7 +20,12 @@ export const useProjectSaving = () => {
 
   const isProjectTextSave = projectTextSave.some((b) => b) || !!state.tmpHackHasTextToSave;
 
-  const isDataToSave = state.savingData.map.size > 0 || state.savingConfig.map.size > 0 || state.savingProjectStudio || isProjectTextSave;
+  const isDataToSave =
+    state.savingData.map.size > 0 ||
+    state.savingConfig.map.size > 0 ||
+    state.savingProjectStudio ||
+    isProjectTextSave ||
+    Object.keys(state.savingImage).length > 0;
 
   const resetSaving = () =>
     setState({
@@ -30,6 +35,7 @@ export const useProjectSaving = () => {
       savingProjectStudio: false,
       tmpHackHasTextToSave: false,
       savingLanguage: [],
+      savingImage: {},
     });
 
   const saveProject = async () => {
@@ -59,6 +65,8 @@ export const useProjectSaving = () => {
     if (state.savingData.map.size > 0) await ipc.send<unknown>('project-saving', getSavingData());
     if (state.savingConfig.map.size > 0) await ipc.send<unknown>('psdk-configs-saving', getSavingConfig());
     if (state.savingProjectStudio) await updateProjectStudio(ipc, state.projectPath, state.projectStudio);
+    if (Object.keys(state.savingImage).length > 0)
+      await ipc.send<unknown>('move-image', { path: state.projectPath, savingImage: { ...state.savingImage } });
     updateProjectEditDate(state.projectPath || '');
     updateProjectStudioLocalStorage(state.projectPath || '', state.projectStudio);
     resetSaving();

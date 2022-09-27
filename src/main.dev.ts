@@ -43,6 +43,7 @@ import { registerReadProjectConfigs } from './backendTasks/readProjectConfigs';
 import { registerReadProjectData } from './backendTasks/readProjectData';
 import { registerReadProjectTexts } from './backendTasks/readProjectTexts';
 import { registerMigrateData } from './backendTasks/migrateData';
+import MoveImageChannelService from '@services/move.image.channel.service';
 
 export default class AppUpdater {
   constructor() {
@@ -211,6 +212,7 @@ const ipcChannels = [
   new FileExistsChannelService(),
   new PSDKConfigsLoadingChannelService(),
   new PSDKConfigsSavingChannelService(),
+  new MoveImageChannelService(),
 ];
 
 ipcChannels.forEach((channel) => channel.registerChannel(ipcMain));

@@ -3,6 +3,7 @@ import IpcService from '@services/IPC/ipc.service';
 import { getFilePath } from '@utils/IPCUtils';
 import React, { DragEventHandler, useMemo, useState } from 'react';
 import styled from 'styled-components';
+import { ReloadableImage } from '@components/ReloadableImage';
 
 type IconInputContainerProps = {
   borderless: boolean;
@@ -82,7 +83,7 @@ export const IconInput = ({ iconPath, name, extensions, borderless, onIconChoose
   return (
     <IconInputContainer onDrop={onDrop} onDragOver={onDragOver} borderless={borderless || false}>
       <div className="icon">
-        <img src={iconPath} draggable="false" />
+        <ReloadableImage src={iconPath} draggable="false" />
       </div>
       <div className="buttons">
         <EditButtonOnlyIcon disabled={isDialogOpen} onClick={isDialogOpen ? undefined : onClick} />
