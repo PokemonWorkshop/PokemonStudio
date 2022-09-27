@@ -41,7 +41,9 @@ const getTypesFromFactorInOtherTypes = (allTypes: TypeModel[], typeDbSymbol: str
 /**
  * This class represents a type.
  */
-@jsonObject
+@jsonObject({
+  onDeserialized: 'onDeserialized',
+})
 export default class TypeModel implements PSDKEntity {
   static klass = 'Type';
 
@@ -173,6 +175,13 @@ export default class TypeModel implements PSDKEntity {
   getColor(): string {
     return this.color === undefined ? this.dbSymbol : this.color;
   }
+
+  /**
+   * Call when the object is deserialized
+   */
+  onDeserialized = (): void => {
+    this.damageTo = this.damageTo.filter((damage) => damage.factor !== null);
+  };
 
   /**
    * Create a new type with default values
