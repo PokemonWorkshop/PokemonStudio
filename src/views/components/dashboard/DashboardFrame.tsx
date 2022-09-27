@@ -14,6 +14,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { Code } from '@components/Code';
+import { useImageSaving } from '@utils/useImageSaving';
+import { ReloadableImage } from '@components/ReloadableImage';
 
 const ProjectVersionContainer = styled.div`
   color: ${({ theme }) => theme.colors.text400};
@@ -25,13 +27,19 @@ export const DashboardFrame = () => {
   const { projectStudioValues: projectStudio } = useProjectStudio();
   const { projectConfigValues: infos } = useConfigInfos();
   const { t } = useTranslation('dashboard');
+  const { getImage } = useImageSaving();
+
   return (
     <DataBlockContainer size="full" data-disabled={true}>
       <DataGrid columns="160px minmax(min-content, 1024px)" gap="24px">
         <DataSpriteContainer type="sprite">
-          <img
+          <ReloadableImage
             alt="project icon"
-            src={state.projectPath ? path.join(state.projectPath, projectStudio.iconPath) : 'https://www.pokepedia.fr/images/8/87/Pok%C3%A9_Ball.png'}
+            src={
+              state.projectPath
+                ? getImage('project_icon.png') ?? path.join(state.projectPath, projectStudio.iconPath)
+                : 'https://www.pokepedia.fr/images/8/87/Pok%C3%A9_Ball.png'
+            }
           />
         </DataSpriteContainer>
         <DataInfoContainer>

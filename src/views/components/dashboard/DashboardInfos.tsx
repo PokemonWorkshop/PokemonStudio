@@ -9,6 +9,7 @@ import { DashboardEditor } from './DashboardEditor';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { useProjectStudio } from '@utils/useProjectStudio';
 import { useConfigInfos } from '@utils/useProjectConfig';
+import { useImageSaving } from '@utils/useImageSaving';
 
 const InputVersion = styled(Input)`
   text-align: left;
@@ -22,6 +23,7 @@ export const DashboardInfos = () => {
   const currentEditedInfos = useMemo(() => infos.clone(), [infos]);
   const currentEditedProjectStudio = useMemo(() => projectStudio.clone(), [projectStudio]);
   const [gameTitleVersion, setGameTitleVersion] = useState({ gameTitle: infos.gameTitle, gameVersion: infos.gameVersion });
+  const { addImage, removeImage, getImage } = useImageSaving();
 
   const onChangeGameTitle = (gameTitle: string) => {
     setGameTitleVersion({ ...gameTitleVersion, gameTitle: gameTitle });
@@ -48,11 +50,14 @@ export const DashboardInfos = () => {
   };
 
   const onIconChoosen = (iconPath: string) => {
-    currentEditedProjectStudio.iconPath = iconPath.substring((state.projectPath || '').length);
+    addImage('project_icon.png', iconPath);
+    //currentEditedProjectStudio.iconPath = iconPath.substring((state.projectPath || '').length);
+    currentEditedProjectStudio.iconPath = 'project_icon.png';
     setProjectStudio(currentEditedProjectStudio);
   };
 
   const onIconClear = () => {
+    removeImage('project_icon.png');
     currentEditedProjectStudio.iconPath = '';
     setProjectStudio(currentEditedProjectStudio);
   };
@@ -91,7 +96,7 @@ export const DashboardInfos = () => {
           <IconInput
             name={t('dashboard_infos:project_icon')}
             extensions={['png']}
-            iconPath={path.join(state.projectPath || '', projectStudio.iconPath)}
+            iconPath={getImage('project_icon.png') ?? path.join(state.projectPath || '', projectStudio.iconPath)}
             onIconChoosen={onIconChoosen}
             onIconClear={onIconClear}
           />
