@@ -7,18 +7,27 @@ export type MigrationTask = (event: IpcMainEvent, projectPath: string) => Promis
 const MIGRATIONS: Record<string, MigrationTask[]> = {
   '1.0.0': [migrateMapLinks], // Don't forget to extend those array with the new tasks that gets added by the time!
   '1.0.1': [migrateMapLinks],
-  '1.0.2': [migrateMapLinks], // Don't forget to add the official version coming up
+  '1.0.2': [migrateMapLinks],
+  '1.1.0': [migrateMapLinks], // Don't forget to add the official version coming up
+};
+
+const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
+  '1.0.0': ['Migrate MapLinks'], // Don't forget to extend those array with the new tasks that gets added by the time!
+  '1.0.1': ['Migrate MapLinks'],
+  '1.0.2': ['Migrate MapLinks'],
+  '1.1.0': ['Migrate MapLinks'], // Don't forget to add the official version coming up
 };
 
 const migrateData = async (event: IpcMainEvent, payload: { projectPath: string; projectVersion: string }) => {
   log.info('migrate-data', payload.projectVersion);
   try {
     const dataToMigrate = MIGRATIONS[payload.projectVersion];
-    if (dataToMigrate) {
+    const stepTexts = MIGRATION_STEP_TEXTS[payload.projectVersion];
+    if (dataToMigrate && stepTexts) {
       log.info('migrate-data', `Found ${dataToMigrate.length} migrations`);
       await dataToMigrate.reduce(async (prev, curr, index) => {
         await prev;
-        event.sender.send('migrate-data/progress', { step: index + 1, total: dataToMigrate.length, stepText: curr.name });
+        event.sender.send('migrate-data/progress', { step: index + 1, total: dataToMigrate.length, stepText: stepTexts[index] });
         await curr(event, payload.projectPath);
       }, Promise.resolve());
     } else {
