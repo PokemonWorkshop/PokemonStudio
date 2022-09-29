@@ -19,12 +19,12 @@ export const DashboardDevices = () => {
   const currentEditedDevices = useMemo(() => devices.clone(), [devices]);
 
   const onSkinChoosen = (skinPath: string) => {
-    currentEditedDevices.mouseSkin = skinPath.replaceAll('\\', '/').split('/').pop()?.split('.').shift();
+    currentEditedDevices.mouseSkin = skinPath.replaceAll('\\', '/').split('/').pop()?.split('.').shift() || null;
     setDevices(currentEditedDevices);
   };
 
   const onSkinClear = () => {
-    currentEditedDevices.mouseSkin = '';
+    currentEditedDevices.mouseSkin = null;
     setDevices(currentEditedDevices);
   };
 
@@ -45,7 +45,7 @@ export const DashboardDevices = () => {
         <InputContainer size="xs">
           <InputWithTopLabelContainer>
             <Label htmlFor={t('mouse_image')}>{t('mouse_image')}</Label>
-            {currentEditedDevices.mouseSkin === undefined || currentEditedDevices.mouseSkin.length === 0 ? (
+            {currentEditedDevices.mouseSkin === null || currentEditedDevices.mouseSkin.length === 0 ? (
               <DropInput name={t('mouse_image')} extensions={['png']} onFileChoosen={onSkinChoosen} />
             ) : (
               <IconInput

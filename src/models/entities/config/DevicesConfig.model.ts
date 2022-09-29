@@ -25,7 +25,7 @@ export default class DevicesConfigModel implements PSDKConfig {
    * The mouse skin to use
    */
   @jsonMember(String, { preserveNull: true })
-  mouseSkin?: string;
+  mouseSkin!: string | null;
 
   /**
    * Clone the object
