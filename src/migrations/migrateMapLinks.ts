@@ -1,7 +1,9 @@
 import { getSpawnArgs, RMXP2StudioSafetyNet } from '@services/PSDKIPC/psdk.exec.channel.service';
 import { spawn } from 'child_process';
 import { IpcMainEvent } from 'electron';
+import fs from 'fs';
 import log from 'electron-log';
+import path from 'path';
 
 const getChildProcess = (projectPath: string) => {
   try {
@@ -12,7 +14,39 @@ const getChildProcess = (projectPath: string) => {
   }
 };
 
+const migrateMapLinksNonWindows = (projectPath: string) => {
+  return new Promise<void>((resolve, reject) => {
+    try {
+      fs.writeFileSync(
+        path.join(projectPath, 'Data', 'Studio', 'rmxp_maps.json'),
+        `[{"id": 14,"name": "PSDK .25.0"}]`,
+      );
+      fs.writeFileSync(
+        path.join(projectPath, 'Data', 'Studio', 'maplinks', 'maplink_0.json'),
+        `{
+          "klass": "MapLink",
+          "id": 0,
+          "dbSymbol": "maplink_0",
+          "mapId": 14,
+          "northMaps": [
+          ],
+          "eastMaps": [
+          ],
+          "southMaps": [
+          ],
+          "westMaps": [
+          ]
+        }`,
+      );
+    } catch (error) {
+      reject(error instanceof Error ? error.message : JSON.stringify(error));
+    }
+    resolve();
+  });
+};
+
 export const migrateMapLinks = async (_: IpcMainEvent, projectPath: string) => {
+  if (process.platform !== 'win32') return migrateMapLinksNonWindows(projectPath);
   const childProcess = getChildProcess(projectPath);
   const stdData = { out: '', err: '' };
   return new Promise<void>((resolve, reject) => {
