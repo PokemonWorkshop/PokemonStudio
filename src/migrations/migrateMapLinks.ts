@@ -17,10 +17,7 @@ const getChildProcess = (projectPath: string) => {
 const migrateMapLinksNonWindows = (projectPath: string) => {
   return new Promise<void>((resolve, reject) => {
     try {
-      fs.writeFileSync(
-        path.join(projectPath, 'Data', 'Studio', 'rmxp_maps.json'),
-        `[{"id": 14,"name": "PSDK .25.0"}]`,
-      );
+      fs.writeFileSync(path.join(projectPath, 'Data', 'Studio', 'rmxp_maps.json'), `[{"id": 14,"name": "PSDK .25.0"}]`);
       fs.writeFileSync(
         path.join(projectPath, 'Data', 'Studio', 'maplinks', 'maplink_0.json'),
         `{
@@ -36,7 +33,7 @@ const migrateMapLinksNonWindows = (projectPath: string) => {
           ],
           "westMaps": [
           ]
-        }`,
+        }`
       );
     } catch (error) {
       reject(error instanceof Error ? error.message : JSON.stringify(error));
@@ -45,13 +42,19 @@ const migrateMapLinksNonWindows = (projectPath: string) => {
   });
 };
 
+const deletePSDKDatFile = (projectPath: string) => {
+  const psdkDatFilePath = path.join(projectPath, 'Data', 'Studio', 'psdk.dat');
+  if (fs.existsSync(psdkDatFilePath)) fs.unlinkSync(psdkDatFilePath);
+};
+
 export const migrateMapLinks = async (_: IpcMainEvent, projectPath: string) => {
+  deletePSDKDatFile(projectPath);
   if (process.platform !== 'win32') return migrateMapLinksNonWindows(projectPath);
   const childProcess = getChildProcess(projectPath);
   const stdData = { out: '', err: '' };
   return new Promise<void>((resolve, reject) => {
     let rejectReason: string | undefined = undefined;
-    let didTheJob: boolean = false;
+    let didTheJob = false;
     childProcess.stdin.write('{"action":"importMapInfosToStudio"}\n{"action":"exit"}\n');
 
     childProcess.stderr.on('data', (data) => {
