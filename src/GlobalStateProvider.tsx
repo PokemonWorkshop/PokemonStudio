@@ -181,7 +181,7 @@ const initialState = {
     ability: 'overgrow',
     group: 'group_0',
     dex: 'national',
-    mapLink: '1', // id of the first map
+    mapLink: '__undef__',
   },
   savingData: new SavingMap(),
   savingConfig: new SavingConfigMap(),

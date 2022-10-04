@@ -16,5 +16,6 @@
   "offset_info": "Lo spostamento è espresso in numero di caselle. Un valore positivo suggerisce uno {{shift}}.",
   "offset_shift_right": "spostamento verso destra",
   "offset_downward_shift": "spostamento verso il basso",
-  "add_link": "Aggiungi collegamento"
+  "add_link": "Aggiungi collegamento",
+  "no_map": "La mappa non esiste o è una mappa interna."
 }

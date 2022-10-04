@@ -4,13 +4,15 @@ import { ReactFlowProvider } from 'react-flow-renderer';
 import { useProjectMapLinks } from '@utils/useProjectData';
 import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
-import { MapLinkControlBar, ReactFlowMapLink } from '@components/mapLink';
+import { MapLinkControlBar, MapLinkNoMap, ReactFlowMapLink } from '@components/mapLink';
 import { LinkEditor, NewLinkEditor } from '@components/mapLink/editors';
 
 import MapLinkModel, { Cardinal, getLinksFromMapLink, setLinksFromMapLink } from '@modelEntities/maplinks/MapLink.model';
 import { EditorOverlay } from '@components/editor';
 import { RMXPMap } from '@modelEntities/maplinks/RMXPMap';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
+import { State } from '@src/GlobalStateProvider';
+import { useTranslation } from 'react-i18next';
 
 const createMapData = (rmxpMaps: RMXPMap[]): Map<number, string> => {
   const mapData = new Map();
@@ -18,6 +20,15 @@ const createMapData = (rmxpMaps: RMXPMap[]): Map<number, string> => {
     mapData.set(rmxpMap.id, rmxpMap.name);
   });
   return mapData;
+};
+
+const checkValidMaplink = (mapId: string, state: State) => {
+  console.log(mapId);
+  const validMaps = Object.values(state.projectData.zones)
+    .filter((zone) => zone.isFlyAllowed && !zone.isWarpDisallowed)
+    .flatMap((zone) => zone.maps);
+  const rmxpMapsFiltered = Object.values(state.rmxpMaps).filter(({ id }) => validMaps.includes(id));
+  return rmxpMapsFiltered.find((rmxpMap) => rmxpMap.id.toString() === mapId) ? true : false;
 };
 
 const MapLinkPage = () => {
@@ -38,6 +49,8 @@ const MapLinkPage = () => {
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const mapData = useMemo(() => createMapData(state.rmxpMaps), [state.rmxpMaps]);
   const currentEditedMaplink = useMemo(() => mapLink.clone(), [mapLink]);
+  const isValidMaplink = useMemo(() => checkValidMaplink(mapId, state), [mapId, state]);
+  const { t } = useTranslation('database_maplinks');
 
   const onChange = (selected: SelectOption) => {
     const id = Number(selected.value);
@@ -114,16 +127,20 @@ const MapLinkPage = () => {
   return (
     <DatabasePageStyle>
       <MapLinkControlBar onChange={onChange} mapId={mapLink.mapId.toString()} />
-      <ReactFlowProvider>
-        <ReactFlowMapLink
-          mapLink={mapLink}
-          mapData={mapData}
-          onClickCreateNewLink={onClickCreateNewLink}
-          onDeleteLink={onDeleteLink}
-          onEditLink={onEditLink}
-          onEditOffset={onEditOffset}
-        />
-      </ReactFlowProvider>
+      {isValidMaplink ? (
+        <ReactFlowProvider>
+          <ReactFlowMapLink
+            mapLink={mapLink}
+            mapData={mapData}
+            onClickCreateNewLink={onClickCreateNewLink}
+            onDeleteLink={onDeleteLink}
+            onEditLink={onEditLink}
+            onEditOffset={onEditOffset}
+          />
+        </ReactFlowProvider>
+      ) : (
+        <MapLinkNoMap>{t('no_map')}</MapLinkNoMap>
+      )}
       <EditorOverlay currentEditor={currentEditor} editors={editors} onClose={onCloseEditor} />
     </DatabasePageStyle>
   );
