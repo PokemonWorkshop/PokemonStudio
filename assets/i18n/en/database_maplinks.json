@@ -16,5 +16,6 @@
   "offset_info": "The offset is expressed in the number of tiles. A positive value suggests a {{shift}}.",
   "offset_shift_right": "shift to the right",
   "offset_downward_shift": "downward shift",
-  "add_link": "Add the link"
+  "add_link": "Add the link",
+  "no_map": "The map does not exist or is an indoor map."
 }

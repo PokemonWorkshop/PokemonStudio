@@ -16,5 +16,6 @@
   "offset_info": "Le décalage est exprimé en nombre de tuiles. Une valeur positive suggère un décalage vers {{shift}}.",
   "offset_shift_right": "la droite",
   "offset_downward_shift": "le bas",
-  "add_link": "Ajouter la liaison"
+  "add_link": "Ajouter la liaison",
+  "no_map": "La carte n'existe pas ou est une carte intérieure."
 }

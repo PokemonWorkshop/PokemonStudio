@@ -42,6 +42,7 @@ export const AbilityPage = () => {
   );
 
   const onCloseEditor = () => {
+    if (currentEditor === 'new') return setCurrentEditor(undefined);
     if (currentEditor === 'frame' && ability.name() === '') return;
     setAbilities({ [ability.dbSymbol]: currentEditedAbility });
     setCurrentEditor(undefined);
