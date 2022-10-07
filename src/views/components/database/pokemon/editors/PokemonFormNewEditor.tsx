@@ -38,7 +38,7 @@ const formCategoryEntries = (t: TFunction<('database_pokemon' | 'database_moves'
 
 export const PokemonFormNewEditor = ({ currentPokemon, onClose }: PokemonFormNewEditorProps) => {
   const { t } = useTranslation(['database_pokemon', 'database_moves']);
-  const { setProjectDataValues: setPokemon } = useProjectPokemon();
+  const { projectDataValues: allPokemon, setProjectDataValues: setPokemon } = useProjectPokemon();
   const formCategoryOptions = useMemo(() => formCategoryEntries(t), [t]);
   const [newFormId, setNewFormId] = useState(findFirstFormNotUsed(currentPokemon, 0, 29));
   const [formCategory, setFormCategory] = useState<FormCategory>('classic');
@@ -50,6 +50,7 @@ export const PokemonFormNewEditor = ({ currentPokemon, onClose }: PokemonFormNew
     form.form = newFormId;
     form.type1 = types.type1;
     form.type2 = types.type2;
+    if (newFormId <= 29 && allPokemon[form.babyDbSymbol]?.forms.find((f) => f.form === newFormId)) form.babyForm = newFormId;
     currentPokemon.forms.push(form);
     currentPokemon.forms.sort((a, b) => a.form - b.form);
     const formIndex = currentPokemon.forms.findIndex((f) => f.form === newFormId);

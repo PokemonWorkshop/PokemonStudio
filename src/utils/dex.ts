@@ -47,6 +47,9 @@ export const searchUnderAndEvolutions = (pokemonForm: PokemonForm, creature: Dex
     dexCreatures.push(creature);
     return dexCreatures;
   }
+  // fix form
+  const creatureToFix = dexCreatures.find((dexCreature) => dexCreature.dbSymbol === creature.dbSymbol);
+  if (creatureToFix) creatureToFix.form = creature.form;
 
   return dexCreatures;
 };
