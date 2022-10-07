@@ -73,7 +73,7 @@ export const DexPokemonListTable = ({ dex, onEdit, onAddEvolution }: DexPokemonL
           setDex({ [dex.dbSymbol]: currentEditedDex });
         }}
       >
-        <DataPokemonVirtualizedListContainer height={dex.creatures.length < 10 ? 40 * dex.creatures.length : 400}>
+        <DataPokemonVirtualizedListContainer height={dex.creatures.length <= 10 ? 40 * dex.creatures.length : 420}>
           <AutoSizer>
             {({ width }) => (
               <Droppable
@@ -111,7 +111,7 @@ export const DexPokemonListTable = ({ dex, onEdit, onAddEvolution }: DexPokemonL
                 {(droppableProvided: DroppableProvided) => (
                   <PokemonList
                     width={width}
-                    height={dex.creatures.length < 10 ? 40 * dex.creatures.length : 400}
+                    height={dex.creatures.length <= 10 ? 40 * dex.creatures.length : 420}
                     rowCount={dex.creatures.length}
                     rowHeight={40}
                     ref={(ref: List | null) => {

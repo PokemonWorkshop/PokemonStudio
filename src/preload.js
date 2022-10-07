@@ -247,4 +247,22 @@ window.api = {
     ipcRenderer.removeAllListeners(`migrate-data/failure`);
     ipcRenderer.removeAllListeners(`migrate-data/progress`);
   },
+  fileExists: (taskPayload, onSuccess, onFailure) => {
+    // Register success event
+    ipcRenderer.once(`file-exists-v2/success`, (_, payload) => {
+      ipcRenderer.removeAllListeners(`file-exists-v2/failure`);
+      onSuccess(payload);
+    });
+    // Register failure event
+    ipcRenderer.once(`file-exists-v2/failure`, (_, error) => {
+      ipcRenderer.removeAllListeners(`file-exists-v2/success`);
+      onFailure(error);
+    });
+    // Call service
+    ipcRenderer.send('file-exists-v2', taskPayload);
+  },
+  cleanupFileExists: () => {
+    ipcRenderer.removeAllListeners(`file-exists-v2/success`);
+    ipcRenderer.removeAllListeners(`file-exists-v2/failure`);
+  },
 };

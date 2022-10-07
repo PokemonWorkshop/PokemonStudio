@@ -48,6 +48,8 @@ declare global {
       cleanupReadProjectTexts: () => void;
       migrateData: BackendTaskWithGenericError<{ projectPath: string; projectVersion: string }, ProjectText, GenericBackendProgress>;
       cleanupMigrateData: () => void;
+      fileExists: BackendTaskWithGenericErrorAndNoProgress<{ filePath: string }, { result: boolean }>;
+      cleanupFileExists: () => void;
     };
   }
 }

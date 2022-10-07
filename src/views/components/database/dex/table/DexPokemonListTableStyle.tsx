@@ -55,7 +55,7 @@ type DataPokemonVirtualizedListContainerProps = {
 export const DataPokemonVirtualizedListContainer = styled.div<DataPokemonVirtualizedListContainerProps>`
   width: calc(100% + 4px);
   height: ${({ height }) => height}px;
-  margin: 0 -4px 0 -8px;
+  margin: -4px -4px -20px -8px;
 `;
 
 export const PokemonList = styled(List)`
