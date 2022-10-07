@@ -29,5 +29,7 @@
   "importing_project_converting": "Converti i dati PSDK in dati di Studio",
   "importing_project_reading_title": "Lettura del titolo del progetto",
   "importing_project_reading_version": "Lettura della versione del progetto",
-  "importing_project_writing_meta": "Salvataggio i metadati del progetto"
+  "importing_project_writing_meta": "Salvataggio i metadati del progetto",
+  "importing_project_checking": "Audit del progetto",
+  "importing_not_import_studio_project": "Non è possibile importare un progetto di Pokémon Studio."
 }

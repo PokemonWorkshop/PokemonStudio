@@ -3,11 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { useLoaderRef } from './loaderContext';
 import { useProjectImportFromPSDKv2 } from '@utils/useProjectImportFromPSDK';
 import ProjectStudioModel from '@modelEntities/ProjectStudio.model';
+import path from 'path';
 
 type ProjectImportFailureCallback = (error: { errorMessage: string }) => void;
 type ProjectImportSuccessCallback = (payload: { projectDirName: string }) => void;
 type ProjectImportStateObjectWithDirName = {
-  state: 'convertingProject' | 'readingTitle';
+  state: 'convertingProject' | 'readingTitle' | 'checkingProject';
   projectDirName: string;
 };
 type ProjectImportStateObjectWithDirNameAndTitle = {
@@ -29,6 +30,7 @@ type ProjectImportStateObject =
 
 const cleanup = (window: Window & typeof globalThis) => {
   window.api.cleanupChooseProjectFileToOpen();
+  window.api.cleanupFileExists();
   window.api.cleanupGetStudioVersion();
   window.api.cleanupGetProjectInfo();
   window.api.cleanupWriteProjectMetadata();
@@ -57,14 +59,29 @@ export const useProjectImportV2 = () => {
         loaderRef.current.open('importing_project', 0, 0, tl('importing_project_choose_project'));
         return window.api.chooseProjectFileToOpen(
           { fileType: 'rxproj' },
-          ({ dirName }) => setState({ state: 'convertingProject', projectDirName: dirName }),
+          ({ dirName }) => setState({ state: 'checkingProject', projectDirName: dirName }),
           () => {
             setState({ state: 'done' });
             loaderRef.current.close();
           }
         );
+      case 'checkingProject':
+        loaderRef.current.setProgress(1, 5, tl('importing_project_checking'));
+        return window.api.fileExists(
+          { filePath: path.join(state.projectDirName, 'project.studio') },
+          ({ result }) => {
+            if (result) {
+              setState({ state: 'done' });
+              fail(callbacks, tl('importing_not_import_studio_project'));
+            } else setState({ ...state, state: 'convertingProject' });
+          },
+          ({ errorMessage }) => {
+            setState({ state: 'done' });
+            fail(callbacks, errorMessage);
+          }
+        );
       case 'convertingProject':
-        loaderRef.current.setProgress(1, 4, tl('importing_project_converting'));
+        loaderRef.current.setProgress(2, 5, tl('importing_project_converting'));
         return projectImportFromPSDKv2(
           { projectDirName: state.projectDirName },
           () => setState({ ...state, state: 'readingTitle' }),
@@ -74,7 +91,7 @@ export const useProjectImportV2 = () => {
           }
         );
       case 'readingTitle':
-        loaderRef.current.setProgress(2, 4, tl('importing_project_reading_title'));
+        loaderRef.current.setProgress(3, 5, tl('importing_project_reading_title'));
         return window.api.getProjectInfo(
           { path: state.projectDirName },
           ({ gameTitle }) => setState({ ...state, state: 'readingVersion', projectTitle: gameTitle }),
@@ -84,7 +101,7 @@ export const useProjectImportV2 = () => {
           }
         );
       case 'readingVersion':
-        loaderRef.current.setProgress(3, 4, tl('importing_project_reading_version'));
+        loaderRef.current.setProgress(4, 5, tl('importing_project_reading_version'));
         return window.api.getStudioVersion(
           {},
           (projectVersion) => setState({ ...state, state: 'writingMeta', projectVersion }),
@@ -94,7 +111,7 @@ export const useProjectImportV2 = () => {
           }
         );
       case 'writingMeta':
-        loaderRef.current.setProgress(4, 4, tl('importing_project_writing_meta'));
+        loaderRef.current.setProgress(5, 5, tl('importing_project_writing_meta'));
         const { clone: _, ...metaData } = ProjectStudioModel.createProjectStudio(
           state.projectTitle,
           state.projectVersion.studioVersion,

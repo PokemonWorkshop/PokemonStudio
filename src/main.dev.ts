@@ -43,6 +43,7 @@ import { registerReadProjectConfigs } from './backendTasks/readProjectConfigs';
 import { registerReadProjectData } from './backendTasks/readProjectData';
 import { registerReadProjectTexts } from './backendTasks/readProjectTexts';
 import { registerMigrateData } from './backendTasks/migrateData';
+import { registerFileExists } from './backendTasks/fileExists';
 import MoveImageChannelService from '@services/move.image.channel.service';
 
 export default class AppUpdater {
@@ -234,3 +235,4 @@ registerReadProjectConfigs(ipcMain);
 registerReadProjectData(ipcMain);
 registerReadProjectTexts(ipcMain);
 registerMigrateData(ipcMain);
+registerFileExists(ipcMain);
