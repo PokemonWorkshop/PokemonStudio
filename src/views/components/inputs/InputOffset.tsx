@@ -12,6 +12,7 @@ const InputOffsetContainer = styled.div`
     top: 7px;
     left: 8px;
     color: ${({ theme }) => theme.colors.text600};
+    cursor: default;
   }
 
   &[data-type='east'] {

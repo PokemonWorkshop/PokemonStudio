@@ -9,3 +9,4 @@ export { EditButtonOnlyIcon } from './EditButtonOnlyIcon';
 export { ClearButtonOnlyIcon } from './ClearButtonOnlyIcon';
 export { ImportProjectButton } from './ImportProjectButton';
 export { CreateProjectButton } from './CreateProjectButton';
+export { PlayButton } from './PlayButton';

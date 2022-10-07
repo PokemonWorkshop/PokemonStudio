@@ -9,5 +9,9 @@
   "deployment": "Deployment",
   "parameters": "Parameters",
   "test": "Test the project",
-  "save": "Save changes"
+  "save": "Save changes",
+  "play_release_mode": "Play the game",
+  "play_debug_mode": "Debug mode",
+  "play_tags_mode": "System Tags Editor",
+  "play_worldmap_mode": "World Maps Editor"
 }

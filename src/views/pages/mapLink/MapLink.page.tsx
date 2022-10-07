@@ -23,7 +23,6 @@ const createMapData = (rmxpMaps: RMXPMap[]): Map<number, string> => {
 };
 
 const checkValidMaplink = (mapId: string, state: State) => {
-  console.log(mapId);
   const validMaps = Object.values(state.projectData.zones)
     .filter((zone) => zone.isFlyAllowed && !zone.isWarpDisallowed)
     .flatMap((zone) => zone.maps);
