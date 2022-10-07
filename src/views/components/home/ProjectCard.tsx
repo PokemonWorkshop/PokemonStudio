@@ -42,6 +42,8 @@ const ProjectCardContainer = styled(ActiveContainer)`
   }
 
   & :hover {
+    cursor: pointer;
+
     & button.clear-button {
       position: absolute;
       display: inline-block;
@@ -53,7 +55,6 @@ const ProjectCardContainer = styled(ActiveContainer)`
       color: inherit;
       border: none;
       font: inherit;
-      cursor: pointer;
       outline: inherit;
     }
   }

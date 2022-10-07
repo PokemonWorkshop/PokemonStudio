@@ -6,9 +6,7 @@ import { BaseIcon } from '../../icons/BaseIcon';
 import { NavigationBarContainer } from './NavigationBarContainer';
 import { useGlobalState } from '../../../../GlobalStateProvider';
 import { SaveProjectButton } from '@components/buttons/SaveProjectButton';
-import { NavigationBarItemContainer } from '../NavigationBarItem/NavigationBarItemContainer';
-import { ReactComponent as PlayIcon } from '@assets/icons/global/play.svg';
-import { StyledNavLinkActionItem } from '../NavigationBarItem/StyledNavLink';
+import { PlayButton } from '@components/buttons';
 
 export const NavigationBarComponent = () => {
   const theme = useContext(ThemeContext);
@@ -46,14 +44,8 @@ export const NavigationBarComponent = () => {
         </NavigationBarItem>
       </div>
       <div id="navigation-bar-bottom">
-        <StyledNavLinkActionItem
-          onClick={() => window.api.platform === 'win32' && window.api.startPSDKDebug(state.projectPath || '')}
-          data-disabled={(window.api.platform !== 'win32').toString()}
-        >
-          <NavigationBarItemContainer disabled={window.api.platform !== 'win32'}>
-            <PlayIcon />
-          </NavigationBarItemContainer>
-        </StyledNavLinkActionItem>
+        <PlayButton />
+
         {/* <NavigationBarItem path="/help">
           <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="help" />
         </NavigationBarItem>

@@ -3,20 +3,20 @@ import styled from 'styled-components';
 
 export const StyledNavLink = styled(NavLink)`
   &.active > div {
-    background-color: rgba(101, 98, 248, 0.12);
+    background-color: ${({ theme }) => theme.colors.primarySoft};
 
     svg {
-      color: #6562f8;
+      color: ${({ theme }) => theme.colors.primaryBase};
     }
   }
 `;
 
 export const StyledNavLinkActionItem = styled.a`
   &[data-disabled='false']:active > div {
-    background-color: rgba(101, 98, 248, 0.12);
+    background-color: ${({ theme }) => theme.colors.primarySoft};
 
     svg {
-      color: #6562f8;
+      color: ${({ theme }) => theme.colors.primaryBase};
     }
   }
 

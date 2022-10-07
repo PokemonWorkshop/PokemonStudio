@@ -7,7 +7,8 @@ export const MapLinkCardContainer = styled.div`
   width: 256px;
   height: 160px;
   padding: 16px;
-  border: 1px solid ${({ theme }) => theme.colors.dark20};
+  outline: 1px solid ${({ theme }) => theme.colors.dark20};
+  outline-offset: -1px;
   border-radius: 4px;
   background-color: ${({ theme }) => theme.colors.dark16};
   align-items: center;
@@ -55,6 +56,10 @@ export const MapLinkCardWithClearButtonContainer = styled(MapLinkCardContainer)`
   }
 
   & :hover {
+    outline: 2px solid ${({ theme }) => theme.colors.dark22};
+    outline-offset: -2px;
+    cursor: pointer;
+
     & button.clear-button {
       position: absolute;
       display: inline-block;
@@ -66,8 +71,7 @@ export const MapLinkCardWithClearButtonContainer = styled(MapLinkCardContainer)`
       color: inherit;
       border: none;
       font: inherit;
-      cursor: pointer;
-      outline: inherit;
+      outline: none;
     }
   }
 `;
