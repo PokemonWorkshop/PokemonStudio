@@ -7,15 +7,13 @@ export type MigrationTask = (event: IpcMainEvent, projectPath: string) => Promis
 const MIGRATIONS: Record<string, MigrationTask[]> = {
   '1.0.0': [migrateMapLinks], // Don't forget to extend those array with the new tasks that gets added by the time!
   '1.0.1': [migrateMapLinks],
-  '1.0.2': [migrateMapLinks],
-  '1.1.0': [migrateMapLinks], // Don't forget to add the official version coming up
+  '1.0.2': [migrateMapLinks], // Don't forget to add the official version coming up
 };
 
 const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
   '1.0.0': ['Migrate MapLinks'], // Don't forget to extend those array with the new tasks that gets added by the time!
   '1.0.1': ['Migrate MapLinks'],
-  '1.0.2': ['Migrate MapLinks'],
-  '1.1.0': ['Migrate MapLinks'], // Don't forget to add the official version coming up
+  '1.0.2': ['Migrate MapLinks'], // Don't forget to add the official version coming up
 };
 
 const migrateData = async (event: IpcMainEvent, payload: { projectPath: string; projectVersion: string }) => {

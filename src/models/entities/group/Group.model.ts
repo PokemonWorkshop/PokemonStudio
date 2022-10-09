@@ -16,10 +16,23 @@ export type CustomCondition = {
   relationWithPreviousCondition: RelationWithPreviousConditionType;
 };
 
-export const SystemTags = ['RegularGround', 'Grass', 'TallGrass', 'Cave', 'Mountain', 'Sand', 'Pond', 'Ocean', 'UnderWater', 'Snow', 'Ice'] as const;
+export const SystemTags = [
+  'RegularGround',
+  'Grass',
+  'TallGrass',
+  'Cave',
+  'Mountain',
+  'Sand',
+  'Pond',
+  'Ocean',
+  'UnderWater',
+  'Snow',
+  'Ice',
+  'HeadButt',
+] as const;
 export type SystemTag = typeof SystemTags[number];
 
-export const ToolGroups = [undefined, 'OldRod', 'GoodRod', 'SuperRod', 'RockSmash', 'HeadButt'] as const;
+export const ToolGroups = [undefined, 'OldRod', 'GoodRod', 'SuperRod', 'RockSmash'] as const;
 export type ToolGroup = typeof ToolGroups[number];
 
 export const GroupVariationsMap = [
@@ -35,7 +48,6 @@ export const GroupVariationsMap = [
   { value: 'GoodRod', label: 'GoodRod' },
   { value: 'SuperRod', label: 'SuperRod' },
   { value: 'RockSmash', label: 'RockSmash' },
-  { value: 'HeadButt', label: 'HeadButt' },
 ] as const;
 export type GroupVariation = typeof GroupActivationsMap[number];
 

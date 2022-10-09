@@ -58,5 +58,7 @@
   "GoodRod": "Amo buono",
   "SuperRod": "Super Amo",
   "RockSmash": "Spaccaroccia",
-  "HeadButt": "Bottintesta"
+  "HeadButt": "Bottintesta",
+  "title_data_modification": "Modifica dei dati",
+  "warning_headbutt_data_change": "Bottintesta dovrebbe ora essere impostato nell'elenco degli ambienti."
 }
