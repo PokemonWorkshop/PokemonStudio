@@ -265,4 +265,22 @@ window.api = {
     ipcRenderer.removeAllListeners(`file-exists-v2/success`);
     ipcRenderer.removeAllListeners(`file-exists-v2/failure`);
   },
+  updateMapInfos: (taskPayload, onSuccess, onFailure) => {
+    // Register success event
+    ipcRenderer.once(`update-map-infos/success`, (_, payload) => {
+      ipcRenderer.removeAllListeners(`update-map-infos/failure`);
+      onSuccess(payload);
+    });
+    // Register failure event
+    ipcRenderer.once(`update-map-infos/failure`, (_, error) => {
+      ipcRenderer.removeAllListeners(`update-map-infos/success`);
+      onFailure(error);
+    });
+    // Call service
+    ipcRenderer.send('update-map-infos', taskPayload);
+  },
+  cleanupUpdateMapInfos: () => {
+    ipcRenderer.removeAllListeners(`update-map-infos/success`);
+    ipcRenderer.removeAllListeners(`update-map-infos/failure`);
+  },
 };
