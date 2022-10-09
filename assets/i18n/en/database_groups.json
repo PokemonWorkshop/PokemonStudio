@@ -58,5 +58,7 @@
   "GoodRod": "Good Rod",
   "SuperRod": "Super Rod",
   "RockSmash": "Rock Smash",
-  "HeadButt": "Headbutt"
+  "HeadButt": "Headbutt",
+  "title_data_modification": "Data modification",
+  "warning_headbutt_data_change": "Headbutt should now be set in the Environment list."
 }
