@@ -50,6 +50,8 @@ declare global {
       cleanupMigrateData: () => void;
       fileExists: BackendTaskWithGenericErrorAndNoProgress<{ filePath: string }, { result: boolean }>;
       cleanupFileExists: () => void;
+      updateMapInfos: BackendTaskWithGenericErrorAndNoProgress<{ projectPath: string }, {}>;
+      cleanupUpdateMapInfos: () => void;
     };
   }
 }

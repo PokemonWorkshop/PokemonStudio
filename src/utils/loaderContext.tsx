@@ -1,6 +1,6 @@
 import React, { createContext, ReactChild, useContext, useEffect, useRef, useState } from 'react';
 
-type LoaderTitle = 'creating_project' | 'importing_project' | 'saving_project' | 'loading_project' | 'updating_psdk';
+type LoaderTitle = 'creating_project' | 'importing_project' | 'saving_project' | 'loading_project' | 'updating_psdk' | 'migrating_data';
 type LoaderErrorTitle =
   | 'creating_project_error'
   | 'importing_project_error'

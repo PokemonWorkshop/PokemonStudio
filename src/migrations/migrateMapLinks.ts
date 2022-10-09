@@ -72,7 +72,7 @@ export const migrateMapLinks = async (_: IpcMainEvent, projectPath: string) => {
       const arrData = (stdData.out + data.toString()).split('\n');
       stdData.out = arrData.pop() || ''; // All message ends with \n, so if something remains, we have something, otherwise we have empty string
       arrData.forEach((line) => {
-        if (line.trim() === '{"done":true,"message":"Conversion to Studio done!"}') {
+        if (line.trim() === '{"done":true,"message":"Map links and map infos conversion to Studio done!"}') {
           didTheJob = true;
         }
       });
