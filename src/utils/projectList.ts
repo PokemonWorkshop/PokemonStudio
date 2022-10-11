@@ -1,6 +1,6 @@
 import ProjectStudioModel from '@modelEntities/ProjectStudio.model';
 
-type Project = {
+export type Project = {
   projectStudio: ProjectStudioModel;
   projectPath: string;
   lastEdit: Date;

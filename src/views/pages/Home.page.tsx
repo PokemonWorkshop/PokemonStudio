@@ -61,20 +61,17 @@ const HomePageComponent = () => {
           <LoadProjectButton>{t('homepage:open_a_project')}</LoadProjectButton>
           <PrimaryButton onClick={() => setCurrentEditor('informationsEditor')}>{t('homepage:new_project')}</PrimaryButton>
         </BrandingActionContainer>
-        <RecentProjectContainer>
-          <div>{projectList.length !== 0 && t('homepage:recent_projects')}</div>
-          <ProjectCardContainer>
-            {projectList.map((project) => (
-              <ProjectCard
-                projectStudio={project.projectStudio}
-                lastEdit={project.lastEdit}
-                projectPath={project.projectPath}
-                key={project.projectPath}
-                onDeleteProjectToList={onDeleteProjectToList}
-              />
-            ))}
-          </ProjectCardContainer>
-        </RecentProjectContainer>
+        {projectList.length !== 0 && (
+          <RecentProjectContainer>
+            <div>{t('homepage:recent_projects')}</div>
+            <ProjectCardContainer>
+              <ProjectCard project={projectList[0]} onDeleteProjectToList={onDeleteProjectToList} />
+              <ProjectCard project={projectList[1]} onDeleteProjectToList={onDeleteProjectToList} />
+              <ProjectCard project={projectList[2]} onDeleteProjectToList={onDeleteProjectToList} />
+              <ProjectCard project={projectList[3]} onDeleteProjectToList={onDeleteProjectToList} />
+            </ProjectCardContainer>
+          </RecentProjectContainer>
+        )}
       </ActionContainer>
       <Footer />
       <EditorOverlay editors={editors} currentEditor={currentEditor} onClose={onCloseEditor} />
