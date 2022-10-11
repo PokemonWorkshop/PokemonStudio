@@ -3,12 +3,12 @@ import { ActiveContainer } from '@components/ActiveContainer';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import ProjectStudioModel from '@modelEntities/ProjectStudio.model';
 import { useHistory } from 'react-router-dom';
 import { useLoaderRef } from '@utils/loaderContext';
 import { ClearButtonOnlyIcon } from '@components/buttons';
 import { Code } from '@components/Code';
 import { useProjectLoadV2 } from '@utils/useProjectLoadV2';
+import { Project } from '@utils/projectList';
 
 const ProjectCardContainer = styled(ActiveContainer)`
   position: relative;
@@ -59,6 +59,10 @@ const ProjectCardContainer = styled(ActiveContainer)`
     }
   }
 
+  &[data-disabled='true']:hover {
+    cursor: default;
+  }
+
   & button.clear-button {
     display: none;
   }
@@ -72,21 +76,21 @@ const ProjectCardContainer = styled(ActiveContainer)`
 `;
 
 type ProjectCardProps = {
-  projectStudio: ProjectStudioModel;
-  projectPath: string;
-  lastEdit: Date;
+  project: Project | undefined;
   onDeleteProjectToList: (event: React.MouseEvent<HTMLSpanElement>, projectPath: string) => void;
 };
 
-export const ProjectCard = ({ projectStudio, lastEdit, projectPath, onDeleteProjectToList }: ProjectCardProps) => {
+export const ProjectCard = ({ project, onDeleteProjectToList }: ProjectCardProps) => {
   const { t } = useTranslation(['homepage']);
   const loaderRef = useLoaderRef();
   const projectLoadV2 = useProjectLoadV2();
   const history = useHistory();
 
   const handleClick = () => {
+    if (!project) return;
+
     projectLoadV2(
-      { projectDirName: projectPath },
+      { projectDirName: project.projectPath },
       () => {
         loaderRef.current.close();
         history.push('/dashboard');
@@ -95,19 +99,25 @@ export const ProjectCard = ({ projectStudio, lastEdit, projectPath, onDeleteProj
     );
   };
 
-  return (
+  return project ? (
     <ProjectCardContainer onClick={handleClick}>
-      {projectStudio.iconPath ? <img src={`file://${projectPath}/${projectStudio.iconPath}`} /> : <BaseIcon icon="top" size="m" color="" />}
-      <h2>{projectStudio.title}</h2>
+      {project.projectStudio.iconPath ? (
+        <img src={`file://${project.projectPath}/${project.projectStudio.iconPath}`} />
+      ) : (
+        <BaseIcon icon="top" size="m" color="" />
+      )}
+      <h2>{project.projectStudio.title}</h2>
       <p>
         {t('homepage:last_edit', {
-          date: lastEdit.toLocaleDateString(),
+          date: project.lastEdit.toLocaleDateString(),
         })}
       </p>
-      <Code>{`/${projectPath.replaceAll('\\', '/').split('/').splice(-1)[0]}`}</Code>
+      <Code>{`/${project.projectPath.replaceAll('\\', '/').split('/').splice(-1)[0]}`}</Code>
       <button className="clear-button">
-        <ClearButtonOnlyIcon onClick={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => onDeleteProjectToList(event, projectPath)} />
+        <ClearButtonOnlyIcon onClick={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => onDeleteProjectToList(event, project.projectPath)} />
       </button>
     </ProjectCardContainer>
+  ) : (
+    <ProjectCardContainer data-disabled="true" />
   );
 };
