@@ -44,7 +44,10 @@ export const SelectPokemonForm = ({
 
   const getData = (): SelectOption => {
     if (!currentPokemon) return { value: dbSymbol, label: t('pokemon_deleted') };
-    if (!currentForm) return { value: form.toString(), label: t('form_deleted') };
+    if (!currentForm) {
+      if (form === -1) return { value: form.toString(), label: overwriteNoneValue || t('none') };
+      else return { value: form.toString(), label: t('form_deleted') };
+    }
     return { value: form.toString(), label: t('form#') + form };
   };
 
@@ -54,7 +57,7 @@ export const SelectPokemonForm = ({
       options={options}
       label={noLabel ? undefined : t('form')}
       noOptionsText={t('no_option_form')}
-      error={(!currentPokemon || !currentForm) && (noneValueIsError ? true : dbSymbol !== '__undef__' || form !== -1)}
+      error={(!currentPokemon || (!currentForm && form !== -1)) && (noneValueIsError ? true : dbSymbol !== '__undef__' || form !== -1)}
       onChange={onChange}
       rejected={rejected}
       breakpoint={breakpoint}

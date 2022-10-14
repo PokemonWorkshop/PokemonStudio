@@ -135,6 +135,11 @@ export const PokemonBattlerListEditor = ({ type, model, currentBattler, onClose 
     updateRareness(battler, species);
   };
 
+  const onChangeForm = (selected: SelectOption) => {
+    const form = selected.value === '__undef__' ? -1 : Number(selected.value);
+    battler.form = form;
+  };
+
   const onChangeAbility = (selected: SelectOption) => {
     const abilitySetup = battler.expandPokemonSetup.find((eps) => eps.type === 'ability');
     if (abilitySetup) abilitySetup.value = selected.value;
@@ -171,9 +176,11 @@ export const PokemonBattlerListEditor = ({ type, model, currentBattler, onClose 
               <InputWithTopLabelContainer>
                 <Label htmlFor="select-form">{t('database_pokemon:form')}</Label>
                 <SelectPokemonForm
-                  onChange={(value) => refreshUI((battler.form = Number(value.value)))}
+                  onChange={(value) => refreshUI(onChangeForm(value))}
                   dbSymbol={battler.specie}
                   form={battler.form}
+                  noneValue
+                  overwriteNoneValue={t('pokemon_battler_list:random')}
                   noLabel
                 />
               </InputWithTopLabelContainer>
