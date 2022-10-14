@@ -10,6 +10,7 @@ const PlayMenuButtonContainer = styled.div`
   position: fixed;
   left: 60px;
   width: 256px;
+  z-index: 100;
 
   & .play-menu {
     width: 240px;
@@ -21,7 +22,6 @@ const PlayMenuButtonContainer = styled.div`
     padding: 8px;
     background-color: ${({ theme }) => theme.colors.dark20};
     border-radius: 8px;
-    z-index: 100;
 
     & span {
       display: flex;
@@ -66,6 +66,10 @@ const PlayButtonContainer = styled.div`
   &.open:hover {
     ${NavigationBarItemContainer} {
       background-color: ${({ theme }) => theme.colors.dark18};
+
+      & :active {
+        background-color: ${({ theme }) => theme.colors.primarySoft};
+      }
     }
 
     ${PlayMenuButtonContainer} {
