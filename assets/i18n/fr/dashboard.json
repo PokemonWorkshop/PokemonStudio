@@ -7,11 +7,13 @@
   "language": "Langue",
   "settings": "Réglages",
   "texts": "Textes",
-  "options": "Options",
+  "options": "Options du jeu",
   "devices": "Périphériques",
   "appearance": "Apparence",
   "display": "Affichage",
   "graphic_settings": "Paramètres graphiques",
   "config": "Configurations",
-  "save": "Sauvegarde"
+  "game_start": "Lancement du jeu",
+  "save": "Sauvegarde",
+  "credits": "Crédits du jeu"
 }
