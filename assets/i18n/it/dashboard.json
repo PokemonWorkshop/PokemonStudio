@@ -13,5 +13,7 @@
   "display": "Schermo",
   "graphic_settings": "Impostazioni grafiche",
   "config": "Configurazioni",
-  "save": "Salvataggio"
+  "game_start": "Inizio di gioco",
+  "save": "Salvataggio",
+  "credits": "Crediti di gioco"
 }

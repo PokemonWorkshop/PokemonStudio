@@ -12,8 +12,7 @@ export const DashboardNavigation = () => {
         <NavigationDatabaseItem path="/dashboard/infos" label={t('infos')} />
         <NavigationDatabaseItem path="/dashboard/language" label={t('language')} />
         <NavigationDatabaseItem path="/dashboard/settings" label={t('settings')} />
-        {/*<NavigationDatabaseItem path="/dashboard/texts" label={t('texts')} />
-        <NavigationDatabaseItem path="/dashboard/options" label={t('options')} /> */}
+        {/*<NavigationDatabaseItem path="/dashboard/texts" label={t('texts')} /> */}
         <NavigationDatabaseItem path="/dashboard/devices" label={t('devices')} />
       </NavigationDatabaseGroup>
       <NavigationDatabaseGroup title={t('appearance')}>
@@ -21,7 +20,10 @@ export const DashboardNavigation = () => {
         <NavigationDatabaseItem path="/dashboard/graphics" label={t('graphic_settings')} />
       </NavigationDatabaseGroup>
       <NavigationDatabaseGroup title={t('config')}>
+        {/*<NavigationDatabaseItem path="/dashboard/game_start" label={t('game_start')} />
+        <NavigationDatabaseItem path="/dashboard/options" label={t('options')} /> */}
         <NavigationDatabaseItem path="/dashboard/save" label={t('save')} />
+        {/*<NavigationDatabaseItem path="/dashboard/game_credits" label={t('game_credits')} /> */}
       </NavigationDatabaseGroup>
     </NavigationDatabaseStyle>
   );

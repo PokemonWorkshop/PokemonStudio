@@ -13,5 +13,7 @@
   "display": "Display",
   "graphic_settings": "Graphic settings",
   "config": "Configurations",
-  "save": "Save"
+  "game_start": "Game start",
+  "save": "Save",
+  "credits": "Game Credits"
 }
