@@ -30,33 +30,35 @@ export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier
   selected: SelectedIdentifier
 ) => {
   const [state, setState] = useGlobalState();
-  const projectDataValues = state.projectData[key];
 
   const setSelectedDataIdentifier = (newSelectedData: Pick<SelectedDataIdentifier, typeof selected>) => {
-    setState({
-      ...state,
-      selectedDataIdentifier: { ...state.selectedDataIdentifier, ...newSelectedData },
-    });
+    setState((currentState) => ({
+      ...currentState,
+      selectedDataIdentifier: { ...currentState.selectedDataIdentifier, ...newSelectedData },
+    }));
   };
 
   const setProjectDataValues = (newDataValues: Partial<ProjectData[typeof key]>, newSelectedData?: Pick<SelectedDataIdentifier, typeof selected>) => {
     const id = String(Object.keys(newDataValues)[0]);
-    if (JSON.stringify(newDataValues[id]) !== JSON.stringify(projectDataValues[id])) {
-      setState({
-        ...state,
-        projectData: { ...state.projectData, [key]: { ...projectDataValues, ...newDataValues } },
-        selectedDataIdentifier: { ...state.selectedDataIdentifier, ...newSelectedData },
-        savingData: new SavingMap(state.savingData.set({ key, id }, 'UPDATE')),
-        tmpHackHasTextToSave: projectTextSave.some((b) => b),
-      });
-    } else {
-      setState({
-        ...state,
-        projectData: { ...state.projectData, [key]: { ...projectDataValues, ...newDataValues } },
-        selectedDataIdentifier: { ...state.selectedDataIdentifier, ...newSelectedData },
-        tmpHackHasTextToSave: projectTextSave.some((b) => b),
-      });
-    }
+    setState((currentState) => {
+      const projectDataValues = currentState.projectData[key];
+      if (JSON.stringify(newDataValues[id]) !== JSON.stringify(projectDataValues[id])) {
+        return {
+          ...currentState,
+          projectData: { ...currentState.projectData, [key]: { ...projectDataValues, ...newDataValues } },
+          selectedDataIdentifier: { ...currentState.selectedDataIdentifier, ...newSelectedData },
+          savingData: new SavingMap(currentState.savingData.set({ key, id }, 'UPDATE')),
+          tmpHackHasTextToSave: projectTextSave.some((b) => b),
+        };
+      } else {
+        return {
+          ...currentState,
+          projectData: { ...currentState.projectData, [key]: { ...projectDataValues, ...newDataValues } },
+          selectedDataIdentifier: { ...currentState.selectedDataIdentifier, ...newSelectedData },
+          tmpHackHasTextToSave: projectTextSave.some((b) => b),
+        };
+      }
+    });
   };
 
   const bindProjectDataValue = (newData: ProjectData[typeof key][keyof ProjectData[typeof key]]) => {
@@ -68,18 +70,20 @@ export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier
     if (newSelectedData[selected] === identifier) {
       throw new Error(`When deleting ${String(identifier)} you cannot use ${JSON.stringify(newSelectedData)} as newSelectedData parameter.`);
     }
-    const newProjectDataValues = { ...projectDataValues };
-    delete newProjectDataValues[identifier];
-    setState({
-      ...state,
-      projectData: { ...state.projectData, [key]: newProjectDataValues },
-      selectedDataIdentifier: { ...state.selectedDataIdentifier, ...newSelectedData },
-      savingData: new SavingMap(state.savingData.set({ key, id: String(identifier) }, 'DELETE')),
+    setState((currentState) => {
+      const newProjectDataValues = { ...currentState.projectData[key] };
+      delete newProjectDataValues[identifier];
+      return {
+        ...currentState,
+        projectData: { ...currentState.projectData, [key]: newProjectDataValues },
+        selectedDataIdentifier: { ...currentState.selectedDataIdentifier, ...newSelectedData },
+        savingData: new SavingMap(currentState.savingData.set({ key, id: String(identifier) }, 'DELETE')),
+      };
     });
   };
 
   return {
-    projectDataValues,
+    projectDataValues: state.projectData[key],
     selectedDataIdentifier: state.selectedDataIdentifier[selected],
     setSelectedDataIdentifier,
     setProjectDataValues,
