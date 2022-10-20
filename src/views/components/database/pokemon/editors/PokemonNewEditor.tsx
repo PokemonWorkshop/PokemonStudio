@@ -9,7 +9,7 @@ import { TextInputError } from '@components/inputs/Input';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { checkDbSymbolExist, generateDefaultDbSymbol, wrongDbSymbol } from '@utils/dbSymbolUtils';
 import { SelectType } from '@components/selects';
-import { useProjectPokemonDex } from '@utils/useProjectDoubleData';
+import { useProjectPokemon, useProjectDex } from '@utils/useProjectData';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -23,15 +23,11 @@ type PokemonNewEditorProps = {
 };
 
 export const PokemonNewEditor = ({ onClose }: PokemonNewEditorProps) => {
-  const {
-    projectDataValues: pokemon,
-    projectDataValues2: dex,
-    setProjectDoubleDataValues: setPokemonDex,
-    bindProjectDataValue: bindPokemon,
-  } = useProjectPokemonDex();
+  const { projectDataValues: pokemon, setProjectDataValues: setPokemon, bindProjectDataValue: bindPokemon } = useProjectPokemon();
+  const { projectDataValues: dex, setProjectDataValues: setDex } = useProjectDex();
   const { t } = useTranslation(['database_pokemon', 'database_moves']);
   const refreshUI = useRefreshUI();
-  const [newPokemon] = useState(bindPokemon(PokemonModel.createPokemon(pokemon)).newData1);
+  const [newPokemon] = useState(bindPokemon(PokemonModel.createPokemon(pokemon)));
   const [pokemonText] = useState({ name: '', descr: '' });
 
   const onClickNew = () => {
@@ -40,7 +36,8 @@ export const PokemonNewEditor = ({ onClose }: PokemonNewEditorProps) => {
     newPokemon.setName(pokemonText.name);
     newPokemon.setDescr(pokemonText.descr);
     newPokemon.forms[0].babyDbSymbol = newPokemon.dbSymbol;
-    setPokemonDex({ [newPokemon.dbSymbol]: newPokemon }, { [editedDex.dbSymbol]: editedDex }, { pokemon: { specie: newPokemon.dbSymbol, form: 0 } });
+    setPokemon({ [newPokemon.dbSymbol]: newPokemon }, { pokemon: { specie: newPokemon.dbSymbol, form: 0 } });
+    setDex({ [editedDex.dbSymbol]: editedDex });
     onClose();
   };
 

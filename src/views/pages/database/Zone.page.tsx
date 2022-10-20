@@ -20,19 +20,18 @@ import {
 } from '@components/database/zone/editors';
 
 import GroupModel from '@modelEntities/group/Group.model';
-import { useProjectZonesGroups } from '@utils/useProjectDoubleData';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
+import { useProjectGroups, useProjectZones } from '@utils/useProjectData';
 
 export const ZonePage = () => {
   const {
     projectDataValues: zones,
-    projectDataValues2: groups,
     selectedDataIdentifier: zoneDbSymbol,
     setSelectedDataIdentifier,
-    setProjectDoubleDataValues: setZoneGroup,
     setProjectDataValues: setZone,
     removeProjectDataValue: deleteZone,
-  } = useProjectZonesGroups();
+  } = useProjectZones();
+  const { projectDataValues: groups, setProjectDataValues: setGroup } = useProjectGroups();
   const { t } = useTranslation('database_zones');
   const onChange = (selected: SelectOption) => setSelectedDataIdentifier({ zone: selected.value });
   const zone = zones[zoneDbSymbol];
@@ -56,7 +55,8 @@ export const ZonePage = () => {
     if (currentEditor === 'addGroup' || currentEditor === 'importGroup') return setCurrentEditor(undefined);
     if (currentEditor === 'editGroup' && currentEditedGroup) {
       currentEditedGroup.data.defineRelationCustomCondition();
-      setZoneGroup({ [zone.dbSymbol]: currentEditedZone }, { [currentEditedGroup.data.dbSymbol]: currentEditedGroup.data });
+      setZone({ [zone.dbSymbol]: currentEditedZone });
+      setGroup({ [currentEditedGroup.data.dbSymbol]: currentEditedGroup.data });
       return setCurrentEditor(undefined);
     }
     currentEditedZone.cleaningNaNValues();
@@ -68,7 +68,8 @@ export const ZonePage = () => {
   const onAddGroup = (editedGroup: GroupModel) => {
     currentEditedZone.wildGroups.push(editedGroup.dbSymbol);
     editedGroup.defineRelationCustomCondition();
-    setZoneGroup({ [zone.dbSymbol]: currentEditedZone }, { [editedGroup.dbSymbol]: editedGroup });
+    setZone({ [zone.dbSymbol]: currentEditedZone });
+    setGroup({ [editedGroup.dbSymbol]: editedGroup });
     setCurrentEditor(undefined);
   };
 
