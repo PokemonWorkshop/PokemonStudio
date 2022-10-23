@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Switch, Route, useRouteMatch } from 'react-router';
+import { Redirect } from 'react-router-dom';
 import { NavigationDatabase } from '../../../components/database/navigation/NavigationDatabase';
 import { PokemonPage } from '../Pokemon.page';
 import { MovePage } from '../Move.page';
@@ -77,6 +78,9 @@ const DatabasePageComponent = () => {
         </Route>
         <Route path={`${path}/dex`}>
           <DexPage />
+        </Route>
+        <Route path={`${path}`}>
+          <Redirect to={`${path}/pokemon`} />
         </Route>
       </Switch>
     </DatabasePageStyle>
