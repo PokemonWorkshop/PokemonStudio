@@ -1,62 +1,50 @@
-import { getSpawnArgs, RMXP2StudioSafetyNet } from '@services/PSDKIPC/psdk.exec.channel.service';
-import { spawn } from 'child_process';
 import Electron, { IpcMainEvent } from 'electron';
 import log from 'electron-log';
+import path from 'path';
+import fs from 'fs';
+import fsPromise from 'fs/promises';
+import Marshal from 'marshal';
 
-const getChildProcess = (projectPath: string) => {
-  try {
-    RMXP2StudioSafetyNet(projectPath);
-    return spawn(...getSpawnArgs(projectPath), { cwd: projectPath, shell: true });
-  } catch (error) {
-    throw new Error(`Failed to update Map Infos: ${error instanceof Error ? error.message : error}`);
-  }
+const mustRMXPMapsBeUpdated = (mapInfoFilePath: string, rmxpMapFilePath: string) => {
+  return fs.statSync(mapInfoFilePath).mtimeMs > fs.statSync(rmxpMapFilePath).mtimeMs;
 };
 
-const execUpdateMapInfos = async (_: IpcMainEvent, projectPath: string) => {
-  if (process.platform !== 'win32') return new Promise<void>((resolve) => resolve());
-  const childProcess = getChildProcess(projectPath);
-  const stdData = { out: '', err: '' };
-  return new Promise<void>((resolve, reject) => {
-    let rejectReason: string | undefined = undefined;
-    let didTheJob = false;
-    childProcess.stdin.write('{"action":"updateMapInfosToStudio"}\n{"action":"exit"}\n');
+type MapInfoData = Record<
+  string,
+  {
+    '@scroll_x': number;
+    '@name': string;
+    '@expanded': boolean;
+    '@order': number;
+    '@scroll_y': number;
+    '@parent_id': number;
+    _name: 'RPG::MapInfo';
+  }
+>;
 
-    childProcess.stderr.on('data', (data) => {
-      log.warn('update-map-infos.stderr.data', data.toString());
-      const arrData = (stdData.err + data.toString()).split('\n');
-      stdData.err = arrData.pop() || ''; // All message ends with \n, so if something remains, we have something, otherwise we have empty string
-      if (arrData.length > 0) {
-        rejectReason = rejectReason ? [rejectReason, ...arrData].join('\n') : arrData.join('\n');
-        childProcess.stdin.write('{"action":"exit"}\n');
-      }
-    });
+const updateRMXPMaps = async (mapInfoFilePath: string, rmxpMapFilePath: string) => {
+  const mapInfoData = await fsPromise.readFile(mapInfoFilePath);
+  const marshalData = new Marshal(mapInfoData);
+  if (!marshalData.parsed) throw new Error('Failed to parse data');
 
-    childProcess.stdout.on('data', (data) => {
-      log.info('update-map-infos.stdout.data', data.toString());
-      const arrData = (stdData.out + data.toString()).split('\n');
-      stdData.out = arrData.pop() || ''; // All message ends with \n, so if something remains, we have something, otherwise we have empty string
-      arrData.forEach((line) => {
-        if (line.trim() === '{"done":true,"message":"Map infos conversion to Studio done!"}') {
-          didTheJob = true;
-        }
-      });
-    });
-
-    childProcess.on('exit', (code) => {
-      log.info('update-map-infos.exit', code);
-      if (rejectReason) reject(rejectReason);
-      else if (!didTheJob) reject('update-map-infos did not updated the data as expected. Please check your PSDK version.');
-      else if (code === 0) resolve();
-      else reject(`update-map-infos exited with code ${code}`);
-    });
-  });
+  const mapInfos = marshalData.parsed as MapInfoData;
+  const mapInfoRecords = Object.entries(mapInfos).map(([id, data]) => ({ id: Number(id), order: data['@order'], name: data['@name'] }));
+  const rmxpMapData = mapInfoRecords.sort((a, b) => a.order - b.order).map(({ id, name }) => ({ id, name }));
+  await fsPromise.writeFile(rmxpMapFilePath, JSON.stringify(rmxpMapData, null, 2));
 };
 
 const updateMapInfos = async (event: IpcMainEvent, payload: { projectPath: string }) => {
   log.info('update-map-infos', payload);
+  const mapInfoFilePath = path.join(payload.projectPath, 'Data', 'MapInfos.rxdata');
+  const rmxpMapFilePath = path.join(payload.projectPath, 'Data', 'Studio', 'rmxp_maps.json');
+  if (!mustRMXPMapsBeUpdated(mapInfoFilePath, rmxpMapFilePath)) {
+    log.info('update-map-infos/success', 'nothing to update');
+    return event.sender.send('update-map-infos/success', {});
+  }
+
   try {
-    await execUpdateMapInfos(event, payload.projectPath);
-    log.info('update-map-infos/success');
+    await updateRMXPMaps(mapInfoFilePath, rmxpMapFilePath);
+    log.info('update-map-infos/success', 'updated file');
     event.sender.send('update-map-infos/success', {});
   } catch (error) {
     log.error('update-map-infos/failure', error);
