@@ -26,7 +26,6 @@ import ProjectSavingChannelService from '@services/project.saving.channel.servic
 import ProjectStudioFileChannelService from '@services/project.studio.file.channel.service';
 import TextSavingChannelService from '@services/text.saving.channel.service';
 import VersionsChannelService from '@services/versions.channel.service';
-import ProjectCreateChannelService from '@services/project.create.channel.service';
 import FileExistsChannelService from '@services/file.exists.channel.service';
 import PSDKConfigsLoadingChannelService from '@services/psdk.configs.loading.channel.service';
 import PSDKConfigsSavingChannelService from '@services/psdk.configs.saving.channel.service';
@@ -46,6 +45,9 @@ import { registerMigrateData } from './backendTasks/migrateData';
 import { registerFileExists } from './backendTasks/fileExists';
 import { registerUpdateMapInfos } from './backendTasks/updateMapInfos';
 import MoveImageChannelService from '@services/move.image.channel.service';
+import { registerChooseFolder } from './backendTasks/chooseFolder';
+import { registerExtractNewProject } from './backendTasks/extractNewProject';
+import { registerConfigureNewProject } from './backendTasks/configureNewProject';
 
 export default class AppUpdater {
   constructor() {
@@ -210,7 +212,6 @@ const ipcChannels = [
   new PSDKExecChannelService(),
   new PSDKDecodeDownloadedScriptsChannelService(),
   new VersionsChannelService(),
-  new ProjectCreateChannelService(),
   new FileExistsChannelService(),
   new PSDKConfigsLoadingChannelService(),
   new PSDKConfigsSavingChannelService(),
@@ -238,3 +239,6 @@ registerReadProjectTexts(ipcMain);
 registerMigrateData(ipcMain);
 registerFileExists(ipcMain);
 registerUpdateMapInfos(ipcMain);
+registerChooseFolder(ipcMain);
+registerExtractNewProject(ipcMain);
+registerConfigureNewProject(ipcMain);

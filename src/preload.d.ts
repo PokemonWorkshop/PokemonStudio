@@ -2,13 +2,12 @@ import type ProjectStudioModel from '@modelEntities/ProjectStudio.model';
 import type { PSDKVersion } from '@services/getPSDKVersion';
 import type { BackendTaskWithGenericError, BackendTaskWithGenericErrorAndNoProgress, GenericBackendProgress } from '@utils/BackendTask';
 import type { ProjectFileType } from './backendTasks/chooseProjectFileToOpen';
+import { ConfigureNewProjectMetaData } from './backendTasks/configureNewProject';
 import { ProjectConfigsFromBackEnd } from './backendTasks/readProjectConfigs';
 import { ProjectDataFromBackEnd } from './backendTasks/readProjectData';
 import { ProjectText } from './GlobalStateProvider';
 
 export {};
-
-type ProjectCreationStepText = 'creating_project_extraction' | 'creating_project_configuration';
 
 declare global {
   interface Window {
@@ -27,8 +26,6 @@ declare global {
       startPSDKDebug: (projectPath: string) => void;
       startPSDKTags: (projectPath: string) => void;
       startPSDKWorldmap: (projectPath: string) => void;
-      registerProjectCreationListener: (listener: (step: number, total: number, stepText: ProjectCreationStepText) => void) => void;
-      unregisterProjectCreationListener: () => void;
       platform: string;
       getStudioVersion: BackendTaskWithGenericErrorAndNoProgress<{}, { studioVersion: string }>;
       cleanupGetStudioVersion: () => void;
@@ -52,6 +49,12 @@ declare global {
       cleanupFileExists: () => void;
       updateMapInfos: BackendTaskWithGenericErrorAndNoProgress<{ projectPath: string }, {}>;
       cleanupUpdateMapInfos: () => void;
+      chooseFolder: BackendTaskWithGenericErrorAndNoProgress<{}, { folderPath: string }>;
+      cleanupChooseFolder: () => void;
+      extractNewProject: BackendTaskWithGenericError<{ projectDirName: string }, {}, { step: number; total: number; stepText: string }>;
+      cleanupExtractNewProject: () => void;
+      configureNewProject: BackendTaskWithGenericErrorAndNoProgress<{ projectDirName: string; metaData: ConfigureNewProjectMetaData }, {}>;
+      cleanupConfigureNewProject: () => void;
     };
   }
 }
