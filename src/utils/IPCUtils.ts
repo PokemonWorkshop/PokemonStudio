@@ -3,8 +3,6 @@ import IpcService from '@services/IPC/ipc.service';
 import { ProjectType } from '@services/project.open.channel.service';
 import { ProjectStudioAction } from '@services/project.studio.file.channel.service';
 import { ProjectData, ProjectText, PSDKConfigs } from '@src/GlobalStateProvider';
-import { TFunction } from 'react-i18next';
-import { LoaderContext } from './loaderContext';
 import { serializeProjectStudio } from './SerializationUtils';
 
 export type IPCError = { error: string };
@@ -50,39 +48,6 @@ export const importProjectDialog = async (ipc: IpcService) => {
   const projectPathValue = await getProjectPath(ipc, 'rxproj');
   if ('error' in projectPathValue) throw new Error(projectPathValue.error);
   return { projectPath: projectPathValue.projectPath };
-};
-
-interface CreateProjectResponse extends IPCError {
-  path?: string;
-}
-
-export const createProject = async (
-  IPC: IpcService,
-  projectData: string,
-  languageConfig: string,
-  projectTitle: string,
-  iconPath: string | undefined,
-  multiLanguage: boolean,
-  loaderRef: React.MutableRefObject<LoaderContext>,
-  t: TFunction<'loader'>
-) => {
-  // TODO: Improve the same way as loading / importing project
-  loaderRef.current.open('creating_project', 1, 3, t('creating_project_opening_path'));
-  window.api.registerProjectCreationListener((step, total, stepText) => loaderRef.current.setProgress(step, total, t(stepText)));
-  const result = await IPC.send<CreateProjectResponse>('project-create', {
-    projectData: projectData,
-    languageConfig,
-    projectTitle,
-    iconPath,
-    multiLanguage,
-  });
-  if ('error' in result) {
-    window.api.unregisterProjectCreationListener();
-    throw new Error(result.error);
-  }
-
-  window.api.unregisterProjectCreationListener();
-  return result.path;
 };
 
 export const fileExists = async (IPC: IpcService, filePath: string) => IPC.send<FileExistsReturnValue>('file-exists', { filePath });

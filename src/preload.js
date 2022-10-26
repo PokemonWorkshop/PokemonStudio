@@ -58,12 +58,6 @@ window.api = {
   startPSDKWorldmap: (projectPath) => {
     ipcRenderer.send('start-psdk-worldmap', projectPath);
   },
-  registerProjectCreationListener: (listener) => {
-    ipcRenderer.on('project-create/status', (_, ...args) => listener(...args));
-  },
-  unregisterProjectCreationListener: () => {
-    ipcRenderer.removeAllListeners('project-create/status');
-  },
   platform: process.platform,
   getStudioVersion: (taskPayload, onSuccess, onFailure) => {
     // Register success event
@@ -282,5 +276,62 @@ window.api = {
   cleanupUpdateMapInfos: () => {
     ipcRenderer.removeAllListeners(`update-map-infos/success`);
     ipcRenderer.removeAllListeners(`update-map-infos/failure`);
+  },
+  chooseFolder: (taskPayload, onSuccess, onFailure) => {
+    // Register success event
+    ipcRenderer.once(`choose-folder/success`, (_, payload) => {
+      ipcRenderer.removeAllListeners(`choose-folder/failure`);
+      onSuccess(payload);
+    });
+    // Register failure event
+    ipcRenderer.once(`choose-folder/failure`, (_, error) => {
+      ipcRenderer.removeAllListeners(`choose-folder/success`);
+      onFailure(error);
+    });
+    // Call service
+    ipcRenderer.send('choose-folder', taskPayload);
+  },
+  cleanupChooseFolder: () => {
+    ipcRenderer.removeAllListeners(`choose-folder/success`);
+    ipcRenderer.removeAllListeners(`choose-folder/failure`);
+  },
+  extractNewProject: (taskPayload, onSuccess, onFailure, onProgress) => {
+    // Register success event
+    ipcRenderer.once(`extract-new-project/success`, (_, payload) => {
+      ipcRenderer.removeAllListeners(`extract-new-project/failure`);
+      onSuccess(payload);
+    });
+    // Register failure event
+    ipcRenderer.once(`extract-new-project/failure`, (_, error) => {
+      ipcRenderer.removeAllListeners(`extract-new-project/success`);
+      onFailure(error);
+    });
+    // Register progress event
+    if (onProgress) ipcRenderer.on(`extract-new-project/progress`, (_, payload) => onProgress(payload));
+    // Call service
+    ipcRenderer.send('extract-new-project', taskPayload);
+  },
+  cleanupExtractNewProject: () => {
+    ipcRenderer.removeAllListeners(`extract-new-project/success`);
+    ipcRenderer.removeAllListeners(`extract-new-project/failure`);
+    ipcRenderer.removeAllListeners(`extract-new-project/progress`);
+  },
+  configureNewProject: (taskPayload, onSuccess, onFailure) => {
+    // Register success event
+    ipcRenderer.once(`configure-new-project/success`, (_, payload) => {
+      ipcRenderer.removeAllListeners(`configure-new-project/failure`);
+      onSuccess(payload);
+    });
+    // Register failure event
+    ipcRenderer.once(`configure-new-project/failure`, (_, error) => {
+      ipcRenderer.removeAllListeners(`configure-new-project/success`);
+      onFailure(error);
+    });
+    // Call service
+    ipcRenderer.send('configure-new-project', taskPayload);
+  },
+  cleanupConfigureNewProject: () => {
+    ipcRenderer.removeAllListeners(`configure-new-project/success`);
+    ipcRenderer.removeAllListeners(`configure-new-project/failure`);
   },
 };

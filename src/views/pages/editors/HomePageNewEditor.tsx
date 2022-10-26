@@ -116,11 +116,7 @@ export const HomePageNewEditor: FunctionComponent = () => {
           <SubEditorTopButtonContainer>
             <ToolTipContainer>
               {(projectData.title.length === 0 || wrongTitle(projectData.title)) && <ToolTip bottom="100%">{t('fields_asterisk_required')}</ToolTip>}
-              <CreateProjectButton
-                projectData={projectData}
-                onBusy={() => null}
-                disabled={projectData.title.length === 0 || wrongTitle(projectData.title)}
-              >
+              <CreateProjectButton projectData={projectData} disabled={projectData.title.length === 0 || wrongTitle(projectData.title)}>
                 {t('create_my_project')}
               </CreateProjectButton>
             </ToolTipContainer>

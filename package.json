@@ -188,6 +188,7 @@
     "@types/react-virtualized": "^9.21.20",
     "@types/styled-components": "^5.1.14",
     "@types/webpack-env": "^1.15.2",
+    "@types/yauzl": "^2.10.0",
     "@typescript-eslint/eslint-plugin": "^5.8.0",
     "@typescript-eslint/parser": "^5.8.0",
     "babel-jest": "^27.4.5",
