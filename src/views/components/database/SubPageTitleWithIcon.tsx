@@ -12,6 +12,11 @@ const BackIconWithIconContainer = styled.div`
   display: flex;
   gap: 4px;
   align-items: center;
+
+  & img {
+    height: 32px;
+    width: auto;
+  }
 `;
 
 export const SubPageTitleWithIcon = ({ title, size, onClickedBack, icon }: SubPageTitleWithIconProps) => {
