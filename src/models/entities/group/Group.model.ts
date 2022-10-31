@@ -1,6 +1,7 @@
 import Encounter from '@modelEntities/Encounter';
 import PSDKEntity from '@modelEntities/PSDKEntity';
 import { ProjectData, TextsWithLanguageConfig } from '@src/GlobalStateProvider';
+import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { findFirstAvailableId } from '@utils/ModelUtils';
 import { getText, setText } from '@utils/ReadingProjectText';
 import { AnyT, jsonArrayMember, jsonMember, jsonObject, TypedJSON } from 'typedjson';
@@ -202,5 +203,14 @@ export default class GroupModel implements PSDKEntity {
     if (mapIdConditions.length >= 1) mapIdConditions[0].relationWithPreviousCondition = 'AND';
     const otherConditions = this.customConditions.filter((conditions) => conditions.type !== 'mapId');
     this.customConditions = mapIdConditions.concat(otherConditions);
+  };
+
+  /**
+   * Cleaning NaN values in number properties
+   */
+  cleaningNaNValues = () => {
+    this.customConditions
+      .filter((condition) => condition.type === CustomConditionTypes[0])
+      .forEach((condition) => (condition.value = cleanNaNValue(condition.value)));
   };
 }

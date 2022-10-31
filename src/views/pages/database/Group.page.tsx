@@ -61,7 +61,9 @@ export const GroupPage = () => {
       return;
     if (currentEditor === 'editBattler' && currentBattler.index !== undefined)
       cleanExpandPokemonSetup(currentEditedGroup.encounters[currentBattler.index], species, true);
-    if (currentEditor === 'newBattler') return setCurrentEditor(undefined);
+    if (currentEditor === 'newBattler' || currentEditor === 'new') return setCurrentEditor(undefined);
+
+    currentEditedGroup.cleaningNaNValues();
     setGroup({ [group.dbSymbol]: currentEditedGroup });
     setCurrentEditor(undefined);
     closeTranslationEditor();
