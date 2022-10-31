@@ -18,6 +18,7 @@ import {
   onSwitchInputChange,
   onVariationChange,
 } from '@utils/GroupUtils';
+import { cleanNaNValue } from '@utils/cleanNaNValue';
 
 const groupActivationEntries = (t: TFunction<'database_groups'>) =>
   GroupActivationsMap.map((activation) => ({ value: activation.value, label: t(activation.label) }));
@@ -73,26 +74,33 @@ export const GroupNewEditor = ({ onClose }: GroupNewEditorProps) => {
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="select-activation">{t('activation')}</Label>
-          <SelectCustomSimple
-            id="select-activation"
-            options={activationOptions}
-            onChange={(value) => onActivationChange(value, newGroup, refreshUI)}
-            value={getActivationValue(newGroup)}
-            noTooltip
-          />
-          {needSwitchInput(newGroup) && (
-            <InputWithLeftLabelContainer>
-              <Label htmlFor="switch" required>
-                {t('switch')}
-              </Label>
-              <Input
-                type="number"
-                name="switch"
-                value={getSwitchValue(newGroup)}
-                onChange={(event) => onSwitchInputChange(event.target.value, newGroup, refreshUI)}
-              />
-            </InputWithLeftLabelContainer>
-          )}
+          <InputContainer size="s">
+            <SelectCustomSimple
+              id="select-activation"
+              options={activationOptions}
+              onChange={(value) => onActivationChange(value, newGroup, refreshUI)}
+              value={getActivationValue(newGroup)}
+              noTooltip
+            />
+            {needSwitchInput(newGroup) && (
+              <InputWithLeftLabelContainer>
+                <Label htmlFor="switch">{t('switch')}</Label>
+                <Input
+                  type="number"
+                  name="switch"
+                  min="0"
+                  max="99999"
+                  value={isNaN(getSwitchValue(newGroup)) ? '' : getSwitchValue(newGroup)}
+                  onChange={(event) => {
+                    const newValue = parseInt(event.target.value);
+                    if (newValue < 0 || newValue > 99999) return event.preventDefault();
+                    onSwitchInputChange(newValue, newGroup, refreshUI);
+                  }}
+                  onBlur={() => onSwitchInputChange(cleanNaNValue(getSwitchValue(newGroup)), newGroup, refreshUI)}
+                />
+              </InputWithLeftLabelContainer>
+            )}
+          </InputContainer>
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="select-battle-type">{t('battle_type')}</Label>

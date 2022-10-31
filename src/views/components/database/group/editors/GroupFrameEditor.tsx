@@ -16,13 +16,14 @@ import {
 } from '@utils/GroupUtils';
 import { OpenTranslationEditorFunction } from '@utils/useTranslationEditor';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
+import { cleanNaNValue } from '@utils/cleanNaNValue';
 
 const groupActivationEntries = (t: TFunction<'database_groups'>) =>
   GroupActivationsMap.map((option) => ({ value: option.value, label: t(option.label as never) }));
 const groupBattleTypeEntries = (t: TFunction<'database_groups'>) => GroupBattleTypes.map((type) => ({ value: type, label: t(type) }));
 const systemTagsEntries = (t: TFunction<'database_groups'>) => SystemTags.map((tag) => ({ value: tag, label: t(tag) }));
 const groupVariationEntries = (t: TFunction<'database_groups'>) =>
-  GroupVariationsMap.map((variation) => ({ value: variation.value, label: t(variation.label as never) }));
+  GroupVariationsMap.map((variation) => ({ value: variation.value, label: t(variation.label) }));
 
 type GroupFrameEditorProps = {
   group: GroupModel;
@@ -56,24 +57,33 @@ export const GroupFrameEditor = ({ group, openTranslationEditor }: GroupFrameEdi
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="select-activation">{t('activation')}</Label>
-          <SelectCustomSimple
-            id="select-activation"
-            options={activationOptions}
-            onChange={(value) => onActivationChange(value, group, refreshUI)}
-            value={getActivationValue(group)}
-            noTooltip
-          />
-          {needSwitchInput(group) && (
-            <InputWithLeftLabelContainer>
-              <Label htmlFor="switch">{t('switch')}</Label>
-              <Input
-                type="number"
-                name="switch"
-                value={getSwitchValue(group)}
-                onChange={(event) => onSwitchInputChange(event.target.value, group, refreshUI)}
-              />
-            </InputWithLeftLabelContainer>
-          )}
+          <InputContainer size="s">
+            <SelectCustomSimple
+              id="select-activation"
+              options={activationOptions}
+              onChange={(value) => onActivationChange(value, group, refreshUI)}
+              value={getActivationValue(group)}
+              noTooltip
+            />
+            {needSwitchInput(group) && (
+              <InputWithLeftLabelContainer>
+                <Label htmlFor="switch">{t('switch')}</Label>
+                <Input
+                  type="number"
+                  name="switch"
+                  min="0"
+                  max="99999"
+                  value={isNaN(getSwitchValue(group)) ? '' : getSwitchValue(group)}
+                  onChange={(event) => {
+                    const newValue = parseInt(event.target.value);
+                    if (newValue < 0 || newValue > 99999) return event.preventDefault();
+                    onSwitchInputChange(newValue, group, refreshUI);
+                  }}
+                  onBlur={() => onSwitchInputChange(cleanNaNValue(getSwitchValue(group)), group, refreshUI)}
+                />
+              </InputWithLeftLabelContainer>
+            )}
+          </InputContainer>
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="select-battle-type">{t('battle_type')}</Label>

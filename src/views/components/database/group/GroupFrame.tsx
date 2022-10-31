@@ -1,10 +1,11 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataBlockContainer, DataFieldsetField, DataGrid, DataInfoContainer, DataInfoContainerHeaderTitle } from '../dataBlocks';
-import GroupModel from '@modelEntities/group/Group.model';
-import { getActivationLabel } from '@utils/GroupUtils';
+import GroupModel, { GroupVariationsMap } from '@modelEntities/group/Group.model';
+import { getActivationLabel, getVariationValue } from '@utils/GroupUtils';
 import styled from 'styled-components';
 import { padStr } from '@utils/PadStr';
+import { DataFieldsetFieldWithChild } from '../dataBlocks/DataFieldsetField';
 
 type GroupFrameProps = {
   group: GroupModel;
@@ -21,12 +22,30 @@ const GroupSubInfoContainer = styled.div`
   gap: 48px;
 `;
 
+const EnvironmentContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  color: ${({ theme }) => theme.colors.text100};
+  ${({ theme }) => theme.fonts.normalRegular}
+
+  & span:nth-child(2) {
+    color: ${({ theme }) => theme.colors.text400};
+  }
+
+  @media ${({ theme }) => theme.breakpoints.dataBox422} {
+    flex-direction: column;
+    gap: 0px;
+  }
+`;
+
 export const GroupFrame = ({ group, onClick }: GroupFrameProps) => {
   const { t } = useTranslation('database_groups');
+  const variationText = GroupVariationsMap.find((variation) => variation.value === getVariationValue(group))?.label;
 
   return (
     <DataBlockContainer size="full" onClick={onClick}>
-      <DataGrid columns="440px minmax(min-content, 1024px)">
+      <DataGrid columns="minmax(min-content, 1024px)">
         <GroupInfoContainer>
           <DataInfoContainerHeaderTitle>
             <h1>
@@ -37,7 +56,12 @@ export const GroupFrame = ({ group, onClick }: GroupFrameProps) => {
           <GroupSubInfoContainer>
             <DataFieldsetField label={t('activation')} data={t(getActivationLabel(group) as never)} disabled={false} />
             <DataFieldsetField label={t('battle_type')} data={group.isDoubleBattle ? t('double') : t('simple')} disabled={false} />
-            <DataFieldsetField label={t('environment')} data={t(group.systemTag)} disabled={false} />
+            <DataFieldsetFieldWithChild label={t('environment')}>
+              <EnvironmentContainer>
+                <span>{t(group.systemTag)}</span>
+                <span>{`(${variationText ? t(variationText) : '???'})`}</span>
+              </EnvironmentContainer>
+            </DataFieldsetFieldWithChild>
           </GroupSubInfoContainer>
         </GroupInfoContainer>
       </DataGrid>

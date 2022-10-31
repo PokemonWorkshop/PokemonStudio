@@ -53,31 +53,21 @@ export const onActivationChange = (value: string, newGroup: GroupModel, refreshU
 
 export const needSwitchInput = (group: GroupModel) => {
   const conditions = group.customConditions ? group.customConditions.filter((condition) => condition.type === CustomConditionTypes[0]) : [];
-  if (conditions.length > 0) {
-    const index = GroupActivationsMap.findIndex((activation) => Number(activation.value) === conditions[0].value);
-    if (index === -1) {
-      return true;
-    }
-  }
-  return false;
+  return conditions.length !== 0;
 };
 
-export const onSwitchInputChange = (value: string, group: GroupModel, refreshUI: (_: unknown) => void) => {
+export const onSwitchInputChange = (value: number, group: GroupModel, refreshUI: (_: unknown) => void) => {
   const conditions = group.customConditions.filter((condition) => condition.type === CustomConditionTypes[0]);
   if (conditions.length > 0) {
-    conditions[0].value = Number(value);
+    conditions[0].value = value;
   }
   refreshUI(null); // No need to assign anything in that case
 };
 
 export const getSwitchValue = (newGroup: GroupModel) => {
   const conditions = newGroup.customConditions ? newGroup.customConditions.filter((condition) => condition.type === CustomConditionTypes[0]) : [];
-  if (conditions.length > 0) {
-    const index = GroupActivationsMap.findIndex((activation) => Number(activation.value) === conditions[0].value);
-    if (index === -1) {
-      return conditions[0].value;
-    }
-  }
+  if (conditions.length > 0) return conditions[0].value;
+
   return 0;
 };
 
