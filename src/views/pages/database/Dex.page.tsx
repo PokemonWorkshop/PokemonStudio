@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { DataBlockWithAction, DataBlockWithActionTooltip, DataBlockWrapper } from '@components/database/dataBlocks';
@@ -21,10 +21,20 @@ import {
 } from '@components/database/dex/editors';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
 import { isResetAvailable, searchUnderAndEvolutions } from '@utils/dex';
+import { useShortcut } from '@utils/useShortcuts';
+import { StudioShortcut } from '@src/GlobalStateProvider';
 
 export const DexPage = () => {
-  const { projectDataValues: allDex, selectedDataIdentifier: dexDbSymbol, setSelectedDataIdentifier, setProjectDataValues: setDex } = useProjectDex();
+  const {
+    projectDataValues: allDex,
+    selectedDataIdentifier: dexDbSymbol,
+    setSelectedDataIdentifier,
+    setProjectDataValues: setDex,
+    getPreviousDbSymbol,
+    getNextDbSymbol,
+  } = useProjectDex();
   const { projectDataValues: allPokemon } = useProjectPokemon();
+  const shortcut = useShortcut([StudioShortcut.DB_PREVIOUS, StudioShortcut.DB_NEXT]);
   const { t } = useTranslation('database_dex');
   const onChange = (selected: SelectOption) => setSelectedDataIdentifier({ dex: selected.value });
   const dex = allDex[dexDbSymbol];
@@ -90,6 +100,16 @@ export const DexPage = () => {
     list: <DexDeletion type="list" onClose={() => setCurrentDeletion(undefined)} />,
     reset: <DexResetNationalPopUp onClickReset={onClickReset} onClose={() => setCurrentDeletion(undefined)} />,
   };
+
+  useEffect(() => {
+    if (shortcut === StudioShortcut.DB_PREVIOUS) {
+      setSelectedDataIdentifier({ dex: getPreviousDbSymbol(allDex, currentEditedDex.id, 0) });
+    }
+    if (shortcut === StudioShortcut.DB_NEXT) {
+      setSelectedDataIdentifier({ dex: getNextDbSymbol(allDex, currentEditedDex.id, 0) });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shortcut]);
 
   return (
     <DatabasePageStyle>

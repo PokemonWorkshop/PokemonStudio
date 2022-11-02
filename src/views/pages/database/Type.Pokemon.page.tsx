@@ -1,5 +1,5 @@
-import React from 'react';
-import { useGlobalSelectedDataIdentifier, useGlobalState } from '@src/GlobalStateProvider';
+import React, { useEffect } from 'react';
+import { StudioShortcut, useGlobalState } from '@src/GlobalStateProvider';
 import { useTranslation } from 'react-i18next';
 import { useHistory, useParams } from 'react-router-dom';
 import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
@@ -9,6 +9,8 @@ import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { SubPageTitle } from '@components/database/SubPageTitle';
 import { TypePokemonTable } from '@components/database/type/TypePokemonTable';
+import { useProjectTypes } from '@utils/useProjectData';
+import { useShortcut } from '@utils/useShortcuts';
 
 type TypePokemonPageParams = {
   typeDbSymbol: string;
@@ -17,8 +19,9 @@ type TypePokemonPageParams = {
 export const TypePokemonPage = () => {
   const history = useHistory();
   const [state] = useGlobalState();
-  const [, setSelectedDataIdentifier] = useGlobalSelectedDataIdentifier();
+  const { projectDataValues: types, setSelectedDataIdentifier: setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol } = useProjectTypes();
   const { t } = useTranslation('database_types');
+  const shortcut = useShortcut([StudioShortcut.DB_PREVIOUS, StudioShortcut.DB_NEXT]);
   const { typeDbSymbol } = useParams<TypePokemonPageParams>();
   const currentType = state.projectData.types[typeDbSymbol];
 
@@ -28,6 +31,20 @@ export const TypePokemonPage = () => {
   };
 
   const onClickedBack = () => history.push(`/database/types/${currentType.dbSymbol}`);
+
+  useEffect(() => {
+    if (shortcut === StudioShortcut.DB_PREVIOUS) {
+      const previousDbSymbol = getPreviousDbSymbol(types, currentType.id);
+      setSelectedDataIdentifier({ type: previousDbSymbol });
+      history.push(`/database/types/${previousDbSymbol}/pokemon`);
+    }
+    if (shortcut === StudioShortcut.DB_NEXT) {
+      const nextDbSymbol = getNextDbSymbol(types, currentType.id);
+      setSelectedDataIdentifier({ type: nextDbSymbol });
+      history.push(`/database/types/${nextDbSymbol}/pokemon`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shortcut]);
 
   return (
     <DatabasePageStyle>

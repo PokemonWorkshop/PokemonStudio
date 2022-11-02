@@ -123,7 +123,6 @@ const createWindow = async () => {
       if (process.platform === 'win32') mainWindow.maximize();
       mainWindow.focus();
     }
-    mainWindow.removeMenu();
   });
 
   mainWindow.on('close', (event) => {

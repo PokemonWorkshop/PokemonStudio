@@ -82,6 +82,22 @@ export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier
     });
   };
 
+  const getPreviousDbSymbol = (listObject: ProjectData[typeof key], currentId: number, minimumId = 1): string => {
+    const entries = Object.entries(listObject);
+    if (currentId <= minimumId)
+      return entries.map(([value, itemData]) => ({ value, index: itemData.id })).filter((d) => d.index === entries.length - 1 + minimumId)[0].value;
+
+    return entries.map(([value, itemData]) => ({ value, index: itemData.id })).filter((d) => d.index === currentId - 1)[0].value;
+  };
+
+  const getNextDbSymbol = (listObject: ProjectData[typeof key], currentId: number, minimumId = 1): string => {
+    const entries = Object.entries(listObject);
+    if (currentId >= entries.length - 1 + minimumId)
+      return entries.map(([value, itemData]) => ({ value, index: itemData.id })).filter((d) => d.index === minimumId)[0].value;
+
+    return entries.map(([value, itemData]) => ({ value, index: itemData.id })).filter((d) => d.index === currentId + 1)[0].value;
+  };
+
   return {
     projectDataValues: state.projectData[key],
     selectedDataIdentifier: state.selectedDataIdentifier[selected],
@@ -89,6 +105,8 @@ export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier
     setProjectDataValues,
     bindProjectDataValue,
     removeProjectDataValue,
+    getPreviousDbSymbol,
+    getNextDbSymbol,
     state,
   };
 };

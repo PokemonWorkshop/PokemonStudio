@@ -22,6 +22,8 @@ import { CurrentBattlerType } from '@components/pokemonBattlerList/PokemonBattle
 import { useTranslationEditor } from '@utils/useTranslationEditor';
 import { showNotification } from '@utils/showNotification';
 import { ToolGroup } from '@modelEntities/group/Group.model';
+import { useShortcut } from '@utils/useShortcuts';
+import { StudioShortcut } from '@src/GlobalStateProvider';
 
 export const GroupPage = () => {
   const {
@@ -29,6 +31,8 @@ export const GroupPage = () => {
     selectedDataIdentifier: groupDbSymbol,
     setSelectedDataIdentifier,
     setProjectDataValues: setGroup,
+    getPreviousDbSymbol,
+    getNextDbSymbol,
   } = useProjectGroups();
   const { projectDataValues: species } = useProjectPokemon();
   const { t } = useTranslation('database_groups');
@@ -38,6 +42,7 @@ export const GroupPage = () => {
 
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
+  const shortcut = useShortcut([StudioShortcut.DB_PREVIOUS, StudioShortcut.DB_NEXT]);
   const [currentBattler, setCurrentBattler] = useState<CurrentBattlerType>({
     index: undefined,
     kind: undefined,
@@ -95,8 +100,16 @@ export const GroupPage = () => {
     if ((group.tool as ToolGroup & 'HeadButt') === 'HeadButt') {
       showNotification('warning', t('title_data_modification'), t('warning_headbutt_data_change'));
     }
+    if (currentEditor !== undefined || currentDeletion !== undefined) return;
+
+    if (shortcut === StudioShortcut.DB_PREVIOUS) {
+      setSelectedDataIdentifier({ group: getPreviousDbSymbol(groups, currentEditedGroup.id, 0) });
+    }
+    if (shortcut === StudioShortcut.DB_NEXT) {
+      setSelectedDataIdentifier({ group: getNextDbSymbol(groups, currentEditedGroup.id, 0) });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [groupDbSymbol]);
+  }, [shortcut, groupDbSymbol]);
 
   return (
     <DatabasePageStyle>

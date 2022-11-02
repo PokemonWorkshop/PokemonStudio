@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { useProjectPokemon, useProjectTrainers } from '@utils/useProjectData';
@@ -10,13 +10,14 @@ import { DeleteButtonWithIcon } from '@components/buttons';
 import { TrainerControlBar, TrainerDeletion, TrainerDialog, TrainerFrame } from '@components/database/trainer';
 import { EditorOverlay } from '@components/editor';
 import { TrainerImportEditor, TrainerDialogEditor, TrainerFrameEditor, TrainerNewEditor } from '@components/database/trainer/editors';
-import { useGlobalState } from '@src/GlobalStateProvider';
+import { useGlobalState, StudioShortcut } from '@src/GlobalStateProvider';
 import { PokemonBattlerList } from '@components/pokemonBattlerList';
 import { PokemonBattlerListEditor } from '@components/pokemonBattlerList/editors';
 import { cleanExpandPokemonSetup } from '@modelEntities/Encounter';
 import { CurrentBattlerType } from '@components/pokemonBattlerList/PokemonBattlerList';
 import { BagEntryList, BagEntryListEditor } from '@components/bagEntryList';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
+import { useShortcut } from '@utils/useShortcuts';
 
 export const TrainerPage = () => {
   const {
@@ -24,6 +25,8 @@ export const TrainerPage = () => {
     selectedDataIdentifier: trainerDbSymbol,
     setSelectedDataIdentifier,
     setProjectDataValues: setTrainer,
+    getPreviousDbSymbol,
+    getNextDbSymbol,
   } = useProjectTrainers();
   const { projectDataValues: species } = useProjectPokemon();
   const { t } = useTranslation('database_trainers');
@@ -37,6 +40,7 @@ export const TrainerPage = () => {
     kind: undefined,
   });
   const [currentBagEntry, setCurrentBagEntry] = useState<number | undefined>(undefined);
+  const shortcut = useShortcut([StudioShortcut.DB_PREVIOUS, StudioShortcut.DB_NEXT]);
   const [state] = useGlobalState();
   const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
     {
@@ -110,6 +114,18 @@ export const TrainerPage = () => {
     trainer: <TrainerDeletion type="trainer" onClose={onCloseDeletion} />,
     battler: <TrainerDeletion type="battler" battlerIndex={currentBattler.index} onClose={onCloseDeletion} />,
   };
+
+  useEffect(() => {
+    if (currentEditor !== undefined || currentDeletion !== undefined) return;
+
+    if (shortcut === StudioShortcut.DB_PREVIOUS) {
+      setSelectedDataIdentifier({ trainer: getPreviousDbSymbol(trainers, currentEditedTrainer.id, 0) });
+    }
+    if (shortcut === StudioShortcut.DB_NEXT) {
+      setSelectedDataIdentifier({ trainer: getNextDbSymbol(trainers, currentEditedTrainer.id, 0) });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shortcut]);
 
   return (
     <DatabasePageStyle>

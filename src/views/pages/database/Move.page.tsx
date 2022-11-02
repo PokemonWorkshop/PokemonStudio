@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import theme from '../../../AppTheme';
 import { DataBlockWithAction, DataBlockWrapper } from '../../components/database/dataBlocks';
 import { BaseIcon } from '../../components/icons/BaseIcon';
@@ -29,6 +29,8 @@ import { EditorOverlay } from '@components/editor';
 import { Deletion, DeletionOverlay } from '@components/deletion';
 import { wrongDbSymbol } from '@utils/dbSymbolUtils';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
+import { useShortcut } from '@utils/useShortcuts';
+import { StudioShortcut } from '@src/GlobalStateProvider';
 
 export const MovePage = () => {
   const {
@@ -37,6 +39,8 @@ export const MovePage = () => {
     setSelectedDataIdentifier,
     setProjectDataValues: setMoves,
     removeProjectDataValue: deleteMove,
+    getPreviousDbSymbol,
+    getNextDbSymbol,
   } = useProjectData('moves', 'move');
   const { t } = useTranslation(['database_moves']);
   const history = useHistory();
@@ -48,6 +52,7 @@ export const MovePage = () => {
   const currentEditedMove = useMemo(() => currentMove.clone(), [currentMove]);
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
+  const shortcut = useShortcut([StudioShortcut.DB_PREVIOUS, StudioShortcut.DB_NEXT]);
   const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
     {
       translation_name: { fileId: 6 },
@@ -98,6 +103,18 @@ export const MovePage = () => {
       />
     ),
   };
+
+  useEffect(() => {
+    if (currentEditor !== undefined || currentDeletion !== undefined) return;
+
+    if (shortcut === StudioShortcut.DB_PREVIOUS) {
+      setSelectedDataIdentifier({ move: getPreviousDbSymbol(moves, currentMove.id) });
+    }
+    if (shortcut === StudioShortcut.DB_NEXT) {
+      setSelectedDataIdentifier({ move: getNextDbSymbol(moves, currentMove.id) });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shortcut]);
 
   return (
     <DatabasePageStyle>
