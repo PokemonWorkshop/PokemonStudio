@@ -2,8 +2,9 @@
   "home": "Homepage",
   "search": "Cerca",
   "dashboard": "Dashboard",
-  "update": "Aggiorna del PSDK",
+  "update": "Aggiorna del Pokémon SDK",
   "database": "Database",
+  "map": "MapLink",
   "event_editor": "Editor di eventi",
   "text_editor": "Editor di testo",
   "deployment": "Distribuzione",
@@ -13,5 +14,6 @@
   "play_release_mode": "Avviare il gioco",
   "play_debug_mode": "Modalità Debug",
   "play_tags_mode": "Editor di System Tags",
-  "play_worldmap_mode": "Editor di World Maps"
+  "play_worldmap_mode": "Editor di World Maps",
+  "not_available_yet": "Disponibile in versioni future"
 }
