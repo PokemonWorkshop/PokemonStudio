@@ -7,10 +7,14 @@ import { NavigationBarContainer } from './NavigationBarContainer';
 import { useGlobalState } from '../../../../GlobalStateProvider';
 import { SaveProjectButton } from '@components/buttons/SaveProjectButton';
 import { PlayButton } from '@components/buttons';
+import { useTranslation } from 'react-i18next';
+import { useToolTip } from '@utils/useToolTip';
 
 export const NavigationBarComponent = () => {
   const theme = useContext(ThemeContext);
   const [state] = useGlobalState();
+  const { t } = useTranslation('main_menu');
+  const { buildOnMouseEnter, onMouseLeave, renderToolTip } = useToolTip();
   const needUpdate = state.projectData && state.currentPSDKVersion.int < state.lastPSDKVersion.int;
 
   return !state.projectData ? (
@@ -24,22 +28,27 @@ export const NavigationBarComponent = () => {
 
         <NavigationBarGroupSeparator />
 
-        <NavigationBarItem path="/dashboard">
+        <NavigationBarItem path="/dashboard" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('dashboard'), 'right-center', true)}>
           <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="dashboard" />
         </NavigationBarItem>
-        <NavigationBarItem path="/psdkupdate">
+        <NavigationBarItem path="/psdkupdate" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('update'), 'right-center', true)}>
           <BaseIcon color={needUpdate ? theme.colors.successBase : theme.colors.navigationIconColor} size="s" icon="update" />
         </NavigationBarItem>
 
         <NavigationBarGroupSeparator />
 
-        <NavigationBarItem path="/database">
+        <NavigationBarItem path="/database" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('database'), 'right-center', true)}>
           <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="database" />
         </NavigationBarItem>
-        <NavigationBarItem path="/map">
+        <NavigationBarItem path="/map" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('map'), 'right-center', true)}>
           <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="map" />
         </NavigationBarItem>
-        <NavigationBarItem path="/code" disabled>
+        <NavigationBarItem
+          path="/code"
+          disabled
+          onMouseLeave={onMouseLeave}
+          onMouseEnter={buildOnMouseEnter(t('not_available_yet'), 'right-center', true)}
+        >
           <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="code" disabled />
         </NavigationBarItem>
       </div>
@@ -59,6 +68,7 @@ export const NavigationBarComponent = () => {
         <NavigationBarItem path="/account" disabled>
           <BaseIcon color="" size="l" icon="account" />
         </NavigationBarItem>
+        {renderToolTip()}
       </div>
     </NavigationBarContainer>
   );
