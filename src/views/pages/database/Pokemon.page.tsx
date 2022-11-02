@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { SecondaryButton, DeleteButtonWithIcon } from '@components/buttons';
 import { DataBlockWrapper, DataBlockWithAction } from '@components/database/dataBlocks';
 import { StatisticsDataBlock } from '@components/database/pokemon/pokemonDataBlock/StatisticsDataBlock';
@@ -32,6 +32,8 @@ import { EncounterDataBlock } from '@components/database/pokemon/pokemonDataBloc
 import { EvolutionEditor } from '@components/database/pokemon/editors/EvolutionEditor';
 import { Deletion, DeletionOverlay } from '@components/deletion';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
+import { useShortcut } from '@utils/useShortcuts';
+import { StudioShortcut } from '@src/GlobalStateProvider';
 
 export const PokemonPage = () => {
   const [evolutionIndex, setEvolutionIndex] = useState(0);
@@ -44,6 +46,8 @@ export const PokemonPage = () => {
     setSelectedDataIdentifier,
     setProjectDataValues: setPokemon,
     removeProjectDataValue: deletePokemon,
+    getPreviousDbSymbol,
+    getNextDbSymbol,
   } = useProjectPokemon();
   const onPokemonChange = (selected: SelectOption) => {
     setSelectedDataIdentifier({ pokemon: { specie: selected.value, form: 0 } });
@@ -63,6 +67,7 @@ export const PokemonPage = () => {
   const currentEditedPokemon = useMemo(() => currentPokemonModel.clone(), [currentPokemonModel]);
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
+  const shortcut = useShortcut([StudioShortcut.DB_PREVIOUS, StudioShortcut.DB_NEXT]);
 
   const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
     {
@@ -162,6 +167,20 @@ export const PokemonPage = () => {
     species: pokemon[currentPokemon.specie],
     form: pokemon[currentPokemon.specie].forms[currentPokemon.form],
   };
+
+  useEffect(() => {
+    if (currentEditor !== undefined || currentDeletion !== undefined) return;
+
+    if (shortcut === StudioShortcut.DB_PREVIOUS) {
+      const previousDbSymbol = getPreviousDbSymbol(pokemon, currentEditedPokemon.id);
+      setSelectedDataIdentifier({ pokemon: { specie: previousDbSymbol, form: 0 } });
+    }
+    if (shortcut === StudioShortcut.DB_NEXT) {
+      const nextDbSymbol = getNextDbSymbol(pokemon, currentEditedPokemon.id);
+      setSelectedDataIdentifier({ pokemon: { specie: nextDbSymbol, form: 0 } });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shortcut]);
 
   return (
     <DatabasePageStyle>

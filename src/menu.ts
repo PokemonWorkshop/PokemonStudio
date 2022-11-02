@@ -1,15 +1,16 @@
-import { app, Menu, shell, BrowserWindow, MenuItemConstructorOptions } from 'electron';
-
-interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
-  selector?: string;
-  submenu?: DarwinMenuItemConstructorOptions[] | Menu;
-}
+import { app, Menu, shell, BrowserWindow, MenuItemConstructorOptions, MenuItem } from 'electron';
 
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
 
+  isDarwin: boolean;
+
+  isDev: boolean;
+
   constructor(mainWindow: BrowserWindow) {
     this.mainWindow = mainWindow;
+    this.isDarwin = process.platform === 'darwin';
+    this.isDev = process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
   }
 
   buildMenu(): Menu {
@@ -17,10 +18,11 @@ export default class MenuBuilder {
       this.setupDevelopmentEnvironment();
     }
 
-    const template = process.platform === 'darwin' ? this.buildDarwinTemplate() : this.buildDefaultTemplate();
+    const template = this.buildDefaultTemplate();
 
     const menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
+    this.mainWindow.setMenu(menu);
 
     return menu;
   }
@@ -40,220 +42,115 @@ export default class MenuBuilder {
     });
   }
 
-  buildDarwinTemplate(): MenuItemConstructorOptions[] {
-    const subMenuAbout: DarwinMenuItemConstructorOptions = {
-      label: 'Pokémon Studio',
-      submenu: [
-        {
-          label: 'About Pokémon Studio',
-          selector: 'orderFrontStandardAboutPanel:',
-        },
-        { type: 'separator' },
-        { label: 'Services', submenu: [] },
-        { type: 'separator' },
-        {
-          label: 'Hide Pokémon Studio',
-          accelerator: 'Command+H',
-          selector: 'hide:',
-        },
-        {
-          label: 'Hide Others',
-          accelerator: 'Command+Shift+H',
-          selector: 'hideOtherApplications:',
-        },
-        { label: 'Show All', selector: 'unhideAllApplications:' },
-        { type: 'separator' },
-        {
-          label: 'Quit',
-          accelerator: 'Command+Q',
-          click: () => {
-            app.quit();
-          },
-        },
-      ],
-    };
-    const subMenuEdit: DarwinMenuItemConstructorOptions = {
-      label: 'Edit',
-      submenu: [
-        { label: 'Undo', accelerator: 'Command+Z', selector: 'undo:' },
-        { label: 'Redo', accelerator: 'Shift+Command+Z', selector: 'redo:' },
-        { type: 'separator' },
-        { label: 'Cut', accelerator: 'Command+X', selector: 'cut:' },
-        { label: 'Copy', accelerator: 'Command+C', selector: 'copy:' },
-        { label: 'Paste', accelerator: 'Command+V', selector: 'paste:' },
-        {
-          label: 'Select All',
-          accelerator: 'Command+A',
-          selector: 'selectAll:',
-        },
-      ],
-    };
-    const subMenuViewDev: MenuItemConstructorOptions = {
-      label: 'View',
-      submenu: [
-        {
-          label: 'Reload',
-          accelerator: 'Command+R',
-          click: () => {
-            this.mainWindow.webContents.reload();
-          },
-        },
-        {
-          label: 'Toggle Full Screen',
-          accelerator: 'Ctrl+Command+F',
-          click: () => {
-            this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
-          },
-        },
-        {
-          label: 'Toggle Developer Tools',
-          accelerator: 'Alt+Command+I',
-          click: () => {
-            this.mainWindow.webContents.toggleDevTools();
-          },
-        },
-      ],
-    };
-    const subMenuViewProd: MenuItemConstructorOptions = {
-      label: 'View',
-      submenu: [
-        {
-          label: 'Toggle Full Screen',
-          accelerator: 'Ctrl+Command+F',
-          click: () => {
-            this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
-          },
-        },
-      ],
-    };
-    const subMenuWindow: DarwinMenuItemConstructorOptions = {
-      label: 'Window',
-      submenu: [
-        {
-          label: 'Minimize',
-          accelerator: 'Command+M',
-          selector: 'performMiniaturize:',
-        },
-        { label: 'Close', accelerator: 'Command+W', selector: 'performClose:' },
-        { type: 'separator' },
-        { label: 'Bring All to Front', selector: 'arrangeInFront:' },
-      ],
-    };
-    const subMenuHelp: MenuItemConstructorOptions = {
-      label: 'Help',
-      submenu: [
-        {
-          label: 'Documentation',
-          click() {
-            shell.openExternal('https://psdk.pokemonworkshop.com/yard/');
-          },
-        },
-        {
-          label: 'Getting started',
-          click() {
-            shell.openExternal('https://psdk.pokemonworkshop.fr/wiki/en/index.html');
-          },
-        },
-        {
-          label: 'Discord',
-          click() {
-            shell.openExternal('https://discord.com/invite/0noB0gBDd91B8pMk');
-          },
-        },
-        {
-          label: 'Twitter',
-          click() {
-            shell.openExternal('https://twitter.com/pokemonworkshop');
-          },
-        },
-      ],
-    };
-
-    const subMenuView = process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true' ? subMenuViewDev : subMenuViewProd;
-
-    return [subMenuAbout, subMenuEdit, subMenuView, subMenuWindow, subMenuHelp];
-  }
-
-  buildDefaultTemplate() {
-    const templateDefault = [
+  buildDefaultTemplate(): MenuItemConstructorOptions[] {
+    const templateDefault: MenuItemConstructorOptions[] = [
       {
-        label: '&File',
+        label: 'Pokémon Studio',
         submenu: [
           {
-            label: '&Open',
-            accelerator: 'Ctrl+O',
+            label: 'About Pokémon Studio',
+            role: 'about',
+          },
+          { type: 'separator' },
+          { label: 'Services', submenu: [] },
+          { type: 'separator' },
+          {
+            label: 'Hide Pokémon Studio',
+            accelerator: 'CmdOrCtrl+H',
+            role: this.isDarwin ? 'hide' : 'minimize',
           },
           {
-            label: '&Close',
-            accelerator: 'Ctrl+W',
+            label: 'Hide Others',
+            visible: this.isDarwin,
+            accelerator: 'Cmd+Shift+H',
+            role: 'hideOthers',
+          },
+          {
+            label: 'Show All',
+            visible: this.isDarwin,
+            role: 'unhide',
+          },
+          { type: 'separator' },
+          {
+            label: 'Quit',
+            accelerator: 'Meta+Q',
             click: () => {
-              this.mainWindow.close();
+              app.quit();
             },
           },
         ],
       },
       {
-        label: '&View',
-        submenu:
-          process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true'
-            ? [
-                {
-                  label: '&Reload',
-                  accelerator: 'Ctrl+R',
-                  click: () => {
-                    this.mainWindow.webContents.reload();
-                  },
-                },
-                {
-                  label: 'Toggle &Full Screen',
-                  accelerator: 'F11',
-                  click: () => {
-                    this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
-                  },
-                },
-                {
-                  label: 'Toggle &Developer Tools',
-                  accelerator: 'Alt+Ctrl+I',
-                  click: () => {
-                    this.mainWindow.webContents.toggleDevTools();
-                  },
-                },
-              ]
-            : [
-                {
-                  label: 'Toggle &Full Screen',
-                  accelerator: 'F11',
-                  click: () => {
-                    this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
-                  },
-                },
-              ],
+        label: 'Edit',
+        role: 'editMenu',
+      },
+      {
+        label: 'View',
+        submenu: [
+          {
+            label: 'Previous Database item',
+            accelerator: this.isDarwin ? 'Alt+Left' : 'Ctrl+Left',
+            click: () => this.mainWindow.webContents.send('request-shortcut', 'db_previous'),
+          },
+          {
+            label: 'Next Database item',
+            accelerator: this.isDarwin ? 'Alt+Right' : 'Ctrl+Right',
+            click: () => this.mainWindow.webContents.send('request-shortcut', 'db_next'),
+          },
+          {
+            label: 'Reload',
+            visible: this.isDev,
+            accelerator: 'CmdOrCtrl+R',
+            click: () => {
+              this.mainWindow.webContents.reload();
+            },
+          },
+          {
+            label: 'Toggle Full Screen',
+            accelerator: this.isDarwin ? 'Ctrl+Command+F' : 'F11',
+            click: () => {
+              this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
+            },
+          },
+          {
+            label: 'Toggle Developer Tools',
+            visible: this.isDev,
+            accelerator: 'CmdOrCtrl+Alt+I',
+            click: () => {
+              this.mainWindow.webContents.toggleDevTools();
+            },
+          },
+        ],
+      },
+      {
+        label: 'Window',
+        role: 'windowMenu',
       },
       {
         label: 'Help',
         submenu: [
           {
-            label: 'Learn More',
-            click() {
-              shell.openExternal('https://electronjs.org');
-            },
-          },
-          {
             label: 'Documentation',
             click() {
-              shell.openExternal('https://github.com/electron/electron/tree/master/docs#readme');
+              shell.openExternal('https://psdk.pokemonworkshop.com/yard/');
             },
           },
           {
-            label: 'Community Discussions',
+            label: 'Getting started',
             click() {
-              shell.openExternal('https://www.electronjs.org/community');
+              shell.openExternal('https://psdk.pokemonworkshop.fr/wiki/en/index.html');
             },
           },
           {
-            label: 'Search Issues',
+            label: 'Discord',
             click() {
-              shell.openExternal('https://github.com/electron/electron/issues');
+              shell.openExternal('https://discord.com/invite/0noB0gBDd91B8pMk');
+            },
+          },
+          {
+            label: 'Twitter',
+            click() {
+              shell.openExternal('https://twitter.com/pokemonworkshop');
             },
           },
         ],

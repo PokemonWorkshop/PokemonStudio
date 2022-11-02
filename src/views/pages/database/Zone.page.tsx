@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 
 import { DataBlockWithAction, DataBlockWrapper } from '@components/database/dataBlocks';
 import { DeleteButtonWithIcon } from '@components/buttons';
@@ -22,6 +22,8 @@ import {
 import GroupModel from '@modelEntities/group/Group.model';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
 import { useProjectGroups, useProjectZones } from '@utils/useProjectData';
+import { useShortcut } from '@utils/useShortcuts';
+import { StudioShortcut } from '@src/GlobalStateProvider';
 
 export const ZonePage = () => {
   const {
@@ -30,6 +32,8 @@ export const ZonePage = () => {
     setSelectedDataIdentifier,
     setProjectDataValues: setZone,
     removeProjectDataValue: deleteZone,
+    getPreviousDbSymbol,
+    getNextDbSymbol,
   } = useProjectZones();
   const { projectDataValues: groups, setProjectDataValues: setGroup } = useProjectGroups();
   const { t } = useTranslation('database_zones');
@@ -40,6 +44,7 @@ export const ZonePage = () => {
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
   const [currentGroupIndex, setCurrentGroupIndex] = useState(0);
   const [currentEditedGroup, setCurrentEditedGroup] = useState<{ data: GroupModel } | undefined>(undefined);
+  const shortcut = useShortcut([StudioShortcut.DB_PREVIOUS, StudioShortcut.DB_NEXT]);
   const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
     {
       translation_name: { fileId: 10 },
@@ -122,6 +127,18 @@ export const ZonePage = () => {
       />
     ),
   };
+
+  useEffect(() => {
+    if (currentEditor !== undefined || currentDeletion !== undefined) return;
+
+    if (shortcut === StudioShortcut.DB_PREVIOUS) {
+      setSelectedDataIdentifier({ zone: getPreviousDbSymbol(zones, currentEditedZone.id, 0) });
+    }
+    if (shortcut === StudioShortcut.DB_NEXT) {
+      setSelectedDataIdentifier({ zone: getNextDbSymbol(zones, currentEditedZone.id, 0) });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shortcut]);
 
   return (
     <DatabasePageStyle>

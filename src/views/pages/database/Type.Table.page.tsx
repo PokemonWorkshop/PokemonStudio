@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TypeControlBar } from '@components/database/type/TypeControlBar';
 import { useHistory, useParams } from 'react-router-dom';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
@@ -11,6 +11,8 @@ import { TypeTable } from '@components/database/type/TypeTable';
 import { DataBlockWrapperWithNoBreakpoint } from '@components/database/dataBlocks/DataBlockWrapper';
 import { EditorOverlay } from '@components/editor';
 import { TypeNewEditor } from '@components/database/type/editors';
+import { StudioShortcut } from '@src/GlobalStateProvider';
+import { useShortcut } from '@utils/useShortcuts';
 
 type TypePageParams = {
   typeDbSymbol?: string;
@@ -18,15 +20,22 @@ type TypePageParams = {
 
 export const TypeTablePage = () => {
   const history = useHistory();
-  const { projectDataValues: types, selectedDataIdentifier: typeSelected, setSelectedDataIdentifier } = useProjectTypes();
+  const {
+    projectDataValues: types,
+    selectedDataIdentifier: typeSelected,
+    setSelectedDataIdentifier: setSelectedDataIdentifier,
+    getPreviousDbSymbol,
+    getNextDbSymbol,
+  } = useProjectTypes();
   const { t } = useTranslation('database_types');
+  const shortcut = useShortcut([StudioShortcut.DB_PREVIOUS, StudioShortcut.DB_NEXT]);
   const { typeDbSymbol } = useParams<TypePageParams>();
   const currentType = types[typeDbSymbol || typeSelected] || types[typeSelected];
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
 
   const onChange = (selected: SelectOption) => {
     setSelectedDataIdentifier({ type: selected.value });
-    history.push(`/database/types/${selected.value}`);
+    history.push(`/database/types/table`);
   };
 
   const onClickedBack = () => history.push(`/database/types/${currentType.dbSymbol}`);
@@ -34,6 +43,18 @@ export const TypeTablePage = () => {
   const editors = {
     new: <TypeNewEditor from="typeTable" onClose={() => setCurrentEditor(undefined)} />,
   };
+
+  useEffect(() => {
+    if (currentEditor !== undefined) return;
+
+    if (shortcut === StudioShortcut.DB_PREVIOUS) {
+      setSelectedDataIdentifier({ type: getPreviousDbSymbol(types, currentType.id) });
+    }
+    if (shortcut === StudioShortcut.DB_NEXT) {
+      setSelectedDataIdentifier({ type: getNextDbSymbol(types, currentType.id) });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shortcut]);
 
   return (
     <DatabasePageStyle>

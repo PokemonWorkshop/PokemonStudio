@@ -1,23 +1,30 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { DataBlockWrapper } from '@components/database/dataBlocks';
 import { PokemonControlBar } from '@components/database/pokemon/PokemonControlBar';
 import { PokemonWithForm } from '@components/database/pokemon/PokemonDataPropsInterface';
 import { SubPageTitleWithIcon } from '@components/database/SubPageTitleWithIcon';
 import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
-import { useProjectData } from '@utils/useProjectData';
+import { useProjectPokemon } from '@utils/useProjectData';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
-import { useGlobalState } from '@src/GlobalStateProvider';
+import { StudioShortcut, useGlobalState } from '@src/GlobalStateProvider';
 import { MovepoolDeletion, MovepoolEditor, MovepoolImport } from '@components/database/pokemon/movepool';
 import { EditorOverlay } from '@components/editor';
 import { DeletionOverlay } from '@components/deletion';
+import { useShortcut } from '@utils/useShortcuts';
 
 export const PokemonMovepoolPage = () => {
   const [state] = useGlobalState();
   const history = useHistory();
-  const { projectDataValues: pokemon, selectedDataIdentifier: pokemonIdentifier, setSelectedDataIdentifier } = useProjectData('pokemon', 'pokemon');
+  const {
+    projectDataValues: pokemon,
+    selectedDataIdentifier: pokemonIdentifier,
+    setSelectedDataIdentifier,
+    getPreviousDbSymbol,
+    getNextDbSymbol,
+  } = useProjectPokemon();
   const { t } = useTranslation(['database_pokemon']);
   const currentPokemonWithForm: PokemonWithForm = {
     species: pokemon[pokemonIdentifier.specie],
@@ -28,6 +35,7 @@ export const PokemonMovepoolPage = () => {
     species: currentEditedPokemon,
     form: currentEditedPokemon.forms[pokemonIdentifier.form],
   };
+  const shortcut = useShortcut([StudioShortcut.DB_PREVIOUS, StudioShortcut.DB_NEXT]);
   const onClickedBack = () => history.push('/database/pokemon');
 
   const onChangeSpecie = (selected: SelectOption) => {
@@ -67,6 +75,20 @@ export const PokemonMovepoolPage = () => {
     breed: <MovepoolDeletion type="breed" onClose={onCloseDeletion} />,
     evolution: <MovepoolDeletion type="evolution" onClose={onCloseDeletion} />,
   };
+
+  useEffect(() => {
+    if (currentEditor !== undefined || currentDeletion !== undefined) return;
+
+    if (shortcut === StudioShortcut.DB_PREVIOUS) {
+      const previousDbSymbol = getPreviousDbSymbol(pokemon, currentEditedPokemon.id);
+      setSelectedDataIdentifier({ pokemon: { specie: previousDbSymbol, form: 0 } });
+    }
+    if (shortcut === StudioShortcut.DB_NEXT) {
+      const nextDbSymbol = getNextDbSymbol(pokemon, currentEditedPokemon.id);
+      setSelectedDataIdentifier({ pokemon: { specie: nextDbSymbol, form: 0 } });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shortcut]);
 
   return (
     <DatabasePageStyle>

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { DataBlockWithAction, DataBlockWrapper } from '@components/database/dataBlocks';
@@ -23,6 +23,8 @@ import {
   QuestNewGoalEditor,
 } from '@components/database/quest/editors';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
+import { useShortcut } from '@utils/useShortcuts';
+import { StudioShortcut } from '@src/GlobalStateProvider';
 
 export const QuestPage = () => {
   const {
@@ -30,6 +32,8 @@ export const QuestPage = () => {
     selectedDataIdentifier: questDbSymbol,
     setSelectedDataIdentifier,
     setProjectDataValues: setQuest,
+    getPreviousDbSymbol,
+    getNextDbSymbol,
   } = useProjectQuests();
   const { t } = useTranslation('database_quests');
   const onChange = (selected: SelectOption) => setSelectedDataIdentifier({ quest: selected.value });
@@ -39,6 +43,7 @@ export const QuestPage = () => {
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
   const [currentObjectiveIndex, setObjectiveIndex] = useState(0);
   const [currentEarningIndex, setEarningIndex] = useState(0);
+  const shortcut = useShortcut([StudioShortcut.DB_PREVIOUS, StudioShortcut.DB_NEXT]);
   const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
     {
       translation_name: { fileId: 45 },
@@ -94,6 +99,18 @@ export const QuestPage = () => {
     goals: <QuestDeletion type="goals" onClose={onCloseDeletion} />,
     earnings: <QuestDeletion type="earnings" onClose={onCloseDeletion} />,
   };
+
+  useEffect(() => {
+    if (currentEditor !== undefined || currentDeletion !== undefined) return;
+
+    if (shortcut === StudioShortcut.DB_PREVIOUS) {
+      setSelectedDataIdentifier({ quest: getPreviousDbSymbol(quests, currentEditedQuest.id, 0) });
+    }
+    if (shortcut === StudioShortcut.DB_NEXT) {
+      setSelectedDataIdentifier({ quest: getNextDbSymbol(quests, currentEditedQuest.id, 0) });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shortcut]);
 
   return (
     <DatabasePageStyle>

@@ -26,6 +26,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
 /*contextBridge.exposeInMainWorld('api', */
 window.api = {
+  shortcut: {
+    on: (cb) => {
+      const func = (_event, args) => cb(args);
+      ipcRenderer.on('request-shortcut', func);
+      return func;
+    },
+    removeListener: (cb) => ipcRenderer.removeListener('request-shortcut', cb),
+  },
   getAppVersion: () => ipcRenderer.invoke('get-app-version'),
   getPSDKBinariesPath: () => ipcRenderer.invoke('get-psdk-binaries-path'),
   getPSDKVersion: () => ipcRenderer.invoke('get-psdk-version'),

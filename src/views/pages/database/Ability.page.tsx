@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { DataBlockWithAction, DataBlockWrapper } from '@components/database/dataBlocks';
@@ -14,6 +14,8 @@ import { Deletion, DeletionOverlay } from '@components/deletion';
 import { useProjectAbilities } from '@utils/useProjectData';
 import { useHistory } from 'react-router-dom';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
+import { useShortcut } from '@utils/useShortcuts';
+import { StudioShortcut } from '@src/GlobalStateProvider';
 
 export const AbilityPage = () => {
   const {
@@ -22,6 +24,8 @@ export const AbilityPage = () => {
     setSelectedDataIdentifier,
     setProjectDataValues: setAbilities,
     removeProjectDataValue: deleteAbility,
+    getPreviousDbSymbol,
+    getNextDbSymbol,
   } = useProjectAbilities();
   const { t } = useTranslation('database_abilities');
   const history = useHistory();
@@ -31,6 +35,7 @@ export const AbilityPage = () => {
   const currentEditedAbility = useMemo(() => ability.clone(), [ability]);
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
+  const shortcut = useShortcut([StudioShortcut.DB_PREVIOUS, StudioShortcut.DB_NEXT]);
 
   const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
     {
@@ -73,6 +78,18 @@ export const AbilityPage = () => {
       />
     ),
   };
+
+  useEffect(() => {
+    if (currentEditor !== undefined || currentDeletion !== undefined) return;
+
+    if (shortcut === StudioShortcut.DB_PREVIOUS) {
+      setSelectedDataIdentifier({ ability: getPreviousDbSymbol(abilities, currentEditedAbility.id) });
+    }
+    if (shortcut === StudioShortcut.DB_NEXT) {
+      setSelectedDataIdentifier({ ability: getNextDbSymbol(abilities, currentEditedAbility.id) });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shortcut]);
 
   return (
     <DatabasePageStyle>

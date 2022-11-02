@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { DataBlockWithAction, DataBlockWithActionTooltip, DataBlockWrapper } from '@components/database/dataBlocks';
 import { TypeControlBar } from '@components/database/type/TypeControlBar';
 import { TypeFrame } from '@components/database/type/TypeFrame';
@@ -16,6 +16,8 @@ import { EditorOverlay } from '@components/editor';
 import { Deletion, DeletionOverlay } from '@components/deletion';
 import { useProjectTypes } from '@utils/useProjectData';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
+import { useShortcut } from '@utils/useShortcuts';
+import { StudioShortcut } from '@src/GlobalStateProvider';
 
 type TypePageParams = {
   typeDbSymbol?: string;
@@ -28,6 +30,8 @@ export const TypePage = () => {
     setSelectedDataIdentifier,
     setProjectDataValues: setTypes,
     removeProjectDataValue: deleteType,
+    getPreviousDbSymbol,
+    getNextDbSymbol,
   } = useProjectTypes();
   const { t } = useTranslation('database_types');
   const history = useHistory();
@@ -36,6 +40,7 @@ export const TypePage = () => {
   const currentEditedType = useMemo(() => currentType.clone(), [currentType]);
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
+  const shortcut = useShortcut([StudioShortcut.DB_PREVIOUS, StudioShortcut.DB_NEXT]);
   const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
     {
       translation_name: { fileId: 3 },
@@ -87,6 +92,18 @@ export const TypePage = () => {
   };
 
   const onClickTypeTable = () => history.push(`/database/types/table`);
+
+  useEffect(() => {
+    if (currentEditor !== undefined || currentDeletion !== undefined) return;
+
+    if (shortcut === StudioShortcut.DB_PREVIOUS) {
+      setSelectedDataIdentifier({ type: getPreviousDbSymbol(types, currentType.id) });
+    }
+    if (shortcut === StudioShortcut.DB_NEXT) {
+      setSelectedDataIdentifier({ type: getNextDbSymbol(types, currentType.id) });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shortcut]);
 
   return (
     <DatabasePageStyle>

@@ -1,3 +1,4 @@
+import { IpcRendererEvent } from 'electron';
 import type ProjectStudioModel from '@modelEntities/ProjectStudio.model';
 import type { PSDKVersion } from '@services/getPSDKVersion';
 import type { BackendTaskWithGenericError, BackendTaskWithGenericErrorAndNoProgress, GenericBackendProgress } from '@utils/BackendTask';
@@ -5,13 +6,17 @@ import type { ProjectFileType } from './backendTasks/chooseProjectFileToOpen';
 import { ConfigureNewProjectMetaData } from './backendTasks/configureNewProject';
 import { ProjectConfigsFromBackEnd } from './backendTasks/readProjectConfigs';
 import { ProjectDataFromBackEnd } from './backendTasks/readProjectData';
-import { ProjectText } from './GlobalStateProvider';
+import { ProjectText, StudioShortcut } from './GlobalStateProvider';
 
 export {};
 
 declare global {
   interface Window {
     api: {
+      shortcut: {
+        on: (cb: (shortcut: StudioShortcut) => unknown) => (event: IpcRendererEvent, args: unknown) => void;
+        removeListener: (listener: (event: IpcRendererEvent, args: unknown) => void) => void;
+      };
       getAppVersion: () => Promise<string>;
       getPSDKBinariesPath: () => Promise<string>;
       getPSDKVersion: () => Promise<PSDKVersion>;

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataBlockWithAction, DataBlockWrapper } from '@components/database/dataBlocks';
 import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
@@ -34,6 +34,8 @@ import { EditorOverlay } from '@components/editor';
 import { Deletion, DeletionOverlay } from '@components/deletion';
 import BallItemModel from '@modelEntities/item/BallItem.model';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
+import { useShortcut } from '@utils/useShortcuts';
+import { StudioShortcut } from '@src/GlobalStateProvider';
 
 export const ItemPage = () => {
   const {
@@ -42,8 +44,11 @@ export const ItemPage = () => {
     setSelectedDataIdentifier,
     setProjectDataValues: setItems,
     removeProjectDataValue: deleteItem,
+    getPreviousDbSymbol,
+    getNextDbSymbol,
   } = useProjectItems();
   const { t } = useTranslation('database_items');
+  const shortcut = useShortcut([StudioShortcut.DB_PREVIOUS, StudioShortcut.DB_NEXT]);
   const onChange = (selected: SelectOption) => setSelectedDataIdentifier({ item: selected.value });
   const item = items[itemDbSymbol];
   const currentEditedItem = useMemo(() => item.clone(), [item]);
@@ -110,6 +115,18 @@ export const ItemPage = () => {
       />
     ),
   };
+
+  useEffect(() => {
+    if (currentEditor !== undefined || currentDeletion !== undefined) return;
+
+    if (shortcut === StudioShortcut.DB_PREVIOUS) {
+      setSelectedDataIdentifier({ item: getPreviousDbSymbol(items, currentEditedItem.id) });
+    }
+    if (shortcut === StudioShortcut.DB_NEXT) {
+      setSelectedDataIdentifier({ item: getNextDbSymbol(items, currentEditedItem.id) });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shortcut]);
 
   return (
     <DatabasePageStyle>

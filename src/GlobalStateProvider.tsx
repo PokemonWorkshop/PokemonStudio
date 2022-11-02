@@ -29,6 +29,11 @@ import GameOptionsConfigModel from '@modelEntities/config/GameOptionsConfig.mode
 import MapLinkModel from '@modelEntities/maplinks/MapLink.model';
 import { RMXPMap } from '@modelEntities/maplinks/RMXPMap';
 
+export enum StudioShortcut {
+  DB_PREVIOUS = 'db_previous',
+  DB_NEXT = 'db_next',
+}
+
 export interface ProjectData {
   items: {
     [item: string]: ItemModel;
