@@ -58,8 +58,8 @@
   "edit": "Modifica",
   "defensive": "Difende",
   "offensive": "Attacca",
-  "high_efficience_helper": "Il tipo {{offensiveType}} è super efficace contro il tipo {{defensiveType}}.",
-  "low_efficience_helper": "Il tipo {{offensiveType}} è poco efficace contro il tipo {{defensiveType}}.",
+  "high_efficience_helper": "Il tipo {{offensiveType}} è superefficace contro il tipo {{defensiveType}}.",
+  "low_efficience_helper": "Il tipo {{offensiveType}} non è molto efficace contro il tipo {{defensiveType}}.",
   "neutral_helper": "Il tipo {{offensiveType}} infligge danni normali contro il tipo {{defensiveType}}.",
-  "zero_efficience_helper": "Il tipo {{offensiveType}} è inefficace contro il tipo {{defensiveType}}."
+  "zero_efficience_helper": "Il tipo {{offensiveType}} non ha effetto contro il tipo {{defensiveType}}."
 }
