@@ -4,6 +4,6 @@
   "max_pokemon_level": "Livello massimo dei Pokémon",
   "evolution_form": "Usa sempre la forma base per le evoluzioni",
   "evolution_form_no_data": "Usa la forma base se nessuna informazione sull'evoluzione è disponibile",
-  "max_bag_item_count": "Numero massimo dello stesso strumento",
-  "unlimited_items": "Si può impostare a 0 se non si vuole limitare il numero massimo dello strumento."
+  "max_bag_item_count": "Quantità massima di uno stesso strumento",
+  "unlimited_items": "Si può impostare a 0 se non si vuole limitare la quantità massima di uno stesso strumento."
 }
