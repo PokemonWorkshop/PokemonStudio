@@ -172,15 +172,14 @@ export const PokemonPage = () => {
     if (currentEditor !== undefined || currentDeletion !== undefined) return;
 
     if (shortcut === StudioShortcut.DB_PREVIOUS) {
-      const previousDbSymbol = getPreviousDbSymbol(pokemon, currentEditedPokemon.id);
+      const previousDbSymbol = getPreviousDbSymbol('id');
       setSelectedDataIdentifier({ pokemon: { specie: previousDbSymbol, form: 0 } });
     }
     if (shortcut === StudioShortcut.DB_NEXT) {
-      const nextDbSymbol = getNextDbSymbol(pokemon, currentEditedPokemon.id);
+      const nextDbSymbol = getNextDbSymbol('id');
       setSelectedDataIdentifier({ pokemon: { specie: nextDbSymbol, form: 0 } });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shortcut]);
+  }, [shortcut, getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
 
   return (
     <DatabasePageStyle>

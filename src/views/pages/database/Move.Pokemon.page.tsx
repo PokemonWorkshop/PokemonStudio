@@ -36,13 +36,12 @@ export const MovePokemonPage = () => {
 
   useEffect(() => {
     if (shortcut === StudioShortcut.DB_PREVIOUS) {
-      setSelectedDataIdentifier({ move: getPreviousDbSymbol(moves, currentMove.id) });
+      setSelectedDataIdentifier({ move: getPreviousDbSymbol('id') });
     }
     if (shortcut === StudioShortcut.DB_NEXT) {
-      setSelectedDataIdentifier({ move: getNextDbSymbol(moves, currentMove.id) });
+      setSelectedDataIdentifier({ move: getNextDbSymbol('id') });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shortcut]);
+  }, [shortcut, getPreviousDbSymbol, getNextDbSymbol]);
 
   return (
     <DatabasePageStyle>

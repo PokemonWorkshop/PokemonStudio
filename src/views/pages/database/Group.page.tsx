@@ -103,13 +103,12 @@ export const GroupPage = () => {
     if (currentEditor !== undefined || currentDeletion !== undefined) return;
 
     if (shortcut === StudioShortcut.DB_PREVIOUS) {
-      setSelectedDataIdentifier({ group: getPreviousDbSymbol(groups, currentEditedGroup.id, 0) });
+      setSelectedDataIdentifier({ group: getPreviousDbSymbol('id') });
     }
     if (shortcut === StudioShortcut.DB_NEXT) {
-      setSelectedDataIdentifier({ group: getNextDbSymbol(groups, currentEditedGroup.id, 0) });
+      setSelectedDataIdentifier({ group: getNextDbSymbol('id') });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shortcut, groupDbSymbol]);
+  }, [shortcut, getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
 
   return (
     <DatabasePageStyle>

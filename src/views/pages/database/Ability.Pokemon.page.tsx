@@ -31,13 +31,12 @@ export const AbilityPokemonPage = () => {
 
   useEffect(() => {
     if (shortcut === StudioShortcut.DB_PREVIOUS) {
-      setSelectedDataIdentifier({ ability: getPreviousDbSymbol(abilities, ability.id) });
+      setSelectedDataIdentifier({ ability: getPreviousDbSymbol('name') });
     }
     if (shortcut === StudioShortcut.DB_NEXT) {
-      setSelectedDataIdentifier({ ability: getNextDbSymbol(abilities, ability.id) });
+      setSelectedDataIdentifier({ ability: getNextDbSymbol('name') });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shortcut]);
+  }, [shortcut, getPreviousDbSymbol, getNextDbSymbol]);
 
   return (
     <DatabasePageStyle>

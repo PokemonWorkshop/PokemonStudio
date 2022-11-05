@@ -119,13 +119,13 @@ export const TrainerPage = () => {
     if (currentEditor !== undefined || currentDeletion !== undefined) return;
 
     if (shortcut === StudioShortcut.DB_PREVIOUS) {
-      setSelectedDataIdentifier({ trainer: getPreviousDbSymbol(trainers, currentEditedTrainer.id, 0) });
+      setSelectedDataIdentifier({ trainer: getPreviousDbSymbol('id') });
     }
     if (shortcut === StudioShortcut.DB_NEXT) {
-      setSelectedDataIdentifier({ trainer: getNextDbSymbol(trainers, currentEditedTrainer.id, 0) });
+      setSelectedDataIdentifier({ trainer: getNextDbSymbol('id') });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shortcut]);
+  }, [shortcut, getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
 
   return (
     <DatabasePageStyle>

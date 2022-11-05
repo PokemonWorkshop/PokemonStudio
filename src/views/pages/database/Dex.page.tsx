@@ -102,14 +102,15 @@ export const DexPage = () => {
   };
 
   useEffect(() => {
+    if (currentDeletion || currentDeletion) return;
+
     if (shortcut === StudioShortcut.DB_PREVIOUS) {
-      setSelectedDataIdentifier({ dex: getPreviousDbSymbol(allDex, currentEditedDex.id, 0) });
+      setSelectedDataIdentifier({ dex: getPreviousDbSymbol('id') });
     }
     if (shortcut === StudioShortcut.DB_NEXT) {
-      setSelectedDataIdentifier({ dex: getNextDbSymbol(allDex, currentEditedDex.id, 0) });
+      setSelectedDataIdentifier({ dex: getNextDbSymbol('id') });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shortcut]);
+  }, [shortcut, getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
 
   return (
     <DatabasePageStyle>

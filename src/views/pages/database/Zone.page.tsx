@@ -132,13 +132,12 @@ export const ZonePage = () => {
     if (currentEditor !== undefined || currentDeletion !== undefined) return;
 
     if (shortcut === StudioShortcut.DB_PREVIOUS) {
-      setSelectedDataIdentifier({ zone: getPreviousDbSymbol(zones, currentEditedZone.id, 0) });
+      setSelectedDataIdentifier({ zone: getPreviousDbSymbol('id') });
     }
     if (shortcut === StudioShortcut.DB_NEXT) {
-      setSelectedDataIdentifier({ zone: getNextDbSymbol(zones, currentEditedZone.id, 0) });
+      setSelectedDataIdentifier({ zone: getNextDbSymbol('id') });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shortcut]);
+  }, [shortcut, getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
 
   return (
     <DatabasePageStyle>
