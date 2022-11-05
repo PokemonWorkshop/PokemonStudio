@@ -104,13 +104,12 @@ export const QuestPage = () => {
     if (currentEditor !== undefined || currentDeletion !== undefined) return;
 
     if (shortcut === StudioShortcut.DB_PREVIOUS) {
-      setSelectedDataIdentifier({ quest: getPreviousDbSymbol(quests, currentEditedQuest.id, 0) });
+      setSelectedDataIdentifier({ quest: getPreviousDbSymbol('id') });
     }
     if (shortcut === StudioShortcut.DB_NEXT) {
-      setSelectedDataIdentifier({ quest: getNextDbSymbol(quests, currentEditedQuest.id, 0) });
+      setSelectedDataIdentifier({ quest: getNextDbSymbol('id') });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shortcut]);
+  }, [shortcut, getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
 
   return (
     <DatabasePageStyle>

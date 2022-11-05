@@ -83,13 +83,12 @@ export const AbilityPage = () => {
     if (currentEditor !== undefined || currentDeletion !== undefined) return;
 
     if (shortcut === StudioShortcut.DB_PREVIOUS) {
-      setSelectedDataIdentifier({ ability: getPreviousDbSymbol(abilities, currentEditedAbility.id) });
+      setSelectedDataIdentifier({ ability: getPreviousDbSymbol('name') });
     }
     if (shortcut === StudioShortcut.DB_NEXT) {
-      setSelectedDataIdentifier({ ability: getNextDbSymbol(abilities, currentEditedAbility.id) });
+      setSelectedDataIdentifier({ ability: getNextDbSymbol('name') });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shortcut]);
+  }, [shortcut, getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
 
   return (
     <DatabasePageStyle>

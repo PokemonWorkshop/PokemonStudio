@@ -30,6 +30,7 @@ export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier
   selected: SelectedIdentifier
 ) => {
   const [state, setState] = useGlobalState();
+  const selectedDataIdentifier = state.selectedDataIdentifier[selected];
 
   const setSelectedDataIdentifier = (newSelectedData: Pick<SelectedDataIdentifier, typeof selected>) => {
     setState((currentState) => ({
@@ -82,25 +83,44 @@ export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier
     });
   };
 
-  const getPreviousDbSymbol = (listObject: ProjectData[typeof key], currentId: number, minimumId = 1): string => {
-    const entries = Object.entries(listObject);
-    if (currentId <= minimumId)
-      return entries.map(([value, itemData]) => ({ value, index: itemData.id })).filter((d) => d.index === entries.length - 1 + minimumId)[0].value;
-
-    return entries.map(([value, itemData]) => ({ value, index: itemData.id })).filter((d) => d.index === currentId - 1)[0].value;
+  const getPreviousDbSymbol = (mode: 'dbSymbol' | 'id' | 'name') => {
+    const currentDbSymbol = typeof selectedDataIdentifier === 'string' ? selectedDataIdentifier : selectedDataIdentifier.specie;
+    switch (mode) {
+      case 'dbSymbol':
+        const keys = Object.keys(state.projectData[key]);
+        return keys[keys.indexOf(currentDbSymbol) - 1] || keys[keys.length - 1];
+      case 'id':
+        const values = Object.values(state.projectData[key]).sort((a, b) => b.id - a.id);
+        const currentId = state.projectData[key][currentDbSymbol].id;
+        return values.find(({ id }) => id < currentId)?.dbSymbol || values[0].dbSymbol;
+      case 'name':
+        const entities = Object.entries(state.projectData[key]).sort(([, a], [, b]) => a.name().localeCompare(b.name()));
+        const keys2 = entities.map(([key]) => key);
+        return keys2[keys2.indexOf(currentDbSymbol) - 1] || keys2[keys2.length - 1];
+      default:
+        return ((v: never) => v)(mode);
+    }
   };
 
-  const getNextDbSymbol = (listObject: ProjectData[typeof key], currentId: number, minimumId = 1): string => {
-    const entries = Object.entries(listObject);
-    if (currentId >= entries.length - 1 + minimumId)
-      return entries.map(([value, itemData]) => ({ value, index: itemData.id })).filter((d) => d.index === minimumId)[0].value;
-
-    return entries.map(([value, itemData]) => ({ value, index: itemData.id })).filter((d) => d.index === currentId + 1)[0].value;
+  const getNextDbSymbol = (mode: 'id' | 'name') => {
+    const currentDbSymbol = typeof selectedDataIdentifier === 'string' ? selectedDataIdentifier : selectedDataIdentifier.specie;
+    switch (mode) {
+      case 'id':
+        const values = Object.values(state.projectData[key]).sort((a, b) => a.id - b.id);
+        const currentId = state.projectData[key][currentDbSymbol].id;
+        return values.find(({ id }) => id > currentId)?.dbSymbol || values[0].dbSymbol;
+      case 'name':
+        const entities = Object.entries(state.projectData[key]).sort(([, a], [, b]) => a.name().localeCompare(b.name()));
+        const keys = entities.map(([key]) => key);
+        return keys[keys.indexOf(currentDbSymbol) + 1] || keys[0];
+      default:
+        return ((v: never) => v)(mode);
+    }
   };
 
   return {
     projectDataValues: state.projectData[key],
-    selectedDataIdentifier: state.selectedDataIdentifier[selected],
+    selectedDataIdentifier: selectedDataIdentifier,
     setSelectedDataIdentifier,
     setProjectDataValues,
     bindProjectDataValue,

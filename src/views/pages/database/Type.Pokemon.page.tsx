@@ -19,7 +19,7 @@ type TypePokemonPageParams = {
 export const TypePokemonPage = () => {
   const history = useHistory();
   const [state] = useGlobalState();
-  const { projectDataValues: types, setSelectedDataIdentifier: setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol } = useProjectTypes();
+  const { setSelectedDataIdentifier: setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol } = useProjectTypes();
   const { t } = useTranslation('database_types');
   const shortcut = useShortcut([StudioShortcut.DB_PREVIOUS, StudioShortcut.DB_NEXT]);
   const { typeDbSymbol } = useParams<TypePokemonPageParams>();
@@ -34,17 +34,16 @@ export const TypePokemonPage = () => {
 
   useEffect(() => {
     if (shortcut === StudioShortcut.DB_PREVIOUS) {
-      const previousDbSymbol = getPreviousDbSymbol(types, currentType.id);
+      const previousDbSymbol = getPreviousDbSymbol('name');
       setSelectedDataIdentifier({ type: previousDbSymbol });
       history.push(`/database/types/${previousDbSymbol}/pokemon`);
     }
     if (shortcut === StudioShortcut.DB_NEXT) {
-      const nextDbSymbol = getNextDbSymbol(types, currentType.id);
+      const nextDbSymbol = getNextDbSymbol('name');
       setSelectedDataIdentifier({ type: nextDbSymbol });
       history.push(`/database/types/${nextDbSymbol}/pokemon`);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shortcut]);
+  }, [shortcut, getPreviousDbSymbol, getNextDbSymbol]);
 
   return (
     <DatabasePageStyle>

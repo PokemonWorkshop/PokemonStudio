@@ -97,13 +97,12 @@ export const TypePage = () => {
     if (currentEditor !== undefined || currentDeletion !== undefined) return;
 
     if (shortcut === StudioShortcut.DB_PREVIOUS) {
-      setSelectedDataIdentifier({ type: getPreviousDbSymbol(types, currentType.id) });
+      setSelectedDataIdentifier({ type: getPreviousDbSymbol('name') });
     }
     if (shortcut === StudioShortcut.DB_NEXT) {
-      setSelectedDataIdentifier({ type: getNextDbSymbol(types, currentType.id) });
+      setSelectedDataIdentifier({ type: getNextDbSymbol('name') });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shortcut]);
+  }, [shortcut, getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
 
   return (
     <DatabasePageStyle>
