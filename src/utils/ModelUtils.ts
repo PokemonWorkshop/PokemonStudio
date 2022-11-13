@@ -1,5 +1,3 @@
-import AbilityModel from '@modelEntities/ability/Ability.model';
-import TypeModel from '@modelEntities/type/Type.model';
 import { ProjectData } from '@src/GlobalStateProvider';
 
 /**
@@ -8,14 +6,17 @@ import { ProjectData } from '@src/GlobalStateProvider';
  * @returns The text id
  */
 export const findFirstAvailableTextId = (allData: ProjectData['abilities'] | ProjectData['types']) => {
-  const dataSortTextId: TypeModel[] | AbilityModel[] = Object.entries(allData)
-    .map(([, data]) => data)
-    .sort((a, b) => a.textId - b.textId);
-  const holeIndex = dataSortTextId.findIndex((data, index) => data.textId !== index);
-  if (holeIndex === -1) return dataSortTextId[dataSortTextId.length - 1].textId + 1;
-  if (holeIndex === 0) return 0;
+  const textIdSet = Object.values(allData)
+    .map(({ textId }) => textId) // Fetch all ids
+    .filter((textId, index, array) => index === array.indexOf(textId)) // reject all duplicates
+    .sort((a, b) => a - b); // sort id by ascending order
+  // Since textIds are ordered, if the first isn't the startId that means we need to fill the beginning of the list ;)
+  if (textIdSet[0] !== 0) return 0;
 
-  return dataSortTextId[holeIndex - 1].textId + 1;
+  const holeIndex = textIdSet.findIndex((textId, index) => textId !== index);
+  if (holeIndex === -1) return textIdSet[textIdSet.length - 1] + 1;
+
+  return textIdSet[holeIndex - 1] + 1;
 };
 
 /**
@@ -25,12 +26,15 @@ export const findFirstAvailableTextId = (allData: ProjectData['abilities'] | Pro
  * @returns The first available id
  */
 export const findFirstAvailableId = (allData: ProjectData[''], startId: number) => {
-  const dataSort = Object.entries(allData)
-    .map(([, data]) => data)
-    .sort((a, b) => a.id - b.id);
-  const holeIndex = dataSort.findIndex((data, index) => data.id !== index + startId && index >= startId);
-  if (holeIndex === -1) return dataSort[dataSort.length - 1].id + 1;
-  if (holeIndex === startId) return startId;
+  const idSet = Object.values(allData)
+    .map(({ id }) => id) // Fetch all ids
+    .filter((id, index, array) => index === array.indexOf(id)) // reject all duplicates
+    .sort((a, b) => a - b); // sort id by ascending order
+  // Since ids are ordered, if the first isn't the startId that means we need to fill the beginning of the list ;)
+  if (idSet[0] > startId) return startId;
 
-  return dataSort[holeIndex - 1].id + 1;
+  const holeIndex = idSet.findIndex((id, index) => id !== index + startId);
+  if (holeIndex === -1) return idSet[idSet.length - 1] + 1;
+
+  return idSet[holeIndex - 1] + 1;
 };
