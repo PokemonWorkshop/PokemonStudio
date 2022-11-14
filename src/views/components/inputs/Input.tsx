@@ -64,6 +64,10 @@ export const Input = styled.input<InputProps>`
       top: 8.5px;
     }
   }
+
+  &:invalid {
+    color: ${({ theme }) => theme.colors.dangerBase};
+  }
 `;
 
 type MultiLineInputProps = {

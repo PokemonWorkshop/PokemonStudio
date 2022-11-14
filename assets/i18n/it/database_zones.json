@@ -21,7 +21,7 @@
   "no_map": "Nessuna mappa",
   "displayed_panel": "Pannello mostrato",
   "forced_weather": "Clima forzato",
-  "map_already_exists": "Questa mappa è già in lista.",
+  "map_already_exists": "La mappa #{{mapId}} è già in lista.",
   "panel_number": "Numero pannello",
   "weather-1": "Predefinito",
   "weather0": "Nessuno",

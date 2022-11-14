@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { Editor, useRefreshUI } from '@components/editor';
 
 import { TFunction, useTranslation } from 'react-i18next';
@@ -48,24 +48,29 @@ type ZoneSettingsEditorProps = {
 };
 
 export const ZoneSettingsEditor = ({ zone }: ZoneSettingsEditorProps) => {
-  const [newMap, setNewMap] = useState<number>(NaN);
-  const [errorNewMap, setErrorNewMap] = useState<boolean>(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [errorNewMap, setErrorNewMap] = useState<number | false>(false);
   const { t } = useTranslation('database_zones');
   const weatherOptions = useMemo(() => weatherCategoryEntries(t), [t]);
   const refreshUI = useRefreshUI();
 
   const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (event) => {
-    if (event.key === 'Enter') {
+    if (inputRef.current && inputRef.current.validity.valid && event.key === 'Enter') {
       const target = event.target as HTMLInputElement;
-      const mapId = parseInt(target.value);
-      if (isNaN(mapId)) return;
-      if (zone.maps.includes(mapId)) {
-        setErrorNewMap(true);
+      const mapIds = target.value
+        .split(',')
+        .filter((v) => v.trim().length !== 0)
+        .map((v) => Number(v))
+        .filter((v, i, a) => i === a.indexOf(v));
+      const errorMapId = mapIds.find((mapId) => zone.maps.includes(mapId));
+      if (errorMapId) {
+        setErrorNewMap(errorMapId);
         return;
       }
 
-      zone.maps.push(mapId);
-      setNewMap(NaN);
+      inputRef.current.value = '';
+      if (errorNewMap) setErrorNewMap(false);
+      refreshUI((zone.maps = zone.maps.concat(mapIds)));
     }
   };
 
@@ -83,21 +88,8 @@ export const ZoneSettingsEditor = ({ zone }: ZoneSettingsEditorProps) => {
         <InputMapsListContainer>
           <Label htmlFor="map">{t('maps_list')}</Label>
           <InputMapWithErrorContainer>
-            <Input
-              type="number"
-              name="map"
-              min="0"
-              max="99999"
-              value={isNaN(newMap) ? '' : newMap}
-              onChange={(event) => {
-                const value = parseInt(event.target.value);
-                if (value < 0 || value > 99_999) return event.preventDefault();
-                setErrorNewMap(false);
-                refreshUI(setNewMap(value));
-              }}
-              onKeyDown={handleKeyDown}
-            />
-            {errorNewMap && <TextInputError>{t('map_already_exists')}</TextInputError>}
+            <Input type="text" name="map" pattern="[0-9]{1,5} *(?:, *[0-9]{0,5} *)*" ref={inputRef} onKeyDown={handleKeyDown} />
+            {errorNewMap !== false && <TextInputError>{t('map_already_exists', { mapId: padStr(errorNewMap, 2) })}</TextInputError>}
           </InputMapWithErrorContainer>
           <MapsListContainer>
             {zone.maps
