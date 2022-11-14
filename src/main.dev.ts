@@ -22,13 +22,9 @@ import ProjectOpenChannelService from '@services/project.open.channel.service';
 import FileOpenChannelService from '@services/file.open.channel.service';
 import { PSDKExecChannelService } from '@services/PSDKIPC/psdk.exec.channel.service';
 import { PSDKDecodeDownloadedScriptsChannelService } from '@services/PSDKIPC/psdk.decodeDownloadedScripts.channel.service';
-import ProjectSavingChannelService from '@services/project.saving.channel.service';
-import ProjectStudioFileChannelService from '@services/project.studio.file.channel.service';
-import TextSavingChannelService from '@services/text.saving.channel.service';
 import VersionsChannelService from '@services/versions.channel.service';
 import FileExistsChannelService from '@services/file.exists.channel.service';
 import PSDKConfigsLoadingChannelService from '@services/psdk.configs.loading.channel.service';
-import PSDKConfigsSavingChannelService from '@services/psdk.configs.saving.channel.service';
 import { getPSDKBinariesPath, getPSDKVersion } from '@services/getPSDKVersion';
 import { getLastPSDKVersion } from '@services/getLastPSDKVersion';
 import { updatePSDK } from '@services/updatePSDK';
@@ -44,10 +40,14 @@ import { registerReadProjectTexts } from './backendTasks/readProjectTexts';
 import { registerMigrateData } from './backendTasks/migrateData';
 import { registerFileExists } from './backendTasks/fileExists';
 import { registerUpdateMapInfos } from './backendTasks/updateMapInfos';
-import MoveImageChannelService from '@services/move.image.channel.service';
 import { registerChooseFolder } from './backendTasks/chooseFolder';
 import { registerExtractNewProject } from './backendTasks/extractNewProject';
 import { registerConfigureNewProject } from './backendTasks/configureNewProject';
+import { registerSaveProjectData } from './backendTasks/saveProjectData';
+import { registerSaveProjectConfigs } from './backendTasks/saveProjectConfigs';
+import { registerSaveProjectTexts } from './backendTasks/saveProjectTexts';
+import { registerMoveImage } from './backendTasks/moveImage';
+import { registerProjectStudioFile } from './backendTasks/projectStudioFile';
 
 export default class AppUpdater {
   constructor() {
@@ -202,19 +202,14 @@ ipcMain.on('window-is-maximized', (event) => {
 const ipcChannels = [
   new TimeInfoChannelService(),
   new ProjectLoadingChannelService(),
-  new ProjectSavingChannelService(),
-  new TextSavingChannelService(),
   new TextLoadingChannelService(),
   new ProjectOpenChannelService(),
   new FileOpenChannelService(),
-  new ProjectStudioFileChannelService(),
   new PSDKExecChannelService(),
   new PSDKDecodeDownloadedScriptsChannelService(),
   new VersionsChannelService(),
   new FileExistsChannelService(),
   new PSDKConfigsLoadingChannelService(),
-  new PSDKConfigsSavingChannelService(),
-  new MoveImageChannelService(),
 ];
 
 ipcChannels.forEach((channel) => channel.registerChannel(ipcMain));
@@ -241,3 +236,8 @@ registerUpdateMapInfos(ipcMain);
 registerChooseFolder(ipcMain);
 registerExtractNewProject(ipcMain);
 registerConfigureNewProject(ipcMain);
+registerSaveProjectData(ipcMain);
+registerSaveProjectConfigs(ipcMain);
+registerSaveProjectTexts(ipcMain);
+registerMoveImage(ipcMain);
+registerProjectStudioFile(ipcMain);

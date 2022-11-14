@@ -1,11 +1,13 @@
 import styled from 'styled-components';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import theme from '@src/AppTheme';
-import { useProjectSaving } from '@utils/useProjectSaving';
 import { BaseIcon } from '@components/icons/BaseIcon';
 import SvgContainer from '@components/icons/BaseIcon/SvgContainer';
 
 import { BaseButtonStyle } from './GenericButtons';
+import { useProjectSave } from '@utils/useProjectSave';
+import { useGlobalState } from '@src/GlobalStateProvider';
+import { useLoaderRef } from '@utils/loaderContext';
 
 const SaveProjectButtonContainer = styled(BaseButtonStyle)`
   display: inline-block;
@@ -51,15 +53,17 @@ const Badge = styled.div<BadgeProps>`
 `;
 
 export const SaveProjectButton = () => {
-  const { state, setState, saveProject, isDataToSave, isProjectTextSave } = useProjectSaving();
-
-  const handleClick = useMemo(
-    () => async () => saveProject(),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isProjectTextSave, state.savingData.map.size, state.savingConfig.map.size, state.savingProjectStudio, state.tmpHackHasTextToSave, state]
-  );
-
+  const [state, setState] = useGlobalState();
+  const { isDataToSave, save } = useProjectSave();
+  const loaderRef = useLoaderRef();
   const [projectLoaded, setProjectLoaded] = useState(false);
+
+  const handleClick = async () => {
+    save(
+      () => loaderRef.current.close(),
+      ({ errorMessage }) => loaderRef.current.setError('saving_project_error', errorMessage)
+    );
+  };
 
   useEffect(() => {
     if (!projectLoaded) {
