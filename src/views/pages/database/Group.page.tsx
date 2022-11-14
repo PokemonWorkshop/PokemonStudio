@@ -22,8 +22,7 @@ import { CurrentBattlerType } from '@components/pokemonBattlerList/PokemonBattle
 import { useTranslationEditor } from '@utils/useTranslationEditor';
 import { showNotification } from '@utils/showNotification';
 import { ToolGroup } from '@modelEntities/group/Group.model';
-import { useShortcut } from '@utils/useShortcuts';
-import { StudioShortcut } from '@src/GlobalStateProvider';
+import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 
 export const GroupPage = () => {
   const {
@@ -42,7 +41,16 @@ export const GroupPage = () => {
 
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
-  const shortcut = useShortcut([StudioShortcut.DB_PREVIOUS, StudioShortcut.DB_NEXT]);
+  const shortcutMap = useMemo<StudioShortcutActions>(() => {
+    if (currentEditor !== undefined || currentDeletion !== undefined) return {};
+
+    return {
+      db_previous: () => setSelectedDataIdentifier({ group: getPreviousDbSymbol('id') }),
+      db_next: () => setSelectedDataIdentifier({ group: getNextDbSymbol('id') }),
+      db_new: () => setCurrentEditor('new'),
+    };
+  }, [getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
+  useShortcut(shortcutMap);
   const [currentBattler, setCurrentBattler] = useState<CurrentBattlerType>({
     index: undefined,
     kind: undefined,
@@ -100,15 +108,7 @@ export const GroupPage = () => {
     if ((group.tool as ToolGroup & 'HeadButt') === 'HeadButt') {
       showNotification('warning', t('title_data_modification'), t('warning_headbutt_data_change'));
     }
-    if (currentEditor !== undefined || currentDeletion !== undefined) return;
-
-    if (shortcut === StudioShortcut.DB_PREVIOUS) {
-      setSelectedDataIdentifier({ group: getPreviousDbSymbol('id') });
-    }
-    if (shortcut === StudioShortcut.DB_NEXT) {
-      setSelectedDataIdentifier({ group: getNextDbSymbol('id') });
-    }
-  }, [shortcut, getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
+  }, []);
 
   return (
     <DatabasePageStyle>

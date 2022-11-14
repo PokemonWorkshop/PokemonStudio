@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { DataBlockWithAction, DataBlockWrapper } from '@components/database/dataBlocks';
@@ -23,8 +23,7 @@ import {
   QuestNewGoalEditor,
 } from '@components/database/quest/editors';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
-import { useShortcut } from '@utils/useShortcuts';
-import { StudioShortcut } from '@src/GlobalStateProvider';
+import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 
 export const QuestPage = () => {
   const {
@@ -43,7 +42,16 @@ export const QuestPage = () => {
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
   const [currentObjectiveIndex, setObjectiveIndex] = useState(0);
   const [currentEarningIndex, setEarningIndex] = useState(0);
-  const shortcut = useShortcut([StudioShortcut.DB_PREVIOUS, StudioShortcut.DB_NEXT]);
+  const shortcutMap = useMemo<StudioShortcutActions>(() => {
+    if (currentEditor !== undefined || currentDeletion !== undefined) return {};
+
+    return {
+      db_previous: () => setSelectedDataIdentifier({ quest: getPreviousDbSymbol('id') }),
+      db_next: () => setSelectedDataIdentifier({ quest: getNextDbSymbol('id') }),
+      db_new: () => setCurrentEditor('new'),
+    };
+  }, [getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
+  useShortcut(shortcutMap);
   const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
     {
       translation_name: { fileId: 45 },
@@ -99,17 +107,6 @@ export const QuestPage = () => {
     goals: <QuestDeletion type="goals" onClose={onCloseDeletion} />,
     earnings: <QuestDeletion type="earnings" onClose={onCloseDeletion} />,
   };
-
-  useEffect(() => {
-    if (currentEditor !== undefined || currentDeletion !== undefined) return;
-
-    if (shortcut === StudioShortcut.DB_PREVIOUS) {
-      setSelectedDataIdentifier({ quest: getPreviousDbSymbol('id') });
-    }
-    if (shortcut === StudioShortcut.DB_NEXT) {
-      setSelectedDataIdentifier({ quest: getNextDbSymbol('id') });
-    }
-  }, [shortcut, getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
 
   return (
     <DatabasePageStyle>
