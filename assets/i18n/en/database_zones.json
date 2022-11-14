@@ -21,7 +21,7 @@
   "no_map": "No map",
   "displayed_panel": "Displayed panel",
   "forced_weather": "Forced weather",
-  "map_already_exists": "This map is already in the list.",
+  "map_already_exists": "Map #{{mapId}} is already in the list.",
   "panel_number": "Panel number",
   "weather-1": "By default",
   "weather0": "None",
