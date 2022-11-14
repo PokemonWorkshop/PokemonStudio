@@ -1,4 +1,4 @@
-import { ProjectData, PSDKConfigs } from '@src/GlobalStateProvider';
+import { ProjectData, ProjectText, PSDKConfigs } from '@src/GlobalStateProvider';
 import { serialize, serializeConfig } from '@utils/SerializationUtils';
 
 export interface SavingPath {
@@ -76,3 +76,13 @@ export class SavingConfigMap {
     });
   }
 }
+
+export type SavingText = {
+  projectTextSave: boolean[];
+  projectText: string;
+  keys: (keyof ProjectText)[];
+};
+
+export type SavingImage = { [path: string]: string };
+
+export type ProjectStudioAction = 'READ' | 'UPDATE' | 'DELETE';

@@ -4,11 +4,12 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
 import theme from '@src/AppTheme';
-import { useProjectSaving } from '@utils/useProjectSaving';
 import { EditorOverlayContainer } from '@components/editor';
 import { DeletionContainer } from '@components/deletion/DeletionContainer';
 import { PrimaryButton } from '@components/buttons';
 import { BaseIcon } from '@components/icons/BaseIcon';
+import { useProjectSave } from '@utils/useProjectSave';
+import { useLoaderRef } from '@utils/loaderContext';
 
 const OverlayContainer = styled(EditorOverlayContainer)`
   display: flex;
@@ -80,7 +81,8 @@ const Button = styled.span`
 
 export const UnsavedWarningModal = () => {
   const { t } = useTranslation(['unsaved_modal']);
-  const { saveProject, isDataToSave, isProjectTextSave, state } = useProjectSaving();
+  const { isDataToSave, save } = useProjectSave();
+  const loaderRef = useLoaderRef();
   const [show, setShow] = useState<boolean>(false);
 
   const onQuit = async () => {
@@ -90,11 +92,16 @@ export const UnsavedWarningModal = () => {
   const onSave = useMemo(
     () => async () => {
       setShow(false);
-      await saveProject();
-      await onQuit();
+      save(
+        async () => {
+          loaderRef.current.close();
+          await onQuit();
+        },
+        ({ errorMessage }) => loaderRef.current.setError('saving_project_error', errorMessage)
+      );
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isDataToSave, isProjectTextSave, state.savingData.map.size, state.savingConfig.map.size, state.savingProjectStudio, state]
+    [isDataToSave]
   );
 
   useEffect(() => {

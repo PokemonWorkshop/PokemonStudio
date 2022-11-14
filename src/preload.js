@@ -342,4 +342,94 @@ window.api = {
     ipcRenderer.removeAllListeners(`configure-new-project/success`);
     ipcRenderer.removeAllListeners(`configure-new-project/failure`);
   },
+  saveProjectData: (taskPayload, onSuccess, onFailure) => {
+    // Register success event
+    ipcRenderer.once(`save-project-data/success`, (_, payload) => {
+      ipcRenderer.removeAllListeners(`save-project-data/failure`);
+      onSuccess(payload);
+    });
+    // Register failure event
+    ipcRenderer.once(`save-project-data/failure`, (_, error) => {
+      ipcRenderer.removeAllListeners(`save-project-data/success`);
+      onFailure(error);
+    });
+    // Call service
+    ipcRenderer.send('save-project-data', taskPayload);
+  },
+  cleanupSaveProjectData: () => {
+    ipcRenderer.removeAllListeners(`save-project-data/success`);
+    ipcRenderer.removeAllListeners(`save-project-data/failure`);
+  },
+  saveProjectConfigs: (taskPayload, onSuccess, onFailure) => {
+    // Register success event
+    ipcRenderer.once(`save-project-configs/success`, (_, payload) => {
+      ipcRenderer.removeAllListeners(`save-project-configs/failure`);
+      onSuccess(payload);
+    });
+    // Register failure event
+    ipcRenderer.once(`save-project-configs/failure`, (_, error) => {
+      ipcRenderer.removeAllListeners(`save-project-configs/success`);
+      onFailure(error);
+    });
+    // Call service
+    ipcRenderer.send('save-project-configs', taskPayload);
+  },
+  cleanupSaveProjectConfigs: () => {
+    ipcRenderer.removeAllListeners(`save-project-configs/success`);
+    ipcRenderer.removeAllListeners(`save-project-configs/failure`);
+  },
+  saveProjectTexts: (taskPayload, onSuccess, onFailure) => {
+    // Register success event
+    ipcRenderer.once(`save-project-texts/success`, (_, payload) => {
+      ipcRenderer.removeAllListeners(`save-project-texts/failure`);
+      onSuccess(payload);
+    });
+    // Register failure event
+    ipcRenderer.once(`save-project-texts/failure`, (_, error) => {
+      ipcRenderer.removeAllListeners(`save-project-texts/success`);
+      onFailure(error);
+    });
+    // Call service
+    ipcRenderer.send('save-project-texts', taskPayload);
+  },
+  cleanupSaveProjectTexts: () => {
+    ipcRenderer.removeAllListeners(`save-project-texts/success`);
+    ipcRenderer.removeAllListeners(`save-project-texts/failure`);
+  },
+  moveImage: (taskPayload, onSuccess, onFailure) => {
+    // Register success event
+    ipcRenderer.once(`move-image/success`, (_, payload) => {
+      ipcRenderer.removeAllListeners(`move-image/failure`);
+      onSuccess(payload);
+    });
+    // Register failure event
+    ipcRenderer.once(`move-image/failure`, (_, error) => {
+      ipcRenderer.removeAllListeners(`move-image/success`);
+      onFailure(error);
+    });
+    // Call service
+    ipcRenderer.send('move-image', taskPayload);
+  },
+  cleanupMoveImage: () => {
+    ipcRenderer.removeAllListeners(`move-image/success`);
+    ipcRenderer.removeAllListeners(`move-image/failure`);
+  },
+  projectStudioFile: (taskPayload, onSuccess, onFailure) => {
+    // Register success event
+    ipcRenderer.once(`project-studio-file/success`, (_, payload) => {
+      ipcRenderer.removeAllListeners(`project-studio-file/failure`);
+      onSuccess(payload);
+    });
+    // Register failure event
+    ipcRenderer.once(`project-studio-file/failure`, (_, error) => {
+      ipcRenderer.removeAllListeners(`project-studio-file/success`);
+      onFailure(error);
+    });
+    // Call service
+    ipcRenderer.send('project-studio-file', taskPayload);
+  },
+  cleanupProjectStudioFile: () => {
+    ipcRenderer.removeAllListeners(`project-studio-file/success`);
+    ipcRenderer.removeAllListeners(`project-studio-file/failure`);
+  },
 };

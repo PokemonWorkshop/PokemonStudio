@@ -1,9 +1,7 @@
 import ProjectStudioModel from '@modelEntities/ProjectStudio.model';
 import IpcService from '@services/IPC/ipc.service';
 import { ProjectType } from '@services/project.open.channel.service';
-import { ProjectStudioAction } from '@services/project.studio.file.channel.service';
 import { ProjectData, ProjectText, PSDKConfigs } from '@src/GlobalStateProvider';
-import { serializeProjectStudio } from './SerializationUtils';
 
 export type IPCError = { error: string };
 export type ProjectOpenReturnValue = { projectPath: string } | IPCError;
@@ -21,24 +19,19 @@ export const loadProjectText = (IPC: IpcService, path: string) => IPC.send<Proje
 export const getFilePath = (IPC: IpcService, name: string, extensions: string[]) =>
   IPC.send<GetFilePathReturnValue>('file-open', { name, extensions });
 export const loadPSDKConfigs = (IPC: IpcService, path: string) => IPC.send<PSDKConfigsLoadingReturnValue>('psdk-configs-loading', { path });
-export const savePSDKConfigs = async (IPC: IpcService, path: string, data: PSDKConfigs) => {
-  const result = await IPC.send<IPCError>('psdk-configs-saving', { path, data: JSON.stringify(data) });
-  if ('error' in result) throw new Error(result.error);
+
+/**
+ * @deprecated
+ */
+export const getProjectStudio = (IPC: IpcService, path: string) => {
+  throw new Error('deprecated');
 };
 
-export const getProjectStudio = (IPC: IpcService, path: string) =>
-  IPC.send<ProjectStudioReturnValue>('project-studio-file', { path, action: 'READ' as ProjectStudioAction });
-
-export const updateProjectStudio = async (IPC: IpcService, path: string | null, data: ProjectStudioModel) =>
-  IPC.send<IPCError>('project-studio-file', {
-    path,
-    action: 'WRITE' as ProjectStudioAction,
-    data: serializeProjectStudio(data),
-  });
-
-export const deleteProjectStudio = async (IPC: IpcService, path: string | null) => {
-  const result = await IPC.send<IPCError>('project-studio-file', { path, action: 'DELETE' as ProjectStudioAction });
-  if ('error' in result) throw new Error(result.error);
+/**
+ * @deprecated
+ */
+export const updateProjectStudio = async (IPC: IpcService, path: string | null, data: ProjectStudioModel) => {
+  throw new Error('deprecated');
 };
 
 // probably useless

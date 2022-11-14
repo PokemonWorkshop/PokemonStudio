@@ -8,6 +8,7 @@ import { ProjectConfigsFromBackEnd } from './backendTasks/readProjectConfigs';
 import { ProjectDataFromBackEnd } from './backendTasks/readProjectData';
 import { ProjectText } from './GlobalStateProvider';
 import { StudioShortcut } from '@utils/useShortcuts';
+import { ProjectStudioAction, SavingConfig, SavingData, SavingImage, SavingText } from '@utils/SavingUtils';
 
 export {};
 
@@ -61,6 +62,19 @@ declare global {
       cleanupExtractNewProject: () => void;
       configureNewProject: BackendTaskWithGenericErrorAndNoProgress<{ projectDirName: string; metaData: ConfigureNewProjectMetaData }, {}>;
       cleanupConfigureNewProject: () => void;
+      saveProjectData: BackendTaskWithGenericErrorAndNoProgress<{ path: string; data: SavingData }, {}>;
+      cleanupSaveProjectData: () => void;
+      saveProjectConfigs: BackendTaskWithGenericErrorAndNoProgress<{ path: string; configs: SavingConfig }, {}>;
+      cleanupSaveProjectConfigs: () => void;
+      saveProjectTexts: BackendTaskWithGenericErrorAndNoProgress<{ path: string; texts: SavingText }, {}>;
+      cleanupSaveProjectTexts: () => void;
+      moveImage: BackendTaskWithGenericErrorAndNoProgress<{ path: string; images: SavingImage }, {}>;
+      cleanupMoveImage: () => void;
+      projectStudioFile: BackendTaskWithGenericErrorAndNoProgress<
+        { path: string; action: ProjectStudioAction; data?: string },
+        { fileData?: string }
+      >;
+      cleanupProjectStudioFile: () => void;
     };
   }
 }
