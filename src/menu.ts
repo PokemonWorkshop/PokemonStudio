@@ -1,4 +1,4 @@
-import { app, Menu, shell, BrowserWindow, MenuItemConstructorOptions, MenuItem } from 'electron';
+import { app, Menu, shell, BrowserWindow, MenuItemConstructorOptions } from 'electron';
 
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
@@ -82,7 +82,20 @@ export default class MenuBuilder {
       },
       {
         label: 'Edit',
-        role: 'editMenu',
+        submenu: [
+          {
+            label: 'New Database item',
+            accelerator: 'CmdOrCtrl+N',
+            click: () => {
+              this.mainWindow.webContents.send('request-shortcut', 'db_new');
+            },
+          },
+          { type: 'separator' },
+          { role: 'cut' },
+          { role: 'copy' },
+          { role: 'paste' },
+          { role: 'selectAll' },
+        ],
       },
       {
         label: 'View',
@@ -90,21 +103,22 @@ export default class MenuBuilder {
           {
             label: 'Previous Database item',
             accelerator: this.isDarwin ? 'Alt+Left' : 'Ctrl+Left',
-            click: () => this.mainWindow.webContents.send('request-shortcut', 'db_previous'),
+            click: (_, __, e) => {
+              if (!e.triggeredByAccelerator) {
+                this.mainWindow.webContents.send('request-shortcut', 'db_previous');
+              }
+            },
           },
           {
             label: 'Next Database item',
             accelerator: this.isDarwin ? 'Alt+Right' : 'Ctrl+Right',
-            click: () => this.mainWindow.webContents.send('request-shortcut', 'db_next'),
-          },
-          {
-            label: 'Reload',
-            visible: this.isDev,
-            accelerator: 'CmdOrCtrl+R',
-            click: () => {
-              this.mainWindow.webContents.reload();
+            click: (_, __, e) => {
+              if (!e.triggeredByAccelerator) {
+                this.mainWindow.webContents.send('request-shortcut', 'db_next');
+              }
             },
           },
+          { type: 'separator' },
           {
             label: 'Toggle Full Screen',
             accelerator: this.isDarwin ? 'Ctrl+Command+F' : 'F11',

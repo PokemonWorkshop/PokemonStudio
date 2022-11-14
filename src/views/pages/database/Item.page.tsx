@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataBlockWithAction, DataBlockWrapper } from '@components/database/dataBlocks';
 import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
@@ -34,8 +34,7 @@ import { EditorOverlay } from '@components/editor';
 import { Deletion, DeletionOverlay } from '@components/deletion';
 import BallItemModel from '@modelEntities/item/BallItem.model';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
-import { useShortcut } from '@utils/useShortcuts';
-import { StudioShortcut } from '@src/GlobalStateProvider';
+import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 
 export const ItemPage = () => {
   const {
@@ -48,12 +47,21 @@ export const ItemPage = () => {
     getNextDbSymbol,
   } = useProjectItems();
   const { t } = useTranslation('database_items');
-  const shortcut = useShortcut([StudioShortcut.DB_PREVIOUS, StudioShortcut.DB_NEXT]);
   const onChange = (selected: SelectOption) => setSelectedDataIdentifier({ item: selected.value });
   const item = items[itemDbSymbol];
   const currentEditedItem = useMemo(() => item.clone(), [item]);
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
+  const shortcutMap = useMemo<StudioShortcutActions>(() => {
+    if (currentEditor !== undefined || currentDeletion !== undefined) return {};
+
+    return {
+      db_previous: () => setSelectedDataIdentifier({ item: getPreviousDbSymbol('id') }),
+      db_next: () => setSelectedDataIdentifier({ item: getNextDbSymbol('id') }),
+      db_new: () => setCurrentEditor('new'),
+    };
+  }, [getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
+  useShortcut(shortcutMap);
   const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
     {
       translation_name: { fileId: 12 },
@@ -115,17 +123,6 @@ export const ItemPage = () => {
       />
     ),
   };
-
-  useEffect(() => {
-    if (currentEditor !== undefined || currentDeletion !== undefined) return;
-
-    if (shortcut === StudioShortcut.DB_PREVIOUS) {
-      setSelectedDataIdentifier({ item: getPreviousDbSymbol('id') });
-    }
-    if (shortcut === StudioShortcut.DB_NEXT) {
-      setSelectedDataIdentifier({ item: getNextDbSymbol('id') });
-    }
-  }, [shortcut, getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
 
   return (
     <DatabasePageStyle>

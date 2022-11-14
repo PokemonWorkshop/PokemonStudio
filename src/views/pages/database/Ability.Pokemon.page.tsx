@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { DataBlockWithTitleNoActive, DataBlockWrapper } from '@components/database/dataBlocks';
 import { AbilityControlBar, AbilityPokemonTable } from '@components/database/ability';
@@ -8,8 +8,7 @@ import { useHistory } from 'react-router-dom';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { SubPageTitle } from '@components/database/SubPageTitle';
 import { useProjectAbilities } from '@utils/useProjectData';
-import { StudioShortcut } from '@src/GlobalStateProvider';
-import { useShortcut } from '@utils/useShortcuts';
+import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 
 export const AbilityPokemonPage = () => {
   const {
@@ -21,22 +20,20 @@ export const AbilityPokemonPage = () => {
   } = useProjectAbilities();
   const { t } = useTranslation('database_abilities');
   const history = useHistory();
-  const shortcut = useShortcut([StudioShortcut.DB_PREVIOUS, StudioShortcut.DB_NEXT]);
+  const shortcutMap = useMemo<StudioShortcutActions>(() => {
+    return {
+      db_previous: () => setSelectedDataIdentifier({ ability: getPreviousDbSymbol('name') }),
+      db_next: () => setSelectedDataIdentifier({ ability: getNextDbSymbol('name') }),
+    };
+  }, [getPreviousDbSymbol, getNextDbSymbol]);
+  useShortcut(shortcutMap);
+
   const ability = abilities[abilityDbSymbol];
 
   const onChange = (selected: SelectOption) => {
     setSelectedDataIdentifier({ ability: selected.value });
   };
   const onClickedBack = () => history.push('database/abilities');
-
-  useEffect(() => {
-    if (shortcut === StudioShortcut.DB_PREVIOUS) {
-      setSelectedDataIdentifier({ ability: getPreviousDbSymbol('name') });
-    }
-    if (shortcut === StudioShortcut.DB_NEXT) {
-      setSelectedDataIdentifier({ ability: getNextDbSymbol('name') });
-    }
-  }, [shortcut, getPreviousDbSymbol, getNextDbSymbol]);
 
   return (
     <DatabasePageStyle>

@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { DataBlockWithAction, DataBlockWrapper } from '@components/database/dataBlocks';
 import { DeleteButtonWithIcon } from '@components/buttons';
@@ -22,8 +22,7 @@ import {
 import GroupModel from '@modelEntities/group/Group.model';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
 import { useProjectGroups, useProjectZones } from '@utils/useProjectData';
-import { useShortcut } from '@utils/useShortcuts';
-import { StudioShortcut } from '@src/GlobalStateProvider';
+import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 
 export const ZonePage = () => {
   const {
@@ -44,7 +43,16 @@ export const ZonePage = () => {
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
   const [currentGroupIndex, setCurrentGroupIndex] = useState(0);
   const [currentEditedGroup, setCurrentEditedGroup] = useState<{ data: GroupModel } | undefined>(undefined);
-  const shortcut = useShortcut([StudioShortcut.DB_PREVIOUS, StudioShortcut.DB_NEXT]);
+  const shortcutMap = useMemo<StudioShortcutActions>(() => {
+    if (currentEditor !== undefined || currentDeletion !== undefined) return {};
+
+    return {
+      db_previous: () => setSelectedDataIdentifier({ zone: getPreviousDbSymbol('id') }),
+      db_next: () => setSelectedDataIdentifier({ zone: getNextDbSymbol('id') }),
+      db_new: () => setCurrentEditor('new'),
+    };
+  }, [getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
+  useShortcut(shortcutMap);
   const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
     {
       translation_name: { fileId: 10 },
@@ -127,17 +135,6 @@ export const ZonePage = () => {
       />
     ),
   };
-
-  useEffect(() => {
-    if (currentEditor !== undefined || currentDeletion !== undefined) return;
-
-    if (shortcut === StudioShortcut.DB_PREVIOUS) {
-      setSelectedDataIdentifier({ zone: getPreviousDbSymbol('id') });
-    }
-    if (shortcut === StudioShortcut.DB_NEXT) {
-      setSelectedDataIdentifier({ zone: getNextDbSymbol('id') });
-    }
-  }, [shortcut, getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
 
   return (
     <DatabasePageStyle>

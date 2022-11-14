@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { DataBlockWithAction, DataBlockWrapper } from '@components/database/dataBlocks';
@@ -14,8 +14,7 @@ import { Deletion, DeletionOverlay } from '@components/deletion';
 import { useProjectAbilities } from '@utils/useProjectData';
 import { useHistory } from 'react-router-dom';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
-import { useShortcut } from '@utils/useShortcuts';
-import { StudioShortcut } from '@src/GlobalStateProvider';
+import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 
 export const AbilityPage = () => {
   const {
@@ -35,7 +34,16 @@ export const AbilityPage = () => {
   const currentEditedAbility = useMemo(() => ability.clone(), [ability]);
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
-  const shortcut = useShortcut([StudioShortcut.DB_PREVIOUS, StudioShortcut.DB_NEXT]);
+  const shortcutMap = useMemo<StudioShortcutActions>(() => {
+    if (currentEditor !== undefined || currentDeletion !== undefined) return {};
+
+    return {
+      db_previous: () => setSelectedDataIdentifier({ ability: getPreviousDbSymbol('name') }),
+      db_next: () => setSelectedDataIdentifier({ ability: getNextDbSymbol('name') }),
+      db_new: () => setCurrentEditor('new'),
+    };
+  }, [getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
+  useShortcut(shortcutMap);
 
   const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
     {
@@ -78,17 +86,6 @@ export const AbilityPage = () => {
       />
     ),
   };
-
-  useEffect(() => {
-    if (currentEditor !== undefined || currentDeletion !== undefined) return;
-
-    if (shortcut === StudioShortcut.DB_PREVIOUS) {
-      setSelectedDataIdentifier({ ability: getPreviousDbSymbol('name') });
-    }
-    if (shortcut === StudioShortcut.DB_NEXT) {
-      setSelectedDataIdentifier({ ability: getNextDbSymbol('name') });
-    }
-  }, [shortcut, getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
 
   return (
     <DatabasePageStyle>

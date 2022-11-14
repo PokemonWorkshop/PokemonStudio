@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { TypeControlBar } from '@components/database/type/TypeControlBar';
 import { useHistory, useParams } from 'react-router-dom';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
@@ -11,8 +11,7 @@ import { TypeTable } from '@components/database/type/TypeTable';
 import { DataBlockWrapperWithNoBreakpoint } from '@components/database/dataBlocks/DataBlockWrapper';
 import { EditorOverlay } from '@components/editor';
 import { TypeNewEditor } from '@components/database/type/editors';
-import { StudioShortcut } from '@src/GlobalStateProvider';
-import { useShortcut } from '@utils/useShortcuts';
+import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 
 type TypePageParams = {
   typeDbSymbol?: string;
@@ -28,10 +27,19 @@ export const TypeTablePage = () => {
     getNextDbSymbol,
   } = useProjectTypes();
   const { t } = useTranslation('database_types');
-  const shortcut = useShortcut([StudioShortcut.DB_PREVIOUS, StudioShortcut.DB_NEXT]);
   const { typeDbSymbol } = useParams<TypePageParams>();
   const currentType = types[typeDbSymbol || typeSelected] || types[typeSelected];
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
+  const shortcutMap = useMemo<StudioShortcutActions>(() => {
+    if (currentEditor !== undefined) return {};
+
+    return {
+      db_previous: () => setSelectedDataIdentifier({ type: getPreviousDbSymbol('name') }),
+      db_next: () => setSelectedDataIdentifier({ type: getNextDbSymbol('name') }),
+      db_new: () => setCurrentEditor('new'),
+    };
+  }, [getPreviousDbSymbol, getNextDbSymbol, currentEditor]);
+  useShortcut(shortcutMap);
 
   const onChange = (selected: SelectOption) => {
     setSelectedDataIdentifier({ type: selected.value });
@@ -43,17 +51,6 @@ export const TypeTablePage = () => {
   const editors = {
     new: <TypeNewEditor from="typeTable" onClose={() => setCurrentEditor(undefined)} />,
   };
-
-  useEffect(() => {
-    if (currentEditor !== undefined) return;
-
-    if (shortcut === StudioShortcut.DB_PREVIOUS) {
-      setSelectedDataIdentifier({ type: getPreviousDbSymbol('name') });
-    }
-    if (shortcut === StudioShortcut.DB_NEXT) {
-      setSelectedDataIdentifier({ type: getNextDbSymbol('name') });
-    }
-  }, [shortcut, getPreviousDbSymbol, getNextDbSymbol, currentEditor]);
 
   return (
     <DatabasePageStyle>

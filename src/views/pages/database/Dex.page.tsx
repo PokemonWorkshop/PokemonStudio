@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { DataBlockWithAction, DataBlockWithActionTooltip, DataBlockWrapper } from '@components/database/dataBlocks';
@@ -21,8 +21,7 @@ import {
 } from '@components/database/dex/editors';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
 import { isResetAvailable, searchUnderAndEvolutions } from '@utils/dex';
-import { useShortcut } from '@utils/useShortcuts';
-import { StudioShortcut } from '@src/GlobalStateProvider';
+import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 
 export const DexPage = () => {
   const {
@@ -34,7 +33,7 @@ export const DexPage = () => {
     getNextDbSymbol,
   } = useProjectDex();
   const { projectDataValues: allPokemon } = useProjectPokemon();
-  const shortcut = useShortcut([StudioShortcut.DB_PREVIOUS, StudioShortcut.DB_NEXT]);
+
   const { t } = useTranslation('database_dex');
   const onChange = (selected: SelectOption) => setSelectedDataIdentifier({ dex: selected.value });
   const dex = allDex[dexDbSymbol];
@@ -43,6 +42,16 @@ export const DexPage = () => {
   const [creatureIndex, setCreatureIndex] = useState<number>(0);
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
+  const shortcutMap = useMemo<StudioShortcutActions>(() => {
+    if (currentEditor !== undefined || currentDeletion !== undefined) return {};
+
+    return {
+      db_previous: () => setSelectedDataIdentifier({ dex: getPreviousDbSymbol('id') }),
+      db_next: () => setSelectedDataIdentifier({ dex: getNextDbSymbol('id') }),
+      db_new: () => setCurrentEditor('new'),
+    };
+  }, [getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
+  useShortcut(shortcutMap);
   const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
     {
       translation_name: { fileId: currentEditedDex.csv.csvFileId },
@@ -100,17 +109,6 @@ export const DexPage = () => {
     list: <DexDeletion type="list" onClose={() => setCurrentDeletion(undefined)} />,
     reset: <DexResetNationalPopUp onClickReset={onClickReset} onClose={() => setCurrentDeletion(undefined)} />,
   };
-
-  useEffect(() => {
-    if (currentDeletion || currentDeletion) return;
-
-    if (shortcut === StudioShortcut.DB_PREVIOUS) {
-      setSelectedDataIdentifier({ dex: getPreviousDbSymbol('id') });
-    }
-    if (shortcut === StudioShortcut.DB_NEXT) {
-      setSelectedDataIdentifier({ dex: getNextDbSymbol('id') });
-    }
-  }, [shortcut, getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
 
   return (
     <DatabasePageStyle>

@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import { SecondaryButton, DeleteButtonWithIcon } from '@components/buttons';
 import { DataBlockWrapper, DataBlockWithAction } from '@components/database/dataBlocks';
 import { StatisticsDataBlock } from '@components/database/pokemon/pokemonDataBlock/StatisticsDataBlock';
@@ -32,8 +32,7 @@ import { EncounterDataBlock } from '@components/database/pokemon/pokemonDataBloc
 import { EvolutionEditor } from '@components/database/pokemon/editors/EvolutionEditor';
 import { Deletion, DeletionOverlay } from '@components/deletion';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
-import { useShortcut } from '@utils/useShortcuts';
-import { StudioShortcut } from '@src/GlobalStateProvider';
+import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 
 export const PokemonPage = () => {
   const [evolutionIndex, setEvolutionIndex] = useState(0);
@@ -67,7 +66,16 @@ export const PokemonPage = () => {
   const currentEditedPokemon = useMemo(() => currentPokemonModel.clone(), [currentPokemonModel]);
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
-  const shortcut = useShortcut([StudioShortcut.DB_PREVIOUS, StudioShortcut.DB_NEXT]);
+  const shortcutMap = useMemo<StudioShortcutActions>(() => {
+    if (currentEditor !== undefined || currentDeletion !== undefined) return {};
+
+    return {
+      db_previous: () => setSelectedDataIdentifier({ pokemon: { specie: getPreviousDbSymbol('id'), form: 0 } }),
+      db_next: () => setSelectedDataIdentifier({ pokemon: { specie: getNextDbSymbol('id'), form: 0 } }),
+      db_new: () => setCurrentEditor('newPokemonEditor'),
+    };
+  }, [getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
+  useShortcut(shortcutMap);
 
   const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
     {
@@ -167,19 +175,6 @@ export const PokemonPage = () => {
     species: pokemon[currentPokemon.specie],
     form: pokemon[currentPokemon.specie].forms[currentPokemon.form],
   };
-
-  useEffect(() => {
-    if (currentEditor !== undefined || currentDeletion !== undefined) return;
-
-    if (shortcut === StudioShortcut.DB_PREVIOUS) {
-      const previousDbSymbol = getPreviousDbSymbol('id');
-      setSelectedDataIdentifier({ pokemon: { specie: previousDbSymbol, form: 0 } });
-    }
-    if (shortcut === StudioShortcut.DB_NEXT) {
-      const nextDbSymbol = getNextDbSymbol('id');
-      setSelectedDataIdentifier({ pokemon: { specie: nextDbSymbol, form: 0 } });
-    }
-  }, [shortcut, getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
 
   return (
     <DatabasePageStyle>

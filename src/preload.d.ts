@@ -6,7 +6,8 @@ import type { ProjectFileType } from './backendTasks/chooseProjectFileToOpen';
 import { ConfigureNewProjectMetaData } from './backendTasks/configureNewProject';
 import { ProjectConfigsFromBackEnd } from './backendTasks/readProjectConfigs';
 import { ProjectDataFromBackEnd } from './backendTasks/readProjectData';
-import { ProjectText, StudioShortcut } from './GlobalStateProvider';
+import { ProjectText } from './GlobalStateProvider';
+import { StudioShortcut } from '@utils/useShortcuts';
 
 export {};
 

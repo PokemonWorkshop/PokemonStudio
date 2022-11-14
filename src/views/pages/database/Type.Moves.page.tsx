@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { StudioShortcut, useGlobalState } from '@src/GlobalStateProvider';
+import React, { useMemo } from 'react';
+import { useGlobalState } from '@src/GlobalStateProvider';
 import { useTranslation } from 'react-i18next';
 import { useHistory, useParams } from 'react-router-dom';
 import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
@@ -10,7 +10,7 @@ import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerSty
 import { SubPageTitle } from '@components/database/SubPageTitle';
 import { TypeMovesTable } from '@components/database/type/TypeMovesTable';
 import { useProjectTypes } from '@utils/useProjectData';
-import { useShortcut } from '@utils/useShortcuts';
+import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 
 type TypeMovesPageParams = {
   typeDbSymbol: string;
@@ -21,7 +21,21 @@ export const TypeMovesPage = () => {
   const [state] = useGlobalState();
   const { setSelectedDataIdentifier: setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol } = useProjectTypes();
   const { t } = useTranslation('database_types');
-  const shortcut = useShortcut([StudioShortcut.DB_PREVIOUS, StudioShortcut.DB_NEXT]);
+  const shortcutMap = useMemo<StudioShortcutActions>(() => {
+    return {
+      db_previous: () => {
+        const nextDbSymbol = getPreviousDbSymbol('name');
+        setSelectedDataIdentifier({ type: nextDbSymbol });
+        history.push(`/database/types/${nextDbSymbol}/moves`);
+      },
+      db_next: () => {
+        const previousDbSymbol = getNextDbSymbol('name');
+        setSelectedDataIdentifier({ type: previousDbSymbol });
+        history.push(`/database/types/${previousDbSymbol}/moves`);
+      },
+    };
+  }, [getPreviousDbSymbol, getNextDbSymbol]);
+  useShortcut(shortcutMap);
   const { typeDbSymbol } = useParams<TypeMovesPageParams>();
   const currentType = state.projectData.types[typeDbSymbol];
 
@@ -31,19 +45,6 @@ export const TypeMovesPage = () => {
   };
 
   const onClickedBack = () => history.push(`/database/types/${currentType.dbSymbol}`);
-
-  useEffect(() => {
-    if (shortcut === StudioShortcut.DB_PREVIOUS) {
-      const previousDbSymbol = getPreviousDbSymbol('name');
-      setSelectedDataIdentifier({ type: previousDbSymbol });
-      history.push(`/database/types/${previousDbSymbol}/moves`);
-    }
-    if (shortcut === StudioShortcut.DB_NEXT) {
-      const nextDbSymbol = getNextDbSymbol('name');
-      setSelectedDataIdentifier({ type: nextDbSymbol });
-      history.push(`/database/types/${nextDbSymbol}/moves`);
-    }
-  }, [shortcut, getPreviousDbSymbol, getNextDbSymbol]);
 
   return (
     <DatabasePageStyle>

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { DataBlockWrapper } from '@components/database/dataBlocks';
 import { PokemonControlBar } from '@components/database/pokemon/PokemonControlBar';
@@ -9,11 +9,11 @@ import { useProjectPokemon } from '@utils/useProjectData';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
-import { StudioShortcut, useGlobalState } from '@src/GlobalStateProvider';
+import { useGlobalState } from '@src/GlobalStateProvider';
 import { MovepoolDeletion, MovepoolEditor, MovepoolImport } from '@components/database/pokemon/movepool';
 import { EditorOverlay } from '@components/editor';
 import { DeletionOverlay } from '@components/deletion';
-import { useShortcut } from '@utils/useShortcuts';
+import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 
 export const PokemonMovepoolPage = () => {
   const [state] = useGlobalState();
@@ -35,7 +35,6 @@ export const PokemonMovepoolPage = () => {
     species: currentEditedPokemon,
     form: currentEditedPokemon.forms[pokemonIdentifier.form],
   };
-  const shortcut = useShortcut([StudioShortcut.DB_PREVIOUS, StudioShortcut.DB_NEXT]);
   const onClickedBack = () => history.push('/database/pokemon');
 
   const onChangeSpecie = (selected: SelectOption) => {
@@ -59,6 +58,15 @@ export const PokemonMovepoolPage = () => {
   const onCloseDeletion = () => {
     setCurrentDeletion(undefined);
   };
+  const shortcutMap = useMemo<StudioShortcutActions>(() => {
+    if (currentEditor !== undefined || currentDeletion !== undefined) return {};
+
+    return {
+      db_previous: () => setSelectedDataIdentifier({ pokemon: { specie: getPreviousDbSymbol('id'), form: 0 } }),
+      db_next: () => setSelectedDataIdentifier({ pokemon: { specie: getNextDbSymbol('id'), form: 0 } }),
+    };
+  }, [getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
+  useShortcut(shortcutMap);
 
   const editors = {
     level: <MovepoolImport type="level" pokemonWithForm={currentEditedPokemonWithForm} onClose={onCloseEditor} />,
@@ -75,19 +83,6 @@ export const PokemonMovepoolPage = () => {
     breed: <MovepoolDeletion type="breed" onClose={onCloseDeletion} />,
     evolution: <MovepoolDeletion type="evolution" onClose={onCloseDeletion} />,
   };
-
-  useEffect(() => {
-    if (currentEditor !== undefined || currentDeletion !== undefined) return;
-
-    if (shortcut === StudioShortcut.DB_PREVIOUS) {
-      const previousDbSymbol = getPreviousDbSymbol('id');
-      setSelectedDataIdentifier({ pokemon: { specie: previousDbSymbol, form: 0 } });
-    }
-    if (shortcut === StudioShortcut.DB_NEXT) {
-      const nextDbSymbol = getNextDbSymbol('id');
-      setSelectedDataIdentifier({ pokemon: { specie: nextDbSymbol, form: 0 } });
-    }
-  }, [shortcut, getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
 
   return (
     <DatabasePageStyle>

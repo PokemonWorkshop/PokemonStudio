@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { StudioShortcut, useGlobalState } from '@src/GlobalStateProvider';
+import React, { useMemo } from 'react';
+import { useGlobalState } from '@src/GlobalStateProvider';
 import { useTranslation } from 'react-i18next';
 import { useHistory, useParams } from 'react-router-dom';
 import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
@@ -10,7 +10,7 @@ import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerSty
 import { SubPageTitle } from '@components/database/SubPageTitle';
 import { TypePokemonTable } from '@components/database/type/TypePokemonTable';
 import { useProjectTypes } from '@utils/useProjectData';
-import { useShortcut } from '@utils/useShortcuts';
+import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 
 type TypePokemonPageParams = {
   typeDbSymbol: string;
@@ -21,7 +21,21 @@ export const TypePokemonPage = () => {
   const [state] = useGlobalState();
   const { setSelectedDataIdentifier: setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol } = useProjectTypes();
   const { t } = useTranslation('database_types');
-  const shortcut = useShortcut([StudioShortcut.DB_PREVIOUS, StudioShortcut.DB_NEXT]);
+  const shortcutMap = useMemo<StudioShortcutActions>(() => {
+    return {
+      db_previous: () => {
+        const previousDbSymbol = getPreviousDbSymbol('name');
+        setSelectedDataIdentifier({ type: previousDbSymbol });
+        history.push(`/database/types/${previousDbSymbol}/pokemon`);
+      },
+      db_next: () => {
+        const nextDbSymbol = getNextDbSymbol('name');
+        setSelectedDataIdentifier({ type: nextDbSymbol });
+        history.push(`/database/types/${nextDbSymbol}/pokemon`);
+      },
+    };
+  }, [getPreviousDbSymbol, getNextDbSymbol]);
+  useShortcut(shortcutMap);
   const { typeDbSymbol } = useParams<TypePokemonPageParams>();
   const currentType = state.projectData.types[typeDbSymbol];
 
@@ -31,19 +45,6 @@ export const TypePokemonPage = () => {
   };
 
   const onClickedBack = () => history.push(`/database/types/${currentType.dbSymbol}`);
-
-  useEffect(() => {
-    if (shortcut === StudioShortcut.DB_PREVIOUS) {
-      const previousDbSymbol = getPreviousDbSymbol('name');
-      setSelectedDataIdentifier({ type: previousDbSymbol });
-      history.push(`/database/types/${previousDbSymbol}/pokemon`);
-    }
-    if (shortcut === StudioShortcut.DB_NEXT) {
-      const nextDbSymbol = getNextDbSymbol('name');
-      setSelectedDataIdentifier({ type: nextDbSymbol });
-      history.push(`/database/types/${nextDbSymbol}/pokemon`);
-    }
-  }, [shortcut, getPreviousDbSymbol, getNextDbSymbol]);
 
   return (
     <DatabasePageStyle>

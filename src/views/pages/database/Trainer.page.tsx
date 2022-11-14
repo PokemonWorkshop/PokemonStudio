@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { useProjectPokemon, useProjectTrainers } from '@utils/useProjectData';
@@ -10,14 +10,14 @@ import { DeleteButtonWithIcon } from '@components/buttons';
 import { TrainerControlBar, TrainerDeletion, TrainerDialog, TrainerFrame } from '@components/database/trainer';
 import { EditorOverlay } from '@components/editor';
 import { TrainerImportEditor, TrainerDialogEditor, TrainerFrameEditor, TrainerNewEditor } from '@components/database/trainer/editors';
-import { useGlobalState, StudioShortcut } from '@src/GlobalStateProvider';
+import { useGlobalState } from '@src/GlobalStateProvider';
 import { PokemonBattlerList } from '@components/pokemonBattlerList';
 import { PokemonBattlerListEditor } from '@components/pokemonBattlerList/editors';
 import { cleanExpandPokemonSetup } from '@modelEntities/Encounter';
 import { CurrentBattlerType } from '@components/pokemonBattlerList/PokemonBattlerList';
 import { BagEntryList, BagEntryListEditor } from '@components/bagEntryList';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
-import { useShortcut } from '@utils/useShortcuts';
+import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 
 export const TrainerPage = () => {
   const {
@@ -40,7 +40,16 @@ export const TrainerPage = () => {
     kind: undefined,
   });
   const [currentBagEntry, setCurrentBagEntry] = useState<number | undefined>(undefined);
-  const shortcut = useShortcut([StudioShortcut.DB_PREVIOUS, StudioShortcut.DB_NEXT]);
+  const shortcutMap = useMemo<StudioShortcutActions>(() => {
+    if (currentEditor !== undefined || currentDeletion !== undefined) return {};
+
+    return {
+      db_previous: () => setSelectedDataIdentifier({ trainer: getPreviousDbSymbol('id') }),
+      db_next: () => setSelectedDataIdentifier({ trainer: getNextDbSymbol('id') }),
+      db_new: () => setCurrentEditor('new'),
+    };
+  }, [getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
+  useShortcut(shortcutMap);
   const [state] = useGlobalState();
   const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
     {
@@ -114,18 +123,6 @@ export const TrainerPage = () => {
     trainer: <TrainerDeletion type="trainer" onClose={onCloseDeletion} />,
     battler: <TrainerDeletion type="battler" battlerIndex={currentBattler.index} onClose={onCloseDeletion} />,
   };
-
-  useEffect(() => {
-    if (currentEditor !== undefined || currentDeletion !== undefined) return;
-
-    if (shortcut === StudioShortcut.DB_PREVIOUS) {
-      setSelectedDataIdentifier({ trainer: getPreviousDbSymbol('id') });
-    }
-    if (shortcut === StudioShortcut.DB_NEXT) {
-      setSelectedDataIdentifier({ trainer: getNextDbSymbol('id') });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shortcut, getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
 
   return (
     <DatabasePageStyle>
