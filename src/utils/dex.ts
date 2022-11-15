@@ -53,3 +53,11 @@ export const searchUnderAndEvolutions = (pokemonForm: PokemonForm, creature: Dex
 
   return dexCreatures;
 };
+
+export const isCreaturesAlreadyInDex = (dexCreatures: DexCreature[], newCreatures: DexCreature[]) => {
+  return newCreatures.every((newCreature) => dexCreatures.find((dc) => dc.dbSymbol === newCreature.dbSymbol && dc.form === newCreature.form));
+};
+
+export const isCreatureHasNotEvolution = (creatures: DexCreature[], creature: DexCreature) => {
+  return creatures.length === 1 && creatures[0].dbSymbol === creature.dbSymbol && creatures[0].form === creature.form;
+};

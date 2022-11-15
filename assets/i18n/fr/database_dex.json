@@ -34,5 +34,7 @@
   "no_creature": "Aucun Pokémon",
   "evolutions": "Évolutions",
   "add_all_evolution": "Ajouter les évolutions",
-  "free_slot": "Emplacement libre"
+  "free_slot": "Emplacement libre",
+  "creatures_already_in_dex": "Toutes les évolutions de {{name}} ont déjà été ajoutées.",
+  "creature_no_evolution": "{{name}} n'a pas d'évolution."
 }
