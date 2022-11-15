@@ -20,8 +20,9 @@ import {
   DexPokemonListImportEditor,
 } from '@components/database/dex/editors';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
-import { isResetAvailable, searchUnderAndEvolutions } from '@utils/dex';
+import { isResetAvailable, searchUnderAndEvolutions, isCreaturesAlreadyInDex, isCreatureHasNotEvolution } from '@utils/dex';
 import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
+import { showNotification } from '@utils/showNotification';
 
 export const DexPage = () => {
   const {
@@ -90,6 +91,12 @@ export const DexPage = () => {
     if (!pokemonForm) return;
 
     const creatures = searchUnderAndEvolutions(pokemonForm, creature, allPokemon);
+    if (isCreatureHasNotEvolution(creatures, creature)) {
+      return showNotification('info', t('dex'), t('creature_no_evolution', { name: allPokemon[creature.dbSymbol].name() }));
+    } else if (isCreaturesAlreadyInDex(currentEditedDex.creatures, creatures)) {
+      return showNotification('info', t('dex'), t('creatures_already_in_dex', { name: allPokemon[creature.dbSymbol].name() }));
+    }
+
     creatures.forEach((c, i) => currentEditedDex.creatures.splice(index + i + 1, 0, c));
     if (creatures.length !== 0) currentEditedDex.creatures.splice(index, 1);
     currentEditedDex.creatures = currentEditedDex.creatures.filter((dexc, i, self) => self.findIndex((c) => c.dbSymbol === dexc.dbSymbol) === i);
