@@ -21,7 +21,6 @@ import TextLoadingChannelService from './services/text.loading.channel.service';
 import ProjectOpenChannelService from '@services/project.open.channel.service';
 import FileOpenChannelService from '@services/file.open.channel.service';
 import { PSDKExecChannelService } from '@services/PSDKIPC/psdk.exec.channel.service';
-import { PSDKDecodeDownloadedScriptsChannelService } from '@services/PSDKIPC/psdk.decodeDownloadedScripts.channel.service';
 import VersionsChannelService from '@services/versions.channel.service';
 import FileExistsChannelService from '@services/file.exists.channel.service';
 import PSDKConfigsLoadingChannelService from '@services/psdk.configs.loading.channel.service';
@@ -206,7 +205,6 @@ const ipcChannels = [
   new ProjectOpenChannelService(),
   new FileOpenChannelService(),
   new PSDKExecChannelService(),
-  new PSDKDecodeDownloadedScriptsChannelService(),
   new VersionsChannelService(),
   new FileExistsChannelService(),
   new PSDKConfigsLoadingChannelService(),

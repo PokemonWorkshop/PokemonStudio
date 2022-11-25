@@ -1,89 +1,91 @@
-import { getSpawnArgs, RMXP2StudioSafetyNet } from '@services/PSDKIPC/psdk.exec.channel.service';
-import { spawn } from 'child_process';
 import { IpcMainEvent } from 'electron';
 import fs from 'fs';
-import log from 'electron-log';
+import fsPromise from 'fs/promises';
 import path from 'path';
-
-const getChildProcess = (projectPath: string) => {
-  try {
-    RMXP2StudioSafetyNet(projectPath);
-    return spawn(...getSpawnArgs(projectPath), { cwd: projectPath, shell: true });
-  } catch (error) {
-    throw new Error(`Failed to migrate MapLinks: ${error instanceof Error ? error.message : error}`);
-  }
-};
-
-const migrateMapLinksNonWindows = (projectPath: string) => {
-  return new Promise<void>((resolve, reject) => {
-    try {
-      fs.writeFileSync(path.join(projectPath, 'Data', 'Studio', 'rmxp_maps.json'), `[{"id": 14,"name": "PSDK .25.0"}]`);
-      fs.writeFileSync(
-        path.join(projectPath, 'Data', 'Studio', 'maplinks', 'maplink_0.json'),
-        `{
-          "klass": "MapLink",
-          "id": 0,
-          "dbSymbol": "maplink_0",
-          "mapId": 14,
-          "northMaps": [
-          ],
-          "eastMaps": [
-          ],
-          "southMaps": [
-          ],
-          "westMaps": [
-          ]
-        }`
-      );
-    } catch (error) {
-      reject(error instanceof Error ? error.message : JSON.stringify(error));
-    }
-    resolve();
-  });
-};
+import { isMarshalHash, Marshal } from 'ts-marshal';
 
 const deletePSDKDatFile = (projectPath: string) => {
   const psdkDatFilePath = path.join(projectPath, 'Data', 'Studio', 'psdk.dat');
   if (fs.existsSync(psdkDatFilePath)) fs.unlinkSync(psdkDatFilePath);
 };
 
+const loadMapLinkData = async (projectPath: string): Promise<[string, number[]][]> => {
+  const mapLinkFilename = path.join(projectPath, 'Data', 'PSDK', 'Maplinks.rxdata');
+  const fileData = await fsPromise.readFile(mapLinkFilename);
+  const object = Marshal.load(fileData);
+  if (!isMarshalHash(object)) throw new Error('Maplinks.rxdata does not contain a Hash');
+
+  const unwantedKeys = ['__class', '__default', '__extendedModules'];
+  return Object.entries(object).filter(
+    (record): record is [string, number[]] =>
+      !unwantedKeys.includes(record[0]) && Array.isArray(record[1]) && record[1].every((v) => typeof v === 'number')
+  );
+};
+
+type MapLinkMap = { mapId: number; offset: number };
+type MapLink = {
+  klass: 'MapLink';
+  id: number;
+  dbSymbol: string;
+  mapId: number;
+  northMaps: MapLinkMap[];
+  eastMaps: MapLinkMap[];
+  southMaps: MapLinkMap[];
+  westMaps: MapLinkMap[];
+};
+
+const makeMapLinkMaps = (input: number[], baseOffset: number): MapLinkMap[] => {
+  if (input[baseOffset] === 0 || input[baseOffset] === undefined) return [];
+
+  return Array.from({ length: Math.floor(input.length / 8 + 0.875) }, (_, i) => i * 8)
+    .map((aryOffset) => {
+      const mapId = input[aryOffset + baseOffset];
+      if (mapId === 0 || mapId === undefined) return undefined;
+      const offset = Number(input[aryOffset + baseOffset + 1] || 0);
+      return { mapId, offset };
+    })
+    .filter(<T>(v: T): v is Exclude<T, undefined> => !!v);
+};
+
+const makeMapLinkData = (input: Awaited<ReturnType<typeof loadMapLinkData>>): MapLink[] => {
+  if (input.length === 0)
+    return [
+      {
+        klass: 'MapLink',
+        id: 0,
+        dbSymbol: 'maplink_0',
+        mapId: 0,
+        northMaps: [],
+        eastMaps: [],
+        southMaps: [],
+        westMaps: [],
+      },
+    ];
+
+  return input.map(([mapIdString, disposition], id) => {
+    const mapId = Number(mapIdString);
+    return {
+      klass: 'MapLink',
+      id,
+      dbSymbol: `maplink_${id}`,
+      mapId,
+      northMaps: makeMapLinkMaps(disposition, 0),
+      eastMaps: makeMapLinkMaps(disposition, 2),
+      southMaps: makeMapLinkMaps(disposition, 4),
+      westMaps: makeMapLinkMaps(disposition, 6),
+    };
+  });
+};
+
 export const migrateMapLinks = async (_: IpcMainEvent, projectPath: string) => {
   deletePSDKDatFile(projectPath);
-  if (process.platform !== 'win32') return migrateMapLinksNonWindows(projectPath);
-  const childProcess = getChildProcess(projectPath);
-  const stdData = { out: '', err: '' };
-  return new Promise<void>((resolve, reject) => {
-    let rejectReason: string | undefined = undefined;
-    let didTheJob = false;
-    childProcess.stdin.write('{"action":"importMapInfosToStudio"}\n{"action":"exit"}\n');
+  const psdkData = await loadMapLinkData(projectPath);
+  const mapLinks = makeMapLinkData(psdkData);
+  const mapLinksFolder = path.join(projectPath, 'Data', 'Studio', 'maplinks');
+  if (!fs.existsSync(mapLinksFolder)) fs.mkdirSync(mapLinksFolder);
 
-    childProcess.stderr.on('data', (data) => {
-      log.warn('migrate-maplinks.stderr.data', data.toString());
-      const arrData = (stdData.err + data.toString()).split('\n');
-      stdData.err = arrData.pop() || ''; // All message ends with \n, so if something remains, we have something, otherwise we have empty string
-      if (arrData.length > 0) {
-        rejectReason = rejectReason ? [rejectReason, ...arrData].join('\n') : arrData.join('\n');
-        childProcess.stdin.write('{"action":"exit"}\n');
-      }
-    });
-
-    childProcess.stdout.on('data', (data) => {
-      log.info('migrate-maplinks.stdout.data', data.toString());
-      const arrData = (stdData.out + data.toString()).split('\n');
-      stdData.out = arrData.pop() || ''; // All message ends with \n, so if something remains, we have something, otherwise we have empty string
-      arrData.forEach((line) => {
-        if (line.trim() === '{"done":true,"message":"Map links and map infos conversion to Studio done!"}') {
-          didTheJob = true;
-        }
-      });
-    });
-
-    childProcess.on('exit', (code) => {
-      log.info('migrate-maplinks.exit', code);
-      if (rejectReason) reject(rejectReason);
-      else if (!didTheJob) reject('migrate-maplinks did not migrated the data as expected. Please check your PSDK version.');
-      else if (code === 0) resolve();
-      else reject(`migrate-maplinks exited with code ${code}`);
-    });
-  });
+  await mapLinks.reduce(async (lastPromise, mapLink) => {
+    await lastPromise;
+    return fsPromise.writeFile(path.join(mapLinksFolder, `${mapLink.dbSymbol}.json`), JSON.stringify(mapLink, null, 2));
+  }, Promise.resolve());
 };

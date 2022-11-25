@@ -1856,13 +1856,6 @@
   dependencies:
     "@types/node" "*"
 
-"@types/marshal@^0.5.1":
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/@types/marshal/-/marshal-0.5.1.tgz#fe2d3c01b712fcc8dadea3460969a92063bf47be"
-  integrity sha512-AVyEWaUglZLG7tEyTaNtl8w873d4g+8+U8Hw49hF8CUWnNdk8Wa3w2DIwdwwAZxYnDo4ScQkhB3FPZRvEmSm1g==
-  dependencies:
-    "@types/node" "*"
-
 "@types/minimatch@*":
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.3.tgz"
@@ -4131,7 +4124,7 @@ debug@2.6.9, debug@^2.2.0, debug@^2.3.3, debug@^2.6.0, debug@^2.6.8, debug@^2.6.
   dependencies:
     ms "2.0.0"
 
-debug@4, debug@4.3.3, debug@^4.0.1, debug@^4.1.0, debug@^4.1.1, debug@^4.2.0, debug@^4.3.1, debug@^4.3.2:
+debug@4, debug@^4.0.1, debug@^4.1.0, debug@^4.1.1, debug@^4.2.0, debug@^4.3.1, debug@^4.3.2:
   version "4.3.3"
   resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.3.tgz#04266e0b70a98d4462e6e288e38259213332b664"
   integrity sha512-/zxw5+vh1Tfv+4Qn7a5nsbcJKPaSvCDhojn6FEl9vupwK2VCSDtEiEtqr8DFtzYFOdz63LBkxec7DYuc2jon6Q==
@@ -7803,13 +7796,6 @@ map-visit@^1.0.0:
   dependencies:
     object-visit "^1.0.0"
 
-marshal@^0.5.3:
-  version "0.5.3"
-  resolved "https://registry.yarnpkg.com/marshal/-/marshal-0.5.3.tgz#76f9b3a2e1730619d648cbfade50df2bf939da93"
-  integrity sha512-5aTnm2yZtgrSqoXQDTOGwB7B7M0HkvsDGR+EvPVq8nJ0YSQgQ42S0UAJ+o6FKRYS+YGTpz0RYDKuG6RIicSRCg==
-  dependencies:
-    debug "4.3.3"
-
 matcher@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/matcher/-/matcher-3.0.0.tgz"
@@ -10762,6 +10748,11 @@ ts-jest@^27.1.2:
     make-error "1.x"
     semver "7.x"
     yargs-parser "20.x"
+
+ts-marshal@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/ts-marshal/-/ts-marshal-0.0.5.tgz#ffa7c19547b1d5ffa66821736358f7331eb9eee5"
+  integrity sha512-xHYZp0wLkf/9NX+vthAsFFYpajQeVsfKEQ/FZBs9elmrEt+Pigr2n9DUIcNMItv/DbXsGPKMzk88YqHLXckpdw==
 
 tsconfig-paths@^3.11.0, tsconfig-paths@^3.9.0:
   version "3.12.0"

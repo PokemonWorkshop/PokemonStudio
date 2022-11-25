@@ -1,10 +1,10 @@
-import Marshal from 'marshal';
 import zlib from 'zlib';
 import fs from 'fs';
 import path from 'path';
 import { versionIntToString } from '@utils/versionIntToString';
 import { net, IpcMainEvent } from 'electron';
 import { getPSDKBinariesPath, PSDK_DOWNLOADS_URL } from './getPSDKVersion';
+import { Marshal, isMarshalHash } from 'ts-marshal';
 
 const getNextVersion = (version: number): Promise<number | undefined> => {
   return new Promise((resolve, reject) => {
@@ -51,12 +51,14 @@ const downloadScripts = async (version: number): Promise<Buffer> =>
 const downloadAndInstall = async (version: number): Promise<void> => {
   const megaDeflate = await downloadScripts(version);
   const data = zlib.inflateSync(megaDeflate);
-  const marshalData = new Marshal(data);
-  if (!marshalData.parsed) throw new Error('Failed to parse data');
+  const marshalData = Marshal.load(data);
+  if (!isMarshalHash(marshalData)) throw new Error('Downloaded data is not Hash object');
 
-  const scripts = marshalData.parsed as Record<string, string>;
+  const { __class, __default, __extendedModules, ...scripts } = marshalData;
   const binariesPath = getPSDKBinariesPath();
   Object.entries(scripts).forEach(([filename, fileData]) => {
+    if (typeof fileData !== 'string') return;
+
     const realFilename = path.join(binariesPath, filename);
     const dirname = path.dirname(realFilename);
     if (!fs.existsSync(dirname)) fs.mkdirSync(dirname, { recursive: true });

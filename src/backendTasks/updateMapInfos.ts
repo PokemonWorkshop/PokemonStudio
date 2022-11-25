@@ -3,32 +3,38 @@ import log from 'electron-log';
 import path from 'path';
 import fs from 'fs';
 import fsPromise from 'fs/promises';
-import Marshal from 'marshal';
+import { isMarshalHash, isMarshalStandardObject, Marshal } from 'ts-marshal';
 
 const mustRMXPMapsBeUpdated = (mapInfoFilePath: string, rmxpMapFilePath: string) => {
   return fs.statSync(mapInfoFilePath).mtimeMs > fs.statSync(rmxpMapFilePath).mtimeMs;
 };
 
-type MapInfoData = Record<
-  string,
-  {
-    '@scroll_x': number;
-    '@name': string;
-    '@expanded': boolean;
-    '@order': number;
-    '@scroll_y': number;
-    '@parent_id': number;
-    _name: 'RPG::MapInfo';
-  }
->;
+type MapInfoData = {
+  '@scroll_x': number;
+  '@name': string;
+  '@expanded': boolean;
+  '@order': number;
+  '@scroll_y': number;
+  '@parent_id': number;
+  __class: symbol;
+};
+
+const isMapInfoObject = (object: unknown): object is MapInfoData =>
+  isMarshalStandardObject(object) &&
+  '@order' in object &&
+  '@name' in object &&
+  typeof object['@order'] === 'number' &&
+  typeof object['@name'] === 'string';
 
 const updateRMXPMaps = async (mapInfoFilePath: string, rmxpMapFilePath: string) => {
   const mapInfoData = await fsPromise.readFile(mapInfoFilePath);
-  const marshalData = new Marshal(mapInfoData);
-  if (!marshalData.parsed) throw new Error('Failed to parse data');
+  const marshalData = Marshal.load(mapInfoData);
+  if (!isMarshalHash(marshalData)) throw new Error('Loaded object is not a Hash');
 
-  const mapInfos = marshalData.parsed as MapInfoData;
-  const mapInfoRecords = Object.entries(mapInfos).map(([id, data]) => ({ id: Number(id), order: data['@order'], name: data['@name'] }));
+  const { __class, __extendedModules, __default, ...mapInfos } = marshalData;
+  const mapInfoRecords = Object.entries(mapInfos)
+    .map(([id, data]) => (isMapInfoObject(data) ? { id: Number(id), order: data['@order'], name: data['@name'] } : undefined))
+    .filter(<T>(data: T): data is Exclude<T, undefined> => !!data);
   const rmxpMapData = mapInfoRecords.sort((a, b) => a.order - b.order).map(({ id, name }) => ({ id, name }));
   await fsPromise.writeFile(rmxpMapFilePath, JSON.stringify(rmxpMapData, null, 2));
 };
