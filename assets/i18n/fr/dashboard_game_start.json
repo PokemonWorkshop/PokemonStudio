@@ -1,0 +1,15 @@
+{
+  "game_start": "Lancement du jeu",
+  "cinematic": "Cinématique",
+  "show_cinematic": "Afficher une cinématique",
+  "map_cinematic_id": "Numéro de la carte comprenant la cinématique",
+  "title_screen": "Écran titre",
+  "show_language_selection": "Afficher la sélection des langues",
+  "music": "Musique",
+  "title_screen_music": "Musique de l'écran titre",
+  "music_duration": "Durée de la musique",
+  "duration_info": "La durée est exprimée en échantillons. Elle est calculée via la formule suivante : Durée (secondes) * 44100.",
+  "control_wait_time": "Durée d’attente avant l’affichage des boutons de l’écran titre",
+  "splash_screens": "Splash screens",
+  "splash_screens_name": "Image du splash screen"
+}

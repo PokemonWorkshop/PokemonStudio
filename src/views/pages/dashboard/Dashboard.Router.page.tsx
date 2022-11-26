@@ -10,6 +10,7 @@ import { DashboardGraphicsPage } from './Dashboard.Graphics.page';
 import { DashboardDisplayPage } from './Dashboard.Display.page';
 import { DashboardSavePage } from './Dashboard.Save.page';
 import { DashboardPage } from './Dashboard.page';
+import { DashboardGameStartPage } from './Dashboard.GameStart.page';
 
 const DashboardRouterPageStyle = styled.div`
   display: flex;
@@ -80,6 +81,11 @@ const DashboardRouterComponent = () => {
       <Route path={`${path}/save`}>
         <DashboardPageWithMenu>
           <DashboardSavePage />
+        </DashboardPageWithMenu>
+      </Route>
+      <Route path={`${path}/gamestart`}>
+        <DashboardPageWithMenu>
+          <DashboardGameStartPage />
         </DashboardPageWithMenu>
       </Route>
     </Switch>

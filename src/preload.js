@@ -432,4 +432,22 @@ window.api = {
     ipcRenderer.removeAllListeners(`project-studio-file/success`);
     ipcRenderer.removeAllListeners(`project-studio-file/failure`);
   },
+  chooseFile: (taskPayload, onSuccess, onFailure) => {
+    // Register success event
+    ipcRenderer.once(`choose-file/success`, (_, payload) => {
+      ipcRenderer.removeAllListeners(`choose-file/failure`);
+      onSuccess(payload);
+    });
+    // Register failure event
+    ipcRenderer.once(`choose-file/failure`, (_, error) => {
+      ipcRenderer.removeAllListeners(`choose-file/success`);
+      onFailure(error);
+    });
+    // Call service
+    ipcRenderer.send('choose-file', taskPayload);
+  },
+  cleanupChooseFile: () => {
+    ipcRenderer.removeAllListeners(`choose-file/success`);
+    ipcRenderer.removeAllListeners(`choose-file/failure`);
+  },
 };

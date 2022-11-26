@@ -6,6 +6,7 @@ import dashboard_infos from './dashboard_infos.json';
 import dashboard_language from './dashboard_language.json';
 import dashboard_save from './dashboard_save.json';
 import dashboard_settings from './dashboard_settings.json';
+import dashboard_game_start from './dashboard_game_start.json';
 import database_abilities from './database_abilities.json';
 import database_items from './database_items.json';
 import database_moves from './database_moves.json';
@@ -33,6 +34,7 @@ import error from './error.json';
 import loader from './loader.json';
 import unsaved_modal from './unsaved_modal.json';
 import copy from './copy.json';
+import audio from './audio.json';
 
 export default {
   dashboard,
@@ -43,6 +45,7 @@ export default {
   dashboard_language,
   dashboard_save,
   dashboard_settings,
+  dashboard_game_start,
   database_abilities,
   database_items,
   database_moves,
@@ -70,4 +73,5 @@ export default {
   bag_entry_list,
   unsaved_modal,
   copy,
+  audio,
 };

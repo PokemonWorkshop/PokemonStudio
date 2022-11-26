@@ -1,11 +1,9 @@
-import React, { DragEventHandler, useMemo, useState } from 'react';
+import React, { DragEventHandler, useState } from 'react';
 import styled from 'styled-components';
 import { ReactComponent as FileDrop } from '@assets/icons/global/drop.svg';
 import { useTranslation } from 'react-i18next';
-import IpcService from '@services/IPC/ipc.service';
-import { getFilePath } from '@utils/IPCUtils';
 
-const DropInputContainer = styled.div`
+export const DropInputContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -49,6 +47,7 @@ type LinkContainerProps = {
 
 const LinkContainer = styled.div<LinkContainerProps>`
   color: ${({ theme, disabled }) => (disabled ? theme.colors.text500 : theme.colors.primaryBase)};
+  text-align: center;
 
   :hover {
     cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
@@ -63,15 +62,15 @@ const onDragOver: DragEventHandler<HTMLDivElement> = (event) => {
 type DropInputProps = {
   imageWidth?: number;
   imageHeight?: number;
+  multipleFiles?: boolean;
   name: string;
   extensions: string[];
   onFileChoosen: (filePath: string) => void;
 };
 
-export const DropInput = ({ imageWidth, imageHeight, name, extensions, onFileChoosen }: DropInputProps) => {
+export const DropInput = ({ imageWidth, imageHeight, multipleFiles, name, extensions, onFileChoosen }: DropInputProps) => {
   const { t } = useTranslation('drop');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const IPC = useMemo(() => new IpcService(), []);
 
   const onDrop: DragEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
@@ -82,21 +81,25 @@ export const DropInput = ({ imageWidth, imageHeight, name, extensions, onFileCho
 
   const onClick = async () => {
     setIsDialogOpen(true);
-    return getFilePath(IPC, name, extensions)
-      .then((result) => {
-        if (!('error' in result)) {
-          onFileChoosen(result.filePath);
-        } else setIsDialogOpen(false);
-        return undefined;
-      })
-      .catch(() => setIsDialogOpen(false));
+    return window.api.chooseFile(
+      { name, extensions },
+      ({ path }) => {
+        onFileChoosen(path);
+        setIsDialogOpen(false);
+        window.api.cleanupChooseFile();
+      },
+      () => {
+        setIsDialogOpen(false);
+        window.api.cleanupChooseFile();
+      }
+    );
   };
 
   return (
     <DropInputContainer onDrop={onDrop} onDragOver={onDragOver}>
       <FileDrop />
       <div className="file">
-        <span>{t('drop_your_file_or')}</span>
+        <span>{multipleFiles ? t('drop_your_files_or') : t('drop_your_file_or')}</span>
         <LinkContainer disabled={isDialogOpen} onClick={isDialogOpen ? undefined : onClick}>
           {t('or_explore_your_files')}
         </LinkContainer>

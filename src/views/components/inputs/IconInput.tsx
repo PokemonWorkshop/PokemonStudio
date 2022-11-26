@@ -1,7 +1,5 @@
 import { ClearButtonOnlyIcon, EditButtonOnlyIcon } from '@components/buttons';
-import IpcService from '@services/IPC/ipc.service';
-import { getFilePath } from '@utils/IPCUtils';
-import React, { DragEventHandler, useMemo, useState } from 'react';
+import React, { DragEventHandler, useState } from 'react';
 import styled from 'styled-components';
 import { ReloadableImage } from '@components/ReloadableImage';
 
@@ -59,7 +57,6 @@ type IconInputProps = {
 
 export const IconInput = ({ iconPath, name, extensions, borderless, onIconChoosen, onIconClear }: IconInputProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const IPC = useMemo(() => new IpcService(), []);
 
   const onDrop: DragEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
@@ -70,14 +67,18 @@ export const IconInput = ({ iconPath, name, extensions, borderless, onIconChoose
 
   const onClick = async () => {
     setIsDialogOpen(true);
-    return getFilePath(IPC, name, extensions)
-      .then((result) => {
-        if (!('error' in result)) {
-          onIconChoosen(result.filePath);
-        }
-        return undefined;
-      })
-      .finally(() => setIsDialogOpen(false));
+    return window.api.chooseFile(
+      { name, extensions },
+      ({ path }) => {
+        onIconChoosen(path);
+        setIsDialogOpen(false);
+        window.api.cleanupChooseFile();
+      },
+      () => {
+        setIsDialogOpen(false);
+        window.api.cleanupChooseFile();
+      }
+    );
   };
 
   return (
