@@ -1,0 +1,15 @@
+{
+  "game_start": "Game start",
+  "cinematic": "Cinematic",
+  "show_cinematic": "Show a cinematic",
+  "map_cinematic_id": "Number of the map containing the cinematic",
+  "title_screen": "Title screen",
+  "show_language_selection": "Show language selection",
+  "music": "Music",
+  "title_screen_music": "Music of the title screen",
+  "music_duration": "Music duration",
+  "duration_info": "The duration is expressed in samples. It is calculated using the following formula: Duration (seconds) * 44100.",
+  "control_wait_time": "Waiting time before title screen buttons are displayed",
+  "splash_screens": "Splash screens",
+  "splash_screens_name": "Picture of the splash screen"
+}

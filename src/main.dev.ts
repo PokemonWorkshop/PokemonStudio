@@ -47,6 +47,7 @@ import { registerSaveProjectConfigs } from './backendTasks/saveProjectConfigs';
 import { registerSaveProjectTexts } from './backendTasks/saveProjectTexts';
 import { registerMoveImage } from './backendTasks/moveImage';
 import { registerProjectStudioFile } from './backendTasks/projectStudioFile';
+import { registerChooseFile } from './backendTasks/chooseFile';
 
 export default class AppUpdater {
   constructor() {
@@ -239,3 +240,4 @@ registerSaveProjectConfigs(ipcMain);
 registerSaveProjectTexts(ipcMain);
 registerMoveImage(ipcMain);
 registerProjectStudioFile(ipcMain);
+registerChooseFile(ipcMain);

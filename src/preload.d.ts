@@ -75,6 +75,8 @@ declare global {
         { fileData?: string }
       >;
       cleanupProjectStudioFile: () => void;
+      chooseFile: BackendTaskWithGenericErrorAndNoProgress<{ name: string; extensions: string[] }, { path: string; dirName: string }>;
+      cleanupChooseFile: () => void;
     };
   }
 }

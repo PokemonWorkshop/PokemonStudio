@@ -9,6 +9,7 @@ import dashboard_infos from '../../assets/i18n/en/dashboard_infos.json';
 import dashboard_language from '../../assets/i18n/en/dashboard_language.json';
 import dashboard_save from '../../assets/i18n/en/dashboard_save.json';
 import dashboard_settings from '../../assets/i18n/en/dashboard_settings.json';
+import dashboard_game_start from '../../assets/i18n/en/dashboard_game_start.json';
 import database_abilities from '../../assets/i18n/en/database_abilities.json';
 import database_items from '../../assets/i18n/en/database_items.json';
 import database_moves from '../../assets/i18n/en/database_moves.json';
@@ -36,6 +37,7 @@ import pokemon_battler_list from '../../assets/i18n/en/pokemon_battler_list.json
 import bag_entry_list from '../../assets/i18n/en/bag_entry_list.json';
 import unsaved_modal from '../../assets/i18n/en/unsaved_modal.json';
 import copy from '../../assets/i18n/en/copy.json';
+import audio from '../../assets/i18n/en/audio.json';
 
 // react-i18next versions higher than 11.11.0
 declare module 'react-i18next' {
@@ -51,6 +53,7 @@ declare module 'react-i18next' {
       dashboard_language: typeof dashboard_language;
       dashboard_save: typeof dashboard_save;
       dashboard_settings: typeof dashboard_settings;
+      dashboard_game_start: typeof dashboard_game_start;
       database_abilities: typeof database_abilities;
       database_items: typeof database_items;
       database_moves: typeof database_moves;
@@ -78,6 +81,7 @@ declare module 'react-i18next' {
       bag_entry_list: typeof bag_entry_list;
       unsaved_modal: typeof unsaved_modal;
       copy: typeof copy;
+      audio: typeof audio;
     };
   }
 }
