@@ -2,6 +2,7 @@ import { ClearButtonOnlyIcon, EditButtonOnlyIcon } from '@components/buttons';
 import React, { DragEventHandler, useState } from 'react';
 import styled from 'styled-components';
 import { ReloadableImage } from '@components/ReloadableImage';
+import { useChoosefile } from '@utils/useChooseFile';
 
 type IconInputContainerProps = {
   borderless: boolean;
@@ -57,6 +58,7 @@ type IconInputProps = {
 
 export const IconInput = ({ iconPath, name, extensions, borderless, onIconChoosen, onIconClear }: IconInputProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const chooseFile = useChoosefile();
 
   const onDrop: DragEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
@@ -67,17 +69,13 @@ export const IconInput = ({ iconPath, name, extensions, borderless, onIconChoose
 
   const onClick = async () => {
     setIsDialogOpen(true);
-    return window.api.chooseFile(
+    chooseFile(
       { name, extensions },
       ({ path }) => {
         onIconChoosen(path);
         setIsDialogOpen(false);
-        window.api.cleanupChooseFile();
       },
-      () => {
-        setIsDialogOpen(false);
-        window.api.cleanupChooseFile();
-      }
+      () => setIsDialogOpen(false)
     );
   };
 

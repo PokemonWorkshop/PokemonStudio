@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import TrainerModel, { AiCategories } from '@modelEntities/trainer/Trainer.model';
 import {
@@ -12,9 +12,8 @@ import {
 import styled from 'styled-components';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { padStr } from '@utils/PadStr';
-import IpcService from '@services/IPC/ipc.service';
-import { fileExists } from '@utils/IPCUtils';
 import { TrainerCategory } from '@components/categories';
+import { showNotification } from '@utils/showNotification';
 
 type TrainerFrameProps = {
   trainer: TrainerModel;
@@ -95,27 +94,28 @@ const TrainerSpriteContainer = styled.div.attrs<TrainerSpriteProps>((props) => (
 export const TrainerFrame = ({ trainer, onClick }: TrainerFrameProps) => {
   const { t } = useTranslation('database_trainers');
   const [state] = useGlobalState();
-  const ipc = useMemo(() => new IpcService(), []);
   const [spriteDp, setSpriteDp] = useState(false);
   const [spriteBig, setSpriteBig] = useState(false);
   const [initial, setInitial] = useState(true);
 
   useEffect(() => {
-    const checkSpriteExists = async () => {
-      if (!state.projectPath) return;
-
-      const resultDp = await fileExists(ipc, trainer.sprite(state.projectPath));
-      if ('error' in resultDp) return console.error(resultDp.error);
-
-      const resultBig = await fileExists(ipc, trainer.spriteBig(state.projectPath));
-      if ('error' in resultBig) return console.error(resultBig.error);
-
-      setSpriteDp(resultDp.fileExists);
-      setSpriteBig(resultBig.fileExists);
-      setInitial(false);
-    };
-    checkSpriteExists();
-  }, [ipc, state.projectPath, trainer]);
+    window.api.fileExists(
+      { filePath: trainer.sprite(state.projectPath!) },
+      ({ result }) => {
+        setSpriteDp(result);
+        window.api.fileExists(
+          { filePath: trainer.spriteBig(state.projectPath!) },
+          ({ result: resultBig }) => {
+            setSpriteBig(resultBig);
+            setInitial(false);
+          },
+          ({ errorMessage }) => showNotification('danger', t('error'), errorMessage)
+        );
+      },
+      ({ errorMessage }) => showNotification('danger', t('error'), errorMessage)
+    );
+    return () => window.api.cleanupFileExists();
+  }, [trainer]);
 
   return (
     <DataBlockContainer size="full" onClick={onClick}>

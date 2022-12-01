@@ -7,7 +7,7 @@ import { useHistory } from 'react-router-dom';
 import { useLoaderRef } from '@utils/loaderContext';
 import { ClearButtonOnlyIcon } from '@components/buttons';
 import { Code } from '@components/Code';
-import { useProjectLoadV2 } from '@utils/useProjectLoadV2';
+import { useProjectLoad } from '@utils/useProjectLoad';
 import { Project } from '@utils/projectList';
 
 const ProjectCardContainer = styled(ActiveContainer)`
@@ -83,13 +83,13 @@ type ProjectCardProps = {
 export const ProjectCard = ({ project, onDeleteProjectToList }: ProjectCardProps) => {
   const { t } = useTranslation(['homepage']);
   const loaderRef = useLoaderRef();
-  const projectLoadV2 = useProjectLoadV2();
+  const projectLoad = useProjectLoad();
   const history = useHistory();
 
   const handleClick = () => {
     if (!project) return;
 
-    projectLoadV2(
+    projectLoad(
       { projectDirName: project.projectPath },
       () => {
         loaderRef.current.close();

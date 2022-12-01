@@ -42,7 +42,7 @@ const fail = (callbacks: { onFailure: ProjectImportFailureCallback } | undefined
   }
 };
 
-export const useProjectImportV2 = () => {
+export const useProjectImport = () => {
   const loaderRef = useLoaderRef();
   const { t: tl } = useTranslation('loader');
   const projectImportFromPSDKv2 = useProjectImportFromPSDKv2();

@@ -54,5 +54,6 @@
   "example_defeat_sentence": "I lost.",
   "scripted_dialog": "Scripted dialog",
   "new_dialog": "New dialog",
-  "available_future_release": "Available in a future release"
+  "available_future_release": "Available in a future release",
+  "error": "Error"
 }

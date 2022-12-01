@@ -55,7 +55,7 @@ const fail = (callbacks: { onFailure: ProjectLoadFailureCallback } | undefined, 
   }
 };
 
-export const useProjectLoadV2 = () => {
+export const useProjectLoad = () => {
   const loaderRef = useLoaderRef();
   const [, setGlobalState] = useGlobalState();
   const { t: tl } = useTranslation('loader');

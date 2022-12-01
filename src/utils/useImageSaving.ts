@@ -4,14 +4,15 @@ export const useImageSaving = () => {
   const [state, setState] = useGlobalState();
 
   const addImage = (destination: string, source: string) => {
-    const updatedSavingImage = { ...state.savingImage, [destination]: source };
-    setState({ ...state, savingImage: updatedSavingImage });
+    setState((currentState) => ({ ...currentState, savingImage: { ...currentState.savingImage, [destination]: source } }));
   };
 
   const removeImage = (destination: string) => {
-    const updatedSavingImage = { ...state.savingImage };
-    delete updatedSavingImage[destination];
-    setState({ ...state, savingImage: updatedSavingImage });
+    setState((currentState) => {
+      const updatedSavingImage = { ...currentState.savingImage };
+      delete updatedSavingImage[destination];
+      return { ...currentState, savingImage: updatedSavingImage };
+    });
   };
 
   const getImage = (destination: string): string | undefined => {

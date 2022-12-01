@@ -4,6 +4,7 @@ import { ClearButtonOnlyIcon, EditButtonOnlyIcon } from '@components/buttons';
 import path from 'path';
 import { showNotification } from '@utils/showNotification';
 import { useTranslation } from 'react-i18next';
+import { useChoosefile } from '@utils/useChooseFile';
 
 const AudioInputContainer = styled.div`
   display: flex;
@@ -60,6 +61,7 @@ export const AudioInput = ({ musicPath, name, extensions, onMusicChoosen, onMusi
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [error, setError] = useState<boolean>(false);
   const { t } = useTranslation('audio');
+  const chooseFile = useChoosefile();
 
   const onDrop: DragEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
@@ -70,17 +72,13 @@ export const AudioInput = ({ musicPath, name, extensions, onMusicChoosen, onMusi
 
   const onClick = async () => {
     setIsDialogOpen(true);
-    return window.api.chooseFile(
+    chooseFile(
       { name, extensions },
       ({ path }) => {
         onMusicChoosen(path);
         setIsDialogOpen(false);
-        window.api.cleanupChooseFile();
       },
-      () => {
-        setIsDialogOpen(false);
-        window.api.cleanupChooseFile();
-      }
+      () => setIsDialogOpen(false)
     );
   };
 

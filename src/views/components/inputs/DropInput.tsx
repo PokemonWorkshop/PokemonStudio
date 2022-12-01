@@ -2,6 +2,7 @@ import React, { DragEventHandler, useState } from 'react';
 import styled from 'styled-components';
 import { ReactComponent as FileDrop } from '@assets/icons/global/drop.svg';
 import { useTranslation } from 'react-i18next';
+import { useChoosefile } from '@utils/useChooseFile';
 
 export const DropInputContainer = styled.div`
   display: flex;
@@ -71,6 +72,7 @@ type DropInputProps = {
 export const DropInput = ({ imageWidth, imageHeight, multipleFiles, name, extensions, onFileChoosen }: DropInputProps) => {
   const { t } = useTranslation('drop');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const chooseFile = useChoosefile();
 
   const onDrop: DragEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
@@ -81,17 +83,13 @@ export const DropInput = ({ imageWidth, imageHeight, multipleFiles, name, extens
 
   const onClick = async () => {
     setIsDialogOpen(true);
-    return window.api.chooseFile(
+    chooseFile(
       { name, extensions },
       ({ path }) => {
         onFileChoosen(path);
-        setIsDialogOpen(false);
-        window.api.cleanupChooseFile();
+        if (multipleFiles) setIsDialogOpen(false);
       },
-      () => {
-        setIsDialogOpen(false);
-        window.api.cleanupChooseFile();
-      }
+      () => setIsDialogOpen(false)
     );
   };
 

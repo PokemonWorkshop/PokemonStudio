@@ -2,17 +2,17 @@ import React, { ReactNode } from 'react';
 import { useHistory } from 'react-router-dom';
 import { SecondaryButton } from '../GenericButtons';
 import { useLoaderRef } from '@utils/loaderContext';
-import { useProjectLoadV2 } from '@utils/useProjectLoadV2';
+import { useProjectLoad } from '@utils/useProjectLoad';
 
 type LoadProjectButtonProps = { children: ReactNode };
 
 export const LoadProjectButton = ({ children }: LoadProjectButtonProps) => {
   const history = useHistory();
   const loaderRef = useLoaderRef();
-  const projectLoadV2 = useProjectLoadV2();
+  const projectLoad = useProjectLoad();
 
   const handleClick = async () => {
-    projectLoadV2(
+    projectLoad(
       {},
       () => {
         loaderRef.current.close();

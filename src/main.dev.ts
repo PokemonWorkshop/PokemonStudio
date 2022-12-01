@@ -15,15 +15,7 @@ import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
-import TimeInfoChannelService from './services/time.info.channel.service';
-import ProjectLoadingChannelService from './services/project.loading.channel.service';
-import TextLoadingChannelService from './services/text.loading.channel.service';
-import ProjectOpenChannelService from '@services/project.open.channel.service';
-import FileOpenChannelService from '@services/file.open.channel.service';
 import { PSDKExecChannelService } from '@services/PSDKIPC/psdk.exec.channel.service';
-import VersionsChannelService from '@services/versions.channel.service';
-import FileExistsChannelService from '@services/file.exists.channel.service';
-import PSDKConfigsLoadingChannelService from '@services/psdk.configs.loading.channel.service';
 import { getPSDKBinariesPath, getPSDKVersion } from '@services/getPSDKVersion';
 import { getLastPSDKVersion } from '@services/getLastPSDKVersion';
 import { updatePSDK } from '@services/updatePSDK';
@@ -199,17 +191,7 @@ ipcMain.on('window-is-maximized', (event) => {
   event.returnValue = BrowserWindow.fromWebContents(event.sender)?.isMaximized();
 });
 
-const ipcChannels = [
-  new TimeInfoChannelService(),
-  new ProjectLoadingChannelService(),
-  new TextLoadingChannelService(),
-  new ProjectOpenChannelService(),
-  new FileOpenChannelService(),
-  new PSDKExecChannelService(),
-  new VersionsChannelService(),
-  new FileExistsChannelService(),
-  new PSDKConfigsLoadingChannelService(),
-];
+const ipcChannels = [new PSDKExecChannelService()];
 
 ipcChannels.forEach((channel) => channel.registerChannel(ipcMain));
 ipcMain.handle('get-psdk-binaries-path', () => getPSDKBinariesPath());
