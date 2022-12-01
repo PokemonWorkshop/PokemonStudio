@@ -1,6 +1,6 @@
 import { useLoaderRef } from '@utils/loaderContext';
-import { useProjectImportV2 } from '@utils/useProjectImportV2';
-import { useProjectLoadV2 } from '@utils/useProjectLoadV2';
+import { useProjectImport } from '@utils/useProjectImport';
+import { useProjectLoad } from '@utils/useProjectLoad';
 import React, { ReactNode } from 'react';
 import { useHistory } from 'react-router-dom';
 import { SecondaryButton } from './GenericButtons';
@@ -10,16 +10,16 @@ type ImportProjectButtonProps = {
 };
 
 export const ImportProjectButton = ({ children }: ImportProjectButtonProps) => {
-  const projectImportV2 = useProjectImportV2();
-  const projectLoadV2 = useProjectLoadV2();
+  const projectImport = useProjectImport();
+  const projectLoad = useProjectLoad();
   const history = useHistory();
   const loaderRef = useLoaderRef();
 
   const handleClick = async () => {
-    projectImportV2(
+    projectImport(
       {},
       async ({ projectDirName }) => {
-        projectLoadV2(
+        projectLoad(
           { projectDirName },
           () => {
             loaderRef.current.close();

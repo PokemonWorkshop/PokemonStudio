@@ -14,8 +14,7 @@ import { useProjectTrainers } from '@utils/useProjectData';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { useGlobalState } from '@src/GlobalStateProvider';
-import { fileExists } from '@utils/IPCUtils';
-import IpcService from '@services/IPC/ipc.service';
+import { showNotification } from '@utils/showNotification';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -47,29 +46,31 @@ export const TrainerNewEditor = ({ onClose }: TrainerNewEditorProps) => {
   const { t } = useTranslation('database_trainers');
   const aiOptions = useMemo(() => aiCategoryEntries(t), [t]);
   const vsTypeOptions = useMemo(() => vsTypeCategoryEntries(t), [t]);
-  const ipc = useMemo(() => new IpcService(), []);
   const [spriteDp, setSpriteDp] = useState(false);
   const [spriteBig, setSpriteBig] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const refreshUI = useRefreshUI();
 
   useEffect(() => {
-    const checkSpriteExists = async () => {
-      if (!isLoading) return;
-      if (!state.projectPath) return;
+    if (!isLoading) return;
 
-      const resultDp = await fileExists(ipc, newTrainer.sprite(state.projectPath));
-      if ('error' in resultDp) return console.error(resultDp.error);
-
-      const resultBig = await fileExists(ipc, newTrainer.spriteBig(state.projectPath));
-      if ('error' in resultBig) return console.error(resultBig.error);
-
-      setSpriteDp(resultDp.fileExists);
-      setSpriteBig(resultBig.fileExists);
-      setLoading(false);
-    };
-    checkSpriteExists();
-  }, [ipc, state.projectPath, newTrainer, isLoading]);
+    window.api.fileExists(
+      { filePath: newTrainer.sprite(state.projectPath!) },
+      ({ result }) => {
+        setSpriteDp(result);
+        window.api.fileExists(
+          { filePath: newTrainer.spriteBig(state.projectPath!) },
+          ({ result: resultBig }) => {
+            setSpriteBig(resultBig);
+            setLoading(false);
+          },
+          ({ errorMessage }) => showNotification('danger', t('error'), errorMessage)
+        );
+      },
+      ({ errorMessage }) => showNotification('danger', t('error'), errorMessage)
+    );
+    return () => window.api.cleanupFileExists();
+  }, [newTrainer, isLoading]);
 
   const onBattlerChoosen = (battlerPath: string) => {
     const battler = path

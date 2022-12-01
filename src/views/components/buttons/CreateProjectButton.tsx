@@ -5,7 +5,7 @@ import { serializeLanguageConfig } from '@utils/SerializationUtils';
 import { useHistory } from 'react-router-dom';
 import LanguageConfigModel from '@modelEntities/config/LanguageConfig.model';
 import { useLoaderRef } from '@utils/loaderContext';
-import { useProjectLoadV2 } from '@utils/useProjectLoadV2';
+import { useProjectLoad } from '@utils/useProjectLoad';
 import { useProjectNew } from '@utils/useProjectNew';
 
 type CreateProjectButtonProps = {
@@ -34,7 +34,7 @@ const getLanguageConfig = (projectData: Omit<ProjectCreationData, 'clone'>): str
 export const CreateProjectButton = ({ projectData, children, disabled }: CreateProjectButtonProps) => {
   const loaderRef = useLoaderRef();
   const projectNew = useProjectNew();
-  const projectLoadV2 = useProjectLoadV2();
+  const projectLoad = useProjectLoad();
   const history = useHistory();
 
   const handleClick = async () => {
@@ -47,7 +47,7 @@ export const CreateProjectButton = ({ projectData, children, disabled }: CreateP
         multiLanguage: projectData.multiLanguage,
       },
       ({ projectDirName }) => {
-        projectLoadV2(
+        projectLoad(
           { projectDirName },
           () => {
             loaderRef.current.close();

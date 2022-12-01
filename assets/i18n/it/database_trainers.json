@@ -54,5 +54,6 @@
   "example_defeat_sentence": "Ho perso.",
   "scripted_dialog": "Dialogo personalizzato",
   "new_dialog": "Nuovo dialogo",
-  "available_future_release": "Disponibile in versioni future"
+  "available_future_release": "Disponibile in versioni future",
+  "error": "Errore"
 }

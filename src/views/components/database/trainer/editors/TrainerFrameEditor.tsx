@@ -21,11 +21,10 @@ import { DropInput } from '@components/inputs/DropInput';
 import path from 'path';
 import { padStr } from '@utils/PadStr';
 import { useGlobalState } from '@src/GlobalStateProvider';
-import { fileExists } from '@utils/IPCUtils';
-import IpcService from '@services/IPC/ipc.service';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import type { OpenTranslationEditorFunction } from '@utils/useTranslationEditor';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
+import { showNotification } from '@utils/showNotification';
 
 const BaseMoneyInfoContainer = styled.span`
   ${({ theme }) => theme.fonts.normalSmall}
@@ -72,29 +71,31 @@ export const TrainerFrameEditor = ({ trainer, openTranslationEditor }: TrainerFr
   const { t } = useTranslation('database_trainers');
   const aiOptions = useMemo(() => aiCategoryEntries(t), [t]);
   const vsTypeOptions = useMemo(() => vsTypeCategoryEntries(t), [t]);
-  const ipc = useMemo(() => new IpcService(), []);
   const [spriteDp, setSpriteDp] = useState(false);
   const [spriteBig, setSpriteBig] = useState(false);
   const [isLoading, setLoading] = useState(true);
   const refreshUI = useRefreshUI();
 
   useEffect(() => {
-    const checkSpriteExists = async () => {
-      if (!isLoading) return;
-      if (!state.projectPath) return;
+    if (!isLoading) return;
 
-      const resultDp = await fileExists(ipc, trainer.sprite(state.projectPath));
-      if ('error' in resultDp) return console.error(resultDp.error);
-
-      const resultBig = await fileExists(ipc, trainer.spriteBig(state.projectPath));
-      if ('error' in resultBig) return console.error(resultBig.error);
-
-      setSpriteDp(resultDp.fileExists);
-      setSpriteBig(resultBig.fileExists);
-      setLoading(false);
-    };
-    checkSpriteExists();
-  }, [ipc, state.projectPath, trainer, isLoading]);
+    window.api.fileExists(
+      { filePath: trainer.sprite(state.projectPath!) },
+      ({ result }) => {
+        setSpriteDp(result);
+        window.api.fileExists(
+          { filePath: trainer.spriteBig(state.projectPath!) },
+          ({ result: resultBig }) => {
+            setSpriteBig(resultBig);
+            setLoading(false);
+          },
+          ({ errorMessage }) => showNotification('danger', t('error'), errorMessage)
+        );
+      },
+      ({ errorMessage }) => showNotification('danger', t('error'), errorMessage)
+    );
+    return () => window.api.cleanupFileExists();
+  }, [trainer, isLoading]);
 
   const onBattlerChoosen = (battlerPath: string) => {
     const battler = path

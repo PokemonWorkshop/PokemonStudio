@@ -1,5 +1,5 @@
 import { SelectedDataIdentifier } from '@src/GlobalStateProvider';
-import { PreGlobalState } from './useProjectLoadV2';
+import { PreGlobalState } from './useProjectLoad';
 
 const firstByName = <T extends { name: () => string; dbSymbol: string }>(data: Record<string, T>): string => {
   return Object.values(data).sort((a, b) => a.name().localeCompare(b.name()))[0].dbSymbol;

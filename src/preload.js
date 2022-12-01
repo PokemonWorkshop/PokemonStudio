@@ -251,21 +251,21 @@ window.api = {
   },
   fileExists: (taskPayload, onSuccess, onFailure) => {
     // Register success event
-    ipcRenderer.once(`file-exists-v2/success`, (_, payload) => {
-      ipcRenderer.removeAllListeners(`file-exists-v2/failure`);
+    ipcRenderer.once(`file-exists/success`, (_, payload) => {
+      ipcRenderer.removeAllListeners(`file-exists/failure`);
       onSuccess(payload);
     });
     // Register failure event
-    ipcRenderer.once(`file-exists-v2/failure`, (_, error) => {
-      ipcRenderer.removeAllListeners(`file-exists-v2/success`);
+    ipcRenderer.once(`file-exists/failure`, (_, error) => {
+      ipcRenderer.removeAllListeners(`file-exists/success`);
       onFailure(error);
     });
     // Call service
-    ipcRenderer.send('file-exists-v2', taskPayload);
+    ipcRenderer.send('file-exists', taskPayload);
   },
   cleanupFileExists: () => {
-    ipcRenderer.removeAllListeners(`file-exists-v2/success`);
-    ipcRenderer.removeAllListeners(`file-exists-v2/failure`);
+    ipcRenderer.removeAllListeners(`file-exists/success`);
+    ipcRenderer.removeAllListeners(`file-exists/failure`);
   },
   updateMapInfos: (taskPayload, onSuccess, onFailure) => {
     // Register success event
