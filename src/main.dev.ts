@@ -183,8 +183,9 @@ ipcMain.on('window-close', (event) => {
   event.sender.send('request-window-close');
 });
 
-ipcMain.on('window-safe-close', (event) => {
+ipcMain.on('window-safe-close', (event, forceQuit) => {
   BrowserWindow.fromWebContents(event.sender)?.destroy();
+  if (forceQuit) app?.quit();
 });
 
 ipcMain.on('window-is-maximized', (event) => {
