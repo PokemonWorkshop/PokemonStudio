@@ -75,7 +75,7 @@ export default class MenuBuilder {
             label: 'Quit',
             accelerator: 'Meta+Q',
             click: () => {
-              app.quit();
+              this.mainWindow.webContents.send('request-window-close', true);
             },
           },
         ],

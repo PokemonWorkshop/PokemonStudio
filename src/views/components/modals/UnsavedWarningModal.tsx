@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron';
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { useMemo, useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
@@ -84,9 +84,10 @@ export const UnsavedWarningModal = () => {
   const { isDataToSave, save } = useProjectSave();
   const loaderRef = useLoaderRef();
   const [show, setShow] = useState<boolean>(false);
+  const shouldForceQuit = useRef<boolean>(false);
 
   const onQuit = async () => {
-    await ipcRenderer.send('window-safe-close');
+    await ipcRenderer.send('window-safe-close', shouldForceQuit.current);
   };
 
   const onSave = useMemo(
@@ -105,7 +106,8 @@ export const UnsavedWarningModal = () => {
   );
 
   useEffect(() => {
-    ipcRenderer.on('request-window-close', async () => {
+    ipcRenderer.on('request-window-close', async (_event, forceQuit = false) => {
+      shouldForceQuit.current = forceQuit;
       if (isDataToSave) {
         setShow(true);
       } else {
