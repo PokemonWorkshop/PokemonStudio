@@ -32,7 +32,7 @@ export const DashboardGameStartTitleScreen = () => {
   const onMusicChoosen = (musicPath: string) => {
     const musicFilename = path.basename(musicPath);
     addImage(path.join('audio/bgm', musicFilename), musicPath);
-    currentEditedGameStart.bgmName = path.join('audio/bgm', musicFilename);
+    currentEditedGameStart.bgmName = path.join('audio/bgm', musicFilename).replaceAll('\\', '/');
     setGameStart(currentEditedGameStart);
   };
 
