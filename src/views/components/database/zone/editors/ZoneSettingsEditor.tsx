@@ -63,13 +63,13 @@ export const ZoneSettingsEditor = ({ zone }: ZoneSettingsEditorProps) => {
         .map((v) => Number(v))
         .filter((v, i, a) => i === a.indexOf(v));
       const errorMapId = mapIds.find((mapId) => zone.maps.includes(mapId));
-      if (errorMapId) {
+      if (errorMapId !== undefined) {
         setErrorNewMap(errorMapId);
         return;
       }
 
       inputRef.current.value = '';
-      if (errorNewMap) setErrorNewMap(false);
+      if (errorNewMap !== false) setErrorNewMap(false);
       refreshUI((zone.maps = zone.maps.concat(mapIds)));
     }
   };
