@@ -1,5 +1,5 @@
 import { TypeCategory } from '@components/categories';
-import PokemonModel from '@modelEntities/pokemon/Pokemon.model';
+import PokemonModel, { pokemonIconPath } from '@modelEntities/pokemon/Pokemon.model';
 import AbilityModel from '@modelEntities/ability/Ability.model';
 import { State, useGlobalState } from '@src/GlobalStateProvider';
 import React from 'react';
@@ -8,6 +8,7 @@ import styled from 'styled-components';
 import { DataGrid } from '../dataBlocks';
 import { useProjectAbilities } from '@utils/useProjectData';
 import { getNameType } from '@utils/getNameType';
+import { ResourceImage } from '@components/ResourceImage';
 
 type AbilityPokemonTableProps = {
   ability: AbilityModel;
@@ -88,7 +89,7 @@ const RenderPokemon = ({ pokemon, ability, state }: RenderAbilityProps) => {
   return (
     <RenderPokemonContainer gap="16px">
       <span>
-        <img src={pokemon.icon(state, form)} />
+        <ResourceImage imagePathInProject={pokemonIconPath(pokemon, form.form)} fallback={form.form === 0 ? undefined : pokemonIconPath(pokemon)} />
       </span>
       <span className="name">{pokemon ? pokemon.name() : '---'}</span>
       <TypeContainer>

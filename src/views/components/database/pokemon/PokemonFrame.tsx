@@ -1,5 +1,7 @@
 import { TypeCategory } from '@components/categories';
 import { CopyIdentifier } from '@components/Copy';
+import { ResourceImage } from '@components/ResourceImage';
+import { pokemonSpritePath } from '@modelEntities/pokemon/Pokemon.model';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { getNameType } from '@utils/getNameType';
 import { padStr } from '@utils/PadStr';
@@ -24,9 +26,9 @@ export const PokemonFrame = ({ pokemonWithForm, onClick }: PokemonDataProps) => 
     <DataBlockContainer size="full" onClick={onClick}>
       <DataGrid columns="160px minmax(min-content, 610px) auto">
         <DataSpriteContainer type="sprite">
-          <img
-            alt="pokemon sprite"
-            src={state.projectPath ? species.sprite(state, form) : 'https://www.pokepedia.fr/images/8/87/Pok%C3%A9_Ball.png'}
+          <ResourceImage
+            imagePathInProject={pokemonSpritePath(species, form.form)}
+            fallback={form.form === 0 ? undefined : pokemonSpritePath(species)}
           />
         </DataSpriteContainer>
         <DataInfoContainer>
