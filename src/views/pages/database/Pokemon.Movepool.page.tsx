@@ -3,21 +3,17 @@ import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { DataBlockWrapper } from '@components/database/dataBlocks';
 import { PokemonControlBar } from '@components/database/pokemon/PokemonControlBar';
 import { PokemonWithForm } from '@components/database/pokemon/PokemonDataPropsInterface';
-import { SubPageTitleWithIcon } from '@components/database/SubPageTitleWithIcon';
 import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { useProjectPokemon } from '@utils/useProjectData';
 import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
-import { useGlobalState } from '@src/GlobalStateProvider';
 import { MovepoolDeletion, MovepoolEditor, MovepoolImport } from '@components/database/pokemon/movepool';
 import { EditorOverlay } from '@components/editor';
 import { DeletionOverlay } from '@components/deletion';
 import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
+import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';
 
 export const PokemonMovepoolPage = () => {
-  const [state] = useGlobalState();
-  const history = useHistory();
   const {
     projectDataValues: pokemon,
     selectedDataIdentifier: pokemonIdentifier,
@@ -35,7 +31,6 @@ export const PokemonMovepoolPage = () => {
     species: currentEditedPokemon,
     form: currentEditedPokemon.forms[pokemonIdentifier.form],
   };
-  const onClickedBack = () => history.push('/database/pokemon');
 
   const onChangeSpecie = (selected: SelectOption) => {
     setSelectedDataIdentifier({ pokemon: { specie: selected.value, form: 0 } });
@@ -90,15 +85,16 @@ export const PokemonMovepoolPage = () => {
       <PageContainerStyle>
         <PageDataConstrainerStyle>
           <DataBlockWrapper>
-            <SubPageTitleWithIcon
-              title={t('database_pokemon:movepool_title', { pokemon: currentPokemonWithForm.species.name() })}
-              onClickedBack={onClickedBack}
-              icon={
-                state.projectPath
-                  ? currentPokemonWithForm.species.icon(state, currentPokemonWithForm.form)
-                  : 'https://www.pokepedia.fr/images/8/87/Pok%C3%A9_Ball.png'
-              }
+            <DatabaseTabsBar
+              currentTabIndex={1}
+              tabs={[
+                { label: t('database_pokemon:pokemon'), path: '/database/pokemon' },
+                { label: t('database_pokemon:movepool'), path: '/database/pokemon/movepool' },
+                { label: t('database_pokemon:resources'), path: '/database/pokemon/resources', disabled: true },
+              ]}
             />
+          </DataBlockWrapper>
+          <DataBlockWrapper>
             <MovepoolEditor type="level" setCurrentEditor={setCurrentEditor} setCurrentDeletion={setCurrentDeletion} />
             <MovepoolEditor type="tutor" setCurrentEditor={setCurrentEditor} setCurrentDeletion={setCurrentDeletion} />
             <MovepoolEditor type="tech" setCurrentEditor={setCurrentEditor} setCurrentDeletion={setCurrentDeletion} />
