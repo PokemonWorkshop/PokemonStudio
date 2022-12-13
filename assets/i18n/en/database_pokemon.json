@@ -188,5 +188,6 @@
   "parabolic": "Medium slow",
   "normal": "Medium fast",
   "fluctuating": "Fluctuating",
-  "erratic": "Erratic"
+  "erratic": "Erratic",
+  "resources": "Resources"
 }

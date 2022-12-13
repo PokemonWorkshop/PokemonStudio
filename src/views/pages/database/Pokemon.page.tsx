@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { SecondaryButton, DeleteButtonWithIcon } from '@components/buttons';
+import { DeleteButtonWithIcon } from '@components/buttons';
 import { DataBlockWrapper, DataBlockWithAction } from '@components/database/dataBlocks';
 import { StatisticsDataBlock } from '@components/database/pokemon/pokemonDataBlock/StatisticsDataBlock';
 import { PokemonControlBar } from '@components/database/pokemon/PokemonControlBar';
@@ -14,7 +14,6 @@ import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerSty
 import { PokemonWithForm } from '@components/database/pokemon/PokemonDataPropsInterface';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { useProjectPokemon } from '@utils/useProjectData';
-import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   BreedingEditor,
@@ -33,12 +32,11 @@ import { EvolutionEditor } from '@components/database/pokemon/editors/EvolutionE
 import { Deletion, DeletionOverlay } from '@components/deletion';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
 import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
+import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';
 
 export const PokemonPage = () => {
   const [evolutionIndex, setEvolutionIndex] = useState(0);
   const { t } = useTranslation(['database_pokemon']);
-  const history = useHistory();
-  const onClickedMovepool = () => history.push(`/database/pokemon/movepool`);
   const {
     projectDataValues: pokemon,
     selectedDataIdentifier: currentPokemon,
@@ -188,6 +186,16 @@ export const PokemonPage = () => {
       <PageContainerStyle>
         <PageDataConstrainerStyle>
           <DataBlockWrapper>
+            <DatabaseTabsBar
+              currentTabIndex={0}
+              tabs={[
+                { label: t('database_pokemon:pokemon'), path: '/database/pokemon' },
+                { label: t('database_pokemon:movepool'), path: '/database/pokemon/movepool' },
+                { label: t('database_pokemon:resources'), path: '/database/pokemon/resources', disabled: true },
+              ]}
+            />
+          </DataBlockWrapper>
+          <DataBlockWrapper>
             <PokemonFrame pokemonWithForm={pokemonWithForm} onClick={() => setCurrentEditor('informationsEditor')} />
             <PokedexDataBlock pokemonWithForm={pokemonWithForm} onClick={() => setCurrentEditor('pokedexEditor')} />
             <EvolutionDataBlock
@@ -203,9 +211,6 @@ export const PokemonPage = () => {
             <StatisticsDataBlock pokemonWithForm={pokemonWithForm} onClick={() => setCurrentEditor('statsEditor')} />
           </DataBlockWrapper>
           <DataBlockWrapper>
-            <DataBlockWithAction size="full" title={t('database_pokemon:movepool')}>
-              <SecondaryButton onClick={onClickedMovepool}>{t('database_pokemon:movepool_button')}</SecondaryButton>
-            </DataBlockWithAction>
             <DataBlockWithAction size="full" title={t('database_pokemon:deleting')}>
               {currentPokemonModel.forms[currentPokemon.form].form === 0 && (
                 <DeleteButtonWithIcon onClick={() => setCurrentDeletion('pokemonDeletion')}>{t('database_pokemon:delete')}</DeleteButtonWithIcon>
