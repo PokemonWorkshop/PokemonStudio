@@ -11,6 +11,8 @@ import { Category } from '@components/categories/Category';
 import { DataFieldsetFieldWithChild } from '@components/database/dataBlocks/DataFieldsetField';
 import { useTranslation } from 'react-i18next';
 import { getNatureText } from '@utils/ReadingProjectText';
+import { ResourceImage } from '@components/ResourceImage';
+import { pokemonIconPath } from '@modelEntities/pokemon/Pokemon.model';
 
 type PokemonBattlerProps = {
   onClickDelete: (index: number) => void;
@@ -248,27 +250,12 @@ export const PokemonBattler = ({ onClickDelete, onEditPokemonProperty, pokemon, 
       >
         <PokemonBattlerHeader>
           {specie ? (
-            <img
-              draggable="false"
-              src={
-                state.projectPath
-                  ? specie.icon(
-                      state,
-                      specie.forms.find((form) => form.form === pokemon.form)
-                    )
-                  : 'https://www.pokepedia.fr/images/8/87/Pok%C3%A9_Ball.png'
-              }
-              alt=""
+            <ResourceImage
+              imagePathInProject={pokemonIconPath(specie, pokemon.form)}
+              fallback={pokemon.form === 0 ? undefined : pokemonIconPath(specie)}
             />
           ) : (
-            <img
-              draggable="false"
-              src={
-                state.projectPath
-                  ? `${state.projectPath}/graphics/pokedex/pokeicon/000.png`
-                  : 'https://www.pokepedia.fr/images/8/87/Pok%C3%A9_Ball.png'
-              }
-            />
+            <ResourceImage imagePathInProject="graphics/pokedex/pokeicon/000.png" />
           )}
           <div className="name-level">
             {specie ? specie.name() : <span className="error">{t('database_pokemon:pokemon_deleted')}</span>}

@@ -1,4 +1,4 @@
-import PokemonModel from '@modelEntities/pokemon/Pokemon.model';
+import PokemonModel, { pokemonIconPath } from '@modelEntities/pokemon/Pokemon.model';
 import MoveModel from '@modelEntities/move/Move.model';
 import { State, useGlobalState } from '@src/GlobalStateProvider';
 import React from 'react';
@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { TypeCategory } from '@components/categories';
 import { DataPokemonGrid, DataPokemonTable, NoPokemonFound, RenderPokemonContainer, TypeContainer } from './MovePokemonTableStyle';
 import { getNameType } from '@utils/getNameType';
+import { ResourceImage } from '@components/ResourceImage';
 
 type RenderPokemonProps = {
   pokemon: PokemonModel;
@@ -26,7 +27,7 @@ const RenderPokemon = ({ pokemon, move, state }: RenderPokemonProps) => {
   return (
     <RenderPokemonContainer gap="16px">
       <span>
-        <img src={pokemon.icon(state, form)} />
+        <ResourceImage imagePathInProject={pokemonIconPath(pokemon, form.form)} fallback={form.form == 0 ? undefined : pokemonIconPath(pokemon)} />
       </span>
       <span className="name">{pokemon.name()}</span>
       <TypeContainer>

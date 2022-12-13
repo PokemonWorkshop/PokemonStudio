@@ -1,8 +1,7 @@
 import { jsonMember, jsonObject, jsonArrayMember, TypedJSON } from 'typedjson';
-import fs from 'fs';
 import PokemonForm from './PokemonForm';
 import PSDKEntity from '../PSDKEntity';
-import { ProjectData, State, TextsWithLanguageConfig } from '@src/GlobalStateProvider';
+import { ProjectData, TextsWithLanguageConfig } from '@src/GlobalStateProvider';
 import { getText, setText } from '@utils/ReadingProjectText';
 import { padStr } from '@utils/PadStr';
 import { findFirstAvailableId } from '@utils/ModelUtils';
@@ -118,38 +117,6 @@ export default class PokemonModel implements PSDKEntity {
   };
 
   /**
-   * Get the icon of the Pokemon
-   */
-  icon = (state: State, form?: PokemonForm) => {
-    const spriteUrlBase = `${state.projectPath}/graphics/pokedex/pokeicon/`;
-
-    if (form && form.form !== 0) {
-      const formUrl = `${spriteUrlBase}${padStr(this.id, 3)}_${padStr(form.form, 2)}.png`;
-      if (formUrl.startsWith('http') || fs.existsSync(formUrl)) {
-        return formUrl;
-      }
-    }
-
-    return `${spriteUrlBase}${padStr(this.id, 3)}.png`;
-  };
-
-  /**
-   * Get the sprite of the Pokemon
-   */
-  sprite = (state: State, form?: PokemonForm) => {
-    const spriteUrlBase = `${state.projectPath}/graphics/pokedex/pokefront/`;
-
-    if (form && form.form !== 0) {
-      const formUrl = `${spriteUrlBase}${padStr(this.id, 3)}_${padStr(form.form, 2)}.png`;
-      if (formUrl.startsWith('http') || fs.existsSync(formUrl)) {
-        return formUrl;
-      }
-    }
-
-    return `${spriteUrlBase}${padStr(this.id, 3)}.png`;
-  };
-
-  /**
    * Clone the object
    */
   clone = (): PokemonModel => {
@@ -176,3 +143,15 @@ export default class PokemonModel implements PSDKEntity {
     return newPokemon;
   };
 }
+
+export const pokemonSpritePath = (species: PokemonModel, form?: number) => {
+  if (form) return `graphics/pokedex/pokefront/${padStr(species.id, 3)}_${padStr(form, 2)}.png`;
+
+  return `graphics/pokedex/pokefront/${padStr(species.id, 3)}.png`;
+};
+
+export const pokemonIconPath = (species: PokemonModel, form?: number) => {
+  if (form) return `graphics/pokedex/pokeicon/${padStr(species.id, 3)}_${padStr(form, 2)}.png`;
+
+  return `graphics/pokedex/pokeicon/${padStr(species.id, 3)}.png`;
+};

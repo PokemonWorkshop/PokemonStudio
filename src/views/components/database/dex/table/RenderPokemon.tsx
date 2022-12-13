@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import theme from '@src/AppTheme';
-import PokemonModel from '@modelEntities/pokemon/Pokemon.model';
+import PokemonModel, { pokemonIconPath } from '@modelEntities/pokemon/Pokemon.model';
 import { useTranslation } from 'react-i18next';
 import { DataPokemonGrid } from './DexPokemonListTableStyle';
 import { ReactComponent as DragIcon } from '@assets/icons/global/drag.svg';
@@ -9,12 +9,12 @@ import { DarkButton, DarkButtonImportResponsive, DeleteButtonOnlyIcon, EditButto
 import { EditButtonOnlyIconContainer } from '@components/buttons/EditButtonOnlyIcon';
 import { DraggableProvided } from 'react-beautiful-dnd';
 import { useProjectTypes } from '@utils/useProjectData';
-import { useGlobalState } from '@src/GlobalStateProvider';
 import { TypeCategory } from '@components/categories';
 import { getNameType } from '@utils/getNameType';
 import { Input } from '@components/inputs';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import DexModel from '@modelEntities/dex/Dex.model';
+import { ResourceImage } from '@components/ResourceImage';
 
 type RenderPokemonContainerProps = {
   isDragging: boolean;
@@ -150,7 +150,6 @@ type RenderPokemonProps = {
 
 export const RenderPokemon = React.forwardRef<HTMLInputElement, RenderPokemonProps>(
   ({ style, pokemon, provided, isDragging, dragOn, index, dex, onClickEdit, onClickDelete, onClickAddEvolution, onEditId }, ref) => {
-    const [state] = useGlobalState();
     const { projectDataValues: types } = useProjectTypes();
     const pokemonForm = useMemo(() => pokemon.data?.forms.find((form) => form.form === pokemon.form), [pokemon.data, pokemon.form]);
     const { t } = useTranslation(['database_pokemon', 'database_dex']);
@@ -203,27 +202,12 @@ export const RenderPokemon = React.forwardRef<HTMLInputElement, RenderPokemonPro
         />
         <span>
           {pokemon.data ? (
-            <img
-              draggable="false"
-              src={
-                state.projectPath
-                  ? pokemon.data.icon(
-                      state,
-                      pokemon.data.forms.find((form) => form.form === pokemon.form)
-                    )
-                  : 'https://www.pokepedia.fr/images/8/87/Pok%C3%A9_Ball.png'
-              }
-              alt=""
+            <ResourceImage
+              imagePathInProject={pokemonIconPath(pokemon.data, pokemon.form)}
+              fallback={pokemon.form === 0 ? undefined : pokemonIconPath(pokemon.data)}
             />
           ) : (
-            <img
-              draggable="false"
-              src={
-                state.projectPath
-                  ? `${state.projectPath}/graphics/pokedex/pokeicon/000.png`
-                  : 'https://www.pokepedia.fr/images/8/87/Pok%C3%A9_Ball.png'
-              }
-            />
+            <ResourceImage imagePathInProject="graphics/pokedex/pokeicon/000.png" />
           )}
         </span>
         {pokemon.data ? (

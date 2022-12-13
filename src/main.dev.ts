@@ -40,6 +40,7 @@ import { registerSaveProjectTexts } from './backendTasks/saveProjectTexts';
 import { registerMoveImage } from './backendTasks/moveImage';
 import { registerProjectStudioFile } from './backendTasks/projectStudioFile';
 import { registerChooseFile } from './backendTasks/chooseFile';
+import { registerElectronProtocolWhenAppRead } from '@utils/electronProtocol';
 
 export default class AppUpdater {
   constructor() {
@@ -83,6 +84,8 @@ const createWindow = async () => {
   const getAssetPath = (...paths: string[]): string => {
     return path.join(RESOURCES_PATH, ...paths);
   };
+
+  registerElectronProtocolWhenAppRead(RESOURCES_PATH);
 
   mainWindow = new BrowserWindow({
     show: false,
