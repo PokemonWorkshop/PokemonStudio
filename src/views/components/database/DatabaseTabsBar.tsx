@@ -89,9 +89,8 @@ export const DatabaseTabsBar = ({ currentTabIndex, tabs }: DatabaseTabBarProps) 
   return (
     <DatabaseTabsBarContainer>
       {tabs.map((tab, index) => (
-        <>
+        <React.Fragment key={`database-tab-${index}`}>
           <TabContainer
-            key={`database-tab-${index}`}
             className={currentTabIndex === index ? 'current-tab' : undefined}
             onClick={() => tab.disabled ?? history.push(tab.path)}
             disabled={tab.disabled}
@@ -99,7 +98,7 @@ export const DatabaseTabsBar = ({ currentTabIndex, tabs }: DatabaseTabBarProps) 
             <span>{tab.label}</span>
           </TabContainer>
           {index < tabs.length - 1 && <SeparatorStyle />}
-        </>
+        </React.Fragment>
       ))}
     </DatabaseTabsBarContainer>
   );

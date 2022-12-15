@@ -148,3 +148,12 @@ export const setLinksFromMapLink = (mapLink: MapLinkModel, links: MapLinkLink[],
       break;
   }
 };
+
+export const isEmptyLinksFromMapLink = (mapLink: MapLinkModel): boolean => {
+  return (
+    getLinksFromMapLink(mapLink, 'north').length === 0 &&
+    getLinksFromMapLink(mapLink, 'east').length === 0 &&
+    getLinksFromMapLink(mapLink, 'south').length === 0 &&
+    getLinksFromMapLink(mapLink, 'west').length === 0
+  );
+};
