@@ -18,7 +18,7 @@ import styled from 'styled-components';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { Tag } from '@components/Tag';
 import { DropInput } from '@components/inputs/DropInput';
-import path from 'path';
+import { basename } from '@utils/path';
 import { padStr } from '@utils/PadStr';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
@@ -98,8 +98,7 @@ export const TrainerFrameEditor = ({ trainer, openTranslationEditor }: TrainerFr
   }, [trainer, isLoading]);
 
   const onBattlerChoosen = (battlerPath: string) => {
-    const battler = path
-      .basename(battlerPath)
+    const battler = basename(battlerPath)
       .split('.')[0]
       .replace(/_big|_sma/, '');
     if (trainer.battlers[0]) refreshUI((trainer.battlers[0] = battler));

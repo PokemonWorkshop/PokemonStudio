@@ -12,7 +12,7 @@ import { checkDbSymbolExist, generateDefaultDbSymbol, wrongDbSymbol } from '@uti
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { TextInputError } from '@components/inputs/Input';
 import { DropInput } from '@components/inputs/DropInput';
-import path from 'path';
+import { basename } from '@utils/path';
 import { useGlobalState } from '@src/GlobalStateProvider';
 
 const itemCategoryEntries = (t: TFunction<('database_items' | 'database_types' | 'database_moves')[]>) =>
@@ -56,7 +56,7 @@ export const ItemNewEditor = ({ onClose }: ItemNewEditorProps) => {
   };
 
   const onIconChoosen = (iconPath: string) => {
-    refreshUI((newItem.icon = path.basename(iconPath).split('.')[0]));
+    refreshUI((newItem.icon = basename(iconPath).split('.')[0]));
   };
 
   const onIconClear = () => {

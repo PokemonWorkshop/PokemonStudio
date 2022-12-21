@@ -4,7 +4,7 @@ import { useConfigLanguage, useConfigSceneTitle } from '@utils/useProjectConfig'
 import { useTranslation } from 'react-i18next';
 import { DashboardEditor } from '../DashboardEditor';
 import { Input, InputWithTopLabelContainer, InputWithLeftLabelContainer, Label, Toggle, InputContainer, AudioInput } from '@components/inputs';
-import path from 'path';
+import { join, basename } from '@utils/path';
 import { DropInput } from '@components/inputs/DropInput';
 import { useImageSaving } from '@utils/useImageSaving';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
@@ -30,9 +30,9 @@ export const DashboardGameStartTitleScreen = () => {
   const [titleScreenData, setTitleScreenData] = useState({ duration: gameStart.bgmDuration, controlWaitTime: gameStart.controlWaitTime });
 
   const onMusicChoosen = (musicPath: string) => {
-    const musicFilename = path.basename(musicPath);
-    addImage(path.join('audio/bgm', musicFilename), musicPath);
-    currentEditedGameStart.bgmName = path.join('audio/bgm', musicFilename).replaceAll('\\', '/');
+    const musicFilename = basename(musicPath);
+    addImage(join('audio/bgm', musicFilename), musicPath);
+    currentEditedGameStart.bgmName = join('audio/bgm', musicFilename).replaceAll('\\', '/');
     setGameStart(currentEditedGameStart);
   };
 
@@ -89,7 +89,7 @@ export const DashboardGameStartTitleScreen = () => {
           <DropInput name={t('title_screen_music')} extensions={['ogg', 'mp3', 'midi', 'flac']} onFileChoosen={onMusicChoosen} />
         ) : (
           <AudioInput
-            musicPath={getImage(gameStart.bgmName) ?? path.join(state.projectPath || '', gameStart.bgmName)}
+            musicPath={getImage(gameStart.bgmName) ?? join(state.projectPath || '', gameStart.bgmName)}
             name={t('title_screen_music')}
             extensions={['ogg', 'mp3', 'midi', 'flac']}
             onMusicChoosen={onMusicChoosen}

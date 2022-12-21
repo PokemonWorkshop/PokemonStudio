@@ -1,5 +1,5 @@
 import ProjectStudioModel from '@modelEntities/ProjectStudio.model';
-import path from 'path';
+import { join } from '@utils/path';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLoaderRef } from './loaderContext';
@@ -46,7 +46,7 @@ export const useProjectNew = () => {
         loaderRef.current.open('creating_project', 0, 0, tl('creating_project_opening_path'));
         return window.api.chooseFolder(
           {},
-          ({ folderPath }) => setState({ ...state, state: 'checkingFolderExist', projectDirName: path.join(folderPath, state.payload.projectTitle) }),
+          ({ folderPath }) => setState({ ...state, state: 'checkingFolderExist', projectDirName: join(folderPath, state.payload.projectTitle) }),
           () => {
             setState({ state: 'done' });
             loaderRef.current.close();

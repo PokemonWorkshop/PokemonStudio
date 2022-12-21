@@ -7,7 +7,7 @@ import { SelectCustomSimple } from '@components/SelectCustom';
 import { UseProjectItemReturnType } from '@utils/useProjectData';
 import { mutateItemToCategory } from './mutateItemToCategory';
 import { DropInput } from '@components/inputs/DropInput';
-import path from 'path';
+import { basename } from '@utils/path';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import type { OpenTranslationEditorFunction } from '@utils/useTranslationEditor';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
@@ -28,7 +28,7 @@ export const ItemFrameEditor = ({ item, setItems, openTranslationEditor }: ItemF
   const [state] = useGlobalState();
 
   const onIconChoosen = (iconPath: string) => {
-    refreshUI((item.icon = path.basename(iconPath).split('.')[0]));
+    refreshUI((item.icon = basename(iconPath).split('.')[0]));
   };
 
   const onIconClear = () => {
