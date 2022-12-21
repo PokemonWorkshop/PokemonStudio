@@ -1,7 +1,7 @@
 import React, { DragEventHandler, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { ClearButtonOnlyIcon, EditButtonOnlyIcon } from '@components/buttons';
-import path from 'path';
+import { basename } from '@utils/path';
 import { showNotification } from '@utils/showNotification';
 import { useTranslation } from 'react-i18next';
 import { useChoosefile } from '@utils/useChooseFile';
@@ -98,7 +98,7 @@ export const AudioInput = ({ musicPath, name, extensions, onMusicChoosen, onMusi
     <AudioInputContainer onDrop={onDrop} onDragOver={onDragOver}>
       <div className="music">
         <audio controls src={musicPath} />
-        {error ? <span className="error">{t('no_file_found')}</span> : <span>{path.basename(musicPath)}</span>}
+        {error ? <span className="error">{t('no_file_found')}</span> : <span>{basename(musicPath)}</span>}
       </div>
       <div className="buttons">
         <EditButtonOnlyIcon disabled={isDialogOpen} onClick={isDialogOpen ? undefined : onClick} />

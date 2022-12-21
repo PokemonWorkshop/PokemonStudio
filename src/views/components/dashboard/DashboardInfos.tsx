@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
-import path from 'path';
+import { join } from '@utils/path';
 import { IconInput, Input, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { DropInput } from '@components/inputs/DropInput';
 import { useGlobalState } from '@src/GlobalStateProvider';
@@ -96,7 +96,7 @@ export const DashboardInfos = () => {
           <IconInput
             name={t('dashboard_infos:project_icon')}
             extensions={['png']}
-            iconPath={getImage('project_icon.png') ?? path.join(state.projectPath || '', projectStudio.iconPath)}
+            iconPath={getImage('project_icon.png') ?? join(state.projectPath || '', projectStudio.iconPath)}
             onIconChoosen={onIconChoosen}
             onIconClear={onIconClear}
           />

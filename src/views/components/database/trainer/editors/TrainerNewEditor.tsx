@@ -8,7 +8,7 @@ import TrainerModel, { AiCategories, VsTypeCategories } from '@modelEntities/tra
 import styled from 'styled-components';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { DropInput } from '@components/inputs/DropInput';
-import path from 'path';
+import { basename } from '@utils/path';
 import { padStr } from '@utils/PadStr';
 import { useProjectTrainers } from '@utils/useProjectData';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
@@ -73,8 +73,7 @@ export const TrainerNewEditor = ({ onClose }: TrainerNewEditorProps) => {
   }, [newTrainer, isLoading]);
 
   const onBattlerChoosen = (battlerPath: string) => {
-    const battler = path
-      .basename(battlerPath)
+    const battler = basename(battlerPath)
       .split('.')[0]
       .replace(/_big|_sma/, '');
     if (newTrainer.battlers[0]) refreshUI((newTrainer.battlers[0] = battler));

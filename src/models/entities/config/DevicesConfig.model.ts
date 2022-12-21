@@ -1,5 +1,5 @@
 import PSDKConfig from '@modelEntities/PSDKConfig';
-import path from 'path';
+import { join } from '@utils/path';
 import { jsonMember, jsonObject, TypedJSON } from 'typedjson';
 
 /**
@@ -43,6 +43,6 @@ export default class DevicesConfigModel implements PSDKConfig {
    * @returns The url of the mouse skin
    */
   mouseSkinUrl = (projectPath: string) => {
-    return path.join(projectPath, `graphics/windowskins/${this.mouseSkin}.png`);
+    return join(projectPath, `graphics/windowskins/${this.mouseSkin}.png`);
   };
 }

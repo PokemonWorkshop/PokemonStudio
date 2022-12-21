@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useLoaderRef } from './loaderContext';
 import { useProjectImportFromPSDKv2 } from '@utils/useProjectImportFromPSDK';
 import ProjectStudioModel from '@modelEntities/ProjectStudio.model';
-import path from 'path';
+import { join } from '@utils/path';
 
 type ProjectImportFailureCallback = (error: { errorMessage: string }) => void;
 type ProjectImportSuccessCallback = (payload: { projectDirName: string }) => void;
@@ -68,7 +68,7 @@ export const useProjectImport = () => {
       case 'checkingProject':
         loaderRef.current.setProgress(1, 5, tl('importing_project_checking'));
         return window.api.fileExists(
-          { filePath: path.join(state.projectDirName, 'project.studio') },
+          { filePath: join(state.projectDirName, 'project.studio') },
           ({ result }) => {
             if (result) {
               setState({ state: 'done' });

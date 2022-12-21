@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
-import path from 'path';
 import { useTranslation } from 'react-i18next';
+import { join, basename } from '@utils/path';
 import { useConfigSceneTitle } from '@utils/useProjectConfig';
 import { DashboardEditor } from '../DashboardEditor';
 import { ReloadableImage } from '@components/ReloadableImage';
@@ -136,18 +136,18 @@ export const DashboardGameStartSplashScreen = () => {
 
   const getSplashScreenPath = (filename: string) => {
     const filenameWithExt = filename + '.png';
-    return getImage(path.join('graphics/titles', filenameWithExt)) ?? path.join(state.projectPath || '', 'graphics/titles', filenameWithExt);
+    return getImage(join('graphics/titles', filenameWithExt)) ?? join(state.projectPath || '', 'graphics/titles', filenameWithExt);
   };
 
   const onSplashScreenClear = (index: number) => {
-    removeImage(path.join('graphics/titles', currentEditedGameStart.additionalSplashes[index] + '.png'));
+    removeImage(join('graphics/titles', currentEditedGameStart.additionalSplashes[index] + '.png'));
     currentEditedGameStart.additionalSplashes.splice(index, 1);
     setGameStart(currentEditedGameStart);
   };
 
   const onSplashScreenChoosen = (splashScreenPath: string) => {
-    addImage(path.join('graphics/titles', path.basename(splashScreenPath)), splashScreenPath);
-    currentEditedGameStart.additionalSplashes.push(path.basename(splashScreenPath, '.png'));
+    addImage(join('graphics/titles', basename(splashScreenPath)), splashScreenPath);
+    currentEditedGameStart.additionalSplashes.push(basename(splashScreenPath, '.png'));
     setGameStart(currentEditedGameStart);
   };
 

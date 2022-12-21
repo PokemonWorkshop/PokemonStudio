@@ -9,7 +9,7 @@ import {
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useConfigInfos } from '@utils/useProjectConfig';
 import { useProjectStudio } from '@utils/useProjectStudio';
-import path from 'path';
+import { join } from '@utils/path';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -37,7 +37,7 @@ export const DashboardFrame = () => {
             alt="project icon"
             src={
               state.projectPath
-                ? getImage('project_icon.png') ?? path.join(state.projectPath, projectStudio.iconPath)
+                ? getImage('project_icon.png') ?? join(state.projectPath, projectStudio.iconPath)
                 : 'https://www.pokepedia.fr/images/8/87/Pok%C3%A9_Ball.png'
             }
           />
