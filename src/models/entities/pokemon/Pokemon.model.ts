@@ -1,10 +1,10 @@
 import { jsonMember, jsonObject, jsonArrayMember, TypedJSON } from 'typedjson';
-import PokemonForm from './PokemonForm';
+import PokemonForm, { formResourcesPath } from './PokemonForm';
 import PSDKEntity from '../PSDKEntity';
 import { ProjectData, TextsWithLanguageConfig } from '@src/GlobalStateProvider';
 import { getText, setText } from '@utils/ReadingProjectText';
-import { padStr } from '@utils/PadStr';
 import { findFirstAvailableId } from '@utils/ModelUtils';
+import { padStr } from '@utils/PadStr';
 
 export const FormCategories = ['classic', 'mega-evolution'] as const;
 export type FormCategory = typeof FormCategories[number];
@@ -140,18 +140,19 @@ export default class PokemonModel implements PSDKEntity {
     newPokemon.id = findFirstAvailableId(allPokemon, 1);
     newPokemon.dbSymbol = '';
     newPokemon.forms[0].babyDbSymbol = '';
+    newPokemon.forms[0].resources.cry = `${padStr(newPokemon.id, 3)}cry.ogg`;
     return newPokemon;
   };
 }
 
-export const pokemonSpritePath = (species: PokemonModel, form?: number) => {
-  if (form) return `graphics/pokedex/pokefront/${padStr(species.id, 3)}_${padStr(form, 2)}.png`;
-
-  return `graphics/pokedex/pokefront/${padStr(species.id, 3)}.png`;
+export const pokemonSpritePath = (form: PokemonForm) => {
+  return formResourcesPath(form, 'front');
 };
 
-export const pokemonIconPath = (species: PokemonModel, form?: number) => {
-  if (form) return `graphics/pokedex/pokeicon/${padStr(species.id, 3)}_${padStr(form, 2)}.png`;
-
-  return `graphics/pokedex/pokeicon/${padStr(species.id, 3)}.png`;
+export const pokemonIconPath = (specie: PokemonModel, formId?: number) => {
+  if (formId) {
+    const form = specie.forms.find((f) => f.form === formId);
+    if (form) return formResourcesPath(form, 'icon');
+  }
+  return formResourcesPath(specie.forms[0], 'icon');
 };

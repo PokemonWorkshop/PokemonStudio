@@ -1,3 +1,4 @@
+import { assertUnreachable } from '@utils/assertUnreachable';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { jsonMember, jsonObject, jsonArrayMember, AnyT } from 'typedjson';
 
@@ -236,6 +237,31 @@ export type Evolution = {
 };
 
 /**
+ * This type represents the resources of a creature
+ */
+export type CreatureResources = {
+  icon: string;
+  iconF?: string;
+  iconShiny: string;
+  iconShinyF?: string;
+  front: string;
+  frontF?: string;
+  frontShiny: string;
+  frontShinyF?: string;
+  back: string;
+  backF?: string;
+  backShiny: string;
+  backShinyF?: string;
+  footprint: string;
+  character: string;
+  characterF?: string;
+  characterShiny: string;
+  characterShinyF?: string;
+  cry: string;
+  hasFemale: boolean;
+};
+
+/**
  * This class represents the form of the Pokémon.
  */
 @jsonObject({
@@ -424,6 +450,12 @@ export default class PokemonForm {
   frontOffsetY!: number;
 
   /**
+   * Resources of the Pokémon
+   */
+  @jsonMember(AnyT)
+  resources!: CreatureResources;
+
+  /**
    * List of moves the Pokémon can learn.
    */
   @jsonArrayMember(AnyT)
@@ -597,6 +629,19 @@ export default class PokemonForm {
     abilities: ['__undef__', '__undef__', '__undef__'],
     frontOffsetY: 0,
     moveSet: [],
+    resources: {
+      icon: '',
+      iconShiny: '',
+      front: '',
+      frontShiny: '',
+      back: '',
+      backShiny: '',
+      footprint: '',
+      character: '',
+      characterShiny: '',
+      cry: '',
+      hasFemale: false,
+    },
   });
 
   /**
@@ -632,3 +677,60 @@ export default class PokemonForm {
     this.itemHeld.forEach((itemHeld) => (itemHeld.chance = cleanNaNValue(itemHeld.chance)));
   };
 }
+
+export type CreatureFormResourcesFemalePath =
+  | 'iconF'
+  | 'iconShinyF'
+  | 'frontF'
+  | 'frontShinyF'
+  | 'backF'
+  | 'backShinyF'
+  | 'characterF'
+  | 'characterShinyF';
+
+export type CreatureFormResourcesPath =
+  | 'icon'
+  | 'iconShiny'
+  | 'front'
+  | 'frontShiny'
+  | 'back'
+  | 'backShiny'
+  | 'footprint'
+  | 'character'
+  | 'characterShiny'
+  | 'cry'
+  | CreatureFormResourcesFemalePath;
+
+export const formResourcesPath = (form: PokemonForm, resource: CreatureFormResourcesPath) => {
+  switch (resource) {
+    case 'icon':
+    case 'iconF':
+    case 'iconShiny':
+    case 'iconShinyF':
+      return `graphics/pokedex/pokeicon/${form.resources[resource]}.png`;
+    case 'front':
+    case 'frontF':
+      return `graphics/pokedex/pokefront/${form.resources[resource]}.png`;
+    case 'frontShiny':
+    case 'frontShinyF':
+      return `graphics/pokedex/pokefrontshiny/${form.resources[resource]}.png`;
+    case 'back':
+    case 'backF':
+      return `graphics/pokedex/pokeback/${form.resources[resource]}.png`;
+    case 'backShiny':
+    case 'backShinyF':
+      return `graphics/pokedex/pokebackshiny/${form.resources[resource]}.png`;
+    case 'footprint':
+      return `graphics/pokedex/footprints/${form.resources.footprint}.png`;
+    case 'character':
+    case 'characterF':
+    case 'characterShiny':
+    case 'characterShinyF':
+      return `graphics/characters/${form.resources[resource]}.png`;
+    case 'cry':
+      return `audio/se/cries/${form.resources.cry}`;
+    default:
+      assertUnreachable(resource);
+  }
+  return '';
+};

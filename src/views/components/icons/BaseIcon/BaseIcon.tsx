@@ -15,6 +15,7 @@ import { ReactComponent as DeleteIcon } from '../../../../../assets/icons/global
 import { ReactComponent as SaveIcon } from '../../../../../assets/icons/navigation/save-icon.svg';
 import { ReactComponent as EditIcon } from '../../../../../assets/icons/global/edit-icon.svg';
 import { ReactComponent as ClearIcon } from '../../../../../assets/icons/global/clear-icon.svg';
+import { ReactComponent as FolderIcon } from '../../../../../assets/icons/global/folder.svg';
 
 type IconName =
   | 'top'
@@ -31,7 +32,8 @@ type IconName =
   | 'delete'
   | 'save'
   | 'edit'
-  | 'clear';
+  | 'clear'
+  | 'folder';
 
 const iconNameToIcon: Record<IconName, typeof TopIcon> = {
   top: TopIcon,
@@ -48,6 +50,7 @@ const iconNameToIcon: Record<IconName, typeof TopIcon> = {
   save: SaveIcon,
   edit: EditIcon,
   clear: ClearIcon,
+  folder: FolderIcon,
 };
 
 type Size = 's' | 'm' | 'l';

@@ -41,6 +41,8 @@ import { registerMoveImage } from './backendTasks/moveImage';
 import { registerProjectStudioFile } from './backendTasks/projectStudioFile';
 import { registerChooseFile } from './backendTasks/chooseFile';
 import { registerElectronProtocolWhenAppRead } from '@utils/electronProtocol';
+import { registerShowItemInFolder } from './backendTasks/showFileInFolder';
+import { registerCopyFile } from './backendTasks/copyFile';
 
 export default class AppUpdater {
   constructor() {
@@ -227,3 +229,5 @@ registerSaveProjectTexts(ipcMain);
 registerMoveImage(ipcMain);
 registerProjectStudioFile(ipcMain);
 registerChooseFile(ipcMain);
+registerShowItemInFolder(ipcMain);
+registerCopyFile(ipcMain);
