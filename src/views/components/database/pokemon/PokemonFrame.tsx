@@ -26,10 +26,7 @@ export const PokemonFrame = ({ pokemonWithForm, onClick }: PokemonDataProps) => 
     <DataBlockContainer size="full" onClick={onClick}>
       <DataGrid columns="160px minmax(min-content, 610px) auto">
         <DataSpriteContainer type="sprite">
-          <ResourceImage
-            imagePathInProject={pokemonSpritePath(species, form.form)}
-            fallback={form.form === 0 ? undefined : pokemonSpritePath(species)}
-          />
+          <ResourceImage imagePathInProject={pokemonSpritePath(form)} />
         </DataSpriteContainer>
         <DataInfoContainer>
           <DataInfoContainerHeader>

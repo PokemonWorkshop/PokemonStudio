@@ -48,6 +48,7 @@ interface Colors {
 interface Fonts {
   titlesStudio: string;
   titlesHeadline1: string;
+  titlesHeadline4: string;
   titlesHeadline6: string;
   titlesOverline: string;
   normalRegular: string;

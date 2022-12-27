@@ -19,6 +19,7 @@ import { TrainerPage } from '../Trainer.page';
 import { GroupPage } from '../Group.page';
 import { ZonePage } from '../Zone.page';
 import { DexPage } from '../Dex.page';
+import { PokemonResourcesPage } from '../Pokemon.Resources.page';
 
 const DatabasePageStyle = styled.div`
   display: flex;
@@ -39,6 +40,9 @@ const DatabasePageComponent = () => {
         </Route>
         <Route path={`${path}/pokemon/movepool`}>
           <PokemonMovepoolPage />
+        </Route>
+        <Route path={`${path}/pokemon/resources`}>
+          <PokemonResourcesPage />
         </Route>
         <Route path={`${path}/pokemon`}>
           <PokemonPage />

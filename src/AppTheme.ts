@@ -63,6 +63,11 @@ const theme: DefaultTheme = {
       font-size: 36px;
       letter-spacing: 0.25px;
       line-height: 43px;`,
+    titlesHeadline4: `
+      font-family: Gilroy;
+      font-weight: 400;
+      font-size: 24px;
+      line-height: 29px;`,
     titlesHeadline6: `
       font-family: Gilroy;
       font-weight: 600;

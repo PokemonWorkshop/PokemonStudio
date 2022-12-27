@@ -23,7 +23,7 @@ export const generateDefaultDbSymbol = (name: string) => {
   const nameNormalized = name
     .normalize('NFD')
     .replace(/\p{Diacritic}/gu, '')
-    .replace(' ', '_')
+    .replaceAll(' ', '_')
     .toLowerCase();
   const characterArray = [...nameNormalized];
 

@@ -23,7 +23,7 @@ const projectDataKeys = [
 type ProjectDataFromBackEndKey = typeof projectDataKeys[number];
 export type ProjectDataFromBackEnd = Record<ProjectDataFromBackEndKey, string[]> & { rmxpMaps: RMXPMap[] };
 
-const readProjectFolder = async (projectPath: string, key: ProjectDataFromBackEndKey): Promise<string[]> => {
+export const readProjectFolder = async (projectPath: string, key: ProjectDataFromBackEndKey): Promise<string[]> => {
   const folderName = path.join(projectPath, 'Data/Studio', key);
   const entries = fs.readdirSync(folderName).filter((f) => {
     return f.endsWith('.json');

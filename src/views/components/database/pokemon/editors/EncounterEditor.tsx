@@ -120,6 +120,7 @@ export const EncounterEditor = ({ currentPokemon, currentFormIndex }: EncounterE
             checked={form.femaleRate === -1}
             name="genderless"
             onChange={(event) => {
+              form.resources.hasFemale = false;
               refreshUI((form.femaleRate = event.target.checked ? -1 : 0));
             }}
           />
@@ -136,9 +137,15 @@ export const EncounterEditor = ({ currentPokemon, currentFormIndex }: EncounterE
               onChange={(event) => {
                 const value = Number(event.target.value);
                 if (value < 0 || value > 100) return event.preventDefault();
+                if (value === 0) form.resources.hasFemale = false;
+                if (value === 100) form.resources.hasFemale = true;
                 refreshUI((form.femaleRate = value));
               }}
-              onBlur={() => (form.femaleRate = isNaN(form.femaleRate) ? 0 : form.femaleRate)}
+              onBlur={() => {
+                form.femaleRate = isNaN(form.femaleRate) ? 0 : form.femaleRate;
+                if (form.femaleRate === 0) form.resources.hasFemale = false;
+                if (form.femaleRate === 100) form.resources.hasFemale = true;
+              }}
             />
           </InputWithLeftLabelContainer>
         )}

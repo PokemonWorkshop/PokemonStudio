@@ -1,35 +1,47 @@
 export const join = (...strs: string[]): string => {
-  if (strs.filter((str) => str.includes('\\')).length) {
-    return strs.join('\\').replaceAll('/', '\\');
-  }
-
-  return strs.join('/').replaceAll('\\', '/');
+  return strs.reduce((previousValue, str, index) => {
+    const newStr = str
+      .replaceAll('\\', '/')
+      .split('/')
+      .filter((s) => s !== '')
+      .join('/');
+    if (index === 0) return newStr;
+    return [previousValue, newStr].join('/');
+  }, '');
 };
 
-export const basename = (str: string | undefined, strip_extension?: string): string => {
+export const basename = (str: string | undefined, stripExtension?: string): string => {
   if (!str) {
     return '';
   }
 
-  let final_str = str;
+  let finalStr: string | undefined = str;
 
-  if (strip_extension) {
-    final_str = final_str.replaceAll(strip_extension, '');
+  if (stripExtension) {
+    finalStr = finalStr.replaceAll(stripExtension, '');
   }
 
-  final_str = final_str.replaceAll('\\', '/').split('/').pop();
+  finalStr = finalStr.replaceAll('\\', '/').split('/').pop();
 
-  if (final_str) {
-    return final_str;
+  if (finalStr) {
+    return finalStr;
   }
 
   return str;
 };
 
-export const strip_extension = (str: string | undefined): string => {
+export const stripExtension = (str: string | undefined): string => {
   if (!str) {
     return '';
   }
 
   return str.substring(0, str.lastIndexOf('.'));
+};
+
+export const dirname = (str: string | undefined): string => {
+  if (!str) return '';
+
+  const strSplited = str.replaceAll('\\', '/').split('/');
+  strSplited.pop();
+  return strSplited.join('/');
 };

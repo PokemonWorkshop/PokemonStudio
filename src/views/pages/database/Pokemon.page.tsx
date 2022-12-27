@@ -191,7 +191,7 @@ export const PokemonPage = () => {
               tabs={[
                 { label: t('database_pokemon:pokemon'), path: '/database/pokemon' },
                 { label: t('database_pokemon:movepool'), path: '/database/pokemon/movepool' },
-                { label: t('database_pokemon:resources'), path: '/database/pokemon/resources', disabled: true },
+                { label: t('database_pokemon:resources'), path: '/database/pokemon/resources' },
               ]}
             />
           </DataBlockWrapper>

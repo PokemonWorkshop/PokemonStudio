@@ -450,4 +450,40 @@ window.api = {
     ipcRenderer.removeAllListeners(`choose-file/success`);
     ipcRenderer.removeAllListeners(`choose-file/failure`);
   },
+  showItemInFolder: (taskPayload, onSuccess, onFailure) => {
+    // Register success event
+    ipcRenderer.once(`show-item-folder/success`, (_, payload) => {
+      ipcRenderer.removeAllListeners(`show-item-folder/failure`);
+      onSuccess(payload);
+    });
+    // Register failure event
+    ipcRenderer.once(`show-item-folder/failure`, (_, error) => {
+      ipcRenderer.removeAllListeners(`show-item-folder/success`);
+      onFailure(error);
+    });
+    // Call service
+    ipcRenderer.send('show-item-folder', taskPayload);
+  },
+  cleanupShowItemInFolder: () => {
+    ipcRenderer.removeAllListeners(`show-item-folder/success`);
+    ipcRenderer.removeAllListeners(`show-item-folder/failure`);
+  },
+  copyFile: (taskPayload, onSuccess, onFailure) => {
+    // Register success event
+    ipcRenderer.once(`copy-file/success`, (_, payload) => {
+      ipcRenderer.removeAllListeners(`copy-file/failure`);
+      onSuccess(payload);
+    });
+    // Register failure event
+    ipcRenderer.once(`copy-file/failure`, (_, error) => {
+      ipcRenderer.removeAllListeners(`copy-file/success`);
+      onFailure(error);
+    });
+    // Call service
+    ipcRenderer.send('copy-file', taskPayload);
+  },
+  cleanupCopyFile: () => {
+    ipcRenderer.removeAllListeners(`copy-file/success`);
+    ipcRenderer.removeAllListeners(`copy-file/failure`);
+  },
 };

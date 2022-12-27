@@ -28,6 +28,7 @@ export const PokedexEditor: FunctionComponent<PokedexEditorProps> = ({
         <InputWithTopLabelContainer>
           <Label htmlFor="height">{t('height')}</Label>
           <EmbeddedUnitInput
+            step="0.01"
             lang="en"
             unit="m"
             name="height"
