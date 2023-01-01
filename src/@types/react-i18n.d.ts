@@ -38,6 +38,7 @@ import bag_entry_list from '../../assets/i18n/en/bag_entry_list.json';
 import unsaved_modal from '../../assets/i18n/en/unsaved_modal.json';
 import copy from '../../assets/i18n/en/copy.json';
 import audio from '../../assets/i18n/en/audio.json';
+import show_message_box from '../../assets/i18n/en/show_message_box.json';
 
 // react-i18next versions higher than 11.11.0
 declare module 'react-i18next' {
@@ -82,6 +83,7 @@ declare module 'react-i18next' {
       unsaved_modal: typeof unsaved_modal;
       copy: typeof copy;
       audio: typeof audio;
+      show_message_box: typeof show_message_box;
     };
   }
 }
