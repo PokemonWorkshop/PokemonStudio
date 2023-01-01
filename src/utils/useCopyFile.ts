@@ -1,5 +1,6 @@
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { basename, dirname, join } from './path';
 
 type CopyFileFailureCallback = (error: { errorMessage: string }) => void;
@@ -15,6 +16,7 @@ export const useCopyFile = () => {
   const [callbacks, setCallbacks] = useState<{ onFailure: CopyFileFailureCallback; onSuccess: CopyFileSuccessCallback } | undefined>(undefined);
   const [state, setState] = useState<CopyFileStateObject>({ state: 'done' });
   const [globalState] = useGlobalState();
+  const { t } = useTranslation('show_message_box');
 
   useEffect(() => {
     switch (state.state) {
@@ -27,9 +29,10 @@ export const useCopyFile = () => {
           callbacks?.onSuccess({ destFile: state.payload.srcFile });
           return;
         }
-        const destFile = join(globalState.projectPath || '', state.payload.destFolder, basename(state.payload.srcFile));
+        const filename = basename(state.payload.srcFile);
+        const destFile = join(globalState.projectPath || '', state.payload.destFolder, filename);
         return window.api.copyFile(
-          { srcFile: state.payload.srcFile, destFile: destFile },
+          { srcFile: state.payload.srcFile, destFile: destFile, translation: { title: t('copy_title'), message: t('copy_message', { filename }) } },
           () => {
             setState({ state: 'done' });
             callbacks?.onSuccess({ destFile });

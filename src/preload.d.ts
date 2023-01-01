@@ -9,6 +9,7 @@ import { ProjectDataFromBackEnd } from './backendTasks/readProjectData';
 import { ProjectText } from './GlobalStateProvider';
 import { StudioShortcut } from '@utils/useShortcuts';
 import { ProjectStudioAction, SavingConfig, SavingData, SavingImage, SavingText } from '@utils/SavingUtils';
+import { ShowMessageBoxTranslation } from './backendTasks/copyFile';
 
 export {};
 
@@ -79,7 +80,7 @@ declare global {
       cleanupChooseFile: () => void;
       showItemInFolder: BackendTaskWithGenericErrorAndNoProgress<{ filePath: string }, {}>;
       cleanupShowItemInFolder: () => void;
-      copyFile: BackendTaskWithGenericErrorAndNoProgress<{ srcFile: string; destFile: string }, {}>;
+      copyFile: BackendTaskWithGenericErrorAndNoProgress<{ srcFile: string; destFile: string; translation: ShowMessageBoxTranslation }, {}>;
       cleanupCopyFile: () => void;
     };
   }

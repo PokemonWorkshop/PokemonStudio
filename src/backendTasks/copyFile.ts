@@ -1,12 +1,36 @@
 import log from 'electron-log';
-import Electron, { IpcMainEvent } from 'electron';
+import Electron, { dialog, IpcMainEvent } from 'electron';
 import fs from 'fs';
 
-const copyFile = (event: IpcMainEvent, payload: { srcFile: string; destFile: string }) => {
+export type ShowMessageBoxTranslation = {
+  title: string;
+  message: string;
+};
+
+const copyFile = async (event: IpcMainEvent, payload: { srcFile: string; destFile: string; translation: ShowMessageBoxTranslation }) => {
   log.info('copy-file');
   try {
     const result = fs.existsSync(payload.srcFile);
     if (!result) return event.sender.send('copy-file/failure', { errorMessage: 'The source file does not exist.' });
+
+    if (fs.existsSync(payload.destFile)) {
+      const choice = await dialog.showMessageBox({
+        type: 'warning',
+        buttons: ['Yes', 'No'],
+        title: payload.translation.title,
+        message: payload.translation.message,
+        cancelId: 99,
+      });
+
+      if (choice.response === 1) {
+        log.info('copy-file/failure', 'no');
+        return event.sender.send('copy-file/failure', { errorMessage: 'Pressed no' });
+      }
+      if (choice.response === 99) {
+        log.info('copy-file/failure', 'cancel');
+        return event.sender.send('copy-file/failure', { errorMessage: 'Pressed cancel' });
+      }
+    }
 
     fs.copyFileSync(payload.srcFile, payload.destFile);
     log.info('copy-file/success', { ...payload });
