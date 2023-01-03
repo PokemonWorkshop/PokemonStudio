@@ -1,12 +1,12 @@
 import { Editor, useRefreshUI } from '@components/editor';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
-import PokemonModel from '@modelEntities/pokemon/Pokemon.model';
+import { StudioCreature } from '@modelEntities/creature';
 import React, { FunctionComponent, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type ExperienceEditorProps = {
-  currentPokemon: PokemonModel;
+  currentPokemon: StudioCreature;
   currentFormIndex: number;
 };
 
@@ -36,7 +36,7 @@ export const ExperienceEditor: FunctionComponent<ExperienceEditorProps> = ({ cur
           <SelectCustomSimple
             id="select-curve-type"
             options={xpCurveOptions}
-            onChange={(value) => refreshUI((form.experienceType = parseInt(value)))}
+            onChange={(value) => refreshUI((form.experienceType = parseInt(value) as typeof form.experienceType))}
             value={form.experienceType.toString()}
             noTooltip
           />

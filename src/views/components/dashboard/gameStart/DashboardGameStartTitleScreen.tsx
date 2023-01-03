@@ -9,6 +9,7 @@ import { DropInput } from '@components/inputs/DropInput';
 import { useImageSaving } from '@utils/useImageSaving';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { EmbeddedUnitInput } from '@components/inputs/EmbeddedUnitInput';
+import { cloneEntity } from '@utils/cloneEntity';
 
 const DurationInfoContainer = styled.span`
   ${({ theme }) => theme.fonts.normalSmall}
@@ -26,7 +27,7 @@ export const DashboardGameStartTitleScreen = () => {
   const { projectConfigValues: gameStart, setProjectConfigValues: setGameStart, state } = useConfigSceneTitle();
   const { projectConfigValues: language } = useConfigLanguage();
   const { addImage, removeImage, getImage } = useImageSaving();
-  const currentEditedGameStart = useMemo(() => gameStart.clone(), [gameStart]);
+  const currentEditedGameStart = useMemo(() => cloneEntity(gameStart), [gameStart]);
   const [titleScreenData, setTitleScreenData] = useState({ duration: gameStart.bgmDuration, controlWaitTime: gameStart.controlWaitTime });
 
   const onMusicChoosen = (musicPath: string) => {

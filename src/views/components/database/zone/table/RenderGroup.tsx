@@ -7,10 +7,11 @@ import { DeleteButtonOnlyIcon, EditButtonOnlyIcon } from '@components/buttons';
 import { EditButtonOnlyIconContainer } from '@components/buttons/EditButtonOnlyIcon';
 import theme from '@src/AppTheme';
 import { DraggableProvided } from 'react-beautiful-dnd';
-import GroupModel from '@modelEntities/group/Group.model';
 import { Code } from '@components/Code';
 import { padStr } from '@utils/PadStr';
-import ZoneModel from '@modelEntities/zone/Zone.model';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
+import { StudioGroup } from '@modelEntities/group';
+import { StudioZone } from '@modelEntities/zone';
 
 type RenderGroupContainerProps = {
   isDragging: boolean;
@@ -97,8 +98,8 @@ const RenderGroupContainer = styled(DataGroupGrid).attrs<RenderGroupContainerPro
 `;
 
 type RenderGroupProps = {
-  group: GroupModel | undefined;
-  zone: ZoneModel;
+  group: StudioGroup | undefined;
+  zone: StudioZone;
   provided: DraggableProvided;
   isDragging: boolean;
   dragOn: boolean;
@@ -109,6 +110,7 @@ type RenderGroupProps = {
 export const RenderGroup = React.forwardRef<HTMLInputElement, RenderGroupProps>(
   ({ group, zone, provided, isDragging, dragOn, onClickEdit, onClickDelete }, ref) => {
     const { t } = useTranslation('database_groups');
+    const getGroupName = useGetEntityNameText();
     return (
       <RenderGroupContainer
         gap="16px"
@@ -124,7 +126,7 @@ export const RenderGroup = React.forwardRef<HTMLInputElement, RenderGroupProps>(
         <span className="drag-icon" {...provided.dragHandleProps}>
           <DragIcon />
         </span>
-        {group ? <span>{group.name()}</span> : <span className="error">{t('group_deleted')}</span>}
+        {group ? <span>{getGroupName(group)}</span> : <span className="error">{t('group_deleted')}</span>}
         {group ? <span className="environment">{t(group.systemTag)}</span> : <span className="environment" />}
         {group ? (
           <div className="present-on-map">

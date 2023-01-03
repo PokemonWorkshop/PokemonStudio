@@ -1,7 +1,8 @@
+import { DbSymbol, DB_SYMBOL_VALIDATOR } from '@modelEntities/dbSymbol';
 import { ProjectData } from '@src/GlobalStateProvider';
 
 export const wrongDbSymbol = (dbSymbol: string) => {
-  return !dbSymbol.match('^[a-z_][a-z0-9_]+$');
+  return !DB_SYMBOL_VALIDATOR.safeParse(dbSymbol).success;
 };
 
 export const checkDbSymbolExist = (data: ProjectData[''], newDbSymbol: string) => {
@@ -17,8 +18,8 @@ export const checkDbSymbolExist = (data: ProjectData[''], newDbSymbol: string) =
  * @param name The name of the new database entity
  * @returns A correct default dbSymbol
  */
-export const generateDefaultDbSymbol = (name: string) => {
-  if (name.length === 0) return name;
+export const generateDefaultDbSymbol = (name: string): DbSymbol => {
+  if (name.length === 0) return name as DbSymbol;
 
   const nameNormalized = name
     .normalize('NFD')
@@ -31,5 +32,5 @@ export const generateDefaultDbSymbol = (name: string) => {
   characterArray.forEach((c, index) => {
     characterArray[index] = !c.match('^[a-z0-9_]+$') ? '' : c;
   });
-  return characterArray.join('');
+  return characterArray.join('') as DbSymbol;
 };

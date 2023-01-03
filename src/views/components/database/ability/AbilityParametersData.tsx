@@ -6,7 +6,7 @@ import { AbilityDataProps } from './AbilityDataPropsInterface';
 
 export const AbilityParametersData = ({ ability, onClick }: AbilityDataProps) => {
   const { t } = useTranslation('database_abilities');
-  const isDisabled = ability.lockedEditors.includes('parameters');
+  const isDisabled = true; // TODO @Aerun: Figure out how this thing is supposed to be enabled/editable.
 
   return (
     <DataBlockWithTitle size="full" title={t('params')} disabled={isDisabled} onClick={isDisabled ? undefined : onClick}>

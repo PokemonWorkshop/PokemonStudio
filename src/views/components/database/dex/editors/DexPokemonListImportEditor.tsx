@@ -4,11 +4,12 @@ import { Editor } from '@components/editor';
 
 import { useTranslation } from 'react-i18next';
 import { InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
-import DexModel from '@modelEntities/dex/Dex.model';
 
 import { useProjectDex } from '@utils/useProjectData';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { SelectDex } from '@components/selects';
+import { cloneEntity } from '@utils/cloneEntity';
+import { StudioDex } from '@modelEntities/dex';
 
 const DexImportInfo = styled.div`
   ${({ theme }) => theme.fonts.normalRegular};
@@ -23,7 +24,7 @@ const ButtonContainer = styled.div`
 `;
 
 type DexPokemonListImportEditorProps = {
-  dex: DexModel;
+  dex: StudioDex;
   onClose: () => void;
 };
 
@@ -37,7 +38,7 @@ export const DexPokemonListImportEditor = ({ dex, onClose }: DexPokemonListImpor
   const [selectedDexImport, setSelectedDexImport] = useState<string>(firstDbSymbol);
 
   const onClickImport = () => {
-    dex.creatures = allDex[selectedDexImport].clone().creatures;
+    dex.creatures = cloneEntity(allDex[selectedDexImport].creatures);
     setDex({ [dex.dbSymbol]: dex });
     onClose();
   };

@@ -5,6 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { DashboardEditor } from './DashboardEditor';
 import { useConfigDisplay } from '@utils/useProjectConfig';
 import { EmbeddedUnitInput } from '@components/inputs/EmbeddedUnitInput';
+import { cleaningDisplayNaNValues } from '@utils/cleanNaNValue';
+import { cloneEntity } from '@utils/cloneEntity';
 
 const InputContainer = styled.div`
   display: flex;
@@ -40,7 +42,7 @@ const EditorsContainer = styled.div`
 export const DashboardDisplay = () => {
   const { t } = useTranslation('dashboard_display');
   const { projectConfigValues: display, setProjectConfigValues: setDisplay } = useConfigDisplay();
-  const currentEditedDisplay = useMemo(() => display.clone(), [display]);
+  const currentEditedDisplay = useMemo(() => cloneEntity(display), [display]);
   const [resolution, setResolution] = useState(currentEditedDisplay.gameResolution);
   const [windowScale, setWindowScale] = useState(currentEditedDisplay.windowScale);
   const [tilemapClass, setTilemapClass] = useState(currentEditedDisplay.tilemapSettings.tilemapClass);
@@ -50,7 +52,7 @@ export const DashboardDisplay = () => {
   const [framePerAnimation, setFramePerAnimation] = useState(currentEditedDisplay.tilemapSettings.autotileIdleFrameCount);
 
   const updateDisplayConfig = () => {
-    currentEditedDisplay.cleaningNaNValues();
+    cleaningDisplayNaNValues(currentEditedDisplay);
     setResolution({ ...currentEditedDisplay.gameResolution });
     setWindowScale(currentEditedDisplay.windowScale);
     setTilemapSize({ ...currentEditedDisplay.tilemapSettings.tilemapSize });

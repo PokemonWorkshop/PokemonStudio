@@ -3,7 +3,6 @@ import { SecondaryNoBackground } from '@components/buttons';
 import { TFunction, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { ReactComponent as DeleteIcon } from '@assets/icons/global/delete-icon.svg';
-import QuestModel, { PokemonQuestCondition, PokemonQuestConditions, PokemonQuestConditionType } from '@modelEntities/quest/Quest.model';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
 import { useRefreshUI } from '@components/editor';
@@ -11,16 +10,23 @@ import { InputNumber } from './InputNumber';
 import { SelectPokemon, SelectType } from '@components/selects';
 import { ReactComponent as PlusIcon } from '@assets/icons/global/plus-icon2.svg';
 import { SelectNature } from '@components/selects/SelectNature';
+import { CREATURE_QUEST_CONDITIONS, StudioCreatureQuestCondition, StudioCreatureQuestConditionType } from '@modelEntities/quest';
+import { DbSymbol } from '@modelEntities/dbSymbol';
+import { createCreatureQuestCondition } from '@utils/entityCreation';
 
 type SelectConditionProps = {
-  condition: PokemonQuestCondition;
+  condition: StudioCreatureQuestCondition;
   index: number;
-  excludeConditions: PokemonQuestConditionType[];
+  excludeConditions: StudioCreatureQuestConditionType[];
   onChange: (value: string) => void;
 };
 
-const conditionCategoryEntries = (t: TFunction<'database_quests'>, excludes: PokemonQuestConditionType[], itSelf: PokemonQuestConditionType) =>
-  PokemonQuestConditions.map((type) => ({ value: type, label: t(`condition_${type}`) })).filter(
+const conditionCategoryEntries = (
+  t: TFunction<'database_quests'>,
+  excludes: StudioCreatureQuestConditionType[],
+  itSelf: StudioCreatureQuestConditionType
+) =>
+  CREATURE_QUEST_CONDITIONS.map((type) => ({ value: type, label: t(`condition_${type}`) })).filter(
     ({ value }) => !excludes.includes(value) || value === itSelf
   );
 
@@ -54,8 +60,8 @@ const TitleContainer = styled.div`
   }
 `;
 
-const buildExcludeConditions = (conditions: PokemonQuestCondition[], index: number) => {
-  const excludes: PokemonQuestConditionType[] = [];
+const buildExcludeConditions = (conditions: StudioCreatureQuestCondition[], index: number) => {
+  const excludes: StudioCreatureQuestConditionType[] = [];
   conditions.map(({ type }, indexCondition) => {
     if (index === indexCondition) return;
     if (type === 'level') excludes.push('level', 'minLevel', 'maxLevel');
@@ -67,7 +73,7 @@ const buildExcludeConditions = (conditions: PokemonQuestCondition[], index: numb
 };
 
 type ValueConditionProps = {
-  condition: PokemonQuestCondition;
+  condition: StudioCreatureQuestCondition;
 };
 
 const ValueCondition = ({ condition }: ValueConditionProps) => {
@@ -86,7 +92,7 @@ const ValueCondition = ({ condition }: ValueConditionProps) => {
     return (
       <InputWithTopLabelContainer>
         <Label htmlFor="type">{t('nature')}</Label>
-        <SelectNature dbSymbol={value as string} onChange={(selected) => refreshUI((condition.value = selected.value))} />
+        <SelectNature dbSymbol={value as string} onChange={(selected) => refreshUI((condition.value = selected.value as DbSymbol))} />
       </InputWithTopLabelContainer>
     );
   } else if (type === 'type') {
@@ -95,7 +101,7 @@ const ValueCondition = ({ condition }: ValueConditionProps) => {
         <Label htmlFor="type">{t('type')}</Label>
         <SelectType
           dbSymbol={value as string}
-          onChange={(selected) => refreshUI((condition.value = selected.value))}
+          onChange={(selected) => refreshUI((condition.value = selected.value as DbSymbol))}
           noLabel
           noneValue
           noneValueIsError
@@ -106,16 +112,21 @@ const ValueCondition = ({ condition }: ValueConditionProps) => {
     return (
       <InputWithTopLabelContainer>
         <Label htmlFor="pokemon">{t('condition_pokemon')}</Label>
-        <SelectPokemon dbSymbol={value as string} onChange={(selected) => refreshUI((condition.value = selected.value))} noLabel noneValue />
+        <SelectPokemon
+          dbSymbol={value as string}
+          onChange={(selected) => refreshUI((condition.value = selected.value as DbSymbol))}
+          noLabel
+          noneValue
+        />
       </InputWithTopLabelContainer>
     );
   }
 };
 
 type GoalConditionProps = {
-  condition: PokemonQuestCondition;
+  condition: StudioCreatureQuestCondition;
   index: number;
-  excludeConditions: PokemonQuestConditionType[];
+  excludeConditions: StudioCreatureQuestConditionType[];
   onChange: (value: string) => void;
   onDelete: () => void;
 };
@@ -147,7 +158,7 @@ const QuestGoalConditionsContainer = styled.div`
 `;
 
 type QuestGoalConditionsProps = {
-  conditions: PokemonQuestCondition[];
+  conditions: StudioCreatureQuestCondition[];
 };
 
 export const QuestGoalConditions = ({ conditions }: QuestGoalConditionsProps) => {
@@ -156,14 +167,14 @@ export const QuestGoalConditions = ({ conditions }: QuestGoalConditionsProps) =>
   const excludeConditions = buildExcludeConditions(conditions, -1);
 
   const addCondition = () => {
-    const remainingConditions = PokemonQuestConditions.filter((type) => !excludeConditions.includes(type));
+    const remainingConditions = CREATURE_QUEST_CONDITIONS.filter((type) => !excludeConditions.includes(type));
     if (remainingConditions.length === 0) return;
-    conditions.push(QuestModel.createCondition(remainingConditions[0]));
+    conditions.push(createCreatureQuestCondition(remainingConditions[0]));
   };
 
   const onChangeCondition = (type: string, index: number) => {
     if (conditions[index].type === type) return;
-    refreshUI((conditions[index] = QuestModel.createCondition(type as PokemonQuestConditionType)));
+    refreshUI((conditions[index] = createCreatureQuestCondition(type as StudioCreatureQuestConditionType)));
   };
 
   return (
@@ -182,7 +193,7 @@ export const QuestGoalConditions = ({ conditions }: QuestGoalConditionsProps) =>
           ))}
         </QuestGoalConditionsContainer>
       )}
-      {excludeConditions.length !== PokemonQuestConditions.length && (
+      {excludeConditions.length !== CREATURE_QUEST_CONDITIONS.length && (
         <SecondaryNoBackground onClick={() => refreshUI(addCondition())}>
           <PlusIcon />
           <span>{t('add_condition')}</span>

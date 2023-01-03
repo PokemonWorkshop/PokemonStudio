@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { TypeTableContainer, TypeTableHead, TypeTableRow, TypeTableBodyContainer, TableTypeContainer, TypeTableMainContainer } from './table';
 import { TitleContainer } from '@components/editor/DataBlockEditorStyle';
 import { useProjectTypes } from '@utils/useProjectData';
-import TypeModel from '@modelEntities/type/Type.model';
 import { HelperSelectedType, TypeHelper } from './TypeHelper';
+import { StudioType } from '@modelEntities/type';
 
 export const TypeTable = () => {
   const { projectDataValues: types, setProjectDataValues: setType } = useProjectTypes();
@@ -14,7 +14,7 @@ export const TypeTable = () => {
   const [typeHelperSelected, setTypeHelperSelected] = useState<HelperSelectedType>({ offensiveType: undefined, defensiveType: undefined });
   const { t } = useTranslation('database_types');
 
-  const editType = (type: TypeModel) => {
+  const editType = (type: StudioType) => {
     setType({ [type.dbSymbol]: type });
   };
 

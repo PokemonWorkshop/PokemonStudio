@@ -1,20 +1,23 @@
 import React from 'react';
-import { Editor, useRefreshUI } from '@components/editor';
+import { Editor } from '@components/editor';
 
 import { useTranslation } from 'react-i18next';
 import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
-import ZoneModel from '@modelEntities/zone/Zone.model';
 import type { OpenTranslationEditorFunction } from '@utils/useTranslationEditor';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
+import { useGetEntityDescriptionText, useGetEntityNameText, useSetProjectText } from '@utils/ReadingProjectText';
+import { StudioZone, ZONE_DESCRIPTION_TEXT_ID, ZONE_NAME_TEXT_ID } from '@modelEntities/zone';
 
 type ZoneFrameEditorProps = {
-  zone: ZoneModel;
+  zone: StudioZone;
   openTranslationEditor: OpenTranslationEditorFunction;
 };
 
 export const ZoneFrameEditor = ({ zone, openTranslationEditor }: ZoneFrameEditorProps) => {
   const { t } = useTranslation('database_zones');
-  const refreshUI = useRefreshUI();
+  const setText = useSetProjectText();
+  const getZoneName = useGetEntityNameText();
+  const getZoneDescription = useGetEntityDescriptionText();
 
   return (
     <Editor type="edit" title={t('informations')}>
@@ -27,8 +30,8 @@ export const ZoneFrameEditor = ({ zone, openTranslationEditor }: ZoneFrameEditor
             <Input
               type="text"
               name="name"
-              value={zone.name()}
-              onChange={(event) => refreshUI(zone.setName(event.target.value))}
+              value={getZoneName(zone)}
+              onChange={(event) => setText(ZONE_NAME_TEXT_ID, zone.id, event.target.value)}
               placeholder={t('example_name')}
             />
           </TranslateInputContainer>
@@ -38,8 +41,8 @@ export const ZoneFrameEditor = ({ zone, openTranslationEditor }: ZoneFrameEditor
           <TranslateInputContainer onTranslateClick={() => openTranslationEditor('translation_description')}>
             <MultiLineInput
               id="descr"
-              value={zone.descr()}
-              onChange={(event) => refreshUI(zone.setDescr(event.target.value))}
+              value={getZoneDescription(zone)}
+              onChange={(event) => setText(ZONE_DESCRIPTION_TEXT_ID, zone.id, event.target.value)}
               placeholder={t('example_descr')}
             />
           </TranslateInputContainer>

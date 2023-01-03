@@ -2,11 +2,13 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataBlockCollapseEditor } from '@components/editor/DataBlockCollapseEditor';
 import { useProjectPokemon, useProjectItems, useProjectMoves } from '@utils/useProjectData';
-import { MovepoolTable } from './MovepoolTable';
-import PokemonForm from '@modelEntities/pokemon/PokemonForm';
+import { getMoveKlass, MovepoolTable } from './MovepoolTable';
 import { MovepoolLevelLearnableTable } from './MovepoolLevelLearnableTable';
 import { ProjectData } from '@src/GlobalStateProvider';
-import TechItemModel from '@modelEntities/item/TechItem.model';
+import { cloneEntity } from '@utils/cloneEntity';
+import { StudioCreatureForm, StudioLevelLearnableMove, StudioTechLearnableMove } from '@modelEntities/creature';
+import { DbSymbol } from '@modelEntities/dbSymbol';
+import { StudioTechItem } from '@modelEntities/item';
 
 export type MovepoolType = 'level' | 'tutor' | 'tech' | 'breed' | 'evolution';
 
@@ -23,26 +25,33 @@ const getDefaultDbSymbol = (allMoves: ProjectData['moves']) => {
     .sort((a, b) => a.index - b.index)[0].value;
 };
 
-const setLearnableMove = (form: PokemonForm, movepoolType: MovepoolType, allItems: ProjectData['items'], allMoves: ProjectData['moves']) => {
-  const defaultDbSymbol = getDefaultDbSymbol(allMoves);
-  if (movepoolType === 'level')
-    form.setLevelLearnableMove(
-      defaultDbSymbol,
-      form.levelLearnableMove.length === 0 ? 1 : form.levelLearnableMove[form.levelLearnableMove.length - 1].level + 1
-    );
-  if (movepoolType === 'tutor') form.setTutorLearnableMove(defaultDbSymbol);
-  if (movepoolType === 'tech') {
-    const dbSymbolMoveTechItems = Object.entries(allItems)
-      .filter(([, itemData]) => itemData.klass === 'TechItem')
-      .map(([, techData]) => (techData as TechItemModel).move);
-    if (dbSymbolMoveTechItems.length === 0) return form.setTechLearnableMove(defaultDbSymbol);
-    const techLearnableDbSymbol = form.techLearnableMove.map((techLearnableMove) => techLearnableMove.move);
-    const dbSymbolToAdd = dbSymbolMoveTechItems.find((dbSymbol) => !techLearnableDbSymbol.includes(dbSymbol));
-    if (dbSymbolToAdd) form.setTechLearnableMove(dbSymbolToAdd);
-    else form.setTechLearnableMove(dbSymbolMoveTechItems[0]);
+const setLearnableMove = (form: StudioCreatureForm, movepoolType: MovepoolType, allItems: ProjectData['items'], allMoves: ProjectData['moves']) => {
+  const defaultDbSymbol = getDefaultDbSymbol(allMoves) as DbSymbol;
+  if (movepoolType === 'level') {
+    const llm = form.moveSet.filter((m): m is StudioLevelLearnableMove => m.klass === 'LevelLearnableMove');
+    form.moveSet.push({
+      klass: 'LevelLearnableMove',
+      move: defaultDbSymbol,
+      level: llm.length === 0 ? 1 : llm[llm.length - 1].level + 1,
+    });
   }
-  if (movepoolType === 'breed') form.setBreedLearnableMove(defaultDbSymbol);
-  if (movepoolType === 'evolution') form.setEvolutionLearnableMove(defaultDbSymbol);
+  if (movepoolType === 'tutor') form.moveSet.push({ klass: 'TutorLearnableMove', move: defaultDbSymbol });
+  if (movepoolType === 'tech') {
+    const dbSymbolMoveTechItems = Object.values(allItems)
+      .filter((itemData): itemData is StudioTechItem => itemData.klass === 'TechItem')
+      .map((itemData) => itemData.move);
+    if (dbSymbolMoveTechItems.length === 0) {
+      form.moveSet.push({ klass: 'TechLearnableMove', move: defaultDbSymbol });
+      return;
+    }
+    const techLearnableDbSymbol = form.moveSet
+      .filter((m): m is StudioTechLearnableMove => m.klass === 'TechLearnableMove')
+      .map((techLearnableMove) => techLearnableMove.move);
+    const dbSymbolToAdd = dbSymbolMoveTechItems.find((dbSymbol) => !techLearnableDbSymbol.includes(dbSymbol as DbSymbol)) as DbSymbol | undefined;
+    form.moveSet.push({ klass: 'TechLearnableMove', move: dbSymbolToAdd ? dbSymbolToAdd : dbSymbolMoveTechItems[0] });
+  }
+  if (movepoolType === 'breed') form.moveSet.push({ klass: 'BreedLearnableMove', move: defaultDbSymbol });
+  if (movepoolType === 'evolution') form.moveSet.push({ klass: 'EvolutionLearnableMove', move: defaultDbSymbol });
 };
 
 export const MovepoolEditor = ({ type, setCurrentEditor, setCurrentDeletion }: MovepoolEditorProps) => {
@@ -52,18 +61,17 @@ export const MovepoolEditor = ({ type, setCurrentEditor, setCurrentDeletion }: M
   const { t } = useTranslation(['database_pokemon']);
 
   const onClickAdd = () => {
-    const currentEditedPokemon = pokemon[currentPokemon.specie].clone();
+    const currentEditedPokemon = cloneEntity(pokemon[currentPokemon.specie]);
     setLearnableMove(currentEditedPokemon.forms[currentPokemon.form], type, items, moves);
     setPokemon({ [currentPokemon.specie]: currentEditedPokemon });
   };
 
   const disabledDeletion = () => {
     const form = pokemon[currentPokemon.specie].forms[currentPokemon.form];
-    if (type === 'level') return form.levelLearnableMove.length <= 1;
-    else if (type === 'tutor') return form.tutorLearnableMove.length === 0;
-    else if (type === 'tech') return form.techLearnableMove.length === 0;
-    else if (type === 'breed') return form.breedLearnableMove.length === 0;
-    return form.evolutionLearnableMove.length === 0;
+    if (type === 'level') return form.moveSet.filter((m) => m.klass === 'LevelLearnableMove').length <= 1;
+
+    const klass = getMoveKlass(type);
+    return form.moveSet.filter((m) => m.klass === klass).length === 0;
   };
 
   return (

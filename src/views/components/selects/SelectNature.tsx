@@ -22,7 +22,7 @@ export const SelectNature = ({ dbSymbol, onChange, noneValue, overwriteNoneValue
   const options = useMemo(() => {
     const natureOptions = getNatureOptions(state).sort((a, b) => a.label.localeCompare(b.label));
     return noneValue ? [{ value: '__undef__', label: overwriteNoneValue || t('database_abilities:no_option') }, ...natureOptions] : natureOptions;
-  }, [state, noneValue, overwriteNoneValue]);
+  }, [state, noneValue, overwriteNoneValue, t]);
 
   return (
     <SelectCustom

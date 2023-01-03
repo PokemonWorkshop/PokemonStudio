@@ -1,12 +1,12 @@
 import React from 'react';
 import { Handle, Position } from 'react-flow-renderer';
-import MapLinkModel from '@modelEntities/maplinks/MapLink.model';
 import { CurrentMapLinkCard } from './CurrentMapLinkCard';
 import { MaplinkHandleStyle } from '../MapLinkHandleStyle';
+import { StudioMapLink } from '@modelEntities/mapLink';
 
 type CurrentMapLinkCardNodeProps = {
   data: {
-    mapLink: MapLinkModel;
+    mapLink: StudioMapLink;
     mapData: Map<number, string>;
   };
 };

@@ -7,6 +7,7 @@ import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { useConfigGameOptions, useConfigLanguage } from '@utils/useProjectConfig';
 import { useProjectSavingLanguage } from '@utils/useProjectSavingLanguage';
+import { cloneEntity } from '@utils/cloneEntity';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -44,12 +45,13 @@ export const DashboardLanguageNewEditor = ({ defaultValue, onClose, onCloseNew }
   const { savingLanguage, setSavingLanguage } = useProjectSavingLanguage();
 
   const onClickNew = () => {
-    const currentEditedLanguage = language.clone();
-    const currentEditedGameOption = gameOption.clone();
+    const currentEditedLanguage = cloneEntity(language);
+    const currentEditedGameOption = cloneEntity(gameOption);
     currentEditedLanguage.choosableLanguageTexts.push(languageText.text);
     currentEditedLanguage.choosableLanguageCode.push(languageText.code);
-    if (currentEditedLanguage.choosableLanguageCode.length > 1 && !currentEditedGameOption.order.includes('language'))
-      currentEditedGameOption.addKeyOfOrder('language');
+    if (currentEditedLanguage.choosableLanguageCode.length > 1 && !currentEditedGameOption.order.includes('language')) {
+      currentEditedGameOption.order.push('language');
+    }
     setSavingLanguage([...savingLanguage, languageText.code]);
     setLanguage(currentEditedLanguage);
     setGameOption(currentEditedGameOption);

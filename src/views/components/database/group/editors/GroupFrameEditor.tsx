@@ -3,12 +3,14 @@ import { Editor, useRefreshUI } from '@components/editor';
 
 import { TFunction, useTranslation } from 'react-i18next';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
-import GroupModel, { GroupActivationsMap, GroupBattleTypes, GroupVariationsMap, SystemTag, SystemTags } from '@modelEntities/group/Group.model';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import {
   getActivationValue,
   getSwitchValue,
   getVariationValue,
+  GroupActivationsMap,
+  GroupBattleTypes,
+  GroupVariationsMap,
   needSwitchInput,
   onActivationChange,
   onSwitchInputChange,
@@ -17,21 +19,25 @@ import {
 import { OpenTranslationEditorFunction } from '@utils/useTranslationEditor';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
+import { useGetEntityNameText, useSetProjectText } from '@utils/ReadingProjectText';
+import { GROUP_NAME_TEXT_ID, GROUP_SYSTEM_TAGS, StudioGroup, StudioGroupSystemTag } from '@modelEntities/group';
 
 const groupActivationEntries = (t: TFunction<'database_groups'>) =>
   GroupActivationsMap.map((option) => ({ value: option.value, label: t(option.label as never) }));
 const groupBattleTypeEntries = (t: TFunction<'database_groups'>) => GroupBattleTypes.map((type) => ({ value: type, label: t(type) }));
-const systemTagsEntries = (t: TFunction<'database_groups'>) => SystemTags.map((tag) => ({ value: tag, label: t(tag) }));
+const systemTagsEntries = (t: TFunction<'database_groups'>) => GROUP_SYSTEM_TAGS.map((tag) => ({ value: tag, label: t(tag) }));
 const groupVariationEntries = (t: TFunction<'database_groups'>) =>
   GroupVariationsMap.map((variation) => ({ value: variation.value, label: t(variation.label) }));
 
 type GroupFrameEditorProps = {
-  group: GroupModel;
+  group: StudioGroup;
   openTranslationEditor: OpenTranslationEditorFunction;
 };
 
 export const GroupFrameEditor = ({ group, openTranslationEditor }: GroupFrameEditorProps) => {
   const { t } = useTranslation('database_groups');
+  const getGroupName = useGetEntityNameText();
+  const setText = useSetProjectText();
   const activationOptions = useMemo(() => groupActivationEntries(t), [t]);
   const battleTypeOptions = useMemo(() => groupBattleTypeEntries(t), [t]);
   const systemTagsOptions = useMemo(() => systemTagsEntries(t), [t]);
@@ -49,8 +55,8 @@ export const GroupFrameEditor = ({ group, openTranslationEditor }: GroupFrameEdi
             <Input
               type="text"
               name="name"
-              value={group.name()}
-              onChange={(event) => refreshUI(group.setName(event.target.value))}
+              value={getGroupName(group)}
+              onChange={(event) => refreshUI(setText(GROUP_NAME_TEXT_ID, group.id, event.target.value))}
               placeholder={t('example_name')}
             />
           </TranslateInputContainer>
@@ -100,7 +106,7 @@ export const GroupFrameEditor = ({ group, openTranslationEditor }: GroupFrameEdi
           <SelectCustomSimple
             id="select-environment"
             options={systemTagsOptions}
-            onChange={(value) => refreshUI((group.systemTag = value as SystemTag))}
+            onChange={(value) => refreshUI((group.systemTag = value as StudioGroupSystemTag))}
             value={group.systemTag ?? 'RegularGround'}
             noTooltip
           />

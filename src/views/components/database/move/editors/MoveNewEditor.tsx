@@ -1,7 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
-import MoveModel, { MoveCategories } from '@modelEntities/move/Move.model';
-import { Editor, useRefreshUI } from '@components/editor';
+import { Editor } from '@components/editor';
 import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
 import { useProjectMoves } from '@utils/useProjectData';
 import { SelectCustomSimple } from '@components/SelectCustom';
@@ -11,9 +10,14 @@ import { TextInputError } from '@components/inputs/Input';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { checkDbSymbolExist, generateDefaultDbSymbol, wrongDbSymbol } from '@utils/dbSymbolUtils';
 import { SelectType } from '@components/selects';
+import { MOVE_CATEGORIES, MOVE_DESCRIPTION_TEXT_ID, MOVE_NAME_TEXT_ID, StudioMoveCategory } from '@modelEntities/move';
+import { createMove } from '@utils/entityCreation';
+import { findFirstAvailableId } from '@utils/ModelUtils';
+import { DbSymbol } from '@modelEntities/dbSymbol';
+import { useSetProjectText } from '@utils/ReadingProjectText';
 
 const moveCategoryEntries = (t: TFunction<('database_moves' | 'database_types')[]>) =>
-  MoveCategories.map((category) => ({ value: category, label: t(`database_types:${category}`) })).sort((a, b) => a.label.localeCompare(b.label));
+  MOVE_CATEGORIES.map((category) => ({ value: category, label: t(`database_types:${category}`) })).sort((a, b) => a.label.localeCompare(b.label));
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -27,31 +31,49 @@ type MoveNewEditorProps = {
 };
 
 export const MoveNewEditor = ({ onClose }: MoveNewEditorProps) => {
-  const { projectDataValues: moves, setProjectDataValues: setMove, bindProjectDataValue: bindMove } = useProjectMoves();
+  const { projectDataValues: moves, setProjectDataValues: setMove } = useProjectMoves();
   const { t } = useTranslation(['database_moves', 'database_types']);
   const categoryOptions = useMemo(() => moveCategoryEntries(t), [t]);
-  const refreshUI = useRefreshUI();
-  const [newMove] = useState(bindMove(MoveModel.createMove(moves)));
-  const [moveText] = useState({ name: '', descr: '' });
+  const setText = useSetProjectText();
+  const [name, setName] = useState(''); // We can't use a ref because of the button behavior
+  const [category, setCategory] = useState<StudioMoveCategory>('physical');
+  const [type, setType] = useState('normal');
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
+  const dbSymbolRef = useRef<HTMLInputElement>(null);
+  const [dbSymbolErrorType, setDbSymbolErrorType] = useState<'value' | 'duplicate' | undefined>(undefined);
 
   const onClickNew = () => {
-    newMove.setName(moveText.name);
-    newMove.setDescr(moveText.descr);
-    setMove({ [newMove.dbSymbol]: newMove }, { move: newMove.dbSymbol });
+    if (!dbSymbolRef.current || !name || !descriptionRef.current) return;
+
+    const dbSymbol = dbSymbolRef.current.value as DbSymbol;
+    const newMove = createMove(dbSymbol, findFirstAvailableId(moves, 1), type as DbSymbol, category);
+    setText(MOVE_NAME_TEXT_ID, newMove.id, name);
+    setText(MOVE_DESCRIPTION_TEXT_ID, newMove.id, descriptionRef.current.value);
+    setMove({ [dbSymbol]: newMove }, { move: dbSymbol });
     onClose();
   };
 
-  const onChangeName = (name: string) => {
-    if (newMove.dbSymbol === '' || newMove.dbSymbol === generateDefaultDbSymbol(moveText.name)) {
-      newMove.dbSymbol = generateDefaultDbSymbol(name);
+  const onChangeDbSymbol = (value: string) => {
+    if (wrongDbSymbol(value)) {
+      if (dbSymbolErrorType !== 'value') setDbSymbolErrorType('value');
+    } else if (checkDbSymbolExist(moves, value)) {
+      if (dbSymbolErrorType !== 'duplicate') setDbSymbolErrorType('duplicate');
+    } else if (dbSymbolErrorType) {
+      setDbSymbolErrorType(undefined);
     }
-    moveText.name = name;
+  };
+
+  const onChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!dbSymbolRef.current) return;
+    if (dbSymbolRef.current.value === '' || dbSymbolRef.current.value === generateDefaultDbSymbol(name)) {
+      dbSymbolRef.current.value = generateDefaultDbSymbol(event.currentTarget.value);
+      onChangeDbSymbol(dbSymbolRef.current.value);
+    }
+    setName(event.currentTarget.value);
   };
 
   const checkDisabled = () => {
-    return (
-      moveText.name.length === 0 || newMove.dbSymbol.length === 0 || wrongDbSymbol(newMove.dbSymbol) || checkDbSymbolExist(moves, newMove.dbSymbol)
-    );
+    return !name || !dbSymbolRef.current || !!dbSymbolErrorType;
   };
 
   return (
@@ -61,34 +83,23 @@ export const MoveNewEditor = ({ onClose }: MoveNewEditorProps) => {
           <Label htmlFor="name" required>
             {t('database_moves:name')}
           </Label>
-          <Input
-            type="text"
-            name="name"
-            value={moveText.name}
-            onChange={(event) => refreshUI(onChangeName(event.target.value))}
-            placeholder={t('database_moves:example_name')}
-          />
+          <Input type="text" name="name" value={name} onChange={onChangeName} placeholder={t('database_moves:example_name')} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="descr">{t('database_moves:description')}</Label>
-          <MultiLineInput
-            id="descr"
-            value={moveText.descr}
-            onChange={(event) => refreshUI((moveText.descr = event.target.value))}
-            placeholder={t('database_moves:example_description')}
-          />
+          <MultiLineInput id="descr" ref={descriptionRef} placeholder={t('database_moves:example_description')} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="type">{t('database_moves:type')}</Label>
-          <SelectType dbSymbol={newMove.type} onChange={(event) => refreshUI((newMove.type = event.value))} noLabel />
+          <SelectType dbSymbol={type} onChange={(event) => setType(event.value)} noLabel />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="category">{t('database_moves:category')}</Label>
           <SelectCustomSimple
             id="select-category"
             options={categoryOptions}
-            onChange={(value) => refreshUI((newMove.category = value))}
-            value={newMove.category}
+            onChange={setCategory as (v: string) => void}
+            value={category}
             noTooltip
           />
         </InputWithTopLabelContainer>
@@ -99,17 +110,13 @@ export const MoveNewEditor = ({ onClose }: MoveNewEditorProps) => {
           <Input
             type="text"
             name="dbSymbol"
-            value={newMove.dbSymbol}
-            onChange={(event) => refreshUI((newMove.dbSymbol = event.target.value))}
-            error={wrongDbSymbol(newMove.dbSymbol) || checkDbSymbolExist(moves, newMove.dbSymbol)}
+            ref={dbSymbolRef}
+            onChange={(e) => onChangeDbSymbol(e.currentTarget.value)}
+            error={!!dbSymbolErrorType}
             placeholder={t('database_moves:example_db_symbol')}
           />
-          {newMove.dbSymbol.length !== 0 && wrongDbSymbol(newMove.dbSymbol) && (
-            <TextInputError>{t('database_moves:incorrect_format')}</TextInputError>
-          )}
-          {newMove.dbSymbol.length !== 0 && checkDbSymbolExist(moves, newMove.dbSymbol) && (
-            <TextInputError>{t('database_moves:db_symbol_already_used')}</TextInputError>
-          )}
+          {dbSymbolErrorType == 'value' && <TextInputError>{t('database_moves:incorrect_format')}</TextInputError>}
+          {dbSymbolErrorType == 'duplicate' && <TextInputError>{t('database_moves:db_symbol_already_used')}</TextInputError>}
         </InputWithTopLabelContainer>
         <ButtonContainer>
           <ToolTipContainer>

@@ -1,30 +1,33 @@
 import React, { useMemo } from 'react';
 import { MoveCategory, TypeCategory } from '@components/categories';
-import PokemonForm, { LearnableMove } from '@modelEntities/pokemon/PokemonForm';
-import { ProjectData, SelectedDataIdentifier } from '@src/GlobalStateProvider';
+import { ProjectData, SelectedDataIdentifier, useGlobalState } from '@src/GlobalStateProvider';
 import { TFunction, useTranslation } from 'react-i18next';
 import { DeleteButtonOnlyIcon } from '@components/buttons';
 import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { SelectCustom } from '@components/SelectCustom';
 import { useProjectData } from '@utils/useProjectData';
-import PSDKEntity from '@modelEntities/PSDKEntity';
 import { DataMoveGrid, DataMoveTable, NoMoveFound, RenderMoveContainer } from './MovepoolTableStyle';
-import TechItemModel from '@modelEntities/item/TechItem.model';
-import PokemonModel from '@modelEntities/pokemon/Pokemon.model';
-import MoveModel from '@modelEntities/move/Move.model';
 import { getNameType } from '@utils/getNameType';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
+import { getSelectDataOptionsOrderedById } from '@components/selects/SelectDataGeneric';
+import { cloneEntity } from '@utils/cloneEntity';
+import { StudioCreature, StudioCreatureForm, StudioLearnableMove } from '@modelEntities/creature';
+import { DbSymbol } from '@modelEntities/dbSymbol';
+import { StudioTechItem } from '@modelEntities/item';
+import { StudioMove } from '@modelEntities/move';
 
 type RenderEditMoveProps = {
-  learnableMove: LearnableMove;
+  learnableMove: StudioLearnableMove;
   index: number;
   moves: ProjectData['moves'];
   types: ProjectData['types'];
   pokemonIdentifier: PokemonIdentifierType;
-  currentEditedPokemon: PokemonModel;
-  setPokemon(newDataValues: Partial<{ [k: string]: PSDKEntity }>, newSelectedData?: Pick<SelectedDataIdentifier, 'pokemon'> | undefined): void;
+  currentEditedPokemon: StudioCreature;
+  setPokemon(newDataValues: Partial<{ [k: string]: StudioCreature }>, newSelectedData?: Pick<SelectedDataIdentifier, 'pokemon'> | undefined): void;
   movepoolType: MovepoolTableType;
   moveOptions: SelectOption[];
   occurrences: MoveOccurrenceType[];
+  moveSet: StudioLearnableMove[];
 };
 
 type PokemonIdentifierType = {
@@ -43,78 +46,94 @@ type MoveOccurrenceType = {
   occurrence: number;
 };
 
-const getSafeName = (move: MoveModel, t: TFunction<('database_pokemon' | 'database_moves')[]>) => {
-  if (move) return move.name();
+const getSafeName = (
+  move: StudioMove,
+  t: TFunction<('database_pokemon' | 'database_moves')[]>,
+  getEntityName: ReturnType<typeof useGetEntityNameText>
+) => {
+  if (move) return getEntityName(move);
   return t('database_moves:move_deleted');
 };
-
-const getMoveOptions = (allMoves: ProjectData['moves']): SelectOption[] =>
-  Object.entries(allMoves)
-    .map(([value, moveData]) => ({ value, label: moveData.name(), index: moveData.id }))
-    .sort((a, b) => a.index - b.index);
 
 const getMoveTechOptions = (
   allItems: ProjectData['items'],
   allMoves: ProjectData['moves'],
-  t: TFunction<('database_pokemon' | 'database_moves')[]>
-): SelectOption[] =>
-  Object.entries(allItems)
-    .filter(([, itemData]) => itemData.klass === 'TechItem')
-    .map(([, itemData]) => ({
-      value: (itemData as TechItemModel).move,
-      label: `${itemData.name()} - ${getSafeName(allMoves[(itemData as TechItemModel).move], t)}`,
-      index: itemData.id,
+  t: TFunction<('database_pokemon' | 'database_moves')[]>,
+  getEntityName: ReturnType<typeof useGetEntityNameText>
+) =>
+  Object.values(allItems)
+    .filter((itemData): itemData is StudioTechItem => itemData.klass === 'TechItem')
+    .map((itemData) => ({
+      value: itemData.move,
+      label: `${getEntityName(itemData)} - ${getSafeName(allMoves[itemData.move], t, getEntityName)}`,
     }))
     .sort((a, b) => a.label.localeCompare(b.label, undefined, { numeric: true, sensitivity: 'base' }));
 
-const getMovepool = (form: PokemonForm, movepoolType: MovepoolTableType) => {
-  if (movepoolType === 'tutor') return form.tutorLearnableMove;
-  if (movepoolType === 'tech') return form.techLearnableMove;
-  if (movepoolType === 'breed') return form.breedLearnableMove;
-  return form.evolutionLearnableMove;
+export const getMoveKlass = (movepoolType: MovepoolTableType) => {
+  switch (movepoolType) {
+    case 'tutor':
+      return 'TutorLearnableMove';
+    case 'tech':
+      return 'TechLearnableMove';
+    case 'breed':
+      return 'BreedLearnableMove';
+    default:
+      return 'EvolutionLearnableMove';
+  }
+};
+
+const getMovepool = (form: StudioCreatureForm, movepoolType: MovepoolTableType) => {
+  const klass = getMoveKlass(movepoolType);
+  return form.moveSet.filter((m) => m.klass === klass);
 };
 
 const getMovepoolData = (
   type: MovepoolTableType,
   moves: ProjectData['moves'],
   items: ProjectData['items'],
-  currentEditedForm: PokemonForm,
-  t: TFunction<('database_pokemon' | 'database_moves')[]>
+  currentEditedForm: StudioCreatureForm,
+  t: TFunction<('database_pokemon' | 'database_moves')[]>,
+  getEntityName: ReturnType<typeof useGetEntityNameText>
 ) => {
   if (type === 'tech') {
-    const techItems = Object.entries(items).filter(([, itemData]) => itemData.klass === 'TechItem');
+    const techItems = Object.values(items).filter((itemData): itemData is StudioTechItem => itemData.klass === 'TechItem');
     return getMovepool(currentEditedForm, type).sort((a, b) => {
-      const techItemA = techItems
-        .filter(([, itemData]) => (itemData as TechItemModel).move === a.move)
-        .map(([, itemData]) => itemData as TechItemModel)[0];
-      const techItemB = techItems
-        .filter(([, itemData]) => (itemData as TechItemModel).move === b.move)
-        .map(([, itemData]) => itemData as TechItemModel)[0];
-      const nameA = techItemA ? `${techItemA.name()} - ${getSafeName(moves[techItemA.move], t)}` : getSafeName(moves[a.move], t);
-      const nameB = techItemB ? `${techItemB.name()} - ${getSafeName(moves[techItemB.move], t)}` : getSafeName(moves[b.move], t);
+      const techItemA = techItems.filter((itemData) => itemData.move === a.move)[0];
+      const techItemB = techItems.filter((itemData) => itemData.move === b.move)[0];
+      const nameA = techItemA
+        ? `${getEntityName(techItemA)} - ${getSafeName(moves[techItemA.move], t, getEntityName)}`
+        : getSafeName(moves[a.move], t, getEntityName);
+      const nameB = techItemB
+        ? `${getEntityName(techItemB)} - ${getSafeName(moves[techItemB.move], t, getEntityName)}`
+        : getSafeName(moves[b.move], t, getEntityName);
       return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: 'base' });
     });
   }
-  return getMovepool(currentEditedForm, type).sort((a, b) => getSafeName(moves[a.move], t).localeCompare(getSafeName(moves[b.move], t)));
+  return getMovepool(currentEditedForm, type).sort((a, b) =>
+    getSafeName(moves[a.move], t, getEntityName).localeCompare(getSafeName(moves[b.move], t, getEntityName))
+  );
 };
 
-const editMove = (
+const editMove = (index: number, moveSet: StudioLearnableMove[], currentEditedPokemon: StudioCreature, move: string) => {
+  moveSet[index].move = move as DbSymbol;
+  return currentEditedPokemon;
+};
+
+const deleteMove = (
   index: number,
+  moveSet: StudioLearnableMove[],
   pokemonIdentifier: PokemonIdentifierType,
-  currentEditedPokemon: PokemonModel,
-  move: string,
+  currentEditedPokemon: StudioCreature,
   type: MovepoolTableType
 ) => {
-  getMovepool(currentEditedPokemon.forms[pokemonIdentifier.form], type)[index].move = move;
+  moveSet.splice(index, 1);
+  const form = currentEditedPokemon.forms[pokemonIdentifier.form];
+  const klass = getMoveKlass(type);
+  form.moveSet = [...form.moveSet.filter((m) => m.klass !== klass), ...moveSet];
   return currentEditedPokemon;
 };
 
-const deleteMove = (index: number, pokemonIdentifier: PokemonIdentifierType, currentEditedPokemon: PokemonModel, type: MovepoolTableType) => {
-  getMovepool(currentEditedPokemon.forms[pokemonIdentifier.form], type).splice(index, 1);
-  return currentEditedPokemon;
-};
-
-const getOccurrences = (form: PokemonForm, type: MovepoolTableType) => {
+const getOccurrences = (form: StudioCreatureForm, type: MovepoolTableType) => {
   const occurences: MoveOccurrenceType[] = [];
   getMovepool(form, type).map((learnableMove) => {
     const occurrence = occurences.find((dbs) => dbs.dbSymbol === learnableMove.move);
@@ -135,18 +154,21 @@ const RenderEditMove = ({
   movepoolType,
   moveOptions,
   occurrences,
+  moveSet,
 }: RenderEditMoveProps) => {
   const { t } = useTranslation(['database_pokemon', 'database_moves']);
+  const [state] = useGlobalState();
+  const getEntityName = useGetEntityNameText();
   const move = moves[learnableMove.move];
   const value =
     movepoolType === 'tech'
       ? moveOptions.find((options) => options.value === learnableMove.move) || {
           value: learnableMove.move,
-          label: getSafeName(move, t),
+          label: getSafeName(move, t, getEntityName),
         }
       : {
           value: learnableMove.move,
-          label: getSafeName(move, t),
+          label: getSafeName(move, t, getEntityName),
         };
 
   return (
@@ -155,14 +177,14 @@ const RenderEditMove = ({
         options={moveOptions}
         onChange={(selected) => {
           setPokemon({
-            [pokemonIdentifier.specie]: editMove(index, pokemonIdentifier, currentEditedPokemon, selected.value, movepoolType),
+            [pokemonIdentifier.specie]: editMove(index, moveSet, currentEditedPokemon, selected.value),
           });
         }}
         noOptionsText={t('database_moves:no_option')}
         value={value}
         error={(occurrences.find((occ) => occ.dbSymbol === learnableMove.move)?.occurrence || 1) > 1 || !move}
       />
-      {move ? <TypeCategory type={move.type}>{getNameType(types, move.type)}</TypeCategory> : <TypeCategory type="normal">???</TypeCategory>}
+      {move ? <TypeCategory type={move.type}>{getNameType(types, move.type, state)}</TypeCategory> : <TypeCategory type="normal">???</TypeCategory>}
       {move ? (
         <MoveCategory category={move.category}>{t(`database_moves:${move.category}` as never)}</MoveCategory>
       ) : (
@@ -175,7 +197,7 @@ const RenderEditMove = ({
         <DeleteButtonOnlyIcon
           onClick={() =>
             setPokemon({
-              [pokemonIdentifier.specie]: deleteMove(index, pokemonIdentifier, currentEditedPokemon, movepoolType),
+              [pokemonIdentifier.specie]: deleteMove(index, moveSet, pokemonIdentifier, currentEditedPokemon, movepoolType),
             })
           }
         />
@@ -192,15 +214,21 @@ export const MovepoolTable = ({ movepoolType }: MovepoolTableProps) => {
     projectDataValues: pokemon,
     selectedDataIdentifier: pokemonIdentifier,
     setProjectDataValues: setPokemon,
+    state,
   } = useProjectData('pokemon', 'pokemon');
   const { t } = useTranslation(['database_pokemon', 'database_moves']);
-  const currentEditedPokemon = pokemon[pokemonIdentifier.specie].clone();
-  const movepoolData = getMovepoolData(movepoolType, moves, items, currentEditedPokemon.forms[pokemonIdentifier.form], t);
+  const getEntityName = useGetEntityNameText();
+  const currentEditedPokemon = cloneEntity(pokemon[pokemonIdentifier.specie]);
+  const movepoolData = getMovepoolData(movepoolType, moves, items, currentEditedPokemon.forms[pokemonIdentifier.form], t, getEntityName);
   const occurrences = getOccurrences(currentEditedPokemon.forms[pokemonIdentifier.form], movepoolType);
 
   const moveOptions = useMemo(
-    () => (movepoolType === 'tech' ? getMoveTechOptions(items, moves, t) : getMoveOptions(moves)),
-    [items, movepoolType, moves, t]
+    () =>
+      movepoolType === 'tech'
+        ? getMoveTechOptions(items, moves, t, getEntityName)
+        : getSelectDataOptionsOrderedById(state.projectData, 'moves', getEntityName),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [movepoolType, state.projectData]
   );
 
   return movepoolData.length === 0 ? (
@@ -228,6 +256,7 @@ export const MovepoolTable = ({ movepoolType }: MovepoolTableProps) => {
           movepoolType={movepoolType}
           moveOptions={moveOptions}
           occurrences={occurrences}
+          moveSet={movepoolData}
         />
       ))}
     </DataMoveTable>

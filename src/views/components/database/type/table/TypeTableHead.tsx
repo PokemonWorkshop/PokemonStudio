@@ -1,14 +1,14 @@
 import React from 'react';
-import TypeModel from '@modelEntities/type/Type.model';
 import { TFunction } from 'react-i18next';
 
 import { TypeTableHeadContainer, TypeIconListContainer, TypeTableHeadTitleContainer } from './TypeTableContainers';
 import { DataFieldsetFieldCenteredWithChild } from '../../dataBlocks/DataFieldsetField';
 import { TypeCategoryIcon } from '@components/categories';
 import styled from 'styled-components';
+import { StudioType } from '@modelEntities/type';
 
 type TypeTableHeadProps = {
-  allTypes: TypeModel[];
+  allTypes: StudioType[];
   t: TFunction<'database_types'>;
   hoveredDefensiveType: string;
 };
@@ -30,7 +30,7 @@ export const TypeTableHead = ({ allTypes, t, hoveredDefensiveType }: TypeTableHe
             {allTypes.map((type) => (
               <TypeCategoryIcon
                 type={type.dbSymbol}
-                key={`${type.name()}-icon`}
+                key={`${type.dbSymbol}-icon`}
                 className={hoveredDefensiveType === type.dbSymbol ? 'hovered-defensive-type' : undefined}
               />
             ))}

@@ -1,9 +1,8 @@
-import ProjectStudioModel from '@modelEntities/ProjectStudio.model';
+import { StudioProject } from '@modelEntities/project';
 import { join } from '@utils/path';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLoaderRef } from './loaderContext';
-import { serializeProjectStudio } from './SerializationUtils';
 
 type ProjectNewStateObject =
   | { state: 'done' }
@@ -14,7 +13,7 @@ type ProjectNewStateObject =
 type ProjectNewFailureCallback = (error: { errorMessage: string }) => void;
 type ProjectNewSuccessCallback = (payload: { projectDirName: string }) => void;
 type ProjectNewPayload = {
-  projectStudioData: Omit<ProjectStudioModel, 'clone'>;
+  projectStudioData: StudioProject;
   languageConfig: string;
   projectTitle: string;
   iconPath: string | undefined;
@@ -95,9 +94,7 @@ export const useProjectNew = () => {
             projectDirName: state.projectDirName,
             metaData: {
               ...state.payload,
-              projectStudioData: serializeProjectStudio(
-                Object.assign(new ProjectStudioModel(), { ...state.payload.projectStudioData, studioVersion: state.studioVersion })
-              ),
+              projectStudioData: JSON.stringify({ ...state.payload.projectStudioData, studioVersion: state.studioVersion }, null, 2),
             },
           },
           () => {

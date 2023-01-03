@@ -1,10 +1,10 @@
-import { IpcMainEvent } from 'electron';
+import { IpcMain, IpcMainEvent } from 'electron';
 import log from 'electron-log';
 import path from 'path';
 import fs from 'fs';
 import fsPromises from 'fs/promises';
 import { batchArray } from '@utils/batchArray';
-import { RMXPMap } from '@modelEntities/maplinks/RMXPMap';
+import { StudioRMXPMap } from '@modelEntities/mapLink';
 
 const projectDataKeys = [
   'abilities',
@@ -21,7 +21,7 @@ const projectDataKeys = [
   'zones',
 ] as const;
 type ProjectDataFromBackEndKey = typeof projectDataKeys[number];
-export type ProjectDataFromBackEnd = Record<ProjectDataFromBackEndKey, string[]> & { rmxpMaps: RMXPMap[] };
+export type ProjectDataFromBackEnd = Record<ProjectDataFromBackEndKey, string[]> & { rmxpMaps: StudioRMXPMap[] };
 
 export const readProjectFolder = async (projectPath: string, key: ProjectDataFromBackEndKey): Promise<string[]> => {
   const folderName = path.join(projectPath, 'Data/Studio', key);
@@ -56,7 +56,7 @@ const readProjectData = async (event: IpcMainEvent, payload: { path: string }) =
   log.info('read-project-data');
   try {
     const rmxpMapsJson = await fsPromises.readFile(path.join(payload.path, 'Data/Studio', 'rmxp_maps.json'), { encoding: 'utf-8' });
-    const rmxpMaps: RMXPMap[] = JSON.parse(rmxpMapsJson);
+    const rmxpMaps: StudioRMXPMap[] = JSON.parse(rmxpMapsJson);
     const projectData = await projectDataKeys.reduce(async (prev, curr, index) => {
       const prevData = await prev;
       log.info('read-project-data/progress', curr);
@@ -73,6 +73,6 @@ const readProjectData = async (event: IpcMainEvent, payload: { path: string }) =
   }
 };
 
-export const registerReadProjectData = (ipcMain: Electron.IpcMain) => {
+export const registerReadProjectData = (ipcMain: IpcMain) => {
   ipcMain.on('read-project-data', readProjectData);
 };

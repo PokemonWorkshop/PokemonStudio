@@ -1,10 +1,10 @@
 import React from 'react';
 import { MapLinkCardContainer, MapLinkTitleContainer } from './MapLinkCardStyle';
-import MapLinkModel from '@modelEntities/maplinks/MapLink.model';
 import { useTranslation } from 'react-i18next';
+import { StudioMapLink } from '@modelEntities/mapLink';
 
 type CurrentMapLinkCardProps = {
-  mapLink: MapLinkModel;
+  mapLink: StudioMapLink;
   mapData: Map<number, string>;
 };
 

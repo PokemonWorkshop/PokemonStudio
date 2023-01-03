@@ -1,14 +1,14 @@
 import React from 'react';
 import { DataBlockWithTitle, DataGrid } from '../dataBlocks';
-import ZoneModel from '@modelEntities/zone/Zone.model';
 import { useTranslation } from 'react-i18next';
 import { DataFieldsetField, DataFieldsetFieldCode } from '../dataBlocks/DataFieldsetField';
+import { StudioZone } from '@modelEntities/zone';
 
-const isPositionUndefined = (zone: ZoneModel) => zone.position.x === null || zone.position.y === null;
-const isWarpUndefined = (zone: ZoneModel) => zone.warp.x === null || zone.warp.y === null;
+const isPositionUndefined = (zone: StudioZone) => zone.position.x === null || zone.position.y === null;
+const isWarpUndefined = (zone: StudioZone) => zone.warp.x === null || zone.warp.y === null;
 
 type ZoneTravelProps = {
-  zone: ZoneModel;
+  zone: StudioZone;
   onClick: () => void;
 };
 

@@ -14,21 +14,47 @@ import { PokemonInput } from './PokemonInput';
 import { WeatherInput } from './WeatherInput';
 import { SecondaryNoBackground } from '@components/buttons';
 import { ReactComponent as PlusIcon } from '@assets/icons/global/plus-icon2.svg';
-import { EvolutionCondition, EvolutionConditionKeys, EVOLUTION_CONDITION_KEYS } from '@modelEntities/pokemon/PokemonForm';
 import { NumberInput } from './NumberInput';
 import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { StudioEvolutionCondition, StudioEvolutionConditionKey } from '@modelEntities/creature';
+import { DbSymbol } from '@modelEntities/dbSymbol';
+
+export const EVOLUTION_CONDITION_KEYS: StudioEvolutionConditionKey[] = [
+  'minLevel',
+  'maxLevel',
+  'stone',
+  'trade',
+  'tradeWith',
+  'itemHold',
+  'maxLoyalty',
+  'minLoyalty',
+  // 'move_kind',
+  'skill1',
+  'skill2',
+  'skill3',
+  'skill4',
+  'weather',
+  'env',
+  'dayNight',
+  'maps',
+  'gender',
+  // 'nature',
+  // 'switch',
+  'func',
+  'gemme',
+];
 
 type ConditionSelectProps = {
-  currentType: EvolutionConditionKeys | 'none';
-  keysToExclude: EvolutionConditionKeys[];
-  onChange: (key: EvolutionConditionKeys) => void;
+  currentType: StudioEvolutionConditionKey | 'none';
+  keysToExclude: StudioEvolutionConditionKey[];
+  onChange: (key: StudioEvolutionConditionKey) => void;
 };
 
-const isSkill = (type: EvolutionConditionKeys | string) => {
+const isSkill = (type: StudioEvolutionConditionKey | string) => {
   return type === 'skill1' || type === 'skill2' || type === 'skill3' || type === 'skill4';
 };
 
-const removeSkills = (options: SelectOption[], currentType: EvolutionConditionKeys) => {
+const removeSkills = (options: SelectOption[], currentType: StudioEvolutionConditionKey) => {
   const currentSkill = isSkill(currentType) ? currentType : undefined;
   const skills: string[] = [];
   options.forEach(({ value }) => {
@@ -46,10 +72,10 @@ const ConditionSelect = ({ currentType, keysToExclude, onChange }: ConditionSele
   const evolutionConditionKeys = currentType === 'none' ? ['none', ...EVOLUTION_CONDITION_KEYS] : EVOLUTION_CONDITION_KEYS;
   const options = removeSkills(
     evolutionConditionKeys
-      .filter((conditionKey) => !keysToExclude.includes(conditionKey as EvolutionConditionKeys))
+      .filter((conditionKey) => !keysToExclude.includes(conditionKey as StudioEvolutionConditionKey))
       .map((conditionKey) => ({
         value: conditionKey,
-        label: t(`evolutionCondition_${conditionKey as EvolutionConditionKeys}`),
+        label: t(`evolutionCondition_${conditionKey as StudioEvolutionConditionKey}`),
       })),
     currentType
   );
@@ -58,7 +84,7 @@ const ConditionSelect = ({ currentType, keysToExclude, onChange }: ConditionSele
     <SelectCustomSimple
       id={`evolution-condition-${currentType}`}
       value={currentType}
-      onChange={(value) => onChange(value as EvolutionConditionKeys)}
+      onChange={(value) => onChange(value as StudioEvolutionConditionKey)}
       options={options}
     />
   );
@@ -94,7 +120,7 @@ const EvolutionInfo = styled.p`
   margin: 0;
 `;
 
-const newEvolutionCondition = (type: EvolutionConditionKeys): EvolutionCondition => {
+const newEvolutionCondition = (type: StudioEvolutionConditionKey): StudioEvolutionCondition => {
   switch (type) {
     case 'dayNight':
     case 'gender':
@@ -110,7 +136,7 @@ const newEvolutionCondition = (type: EvolutionConditionKeys): EvolutionCondition
     case 'skill3':
     case 'skill4':
     case 'tradeWith':
-      return { type, value: '__undef__' };
+      return { type, value: '__undef__' as DbSymbol };
     case 'maps':
       return { type, value: [-1] };
     case 'maxLevel':
@@ -123,22 +149,22 @@ const newEvolutionCondition = (type: EvolutionConditionKeys): EvolutionCondition
     case 'trade':
       return { type, value: true }; // dbSymbol
     case 'weather': // Weather type
-      return { type, value: 'rain' };
+      return { type, value: 'rain' as DbSymbol };
     default:
       assertUnreachable(type);
       return { type, value: undefined };
   }
 };
 
-type EvolutionConditionEditorProps = InputProps & { allConditions: EvolutionCondition[] };
+type EvolutionConditionEditorProps = InputProps & { allConditions: StudioEvolutionCondition[] };
 
 const ConditionFields = ({ condition, allConditions, index, onChange }: EvolutionConditionEditorProps) => {
   const { t } = useTranslation('database_pokemon');
   const { type } = condition;
   const keysToExclude = allConditions
     .filter((otherCondition) => otherCondition.type !== type)
-    .reduce((keys, curr) => [...keys, curr.type], [] as EvolutionConditionKeys[]);
-  const onKeyChange = (newKey: EvolutionConditionKeys) => onChange(newEvolutionCondition(newKey), index);
+    .reduce((keys, curr) => [...keys, curr.type], [] as StudioEvolutionConditionKey[]);
+  const onKeyChange = (newKey: StudioEvolutionConditionKey) => onChange(newEvolutionCondition(newKey), index);
 
   switch (type) {
     case 'dayNight': // 0-3

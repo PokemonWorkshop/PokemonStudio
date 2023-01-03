@@ -1,6 +1,5 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import QuestModel from '@modelEntities/quest/Quest.model';
 import {
   DataBlockContainer,
   DataGrid,
@@ -11,14 +10,18 @@ import {
 } from '../dataBlocks';
 import { QuestCategory } from '@components/categories';
 import { padStr } from '@utils/PadStr';
+import { useGetEntityDescriptionText, useGetEntityNameText } from '@utils/ReadingProjectText';
+import { StudioQuest } from '@modelEntities/quest';
 
 type QuestFrameProps = {
-  quest: QuestModel;
+  quest: StudioQuest;
   onClick: () => void;
 };
 
 export const QuestFrame = ({ quest, onClick }: QuestFrameProps) => {
   const { t } = useTranslation('database_quests');
+  const getQuestName = useGetEntityNameText();
+  const getQuestDescription = useGetEntityDescriptionText();
 
   return (
     <DataBlockContainer size="full" onClick={onClick}>
@@ -27,7 +30,7 @@ export const QuestFrame = ({ quest, onClick }: QuestFrameProps) => {
           <DataInfoContainerHeader>
             <DataInfoContainerHeaderTitle>
               <h1>
-                {quest.name()}
+                {getQuestName(quest)}
                 <span className="data-id">#{padStr(quest.id, 3)}</span>
               </h1>
             </DataInfoContainerHeaderTitle>
@@ -36,7 +39,7 @@ export const QuestFrame = ({ quest, onClick }: QuestFrameProps) => {
               {/* <QuestCategory category={quest.resolution}>{t(quest.resolution)}</QuestCategory> */}
             </DataInfoContainerHeaderBadges>
           </DataInfoContainerHeader>
-          <p>{quest.descr()}</p>
+          <p>{getQuestDescription(quest)}</p>
         </DataInfoContainer>
       </DataGrid>
     </DataBlockContainer>

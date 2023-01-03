@@ -1,6 +1,5 @@
 import { ClearButtonOnlyIcon, FolderButtonOnlyIcon } from '@components/buttons';
 import { ResourceImage } from '@components/ResourceImage';
-import PokemonForm, { CreatureFormResourcesPath, formResourcesPath } from '@modelEntities/pokemon/PokemonForm';
 import React, { DragEventHandler, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -9,8 +8,9 @@ import { useShowItemInFolder } from '@utils/useShowItemInFolder';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useCopyFile } from '@utils/useCopyFile';
 import { ResourceContainer } from './ResourcesContainer';
-import { dirname, join } from '@utils/path';
+import { CreatureFormResourcesPath, dirname, formResourcesPath, join } from '@utils/path';
 import { useChoosefile } from '@utils/useChooseFile';
+import { StudioCreatureForm } from '@modelEntities/creature';
 
 const IconResourceContainer = styled(ResourceContainer)`
   flex-direction: row;
@@ -70,12 +70,12 @@ const onDragOver: DragEventHandler<HTMLDivElement> = (event) => {
   event.stopPropagation();
 };
 
-const isNoRessource = (form: PokemonForm, resource: CreatureFormResourcesPath, isFemale: boolean) => {
+const isNoRessource = (form: StudioCreatureForm, resource: CreatureFormResourcesPath, isFemale: boolean) => {
   return isFemale ? form.resources[resource] === undefined : form.resources[resource]?.length === 0;
 };
 
 type IconResourceProps = {
-  form: PokemonForm;
+  form: StudioCreatureForm;
   resource: CreatureFormResourcesPath;
   isFemale: boolean;
   onResourceChoosen: (filePath: string, resource: CreatureFormResourcesPath) => void;

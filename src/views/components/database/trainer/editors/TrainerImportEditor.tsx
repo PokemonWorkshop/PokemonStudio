@@ -8,7 +8,8 @@ import styled from 'styled-components';
 import { SelectTrainer } from '@components/selects';
 import { useProjectTrainers } from '@utils/useProjectData';
 import { DarkButton, PrimaryButton } from '@components/buttons';
-import TrainerModel from '@modelEntities/trainer/Trainer.model';
+import { reduceBagEntries, StudioTrainer } from '@modelEntities/trainer';
+import { cloneEntity } from '@utils/cloneEntity';
 
 const TrainerImportInfo = styled.div`
   ${({ theme }) => theme.fonts.normalRegular};
@@ -24,7 +25,7 @@ const ButtonContainer = styled.div`
 `;
 
 type TrainerImportEditorProps = {
-  trainer: TrainerModel;
+  trainer: StudioTrainer;
   type: 'battler' | 'item';
   onClose: () => void;
 };
@@ -42,12 +43,12 @@ export const TrainerImportEditor = ({ trainer, type, onClose }: TrainerImportEdi
 
   const onClickImport = () => {
     if (type === 'battler') {
-      if (override) trainer.party = trainers[selectedTrainer].clone().party;
-      else trainer.party.push(...trainers[selectedTrainer].clone().party);
+      if (override) trainer.party = cloneEntity(trainers[selectedTrainer].party);
+      else trainer.party.push(...cloneEntity(trainers[selectedTrainer].party));
     } else {
-      if (override) trainer.bagEntries = trainers[selectedTrainer].clone().bagEntries;
-      else trainer.bagEntries.push(...trainers[selectedTrainer].clone().bagEntries);
-      trainer.reduceBagEntries();
+      if (override) trainer.bagEntries = cloneEntity(trainers[selectedTrainer].bagEntries);
+      else trainer.bagEntries.push(...cloneEntity(trainers[selectedTrainer].bagEntries));
+      reduceBagEntries(trainer);
     }
     setTrainer({ [trainer.dbSymbol]: trainer });
     onClose();

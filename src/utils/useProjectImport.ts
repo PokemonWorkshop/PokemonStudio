@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLoaderRef } from './loaderContext';
 import { useProjectImportFromPSDKv2 } from '@utils/useProjectImportFromPSDK';
-import ProjectStudioModel from '@modelEntities/ProjectStudio.model';
 import { join } from '@utils/path';
+import { createProjectStudio } from '@modelEntities/project';
 
 type ProjectImportFailureCallback = (error: { errorMessage: string }) => void;
 type ProjectImportSuccessCallback = (payload: { projectDirName: string }) => void;
@@ -28,7 +28,7 @@ type ProjectImportStateObject =
   | ProjectImportStateObjectWithDirNameAndTitle
   | ProjectImportStateObjectWritingMeta;
 
-const cleanup = (window: Window & typeof globalThis) => {
+const cleanup = (window: Window) => {
   window.api.cleanupChooseProjectFileToOpen();
   window.api.cleanupFileExists();
   window.api.cleanupGetStudioVersion();
@@ -112,13 +112,11 @@ export const useProjectImport = () => {
         );
       case 'writingMeta':
         loaderRef.current.setProgress(5, 5, tl('importing_project_writing_meta'));
-        const { clone: _, ...metaData } = ProjectStudioModel.createProjectStudio(
-          state.projectTitle,
-          state.projectVersion.studioVersion,
-          'graphics/icons/game.png'
-        );
         return window.api.writeProjectMetadata(
-          { path: state.projectDirName, metaData },
+          {
+            path: state.projectDirName,
+            metaData: createProjectStudio(state.projectTitle, state.projectVersion.studioVersion, 'graphics/icons/game.png'),
+          },
           () => {
             setState({ state: 'done' });
             if (!callbacks) return loaderRef.current.close();
@@ -131,9 +129,10 @@ export const useProjectImport = () => {
           }
         );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state, callbacks]);
 
-  return (_: {}, onSuccess: ProjectImportSuccessCallback, onFailure: ProjectImportFailureCallback) => {
+  return (_: unknown, onSuccess: ProjectImportSuccessCallback, onFailure: ProjectImportFailureCallback) => {
     setCallbacks({ onFailure, onSuccess });
     setState({ state: 'choosingProjectFile' });
   };

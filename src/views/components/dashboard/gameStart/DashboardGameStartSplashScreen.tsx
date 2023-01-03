@@ -9,6 +9,7 @@ import { ClearButtonOnlyIcon } from '@components/buttons';
 import { DropInput, DropInputContainer } from '@components/inputs/DropInput';
 import { useImageSaving } from '@utils/useImageSaving';
 import { DragDropContext, Draggable, DraggableProvided, Droppable, DroppableProvided, DropResult } from 'react-beautiful-dnd';
+import { cloneEntity } from '@utils/cloneEntity';
 
 type SplashScreenContainerProps = {
   splashScreenLength: number;
@@ -131,7 +132,7 @@ export const DashboardGameStartSplashScreen = () => {
   const { t } = useTranslation('dashboard_game_start');
   const { projectConfigValues: gameStart, setProjectConfigValues: setGameStart, state } = useConfigSceneTitle();
   const { addImage, removeImage, getImage } = useImageSaving();
-  const currentEditedGameStart = useMemo(() => gameStart.clone(), [gameStart]);
+  const currentEditedGameStart = useMemo(() => cloneEntity(gameStart), [gameStart]);
   const [onDrag, setOnDrag] = useState(false);
 
   const getSplashScreenPath = (filename: string) => {

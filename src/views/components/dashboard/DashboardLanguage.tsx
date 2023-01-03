@@ -4,13 +4,13 @@ import { EditorOverlay } from '@components/editor';
 import { useTranslation } from 'react-i18next';
 import { DashboardEditor } from './DashboardEditor';
 import { Input, InputWithTopLabelContainer, Label } from '@components/inputs';
-import LanguageConfigModel from '@modelEntities/config/LanguageConfig.model';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import { TagWithDeletion } from '@components/Tag';
 import { DashboardLanguageEditor, DashboardLanguageNewEditor } from './editors';
 import { useConfigGameOptions, useConfigLanguage } from '@utils/useProjectConfig';
-import { useGlobalState } from '@src/GlobalStateProvider';
 import { useProjectSavingLanguage } from '@utils/useProjectSavingLanguage';
+import { StudioLanguageConfig } from '@modelEntities/config';
+import { cloneEntity } from '@utils/cloneEntity';
 
 type TagLanguageContainerProps = {
   noHideCode: boolean;
@@ -36,19 +36,19 @@ const TagLanguage = styled.div`
   }
 `;
 
-const languageDefaultEntries = (language: LanguageConfigModel) =>
+const languageDefaultEntries = (language: StudioLanguageConfig) =>
   language.choosableLanguageCode
     .map((code, index) => ({ value: code, label: language.choosableLanguageTexts[index] }))
     .sort((a, b) => a.label.localeCompare(b.label));
 
 const getCode = (languageText: string) => languageText.slice(0, languageText.length === 1 ? 1 : 2).toLocaleLowerCase();
-const isCodeUnique = (language: LanguageConfigModel) => {
+const isCodeUnique = (language: StudioLanguageConfig) => {
   return language.choosableLanguageCode.every(
     (code, codeIndex) => language.choosableLanguageCode.find((c, idx) => c === code && codeIndex !== idx) === undefined
   );
 };
 
-const updateDefaultLanguage = (language: LanguageConfigModel) => {
+const updateDefaultLanguage = (language: StudioLanguageConfig) => {
   if (language.choosableLanguageCode.indexOf(language.defaultLanguage) === -1) {
     language.defaultLanguage = language.choosableLanguageCode[0];
   }
@@ -57,8 +57,8 @@ const updateDefaultLanguage = (language: LanguageConfigModel) => {
 export const DashboardLanguage = () => {
   const { projectConfigValues: language, setProjectConfigValues: setLanguage } = useConfigLanguage();
   const { projectConfigValues: gameOption, setProjectConfigValues: setGameOption } = useConfigGameOptions();
-  const currentEditedLanguage = useMemo(() => language.clone(), [language]);
-  const currentEditedGameOption = useMemo(() => gameOption.clone(), [gameOption]);
+  const currentEditedLanguage = useMemo(() => cloneEntity(language), [language]);
+  const currentEditedGameOption = useMemo(() => cloneEntity(gameOption), [gameOption]);
   const languageDefaultOptions = useMemo(() => languageDefaultEntries(language), [language]);
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const [newLanguage, setNewLanguage] = useState('');
@@ -87,7 +87,9 @@ export const DashboardLanguage = () => {
 
     currentEditedLanguage.choosableLanguageCode.splice(index, 1);
     currentEditedLanguage.choosableLanguageTexts.splice(index, 1);
-    if (currentEditedLanguage.choosableLanguageCode.length <= 1) currentEditedGameOption.removeKeyOfOrder('language');
+    if (currentEditedLanguage.choosableLanguageCode.length <= 1) {
+      currentEditedGameOption.order = currentEditedGameOption.order.filter((k) => k !== 'language');
+    }
     updateDefaultLanguage(currentEditedLanguage);
     setLanguage(currentEditedLanguage);
     setGameOption(currentEditedGameOption);

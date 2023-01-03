@@ -2,59 +2,57 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Editor, useRefreshUI } from '@components/editor';
 import { Input, InputContainer, InputWithLeftLabelContainer, Label } from '@components/inputs';
-import ItemModel from '@modelEntities/item/Item.model';
-import RepelItemModel from '@modelEntities/item/RepelItem.model';
-import EventItemModel from '@modelEntities/item/EventItem.model';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
+import { LOCKED_ITEM_EDITOR, StudioItem } from '@modelEntities/item';
 
 type ItemExplorationDataEditorProps = {
-  item: ItemModel;
+  item: StudioItem;
 };
 
 export const ItemExplorationDataEditor = ({ item }: ItemExplorationDataEditorProps) => {
   const { t } = useTranslation('database_items');
   const refreshUI = useRefreshUI();
-  const repelItem = item instanceof RepelItemModel ? item : undefined;
-  const eventItem = item instanceof EventItemModel ? item : undefined;
+  const isItemRepel = item.klass === 'RepelItem';
+  const isItemEvent = item.klass === 'EventItem';
 
-  return item.lockedEditors.includes('exploration') ? (
+  return LOCKED_ITEM_EDITOR[item.klass].includes('exploration') ? (
     <></>
   ) : (
     <Editor type="edit" title={t('event')}>
       <InputContainer>
-        {repelItem && (
+        {isItemRepel && (
           <InputWithLeftLabelContainer>
             <Label htmlFor="step_number">{t('step_number')}</Label>
             <Input
               type="number"
               name="step_number"
-              value={isNaN(repelItem.repelCount) ? '' : repelItem.repelCount}
+              value={isNaN(item.repelCount) ? '' : item.repelCount}
               min="0"
               max="99999"
               onChange={(event) => {
                 const value = parseInt(event.target.value);
                 if (value < 0 || value > 99_999) return event.preventDefault();
-                refreshUI((repelItem.repelCount = value));
+                refreshUI((item.repelCount = value));
               }}
-              onBlur={() => refreshUI((repelItem.repelCount = cleanNaNValue(repelItem.repelCount)))}
+              onBlur={() => refreshUI((item.repelCount = cleanNaNValue(item.repelCount)))}
             />
           </InputWithLeftLabelContainer>
         )}
-        {eventItem && (
+        {isItemEvent && (
           <InputWithLeftLabelContainer>
             <Label htmlFor="common_event_id">{t('common_event_id')}</Label>
             <Input
               type="number"
               name="common_event_id"
-              value={isNaN(eventItem.eventId) ? '' : eventItem.eventId}
+              value={isNaN(item.eventId) ? '' : item.eventId}
               min="0"
               max="999"
               onChange={(event) => {
                 const value = parseInt(event.target.value);
                 if (value < 0 || value > 999) return event.preventDefault();
-                refreshUI((eventItem.eventId = value));
+                refreshUI((item.eventId = value));
               }}
-              onBlur={() => refreshUI((eventItem.eventId = cleanNaNValue(eventItem.eventId)))}
+              onBlur={() => refreshUI((item.eventId = cleanNaNValue(item.eventId)))}
             />
           </InputWithLeftLabelContainer>
         )}

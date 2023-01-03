@@ -2,13 +2,14 @@ import { Editor, useRefreshUI } from '@components/editor';
 import { Input, InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { EmbeddedUnitInput } from '@components/inputs/EmbeddedUnitInput';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
-import PokemonModel from '@modelEntities/pokemon/Pokemon.model';
+import { CREATURE_SPECIE_TEXT_ID, StudioCreature } from '@modelEntities/creature';
+import { useGetProjectText, useSetProjectText } from '@utils/ReadingProjectText';
 import type { OpenTranslationEditorFunction } from '@utils/useTranslationEditor';
 import React, { FunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type PokedexEditorProps = {
-  currentPokemon: PokemonModel;
+  currentPokemon: StudioCreature;
   currentFormIndex: number;
   openTranslationEditor: OpenTranslationEditorFunction;
 };
@@ -20,6 +21,8 @@ export const PokedexEditor: FunctionComponent<PokedexEditorProps> = ({
 }: PokedexEditorProps) => {
   const { t } = useTranslation('database_pokemon');
   const refreshUI = useRefreshUI();
+  const setText = useSetProjectText();
+  const getText = useGetProjectText();
   const form = currentPokemon.forms[currentFormIndex];
 
   return (
@@ -55,8 +58,8 @@ export const PokedexEditor: FunctionComponent<PokedexEditorProps> = ({
             <Input
               name="species"
               type="text"
-              value={currentPokemon.species()}
-              onChange={(event) => refreshUI(currentPokemon.setSpecies(event.target.value))}
+              value={getText(CREATURE_SPECIE_TEXT_ID, currentPokemon.id)}
+              onChange={(event) => refreshUI(setText(CREATURE_SPECIE_TEXT_ID, currentPokemon.id, event.target.value))}
             />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>

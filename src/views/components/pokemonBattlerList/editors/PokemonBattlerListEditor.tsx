@@ -9,24 +9,27 @@ import {
   Label,
   PaddedInputContainer,
 } from '@components/inputs';
-import Encounter, { cleanExpandPokemonSetup, createEncounter, createOptionalExpandPokemonSetup, LevelMinMax } from '@modelEntities/Encounter';
 import { useTranslation } from 'react-i18next';
 import { SelectAbility, SelectPokemon, SelectPokemonForm } from '@components/selects';
 import { PokemonBattlerListIEVsEditor } from './PokemonBattlerListIEVsEditor';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { useProjectGroups, useProjectPokemon, useProjectTrainers } from '@utils/useProjectData';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { PokemonBattlerListMoveEditor } from './PokemonBattlerListMoveEditor';
 import { PokemonBattlerListMoreInfoEditor } from './PokemonBattlerListMoreInfoEditor';
 import styled from 'styled-components';
 import { ProjectData, useGlobalState } from '@src/GlobalStateProvider';
-import TrainerModel from '@modelEntities/trainer/Trainer.model';
-import GroupModel from '@modelEntities/group/Group.model';
 import { EmbeddedUnitInput } from '@components/inputs/EmbeddedUnitInput';
-import { cleanNaNValue } from '@utils/cleanNaNValue';
+import { cleanExpandPokemonSetup, cleanNaNValue } from '@utils/cleanNaNValue';
 import { CurrentBattlerType } from '../PokemonBattlerList';
 import { SelectNature } from '@components/selects/SelectNature';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
+import { StudioGroup } from '@modelEntities/group';
+import { createExpandPokemonSetup, StudioGroupEncounter } from '@modelEntities/groupEncounter';
+import { createEncounter } from '@utils/entityCreation';
+import { StudioTrainer, updatePartyTrainerName } from '@modelEntities/trainer';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 
 const GroupCollapseContainer = styled.div`
   display: flex;
@@ -67,33 +70,40 @@ const InputNumberLevel = ({ name, max, value, setValue }: InputNumberLevelProps)
   );
 };
 
-const updateGivenName = (battler: Encounter, species: ProjectData['pokemon']) => {
+const updateGivenName = (battler: StudioGroupEncounter, species: ProjectData['pokemon'], getEntityName: ReturnType<typeof useGetEntityNameText>) => {
   const givenNameSetup = battler.expandPokemonSetup.find((eps) => eps.type === 'givenName');
-  if (givenNameSetup) givenNameSetup.value = species[battler.specie]?.name() || '???';
+  if (givenNameSetup) givenNameSetup.value = species[battler.specie] ? getEntityName(species[battler.specie]) : '???';
 };
 
-const updateRareness = (battler: Encounter, species: ProjectData['pokemon']) => {
+const updateRareness = (battler: StudioGroupEncounter, species: ProjectData['pokemon']) => {
   const rarenessSetup = battler.expandPokemonSetup.find((eps) => eps.type === 'rareness');
   if (rarenessSetup) rarenessSetup.value = species[battler.specie]?.forms.find((form) => form.form === battler.form)?.catchRate || 0;
 };
 
-const updateNature = (battler: Encounter, nature: string) => {
+const updateNature = (battler: StudioGroupEncounter, nature: string) => {
   const natureSetup = battler.expandPokemonSetup.find((eps) => eps.type === 'nature');
   if (natureSetup) natureSetup.value = nature;
 };
 
-const getBattler = (model: TrainerModel | GroupModel, index: number) => {
+const getBattler = (model: StudioTrainer | StudioGroup, index: number) => {
   if ('party' in model) return model.party[index];
   return model.encounters[index];
 };
 
-const getIsWild = (model: TrainerModel | GroupModel) => {
+const getIsWild = (model: StudioTrainer | StudioGroup) => {
   return 'encounters' in model;
+};
+
+const createOptionalExpandPokemonSetup = (encounter: StudioGroupEncounter) => {
+  const eps = ['ability', 'nature', 'givenName', 'itemHeld', 'givenName', 'gender', 'caughtWith', 'rareness', 'ivs', 'evs'] as const;
+  eps.forEach(
+    (key) => encounter.expandPokemonSetup.find((setup) => setup.type === key) || encounter.expandPokemonSetup.push(createExpandPokemonSetup(key))
+  );
 };
 
 type PokemonBattlerListEditorProps = {
   type: 'creation' | 'edit';
-  model: TrainerModel | GroupModel;
+  model: StudioTrainer | StudioGroup;
   currentBattler?: CurrentBattlerType;
   isWild?: true;
   onClose?: () => void;
@@ -112,14 +122,15 @@ export const PokemonBattlerListEditor = ({ type, model, currentBattler, onClose 
   const [state] = useGlobalState();
   const { t } = useTranslation(['database_pokemon', 'database_abilities', 'pokemon_battler_list']);
   const refreshUI = useRefreshUI();
+  const getEntityName = useGetEntityNameText();
   createOptionalExpandPokemonSetup(battler);
 
   const checkDisabled = () => battler.specie === '__undef__';
   const onClickNew = () => {
-    cleanExpandPokemonSetup(battler, species, isWild);
+    cleanExpandPokemonSetup(battler, species, isWild, state);
     if ('party' in model) {
       model.party.push(battler);
-      model.updatePartyTrainerName();
+      updatePartyTrainerName(model, getEntityName(model));
       setTrainer({ [model.dbSymbol]: model });
     } else {
       model.encounters.push(battler);
@@ -128,19 +139,19 @@ export const PokemonBattlerListEditor = ({ type, model, currentBattler, onClose 
     if (onClose) onClose();
   };
 
-  const onChangePokemon = (selected: SelectOption) => {
-    battler.specie = selected.value;
+  const onChangePokemon: SelectChangeEvent = (selected) => {
+    battler.specie = selected.value as DbSymbol;
     battler.form = 0;
-    updateGivenName(battler, species);
+    updateGivenName(battler, species, getEntityName);
     updateRareness(battler, species);
   };
 
-  const onChangeForm = (selected: SelectOption) => {
+  const onChangeForm: SelectChangeEvent = (selected) => {
     const form = selected.value === '__undef__' ? -1 : Number(selected.value);
     battler.form = form;
   };
 
-  const onChangeAbility = (selected: SelectOption) => {
+  const onChangeAbility: SelectChangeEvent = (selected) => {
     const abilitySetup = battler.expandPokemonSetup.find((eps) => eps.type === 'ability');
     if (abilitySetup) abilitySetup.value = selected.value;
   };
@@ -151,6 +162,8 @@ export const PokemonBattlerListEditor = ({ type, model, currentBattler, onClose 
     model.party.splice(0, 0, model.party.splice(currentBattler.index, 1)[0]);
     currentBattler.index = 0;
   };
+
+  const levelSetup = battler.levelSetup;
 
   return (
     <EditorWithCollapse type={type} title={t('database_pokemon:pokemon')}>
@@ -185,33 +198,33 @@ export const PokemonBattlerListEditor = ({ type, model, currentBattler, onClose 
                 />
               </InputWithTopLabelContainer>
             )}
-            {!isWild && battler.levelSetup.kind === 'fixed' && (
+            {!isWild && levelSetup.kind === 'fixed' && (
               <InputWithLeftLabelContainer>
                 <Label htmlFor="fixed-level">{t('pokemon_battler_list:level')}</Label>
                 <InputNumberLevel
                   name="fixed-level"
                   max={state.projectConfig.settings_config.pokemonMaxLevel}
-                  value={battler.levelSetup.level}
-                  setValue={(value: number) => refreshUI((battler.levelSetup.level = value))}
+                  value={levelSetup.level}
+                  setValue={(value: number) => refreshUI((levelSetup.level = value))}
                 />
               </InputWithLeftLabelContainer>
             )}
-            {isWild && battler.levelSetup.kind === 'minmax' && (
+            {isWild && levelSetup.kind === 'minmax' && (
               <InputWithLeftLabelContainer>
                 <Label htmlFor="minmax-level">{t('pokemon_battler_list:level')}</Label>
                 <InputWithSeparatorContainer>
                   <InputNumberLevel
                     name="min-level"
                     max={state.projectConfig.settings_config.pokemonMaxLevel}
-                    value={battler.levelSetup.level.minimumLevel}
-                    setValue={(value: number) => refreshUI(((battler.levelSetup.level as LevelMinMax).minimumLevel = value))}
+                    value={levelSetup.level.minimumLevel}
+                    setValue={(value: number) => refreshUI((levelSetup.level.minimumLevel = value))}
                   />
                   <span className="separator">{t('pokemon_battler_list:level_separator')}</span>
                   <InputNumberLevel
                     name="max-level"
                     max={state.projectConfig.settings_config.pokemonMaxLevel}
-                    value={battler.levelSetup.level.maximumLevel}
-                    setValue={(value: number) => refreshUI(((battler.levelSetup.level as LevelMinMax).maximumLevel = value))}
+                    value={levelSetup.level.maximumLevel}
+                    setValue={(value: number) => refreshUI((levelSetup.level.maximumLevel = value))}
                   />
                 </InputWithSeparatorContainer>
               </InputWithLeftLabelContainer>

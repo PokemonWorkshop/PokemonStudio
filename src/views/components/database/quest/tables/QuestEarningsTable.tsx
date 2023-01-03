@@ -1,18 +1,19 @@
 import React, { useMemo } from 'react';
-import QuestModel from '@modelEntities/quest/Quest.model';
 import { DataEarningGrid, DataQuestTable, TableEmpty } from './QuestTableStyle';
 import { useTranslation } from 'react-i18next';
 import { useProjectQuests } from '@utils/useProjectData';
 import { RenderEarning } from './RenderEarning';
+import { cloneEntity } from '@utils/cloneEntity';
+import { StudioQuest } from '@modelEntities/quest';
 
 type QuestEarningsTableProps = {
-  quest: QuestModel;
+  quest: StudioQuest;
   onEdit: (index: number) => void;
 };
 
 export const QuestEarningsTable = ({ quest, onEdit }: QuestEarningsTableProps) => {
   const { setProjectDataValues: setQuest } = useProjectQuests();
-  const currentEditedQuest = useMemo(() => quest.clone(), [quest]);
+  const currentEditedQuest = useMemo(() => cloneEntity(quest), [quest]);
   const { t } = useTranslation('database_quests');
 
   return quest.earnings.length === 0 ? (

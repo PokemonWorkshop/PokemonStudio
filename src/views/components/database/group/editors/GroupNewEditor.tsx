@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Editor, useRefreshUI } from '@components/editor';
+import { Editor } from '@components/editor';
 
 import { TFunction, useTranslation } from 'react-i18next';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
@@ -8,24 +8,20 @@ import styled from 'styled-components';
 import { useProjectGroups } from '@utils/useProjectData';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
-import GroupModel, { GroupActivationsMap, GroupBattleTypes, SystemTags, SystemTag, GroupVariationsMap } from '@modelEntities/group/Group.model';
-import {
-  getActivationValue,
-  getSwitchValue,
-  getVariationValue,
-  needSwitchInput,
-  onActivationChange,
-  onSwitchInputChange,
-  onVariationChange,
-} from '@utils/GroupUtils';
-import { cleanNaNValue } from '@utils/cleanNaNValue';
+import { defineRelationCustomCondition, GroupActivationsMap, GroupBattleTypes, GroupVariationsMap } from '@utils/GroupUtils';
+import { GROUP_NAME_TEXT_ID, GROUP_SYSTEM_TAGS, StudioGroupSystemTag, StudioGroupTool } from '@modelEntities/group';
+import { useSetProjectText } from '@utils/ReadingProjectText';
+import { createGroup } from '@utils/entityCreation';
+import { DbSymbol } from '@modelEntities/dbSymbol';
+import { findFirstAvailableId } from '@utils/ModelUtils';
 
 const groupActivationEntries = (t: TFunction<'database_groups'>) =>
   GroupActivationsMap.map((activation) => ({ value: activation.value, label: t(activation.label) }));
 const groupBattleTypeEntries = (t: TFunction<'database_groups'>) => GroupBattleTypes.map((type) => ({ value: type, label: t(type) }));
-const systemTagsEntries = (t: TFunction<'database_groups'>) => SystemTags.map((tag) => ({ value: tag, label: t(tag) }));
+const systemTagsEntries = (t: TFunction<'database_groups'>) => GROUP_SYSTEM_TAGS.map((tag) => ({ value: tag, label: t(tag) }));
 const groupVariationEntries = (t: TFunction<'database_groups'>) =>
   GroupVariationsMap.map((variation) => ({ value: variation.value, label: t(variation.label) }));
+const isTool = (variation: unknown): variation is StudioGroupTool => ['OldRod', 'GoodRod', 'SuperRod', 'RockSmash'].includes(variation as string);
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -39,21 +35,39 @@ type GroupNewEditorProps = {
 };
 
 export const GroupNewEditor = ({ onClose }: GroupNewEditorProps) => {
-  const { projectDataValues: groups, setProjectDataValues: setGroup, bindProjectDataValue: bindGroup } = useProjectGroups();
+  const { projectDataValues: groups, setProjectDataValues: setGroup } = useProjectGroups();
   const { t } = useTranslation('database_groups');
   const activationOptions = useMemo(() => groupActivationEntries(t), [t]);
   const battleTypeOptions = useMemo(() => groupBattleTypeEntries(t), [t]);
   const systemTagsOptions = useMemo(() => systemTagsEntries(t), [t]);
   const variationOptions = useMemo(() => groupVariationEntries(t), [t]);
+  const setText = useSetProjectText();
 
-  const refreshUI = useRefreshUI();
-  const [newGroup] = useState(bindGroup(GroupModel.createGroup(groups)));
-  const [groupText] = useState({ name: '' });
+  const [name, setName] = useState<string>('');
+  const [activation, setActivation] = useState<typeof activationOptions[number]['value']>('always');
+  const [battleType, setBattleType] = useState<typeof battleTypeOptions[number]['value']>('simple');
+  const [systemTag, setSystemTag] = useState<StudioGroupSystemTag>('Grass');
+  const [variation, setVariation] = useState<typeof variationOptions[number]['value']>('0');
+  const [switchId, setSwitchId] = useState(1);
 
   const onClickNew = () => {
-    newGroup.setName(groupText.name);
-    newGroup.defineRelationCustomCondition();
-    setGroup({ [newGroup.dbSymbol]: newGroup }, { group: newGroup.dbSymbol });
+    const id = findFirstAvailableId(groups, 0);
+    const dbSymbol = `group_${id}` as DbSymbol;
+    const tool = isTool(variation) ? variation : null;
+    const terrainTag = tool ? 0 : Number(variation);
+    const activationSwitchId = activation === 'custom' ? switchId : Number(activation);
+    const group = createGroup(
+      dbSymbol,
+      id,
+      systemTag,
+      terrainTag,
+      tool,
+      battleType === 'double',
+      activation === 'always' ? undefined : { value: activationSwitchId, type: 'enabledSwitch', relationWithPreviousCondition: 'AND' }
+    );
+    defineRelationCustomCondition(group);
+    setText(GROUP_NAME_TEXT_ID, group.id, name);
+    setGroup({ [dbSymbol]: group }, { group: dbSymbol });
     onClose();
   };
 
@@ -64,13 +78,7 @@ export const GroupNewEditor = ({ onClose }: GroupNewEditorProps) => {
           <Label htmlFor="name" required>
             {t('group_name')}
           </Label>
-          <Input
-            type="text"
-            name="name"
-            value={groupText.name}
-            onChange={(event) => refreshUI((groupText.name = event.target.value))}
-            placeholder={t('example_name')}
-          />
+          <Input type="text" name="name" value={name} onChange={(event) => setName(event.currentTarget.value)} placeholder={t('example_name')} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="select-activation">{t('activation')}</Label>
@@ -78,25 +86,24 @@ export const GroupNewEditor = ({ onClose }: GroupNewEditorProps) => {
             <SelectCustomSimple
               id="select-activation"
               options={activationOptions}
-              onChange={(value) => onActivationChange(value, newGroup, refreshUI)}
-              value={getActivationValue(newGroup)}
+              onChange={(value) => setActivation(value as typeof activation)}
+              value={activation}
               noTooltip
             />
-            {needSwitchInput(newGroup) && (
+            {activation === 'custom' && (
               <InputWithLeftLabelContainer>
                 <Label htmlFor="switch">{t('switch')}</Label>
                 <Input
                   type="number"
                   name="switch"
-                  min="0"
+                  min="1"
                   max="99999"
-                  value={isNaN(getSwitchValue(newGroup)) ? '' : getSwitchValue(newGroup)}
+                  value={switchId || ''}
                   onChange={(event) => {
                     const newValue = parseInt(event.target.value);
-                    if (newValue < 0 || newValue > 99999) return event.preventDefault();
-                    onSwitchInputChange(newValue, newGroup, refreshUI);
+                    if (newValue < 1 || newValue > 99999) return event.preventDefault();
+                    setSwitchId(newValue);
                   }}
-                  onBlur={() => onSwitchInputChange(cleanNaNValue(getSwitchValue(newGroup)), newGroup, refreshUI)}
                 />
               </InputWithLeftLabelContainer>
             )}
@@ -107,8 +114,8 @@ export const GroupNewEditor = ({ onClose }: GroupNewEditorProps) => {
           <SelectCustomSimple
             id="select-battle-type"
             options={battleTypeOptions}
-            onChange={(value) => refreshUI((newGroup.isDoubleBattle = value === 'double'))}
-            value={newGroup.isDoubleBattle ? 'double' : 'simple'}
+            onChange={(value) => setBattleType(value as typeof battleType)}
+            value={battleType}
             noTooltip
           />
         </InputWithTopLabelContainer>
@@ -117,8 +124,8 @@ export const GroupNewEditor = ({ onClose }: GroupNewEditorProps) => {
           <SelectCustomSimple
             id="select-environment"
             options={systemTagsOptions}
-            onChange={(value) => refreshUI((newGroup.systemTag = value as SystemTag))}
-            value={newGroup.systemTag ?? 'RegularGround'}
+            onChange={(value) => setSystemTag(value as StudioGroupSystemTag)}
+            value={systemTag}
             noTooltip
           />
         </InputWithTopLabelContainer>
@@ -127,15 +134,15 @@ export const GroupNewEditor = ({ onClose }: GroupNewEditorProps) => {
           <SelectCustomSimple
             id="select-variation"
             options={variationOptions}
-            onChange={(value) => onVariationChange(value, newGroup, refreshUI)}
-            value={getVariationValue(newGroup)}
+            onChange={(value) => setVariation(value as typeof variation)}
+            value={variation}
             noTooltip
           />
         </InputWithTopLabelContainer>
         <ButtonContainer>
           <ToolTipContainer>
-            {groupText.name.length === 0 && <ToolTip bottom="100%">{t('fields_asterisk_required')}</ToolTip>}
-            <PrimaryButton onClick={onClickNew} disabled={groupText.name.length === 0}>
+            {!name && <ToolTip bottom="100%">{t('fields_asterisk_required')}</ToolTip>}
+            <PrimaryButton onClick={onClickNew} disabled={!name}>
               {t('create_group')}
             </PrimaryButton>
           </ToolTipContainer>

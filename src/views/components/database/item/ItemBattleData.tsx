@@ -1,22 +1,21 @@
-import ItemModel from '@modelEntities/item/Item.model';
-import StatBoostItemModel from '@modelEntities/item/StatBoostItem.model';
+import { LOCKED_ITEM_EDITOR, StudioItem } from '@modelEntities/item';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataBlockWithTitle, DataFieldsetField, DataGrid } from '../dataBlocks';
 
-type ItemBattleDataProps = { item: ItemModel; onClick: () => void };
+type ItemBattleDataProps = { item: StudioItem; onClick: () => void };
 
 export const ItemBattleData = ({ item, onClick }: ItemBattleDataProps) => {
   const { t } = useTranslation('database_items');
-  const statBoostItem = item instanceof StatBoostItemModel ? item : undefined;
-  const isDisabled = item.lockedEditors.includes('battle');
+  const isStatBoostItem = item.klass === 'StatBoostItem';
+  const isDisabled = LOCKED_ITEM_EDITOR[item.klass].includes('battle');
 
   return (
     <DataBlockWithTitle size="fourth" title={t('battle')} disabled={isDisabled} onClick={isDisabled ? undefined : onClick}>
-      {!isDisabled && statBoostItem && (
+      {!isDisabled && isStatBoostItem && (
         <DataGrid rows="1fr 1fr 1fr">
-          <DataFieldsetField label={t('statistic')} data={t(statBoostItem.stat as never)} />
-          <DataFieldsetField label={t('value')} data={statBoostItem.count} />
+          <DataFieldsetField label={t('statistic')} data={t(item.stat)} />
+          <DataFieldsetField label={t('value')} data={item.count} />
         </DataGrid>
       )}
     </DataBlockWithTitle>

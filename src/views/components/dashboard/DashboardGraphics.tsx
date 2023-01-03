@@ -3,11 +3,12 @@ import { InputWithLeftLabelContainer, Label, Toggle } from '@components/inputs';
 import { useTranslation } from 'react-i18next';
 import { DashboardEditor } from './DashboardEditor';
 import { useConfigGraphic } from '@utils/useProjectConfig';
+import { cloneEntity } from '@utils/cloneEntity';
 
 export const DashboardGraphics = () => {
   const { t } = useTranslation('dashboard_graphics');
   const { projectConfigValues: graphics, setProjectConfigValues: setGraphics } = useConfigGraphic();
-  const currentEditedGraphics = useMemo(() => graphics.clone(), [graphics]);
+  const currentEditedGraphics = useMemo(() => cloneEntity(graphics), [graphics]);
 
   return (
     <DashboardEditor editorTitle={t('graphic_settings')} title={t('settings')}>

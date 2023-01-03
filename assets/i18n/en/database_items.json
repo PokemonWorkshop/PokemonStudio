@@ -87,6 +87,7 @@
   "DEATH": "K.O.",
   "FLINCH": "Flinch",
   "ALL": "All status",
+  "NONE": "No status",
   "ATK_STAGE": "Attack",
   "ATS_STAGE": "Special Attack",
   "DFE_STAGE": "Defense",

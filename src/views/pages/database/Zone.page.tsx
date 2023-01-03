@@ -5,7 +5,7 @@ import { DeleteButtonWithIcon } from '@components/buttons';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { useTranslation } from 'react-i18next';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { Deletion, DeletionOverlay } from '@components/deletion';
 import { EditorOverlay } from '@components/editor';
 import { ZoneControlBar, ZoneFrame, ZoneGroups, ZoneSettings, ZoneTravel } from '@components/database/zone';
@@ -19,10 +19,14 @@ import {
   ZoneTravelEditor,
 } from '@components/database/zone/editors';
 
-import GroupModel from '@modelEntities/group/Group.model';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
 import { useProjectGroups, useProjectZones } from '@utils/useProjectData';
 import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
+import { defineRelationCustomCondition } from '@utils/GroupUtils';
+import { cloneEntity } from '@utils/cloneEntity';
+import { StudioGroup } from '@modelEntities/group';
+import { cleaningZoneNaNValues } from '@utils/cleanNaNValue';
 
 export const ZonePage = () => {
   const {
@@ -36,13 +40,14 @@ export const ZonePage = () => {
   } = useProjectZones();
   const { projectDataValues: groups, setProjectDataValues: setGroup } = useProjectGroups();
   const { t } = useTranslation('database_zones');
-  const onChange = (selected: SelectOption) => setSelectedDataIdentifier({ zone: selected.value });
+  const getZoneName = useGetEntityNameText();
+  const onChange: SelectChangeEvent = (selected) => setSelectedDataIdentifier({ zone: selected.value });
   const zone = zones[zoneDbSymbol];
-  const currentEditedZone = useMemo(() => zone.clone(), [zone]);
+  const currentEditedZone = useMemo(() => cloneEntity(zone), [zone]);
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
   const [currentGroupIndex, setCurrentGroupIndex] = useState(0);
-  const [currentEditedGroup, setCurrentEditedGroup] = useState<{ data: GroupModel } | undefined>(undefined);
+  const [currentEditedGroup, setCurrentEditedGroup] = useState<{ data: StudioGroup } | undefined>(undefined);
   const shortcutMap = useMemo<StudioShortcutActions>(() => {
     if (currentEditor !== undefined || currentDeletion !== undefined) return {};
 
@@ -51,7 +56,7 @@ export const ZonePage = () => {
       db_next: () => setSelectedDataIdentifier({ zone: getNextDbSymbol('id') }),
       db_new: () => setCurrentEditor('new'),
     };
-  }, [getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
+  }, [currentEditor, currentDeletion, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol]);
   useShortcut(shortcutMap);
   const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
     {
@@ -59,28 +64,28 @@ export const ZonePage = () => {
       translation_description: { fileId: 64, isMultiline: true },
     },
     currentEditedZone.id,
-    currentEditedZone.name()
+    getZoneName(currentEditedZone)
   );
 
   const onCloseEditor = () => {
-    if (currentEditor === 'frame' && currentEditedZone.name() === '') return;
+    if (currentEditor === 'frame' && getZoneName(currentEditedZone) === '') return;
     if (currentEditor === 'new') return setCurrentEditor(undefined);
     if (currentEditor === 'addGroup' || currentEditor === 'importGroup') return setCurrentEditor(undefined);
     if (currentEditor === 'editGroup' && currentEditedGroup) {
-      currentEditedGroup.data.defineRelationCustomCondition();
+      defineRelationCustomCondition(currentEditedGroup.data);
       setZone({ [zone.dbSymbol]: currentEditedZone });
       setGroup({ [currentEditedGroup.data.dbSymbol]: currentEditedGroup.data });
       return setCurrentEditor(undefined);
     }
-    currentEditedZone.cleaningNaNValues();
+    cleaningZoneNaNValues(currentEditedZone);
     setZone({ [zone.dbSymbol]: currentEditedZone });
     setCurrentEditor(undefined);
     closeTranslationEditor();
   };
 
-  const onAddGroup = (editedGroup: GroupModel) => {
+  const onAddGroup = (editedGroup: StudioGroup) => {
     currentEditedZone.wildGroups.push(editedGroup.dbSymbol);
-    editedGroup.defineRelationCustomCondition();
+    defineRelationCustomCondition(editedGroup);
     setZone({ [zone.dbSymbol]: currentEditedZone });
     setGroup({ [editedGroup.dbSymbol]: editedGroup });
     setCurrentEditor(undefined);
@@ -88,7 +93,7 @@ export const ZonePage = () => {
 
   const onEditGroup = (index: number) => {
     setCurrentGroupIndex(index);
-    setCurrentEditedGroup({ data: groups[zone.wildGroups[index]].clone() });
+    setCurrentEditedGroup({ data: cloneEntity(groups[zone.wildGroups[index]]) });
     setCurrentEditor('editGroup');
   };
 
@@ -121,7 +126,7 @@ export const ZonePage = () => {
     zone: (
       <Deletion
         title={t('deletion_of_zone')}
-        message={t('deletion_message', { zone: zone.name() })}
+        message={t('deletion_message', { zone: getZoneName(zone) })}
         onClickDelete={onClickDelete}
         onClose={() => setCurrentDeletion(undefined)}
       />
@@ -129,7 +134,7 @@ export const ZonePage = () => {
     groups: (
       <Deletion
         title={t('deletion_of_groups')}
-        message={t('deletion_groups_message', { zone: zone.name() })}
+        message={t('deletion_groups_message', { zone: getZoneName(zone) })}
         onClickDelete={onClickDeleteGroups}
         onClose={() => setCurrentDeletion(undefined)}
       />

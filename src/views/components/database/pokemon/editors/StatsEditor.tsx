@@ -2,14 +2,13 @@ import { useRefreshUI } from '@components/editor';
 import { EditorWithCollapse } from '@components/editor/Editor';
 import { Input, InputContainer, InputWithLeftLabelContainer, Label } from '@components/inputs';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
-
-import PokemonModel from '@modelEntities/pokemon/Pokemon.model';
+import { StudioCreature } from '@modelEntities/creature';
 
 import React, { FunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type StatsEditorProps = {
-  currentPokemon: PokemonModel;
+  currentPokemon: StudioCreature;
   currentFormIndex: number;
 };
 

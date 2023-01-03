@@ -12,10 +12,11 @@ import {
   DropResult,
   DraggableRubric,
 } from 'react-beautiful-dnd';
-import DexModel from '@modelEntities/dex/Dex.model';
 import { RenderPokemon } from './RenderPokemon';
 import { AutoSizer, List } from 'react-virtualized';
 import ReactDOM from 'react-dom';
+import { cloneEntity } from '@utils/cloneEntity';
+import { StudioDex } from '@modelEntities/dex';
 
 type RowRendererType = {
   key: string;
@@ -24,7 +25,7 @@ type RowRendererType = {
 };
 
 type DexPokemonListTableProps = {
-  dex: DexModel;
+  dex: StudioDex;
   onEdit: (index: number) => void;
   onAddEvolution: (index: number) => void;
 };
@@ -32,7 +33,7 @@ type DexPokemonListTableProps = {
 export const DexPokemonListTable = ({ dex, onEdit, onAddEvolution }: DexPokemonListTableProps) => {
   const { selectedDataIdentifier: selectedDex, setProjectDataValues: setDex } = useProjectDex();
   const { projectDataValues: allPokemon } = useProjectPokemon();
-  const currentEditedDex = useMemo(() => dex.clone(), [dex]);
+  const currentEditedDex = useMemo(() => cloneEntity(dex), [dex]);
   const { t } = useTranslation(['database_dex', 'database_pokemon', 'database_types']);
   const [dragOn, setDragOn] = useState(false);
   const [scrollToRow, setScrollToRow] = useState<number | undefined>(undefined);
@@ -45,7 +46,9 @@ export const DexPokemonListTable = ({ dex, onEdit, onAddEvolution }: DexPokemonL
   const onEditId = (index: number, id: number) => {
     if (index === id - dex.startId) return;
 
-    currentEditedDex.changeId(index, id);
+    const creature = currentEditedDex.creatures[index];
+    currentEditedDex.creatures.splice(index, 1);
+    currentEditedDex.creatures.splice(id - currentEditedDex.startId, 0, creature);
     setDex({ [dex.dbSymbol]: currentEditedDex });
     setScrollToRow(id - dex.startId);
   };

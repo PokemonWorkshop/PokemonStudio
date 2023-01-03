@@ -1,7 +1,6 @@
 import { ClearButtonOnlyIcon, FolderButtonOnlyIcon } from '@components/buttons';
 import { DropInputContainer } from '@components/inputs/DropInput';
 import { ResourceImage } from '@components/ResourceImage';
-import PokemonForm, { CreatureFormResourcesPath, formResourcesPath } from '@modelEntities/pokemon/PokemonForm';
 import React, { DragEventHandler, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -11,7 +10,8 @@ import { useGlobalState } from '@src/GlobalStateProvider';
 import { useShowItemInFolder } from '@utils/useShowItemInFolder';
 import { useCopyFile } from '@utils/useCopyFile';
 import { ResourceContainer } from './ResourcesContainer';
-import { dirname, join } from '@utils/path';
+import { CreatureFormResourcesPath, dirname, formResourcesPath, join } from '@utils/path';
+import { StudioCreatureForm } from '@modelEntities/creature';
 
 const SpriteResourceContainer = styled(ResourceContainer)`
   position: relative;
@@ -93,12 +93,12 @@ const onDragOver: DragEventHandler<HTMLDivElement> = (event) => {
   event.stopPropagation();
 };
 
-const isNoRessource = (form: PokemonForm, resource: CreatureFormResourcesPath, isFemale: boolean) => {
+const isNoRessource = (form: StudioCreatureForm, resource: CreatureFormResourcesPath, isFemale: boolean) => {
   return isFemale ? form.resources[resource] === undefined : form.resources[resource]?.length === 0;
 };
 
 type SpriteResourceProps = {
-  form: PokemonForm;
+  form: StudioCreatureForm;
   resource: CreatureFormResourcesPath;
   isFemale: boolean;
   onResourceChoosen: (filePath: string, resource: CreatureFormResourcesPath) => void;

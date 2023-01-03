@@ -1,15 +1,15 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import DexModel from '@modelEntities/dex/Dex.model';
 import { DataBlockEditor } from '@components/editor';
 import { DexPokemonListTable } from './table';
 import { ProjectData } from '@src/GlobalStateProvider';
+import { StudioDex } from '@modelEntities/dex';
 
-const checkAddUnavailable = (dex: DexModel, allPokemon: ProjectData['pokemon']): boolean => {
+const checkAddUnavailable = (dex: StudioDex, allPokemon: ProjectData['pokemon']): boolean => {
   const sortPokemonDbSymbol = Object.entries(allPokemon)
     .map(([dbSymbol]) => dbSymbol)
     .sort((a, b) => a.localeCompare(b));
-  const sortDexCreatures = dex.clone().creatures.sort((a, b) => a.dbSymbol.localeCompare(b.dbSymbol));
+  const sortDexCreatures = dex.creatures.slice().sort((a, b) => a.dbSymbol.localeCompare(b.dbSymbol));
 
   sortDexCreatures.forEach((creature) => {
     const index = sortPokemonDbSymbol.findIndex((dbSymbol) => dbSymbol === creature.dbSymbol);
@@ -19,7 +19,7 @@ const checkAddUnavailable = (dex: DexModel, allPokemon: ProjectData['pokemon']):
 };
 
 type DexPokemonListProps = {
-  dex: DexModel;
+  dex: StudioDex;
   allDex: ProjectData['dex'];
   allPokemon: ProjectData['pokemon'];
   onDelete: () => void;

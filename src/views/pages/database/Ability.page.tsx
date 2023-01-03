@@ -5,7 +5,7 @@ import { DataBlockWithAction, DataBlockWrapper } from '@components/database/data
 import { DeleteButtonWithIcon, DarkButton } from '@components/buttons';
 import { AbilityControlBar, AbilityFrame, AbilityParametersData } from '@components/database/ability';
 import { AbilityFrameEditor, AbilityNewEditor } from '@components/database/ability/editors';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { EditorOverlay } from '@components/editor';
@@ -15,6 +15,9 @@ import { useProjectAbilities } from '@utils/useProjectData';
 import { useHistory } from 'react-router-dom';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
 import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
+import { useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
+import { useEditorHandlingCloseRef } from '@components/editor/useHandleCloseEditor';
+import { cloneEntity } from '@utils/cloneEntity';
 
 export const AbilityPage = () => {
   const {
@@ -28,10 +31,13 @@ export const AbilityPage = () => {
   } = useProjectAbilities();
   const { t } = useTranslation('database_abilities');
   const history = useHistory();
+  const getAbilityName = useGetEntityNameTextUsingTextId();
   const onClickedPokemonList = () => history.push(`/database/abilities/pokemon`);
-  const onChange = (selected: SelectOption) => setSelectedDataIdentifier({ ability: selected.value });
+  const onChange: SelectChangeEvent = (selected) => setSelectedDataIdentifier({ ability: selected.value });
   const ability = abilities[abilityDbSymbol];
-  const currentEditedAbility = useMemo(() => ability.clone(), [ability]);
+  const abilityName = getAbilityName(ability);
+  const frameEditorRef = useEditorHandlingCloseRef();
+  const currentEditedAbility = useMemo(() => cloneEntity(ability), [ability]);
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
   const shortcutMap = useMemo<StudioShortcutActions>(() => {
@@ -42,7 +48,7 @@ export const AbilityPage = () => {
       db_next: () => setSelectedDataIdentifier({ ability: getNextDbSymbol('name') }),
       db_new: () => setCurrentEditor('new'),
     };
-  }, [getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
+  }, [currentEditor, currentDeletion, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol]);
   useShortcut(shortcutMap);
 
   const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
@@ -51,12 +57,15 @@ export const AbilityPage = () => {
       translation_description: { fileId: 5, isMultiline: true },
     },
     currentEditedAbility.textId,
-    currentEditedAbility.name()
+    getAbilityName(currentEditedAbility)
   );
 
   const onCloseEditor = () => {
     if (currentEditor === 'new') return setCurrentEditor(undefined);
-    if (currentEditor === 'frame' && ability.name() === '') return;
+    if (currentEditor === 'frame') {
+      if (!frameEditorRef.current?.canClose()) return;
+      frameEditorRef.current?.onClose();
+    }
     setAbilities({ [ability.dbSymbol]: currentEditedAbility });
     setCurrentEditor(undefined);
     closeTranslationEditor();
@@ -64,7 +73,7 @@ export const AbilityPage = () => {
 
   const onClickDelete = () => {
     const firstDbSymbol = Object.entries(abilities)
-      .map(([value, abilityData]) => ({ value, index: abilityData.name() }))
+      .map(([value, abilityData]) => ({ value, index: getAbilityName(abilityData) }))
       .filter((d) => d.value !== abilityDbSymbol)
       .sort((a, b) => a.index.localeCompare(b.index))[0].value;
     deleteAbility(abilityDbSymbol, { ability: firstDbSymbol });
@@ -72,15 +81,15 @@ export const AbilityPage = () => {
   };
 
   const editors = {
-    frame: <AbilityFrameEditor ability={ability} openTranslationEditor={openTranslationEditor} />,
+    frame: <AbilityFrameEditor ability={ability} openTranslationEditor={openTranslationEditor} ref={frameEditorRef} />,
     new: <AbilityNewEditor onClose={() => setCurrentEditor(undefined)} />,
   };
 
   const deletions = {
     deletion: (
       <Deletion
-        title={t('deletion_of', { ability: ability.name() })}
-        message={t('deletion_message', { ability: ability.name() })}
+        title={t('deletion_of', { ability: abilityName })}
+        message={t('deletion_message', { ability: abilityName })}
         onClickDelete={onClickDelete}
         onClose={() => setCurrentDeletion(undefined)}
       />
@@ -94,10 +103,10 @@ export const AbilityPage = () => {
         <PageDataConstrainerStyle>
           <DataBlockWrapper>
             <AbilityFrame ability={ability} onClick={() => setCurrentEditor('frame')} />
-            <AbilityParametersData ability={ability} onClick={() => setCurrentEditor('params')} />
+            {/* <AbilityParametersData ability={ability} onClick={() => setCurrentEditor('params')} /> */}
           </DataBlockWrapper>
           <DataBlockWrapper>
-            <DataBlockWithAction size="full" title={`${t('pokemon_with_ability')} ${ability.name()}`}>
+            <DataBlockWithAction size="full" title={`${t('pokemon_with_ability')} ${abilityName}`}>
               <DarkButton onClick={onClickedPokemonList}>{t('button_list_pokemon')}</DarkButton>
             </DataBlockWithAction>
             <DataBlockWithAction size="full" title={t('deleting')}>

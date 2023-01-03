@@ -1,4 +1,5 @@
-import { ProjectData } from '@src/GlobalStateProvider';
+import { ProjectData, State } from '@src/GlobalStateProvider';
+import { getEntityNameTextUsingTextId } from './ReadingProjectText';
 
 /**
  * Get the name of the type.
@@ -6,6 +7,6 @@ import { ProjectData } from '@src/GlobalStateProvider';
  * @param dbSymbol The db_symbol of the type
  * @returns The name of the type. If doesn't exist, return ???
  */
-export const getNameType = (types: ProjectData['types'], dbSymbol: string) => {
-  return types[dbSymbol] ? types[dbSymbol].name() : '???';
+export const getNameType = (types: ProjectData['types'], dbSymbol: string, state: State) => {
+  return types[dbSymbol] ? getEntityNameTextUsingTextId(types[dbSymbol], state) : '???';
 };

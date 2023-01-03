@@ -1,12 +1,11 @@
 import React, { ReactNode } from 'react';
 import { DefaultLanguageType, ProjectCreationData } from '@pages/editors';
 import { PrimaryButton } from './GenericButtons';
-import { serializeLanguageConfig } from '@utils/SerializationUtils';
 import { useHistory } from 'react-router-dom';
-import LanguageConfigModel from '@modelEntities/config/LanguageConfig.model';
 import { useLoaderRef } from '@utils/loaderContext';
 import { useProjectLoad } from '@utils/useProjectLoad';
 import { useProjectNew } from '@utils/useProjectNew';
+import { StudioLanguageConfig } from '@modelEntities/config';
 
 type CreateProjectButtonProps = {
   projectData: Omit<ProjectCreationData, 'clone'>;
@@ -21,14 +20,13 @@ const languageTexts: Record<DefaultLanguageType, string> = {
 };
 
 const getLanguageConfig = (projectData: Omit<ProjectCreationData, 'clone'>): string => {
-  return serializeLanguageConfig(
-    Object.assign(new LanguageConfigModel(), {
-      klass: 'Configs::Project::Language',
-      defaultLanguage: projectData.defaultLanguage,
-      choosableLanguageCode: projectData.multiLanguage ? ['en', 'fr', 'es'] : [projectData.defaultLanguage],
-      choosableLanguageTexts: projectData.multiLanguage ? ['English', 'French', 'Spanish'] : [languageTexts[projectData.defaultLanguage]],
-    })
-  );
+  const config: StudioLanguageConfig = {
+    klass: 'Configs::Project::Language',
+    defaultLanguage: projectData.defaultLanguage,
+    choosableLanguageCode: projectData.multiLanguage ? ['en', 'fr', 'es'] : [projectData.defaultLanguage],
+    choosableLanguageTexts: projectData.multiLanguage ? ['English', 'French', 'Spanish'] : [languageTexts[projectData.defaultLanguage]],
+  };
+  return JSON.stringify(config, null, 2);
 };
 
 export const CreateProjectButton = ({ projectData, children, disabled }: CreateProjectButtonProps) => {

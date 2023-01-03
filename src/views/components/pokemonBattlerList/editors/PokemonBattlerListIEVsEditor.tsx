@@ -2,9 +2,9 @@ import React from 'react';
 import { useRefreshUI } from '@components/editor';
 import { Input, InputWithLeftLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
-import Encounter, { ExpandPokemonSetup } from '@modelEntities/Encounter';
 import { useTranslation } from 'react-i18next';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
+import { StudioGroupEncounter } from '@modelEntities/groupEncounter';
 
 type InputNumberProps = {
   name: string;
@@ -34,18 +34,18 @@ type IEVsType = 'ivs' | 'evs';
 
 type PokemonBattlerListIEVsEditorProps = {
   type: IEVsType;
-  battler: Encounter;
+  battler: StudioGroupEncounter;
   collapseByDefault: boolean;
 };
 
 export const PokemonBattlerListIEVsEditor = ({ type, battler, collapseByDefault }: PokemonBattlerListIEVsEditorProps) => {
   const { t } = useTranslation(['database_pokemon', 'pokemon_battler_list']);
-  const ievs = battler.expandPokemonSetup.find((setup) => setup.type === type) as ExpandPokemonSetup;
+  const ievs = battler.expandPokemonSetup.find((setup) => setup.type === type);
   const refreshUI = useRefreshUI();
 
   return (
     <InputGroupCollapse title={t(`pokemon_battler_list:${type}_title`)} gap="24px" collapseByDefault={collapseByDefault || undefined}>
-      {(ievs.type === 'evs' || ievs.type === 'ivs') && (
+      {ievs && (ievs.type === 'evs' || ievs.type === 'ivs') && (
         <PaddedInputContainer size="xs">
           <InputWithLeftLabelContainer>
             <Label htmlFor="hp">{t('database_pokemon:hit_points')}</Label>

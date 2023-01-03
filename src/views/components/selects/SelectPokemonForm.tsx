@@ -1,16 +1,15 @@
 import React from 'react';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { TFunction, useTranslation } from 'react-i18next';
 import { useGlobalState } from '@src/GlobalStateProvider';
-import PokemonForm from '@modelEntities/pokemon/PokemonForm';
 import { SelectDataGeneric } from './SelectDataGeneric';
 import { SelectDataProps } from './SelectDataProps';
+import { StudioCreatureForm } from '@modelEntities/creature';
 
 type SelectPokemonFormProps = {
   form: number;
 } & SelectDataProps;
 
-const getFormOptions = (t: TFunction<'database_pokemon'>, forms: PokemonForm[]): SelectOption[] =>
+const getFormOptions = (t: TFunction<'database_pokemon'>, forms: StudioCreatureForm[]) =>
   Object.entries(forms).map(([, formData]) => ({ value: formData.form.toString(), label: t('form#') + formData.form }));
 
 /**
@@ -42,7 +41,7 @@ export const SelectPokemonForm = ({
   const currentForm = currentPokemon?.forms.find((_form) => _form.form === form);
   const options = currentPokemon ? getFormOptions(t, currentPokemon.forms) : [];
 
-  const getData = (): SelectOption => {
+  const getData = () => {
     if (!currentPokemon) return { value: dbSymbol, label: t('pokemon_deleted') };
     if (!currentForm) {
       if (form === -1) return { value: form.toString(), label: overwriteNoneValue || t('none') };

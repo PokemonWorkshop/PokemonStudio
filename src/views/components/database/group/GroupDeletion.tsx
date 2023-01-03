@@ -2,6 +2,8 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Deletion } from '@components/deletion';
 import { useProjectGroups, useProjectPokemon } from '@utils/useProjectData';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
+import { cloneEntity } from '@utils/cloneEntity';
 
 type GroupDeletionProps = {
   type: 'group' | 'battler';
@@ -18,8 +20,9 @@ export const GroupDeletion = ({ type, battlerIndex, onClose }: GroupDeletionProp
   } = useProjectGroups();
   const { projectDataValues: species } = useProjectPokemon();
   const { t } = useTranslation('database_groups');
+  const getName = useGetEntityNameText();
   const group = groups[groupDbSymbol];
-  const currentDeletedGroup = useMemo(() => group.clone(), [group]);
+  const currentDeletedGroup = useMemo(() => cloneEntity(group), [group]);
 
   const onClickDelete = () => {
     if (type === 'group') {
@@ -42,9 +45,9 @@ export const GroupDeletion = ({ type, battlerIndex, onClose }: GroupDeletionProp
       message={t(`${type}_deletion_message`, {
         battler:
           battlerIndex != null && !!species[group.encounters[battlerIndex].specie]
-            ? species[group.encounters[battlerIndex].specie].name().replaceAll(' ', '\u00a0')
+            ? getName(species[group.encounters[battlerIndex].specie]).replaceAll(' ', '\u00a0')
             : '???',
-        group: group.name().replaceAll(' ', '\u00a0'),
+        group: getName(group).replaceAll(' ', '\u00a0'),
       })}
       onClickDelete={onClickDelete}
       onClose={onClose}

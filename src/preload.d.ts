@@ -1,5 +1,4 @@
 import { IpcRendererEvent } from 'electron';
-import type ProjectStudioModel from '@modelEntities/ProjectStudio.model';
 import type { PSDKVersion } from '@services/getPSDKVersion';
 import type { BackendTaskWithGenericError, BackendTaskWithGenericErrorAndNoProgress, GenericBackendProgress } from '@utils/BackendTask';
 import type { ProjectFileType } from './backendTasks/chooseProjectFileToOpen';
@@ -10,6 +9,7 @@ import { ProjectText } from './GlobalStateProvider';
 import { StudioShortcut } from '@utils/useShortcuts';
 import { ProjectStudioAction, SavingConfig, SavingData, SavingImage, SavingText } from '@utils/SavingUtils';
 import { ShowMessageBoxTranslation } from './backendTasks/copyFile';
+import { StudioProject } from '@modelEntities/project';
 
 export {};
 
@@ -35,15 +35,15 @@ declare global {
       startPSDKTags: (projectPath: string) => void;
       startPSDKWorldmap: (projectPath: string) => void;
       platform: string;
-      getStudioVersion: BackendTaskWithGenericErrorAndNoProgress<{}, { studioVersion: string }>;
+      getStudioVersion: BackendTaskWithGenericErrorAndNoProgress<Record<string, never>, { studioVersion: string }>;
       cleanupGetStudioVersion: () => void;
       chooseProjectFileToOpen: BackendTaskWithGenericErrorAndNoProgress<{ fileType: ProjectFileType }, { path: string; dirName: string }>;
       cleanupChooseProjectFileToOpen: () => void;
       getProjectInfo: BackendTaskWithGenericErrorAndNoProgress<{ path: string }, { gameTitle: string }>;
       cleanupGetProjectInfo: () => void;
-      writeProjectMetadata: BackendTaskWithGenericErrorAndNoProgress<{ path: string; metaData: Omit<ProjectStudioModel, 'clone'> }, {}>;
+      writeProjectMetadata: BackendTaskWithGenericErrorAndNoProgress<{ path: string; metaData: StudioProject }, Record<string, never>>;
       cleanupWriteProjectMetadata: () => void;
-      readProjectMetadata: BackendTaskWithGenericErrorAndNoProgress<{ path: string }, { metaData: Omit<ProjectStudioModel, 'clone'> }>;
+      readProjectMetadata: BackendTaskWithGenericErrorAndNoProgress<{ path: string }, { metaData: StudioProject }>;
       cleanupReadProjectMetadata: () => void;
       readProjectConfigs: BackendTaskWithGenericError<{ path: string }, ProjectConfigsFromBackEnd, GenericBackendProgress>;
       cleanupReadProjectConfigs: () => void;
@@ -55,21 +55,28 @@ declare global {
       cleanupMigrateData: () => void;
       fileExists: BackendTaskWithGenericErrorAndNoProgress<{ filePath: string }, { result: boolean }>;
       cleanupFileExists: () => void;
-      updateMapInfos: BackendTaskWithGenericErrorAndNoProgress<{ projectPath: string }, {}>;
+      updateMapInfos: BackendTaskWithGenericErrorAndNoProgress<{ projectPath: string }, Record<string, never>>;
       cleanupUpdateMapInfos: () => void;
-      chooseFolder: BackendTaskWithGenericErrorAndNoProgress<{}, { folderPath: string }>;
+      chooseFolder: BackendTaskWithGenericErrorAndNoProgress<Record<string, never>, { folderPath: string }>;
       cleanupChooseFolder: () => void;
-      extractNewProject: BackendTaskWithGenericError<{ projectDirName: string }, {}, { step: number; total: number; stepText: string }>;
+      extractNewProject: BackendTaskWithGenericError<
+        { projectDirName: string },
+        Record<string, never>,
+        { step: number; total: number; stepText: string }
+      >;
       cleanupExtractNewProject: () => void;
-      configureNewProject: BackendTaskWithGenericErrorAndNoProgress<{ projectDirName: string; metaData: ConfigureNewProjectMetaData }, {}>;
+      configureNewProject: BackendTaskWithGenericErrorAndNoProgress<
+        { projectDirName: string; metaData: ConfigureNewProjectMetaData },
+        Record<string, never>
+      >;
       cleanupConfigureNewProject: () => void;
-      saveProjectData: BackendTaskWithGenericErrorAndNoProgress<{ path: string; data: SavingData }, {}>;
+      saveProjectData: BackendTaskWithGenericErrorAndNoProgress<{ path: string; data: SavingData }, Record<string, never>>;
       cleanupSaveProjectData: () => void;
-      saveProjectConfigs: BackendTaskWithGenericErrorAndNoProgress<{ path: string; configs: SavingConfig }, {}>;
+      saveProjectConfigs: BackendTaskWithGenericErrorAndNoProgress<{ path: string; configs: SavingConfig }, Record<string, never>>;
       cleanupSaveProjectConfigs: () => void;
-      saveProjectTexts: BackendTaskWithGenericErrorAndNoProgress<{ path: string; texts: SavingText }, {}>;
+      saveProjectTexts: BackendTaskWithGenericErrorAndNoProgress<{ path: string; texts: SavingText }, Record<string, never>>;
       cleanupSaveProjectTexts: () => void;
-      moveImage: BackendTaskWithGenericErrorAndNoProgress<{ path: string; images: SavingImage }, {}>;
+      moveImage: BackendTaskWithGenericErrorAndNoProgress<{ path: string; images: SavingImage }, Record<string, never>>;
       cleanupMoveImage: () => void;
       projectStudioFile: BackendTaskWithGenericErrorAndNoProgress<
         { path: string; action: ProjectStudioAction; data?: string },
@@ -78,7 +85,7 @@ declare global {
       cleanupProjectStudioFile: () => void;
       chooseFile: BackendTaskWithGenericErrorAndNoProgress<{ name: string; extensions: string[] }, { path: string; dirName: string }>;
       cleanupChooseFile: () => void;
-      showItemInFolder: BackendTaskWithGenericErrorAndNoProgress<{ filePath: string }, {}>;
+      showItemInFolder: BackendTaskWithGenericErrorAndNoProgress<{ filePath: string }, Record<string, never>>;
       cleanupShowItemInFolder: () => void;
       copyFile: BackendTaskWithGenericErrorAndNoProgress<{ srcFile: string; destFile: string; translation: ShowMessageBoxTranslation }, {}>;
       cleanupCopyFile: () => void;

@@ -2,14 +2,15 @@ import React, { useMemo } from 'react';
 import { useRefreshUI } from '@components/editor';
 import { InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
-import Encounter, { createExpandPokemonSetup } from '@modelEntities/Encounter';
 import { TFunction, useTranslation } from 'react-i18next';
 import { SelectDataGeneric } from '@components/selects';
 import { ProjectData } from '@src/GlobalStateProvider';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { useProjectMoves } from '@utils/useProjectData';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
+import { createExpandPokemonSetup, StudioGroupEncounter } from '@modelEntities/groupEncounter';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 
-const findOrCreateMoves = (battler: Encounter) => {
+const findOrCreateMoves = (battler: StudioGroupEncounter) => {
   const moves = battler.expandPokemonSetup.find((setup) => setup.type === 'moves');
   if (!moves) {
     const newMoves = createExpandPokemonSetup('moves');
@@ -19,22 +20,30 @@ const findOrCreateMoves = (battler: Encounter) => {
   return moves;
 };
 
-const getMoveOptions = (allMoves: ProjectData['moves'], t: TFunction<('pokemon_battler_list' | 'database_moves')[]>): SelectOption[] => {
-  const moveOptions = Object.entries(allMoves)
-    .map(([value, moveData]) => ({ value, label: moveData.name(), index: moveData.id }))
-    .sort((a, b) => a.index - b.index)
-    .map((data) => ({ value: data.value, label: data.label }));
-  moveOptions.unshift({ value: '__remove__', label: t('pokemon_battler_list:none') });
-  return moveOptions;
-};
+const getMoveOptions = (
+  allMoves: ProjectData['moves'],
+  t: TFunction<('pokemon_battler_list' | 'database_moves')[]>,
+  getMoveName: ReturnType<typeof useGetEntityNameText>
+) => [
+  { value: '__remove__', label: t('pokemon_battler_list:none') },
+  ...Object.values(allMoves)
+    .sort((a, b) => a.id - b.id)
+    .map((moveData) => ({ value: moveData.dbSymbol, label: getMoveName(moveData) })),
+];
 
-const getData = (move: string, allMoves: ProjectData['moves'], t: TFunction<('pokemon_battler_list' | 'database_moves')[]>): SelectOption => {
-  const name = allMoves[move]?.name();
-  return { value: move, label: name ? name : move === '__remove__' ? t('pokemon_battler_list:none') : t('database_moves:move_deleted') };
+const getData = (
+  move: string,
+  allMoves: ProjectData['moves'],
+  t: TFunction<('pokemon_battler_list' | 'database_moves')[]>,
+  getMoveName: ReturnType<typeof useGetEntityNameText>
+) => {
+  const label =
+    (allMoves[move] && getMoveName(allMoves[move])) || (move === '__remove__' ? t('pokemon_battler_list:none') : t('database_moves:move_deleted'));
+  return { value: move, label };
 };
 
 type PokemonBattlerListMoveEditorProps = {
-  battler: Encounter;
+  battler: StudioGroupEncounter;
   collapseByDefault: boolean;
 };
 
@@ -42,7 +51,9 @@ export const PokemonBattlerListMoveEditor = ({ battler, collapseByDefault }: Pok
   const { t } = useTranslation(['pokemon_battler_list', 'database_moves']);
   const moves = findOrCreateMoves(battler);
   const { projectDataValues: movesData } = useProjectMoves();
-  const moveOptions = useMemo(() => getMoveOptions(movesData, t), [movesData, t]);
+  const getMoveName = useGetEntityNameText();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const moveOptions = useMemo(() => getMoveOptions(movesData, t, getMoveName), [movesData]);
   const refreshUI = useRefreshUI();
 
   return (
@@ -53,9 +64,9 @@ export const PokemonBattlerListMoveEditor = ({ battler, collapseByDefault }: Pok
             <InputWithTopLabelContainer key={`${move}-${index}`}>
               <Label htmlFor={`move-${index}`}>{t('pokemon_battler_list:move', { id: index + 1 })}</Label>
               <SelectDataGeneric
-                data={getData(move, movesData, t)}
+                data={getData(move, movesData, t, getMoveName)}
                 options={moveOptions}
-                onChange={(selected) => refreshUI((moves.value[index] = selected.value))}
+                onChange={(selected) => refreshUI((moves.value[index] = selected.value as DbSymbol))}
                 noOptionsText={t('database_moves:no_option')}
                 error={!movesData[move] && move !== '__undef__' && move !== '__remove__'}
                 noneValue

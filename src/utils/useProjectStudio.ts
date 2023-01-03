@@ -1,4 +1,4 @@
-import ProjectStudioModel from '@modelEntities/ProjectStudio.model';
+import { StudioProject } from '@modelEntities/project';
 import { useGlobalState } from '@src/GlobalStateProvider';
 
 /**
@@ -14,7 +14,7 @@ export const useProjectStudio = () => {
   const [state, setState] = useGlobalState();
   const projectStudioValues = state.projectStudio;
 
-  const setProjectStudioValues = (newStudioValues: ProjectStudioModel) => {
+  const setProjectStudioValues = (newStudioValues: StudioProject) => {
     if (JSON.stringify(newStudioValues) !== JSON.stringify(projectStudioValues)) {
       setState((currentState) => ({
         ...currentState,

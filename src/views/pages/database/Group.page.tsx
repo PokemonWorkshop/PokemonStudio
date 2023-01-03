@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { DataBlockWithAction, DataBlockWrapper } from '@components/database/dataBlocks';
 import { DeleteButtonWithIcon } from '@components/buttons';
 
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { EditorOverlay } from '@components/editor';
@@ -17,12 +17,16 @@ import { GroupFrameEditor, GroupNewEditor } from '@components/database/group/edi
 import { GroupDeletion } from '@components/database/group/GroupDeletion';
 import { GroupBattlerImportEditor } from '@components/database/group/editors/GroupBattlerImportEditor';
 import { PokemonBattlerListEditor } from '@components/pokemonBattlerList/editors';
-import { cleanExpandPokemonSetup } from '@modelEntities/Encounter';
 import { CurrentBattlerType } from '@components/pokemonBattlerList/PokemonBattlerList';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
 import { showNotification } from '@utils/showNotification';
-import { ToolGroup } from '@modelEntities/group/Group.model';
 import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
+import { useGlobalState } from '@src/GlobalStateProvider';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
+import { StudioGroupTool } from '@modelEntities/group';
+import { defineRelationCustomCondition } from '@utils/GroupUtils';
+import { cleanExpandPokemonSetup, cleanNaNValue } from '@utils/cleanNaNValue';
+import { cloneEntity } from '@utils/cloneEntity';
 
 export const GroupPage = () => {
   const {
@@ -35,9 +39,11 @@ export const GroupPage = () => {
   } = useProjectGroups();
   const { projectDataValues: species } = useProjectPokemon();
   const { t } = useTranslation('database_groups');
-  const onChange = (selected: SelectOption) => setSelectedDataIdentifier({ group: selected.value });
+  const getGroupName = useGetEntityNameText();
+  const [state] = useGlobalState();
+  const onChange: SelectChangeEvent = (selected) => setSelectedDataIdentifier({ group: selected.value });
   const group = groups[groupDbSymbol];
-  const currentEditedGroup = useMemo(() => group.clone(), [group]);
+  const currentEditedGroup = useMemo(() => cloneEntity(group), [group]);
 
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
@@ -49,7 +55,7 @@ export const GroupPage = () => {
       db_next: () => setSelectedDataIdentifier({ group: getNextDbSymbol('id') }),
       db_new: () => setCurrentEditor('new'),
     };
-  }, [getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
+  }, [currentEditor, currentDeletion, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol]);
   useShortcut(shortcutMap);
   const [currentBattler, setCurrentBattler] = useState<CurrentBattlerType>({
     index: undefined,
@@ -60,12 +66,12 @@ export const GroupPage = () => {
       translation_name: { fileId: 61 },
     },
     currentEditedGroup.id,
-    currentEditedGroup.name()
+    getGroupName(currentEditedGroup)
   );
 
   const onCloseEditor = () => {
-    if (currentEditor === 'frame' && currentEditedGroup.name() === '') return;
-    if (currentEditor === 'frame') currentEditedGroup.defineRelationCustomCondition();
+    if (currentEditor === 'frame' && getGroupName(currentEditedGroup) === '') return;
+    if (currentEditor === 'frame') defineRelationCustomCondition(currentEditedGroup);
     if (
       currentEditor === 'editBattler' &&
       currentBattler.index !== undefined &&
@@ -73,11 +79,13 @@ export const GroupPage = () => {
     )
       return;
     if (currentEditor === 'editBattler' && currentBattler.index !== undefined)
-      cleanExpandPokemonSetup(currentEditedGroup.encounters[currentBattler.index], species, true);
+      cleanExpandPokemonSetup(currentEditedGroup.encounters[currentBattler.index], species, true, state);
     if (currentEditor === 'newBattler' || currentEditor === 'new') return setCurrentEditor(undefined);
 
-    currentEditedGroup.cleaningNaNValues();
-    setGroup({ [group.dbSymbol]: currentEditedGroup });
+    currentEditedGroup.customConditions
+      .filter((condition) => condition.type === 'enabledSwitch')
+      .forEach((condition) => (condition.value = cleanNaNValue(condition.value)));
+    setGroup({ [group.dbSymbol]: cloneEntity(currentEditedGroup) });
     setCurrentEditor(undefined);
     closeTranslationEditor();
   };
@@ -105,9 +113,10 @@ export const GroupPage = () => {
   };
 
   useEffect(() => {
-    if ((group.tool as ToolGroup & 'HeadButt') === 'HeadButt') {
+    if ((group.tool as StudioGroupTool & 'HeadButt') === 'HeadButt') {
       showNotification('warning', t('title_data_modification'), t('warning_headbutt_data_change'));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

@@ -4,11 +4,12 @@ import { Editor, useRefreshUI } from '@components/editor';
 import { useTranslation } from 'react-i18next';
 import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
 
-import QuestModel from '@modelEntities/quest/Quest.model';
 import styled from 'styled-components';
 import { SelectQuest } from '@components/selects';
 import { useProjectQuests } from '@utils/useProjectData';
 import { DarkButton, PrimaryButton } from '@components/buttons';
+import { cloneEntity } from '@utils/cloneEntity';
+import { StudioQuest } from '@modelEntities/quest';
 
 const GoalImportInfo = styled.div`
   ${({ theme }) => theme.fonts.normalRegular};
@@ -24,7 +25,7 @@ const ButtonContainer = styled.div`
 `;
 
 type QuestGoalImportEditorProps = {
-  quest: QuestModel;
+  quest: StudioQuest;
   onClose: () => void;
 };
 
@@ -40,8 +41,8 @@ export const QuestGoalImportEditor = ({ quest, onClose }: QuestGoalImportEditorP
   const refreshUI = useRefreshUI();
 
   const onClickImport = () => {
-    if (override) quest.objectives = quests[selectedQuest].clone().objectives;
-    else quest.objectives.push(...quests[selectedQuest].clone().objectives);
+    if (override) quest.objectives = cloneEntity(quests[selectedQuest].objectives);
+    else quest.objectives.push(...cloneEntity(quests[selectedQuest].objectives));
     setQuest({ [quest.dbSymbol]: quest });
     onClose();
   };

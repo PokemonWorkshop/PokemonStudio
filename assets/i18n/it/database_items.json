@@ -87,6 +87,7 @@
   "DEATH": "K.O.",
   "FLINCH": "Tentennamento",
   "ALL": "Tutti gli stati",
+  "NONE": "Nessuno Stato",
   "ATK_STAGE": "Attacco",
   "ATS_STAGE": "Attacco Speciale",
   "DFE_STAGE": "Difesa",

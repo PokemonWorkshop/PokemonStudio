@@ -1,26 +1,26 @@
+import { StudioMoveStatus } from '@modelEntities/move';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { MoveStatus } from '../../../../../models/entities/move/Move.model';
 import { DataBlockWithTitle, DataFieldsetField, DataGrid } from '../../dataBlocks';
 import { MoveDataProps } from '../MoveDataPropsInterface';
 
-const isDisabledStatus = (status: MoveStatus[] | null, index: number) => {
+const isDisabledStatus = (status: StudioMoveStatus[] | null, index: number) => {
   return status === null || status.length <= index || status[index].status === null ? true : undefined;
 };
 
-const isDisabledLuckRate = (status: MoveStatus[] | null, index: number) => {
+const isDisabledLuckRate = (status: StudioMoveStatus[] | null, index: number) => {
   return status === null || status.length <= index || status[index].luckRate === 0 ? true : undefined;
 };
 
 export const StatusDataBlock = ({ move, onClick }: MoveDataProps) => {
   const { t } = useTranslation(['database_moves']);
 
-  const getStatus = (status: MoveStatus[] | null, index: number) => {
+  const getStatus = (status: StudioMoveStatus[] | null, index: number) => {
     if (status === null || status.length <= index || status[index].status === null) return t('database_moves:none');
     return t(`database_moves:${status[index].status}` as never);
   };
 
-  const getLuckRate = (status: MoveStatus[] | null, index: number) => {
+  const getLuckRate = (status: StudioMoveStatus[] | null, index: number) => {
     if (status === null || status.length <= index || status[index].luckRate === 0) return t('database_moves:none');
     return `${status[index].luckRate} %`;
   };

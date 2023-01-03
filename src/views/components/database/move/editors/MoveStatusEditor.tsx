@@ -1,28 +1,59 @@
 import React, { useMemo } from 'react';
 import { Editor, useRefreshUI } from '@components/editor';
-import MoveModel, { MoveStatusList } from '@modelEntities/move/Move.model';
 import { TFunction, useTranslation } from 'react-i18next';
 import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PercentInput } from '@components/inputs';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import styled from 'styled-components';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
+import { MOVE_STATUS_LIST, StudioMove, StudioMoveStatusList } from '@modelEntities/move';
 
-const moveStatusEntries = (t: TFunction<'database_moves'[]>) => {
-  const entries = MoveStatusList.map((status) => ({
+const moveStatusEntries = (t: TFunction<'database_moves'[]>) => [
+  { value: '', label: t('database_moves:none') },
+  ...MOVE_STATUS_LIST.map((status) => ({
     value: status,
     label: t(`database_moves:${status}`),
-  })).sort((a, b) => a.label.localeCompare(b.label)) as SelectOption[];
-  entries.unshift({ value: '', label: t('database_moves:none') });
-  return entries;
-};
+  })).sort((a, b) => a.label.localeCompare(b.label)),
+];
 
-const createDefaultStatus = (move: MoveModel) => {
+const createDefaultStatus = (move: StudioMove) => {
   if (move.moveStatus.length === 0) move.moveStatus.push({ status: null, luckRate: 0 });
 };
 
+/**
+ * Remove useless move status
+ * @param index The index of the status in move status
+ */
+const removeUselessMoveStatus = (move: StudioMove, index: number) => {
+  if (move.moveStatus[index].status || move.moveStatus[index].luckRate !== 0) return;
+  if (index === 0) move.moveStatus = [{ status: null, luckRate: 0 }];
+  if (index === 1) move.moveStatus = [{ status: move.moveStatus[0].status, luckRate: move.moveStatus[0].luckRate }];
+  if (index === 2) move.moveStatus.pop();
+};
+
+/**
+ * Set the move status of the move
+ * @param index The index of the status in move status
+ * @param status The status to set
+ */
+const setMoveStatus = (move: StudioMove, index: number, status: StudioMoveStatusList | '') => {
+  if (index < move.moveStatus.length) move.moveStatus[index].status = status === '' ? null : status;
+  else move.moveStatus.push({ status: status || null, luckRate: 0 });
+  removeUselessMoveStatus(move, index);
+};
+
+/**
+ * Set the luck rate of the move status of the move
+ * @param index The index of the status in move status
+ * @param luckRate The luck rate to set
+ */
+const setMoveStatusLuckRate = (move: StudioMove, index: number, luckRate: number) => {
+  if (index < move.moveStatus.length) move.moveStatus[index].luckRate = luckRate;
+  else move.moveStatus.push({ status: null, luckRate: luckRate });
+  removeUselessMoveStatus(move, index);
+};
+
 type MoveStatusEditorProps = {
-  move: MoveModel;
+  move: StudioMove;
 };
 
 const InputContainerStatus = styled.div`
@@ -46,7 +77,7 @@ export const MoveStatusEditor = ({ move }: MoveStatusEditorProps) => {
             <SelectCustomSimple
               id="select-status-1"
               options={statusOptions}
-              onChange={(value) => refreshUI(move.setMoveStatus(0, value))}
+              onChange={(value) => refreshUI(setMoveStatus(move, 0, value as StudioMoveStatusList))}
               value={move.moveStatus[0].status || ''}
               noTooltip
             />
@@ -62,9 +93,9 @@ export const MoveStatusEditor = ({ move }: MoveStatusEditorProps) => {
               onChange={(event) => {
                 const newValue = event.target.value === '' ? Number.NaN : Number(event.target.value);
                 if (newValue < 0 || newValue > 100) return event.preventDefault();
-                refreshUI(move.setMoveStatusLuckRate(0, newValue));
+                refreshUI(setMoveStatusLuckRate(move, 0, newValue));
               }}
-              onBlur={() => refreshUI(move.setMoveStatusLuckRate(0, cleanNaNValue(move.moveStatus[0].luckRate)))}
+              onBlur={() => refreshUI(setMoveStatusLuckRate(move, 0, cleanNaNValue(move.moveStatus[0].luckRate)))}
             />
           </InputWithLeftLabelContainer>
         </InputContainerStatus>
@@ -75,7 +106,7 @@ export const MoveStatusEditor = ({ move }: MoveStatusEditorProps) => {
               <SelectCustomSimple
                 id="select-status-2"
                 options={statusOptions}
-                onChange={(value) => refreshUI(move.setMoveStatus(1, value))}
+                onChange={(value) => refreshUI(setMoveStatus(move, 1, value as StudioMoveStatusList))}
                 value={move.moveStatus.length >= 2 ? move.moveStatus[1].status || '' : ''}
                 noTooltip
               />
@@ -91,12 +122,12 @@ export const MoveStatusEditor = ({ move }: MoveStatusEditorProps) => {
                 onChange={(event) => {
                   const newValue = event.target.value === '' ? Number.NaN : Number(event.target.value);
                   if (newValue < 0 || newValue > 100) return event.preventDefault();
-                  refreshUI(move.setMoveStatusLuckRate(1, newValue));
+                  refreshUI(setMoveStatusLuckRate(move, 1, newValue));
                 }}
                 onBlur={() => {
                   if (!move.moveStatus[1]) return;
                   const luckRate = move.moveStatus[1].luckRate;
-                  refreshUI(move.setMoveStatusLuckRate(1, cleanNaNValue(luckRate)));
+                  refreshUI(setMoveStatusLuckRate(move, 1, cleanNaNValue(luckRate)));
                 }}
               />
             </InputWithLeftLabelContainer>
@@ -109,7 +140,7 @@ export const MoveStatusEditor = ({ move }: MoveStatusEditorProps) => {
               <SelectCustomSimple
                 id="select-status-3"
                 options={statusOptions}
-                onChange={(value) => refreshUI(move.setMoveStatus(2, value))}
+                onChange={(value) => refreshUI(setMoveStatus(move, 2, value as StudioMoveStatusList))}
                 value={move.moveStatus.length == 3 ? move.moveStatus[2].status || '' : ''}
                 noTooltip
               />
@@ -125,12 +156,12 @@ export const MoveStatusEditor = ({ move }: MoveStatusEditorProps) => {
                 onChange={(event) => {
                   const newValue = event.target.value === '' ? Number.NaN : Number(event.target.value);
                   if (newValue < 0 || newValue > 100) return event.preventDefault();
-                  refreshUI(move.setMoveStatusLuckRate(2, newValue));
+                  refreshUI(setMoveStatusLuckRate(move, 2, newValue));
                 }}
                 onBlur={() => {
                   if (!move.moveStatus[2]) return;
                   const luckRate = move.moveStatus[2].luckRate;
-                  refreshUI(move.setMoveStatusLuckRate(2, cleanNaNValue(luckRate)));
+                  refreshUI(setMoveStatusLuckRate(move, 2, cleanNaNValue(luckRate)));
                 }}
               />
             </InputWithLeftLabelContainer>

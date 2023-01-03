@@ -1,14 +1,15 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataBlockContainer, DataFieldsetField, DataGrid, DataInfoContainer, DataInfoContainerHeaderTitle } from '../dataBlocks';
-import GroupModel, { GroupVariationsMap } from '@modelEntities/group/Group.model';
-import { getActivationLabel, getVariationValue } from '@utils/GroupUtils';
+import { getActivationLabel, getVariationValue, GroupVariationsMap } from '@utils/GroupUtils';
 import styled from 'styled-components';
 import { padStr } from '@utils/PadStr';
 import { DataFieldsetFieldWithChild } from '../dataBlocks/DataFieldsetField';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
+import { StudioGroup } from '@modelEntities/group';
 
 type GroupFrameProps = {
-  group: GroupModel;
+  group: StudioGroup;
   onClick: () => void;
 };
 
@@ -41,6 +42,7 @@ const EnvironmentContainer = styled.div`
 
 export const GroupFrame = ({ group, onClick }: GroupFrameProps) => {
   const { t } = useTranslation('database_groups');
+  const getGroupName = useGetEntityNameText();
   const variationText = GroupVariationsMap.find((variation) => variation.value === getVariationValue(group))?.label;
 
   return (
@@ -49,7 +51,7 @@ export const GroupFrame = ({ group, onClick }: GroupFrameProps) => {
         <GroupInfoContainer>
           <DataInfoContainerHeaderTitle>
             <h1>
-              {group.name()}
+              {getGroupName(group)}
               <span className="data-id">#{padStr(group.id, 3)}</span>
             </h1>
           </DataInfoContainerHeaderTitle>

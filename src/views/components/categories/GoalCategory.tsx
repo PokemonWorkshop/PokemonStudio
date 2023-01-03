@@ -1,8 +1,8 @@
+import { StudioQuestObjectiveCategoryType } from '@modelEntities/quest';
 import styled from 'styled-components';
 import { Category } from './Category';
-import { ObjectiveCategoryType } from '@modelEntities/quest/Quest.model';
 
-type GoalCategoryProps = { category: ObjectiveCategoryType };
+type GoalCategoryProps = { category: StudioQuestObjectiveCategoryType };
 
 export const GoalCategory = styled(Category).attrs<GoalCategoryProps>((props) => ({
   'data-category': props.category,

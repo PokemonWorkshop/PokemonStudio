@@ -1,15 +1,16 @@
 import React, { useMemo } from 'react';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
-import PSDKEntity from '@modelEntities/PSDKEntity';
+import { SelectOption, SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { SelectCustom, SelectCustomWithLabel, SelectCustomWithLabelResponsive } from '@components/SelectCustom';
 import { ProjectData } from '@src/GlobalStateProvider';
 import { TFunction, useTranslation } from 'react-i18next';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 
+type Entity = { dbSymbol: DbSymbol };
 type SelectDataGenericProps = {
-  data: PSDKEntity | SelectOption;
+  data: Entity | SelectOption;
   options: SelectOption[];
   noOptionsText: string;
-  onChange: (selected: SelectOption) => void;
+  onChange: SelectChangeEvent;
   label?: string;
   error?: boolean;
   rejected?: string[];
@@ -18,19 +19,32 @@ type SelectDataGenericProps = {
   overwriteNoneValue?: string;
 };
 
-export const getDataOptions = (projectData: ProjectData, key: keyof ProjectData, alphabeticalOrder?: boolean): SelectOption[] =>
-  Object.entries(projectData[key])
-    .map(([value, data]) => ({ value, label: data.name(), index: data.id }))
-    .sort((a, b) => (alphabeticalOrder ? a.label.localeCompare(b.label) : a.index - b.index));
+export const getSelectDataOptionsOrderedById = <K extends keyof ProjectData>(
+  projectData: ProjectData,
+  key: K,
+  getText: (entity: typeof projectData[K][string]) => string
+): SelectOption[] =>
+  Object.values(projectData[key])
+    .sort((a, b) => a.id - b.id)
+    .map((data) => ({ value: data.dbSymbol, label: getText(data) }));
 
-const getValue = (data: PSDKEntity | SelectOption, t: TFunction<'select'>, overwriteNoneValue?: string) => {
+export const getSelectDataOptionsOrderedByLabel = <K extends keyof ProjectData>(
+  projectData: ProjectData,
+  key: K,
+  getText: (entity: typeof projectData[K][string]) => string
+): SelectOption[] =>
+  Object.values(projectData[key])
+    .map((data) => ({ value: data.dbSymbol, label: getText(data) }))
+    .sort((a, b) => a.label.localeCompare(b.label));
+
+const getValue = (data: Entity | SelectOption, t: TFunction<'select'>, options: SelectOption[], overwriteNoneValue?: string) => {
   if ('value' in data && data.value === '__undef__') return { value: data.value, label: overwriteNoneValue || t('none') };
   if ('value' in data) return data;
-  return { value: data.dbSymbol, label: data.name() };
+  return options.find(({ value }) => value === data.dbSymbol) || { value: data.dbSymbol, label: overwriteNoneValue || t('none') };
 };
 
 const getOptions = (selectOptions: SelectOption[], t: TFunction<'select'>, rejected?: string[], noneValue?: true, overwriteNoneValue?: string) => {
-  const options = rejected ? selectOptions.filter((so) => !rejected.includes(so.value)) : selectOptions;
+  const options = rejected ? selectOptions.filter((so) => !rejected.includes(so.value)) : selectOptions.slice();
   if (noneValue && (options.length === 0 || options[0].value !== '__undef__')) {
     options.unshift({ value: '__undef__', label: overwriteNoneValue || t('none') });
   }
@@ -60,7 +74,7 @@ export const SelectDataGeneric = ({
   return label ? (
     breakpoint ? (
       <SelectCustomWithLabelResponsive
-        value={getValue(data, t, overwriteNoneValue)}
+        value={getValue(data, t, options, overwriteNoneValue)}
         options={genericOptions}
         noOptionsText={noOptionsText}
         onChange={onChange}
@@ -70,7 +84,7 @@ export const SelectDataGeneric = ({
       />
     ) : (
       <SelectCustomWithLabel
-        value={getValue(data, t, overwriteNoneValue)}
+        value={getValue(data, t, options, overwriteNoneValue)}
         options={genericOptions}
         noOptionsText={noOptionsText}
         onChange={onChange}
@@ -80,7 +94,7 @@ export const SelectDataGeneric = ({
     )
   ) : (
     <SelectCustom
-      value={getValue(data, t, overwriteNoneValue)}
+      value={getValue(data, t, options, overwriteNoneValue)}
       options={genericOptions}
       noOptionsText={noOptionsText}
       onChange={onChange}

@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 import { PokemonBattlerListComponent, PokemonBattlerListGrid, PokemonBattlerListHeader } from '@components/pokemonBattlerList/PokemonBattlerList';
-import { BagEntry } from '@modelEntities/trainer/Trainer.model';
 import { useTranslation } from 'react-i18next';
 import React from 'react';
 import { DarkButton, SecondaryButtonWithPlusIconResponsive } from '@components/buttons';
 import { ItemBagEntry } from './ItemBagEntry';
+import { StudioTrainerBagEntry } from '@modelEntities/trainer';
 
 type BagEntryListProps = {
   title: string;
@@ -12,7 +12,7 @@ type BagEntryListProps = {
   onClickImport: () => void;
   onClickDelete: (index: number) => void;
   onClickEdit: (index: number) => void;
-  bagEntries: BagEntry[];
+  bagEntries: StudioTrainerBagEntry[];
   disabledImport: boolean;
 };
 

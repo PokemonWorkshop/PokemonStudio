@@ -1,27 +1,45 @@
 import React from 'react';
 import { Editor, useRefreshUI } from '@components/editor';
-import MoveModel, { BattleStageType } from '@modelEntities/move/Move.model';
 import { useTranslation } from 'react-i18next';
-import { Input, InputContainer, InputWithLeftLabelContainer, Label, PercentInput } from '@components/inputs';
+import { Input, InputContainer, InputWithLeftLabelContainer, Label } from '@components/inputs';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
+import { getBattleStageModModificator, StudioMove, StudioMoveBattleStage } from '@modelEntities/move';
 
 type MoveStatisticsEditorProps = {
-  move: MoveModel;
+  move: StudioMove;
 };
 
-const value = (stageType: BattleStageType, move: MoveModel) => {
-  return isNaN(move.getBattleStageModModificator(stageType)) ? '' : move.getBattleStageModModificator(stageType);
+/**
+ * Set the battle stage mod modificator
+ * @param stageType The type of the battle stage
+ * @param modificator The modificator of the battle stage
+ */
+const setBattleStageMod = (move: StudioMove, stageType: StudioMoveBattleStage, modificator: number) => {
+  const currentStageMod = move.battleStageMod.find((stat) => stat.battleStage === stageType);
+  if (!currentStageMod) {
+    if (modificator !== 0) move.battleStageMod.push({ battleStage: stageType, modificator: modificator });
+    return;
+  }
+  if (modificator !== 0) {
+    currentStageMod.modificator = modificator;
+    return;
+  }
+  move.battleStageMod.splice(move.battleStageMod.indexOf(currentStageMod), 1);
 };
 
-const onChange = (event: React.ChangeEvent<HTMLInputElement>, stageType: BattleStageType, move: MoveModel) => {
+const value = (stageType: StudioMoveBattleStage, move: StudioMove) => {
+  return isNaN(getBattleStageModModificator(move, stageType)) ? '' : getBattleStageModModificator(move, stageType);
+};
+
+const onChange = (event: React.ChangeEvent<HTMLInputElement>, stageType: StudioMoveBattleStage, move: StudioMove) => {
   const newValue = parseInt(event.target.value);
   if (newValue < -99 || newValue > 99) return event.preventDefault();
-  move.setBattleStageMod(stageType, newValue);
+  setBattleStageMod(move, stageType, newValue);
 };
 
-const onBlur = (stageType: BattleStageType, move: MoveModel) => {
-  const modificator = move.getBattleStageModModificator(stageType);
-  move.setBattleStageMod(stageType, cleanNaNValue(modificator));
+const onBlur = (stageType: StudioMoveBattleStage, move: StudioMove) => {
+  const modificator = getBattleStageModModificator(move, stageType);
+  setBattleStageMod(move, stageType, cleanNaNValue(modificator));
 };
 
 export const MoveStatisticsEditor = ({ move }: MoveStatisticsEditorProps) => {

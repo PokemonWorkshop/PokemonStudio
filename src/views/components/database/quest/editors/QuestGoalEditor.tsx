@@ -3,7 +3,8 @@ import { EditorWithCollapse } from '@components/editor/Editor';
 import { EditorChildWithSubEditorContainer } from '@components/editor/EditorContainer';
 import { InputContainer, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
-import QuestModel, { ObjectiveType, ObjectiveTypes } from '@modelEntities/quest/Quest.model';
+import { QUEST_OBJECTIVES, StudioQuest, StudioQuestObjectiveType } from '@modelEntities/quest';
+import { createQuestObjective } from '@utils/entityCreation';
 import { padStr } from '@utils/PadStr';
 import React, { useMemo } from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
@@ -17,10 +18,11 @@ import {
   QuestGoalSpeakTo,
 } from './goals';
 
-const objectiveCategoryEntries = (t: TFunction<'database_quests'>) => ObjectiveTypes.map((objective) => ({ value: objective, label: t(objective) }));
+const objectiveCategoryEntries = (t: TFunction<'database_quests'>) =>
+  QUEST_OBJECTIVES.map((objective) => ({ value: objective, label: t(objective) }));
 
 type QuestGoalEditorProps = {
-  quest: QuestModel;
+  quest: StudioQuest;
   objectiveIndex: number;
 };
 
@@ -30,9 +32,9 @@ export const QuestGoalEditor = ({ quest, objectiveIndex }: QuestGoalEditorProps)
   const objectiveOptions = useMemo(() => objectiveCategoryEntries(t), [t]);
   const objective = quest.objectives[objectiveIndex];
 
-  const changeObjective = (value: ObjectiveType) => {
+  const changeObjective = (value: StudioQuestObjectiveType) => {
     if (value === quest.objectives[objectiveIndex].objectiveMethodName) return;
-    quest.objectives[objectiveIndex] = QuestModel.createObjective(value);
+    quest.objectives[objectiveIndex] = createQuestObjective(value);
   };
 
   return (
@@ -46,7 +48,7 @@ export const QuestGoalEditor = ({ quest, objectiveIndex }: QuestGoalEditorProps)
                 id={'goal-type-select'}
                 value={objective.objectiveMethodName}
                 options={objectiveOptions}
-                onChange={(value) => refreshUI(changeObjective(value as ObjectiveType))}
+                onChange={(value) => refreshUI(changeObjective(value as StudioQuestObjectiveType))}
                 noTooltip
               />
             </InputWithTopLabelContainer>

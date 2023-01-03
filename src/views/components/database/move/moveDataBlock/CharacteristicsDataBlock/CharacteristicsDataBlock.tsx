@@ -4,9 +4,9 @@ import { DataBlockWithTitle } from '../../../dataBlocks';
 import { CharacteristicsDataBlockStyle, NoCharacteristic } from './CharacteristicsDataBlockStyle';
 import { CharacteristicElement } from './CharacteristicElement';
 import { MoveDataProps } from '../../MoveDataPropsInterface';
-import MoveModel from '@modelEntities/move/Move.model';
+import { StudioMove } from '@modelEntities/move';
 
-const atLeastOneCharacteristic = (move: MoveModel) => {
+const atLeastOneCharacteristic = (move: StudioMove) => {
   return (
     move.isDirect ||
     move.isDistance ||

@@ -1,6 +1,7 @@
 import { DataFieldsetFieldWithChild, FieldData } from '@components/database/dataBlocks/DataFieldsetField';
-import { ItemHeld } from '@modelEntities/pokemon/PokemonForm';
+import { StudioItemHeld } from '@modelEntities/creature';
 import { ProjectData } from '@src/GlobalStateProvider';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
 import { useProjectItems } from '@utils/useProjectData';
 import React from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
@@ -19,19 +20,20 @@ const ItemHeldStyle = styled.div`
 `;
 
 type ItemHeldComponentProps = {
-  itemHeld: ItemHeld;
+  itemHeld: StudioItemHeld;
   items: ProjectData['items'];
   t: TFunction<('database_pokemon' | 'database_items')[]>;
 };
 
 const ItemHeldComponent = ({ itemHeld, items, t }: ItemHeldComponentProps) => {
+  const getItemName = useGetEntityNameText();
   return (
     <FieldData disabled={false} error={items[itemHeld.dbSymbol] === undefined}>
       {items[itemHeld.dbSymbol] === undefined ? (
         t('database_items:item_deleted')
       ) : (
         <ItemHeldStyle>
-          {items[itemHeld.dbSymbol].name()}
+          {getItemName(items[itemHeld.dbSymbol])}
           <span className="chance">{`(${itemHeld.chance}%)`}</span>
         </ItemHeldStyle>
       )}

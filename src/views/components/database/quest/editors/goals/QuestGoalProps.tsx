@@ -1,5 +1,5 @@
-import { Objective } from '@modelEntities/quest/Quest.model';
+import { StudioQuestObjective } from '@modelEntities/quest';
 
 export type QuestGoalProps = {
-  objective: Objective;
+  objective: StudioQuestObjective;
 };

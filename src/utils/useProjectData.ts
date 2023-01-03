@@ -1,5 +1,43 @@
-import { ProjectData, projectTextSave, SelectedDataIdentifier, useGlobalState } from '@src/GlobalStateProvider';
+import { DbSymbol } from '@modelEntities/dbSymbol';
+import { ProjectData, projectTextSave, SelectedDataIdentifier, State, useGlobalState } from '@src/GlobalStateProvider';
+import { getEntityNameText, getEntityNameTextUsingTextId } from './ReadingProjectText';
 import { SavingMap } from './SavingUtils';
+
+const getPreviousDbSymbolById = (values: { id: number; dbSymbol: DbSymbol }[], currentId: number) => {
+  const sortedValues = values.sort((a, b) => b.id - a.id);
+  return sortedValues.find(({ id }) => id < currentId)?.dbSymbol || sortedValues[0].dbSymbol;
+};
+
+type EntityTextIdWithDbSymbol = Parameters<typeof getEntityNameTextUsingTextId>[0] & { dbSymbol: DbSymbol };
+type EntityIdWithDbSymbol = Parameters<typeof getEntityNameText>[0] & { dbSymbol: DbSymbol };
+const getPreviousDbSymbolByName = (values: (EntityTextIdWithDbSymbol | EntityIdWithDbSymbol)[], currentDbSymbol: string, state: State) => {
+  if (values.length === 0) return '__undef__';
+  const sortedValues =
+    'textId' in values[0]
+      ? (values as EntityTextIdWithDbSymbol[]).sort((a, b) =>
+          getEntityNameTextUsingTextId(a, state).localeCompare(getEntityNameTextUsingTextId(b, state))
+        )
+      : (values as EntityIdWithDbSymbol[]).sort((a, b) => getEntityNameText(a, state).localeCompare(getEntityNameText(b, state)));
+  const keys = sortedValues.map(({ dbSymbol }) => dbSymbol);
+  return keys[keys.indexOf(currentDbSymbol as DbSymbol) - 1] || keys[keys.length - 1];
+};
+
+const getNextDbSymbolById = (values: { id: number; dbSymbol: DbSymbol }[], currentId: number) => {
+  const sortedValues = values.sort((a, b) => a.id - b.id);
+  return sortedValues.find(({ id }) => id > currentId)?.dbSymbol || sortedValues[0].dbSymbol;
+};
+
+const getNextDbSymbolByName = (values: (EntityTextIdWithDbSymbol | EntityIdWithDbSymbol)[], currentDbSymbol: string, state: State) => {
+  if (values.length === 0) return '__undef__';
+  const sortedValues =
+    'textId' in values[0]
+      ? (values as EntityTextIdWithDbSymbol[]).sort((a, b) =>
+          getEntityNameTextUsingTextId(a, state).localeCompare(getEntityNameTextUsingTextId(b, state))
+        )
+      : (values as EntityIdWithDbSymbol[]).sort((a, b) => getEntityNameText(a, state).localeCompare(getEntityNameText(b, state)));
+  const keys = sortedValues.map(({ dbSymbol }) => dbSymbol);
+  return keys[keys.indexOf(currentDbSymbol as DbSymbol) + 1] || keys[0];
+};
 
 /**
  * Captain Hook of the Hooks. This hook allow you to manipulate data from a specific screen by specifying the data key & data selected key to be able to mutate data.
@@ -83,20 +121,13 @@ export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier
     });
   };
 
-  const getPreviousDbSymbol = (mode: 'dbSymbol' | 'id' | 'name') => {
+  const getPreviousDbSymbol = (mode: 'id' | 'name') => {
     const currentDbSymbol = typeof selectedDataIdentifier === 'string' ? selectedDataIdentifier : selectedDataIdentifier.specie;
     switch (mode) {
-      case 'dbSymbol':
-        const keys = Object.keys(state.projectData[key]);
-        return keys[keys.indexOf(currentDbSymbol) - 1] || keys[keys.length - 1];
       case 'id':
-        const values = Object.values(state.projectData[key]).sort((a, b) => b.id - a.id);
-        const currentId = state.projectData[key][currentDbSymbol].id;
-        return values.find(({ id }) => id < currentId)?.dbSymbol || values[0].dbSymbol;
+        return getPreviousDbSymbolById(Object.values(state.projectData[key]), state.projectData[key][currentDbSymbol].id);
       case 'name':
-        const entities = Object.entries(state.projectData[key]).sort(([, a], [, b]) => a.name().localeCompare(b.name()));
-        const keys2 = entities.map(([key]) => key);
-        return keys2[keys2.indexOf(currentDbSymbol) - 1] || keys2[keys2.length - 1];
+        return getPreviousDbSymbolByName(Object.values(state.projectData[key]), currentDbSymbol, state);
       default:
         return ((v: never) => v)(mode);
     }
@@ -106,13 +137,9 @@ export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier
     const currentDbSymbol = typeof selectedDataIdentifier === 'string' ? selectedDataIdentifier : selectedDataIdentifier.specie;
     switch (mode) {
       case 'id':
-        const values = Object.values(state.projectData[key]).sort((a, b) => a.id - b.id);
-        const currentId = state.projectData[key][currentDbSymbol].id;
-        return values.find(({ id }) => id > currentId)?.dbSymbol || values[0].dbSymbol;
+        return getNextDbSymbolById(Object.values(state.projectData[key]), state.projectData[key][currentDbSymbol].id);
       case 'name':
-        const entities = Object.entries(state.projectData[key]).sort(([, a], [, b]) => a.name().localeCompare(b.name()));
-        const keys = entities.map(([key]) => key);
-        return keys[keys.indexOf(currentDbSymbol) + 1] || keys[0];
+        return getNextDbSymbolByName(Object.values(state.projectData[key]), currentDbSymbol, state);
       default:
         return ((v: never) => v)(mode);
     }

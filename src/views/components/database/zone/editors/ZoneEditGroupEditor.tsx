@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import ZoneModel from '@modelEntities/zone/Zone.model';
 import { useTranslation } from 'react-i18next';
 import { Editor, useRefreshUI } from '@components/editor';
 import { InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
@@ -8,7 +7,10 @@ import { SelectGroup } from '@components/selects';
 import { ProjectData } from '@src/GlobalStateProvider';
 import { TagWithSelection } from '@components/Tag';
 import { padStr } from '@utils/PadStr';
-import GroupModel from '@modelEntities/group/Group.model';
+import { cloneEntity } from '@utils/cloneEntity';
+import { StudioGroup } from '@modelEntities/group';
+import { StudioZone } from '@modelEntities/zone';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 
 const MapsListContainer = styled.div`
   display: flex;
@@ -17,10 +19,10 @@ const MapsListContainer = styled.div`
   gap: 4px;
 `;
 
-const mapIdIndexInGroup = (mapId: number, group: GroupModel) =>
+const mapIdIndexInGroup = (mapId: number, group: StudioGroup) =>
   group.customConditions.filter((condition) => condition.type === 'mapId').findIndex((condition) => condition.value === mapId);
 
-const rejectedGroup = (wildGroups: string[], group: GroupModel) => {
+const rejectedGroup = (wildGroups: string[], group: StudioGroup) => {
   const wildGroupsCopy = Object.assign([], wildGroups);
   const groupIndex = wildGroupsCopy.indexOf(group.dbSymbol);
   if (groupIndex !== -1) wildGroupsCopy.splice(groupIndex, 1);
@@ -28,9 +30,9 @@ const rejectedGroup = (wildGroups: string[], group: GroupModel) => {
 };
 
 type ZoneEditGroupEditorProps = {
-  zone: ZoneModel;
+  zone: StudioZone;
   groups: ProjectData['groups'];
-  group: { data: GroupModel } | undefined;
+  group: { data: StudioGroup } | undefined;
   index: number;
 };
 
@@ -41,8 +43,8 @@ export const ZoneEditGroupEditor = ({ zone, groups, group, index }: ZoneEditGrou
   const refreshUI = useRefreshUI();
 
   const onChangeGroup = (dbSymbol: string) => {
-    group.data = groups[dbSymbol].clone();
-    zone.wildGroups[index] = dbSymbol;
+    group.data = cloneEntity(groups[dbSymbol]);
+    zone.wildGroups[index] = dbSymbol as DbSymbol;
   };
 
   const onClickTag = (mapId: number) => {

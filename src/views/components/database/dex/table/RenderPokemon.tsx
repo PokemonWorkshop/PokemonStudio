@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import theme from '@src/AppTheme';
-import PokemonModel, { pokemonIconPath } from '@modelEntities/pokemon/Pokemon.model';
 import { useTranslation } from 'react-i18next';
 import { DataPokemonGrid } from './DexPokemonListTableStyle';
 import { ReactComponent as DragIcon } from '@assets/icons/global/drag.svg';
@@ -13,8 +12,12 @@ import { TypeCategory } from '@components/categories';
 import { getNameType } from '@utils/getNameType';
 import { Input } from '@components/inputs';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
-import DexModel from '@modelEntities/dex/Dex.model';
 import { ResourceImage } from '@components/ResourceImage';
+import { useGlobalState } from '@src/GlobalStateProvider';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
+import { StudioDex } from '@modelEntities/dex';
+import { pokemonIconPath } from '@utils/path';
+import { StudioCreature } from '@modelEntities/creature';
 
 type RenderPokemonContainerProps = {
   isDragging: boolean;
@@ -128,7 +131,7 @@ const TypeContainer = styled.span`
 `;
 
 type PokemonDataRender = {
-  data: PokemonModel | undefined;
+  data: StudioCreature | undefined;
   form: number;
   id: number;
   undef: boolean;
@@ -141,7 +144,7 @@ type RenderPokemonProps = {
   isDragging: boolean;
   dragOn: boolean;
   index: number;
-  dex: DexModel;
+  dex: StudioDex;
   onClickEdit: () => void;
   onClickDelete: () => void;
   onClickAddEvolution: () => void;
@@ -153,6 +156,8 @@ export const RenderPokemon = React.forwardRef<HTMLInputElement, RenderPokemonPro
     const { projectDataValues: types } = useProjectTypes();
     const pokemonForm = useMemo(() => pokemon.data?.forms.find((form) => form.form === pokemon.form), [pokemon.data, pokemon.form]);
     const { t } = useTranslation(['database_pokemon', 'database_dex']);
+    const getCreatureName = useGetEntityNameText();
+    const [state] = useGlobalState();
     const [pokemonId, setPokemonId] = useState<number>(pokemon.id);
 
     useEffect(() => {
@@ -211,15 +216,15 @@ export const RenderPokemon = React.forwardRef<HTMLInputElement, RenderPokemonPro
           )}
         </span>
         {pokemon.data ? (
-          <span className={pokemonForm ? 'name' : 'error'}>{pokemon.data.name()}</span>
+          <span className={pokemonForm ? 'name' : 'error'}>{getCreatureName(pokemon.data)}</span>
         ) : (
           <span className="error">{pokemon.undef ? t('database_dex:free_slot') : t('database_pokemon:pokemon_deleted')}</span>
         )}
         {pokemonForm ? (
           <TypeContainer>
-            <TypeCategory type={pokemonForm.type1}>{getNameType(types, pokemonForm.type1)}</TypeCategory>
+            <TypeCategory type={pokemonForm.type1}>{getNameType(types, pokemonForm.type1, state)}</TypeCategory>
             {pokemonForm.type2 !== '__undef__' ? (
-              <TypeCategory type={pokemonForm.type2}>{getNameType(types, pokemonForm.type2)}</TypeCategory>
+              <TypeCategory type={pokemonForm.type2}>{getNameType(types, pokemonForm.type2, state)}</TypeCategory>
             ) : (
               <span></span>
             )}

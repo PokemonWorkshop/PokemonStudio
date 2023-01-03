@@ -3,15 +3,15 @@ import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { DataBlockWrapper } from '@components/database/dataBlocks';
 import { PokemonControlBar } from '@components/database/pokemon/PokemonControlBar';
 import { PokemonWithForm } from '@components/database/pokemon/PokemonDataPropsInterface';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { useProjectPokemon } from '@utils/useProjectData';
 import { useTranslation } from 'react-i18next';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';
-import { CreatureFormResourcesFemalePath, CreatureFormResourcesPath } from '@modelEntities/pokemon/PokemonForm';
 import { BattlersResources, CharactersResources, IconsResources, ResourceWrapper } from '@components/database/pokemon/resources';
-import { basename } from '@utils/path';
+import { basename, CreatureFormResourcesFemalePath, CreatureFormResourcesPath } from '@utils/path';
+import { cloneEntity } from '@utils/cloneEntity';
 
 export const PokemonResourcesPage = () => {
   const {
@@ -28,17 +28,17 @@ export const PokemonResourcesPage = () => {
     form: pokemon[pokemonIdentifier.specie].forms[pokemonIdentifier.form],
   };
   const [isShowFemale, setIsShowFemale] = useState<boolean>(currentPokemonWithForm.form.resources.hasFemale);
-  const currentEditedPokemon = useMemo(() => pokemon[pokemonIdentifier.specie].clone(), [pokemonIdentifier.specie, pokemon]);
+  const currentEditedPokemon = useMemo(() => cloneEntity(pokemon[pokemonIdentifier.specie]), [pokemonIdentifier.specie, pokemon]);
   const currentEditedPokemonWithForm: PokemonWithForm = {
     species: currentEditedPokemon,
     form: currentEditedPokemon.forms[pokemonIdentifier.form],
   };
 
-  const onChangeSpecie = (selected: SelectOption) => {
+  const onChangeSpecie: SelectChangeEvent = (selected) => {
     setIsShowFemale(pokemon[selected.value].forms[0].resources.hasFemale);
     setSelectedDataIdentifier({ pokemon: { specie: selected.value, form: 0 } });
   };
-  const onChangeForm = (selected: SelectOption) => {
+  const onChangeForm: SelectChangeEvent = (selected) => {
     const indexForm = pokemon[pokemonIdentifier.specie].forms.findIndex((f) => f.form === Number(selected.value));
     setIsShowFemale(pokemon[pokemonIdentifier.specie].forms[indexForm].resources.hasFemale);
     setSelectedDataIdentifier({
@@ -79,7 +79,7 @@ export const PokemonResourcesPage = () => {
         setSelectedDataIdentifier({ pokemon: { specie: dbSymbol, form: 0 } });
       },
     };
-  }, [getPreviousDbSymbol, getNextDbSymbol]);
+  }, [getPreviousDbSymbol, pokemon, setSelectedDataIdentifier, getNextDbSymbol]);
   useShortcut(shortcutMap);
 
   return (

@@ -1,22 +1,32 @@
-import React, { useMemo, useState } from 'react';
-import { Editor, useRefreshUI } from '@components/editor';
-import ItemModel, { ItemCategories } from '@modelEntities/item/Item.model';
+import React, { useMemo, useRef, useState } from 'react';
+import { Editor } from '@components/editor';
 import { TFunction, useTranslation } from 'react-i18next';
 import { IconInput, Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import { useProjectItems } from '@utils/useProjectData';
-import { mutateItemToCategory } from './mutateItemToCategory';
 import styled from 'styled-components';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { checkDbSymbolExist, generateDefaultDbSymbol, wrongDbSymbol } from '@utils/dbSymbolUtils';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { TextInputError } from '@components/inputs/Input';
 import { DropInput } from '@components/inputs/DropInput';
-import { basename } from '@utils/path';
-import { useGlobalState } from '@src/GlobalStateProvider';
+import { basename, itemIconPath } from '@utils/path';
+import {
+  ITEM_CATEGORY_INITIAL_CLASSES,
+  ITEM_DESCRIPTION_TEXT_ID,
+  ITEM_NAME_TEXT_ID,
+  StudioItemCategories,
+  StudioItemCategory,
+} from '@modelEntities/item';
+import { findFirstAvailableId } from '@utils/ModelUtils';
+import { createItem } from '@utils/entityCreation';
+import { DbSymbol } from '@modelEntities/dbSymbol';
+import { useSetProjectText } from '@utils/ReadingProjectText';
 
 const itemCategoryEntries = (t: TFunction<('database_items' | 'database_types' | 'database_moves')[]>) =>
-  ItemCategories.map((category) => ({ value: category, label: t(`database_types:${category}`) })).sort((a, b) => a.label.localeCompare(b.label));
+  StudioItemCategories.map((category) => ({ value: category, label: t(`database_types:${category}`) })).sort((a, b) =>
+    a.label.localeCompare(b.label)
+  );
 
 type ItemNewEditorProps = {
   onClose: () => void;
@@ -30,44 +40,53 @@ const ButtonContainer = styled.div`
 `;
 
 export const ItemNewEditor = ({ onClose }: ItemNewEditorProps) => {
-  const { projectDataValues: items, setProjectDataValues: setItem, bindProjectDataValue: bindItem } = useProjectItems();
+  const { projectDataValues: items, setProjectDataValues: setItem, state } = useProjectItems();
   const { t } = useTranslation(['database_items', 'database_types', 'database_moves']);
   const options = useMemo(() => itemCategoryEntries(t), [t]);
-  const refreshUI = useRefreshUI();
-  const [newItem, setNewItem] = useState(bindItem(ItemModel.createItem(items)));
-  const [itemText] = useState({ name: '', descr: '' });
-  const [state] = useGlobalState();
+  const setText = useSetProjectText();
+  const [name, setName] = useState(''); // We can't use a ref because of the button behavior
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
+  const dbSymbolRef = useRef<HTMLInputElement>(null);
+  const [dbSymbolErrorType, setDbSymbolErrorType] = useState<'value' | 'duplicate' | undefined>(undefined);
+  const [itemCategory, setItemCategory] = useState<StudioItemCategory>('generic');
+  const [icon, setIcon] = useState('');
 
   const onClickNew = () => {
-    newItem.setName(itemText.name);
-    newItem.setDescr(itemText.descr);
-    setItem({ [newItem.dbSymbol]: newItem }, { item: newItem.dbSymbol });
+    if (!dbSymbolRef.current || !name || !descriptionRef.current) return;
+
+    const dbSymbol = dbSymbolRef.current.value as DbSymbol;
+    const id = findFirstAvailableId(items, 1);
+    const newItem = createItem(ITEM_CATEGORY_INITIAL_CLASSES[itemCategory], dbSymbol, id);
+    newItem.icon = icon;
+    setText(ITEM_NAME_TEXT_ID, newItem.id, name);
+    setText(ITEM_DESCRIPTION_TEXT_ID, newItem.id, descriptionRef.current.value);
+    setItem({ [dbSymbol]: newItem }, { item: dbSymbol });
     onClose();
   };
 
-  const checkDisabled = () => {
-    return (
-      itemText.name.length === 0 ||
-      newItem.icon.length === 0 ||
-      newItem.dbSymbol.length === 0 ||
-      wrongDbSymbol(newItem.dbSymbol) ||
-      checkDbSymbolExist(items, newItem.dbSymbol)
-    );
-  };
-
-  const onIconChoosen = (iconPath: string) => {
-    refreshUI((newItem.icon = basename(iconPath).split('.')[0]));
-  };
-
-  const onIconClear = () => {
-    refreshUI((newItem.icon = ''));
-  };
-
-  const onChangeName = (name: string) => {
-    if (newItem.dbSymbol === '' || newItem.dbSymbol === generateDefaultDbSymbol(itemText.name)) {
-      newItem.dbSymbol = generateDefaultDbSymbol(name);
+  const onChangeDbSymbol = (value: string) => {
+    if (wrongDbSymbol(value)) {
+      if (dbSymbolErrorType !== 'value') setDbSymbolErrorType('value');
+    } else if (checkDbSymbolExist(items, value)) {
+      if (dbSymbolErrorType !== 'duplicate') setDbSymbolErrorType('duplicate');
+    } else if (dbSymbolErrorType) {
+      setDbSymbolErrorType(undefined);
     }
-    itemText.name = name;
+  };
+
+  const onChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!dbSymbolRef.current) return;
+    if (dbSymbolRef.current.value === '' || dbSymbolRef.current.value === generateDefaultDbSymbol(name)) {
+      dbSymbolRef.current.value = generateDefaultDbSymbol(event.currentTarget.value);
+      onChangeDbSymbol(dbSymbolRef.current.value);
+    }
+    setName(event.currentTarget.value);
+  };
+
+  const onIconChosen = (iconPath: string) => setIcon(basename(iconPath).split('.')[0]);
+
+  const checkDisabled = () => {
+    return !name || !icon || !dbSymbolRef.current || !!dbSymbolErrorType;
   };
 
   return (
@@ -77,55 +96,37 @@ export const ItemNewEditor = ({ onClose }: ItemNewEditorProps) => {
           <Label htmlFor="name" required>
             {t('database_items:name')}
           </Label>
-          <Input
-            type="text"
-            name="name"
-            value={itemText.name}
-            onChange={(event) => refreshUI(onChangeName(event.target.value))}
-            placeholder={t('database_items:example_name')}
-          />
+          <Input type="text" name="name" value={name} onChange={onChangeName} placeholder={t('database_items:example_name')} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="descr">{t('database_items:description')}</Label>
-          <MultiLineInput
-            id="descr"
-            value={itemText.descr}
-            onChange={(event) => refreshUI((itemText.descr = event.target.value))}
-            placeholder={t('database_items:example_description')}
-          />
+          <MultiLineInput id="descr" ref={descriptionRef} placeholder={t('database_items:example_description')} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="icon" required>
             {t('database_items:icon')}
           </Label>
-          {newItem.icon.length === 0 ? (
+          {!icon ? (
             <DropInput
               imageWidth={32}
               imageHeight={32}
               name={t('database_items:icon_of_the_item')}
               extensions={['png']}
-              onFileChoosen={onIconChoosen}
+              onFileChoosen={onIconChosen}
             />
           ) : (
             <IconInput
               name={t('database_items:icon_of_the_item')}
               extensions={['png']}
-              iconPath={newItem.iconUrl(state.projectPath || 'https://www.pokepedia.fr/images/8/87/Pok%C3%A9_Ball.png')}
-              onIconChoosen={onIconChoosen}
-              onIconClear={onIconClear}
+              iconPath={itemIconPath(icon, state.projectPath)}
+              onIconChoosen={onIconChosen}
+              onIconClear={() => setIcon('')}
             />
           )}
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="category">{t('database_items:category')}</Label>
-          <SelectCustomSimple
-            id="select-category"
-            options={options}
-            onChange={(value) => {
-              setNewItem(mutateItemToCategory(newItem, value as typeof options[number]['value']));
-            }}
-            value={newItem.category}
-          />
+          <SelectCustomSimple id="select-category" options={options} onChange={setItemCategory as (v: string) => void} value={itemCategory} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="dbSymbol" required>
@@ -134,17 +135,13 @@ export const ItemNewEditor = ({ onClose }: ItemNewEditorProps) => {
           <Input
             type="text"
             name="dbSymbol"
-            value={newItem.dbSymbol}
-            onChange={(event) => refreshUI((newItem.dbSymbol = event.target.value))}
-            error={wrongDbSymbol(newItem.dbSymbol) || checkDbSymbolExist(items, newItem.dbSymbol)}
+            ref={dbSymbolRef}
+            onChange={(e) => onChangeDbSymbol(e.currentTarget.value)}
+            error={!!dbSymbolErrorType}
             placeholder={t('database_items:example_db_symbol')}
           />
-          {newItem.dbSymbol.length !== 0 && wrongDbSymbol(newItem.dbSymbol) && (
-            <TextInputError>{t('database_moves:incorrect_format')}</TextInputError>
-          )}
-          {newItem.dbSymbol.length !== 0 && checkDbSymbolExist(items, newItem.dbSymbol) && (
-            <TextInputError>{t('database_moves:db_symbol_already_used')}</TextInputError>
-          )}
+          {dbSymbolErrorType == 'value' && <TextInputError>{t('database_moves:incorrect_format')}</TextInputError>}
+          {dbSymbolErrorType == 'duplicate' && <TextInputError>{t('database_moves:db_symbol_already_used')}</TextInputError>}
         </InputWithTopLabelContainer>
         <ButtonContainer>
           <ToolTipContainer>

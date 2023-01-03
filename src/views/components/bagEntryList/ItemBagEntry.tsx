@@ -2,16 +2,18 @@ import React from 'react';
 import styled from 'styled-components';
 import { PokemonBattlerContainer } from '@components/pokemonBattlerList/PokemonBattler';
 import { useGlobalState } from '@src/GlobalStateProvider';
-import { BagEntry } from '@modelEntities/trainer/Trainer.model';
 import { useProjectItems } from '@utils/useProjectData';
 import { Tag } from '@components/Tag';
 import { ClearButtonOnlyIcon } from '@components/buttons';
 import { useTranslation } from 'react-i18next';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
+import { itemIconPath } from '@utils/path';
+import { StudioTrainerBagEntry } from '@modelEntities/trainer';
 
 type ItemBagEntryProps = {
   onClickDelete: (index: number) => void;
   onClickEdit: (index: number) => void;
-  bagEntry: BagEntry;
+  bagEntry: StudioTrainerBagEntry;
   index: number;
 };
 
@@ -65,6 +67,7 @@ const ItemBagEntryHeader = styled.div`
 export const ItemBagEntry = ({ onClickDelete, onClickEdit, bagEntry, index }: ItemBagEntryProps) => {
   const [state] = useGlobalState();
   const { projectDataValues: items } = useProjectItems();
+  const getItemName = useGetEntityNameText();
   const item = items[bagEntry.dbSymbol];
   const { t } = useTranslation('database_items');
 
@@ -81,21 +84,8 @@ export const ItemBagEntry = ({ onClickDelete, onClickEdit, bagEntry, index }: It
   return (
     <ItemBagEntryContainer onClick={onEdit}>
       <ItemBagEntryHeader>
-        {item ? (
-          <img
-            draggable="false"
-            src={state.projectPath ? item.iconUrl(state.projectPath) : 'https://www.pokepedia.fr/images/8/87/Pok%C3%A9_Ball.png'}
-            alt=""
-          />
-        ) : (
-          <img
-            draggable="false"
-            src={
-              state.projectPath ? `${state.projectPath}/graphics/pokedex/pokeicon/000.png` : 'https://www.pokepedia.fr/images/8/87/Pok%C3%A9_Ball.png'
-            }
-          />
-        )}
-        {item ? <span>{item.name()}</span> : <span className="error">{t('item_deleted')}</span>}
+        <img draggable="false" src={itemIconPath(item?.icon || '000.png', state.projectPath)} alt="" />
+        {item ? <span>{getItemName(item)}</span> : <span className="error">{t('item_deleted')}</span>}
         <div className="amount-delete-button">
           <Tag className="amount">{`x${bagEntry.amount}`}</Tag>
           <ClearButtonOnlyIcon className="delete-button" onClick={(event: React.MouseEvent<HTMLButtonElement>) => onDelete(event)} />

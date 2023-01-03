@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { DataBlockWithAction, DataBlockWrapper } from '@components/database/dataBlocks';
 import { DeleteButtonWithIcon } from '@components/buttons';
 
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { EditorOverlay } from '@components/editor';
@@ -24,6 +24,10 @@ import {
 } from '@components/database/quest/editors';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
 import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
+import { updateIndexSpeakToBeatNpc } from '@modelEntities/quest';
+import { cleaningQuestNaNValues } from '@utils/cleanNaNValue';
+import { cloneEntity } from '@utils/cloneEntity';
 
 export const QuestPage = () => {
   const {
@@ -35,9 +39,10 @@ export const QuestPage = () => {
     getNextDbSymbol,
   } = useProjectQuests();
   const { t } = useTranslation('database_quests');
-  const onChange = (selected: SelectOption) => setSelectedDataIdentifier({ quest: selected.value });
+  const getQuestName = useGetEntityNameText();
+  const onChange: SelectChangeEvent = (selected) => setSelectedDataIdentifier({ quest: selected.value });
   const quest = quests[questDbSymbol];
-  const currentEditedQuest = useMemo(() => quest.clone(), [quest]);
+  const currentEditedQuest = useMemo(() => cloneEntity(quest), [quest]);
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
   const [currentObjectiveIndex, setObjectiveIndex] = useState(0);
@@ -50,7 +55,7 @@ export const QuestPage = () => {
       db_next: () => setSelectedDataIdentifier({ quest: getNextDbSymbol('id') }),
       db_new: () => setCurrentEditor('new'),
     };
-  }, [getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
+  }, [currentEditor, currentDeletion, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol]);
   useShortcut(shortcutMap);
   const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
     {
@@ -58,11 +63,11 @@ export const QuestPage = () => {
       translation_description: { fileId: 46, isMultiline: true },
     },
     currentEditedQuest.id,
-    currentEditedQuest.name()
+    getQuestName(currentEditedQuest)
   );
 
   const onCloseEditor = () => {
-    if (currentEditor === 'frame' && quest.name() === '') return;
+    if (currentEditor === 'frame' && getQuestName(quest) === '') return;
     const currentObjective = currentEditedQuest.objectives[currentObjectiveIndex];
     if (
       currentEditor === 'editGoal' &&
@@ -70,8 +75,8 @@ export const QuestPage = () => {
       currentObjective.objectiveMethodArgs[1] === ''
     )
       return;
-    if (currentEditor === 'editGoal' || currentEditor === 'editEarning') currentEditedQuest.cleaningNaNValues();
-    currentEditedQuest.updateIndexSpeakToBeatNpc();
+    if (currentEditor === 'editGoal' || currentEditor === 'editEarning') cleaningQuestNaNValues(currentEditedQuest);
+    updateIndexSpeakToBeatNpc(currentEditedQuest);
     setQuest({ [quest.dbSymbol]: currentEditedQuest });
     setCurrentEditor(undefined);
     closeTranslationEditor();

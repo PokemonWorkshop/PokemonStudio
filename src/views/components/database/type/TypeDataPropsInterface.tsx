@@ -1,6 +1,6 @@
-import TypeModel from '@modelEntities/type/Type.model';
+import { StudioType } from '@modelEntities/type';
 
 export type TypeFrameProps = {
-  type: TypeModel;
+  type: StudioType;
   onClick?: () => void;
 };

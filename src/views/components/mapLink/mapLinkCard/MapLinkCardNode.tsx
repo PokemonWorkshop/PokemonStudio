@@ -1,17 +1,17 @@
 import React from 'react';
 import { Handle, Position } from 'react-flow-renderer';
-import { Cardinal, MapLinkLink } from '@modelEntities/maplinks/MapLink.model';
 import { MapLinkCard } from './MapLinkCard';
 import { MaplinkHandleStyle } from '../MapLinkHandleStyle';
+import { StudioMapLinkCardinal, StudioMapLinkLink } from '@modelEntities/mapLink';
 
 type MapLinkCardNodeData = {
-  mapLinkLink: MapLinkLink;
+  mapLinkLink: StudioMapLinkLink;
   index: number;
-  cardinal: Cardinal;
+  cardinal: StudioMapLinkCardinal;
   mapData: Map<number, string>;
-  onDeleteLink: (index: number, cardinal: Cardinal) => void;
-  onEditOffset: (index: number, cardinal: Cardinal, offset: number) => void;
-  onEditLink: (index: number, cardinal: Cardinal) => void;
+  onDeleteLink: (index: number, cardinal: StudioMapLinkCardinal) => void;
+  onEditOffset: (index: number, cardinal: StudioMapLinkCardinal, offset: number) => void;
+  onEditLink: (index: number, cardinal: StudioMapLinkCardinal) => void;
 };
 
 type MapLinkCardNodeProps = {

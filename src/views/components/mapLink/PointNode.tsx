@@ -2,10 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import { Handle, Position } from 'react-flow-renderer';
 import { MaplinkHandleStyle } from './MapLinkHandleStyle';
-import { Cardinal } from '@modelEntities/maplinks/MapLink.model';
+import { StudioMapLinkCardinal } from '@modelEntities/mapLink';
 
 type PointNodeStyleProps = {
-  cardinal: Cardinal;
+  cardinal: StudioMapLinkCardinal;
 };
 
 const PointNodeStyle = styled.div<PointNodeStyleProps>`
@@ -16,7 +16,7 @@ const PointNodeStyle = styled.div<PointNodeStyleProps>`
 
 type PointNodeProps = {
   data: {
-    cardinal: Cardinal;
+    cardinal: StudioMapLinkCardinal;
   };
 };
 

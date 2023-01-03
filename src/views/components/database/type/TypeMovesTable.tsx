@@ -1,18 +1,19 @@
 import { MoveCategory, TypeCategory } from '@components/categories';
-import MoveModel from '@modelEntities/move/Move.model';
-import TypeModel from '@modelEntities/type/Type.model';
+import { StudioMove } from '@modelEntities/move';
+import { StudioType } from '@modelEntities/type';
 import { State, useGlobalState } from '@src/GlobalStateProvider';
+import { useGetEntityNameText, useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
 import React from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { DataGrid } from '../dataBlocks';
 
 type TypeMovesTableProps = {
-  type: TypeModel;
+  type: StudioType;
 };
 
 type RenderMoveProps = {
-  move: MoveModel;
+  move: StudioMove;
   state: State;
   t: TFunction<'database_types'>;
 };
@@ -67,21 +68,31 @@ const RenderMoveContainer = styled(DataMoveGrid)`
   margin: 0 -8px 0 -8px;
 `;
 
-const RenderMove = ({ move, state, t }: RenderMoveProps) => (
-  <RenderMoveContainer gap="8px">
-    <span className="name">{move.name()}</span>
-    <TypeCategory type={move.type}>{state.projectData.types[move.type].name()}</TypeCategory>
-    <MoveCategory category={move.category}>{t(move.category as never)}</MoveCategory>
-    <span>{move.pp}</span>
-    <span>{move.power || '---'}</span>
-    <span>{move.accuracy || '---'}</span>
-  </RenderMoveContainer>
-);
+const RenderMove = ({ move, state, t }: RenderMoveProps) => {
+  const getTypeName = useGetEntityNameTextUsingTextId();
+  const getMoveName = useGetEntityNameText();
+  return (
+    <RenderMoveContainer gap="8px">
+      <span className="name">{getMoveName(move)}</span>
+      <TypeCategory type={move.type}>{getTypeName(state.projectData.types[move.type])}</TypeCategory>
+      <MoveCategory category={move.category}>{t(move.category as never)}</MoveCategory>
+      <span>{move.pp}</span>
+      <span>{move.power || '---'}</span>
+      <span>{move.accuracy || '---'}</span>
+    </RenderMoveContainer>
+  );
+};
+
+const getMovesWithCurrentType = (type: StudioType, state: State) => {
+  return Object.values(state.projectData.moves)
+    .filter((move) => move.type === type.dbSymbol)
+    .sort((a, b) => a.id - b.id);
+};
 
 export const TypeMovesTable = ({ type }: TypeMovesTableProps) => {
   const [state] = useGlobalState();
   const { t } = useTranslation('database_types');
-  const allMoves = type.getMovesWithCurrentType(state);
+  const allMoves = getMovesWithCurrentType(type, state);
 
   return (
     <DataMoveTable>

@@ -1,15 +1,16 @@
 import React from 'react';
-import TypeModel from '@modelEntities/type/Type.model';
 
 import { TypeTableRowContainer, TypeIconListContainer } from './TypeTableContainers';
 import { TypeTableCategory, RatioCategoryIcon } from '@components/categories';
 import styled from 'styled-components';
 import { HelperSelectedType } from '../TypeHelper';
+import { useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
+import { StudioType } from '@modelEntities/type';
 
 type TypeTableRowProps = {
-  currentType: TypeModel;
-  allTypes: TypeModel[];
-  editType: (type: TypeModel) => void;
+  currentType: StudioType;
+  allTypes: StudioType[];
+  editType: (type: StudioType) => void;
   setHoveredDefensiveType: (value: string) => void;
   setTypeHelperSelected: (typeHelperSelected: HelperSelectedType) => void;
 };
@@ -22,6 +23,7 @@ const TypeCategoryContainer = styled.span`
 `;
 
 export const TypeTableRow = ({ currentType, allTypes, editType, setHoveredDefensiveType, setTypeHelperSelected }: TypeTableRowProps) => {
+  const getTypeName = useGetEntityNameTextUsingTextId();
   const onMouseEnter = () => {
     setHoveredDefensiveType('__undef__');
     setTypeHelperSelected({ offensiveType: undefined, defensiveType: undefined });
@@ -30,19 +32,18 @@ export const TypeTableRow = ({ currentType, allTypes, editType, setHoveredDefens
   return (
     <TypeTableRowContainer>
       <TypeCategoryContainer className="type-indicator" onMouseEnter={onMouseEnter}>
-        <TypeTableCategory type={currentType.dbSymbol}>{currentType.name()}</TypeTableCategory>
+        <TypeTableCategory type={currentType.dbSymbol}>{getTypeName(currentType)}</TypeTableCategory>
       </TypeCategoryContainer>
       <TypeIconListContainer>
         {allTypes.map((type) => (
           <RatioCategoryIcon
-            ratio={TypeModel.getEfficiency(currentType, type, allTypes)}
             offensiveType={currentType}
             defensiveType={type}
             allTypes={allTypes}
             editType={editType}
             setHoveredDefensiveType={setHoveredDefensiveType}
             setTypeHelperSelected={setTypeHelperSelected}
-            key={`${currentType.name()}-${type.name()}`}
+            key={`${currentType.dbSymbol}-${type.dbSymbol}`}
           />
         ))}
       </TypeIconListContainer>

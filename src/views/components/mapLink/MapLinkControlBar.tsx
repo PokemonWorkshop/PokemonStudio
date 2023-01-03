@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { ControlBar } from '@components/ControlBar';
 import { SelectRMXPMap } from '@components/selects';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +11,7 @@ const MapLinkControlBarContainer = styled(ControlBar)`
 `;
 
 type MapLinkControlBarProps = {
-  onChange: (selected: SelectOption) => void;
+  onChange: SelectChangeEvent;
   mapId: string;
 };
 

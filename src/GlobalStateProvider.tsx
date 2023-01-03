@@ -1,70 +1,67 @@
 import { useState } from 'react';
 import { createContainer } from 'react-tracked';
-import ItemModel from './models/entities/item/Item.model';
-import MoveModel from './models/entities/move/Move.model';
-import PokemonModel from './models/entities/pokemon/Pokemon.model';
-import QuestModel from './models/entities/quest/Quest.model';
-import TrainerModel from './models/entities/trainer/Trainer.model';
-import TypeModel from './models/entities/type/Type.model';
-import ZoneModel from './models/entities/zone/Zone.model';
-import PSDKEntity from './models/entities/PSDKEntity';
-import AbilityModel from '@modelEntities/ability/Ability.model';
 import { SavingConfigMap, SavingMap } from '@utils/SavingUtils';
-import ProjectStudioModel from '@modelEntities/ProjectStudio.model';
-import GroupModel from '@modelEntities/group/Group.model';
-import CreditsConfigModel from '@modelEntities/config/CreditsConfig.model';
-import DevicesConfigModel from '@modelEntities/config/DevicesConfig.model';
-import DisplayConfigModel from '@modelEntities/config/DisplayConfig.model';
-import GraphicConfigModel from '@modelEntities/config/GraphicConfig.model';
-import InfosConfigModel from '@modelEntities/config/InfosConfig.model';
-import LanguageConfigModel from '@modelEntities/config/LanguageConfig.model';
-import SaveConfigModel from '@modelEntities/config/SaveConfig.model';
-import SceneTitleConfigModel from '@modelEntities/config/SceneTitleConfig.model';
-import SettingsConfigModel from '@modelEntities/config/SettingsConfig.model';
-import TextsConfigModel from '@modelEntities/config/TextsConfig.model';
 import type { PSDKVersion } from '@services/getPSDKVersion';
-import NaturesConfigModel from '@modelEntities/config/NaturesConfig.model';
-import DexModel from '@modelEntities/dex/Dex.model';
-import GameOptionsConfigModel from '@modelEntities/config/GameOptionsConfig.model';
-import MapLinkModel from '@modelEntities/maplinks/MapLink.model';
-import { RMXPMap } from '@modelEntities/maplinks/RMXPMap';
+import { StudioAbility } from '@modelEntities/ability';
+import {
+  StudioCreditConfig,
+  StudioDevicesConfig,
+  StudioDisplayConfig,
+  StudioGameOptionConfig,
+  StudioGraphicConfig,
+  StudioInfoConfig,
+  StudioLanguageConfig,
+  StudioNatureConfig,
+  StudioSaveConfig,
+  StudioSceneTitleConfig,
+  StudioSettingConfig,
+  StudioTextConfig,
+} from '@modelEntities/config';
+import { StudioDex } from '@modelEntities/dex';
+import { StudioCreature } from '@modelEntities/creature';
+import { StudioItem } from '@modelEntities/item';
+import { StudioMove } from '@modelEntities/move';
+import { StudioGroup } from '@modelEntities/group';
+import { StudioTrainer } from '@modelEntities/trainer';
+import { StudioMapLink, StudioRMXPMap } from '@modelEntities/mapLink';
+import { StudioZone } from '@modelEntities/zone';
+import { StudioType } from '@modelEntities/type';
+import { StudioQuest } from '@modelEntities/quest';
+import { StudioProject } from '@modelEntities/project';
 
 export interface ProjectData {
   items: {
-    [item: string]: ItemModel;
+    [item: string]: StudioItem;
   };
   moves: {
-    [move: string]: MoveModel;
+    [move: string]: StudioMove;
   };
   pokemon: {
-    [pokemon: string]: PokemonModel;
+    [pokemon: string]: StudioCreature;
   };
   quests: {
-    [quest: string]: QuestModel;
+    [quest: string]: StudioQuest;
   };
   trainers: {
-    [trainer: string]: TrainerModel;
+    [trainer: string]: StudioTrainer;
   };
   types: {
-    [type: string]: TypeModel;
+    [type: string]: StudioType;
   };
   zones: {
-    [zone: string]: ZoneModel;
+    [zone: string]: StudioZone;
   };
   abilities: {
-    [ability: string]: AbilityModel;
+    [ability: string]: StudioAbility;
   };
   groups: {
-    [group: string]: GroupModel;
+    [group: string]: StudioGroup;
   };
   dex: {
-    [dex: string]: DexModel;
+    [dex: string]: StudioDex;
   };
   mapLinks: {
-    [mapLink: string]: MapLinkModel;
-  };
-  [other: string]: {
-    [k: string]: PSDKEntity;
+    [mapLink: string]: StudioMapLink;
   };
 }
 
@@ -117,18 +114,18 @@ export const psdkConfigKeys: (keyof PSDKConfigs)[] = [
 ];
 
 export interface PSDKConfigs {
-  credits_config: CreditsConfigModel;
-  devices_config: DevicesConfigModel;
-  display_config: DisplayConfigModel;
-  graphic_config: GraphicConfigModel;
-  infos_config: InfosConfigModel;
-  language_config: LanguageConfigModel;
-  save_config: SaveConfigModel;
-  scene_title_config: SceneTitleConfigModel;
-  settings_config: SettingsConfigModel;
-  texts_config: TextsConfigModel;
-  game_options_config: GameOptionsConfigModel;
-  natures: NaturesConfigModel;
+  credits_config: StudioCreditConfig;
+  devices_config: StudioDevicesConfig;
+  display_config: StudioDisplayConfig;
+  graphic_config: StudioGraphicConfig;
+  infos_config: StudioInfoConfig;
+  language_config: StudioLanguageConfig;
+  save_config: StudioSaveConfig;
+  scene_title_config: StudioSceneTitleConfig;
+  settings_config: StudioSettingConfig;
+  texts_config: StudioTextConfig;
+  game_options_config: StudioGameOptionConfig;
+  natures: StudioNatureConfig;
 }
 
 export type SelectedDataIdentifier = {
@@ -152,7 +149,7 @@ export interface State {
   projectPath: string | null;
   projectData: ProjectData;
   projectText: ProjectText;
-  projectStudio: ProjectStudioModel;
+  projectStudio: StudioProject;
   projectConfig: PSDKConfigs;
   selectedDataIdentifier: SelectedDataIdentifier;
   savingData: SavingMap;
@@ -160,7 +157,7 @@ export interface State {
   savingProjectStudio: boolean;
   currentPSDKVersion: PSDKVersion;
   lastPSDKVersion: PSDKVersion;
-  rmxpMaps: RMXPMap[];
+  rmxpMaps: StudioRMXPMap[];
   tmpHackHasTextToSave?: boolean;
   savingLanguage: string[];
   savingImage: { [path: string]: string };
@@ -185,7 +182,7 @@ const initialState = {
   },
   savingData: new SavingMap(),
   savingConfig: new SavingConfigMap(),
-  rmxpMaps: [] as RMXPMap[],
+  rmxpMaps: [] as StudioRMXPMap[],
   savingProjectStudio: false,
   savingLanguage: [] as string[],
   savingImage: {},
@@ -193,7 +190,7 @@ const initialState = {
 
 export type TextsWithLanguageConfig = {
   texts: ProjectText;
-  config: LanguageConfigModel;
+  config: StudioLanguageConfig;
 };
 
 const useMyState = () => useState(initialState as State);

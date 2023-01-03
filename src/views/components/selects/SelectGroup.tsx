@@ -1,9 +1,9 @@
-import React from 'react';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import React, { useMemo } from 'react';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useTranslation } from 'react-i18next';
-import { getDataOptions, SelectDataGeneric } from './SelectDataGeneric';
+import { getSelectDataOptionsOrderedById, SelectDataGeneric } from './SelectDataGeneric';
 import { SelectDataProps } from './SelectDataProps';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
 
 /**
  * Component to show a select group.
@@ -28,11 +28,13 @@ export const SelectGroup = ({
 }: SelectDataProps) => {
   const { t } = useTranslation('database_groups');
   const [state] = useGlobalState();
-  const options = getDataOptions(state.projectData, 'groups');
+  const getGroupText = useGetEntityNameText();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const options = useMemo(() => getSelectDataOptionsOrderedById(state.projectData, 'groups', getGroupText), [state.projectData]);
 
   const getData = () => {
     const currentGroup = state.projectData.groups[dbSymbol];
-    return currentGroup ? currentGroup : ({ value: dbSymbol, label: t('group_deleted') } as SelectOption);
+    return { value: dbSymbol, label: currentGroup ? getGroupText(currentGroup) : t('group_deleted') };
   };
 
   return (

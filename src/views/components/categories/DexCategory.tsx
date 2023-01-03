@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import { Category } from './Category';
-import { DexType } from '@modelEntities/dex/Dex.model';
+import { StudioDexType } from '@modelEntities/dex';
 
-type DexCategoryProps = { category: DexType };
+type DexCategoryProps = { category: StudioDexType };
 
 export const DexCategory = styled(Category).attrs<DexCategoryProps>((props) => ({
   'data-category': props.category,

@@ -2,26 +2,29 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { ReactFlowProvider } from 'react-flow-renderer';
 
 import { useProjectMapLinks } from '@utils/useProjectData';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { MapLinkControlBar, MapLinkNoMap, ReactFlowMapLink } from '@components/mapLink';
 import { LinkEditor, NewLinkEditor } from '@components/mapLink/editors';
 
-import MapLinkModel, {
-  Cardinal,
-  getLinksFromMapLink,
-  isEmptyLinksFromMapLink,
-  MapLinkLink,
-  setLinksFromMapLink,
-} from '@modelEntities/maplinks/MapLink.model';
 import { EditorOverlay } from '@components/editor';
-import { RMXPMap } from '@modelEntities/maplinks/RMXPMap';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { State } from '@src/GlobalStateProvider';
 import { useTranslation } from 'react-i18next';
 import { assertUnreachable } from '@utils/assertUnreachable';
+import {
+  getLinksFromMapLink,
+  setLinksFromMapLink,
+  StudioMapLink,
+  StudioMapLinkCardinal,
+  StudioMapLinkLink,
+  StudioRMXPMap,
+} from '@modelEntities/mapLink';
+import { findFirstAvailableId } from '@utils/ModelUtils';
+import { createMapLink } from '@utils/entityCreation';
+import { cloneEntity } from '@utils/cloneEntity';
 
-const createMapData = (rmxpMaps: RMXPMap[]): Map<number, string> => {
+const createMapData = (rmxpMaps: StudioRMXPMap[]): Map<number, string> => {
   const mapData = new Map();
   rmxpMaps.forEach((rmxpMap) => {
     mapData.set(rmxpMap.id, rmxpMap.name);
@@ -37,7 +40,7 @@ const checkValidMaplink = (mapId: string, state: State) => {
   return rmxpMapsFiltered.find((rmxpMap) => rmxpMap.id.toString() === mapId) ? true : false;
 };
 
-const getCardinalOpposed = (cardinal: Cardinal): Cardinal => {
+const getCardinalOpposed = (cardinal: StudioMapLinkCardinal): StudioMapLinkCardinal => {
   switch (cardinal) {
     case 'north':
       return 'south';
@@ -53,6 +56,15 @@ const getCardinalOpposed = (cardinal: Cardinal): Cardinal => {
   return 'north';
 };
 
+const isEmptyLinksFromMapLink = (mapLink: StudioMapLink): boolean => {
+  return (
+    getLinksFromMapLink(mapLink, 'north').length === 0 &&
+    getLinksFromMapLink(mapLink, 'east').length === 0 &&
+    getLinksFromMapLink(mapLink, 'south').length === 0 &&
+    getLinksFromMapLink(mapLink, 'west').length === 0
+  );
+};
+
 const MapLinkPage = () => {
   const {
     projectDataValues: mapLinks,
@@ -63,21 +75,20 @@ const MapLinkPage = () => {
     removeProjectDataValue: removeMapLink,
     state,
   } = useProjectMapLinks();
-  const [mapLink, setMapLink] = useState<MapLinkModel>(
-    () => Object.values(mapLinks).find((mapL) => mapL.mapId === Number(mapId)) || bindMapLink(MapLinkModel.createMapLink(mapLinks, Number(mapId)))
+  const lastId = useMemo(() => findFirstAvailableId(mapLinks, 0), [mapLinks]);
+  const [mapLink, setMapLink] = useState<StudioMapLink>(
+    () => Object.values(mapLinks).find((mapL) => mapL.mapId === Number(mapId)) || createMapLink(lastId, Number(mapId))
   );
-  const [cardinalSelected, setCardinalSelected] = useState<Cardinal>('north');
+  const [cardinalSelected, setCardinalSelected] = useState<StudioMapLinkCardinal>('north');
   const [indexSelected, setIndexSelected] = useState<number>(0);
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const mapData = useMemo(() => createMapData(state.rmxpMaps), [state.rmxpMaps]);
-  const currentEditedMaplink = useMemo(() => mapLink.clone(), [mapLink]);
+  const currentEditedMaplink = useMemo(() => cloneEntity(mapLink), [mapLink]);
   const isValidMaplink = useMemo(() => checkValidMaplink(mapId, state), [mapId, state]);
   const { t } = useTranslation('database_maplinks');
 
-  const addReverseMapLink = (selectedMap: number, cardinal: Cardinal, offset: number) => {
-    const mapLinkSelectedMap = (
-      Object.values(mapLinks).find((mapL) => mapL.mapId === selectedMap) || bindMapLink(MapLinkModel.createMapLink(mapLinks, selectedMap))
-    ).clone();
+  const addReverseMapLink = (selectedMap: number, cardinal: StudioMapLinkCardinal, offset: number) => {
+    const mapLinkSelectedMap = cloneEntity(Object.values(mapLinks).find((mapL) => mapL.mapId === selectedMap) || createMapLink(lastId, selectedMap));
     const cardinalOpposed = getCardinalOpposed(cardinal);
     const reverseLinks = getLinksFromMapLink(mapLinkSelectedMap, cardinalOpposed).concat({
       mapId: Number(currentEditedMaplink.mapId),
@@ -88,11 +99,9 @@ const MapLinkPage = () => {
     setDataMapLink({ [mapLinkSelectedMap.dbSymbol]: mapLinkSelectedMap });
   };
 
-  const deleteReverseMapLink = (cardinal: Cardinal, linkDeleted: MapLinkLink) => {
+  const deleteReverseMapLink = (cardinal: StudioMapLinkCardinal, linkDeleted: StudioMapLinkLink) => {
     const cardinalOpposed = getCardinalOpposed(cardinal);
-    const mapLinkReverse = Object.values(mapLinks)
-      .find((mapL) => mapL.mapId === linkDeleted.mapId)
-      ?.clone();
+    const mapLinkReverse = cloneEntity(Object.values(mapLinks).find((mapL) => mapL.mapId === linkDeleted.mapId));
     if (!mapLinkReverse) return;
 
     const reverseLinks = getLinksFromMapLink(mapLinkReverse, cardinalOpposed);
@@ -107,11 +116,9 @@ const MapLinkPage = () => {
     }
   };
 
-  const updateOffsetReverseMapLink = (cardinal: Cardinal, offset: number, editedLink: MapLinkLink) => {
+  const updateOffsetReverseMapLink = (cardinal: StudioMapLinkCardinal, offset: number, editedLink: StudioMapLinkLink) => {
     const cardinalOpposed = getCardinalOpposed(cardinal);
-    const mapLinkReverse = Object.values(mapLinks)
-      .find((mapL) => mapL.mapId === editedLink.mapId)
-      ?.clone();
+    const mapLinkReverse = cloneEntity(Object.values(mapLinks).find((mapL) => mapL.mapId === editedLink.mapId));
     if (!mapLinkReverse) return;
 
     const linksReverse = getLinksFromMapLink(mapLinkReverse, cardinalOpposed);
@@ -123,30 +130,30 @@ const MapLinkPage = () => {
     setDataMapLink({ [mapLinkReverse.dbSymbol]: mapLinkReverse });
   };
 
-  const onChange = (selected: SelectOption) => {
+  const onChange: SelectChangeEvent = (selected) => {
     const id = Number(selected.value);
     setSelectedDataIdentifier({ mapLink: selected.value });
-    setMapLink(Object.values(mapLinks).find((mapL) => mapL.mapId === Number(id)) || bindMapLink(MapLinkModel.createMapLink(mapLinks, Number(id))));
+    setMapLink(Object.values(mapLinks).find((mapL) => mapL.mapId === Number(id)) || createMapLink(lastId, Number(id)));
   };
 
-  const onClickCreateNewLink = useCallback((cardinal: Cardinal) => {
+  const onClickCreateNewLink = useCallback((cardinal: StudioMapLinkCardinal) => {
     setCardinalSelected(cardinal);
     setCurrentEditor('newLink');
   }, []);
 
-  const onDeleteLink = (index: number, cardinal: Cardinal) => {
+  const onDeleteLink = (index: number, cardinal: StudioMapLinkCardinal) => {
     const deletedLink = getLinksFromMapLink(currentEditedMaplink, cardinal).splice(index, 1)[0];
     deleteReverseMapLink(cardinal, deletedLink);
     if (isEmptyLinksFromMapLink(currentEditedMaplink)) {
       removeMapLink(mapLink.dbSymbol, { mapLink: mapLink.mapId.toString() });
-      setMapLink(bindMapLink(MapLinkModel.createMapLink(mapLinks, Number(mapLink.mapId))));
+      setMapLink(bindMapLink(createMapLink(lastId, Number(mapLink.mapId))));
     } else {
       setDataMapLink({ [mapLink.dbSymbol]: currentEditedMaplink });
       setMapLink(currentEditedMaplink);
     }
   };
 
-  const onAddLink = (cardinal: Cardinal, selectedMap: string, offset: number) => {
+  const onAddLink = (cardinal: StudioMapLinkCardinal, selectedMap: string, offset: number) => {
     const links = getLinksFromMapLink(currentEditedMaplink, cardinal).concat({ mapId: Number(selectedMap), offset: offset });
     links.sort((a, b) => a.offset - b.offset);
     setLinksFromMapLink(currentEditedMaplink, links, cardinal);
@@ -156,7 +163,7 @@ const MapLinkPage = () => {
     setCurrentEditor(undefined);
   };
 
-  const onEditOffset = (index: number, cardinal: Cardinal, offset: number) => {
+  const onEditOffset = (index: number, cardinal: StudioMapLinkCardinal, offset: number) => {
     const links = getLinksFromMapLink(currentEditedMaplink, cardinal);
     if (offset === links[index].offset) return;
 
@@ -167,7 +174,7 @@ const MapLinkPage = () => {
     setMapLink(currentEditedMaplink);
   };
 
-  const onEditLink = (index: number, cardinal: Cardinal) => {
+  const onEditLink = (index: number, cardinal: StudioMapLinkCardinal) => {
     setIndexSelected(index);
     setCardinalSelected(cardinal);
     setCurrentEditor('editLink');

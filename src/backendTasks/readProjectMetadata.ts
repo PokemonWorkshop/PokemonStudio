@@ -2,13 +2,13 @@ import { IpcMainEvent } from 'electron';
 import log from 'electron-log';
 import path from 'path';
 import fs from 'fs';
-import type ProjectStudioModel from '@modelEntities/ProjectStudio.model';
+import { StudioProject } from '@modelEntities/project';
 
 const readProjectMetadata = async (event: IpcMainEvent, payload: { path: string }) => {
   log.info('read-project-metadata');
   try {
     const metaDataJson = fs.readFileSync(path.join(payload.path, 'project.studio'), { encoding: 'utf-8' });
-    const metaData: Omit<ProjectStudioModel, 'clone'> = JSON.parse(metaDataJson);
+    const metaData: StudioProject = JSON.parse(metaDataJson);
     log.info('read-project-metadata/success', { metaData });
     event.sender.send('read-project-metadata/success', { metaData });
   } catch (error) {

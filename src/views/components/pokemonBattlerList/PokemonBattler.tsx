@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import Encounter, { IEv } from '@modelEntities/Encounter';
 import { PokemonPropertyType } from './PokemonBattlerList';
 import { Tag } from '@components/Tag';
 import { useProjectAbilities, useProjectItems, useProjectMoves, useProjectPokemon } from '@utils/useProjectData';
@@ -10,14 +9,15 @@ import { TypeCategoryPokemonBattler } from '@components/categories';
 import { Category } from '@components/categories/Category';
 import { DataFieldsetFieldWithChild } from '@components/database/dataBlocks/DataFieldsetField';
 import { useTranslation } from 'react-i18next';
-import { getNatureText } from '@utils/ReadingProjectText';
+import { getNatureText, useGetEntityNameText, useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
 import { ResourceImage } from '@components/ResourceImage';
-import { pokemonIconPath } from '@modelEntities/pokemon/Pokemon.model';
+import { itemIconPath, pokemonIconPath } from '@utils/path';
+import { StudioGroupEncounter, StudioIvEv } from '@modelEntities/groupEncounter';
 
 type PokemonBattlerProps = {
   onClickDelete: (index: number) => void;
   onEditPokemonProperty: (index: number, kind: PokemonPropertyType) => void;
-  pokemon: Encounter;
+  pokemon: StudioGroupEncounter;
   index: number;
   isWild: boolean;
 };
@@ -132,7 +132,7 @@ const PokemonBattlerEVContainer = styled.div`
 `;
 
 type PokemonBattlerEVProps = {
-  evs: IEv;
+  evs: StudioIvEv;
   onClick: (event: React.MouseEvent<HTMLSpanElement>) => void;
 };
 
@@ -184,6 +184,8 @@ type PokemonBattlerMovesetProps = {
 const PokemonBattlerMoveset = ({ moveset, onClick }: PokemonBattlerMovesetProps) => {
   const { projectDataValues: moves } = useProjectMoves();
   const { t } = useTranslation('database_moves');
+  const getMoveName = useGetEntityNameText();
+
   return moveset.filter((move) => move === '__undef__' || move === '__remove__').length === moveset.length ? (
     <></>
   ) : (
@@ -194,7 +196,7 @@ const PokemonBattlerMoveset = ({ moveset, onClick }: PokemonBattlerMovesetProps)
           move !== '__remove__' &&
           (moves[move] ? (
             <TypeCategoryPokemonBattler key={`moveset-${move}-${index}`} type={moves[move].type}>
-              {moves[move].name()}
+              {getMoveName(moves[move])}
             </TypeCategoryPokemonBattler>
           ) : (
             <span key={`moveset-${move}-${index}`} className="error" data-has-hover>
@@ -211,16 +213,18 @@ export const PokemonBattler = ({ onClickDelete, onEditPokemonProperty, pokemon, 
   const { projectDataValues: species } = useProjectPokemon();
   const { projectDataValues: abilities } = useProjectAbilities();
   const { projectDataValues: items } = useProjectItems();
+  const getAbilityName = useGetEntityNameTextUsingTextId();
   const specie = species[pokemon.specie];
   const itemSetup = pokemon.expandPokemonSetup.find((setup) => setup.type === 'itemHeld' && setup.value !== 'none')?.value as string;
   const item = items[itemSetup];
   const abilitySetup = pokemon.expandPokemonSetup.find((setup) => setup.type === 'ability')?.value as string;
   const ability = abilities[abilitySetup];
   const nature = pokemon.expandPokemonSetup.find((setup) => setup.type === 'nature')?.value as string;
-  const evSetup = pokemon.expandPokemonSetup.find((setup) => setup.type === 'evs')?.value as IEv;
+  const evSetup = pokemon.expandPokemonSetup.find((setup) => setup.type === 'evs')?.value as StudioIvEv;
   const movesSetup = pokemon.expandPokemonSetup.find((setup) => setup.type === 'moves')?.value as string[];
   const { t } = useTranslation(['database_abilities', 'database_pokemon', 'database_items', 'pokemon_battler_list']);
   const [allowParentHover, setAllowParentHover] = useState(true);
+  const getEntityName = useGetEntityNameText();
 
   const onDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
@@ -258,7 +262,7 @@ export const PokemonBattler = ({ onClickDelete, onEditPokemonProperty, pokemon, 
             <ResourceImage imagePathInProject="graphics/pokedex/pokeicon/000.png" />
           )}
           <div className="name-level">
-            {specie ? specie.name() : <span className="error">{t('database_pokemon:pokemon_deleted')}</span>}
+            {specie ? getEntityName(specie) : <span className="error">{t('database_pokemon:pokemon_deleted')}</span>}
             <span className="level">
               {pokemon.levelSetup.kind === 'fixed'
                 ? t('pokemon_battler_list:level', { level: pokemon.levelSetup.level })
@@ -274,21 +278,15 @@ export const PokemonBattler = ({ onClickDelete, onEditPokemonProperty, pokemon, 
         </PokemonBattlerHeader>
         {itemSetup && (
           <PokemonBattlerItem>
-            {item && (
-              <img
-                draggable="false"
-                src={state.projectPath ? item.iconUrl(state.projectPath) : 'https://www.pokepedia.fr/images/8/87/Pok%C3%A9_Ball.png'}
-                alt=""
-              />
-            )}
-            {item ? item.name() : <span className="error">{t('database_items:item_deleted')}</span>}
+            {item && <img draggable="false" src={itemIconPath(item.icon, state.projectPath)} alt="" />}
+            {item ? getEntityName(item) : <span className="error">{t('database_items:item_deleted')}</span>}
           </PokemonBattlerItem>
         )}
         {(abilitySetup || nature) && (
           <PokemonBattlerAbilityNature>
             {abilitySetup && (
               <DataFieldsetFieldWithChild label={t('database_abilities:ability')}>
-                {ability ? ability.name() : <span className="error">{t('database_abilities:ability_deleted')}</span>}
+                {ability ? getAbilityName(ability) : <span className="error">{t('database_abilities:ability_deleted')}</span>}
               </DataFieldsetFieldWithChild>
             )}
             {nature && (

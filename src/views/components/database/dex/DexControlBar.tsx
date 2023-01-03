@@ -1,14 +1,14 @@
 import { SecondaryButtonWithPlusIcon } from '@components/buttons';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { ControlBar } from '@components/ControlBar';
-import DexModel from '@modelEntities/dex/Dex.model';
 import { SelectDex } from '@components/selects';
+import { StudioDex } from '@modelEntities/dex';
 
 type DexControlBarProps = {
-  onChange: (selected: SelectOption) => void;
-  dex: DexModel;
+  onChange: SelectChangeEvent;
+  dex: StudioDex;
   onClickNewDex: () => void;
 };
 

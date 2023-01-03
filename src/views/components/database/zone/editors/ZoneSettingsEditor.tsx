@@ -3,13 +3,13 @@ import { Editor, useRefreshUI } from '@components/editor';
 
 import { TFunction, useTranslation } from 'react-i18next';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
-import ZoneModel, { WeatherCategories } from '@modelEntities/zone/Zone.model';
 import styled from 'styled-components';
 import { TagWithDeletion, TagWithDeletionContainer } from '@components/Tag';
 import { padStr } from '@utils/PadStr';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import { TextInputError } from '@components/inputs/Input';
+import { StudioZone } from '@modelEntities/zone';
 
 const InputMapsListContainer = styled(InputWithTopLabelContainer)`
   gap: 16px;
@@ -40,11 +40,14 @@ const MapsListContainer = styled.div`
   }
 `;
 
+// -1 = By default, 0 = None, 1 = Rain, 2 = Sun/Zenith, 3 = Sandstorm, 4 = Hail, 5 = Foggy
+const WeatherCategories = [-1, 0, 1, 2, 3, 4, 5] as const;
+
 const weatherCategoryEntries = (t: TFunction<'database_zones'>) =>
   WeatherCategories.map((category) => ({ value: category.toString(), label: t(`weather${category}`) }));
 
 type ZoneSettingsEditorProps = {
-  zone: ZoneModel;
+  zone: StudioZone;
 };
 
 export const ZoneSettingsEditor = ({ zone }: ZoneSettingsEditorProps) => {
@@ -79,7 +82,7 @@ export const ZoneSettingsEditor = ({ zone }: ZoneSettingsEditorProps) => {
   };
 
   const onChangeForcedWeather = (value: number) => {
-    refreshUI((zone.forcedWeather = value === -1 ? null : value));
+    refreshUI((zone.forcedWeather = value === -1 ? null : (value as 1)));
   };
 
   return (

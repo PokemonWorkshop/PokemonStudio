@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import TrainerModel, { AiCategories } from '@modelEntities/trainer/Trainer.model';
 import {
   DataBlockContainer,
   DataFieldsetField,
@@ -14,9 +13,12 @@ import { useGlobalState } from '@src/GlobalStateProvider';
 import { padStr } from '@utils/PadStr';
 import { TrainerCategory } from '@components/categories';
 import { showNotification } from '@utils/showNotification';
+import { useGetEntityNameText, useGetProjectText } from '@utils/ReadingProjectText';
+import { getTrainerMoney, StudioTrainer, TRAINER_AI_CATEGORIES, TRAINER_CLASS_TEXT_ID } from '@modelEntities/trainer';
+import { trainerSpriteBigPath, trainerSpritePath } from '@utils/path';
 
 type TrainerFrameProps = {
-  trainer: TrainerModel;
+  trainer: StudioTrainer;
   onClick: () => void;
 };
 
@@ -94,17 +96,21 @@ const TrainerSpriteContainer = styled.div.attrs<TrainerSpriteProps>((props) => (
 export const TrainerFrame = ({ trainer, onClick }: TrainerFrameProps) => {
   const { t } = useTranslation('database_trainers');
   const [state] = useGlobalState();
+  const getTrainerName = useGetEntityNameText();
+  const getText = useGetProjectText();
   const [spriteDp, setSpriteDp] = useState(false);
   const [spriteBig, setSpriteBig] = useState(false);
   const [initial, setInitial] = useState(true);
 
+  const trainerName = useMemo(() => `${getText(TRAINER_CLASS_TEXT_ID, trainer.id)} ${getTrainerName(trainer)}`, [trainer]);
+
   useEffect(() => {
     window.api.fileExists(
-      { filePath: trainer.sprite(state.projectPath!) },
+      { filePath: trainerSpritePath(trainer, state.projectPath!) },
       ({ result }) => {
         setSpriteDp(result);
         window.api.fileExists(
-          { filePath: trainer.spriteBig(state.projectPath!) },
+          { filePath: trainerSpriteBigPath(trainer, state.projectPath!) },
           ({ result: resultBig }) => {
             setSpriteBig(resultBig);
             setInitial(false);
@@ -124,28 +130,28 @@ export const TrainerFrame = ({ trainer, onClick }: TrainerFrameProps) => {
           <DataInfoContainerHeader>
             <DataInfoContainerHeaderTitle>
               <h1>
-                {trainer.name()}
+                {trainerName}
                 <span className="data-id">#{padStr(trainer.id, 3)}</span>
               </h1>
             </DataInfoContainerHeaderTitle>
             {trainer.vsType === 2 && <TrainerCategory category="double">{t('vs_type2')}</TrainerCategory>}
           </DataInfoContainerHeader>
           <TrainerSubInfoContainer>
-            <DataFieldsetField label={t('trainer_class')} data={trainer.trainerClassName()} />
-            <DataFieldsetField label={t('ai_level')} data={t(AiCategories[trainer.ai - 1])} />
-            <DataFieldsetField label={t('money_given')} data={`${trainer.money()} P$`} />
+            <DataFieldsetField label={t('trainer_class')} data={getText(TRAINER_CLASS_TEXT_ID, trainer.id)} />
+            <DataFieldsetField label={t('ai_level')} data={t(TRAINER_AI_CATEGORIES[trainer.ai - 1])} />
+            <DataFieldsetField label={t('money_given')} data={`${getTrainerMoney(trainer)} P$`} />
           </TrainerSubInfoContainer>
         </TrainerInfoContainer>
         {trainer.battlers.length !== 0 && state.projectPath && (
           <TrainerSpriteContainer show={initial ? 'show' : !spriteBig && !spriteDp ? 'not-show' : 'show'}>
             {spriteBig && (
               <div className="sprite-big">
-                <img src={trainer.spriteBig(state.projectPath)} />
+                <img src={trainerSpriteBigPath(trainer, state.projectPath)} />
               </div>
             )}
             {spriteDp && (
               <div className="sprite-dp">
-                <img src={trainer.sprite(state.projectPath)} />
+                <img src={trainerSpritePath(trainer, state.projectPath)} />
               </div>
             )}
           </TrainerSpriteContainer>

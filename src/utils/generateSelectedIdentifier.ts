@@ -1,8 +1,13 @@
+import { DbSymbol } from '@modelEntities/dbSymbol';
 import { SelectedDataIdentifier } from '@src/GlobalStateProvider';
+import { getEntityNameTextUsingTextId } from './ReadingProjectText';
 import { PreGlobalState } from './useProjectLoad';
 
-const firstByName = <T extends { name: () => string; dbSymbol: string }>(data: Record<string, T>): string => {
-  return Object.values(data).sort((a, b) => a.name().localeCompare(b.name()))[0].dbSymbol;
+const firstByNameUsingTextId = (
+  data: Record<string, Parameters<typeof getEntityNameTextUsingTextId>[0] & { dbSymbol: DbSymbol }>,
+  state: PreGlobalState
+): string => {
+  return Object.values(data).sort((a, b) => getEntityNameTextUsingTextId(a, state).localeCompare(getEntityNameTextUsingTextId(b, state)))[0].dbSymbol;
 };
 
 const firstById = <T extends { id: number; dbSymbol: string }>(data: Record<string, T>): string => {
@@ -23,9 +28,9 @@ export const generateSelectedIdentifier = (preState: PreGlobalState): SelectedDa
     item: firstById(projectData.items),
     quest: firstById(projectData.quests),
     trainer: firstById(projectData.trainers),
-    type: firstByName(projectData.types),
+    type: firstByNameUsingTextId(projectData.types, preState),
     zone: firstById(projectData.zones),
-    ability: firstByName(projectData.abilities),
+    ability: firstByNameUsingTextId(projectData.abilities, preState),
     group: firstById(projectData.groups),
     dex: firstById(projectData.dex),
     mapLink:

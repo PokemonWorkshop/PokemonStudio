@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { useProjectPokemon, useProjectTrainers } from '@utils/useProjectData';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { useTranslation } from 'react-i18next';
 import { DeletionOverlay } from '@components/deletion';
 import { DataBlockWithAction, DataBlockWrapper } from '@components/database/dataBlocks';
@@ -13,11 +13,15 @@ import { TrainerImportEditor, TrainerDialogEditor, TrainerFrameEditor, TrainerNe
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { PokemonBattlerList } from '@components/pokemonBattlerList';
 import { PokemonBattlerListEditor } from '@components/pokemonBattlerList/editors';
-import { cleanExpandPokemonSetup } from '@modelEntities/Encounter';
 import { CurrentBattlerType } from '@components/pokemonBattlerList/PokemonBattlerList';
 import { BagEntryList, BagEntryListEditor } from '@components/bagEntryList';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
 import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
+import { useGetEntityNameText, useGetProjectText } from '@utils/ReadingProjectText';
+import { reduceBagEntries, TRAINER_CLASS_TEXT_ID, updatePartyTrainerName } from '@modelEntities/trainer';
+import { cleanExpandPokemonSetup, cleaningTrainerNaNValues } from '@utils/cleanNaNValue';
+import { cloneEntity } from '@utils/cloneEntity';
+import { trainerSpriteBigPath, trainerSpritePath } from '@utils/path';
 
 export const TrainerPage = () => {
   const {
@@ -30,9 +34,11 @@ export const TrainerPage = () => {
   } = useProjectTrainers();
   const { projectDataValues: species } = useProjectPokemon();
   const { t } = useTranslation('database_trainers');
-  const onChange = (selected: SelectOption) => setSelectedDataIdentifier({ trainer: selected.value });
+  const getTrainerName = useGetEntityNameText();
+  const getText = useGetProjectText();
+  const onChange: SelectChangeEvent = (selected) => setSelectedDataIdentifier({ trainer: selected.value });
   const trainer = trainers[trainerDbSymbol];
-  const currentEditedTrainer = useMemo(() => trainer.clone(), [trainer]);
+  const currentEditedTrainer = useMemo(() => cloneEntity(trainer), [trainer]);
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
   const [currentBattler, setCurrentBattler] = useState<CurrentBattlerType>({
@@ -48,7 +54,8 @@ export const TrainerPage = () => {
       db_next: () => setSelectedDataIdentifier({ trainer: getNextDbSymbol('id') }),
       db_new: () => setCurrentEditor('new'),
     };
-  }, [getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
+  }, [currentEditor, currentDeletion, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol]);
+
   useShortcut(shortcutMap);
   const [state] = useGlobalState();
   const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
@@ -59,13 +66,15 @@ export const TrainerPage = () => {
       translation_defeat: { fileId: 48, isMultiline: true },
     },
     currentEditedTrainer.id,
-    currentEditedTrainer.name()
+    `${getText(TRAINER_CLASS_TEXT_ID, currentEditedTrainer.id)} ${getTrainerName(currentEditedTrainer)}`
   );
 
   const onCloseEditor = () => {
     if (
       currentEditor === 'frame' &&
-      (currentEditedTrainer.trainerName() === '' || currentEditedTrainer.trainerClassName() === '' || currentEditedTrainer.battlers.length === 0)
+      (getTrainerName(currentEditedTrainer) === '' ||
+        getText(TRAINER_CLASS_TEXT_ID, currentEditedTrainer.id) === '' ||
+        currentEditedTrainer.battlers.length === 0)
     )
       return;
     if (
@@ -81,12 +90,12 @@ export const TrainerPage = () => {
     )
       return;
     if (currentEditor === 'battlerEdit' && currentBattler.index !== undefined)
-      cleanExpandPokemonSetup(currentEditedTrainer.party[currentBattler.index], species, false);
-    if (currentEditor === 'bagEntryEdit') currentEditedTrainer.reduceBagEntries();
-    currentEditedTrainer.updatePartyTrainerName();
-    currentEditedTrainer.cleaningNaNValues();
+      cleanExpandPokemonSetup(currentEditedTrainer.party[currentBattler.index], species, false, state);
+    if (currentEditor === 'bagEntryEdit') reduceBagEntries(currentEditedTrainer);
+    updatePartyTrainerName(currentEditedTrainer, getTrainerName(currentEditedTrainer));
+    cleaningTrainerNaNValues(currentEditedTrainer);
     if (currentEditor === 'battlerNew' || currentEditor === 'bagEntryNew') return setCurrentEditor(undefined);
-    setTrainer({ [trainer.dbSymbol]: currentEditedTrainer });
+    setTrainer({ [trainer.dbSymbol]: cloneEntity(currentEditedTrainer) });
     setCurrentEditor(undefined);
     closeTranslationEditor();
   };
@@ -133,13 +142,13 @@ export const TrainerPage = () => {
             <TrainerFrame
               trainer={trainer}
               onClick={() => setCurrentEditor('frame')}
-              key={`${trainer.sprite(state.projectPath || '')}-${trainer.spriteBig(state.projectPath || '')}`}
+              key={`${trainerSpritePath(trainer, state.projectPath || '')}-${trainerSpriteBigPath(trainer, state.projectPath || '')}`}
             />
             <TrainerDialog trainer={trainer} onClick={() => setCurrentEditor('dialog')} />
           </DataBlockWrapper>
           <DataBlockWrapper>
             <PokemonBattlerList
-              title={t('trainer_party', { name: trainer.trainerName() })}
+              title={t('trainer_party', { name: getTrainerName(trainer) })}
               onClickAdd={() => setCurrentEditor('battlerNew')}
               onClickDelete={onDeleteBattler}
               onClickImport={() => setCurrentEditor('battlerImport')}
@@ -151,7 +160,7 @@ export const TrainerPage = () => {
               disabledImport={Object.entries(trainers).length <= 1}
             />
             <BagEntryList
-              title={t('trainer_bag', { name: trainer.trainerName() })}
+              title={t('trainer_bag', { name: getTrainerName(trainer) })}
               onClickAdd={() => setCurrentEditor('bagEntryNew')}
               onClickDelete={onDeleteBagEntry}
               onClickImport={() => setCurrentEditor('bagEntryImport')}

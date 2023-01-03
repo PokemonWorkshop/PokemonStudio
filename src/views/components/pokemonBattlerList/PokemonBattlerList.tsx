@@ -2,9 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import { DataBlockEditorContainer } from '@components/editor/DataBlockEditorStyle';
 import { DarkButton, SecondaryButtonWithPlusIconResponsive } from '@components/buttons';
-import Encounter from '@modelEntities/Encounter';
 import { PokemonBattler } from './PokemonBattler';
 import { useTranslation } from 'react-i18next';
+import { StudioGroupEncounter } from '@modelEntities/groupEncounter';
 
 type PokemonBattlerListProps = {
   title: string;
@@ -12,7 +12,7 @@ type PokemonBattlerListProps = {
   onClickImport: () => void;
   onClickDelete: (index: number) => void;
   onEditPokemonProperty: (index: number, kind: PokemonPropertyType) => void;
-  pokemonBattlers: Encounter[];
+  pokemonBattlers: StudioGroupEncounter[];
   disabledImport: boolean;
   isWild?: true;
 };
