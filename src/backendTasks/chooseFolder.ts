@@ -1,10 +1,10 @@
-import Electron, { dialog, IpcMainEvent } from 'electron';
+import Electron, { BrowserWindow, dialog, IpcMainEvent } from 'electron';
 import log from 'electron-log';
 
 const chooseFolder = async (event: IpcMainEvent) => {
   log.info('choose-folder');
   try {
-    const filePaths = await dialog.showOpenDialog({
+    const filePaths = await dialog.showOpenDialog(BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0], {
       properties: ['openDirectory', 'createDirectory', 'promptToCreate'],
     });
 

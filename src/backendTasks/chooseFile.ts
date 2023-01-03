@@ -1,11 +1,11 @@
-import { IpcMain, dialog, IpcMainEvent } from 'electron';
+import { IpcMain, dialog, IpcMainEvent, BrowserWindow } from 'electron';
 import log from 'electron-log';
 import path from 'path';
 
 const chooseFile = async (event: IpcMainEvent, payload: { name: string; extensions: string[] }) => {
   log.info('choose-file', payload);
   try {
-    const filePaths = await dialog.showOpenDialog({
+    const filePaths = await dialog.showOpenDialog(BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0], {
       properties: ['openFile'],
       filters: [
         {

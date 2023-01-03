@@ -1,4 +1,4 @@
-import { dialog, IpcMainEvent } from 'electron';
+import { BrowserWindow, dialog, IpcMainEvent, IpcMain } from 'electron';
 import log from 'electron-log';
 import path from 'path';
 
@@ -7,7 +7,7 @@ export type ProjectFileType = 'studio' | 'rxproj';
 const chooseProjectFileToOpen = async (event: IpcMainEvent, payload: { fileType: ProjectFileType }) => {
   log.info('choose-project-file-to-open', payload);
   try {
-    const filePaths = await dialog.showOpenDialog({
+    const filePaths = await dialog.showOpenDialog(BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0], {
       properties: ['openFile'],
       filters: [
         {
@@ -33,6 +33,6 @@ const chooseProjectFileToOpen = async (event: IpcMainEvent, payload: { fileType:
   }
 };
 
-export const registerChooseProjectFileToOpen = (ipcMain: Electron.IpcMain) => {
+export const registerChooseProjectFileToOpen = (ipcMain: IpcMain) => {
   ipcMain.on('choose-project-file-to-open', chooseProjectFileToOpen);
 };

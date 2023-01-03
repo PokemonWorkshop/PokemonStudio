@@ -1,5 +1,5 @@
 import log from 'electron-log';
-import Electron, { dialog, IpcMainEvent } from 'electron';
+import Electron, { BrowserWindow, dialog, IpcMainEvent } from 'electron';
 import fs from 'fs';
 
 export type ShowMessageBoxTranslation = {
@@ -14,7 +14,7 @@ const copyFile = async (event: IpcMainEvent, payload: { srcFile: string; destFil
     if (!result) return event.sender.send('copy-file/failure', { errorMessage: 'The source file does not exist.' });
 
     if (fs.existsSync(payload.destFile)) {
-      const choice = await dialog.showMessageBox({
+      const choice = await dialog.showMessageBox(BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0], {
         type: 'warning',
         buttons: ['Yes', 'No'],
         title: payload.translation.title,
