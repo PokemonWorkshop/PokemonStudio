@@ -1,15 +1,15 @@
 import { Editor, useRefreshUI } from '@components/editor';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { SelectPokemon, SelectPokemonForm } from '@components/selects';
-import PokemonModel from '@modelEntities/pokemon/Pokemon.model';
+import { StudioCreature } from '@modelEntities/creature';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 import { TFunction } from 'i18next';
 import React, { FunctionComponent, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type BreedingEditorProps = {
-  currentPokemon: PokemonModel;
+  currentPokemon: StudioCreature;
   currentFormIndex: number;
 };
 
@@ -32,7 +32,7 @@ const breedingGroupEntries = [
   'unknown',
 ];
 
-const getBreedingGroupOptions = (t: TFunction, breedingGroups: string[]): SelectOption[] =>
+const getBreedingGroupOptions = (t: TFunction, breedingGroups: string[]) =>
   breedingGroups
     .map((breedingGroup, index) => ({ value: index.toString(), label: t(`database_pokemon:${breedingGroup}`) }))
     .sort((a, b) => a.label.localeCompare(b.label));
@@ -48,7 +48,7 @@ export const BreedingEditor: FunctionComponent<BreedingEditorProps> = ({ current
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="baby">{t('database_pokemon:baby')}</Label>
-          <SelectPokemon dbSymbol={form.babyDbSymbol} onChange={(event) => refreshUI((form.babyDbSymbol = event.value))} noLabel />
+          <SelectPokemon dbSymbol={form.babyDbSymbol} onChange={(event) => refreshUI((form.babyDbSymbol = event.value as DbSymbol))} noLabel />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="form">{t('database_pokemon:form')}</Label>

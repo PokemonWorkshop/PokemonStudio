@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Editor, useRefreshUI } from '@components/editor';
 import { InputContainer, InputWithLeftLabelContainer, Label, Toggle } from '@components/inputs';
-import ItemModel from '@modelEntities/item/Item.model';
+import { LOCKED_ITEM_EDITOR, StudioItem } from '@modelEntities/item';
 
 type ItemParametersDataEditorProps = {
-  item: ItemModel;
+  item: StudioItem;
 };
 
 export const ItemParametersDataEditor = ({ item }: ItemParametersDataEditorProps) => {
   const { t } = useTranslation('database_items');
   const refreshUI = useRefreshUI();
 
-  return item.lockedEditors.includes('parameters') ? (
+  return LOCKED_ITEM_EDITOR[item.klass].includes('parameters') ? (
     <></>
   ) : (
     <Editor type="edit" title={t('params')}>

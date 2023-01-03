@@ -1,5 +1,5 @@
-import { Earning } from '@modelEntities/quest/Quest.model';
+import { StudioQuestEarning } from '@modelEntities/quest';
 
 export type QuestEarningProps = {
-  earning: Earning;
+  earning: StudioQuestEarning;
 };

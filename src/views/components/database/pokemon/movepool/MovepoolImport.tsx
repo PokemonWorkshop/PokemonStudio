@@ -2,14 +2,15 @@ import React, { useMemo, useState } from 'react';
 import { Editor } from '@components/editor';
 import { TFunction, useTranslation } from 'react-i18next';
 import { InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
-import { ProjectData } from '@src/GlobalStateProvider';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { SelectCustom } from '@components/SelectCustom';
 import { useProjectData } from '@utils/useProjectData';
 import styled from 'styled-components';
 import { PokemonWithForm } from '../PokemonDataPropsInterface';
 import { DarkButton, PrimaryButton } from '@components/buttons';
-import PokemonForm from '@modelEntities/pokemon/PokemonForm';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
+import { getSelectDataOptionsOrderedById } from '@components/selects/SelectDataGeneric';
+import { StudioCreatureForm } from '@modelEntities/creature';
+import { getMoveKlass } from './MovepoolTable';
 
 type MovepoolImportProps = {
   type: 'level' | 'tutor' | 'tech' | 'breed' | 'evolution';
@@ -30,12 +31,7 @@ const ButtonContainer = styled.div`
   gap: 8px;
 `;
 
-const getPokemonOptions = (allPokemon: ProjectData['pokemon']): SelectOption[] =>
-  Object.entries(allPokemon)
-    .map(([value, pokemonData]) => ({ value, label: pokemonData.name(), index: pokemonData.id }))
-    .sort((a, b) => a.index - b.index);
-
-const getFormOptions = (t: TFunction<'database_pokemon'[]>, allForms: PokemonForm[]): SelectOption[] =>
+const getFormOptions = (t: TFunction<'database_pokemon'[]>, allForms: StudioCreatureForm[]) =>
   Object.entries(allForms).map(([value, formData]) => ({ value, label: t('database_pokemon:form#') + formData.form }));
 
 export const MovepoolImport = ({ type, pokemonWithForm, onClose }: MovepoolImportProps) => {
@@ -43,20 +39,22 @@ export const MovepoolImport = ({ type, pokemonWithForm, onClose }: MovepoolImpor
     projectDataValues: pokemon,
     selectedDataIdentifier: currentPokemon,
     setProjectDataValues: setPokemon,
+    state,
   } = useProjectData('pokemon', 'pokemon');
+  const getCreatureName = useGetEntityNameText();
   const [selectedPokemon, setSelectedPokemon] = useState('bulbasaur');
   const [selectedForm, setSelectedForm] = useState(0);
   const { t } = useTranslation(['database_pokemon']);
-  const pokemonOptions = useMemo(() => getPokemonOptions(pokemon), [pokemon]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const pokemonOptions = useMemo(() => getSelectDataOptionsOrderedById(state.projectData, 'pokemon', getCreatureName), [state.projectData]);
   const formOptions = useMemo(() => getFormOptions(t, pokemon[selectedPokemon].forms), [pokemon, selectedPokemon, t]);
 
   const onClickValidate = () => {
-    if (type === 'level') pokemonWithForm.form.levelLearnableMove = pokemon[selectedPokemon].clone().forms[selectedForm].levelLearnableMove;
-    if (type === 'tutor') pokemonWithForm.form.tutorLearnableMove = pokemon[selectedPokemon].clone().forms[selectedForm].tutorLearnableMove;
-    if (type === 'tech') pokemonWithForm.form.techLearnableMove = pokemon[selectedPokemon].clone().forms[selectedForm].techLearnableMove;
-    if (type === 'breed') pokemonWithForm.form.breedLearnableMove = pokemon[selectedPokemon].clone().forms[selectedForm].breedLearnableMove;
-    if (type === 'evolution')
-      pokemonWithForm.form.evolutionLearnableMove = pokemon[selectedPokemon].clone().forms[selectedForm].evolutionLearnableMove;
+    const klass = type === 'level' ? 'LevelLearnableMove' : getMoveKlass(type);
+    pokemonWithForm.form.moveSet = [
+      ...pokemonWithForm.form.moveSet.filter((m) => m.klass !== klass),
+      ...pokemon[selectedPokemon].forms[selectedForm].moveSet.filter((m) => m.klass === klass),
+    ];
     setPokemon({ [currentPokemon.specie]: pokemonWithForm.species });
     onClose();
   };
@@ -67,7 +65,7 @@ export const MovepoolImport = ({ type, pokemonWithForm, onClose }: MovepoolImpor
         <MovepoolImportInfo>{t(`database_pokemon:${type}_learnable_info` as never)}</MovepoolImportInfo>
         <InputWithTopLabelContainer>
           <Label htmlFor="pokemon">{t('database_pokemon:import_moves_from')}</Label>
-          <SelectCustom
+          <SelectCustom // TODO: Change to SelectPokemon
             options={pokemonOptions}
             onChange={(event) => {
               setSelectedPokemon(event.value);

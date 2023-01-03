@@ -1,9 +1,9 @@
-import React from 'react';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import React, { useMemo } from 'react';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useTranslation } from 'react-i18next';
-import { getDataOptions, SelectDataGeneric } from './SelectDataGeneric';
+import { getSelectDataOptionsOrderedById, SelectDataGeneric } from './SelectDataGeneric';
 import { SelectDataProps } from './SelectDataProps';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
 
 /**
  * Component to show a select item.
@@ -28,11 +28,13 @@ export const SelectItem = ({
 }: SelectDataProps) => {
   const { t } = useTranslation('database_items');
   const [state] = useGlobalState();
-  const options = getDataOptions(state.projectData, 'items');
+  const getItemName = useGetEntityNameText();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const options = useMemo(() => getSelectDataOptionsOrderedById(state.projectData, 'items', getItemName), [state.projectData]);
 
   const getData = () => {
     const currentItem = state.projectData.items[dbSymbol];
-    return currentItem ? currentItem : ({ value: dbSymbol, label: t('item_deleted') } as SelectOption);
+    return { value: dbSymbol, label: currentItem ? getItemName(currentItem) : t('item_deleted') };
   };
 
   return (

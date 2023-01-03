@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Objective, ObjectiveCategoryType, ObjectiveType } from '@modelEntities/quest/Quest.model';
 import { padStr } from '@utils/PadStr';
 import { useTranslation } from 'react-i18next';
 import { GoalCategory } from '@components/categories';
@@ -12,6 +11,7 @@ import { DeleteButtonOnlyIcon, EditButtonOnlyIcon } from '@components/buttons';
 import { EditButtonOnlyIconContainer } from '@components/buttons/EditButtonOnlyIcon';
 import theme from '@src/AppTheme';
 import { DraggableProvided } from 'react-beautiful-dnd';
+import { StudioQuestObjective, StudioQuestObjectiveCategoryType, StudioQuestObjectiveType } from '@modelEntities/quest';
 
 type RenderGoalContainerProps = {
   isDragging: boolean;
@@ -77,7 +77,7 @@ const RenderGoalContainer = styled(DataGoalGrid).attrs<RenderGoalContainerProps>
   }
 `;
 
-const categoryGoal: Record<ObjectiveType, ObjectiveCategoryType> = {
+const categoryGoal: Record<StudioQuestObjectiveType, StudioQuestObjectiveCategoryType> = {
   objective_speak_to: 'interaction',
   objective_obtain_item: 'discovery',
   objective_see_pokemon: 'exploration',
@@ -89,7 +89,7 @@ const categoryGoal: Record<ObjectiveType, ObjectiveCategoryType> = {
 };
 
 type RenderGoalProps = {
-  objective: Objective;
+  objective: StudioQuestObjective;
   index: number;
   provided: DraggableProvided;
   isDragging: boolean;

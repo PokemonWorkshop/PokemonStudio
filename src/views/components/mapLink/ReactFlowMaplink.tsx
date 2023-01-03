@@ -1,13 +1,17 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import theme from '@src/AppTheme';
 import ReactFlow, { addEdge, Controls, useEdgesState, useNodesState, useReactFlow } from 'react-flow-renderer';
-import MapLinkModel, { Cardinal, CardinalCategory, getLinksFromMapLink } from '@modelEntities/maplinks/MapLink.model';
 import { CurrentMapLinkCardNode, MapLinkCardNode } from './mapLinkCard';
 import { NewLinkNode } from './NewLinkNode';
 import { PointNode } from './PointNode';
 import { assertUnreachable } from '@utils/assertUnreachable';
+import { getLinksFromMapLink, MAP_LINK_CARDINAL_LIST, StudioMapLink, StudioMapLinkCardinal } from '@modelEntities/mapLink';
 
-const createInitialNodes = (currentMapLink: MapLinkModel, mapData: Map<number, string>, onClickCreateNewLink: (cardinal: Cardinal) => void) => [
+const createInitialNodes = (
+  currentMapLink: StudioMapLink,
+  mapData: Map<number, string>,
+  onClickCreateNewLink: (cardinal: StudioMapLinkCardinal) => void
+) => [
   {
     id: 'main-maplink-card',
     position: { x: 0, y: 0 },
@@ -44,7 +48,7 @@ const createInitialNodes = (currentMapLink: MapLinkModel, mapData: Map<number, s
   },
 ];
 
-const createInitialsEdges = (currentMapLink: MapLinkModel) => [
+const createInitialsEdges = (currentMapLink: StudioMapLink) => [
   {
     id: 'edges-north',
     source: 'main-maplink-card',
@@ -132,7 +136,7 @@ const pointPositions = {
   ],
 };
 
-const getPosition = (index: number, cardinal: Cardinal, max: number) => {
+const getPosition = (index: number, cardinal: StudioMapLinkCardinal, max: number) => {
   switch (cardinal) {
     case 'north':
       return northPositions[max - 1][index];
@@ -148,7 +152,7 @@ const getPosition = (index: number, cardinal: Cardinal, max: number) => {
   }
 };
 
-const getEdgeHandle = (cardinal: Cardinal) => {
+const getEdgeHandle = (cardinal: StudioMapLinkCardinal) => {
   switch (cardinal) {
     case 'north':
       return { source: 'Stop', target: 'Tbottom' };
@@ -164,14 +168,14 @@ const getEdgeHandle = (cardinal: Cardinal) => {
   }
 };
 
-const pointTarget: Record<Cardinal, string> = {
+const pointTarget: Record<StudioMapLinkCardinal, string> = {
   north: 'Tbottom',
   east: 'Tleft',
   south: 'Ttop',
   west: 'Tright',
 };
 
-const getPointHandle = (cardinal: Cardinal, length: number) => {
+const getPointHandle = (cardinal: StudioMapLinkCardinal, length: number) => {
   switch (cardinal) {
     case 'north':
     case 'south':
@@ -215,12 +219,12 @@ const createEdge = (id: string, source: string, sourceHandle: string, target: st
 });
 
 type ReactFlowMapLinkProps = {
-  mapLink: MapLinkModel;
+  mapLink: StudioMapLink;
   mapData: Map<number, string>;
-  onClickCreateNewLink: (cardinal: Cardinal) => void;
-  onDeleteLink: (index: number, cardinal: Cardinal) => void;
-  onEditOffset: (index: number, cardinal: Cardinal, offset: number) => void;
-  onEditLink: (index: number, cardinal: Cardinal) => void;
+  onClickCreateNewLink: (cardinal: StudioMapLinkCardinal) => void;
+  onDeleteLink: (index: number, cardinal: StudioMapLinkCardinal) => void;
+  onEditOffset: (index: number, cardinal: StudioMapLinkCardinal, offset: number) => void;
+  onEditLink: (index: number, cardinal: StudioMapLinkCardinal) => void;
 };
 
 export const ReactFlowMapLink = ({ mapLink, mapData, onClickCreateNewLink, onDeleteLink, onEditOffset, onEditLink }: ReactFlowMapLinkProps) => {
@@ -240,7 +244,7 @@ export const ReactFlowMapLink = ({ mapLink, mapData, onClickCreateNewLink, onDel
     // reset nodes and edges with initial data
     setNodes(initialNodes);
     setEdges(initialEdges);
-    CardinalCategory.forEach((cardinal) => {
+    MAP_LINK_CARDINAL_LIST.forEach((cardinal) => {
       const mapLinkLinks = getLinksFromMapLink(mapLink, cardinal);
       const edgeHandle = getEdgeHandle(cardinal);
       // create point nodes and the edges associated

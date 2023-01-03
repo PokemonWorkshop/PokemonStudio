@@ -4,12 +4,13 @@ import { Editor } from '@components/editor';
 
 import { useTranslation } from 'react-i18next';
 import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
-import DexModel, { DexCreature } from '@modelEntities/dex/Dex.model';
 import { useProjectDex, useProjectPokemon } from '@utils/useProjectData';
 import { SelectPokemon, SelectPokemonForm } from '@components/selects';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { searchUnderAndEvolutions } from '@utils/dex';
+import { StudioDex, StudioDexCreature } from '@modelEntities/dex';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -17,31 +18,31 @@ const ButtonContainer = styled.div`
   gap: 8px;
 `;
 
-const getPokemonUnavailable = (dex: DexModel): string[] => {
+const getPokemonUnavailable = (dex: StudioDex): string[] => {
   return dex.creatures.map((creature) => creature.dbSymbol);
 };
 
 type DexPokemonListAddEditorProps = {
-  dex: DexModel;
+  dex: StudioDex;
   onClose: () => void;
 };
 
 export const DexPokemonListAddEditor = ({ dex, onClose }: DexPokemonListAddEditorProps) => {
   const { setProjectDataValues: setDex } = useProjectDex();
   const { projectDataValues: allPokemon } = useProjectPokemon();
-  const [creature, setCreature] = useState<DexCreature>({ dbSymbol: '__undef__', form: 0 });
+  const [creature, setCreature] = useState<StudioDexCreature>({ dbSymbol: '__undef__' as DbSymbol, form: 0 });
   const pokemonUnavailable = useMemo(() => getPokemonUnavailable(dex), [dex]);
   const { t } = useTranslation(['database_dex', 'database_pokemon', 'database_moves']);
   const [isAddingEvolutions, setIsAddingEvolutions] = useState(false);
 
   const onClickAdd = () => {
-    const newDex = dex.clone();
+    const newDex = { ...dex, creatures: [] as StudioDexCreature[] };
     const pokemonForm = isAddingEvolutions && allPokemon[creature.dbSymbol]?.forms.find((form) => form.form === creature.form);
     const creatures = pokemonForm ? searchUnderAndEvolutions(pokemonForm, creature, allPokemon) : [creature];
     const alreadyInCreatures = dex.creatures.map(({ dbSymbol }) => dbSymbol);
     const creaturesToAdd = creatures.filter((other) => !alreadyInCreatures.includes(other.dbSymbol));
     if (creaturesToAdd.length !== 0) {
-      newDex.creatures = [...newDex.creatures, ...creaturesToAdd];
+      newDex.creatures = [...dex.creatures, ...creaturesToAdd];
       setDex({ [dex.dbSymbol]: newDex });
     }
     onClose();
@@ -57,7 +58,7 @@ export const DexPokemonListAddEditor = ({ dex, onClose }: DexPokemonListAddEdito
             </Label>
             <SelectPokemon
               dbSymbol={creature.dbSymbol}
-              onChange={(selected) => setCreature({ ...creature, dbSymbol: selected.value })}
+              onChange={(selected) => setCreature({ ...creature, dbSymbol: selected.value as DbSymbol })}
               noLabel
               noneValue
               noneValueIsError

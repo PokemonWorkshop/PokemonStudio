@@ -1,11 +1,9 @@
-import InfosConfigModel from '@modelEntities/config/InfosConfig.model';
 import { generatePSDKBatFileContent } from '@services/generatePSDKBatFileContent';
 import Electron, { IpcMainEvent } from 'electron';
 import log from 'electron-log';
 import path from 'path';
 import { copyFileSync, existsSync, readFileSync, writeFileSync } from 'fs';
-import { TypedJSON } from 'typedjson';
-import GameOptionsConfigModel from '@modelEntities/config/GameOptionsConfig.model';
+import { GAME_OPTION_CONFIG_VALIDATOR, INFO_CONFIG_VALIDATOR } from '@modelEntities/config';
 
 export type ConfigureNewProjectMetaData = {
   projectStudioData: string;
@@ -19,24 +17,22 @@ const updateInfosConfig = (infosConfigPath: string, projectTitle: string) => {
   if (!existsSync(infosConfigPath)) throw new Error('infos_config.json file not found');
 
   const infosConfigContent = readFileSync(infosConfigPath).toString('utf-8');
-  const serializer = new TypedJSON(InfosConfigModel);
-  const infosConfig = serializer.parse(infosConfigContent);
-  if (!infosConfig) throw new Error('Fail to parse infos_config.json');
+  const infosConfig = INFO_CONFIG_VALIDATOR.safeParse(JSON.parse(infosConfigContent));
+  if (!infosConfig.success) throw new Error('Fail to parse infos_config.json');
 
-  infosConfig.gameTitle = projectTitle;
-  writeFileSync(infosConfigPath, serializer.stringify(infosConfig));
+  infosConfig.data.gameTitle = projectTitle;
+  writeFileSync(infosConfigPath, JSON.stringify(infosConfig.data, null, 2));
 };
 
 const updateGameOptionsConfig = (gameOptionsConfigPath: string) => {
   if (!existsSync(gameOptionsConfigPath)) throw new Error('game_options_config.json file not found');
 
   const gameOptionsConfigContent = readFileSync(gameOptionsConfigPath).toString('utf-8');
-  const serializer = new TypedJSON(GameOptionsConfigModel);
-  const gameOptionsConfig = serializer.parse(gameOptionsConfigContent);
-  if (!gameOptionsConfig) throw new Error('Fail to parse game_options_config.json');
+  const gameOptionConfigValidation = GAME_OPTION_CONFIG_VALIDATOR.safeParse(JSON.parse(gameOptionsConfigContent));
+  if (!gameOptionConfigValidation.success) throw new Error('Fail to parse game_options_config.json');
 
-  gameOptionsConfig.removeKeyOfOrder('language');
-  writeFileSync(gameOptionsConfigPath, serializer.stringify(gameOptionsConfig));
+  gameOptionConfigValidation.data.order = gameOptionConfigValidation.data.order.filter((k) => k !== 'language');
+  writeFileSync(gameOptionsConfigPath, JSON.stringify(gameOptionConfigValidation.data, null, 2));
 };
 
 const configureNewProject = (event: IpcMainEvent, payload: { projectDirName: string; metaData: ConfigureNewProjectMetaData }) => {

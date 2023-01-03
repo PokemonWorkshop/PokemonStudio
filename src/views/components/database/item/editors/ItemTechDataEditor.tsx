@@ -2,20 +2,19 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Editor, useRefreshUI } from '@components/editor';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
-import ItemModel from '@modelEntities/item/Item.model';
-import TechItemModel from '@modelEntities/item/TechItem.model';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { SelectMove } from '@components/selects';
+import { LOCKED_ITEM_EDITOR, StudioItem } from '@modelEntities/item';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 
 type ItemTechDataEditorProps = {
-  item: ItemModel;
+  item: StudioItem;
 };
 
 export const ItemTechDataEditor = ({ item }: ItemTechDataEditorProps) => {
   const { t } = useTranslation(['database_items', 'database_moves']);
   const refreshUI = useRefreshUI();
-  const techItem = item instanceof TechItemModel ? item : undefined;
   const machineOptions = useMemo(
     () =>
       (['hm', 'tm'] as const)
@@ -23,28 +22,29 @@ export const ItemTechDataEditor = ({ item }: ItemTechDataEditorProps) => {
         .sort((a, b) => a.label.localeCompare(b.label)),
     [t]
   );
+  const isTechItem = item.klass === 'TechItem';
 
-  return item.lockedEditors.includes('tech') ? (
+  return LOCKED_ITEM_EDITOR[item.klass].includes('tech') ? (
     <></>
   ) : (
     <Editor type="edit" title={t('database_items:techniques')}>
       <InputContainer>
-        {techItem && (
+        {isTechItem && (
           <InputWithTopLabelContainer>
             <Label htmlFor="machines_category">{t('database_items:machines_category')}</Label>
             <SelectCustomSimple
               id="select-machines_category"
               options={machineOptions}
-              value={machineOptions[techItem.isHm ? 0 : 1].value}
-              onChange={(value) => refreshUI((techItem.isHm = value === 'hm'))}
+              value={machineOptions[item.isHm ? 0 : 1].value}
+              onChange={(value) => refreshUI((item.isHm = value === 'hm'))}
               noTooltip
             />
           </InputWithTopLabelContainer>
         )}
-        {techItem && (
+        {isTechItem && (
           <InputWithTopLabelContainer>
             <Label htmlFor="move_learnt">{t('database_items:move_learnt')}</Label>
-            <SelectMove dbSymbol={techItem.move} onChange={(selected) => refreshUI((techItem.move = selected.value))} noLabel />
+            <SelectMove dbSymbol={item.move} onChange={(selected) => refreshUI((item.move = selected.value as DbSymbol))} noLabel />
           </InputWithTopLabelContainer>
         )}
         <InputWithLeftLabelContainer>

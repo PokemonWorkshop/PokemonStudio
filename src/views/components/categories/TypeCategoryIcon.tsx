@@ -184,7 +184,7 @@ export const TypeCategoryIcon = ({ type, className }: TypeCategoryIconProps) => 
   const { projectDataValues: types } = useProjectTypes();
   const currentType = types[type];
   return (
-    <TypeCategoryIconStyle type={currentType ? currentType.getColor() : 'normal'} className={className}>
+    <TypeCategoryIconStyle type={currentType ? currentType.color || currentType.dbSymbol : 'normal'} className={className}>
       {renderSVGIcon(type)}
     </TypeCategoryIconStyle>
   );

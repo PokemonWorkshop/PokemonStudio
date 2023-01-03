@@ -4,11 +4,12 @@ import { useConfigSceneTitle } from '@utils/useProjectConfig';
 import { DashboardEditor } from '../DashboardEditor';
 import { Input, InputWithLeftLabelContainer, Label, Toggle } from '@components/inputs';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
+import { cloneEntity } from '@utils/cloneEntity';
 
 export const DashboardGameStartCinematic = () => {
   const { t } = useTranslation('dashboard_game_start');
   const { projectConfigValues: gameStart, setProjectConfigValues: setGameStart } = useConfigSceneTitle();
-  const currentEditedGameStart = useMemo(() => gameStart.clone(), [gameStart]);
+  const currentEditedGameStart = useMemo(() => cloneEntity(gameStart), [gameStart]);
   const [mapCinematicId, setMapCinematicId] = useState<number>(gameStart.introMovieMapId);
 
   const onChangeIntroMovieMapId = (event: React.ChangeEvent<HTMLInputElement>) => {

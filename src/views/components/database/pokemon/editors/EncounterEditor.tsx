@@ -4,10 +4,11 @@ import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelCo
 import { EmbeddedUnitInput } from '@components/inputs/EmbeddedUnitInput';
 import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { SelectDataGeneric } from '@components/selects';
+import { StudioCreature, StudioCreatureForm, StudioItemHeld } from '@modelEntities/creature';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 
-import PokemonModel from '@modelEntities/pokemon/Pokemon.model';
-import PokemonForm, { ItemHeld } from '@modelEntities/pokemon/PokemonForm';
 import { ProjectData } from '@src/GlobalStateProvider';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
 import { useProjectItems } from '@utils/useProjectData';
 
 import React, { useMemo } from 'react';
@@ -23,7 +24,7 @@ const ItemHeldContainer = styled.div`
 type ItemHeldComponentProps = {
   title: string;
   name: string;
-  itemHeld: ItemHeld;
+  itemHeld: StudioItemHeld;
   items: ProjectData['items'];
   itemHeldOptions: SelectOption[];
   refreshUI: (_: unknown) => void;
@@ -31,6 +32,7 @@ type ItemHeldComponentProps = {
 };
 
 const ItemHeldComponent = ({ title, name, itemHeld, items, itemHeldOptions, refreshUI, t }: ItemHeldComponentProps) => {
+  const getItemName = useGetEntityNameText();
   const onChangeItem = (dbSymbol: string) => {
     itemHeld.dbSymbol = dbSymbol;
     if (dbSymbol === '__undef__') itemHeld.chance = 0;
@@ -41,7 +43,10 @@ const ItemHeldComponent = ({ title, name, itemHeld, items, itemHeldOptions, refr
       <InputWithTopLabelContainer>
         <Label htmlFor={name}>{title}</Label>
         <SelectDataGeneric
-          data={{ value: itemHeld.dbSymbol, label: items[itemHeld.dbSymbol]?.name() || t('database_items:item_deleted') }}
+          data={{
+            value: itemHeld.dbSymbol,
+            label: items[itemHeld.dbSymbol] ? getItemName(items[itemHeld.dbSymbol]) : t('database_items:item_deleted'),
+          }}
           options={itemHeldOptions}
           onChange={(option) => refreshUI(onChangeItem(option.value))}
           noOptionsText={t('database_items:no_option')}
@@ -74,18 +79,28 @@ const ItemHeldComponent = ({ title, name, itemHeld, items, itemHeldOptions, refr
 };
 
 type EncounterEditorProps = {
-  currentPokemon: PokemonModel;
+  currentPokemon: StudioCreature;
   currentFormIndex: number;
 };
 
-const getItemHeldOptions = (allItems: ProjectData['items']): SelectOption[] =>
-  Object.entries(allItems)
-    .filter(([, itemData]) => itemData.isHoldable)
-    .map(([value, itemData]) => ({ value, label: itemData.name(), index: itemData.id }))
-    .sort((a, b) => a.index - b.index);
+const getItemHeldOptions = (allItems: ProjectData['items'], getItemName: ReturnType<typeof useGetEntityNameText>) =>
+  Object.values(allItems)
+    .filter((itemData) => itemData.isHoldable)
+    .sort((a, b) => a.id - b.id)
+    .map((itemData) => ({ value: itemData.dbSymbol, label: getItemName(itemData) }));
 
-const defaultValuesItemHeld = (form: PokemonForm) => {
-  if (form.itemHeld.length === 0) form.itemHeld = PokemonForm.defaultValuesItemHeld();
+const defaultValuesItemHeld = (form: StudioCreatureForm) => {
+  if (form.itemHeld.length === 0)
+    form.itemHeld = [
+      {
+        dbSymbol: 'none' as DbSymbol,
+        chance: 0,
+      },
+      {
+        dbSymbol: 'none' as DbSymbol,
+        chance: 0,
+      },
+    ];
 };
 
 export const EncounterEditor = ({ currentPokemon, currentFormIndex }: EncounterEditorProps) => {
@@ -93,9 +108,14 @@ export const EncounterEditor = ({ currentPokemon, currentFormIndex }: EncounterE
   const refreshUI = useRefreshUI();
   const form = currentPokemon.forms[currentFormIndex];
   const { projectDataValues: items } = useProjectItems();
-  const itemHeldOptions = useMemo(() => getItemHeldOptions(items), [items]);
+  const getItemName = useGetEntityNameText();
+  const itemHeldOptions = useMemo(() => getItemHeldOptions(items, getItemName), [items, getItemName]);
   useMemo(() => defaultValuesItemHeld(form), [form]);
-  useMemo(() => form.changeDefaultValueItemHeld('__undef__'), [form]);
+  useMemo(() => {
+    form.itemHeld.forEach((itemHeld) => {
+      if (itemHeld.dbSymbol === 'none') itemHeld.dbSymbol = '__undef__' as DbSymbol;
+    });
+  }, [form]);
 
   return (
     <Editor type="edit" title={t('database_pokemon:encounter')}>

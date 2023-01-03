@@ -4,6 +4,8 @@ import { InputWithLeftLabelContainer, Input, Label, Toggle, InputContainer } fro
 import { DashboardEditor } from './DashboardEditor';
 import { useConfigSettings } from '@utils/useProjectConfig';
 import styled from 'styled-components';
+import { cleaningSettingsNaNValues } from '@utils/cleanNaNValue';
+import { cloneEntity } from '@utils/cloneEntity';
 
 const UnlimitedItemsInfoContainer = styled.span`
   ${({ theme }) => theme.fonts.normalSmall}
@@ -15,10 +17,10 @@ export const DashboardSettings = () => {
   const { projectConfigValues: settings, setProjectConfigValues: setSettings } = useConfigSettings();
   const [maxLevel, setMaxLevel] = useState(settings.pokemonMaxLevel);
   const [maxItemCount, setMaxBagItemCount] = useState(settings.maxBagItemCount);
-  const currentEditedSettings = useMemo(() => settings.clone(), [settings]);
+  const currentEditedSettings = useMemo(() => cloneEntity(settings), [settings]);
 
   const updateSettingsConfig = () => {
-    currentEditedSettings.cleaningNaNValues();
+    cleaningSettingsNaNValues(currentEditedSettings);
     setMaxLevel(currentEditedSettings.pokemonMaxLevel);
     setMaxBagItemCount(currentEditedSettings.maxBagItemCount);
     setSettings(currentEditedSettings);

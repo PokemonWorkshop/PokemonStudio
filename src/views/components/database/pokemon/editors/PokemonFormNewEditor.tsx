@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
-import PokemonModel, { FormCategories, FormCategory } from '@modelEntities/pokemon/Pokemon.model';
 import { Editor, useRefreshUI } from '@components/editor';
 import { InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import styled from 'styled-components';
@@ -9,6 +8,12 @@ import { TextInputError } from '@components/inputs/Input';
 import { SelectType } from '@components/selects';
 import { useProjectPokemon } from '@utils/useProjectData';
 import { SelectCustomSimple } from '@components/SelectCustom';
+import { cloneEntity } from '@utils/cloneEntity';
+import { StudioCreature } from '@modelEntities/creature';
+import { DbSymbol } from '@modelEntities/dbSymbol';
+
+export const FormCategories = ['classic', 'mega-evolution'] as const;
+export type FormCategory = typeof FormCategories[number];
 
 const InputWithError = styled.div`
   display: flex;
@@ -24,11 +29,11 @@ const ButtonContainer = styled.div`
 `;
 
 type PokemonFormNewEditorProps = {
-  currentPokemon: PokemonModel;
+  currentPokemon: StudioCreature;
   onClose: () => void;
 };
 
-const findFirstFormNotUsed = (pokemon: PokemonModel, start: number, end: number) => {
+const findFirstFormNotUsed = (pokemon: StudioCreature, start: number, end: number) => {
   const formIds = pokemon.forms.map((form) => form.form).sort((a, b) => a - b);
   for (let i = start; i <= end; i++) if (!formIds.includes(i)) return i;
   return -1;
@@ -46,7 +51,7 @@ export const PokemonFormNewEditor = ({ currentPokemon, onClose }: PokemonFormNew
   const refreshUI = useRefreshUI();
 
   const onClickNew = () => {
-    const form = currentPokemon.clone().forms[0];
+    const form = cloneEntity(currentPokemon.forms[0]);
     form.form = newFormId;
     form.type1 = types.type1;
     form.type2 = types.type2;
@@ -85,13 +90,18 @@ export const PokemonFormNewEditor = ({ currentPokemon, onClose }: PokemonFormNew
         </InputWithError>
         <InputWithTopLabelContainer>
           <Label htmlFor="type1">{t('database_pokemon:type1')}</Label>
-          <SelectType dbSymbol={types.type1} onChange={(event) => refreshUI((types.type1 = event.value))} rejected={[types.type2]} noLabel />
+          <SelectType
+            dbSymbol={types.type1}
+            onChange={(event) => refreshUI((types.type1 = event.value as DbSymbol))}
+            rejected={[types.type2]}
+            noLabel
+          />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="type2">{t('database_pokemon:type2')}</Label>
           <SelectType
             dbSymbol={types.type2}
-            onChange={(event) => refreshUI((types.type2 = event.value))}
+            onChange={(event) => refreshUI((types.type2 = event.value as DbSymbol))}
             rejected={[types.type1]}
             noneValue
             noLabel

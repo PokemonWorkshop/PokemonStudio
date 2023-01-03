@@ -1,4 +1,14 @@
-import { State, ProjectText, projectTextKeys, projectTextSave, TextsWithLanguageConfig } from '@src/GlobalStateProvider';
+import { ABILITY_DESCRIPTION_TEXT_ID, ABILITY_NAME_TEXT_ID } from '@modelEntities/ability';
+import { CREATURE_DESCRIPTION_TEXT_ID, CREATURE_NAME_TEXT_ID } from '@modelEntities/creature';
+import { StudioDex } from '@modelEntities/dex';
+import { GROUP_NAME_TEXT_ID } from '@modelEntities/group';
+import { ITEM_DESCRIPTION_TEXT_ID, ITEM_NAME_TEXT_ID, ITEM_POCKET_NAME_TEXT_ID, StudioItem } from '@modelEntities/item';
+import { MOVE_DESCRIPTION_TEXT_ID, MOVE_NAME_TEXT_ID } from '@modelEntities/move';
+import { QUEST_DESCRIPTION_TEXT_ID, QUEST_NAME_TEXT_ID } from '@modelEntities/quest';
+import { TRAINER_NAME_TEXT_ID } from '@modelEntities/trainer';
+import { TYPE_NAME_TEXT_ID } from '@modelEntities/type';
+import { ZONE_DESCRIPTION_TEXT_ID, ZONE_NAME_TEXT_ID } from '@modelEntities/zone';
+import { State, ProjectText, projectTextKeys, projectTextSave, TextsWithLanguageConfig, useGlobalState } from '@src/GlobalStateProvider';
 
 type KeyProjectText = keyof ProjectText;
 
@@ -75,4 +85,149 @@ export const setDialogMessage = (projectText: TextsWithLanguageConfig, fileId: n
  */
 export const setText = (projectText: TextsWithLanguageConfig, fileId: number, textId: number, text: string, language?: string) => {
   return setDialogMessage(projectText, CSV_BASE + fileId, textId, text, language);
+};
+
+export const useGetProjectText = () => {
+  const [{ projectText: texts, projectConfig }] = useGlobalState();
+
+  return (fileId: number, textId: number): string =>
+    getText({ texts, config: projectConfig.language_config }, fileId, textId, projectConfig.language_config.defaultLanguage);
+};
+
+export const useSetProjectText = () => {
+  const [{ projectText: texts, projectConfig }] = useGlobalState();
+
+  return (fileId: number, textId: number, text: string) =>
+    setText({ texts, config: projectConfig.language_config }, fileId, textId, text, projectConfig.language_config.defaultLanguage);
+};
+
+const ENTITY_TO_NAME_TEXT = {
+  Ability: ABILITY_NAME_TEXT_ID,
+  Specie: CREATURE_NAME_TEXT_ID,
+  Item: ITEM_NAME_TEXT_ID,
+  HealingItem: ITEM_NAME_TEXT_ID,
+  PPHealItem: ITEM_NAME_TEXT_ID,
+  AllPPHealItem: ITEM_NAME_TEXT_ID,
+  BallItem: ITEM_NAME_TEXT_ID,
+  ConstantHealItem: ITEM_NAME_TEXT_ID,
+  StatBoostItem: ITEM_NAME_TEXT_ID,
+  EVBoostItem: ITEM_NAME_TEXT_ID,
+  EventItem: ITEM_NAME_TEXT_ID,
+  FleeingItem: ITEM_NAME_TEXT_ID,
+  LevelIncreaseItem: ITEM_NAME_TEXT_ID,
+  PPIncreaseItem: ITEM_NAME_TEXT_ID,
+  RateHealItem: ITEM_NAME_TEXT_ID,
+  RepelItem: ITEM_NAME_TEXT_ID,
+  StatusConstantHealItem: ITEM_NAME_TEXT_ID,
+  StatusHealItem: ITEM_NAME_TEXT_ID,
+  StatusRateHealItem: ITEM_NAME_TEXT_ID,
+  StoneItem: ITEM_NAME_TEXT_ID,
+  TechItem: ITEM_NAME_TEXT_ID,
+  Move: MOVE_NAME_TEXT_ID,
+  Quest: QUEST_NAME_TEXT_ID,
+  TrainerBattleSetup: TRAINER_NAME_TEXT_ID,
+  Type: TYPE_NAME_TEXT_ID,
+  Zone: ZONE_NAME_TEXT_ID,
+  Group: GROUP_NAME_TEXT_ID,
+};
+
+// TODO: All entities must accept undefined! (due to getting entity from state unsafely) => returns empty string and let UI manage it
+// '' || '???' = '???'
+export const useGetEntityNameText = () => {
+  const getEntityText = useGetProjectText();
+
+  return (entity: { klass: keyof Omit<typeof ENTITY_TO_NAME_TEXT, 'Ability' | 'Type'>; id: number }) =>
+    getEntityText(ENTITY_TO_NAME_TEXT[entity.klass], entity.id);
+};
+
+export const useGetEntityNameTextUsingTextId = () => {
+  const getEntityText = useGetProjectText();
+
+  return (entity: { klass: 'Ability' | 'Type'; textId: number }) => getEntityText(ENTITY_TO_NAME_TEXT[entity.klass], entity.textId);
+};
+
+// Mapping between pocket id and pocket name id
+export const pocketMapping = [0, 4, 1, 5, 3, 8, 0];
+export const getItemPocketText = (item: StudioItem, state: State): string => {
+  return getText(
+    { texts: state.projectText, config: state.projectConfig.language_config },
+    ITEM_POCKET_NAME_TEXT_ID,
+    pocketMapping[item.socket] || item.socket
+  );
+};
+export const useGetItemPocketText = () => {
+  const getEntityText = useGetProjectText();
+
+  return (entity: { klass: StudioItem['klass']; socket: number }) =>
+    getEntityText(ITEM_POCKET_NAME_TEXT_ID, pocketMapping[entity.socket] || entity.socket);
+};
+
+export const useGetEntityNameUsingCSV = () => {
+  const getEntityText = useGetProjectText();
+
+  return (entity: { csv: StudioDex['csv'] }) => getEntityText(entity.csv.csvFileId, entity.csv.csvTextIndex);
+};
+
+const ENTITY_TO_DESCRIPTION_TEXT = {
+  Ability: ABILITY_DESCRIPTION_TEXT_ID,
+  Specie: CREATURE_DESCRIPTION_TEXT_ID,
+  Item: ITEM_DESCRIPTION_TEXT_ID,
+  HealingItem: ITEM_DESCRIPTION_TEXT_ID,
+  PPHealItem: ITEM_DESCRIPTION_TEXT_ID,
+  AllPPHealItem: ITEM_DESCRIPTION_TEXT_ID,
+  BallItem: ITEM_DESCRIPTION_TEXT_ID,
+  ConstantHealItem: ITEM_DESCRIPTION_TEXT_ID,
+  StatBoostItem: ITEM_DESCRIPTION_TEXT_ID,
+  EVBoostItem: ITEM_DESCRIPTION_TEXT_ID,
+  EventItem: ITEM_DESCRIPTION_TEXT_ID,
+  FleeingItem: ITEM_DESCRIPTION_TEXT_ID,
+  LevelIncreaseItem: ITEM_DESCRIPTION_TEXT_ID,
+  PPIncreaseItem: ITEM_DESCRIPTION_TEXT_ID,
+  RateHealItem: ITEM_DESCRIPTION_TEXT_ID,
+  RepelItem: ITEM_DESCRIPTION_TEXT_ID,
+  StatusConstantHealItem: ITEM_DESCRIPTION_TEXT_ID,
+  StatusHealItem: ITEM_DESCRIPTION_TEXT_ID,
+  StatusRateHealItem: ITEM_DESCRIPTION_TEXT_ID,
+  StoneItem: ITEM_DESCRIPTION_TEXT_ID,
+  TechItem: ITEM_DESCRIPTION_TEXT_ID,
+  Move: MOVE_DESCRIPTION_TEXT_ID,
+  Quest: QUEST_DESCRIPTION_TEXT_ID,
+  Zone: ZONE_DESCRIPTION_TEXT_ID,
+};
+
+export const useGetEntityDescriptionText = () => {
+  const getEntityText = useGetProjectText();
+
+  return (entity: { klass: keyof Omit<typeof ENTITY_TO_DESCRIPTION_TEXT, 'Ability'>; id: number }) =>
+    getEntityText(ENTITY_TO_DESCRIPTION_TEXT[entity.klass], entity.id);
+};
+
+export const useGetEntityDescriptionTextUsingTextId = () => {
+  const getEntityText = useGetProjectText();
+
+  return (entity: { klass: 'Ability'; textId: number }) => getEntityText(ENTITY_TO_DESCRIPTION_TEXT.Ability, entity.textId);
+};
+
+export const getEntityNameText = (
+  entity: { klass: keyof Omit<typeof ENTITY_TO_NAME_TEXT, 'Ability' | 'Type'>; id: number },
+  { projectText: texts, projectConfig }: Pick<State, 'projectText' | 'projectConfig'>
+) => {
+  return getText(
+    { texts, config: projectConfig.language_config },
+    ENTITY_TO_NAME_TEXT[entity.klass],
+    entity.id,
+    projectConfig.language_config.defaultLanguage
+  );
+};
+
+export const getEntityNameTextUsingTextId = (
+  entity: { klass: 'Ability' | 'Type'; textId: number },
+  { projectText: texts, projectConfig }: Pick<State, 'projectText' | 'projectConfig'>
+) => {
+  return getText(
+    { texts, config: projectConfig.language_config },
+    ENTITY_TO_NAME_TEXT[entity.klass],
+    entity.textId,
+    projectConfig.language_config.defaultLanguage
+  );
 };

@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { MapLinkCardWithClearButtonContainer, MapLinkTitleContainer } from './MapLinkCardStyle';
-import { Cardinal, MapLinkLink } from '@modelEntities/maplinks/MapLink.model';
 import { useTranslation } from 'react-i18next';
 import { ClearButtonOnlyIcon } from '@components/buttons';
 import { InputOffset } from '@components/inputs';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
+import { StudioMapLinkCardinal, StudioMapLinkLink } from '@modelEntities/mapLink';
 
 type MapLinkCardProps = {
-  mapLinkLink: MapLinkLink;
+  mapLinkLink: StudioMapLinkLink;
   index: number;
-  cardinal: Cardinal;
+  cardinal: StudioMapLinkCardinal;
   mapData: Map<number, string>;
-  onDeleteLink: (index: number, cardinal: Cardinal) => void;
-  onEditOffset: (index: number, cardinal: Cardinal, offset: number) => void;
-  onEditLink: (index: number, cardinal: Cardinal) => void;
+  onDeleteLink: (index: number, cardinal: StudioMapLinkCardinal) => void;
+  onEditOffset: (index: number, cardinal: StudioMapLinkCardinal, offset: number) => void;
+  onEditLink: (index: number, cardinal: StudioMapLinkCardinal) => void;
 };
 
 export const MapLinkCard = ({ mapLinkLink, index, cardinal, mapData, onDeleteLink, onEditOffset, onEditLink }: MapLinkCardProps) => {

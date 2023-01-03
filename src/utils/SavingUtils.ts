@@ -1,5 +1,4 @@
 import { ProjectData, ProjectText, PSDKConfigs } from '@src/GlobalStateProvider';
-import { serialize, serializeConfig } from '@utils/SerializationUtils';
 
 export interface SavingPath {
   key: keyof ProjectData;
@@ -36,11 +35,20 @@ export class SavingMap {
 
   getSavingData(projectData: ProjectData): SavingData {
     return Array.from(this.map.entries()).map(([sp, sa]) => {
+      if (sa === 'DELETE') {
+        return {
+          savingPath: sp,
+          data: undefined,
+          savingAction: sa,
+        };
+      }
       const savingPath = string2sp(sp);
+      const dataToSave = projectData[savingPath.key][savingPath.id];
+      const data = JSON.stringify(dataToSave, null, 2);
 
       return {
         savingPath: sp,
-        data: sa == 'DELETE' ? undefined : serialize(projectData[savingPath.key][savingPath.id]),
+        data,
         savingAction: sa,
       };
     });
@@ -68,9 +76,17 @@ export class SavingConfigMap {
 
   getSavingConfig(projectConfig: PSDKConfigs): SavingConfig {
     return Array.from(this.map.entries()).map(([filename, sa]) => {
+      if (sa === 'DELETE') {
+        return {
+          savingFilename: filename,
+          data: undefined,
+          savingAction: sa,
+        };
+      }
+
       return {
         savingFilename: filename,
-        data: sa == 'DELETE' ? undefined : serializeConfig(projectConfig[filename as keyof PSDKConfigs]),
+        data: JSON.stringify(projectConfig[filename as keyof PSDKConfigs], null, 2),
         savingAction: sa,
       };
     });

@@ -1,5 +1,5 @@
 import { Tag } from '@components/Tag';
-import ItemModel from '@modelEntities/item/Item.model';
+import { LOCKED_ITEM_EDITOR, StudioItem } from '@modelEntities/item';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -16,16 +16,16 @@ const NoParameterContainer = styled.div`
   color: ${({ theme }) => theme.colors.text500};
 `;
 
-const atLeastOneParameter = (item: ItemModel) => item.isBattleUsable || item.isMapUsable || item.isLimited || item.isHoldable;
+const atLeastOneParameter = (item: StudioItem) => item.isBattleUsable || item.isMapUsable || item.isLimited || item.isHoldable;
 
 type ItemParemetersDataProps = {
-  item: ItemModel;
+  item: StudioItem;
   onClick: () => void;
 };
 
 export const ItemParametersData = ({ item, onClick }: ItemParemetersDataProps) => {
   const { t } = useTranslation('database_items');
-  const isDisabled = item.lockedEditors.includes('parameters');
+  const isDisabled = LOCKED_ITEM_EDITOR[item.klass].includes('parameters');
   return (
     <DataBlockWithTitle size="fourth" title={t('params')} disabled={isDisabled} onClick={isDisabled ? undefined : onClick}>
       {!isDisabled &&

@@ -1,6 +1,4 @@
 import { TypeCategory } from '@components/categories';
-import PokemonModel, { pokemonIconPath } from '@modelEntities/pokemon/Pokemon.model';
-import AbilityModel from '@modelEntities/ability/Ability.model';
 import { State, useGlobalState } from '@src/GlobalStateProvider';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,14 +7,18 @@ import { DataGrid } from '../dataBlocks';
 import { useProjectAbilities } from '@utils/useProjectData';
 import { getNameType } from '@utils/getNameType';
 import { ResourceImage } from '@components/ResourceImage';
+import { StudioAbility } from '@modelEntities/ability';
+import { StudioCreature } from '@modelEntities/creature';
+import { pokemonIconPath } from '@utils/resourcePath';
+import { useGetEntityNameText, useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
 
 type AbilityPokemonTableProps = {
-  ability: AbilityModel;
+  ability: StudioAbility;
 };
 
 type RenderAbilityProps = {
-  pokemon: PokemonModel;
-  ability: AbilityModel;
+  pokemon: StudioCreature;
+  ability: StudioAbility;
   state: State;
 };
 
@@ -75,14 +77,26 @@ const TypeContainer = styled.span`
   gap: 8px;
 `;
 
-const getFormWithCurrentAbility = (pokemon: PokemonModel, ability: AbilityModel) =>
+const getFormWithCurrentAbility = (pokemon: StudioCreature, ability: StudioAbility) =>
   pokemon.forms.find(
     (form) => form.abilities[0] === ability.dbSymbol || form.abilities[1] === ability.dbSymbol || form.abilities[2] === ability.dbSymbol
   ) || pokemon.forms[0];
 
+const getAllPokemonWithCurrentAbility = (state: State, ability: StudioAbility): StudioCreature[] => {
+  return (Object.values(state.projectData.pokemon) as unknown[] as StudioCreature[]) // TODO: Remove as - as
+    .filter((pokemon) =>
+      pokemon.forms.find(
+        (form) => form.abilities[0] === ability.dbSymbol || form.abilities[1] === ability.dbSymbol || form.abilities[2] === ability.dbSymbol
+      )
+    )
+    .sort((a, b) => a.id - b.id);
+};
+
 const RenderPokemon = ({ pokemon, ability, state }: RenderAbilityProps) => {
   const form = getFormWithCurrentAbility(pokemon, ability);
   const { projectDataValues: abilities } = useProjectAbilities();
+  const getAbilityName = useGetEntityNameTextUsingTextId();
+  const getCreatureName = useGetEntityNameText();
   const { t } = useTranslation('database_abilities');
   const types = state.projectData.types;
 
@@ -91,19 +105,19 @@ const RenderPokemon = ({ pokemon, ability, state }: RenderAbilityProps) => {
       <span>
         <ResourceImage imagePathInProject={pokemonIconPath(pokemon, form.form)} fallback={form.form === 0 ? undefined : pokemonIconPath(pokemon)} />
       </span>
-      <span className="name">{pokemon ? pokemon.name() : '---'}</span>
+      <span className="name">{pokemon ? getCreatureName(pokemon) : '---'}</span>
       <TypeContainer>
-        {form.type1 !== '__undef__' ? <TypeCategory type={form.type1}>{getNameType(types, form.type1)}</TypeCategory> : <span></span>}
-        {form.type2 !== '__undef__' ? <TypeCategory type={form.type2}>{getNameType(types, form.type2)}</TypeCategory> : <span></span>}
+        {form.type1 !== '__undef__' ? <TypeCategory type={form.type1}>{getNameType(types, form.type1, state)}</TypeCategory> : <span></span>}
+        {form.type2 !== '__undef__' ? <TypeCategory type={form.type2}>{getNameType(types, form.type2, state)}</TypeCategory> : <span></span>}
       </TypeContainer>
       <span className={abilities[form.abilities[0]] ? '' : 'error'}>
-        {form.abilities[0] ? (abilities[form.abilities[0]] ? abilities[form.abilities[0]].name() : t('ability_deleted')) : '---'}
+        {form.abilities[0] ? (abilities[form.abilities[0]] ? getAbilityName(abilities[form.abilities[0]]) : t('ability_deleted')) : '---'}
       </span>
       <span className={abilities[form.abilities[1]] ? '' : 'error'}>
-        {form.abilities[1] ? (abilities[form.abilities[1]] ? abilities[form.abilities[1]].name() : t('ability_deleted')) : '---'}
+        {form.abilities[1] ? (abilities[form.abilities[1]] ? getAbilityName(abilities[form.abilities[1]]) : t('ability_deleted')) : '---'}
       </span>
       <span className={abilities[form.abilities[2]] ? '' : 'error'}>
-        {form.abilities[2] ? (abilities[form.abilities[2]] ? abilities[form.abilities[2]].name() : t('ability_deleted')) : '---'}
+        {form.abilities[2] ? (abilities[form.abilities[2]] ? getAbilityName(abilities[form.abilities[2]]) : t('ability_deleted')) : '---'}
       </span>
     </RenderPokemonContainer>
   );
@@ -112,7 +126,7 @@ const RenderPokemon = ({ pokemon, ability, state }: RenderAbilityProps) => {
 export const AbilityPokemonTable = ({ ability }: AbilityPokemonTableProps) => {
   const [state] = useGlobalState();
   const { t } = useTranslation('database_abilities');
-  const allPokemon = ability.getAllPokemonWithCurrentAbility(state);
+  const allPokemon = getAllPokemonWithCurrentAbility(state, ability);
 
   return (
     <DataPokemonTable>

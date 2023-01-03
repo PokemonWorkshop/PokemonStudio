@@ -1,9 +1,9 @@
-import React from 'react';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import React, { useMemo } from 'react';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useTranslation } from 'react-i18next';
-import { getDataOptions, SelectDataGeneric } from './SelectDataGeneric';
+import { getSelectDataOptionsOrderedById, SelectDataGeneric } from './SelectDataGeneric';
 import { SelectDataProps } from './SelectDataProps';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
 
 /**
  * Component to show a select Pokémon.
@@ -28,11 +28,13 @@ export const SelectPokemon = ({
 }: SelectDataProps) => {
   const { t } = useTranslation('database_pokemon');
   const [state] = useGlobalState();
-  const options = getDataOptions(state.projectData, 'pokemon');
+  const getCreatureName = useGetEntityNameText();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const options = useMemo(() => getSelectDataOptionsOrderedById(state.projectData, 'pokemon', getCreatureName), [state.projectData]);
 
   const getData = () => {
     const currentPokemon = state.projectData.pokemon[dbSymbol];
-    return currentPokemon ? currentPokemon : ({ value: dbSymbol, label: t('pokemon_deleted') } as SelectOption);
+    return { value: dbSymbol, label: currentPokemon ? getCreatureName(currentPokemon) : t('pokemon_deleted') };
   };
 
   return (

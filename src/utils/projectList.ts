@@ -1,7 +1,7 @@
-import ProjectStudioModel from '@modelEntities/ProjectStudio.model';
+import { StudioProject } from '@modelEntities/project';
 
 export type Project = {
-  projectStudio: ProjectStudioModel;
+  projectStudio: StudioProject;
   projectPath: string;
   lastEdit: Date;
 };
@@ -24,16 +24,16 @@ export const addProjectToList = (project: Project) => {
 
 export const updateProjectEditDate = (projectPath: string) => {
   const projectList = getProjectList();
-  const project = projectList.find((project) => project.projectPath === projectPath);
+  const project = projectList.find((p) => p.projectPath === projectPath);
   if (!project) return;
 
   project.lastEdit = new Date();
   localStorage.setItem('projectList', JSON.stringify(projectList));
 };
 
-export const updateProjectStudio = (projectPath: string, projectStudio: ProjectStudioModel) => {
+export const updateProjectStudio = (projectPath: string, projectStudio: StudioProject) => {
   const projectList = getProjectList();
-  const project = projectList.find((project) => project.projectPath === projectPath);
+  const project = projectList.find((p) => p.projectPath === projectPath);
   if (!project) return;
 
   project.projectStudio = projectStudio;

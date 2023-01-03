@@ -1,8 +1,8 @@
-import MoveModel from '@modelEntities/move/Move.model';
-import { SelectOption } from '../../../SelectCustom/SelectCustomPropsInterface';
+import { StudioMove } from '@modelEntities/move';
+import { SelectChangeEvent } from '../../../SelectCustom/SelectCustomPropsInterface';
 
 export type MoveControlBarProps = {
-  onMoveChange: (selected: SelectOption) => void;
-  move: MoveModel;
+  onMoveChange: SelectChangeEvent;
+  move: StudioMove;
   onClickNewMove?: () => void;
 };

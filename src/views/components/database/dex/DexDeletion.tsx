@@ -2,6 +2,8 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Deletion } from '@components/deletion';
 import { useProjectDex } from '@utils/useProjectData';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
+import { cloneEntity } from '@utils/cloneEntity';
 
 type DexDeletionProps = {
   type: 'dex' | 'list';
@@ -16,8 +18,9 @@ export const DexDeletion = ({ type, onClose }: DexDeletionProps) => {
     removeProjectDataValue: removeDex,
   } = useProjectDex();
   const { t } = useTranslation('database_dex');
+  const getDexName = useGetEntityNameText();
   const dex = allDex[dexDbSymbol];
-  const currentDex = useMemo(() => dex.clone(), [dex]);
+  const currentDex = useMemo(() => cloneEntity(dex), [dex]);
 
   const onClickDelete = () => {
     if (type === 'dex') {
@@ -36,7 +39,7 @@ export const DexDeletion = ({ type, onClose }: DexDeletionProps) => {
   return (
     <Deletion
       title={t(`${type}_deletion_of`)}
-      message={t(`${type}_deletion_message`, { dex: dex.name().replaceAll(' ', '\u00a0') })}
+      message={t(`${type}_deletion_message`, { dex: getDexName(dex).replaceAll(' ', '\u00a0') })}
       onClickDelete={onClickDelete}
       onClose={onClose}
     />

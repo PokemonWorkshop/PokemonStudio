@@ -1,5 +1,4 @@
 import React from 'react';
-import TrainerModel from '@modelEntities/trainer/Trainer.model';
 import { useTranslation } from 'react-i18next';
 import { Editor, EditorWithPagination, useRefreshUI } from '@components/editor';
 import { EditorChildWithSubEditorContainer, SubEditorContainer, SubEditorSeparator } from '@components/editor/EditorContainer';
@@ -8,15 +7,19 @@ import { InputWithTopLabelContainer, Label, MultiLineInput, PaddedInputContainer
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import type { OpenTranslationEditorFunction } from '@utils/useTranslationEditor';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
+import { useGetProjectText, useSetProjectText } from '@utils/ReadingProjectText';
+import { StudioTrainer, TRAINER_DEFEAT_SENTENCE_TEXT_ID, TRAINER_VICTORY_SENTENCE_TEXT_ID } from '@modelEntities/trainer';
 
 type TrainerDialogEditorProps = {
-  trainer: TrainerModel;
+  trainer: StudioTrainer;
   openTranslationEditor: OpenTranslationEditorFunction;
 };
 
 export const TrainerDialogEditor = ({ trainer, openTranslationEditor }: TrainerDialogEditorProps) => {
   const { t } = useTranslation('database_trainers');
   const refreshUI = useRefreshUI();
+  const getText = useGetProjectText();
+  const setText = useSetProjectText();
 
   return (
     <EditorWithPagination type="edit" title={t('dialogs')} paginationProps={undefined}>
@@ -27,8 +30,8 @@ export const TrainerDialogEditor = ({ trainer, openTranslationEditor }: TrainerD
             <TranslateInputContainer onTranslateClick={() => openTranslationEditor('translation_victory')}>
               <MultiLineInput
                 name="victory"
-                value={trainer.victorySentence()}
-                onChange={(event) => refreshUI(trainer.setVictorySentence(event.target.value))}
+                value={getText(TRAINER_VICTORY_SENTENCE_TEXT_ID, trainer.id)}
+                onChange={(event) => refreshUI(setText(TRAINER_VICTORY_SENTENCE_TEXT_ID, trainer.id, event.target.value))}
                 placeholder={t('example_victory_sentence')}
               />
             </TranslateInputContainer>
@@ -38,8 +41,8 @@ export const TrainerDialogEditor = ({ trainer, openTranslationEditor }: TrainerD
             <TranslateInputContainer onTranslateClick={() => openTranslationEditor('translation_defeat')}>
               <MultiLineInput
                 name="defeat"
-                value={trainer.defeatSentence()}
-                onChange={(event) => refreshUI(trainer.setDefeatSentence(event.target.value))}
+                value={getText(TRAINER_DEFEAT_SENTENCE_TEXT_ID, trainer.id)}
+                onChange={(event) => refreshUI(setText(TRAINER_DEFEAT_SENTENCE_TEXT_ID, trainer.id, event.target.value))}
                 placeholder={t('example_defeat_sentence')}
               />
             </TranslateInputContainer>

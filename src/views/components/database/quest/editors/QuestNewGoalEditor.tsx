@@ -4,7 +4,8 @@ import { EditorWithCollapse } from '@components/editor/Editor';
 import { InputContainer, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
-import QuestModel, { ObjectiveType, ObjectiveTypes } from '@modelEntities/quest/Quest.model';
+import { QUEST_OBJECTIVES, StudioQuest, StudioQuestObjectiveType, updateIndexSpeakToBeatNpc } from '@modelEntities/quest';
+import { createQuestObjective } from '@utils/entityCreation';
 import { useProjectQuests } from '@utils/useProjectData';
 import React, { useMemo, useState } from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
@@ -26,10 +27,11 @@ const ButtonContainer = styled.div`
   gap: 8px;
 `;
 
-const objectiveCategoryEntries = (t: TFunction<'database_quests'>) => ObjectiveTypes.map((objective) => ({ value: objective, label: t(objective) }));
+const objectiveCategoryEntries = (t: TFunction<'database_quests'>) =>
+  QUEST_OBJECTIVES.map((objective) => ({ value: objective, label: t(objective) }));
 
 type QuestNewGoalEditorProps = {
-  quest: QuestModel;
+  quest: StudioQuest;
   onClose: () => void;
 };
 
@@ -37,18 +39,18 @@ export const QuestNewGoalEditor = ({ quest, onClose }: QuestNewGoalEditorProps) 
   const { t } = useTranslation('database_quests');
   const refreshUI = useRefreshUI();
   const objectiveOptions = useMemo(() => objectiveCategoryEntries(t), [t]);
-  const [newObjective, setNewObjective] = useState(QuestModel.createObjective('objective_speak_to'));
+  const [newObjective, setNewObjective] = useState(createQuestObjective('objective_speak_to'));
   const [isEmptyText, setIsEmptyText] = useState(true);
   const { setProjectDataValues: setQuest } = useProjectQuests();
 
-  const changeObjective = (value: ObjectiveType) => {
+  const changeObjective = (value: StudioQuestObjectiveType) => {
     if (value === newObjective.objectiveMethodName) return;
-    setNewObjective(QuestModel.createObjective(value));
+    setNewObjective(createQuestObjective(value));
   };
 
   const onClickNew = () => {
     quest.objectives.push(newObjective);
-    quest.updateIndexSpeakToBeatNpc();
+    updateIndexSpeakToBeatNpc(quest);
     setQuest({ [quest.dbSymbol]: quest });
     onClose();
   };
@@ -67,7 +69,7 @@ export const QuestNewGoalEditor = ({ quest, onClose }: QuestNewGoalEditorProps) 
               id={'goal-type-select'}
               value={newObjective.objectiveMethodName}
               options={objectiveOptions}
-              onChange={(value) => refreshUI(changeObjective(value as ObjectiveType))}
+              onChange={(value) => refreshUI(changeObjective(value as StudioQuestObjectiveType))}
               noTooltip
             />
           </InputWithTopLabelContainer>

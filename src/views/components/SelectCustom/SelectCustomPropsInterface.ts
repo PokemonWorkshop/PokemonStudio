@@ -1,6 +1,6 @@
 export type SelectCustomProps = {
   options: SelectOption[];
-  onChange: (selected: SelectOption) => void;
+  onChange: SelectChangeEvent;
   noOptionsText?: string;
   defaultValue?: SelectOption;
   value?: SelectOption;
@@ -16,3 +16,5 @@ export type SelectElementType = {
   height: string;
   error: boolean;
 };
+
+export type SelectChangeEvent = (selected: SelectOption) => void;

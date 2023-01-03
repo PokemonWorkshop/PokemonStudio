@@ -8,7 +8,8 @@ import styled from 'styled-components';
 import { SelectGroup } from '@components/selects';
 import { useProjectGroups } from '@utils/useProjectData';
 import { DarkButton, PrimaryButton } from '@components/buttons';
-import GroupModel from '@modelEntities/group/Group.model';
+import { cloneEntity } from '@utils/cloneEntity';
+import { StudioGroup } from '@modelEntities/group';
 
 const BattlerImportInfo = styled.div`
   ${({ theme }) => theme.fonts.normalRegular};
@@ -24,7 +25,7 @@ const ButtonContainer = styled.div`
 `;
 
 type GroupBattlerImportEditorProps = {
-  group: GroupModel;
+  group: StudioGroup;
   onClose: () => void;
 };
 
@@ -40,8 +41,8 @@ export const GroupBattlerImportEditor = ({ group, onClose }: GroupBattlerImportE
   const refreshUI = useRefreshUI();
 
   const onClickImport = () => {
-    if (override) group.encounters = groups[selectedGroup].clone().encounters;
-    else group.encounters.push(...groups[selectedGroup].clone().encounters);
+    if (override) group.encounters = cloneEntity(groups[selectedGroup].encounters);
+    else group.encounters.push(...cloneEntity(groups[selectedGroup].encounters));
     setGroup({ [group.dbSymbol]: group });
     onClose();
   };

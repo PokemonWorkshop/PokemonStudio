@@ -1,10 +1,10 @@
-import { IpcMainEvent } from 'electron';
+import { IpcMain, IpcMainEvent } from 'electron';
 import log from 'electron-log';
 import path from 'path';
 import fs from 'fs';
-import type ProjectStudioModel from '@modelEntities/ProjectStudio.model';
+import { StudioProject } from '@modelEntities/project';
 
-const writeProjectMetadata = async (event: IpcMainEvent, payload: { path: string; metaData: Omit<ProjectStudioModel, 'clone'> }) => {
+const writeProjectMetadata = async (event: IpcMainEvent, payload: { path: string; metaData: StudioProject }) => {
   log.info('write-project-metadata');
   try {
     fs.writeFileSync(path.join(payload.path, 'project.studio'), JSON.stringify(payload.metaData));
@@ -16,6 +16,6 @@ const writeProjectMetadata = async (event: IpcMainEvent, payload: { path: string
   }
 };
 
-export const registerWriteProjectMetadata = (ipcMain: Electron.IpcMain) => {
+export const registerWriteProjectMetadata = (ipcMain: IpcMain) => {
   ipcMain.on('write-project-metadata', writeProjectMetadata);
 };

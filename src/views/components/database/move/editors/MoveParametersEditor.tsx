@@ -1,28 +1,27 @@
 import React, { useMemo } from 'react';
 import { Editor, useRefreshUI } from '@components/editor';
-import MoveModel, { MoveBattleEngineMethod, MoveTarget } from '@modelEntities/move/Move.model';
 import { TFunction, useTranslation } from 'react-i18next';
 import { Input, InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { wrongDbSymbol } from '@utils/dbSymbolUtils';
 import { TextInputError } from '@components/inputs/Input';
 import { SelectCustomSimple } from '@components/SelectCustom/SelectCustomSimple';
+import { MOVE_BATTLE_ENGINE_METHODS, MOVE_TARGETS, StudioMove, StudioMoveBattleEngineAimedTarget } from '@modelEntities/move';
 
-const determineBeMethod = (move: MoveModel) => {
-  if ((MoveBattleEngineMethod as ReadonlyArray<string>).includes(move.battleEngineMethod)) return `s_${move.dbSymbol}`;
+const determineBeMethod = (move: StudioMove) => {
+  if ((MOVE_BATTLE_ENGINE_METHODS as ReadonlyArray<string>).includes(move.battleEngineMethod)) return `s_${move.dbSymbol}`;
   return move.battleEngineMethod;
 };
 
-const moveTargetEntries = (t: TFunction<'database_moves'[]>) => MoveTarget.map((target) => ({ value: target, label: t(`database_moves:${target}`) }));
+const moveTargetEntries = (t: TFunction<'database_moves'[]>) =>
+  MOVE_TARGETS.map((target) => ({ value: target, label: t(`database_moves:${target}`) }));
 
-const moveBattleEngineMethodEntries = (t: TFunction<'database_moves'[]>, move: MoveModel) => {
-  const entries = MoveBattleEngineMethod.map((beMethod) => ({ value: beMethod, label: t(`database_moves:${beMethod}`) })) as SelectOption[];
-  entries.push({ value: determineBeMethod(move), label: t('database_moves:custom') });
-  return entries;
-};
+const moveBattleEngineMethodEntries = (t: TFunction<'database_moves'[]>, move: StudioMove) => [
+  ...MOVE_BATTLE_ENGINE_METHODS.map((beMethod) => ({ value: beMethod, label: t(`database_moves:${beMethod}`) })),
+  { value: determineBeMethod(move), label: t('database_moves:custom') },
+];
 
 type MoveParametersEditorProps = {
-  move: MoveModel;
+  move: StudioMove;
 };
 
 export const MoveParametersEditor = ({ move }: MoveParametersEditorProps) => {
@@ -40,7 +39,7 @@ export const MoveParametersEditor = ({ move }: MoveParametersEditorProps) => {
             id="select-target"
             value={move.battleEngineAimedTarget}
             options={targetOptions}
-            onChange={(value) => refreshUI((move.battleEngineAimedTarget = value))}
+            onChange={(value) => refreshUI((move.battleEngineAimedTarget = value as StudioMoveBattleEngineAimedTarget))}
           />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
@@ -52,7 +51,7 @@ export const MoveParametersEditor = ({ move }: MoveParametersEditorProps) => {
             value={move.battleEngineMethod}
           />
         </InputWithTopLabelContainer>
-        {!(MoveBattleEngineMethod as ReadonlyArray<string>).includes(move.battleEngineMethod) && (
+        {!(MOVE_BATTLE_ENGINE_METHODS as ReadonlyArray<string>).includes(move.battleEngineMethod) && (
           <InputWithTopLabelContainer>
             <Label htmlFor="function" required>
               {t('database_moves:function')}

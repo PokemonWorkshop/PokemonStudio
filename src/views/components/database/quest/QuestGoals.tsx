@@ -1,12 +1,12 @@
 import { DataBlockEditor } from '@components/editor';
-import QuestModel from '@modelEntities/quest/Quest.model';
+import { StudioQuest } from '@modelEntities/quest';
 import { useProjectQuests } from '@utils/useProjectData';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { QuestGoalsTable } from './tables';
 
 type QuestGoalsProps = {
-  quest: QuestModel;
+  quest: StudioQuest;
   onDelete: () => void;
   onImport: () => void;
   onNew: () => void;

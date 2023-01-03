@@ -3,8 +3,9 @@ import { Input, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, 
 import { useTranslation } from 'react-i18next';
 import { DashboardEditor } from './DashboardEditor';
 import { useConfigSave } from '@utils/useProjectConfig';
-import { cleanNaNValue } from '@utils/cleanNaNValue';
+import { cleaningSaveNaNValues, cleanNaNValue } from '@utils/cleanNaNValue';
 import styled from 'styled-components';
+import { cloneEntity } from '@utils/cloneEntity';
 
 const Divider = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.colors.dark20};
@@ -17,14 +18,14 @@ const InputKey = styled(Input)`
 export const DashboardSave = () => {
   const { t } = useTranslation('dashboard_save');
   const { projectConfigValues: save, setProjectConfigValues: setSave } = useConfigSave();
-  const currentEditedSave = useMemo(() => save.clone(), [save]);
+  const currentEditedSave = useMemo(() => cloneEntity(save), [save]);
   const [filename, setFilename] = useState(currentEditedSave.baseFilename);
   const [header, setHeader] = useState(currentEditedSave.saveHeader);
   const [key, setKey] = useState(currentEditedSave.saveKey);
   const [maxSaves, setMaxSaves] = useState(currentEditedSave.maximumSave);
 
   const updateSaveConfig = () => {
-    currentEditedSave.cleaningNaNValues();
+    cleaningSaveNaNValues(currentEditedSave);
     setFilename(currentEditedSave.baseFilename);
     setHeader(currentEditedSave.saveHeader);
     setKey(currentEditedSave.saveKey);

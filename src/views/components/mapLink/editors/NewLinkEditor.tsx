@@ -7,8 +7,8 @@ import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelCo
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { SelectRMXPMap } from '@components/selects';
-import MapLinkModel, { Cardinal, CardinalCategory, getLinksFromMapLink } from '@modelEntities/maplinks/MapLink.model';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
+import { getLinksFromMapLink, MAP_LINK_CARDINAL_LIST, StudioMapLink, StudioMapLinkCardinal } from '@modelEntities/mapLink';
 
 const OffsetInfo = styled.div`
   ${({ theme }) => theme.fonts.normalSmall};
@@ -22,24 +22,21 @@ const ButtonContainer = styled.div`
   gap: 8px;
 `;
 
-const getShift = (cardinal: Cardinal, t: TFunction<('database_maplinks' | 'database_moves')[]>) => {
+const getShift = (cardinal: StudioMapLinkCardinal, t: TFunction<('database_maplinks' | 'database_moves')[]>) => {
   if (cardinal === 'north' || cardinal === 'south') return t('database_maplinks:offset_shift_right');
 
   return t('database_maplinks:offset_downward_shift');
 };
 
-const mapsAlreadyAssigned = (mapLink: MapLinkModel) => {
-  return CardinalCategory.reduce(
-    (previousValue, currentValue) => previousValue.concat(getLinksFromMapLink(mapLink, currentValue).map((link) => link.mapId)),
-    [] as number[]
-  ).concat(mapLink.mapId);
+const mapsAlreadyAssigned = (mapLink: StudioMapLink) => {
+  return MAP_LINK_CARDINAL_LIST.flatMap((cardinal) => getLinksFromMapLink(mapLink, cardinal).map((link) => link.mapId)).concat(mapLink.mapId);
 };
 
 type NewLinkEditorProps = {
-  mapLink: MapLinkModel;
-  cardinal: Cardinal;
+  mapLink: StudioMapLink;
+  cardinal: StudioMapLinkCardinal;
   onClose: () => void;
-  onAddLink: (cardinal: Cardinal, selectedMap: string, offset: number) => void;
+  onAddLink: (cardinal: StudioMapLinkCardinal, selectedMap: string, offset: number) => void;
 };
 
 export const NewLinkEditor = ({ mapLink, cardinal, onClose, onAddLink }: NewLinkEditorProps) => {

@@ -1,12 +1,11 @@
 import styled from 'styled-components';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import theme from '@src/AppTheme';
 import { BaseIcon } from '@components/icons/BaseIcon';
 import SvgContainer from '@components/icons/BaseIcon/SvgContainer';
 
 import { BaseButtonStyle } from './GenericButtons';
 import { useProjectSave } from '@utils/useProjectSave';
-import { useGlobalState } from '@src/GlobalStateProvider';
 import { useLoaderRef } from '@utils/loaderContext';
 
 const SaveProjectButtonContainer = styled(BaseButtonStyle)`
@@ -53,10 +52,8 @@ const Badge = styled.div<BadgeProps>`
 `;
 
 export const SaveProjectButton = () => {
-  const [state, setState] = useGlobalState();
   const { isDataToSave, save } = useProjectSave();
   const loaderRef = useLoaderRef();
-  const [projectLoaded, setProjectLoaded] = useState(false);
 
   const handleClick = async () => {
     save(
@@ -64,24 +61,6 @@ export const SaveProjectButton = () => {
       ({ errorMessage }) => loaderRef.current.setError('saving_project_error', errorMessage)
     );
   };
-
-  useEffect(() => {
-    if (!projectLoaded) {
-      setProjectLoaded(true);
-    } else {
-      const newProjectData = Object.assign({}, state.projectData);
-      Object.keys(newProjectData).forEach((key) =>
-        Object.keys(newProjectData[key]).forEach(
-          (id) =>
-            (newProjectData[key][id].projectText = {
-              texts: newProjectData[key][id].projectText!.texts,
-              config: state.projectConfig.language_config,
-            })
-        )
-      );
-      setState(Object.assign({ projectData: newProjectData }, state));
-    }
-  }, [state.projectConfig.language_config]);
 
   return (
     <SaveProjectButtonContainer onClick={handleClick} disabled={!isDataToSave}>

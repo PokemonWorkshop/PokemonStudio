@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { DataBlockWithAction, DataBlockWithActionTooltip, DataBlockWrapper } from '@components/database/dataBlocks';
 import { TypeControlBar } from '@components/database/type/TypeControlBar';
 import { TypeFrame } from '@components/database/type/TypeFrame';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { useHistory, useParams } from 'react-router-dom';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
@@ -17,6 +17,8 @@ import { Deletion, DeletionOverlay } from '@components/deletion';
 import { useProjectTypes } from '@utils/useProjectData';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
 import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
+import { useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
+import { cloneEntity } from '@utils/cloneEntity';
 
 type TypePageParams = {
   typeDbSymbol?: string;
@@ -33,10 +35,11 @@ export const TypePage = () => {
     getNextDbSymbol,
   } = useProjectTypes();
   const { t } = useTranslation('database_types');
+  const getTypeName = useGetEntityNameTextUsingTextId();
   const history = useHistory();
   const { typeDbSymbol } = useParams<TypePageParams>();
   const currentType = types[typeDbSymbol || typeSelected] || types[typeSelected];
-  const currentEditedType = useMemo(() => currentType.clone(), [currentType]);
+  const currentEditedType = useMemo(() => cloneEntity(currentType), [currentType]);
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
   const shortcutMap = useMemo<StudioShortcutActions>(() => {
@@ -47,18 +50,18 @@ export const TypePage = () => {
       db_next: () => setSelectedDataIdentifier({ type: getNextDbSymbol('name') }),
       db_new: () => setCurrentEditor('new'),
     };
-  }, [getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
+  }, [currentEditor, currentDeletion, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol]);
   useShortcut(shortcutMap);
   const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
     {
       translation_name: { fileId: 3 },
     },
     currentEditedType.textId,
-    currentEditedType.name()
+    getTypeName(currentEditedType)
   );
   const allTypes = Object.values(types);
 
-  const onChange = (selected: SelectOption) => {
+  const onChange: SelectChangeEvent = (selected) => {
     setSelectedDataIdentifier({ type: selected.value });
     history.push(`/database/types/${selected.value}`);
   };
@@ -67,7 +70,7 @@ export const TypePage = () => {
   const onClickedPokemonList = () => history.push(`/database/types/${currentType.dbSymbol}/pokemon`);
 
   const onCloseEditor = () => {
-    if (currentEditor === 'frame' && currentEditedType.name() === '') return;
+    if (currentEditor === 'frame' && getTypeName(currentEditedType) === '') return;
     setTypes({ [currentType.dbSymbol]: currentEditedType });
     setCurrentEditor(undefined);
     closeTranslationEditor();
@@ -75,7 +78,7 @@ export const TypePage = () => {
 
   const onClickDelete = () => {
     const firstDbSymbol = Object.entries(types)
-      .map(([value, typeData]) => ({ value, index: typeData.name() }))
+      .map(([value, typeData]) => ({ value, index: getTypeName(typeData) }))
       .filter((d) => d.value !== currentType.dbSymbol)
       .sort((a, b) => a.index.localeCompare(b.index))[0].value;
     deleteType(currentType.dbSymbol, { type: firstDbSymbol });
@@ -91,8 +94,8 @@ export const TypePage = () => {
   const deletions = {
     deletion: (
       <Deletion
-        title={t('deletion_of', { type: currentType.name() })}
-        message={t('deletion_message', { type: currentType.name() })}
+        title={t('deletion_of', { type: getTypeName(currentType) })}
+        message={t('deletion_message', { type: getTypeName(currentType) })}
         onClickDelete={onClickDelete}
         onClose={() => setCurrentDeletion(undefined)}
       />
@@ -112,10 +115,10 @@ export const TypePage = () => {
             <TypeResistanceData type={currentType} types={allTypes} />
           </DataBlockWrapper>
           <DataBlockWrapper>
-            <DataBlockWithTitleNoActive size="half" title={t('list_all_pokemon', { type: currentType.name() })} data-noactive>
+            <DataBlockWithTitleNoActive size="half" title={t('list_all_pokemon', { type: getTypeName(currentType) })} data-noactive>
               <DarkButton onClick={onClickedPokemonList}>{t('show_all_pokemon')}</DarkButton>
             </DataBlockWithTitleNoActive>
-            <DataBlockWithTitleNoActive size="half" title={t('list_all_moves', { type: currentType.name() })} data-noactive>
+            <DataBlockWithTitleNoActive size="half" title={t('list_all_moves', { type: getTypeName(currentType) })} data-noactive>
               <DarkButton onClick={onClickedMoveList}>{t('show_all_moves')}</DarkButton>
             </DataBlockWithTitleNoActive>
             {currentType.id <= 18 ? (

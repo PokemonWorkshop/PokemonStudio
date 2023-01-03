@@ -276,7 +276,7 @@
     "source-map-support": "^0.5.19",
     "styled-components": "^5.3.3",
     "ts-marshal": "^0.0.5",
-    "typedjson": "^1.7.0"
+    "zod": "^3.20.2"
   },
   "devEngines": {
     "node": ">=10.x",

@@ -1,8 +1,8 @@
+import { StudioQuestEarningCategoryType } from '@modelEntities/quest';
 import styled from 'styled-components';
 import { Category } from './Category';
-import { EarningCategoryType } from '@modelEntities/quest/Quest.model';
 
-type EarningCategoryProps = { category: EarningCategoryType };
+type EarningCategoryProps = { category: StudioQuestEarningCategoryType };
 
 export const EarningCategory = styled(Category).attrs<EarningCategoryProps>((props) => ({
   'data-category': props.category,

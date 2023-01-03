@@ -25,7 +25,7 @@ export const findFirstAvailableTextId = (allData: ProjectData['abilities'] | Pro
  * @param startId The first id usable
  * @returns The first available id
  */
-export const findFirstAvailableId = (allData: ProjectData[''], startId: number) => {
+export const findFirstAvailableId = (allData: Record<string, { id: number }>, startId: number) => {
   const idSet = Object.values(allData)
     .map(({ id }) => id) // Fetch all ids
     .filter((id, index, array) => index === array.indexOf(id)) // reject all duplicates

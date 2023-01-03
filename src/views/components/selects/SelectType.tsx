@@ -1,9 +1,9 @@
-import React from 'react';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import React, { useMemo } from 'react';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useTranslation } from 'react-i18next';
-import { getDataOptions, SelectDataGeneric } from './SelectDataGeneric';
+import { getSelectDataOptionsOrderedByLabel, SelectDataGeneric } from './SelectDataGeneric';
 import { SelectDataProps } from './SelectDataProps';
+import { useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
 
 /**
  * Component to show a select type.
@@ -28,11 +28,13 @@ export const SelectType = ({
 }: SelectDataProps) => {
   const { t } = useTranslation('database_types');
   const [state] = useGlobalState();
-  const options = getDataOptions(state.projectData, 'types', true);
+  const getTypeName = useGetEntityNameTextUsingTextId();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const options = useMemo(() => getSelectDataOptionsOrderedByLabel(state.projectData, 'types', getTypeName), [state.projectData]);
 
   const getData = () => {
     const currentType = state.projectData.types[dbSymbol];
-    return currentType ? currentType : ({ value: dbSymbol, label: t('type_deleted') } as SelectOption);
+    return { value: dbSymbol, label: currentType ? getTypeName(currentType) : t('type_deleted') };
   };
 
   return (

@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataBlockWithAction, DataBlockWrapper } from '@components/database/dataBlocks';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { DeleteButtonWithIcon } from '@components/buttons';
@@ -32,9 +32,12 @@ import {
 } from '@components/database/item/editors';
 import { EditorOverlay } from '@components/editor';
 import { Deletion, DeletionOverlay } from '@components/deletion';
-import BallItemModel from '@modelEntities/item/BallItem.model';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
 import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
+import { useEditorHandlingCloseRef } from '@components/editor/useHandleCloseEditor';
+import { cleaningItemNaNValues } from '@utils/cleanNaNValue';
+import { cloneEntity } from '@utils/cloneEntity';
 
 export const ItemPage = () => {
   const {
@@ -47,11 +50,13 @@ export const ItemPage = () => {
     getNextDbSymbol,
   } = useProjectItems();
   const { t } = useTranslation('database_items');
-  const onChange = (selected: SelectOption) => setSelectedDataIdentifier({ item: selected.value });
+  const getItemName = useGetEntityNameText();
+  const onChange: SelectChangeEvent = (selected) => setSelectedDataIdentifier({ item: selected.value });
   const item = items[itemDbSymbol];
-  const currentEditedItem = useMemo(() => item.clone(), [item]);
+  const currentEditedItem = useMemo(() => cloneEntity(item), [item]);
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
+  const frameEditorRef = useEditorHandlingCloseRef();
   const shortcutMap = useMemo<StudioShortcutActions>(() => {
     if (currentEditor !== undefined || currentDeletion !== undefined) return {};
 
@@ -60,7 +65,7 @@ export const ItemPage = () => {
       db_next: () => setSelectedDataIdentifier({ item: getNextDbSymbol('id') }),
       db_new: () => setCurrentEditor('new'),
     };
-  }, [getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
+  }, [currentEditor, currentDeletion, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol]);
   useShortcut(shortcutMap);
   const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
     {
@@ -68,16 +73,15 @@ export const ItemPage = () => {
       translation_description: { fileId: 13, isMultiline: true },
     },
     currentEditedItem.id,
-    currentEditedItem.name()
+    getItemName(currentEditedItem)
   );
 
   const blockCloseEditor = () => {
     if (currentEditor === 'frame') {
-      return currentEditedItem.name() === '' || currentEditedItem.icon === '';
+      return !frameEditorRef.current || !frameEditorRef.current.canClose();
     }
-    if (currentEditor === 'catch' && (currentEditedItem as BallItemModel)) {
-      const ballItem = currentEditedItem as BallItemModel;
-      return ballItem.spriteFilename === '';
+    if (currentEditor === 'catch' && currentEditedItem.klass === 'BallItem') {
+      return currentEditedItem.spriteFilename === '';
     }
     return false;
   };
@@ -86,7 +90,11 @@ export const ItemPage = () => {
     if (blockCloseEditor()) return;
     setCurrentEditor(undefined);
     if (currentEditor === 'new') return;
-    currentEditedItem.cleaningNaNValues();
+    if (currentEditor === 'frame') {
+      frameEditorRef.current?.onClose();
+      return closeTranslationEditor();
+    }
+    cleaningItemNaNValues(currentEditedItem);
     setItems({ [item.dbSymbol]: currentEditedItem });
     closeTranslationEditor();
   };
@@ -102,7 +110,7 @@ export const ItemPage = () => {
 
   const editors = {
     new: <ItemNewEditor onClose={() => setCurrentEditor(undefined)} />,
-    frame: <ItemFrameEditor item={currentEditedItem} setItems={setItems} openTranslationEditor={openTranslationEditor} />,
+    frame: <ItemFrameEditor item={currentEditedItem} setItems={setItems} openTranslationEditor={openTranslationEditor} ref={frameEditorRef} />,
     generic: <ItemGenericDataEditor item={currentEditedItem} />,
     parameters: <ItemParametersDataEditor item={currentEditedItem} />,
     tech: <ItemTechDataEditor item={currentEditedItem} />,
@@ -116,8 +124,8 @@ export const ItemPage = () => {
   const deletions = {
     deletion: (
       <Deletion
-        title={t('deletion_of', { item: item.name() })}
-        message={t('deletion_message', { item: item.name() })}
+        title={t('deletion_of', { item: getItemName(item) })}
+        message={t('deletion_message', { item: getItemName(item) })}
         onClickDelete={onClickDelete}
         onClose={() => setCurrentDeletion(undefined)}
       />

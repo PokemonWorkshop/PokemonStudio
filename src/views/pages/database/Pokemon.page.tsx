@@ -9,7 +9,7 @@ import { PokedexDataBlock } from '@components/database/pokemon/pokemonDataBlock/
 import { ReproductionDataBlock } from '@components/database/pokemon/pokemonDataBlock/ReproductionDataBlock';
 import { TalentsDataBlock } from '@components/database/pokemon/pokemonDataBlock/TalentsDataBlock';
 import { PokemonFrame } from '@components/database/pokemon/PokemonFrame';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { PokemonWithForm } from '@components/database/pokemon/PokemonDataPropsInterface';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
@@ -33,6 +33,10 @@ import { Deletion, DeletionOverlay } from '@components/deletion';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
 import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
+import { cleaningCreatureFormNaNValues } from '@utils/cleanNaNValue';
+import { cloneEntity } from '@utils/cloneEntity';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 
 export const PokemonPage = () => {
   const [evolutionIndex, setEvolutionIndex] = useState(0);
@@ -46,11 +50,12 @@ export const PokemonPage = () => {
     getPreviousDbSymbol,
     getNextDbSymbol,
   } = useProjectPokemon();
-  const onPokemonChange = (selected: SelectOption) => {
+  const getCreatureName = useGetEntityNameText();
+  const onPokemonChange: SelectChangeEvent = (selected) => {
     setSelectedDataIdentifier({ pokemon: { specie: selected.value, form: 0 } });
     setEvolutionIndex(0);
   };
-  const onFormChange = (selected: SelectOption) => {
+  const onFormChange: SelectChangeEvent = (selected) => {
     setSelectedDataIdentifier({
       pokemon: {
         specie: currentPokemon.specie,
@@ -61,7 +66,7 @@ export const PokemonPage = () => {
   };
 
   const currentPokemonModel = pokemon[currentPokemon.specie];
-  const currentEditedPokemon = useMemo(() => currentPokemonModel.clone(), [currentPokemonModel]);
+  const currentEditedPokemon = useMemo(() => cloneEntity(currentPokemonModel), [currentPokemonModel]);
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
   const shortcutMap = useMemo<StudioShortcutActions>(() => {
@@ -72,7 +77,7 @@ export const PokemonPage = () => {
       db_next: () => setSelectedDataIdentifier({ pokemon: { specie: getNextDbSymbol('id'), form: 0 } }),
       db_new: () => setCurrentEditor('newPokemonEditor'),
     };
-  }, [getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
+  }, [currentEditor, currentDeletion, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol]);
   useShortcut(shortcutMap);
 
   const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
@@ -82,14 +87,16 @@ export const PokemonPage = () => {
       translation_species: { fileId: 1 },
     },
     currentEditedPokemon.id,
-    currentEditedPokemon.name()
+    getCreatureName(currentEditedPokemon)
   );
 
   const onCloseEditor = () => {
-    if (currentEditor === 'informationsEditor' && currentEditedPokemon.name() === '') return;
+    if (currentEditor === 'informationsEditor' && getCreatureName(currentEditedPokemon) === '') return;
     if (currentEditor === 'newPokemonEditor' || currentEditor === 'newPokemonFormEditor') return setCurrentEditor(undefined);
-    currentEditedPokemon.forms[currentPokemon.form].changeDefaultValueItemHeld('none');
-    currentEditedPokemon.forms[currentPokemon.form].cleaningNaNValues();
+    currentEditedPokemon.forms[currentPokemon.form].itemHeld.forEach((itemHeld) => {
+      if (itemHeld.dbSymbol === '__undef__') itemHeld.dbSymbol = 'none' as DbSymbol;
+    });
+    cleaningCreatureFormNaNValues(currentEditedPokemon.forms[currentPokemon.form]);
     setPokemon({ [currentPokemonModel.dbSymbol]: currentEditedPokemon });
     setCurrentEditor(undefined);
     closeTranslationEditor();
@@ -153,8 +160,8 @@ export const PokemonPage = () => {
   const deletions = {
     pokemonDeletion: (
       <Deletion
-        title={t('database_pokemon:deletion_of_pokemon', { pokemon: currentPokemonModel.name() })}
-        message={t('database_pokemon:deletion_message_pokemon', { pokemon: currentPokemonModel.name() })}
+        title={t('database_pokemon:deletion_of_pokemon', { pokemon: getCreatureName(currentPokemonModel) })}
+        message={t('database_pokemon:deletion_message_pokemon', { pokemon: getCreatureName(currentPokemonModel) })}
         onClickDelete={onClickDeletePokemon}
         onClose={() => setCurrentDeletion(undefined)}
       />

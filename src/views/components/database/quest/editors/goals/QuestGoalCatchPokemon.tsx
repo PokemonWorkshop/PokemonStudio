@@ -1,11 +1,11 @@
 import React from 'react';
 import { InputContainer, InputWithLeftLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
-import { PokemonQuestCondition } from '@modelEntities/quest/Quest.model';
 import { QuestGoalConditions } from './QuestGoalConditions';
 import { QuestGoalProps } from './QuestGoalProps';
 import { useRefreshUI } from '@components/editor';
 import { InputNumber } from './InputNumber';
 import { useTranslation } from 'react-i18next';
+import { StudioCreatureQuestCondition } from '@modelEntities/quest';
 
 export const QuestGoalCatchPokemon = ({ objective }: QuestGoalProps) => {
   const { t } = useTranslation('database_quests');
@@ -22,7 +22,7 @@ export const QuestGoalCatchPokemon = ({ objective }: QuestGoalProps) => {
           />
         </InputWithLeftLabelContainer>
       </PaddedInputContainer>
-      <QuestGoalConditions conditions={objective.objectiveMethodArgs[0] as PokemonQuestCondition[]} />
+      <QuestGoalConditions conditions={objective.objectiveMethodArgs[0] as StudioCreatureQuestCondition[]} />
     </InputContainer>
   );
 };

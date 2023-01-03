@@ -1,5 +1,4 @@
-import PokemonModel from '@modelEntities/pokemon/Pokemon.model';
-import PokemonForm from '@modelEntities/pokemon/PokemonForm';
+import { StudioCreature, StudioCreatureForm } from '@modelEntities/creature';
 
 export type PokemonDataProps = {
   pokemonWithForm: PokemonWithForm;
@@ -7,6 +6,6 @@ export type PokemonDataProps = {
 };
 
 export type PokemonWithForm = {
-  species: PokemonModel;
-  form: PokemonForm;
+  species: StudioCreature;
+  form: StudioCreatureForm;
 };

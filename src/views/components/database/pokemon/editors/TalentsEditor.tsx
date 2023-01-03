@@ -1,12 +1,13 @@
 import { Editor, useRefreshUI } from '@components/editor';
 import { InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { SelectAbility } from '@components/selects';
-import PokemonModel from '@modelEntities/pokemon/Pokemon.model';
+import { StudioCreature } from '@modelEntities/creature';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 import React, { FunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type TalentEditorProps = {
-  currentPokemon: PokemonModel;
+  currentPokemon: StudioCreature;
   currentFormIndex: number;
 };
 
@@ -20,15 +21,15 @@ export const TalentsEditor: FunctionComponent<TalentEditorProps> = ({ currentPok
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="ability_1">{t('database_pokemon:ability_1')}</Label>
-          <SelectAbility dbSymbol={form.abilities[0]} onChange={(event) => refreshUI((form.abilities[0] = event.value))} noLabel />
+          <SelectAbility dbSymbol={form.abilities[0]} onChange={(event) => refreshUI((form.abilities[0] = event.value as DbSymbol))} noLabel />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="ability_2">{t('database_pokemon:ability_2')}</Label>
-          <SelectAbility dbSymbol={form.abilities[1]} onChange={(event) => refreshUI((form.abilities[1] = event.value))} noLabel />
+          <SelectAbility dbSymbol={form.abilities[1]} onChange={(event) => refreshUI((form.abilities[1] = event.value as DbSymbol))} noLabel />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="hidden_ability">{t('database_pokemon:hidden_ability')}</Label>
-          <SelectAbility dbSymbol={form.abilities[2]} onChange={(event) => refreshUI((form.abilities[2] = event.value))} noLabel />
+          <SelectAbility dbSymbol={form.abilities[2]} onChange={(event) => refreshUI((form.abilities[2] = event.value as DbSymbol))} noLabel />
         </InputWithTopLabelContainer>
       </InputContainer>
     </Editor>

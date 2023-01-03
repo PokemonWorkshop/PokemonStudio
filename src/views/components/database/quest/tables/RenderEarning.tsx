@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Earning, EarningCategoryType, EarningType } from '@modelEntities/quest/Quest.model';
 import { useTranslation } from 'react-i18next';
 import { EarningCategory } from '@components/categories';
 import { DataEarningGrid } from './QuestTableStyle';
@@ -9,6 +8,7 @@ import { EditButtonOnlyIconContainer } from '@components/buttons/EditButtonOnlyI
 import theme from '@src/AppTheme';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { buildEarningText } from '@utils/QuestUtils';
+import { StudioQuestEarning, StudioQuestEarningCategoryType, StudioQuestEarningType } from '@modelEntities/quest';
 
 const RenderEarningContainer = styled(DataEarningGrid)`
   box-sizing: border-box;
@@ -43,14 +43,14 @@ const RenderEarningContainer = styled(DataEarningGrid)`
   }
 `;
 
-const categoryEarning: Record<EarningType, EarningCategoryType> = {
+const categoryEarning: Record<StudioQuestEarningType, StudioQuestEarningCategoryType> = {
   earning_money: 'money',
   earning_item: 'item',
   earning_pokemon: 'pokemon',
 };
 
 type RenderEarningProps = {
-  earning: Earning;
+  earning: StudioQuestEarning;
   onClickEdit: () => void;
   onClickDelete: () => void;
 };

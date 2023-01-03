@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useTranslation } from 'react-i18next';
-import { getDataOptions, SelectDataGeneric } from './SelectDataGeneric';
+import { getSelectDataOptionsOrderedById, SelectDataGeneric } from './SelectDataGeneric';
 import { SelectDataProps } from './SelectDataProps';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
 
 /**
  * Component to show a select move.
@@ -27,11 +28,13 @@ export const SelectMove = ({
 }: SelectDataProps) => {
   const { t } = useTranslation('database_moves');
   const [state] = useGlobalState();
-  const options = getDataOptions(state.projectData, 'moves');
+  const getMoveName = useGetEntityNameText();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const options = useMemo(() => getSelectDataOptionsOrderedById(state.projectData, 'moves', getMoveName), [state.projectData]);
 
   const getData = () => {
     const currentMove = state.projectData.moves[dbSymbol];
-    return currentMove ? currentMove : { value: dbSymbol, label: t('move_deleted') };
+    return { value: dbSymbol, label: currentMove ? getMoveName(currentMove) : t('move_deleted') };
   };
 
   return (

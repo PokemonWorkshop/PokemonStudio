@@ -1,6 +1,6 @@
-import MoveModel from '@modelEntities/move/Move.model';
+import { StudioMove } from '@modelEntities/move';
 
 export type MoveDataProps = {
-  move: MoveModel;
+  move: StudioMove;
   onClick?: () => void;
 };

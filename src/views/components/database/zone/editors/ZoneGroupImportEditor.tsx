@@ -8,7 +8,8 @@ import styled from 'styled-components';
 import { SelectZone } from '@components/selects';
 import { useProjectZones } from '@utils/useProjectData';
 import { DarkButton, PrimaryButton } from '@components/buttons';
-import ZoneModel from '@modelEntities/zone/Zone.model';
+import { cloneEntity } from '@utils/cloneEntity';
+import { StudioZone } from '@modelEntities/zone';
 
 const ZoneGroupImportInfo = styled.div`
   ${({ theme }) => theme.fonts.normalRegular};
@@ -24,7 +25,7 @@ const ButtonContainer = styled.div`
 `;
 
 type ZoneGroupImportEditorProps = {
-  zone: ZoneModel;
+  zone: StudioZone;
   onClose: () => void;
 };
 
@@ -40,8 +41,8 @@ export const ZoneGroupImportEditor = ({ zone, onClose }: ZoneGroupImportEditorPr
   const refreshUI = useRefreshUI();
 
   const onClickImport = () => {
-    if (override) zone.wildGroups = zones[selectedZone].clone().wildGroups;
-    else zone.wildGroups.push(...zones[selectedZone].clone().wildGroups);
+    if (override) zone.wildGroups = cloneEntity(zones[selectedZone].wildGroups);
+    else zone.wildGroups.push(...cloneEntity(zones[selectedZone].wildGroups));
     setZone({ [zone.dbSymbol]: zone });
     onClose();
   };

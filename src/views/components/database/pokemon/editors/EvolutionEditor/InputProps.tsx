@@ -1,7 +1,7 @@
-import { EvolutionCondition } from '@modelEntities/pokemon/PokemonForm';
+import { StudioEvolutionCondition } from '@modelEntities/creature';
 
 export type InputProps = {
-  condition: EvolutionCondition;
+  condition: StudioEvolutionCondition;
   index: number;
-  onChange: (condition: EvolutionCondition | undefined, index: number) => void;
+  onChange: (condition: StudioEvolutionCondition | undefined, index: number) => void;
 };

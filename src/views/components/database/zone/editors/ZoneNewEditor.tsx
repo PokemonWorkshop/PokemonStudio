@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
-import { Editor, useRefreshUI } from '@components/editor';
+import { Editor } from '@components/editor';
 
 import { useTranslation } from 'react-i18next';
 import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
-import ZoneModel from '@modelEntities/zone/Zone.model';
 import { useProjectZones } from '@utils/useProjectData';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
+import { useSetProjectText } from '@utils/ReadingProjectText';
+import { ZONE_DESCRIPTION_TEXT_ID, ZONE_NAME_TEXT_ID } from '@modelEntities/zone';
+import { DbSymbol } from '@modelEntities/dbSymbol';
+import { findFirstAvailableId } from '@utils/ModelUtils';
+import { createZone } from '@utils/entityCreation';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -21,16 +25,21 @@ type ZoneNewEditorProps = {
 };
 
 export const ZoneNewEditor = ({ onClose }: ZoneNewEditorProps) => {
-  const { projectDataValues: zones, setProjectDataValues: setZone, bindProjectDataValue: bindZone } = useProjectZones();
+  const { projectDataValues: zones, setProjectDataValues: setZone } = useProjectZones();
   const { t } = useTranslation('database_zones');
-  const [newZone] = useState(bindZone(ZoneModel.createZone(zones)));
-  const [zoneText, setZoneText] = useState({ name: '', descr: '' });
-  const refreshUI = useRefreshUI();
+  const setText = useSetProjectText();
+  const [name, setName] = useState(''); // We can't use a ref because of the button behavior
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
   const onClickNew = () => {
-    newZone.setName(zoneText.name);
-    newZone.setDescr(zoneText.descr);
-    setZone({ [newZone.dbSymbol]: newZone }, { zone: newZone.dbSymbol });
+    if (!descriptionRef.current) return;
+
+    const id = findFirstAvailableId(zones, 0);
+    const dbSymbol = `zone_${id}` as DbSymbol;
+    const zone = createZone(dbSymbol, id);
+    setText(ZONE_NAME_TEXT_ID, id, name);
+    setText(ZONE_DESCRIPTION_TEXT_ID, id, descriptionRef.current.value);
+    setZone({ [dbSymbol]: zone }, { zone: dbSymbol });
     onClose();
   };
 
@@ -41,27 +50,16 @@ export const ZoneNewEditor = ({ onClose }: ZoneNewEditorProps) => {
           <Label htmlFor="name" required>
             {t('name')}
           </Label>
-          <Input
-            type="text"
-            name="name"
-            value={zoneText.name}
-            onChange={(event) => refreshUI(setZoneText({ ...zoneText, name: event.target.value }))}
-            placeholder={t('example_name')}
-          />
+          <Input type="text" name="name" value={name} onChange={(event) => setName(event.target.value)} placeholder={t('example_name')} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="descr">{t('description')}</Label>
-          <MultiLineInput
-            id="descr"
-            value={zoneText.descr}
-            onChange={(event) => refreshUI(setZoneText({ ...zoneText, descr: event.target.value }))}
-            placeholder={t('example_descr')}
-          />
+          <MultiLineInput id="descr" ref={descriptionRef} placeholder={t('example_descr')} />
         </InputWithTopLabelContainer>
         <ButtonContainer>
           <ToolTipContainer>
-            {zoneText.name.length === 0 && <ToolTip bottom="100%">{t('fields_asterisk_required')}</ToolTip>}
-            <PrimaryButton onClick={onClickNew} disabled={zoneText.name.length === 0}>
+            {!name && <ToolTip bottom="100%">{t('fields_asterisk_required')}</ToolTip>}
+            <PrimaryButton onClick={onClickNew} disabled={!name}>
               {t('create_zone')}
             </PrimaryButton>
           </ToolTipContainer>

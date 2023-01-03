@@ -1,19 +1,23 @@
-import React, { useMemo, useState } from 'react';
-import { Editor, useRefreshUI } from '@components/editor';
+import React, { useMemo, useRef, useState } from 'react';
+import { Editor } from '@components/editor';
 
 import { TFunction, useTranslation } from 'react-i18next';
 import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
-import QuestModel, { QuestCategories, QuestResolution, QuestResolutions } from '@modelEntities/quest/Quest.model';
 import styled from 'styled-components';
 import { useProjectQuests } from '@utils/useProjectData';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
+import { QUEST_CATEGORIES, QUEST_DESCRIPTION_TEXT_ID, QUEST_NAME_TEXT_ID, QUEST_RESOLUTIONS, StudioQuestCategory } from '@modelEntities/quest';
+import { useSetProjectText } from '@utils/ReadingProjectText';
+import { findFirstAvailableId } from '@utils/ModelUtils';
+import { DbSymbol } from '@modelEntities/dbSymbol';
+import { createQuest } from '@utils/entityCreation';
 
-const questCategoryEntries = (t: TFunction<'database_quests'>) => QuestCategories.map((category) => ({ value: category, label: t(category) }));
+const questCategoryEntries = (t: TFunction<'database_quests'>) => QUEST_CATEGORIES.map((category) => ({ value: category, label: t(category) }));
 
 const questResolutionEntries = (t: TFunction<'database_quests'>) =>
-  QuestResolutions.map((resolution) => ({ value: resolution, label: t(resolution) }));
+  QUEST_RESOLUTIONS.map((resolution) => ({ value: resolution, label: t(resolution) }));
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -27,18 +31,24 @@ type QuestNewEditorProps = {
 };
 
 export const QuestNewEditor = ({ onClose }: QuestNewEditorProps) => {
-  const { projectDataValues: quests, setProjectDataValues: setQuest, bindProjectDataValue: bindQuest } = useProjectQuests();
+  const { projectDataValues: quests, setProjectDataValues: setQuest } = useProjectQuests();
   const { t } = useTranslation('database_quests');
+  const setText = useSetProjectText();
   const categoryOptions = useMemo(() => questCategoryEntries(t), [t]);
   const resolutionOptions = useMemo(() => questResolutionEntries(t), [t]);
-  const refreshUI = useRefreshUI();
-  const [newQuest] = useState(bindQuest(QuestModel.createQuest(quests)));
-  const [questText] = useState({ name: '', descr: '' });
+  const [name, setName] = useState(''); // We can't use a ref because of the button behavior
+  const [category, setCategory] = useState<StudioQuestCategory>('primary');
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
   const onClickNew = () => {
-    newQuest.setName(questText.name);
-    newQuest.setDescr(questText.descr);
-    setQuest({ [newQuest.dbSymbol]: newQuest }, { quest: newQuest.dbSymbol });
+    if (!descriptionRef.current) return;
+
+    const id = findFirstAvailableId(quests, 0);
+    const dbSymbol = `quest_${id}` as DbSymbol;
+    const quest = createQuest(dbSymbol, id, category === 'primary', 'default');
+    setText(QUEST_NAME_TEXT_ID, id, name);
+    setText(QUEST_DESCRIPTION_TEXT_ID, id, descriptionRef.current.value);
+    setQuest({ [dbSymbol]: quest }, { quest: dbSymbol });
     onClose();
   };
 
@@ -49,21 +59,15 @@ export const QuestNewEditor = ({ onClose }: QuestNewEditorProps) => {
           <Label htmlFor="name" required>
             {t('quest_name')}
           </Label>
-          <Input
-            type="text"
-            name="name"
-            value={questText.name}
-            onChange={(event) => refreshUI((questText.name = event.target.value))}
-            placeholder={t('example_name')}
-          />
+          <Input type="text" name="name" value={name} onChange={(event) => setName(event.target.value)} placeholder={t('example_name')} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="select-category">{t('category')}</Label>
           <SelectCustomSimple
             id="select-category"
             options={categoryOptions}
-            onChange={(value) => refreshUI((newQuest.isPrimary = value === 'primary'))}
-            value={newQuest.isPrimary ? 'primary' : 'secondary'}
+            onChange={(value) => setCategory(value as StudioQuestCategory)}
+            value={category}
             noTooltip
           />
         </InputWithTopLabelContainer>
@@ -79,17 +83,12 @@ export const QuestNewEditor = ({ onClose }: QuestNewEditorProps) => {
         </InputWithTopLabelContainer> */}
         <InputWithTopLabelContainer>
           <Label htmlFor="descr">{t('description')}</Label>
-          <MultiLineInput
-            id="descr"
-            value={questText.descr}
-            onChange={(event) => refreshUI((questText.descr = event.target.value))}
-            placeholder={t('example_descr')}
-          />
+          <MultiLineInput id="descr" ref={descriptionRef} placeholder={t('example_descr')} />
         </InputWithTopLabelContainer>
         <ButtonContainer>
           <ToolTipContainer>
-            {questText.name.length === 0 && <ToolTip bottom="100%">{t('fields_asterisk_required')}</ToolTip>}
-            <PrimaryButton onClick={onClickNew} disabled={questText.name.length === 0}>
+            {!name && <ToolTip bottom="100%">{t('fields_asterisk_required')}</ToolTip>}
+            <PrimaryButton onClick={onClickNew} disabled={!name}>
               {t('create_quest')}
             </PrimaryButton>
           </ToolTipContainer>

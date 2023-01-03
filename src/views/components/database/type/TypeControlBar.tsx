@@ -2,15 +2,15 @@ import { SecondaryButtonWithPlusIcon, SecondaryButton } from '@components/button
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ControlBar, ControlBarLabelContainer } from '@components/ControlBar';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
-import TypeModel from '@modelEntities/type/Type.model';
+import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { SelectType } from '@components/selects';
+import { StudioType } from '@modelEntities/type';
 
 type TypeControlBarProps = {
-  onChange: (selected: SelectOption) => void;
+  onChange: SelectChangeEvent;
   onClickNewType?: () => void;
   onClickTypeTable?: () => void;
-  type: TypeModel;
+  type: StudioType;
 };
 
 export const TypeControlBar = ({ onChange, onClickNewType, type, onClickTypeTable }: TypeControlBarProps) => {

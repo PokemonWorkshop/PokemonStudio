@@ -4,15 +4,16 @@ import { Editor, useRefreshUI } from '@components/editor';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { SelectItem } from '@components/selects';
 import { useTranslation } from 'react-i18next';
-import TrainerModel from '@modelEntities/trainer/Trainer.model';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { useProjectTrainers } from '@utils/useProjectData';
+import { DbSymbol } from '@modelEntities/dbSymbol';
+import { reduceBagEntries, StudioTrainer } from '@modelEntities/trainer';
 
 type BagEntryListEditorProps = {
   type: 'creation' | 'edit';
-  trainer: TrainerModel;
+  trainer: StudioTrainer;
   index?: number;
   onClose?: () => void;
 };
@@ -30,14 +31,14 @@ export const BagEntryListEditor = ({ type, trainer, index, onClose }: BagEntryLi
 
   const { setProjectDataValues: setTrainer } = useProjectTrainers();
   const { t } = useTranslation('bag_entry_list');
-  const newBagEntry = useMemo(() => TrainerModel.createBagEntry(), []);
+  const newBagEntry = useMemo(() => ({ dbSymbol: '__undef__' as DbSymbol, amount: 1 }), []);
   const bagEntry = type === 'edit' && index !== undefined ? trainer.bagEntries[index] : newBagEntry;
   const refreshUI = useRefreshUI();
 
   const checkDisabled = () => bagEntry.dbSymbol === '__undef__';
   const onClickNew = () => {
     trainer.bagEntries.push(bagEntry);
-    trainer.reduceBagEntries();
+    reduceBagEntries(trainer);
     setTrainer({ [trainer.dbSymbol]: trainer });
     if (onClose) onClose();
   };
@@ -51,7 +52,7 @@ export const BagEntryListEditor = ({ type, trainer, index, onClose }: BagEntryLi
           </Label>
           <SelectItem
             dbSymbol={bagEntry.dbSymbol}
-            onChange={(selected) => refreshUI((bagEntry.dbSymbol = selected.value))}
+            onChange={(selected) => refreshUI((bagEntry.dbSymbol = selected.value as DbSymbol))}
             noLabel
             noneValue
             noneValueIsError

@@ -3,7 +3,8 @@ import styled from 'styled-components';
 import { Editor, useRefreshUI } from '@components/editor';
 import { CoordinateInput, InputContainer, InputWithLeftLabelContainer, InputWithCoordinateLabelContainer, Label, Toggle } from '@components/inputs';
 import { useTranslation } from 'react-i18next';
-import ZoneModel from '@modelEntities/zone/Zone.model';
+import { cleaningNaNToNull } from '@utils/cleanNaNValue';
+import { StudioZone } from '@modelEntities/zone';
 
 const OutsideContainer = styled.div`
   display: flex;
@@ -31,13 +32,13 @@ const ZoneCoordinateInput = ({ unit, value, setValue, refreshUI }: ZoneCoordinat
         if (val < 0 || val > 99_999) return event.preventDefault();
         refreshUI(setValue(val));
       }}
-      onBlur={() => refreshUI(setValue(ZoneModel.cleanCoordinate(value)))}
+      onBlur={() => refreshUI(setValue(cleaningNaNToNull(value)))}
     />
   );
 };
 
 type ZoneTravelEditorProps = {
-  zone: ZoneModel;
+  zone: StudioZone;
 };
 
 export const ZoneTravelEditor = ({ zone }: ZoneTravelEditorProps) => {

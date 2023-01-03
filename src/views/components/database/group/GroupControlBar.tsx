@@ -1,14 +1,14 @@
 import { SecondaryButtonWithPlusIcon } from '@components/buttons';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { ControlBar } from '@components/ControlBar';
-import GroupModel from '@modelEntities/group/Group.model';
 import { SelectGroup } from '@components/selects';
+import { StudioGroup } from '@modelEntities/group';
 
 type GroupControlBarProps = {
-  onChange: (selected: SelectOption) => void;
-  group: GroupModel;
+  onChange: SelectChangeEvent;
+  group: StudioGroup;
   onClickNewGroup: () => void;
 };
 

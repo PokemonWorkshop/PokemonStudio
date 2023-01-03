@@ -2,13 +2,14 @@ import React, { useMemo } from 'react';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { DataBlockWithTitleNoActive, DataBlockWrapper } from '@components/database/dataBlocks';
 import { AbilityControlBar, AbilityPokemonTable } from '@components/database/ability';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { SubPageTitle } from '@components/database/SubPageTitle';
 import { useProjectAbilities } from '@utils/useProjectData';
 import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
+import { useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
 
 export const AbilityPokemonPage = () => {
   const {
@@ -20,17 +21,18 @@ export const AbilityPokemonPage = () => {
   } = useProjectAbilities();
   const { t } = useTranslation('database_abilities');
   const history = useHistory();
+  const getAbilityName = useGetEntityNameTextUsingTextId();
   const shortcutMap = useMemo<StudioShortcutActions>(() => {
     return {
       db_previous: () => setSelectedDataIdentifier({ ability: getPreviousDbSymbol('name') }),
       db_next: () => setSelectedDataIdentifier({ ability: getNextDbSymbol('name') }),
     };
-  }, [getPreviousDbSymbol, getNextDbSymbol]);
+  }, [setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol]);
   useShortcut(shortcutMap);
 
   const ability = abilities[abilityDbSymbol];
 
-  const onChange = (selected: SelectOption) => {
+  const onChange: SelectChangeEvent = (selected) => {
     setSelectedDataIdentifier({ ability: selected.value });
   };
   const onClickedBack = () => history.push('database/abilities');
@@ -41,8 +43,8 @@ export const AbilityPokemonPage = () => {
       <PageContainerStyle>
         <PageDataConstrainerStyle>
           <DataBlockWrapper>
-            <SubPageTitle title={t('pokemon_with_ability', { ability: ability.name() })} onClickedBack={onClickedBack} />
-            <DataBlockWithTitleNoActive title={t('pokemon_with_ability', { ability: ability.name() })} size="full">
+            <SubPageTitle title={t('pokemon_with_ability', { ability: getAbilityName(ability) })} onClickedBack={onClickedBack} />
+            <DataBlockWithTitleNoActive title={t('pokemon_with_ability', { ability: getAbilityName(ability) })} size="full">
               <AbilityPokemonTable ability={ability} />
             </DataBlockWithTitleNoActive>
           </DataBlockWrapper>

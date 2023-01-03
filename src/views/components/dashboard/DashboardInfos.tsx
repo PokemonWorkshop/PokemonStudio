@@ -10,6 +10,7 @@ import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { useProjectStudio } from '@utils/useProjectStudio';
 import { useConfigInfos } from '@utils/useProjectConfig';
 import { useImageSaving } from '@utils/useImageSaving';
+import { cloneEntity } from '@utils/cloneEntity';
 
 const InputVersion = styled(Input)`
   text-align: left;
@@ -20,8 +21,8 @@ export const DashboardInfos = () => {
   const [state] = useGlobalState();
   const { projectConfigValues: infos, setProjectConfigValues: setInfos } = useConfigInfos();
   const { projectStudioValues: projectStudio, setProjectStudioValues: setProjectStudio } = useProjectStudio();
-  const currentEditedInfos = useMemo(() => infos.clone(), [infos]);
-  const currentEditedProjectStudio = useMemo(() => projectStudio.clone(), [projectStudio]);
+  const currentEditedInfos = useMemo(() => cloneEntity(infos), [infos]);
+  const currentEditedProjectStudio = useMemo(() => cloneEntity(projectStudio), [projectStudio]);
   const [gameTitleVersion, setGameTitleVersion] = useState({ gameTitle: infos.gameTitle, gameVersion: infos.gameVersion });
   const { addImage, removeImage, getImage } = useImageSaving();
 

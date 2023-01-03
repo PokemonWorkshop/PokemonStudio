@@ -12,19 +12,27 @@ import {
   PictureInput,
 } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
-import TrainerModel, { AiCategories, VsTypeCategories } from '@modelEntities/trainer/Trainer.model';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import styled from 'styled-components';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { Tag } from '@components/Tag';
 import { DropInput } from '@components/inputs/DropInput';
-import { basename } from '@utils/path';
+import { basename, trainerSpriteBigPath, trainerSpritePath } from '@utils/path';
 import { padStr } from '@utils/PadStr';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import type { OpenTranslationEditorFunction } from '@utils/useTranslationEditor';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 import { showNotification } from '@utils/showNotification';
+import {
+  getTrainerMoney,
+  StudioTrainer,
+  TRAINER_AI_CATEGORIES,
+  TRAINER_CLASS_TEXT_ID,
+  TRAINER_NAME_TEXT_ID,
+  TRAINER_VS_TYPE_CATEGORIES,
+} from '@modelEntities/trainer';
+import { useGetProjectText, useSetProjectText } from '@utils/ReadingProjectText';
 
 const BaseMoneyInfoContainer = styled.span`
   ${({ theme }) => theme.fonts.normalSmall}
@@ -56,13 +64,13 @@ const MoneyContainer = styled.div`
 `;
 
 const aiCategoryEntries = (t: TFunction<'database_trainers'>) =>
-  AiCategories.map((category, index) => ({ value: (index + 1).toString(), label: `${padStr(index + 1, 2)} - ${t(category)}` }));
+  TRAINER_AI_CATEGORIES.map((category, index) => ({ value: (index + 1).toString(), label: `${padStr(index + 1, 2)} - ${t(category)}` }));
 
 const vsTypeCategoryEntries = (t: TFunction<'database_trainers'>) =>
-  VsTypeCategories.map((category) => ({ value: category.toString(), label: t(`vs_type${category}`) }));
+  TRAINER_VS_TYPE_CATEGORIES.map((category) => ({ value: category.toString(), label: t(`vs_type${category}`) }));
 
 type TrainerFrameEditorProps = {
-  trainer: TrainerModel;
+  trainer: StudioTrainer;
   openTranslationEditor: OpenTranslationEditorFunction;
 };
 
@@ -74,17 +82,19 @@ export const TrainerFrameEditor = ({ trainer, openTranslationEditor }: TrainerFr
   const [spriteDp, setSpriteDp] = useState(false);
   const [spriteBig, setSpriteBig] = useState(false);
   const [isLoading, setLoading] = useState(true);
+  const setText = useSetProjectText();
+  const getText = useGetProjectText();
   const refreshUI = useRefreshUI();
 
   useEffect(() => {
     if (!isLoading) return;
 
     window.api.fileExists(
-      { filePath: trainer.sprite(state.projectPath!) },
+      { filePath: trainerSpritePath(trainer, state.projectPath!) },
       ({ result }) => {
         setSpriteDp(result);
         window.api.fileExists(
-          { filePath: trainer.spriteBig(state.projectPath!) },
+          { filePath: trainerSpriteBigPath(trainer, state.projectPath!) },
           ({ result: resultBig }) => {
             setSpriteBig(resultBig);
             setLoading(false);
@@ -108,8 +118,8 @@ export const TrainerFrameEditor = ({ trainer, openTranslationEditor }: TrainerFr
 
   const getSprite = () => {
     if (!state.projectPath) return '';
-    if (spriteBig) return trainer.spriteBig(state.projectPath);
-    if (spriteDp) return trainer.sprite(state.projectPath);
+    if (spriteBig) return trainerSpriteBigPath(trainer, state.projectPath);
+    if (spriteDp) return trainerSpritePath(trainer, state.projectPath);
     return 'https://www.pokepedia.fr/images/8/87/Pok%C3%A9_Ball.png'; // placeholder here
   };
 
@@ -125,8 +135,8 @@ export const TrainerFrameEditor = ({ trainer, openTranslationEditor }: TrainerFr
               <Input
                 type="text"
                 name="name"
-                value={trainer.trainerName()}
-                onChange={(event) => refreshUI(trainer.setTrainerName(event.target.value))}
+                value={getText(TRAINER_NAME_TEXT_ID, trainer.id)}
+                onChange={(event) => refreshUI(setText(TRAINER_NAME_TEXT_ID, trainer.id, event.target.value))}
                 placeholder={t('example_trainer_name')}
               />
             </TranslateInputContainer>
@@ -139,8 +149,8 @@ export const TrainerFrameEditor = ({ trainer, openTranslationEditor }: TrainerFr
               <Input
                 type="text"
                 name="name"
-                value={trainer.trainerClassName()}
-                onChange={(event) => refreshUI(trainer.setTrainerClassName(event.target.value))}
+                value={getText(TRAINER_CLASS_TEXT_ID, trainer.id)}
+                onChange={(event) => refreshUI(setText(TRAINER_CLASS_TEXT_ID, trainer.id, event.target.value))}
                 placeholder={t('example_trainer_class')}
               />
             </TranslateInputContainer>
@@ -160,7 +170,7 @@ export const TrainerFrameEditor = ({ trainer, openTranslationEditor }: TrainerFr
             <SelectCustomSimple
               id="select-vs-type"
               options={vsTypeOptions}
-              onChange={(value) => refreshUI((trainer.vsType = Number(value)))}
+              onChange={(value) => refreshUI((trainer.vsType = Number(value) as 1))}
               value={trainer.vsType.toString()}
               noTooltip
             />
@@ -225,7 +235,7 @@ export const TrainerFrameEditor = ({ trainer, openTranslationEditor }: TrainerFr
             <BaseMoneyInfoContainer>{t('base_money_info')}</BaseMoneyInfoContainer>
             <MoneyContainer>
               <span className="title">{t('money_title')}</span>
-              <Tag>{`${trainer.money()} P$`}</Tag>
+              <Tag>{`${getTrainerMoney(trainer)} P$`}</Tag>
             </MoneyContainer>
           </PaddedInputContainer>
         </InputGroupCollapse>

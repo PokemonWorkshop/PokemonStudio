@@ -4,11 +4,12 @@ import { Editor, useRefreshUI } from '@components/editor';
 import { useTranslation } from 'react-i18next';
 import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
 
-import QuestModel from '@modelEntities/quest/Quest.model';
 import styled from 'styled-components';
 import { SelectQuest } from '@components/selects';
 import { useProjectQuests } from '@utils/useProjectData';
 import { DarkButton, PrimaryButton } from '@components/buttons';
+import { cloneEntity } from '@utils/cloneEntity';
+import { StudioQuest } from '@modelEntities/quest';
 
 const EarningImportInfo = styled.div`
   ${({ theme }) => theme.fonts.normalRegular};
@@ -24,7 +25,7 @@ const ButtonContainer = styled.div`
 `;
 
 type QuestEarningImportEditorProps = {
-  quest: QuestModel;
+  quest: StudioQuest;
   onClose: () => void;
 };
 
@@ -40,8 +41,8 @@ export const QuestEarningImportEditor = ({ quest, onClose }: QuestEarningImportE
   const refreshUI = useRefreshUI();
 
   const onClickImport = () => {
-    if (override) quest.earnings = quests[selectedQuest].clone().earnings;
-    else quest.earnings.push(...quests[selectedQuest].clone().earnings);
+    if (override) quest.earnings = cloneEntity(quests[selectedQuest].earnings);
+    else quest.earnings.push(...cloneEntity(quests[selectedQuest].earnings));
     setQuest({ [quest.dbSymbol]: quest });
     onClose();
   };

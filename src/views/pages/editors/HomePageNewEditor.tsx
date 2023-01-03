@@ -14,18 +14,18 @@ import { SelectCustomSimple } from '@components/SelectCustom';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import React, { FunctionComponent, useMemo, useState } from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
-import ProjectStudioModel from '@modelEntities/ProjectStudio.model';
 import { TextInputError } from '@components/inputs/Input';
+import { StudioProject } from '@modelEntities/project';
 
 const iconFileExtensions = ['png'];
 
 const DefaultLanguage = ['en', 'fr', 'es'] as const;
 export type DefaultLanguageType = typeof DefaultLanguage[number];
-export interface ProjectCreationData extends ProjectStudioModel {
+export type ProjectCreationData = StudioProject & {
   icon?: string;
   defaultLanguage: DefaultLanguageType;
   multiLanguage: boolean;
-}
+};
 
 const languageEntries = (t: TFunction<'homepage'>) => DefaultLanguage.map((language) => ({ value: language, label: t(language) }));
 const wrongTitle = (title: string) => {

@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { Editor, useRefreshUI } from '@components/editor';
+import { Editor } from '@components/editor';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { TextInputError } from '@components/inputs/Input';
 import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { checkDbSymbolExist, generateDefaultDbSymbol, wrongDbSymbol } from '@utils/dbSymbolUtils';
 import { useProjectAbilities } from '@utils/useProjectData';
-import AbilityModel from '@modelEntities/ability/Ability.model';
+import { useSetProjectText } from '@utils/ReadingProjectText';
+import { ABILITY_DESCRIPTION_TEXT_ID, ABILITY_NAME_TEXT_ID } from '@modelEntities/ability';
+import { createAbility } from '@utils/entityCreation';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 
 type AbilityNewEditorProps = {
   onClose: () => void;
@@ -22,33 +25,46 @@ const ButtonContainer = styled.div`
 `;
 
 export const AbilityNewEditor = ({ onClose }: AbilityNewEditorProps) => {
-  const { projectDataValues: abilities, setProjectDataValues: setAbility, bindProjectDataValue: bindAbility } = useProjectAbilities();
+  const { projectDataValues: abilities, setProjectDataValues: setAbility } = useProjectAbilities();
   const { t } = useTranslation('database_abilities');
-  const refreshUI = useRefreshUI();
-  const [newAbility] = useState(bindAbility(AbilityModel.createAbility(abilities)));
-  const [abilityText] = useState({ name: '', descr: '' });
+  const setText = useSetProjectText();
+  const [name, setName] = useState(''); // We can't use a ref because of the button behavior
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
+  const dbSymbolRef = useRef<HTMLInputElement>(null);
+  const [dbSymbolErrorType, setDbSymbolErrorType] = useState<'value' | 'duplicate' | undefined>(undefined);
 
   const onClickNew = () => {
-    newAbility.setName(abilityText.name);
-    newAbility.setDescr(abilityText.descr);
-    setAbility({ [newAbility.dbSymbol]: newAbility }, { ability: newAbility.dbSymbol });
+    if (!dbSymbolRef.current || !name || !descriptionRef.current) return;
+
+    const dbSymbol = dbSymbolRef.current.value;
+    const newAbility = createAbility(abilities, dbSymbol as DbSymbol);
+    setText(ABILITY_NAME_TEXT_ID, newAbility.textId, name);
+    setText(ABILITY_DESCRIPTION_TEXT_ID, newAbility.textId, descriptionRef.current.value);
+    setAbility({ [dbSymbol]: newAbility }, { ability: dbSymbol });
     onClose();
   };
 
-  const onChangeName = (name: string) => {
-    if (newAbility.dbSymbol === '' || newAbility.dbSymbol === generateDefaultDbSymbol(abilityText.name)) {
-      newAbility.dbSymbol = generateDefaultDbSymbol(name);
+  const onChangeDbSymbol = (value: string) => {
+    if (wrongDbSymbol(value)) {
+      if (dbSymbolErrorType !== 'value') setDbSymbolErrorType('value');
+    } else if (checkDbSymbolExist(abilities, value)) {
+      if (dbSymbolErrorType !== 'duplicate') setDbSymbolErrorType('duplicate');
+    } else if (dbSymbolErrorType) {
+      setDbSymbolErrorType(undefined);
     }
-    abilityText.name = name;
+  };
+
+  const onChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!dbSymbolRef.current) return;
+    if (dbSymbolRef.current.value === '' || dbSymbolRef.current.value === generateDefaultDbSymbol(name)) {
+      dbSymbolRef.current.value = generateDefaultDbSymbol(event.currentTarget.value);
+      onChangeDbSymbol(dbSymbolRef.current.value);
+    }
+    setName(event.currentTarget.value);
   };
 
   const checkDisabled = () => {
-    return (
-      abilityText.name.length === 0 ||
-      newAbility.dbSymbol.length === 0 ||
-      wrongDbSymbol(newAbility.dbSymbol) ||
-      checkDbSymbolExist(abilities, newAbility.dbSymbol)
-    );
+    return !name || !dbSymbolRef.current || !!dbSymbolErrorType;
   };
 
   return (
@@ -58,22 +74,11 @@ export const AbilityNewEditor = ({ onClose }: AbilityNewEditorProps) => {
           <Label htmlFor="name" required>
             {t('name')}
           </Label>
-          <Input
-            type="text"
-            name="name"
-            value={abilityText.name}
-            onChange={(event) => refreshUI(onChangeName(event.target.value))}
-            placeholder={t('example_name')}
-          />
+          <Input type="text" name="name" value={name} onChange={onChangeName} placeholder={t('example_name')} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="descr">{t('description')}</Label>
-          <MultiLineInput
-            id="descr"
-            value={abilityText.descr}
-            onChange={(event) => refreshUI((abilityText.descr = event.target.value))}
-            placeholder={t('example_description')}
-          />
+          <MultiLineInput id="descr" ref={descriptionRef} placeholder={t('example_description')} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="dbSymbol" required>
@@ -82,15 +87,13 @@ export const AbilityNewEditor = ({ onClose }: AbilityNewEditorProps) => {
           <Input
             type="text"
             name="dbSymbol"
-            value={newAbility.dbSymbol}
-            onChange={(event) => refreshUI((newAbility.dbSymbol = event.target.value))}
-            error={wrongDbSymbol(newAbility.dbSymbol) || checkDbSymbolExist(abilities, newAbility.dbSymbol)}
+            ref={dbSymbolRef}
+            onChange={(e) => onChangeDbSymbol(e.currentTarget.value)}
+            error={!!dbSymbolErrorType}
             placeholder={t('example_db_symbol')}
           />
-          {newAbility.dbSymbol.length !== 0 && wrongDbSymbol(newAbility.dbSymbol) && <TextInputError>{t('incorrect_format')}</TextInputError>}
-          {newAbility.dbSymbol.length !== 0 && checkDbSymbolExist(abilities, newAbility.dbSymbol) && (
-            <TextInputError>{t('db_symbol_already_used')}</TextInputError>
-          )}
+          {dbSymbolErrorType == 'value' && <TextInputError>{t('incorrect_format')}</TextInputError>}
+          {dbSymbolErrorType == 'duplicate' && <TextInputError>{t('db_symbol_already_used')}</TextInputError>}
         </InputWithTopLabelContainer>
         <ButtonContainer>
           <ToolTipContainer>

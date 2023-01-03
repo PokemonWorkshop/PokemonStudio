@@ -1,4 +1,4 @@
-import { BattleStageType } from '@modelEntities/move/Move.model';
+import { getBattleStageModModificator, StudioMoveBattleStage } from '@modelEntities/move';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataBlockWithTitle, DataFieldgroup, DataFieldgroupField, DataGrid } from '../../dataBlocks';
@@ -7,8 +7,8 @@ import { MoveDataProps } from '../MoveDataPropsInterface';
 export const StatisticsDataBlock = ({ move, onClick }: MoveDataProps) => {
   const { t } = useTranslation(['database_moves']);
 
-  const getStatistic = (stageType: BattleStageType) => {
-    const modificator = move.getBattleStageModModificator(stageType);
+  const getStatistic = (stageType: StudioMoveBattleStage) => {
+    const modificator = getBattleStageModModificator(move, stageType);
     if (modificator > 0) return `+${modificator}`;
     return modificator;
   };

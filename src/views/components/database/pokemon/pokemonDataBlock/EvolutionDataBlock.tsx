@@ -1,3 +1,4 @@
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
 import { useProjectPokemon } from '@utils/useProjectData';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +13,7 @@ type EvolutionDataBlockProps = {
 export const EvolutionDataBlock = ({ pokemonWithForm, evolutionIndex, setEvolutionIndex, onClick }: EvolutionDataBlockProps) => {
   const { projectDataValues: pokemon } = useProjectPokemon();
   const { t } = useTranslation('database_pokemon');
+  const getEntityName = useGetEntityNameText();
   const { species, form } = pokemonWithForm;
 
   const evolutionCount = form.evolutions.length;
@@ -29,6 +31,7 @@ export const EvolutionDataBlock = ({ pokemonWithForm, evolutionIndex, setEvoluti
       setEvolutionIndex(evolutionIndex + 1);
     }
   };
+  const currentCreature = pokemon[megaPrefix ? species.dbSymbol : evolution?.dbSymbol || species.dbSymbol];
 
   return (
     <DataBlockWithTitlePagination
@@ -47,10 +50,7 @@ export const EvolutionDataBlock = ({ pokemonWithForm, evolutionIndex, setEvoluti
         </DataGrid>
       ) : (
         <DataGrid columns="1fr" rows="1fr 1fr 1fr">
-          <DataFieldsetField
-            label={t('evolves_into')}
-            data={`${megaPrefix}${pokemon[evolution.dbSymbol || species.dbSymbol]?.name() || '__undef__'}`}
-          />
+          <DataFieldsetField label={t('evolves_into')} data={`${megaPrefix}${currentCreature ? getEntityName(currentCreature) : '__undef__'}`} />
           <DataFieldsetField label={t('at_level')} disabled={minLevel === '-'} data={minLevel.toString()} />
           <DataFieldsetField
             label={t('evolves_if')}

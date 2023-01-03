@@ -2,6 +2,7 @@ import { MoveCategory, TypeCategory } from '@components/categories';
 import { CopyIdentifier } from '@components/Copy';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { getNameType } from '@utils/getNameType';
+import { useGetEntityDescriptionText, useGetEntityNameText } from '@utils/ReadingProjectText';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -16,6 +17,8 @@ import { MoveDataProps } from './MoveDataPropsInterface';
 
 export const MoveFrame = ({ move, onClick }: MoveDataProps) => {
   const [state] = useGlobalState();
+  const getMoveName = useGetEntityNameText();
+  const getMoveDescription = useGetEntityDescriptionText();
   const { t } = useTranslation(['database_moves']);
 
   return (
@@ -24,15 +27,15 @@ export const MoveFrame = ({ move, onClick }: MoveDataProps) => {
         <DataInfoContainer>
           <DataInfoContainerHeader>
             <DataInfoContainerHeaderTitle>
-              <h1>{move.name()}</h1>
+              <h1>{getMoveName(move)}</h1>
               <CopyIdentifier dataToCopy={move.dbSymbol} />
             </DataInfoContainerHeaderTitle>
             <DataInfoContainerHeaderBadges>
-              <TypeCategory type={move.type}>{getNameType(state.projectData.types, move.type)}</TypeCategory>
+              <TypeCategory type={move.type}>{getNameType(state.projectData.types, move.type, state)}</TypeCategory>
               <MoveCategory category={move.category}>{t(`database_moves:${move.category}` as never)}</MoveCategory>
             </DataInfoContainerHeaderBadges>
           </DataInfoContainerHeader>
-          <p>{move.descr()}</p>
+          <p>{getMoveDescription(move)}</p>
         </DataInfoContainer>
       </DataGrid>
     </DataBlockContainer>

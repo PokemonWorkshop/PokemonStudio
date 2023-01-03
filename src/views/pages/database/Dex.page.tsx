@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { DataBlockWithAction, DataBlockWithActionTooltip, DataBlockWrapper } from '@components/database/dataBlocks';
 import { DeleteButtonWithIcon } from '@components/buttons';
 
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { EditorOverlay } from '@components/editor';
@@ -23,6 +23,9 @@ import { useTranslationEditor } from '@utils/useTranslationEditor';
 import { isResetAvailable, searchUnderAndEvolutions, isCreaturesAlreadyInDex, isCreatureHasNotEvolution } from '@utils/dex';
 import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 import { showNotification } from '@utils/showNotification';
+import { useGetEntityNameText, useGetEntityNameUsingCSV } from '@utils/ReadingProjectText';
+import { cloneEntity } from '@utils/cloneEntity';
+import { useEditorHandlingCloseRef } from '@components/editor/useHandleCloseEditor';
 
 export const DexPage = () => {
   const {
@@ -34,11 +37,13 @@ export const DexPage = () => {
     getNextDbSymbol,
   } = useProjectDex();
   const { projectDataValues: allPokemon } = useProjectPokemon();
-
+  const frameEditorRef = useEditorHandlingCloseRef();
+  const getDexName = useGetEntityNameUsingCSV();
+  const getCreatureName = useGetEntityNameText();
   const { t } = useTranslation('database_dex');
-  const onChange = (selected: SelectOption) => setSelectedDataIdentifier({ dex: selected.value });
+  const onChange: SelectChangeEvent = (selected) => setSelectedDataIdentifier({ dex: selected.value });
   const dex = allDex[dexDbSymbol];
-  const currentEditedDex = useMemo(() => dex.clone(), [dex]);
+  const currentEditedDex = useMemo(() => cloneEntity(dex), [dex]);
 
   const [creatureIndex, setCreatureIndex] = useState<number>(0);
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
@@ -51,21 +56,23 @@ export const DexPage = () => {
       db_next: () => setSelectedDataIdentifier({ dex: getNextDbSymbol('id') }),
       db_new: () => setCurrentEditor('new'),
     };
-  }, [getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
+  }, [currentEditor, currentDeletion, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol]);
   useShortcut(shortcutMap);
   const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
     {
       translation_name: { fileId: currentEditedDex.csv.csvFileId },
     },
     currentEditedDex.csv.csvTextIndex,
-    currentEditedDex.name()
+    getDexName(currentEditedDex)
   );
 
   const onCloseEditor = () => {
-    if (currentEditor === 'frame' && currentEditedDex.name() === '') return;
+    if (currentEditor === 'frame') {
+      if (!frameEditorRef.current?.canClose()) return;
+      frameEditorRef.current.onClose();
+    }
     if (currentEditor === 'new' || currentEditor === 'addPokemon' || currentEditor === 'importPokemonList') return setCurrentEditor(undefined);
 
-    currentEditedDex.cleaningNaNValues();
     setDex({ [dex.dbSymbol]: currentEditedDex });
     setCurrentEditor(undefined);
     closeTranslationEditor();
@@ -92,9 +99,9 @@ export const DexPage = () => {
 
     const creatures = searchUnderAndEvolutions(pokemonForm, creature, allPokemon);
     if (isCreatureHasNotEvolution(creatures, creature)) {
-      return showNotification('info', t('dex'), t('creature_no_evolution', { name: allPokemon[creature.dbSymbol].name() }));
+      return showNotification('info', t('dex'), t('creature_no_evolution', { name: getCreatureName(allPokemon[creature.dbSymbol]) }));
     } else if (isCreaturesAlreadyInDex(currentEditedDex.creatures, creatures)) {
-      return showNotification('info', t('dex'), t('creatures_already_in_dex', { name: allPokemon[creature.dbSymbol].name() }));
+      return showNotification('info', t('dex'), t('creatures_already_in_dex', { name: getCreatureName(allPokemon[creature.dbSymbol]) }));
     }
 
     creatures.forEach((c, i) => currentEditedDex.creatures.splice(index + i + 1, 0, c));
@@ -105,7 +112,7 @@ export const DexPage = () => {
 
   const editors = {
     new: <DexNewEditor onClose={() => setCurrentEditor(undefined)} />,
-    frame: <DexFrameEditor dex={currentEditedDex} openTranslationEditor={openTranslationEditor} />,
+    frame: <DexFrameEditor dex={currentEditedDex} openTranslationEditor={openTranslationEditor} ref={frameEditorRef} />,
     addPokemon: <DexPokemonListAddEditor dex={currentEditedDex} onClose={() => setCurrentEditor(undefined)} />,
     editPokemon: <DexPokemonListEditEditor dex={currentEditedDex} creature={currentEditedDex.creatures[creatureIndex]} />,
     importPokemonList: <DexPokemonListImportEditor dex={currentEditedDex} onClose={() => setCurrentEditor(undefined)} />,

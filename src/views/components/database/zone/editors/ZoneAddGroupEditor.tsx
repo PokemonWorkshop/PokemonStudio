@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
-import ZoneModel from '@modelEntities/zone/Zone.model';
 import { useTranslation } from 'react-i18next';
 import { Editor, useRefreshUI } from '@components/editor';
 import { InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
@@ -9,8 +8,11 @@ import { ProjectData } from '@src/GlobalStateProvider';
 import { DarkButton, PrimaryButton, SecondaryButton } from '@components/buttons';
 import { TagWithSelection } from '@components/Tag';
 import { padStr } from '@utils/PadStr';
-import GroupModel from '@modelEntities/group/Group.model';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
+import { cloneEntity } from '@utils/cloneEntity';
+import { StudioGroup } from '@modelEntities/group';
+import { StudioZone } from '@modelEntities/zone';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 
 const GroupContainer = styled.div`
   display: flex;
@@ -32,13 +34,13 @@ const ButtonContainer = styled.div`
   gap: 8px;
 `;
 
-const mapIdIndexInGroup = (mapId: number, group: GroupModel) =>
+const mapIdIndexInGroup = (mapId: number, group: StudioGroup) =>
   group.customConditions.filter((condition) => condition.type === 'mapId').findIndex((condition) => condition.value === mapId);
 
 type ZoneAddGroupEditorProps = {
-  zone: ZoneModel;
+  zone: StudioZone;
   groups: ProjectData['groups'];
-  onAddGroup: (group: GroupModel) => void;
+  onAddGroup: (group: StudioGroup) => void;
   onClose: () => void;
 };
 
@@ -46,11 +48,11 @@ export const ZoneAddGroupEditor = ({ zone, groups, onAddGroup, onClose }: ZoneAd
   const { t } = useTranslation(['database_zones', 'database_groups', 'database_trainers']);
   const firstDbSymbol = Object.entries(groups)
     .map(([value, groupData]) => ({ value, index: groupData.id }))
-    .filter((d) => !zone.wildGroups.includes(d.value))
+    .filter((d) => !zone.wildGroups.includes(d.value as DbSymbol))
     .sort((a, b) => a.index - b.index)[0].value;
   const [selectedGroup, setSelectedGroup] = useState(firstDbSymbol);
   const group = groups[selectedGroup];
-  const currentEditedGroup = useMemo(() => group.clone(), [group]);
+  const currentEditedGroup = useMemo(() => cloneEntity(group), [group]);
   const refreshUI = useRefreshUI();
 
   const onClickTag = (mapId: number) => {

@@ -3,10 +3,11 @@ import { Editor, useRefreshUI } from '@components/editor';
 
 import { useTranslation } from 'react-i18next';
 import { InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
-import DexModel, { DexCreature } from '@modelEntities/dex/Dex.model';
 import { SelectPokemon, SelectPokemonForm } from '@components/selects';
+import { StudioDex, StudioDexCreature } from '@modelEntities/dex';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 
-const getPokemonUnavailable = (dex: DexModel, creature: DexCreature): string[] => {
+const getPokemonUnavailable = (dex: StudioDex, creature: StudioDexCreature): string[] => {
   const dbSymbols = dex.creatures.map((c) => c.dbSymbol);
   const index = dbSymbols.findIndex((dbSymbol) => creature.dbSymbol === dbSymbol);
   dbSymbols.splice(index, 1);
@@ -14,8 +15,8 @@ const getPokemonUnavailable = (dex: DexModel, creature: DexCreature): string[] =
 };
 
 type DexPokemonListEditEditorProps = {
-  dex: DexModel;
-  creature: DexCreature;
+  dex: StudioDex;
+  creature: StudioDexCreature;
 };
 
 export const DexPokemonListEditEditor = ({ dex, creature }: DexPokemonListEditEditorProps) => {
@@ -31,7 +32,7 @@ export const DexPokemonListEditEditor = ({ dex, creature }: DexPokemonListEditEd
             <Label htmlFor="name">{t('database_pokemon:pokemon')}</Label>
             <SelectPokemon
               dbSymbol={creature.dbSymbol}
-              onChange={(selected) => refreshUI((creature.dbSymbol = selected.value))}
+              onChange={(selected) => refreshUI((creature.dbSymbol = selected.value as DbSymbol))}
               noLabel
               rejected={pokemonUnavailable}
             />

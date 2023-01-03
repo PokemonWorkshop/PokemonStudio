@@ -3,19 +3,20 @@ import { DataGroupGrid, DataZoneGroupsTable, TableEmpty } from './ZoneTableStyle
 import { useTranslation } from 'react-i18next';
 import { useProjectZones } from '@utils/useProjectData';
 import { DragDropContext, Droppable, Draggable, DroppableProvided, DraggableProvided, DraggableStateSnapshot, DropResult } from 'react-beautiful-dnd';
-import ZoneModel from '@modelEntities/zone/Zone.model';
 import { ProjectData } from '@src/GlobalStateProvider';
 import { RenderGroup } from './RenderGroup';
+import { cloneEntity } from '@utils/cloneEntity';
+import { StudioZone } from '@modelEntities/zone';
 
 type ZoneGroupsTableProps = {
-  zone: ZoneModel;
+  zone: StudioZone;
   groups: ProjectData['groups'];
   onEdit: (index: number) => void;
 };
 
 export const ZoneGroupsTable = ({ zone, groups, onEdit }: ZoneGroupsTableProps) => {
   const { setProjectDataValues: setZone } = useProjectZones();
-  const currentEditedZone = useMemo(() => zone.clone(), [zone]);
+  const currentEditedZone = useMemo(() => cloneEntity(zone), [zone]);
   const { t } = useTranslation('database_zones');
   const [dragOn, setDragOn] = useState(false);
 

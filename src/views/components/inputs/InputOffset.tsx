@@ -2,7 +2,7 @@ import React, { InputHTMLAttributes } from 'react';
 import styled from 'styled-components';
 import { Input } from './Input';
 import { ReactComponent as OffsetIcon } from '@assets/icons/global/offset-icon.svg';
-import { Cardinal } from '@modelEntities/maplinks/MapLink.model';
+import { StudioMapLinkCardinal } from '@modelEntities/mapLink';
 
 const InputOffsetContainer = styled.div`
   position: relative;
@@ -52,7 +52,7 @@ const InputOffsetContainer = styled.div`
 `;
 
 type InputOffsetProps = {
-  cardinal: Cardinal;
+  cardinal: StudioMapLinkCardinal;
 } & InputHTMLAttributes<HTMLInputElement>;
 
 export const InputOffset = ({ cardinal, ...props }: InputOffsetProps) => (

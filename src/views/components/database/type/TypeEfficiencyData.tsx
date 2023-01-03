@@ -1,23 +1,25 @@
 import React from 'react';
-import TypeModel from '@modelEntities/type/Type.model';
 import { TFunction, useTranslation } from 'react-i18next';
 import { DataBlockWithTitleNoActive, DataGrid } from '../dataBlocks';
 import { DataFieldsetField, DataFieldsetFieldWithChild } from '../dataBlocks/DataFieldsetField';
 import { TypeCategory } from '@components/categories';
 import { TypeList } from './TypeList';
+import { useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
+import { getEfficiencies, StudioType } from '@modelEntities/type';
 
 type TypeEfficiencyDataProps = {
-  type: TypeModel;
-  types: TypeModel[];
+  type: StudioType;
+  types: StudioType[];
 };
 
 type RenderEfficienceProps = {
   t: TFunction<'database_types'>;
   efficience: 'high_efficience' | 'low_efficience' | 'zero_efficience';
-  types: TypeModel[];
+  types: StudioType[];
 };
 
 const RenderEfficience = ({ t, efficience, types }: RenderEfficienceProps) => {
+  const getTypeName = useGetEntityNameTextUsingTextId();
   if (types.length === 0) {
     return <DataFieldsetField label={t(efficience)} data={t('none')} disabled />;
   }
@@ -27,7 +29,7 @@ const RenderEfficience = ({ t, efficience, types }: RenderEfficienceProps) => {
       <TypeList>
         {types.map((type) => (
           <TypeCategory type={type.dbSymbol} key={`${efficience}-${type.dbSymbol}`}>
-            {type.name()}
+            {getTypeName(type)}
           </TypeCategory>
         ))}
       </TypeList>
@@ -37,7 +39,7 @@ const RenderEfficience = ({ t, efficience, types }: RenderEfficienceProps) => {
 
 export const TypeEfficiencyData = ({ type, types }: TypeEfficiencyDataProps) => {
   const { t } = useTranslation('database_types');
-  const efficiencyData = type.getEfficiencies(types);
+  const efficiencyData = getEfficiencies(types, type);
 
   return (
     <DataBlockWithTitleNoActive size="half" title={t('efficiencies')}>

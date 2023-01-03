@@ -1,14 +1,14 @@
 import { SecondaryButtonWithPlusIcon } from '@components/buttons';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { ControlBar } from '@components/ControlBar';
-import AbilityModel from '@modelEntities/ability/Ability.model';
 import { SelectAbility } from '@components/selects';
+import { StudioAbility } from '@modelEntities/ability';
 
 type AbilityControlBarProps = {
-  onChange: (selected: SelectOption) => void;
-  ability: AbilityModel;
+  onChange: SelectChangeEvent;
+  ability: StudioAbility;
   onClickNewAbility?: () => void;
 };
 

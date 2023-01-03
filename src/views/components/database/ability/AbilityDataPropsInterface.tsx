@@ -1,6 +1,6 @@
-import AbilityModel from '@modelEntities/ability/Ability.model';
+import { StudioAbility } from '@modelEntities/ability';
 
 export type AbilityDataProps = {
-  ability: AbilityModel;
+  ability: StudioAbility;
   onClick?: () => void;
 };

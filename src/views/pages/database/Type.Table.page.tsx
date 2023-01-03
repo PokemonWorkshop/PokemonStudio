@@ -5,7 +5,7 @@ import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { useTranslation } from 'react-i18next';
 import { useProjectTypes } from '@utils/useProjectData';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { SubPageTitle } from '@components/database/SubPageTitle';
 import { TypeTable } from '@components/database/type/TypeTable';
 import { DataBlockWrapperWithNoBreakpoint } from '@components/database/dataBlocks/DataBlockWrapper';
@@ -38,10 +38,10 @@ export const TypeTablePage = () => {
       db_next: () => setSelectedDataIdentifier({ type: getNextDbSymbol('name') }),
       db_new: () => setCurrentEditor('new'),
     };
-  }, [getPreviousDbSymbol, getNextDbSymbol, currentEditor]);
+  }, [currentEditor, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol]);
   useShortcut(shortcutMap);
 
-  const onChange = (selected: SelectOption) => {
+  const onChange: SelectChangeEvent = (selected) => {
     setSelectedDataIdentifier({ type: selected.value });
     history.push(`/database/types/table`);
   };

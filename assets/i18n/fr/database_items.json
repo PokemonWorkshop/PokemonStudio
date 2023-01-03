@@ -87,6 +87,7 @@
   "DEATH": "K.O.",
   "FLINCH": "Peur",
   "ALL": "Tous les Statuts",
+  "NONE": "Aucun statut",
   "ATK_STAGE": "Attaque",
   "ATS_STAGE": "Attaque Spéciale",
   "DFE_STAGE": "Défense",

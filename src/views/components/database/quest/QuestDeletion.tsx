@@ -2,6 +2,8 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Deletion } from '@components/deletion';
 import { useProjectQuests } from '@utils/useProjectData';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
+import { cloneEntity } from '@utils/cloneEntity';
 
 type QuestDeletionProps = {
   type: 'quest' | 'goals' | 'earnings';
@@ -16,8 +18,9 @@ export const QuestDeletion = ({ type, onClose }: QuestDeletionProps) => {
     removeProjectDataValue: removeQuest,
   } = useProjectQuests();
   const { t } = useTranslation('database_quests');
+  const getQuestName = useGetEntityNameText();
   const quest = quests[questDbSymbol];
-  const currentDeletedQuest = useMemo(() => quest.clone(), [quest]);
+  const currentDeletedQuest = useMemo(() => cloneEntity(quest), [quest]);
 
   const onClickDelete = () => {
     if (type === 'quest') {
@@ -39,7 +42,7 @@ export const QuestDeletion = ({ type, onClose }: QuestDeletionProps) => {
   return (
     <Deletion
       title={t(`${type}_deletion_of`)}
-      message={t(`${type}_deletion_message`, { quest: quest.name().replaceAll(' ', '\u00a0') })}
+      message={t(`${type}_deletion_message`, { quest: getQuestName(quest).replaceAll(' ', '\u00a0') })}
       onClickDelete={onClickDelete}
       onClose={onClose}
     />

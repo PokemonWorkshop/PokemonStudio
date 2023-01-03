@@ -1,23 +1,25 @@
 import React from 'react';
-import TypeModel from '@modelEntities/type/Type.model';
 import { TFunction, useTranslation } from 'react-i18next';
 import { DataBlockWithTitleNoActive, DataGrid } from '../dataBlocks';
 import { DataFieldsetField, DataFieldsetFieldWithChild } from '../dataBlocks/DataFieldsetField';
 import { TypeCategory } from '@components/categories';
 import { TypeList } from './TypeList';
+import { useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
+import { StudioType } from '@modelEntities/type';
 
 type TypeResistanceDataProps = {
-  type: TypeModel;
-  types: TypeModel[];
+  type: StudioType;
+  types: StudioType[];
 };
 
 type RenderResistanceProps = {
   t: TFunction<'database_types'>;
   resistance: 'weak_resistance' | 'high_resistance' | 'immunity';
-  types: TypeModel[];
+  types: StudioType[];
 };
 
 const RenderResistance = ({ t, resistance, types }: RenderResistanceProps) => {
+  const getTypeName = useGetEntityNameTextUsingTextId();
   if (types.length === 0) {
     return <DataFieldsetField label={t(resistance)} data={t('none')} disabled />;
   }
@@ -27,7 +29,7 @@ const RenderResistance = ({ t, resistance, types }: RenderResistanceProps) => {
       <TypeList>
         {types.map((type) => (
           <TypeCategory type={type.dbSymbol} key={`${resistance}-${type.dbSymbol}`}>
-            {type.name()}
+            {getTypeName(type)}
           </TypeCategory>
         ))}
       </TypeList>
@@ -35,9 +37,20 @@ const RenderResistance = ({ t, resistance, types }: RenderResistanceProps) => {
   );
 };
 
+const getTypesFromFactorInOtherTypes = (allTypes: StudioType[], typeDbSymbol: string, factor: number) =>
+  allTypes.filter((type) => type.damageTo.find((dmg) => dmg.defensiveType === typeDbSymbol && dmg.factor === factor));
+
+const getResistances = (allTypes: StudioType[], type: StudioType) => {
+  return {
+    high: getTypesFromFactorInOtherTypes(allTypes, type.dbSymbol, 0.5),
+    low: getTypesFromFactorInOtherTypes(allTypes, type.dbSymbol, 2),
+    zero: getTypesFromFactorInOtherTypes(allTypes, type.dbSymbol, 0),
+  };
+};
+
 export const TypeResistanceData = ({ type, types }: TypeResistanceDataProps) => {
   const { t } = useTranslation('database_types');
-  const efficiencyData = type.getResistances(types);
+  const efficiencyData = getResistances(types, type);
 
   return (
     <DataBlockWithTitleNoActive size="half" title={t('resistances')}>

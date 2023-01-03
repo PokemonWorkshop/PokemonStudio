@@ -13,9 +13,13 @@ import { TypeCategoryPreview } from '@components/categories';
 import { TypeFrameProps } from '../TypeDataPropsInterface';
 import type { OpenTranslationEditorFunction } from '@utils/useTranslationEditor';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
+import { useGetEntityNameTextUsingTextId, useSetProjectText } from '@utils/ReadingProjectText';
+import { TYPE_NAME_TEXT_ID } from '@modelEntities/type';
 
 export const TypeFrameEditor = ({ type, openTranslationEditor }: TypeFrameProps & { openTranslationEditor: OpenTranslationEditorFunction }) => {
   const { t } = useTranslation(['database_types', 'database_moves']);
+  const getTypeName = useGetEntityNameTextUsingTextId();
+  const setText = useSetProjectText();
   const refreshUI = useRefreshUI();
 
   return (
@@ -29,26 +33,19 @@ export const TypeFrameEditor = ({ type, openTranslationEditor }: TypeFrameProps 
             <Input
               type="text"
               name="name"
-              value={type.name()}
-              onChange={(event) => refreshUI(type.setName(event.target.value))}
+              value={getTypeName(type)}
+              onChange={(event) => setText(TYPE_NAME_TEXT_ID, type.textId, event.target.value)}
               placeholder={t('database_types:example_name')}
             />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>
         <InputWithColorLabelContainer>
           <Label htmlFor="color">{t('database_types:color')}</Label>
-          <Input
-            type="color"
-            name="color"
-            value={type.color === undefined ? '#C3B5B2' : type.color}
-            onChange={(event) => refreshUI((type.color = event.target.value))}
-          />
+          <Input type="color" name="color" value={type.color || '#C3B5B2'} onChange={(event) => refreshUI((type.color = event.target.value))} />
         </InputWithColorLabelContainer>
         <InputWithLeftLabelContainer>
           <Label htmlFor="preview">{t('database_types:preview')}</Label>
-          <TypeCategoryPreview type={type.color === undefined ? type.dbSymbol : type.color}>
-            {type.name() === '' ? '???' : type.name()}
-          </TypeCategoryPreview>
+          <TypeCategoryPreview type={type.color || type.dbSymbol}>{getTypeName(type) || '???'}</TypeCategoryPreview>
         </InputWithLeftLabelContainer>
       </InputContainer>
     </Editor>

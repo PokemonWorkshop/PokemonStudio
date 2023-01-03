@@ -2,6 +2,8 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Deletion } from '@components/deletion';
 import { useProjectPokemon, useProjectTrainers } from '@utils/useProjectData';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
+import { cloneEntity } from '@utils/cloneEntity';
 
 type TrainerDeletionProps = {
   type: 'trainer' | 'battler';
@@ -18,8 +20,9 @@ export const TrainerDeletion = ({ type, battlerIndex, onClose }: TrainerDeletion
   } = useProjectTrainers();
   const { projectDataValues: species } = useProjectPokemon();
   const { t } = useTranslation('database_trainers');
+  const getEntityName = useGetEntityNameText();
   const trainer = trainers[trainerDbSymbol];
-  const currentDeletedTrainer = useMemo(() => trainer.clone(), [trainer]);
+  const currentDeletedTrainer = useMemo(() => cloneEntity(trainer), [trainer]);
 
   const onClickDelete = () => {
     if (type === 'trainer') {
@@ -41,9 +44,9 @@ export const TrainerDeletion = ({ type, battlerIndex, onClose }: TrainerDeletion
       message={t(`${type}_deletion_message`, {
         battler:
           battlerIndex !== undefined && species[trainer.party[battlerIndex].specie]
-            ? species[trainer.party[battlerIndex].specie].name().replaceAll(' ', '\u00a0')
+            ? getEntityName(species[trainer.party[battlerIndex].specie]).replaceAll(' ', '\u00a0')
             : '???',
-        trainer: trainer.trainerName().replaceAll(' ', '\u00a0'),
+        trainer: getEntityName(trainer).replaceAll(' ', '\u00a0'),
       })}
       onClickDelete={onClickDelete}
       onClose={onClose}

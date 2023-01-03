@@ -1,9 +1,9 @@
-import React from 'react';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import React, { useMemo } from 'react';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useTranslation } from 'react-i18next';
-import { getDataOptions, SelectDataGeneric } from './SelectDataGeneric';
+import { getSelectDataOptionsOrderedById, SelectDataGeneric } from './SelectDataGeneric';
 import { SelectDataProps } from './SelectDataProps';
+import { useGetEntityNameUsingCSV } from '@utils/ReadingProjectText';
 
 /**
  * Component to show a select dex.
@@ -28,11 +28,13 @@ export const SelectDex = ({
 }: SelectDataProps) => {
   const { t } = useTranslation('database_dex');
   const [state] = useGlobalState();
-  const options = getDataOptions(state.projectData, 'dex');
+  const getDexText = useGetEntityNameUsingCSV();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const options = useMemo(() => getSelectDataOptionsOrderedById(state.projectData, 'dex', getDexText), [state.projectData]);
 
   const getData = () => {
     const currentDex = state.projectData.dex[dbSymbol];
-    return currentDex ? currentDex : ({ value: dbSymbol, label: t('dex_deleted') } as SelectOption);
+    return { value: dbSymbol, label: currentDex ? getDexText(currentDex) : t('dex_deleted') };
   };
 
   return (

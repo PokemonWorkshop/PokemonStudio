@@ -1,12 +1,12 @@
 import React from 'react';
 import { Editor, useRefreshUI } from '@components/editor';
-import MoveModel from '@modelEntities/move/Move.model';
 import { useTranslation } from 'react-i18next';
 import { InputContainer, InputWithLeftLabelContainer, Label, Toggle } from '@components/inputs';
 import styled from 'styled-components';
+import { StudioMove } from '@modelEntities/move';
 
 type MoveCharacteristicsEditorProps = {
-  move: MoveModel;
+  move: StudioMove;
 };
 
 const CharactericticsInfo = styled.div`

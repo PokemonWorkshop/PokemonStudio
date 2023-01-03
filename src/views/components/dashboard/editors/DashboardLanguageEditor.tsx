@@ -3,11 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { EditorWithPagination, useRefreshUI } from '@components/editor';
 import { EditorChildWithSubEditorContainer } from '@components/editor/EditorContainer';
 import { Input, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
-import LanguageConfigModel from '@modelEntities/config/LanguageConfig.model';
 import { PaginationWithTitleProps } from '@components/PaginationWithTitle';
+import { StudioLanguageConfig } from '@modelEntities/config';
 
 type DashboardLanguageEditorProps = {
-  language: LanguageConfigModel;
+  language: StudioLanguageConfig;
   index: number;
 };
 

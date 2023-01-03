@@ -9,41 +9,39 @@ import {
   InputWithTopLabelContainer,
   Label,
 } from '@components/inputs';
-import ItemModel from '@modelEntities/item/Item.model';
-import BallItemModel from '@modelEntities/item/BallItem.model';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { colorToHex, hexToColor } from '@utils/ColorUtils';
+import { LOCKED_ITEM_EDITOR, StudioItem } from '@modelEntities/item';
 
 type ItemCatchDataEditorProps = {
-  item: ItemModel;
+  item: StudioItem;
 };
 
 export const ItemCatchDataEditor = ({ item }: ItemCatchDataEditorProps) => {
   const { t } = useTranslation('database_items');
   const refreshUI = useRefreshUI();
-  const ballItem = item instanceof BallItemModel ? item : undefined;
 
-  return item.lockedEditors.includes('catch') ? (
+  return LOCKED_ITEM_EDITOR[item.klass].includes('catch') ? (
     <></>
   ) : (
     <Editor type="edit" title={t('catch')}>
-      {ballItem && (
+      {item.klass === 'BallItem' && (
         <InputContainer>
           <InputWithLeftLabelContainer>
             <Label htmlFor="catch_rate">{t('catch_rate')}</Label>
             <Input
               type="number"
               name="catch_rate"
-              value={isNaN(ballItem.catchRate) ? '' : ballItem.catchRate}
+              value={isNaN(item.catchRate) ? '' : item.catchRate}
               min="0"
               max="255"
               step="0.1"
               onChange={(event) => {
                 const newValue = event.target.value == '' ? Number.NaN : Number(event.target.value);
                 if (newValue < 0 || newValue > 255) return event.preventDefault();
-                refreshUI((ballItem.catchRate = newValue));
+                refreshUI((item.catchRate = newValue));
               }}
-              onBlur={() => refreshUI((ballItem.catchRate = cleanNaNValue(ballItem.catchRate)))}
+              onBlur={() => refreshUI((item.catchRate = cleanNaNValue(item.catchRate)))}
             />
           </InputWithLeftLabelContainer>
           <InputWithTopLabelContainer>
@@ -53,8 +51,8 @@ export const ItemCatchDataEditor = ({ item }: ItemCatchDataEditorProps) => {
             <Input
               type="text"
               name="spritesheet"
-              value={ballItem.spriteFilename}
-              onChange={(event) => refreshUI((ballItem.spriteFilename = event.target.value))}
+              value={item.spriteFilename}
+              onChange={(event) => refreshUI((item.spriteFilename = event.target.value))}
               placeholder="ball_1"
             />
           </InputWithTopLabelContainer>
@@ -63,8 +61,8 @@ export const ItemCatchDataEditor = ({ item }: ItemCatchDataEditorProps) => {
             <Input
               type="color"
               name="color"
-              value={colorToHex(ballItem.color)}
-              onChange={(event) => refreshUI((ballItem.color = hexToColor(event.target.value)))}
+              value={colorToHex(item.color)}
+              onChange={(event) => refreshUI((item.color = hexToColor(event.target.value)))}
             />
           </InputWithColorLabelContainer>
         </InputContainer>

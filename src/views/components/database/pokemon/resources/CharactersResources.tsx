@@ -1,12 +1,13 @@
 import { DataBlockWrapper } from '@components/database/dataBlocks';
-import PokemonForm, { CreatureFormResourcesPath } from '@modelEntities/pokemon/PokemonForm';
+import { StudioCreatureForm } from '@modelEntities/creature';
+import { CreatureFormResourcesPath } from '@utils/path';
 import React from 'react';
 import { ResourcesContainer } from './ResourcesContainer';
 import { SpriteResource } from './SpriteResource';
 import { TitleResource } from './TitleResource';
 
 type BattlersResourcesProps = {
-  form: PokemonForm;
+  form: StudioCreatureForm;
   isShowFemale: boolean;
   onResourceChoosen: (filePath: string, resource: CreatureFormResourcesPath) => void;
   onResourceClean: (resource: CreatureFormResourcesPath, isFemale: boolean) => void;

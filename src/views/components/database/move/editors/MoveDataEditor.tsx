@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
 import { Editor, useRefreshUI } from '@components/editor';
-import MoveModel, { MoveCriticalRate } from '@modelEntities/move/Move.model';
 import { TFunction, useTranslation } from 'react-i18next';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PercentInput } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
+import { MOVE_CRITICAL_RATES, StudioMove, StudioMoveCriticalRate } from '@modelEntities/move';
 
 const textCriticalRate = [
   'database_moves:no_critical_hit',
@@ -15,10 +15,10 @@ const textCriticalRate = [
 ];
 
 const moveCrititalRateEntries = (t: TFunction<('database_moves' | 'database_items')[]>) =>
-  MoveCriticalRate.map((critialRate) => ({ value: critialRate.toString(), label: t(textCriticalRate[critialRate] as never) }));
+  MOVE_CRITICAL_RATES.map((critialRate) => ({ value: critialRate.toString(), label: t(textCriticalRate[critialRate] as never) }));
 
 type MoveDataEditorProps = {
-  move: MoveModel;
+  move: StudioMove;
 };
 
 export const MoveDataEditor = ({ move }: MoveDataEditorProps) => {
@@ -82,7 +82,7 @@ export const MoveDataEditor = ({ move }: MoveDataEditorProps) => {
           <SelectCustomSimple
             id="select-critical-rate"
             options={criticalRateOptions}
-            onChange={(value) => refreshUI((move.movecriticalRate = Number(value)))}
+            onChange={(value) => refreshUI((move.movecriticalRate = Number(value) as StudioMoveCriticalRate))}
             value={move.movecriticalRate.toString()}
           />
         </InputWithTopLabelContainer>

@@ -1,12 +1,12 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import ZoneModel from '@modelEntities/zone/Zone.model';
 import { DataBlockEditor } from '@components/editor';
 import { ProjectData } from '@src/GlobalStateProvider';
 import { ZoneGroupsTable } from './table';
+import { StudioZone } from '@modelEntities/zone';
 
 type ZoneGroupsProps = {
-  zone: ZoneModel;
+  zone: StudioZone;
   groups: ProjectData['groups'];
   onDelete: () => void;
   onImport: () => void;

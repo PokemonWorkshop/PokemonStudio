@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Editor, useRefreshUI } from '@components/editor';
+import { Editor } from '@components/editor';
 import {
   Input,
   InputContainer,
@@ -15,9 +15,13 @@ import { DarkButton, PrimaryButton } from '@components/buttons';
 import { TextInputError } from '@components/inputs/Input';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { checkDbSymbolExist, generateDefaultDbSymbol, wrongDbSymbol } from '@utils/dbSymbolUtils';
-import TypeModel from '@modelEntities/type/Type.model';
 import { TypeCategoryPreview } from '@components/categories';
 import { useHistory } from 'react-router-dom';
+import { findFirstAvailableId, findFirstAvailableTextId } from '@utils/ModelUtils';
+import { DbSymbol } from '@modelEntities/dbSymbol';
+import { createType } from '@utils/entityCreation';
+import { useSetProjectText } from '@utils/ReadingProjectText';
+import { TYPE_NAME_TEXT_ID } from '@modelEntities/type';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -32,30 +36,56 @@ type TypeNewEditorProps = {
 };
 
 export const TypeNewEditor = ({ from, onClose }: TypeNewEditorProps) => {
-  const { projectDataValues: types, setProjectDataValues: setType, bindProjectDataValue: bindType } = useProjectTypes();
+  const { projectDataValues: types, setProjectDataValues: setType } = useProjectTypes();
   const { t } = useTranslation(['database_types', 'database_moves']);
-  const refreshUI = useRefreshUI();
-  const [newType] = useState(bindType(TypeModel.createType(types)));
-  const [typeText, setTypeText] = useState('');
+  const setText = useSetProjectText();
+  const [name, setName] = useState('');
+  const [previewColor, setPreviewColor] = useState('#C3B5B2');
+  const dbSymbolRef = useRef<HTMLInputElement>(null);
+  const [dbSymbolErrorType, setDbSymbolErrorType] = useState<'value' | 'duplicate' | undefined>(undefined);
+  const colorRef = useRef<HTMLInputElement>(null);
   const history = useHistory();
 
   const onClickNew = () => {
-    newType.setName(typeText);
-    setType({ [newType.dbSymbol]: newType }, { type: newType.dbSymbol });
-    if (from === 'type') history.push(`/database/types/${newType.dbSymbol}`);
+    if (!dbSymbolRef.current || !colorRef.current) return;
+
+    const id = findFirstAvailableId(types, 1);
+    const textId = findFirstAvailableTextId(types);
+    const dbSymbol = dbSymbolRef.current.value as DbSymbol;
+    const type = createType(dbSymbol, id, textId, colorRef.current.value);
+    setText(TYPE_NAME_TEXT_ID, textId, name);
+    setType({ [dbSymbol]: type }, { type: dbSymbol });
+    if (from === 'type') history.push(`/database/types/${dbSymbol}`);
     else history.push(`/database/types/table`);
+
     onClose();
   };
 
-  const onChangeName = (name: string) => {
-    if (newType.dbSymbol === '' || newType.dbSymbol === generateDefaultDbSymbol(typeText)) {
-      newType.dbSymbol = generateDefaultDbSymbol(name);
+  const onChangeDbSymbol = (value: string) => {
+    if (wrongDbSymbol(value)) {
+      if (dbSymbolErrorType !== 'value') setDbSymbolErrorType('value');
+    } else if (checkDbSymbolExist(types, value)) {
+      if (dbSymbolErrorType !== 'duplicate') setDbSymbolErrorType('duplicate');
+    } else if (dbSymbolErrorType) {
+      setDbSymbolErrorType(undefined);
     }
-    setTypeText(name);
+  };
+
+  const onChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!dbSymbolRef.current) return;
+    if (dbSymbolRef.current.value === '' || dbSymbolRef.current.value === generateDefaultDbSymbol(name)) {
+      dbSymbolRef.current.value = generateDefaultDbSymbol(event.currentTarget.value);
+      onChangeDbSymbol(dbSymbolRef.current.value);
+    }
+    setName(event.currentTarget.value);
+  };
+
+  const onBlurColor = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPreviewColor(event.currentTarget.value);
   };
 
   const checkDisabled = () => {
-    return typeText.length === 0 || newType.dbSymbol.length === 0 || wrongDbSymbol(newType.dbSymbol) || checkDbSymbolExist(types, newType.dbSymbol);
+    return !name || !colorRef.current?.value || !!dbSymbolErrorType;
   };
 
   return (
@@ -65,48 +95,30 @@ export const TypeNewEditor = ({ from, onClose }: TypeNewEditorProps) => {
           <Label htmlFor="name" required>
             {t('database_moves:name')}
           </Label>
-          <Input
-            type="text"
-            name="name"
-            value={typeText}
-            onChange={(event) => refreshUI(onChangeName(event.target.value))}
-            placeholder={t('database_types:example_name')}
-          />
+          <Input type="text" name="name" value={name} onChange={onChangeName} placeholder={t('database_types:example_name')} />
         </InputWithTopLabelContainer>
         <InputWithColorLabelContainer>
           <Label htmlFor="color">{t('database_types:color')}</Label>
           <Input
             type="color"
             name="color"
-            value={newType.color === undefined ? '#C3B5B2' : newType.color}
-            onChange={(event) => refreshUI((newType.color = event.target.value))}
+            defaultValue={previewColor}
+            ref={colorRef}
             placeholder={t('database_types:example_name')}
+            onBlur={onBlurColor}
           />
         </InputWithColorLabelContainer>
         <InputWithLeftLabelContainer>
           <Label htmlFor="preview">{t('database_types:preview')}</Label>
-          <TypeCategoryPreview type={newType.color === undefined ? '#C3B5B2' : newType.color}>
-            {typeText === '' ? '???' : typeText}
-          </TypeCategoryPreview>
+          <TypeCategoryPreview type={previewColor}>{name || '???'}</TypeCategoryPreview>
         </InputWithLeftLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="dbSymbol" required>
             {t('database_moves:symbol')}
           </Label>
-          <Input
-            type="text"
-            name="dbSymbol"
-            value={newType.dbSymbol}
-            onChange={(event) => refreshUI((newType.dbSymbol = event.target.value))}
-            error={wrongDbSymbol(newType.dbSymbol) || checkDbSymbolExist(types, newType.dbSymbol)}
-            placeholder={t('database_types:example_db_symbol')}
-          />
-          {newType.dbSymbol.length !== 0 && wrongDbSymbol(newType.dbSymbol) && (
-            <TextInputError>{t('database_moves:incorrect_format')}</TextInputError>
-          )}
-          {newType.dbSymbol.length !== 0 && checkDbSymbolExist(types, newType.dbSymbol) && (
-            <TextInputError>{t('database_moves:db_symbol_already_used')}</TextInputError>
-          )}
+          <Input type="text" name="dbSymbol" ref={dbSymbolRef} error={!!dbSymbolErrorType} placeholder={t('database_types:example_db_symbol')} />
+          {dbSymbolErrorType == 'value' && <TextInputError>{t('database_moves:incorrect_format')}</TextInputError>}
+          {dbSymbolErrorType == 'duplicate' && <TextInputError>{t('database_moves:db_symbol_already_used')}</TextInputError>}
         </InputWithTopLabelContainer>
         <ButtonContainer>
           <ToolTipContainer>

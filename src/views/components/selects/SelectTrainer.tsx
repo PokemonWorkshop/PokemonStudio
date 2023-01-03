@@ -1,9 +1,10 @@
-import React from 'react';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import React, { useMemo } from 'react';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useTranslation } from 'react-i18next';
-import { getDataOptions, SelectDataGeneric } from './SelectDataGeneric';
+import { getSelectDataOptionsOrderedById, SelectDataGeneric } from './SelectDataGeneric';
 import { SelectDataProps } from './SelectDataProps';
+import { useGetProjectText } from '@utils/ReadingProjectText';
+import { StudioTrainer, TRAINER_CLASS_TEXT_ID, TRAINER_NAME_TEXT_ID } from '@modelEntities/trainer';
 
 /**
  * Component to show a select trainer.
@@ -28,11 +29,14 @@ export const SelectTrainer = ({
 }: SelectDataProps) => {
   const { t } = useTranslation('database_trainers');
   const [state] = useGlobalState();
-  const options = getDataOptions(state.projectData, 'trainers');
+  const getText = useGetProjectText();
+  const getTrainerName = (trainer: StudioTrainer) => `${getText(TRAINER_CLASS_TEXT_ID, trainer.id)} ${getText(TRAINER_NAME_TEXT_ID, trainer.id)}`;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const options = useMemo(() => getSelectDataOptionsOrderedById(state.projectData, 'trainers', getTrainerName), [state.projectData]);
 
   const getData = () => {
     const currentTrainer = state.projectData.trainers[dbSymbol];
-    return currentTrainer ? currentTrainer : ({ value: dbSymbol, label: t('trainer_deleted') } as SelectOption);
+    return { value: dbSymbol, label: currentTrainer ? getTrainerName(currentTrainer) : t('trainer_deleted') };
   };
 
   return (

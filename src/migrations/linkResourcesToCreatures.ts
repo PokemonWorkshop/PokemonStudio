@@ -2,11 +2,35 @@ import { IpcMainEvent } from 'electron';
 import fs from 'fs';
 import path from 'path';
 import { readProjectFolder } from '@src/backendTasks/readProjectData';
-import { TypedJSON } from 'typedjson';
-import PokemonModel from '@modelEntities/pokemon/Pokemon.model';
-import PokemonForm, { CreatureResources } from '@modelEntities/pokemon/PokemonForm';
 import { padStr } from '@utils/PadStr';
 import fsPromise from 'fs/promises';
+import {
+  StudioCreatureResources,
+  StudioCreatureForm,
+  CREATURE_VALIDATOR,
+  CREATURE_FORM_VALIDATOR,
+  CREATURE_RESOURCES_VALIDATOR,
+} from '@modelEntities/creature';
+import { z } from 'zod';
+
+const PRE_MIGRATION_CREATURE_VALIDATOR = CREATURE_VALIDATOR.extend({
+  forms: z.array(CREATURE_FORM_VALIDATOR.omit({ resources: true })).nonempty(),
+});
+type StudioCreatureDataBeforeMigration = z.infer<typeof PRE_MIGRATION_CREATURE_VALIDATOR>;
+type ComputedCreatureResources = Partial<Omit<Exclude<StudioCreatureResources, { hasFemale: false }>, 'hasFemale'>>;
+const DEFAULT_CREATURE_RESOURCE: StudioCreatureResources = {
+  hasFemale: false,
+  icon: '000',
+  iconShiny: '000',
+  front: '000',
+  frontShiny: '000',
+  back: '000',
+  backShiny: '000',
+  footprint: '000',
+  character: '000',
+  characterShiny: '000',
+  cry: '000cry',
+};
 
 const deletePSDKDatFile = (projectPath: string) => {
   const psdkDatFilePath = path.join(projectPath, 'Data', 'Studio', 'psdk.dat');
@@ -46,7 +70,7 @@ const searchCry = (id: number, projectPath: string) => {
   return result ? cryName : '';
 };
 
-const hasFemale = (resources: Omit<CreatureResources, 'hasFemale'>) => {
+const hasFemale = (resources: ComputedCreatureResources) => {
   return !!(
     resources.backF ||
     resources.backShinyF ||
@@ -59,67 +83,66 @@ const hasFemale = (resources: Omit<CreatureResources, 'hasFemale'>) => {
   );
 };
 
-const fixResourcesForFemaleOnly = (form: PokemonForm, resources: Omit<CreatureResources, 'hasFemale'>) => {
-  if (form.femaleRate !== 100) return resources;
+const fixResourcesForFemaleOnly = (form: Pick<StudioCreatureForm, 'femaleRate'>, resources: ComputedCreatureResources): StudioCreatureResources => {
+  if (form.femaleRate !== 100) {
+    const resourcesValidated = CREATURE_RESOURCES_VALIDATOR.safeParse({ ...resources, hasFemale: hasFemale(resources) });
+    if (resourcesValidated.success) return resourcesValidated.data;
+  }
 
-  if (resources.back !== '') resources.backF ??= resources.back;
-  if (resources.backShiny !== '') resources.backShinyF ??= resources.backShiny;
-  if (resources.character !== '') resources.characterF ??= resources.character;
-  if (resources.characterShiny !== '') resources.characterShinyF ??= resources.characterShiny;
-  if (resources.front !== '') resources.frontF ??= resources.front;
-  if (resources.frontShiny !== '') resources.frontShinyF ??= resources.frontShiny;
-  if (resources.icon !== '') resources.iconF ??= resources.icon;
-  if (resources.iconShiny !== '') resources.iconShinyF ??= resources.iconShiny;
-  return resources;
+  if (resources.back) resources.backF ??= resources.back;
+  if (resources.backShiny) resources.backShinyF ??= resources.backShiny;
+  if (resources.character) resources.characterF ??= resources.character;
+  if (resources.characterShiny) resources.characterShinyF ??= resources.characterShiny;
+  if (resources.front) resources.frontF ??= resources.front;
+  if (resources.frontShiny) resources.frontShinyF ??= resources.frontShiny;
+  if (resources.icon) resources.iconF ??= resources.icon;
+  if (resources.iconShiny) resources.iconShinyF ??= resources.iconShiny;
+
+  const resourcesValidated = CREATURE_RESOURCES_VALIDATOR.safeParse({ ...resources, hasFemale: hasFemale(resources) });
+  if (resourcesValidated.success) return resourcesValidated.data;
+
+  return { ...DEFAULT_CREATURE_RESOURCE, ...resources, hasFemale: hasFemale(resources) };
 };
 
-const linkResources = (creature: PokemonModel, projectPath: string) => {
+const linkResources = (creature: StudioCreatureDataBeforeMigration, projectPath: string) => {
   creature.forms.forEach((form) => {
-    if (!form.resources) {
-      const resources: Omit<CreatureResources, 'hasFemale'> = {
-        icon: searchDexResource(creature.id, form.form, 'pokeicon', projectPath, false, false) as string,
-        iconF: searchDexResource(creature.id, form.form, 'pokeicon', projectPath, true, false),
-        iconShiny: searchDexResource(creature.id, form.form, 'pokeicon', projectPath, false, true) as string,
-        iconShinyF: searchDexResource(creature.id, form.form, 'pokeicon', projectPath, true, true),
-        front: searchDexResource(creature.id, form.form, 'pokefront', projectPath, false) as string,
-        frontF: searchDexResource(creature.id, form.form, 'pokefront', projectPath, true),
-        frontShiny: searchDexResource(creature.id, form.form, 'pokefrontshiny', projectPath, false) as string,
-        frontShinyF: searchDexResource(creature.id, form.form, 'pokefrontshiny', projectPath, true),
-        back: searchDexResource(creature.id, form.form, 'pokeback', projectPath, false) as string,
-        backF: searchDexResource(creature.id, form.form, 'pokeback', projectPath, true),
-        backShiny: searchDexResource(creature.id, form.form, 'pokebackshiny', projectPath, false) as string,
-        backShinyF: searchDexResource(creature.id, form.form, 'pokebackshiny', projectPath, true),
-        footprint: searchDexResource(creature.id, form.form, 'footprints', projectPath, false) as string,
-        character: searchCharacterResource(creature.id, form.form, projectPath, false, false) as string,
-        characterF: searchCharacterResource(creature.id, form.form, projectPath, true, false),
-        characterShiny: searchCharacterResource(creature.id, form.form, projectPath, false, true) as string,
-        characterShinyF: searchCharacterResource(creature.id, form.form, projectPath, true, true),
-        cry: searchCry(creature.id, projectPath),
-      };
-      const resourcesFixed = fixResourcesForFemaleOnly(form, resources);
-      form.resources = {
-        ...resourcesFixed,
-        hasFemale: hasFemale(resourcesFixed),
-      };
-    }
+    if ('resources' in form) return; // Avoid compiling resources if it was already there
+    const resources: ComputedCreatureResources = {
+      icon: searchDexResource(creature.id, form.form, 'pokeicon', projectPath, false, false),
+      iconF: searchDexResource(creature.id, form.form, 'pokeicon', projectPath, true, false),
+      iconShiny: searchDexResource(creature.id, form.form, 'pokeicon', projectPath, false, true),
+      iconShinyF: searchDexResource(creature.id, form.form, 'pokeicon', projectPath, true, true),
+      front: searchDexResource(creature.id, form.form, 'pokefront', projectPath, false),
+      frontF: searchDexResource(creature.id, form.form, 'pokefront', projectPath, true),
+      frontShiny: searchDexResource(creature.id, form.form, 'pokefrontshiny', projectPath, false),
+      frontShinyF: searchDexResource(creature.id, form.form, 'pokefrontshiny', projectPath, true),
+      back: searchDexResource(creature.id, form.form, 'pokeback', projectPath, false),
+      backF: searchDexResource(creature.id, form.form, 'pokeback', projectPath, true),
+      backShiny: searchDexResource(creature.id, form.form, 'pokebackshiny', projectPath, false),
+      backShinyF: searchDexResource(creature.id, form.form, 'pokebackshiny', projectPath, true),
+      footprint: searchDexResource(creature.id, form.form, 'footprints', projectPath, false),
+      character: searchCharacterResource(creature.id, form.form, projectPath, false, false),
+      characterF: searchCharacterResource(creature.id, form.form, projectPath, true, false),
+      characterShiny: searchCharacterResource(creature.id, form.form, projectPath, false, true),
+      characterShinyF: searchCharacterResource(creature.id, form.form, projectPath, true, true),
+      cry: searchCry(creature.id, projectPath),
+    };
+    (form as StudioCreatureForm).resources = fixResourcesForFemaleOnly(form, resources);
   });
 };
 
 export const linkResourcesToCreatures = async (_: IpcMainEvent, projectPath: string) => {
-  const serializer = new TypedJSON(PokemonModel);
-  serializer.config({ indent: 2 });
-
   deletePSDKDatFile(projectPath);
 
   const creatureData = await readProjectFolder(projectPath, 'pokemon');
   await creatureData.reduce(async (lastPromise, creature) => {
     await lastPromise;
-    const creatureParsed = serializer.parse(creature);
-    if (creatureParsed) {
-      linkResources(creatureParsed, projectPath);
+    const creatureParsed = PRE_MIGRATION_CREATURE_VALIDATOR.safeParse(JSON.parse(creature));
+    if (creatureParsed.success) {
+      linkResources(creatureParsed.data, projectPath);
       return fsPromise.writeFile(
-        path.join(projectPath, 'Data/Studio/pokemon', `${creatureParsed.dbSymbol}.json`),
-        serializer.stringify(creatureParsed)
+        path.join(projectPath, 'Data/Studio/pokemon', `${creatureParsed.data.dbSymbol}.json`),
+        JSON.stringify(creatureParsed.data, null, 2)
       );
     }
   }, Promise.resolve());

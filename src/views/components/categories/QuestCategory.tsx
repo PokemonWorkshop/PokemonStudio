@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import { Category } from './Category';
-import { QuestCategory as QuestCategoryType, QuestResolution as QuestResolutionType } from '@modelEntities/quest/Quest.model';
+import { StudioQuestCategory, StudioQuestResolution } from '@modelEntities/quest';
 
-type QuestCategoryProps = { category: QuestCategoryType | QuestResolutionType };
+type QuestCategoryProps = { category: StudioQuestCategory | StudioQuestResolution };
 
 export const QuestCategory = styled(Category).attrs<QuestCategoryProps>((props) => ({
   'data-category': props.category,

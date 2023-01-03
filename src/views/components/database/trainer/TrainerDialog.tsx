@@ -1,8 +1,9 @@
 import React from 'react';
-import TrainerModel from '@modelEntities/trainer/Trainer.model';
 import { DataBlockWithTitle, DataFieldsetField } from '../dataBlocks';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { useGetProjectText } from '@utils/ReadingProjectText';
+import { StudioTrainer, TRAINER_DEFEAT_SENTENCE_TEXT_ID, TRAINER_VICTORY_SENTENCE_TEXT_ID } from '@modelEntities/trainer';
 
 const TrainerDialogContainer = styled.div`
   display: flex;
@@ -11,25 +12,28 @@ const TrainerDialogContainer = styled.div`
 `;
 
 type TrainerDialogProps = {
-  trainer: TrainerModel;
+  trainer: StudioTrainer;
   onClick: () => void;
 };
 
 export const TrainerDialog = ({ trainer, onClick }: TrainerDialogProps) => {
   const { t } = useTranslation('database_trainers');
+  const getText = useGetProjectText();
+  const victorySentence = getText(TRAINER_VICTORY_SENTENCE_TEXT_ID, trainer.id);
+  const defeatSentence = getText(TRAINER_DEFEAT_SENTENCE_TEXT_ID, trainer.id);
 
   return (
     <DataBlockWithTitle size="full" title={t('dialogs')} onClick={onClick}>
       <TrainerDialogContainer>
         <DataFieldsetField
           label={t('trainer_victory')}
-          data={trainer.victorySentence() !== '' ? `“${trainer.victorySentence()}”` : '---'}
-          disabled={trainer.victorySentence() === ''}
+          data={victorySentence !== '' ? `“${victorySentence}”` : '---'}
+          disabled={victorySentence === ''}
         />
         <DataFieldsetField
           label={t('trainer_defeat')}
-          data={trainer.defeatSentence() !== '' ? `“${trainer.defeatSentence()}”` : '---'}
-          disabled={trainer.defeatSentence() === ''}
+          data={defeatSentence !== '' ? `“${defeatSentence}”` : '---'}
+          disabled={defeatSentence === ''}
         />
       </TrainerDialogContainer>
     </DataBlockWithTitle>

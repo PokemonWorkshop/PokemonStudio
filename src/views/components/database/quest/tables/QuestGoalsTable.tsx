@@ -1,19 +1,20 @@
 import React, { useMemo, useState } from 'react';
-import QuestModel from '@modelEntities/quest/Quest.model';
 import { DataGoalGrid, DataQuestTable, TableEmpty } from './QuestTableStyle';
 import { useTranslation } from 'react-i18next';
 import { useProjectQuests } from '@utils/useProjectData';
 import { RenderGoal } from './RenderGoal';
 import { DragDropContext, Droppable, Draggable, DroppableProvided, DraggableProvided, DraggableStateSnapshot, DropResult } from 'react-beautiful-dnd';
+import { StudioQuest, updateIndexSpeakToBeatNpc } from '@modelEntities/quest';
+import { cloneEntity } from '@utils/cloneEntity';
 
 type QuestGoalsTableProps = {
-  quest: QuestModel;
+  quest: StudioQuest;
   onEdit: (index: number) => void;
 };
 
 export const QuestGoalsTable = ({ quest, onEdit }: QuestGoalsTableProps) => {
   const { setProjectDataValues: setQuest } = useProjectQuests();
-  const currentEditedQuest = useMemo(() => quest.clone(), [quest]);
+  const currentEditedQuest = useMemo(() => cloneEntity(quest), [quest]);
   const { t } = useTranslation('database_quests');
   const [dragOn, setDragOn] = useState(false);
 
@@ -37,7 +38,7 @@ export const QuestGoalsTable = ({ quest, onEdit }: QuestGoalsTableProps) => {
           if (desI === undefined) return;
 
           currentEditedQuest.objectives.splice(desI, 0, currentEditedQuest.objectives.splice(srcI, 1)[0]);
-          currentEditedQuest.updateIndexSpeakToBeatNpc();
+          updateIndexSpeakToBeatNpc(currentEditedQuest);
           setQuest({ [quest.dbSymbol]: currentEditedQuest });
         }}
       >
@@ -59,7 +60,7 @@ export const QuestGoalsTable = ({ quest, onEdit }: QuestGoalsTableProps) => {
                       }}
                       onClickDelete={() => {
                         currentEditedQuest.objectives.splice(index, 1);
-                        currentEditedQuest.updateIndexSpeakToBeatNpc();
+                        updateIndexSpeakToBeatNpc(currentEditedQuest);
                         setQuest({ [quest.dbSymbol]: currentEditedQuest });
                       }}
                     />

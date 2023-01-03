@@ -9,10 +9,9 @@ import {
 } from '@components/editor/EditorContainer';
 import { Input, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
 import { PaginationWithTitleProps } from '@components/PaginationWithTitle';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { SelectPokemon, SelectPokemonForm } from '@components/selects';
 
-import PokemonModel from '@modelEntities/pokemon/Pokemon.model';
 import { useProjectPokemon } from '@utils/useProjectData';
 
 import React, { useState } from 'react';
@@ -21,7 +20,9 @@ import styled from 'styled-components';
 import { EvolutionConditionEditor } from './EvolutionConditionEditor';
 
 import { ReactComponent as PlusIcon } from '@assets/icons/global/plus-icon2.svg';
-import { EvolutionCondition } from '@modelEntities/pokemon/PokemonForm';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
+import { StudioCreature, StudioEvolutionCondition } from '@modelEntities/creature';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 
 const EvolutionEditorContainer = styled.div`
   display: flex;
@@ -30,7 +31,7 @@ const EvolutionEditorContainer = styled.div`
 `;
 
 type EvolutionEditorProps = {
-  currentPokemon: PokemonModel;
+  currentPokemon: StudioCreature;
   currentFormIndex: number;
   evolutionIndex: number;
   setEvolutionIndex: (index: number) => void;
@@ -40,6 +41,7 @@ type EvolutionEditorProps = {
 export const EvolutionEditor = ({ currentPokemon, currentFormIndex, evolutionIndex, setEvolutionIndex, onAddEvolution }: EvolutionEditorProps) => {
   const { projectDataValues: pokemon } = useProjectPokemon();
   const { t } = useTranslation('database_pokemon');
+  const getCreatureName = useGetEntityNameText();
   const [isAddingNewCondition, setIsAddingNewCondition] = useState(false);
   const refreshUI = useRefreshUI();
   const form = currentPokemon.forms[currentFormIndex];
@@ -51,14 +53,14 @@ export const EvolutionEditor = ({ currentPokemon, currentFormIndex, evolutionInd
   const showNoneAsNoPokemonIsSelected = !evolutionDbSymbol || evolutionDbSymbol === '__undef__' || undefined;
   if (isAddingNewCondition) conditions.push({ type: 'none', value: undefined });
 
-  const onConditionChange = (newCondition: EvolutionCondition | undefined, index: number) => {
+  const onConditionChange = (newCondition: StudioEvolutionCondition | undefined, index: number) => {
     if (newCondition && newCondition.type === 'none') {
       setIsAddingNewCondition(true);
       return;
     }
     const newConditions = conditions
       .map((condition, i) => (index === i ? newCondition : condition))
-      .filter((condition) => condition !== undefined) as EvolutionCondition[];
+      .filter((condition): condition is StudioEvolutionCondition => condition !== undefined);
 
     if (newConditions.some((condition) => condition.type === 'gemme')) {
       refreshUI((form.evolutions[evolutionIndex] = { form: evolution.form, conditions: newConditions }));
@@ -93,11 +95,11 @@ export const EvolutionEditor = ({ currentPokemon, currentFormIndex, evolutionInd
     refreshUI((form.evolutions = form.evolutions.filter((_, index) => index !== evolutionIndex)));
   };
 
-  const onChooseEvolution = ({ value }: SelectOption) => {
-    refreshUI((form.evolutions[evolutionIndex] = { ...evolution, dbSymbol: value }));
+  const onChooseEvolution: SelectChangeEvent = ({ value }) => {
+    refreshUI((form.evolutions[evolutionIndex] = { ...evolution, dbSymbol: value as DbSymbol }));
   };
 
-  const onChooseForm = ({ value }: SelectOption) => {
+  const onChooseForm: SelectChangeEvent = ({ value }) => {
     if (evolutionDbSymbol) {
       const formId = Number(value);
       if (!pokemon[evolutionDbSymbol] || !pokemon[evolutionDbSymbol].forms.find((f) => f.form === formId)) return;
@@ -105,8 +107,9 @@ export const EvolutionEditor = ({ currentPokemon, currentFormIndex, evolutionInd
     }
   };
 
+  const currentEvolution = pokemon[evolutionDbSymbol || currentPokemon.dbSymbol];
   const paginationProps: PaginationWithTitleProps = {
-    title: `#${evolutionIndex + 1} - ${pokemon[evolutionDbSymbol || currentPokemon.dbSymbol]?.name()}`,
+    title: `#${evolutionIndex + 1} - ${currentEvolution ? getCreatureName(currentEvolution) : '???'}`,
     onChangeIndex,
   };
 
@@ -118,7 +121,7 @@ export const EvolutionEditor = ({ currentPokemon, currentFormIndex, evolutionInd
             <InputWithTopLabelContainer>
               <Label>{t('evolves_into')}</Label>
               {isMega ? (
-                <Input type="text" value={`Mega-${pokemon[currentPokemon.dbSymbol]?.name() || '???'}`} disabled />
+                <Input type="text" value={`Mega-${getCreatureName(pokemon[currentPokemon.dbSymbol]) || '???'}`} disabled />
               ) : (
                 <SelectPokemon
                   dbSymbol={evolutionDbSymbol || '__undef__'}

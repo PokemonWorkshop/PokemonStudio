@@ -1,11 +1,11 @@
 import React from 'react';
 import { DataBlockWithTitle, DataGrid } from '../dataBlocks';
-import ZoneModel from '@modelEntities/zone/Zone.model';
 import { useTranslation } from 'react-i18next';
 import { DataFieldsetField, DataFieldsetFieldCode, DataFieldsetFieldWithChild } from '../dataBlocks/DataFieldsetField';
 import styled from 'styled-components';
 import { Code } from '@components/Code';
 import { padStr } from '@utils/PadStr';
+import { StudioZone } from '@modelEntities/zone';
 
 const MapsListContainer = styled.div`
   display: flex;
@@ -15,7 +15,7 @@ const MapsListContainer = styled.div`
 `;
 
 type ZoneSettingsProps = {
-  zone: ZoneModel;
+  zone: StudioZone;
   onClick: () => void;
 };
 

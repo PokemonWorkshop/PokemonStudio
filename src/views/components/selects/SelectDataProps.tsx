@@ -1,8 +1,8 @@
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 
 export type SelectDataProps = {
   dbSymbol: string;
-  onChange: (selected: SelectOption) => void;
+  onChange: SelectChangeEvent;
   noLabel?: true;
   rejected?: string[];
   breakpoint?: string;

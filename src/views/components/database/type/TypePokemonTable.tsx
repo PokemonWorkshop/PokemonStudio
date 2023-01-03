@@ -1,6 +1,4 @@
 import { TypeCategory } from '@components/categories';
-import PokemonModel, { pokemonIconPath } from '@modelEntities/pokemon/Pokemon.model';
-import TypeModel from '@modelEntities/type/Type.model';
 import { State, useGlobalState } from '@src/GlobalStateProvider';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,14 +7,18 @@ import { DataGrid } from '../dataBlocks';
 import { useProjectAbilities } from '@utils/useProjectData';
 import { getNameType } from '@utils/getNameType';
 import { ResourceImage } from '@components/ResourceImage';
+import { useGetEntityNameText, useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
+import { pokemonIconPath } from '@utils/path';
+import { StudioCreature } from '@modelEntities/creature';
+import { StudioType } from '@modelEntities/type';
 
 type TypePokemonTableProps = {
-  type: TypeModel;
+  type: StudioType;
 };
 
 type RenderMoveProps = {
-  pokemon: PokemonModel;
-  type: TypeModel;
+  pokemon: StudioCreature;
+  type: StudioType;
   state: State;
 };
 
@@ -75,42 +77,51 @@ const TypeContainer = styled.span`
   gap: 8px;
 `;
 
-const getFormWithCurrentType = (pokemon: PokemonModel, type: TypeModel) =>
+const getFormWithCurrentType = (pokemon: StudioCreature, type: StudioType) =>
   pokemon.forms.find((form) => form.type1 === type.dbSymbol || form.type2 === type.dbSymbol) || pokemon.forms[0];
 
 const RenderPokemon = ({ pokemon, type, state }: RenderMoveProps) => {
   const form = getFormWithCurrentType(pokemon, type);
   const { t } = useTranslation('database_types');
+  const getCreatureName = useGetEntityNameText();
+  const getAbilityName = useGetEntityNameTextUsingTextId();
   const { projectDataValues: abilities } = useProjectAbilities();
   const types = state.projectData.types;
+
+  const getAbilityNameByIndex = (index: number) => {
+    if (!form.abilities[index]) return '---';
+    if (abilities[form.abilities[index]]) return getAbilityName(abilities[form.abilities[index]]);
+
+    return t('ability_deleted');
+  };
 
   return (
     <RenderPokemonContainer gap="16px">
       <span>
         <ResourceImage imagePathInProject={pokemonIconPath(pokemon, form.form)} fallback={form.form === 0 ? undefined : pokemonIconPath(pokemon)} />
       </span>
-      <span className="name">{pokemon.name()}</span>
+      <span className="name">{getCreatureName(pokemon)}</span>
       <TypeContainer>
-        <TypeCategory type={form.type1}>{getNameType(types, form.type1)}</TypeCategory>
-        {form.type2 !== '__undef__' ? <TypeCategory type={form.type2}>{getNameType(types, form.type2)}</TypeCategory> : <span></span>}
+        <TypeCategory type={form.type1}>{getNameType(types, form.type1, state)}</TypeCategory>
+        {form.type2 !== '__undef__' ? <TypeCategory type={form.type2}>{getNameType(types, form.type2, state)}</TypeCategory> : <span></span>}
       </TypeContainer>
-      <span className={abilities[form.abilities[0]] ? '' : 'error'}>
-        {form.abilities[0] ? (abilities[form.abilities[0]] ? abilities[form.abilities[0]].name() : t('ability_deleted')) : '---'}
-      </span>
-      <span className={abilities[form.abilities[1]] ? '' : 'error'}>
-        {form.abilities[1] ? (abilities[form.abilities[1]] ? abilities[form.abilities[1]].name() : t('ability_deleted')) : '---'}
-      </span>
-      <span className={abilities[form.abilities[2]] ? '' : 'error'}>
-        {form.abilities[2] ? (abilities[form.abilities[2]] ? abilities[form.abilities[2]].name() : t('ability_deleted')) : '---'}
-      </span>
+      <span className={abilities[form.abilities[0]] ? '' : 'error'}>{getAbilityNameByIndex(0)}</span>
+      <span className={abilities[form.abilities[1]] ? '' : 'error'}>{getAbilityNameByIndex(1)}</span>
+      <span className={abilities[form.abilities[2]] ? '' : 'error'}>{getAbilityNameByIndex(2)}</span>
     </RenderPokemonContainer>
   );
+};
+
+const getAllPokemonWithCurrentType = (type: StudioType, state: State) => {
+  return Object.values(state.projectData.pokemon)
+    .filter((pokemon) => pokemon.forms.find((form) => form.type1 === type.dbSymbol || form.type2 === type.dbSymbol))
+    .sort((a, b) => a.id - b.id);
 };
 
 export const TypePokemonTable = ({ type }: TypePokemonTableProps) => {
   const [state] = useGlobalState();
   const { t } = useTranslation('database_types');
-  const allPokemon = type.getAllPokemonWithCurrentType(state);
+  const allPokemon = getAllPokemonWithCurrentType(type, state);
 
   return (
     <DataPokemonTable>

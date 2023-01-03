@@ -1,4 +1,4 @@
-export { SelectDataGeneric, getDataOptions } from './SelectDataGeneric';
+export { SelectDataGeneric } from './SelectDataGeneric';
 export { SelectAbility } from './SelectAbility';
 export { SelectGroup } from './SelectGroup';
 export { SelectItem } from './SelectItem';
@@ -10,5 +10,4 @@ export { SelectTrainer } from './SelectTrainer';
 export { SelectType } from './SelectType';
 export { SelectZone } from './SelectZone';
 export { SelectDex } from './SelectDex';
-export { SelectMapLink } from './SelectMapLink';
 export { SelectRMXPMap } from './SelectRMXPMap';

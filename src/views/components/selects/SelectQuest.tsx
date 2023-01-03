@@ -1,9 +1,9 @@
-import React from 'react';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import React, { useMemo } from 'react';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useTranslation } from 'react-i18next';
-import { getDataOptions, SelectDataGeneric } from './SelectDataGeneric';
+import { getSelectDataOptionsOrderedById, SelectDataGeneric } from './SelectDataGeneric';
 import { SelectDataProps } from './SelectDataProps';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
 
 /**
  * Component to show a select quest.
@@ -28,11 +28,13 @@ export const SelectQuest = ({
 }: SelectDataProps) => {
   const { t } = useTranslation('database_quests');
   const [state] = useGlobalState();
-  const options = getDataOptions(state.projectData, 'quests');
+  const getQuestName = useGetEntityNameText();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const options = useMemo(() => getSelectDataOptionsOrderedById(state.projectData, 'quests', getQuestName), [state.projectData]);
 
   const getData = () => {
     const currentQuest = state.projectData.quests[dbSymbol];
-    return currentQuest ? currentQuest : ({ value: dbSymbol, label: t('quest_deleted') } as SelectOption);
+    return { value: dbSymbol, label: currentQuest ? getQuestName(currentQuest) : t('quest_deleted') };
   };
 
   return (

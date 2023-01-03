@@ -11,7 +11,7 @@ import { StatusDataBlock } from '../../components/database/move/moveDataBlock/St
 import { StatisticsDataBlock } from '../../components/database/move/moveDataBlock/StatisticsDataBlock';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { DeleteButton, DarkButton } from '@components/buttons';
-import { SelectOption } from '../../components/SelectCustom/SelectCustomPropsInterface';
+import { SelectChangeEvent } from '../../components/SelectCustom/SelectCustomPropsInterface';
 import { useTranslation } from 'react-i18next';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { useHistory } from 'react-router-dom';
@@ -30,6 +30,10 @@ import { Deletion, DeletionOverlay } from '@components/deletion';
 import { wrongDbSymbol } from '@utils/dbSymbolUtils';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
 import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
+import { useEditorHandlingCloseRef } from '@components/editor/useHandleCloseEditor';
+import { cleaningMoveNaNValues } from '@utils/cleanNaNValue';
+import { cloneEntity } from '@utils/cloneEntity';
 
 export const MovePage = () => {
   const {
@@ -42,13 +46,15 @@ export const MovePage = () => {
     getNextDbSymbol,
   } = useProjectData('moves', 'move');
   const { t } = useTranslation(['database_moves']);
+  const frameEditorRef = useEditorHandlingCloseRef();
+  const getMoveName = useGetEntityNameText();
   const history = useHistory();
   const onClickedPokemonList = () => history.push(`/database/moves/pokemon`);
-  const onMoveChange = (selected: SelectOption) => {
+  const onMoveChange: SelectChangeEvent = (selected) => {
     setSelectedDataIdentifier({ move: selected.value });
   };
   const currentMove = moves[moveDbSymbol];
-  const currentEditedMove = useMemo(() => currentMove.clone(), [currentMove]);
+  const currentEditedMove = useMemo(() => cloneEntity(currentMove), [currentMove]);
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
   const shortcutMap = useMemo<StudioShortcutActions>(() => {
@@ -59,7 +65,7 @@ export const MovePage = () => {
       db_next: () => setSelectedDataIdentifier({ move: getNextDbSymbol('id') }),
       db_new: () => setCurrentEditor('new'),
     };
-  }, [getPreviousDbSymbol, getNextDbSymbol, currentEditor, currentDeletion]);
+  }, [currentEditor, currentDeletion, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol]);
   useShortcut(shortcutMap);
   const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
     {
@@ -67,16 +73,19 @@ export const MovePage = () => {
       translation_description: { fileId: 7, isMultiline: true },
     },
     currentEditedMove.id,
-    currentEditedMove.name()
+    getMoveName(currentEditedMove)
   );
 
   const onCloseEditor = () => {
-    if (currentEditor === 'frame' && currentEditedMove.name() === '') return;
+    if (currentEditor === 'frame') {
+      if (!frameEditorRef.current?.canClose()) return;
+      frameEditorRef.current.onClose();
+    }
     if (currentEditor === 'parameters' && (currentEditedMove.battleEngineMethod === '' || wrongDbSymbol(currentEditedMove.battleEngineMethod)))
       return;
     if (currentEditor === 'new') return setCurrentEditor(undefined);
-    if (currentEditor === 'status') currentEditedMove.cleanStatus();
-    currentEditedMove.cleaningNaNValues();
+    if (currentEditor === 'status') currentEditedMove.moveStatus = currentEditedMove.moveStatus.filter((moveStatus) => moveStatus.status !== null);
+    cleaningMoveNaNValues(currentEditedMove);
     setMoves({ [currentMove.dbSymbol]: currentEditedMove });
     setCurrentEditor(undefined);
     closeTranslationEditor();
@@ -93,7 +102,7 @@ export const MovePage = () => {
 
   const editors = {
     new: <MoveNewEditor onClose={() => setCurrentEditor(undefined)} />,
-    frame: <MoveFrameEditor move={currentEditedMove} openTranslationEditor={openTranslationEditor} />,
+    frame: <MoveFrameEditor move={currentEditedMove} openTranslationEditor={openTranslationEditor} ref={frameEditorRef} />,
     data: <MoveDataEditor move={currentEditedMove} />,
     parameters: <MoveParametersEditor move={currentEditedMove} />,
     characteristics: <MoveCharacteristicsEditor move={currentEditedMove} />,
@@ -104,8 +113,8 @@ export const MovePage = () => {
   const deletions = {
     deletion: (
       <Deletion
-        title={t('database_moves:deletion_of', { move: currentMove.name() })}
-        message={t('database_moves:deletion_message', { move: currentMove.name() })}
+        title={t('database_moves:deletion_of', { move: getMoveName(currentMove) })}
+        message={t('database_moves:deletion_message', { move: getMoveName(currentMove) })}
         onClickDelete={onClickDelete}
         onClose={() => setCurrentDeletion(undefined)}
       />
@@ -126,7 +135,7 @@ export const MovePage = () => {
             <StatisticsDataBlock move={currentMove} onClick={() => setCurrentEditor('statistics')} />
           </DataBlockWrapper>
           <DataBlockWrapper>
-            <DataBlockWithAction size="full" title={`${t('database_moves:pokemon_with_move')} ${currentMove.name()}`}>
+            <DataBlockWithAction size="full" title={`${t('database_moves:pokemon_with_move')} ${getMoveName(currentMove)}`}>
               <DarkButton onClick={onClickedPokemonList}>{t('database_moves:button_list_pokemon')}</DarkButton>
             </DataBlockWithAction>
             <DataBlockWithAction size="full" title={t('database_moves:deleting')}>

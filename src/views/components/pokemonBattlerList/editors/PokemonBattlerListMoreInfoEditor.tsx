@@ -2,24 +2,32 @@ import React, { useMemo, useState } from 'react';
 import { useRefreshUI } from '@components/editor';
 import { Input, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PaddedInputContainer, Toggle } from '@components/inputs';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
-import Encounter, { GenderCategories, ShinyCategories, ShinyCategory, ShinySetup } from '@modelEntities/Encounter';
 import { TFunction, useTranslation } from 'react-i18next';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import { SelectDataGeneric } from '@components/selects';
 import { ProjectData } from '@src/GlobalStateProvider';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { useProjectItems, useProjectPokemon } from '@utils/useProjectData';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { EmbeddedUnitInput } from '@components/inputs/EmbeddedUnitInput';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
+import { StudioGroupEncounter } from '@modelEntities/groupEncounter';
 
-const determineGivenName = (battler: Encounter, species: ProjectData['pokemon']) => {
+const determineGivenName = (
+  battler: StudioGroupEncounter,
+  species: ProjectData['pokemon'],
+  getEntityName: ReturnType<typeof useGetEntityNameText>
+) => {
   const givenName = battler.expandPokemonSetup.find((eps) => eps.type === 'givenName')?.value as string;
-  if (givenName === '') return species[battler.specie]?.name() || '???';
+  if (givenName === '') return species[battler.specie] ? getEntityName(species[battler.specie]) : '???';
   return givenName;
 };
 
-const determineShinyValue = (shinySetup: ShinySetup): ShinyCategory => {
+export const GenderCategories = [-1, 0, 1, 2] as const;
+export const ShinyCategories = ['default', 'always', 'never', 'custom'] as const;
+export type ShinyCategory = typeof ShinyCategories[number];
+
+const determineShinyValue = (shinySetup: StudioGroupEncounter['shinySetup']) => {
   switch (shinySetup.kind) {
     case 'automatic':
       return 'default';
@@ -33,7 +41,7 @@ const determineShinyValue = (shinySetup: ShinySetup): ShinyCategory => {
   return 'default';
 };
 
-const determineRareness = (battler: Encounter, species: ProjectData['pokemon']) => {
+const determineRareness = (battler: StudioGroupEncounter, species: ProjectData['pokemon']) => {
   const rareness = battler.expandPokemonSetup.find((eps) => eps.type === 'rareness')?.value as number;
   if (rareness === -1) return species[battler.specie]?.forms.find((form) => form.form === battler.form)?.catchRate || 0;
   return rareness;
@@ -45,20 +53,20 @@ const shinyCategoryEntries = (t: TFunction<('database_items' | 'pokemon_battler_
 const genderCategoryEntries = (t: TFunction<('database_items' | 'pokemon_battler_list')[]>) =>
   GenderCategories.map((category) => ({ value: category.toString(), label: t(`pokemon_battler_list:gender${category}`) }));
 
-const getItemHeldOptions = (allItems: ProjectData['items']): SelectOption[] =>
-  Object.entries(allItems)
-    .filter(([, itemData]) => itemData.isHoldable)
-    .map(([value, itemData]) => ({ value, label: itemData.name(), index: itemData.id }))
-    .sort((a, b) => a.index - b.index);
+const getItemHeldOptions = (allItems: ProjectData['items'], getEntityName: ReturnType<typeof useGetEntityNameText>) =>
+  Object.values(allItems)
+    .filter((itemData) => itemData.isHoldable)
+    .sort((a, b) => a.id - b.id)
+    .map((itemData) => ({ value: itemData.dbSymbol, label: getEntityName(itemData) }));
 
-const getBallOptions = (allItems: ProjectData['items']): SelectOption[] =>
-  Object.entries(allItems)
-    .filter(([, itemData]) => itemData.category === 'ball')
-    .map(([value, itemData]) => ({ value, label: itemData.name(), index: itemData.id }))
-    .sort((a, b) => a.index - b.index);
+const getBallOptions = (allItems: ProjectData['items'], getEntityName: ReturnType<typeof useGetEntityNameText>) =>
+  Object.values(allItems)
+    .filter((itemData) => itemData.klass === 'BallItem')
+    .sort((a, b) => a.id - b.id)
+    .map((itemData) => ({ value: itemData.dbSymbol, label: getEntityName(itemData) }));
 
 type PokemonBattlerListModeInfoEditorProps = {
-  battler: Encounter;
+  battler: StudioGroupEncounter;
   collapseByDefault: boolean;
   isWild: boolean;
   index: number | undefined;
@@ -74,12 +82,15 @@ export const PokemonBattlerListMoreInfoEditor = ({
 }: PokemonBattlerListModeInfoEditorProps) => {
   const { projectDataValues: items } = useProjectItems();
   const { projectDataValues: species } = useProjectPokemon();
+  const getEntityName = useGetEntityNameText();
   const { t } = useTranslation(['database_items', 'pokemon_battler_list']);
-  const shinyOptions = useMemo(() => shinyCategoryEntries(t), [t]);
-  const genderOptions = useMemo(() => genderCategoryEntries(t), [t]);
-  const itemHeldOptions = useMemo(() => getItemHeldOptions(items), [items]);
-  const ballOptions = useMemo(() => getBallOptions(items), [items]);
-  const [givenName, setGivenName] = useState(determineGivenName(battler, species));
+  /* eslint-disable react-hooks/exhaustive-deps */
+  const shinyOptions = useMemo(() => shinyCategoryEntries(t), []);
+  const genderOptions = useMemo(() => genderCategoryEntries(t), []);
+  const itemHeldOptions = useMemo(() => getItemHeldOptions(items, getEntityName), [items]);
+  const ballOptions = useMemo(() => getBallOptions(items, getEntityName), [items]);
+  /* eslint-enable react-hooks/exhaustive-deps */
+  const [givenName, setGivenName] = useState(determineGivenName(battler, species, getEntityName));
   const [shiny, setShiny] = useState(determineShinyValue(battler.shinySetup));
   const [gender, setGender] = useState(battler.expandPokemonSetup.find((eps) => eps.type === 'gender')?.value as number);
   const [itemHeld, setItemHeld] = useState(battler.expandPokemonSetup.find((eps) => eps.type === 'itemHeld')?.value as string);
@@ -220,7 +231,7 @@ export const PokemonBattlerListMoreInfoEditor = ({
             <SelectDataGeneric
               data={{
                 value: itemHeld === 'none' ? '__undef__' : itemHeld,
-                label: items[itemHeld]?.name() || t('database_items:item_deleted'),
+                label: items[itemHeld] ? getEntityName(items[itemHeld]) : t('database_items:item_deleted'),
               }}
               options={itemHeldOptions}
               onChange={(selected) => refreshUI(onChangeItemHeld(selected.value))}
@@ -237,7 +248,7 @@ export const PokemonBattlerListMoreInfoEditor = ({
             <SelectDataGeneric
               data={{
                 value: caughtWith,
-                label: items[caughtWith]?.name() || t('database_items:item_deleted'),
+                label: items[caughtWith] ? getEntityName(items[caughtWith]) : t('database_items:item_deleted'),
               }}
               options={ballOptions}
               onChange={(selected) => refreshUI(onChangeCaughtWith(selected.value))}

@@ -218,7 +218,7 @@ const TypeTableCategoryStyle = styled(CategoryLarge).attrs<TypeCategoryProps>((p
 export const TypeCategory = ({ type, children }: TypeCategoryProps) => {
   const { projectDataValues: types } = useProjectTypes();
   const currentType = types[type];
-  return <TypeCategoryStyle type={currentType ? currentType.getColor() : 'normal'}>{children}</TypeCategoryStyle>;
+  return <TypeCategoryStyle type={currentType ? currentType.color || currentType.dbSymbol : 'normal'}>{children}</TypeCategoryStyle>;
 };
 
 export const TypeCategoryPreview = ({ type, children }: TypeCategoryProps) => {
@@ -229,7 +229,7 @@ export const TypeCategoryPokemonBattler = ({ type, children }: TypeCategoryProps
   const { projectDataValues: types } = useProjectTypes();
   const currentType = types[type];
   return (
-    <TypeCategoryStyle type={currentType ? currentType.getColor() : 'normal'} data-has-hover>
+    <TypeCategoryStyle type={currentType ? currentType.color || currentType.dbSymbol : 'normal'} data-has-hover>
       {children}
     </TypeCategoryStyle>
   );
@@ -238,5 +238,5 @@ export const TypeCategoryPokemonBattler = ({ type, children }: TypeCategoryProps
 export const TypeTableCategory = ({ type, children }: TypeCategoryProps) => {
   const { projectDataValues: types } = useProjectTypes();
   const currentType = types[type];
-  return <TypeTableCategoryStyle type={currentType ? currentType.getColor() : 'normal'}>{children}</TypeTableCategoryStyle>;
+  return <TypeTableCategoryStyle type={currentType ? currentType.color || currentType.dbSymbol : 'normal'}>{children}</TypeTableCategoryStyle>;
 };

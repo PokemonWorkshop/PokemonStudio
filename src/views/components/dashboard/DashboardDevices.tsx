@@ -6,6 +6,8 @@ import { useTranslation } from 'react-i18next';
 import { DashboardEditor } from './DashboardEditor';
 import { useConfigDevices } from '@utils/useProjectConfig';
 import styled from 'styled-components';
+import { join } from '@utils/path';
+import { cloneEntity } from '@utils/cloneEntity';
 
 const MouseSkinInfoContainer = styled.span`
   ${({ theme }) => theme.fonts.normalSmall}
@@ -16,7 +18,7 @@ export const DashboardDevices = () => {
   const { t } = useTranslation('dashboard_devices');
   const [state] = useGlobalState();
   const { projectConfigValues: devices, setProjectConfigValues: setDevices } = useConfigDevices();
-  const currentEditedDevices = useMemo(() => devices.clone(), [devices]);
+  const currentEditedDevices = useMemo(() => cloneEntity(devices), [devices]);
 
   const onSkinChoosen = (skinPath: string) => {
     currentEditedDevices.mouseSkin = skinPath.replaceAll('\\', '/').split('/').pop()?.split('.').shift() || null;
@@ -27,6 +29,10 @@ export const DashboardDevices = () => {
     currentEditedDevices.mouseSkin = null;
     setDevices(currentEditedDevices);
   };
+
+  const iconPath = state.projectPath
+    ? join(state.projectPath, `graphics/windowskins/${currentEditedDevices.mouseSkin}.png`)
+    : 'https://www.pokepedia.fr/images/8/87/Pok%C3%A9_Ball.png';
 
   return (
     <DashboardEditor editorTitle={t('devices')} title={t('mouse')}>
@@ -48,15 +54,7 @@ export const DashboardDevices = () => {
             {currentEditedDevices.mouseSkin === null || currentEditedDevices.mouseSkin.length === 0 ? (
               <DropInput name={t('mouse_image')} extensions={['png']} onFileChoosen={onSkinChoosen} />
             ) : (
-              <IconInput
-                name={t('mouse_image')}
-                extensions={['png']}
-                iconPath={
-                  state.projectPath ? currentEditedDevices.mouseSkinUrl(state.projectPath) : 'https://www.pokepedia.fr/images/8/87/Pok%C3%A9_Ball.png'
-                }
-                onIconChoosen={onSkinChoosen}
-                onIconClear={onSkinClear}
-              />
+              <IconInput name={t('mouse_image')} extensions={['png']} iconPath={iconPath} onIconChoosen={onSkinChoosen} onIconClear={onSkinClear} />
             )}
           </InputWithTopLabelContainer>
           <MouseSkinInfoContainer>{t('info_mouse_image')}</MouseSkinInfoContainer>

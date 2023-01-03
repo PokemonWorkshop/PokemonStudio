@@ -5,8 +5,8 @@ import { Editor, useRefreshUI } from '@components/editor';
 import { TFunction, useTranslation } from 'react-i18next';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { SelectRMXPMap } from '@components/selects';
-import MapLinkModel, { Cardinal, CardinalCategory, getLinksFromMapLink } from '@modelEntities/maplinks/MapLink.model';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
+import { getLinksFromMapLink, MAP_LINK_CARDINAL_LIST, StudioMapLink, StudioMapLinkCardinal } from '@modelEntities/mapLink';
 
 const OffsetInfo = styled.div`
   ${({ theme }) => theme.fonts.normalSmall};
@@ -14,15 +14,15 @@ const OffsetInfo = styled.div`
   user-select: none;
 `;
 
-const getShift = (cardinal: Cardinal, t: TFunction<'database_maplinks'>) => {
+const getShift = (cardinal: StudioMapLinkCardinal, t: TFunction<'database_maplinks'>) => {
   if (cardinal === 'north' || cardinal === 'south') return t('offset_shift_right');
 
   return t('offset_downward_shift');
 };
 
-const mapsAlreadyAssigned = (mapLink: MapLinkModel, cardinal: Cardinal, index: number) => {
+const mapsAlreadyAssigned = (mapLink: StudioMapLink, cardinal: StudioMapLinkCardinal, index: number) => {
   const currentLink = getLinksFromMapLink(mapLink, cardinal)[index];
-  return CardinalCategory.reduce(
+  return MAP_LINK_CARDINAL_LIST.reduce(
     (previousValue, currentValue) =>
       previousValue.concat(
         getLinksFromMapLink(mapLink, currentValue)
@@ -34,8 +34,8 @@ const mapsAlreadyAssigned = (mapLink: MapLinkModel, cardinal: Cardinal, index: n
 };
 
 type NewLinkEditorProps = {
-  mapLink: MapLinkModel;
-  cardinal: Cardinal;
+  mapLink: StudioMapLink;
+  cardinal: StudioMapLinkCardinal;
   index: number;
 };
 

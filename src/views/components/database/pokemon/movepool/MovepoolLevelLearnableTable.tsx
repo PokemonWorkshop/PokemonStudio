@@ -1,8 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { MoveCategory, TypeCategory } from '@components/categories';
 import { DataGrid } from '@components/database/dataBlocks';
-import PokemonForm, { LevelLearnableMove } from '@modelEntities/pokemon/PokemonForm';
-import { ProjectData, SelectedDataIdentifier } from '@src/GlobalStateProvider';
+import { ProjectData, SelectedDataIdentifier, useGlobalState } from '@src/GlobalStateProvider';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { Input } from '@components/inputs';
@@ -10,21 +9,24 @@ import { DeleteButtonOnlyIcon } from '@components/buttons';
 import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { SelectCustom } from '@components/SelectCustom';
 import { useProjectData } from '@utils/useProjectData';
-import PSDKEntity from '@modelEntities/PSDKEntity';
 import { DataMoveTable, NoMoveFound } from './MovepoolTableStyle';
-import PokemonModel from '@modelEntities/pokemon/Pokemon.model';
 import { getNameType } from '@utils/getNameType';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
+import { cloneEntity } from '@utils/cloneEntity';
+import { StudioCreature, StudioCreatureForm, StudioLevelLearnableMove } from '@modelEntities/creature';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 
 type RenderEditMoveProps = {
-  learnableMove: LevelLearnableMove;
+  learnableMove: StudioLevelLearnableMove;
   index: number;
   moves: ProjectData['moves'];
   types: ProjectData['types'];
   pokemonIdentifier: PokemonIdentifierType;
-  currentEditedPokemon: PokemonModel;
-  setPokemon(newDataValues: Partial<{ [k: string]: PSDKEntity }>, newSelectedData?: Pick<SelectedDataIdentifier, 'pokemon'> | undefined): void;
+  currentEditedPokemon: StudioCreature;
+  setPokemon(newDataValues: Partial<{ [k: string]: StudioCreature }>, newSelectedData?: Pick<SelectedDataIdentifier, 'pokemon'> | undefined): void;
   moveOptions: SelectOption[];
   occurrences: MoveOccurrenceType[];
+  movePool: StudioLevelLearnableMove[];
 };
 
 type PokemonIdentifierType = {
@@ -84,35 +86,51 @@ const RenderMoveContainer = styled(DataMoveGrid)`
   margin: 0 -4px 0 -8px;
 `;
 
-const getMoveOptions = (allMoves: ProjectData['moves']): SelectOption[] =>
+const getMoveOptions = (allMoves: ProjectData['moves'], getMoveName: ReturnType<typeof useGetEntityNameText>): SelectOption[] =>
   Object.entries(allMoves)
-    .map(([value, moveData]) => ({ value, label: moveData.name(), index: moveData.id }))
+    .map(([value, moveData]) => ({ value, label: getMoveName(moveData), index: moveData.id }))
     .sort((a, b) => a.index - b.index);
 
-const getOccurrences = (form: PokemonForm) => {
+const getOccurrences = (form: StudioCreatureForm) => {
   const occurrences: MoveOccurrenceType[] = [];
-  form.levelLearnableMove.map((levelLearnableMove) => {
-    const occurrence = occurrences.find((dbs) => dbs.move.dbSymbol === levelLearnableMove.move && dbs.move.level === levelLearnableMove.level);
-    if (occurrence) occurrence.occurrence += 1;
-    else occurrences.push({ move: { dbSymbol: levelLearnableMove.move, level: levelLearnableMove.level }, occurrence: 1 });
-  });
+  form.moveSet
+    .filter((m): m is StudioLevelLearnableMove => m.klass === 'LevelLearnableMove')
+    .map((levelLearnableMove) => {
+      const occurrence = occurrences.find((dbs) => dbs.move.dbSymbol === levelLearnableMove.move && dbs.move.level === levelLearnableMove.level);
+      if (occurrence) occurrence.occurrence += 1;
+      else occurrences.push({ move: { dbSymbol: levelLearnableMove.move, level: levelLearnableMove.level }, occurrence: 1 });
+    });
   return occurrences;
 };
 
-const editLevel = (index: number, pokemonIdentifier: PokemonIdentifierType, currentEditedPokemon: PokemonModel, level: number) => {
+const editLevel = (
+  index: number,
+  movePool: StudioLevelLearnableMove[],
+  pokemonIdentifier: PokemonIdentifierType,
+  currentEditedPokemon: StudioCreature,
+  level: number
+) => {
   const currentEditedForm = currentEditedPokemon.forms[pokemonIdentifier.form];
-  currentEditedForm.levelLearnableMove[index].level = level;
-  currentEditedForm.levelLearnableMove.sort((a, b) => a.level - b.level);
+  movePool[index].level = level;
+  movePool.sort((a, b) => a.level - b.level);
+  currentEditedForm.moveSet = [...movePool, ...currentEditedForm.moveSet.filter((m) => m.klass !== 'LevelLearnableMove')];
   return currentEditedPokemon;
 };
 
-const editMove = (index: number, pokemonIdentifier: PokemonIdentifierType, currentEditedPokemon: PokemonModel, move: string) => {
-  currentEditedPokemon.forms[pokemonIdentifier.form].levelLearnableMove[index].move = move;
+const editMove = (index: number, movePool: StudioLevelLearnableMove[], currentEditedPokemon: StudioCreature, move: string) => {
+  movePool[index].move = move as DbSymbol;
   return currentEditedPokemon;
 };
 
-const deleteMove = (index: number, pokemonIdentifier: PokemonIdentifierType, currentEditedPokemon: PokemonModel) => {
-  currentEditedPokemon.forms[pokemonIdentifier.form].levelLearnableMove.splice(index, 1);
+const deleteMove = (
+  index: number,
+  movePool: StudioLevelLearnableMove[],
+  pokemonIdentifier: PokemonIdentifierType,
+  currentEditedPokemon: StudioCreature
+) => {
+  const currentEditedForm = currentEditedPokemon.forms[pokemonIdentifier.form];
+  movePool.splice(index, 1);
+  currentEditedForm.moveSet = [...movePool, ...currentEditedForm.moveSet.filter((m) => m.klass !== 'LevelLearnableMove')];
   return currentEditedPokemon;
 };
 
@@ -126,8 +144,11 @@ const RenderEditMove = ({
   setPokemon,
   moveOptions,
   occurrences,
+  movePool,
 }: RenderEditMoveProps) => {
   const { t } = useTranslation(['database_moves']);
+  const [state] = useGlobalState();
+  const getMoveName = useGetEntityNameText();
   const move = moves[learnableMove.move];
   const [currentLevel, setCurrentLevel] = useState(learnableMove.level);
 
@@ -146,7 +167,7 @@ const RenderEditMove = ({
         onBlur={(event) => {
           setCurrentLevel(Number(event.target.value));
           setPokemon({
-            [pokemonIdentifier.specie]: editLevel(index, pokemonIdentifier, currentEditedPokemon, currentLevel),
+            [pokemonIdentifier.specie]: editLevel(index, movePool, pokemonIdentifier, currentEditedPokemon, currentLevel),
           });
         }}
       />
@@ -154,17 +175,17 @@ const RenderEditMove = ({
         options={moveOptions}
         onChange={(selected) => {
           setPokemon({
-            [pokemonIdentifier.specie]: editMove(index, pokemonIdentifier, currentEditedPokemon, selected.value),
+            [pokemonIdentifier.specie]: editMove(index, movePool, currentEditedPokemon, selected.value),
           });
         }}
         noOptionsText={t('database_moves:no_option')}
-        value={{ value: learnableMove.move, label: move ? move.name() : t('database_moves:move_deleted') }}
+        value={{ value: learnableMove.move, label: move ? getMoveName(move) : t('database_moves:move_deleted') }}
         error={
           (occurrences.find((occ) => occ.move.dbSymbol === learnableMove.move && occ.move.level === learnableMove.level)?.occurrence || 1) > 1 ||
           !move
         }
       />
-      {move ? <TypeCategory type={move.type}>{getNameType(types, move.type)}</TypeCategory> : <TypeCategory type="normal">???</TypeCategory>}
+      {move ? <TypeCategory type={move.type}>{getNameType(types, move.type, state)}</TypeCategory> : <TypeCategory type="normal">???</TypeCategory>}
       {move ? (
         <MoveCategory category={move.category}>{t(`database_moves:${move.category}` as never)}</MoveCategory>
       ) : (
@@ -177,10 +198,10 @@ const RenderEditMove = ({
         <DeleteButtonOnlyIcon
           onClick={() =>
             setPokemon({
-              [pokemonIdentifier.specie]: deleteMove(index, pokemonIdentifier, currentEditedPokemon),
+              [pokemonIdentifier.specie]: deleteMove(index, movePool, pokemonIdentifier, currentEditedPokemon),
             })
           }
-          disabled={currentEditedPokemon.forms[pokemonIdentifier.form].levelLearnableMove.length === 1}
+          disabled={movePool.length === 1}
         />
       </div>
     </RenderMoveContainer>
@@ -196,12 +217,15 @@ export const MovepoolLevelLearnableTable = () => {
     setProjectDataValues: setPokemon,
   } = useProjectData('pokemon', 'pokemon');
   const { t } = useTranslation(['database_pokemon', 'database_moves']);
-  const currentEditedPokemon = pokemon[pokemonIdentifier.specie].clone();
-  const moveOptions = useMemo(() => getMoveOptions(moves), [moves]);
-  const movepool = currentEditedPokemon.forms[pokemonIdentifier.form].levelLearnableMove;
+  const currentEditedPokemon = cloneEntity(pokemon[pokemonIdentifier.specie]);
+  const getMoveName = useGetEntityNameText();
+  const moveOptions = useMemo(() => getMoveOptions(moves, getMoveName), [moves, getMoveName]);
+  const movePool = currentEditedPokemon.forms[pokemonIdentifier.form].moveSet.filter(
+    (m): m is StudioLevelLearnableMove => m.klass === 'LevelLearnableMove'
+  );
   const occurrences = getOccurrences(currentEditedPokemon.forms[pokemonIdentifier.form]);
 
-  return movepool.length === 0 ? (
+  return movePool.length === 0 ? (
     <NoMoveFound>{t('database_moves:no_option')}</NoMoveFound>
   ) : (
     <DataMoveTable>
@@ -214,7 +238,7 @@ export const MovepoolLevelLearnableTable = () => {
         <span>{t('database_moves:power')}</span>
         <span>{t('database_moves:accuracy')}</span>
       </DataMoveGrid>
-      {movepool.map((learnableMove, index) => (
+      {movePool.map((learnableMove, index) => (
         <RenderEditMove
           key={`level-learnable-${learnableMove.move}-${learnableMove.level}-${index}-${new Date().getTime()}`}
           learnableMove={learnableMove}
@@ -226,6 +250,7 @@ export const MovepoolLevelLearnableTable = () => {
           setPokemon={setPokemon}
           moveOptions={moveOptions}
           occurrences={occurrences}
+          movePool={movePool}
         />
       ))}
     </DataMoveTable>

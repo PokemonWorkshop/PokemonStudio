@@ -1,32 +1,33 @@
 import React, { useMemo } from 'react';
 import { Editor, useRefreshUI } from '@components/editor';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
-import ItemModel, { pocketMapping } from '@modelEntities/item/Item.model';
-import { ProjectText } from '@src/GlobalStateProvider';
-import { getText } from '@utils/ReadingProjectText';
+import { pocketMapping, useGetProjectText } from '@utils/ReadingProjectText';
 import { useTranslation } from 'react-i18next';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import { useProjectItems } from '@utils/useProjectData';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
+import { LOCKED_ITEM_EDITOR, StudioItem } from '@modelEntities/item';
 
-const pocketOptions = (projectText: ProjectText) =>
+const pocketOptions = (getText: ReturnType<typeof useGetProjectText>) =>
   pocketMapping
     .slice(1)
-    .map((i) => ({ value: i.toString(), label: getText(projectText, 15, i) }))
+    .map((i) => ({ value: i.toString(), label: getText(15, i) }))
     .sort((a, b) => a.label.localeCompare(b.label));
 
 type ItemGenericDataEditorProps = {
-  item: ItemModel;
+  item: StudioItem;
 };
 
 export const ItemGenericDataEditor = ({ item }: ItemGenericDataEditorProps) => {
   const { t } = useTranslation('database_items');
   const refreshUI = useRefreshUI();
-  const options = useMemo(() => (item.projectText ? pocketOptions(item.projectText) : []), [item]);
+  const getText = useGetProjectText();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const options = useMemo(() => pocketOptions(getText), [item]);
   const itemPocket = (pocketMapping[item.socket] ?? item.socket).toString();
   const { projectDataValues: items } = useProjectItems();
 
-  return item.lockedEditors.includes('generic') ? (
+  return LOCKED_ITEM_EDITOR[item.klass].includes('generic') ? (
     <></>
   ) : (
     <Editor type="edit" title={t('data')}>
