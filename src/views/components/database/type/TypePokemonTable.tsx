@@ -70,6 +70,13 @@ const RenderPokemonContainer = styled(DataPokemonGrid)`
   height: 40px;
   padding: 0 8px 0 8px;
   margin: 0 -8px 0 -8px;
+
+  & .icon {
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+    object-position: 0 100%;
+  }
 `;
 
 const TypeContainer = styled.span`
@@ -98,7 +105,11 @@ const RenderPokemon = ({ pokemon, type, state }: RenderMoveProps) => {
   return (
     <RenderPokemonContainer gap="16px">
       <span>
-        <ResourceImage imagePathInProject={pokemonIconPath(pokemon, form.form)} fallback={form.form === 0 ? undefined : pokemonIconPath(pokemon)} />
+        <ResourceImage
+          imagePathInProject={pokemonIconPath(pokemon, form.form)}
+          fallback={form.form === 0 ? undefined : pokemonIconPath(pokemon)}
+          className="icon"
+        />
       </span>
       <span className="name">{getCreatureName(pokemon)}</span>
       <TypeContainer>
