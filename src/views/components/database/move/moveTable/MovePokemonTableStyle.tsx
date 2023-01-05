@@ -45,4 +45,11 @@ export const RenderPokemonContainer = styled(DataPokemonGrid)`
   height: 40px;
   padding: 0 8px 0 8px;
   margin: 0 -8px 0 -8px;
+
+  & .icon {
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+    object-position: 0 100%;
+  }
 `;

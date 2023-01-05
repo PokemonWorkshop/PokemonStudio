@@ -70,8 +70,10 @@ const PokemonBattlerHeader = styled.div`
   height: 40px;
 
   & img {
-    max-width: 32px;
-    max-height: 32px;
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+    object-position: 0 100%;
   }
 
   & div.name-level {

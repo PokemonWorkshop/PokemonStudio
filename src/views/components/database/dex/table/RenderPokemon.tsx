@@ -41,8 +41,10 @@ const RenderPokemonContainer = styled(DataPokemonGrid).attrs<RenderPokemonContai
   }
 
   & img {
-    max-width: 32px;
-    max-height: 32px;
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+    object-position: 0 100%;
   }
 
   & .buttons:nth-child(6) {

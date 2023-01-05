@@ -26,6 +26,7 @@ const IconResourceContainer = styled(ResourceContainer)`
   & img {
     height: 32px;
     width: 32px;
+    object-position: 0 100%;
   }
 
   & div.icon-title {
