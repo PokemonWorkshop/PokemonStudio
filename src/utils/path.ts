@@ -9,7 +9,7 @@ export const join = (...strs: string[]): string => {
       .split('/')
       .filter((s) => s !== '')
       .join('/');
-    if (index === 0) return newStr;
+    if (index === 0 && !strs[0].startsWith('/')) return newStr;
     return [previousValue, newStr].join('/');
   }, '');
 };
