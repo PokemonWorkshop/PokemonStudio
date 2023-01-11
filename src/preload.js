@@ -1,5 +1,5 @@
 const { Titlebar, Color } = require('custom-electron-titlebar');
-const { ipcRenderer } = window.require('electron');
+const { ipcRenderer, webFrame } = window.require('electron');
 
 window.addEventListener('DOMContentLoaded', () => {
   if (process.platform === 'darwin' || process.platform === 'linux') return;
@@ -26,6 +26,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 /*contextBridge.exposeInMainWorld('api', */
 window.api = {
+  clearCache: () => webFrame.clearCache(),
   shortcut: {
     on: (cb) => {
       const func = (_event, args) => cb(args);

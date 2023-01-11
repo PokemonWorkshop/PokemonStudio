@@ -108,6 +108,7 @@ type SpriteResourceProps = {
 export const SpriteResource = ({ form, resource, isFemale, onResourceChoosen, onResourceClean }: SpriteResourceProps) => {
   const [state] = useGlobalState();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [flipFlap, setFlipFlap] = useState(false);
   const { t } = useTranslation(['database_pokemon', 'drop']);
   const chooseFile = useChoosefile();
   const copyFile = useCopyFile();
@@ -120,7 +121,11 @@ export const SpriteResource = ({ form, resource, isFemale, onResourceChoosen, on
     if (acceptedFiles.length > 0) {
       copyFile(
         { srcFile: acceptedFiles[0].path, destFolder: dirname(formResourcesPath(form, resource)) },
-        ({ destFile }) => onResourceChoosen(destFile, resource),
+        ({ destFile }) =>
+          setImmediate(() => {
+            onResourceChoosen(destFile, resource);
+            setFlipFlap((last) => !last);
+          }),
         ({ errorMessage }) => console.log(errorMessage)
       );
     }
@@ -131,8 +136,11 @@ export const SpriteResource = ({ form, resource, isFemale, onResourceChoosen, on
     chooseFile(
       { name: t(`database_pokemon:${resource}`), extensions: ['png'], destFolderToCopy: dirname(formResourcesPath(form, resource)) },
       ({ path: resourcePath }) => {
-        onResourceChoosen(resourcePath, resource);
-        setIsDialogOpen(false);
+        setImmediate(() => {
+          onResourceChoosen(resourcePath, resource);
+          setFlipFlap((last) => !last);
+          setIsDialogOpen(false);
+        });
       },
       () => setIsDialogOpen(false)
     );
@@ -177,7 +185,7 @@ export const SpriteResource = ({ form, resource, isFemale, onResourceChoosen, on
           }}
         />
       </button>
-      <ResourceImage imagePathInProject={formResourcesPath(form, resource)} />
+      <ResourceImage imagePathInProject={formResourcesPath(form, resource)} versionId={flipFlap ? 2 : 1} />
       <span className="title">{t(`database_pokemon:${resource}`)}</span>
     </SpriteResourceContainer>
   );

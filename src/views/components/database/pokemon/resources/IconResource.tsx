@@ -86,6 +86,7 @@ type IconResourceProps = {
 export const IconResource = ({ form, resource, isFemale, onResourceChoosen, onResourceClean }: IconResourceProps) => {
   const [state] = useGlobalState();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [flipFlap, setFlipFlap] = useState(false);
   const { t } = useTranslation('database_pokemon');
   const showItemInFolder = useShowItemInFolder();
   const copyFile = useCopyFile();
@@ -98,7 +99,11 @@ export const IconResource = ({ form, resource, isFemale, onResourceChoosen, onRe
     if (acceptedFiles.length > 0) {
       copyFile(
         { srcFile: acceptedFiles[0].path, destFolder: dirname(formResourcesPath(form, resource)) },
-        () => onResourceChoosen(acceptedFiles[0].path, resource),
+        () =>
+          setImmediate(() => {
+            onResourceChoosen(acceptedFiles[0].path, resource);
+            setFlipFlap((last) => !last);
+          }),
         ({ errorMessage }) => console.log(errorMessage)
       );
     }
@@ -109,8 +114,11 @@ export const IconResource = ({ form, resource, isFemale, onResourceChoosen, onRe
     chooseFile(
       { name: t(resource), extensions: ['png'], destFolderToCopy: dirname(formResourcesPath(form, resource)) },
       ({ path: resourcePath }) => {
-        onResourceChoosen(resourcePath, resource);
-        setIsDialogOpen(false);
+        setImmediate(() => {
+          onResourceChoosen(resourcePath, resource);
+          setFlipFlap((last) => !last);
+          setIsDialogOpen(false);
+        });
       },
       () => setIsDialogOpen(false)
     );
@@ -139,7 +147,7 @@ export const IconResource = ({ form, resource, isFemale, onResourceChoosen, onRe
   ) : (
     <IconResourceContainer onDrop={onDrop} onDragOver={onDragOver} onClick={isDialogOpen ? undefined : onClick} disabled={isDialogOpen}>
       <div className="icon-title">
-        <ResourceImage imagePathInProject={formResourcesPath(form, resource)} />
+        <ResourceImage imagePathInProject={formResourcesPath(form, resource)} versionId={flipFlap ? 2 : 1} />
         <span className="title">{t(resource)}</span>
       </div>
       <div className="buttons">
