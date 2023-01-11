@@ -34,6 +34,7 @@ export const useCopyFile = () => {
         return window.api.copyFile(
           { srcFile: state.payload.srcFile, destFile: destFile, translation: { title: t('copy_title'), message: t('copy_message', { filename }) } },
           () => {
+            window.api.clearCache();
             setState({ state: 'done' });
             callbacks?.onSuccess({ destFile });
           },

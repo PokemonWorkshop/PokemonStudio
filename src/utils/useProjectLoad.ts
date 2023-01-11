@@ -118,6 +118,7 @@ export const useProjectLoad = () => {
         );
       case 'readingVersion':
         loaderRef.current.setProgress(1, 13, tl('importing_project_reading_version'));
+        window.api.clearCache();
         return window.api.getStudioVersion(
           {},
           (projectVersion) => setState({ ...state, state: 'readProjectMetadata', studioVersion: projectVersion.studioVersion }),
