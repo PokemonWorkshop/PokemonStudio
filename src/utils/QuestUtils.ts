@@ -119,6 +119,7 @@ const earningTexts: Record<StudioQuestEarningType, (earning: StudioQuestEarning,
   earning_money: buildMoneyText,
   earning_item: buildEarningItemText,
   earning_pokemon: buildEarningPokemonText,
+  earning_egg: buildEarningPokemonText,
 };
 
 export const buildEarningText = (earning: StudioQuestEarning, state: State) => {

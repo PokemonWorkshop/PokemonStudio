@@ -59,6 +59,7 @@ export const QuestNewEarningEditor = ({ quest, onClose }: QuestNewEarningEditorP
         {newEarning.earningMethodName === 'earning_money' && <QuestEarningMoney earning={newEarning} />}
         {newEarning.earningMethodName === 'earning_item' && <QuestEarningItem earning={newEarning} />}
         {newEarning.earningMethodName === 'earning_pokemon' && <QuestEarningPokemon earning={newEarning} />}
+        {newEarning.earningMethodName === 'earning_egg' && <QuestEarningPokemon earning={newEarning} />}
         <ButtonContainer>
           <PrimaryButton onClick={onClickNew}>{t('add_earning')}</PrimaryButton>
           <DarkButton onClick={onClose}>{t('cancel')}</DarkButton>

@@ -32,7 +32,7 @@ export const QUEST_OBJECTIVE_VALIDATOR = z.object({
 export type StudioQuestObjective = z.infer<typeof QUEST_OBJECTIVE_VALIDATOR>;
 
 export const QUEST_EARNING_VALIDATOR = z.object({
-  earningMethodName: z.union([z.literal('earning_money'), z.literal('earning_item'), z.literal('earning_pokemon')]),
+  earningMethodName: z.union([z.literal('earning_money'), z.literal('earning_item'), z.literal('earning_pokemon'), z.literal('earning_egg')]),
   earningArgs: z.array(z.union([z.string(), z.number()])),
   textFormatMethodName: z.string(),
 });
@@ -71,9 +71,9 @@ export const QUEST_OBJECTIVES = [
 export type StudioQuestObjectiveType = typeof QUEST_OBJECTIVES[number];
 export type StudioQuestObjectiveCategoryType = 'interaction' | 'battle' | 'discovery' | 'exploration';
 
-export const QUEST_EARNINGS = ['earning_money', 'earning_item', 'earning_pokemon'] as const;
+export const QUEST_EARNINGS = ['earning_money', 'earning_item', 'earning_pokemon', 'earning_egg'] as const;
 export type StudioQuestEarningType = typeof QUEST_EARNINGS[number];
-export type StudioQuestEarningCategoryType = 'money' | 'item' | 'pokemon';
+export type StudioQuestEarningCategoryType = 'money' | 'item' | 'pokemon' | 'egg';
 
 export const updateIndexSpeakToBeatNpc = (quest: StudioQuest) => {
   const index = { speakTo: 0, beatNpc: 0 };

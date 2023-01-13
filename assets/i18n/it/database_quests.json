@@ -1,6 +1,6 @@
 {
   "quests": "Missioni",
-  "quest":"Missione",
+  "quest": "Missione",
   "quest_deleted": "Missione rimossa",
   "no_option": "Nessuna missione trovata",
   "new": "Nuova missione",
@@ -83,6 +83,7 @@
   "money": "Soldi",
   "item": "Strumento",
   "pokemon": "Pokémon",
+  "egg": "Uovo",
   "earning_import_info": "Puoi importare le ricompense da un'altra missione.",
   "import_earning_from": "Importa le ricompense da",
   "replace_earnings": "Sostituisci ricompense",
@@ -90,5 +91,6 @@
   "earning_money": "Soldi",
   "earning_item": "Strumento",
   "earning_pokemon": "Pokémon",
+  "earning_egg": "Uovo",
   "earning": "Ricompensa"
 }

@@ -47,6 +47,7 @@ const categoryEarning: Record<StudioQuestEarningType, StudioQuestEarningCategory
   earning_money: 'money',
   earning_item: 'item',
   earning_pokemon: 'pokemon',
+  earning_egg: 'egg',
 };
 
 type RenderEarningProps = {
