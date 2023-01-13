@@ -291,6 +291,7 @@ export const DashboardDisplay = () => {
             name="tileZoom"
             min="0.5"
             max="99"
+            step="0.1"
             value={isNaN(tileZoom) ? '' : tileZoom}
             onChange={onChangeTileZoom}
             onBlur={onBlurTileZoom}
@@ -304,6 +305,7 @@ export const DashboardDisplay = () => {
             name="characterZoom"
             min="0.5"
             max="99"
+            step="0.1"
             value={isNaN(characterZoom) ? '' : characterZoom}
             onChange={onChangeCharacterZoom}
             onBlur={onBlurCharacterZoom}
