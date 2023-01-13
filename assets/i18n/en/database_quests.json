@@ -1,6 +1,6 @@
 {
   "quests": "Quests",
-  "quest":"Quest",
+  "quest": "Quest",
   "quest_deleted": "Quest deleted",
   "no_option": "No quest found",
   "new": "New quest",
@@ -83,6 +83,7 @@
   "money": "Money",
   "item": "Item",
   "pokemon": "Pokémon",
+  "egg": "Egg",
   "earning_import_info": "You can import earnings from another quest.",
   "import_earning_from": "Import the earnings of",
   "replace_earnings": "Replace the earnings",
@@ -90,5 +91,6 @@
   "earning_money": "Money",
   "earning_item": "Item",
   "earning_pokemon": "Pokémon",
+  "earning_egg": "Egg",
   "earning": "Earning"
 }

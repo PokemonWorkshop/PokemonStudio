@@ -43,6 +43,7 @@ export const QuestEarningEditor = ({ quest, earningIndex }: QuestEarningEditorPr
         {earning.earningMethodName === 'earning_money' && <QuestEarningMoney earning={earning} />}
         {earning.earningMethodName === 'earning_item' && <QuestEarningItem earning={earning} />}
         {earning.earningMethodName === 'earning_pokemon' && <QuestEarningPokemon earning={earning} />}
+        {earning.earningMethodName === 'earning_egg' && <QuestEarningPokemon earning={earning} />}
       </InputContainer>
     </Editor>
   );

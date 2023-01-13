@@ -403,6 +403,7 @@ export const createQuestEarning = (type: StudioQuestEarningType): StudioQuestEar
     case 'earning_item':
       return { earningMethodName: type, earningArgs: ['__undef__', 1], textFormatMethodName };
     case 'earning_pokemon':
+    case 'earning_egg':
       return { earningMethodName: type, earningArgs: ['__undef__'], textFormatMethodName };
     default:
       assertUnreachable(type);

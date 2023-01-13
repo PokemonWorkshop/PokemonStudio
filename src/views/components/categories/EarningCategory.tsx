@@ -21,4 +21,9 @@ export const EarningCategory = styled(Category).attrs<EarningCategoryProps>((pro
     background: rgba(53, 175, 243, 0.12);
     color: rgba(53, 175, 243, 1);
   }
+
+  &[data-category='egg'] {
+    background: rgba(53, 175, 243, 0.12);
+    color: rgba(53, 175, 243, 1);
+  }
 `;
