@@ -5,6 +5,7 @@ import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInt
 import { ControlBar } from '@components/ControlBar';
 import { SelectQuest } from '@components/selects';
 import { StudioQuest } from '@modelEntities/quest';
+import { useSetCurrentDatabasePath } from '@utils/useSetCurrentDatabasePage';
 
 type QuestControlBarProps = {
   onChange: SelectChangeEvent;
@@ -14,6 +15,7 @@ type QuestControlBarProps = {
 
 export const QuestControlBar = ({ onChange, quest, onClickNewQuest }: QuestControlBarProps) => {
   const { t } = useTranslation('database_quests');
+  useSetCurrentDatabasePath();
 
   return (
     <ControlBar>

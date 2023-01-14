@@ -116,6 +116,8 @@ export const useProjectSave = () => {
       case 'update_project_list':
         updateProjectEditDate(state.projectPath || '');
         updateProjectStudioLocalStorage(state.projectPath || '', state.projectStudio);
+        // Save the selected identifier in locale storage
+        localStorage.setItem(`selectedDataIdentifier:${window.api.md5(state.projectStudio.title)}`, JSON.stringify(state.selectedDataIdentifier));
         return setStateSave({ state: 'reset_saving' });
       case 'reset_saving':
         setState({

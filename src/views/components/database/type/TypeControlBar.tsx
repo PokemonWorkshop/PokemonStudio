@@ -5,6 +5,7 @@ import { ControlBar, ControlBarLabelContainer } from '@components/ControlBar';
 import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { SelectType } from '@components/selects';
 import { StudioType } from '@modelEntities/type';
+import { useSetCurrentDatabasePath } from '@utils/useSetCurrentDatabasePage';
 
 type TypeControlBarProps = {
   onChange: SelectChangeEvent;
@@ -15,6 +16,7 @@ type TypeControlBarProps = {
 
 export const TypeControlBar = ({ onChange, onClickNewType, type, onClickTypeTable }: TypeControlBarProps) => {
   const { t } = useTranslation('database_types');
+  useSetCurrentDatabasePath();
 
   return (
     <ControlBar>

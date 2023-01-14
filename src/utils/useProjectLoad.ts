@@ -296,6 +296,7 @@ export const useProjectLoad = () => {
               .getLastPSDKVersion()
               .then((lastPSDKVersion) => {
                 loaderRef.current.setProgress(13, 13, tl('loading_project_identifier'));
+                sessionStorage.clear(); // Clear the whole session storage when loading is done so we don't carry garbage from other projects
                 const selectedDataIdentifier = generateSelectedIdentifier(state.preState);
                 setGlobalState({
                   ...state.preState,

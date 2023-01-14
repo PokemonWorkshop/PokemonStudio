@@ -20,6 +20,7 @@ import { GroupPage } from '../Group.page';
 import { ZonePage } from '../Zone.page';
 import { DexPage } from '../Dex.page';
 import { PokemonResourcesPage } from '../Pokemon.Resources.page';
+import { SelectedDataIdentifier } from '@src/GlobalStateProvider';
 
 const DatabasePageStyle = styled.div`
   display: flex;
@@ -84,7 +85,7 @@ const DatabasePageComponent = () => {
           <DexPage />
         </Route>
         <Route path={`${path}`}>
-          <Redirect to={`${path}/pokemon`} />
+          <Redirect to={sessionStorage.getItem('lastDatabasePage') || `${path}/pokemon`} />
         </Route>
       </Switch>
     </DatabasePageStyle>

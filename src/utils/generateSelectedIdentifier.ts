@@ -1,5 +1,6 @@
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { SelectedDataIdentifier } from '@src/GlobalStateProvider';
+import log from 'electron-log';
 import { getEntityNameTextUsingTextId } from './ReadingProjectText';
 import { PreGlobalState } from './useProjectLoad';
 
@@ -14,29 +15,74 @@ const firstById = <T extends { id: number; dbSymbol: string }>(data: Record<stri
   return Object.values(data).sort((a, b) => a.id - b.id)[0].dbSymbol;
 };
 
+const getSelectedIdentifierFromStorage = (preState: PreGlobalState) => {
+  try {
+    const identifiers = localStorage.getItem(`selectedDataIdentifier:${window.api.md5(preState.projectStudio.title)}`);
+    if (identifiers) return JSON.parse(identifiers) as unknown as SelectedDataIdentifier;
+  } catch (error) {
+    log.error('Failed to get data identifier from local storage');
+  }
+  return {} as unknown as SelectedDataIdentifier;
+};
+
+const getSelectedIdentifier = <T extends keyof SelectedDataIdentifier>(
+  preState: PreGlobalState,
+  selectedFromStorage: SelectedDataIdentifier,
+  key: T,
+  dataKey: keyof PreGlobalState['projectData']
+): SelectedDataIdentifier[T] | undefined => {
+  if (key === 'pokemon') {
+    const identifier = selectedFromStorage.pokemon;
+    if (!identifier) return undefined;
+
+    const creature = preState.projectData.pokemon[identifier.specie];
+    if (!creature) return undefined;
+
+    return {
+      specie: identifier.specie,
+      form: creature.forms[identifier.form] ? identifier.form : 0, // For some reason it's not actually storing the form (wtf)
+    }; // Note: typescript is lost for whatever reeason, let's see on updates of typescript if it's no longer lost before rewriting this perfectly valid code
+  }
+
+  const identifier = selectedFromStorage[key];
+  if (preState.projectData[dataKey][identifier]) return identifier;
+
+  return undefined;
+};
+
+const getMapLinkIdentifier = (selectedFromStorage: SelectedDataIdentifier, maps: PreGlobalState['rmxpMaps'], validMaps: number[]) => {
+  const expectedMapId = Number(selectedFromStorage.mapLink);
+
+  if (maps.find(({ id }) => id === expectedMapId)) return expectedMapId.toString();
+
+  return (
+    maps
+      .filter(({ id }) => validMaps.includes(id))
+      .sort((a, b) => a.id - b.id)[0]
+      ?.id.toString() || '__undef__'
+  );
+};
+
 export const generateSelectedIdentifier = (preState: PreGlobalState): SelectedDataIdentifier => {
   const projectData = preState.projectData;
+  const selectedFromStorage = getSelectedIdentifierFromStorage(preState);
   const validMaps = Object.values(projectData.zones)
     .filter((zone) => zone.isFlyAllowed && !zone.isWarpDisallowed)
     .flatMap((zone) => zone.maps);
   return {
-    pokemon: {
+    pokemon: getSelectedIdentifier(preState, selectedFromStorage, 'pokemon', 'pokemon') || {
       specie: firstById(projectData.pokemon),
       form: 0,
     },
-    move: firstById(projectData.moves),
-    item: firstById(projectData.items),
-    quest: firstById(projectData.quests),
-    trainer: firstById(projectData.trainers),
-    type: firstByNameUsingTextId(projectData.types, preState),
-    zone: firstById(projectData.zones),
-    ability: firstByNameUsingTextId(projectData.abilities, preState),
-    group: firstById(projectData.groups),
-    dex: firstById(projectData.dex),
-    mapLink:
-      Object.values(preState.rmxpMaps)
-        .filter(({ id }) => validMaps.includes(id))
-        .sort((a, b) => a.id - b.id)[0]
-        ?.id.toString() || '__undef__',
+    move: getSelectedIdentifier(preState, selectedFromStorage, 'move', 'moves') || firstById(projectData.moves),
+    item: getSelectedIdentifier(preState, selectedFromStorage, 'item', 'items') || firstById(projectData.items),
+    quest: getSelectedIdentifier(preState, selectedFromStorage, 'quest', 'quests') || firstById(projectData.quests),
+    trainer: getSelectedIdentifier(preState, selectedFromStorage, 'trainer', 'trainers') || firstById(projectData.trainers),
+    type: getSelectedIdentifier(preState, selectedFromStorage, 'type', 'types') || firstByNameUsingTextId(projectData.types, preState),
+    zone: getSelectedIdentifier(preState, selectedFromStorage, 'zone', 'zones') || firstById(projectData.zones),
+    ability: getSelectedIdentifier(preState, selectedFromStorage, 'ability', 'abilities') || firstByNameUsingTextId(projectData.abilities, preState),
+    group: getSelectedIdentifier(preState, selectedFromStorage, 'group', 'groups') || firstById(projectData.groups),
+    dex: getSelectedIdentifier(preState, selectedFromStorage, 'dex', 'dex') || firstById(projectData.dex),
+    mapLink: getMapLinkIdentifier(selectedFromStorage, preState.rmxpMaps, validMaps),
   };
 };

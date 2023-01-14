@@ -1,5 +1,6 @@
 const { Titlebar, Color } = require('custom-electron-titlebar');
 const { ipcRenderer, webFrame } = window.require('electron');
+const crypto = require('crypto');
 
 window.addEventListener('DOMContentLoaded', () => {
   if (process.platform === 'darwin' || process.platform === 'linux') return;
@@ -27,6 +28,7 @@ window.addEventListener('DOMContentLoaded', () => {
 /*contextBridge.exposeInMainWorld('api', */
 window.api = {
   clearCache: () => webFrame.clearCache(),
+  md5: (value) => crypto.createHash('md5').update(value, 'utf8').digest().toString('hex'),
   shortcut: {
     on: (cb) => {
       const func = (_event, args) => cb(args);
