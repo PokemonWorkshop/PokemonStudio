@@ -5,6 +5,7 @@ import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInt
 import { ControlBar } from '@components/ControlBar';
 import { SelectAbility } from '@components/selects';
 import { StudioAbility } from '@modelEntities/ability';
+import { useSetCurrentDatabasePath } from '@utils/useSetCurrentDatabasePage';
 
 type AbilityControlBarProps = {
   onChange: SelectChangeEvent;
@@ -13,6 +14,7 @@ type AbilityControlBarProps = {
 };
 
 export const AbilityControlBar = ({ onChange, ability, onClickNewAbility }: AbilityControlBarProps) => {
+  useSetCurrentDatabasePath();
   const { t } = useTranslation('database_abilities');
 
   return (

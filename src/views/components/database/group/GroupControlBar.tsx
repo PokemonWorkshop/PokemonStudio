@@ -5,6 +5,7 @@ import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInt
 import { ControlBar } from '@components/ControlBar';
 import { SelectGroup } from '@components/selects';
 import { StudioGroup } from '@modelEntities/group';
+import { useSetCurrentDatabasePath } from '@utils/useSetCurrentDatabasePage';
 
 type GroupControlBarProps = {
   onChange: SelectChangeEvent;
@@ -14,6 +15,7 @@ type GroupControlBarProps = {
 
 export const GroupControlBar = ({ onChange, group, onClickNewGroup }: GroupControlBarProps) => {
   const { t } = useTranslation('database_groups');
+  useSetCurrentDatabasePath();
 
   return (
     <ControlBar>

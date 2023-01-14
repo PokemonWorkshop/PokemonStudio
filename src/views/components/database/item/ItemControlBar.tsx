@@ -5,6 +5,7 @@ import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInt
 import { ControlBar } from '@components/ControlBar';
 import { SelectItem } from '@components/selects';
 import { StudioItem } from '@modelEntities/item';
+import { useSetCurrentDatabasePath } from '@utils/useSetCurrentDatabasePage';
 
 type ItemControlBarProps = {
   onChange: SelectChangeEvent;
@@ -14,6 +15,7 @@ type ItemControlBarProps = {
 
 export const ItemControlBar = ({ onChange, item, onClickNewItem }: ItemControlBarProps) => {
   const { t } = useTranslation('database_items');
+  useSetCurrentDatabasePath();
 
   return (
     <ControlBar>

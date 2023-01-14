@@ -5,6 +5,7 @@ import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInt
 import { ControlBar } from '@components/ControlBar';
 import { SelectDex } from '@components/selects';
 import { StudioDex } from '@modelEntities/dex';
+import { useSetCurrentDatabasePath } from '@utils/useSetCurrentDatabasePage';
 
 type DexControlBarProps = {
   onChange: SelectChangeEvent;
@@ -14,6 +15,7 @@ type DexControlBarProps = {
 
 export const DexControlBar = ({ onChange, dex, onClickNewDex }: DexControlBarProps) => {
   const { t } = useTranslation('database_dex');
+  useSetCurrentDatabasePath();
 
   return (
     <ControlBar>

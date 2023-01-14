@@ -17,6 +17,7 @@ declare global {
   interface Window {
     api: {
       clearCache: () => void;
+      md5: (value: string) => string;
       shortcut: {
         on: (cb: (shortcut: StudioShortcut) => unknown) => (event: IpcRendererEvent, args: unknown) => void;
         removeListener: (listener: (event: IpcRendererEvent, args: unknown) => void) => void;

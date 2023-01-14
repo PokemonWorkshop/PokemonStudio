@@ -5,6 +5,7 @@ import { ControlBar, ControlBarButtonContainer, ControlBarLabelContainer } from 
 import { useTranslation } from 'react-i18next';
 import { PokemonControlBarProps } from './PokemonControlBarPropsInterface';
 import { SelectPokemon, SelectPokemonForm } from '@components/selects';
+import { useSetCurrentDatabasePath } from '@utils/useSetCurrentDatabasePage';
 
 export const PokemonControlBar = ({
   onPokemonChange,
@@ -14,6 +15,7 @@ export const PokemonControlBar = ({
   currentPokemonWithForm,
 }: PokemonControlBarProps) => {
   const { t } = useTranslation(['database_pokemon']);
+  useSetCurrentDatabasePath();
 
   return (
     <ControlBar>

@@ -5,6 +5,7 @@ import { ControlBar } from '@components/ControlBar';
 import { SelectZone } from '@components/selects';
 import { SecondaryButtonWithPlusIcon } from '@components/buttons';
 import { StudioZone } from '@modelEntities/zone';
+import { useSetCurrentDatabasePath } from '@utils/useSetCurrentDatabasePage';
 
 type ZoneControlBarProps = {
   onChange: SelectChangeEvent;
@@ -14,6 +15,7 @@ type ZoneControlBarProps = {
 
 export const ZoneControlBar = ({ onChange, zone, onClickNewZone }: ZoneControlBarProps) => {
   const { t } = useTranslation('database_zones');
+  useSetCurrentDatabasePath();
 
   return (
     <ControlBar>

@@ -4,9 +4,11 @@ import { SecondaryButtonWithPlusIcon } from '@components/buttons';
 import { MoveControlBarProps } from './MoveControlBarPropsInterface';
 import { ControlBar } from '@components/ControlBar';
 import { SelectMove } from '@components/selects';
+import { useSetCurrentDatabasePath } from '@utils/useSetCurrentDatabasePage';
 
 export const MoveControlBar = ({ onMoveChange, move, onClickNewMove }: MoveControlBarProps) => {
   const { t } = useTranslation(['database_moves']);
+  useSetCurrentDatabasePath();
 
   return (
     <ControlBar>
