@@ -1,5 +1,8 @@
 import { spawn } from 'child_process';
-import { RMXP2StudioSafetyNet } from './PSDKIPC/psdk.exec.channel.service';
+import path from 'path';
+import { generatePSDKBatFileContent } from '@services/generatePSDKBatFileContent';
+import { writeFileSync, existsSync, readFileSync, renameSync } from 'fs';
+import { getPSDKBinariesPath } from '@services/getPSDKVersion';
 
 export const getSpawnArgs = (projectPath: string, ...args: string[]): [string, string[]] => {
   if (process.platform === 'win32') {
@@ -8,6 +11,23 @@ export const getSpawnArgs = (projectPath: string, ...args: string[]): [string, s
     return ['./game-linux.sh', args];
   } else {
     return ['./game.rb', args];
+  }
+};
+
+export const RMXP2StudioSafetyNet = (projectPath: string) => {
+  const psdkBatPath = path.join(projectPath, 'psdk.bat');
+  const psdkBatContent = generatePSDKBatFileContent();
+  const realPsdkBatContent = existsSync(psdkBatPath) && readFileSync(psdkBatPath).toString('utf-8');
+  if (realPsdkBatContent !== psdkBatContent) writeFileSync(psdkBatPath, psdkBatContent);
+
+  const gameRbPath = path.join(projectPath, 'Game.rb');
+  const gameRbContent = readFileSync(path.join(getPSDKBinariesPath(), 'Game.rb')).toString('utf-8');
+  const realgameRbContent = existsSync(gameRbPath) && readFileSync(gameRbPath).toString('utf-8');
+  if (realgameRbContent !== gameRbContent) writeFileSync(gameRbPath, gameRbContent);
+
+  const pokemonSDKFolder = path.join(projectPath, 'pokemonsdk');
+  if (!existsSync(path.join(projectPath, '.git')) && existsSync(pokemonSDKFolder)) {
+    renameSync(pokemonSDKFolder, path.join(projectPath, 'pokemonsdk.old'));
   }
 };
 

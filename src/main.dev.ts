@@ -15,7 +15,6 @@ import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
-import { PSDKExecChannelService } from '@services/PSDKIPC/psdk.exec.channel.service';
 import { getPSDKBinariesPath, getPSDKVersion } from '@services/getPSDKVersion';
 import { getLastPSDKVersion } from '@services/getLastPSDKVersion';
 import { updatePSDK } from '@services/updatePSDK';
@@ -197,9 +196,6 @@ ipcMain.on('window-is-maximized', (event) => {
   event.returnValue = BrowserWindow.fromWebContents(event.sender)?.isMaximized();
 });
 
-const ipcChannels = [new PSDKExecChannelService()];
-
-ipcChannels.forEach((channel) => channel.registerChannel(ipcMain));
 ipcMain.handle('get-psdk-binaries-path', () => getPSDKBinariesPath());
 ipcMain.handle('get-psdk-version', () => getPSDKVersion());
 ipcMain.handle('get-app-version', () => app.getVersion());

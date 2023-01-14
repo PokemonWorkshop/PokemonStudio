@@ -7,7 +7,6 @@ export { DeleteButtonOnlyIcon } from './DeleteButtonOnlyIcon';
 export { SaveProjectButton } from './SaveProjectButton';
 export { EditButtonOnlyIcon } from './EditButtonOnlyIcon';
 export { ClearButtonOnlyIcon } from './ClearButtonOnlyIcon';
-export { ImportProjectButton } from './ImportProjectButton';
 export { CreateProjectButton } from './CreateProjectButton';
 export { PlayButton } from './PlayButton';
 export { FolderButtonOnlyIcon } from './FolderButtonOnlyIcon';

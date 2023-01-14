@@ -2,7 +2,7 @@ import { BrowserWindow, dialog, IpcMainEvent, IpcMain } from 'electron';
 import log from 'electron-log';
 import path from 'path';
 
-export type ProjectFileType = 'studio' | 'rxproj';
+export type ProjectFileType = 'studio';
 
 const chooseProjectFileToOpen = async (event: IpcMainEvent, payload: { fileType: ProjectFileType }) => {
   log.info('choose-project-file-to-open', payload);
