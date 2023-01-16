@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { DataBlockWithAction, DataBlockWrapper } from '@components/database/dataBlocks';
@@ -19,11 +19,9 @@ import { GroupBattlerImportEditor } from '@components/database/group/editors/Gro
 import { PokemonBattlerListEditor } from '@components/pokemonBattlerList/editors';
 import { CurrentBattlerType } from '@components/pokemonBattlerList/PokemonBattlerList';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
-import { showNotification } from '@utils/showNotification';
 import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
-import { StudioGroupTool } from '@modelEntities/group';
 import { defineRelationCustomCondition } from '@utils/GroupUtils';
 import { cleanExpandPokemonSetup, cleanNaNValue } from '@utils/cleanNaNValue';
 import { cloneEntity } from '@utils/cloneEntity';
@@ -111,13 +109,6 @@ export const GroupPage = () => {
     group: <GroupDeletion type="group" onClose={onCloseDeletion} />,
     battler: <GroupDeletion type="battler" battlerIndex={currentBattler.index} onClose={onCloseDeletion} />,
   };
-
-  useEffect(() => {
-    if ((group.tool as StudioGroupTool & 'HeadButt') === 'HeadButt') {
-      showNotification('warning', t('title_data_modification'), t('warning_headbutt_data_change'));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <DatabasePageStyle>
