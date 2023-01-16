@@ -1,28 +1,31 @@
 import { linkResourcesToCreatures } from '@src/migrations/linkResourcesToCreatures';
+import { migrateHeadbutt } from '@src/migrations/migrateHeadbutt';
 import { migrateMapLinks } from '@src/migrations/migrateMapLinks';
 import { IpcMainEvent, IpcMain } from 'electron';
 import log from 'electron-log';
 
 export type MigrationTask = (event: IpcMainEvent, projectPath: string) => Promise<void>;
 
+// Don't forget to extend those array with the new tasks that gets added by the time!
 const MIGRATIONS: Record<string, MigrationTask[]> = {
-  '1.0.0': [migrateMapLinks, linkResourcesToCreatures], // Don't forget to extend those array with the new tasks that gets added by the time!
-  '1.0.1': [migrateMapLinks, linkResourcesToCreatures],
-  '1.0.2': [migrateMapLinks, linkResourcesToCreatures],
-  '1.1.0': [linkResourcesToCreatures],
-  '1.1.1': [linkResourcesToCreatures],
-  '1.2.0': [linkResourcesToCreatures],
-  '1.3.0': [linkResourcesToCreatures], // Don't forget to add the official version coming up
+  '1.0.0': [migrateMapLinks, linkResourcesToCreatures, migrateHeadbutt],
+  '1.0.1': [migrateMapLinks, linkResourcesToCreatures, migrateHeadbutt],
+  '1.0.2': [migrateMapLinks, linkResourcesToCreatures, migrateHeadbutt],
+  '1.1.0': [linkResourcesToCreatures, migrateHeadbutt],
+  '1.1.1': [linkResourcesToCreatures, migrateHeadbutt],
+  '1.2.0': [linkResourcesToCreatures, migrateHeadbutt],
+  '1.3.0': [linkResourcesToCreatures, migrateHeadbutt], // Don't forget to add the official version coming up
 };
 
+// Don't forget to extend those array with the new tasks that gets added by the time!
 const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
-  '1.0.0': ['Migrate MapLinks', 'Link the resources to the Pokémon'], // Don't forget to extend those array with the new tasks that gets added by the time!
-  '1.0.1': ['Migrate MapLinks', 'Link the resources to the Pokémon'],
-  '1.0.2': ['Migrate MapLinks', 'Link the resources to the Pokémon'],
-  '1.1.0': ['Link the resources to the Pokémon'],
-  '1.1.1': ['Link the resources to the Pokémon'],
-  '1.2.0': ['Link the resources to the Pokémon'],
-  '1.3.0': ['Link the resources to the Pokémon'], // Don't forget to add the official version coming up
+  '1.0.0': ['Migrate MapLinks', 'Link the resources to the Pokémon', 'Move Headbutt tool in the system tag'],
+  '1.0.1': ['Migrate MapLinks', 'Link the resources to the Pokémon', 'Move Headbutt tool in the system tag'],
+  '1.0.2': ['Migrate MapLinks', 'Link the resources to the Pokémon', 'Move Headbutt tool in the system tag'],
+  '1.1.0': ['Link the resources to the Pokémon', 'Move Headbutt tool in the system tag'],
+  '1.1.1': ['Link the resources to the Pokémon', 'Move Headbutt tool in the system tag'],
+  '1.2.0': ['Link the resources to the Pokémon', 'Move Headbutt tool in the system tag'],
+  '1.3.0': ['Link the resources to the Pokémon', 'Move Headbutt tool in the system tag'], // Don't forget to add the official version coming up
 };
 
 const migrateData = async (event: IpcMainEvent, payload: { projectPath: string; projectVersion: string }) => {

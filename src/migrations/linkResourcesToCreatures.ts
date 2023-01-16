@@ -12,6 +12,7 @@ import {
   CREATURE_RESOURCES_VALIDATOR,
 } from '@modelEntities/creature';
 import { z } from 'zod';
+import { deletePSDKDatFile } from './migrateUtils';
 
 const PRE_MIGRATION_CREATURE_VALIDATOR = CREATURE_VALIDATOR.extend({
   forms: z.array(CREATURE_FORM_VALIDATOR.omit({ resources: true })).nonempty(),
@@ -30,11 +31,6 @@ const DEFAULT_CREATURE_RESOURCE: StudioCreatureResources = {
   character: '000',
   characterShiny: '000',
   cry: '000cry',
-};
-
-const deletePSDKDatFile = (projectPath: string) => {
-  const psdkDatFilePath = path.join(projectPath, 'Data', 'Studio', 'psdk.dat');
-  if (fs.existsSync(psdkDatFilePath)) fs.unlinkSync(psdkDatFilePath);
 };
 
 type DexResource = 'footprints' | 'pokeback' | 'pokebackshiny' | 'pokefront' | 'pokefrontshiny' | 'pokeicon';

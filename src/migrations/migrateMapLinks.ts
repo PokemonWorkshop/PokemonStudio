@@ -3,11 +3,7 @@ import fs from 'fs';
 import fsPromise from 'fs/promises';
 import path from 'path';
 import { isMarshalHash, Marshal } from 'ts-marshal';
-
-const deletePSDKDatFile = (projectPath: string) => {
-  const psdkDatFilePath = path.join(projectPath, 'Data', 'Studio', 'psdk.dat');
-  if (fs.existsSync(psdkDatFilePath)) fs.unlinkSync(psdkDatFilePath);
-};
+import { deletePSDKDatFile } from './migrateUtils';
 
 const loadMapLinkData = async (projectPath: string): Promise<[string, number[]][]> => {
   const mapLinkFilename = path.join(projectPath, 'Data', 'PSDK', 'Maplinks.rxdata');
