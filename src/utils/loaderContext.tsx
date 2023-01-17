@@ -16,13 +16,14 @@ type LoaderState = {
   errorTitle?: LoaderErrorTitle;
   errorText: string;
   isOpen: boolean;
+  isLogsAvailable: boolean;
 };
 
 export type LoaderContext = LoaderState & {
   close: () => void;
   open: (thingInProgress: LoaderTitle, step: number, total: number, stepText: string) => void;
   setProgress: (step: number, total: number, stepText: string) => void;
-  setError: (errorTitle: LoaderErrorTitle, errorText: string) => void;
+  setError: (errorTitle: LoaderErrorTitle, errorText: string, isLogsAvailable?: boolean) => void;
 };
 
 const LoaderContextHolder = createContext<LoaderContext>({
@@ -33,10 +34,11 @@ const LoaderContextHolder = createContext<LoaderContext>({
   errorTitle: undefined,
   errorText: '',
   isOpen: false,
+  isLogsAvailable: false,
   close: () => null,
   open: (_thingInProgress: LoaderTitle, _step: number, _total: number, _stepText: string) => null,
   setProgress: (_step: number, _total: number, _stepText: string) => null,
-  setError: (_errorTitle: LoaderErrorTitle, _errorText: string) => null,
+  setError: (_errorTitle: LoaderErrorTitle, _errorText: string, _isLogsAvailable?: boolean) => null,
 });
 
 export const useLoaderContext = () => useContext(LoaderContextHolder);
@@ -62,6 +64,7 @@ const useLoaderContextService = (): LoaderContext => {
     errorTitle: undefined,
     errorText: '',
     isOpen: false,
+    isLogsAvailable: false,
   });
 
   return {
@@ -85,11 +88,12 @@ const useLoaderContextService = (): LoaderContext => {
         total,
         stepText,
       }),
-    setError: (errorTitle: LoaderErrorTitle, errorText: string) =>
+    setError: (errorTitle: LoaderErrorTitle, errorText: string, isLogsAvailable?: boolean) =>
       setLoaderState({
         ...loaderState,
         errorTitle,
         errorText,
+        isLogsAvailable: isLogsAvailable || false,
       }),
   };
 };

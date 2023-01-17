@@ -33,5 +33,6 @@
   "importing_project_reading_version": "Reading project version",
   "importing_project_writing_meta": "Writing project meta",
   "importing_project_checking": "Checking project",
-  "importing_not_import_studio_project": "You can not import a Pokémon Studio project."
+  "importing_not_import_studio_project": "You can not import a Pokémon Studio project.",
+  "integrity_message": "{{count}} non-compliant files have been detected and have not been loaded. You can get more information by accessing the Pokémon Studio logs."
 }

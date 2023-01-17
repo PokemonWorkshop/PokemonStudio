@@ -34,6 +34,7 @@ import { ZONE_VALIDATOR } from '@modelEntities/zone';
 import { TYPE_VALIDATOR } from '@modelEntities/type';
 import { QUEST_VALIDATOR } from '@modelEntities/quest';
 import { PROJECT_VALIDATOR, StudioProject } from '@modelEntities/project';
+import { z } from 'zod';
 
 export type PreGlobalState = Omit<
   State,
@@ -49,6 +50,7 @@ export type PreGlobalState = Omit<
 > & { projectPath: string };
 type ProjectLoadFailureCallback = (error: { errorMessage: string }) => void;
 type ProjectLoadSuccessCallback = (payload: Record<string, never>) => void;
+type ProjectLoadIntegrityFailureCallback = (count: number) => void;
 type ProjectLoadStateObject =
   | { state: 'done' | 'choosingProjectFile' }
   | { state: 'readingVersion'; projectDirName: string }
@@ -80,7 +82,7 @@ type ProjectLoadStateObject =
       projectData: ProjectDataFromBackEnd;
       projectTexts: ProjectText;
     }
-  | { state: 'finalizeGlobalState'; preState: PreGlobalState };
+  | { state: 'finalizeGlobalState'; preState: PreGlobalState; integrityFailureCount: number };
 
 const fail = (callbacks: { onFailure: ProjectLoadFailureCallback } | undefined, error: unknown) => {
   if (callbacks) {
@@ -89,11 +91,30 @@ const fail = (callbacks: { onFailure: ProjectLoadFailureCallback } | undefined, 
   }
 };
 
+const countZodDataIntegrityFailure = <I extends z.ZodRawShape>(inputObjects: string[], validator: z.ZodObject<I>, count: { count: number }) => {
+  const result = deserializeZodData(inputObjects, validator);
+  count.count += result.integrityFailureCount.count;
+  return result.input;
+};
+
+const countZodDiscriminatedDataIntegrityFailure = <K extends string, Options extends z.ZodDiscriminatedUnionOption<K>[]>(
+  inputObjects: string[],
+  validator: z.ZodDiscriminatedUnion<K, Options>,
+  count: { count: number }
+) => {
+  const result = deserializeZodDiscriminatedData(inputObjects, validator);
+  count.count += result.integrityFailureCount.count;
+  return result.input;
+};
+
 export const useProjectLoad = () => {
   const loaderRef = useLoaderRef();
   const [, setGlobalState] = useGlobalState();
   const { t: tl } = useTranslation('loader');
-  const [callbacks, setCallbacks] = useState<{ onFailure: ProjectLoadFailureCallback; onSuccess: ProjectLoadSuccessCallback } | undefined>(undefined);
+  const [callbacks, setCallbacks] = useState<
+    | { onFailure: ProjectLoadFailureCallback; onSuccess: ProjectLoadSuccessCallback; onIntegrityFailure: ProjectLoadIntegrityFailureCallback }
+    | undefined
+  >(undefined);
   const [state, setState] = useState<ProjectLoadStateObject>({ state: 'done' });
 
   useEffect(() => {
@@ -254,19 +275,20 @@ export const useProjectLoad = () => {
       case 'deserializeProjectData':
         loaderRef.current.setProgress(10, 13, tl('loading_project_data_deserialization'));
         try {
+          const integrityFailureCount = { count: 0 };
           const projectText = state.projectTexts;
           const projectData: ProjectData = {
-            items: zodDataToEntries(deserializeZodDiscriminatedData(state.projectData.items, ITEM_VALIDATOR)),
-            moves: zodDataToEntries(deserializeZodData(state.projectData.moves, MOVE_VALIDATOR)),
-            pokemon: zodDataToEntries(deserializeZodData(state.projectData.pokemon, CREATURE_VALIDATOR)),
-            quests: zodDataToEntries(deserializeZodData(state.projectData.quests, QUEST_VALIDATOR)),
-            trainers: zodDataToEntries(deserializeZodData(state.projectData.trainers, TRAINER_VALIDATOR)),
-            types: zodDataToEntries(deserializeZodData(state.projectData.types, TYPE_VALIDATOR)),
-            zones: zodDataToEntries(deserializeZodData(state.projectData.zones, ZONE_VALIDATOR)),
-            abilities: zodDataToEntries(deserializeZodData(state.projectData.abilities, ABILITY_VALIDATOR)),
-            groups: zodDataToEntries(deserializeZodData(state.projectData.groups, GROUP_VALIDATOR)),
-            dex: zodDataToEntries(deserializeZodData(state.projectData.dex, DEX_VALIDATOR)),
-            mapLinks: zodDataToEntries(deserializeZodData(state.projectData.maplinks, MAP_LINK_VALIDATOR)),
+            items: zodDataToEntries(countZodDiscriminatedDataIntegrityFailure(state.projectData.items, ITEM_VALIDATOR, integrityFailureCount)),
+            moves: zodDataToEntries(countZodDataIntegrityFailure(state.projectData.moves, MOVE_VALIDATOR, integrityFailureCount)),
+            pokemon: zodDataToEntries(countZodDataIntegrityFailure(state.projectData.pokemon, CREATURE_VALIDATOR, integrityFailureCount)),
+            quests: zodDataToEntries(countZodDataIntegrityFailure(state.projectData.quests, QUEST_VALIDATOR, integrityFailureCount)),
+            trainers: zodDataToEntries(countZodDataIntegrityFailure(state.projectData.trainers, TRAINER_VALIDATOR, integrityFailureCount)),
+            types: zodDataToEntries(countZodDataIntegrityFailure(state.projectData.types, TYPE_VALIDATOR, integrityFailureCount)),
+            zones: zodDataToEntries(countZodDataIntegrityFailure(state.projectData.zones, ZONE_VALIDATOR, integrityFailureCount)),
+            abilities: zodDataToEntries(countZodDataIntegrityFailure(state.projectData.abilities, ABILITY_VALIDATOR, integrityFailureCount)),
+            groups: zodDataToEntries(countZodDataIntegrityFailure(state.projectData.groups, GROUP_VALIDATOR, integrityFailureCount)),
+            dex: zodDataToEntries(countZodDataIntegrityFailure(state.projectData.dex, DEX_VALIDATOR, integrityFailureCount)),
+            mapLinks: zodDataToEntries(countZodDataIntegrityFailure(state.projectData.maplinks, MAP_LINK_VALIDATOR, integrityFailureCount)),
           };
           setState({
             ...state,
@@ -279,6 +301,7 @@ export const useProjectLoad = () => {
               projectText,
               rmxpMaps: state.projectData.rmxpMaps,
             },
+            integrityFailureCount: integrityFailureCount.count,
           });
         } catch (error) {
           setState({ state: 'done' });
@@ -317,7 +340,8 @@ export const useProjectLoad = () => {
                 });
                 updateProjectStudio(state.preState.projectPath, state.preState.projectStudio);
                 setState({ state: 'done' });
-                callbacks?.onSuccess({});
+                if (state.integrityFailureCount) callbacks?.onIntegrityFailure(state.integrityFailureCount);
+                else callbacks?.onSuccess({});
               })
               .catch((error) => {
                 setState({ state: 'done' });
@@ -331,8 +355,13 @@ export const useProjectLoad = () => {
     }
   }, [state, callbacks]);
 
-  return (payload: { projectDirName?: string }, onSuccess: ProjectLoadSuccessCallback, onFailure: ProjectLoadFailureCallback) => {
-    setCallbacks({ onFailure, onSuccess });
+  return (
+    payload: { projectDirName?: string },
+    onSuccess: ProjectLoadSuccessCallback,
+    onFailure: ProjectLoadFailureCallback,
+    onIntegrityFailure: ProjectLoadIntegrityFailureCallback
+  ) => {
+    setCallbacks({ onFailure, onSuccess, onIntegrityFailure });
     setState(payload.projectDirName ? { state: 'readingVersion', projectDirName: payload.projectDirName } : { state: 'choosingProjectFile' });
   };
 };

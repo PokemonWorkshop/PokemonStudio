@@ -33,5 +33,6 @@
   "importing_project_reading_version": "Lettura della versione del progetto",
   "importing_project_writing_meta": "Salvataggio dei metadati del progetto",
   "importing_project_checking": "Audit del progetto",
-  "importing_not_import_studio_project": "Non è possibile importare un progetto di Pokémon Studio."
+  "importing_not_import_studio_project": "Non è possibile importare un progetto di Pokémon Studio.",
+  "integrity_message": "Sono stati rilevati {{count}} file non conformi che non sono stati caricati. Ulteriori informazioni sono disponibili nei registri di Pokémon Studio."
 }

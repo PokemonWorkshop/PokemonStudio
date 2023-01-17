@@ -81,7 +81,7 @@ type ProjectCardProps = {
 };
 
 export const ProjectCard = ({ project, onDeleteProjectToList }: ProjectCardProps) => {
-  const { t } = useTranslation(['homepage']);
+  const { t } = useTranslation(['homepage', 'loader']);
   const loaderRef = useLoaderRef();
   const projectLoad = useProjectLoad();
   const history = useHistory();
@@ -95,7 +95,8 @@ export const ProjectCard = ({ project, onDeleteProjectToList }: ProjectCardProps
         loaderRef.current.close();
         history.push('/dashboard');
       },
-      ({ errorMessage }) => loaderRef.current.setError('loading_project_error', errorMessage)
+      ({ errorMessage }) => loaderRef.current.setError('loading_project_error', errorMessage),
+      (count) => loaderRef.current.setError('loading_project_error', t('loader:integrity_message', { count }), true)
     );
   };
 
