@@ -42,6 +42,7 @@ import { registerChooseFile } from './backendTasks/chooseFile';
 import { registerElectronProtocolWhenAppRead } from '@utils/electronProtocol';
 import { registerShowItemInFolder } from './backendTasks/showFileInFolder';
 import { registerCopyFile } from './backendTasks/copyFile';
+import { registerOpenStudioLogsFolder } from './backendTasks/openStudioLogsFolder';
 
 export default class AppUpdater {
   constructor() {
@@ -227,3 +228,4 @@ registerProjectStudioFile(ipcMain);
 registerChooseFile(ipcMain);
 registerShowItemInFolder(ipcMain);
 registerCopyFile(ipcMain);
+registerOpenStudioLogsFolder(ipcMain);

@@ -6,6 +6,7 @@ import { useLoaderRef } from '@utils/loaderContext';
 import { useProjectLoad } from '@utils/useProjectLoad';
 import { useProjectNew } from '@utils/useProjectNew';
 import { StudioLanguageConfig } from '@modelEntities/config';
+import { useTranslation } from 'react-i18next';
 
 type CreateProjectButtonProps = {
   projectData: Omit<ProjectCreationData, 'clone'>;
@@ -34,6 +35,7 @@ export const CreateProjectButton = ({ projectData, children, disabled }: CreateP
   const projectNew = useProjectNew();
   const projectLoad = useProjectLoad();
   const history = useHistory();
+  const { t } = useTranslation(['loader']);
 
   const handleClick = async () => {
     projectNew(
@@ -51,7 +53,8 @@ export const CreateProjectButton = ({ projectData, children, disabled }: CreateP
             loaderRef.current.close();
             history.push('/dashboard');
           },
-          ({ errorMessage }) => loaderRef.current.setError('loading_project_error', errorMessage)
+          ({ errorMessage }) => loaderRef.current.setError('loading_project_error', errorMessage),
+          (count) => loaderRef.current.setError('loading_project_error', t('loader:integrity_message', { count }), true)
         );
       },
       ({ errorMessage }) => loaderRef.current.setError('creating_project_error', errorMessage)

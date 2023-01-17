@@ -59,7 +59,7 @@ const LoaderCurrentActionText = styled.span`
 `;
 
 export const Loader = () => {
-  const { thingInProgress, step, total, stepText, errorTitle, errorText, isOpen, close } = useLoaderContext();
+  const { thingInProgress, step, total, stepText, errorTitle, errorText, isOpen, isLogsAvailable, close } = useLoaderContext();
   const { t } = useTranslation('loader');
 
   const containerClass = isOpen ? (errorTitle ? 'visible has-error' : 'visible') : undefined;
@@ -67,7 +67,7 @@ export const Loader = () => {
   return (
     <LoaderContainer className={containerClass}>
       {errorTitle ? (
-        <ErrorDialog title={t(errorTitle)} message={errorText} onClose={close} />
+        <ErrorDialog title={t(errorTitle)} message={errorText} isLogsAvailable={isLogsAvailable} onClose={close} />
       ) : (
         <div>
           <MainIcon />

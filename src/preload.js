@@ -489,4 +489,22 @@ window.api = {
     ipcRenderer.removeAllListeners(`copy-file/success`);
     ipcRenderer.removeAllListeners(`copy-file/failure`);
   },
+  openStudioLogsFolder: (taskPayload, onSuccess, onFailure) => {
+    // Register success event
+    ipcRenderer.once(`open-studio-logs-folder/success`, (_, payload) => {
+      ipcRenderer.removeAllListeners(`open-studio-logs-folder/failure`);
+      onSuccess(payload);
+    });
+    // Register failure event
+    ipcRenderer.once(`open-studio-logs-folder/failure`, (_, error) => {
+      ipcRenderer.removeAllListeners(`open-studio-logs-folder/success`);
+      onFailure(error);
+    });
+    // Call service
+    ipcRenderer.send('open-studio-logs-folder', taskPayload);
+  },
+  cleanupOpenStudioLogsFolder: () => {
+    ipcRenderer.removeAllListeners(`open-studio-logs-folder/success`);
+    ipcRenderer.removeAllListeners(`open-studio-logs-folder/failure`);
+  },
 };

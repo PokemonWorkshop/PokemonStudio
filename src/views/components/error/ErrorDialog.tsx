@@ -3,8 +3,9 @@ import styled from 'styled-components';
 import theme from '@src/AppTheme';
 import { useTranslation } from 'react-i18next';
 import { DeletionContainer } from '@components/deletion/DeletionContainer';
-import { DarkButton } from '@components/buttons';
+import { DarkButton, SecondaryButton } from '@components/buttons';
 import { ReactComponent as ErrorIcon } from '@assets/icons/global/error.svg';
+import { useOpenStudioLogsFolder } from '@utils/useOpenStudioLogsFolder';
 
 const TitleWithIconContainer = styled.div`
   display: flex;
@@ -65,11 +66,20 @@ const ActionContainer = styled.div`
 type DeletionProps = {
   title: string;
   message: string;
+  isLogsAvailable: boolean;
   onClose: () => void;
 };
 
-export const ErrorDialog = ({ title, message, onClose }: DeletionProps) => {
+export const ErrorDialog = ({ title, message, isLogsAvailable, onClose }: DeletionProps) => {
   const { t } = useTranslation(['error']);
+  const openStudioLogsFolder = useOpenStudioLogsFolder();
+
+  const onClickLogs = async () => {
+    openStudioLogsFolder(
+      () => {},
+      ({ errorMessage }) => console.log(errorMessage)
+    );
+  };
 
   return (
     <DeletionContainer>
@@ -83,6 +93,7 @@ export const ErrorDialog = ({ title, message, onClose }: DeletionProps) => {
         <p>{message}</p>
       </TextWarningContainer>
       <ActionContainer>
+        {isLogsAvailable && <SecondaryButton onClick={onClickLogs}>{t('error:logs')}</SecondaryButton>}
         <DarkButton onClick={onClose}>{t('error:dismiss')}</DarkButton>
       </ActionContainer>
     </DeletionContainer>
