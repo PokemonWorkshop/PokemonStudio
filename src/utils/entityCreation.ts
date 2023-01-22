@@ -60,7 +60,7 @@ const findFirstAvailableDexCsvTextIndex = (allDex: ProjectData['dex']) => {
  */
 export const createDex = (allDex: ProjectData['dex'], dbSymbol: DbSymbol, startId: number, creatures: StudioDexCreature[]): StudioDex => ({
   klass: 'Dex',
-  id: findFirstAvailableId(allDex, 1),
+  id: findFirstAvailableId(allDex, 0),
   dbSymbol,
   startId,
   csv: {
