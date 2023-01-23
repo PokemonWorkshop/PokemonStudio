@@ -48,7 +48,7 @@ export const LEVEL_SETUP_VALIDATOR = z.discriminatedUnion('kind', [
 
 export const ENCOUNTER_VALIDATOR = z.object({
   specie: DB_SYMBOL_VALIDATOR,
-  form: POSITIVE_OR_ZERO_INT,
+  form: POSITIVE_OR_ZERO_INT.or(z.literal(-1)),
   shinySetup: SHINY_SETUP_VALIDATOR,
   levelSetup: LEVEL_SETUP_VALIDATOR,
   randomEncounterChance: POSITIVE_OR_ZERO_INT,
