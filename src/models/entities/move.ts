@@ -134,7 +134,7 @@ export const MOVE_BATTLE_ENGINE_METHODS = [
   's_ohko',
   's_2turns',
   's_self_stat',
-  's_self_statut',
+  's_self_status',
 ] as const;
 export const MOVE_STATUS_LIST = ['POISONED', 'PARALYZED', 'BURN', 'ASLEEP', 'FROZEN', 'TOXIC', 'CONFUSED', 'DEATH', 'FLINCH'] as const;
 

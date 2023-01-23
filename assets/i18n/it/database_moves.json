@@ -45,7 +45,7 @@
   "s_ohko": "Mossa OHKO",
   "s_2turns": "Mossa in 2 turni",
   "s_self_stat": "Mossa che cambia le statistiche di sè stesso",
-  "s_self_statut": "Mossa che infligge a sé stesso uno stato",
+  "s_self_status": "Mossa che infligge a sé stesso uno stato",
   "symbol": "Identificatore",
   "physical": "Fisico",
   "special": "Speciale",

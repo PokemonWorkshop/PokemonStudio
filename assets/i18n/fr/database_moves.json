@@ -45,7 +45,7 @@
   "s_ohko": "Attaque OHKO",
   "s_2turns": "Attaque en 2 tours",
   "s_self_stat": "Attaque changeant les statistiques sur soi",
-  "s_self_statut": "Attaque infligeant un statut sur soi",
+  "s_self_status": "Attaque infligeant un statut sur soi",
   "symbol": "Identifiant",
   "physical": "Physique",
   "special": "Spéciale",
