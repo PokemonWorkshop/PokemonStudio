@@ -25,7 +25,7 @@ export const QUEST_OBJECTIVE_VALIDATOR = z.object({
     z.literal('objective_obtain_egg'),
     z.literal('objective_hatch_egg'),
   ]),
-  objectiveMethodArgs: z.array(z.union([z.string(), z.number(), z.array(CREATURE_QUEST_CONDITION_VALIDATOR), z.undefined()])),
+  objectiveMethodArgs: z.array(z.union([z.string(), z.number(), z.array(CREATURE_QUEST_CONDITION_VALIDATOR), z.undefined(), z.null()])),
   textFormatMethodName: z.string(),
   hiddenByDefault: z.boolean(),
 });
