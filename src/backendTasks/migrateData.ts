@@ -1,3 +1,4 @@
+import { fixBeMethodMoveSelfStatus } from '@src/migrations/fixBeMethodMoveSelfStatus';
 import { linkResourcesToCreatures } from '@src/migrations/linkResourcesToCreatures';
 import { migrateHeadbutt } from '@src/migrations/migrateHeadbutt';
 import { migrateMapLinks } from '@src/migrations/migrateMapLinks';
@@ -8,24 +9,24 @@ export type MigrationTask = (event: IpcMainEvent, projectPath: string) => Promis
 
 // Don't forget to extend those array with the new tasks that gets added by the time!
 const MIGRATIONS: Record<string, MigrationTask[]> = {
-  '1.0.0': [migrateMapLinks, linkResourcesToCreatures, migrateHeadbutt],
-  '1.0.1': [migrateMapLinks, linkResourcesToCreatures, migrateHeadbutt],
-  '1.0.2': [migrateMapLinks, linkResourcesToCreatures, migrateHeadbutt],
-  '1.1.0': [linkResourcesToCreatures, migrateHeadbutt],
-  '1.1.1': [linkResourcesToCreatures, migrateHeadbutt],
-  '1.2.0': [linkResourcesToCreatures, migrateHeadbutt],
-  '1.3.0': [linkResourcesToCreatures, migrateHeadbutt], // Don't forget to add the official version coming up
+  '1.0.0': [migrateMapLinks, linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus],
+  '1.0.1': [migrateMapLinks, linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus],
+  '1.0.2': [migrateMapLinks, linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus],
+  '1.1.0': [linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus],
+  '1.1.1': [linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus],
+  '1.2.0': [linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus],
+  '1.3.0': [linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus], // Don't forget to add the official version coming up
 };
 
 // Don't forget to extend those array with the new tasks that gets added by the time!
 const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
-  '1.0.0': ['Migrate MapLinks', 'Link the resources to the Pokémon', 'Move Headbutt tool in the system tag'],
-  '1.0.1': ['Migrate MapLinks', 'Link the resources to the Pokémon', 'Move Headbutt tool in the system tag'],
-  '1.0.2': ['Migrate MapLinks', 'Link the resources to the Pokémon', 'Move Headbutt tool in the system tag'],
-  '1.1.0': ['Link the resources to the Pokémon', 'Move Headbutt tool in the system tag'],
-  '1.1.1': ['Link the resources to the Pokémon', 'Move Headbutt tool in the system tag'],
-  '1.2.0': ['Link the resources to the Pokémon', 'Move Headbutt tool in the system tag'],
-  '1.3.0': ['Link the resources to the Pokémon', 'Move Headbutt tool in the system tag'], // Don't forget to add the official version coming up
+  '1.0.0': ['Migrate MapLinks', 'Link the resources to the Pokémon', 'Move Headbutt tool in the system tag', 'Fix battle engine method of the moves'],
+  '1.0.1': ['Migrate MapLinks', 'Link the resources to the Pokémon', 'Move Headbutt tool in the system tag', 'Fix battle engine method of the moves'],
+  '1.0.2': ['Migrate MapLinks', 'Link the resources to the Pokémon', 'Move Headbutt tool in the system tag', 'Fix battle engine method of the moves'],
+  '1.1.0': ['Link the resources to the Pokémon', 'Move Headbutt tool in the system tag', 'Fix battle engine method of the moves'],
+  '1.1.1': ['Link the resources to the Pokémon', 'Move Headbutt tool in the system tag', 'Fix battle engine method of the moves'],
+  '1.2.0': ['Link the resources to the Pokémon', 'Move Headbutt tool in the system tag', 'Fix battle engine method of the moves'],
+  '1.3.0': ['Link the resources to the Pokémon', 'Move Headbutt tool in the system tag', 'Fix battle engine method of the moves'], // Don't forget to add the official version coming up
 };
 
 const migrateData = async (event: IpcMainEvent, payload: { projectPath: string; projectVersion: string }) => {

@@ -45,7 +45,7 @@
   "s_ohko": "OHKO move",
   "s_2turns": "Move in 2 turns",
   "s_self_stat": "Move changing stats on self",
-  "s_self_statut": "Move inflicting status on self",
+  "s_self_status": "Move inflicting status on self",
   "symbol": "Identifier",
   "physical": "Physical",
   "special": "Special",
