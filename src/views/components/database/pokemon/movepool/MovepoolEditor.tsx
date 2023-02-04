@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataBlockCollapseEditor } from '@components/editor/DataBlockCollapseEditor';
 import { useProjectPokemon, useProjectItems, useProjectMoves } from '@utils/useProjectData';
@@ -58,10 +58,10 @@ export const MovepoolEditor = ({ type, setCurrentEditor, setCurrentDeletion }: M
   const { projectDataValues: pokemon, selectedDataIdentifier: currentPokemon, setProjectDataValues: setPokemon } = useProjectPokemon();
   const { projectDataValues: items } = useProjectItems();
   const { projectDataValues: moves } = useProjectMoves();
+  const currentEditedPokemon = useMemo(() => cloneEntity(pokemon[currentPokemon.specie]), [pokemon, currentPokemon.specie]);
   const { t } = useTranslation(['database_pokemon']);
 
   const onClickAdd = () => {
-    const currentEditedPokemon = cloneEntity(pokemon[currentPokemon.specie]);
     setLearnableMove(currentEditedPokemon.forms[currentPokemon.form], type, items, moves);
     setPokemon({ [currentPokemon.specie]: currentEditedPokemon });
   };

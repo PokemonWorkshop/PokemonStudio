@@ -96,7 +96,7 @@ export const formResourcesPath = (form: StudioCreatureForm, resource: CreatureFo
       return `graphics/pokedex/pokefrontshiny/${(resources.hasFemale && resources[resource]) || resources.frontShiny}.png`;
     case 'back':
     case 'backF':
-      return `graphics/pokedex/pokeback/${(resources.hasFemale && resources[resource]) || resources.backShiny}.png`;
+      return `graphics/pokedex/pokeback/${(resources.hasFemale && resources[resource]) || resources.back}.png`;
     case 'backShiny':
     case 'backShinyF':
       return `graphics/pokedex/pokebackshiny/${(resources.hasFemale && resources[resource]) || resources.backShiny}.png`;
