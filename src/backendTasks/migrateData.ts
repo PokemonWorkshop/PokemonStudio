@@ -15,7 +15,8 @@ const MIGRATIONS: Record<string, MigrationTask[]> = {
   '1.1.0': [linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus],
   '1.1.1': [linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus],
   '1.2.0': [linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus],
-  '1.3.0': [linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus], // Don't forget to add the official version coming up
+  '1.3.0': [linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus],
+  '1.4.0': [linkResourcesToCreatures], // Don't forget to add the official version coming up
 };
 
 // Don't forget to extend those array with the new tasks that gets added by the time!
@@ -26,7 +27,8 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
   '1.1.0': ['Link the resources to the Pokémon', 'Move Headbutt tool in the system tag', 'Fix battle engine method of the moves'],
   '1.1.1': ['Link the resources to the Pokémon', 'Move Headbutt tool in the system tag', 'Fix battle engine method of the moves'],
   '1.2.0': ['Link the resources to the Pokémon', 'Move Headbutt tool in the system tag', 'Fix battle engine method of the moves'],
-  '1.3.0': ['Link the resources to the Pokémon', 'Move Headbutt tool in the system tag', 'Fix battle engine method of the moves'], // Don't forget to add the official version coming up
+  '1.3.0': ['Link the resources to the Pokémon', 'Move Headbutt tool in the system tag', 'Fix battle engine method of the moves'],
+  '1.4.0': ['Link the resources to the Pokémon'], // Don't forget to add the official version coming up
 };
 
 const migrateData = async (event: IpcMainEvent, payload: { projectPath: string; projectVersion: string }) => {
