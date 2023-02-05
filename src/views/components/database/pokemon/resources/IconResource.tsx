@@ -79,11 +79,12 @@ type IconResourceProps = {
   form: StudioCreatureForm;
   resource: CreatureFormResourcesPath;
   isFemale: boolean;
+  disableGif?: true;
   onResourceChoosen: (filePath: string, resource: CreatureFormResourcesPath) => void;
   onResourceClean: (resource: CreatureFormResourcesPath, isFemale: boolean) => void;
 };
 
-export const IconResource = ({ form, resource, isFemale, onResourceChoosen, onResourceClean }: IconResourceProps) => {
+export const IconResource = ({ form, resource, isFemale, disableGif, onResourceChoosen, onResourceClean }: IconResourceProps) => {
   const [state] = useGlobalState();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [flipFlap, setFlipFlap] = useState(false);
@@ -95,7 +96,8 @@ export const IconResource = ({ form, resource, isFemale, onResourceChoosen, onRe
   const onDrop: DragEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    const acceptedFiles = Array.from(event.dataTransfer.files).filter((file) => ['png'].includes(file.name.split('.').pop() ?? ''));
+    const extensions = disableGif ? ['png'] : ['png', 'gif'];
+    const acceptedFiles = Array.from(event.dataTransfer.files).filter((file) => extensions.includes(file.name.split('.').pop() ?? ''));
     if (acceptedFiles.length > 0) {
       copyFile(
         { srcFile: acceptedFiles[0].path, destFolder: dirname(formResourcesPath(form, resource)) },
@@ -111,8 +113,9 @@ export const IconResource = ({ form, resource, isFemale, onResourceChoosen, onRe
 
   const onClick = async () => {
     setIsDialogOpen(true);
+    const extensions = disableGif ? ['png'] : ['png', 'gif'];
     chooseFile(
-      { name: t(resource), extensions: ['png'], destFolderToCopy: dirname(formResourcesPath(form, resource)) },
+      { name: t(resource), extensions, destFolderToCopy: dirname(formResourcesPath(form, resource)) },
       ({ path: resourcePath }) => {
         setImmediate(() => {
           onResourceChoosen(resourcePath, resource);

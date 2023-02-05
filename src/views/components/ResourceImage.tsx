@@ -1,6 +1,5 @@
 import { useGlobalState } from '@src/GlobalStateProvider';
-import React from 'react';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 // Root URL of all resources (in cas Studio becomes a webapp)
 const URL_ROOT = 'project://--/';
@@ -8,6 +7,7 @@ const URL_ROOT = 'project://--/';
 const buildImageSrc = (imagePathInProject: string, projectPath: string, versionId?: number, fallback?: string) => {
   const imageUrl = new URL(imagePathInProject, URL_ROOT);
   imageUrl.searchParams.append('projectPath', projectPath);
+  imageUrl.searchParams.append('type', 'image');
   if (versionId) imageUrl.searchParams.append('versionId', versionId.toString());
   if (fallback) imageUrl.searchParams.append('fallbacks', fallback);
   return imageUrl.toString();

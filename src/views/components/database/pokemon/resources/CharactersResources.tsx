@@ -24,6 +24,7 @@ export const CharactersResources = ({ form, isShowFemale, onResourceChoosen, onR
               form={form}
               resource="character"
               isFemale={false}
+              disableGif={true}
               onResourceChoosen={onResourceChoosen}
               onResourceClean={onResourceClean}
             />
@@ -31,6 +32,7 @@ export const CharactersResources = ({ form, isShowFemale, onResourceChoosen, onR
               form={form}
               resource="characterShiny"
               isFemale={false}
+              disableGif={true}
               onResourceChoosen={onResourceChoosen}
               onResourceClean={onResourceClean}
             />
@@ -42,6 +44,7 @@ export const CharactersResources = ({ form, isShowFemale, onResourceChoosen, onR
               form={form}
               resource="characterF"
               isFemale={true}
+              disableGif={true}
               onResourceChoosen={onResourceChoosen}
               onResourceClean={onResourceClean}
             />
@@ -49,6 +52,7 @@ export const CharactersResources = ({ form, isShowFemale, onResourceChoosen, onR
               form={form}
               resource="characterShinyF"
               isFemale={true}
+              disableGif={true}
               onResourceChoosen={onResourceChoosen}
               onResourceClean={onResourceClean}
             />
