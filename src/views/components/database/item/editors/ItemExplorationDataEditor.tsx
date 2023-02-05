@@ -45,14 +45,14 @@ export const ItemExplorationDataEditor = ({ item }: ItemExplorationDataEditorPro
               type="number"
               name="common_event_id"
               value={isNaN(item.eventId) ? '' : item.eventId}
-              min="0"
+              min="1"
               max="999"
               onChange={(event) => {
                 const value = parseInt(event.target.value);
-                if (value < 0 || value > 999) return event.preventDefault();
+                if (value < 1 || value > 999) return event.preventDefault();
                 refreshUI((item.eventId = value));
               }}
-              onBlur={() => refreshUI((item.eventId = cleanNaNValue(item.eventId)))}
+              onBlur={() => refreshUI((item.eventId = cleanNaNValue(item.eventId, 1)))}
             />
           </InputWithLeftLabelContainer>
         )}

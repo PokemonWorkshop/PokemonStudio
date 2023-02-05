@@ -170,7 +170,7 @@ export const createItem = <K extends StudioItem['klass']>(klass: K, dbSymbol: Db
     case 'EVBoostItem':
       return { stat: 'ATK', count: 1, loyaltyMalus: 0, ...itemDefaultValues } as Output;
     case 'EventItem':
-      return { eventId: 0, ...itemDefaultValues } as Output;
+      return { eventId: 1, ...itemDefaultValues } as Output;
     case 'FleeingItem':
       return itemDefaultValues as Output;
     case 'HealingItem':

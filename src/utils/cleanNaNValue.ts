@@ -66,7 +66,7 @@ export const cleaningCreatureFormNaNValues = (v: StudioCreatureForm) => {
 
 export const cleaningItemNaNValues = (v: StudioItem) => {
   Object.entries(v).forEach(([key, value]) => {
-    if (typeof value === 'number' && isNaN(value)) (v as unknown as Record<string, number>)[key] = 0;
+    if (typeof value === 'number' && isNaN(value)) (v as unknown as Record<string, number>)[key] = key === 'eventId' ? 1 : 0;
   });
 };
 
