@@ -101,11 +101,12 @@ type SpriteResourceProps = {
   form: StudioCreatureForm;
   resource: CreatureFormResourcesPath;
   isFemale: boolean;
+  disableGif?: true;
   onResourceChoosen: (filePath: string, resource: CreatureFormResourcesPath) => void;
   onResourceClean: (resource: CreatureFormResourcesPath, isFemale: boolean) => void;
 };
 
-export const SpriteResource = ({ form, resource, isFemale, onResourceChoosen, onResourceClean }: SpriteResourceProps) => {
+export const SpriteResource = ({ form, resource, isFemale, disableGif, onResourceChoosen, onResourceClean }: SpriteResourceProps) => {
   const [state] = useGlobalState();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [flipFlap, setFlipFlap] = useState(false);
@@ -117,7 +118,8 @@ export const SpriteResource = ({ form, resource, isFemale, onResourceChoosen, on
   const onDrop: DragEventHandler<HTMLDivElement> = async (event) => {
     event.preventDefault();
     event.stopPropagation();
-    const acceptedFiles = Array.from(event.dataTransfer.files).filter((file) => ['png'].includes(file.name.split('.').pop() ?? ''));
+    const extensions = disableGif ? ['png'] : ['png', 'gif'];
+    const acceptedFiles = Array.from(event.dataTransfer.files).filter((file) => extensions.includes(file.name.split('.').pop() ?? ''));
     if (acceptedFiles.length > 0) {
       copyFile(
         { srcFile: acceptedFiles[0].path, destFolder: dirname(formResourcesPath(form, resource)) },
@@ -133,8 +135,9 @@ export const SpriteResource = ({ form, resource, isFemale, onResourceChoosen, on
 
   const onClick = async () => {
     setIsDialogOpen(true);
+    const extensions = disableGif ? ['png'] : ['png', 'gif'];
     chooseFile(
-      { name: t(`database_pokemon:${resource}`), extensions: ['png'], destFolderToCopy: dirname(formResourcesPath(form, resource)) },
+      { name: t(`database_pokemon:${resource}`), extensions, destFolderToCopy: dirname(formResourcesPath(form, resource)) },
       ({ path: resourcePath }) => {
         setImmediate(() => {
           onResourceChoosen(resourcePath, resource);

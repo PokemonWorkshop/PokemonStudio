@@ -32,7 +32,14 @@ export const IconsResources = ({ form, isShowFemale, onResourceChoosen, onResour
             <IconResource form={form} resource="iconShinyF" isFemale={true} onResourceChoosen={onResourceChoosen} onResourceClean={onResourceClean} />
           </>
         )}
-        <IconResource form={form} resource="footprint" isFemale={false} onResourceChoosen={onResourceChoosen} onResourceClean={onResourceClean} />
+        <IconResource
+          form={form}
+          resource="footprint"
+          isFemale={false}
+          disableGif={true}
+          onResourceChoosen={onResourceChoosen}
+          onResourceClean={onResourceClean}
+        />
       </ResourceWrapper>
     </ResourcesContainer>
   );

@@ -37,14 +37,20 @@ type DexResource = 'footprints' | 'pokeback' | 'pokebackshiny' | 'pokefront' | '
 
 const searchDexResource = (id: number, formId: number, dexResource: DexResource, projectPath: string, isFemale: boolean, isShiny?: boolean) => {
   const resourcePath = path.join(projectPath, 'graphics/pokedex', dexResource);
+  const extensions = ['.gif', '.png'];
 
-  const resourceName = `${padStr(id, 3)}${isFemale ? 'f' : ''}${isShiny ? 's' : ''}${formId === 0 ? '' : `_${padStr(formId, 2)}`}.png`;
-  const result = fs.existsSync(path.join(resourcePath, resourceName));
-  if (result) return resourceName.replace('.png', '');
+  const resource = { name: '' };
+  extensions.forEach((ext) => {
+    const filename = `${padStr(id, 3)}${isFemale ? 'f' : ''}${isShiny ? 's' : ''}${formId === 0 ? '' : `_${padStr(formId, 2)}`}${ext}`;
+    const result = fs.existsSync(path.join(resourcePath, filename));
+    if (result) return (resource.name = filename.replace(/\.(png|gif)$/, ''));
 
-  const resourceNameIgnoreForm = `${padStr(id, 3)}${isFemale ? 'f' : ''}${isShiny ? 's' : ''}.png`;
-  if (fs.existsSync(path.join(resourcePath, resourceNameIgnoreForm))) return resourceNameIgnoreForm.replace('.png', '');
+    const resourceNameIgnoreForm = `${padStr(id, 3)}${isFemale ? 'f' : ''}${isShiny ? 's' : ''}${ext}`;
+    if (fs.existsSync(path.join(resourcePath, resourceNameIgnoreForm))) return (resource.name = resourceNameIgnoreForm.replace(/\.(png|gif)$/, ''));
+    return '';
+  });
 
+  if (resource.name) return resource.name;
   return isFemale ? undefined : '';
 };
 
@@ -60,10 +66,16 @@ const searchCharacterResource = (id: number, formId: number, projectPath: string
 
 const searchCry = (id: number, projectPath: string) => {
   const cryPath = path.join(projectPath, 'audio/se/cries');
+  const extensions = ['.wav', '.ogg', '.mp3', '.flac'];
 
-  const cryName = `${padStr(id, 3)}cry.ogg`;
-  const result = fs.existsSync(path.join(cryPath, cryName));
-  return result ? cryName : '';
+  const cry = { name: '' };
+  extensions.forEach((ext) => {
+    const filename = `${padStr(id, 3)}cry${ext}`;
+    const result = fs.existsSync(path.join(cryPath, filename));
+    if (result) cry.name = filename;
+  });
+
+  return cry.name;
 };
 
 const hasFemale = (resources: ComputedCreatureResources) => {

@@ -84,30 +84,30 @@ export const formResourcesPath = (form: StudioCreatureForm, resource: CreatureFo
   switch (resource) {
     case 'icon':
     case 'iconF':
-      return `graphics/pokedex/pokeicon/${(resources.hasFemale && resources[resource]) || resources.icon}.png`;
+      return `graphics/pokedex/pokeicon/${(resources.hasFemale && resources[resource]) || resources.icon}`;
     case 'iconShiny':
     case 'iconShinyF':
-      return `graphics/pokedex/pokeicon/${(resources.hasFemale && resources[resource]) || resources.iconShiny}.png`;
+      return `graphics/pokedex/pokeicon/${(resources.hasFemale && resources[resource]) || resources.iconShiny}`;
     case 'front':
     case 'frontF':
-      return `graphics/pokedex/pokefront/${(resources.hasFemale && resources[resource]) || resources.front}.png`;
+      return `graphics/pokedex/pokefront/${(resources.hasFemale && resources[resource]) || resources.front}`;
     case 'frontShiny':
     case 'frontShinyF':
-      return `graphics/pokedex/pokefrontshiny/${(resources.hasFemale && resources[resource]) || resources.frontShiny}.png`;
+      return `graphics/pokedex/pokefrontshiny/${(resources.hasFemale && resources[resource]) || resources.frontShiny}`;
     case 'back':
     case 'backF':
-      return `graphics/pokedex/pokeback/${(resources.hasFemale && resources[resource]) || resources.back}.png`;
+      return `graphics/pokedex/pokeback/${(resources.hasFemale && resources[resource]) || resources.back}`;
     case 'backShiny':
     case 'backShinyF':
-      return `graphics/pokedex/pokebackshiny/${(resources.hasFemale && resources[resource]) || resources.backShiny}.png`;
+      return `graphics/pokedex/pokebackshiny/${(resources.hasFemale && resources[resource]) || resources.backShiny}`;
     case 'footprint':
-      return `graphics/pokedex/footprints/${resources.footprint}.png`;
+      return `graphics/pokedex/footprints/${resources.footprint}`;
     case 'character':
     case 'characterF':
-      return `graphics/characters/${(resources.hasFemale && resources[resource]) || resources.character}.png`;
+      return `graphics/characters/${(resources.hasFemale && resources[resource]) || resources.character}`;
     case 'characterShiny':
     case 'characterShinyF':
-      return `graphics/characters/${(resources.hasFemale && resources[resource]) || resources.characterShiny}.png`;
+      return `graphics/characters/${(resources.hasFemale && resources[resource]) || resources.characterShiny}`;
     case 'cry':
       return `audio/se/cries/${form.resources.cry}`;
     default:
