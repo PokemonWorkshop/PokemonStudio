@@ -219,6 +219,7 @@ const createEdge = (id: string, source: string, sourceHandle: string, target: st
 });
 
 type ReactFlowMapLinkProps = {
+  mapLinks: Record<string, StudioMapLink>;
   mapLink: StudioMapLink;
   mapData: Map<number, string>;
   onClickCreateNewLink: (cardinal: StudioMapLinkCardinal) => void;
@@ -227,7 +228,15 @@ type ReactFlowMapLinkProps = {
   onEditLink: (index: number, cardinal: StudioMapLinkCardinal) => void;
 };
 
-export const ReactFlowMapLink = ({ mapLink, mapData, onClickCreateNewLink, onDeleteLink, onEditOffset, onEditLink }: ReactFlowMapLinkProps) => {
+export const ReactFlowMapLink = ({
+  mapLinks,
+  mapLink,
+  mapData,
+  onClickCreateNewLink,
+  onDeleteLink,
+  onEditOffset,
+  onEditLink,
+}: ReactFlowMapLinkProps) => {
   const reactFlowInstance = useReactFlow();
   const initialNodes = useMemo(() => createInitialNodes(mapLink, mapData, onClickCreateNewLink), [mapLink, mapData, onClickCreateNewLink]);
   const nodeTypes = useMemo(
@@ -316,7 +325,7 @@ export const ReactFlowMapLink = ({ mapLink, mapData, onClickCreateNewLink, onDel
     }, 50);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mapLink, setNodes, setEdges]);
+  }, [mapLink, mapLinks, setNodes, setEdges]);
 
   return (
     <ReactFlow

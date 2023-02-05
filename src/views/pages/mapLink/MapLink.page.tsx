@@ -90,10 +90,17 @@ const MapLinkPage = () => {
   const addReverseMapLink = (selectedMap: number, cardinal: StudioMapLinkCardinal, offset: number) => {
     const mapLinkSelectedMap = cloneEntity(Object.values(mapLinks).find((mapL) => mapL.mapId === selectedMap) || createMapLink(lastId, selectedMap));
     const cardinalOpposed = getCardinalOpposed(cardinal);
-    const reverseLinks = getLinksFromMapLink(mapLinkSelectedMap, cardinalOpposed).concat({
-      mapId: Number(currentEditedMaplink.mapId),
-      offset: -offset,
-    });
+    const reverseLinks = getLinksFromMapLink(mapLinkSelectedMap, cardinalOpposed);
+    const reverseLink = reverseLinks.find((link) => link.mapId === Number(currentEditedMaplink.mapId));
+    // if the link already exists, we update only the offset to force the synchronisation
+    if (reverseLink) {
+      reverseLink.offset = -offset;
+    } else {
+      reverseLinks.push({
+        mapId: Number(currentEditedMaplink.mapId),
+        offset: -offset,
+      });
+    }
     reverseLinks.sort((a, b) => a.offset - b.offset);
     setLinksFromMapLink(mapLinkSelectedMap, reverseLinks, cardinalOpposed);
     setDataMapLink({ [mapLinkSelectedMap.dbSymbol]: mapLinkSelectedMap });
@@ -207,6 +214,7 @@ const MapLinkPage = () => {
       {isValidMaplink ? (
         <ReactFlowProvider>
           <ReactFlowMapLink
+            mapLinks={mapLinks}
             mapLink={mapLink}
             mapData={mapData}
             onClickCreateNewLink={onClickCreateNewLink}
