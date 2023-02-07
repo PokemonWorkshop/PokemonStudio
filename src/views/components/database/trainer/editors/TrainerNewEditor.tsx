@@ -116,8 +116,8 @@ export const TrainerNewEditor = ({ onClose }: TrainerNewEditorProps) => {
       baseMoneyRef.current.valueAsNumber,
       battlerName
     );
-    setText(TRAINER_CLASS_TEXT_ID, id, name);
-    setText(TRAINER_NAME_TEXT_ID, id, tClass);
+    setText(TRAINER_CLASS_TEXT_ID, id, tClass);
+    setText(TRAINER_NAME_TEXT_ID, id, name);
     setText(TRAINER_VICTORY_SENTENCE_TEXT_ID, id, '');
     setText(TRAINER_DEFEAT_SENTENCE_TEXT_ID, id, '');
     setTrainer({ [dbSymbol]: trainer }, { trainer: dbSymbol });
