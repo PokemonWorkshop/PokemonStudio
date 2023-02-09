@@ -209,5 +209,7 @@
   "characterShinyF": "Characters - Femelle Chromatique",
   "cry": "Cri",
   "icons": "Icônes",
-  "show_female_sprites": "Afficher des sprites différents pour les femelles"
+  "show_female_sprites": "Afficher des sprites différents pour les femelles",
+  "offset": "Décalage du sprite",
+  "offset_info": "Le décalage est exprimé en pixels. Une valeur positive suggère un décalage vers le bas."
 }

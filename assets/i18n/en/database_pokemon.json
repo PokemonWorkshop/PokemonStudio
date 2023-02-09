@@ -209,5 +209,7 @@
   "characterShinyF": "Characters - Female Shiny",
   "cry": "Cry",
   "icons": "Icons",
-  "show_female_sprites": "Show different sprites for females"
+  "show_female_sprites": "Show different sprites for females",
+  "offset": "Sprite offset",
+  "offset_info": "The offset is expressed in pixels. A positive value suggests a downward shift."
 }

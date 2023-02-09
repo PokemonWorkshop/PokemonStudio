@@ -1,13 +1,21 @@
 import { Editor, useRefreshUI } from '@components/editor';
-import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
+import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 import { SelectType } from '@components/selects';
 import { CREATURE_DESCRIPTION_TEXT_ID, CREATURE_NAME_TEXT_ID, StudioCreature } from '@modelEntities/creature';
 import { DbSymbol } from '@modelEntities/dbSymbol';
+import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { useGetEntityDescriptionText, useGetEntityNameText, useSetProjectText } from '@utils/ReadingProjectText';
 import type { OpenTranslationEditorFunction } from '@utils/useTranslationEditor';
 import React, { FunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+
+const OffsetInfo = styled.div`
+  ${({ theme }) => theme.fonts.normalSmall};
+  color: ${({ theme }) => theme.colors.text400};
+  user-select: none;
+`;
 
 type InformationsEditorProps = {
   currentPokemon: StudioCreature;
@@ -67,6 +75,25 @@ export const InformationsEditor: FunctionComponent<InformationsEditorProps> = ({
             rejected={[form.type1]}
             noneValue
           />
+        </InputWithTopLabelContainer>
+        <InputWithTopLabelContainer>
+          <InputWithLeftLabelContainer>
+            <Label htmlFor="offset">{t('database_pokemon:offset')}</Label>
+            <Input
+              type="number"
+              name="offset"
+              min="-999"
+              max="999"
+              value={isNaN(form.frontOffsetY) ? '' : form.frontOffsetY}
+              onChange={(event) => {
+                const newValue = parseInt(event.target.value);
+                if (newValue < -999 || newValue > 999) return event.preventDefault();
+                refreshUI((form.frontOffsetY = newValue));
+              }}
+              onBlur={() => refreshUI((form.frontOffsetY = cleanNaNValue(form.frontOffsetY)))}
+            />
+          </InputWithLeftLabelContainer>
+          <OffsetInfo>{t('database_pokemon:offset_info')}</OffsetInfo>
         </InputWithTopLabelContainer>
       </InputContainer>
     </Editor>

@@ -62,6 +62,7 @@ export const cleaningCreatureFormNaNValues = (v: StudioCreatureForm) => {
   v.evDfs = cleanNaNValue(v.evDfs);
   v.evSpd = cleanNaNValue(v.evSpd);
   v.itemHeld.forEach((itemHeld) => (itemHeld.chance = cleanNaNValue(itemHeld.chance)));
+  v.frontOffsetY = cleanNaNValue(v.frontOffsetY);
 };
 
 export const cleaningItemNaNValues = (v: StudioItem) => {
