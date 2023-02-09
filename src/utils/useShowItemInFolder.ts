@@ -4,6 +4,7 @@ type ShowItemInFolderFailureCallback = () => void;
 type ShowItemInFolderSuccessCallback = () => void;
 type ShowItemInFolderPayload = {
   filePath: string;
+  extensions?: string[];
 };
 
 type ShowItemInFolderStateObject = { state: 'done' } | { state: 'showItemInFolder'; payload: ShowItemInFolderPayload };
@@ -21,7 +22,7 @@ export const useShowItemInFolder = () => {
         return;
       case 'showItemInFolder':
         return window.api.showItemInFolder(
-          { filePath: state.payload.filePath },
+          { filePath: state.payload.filePath, extensions: state.payload.extensions },
           () => {
             setState({ state: 'done' });
             callbacks?.onSuccess();

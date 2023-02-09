@@ -87,7 +87,7 @@ declare global {
       cleanupProjectStudioFile: () => void;
       chooseFile: BackendTaskWithGenericErrorAndNoProgress<{ name: string; extensions: string[] }, { path: string; dirName: string }>;
       cleanupChooseFile: () => void;
-      showItemInFolder: BackendTaskWithGenericErrorAndNoProgress<{ filePath: string }, Record<string, never>>;
+      showItemInFolder: BackendTaskWithGenericErrorAndNoProgress<{ filePath: string; extensions?: string[] }, Record<string, never>>;
       cleanupShowItemInFolder: () => void;
       copyFile: BackendTaskWithGenericErrorAndNoProgress<
         { srcFile: string; destFile: string; translation: ShowMessageBoxTranslation },

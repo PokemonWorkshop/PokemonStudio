@@ -106,10 +106,10 @@ const fixResourcesForFemaleOnly = (form: Pick<StudioCreatureForm, 'femaleRate'>,
   if (resources.icon) resources.iconF ??= resources.icon;
   if (resources.iconShiny) resources.iconShinyF ??= resources.iconShiny;
 
-  const resourcesValidated = CREATURE_RESOURCES_VALIDATOR.safeParse({ ...resources, hasFemale: hasFemale(resources) });
+  const resourcesValidated = CREATURE_RESOURCES_VALIDATOR.safeParse({ ...resources, hasFemale: true });
   if (resourcesValidated.success) return resourcesValidated.data;
 
-  return { ...DEFAULT_CREATURE_RESOURCE, ...resources, hasFemale: hasFemale(resources) };
+  return { ...DEFAULT_CREATURE_RESOURCE, ...resources, hasFemale: true };
 };
 
 const linkResources = (creature: StudioCreatureDataBeforeMigration, projectPath: string) => {

@@ -154,7 +154,7 @@ export const SpriteResource = ({ form, resource, isFemale, disableGif, onResourc
     if (!state.projectPath) return;
 
     showItemInFolder(
-      { filePath: join(state.projectPath, filePath) },
+      { filePath: join(state.projectPath, filePath), extensions: ['.gif', '.png'] },
       () => {},
       () => {}
     );
