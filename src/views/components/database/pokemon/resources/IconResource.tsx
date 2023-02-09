@@ -132,7 +132,7 @@ export const IconResource = ({ form, resource, isFemale, disableGif, onResourceC
     if (!state.projectPath) return;
 
     showItemInFolder(
-      { filePath: join(state.projectPath, filePath) },
+      { filePath: join(state.projectPath, filePath), extensions: ['.gif', '.png'] },
       () => {},
       () => {}
     );

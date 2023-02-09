@@ -50,7 +50,7 @@ export const PokemonResourcesPage = () => {
   };
 
   const onResourceChoosen = (filePath: string, resource: CreatureFormResourcesPath) => {
-    currentEditedPokemonWithForm.form.resources[resource] = basename(filePath, '.png');
+    currentEditedPokemonWithForm.form.resources[resource] = basename(filePath, '.png').replace(/\.gif$/, '');
     setPokemon({ [currentEditedPokemon.dbSymbol]: currentEditedPokemon });
   };
 
