@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PrimaryButton, SecondaryButton } from '@components/buttons';
 import {
   ActionContainer,
@@ -13,8 +15,6 @@ import type { PSDKVersion } from '@services/getPSDKVersion';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useLoaderRef } from '@utils/loaderContext';
 import { showNotification } from '@utils/showNotification';
-import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 type PSDKUpdateState =
   | {

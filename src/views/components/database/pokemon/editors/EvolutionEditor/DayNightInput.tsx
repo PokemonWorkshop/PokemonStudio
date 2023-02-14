@@ -21,7 +21,7 @@ export const DayNightInput = ({ condition, index, onChange }: InputProps) => {
           id="dayNight-DropDown"
           options={options}
           value={condition.value.toString()}
-          onChange={(value) => onChange({ type: 'dayNight', value: Number(value) }, index)}
+          onChange={(value) => onChange({ type: 'dayNight', value: Number(value) as 0 | 1 | 2 | 3 }, index)}
         />
       </InputWithTopLabelContainer>
     );

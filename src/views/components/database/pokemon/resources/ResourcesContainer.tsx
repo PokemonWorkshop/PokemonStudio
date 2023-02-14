@@ -26,7 +26,7 @@ export const ResourceContainer = styled.div<ResourceContainerProps>`
   margin: 0 8px 0 8px;
   user-select: none;
 
-  & :hover {
+  &:hover {
     border: 2px solid ${({ theme }) => theme.colors.dark24};
     background-color: ${({ theme }) => theme.colors.dark14};
 

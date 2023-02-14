@@ -20,7 +20,7 @@ export const GenderInput = ({ condition, index, onChange }: InputProps) => {
           id="gender-DropDown"
           options={options}
           value={condition.value.toString()}
-          onChange={(value) => onChange({ type: 'gender', value: Number(value) }, index)}
+          onChange={(value) => onChange({ type: 'gender', value: Number(value) as 0 | 1 | 2 }, index)}
         />
       </InputWithTopLabelContainer>
     );

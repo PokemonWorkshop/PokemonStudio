@@ -132,6 +132,8 @@ const DropDownContainer = styled.div`
   }
 `;
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore TODO: Fix this for real ???
 const ReactTooltipStyled = styled(ReactTooltip)`
   padding: 8px !important;
   border-radius: 4px !important;

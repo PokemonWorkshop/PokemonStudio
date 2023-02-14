@@ -1,6 +1,7 @@
-import React from 'react';
-import ReactNotification from 'react-notifications-component';
-import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
+import React, { Suspense } from 'react';
+import { render } from 'react-dom';
+import { ReactNotifications } from 'react-notifications-component';
+import { MemoryRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import GlobalStyle from './AppGlobalStyle';
 import theme from './AppTheme';
@@ -14,6 +15,9 @@ import DashboardRouter from '@pages/dashboard/Dashboard.Router.page';
 import { Loader } from '@components/Loader';
 import { LoaderContextProvider } from '@utils/loaderContext';
 import { UnsavedWarningModal } from '@components/modals/UnsavedWarningModal';
+import { TitleBar } from '@components/titleBar/TitleBar';
+
+import './i18n';
 
 const App = () => {
   return (
@@ -22,27 +26,47 @@ const App = () => {
         <ThemeProvider theme={theme}>
           <GlobalStyle />
           <UnsavedWarningModal />
-          <Router>
+          <MemoryRouter>
             <NavigationBarComponent />
-            <Switch>
-              <Route exact strict path="/home" component={HomePage} />
-              <Route strict path="/dashboard" component={DashboardRouter} />
-              <Route exact strict path="/psdkupdate" component={PSDKUpdatePage} />
-              <Route strict path="/database" component={DatabasePage} />
-              <Route exact strict path="/map" component={MapLinkPage} />
-              <Route exact strict path="/code" />
-              <Route exact strict path="/help" />
-              <Route exact strict path="/settings" />
-              <Route exact strict path="/account" />
-              <Redirect exact strict path="*" to="/home" />
-            </Switch>
-          </Router>
+            <Routes>
+              <Route path="/home" element={<HomePage />} />
+              <Route path="/dashboard/*" element={<DashboardRouter />} />
+              <Route path="/psdkupdate" element={<PSDKUpdatePage />} />
+              <Route path="/database/*" element={<DatabasePage />} />
+              <Route path="/map" element={<MapLinkPage />} />
+              <Route path="/code" />
+              <Route path="/help" />
+              <Route path="/settings" />
+              <Route path="/account" />
+              <Route path="/" element={<Navigate to="/home" />} />
+            </Routes>
+          </MemoryRouter>
           <Loader />
-          <ReactNotification />
+          <ReactNotifications />
         </ThemeProvider>
       </LoaderContextProvider>
     </GlobalStateProvider>
   );
 };
 
-export default App;
+render(
+  <Suspense fallback={null}>
+    <App />
+  </Suspense>,
+  document.getElementById('root')
+);
+
+const TitleBarApp = () => {
+  return (
+    <ThemeProvider theme={theme}>
+      <TitleBar />
+    </ThemeProvider>
+  );
+};
+
+render(
+  <Suspense fallback={null}>
+    <TitleBarApp />
+  </Suspense>,
+  document.getElementById('titlebar')
+);

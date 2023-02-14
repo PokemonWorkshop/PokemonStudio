@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import { DefaultLanguageType, ProjectCreationData } from '@pages/editors';
 import { PrimaryButton } from './GenericButtons';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useLoaderRef } from '@utils/loaderContext';
 import { useProjectLoad } from '@utils/useProjectLoad';
 import { useProjectNew } from '@utils/useProjectNew';
@@ -34,7 +34,7 @@ export const CreateProjectButton = ({ projectData, children, disabled }: CreateP
   const loaderRef = useLoaderRef();
   const projectNew = useProjectNew();
   const projectLoad = useProjectLoad();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { t } = useTranslation(['loader']);
 
   const handleClick = async () => {
@@ -51,7 +51,7 @@ export const CreateProjectButton = ({ projectData, children, disabled }: CreateP
           { projectDirName },
           () => {
             loaderRef.current.close();
-            history.push('/dashboard');
+            navigate('/dashboard');
           },
           ({ errorMessage }) => loaderRef.current.setError('loading_project_error', errorMessage),
           (count) => loaderRef.current.setError('loading_project_error', t('loader:integrity_message', { count }), true)

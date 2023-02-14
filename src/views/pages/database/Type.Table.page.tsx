@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { TypeControlBar } from '@components/database/type/TypeControlBar';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { useTranslation } from 'react-i18next';
@@ -18,7 +18,7 @@ type TypePageParams = {
 };
 
 export const TypeTablePage = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const {
     projectDataValues: types,
     selectedDataIdentifier: typeSelected,
@@ -43,10 +43,10 @@ export const TypeTablePage = () => {
 
   const onChange: SelectChangeEvent = (selected) => {
     setSelectedDataIdentifier({ type: selected.value });
-    history.push(`/database/types/table`);
+    navigate(`/database/types/table`);
   };
 
-  const onClickedBack = () => history.push(`/database/types/${currentType.dbSymbol}`);
+  const onClickedBack = () => navigate(`/database/types/${currentType.dbSymbol}`);
 
   const editors = {
     new: <TypeNewEditor from="typeTable" onClose={() => setCurrentEditor(undefined)} />,

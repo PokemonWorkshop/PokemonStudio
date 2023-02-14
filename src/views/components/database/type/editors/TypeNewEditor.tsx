@@ -16,7 +16,7 @@ import { TextInputError } from '@components/inputs/Input';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { checkDbSymbolExist, generateDefaultDbSymbol, wrongDbSymbol } from '@utils/dbSymbolUtils';
 import { TypeCategoryPreview } from '@components/categories';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { findFirstAvailableId, findFirstAvailableTextId } from '@utils/ModelUtils';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { createType } from '@utils/entityCreation';
@@ -44,7 +44,7 @@ export const TypeNewEditor = ({ from, onClose }: TypeNewEditorProps) => {
   const dbSymbolRef = useRef<HTMLInputElement>(null);
   const [dbSymbolErrorType, setDbSymbolErrorType] = useState<'value' | 'duplicate' | undefined>(undefined);
   const colorRef = useRef<HTMLInputElement>(null);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const onClickNew = () => {
     if (!dbSymbolRef.current || !colorRef.current) return;
@@ -55,8 +55,8 @@ export const TypeNewEditor = ({ from, onClose }: TypeNewEditorProps) => {
     const type = createType(dbSymbol, id, textId, colorRef.current.value);
     setText(TYPE_NAME_TEXT_ID, textId, name);
     setType({ [dbSymbol]: type }, { type: dbSymbol });
-    if (from === 'type') history.push(`/database/types/${dbSymbol}`);
-    else history.push(`/database/types/table`);
+    if (from === 'type') navigate(`/database/types/${dbSymbol}`);
+    else navigate(`/database/types/table`);
 
     onClose();
   };

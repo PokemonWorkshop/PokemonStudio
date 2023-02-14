@@ -3,12 +3,13 @@ import { ActiveContainer } from '@components/ActiveContainer';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useLoaderRef } from '@utils/loaderContext';
 import { ClearButtonOnlyIcon } from '@components/buttons';
 import { Code } from '@components/Code';
 import { useProjectLoad } from '@utils/useProjectLoad';
 import { Project } from '@utils/projectList';
+import { ResourceImage } from '@components/ResourceImage';
 
 const ProjectCardContainer = styled(ActiveContainer)`
   position: relative;
@@ -41,7 +42,7 @@ const ProjectCardContainer = styled(ActiveContainer)`
     color: ${({ theme }) => theme.colors.text400};
   }
 
-  & :hover {
+  &:hover {
     cursor: pointer;
 
     & button.clear-button {
@@ -56,6 +57,10 @@ const ProjectCardContainer = styled(ActiveContainer)`
       border: none;
       font: inherit;
       outline: inherit;
+
+      &:hover {
+        cursor: pointer;
+      }
     }
   }
 
@@ -84,7 +89,7 @@ export const ProjectCard = ({ project, onDeleteProjectToList }: ProjectCardProps
   const { t } = useTranslation(['homepage', 'loader']);
   const loaderRef = useLoaderRef();
   const projectLoad = useProjectLoad();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleClick = () => {
     if (!project) return;
@@ -93,7 +98,7 @@ export const ProjectCard = ({ project, onDeleteProjectToList }: ProjectCardProps
       { projectDirName: project.projectPath },
       () => {
         loaderRef.current.close();
-        history.push('/dashboard');
+        navigate('/dashboard');
       },
       ({ errorMessage }) => loaderRef.current.setError('loading_project_error', errorMessage),
       (count) => loaderRef.current.setError('loading_project_error', t('loader:integrity_message', { count }), true)
@@ -103,7 +108,7 @@ export const ProjectCard = ({ project, onDeleteProjectToList }: ProjectCardProps
   return project ? (
     <ProjectCardContainer onClick={handleClick}>
       {project.projectStudio.iconPath ? (
-        <img src={`file://${project.projectPath}/${project.projectStudio.iconPath}`} />
+        <ResourceImage imagePathInProject={project.projectStudio.iconPath} projectPath={project.projectPath} />
       ) : (
         <BaseIcon icon="top" size="m" color="" />
       )}

@@ -90,11 +90,11 @@ export const TrainerFrameEditor = ({ trainer, openTranslationEditor }: TrainerFr
     if (!isLoading) return;
 
     window.api.fileExists(
-      { filePath: trainerSpritePath(trainer, state.projectPath!) },
+      { filePath: trainerSpritePath(trainer, state.projectPath) },
       ({ result }) => {
         setSpriteDp(result);
         window.api.fileExists(
-          { filePath: trainerSpriteBigPath(trainer, state.projectPath!) },
+          { filePath: trainerSpriteBigPath(trainer, state.projectPath) },
           ({ result: resultBig }) => {
             setSpriteBig(resultBig);
             setLoading(false);
@@ -117,10 +117,9 @@ export const TrainerFrameEditor = ({ trainer, openTranslationEditor }: TrainerFr
   };
 
   const getSprite = () => {
-    if (!state.projectPath) return '';
-    if (spriteBig) return trainerSpriteBigPath(trainer, state.projectPath);
-    if (spriteDp) return trainerSpritePath(trainer, state.projectPath);
-    return 'https://www.pokepedia.fr/images/8/87/Pok%C3%A9_Ball.png'; // placeholder here
+    if (spriteBig) return trainerSpriteBigPath(trainer);
+    if (spriteDp) return trainerSpritePath(trainer);
+    return '';
   };
 
   return (
@@ -200,8 +199,8 @@ export const TrainerFrameEditor = ({ trainer, openTranslationEditor }: TrainerFr
             <Label htmlFor="battler" required>
               {t('trainer_sprite')}
             </Label>
-            {trainer.battlers.length === 0 ? (
-              <DropInput name={t('trainer_sprite')} extensions={['png']} onFileChoosen={onBattlerChoosen} />
+            {trainer.battlers.length === 0 || (!spriteDp && !spriteBig) ? (
+              <DropInput destFolderToCopy="graphics/battlers" name={t('trainer_sprite')} extensions={['png']} onFileChoosen={onBattlerChoosen} />
             ) : !isLoading ? (
               <PictureInput
                 name={t('trainer_sprite')}

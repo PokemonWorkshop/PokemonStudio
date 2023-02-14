@@ -1,15 +1,14 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, forwardRef } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { join, basename } from '@utils/path';
+import { basename } from '@utils/path';
 import { useConfigSceneTitle } from '@utils/useProjectConfig';
 import { DashboardEditor } from '../DashboardEditor';
-import { ReloadableImage } from '@components/ReloadableImage';
 import { ClearButtonOnlyIcon } from '@components/buttons';
 import { DropInput, DropInputContainer } from '@components/inputs/DropInput';
-import { useImageSaving } from '@utils/useImageSaving';
 import { DragDropContext, Draggable, DraggableProvided, Droppable, DroppableProvided, DropResult } from 'react-beautiful-dnd';
 import { cloneEntity } from '@utils/cloneEntity';
+import { ResourceImage } from '@components/ResourceImage';
 
 type SplashScreenContainerProps = {
   splashScreenLength: number;
@@ -20,6 +19,7 @@ const SplashScreenContainer = styled.div<SplashScreenContainerProps>`
   flex-direction: row;
   gap: 16px;
   overflow-x: auto;
+  overflow-y: hidden;
   height: ${({ splashScreenLength }) => (splashScreenLength >= 4 ? '165px' : 'auto')};
 
   ${DropInputContainer} {
@@ -75,7 +75,7 @@ const SplashScreenCardContainer = styled.div`
     object-fit: cover;
   }
 
-  & :hover {
+  &:hover {
     cursor: grab;
 
     & button.clear-button {
@@ -103,51 +103,39 @@ type SplashScreenCardProps = {
   index: number;
   splashScreenPath: string;
   provided: DraggableProvided;
-  onDrag: boolean;
   onSplashScreenClear: (index: number) => void;
 };
 
-const SplashScreenCard = React.forwardRef<HTMLInputElement, SplashScreenCardProps>(
-  ({ index, splashScreenPath, provided, onDrag, onSplashScreenClear }, ref) => {
-    return (
-      <SplashScreenCardContainer
-        ref={ref}
-        {...provided.draggableProps}
-        style={{
-          ...provided.draggableProps.style,
-        }}
-        {...provided.dragHandleProps}
-      >
-        {onDrag ? <img src={splashScreenPath} draggable="false" /> : <ReloadableImage src={splashScreenPath} draggable="false" />}
-        <button className="clear-button">
-          <ClearButtonOnlyIcon onClick={() => onSplashScreenClear(index)} />
-        </button>
-      </SplashScreenCardContainer>
-    );
-  }
-);
+const SplashScreenCard = forwardRef<HTMLInputElement, SplashScreenCardProps>(({ index, splashScreenPath, provided, onSplashScreenClear }, ref) => {
+  return (
+    <SplashScreenCardContainer
+      ref={ref}
+      {...provided.draggableProps}
+      style={{
+        ...provided.draggableProps.style,
+      }}
+      {...provided.dragHandleProps}
+    >
+      <ResourceImage imagePathInProject={splashScreenPath} />
+      <button className="clear-button">
+        <ClearButtonOnlyIcon onClick={() => onSplashScreenClear(index)} />
+      </button>
+    </SplashScreenCardContainer>
+  );
+});
 SplashScreenCard.displayName = 'SplashScreenCard';
 
 export const DashboardGameStartSplashScreen = () => {
   const { t } = useTranslation('dashboard_game_start');
-  const { projectConfigValues: gameStart, setProjectConfigValues: setGameStart, state } = useConfigSceneTitle();
-  const { addImage, removeImage, getImage } = useImageSaving();
+  const { projectConfigValues: gameStart, setProjectConfigValues: setGameStart } = useConfigSceneTitle();
   const currentEditedGameStart = useMemo(() => cloneEntity(gameStart), [gameStart]);
-  const [onDrag, setOnDrag] = useState(false);
-
-  const getSplashScreenPath = (filename: string) => {
-    const filenameWithExt = filename + '.png';
-    return getImage(join('graphics/titles', filenameWithExt)) ?? join(state.projectPath || '', 'graphics/titles', filenameWithExt);
-  };
 
   const onSplashScreenClear = (index: number) => {
-    removeImage(join('graphics/titles', currentEditedGameStart.additionalSplashes[index] + '.png'));
     currentEditedGameStart.additionalSplashes.splice(index, 1);
     setGameStart(currentEditedGameStart);
   };
 
   const onSplashScreenChoosen = (splashScreenPath: string) => {
-    addImage(join('graphics/titles', basename(splashScreenPath)), splashScreenPath);
     currentEditedGameStart.additionalSplashes.push(basename(splashScreenPath, '.png'));
     setGameStart(currentEditedGameStart);
   };
@@ -157,9 +145,7 @@ export const DashboardGameStartSplashScreen = () => {
       {gameStart.additionalSplashes.length > 0 ? (
         <SplashScreenContainer splashScreenLength={gameStart.additionalSplashes.length}>
           <DragDropContext
-            onDragStart={() => setOnDrag(true)}
             onDragEnd={(result: DropResult) => {
-              setOnDrag(false);
               const srcI = result.source.index;
               const desI = result.destination?.index;
               if (desI === undefined) return;
@@ -177,10 +163,9 @@ export const DashboardGameStartSplashScreen = () => {
                         <SplashScreenCard
                           ref={provided.innerRef}
                           index={index}
-                          splashScreenPath={getSplashScreenPath(filename)}
+                          splashScreenPath={`graphics/titles/${filename}.png`}
                           onSplashScreenClear={onSplashScreenClear}
                           provided={provided}
-                          onDrag={onDrag}
                         />
                       )}
                     </Draggable>
@@ -190,10 +175,22 @@ export const DashboardGameStartSplashScreen = () => {
               )}
             </Droppable>
           </DragDropContext>
-          <DropInput name={t('splash_screens_name')} extensions={['png']} onFileChoosen={onSplashScreenChoosen} multipleFiles={true} />
+          <DropInput
+            destFolderToCopy="graphics/titles"
+            name={t('splash_screens_name')}
+            extensions={['png']}
+            onFileChoosen={onSplashScreenChoosen}
+            multipleFiles={true}
+          />
         </SplashScreenContainer>
       ) : (
-        <DropInput name={t('splash_screens_name')} extensions={['png']} onFileChoosen={onSplashScreenChoosen} multipleFiles={true} />
+        <DropInput
+          destFolderToCopy="graphics/titles"
+          name={t('splash_screens_name')}
+          extensions={['png']}
+          onFileChoosen={onSplashScreenChoosen}
+          multipleFiles={true}
+        />
       )}
     </DashboardEditor>
   );

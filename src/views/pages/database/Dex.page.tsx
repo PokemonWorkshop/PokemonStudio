@@ -26,6 +26,7 @@ import { showNotification } from '@utils/showNotification';
 import { useGetEntityNameText, useGetEntityNameUsingCSV } from '@utils/ReadingProjectText';
 import { cloneEntity } from '@utils/cloneEntity';
 import { useEditorHandlingCloseRef } from '@components/editor/useHandleCloseEditor';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 
 export const DexPage = () => {
   const {
@@ -80,7 +81,7 @@ export const DexPage = () => {
 
   const onClickReset = () => {
     currentEditedDex.creatures = Object.entries(allPokemon)
-      .map(([dbSymbol, pokemonData]) => ({ dbSymbol, index: pokemonData.id }))
+      .map(([dbSymbol, pokemonData]) => ({ dbSymbol: dbSymbol as DbSymbol, index: pokemonData.id }))
       .sort((a, b) => a.index - b.index)
       .map((data) => ({ dbSymbol: data.dbSymbol, form: 0 }));
     setDex({ [dex.dbSymbol]: currentEditedDex });

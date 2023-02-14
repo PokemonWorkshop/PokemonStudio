@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Deletion } from '@components/deletion';
 import { useProjectDex } from '@utils/useProjectData';
-import { useGetEntityNameText } from '@utils/ReadingProjectText';
+import { useGetEntityNameUsingCSV } from '@utils/ReadingProjectText';
 import { cloneEntity } from '@utils/cloneEntity';
 
 type DexDeletionProps = {
@@ -18,7 +18,7 @@ export const DexDeletion = ({ type, onClose }: DexDeletionProps) => {
     removeProjectDataValue: removeDex,
   } = useProjectDex();
   const { t } = useTranslation('database_dex');
-  const getDexName = useGetEntityNameText();
+  const getDexName = useGetEntityNameUsingCSV();
   const dex = allDex[dexDbSymbol];
   const currentDex = useMemo(() => cloneEntity(dex), [dex]);
 

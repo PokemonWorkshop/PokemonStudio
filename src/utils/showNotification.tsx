@@ -1,6 +1,6 @@
 import { Notification } from '@components/Notification';
 import React from 'react';
-import { store } from 'react-notifications-component';
+import { Store } from 'react-notifications-component';
 
 type NotificationType = 'success' | 'danger' | 'info' | 'warning';
 
@@ -10,7 +10,7 @@ type NotificationType = 'success' | 'danger' | 'info' | 'warning';
  *   <Component onClick={() => showNotification('success', 'onClick', 'You successfully triggered onClick')} />
  */
 export const showNotification = (type: NotificationType, title: string, message: string) => {
-  store.addNotification({
+  Store.addNotification({
     content: <Notification type={type} title={title} message={message} />,
     container: 'bottom-right',
     insert: 'bottom',

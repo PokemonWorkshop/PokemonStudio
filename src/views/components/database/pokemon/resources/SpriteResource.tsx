@@ -20,7 +20,7 @@ const SpriteResourceContainer = styled(ResourceContainer)`
   width: 244px;
   height: 244px;
 
-  & :hover {
+  &:hover {
     padding: 23px 23px 15px;
     cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
 
@@ -124,7 +124,7 @@ export const SpriteResource = ({ form, resource, isFemale, disableGif, onResourc
       copyFile(
         { srcFile: acceptedFiles[0].path, destFolder: dirname(formResourcesPath(form, resource)) },
         ({ destFile }) =>
-          setImmediate(() => {
+          setTimeout(() => {
             onResourceChoosen(destFile, resource);
             setFlipFlap((last) => !last);
           }),
@@ -139,7 +139,7 @@ export const SpriteResource = ({ form, resource, isFemale, disableGif, onResourc
     chooseFile(
       { name: t(`database_pokemon:${resource}`), extensions, destFolderToCopy: dirname(formResourcesPath(form, resource)) },
       ({ path: resourcePath }) => {
-        setImmediate(() => {
+        setTimeout(() => {
           onResourceChoosen(resourcePath, resource);
           setFlipFlap((last) => !last);
           setIsDialogOpen(false);

@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const DatabaseTabsBarContainer = styled.div`
   display: flex;
@@ -45,7 +45,7 @@ const TabContainer = styled.div.attrs<TabContainerProps>((props) => ({
     white-space: nowrap;
   }
 
-  & :hover {
+  &:hover {
     background-color: ${({ theme }) => theme.colors.dark16};
     cursor: pointer;
   }
@@ -60,7 +60,7 @@ const TabContainer = styled.div.attrs<TabContainerProps>((props) => ({
       color: ${({ theme }) => theme.colors.text500};
     }
 
-    & :hover {
+    &:hover {
       background-color: transparent;
       cursor: default;
     }
@@ -85,14 +85,14 @@ type DatabaseTabBarProps = {
 };
 
 export const DatabaseTabsBar = ({ currentTabIndex, tabs }: DatabaseTabBarProps) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   return (
     <DatabaseTabsBarContainer>
       {tabs.map((tab, index) => (
         <React.Fragment key={`database-tab-${index}`}>
           <TabContainer
             className={currentTabIndex === index ? 'current-tab' : undefined}
-            onClick={() => tab.disabled ?? history.push(tab.path)}
+            onClick={() => tab.disabled ?? navigate(tab.path)}
             disabled={tab.disabled}
           >
             <span>{tab.label}</span>

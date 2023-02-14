@@ -128,11 +128,17 @@ export const pokemonIconPath = (specie: StudioCreature, formId?: number) => {
   return formResourcesPath(specie.forms[0], 'icon');
 };
 
-export const itemIconPath = (icon: string, projectPath: string | null) => {
-  if (!projectPath) return 'https://www.pokepedia.fr/images/8/87/Pok%C3%A9_Ball.png';
-  return join(projectPath, 'graphics/icons/', `${icon}.png`);
+export const itemIconPath = (icon: string) => {
+  return join('graphics/icons/', `${icon}.png`);
 };
 
-export const trainerSpritePath = (trainer: StudioTrainer, projectPath: string) => `${projectPath}/graphics/battlers/${trainer.battlers[0]}.png`;
-export const trainerSpriteBigPath = (trainer: StudioTrainer, projectPath: string) =>
-  `${projectPath}/graphics/battlers/${trainer.battlers[0]}_big.png`;
+export const trainerSpritePath = (trainer: StudioTrainer, projectPath?: string | null) => {
+  if (projectPath) return `${projectPath}/graphics/battlers/${trainer.battlers[0]}.png`;
+
+  return `graphics/battlers/${trainer.battlers[0]}.png`;
+};
+export const trainerSpriteBigPath = (trainer: StudioTrainer, projectPath?: string | null) => {
+  if (projectPath) return `${projectPath}/graphics/battlers/${trainer.battlers[0]}_big.png`;
+
+  return `graphics/battlers/${trainer.battlers[0]}_big.png`;
+};

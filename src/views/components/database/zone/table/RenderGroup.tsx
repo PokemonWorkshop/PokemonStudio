@@ -58,12 +58,12 @@ const RenderGroupContainer = styled(DataGroupGrid).attrs<RenderGroupContainerPro
   & .error {
     color: ${theme.colors.dangerBase};
 
-    & :hover {
+    &:hover {
       color: ${theme.colors.dangerBase};
     }
   }
 
-  & :hover {
+  &:hover {
     .buttons:nth-child(5) {
       visibility: ${({ dragOn }) => (dragOn ? `hidden` : 'visible')};
     }

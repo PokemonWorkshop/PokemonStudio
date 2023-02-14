@@ -1,4 +1,5 @@
-import { protocol } from 'electron';
+import { app, protocol } from 'electron';
+import electronIsDev from 'electron-is-dev';
 import path from 'path';
 import fs from 'fs';
 
@@ -37,5 +38,11 @@ export const registerElectronProtocolWhenAppRead = (resourcePath: string) => {
     }
 
     callBack(filepath);
+  });
+  // Create static files protocol
+  protocol.registerFileProtocol('static', (request, callback) => {
+    const fileUrl = request.url.replace('static://', '');
+    const filePath = path.join(app.getAppPath(), electronIsDev ? '' : '.webpack/renderer', fileUrl);
+    callback({ path: filePath, headers: { 'Access-Control-Allow-Origin': '*' } });
   });
 };

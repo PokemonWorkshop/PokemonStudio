@@ -3,6 +3,8 @@ import { List } from 'react-virtualized';
 import styled from 'styled-components';
 import { SelectElementType } from './SelectCustomPropsInterface';
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore TODO: Fix this for real
 export const ListElement = styled(List)`
   padding: 0px 4px;
 

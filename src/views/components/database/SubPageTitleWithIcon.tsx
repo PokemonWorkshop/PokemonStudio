@@ -3,6 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { ReactComponent as BackIcon } from '@assets/icons/global/back.svg';
 import { SubPageTitleContainer, SubPageTitleProps } from './SubPageTitle';
+import { ResourceImage } from '@components/ResourceImage';
 
 type SubPageTitleWithIconProps = {
   icon: string;
@@ -25,7 +26,7 @@ export const SubPageTitleWithIcon = ({ title, size, onClickedBack, icon }: SubPa
       <DarkButton onClick={onClickedBack}>
         <BackIconWithIconContainer>
           <BackIcon />
-          <img src={icon} />
+          <ResourceImage imagePathInProject={icon} />
         </BackIconWithIconContainer>
       </DarkButton>
       <h1>{title}</h1>

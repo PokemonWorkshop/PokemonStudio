@@ -24,6 +24,7 @@ interface Colors {
 
   navigationTopIconColor: string;
   navigationIconColor: string;
+  navigationIconCloseColor: string;
 
   overlay: string;
   dark8: string;
@@ -55,6 +56,7 @@ interface Fonts {
   normalMedium: string;
   normalSmall: string;
   codeRegular: string;
+  windowsIcons: string;
 }
 
 interface Breakpoints {

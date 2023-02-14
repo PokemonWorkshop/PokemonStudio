@@ -58,6 +58,8 @@ export const DataPokemonVirtualizedListContainer = styled.div<DataPokemonVirtual
   margin: -4px -4px -20px -8px;
 `;
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore TODO: Fix this for real
 export const PokemonList = styled(List)`
   padding-right: 4px;
 

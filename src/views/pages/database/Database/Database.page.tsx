@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Switch, Route, useRouteMatch } from 'react-router';
-import { Redirect } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { NavigationDatabase } from '../../../components/database/navigation/NavigationDatabase';
 import { PokemonPage } from '../Pokemon.page';
 import { MovePage } from '../Move.page';
@@ -20,7 +19,6 @@ import { GroupPage } from '../Group.page';
 import { ZonePage } from '../Zone.page';
 import { DexPage } from '../Dex.page';
 import { PokemonResourcesPage } from '../Pokemon.Resources.page';
-import { SelectedDataIdentifier } from '@src/GlobalStateProvider';
 
 const DatabasePageStyle = styled.div`
   display: flex;
@@ -28,66 +26,29 @@ const DatabasePageStyle = styled.div`
 `;
 
 const DatabasePageComponent = () => {
-  const { path } = useRouteMatch();
   return (
     <DatabasePageStyle>
       <NavigationDatabase />
-      <Switch>
-        <Route path={`${path}/moves/pokemon`}>
-          <MovePokemonPage />
-        </Route>
-        <Route path={`${path}/moves`}>
-          <MovePage />
-        </Route>
-        <Route path={`${path}/pokemon/movepool`}>
-          <PokemonMovepoolPage />
-        </Route>
-        <Route path={`${path}/pokemon/resources`}>
-          <PokemonResourcesPage />
-        </Route>
-        <Route path={`${path}/pokemon`}>
-          <PokemonPage />
-        </Route>
-        <Route path={`${path}/items`}>
-          <ItemPage />
-        </Route>
-        <Route path={`${path}/abilities/pokemon`}>
-          <AbilityPokemonPage />
-        </Route>
-        <Route path={`${path}/abilities`}>
-          <AbilityPage />
-        </Route>
-        <Route path={`${path}/types/table`}>
-          <TypeTablePage />
-        </Route>
-        <Route path={`${path}/types/:typeDbSymbol/moves`}>
-          <TypeMovesPage />
-        </Route>
-        <Route path={`${path}/types/:typeDbSymbol/pokemon`}>
-          <TypePokemonPage />
-        </Route>
-        <Route path={`${path}/types/:typeDbSymbol?`}>
-          <TypePage />
-        </Route>
-        <Route path={`${path}/quests`}>
-          <QuestPage />
-        </Route>
-        <Route path={`${path}/trainers`}>
-          <TrainerPage />
-        </Route>
-        <Route path={`${path}/groups`}>
-          <GroupPage />
-        </Route>
-        <Route path={`${path}/zones`}>
-          <ZonePage />
-        </Route>
-        <Route path={`${path}/dex`}>
-          <DexPage />
-        </Route>
-        <Route path={`${path}`}>
-          <Redirect to={sessionStorage.getItem('lastDatabasePage') || `${path}/pokemon`} />
-        </Route>
-      </Switch>
+      <Routes>
+        <Route path="moves/pokemon" element={<MovePokemonPage />} />
+        <Route path="moves" element={<MovePage />} />
+        <Route path="pokemon/movepool" element={<PokemonMovepoolPage />} />
+        <Route path="pokemon/resources" element={<PokemonResourcesPage />} />
+        <Route path="pokemon" element={<PokemonPage />} />
+        <Route path="items" element={<ItemPage />} />
+        <Route path="abilities/pokemon" element={<AbilityPokemonPage />} />
+        <Route path="abilities" element={<AbilityPage />} />
+        <Route path="types/table" element={<TypeTablePage />} />
+        <Route path="types/:typeDbSymbol/moves" element={<TypeMovesPage />} />
+        <Route path="types/:typeDbSymbol/pokemon" element={<TypePokemonPage />} />
+        <Route path="types/:typeDbSymbol?" element={<TypePage />} />
+        <Route path="quests" element={<QuestPage />} />
+        <Route path="trainers" element={<TrainerPage />} />
+        <Route path="groups" element={<GroupPage />} />
+        <Route path="zones" element={<ZonePage />} />
+        <Route path="dex" element={<DexPage />} />
+        <Route path="/" element={<Navigate to={sessionStorage.getItem('lastDatabasePage') || 'pokemon'} />} />
+      </Routes>
     </DatabasePageStyle>
   );
 };

@@ -3,7 +3,7 @@ import { DataBlockWithAction, DataBlockWrapper } from '@components/database/data
 import { PageContainerStyle, PageDataConstrainerStyle } from '@pages/database/PageContainerStyle';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { DashboardFrame } from '../../components/dashboard';
 import { DashboardPageStyle } from './DashboardPageStyle';
@@ -16,7 +16,7 @@ const DashboardContainerStyle = styled(PageContainerStyle)`
 
 export const DashboardPage = () => {
   const { t } = useTranslation('dashboard');
-  const history = useHistory();
+  const navigate = useNavigate();
   return (
     <DashboardPageStyle>
       <DashboardContainerStyle>
@@ -26,7 +26,7 @@ export const DashboardPage = () => {
           </DataBlockWrapper>
           <DataBlockWrapper>
             <DataBlockWithAction size="full" title={t('project_settings')}>
-              <SecondaryButton onClick={() => history.push('/dashboard/infos')}>{t('change_project_settings')}</SecondaryButton>
+              <SecondaryButton onClick={() => navigate('/dashboard/infos')}>{t('change_project_settings')}</SecondaryButton>
             </DataBlockWithAction>
           </DataBlockWrapper>
         </PageDataConstrainerStyle>

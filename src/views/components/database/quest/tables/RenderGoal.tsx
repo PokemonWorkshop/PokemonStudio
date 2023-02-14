@@ -44,7 +44,7 @@ const RenderGoalContainer = styled(DataGoalGrid).attrs<RenderGoalContainerProps>
     visibility: hidden;
   }
 
-  & :hover {
+  &:hover {
     .buttons:nth-child(6) {
       visibility: ${({ dragOn }) => (dragOn ? `hidden` : 'visible')};
     }

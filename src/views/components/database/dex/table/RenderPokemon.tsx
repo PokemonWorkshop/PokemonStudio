@@ -76,12 +76,12 @@ const RenderPokemonContainer = styled(DataPokemonGrid).attrs<RenderPokemonContai
   & .error {
     color: ${theme.colors.dangerBase};
 
-    & :hover {
+    &:hover {
       color: ${theme.colors.dangerBase};
     }
   }
 
-  & :hover {
+  &:hover {
     .buttons:nth-child(6) {
       visibility: ${({ dragOn }) => (dragOn ? `hidden` : 'visible')};
     }

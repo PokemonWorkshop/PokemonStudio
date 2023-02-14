@@ -14,7 +14,7 @@ import { DeleteButton, DarkButton } from '@components/buttons';
 import { SelectChangeEvent } from '../../components/SelectCustom/SelectCustomPropsInterface';
 import { useTranslation } from 'react-i18next';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useProjectData } from '@utils/useProjectData';
 import {
   MoveCharacteristicsEditor,
@@ -48,8 +48,8 @@ export const MovePage = () => {
   const { t } = useTranslation(['database_moves']);
   const frameEditorRef = useEditorHandlingCloseRef();
   const getMoveName = useGetEntityNameText();
-  const history = useHistory();
-  const onClickedPokemonList = () => history.push(`/database/moves/pokemon`);
+  const navigate = useNavigate();
+  const onClickedPokemonList = () => navigate(`/database/moves/pokemon`);
   const onMoveChange: SelectChangeEvent = (selected) => {
     setSelectedDataIdentifier({ move: selected.value });
   };

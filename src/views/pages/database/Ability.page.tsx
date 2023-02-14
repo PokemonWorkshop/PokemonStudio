@@ -12,7 +12,7 @@ import { EditorOverlay } from '@components/editor';
 import { Deletion, DeletionOverlay } from '@components/deletion';
 
 import { useProjectAbilities } from '@utils/useProjectData';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
 import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 import { useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
@@ -30,9 +30,9 @@ export const AbilityPage = () => {
     getNextDbSymbol,
   } = useProjectAbilities();
   const { t } = useTranslation('database_abilities');
-  const history = useHistory();
+  const navigate = useNavigate();
   const getAbilityName = useGetEntityNameTextUsingTextId();
-  const onClickedPokemonList = () => history.push(`/database/abilities/pokemon`);
+  const onClickedPokemonList = () => navigate(`/database/abilities/pokemon`);
   const onChange: SelectChangeEvent = (selected) => setSelectedDataIdentifier({ ability: selected.value });
   const ability = abilities[abilityDbSymbol];
   const abilityName = getAbilityName(ability);

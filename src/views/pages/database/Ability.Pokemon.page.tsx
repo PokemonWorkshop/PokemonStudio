@@ -4,7 +4,7 @@ import { DataBlockWithTitleNoActive, DataBlockWrapper } from '@components/databa
 import { AbilityControlBar, AbilityPokemonTable } from '@components/database/ability';
 import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { SubPageTitle } from '@components/database/SubPageTitle';
 import { useProjectAbilities } from '@utils/useProjectData';
@@ -20,7 +20,7 @@ export const AbilityPokemonPage = () => {
     getNextDbSymbol,
   } = useProjectAbilities();
   const { t } = useTranslation('database_abilities');
-  const history = useHistory();
+  const navigate = useNavigate();
   const getAbilityName = useGetEntityNameTextUsingTextId();
   const shortcutMap = useMemo<StudioShortcutActions>(() => {
     return {
@@ -35,7 +35,7 @@ export const AbilityPokemonPage = () => {
   const onChange: SelectChangeEvent = (selected) => {
     setSelectedDataIdentifier({ ability: selected.value });
   };
-  const onClickedBack = () => history.push('database/abilities');
+  const onClickedBack = () => navigate('/database/abilities');
 
   return (
     <DatabasePageStyle>

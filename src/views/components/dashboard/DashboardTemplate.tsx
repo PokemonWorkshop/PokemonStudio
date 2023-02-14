@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 import { DataBlockWrapper } from '@components/database/dataBlocks';
 import { PageContainerStyle, PageDataConstrainerStyle } from '@pages/database/PageContainerStyle';
 import { SubPageTitle } from '@components/database/SubPageTitle';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { DashboardPageStyle } from '@pages/dashboard/DashboardPageStyle';
 import styled from 'styled-components';
 
@@ -25,13 +25,13 @@ const DashboardContainer = styled.div<DashboardContainerProps>`
 `;
 
 export const DashboardTemplate = ({ title, children }: DashboardTemplateProps) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   return (
     <DashboardPageStyle>
       <PageContainerStyle>
         <PageDataConstrainerStyle>
           <DataBlockWrapper>
-            <SubPageTitle title={title} size="dashboard" onClickedBack={() => history.push('/dashboard')} />
+            <SubPageTitle title={title} size="dashboard" onClickedBack={() => navigate('/dashboard')} />
             <DashboardContainer size="dashboard">{children}</DashboardContainer>
           </DataBlockWrapper>
         </PageDataConstrainerStyle>

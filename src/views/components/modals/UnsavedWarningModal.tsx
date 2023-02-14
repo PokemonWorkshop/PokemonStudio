@@ -1,4 +1,3 @@
-import { ipcRenderer } from 'electron';
 import React, { useMemo, useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
@@ -85,9 +84,11 @@ export const UnsavedWarningModal = () => {
   const loaderRef = useLoaderRef();
   const [show, setShow] = useState<boolean>(false);
   const shouldForceQuit = useRef<boolean>(false);
+  const isDataToSaveRef = useRef<boolean>(isDataToSave);
+  const [state, setState] = useState<'init' | 'update'>('init');
 
   const onQuit = async () => {
-    await ipcRenderer.send('window-safe-close', shouldForceQuit.current);
+    await window.api.safeClose(shouldForceQuit.current);
   };
 
   const onSave = useMemo(
@@ -105,20 +106,26 @@ export const UnsavedWarningModal = () => {
     [isDataToSave]
   );
 
+  const listener: Parameters<typeof window.api.requestClose.on>[0] = async (_event, forceQuit = false) => {
+    shouldForceQuit.current = forceQuit;
+    if (isDataToSaveRef.current) {
+      setShow(true);
+    } else {
+      await onQuit();
+    }
+  };
+
   useEffect(() => {
-    ipcRenderer.on('request-window-close', async (_event, forceQuit = false) => {
-      shouldForceQuit.current = forceQuit;
-      if (isDataToSave) {
-        setShow(true);
-      } else {
-        await onQuit();
-      }
-    });
+    if (state === 'init') {
+      window.api.requestClose.on(listener);
+      setState('update');
+    } else if (state === 'update') isDataToSaveRef.current = isDataToSave;
 
     return () => {
-      ipcRenderer.removeAllListeners('request-window-close');
+      window.api.requestClose.removeListener(listener);
     };
-  }, [isDataToSave]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDataToSave, state]);
 
   return show ? (
     <OverlayContainer className="active">

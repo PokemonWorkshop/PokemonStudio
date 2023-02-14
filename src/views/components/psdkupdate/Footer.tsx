@@ -36,7 +36,7 @@ const Footer = ({ version }: { version: string }) => {
       <LinkContainer>
         <Link external href="https://psdk.pokemonworkshop.fr/wiki/en/index.html" text={t('psdk_update:wiki')} />
         <Link external href="https://psdk.pokemonworkshop.com/yard/" text={t('psdk_update:documentation')} />
-        <Link external href="https://gitlab.com/pokemonsdk" text={t('psdk_update:gitlab')} />
+        <Link external href="https://gitlab.com/pokemonsdk/pokemonsdk" text={t('psdk_update:gitlab')} />
         <Link external href="https://twitter.com/pokemonsdk" text={t('psdk_update:twitter')} />
       </LinkContainer>
       {version && (

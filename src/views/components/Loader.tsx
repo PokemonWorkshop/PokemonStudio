@@ -9,10 +9,10 @@ const LoaderContainer = styled.div`
   visibility: hidden;
   opacity: 0;
   position: absolute;
-  top: 0;
+  top: ${({ theme }) => theme.calc.titleBarHeight};
   left: 0;
   width: 100vw;
-  height: 100vh;
+  height: ${({ theme }) => theme.calc.height};
   color: ${({ theme }) => theme.colors.text100};
   background-color: ${({ theme }) => theme.colors.dark12};
   display: flex;

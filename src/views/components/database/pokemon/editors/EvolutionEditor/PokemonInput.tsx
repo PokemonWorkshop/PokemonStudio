@@ -1,5 +1,6 @@
 import { InputWithTopLabelContainer, Label } from '@components/inputs';
 import { SelectPokemon } from '@components/selects';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { InputProps } from './InputProps';
@@ -13,7 +14,11 @@ export const PokemonInput = ({ condition, index, onChange, currentType }: Pokemo
   return (
     <InputWithTopLabelContainer>
       <Label>{t('evolutionValue_pokemon')}</Label>
-      <SelectPokemon dbSymbol={condition.value} onChange={(option) => onChange({ type: currentType, value: option.value }, index)} noLabel />
+      <SelectPokemon
+        dbSymbol={condition.value}
+        onChange={(option) => onChange({ type: currentType, value: option.value as DbSymbol }, index)}
+        noLabel
+      />
     </InputWithTopLabelContainer>
   );
 };

@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import { Category } from './Category';
-import { ItemCategory as ItemCategoryType } from '@modelEntities/item/Item.model';
+import { StudioItemCategory } from '@modelEntities/item';
 
-type ItemCategoryProps = { category: ItemCategoryType };
+type ItemCategoryProps = { category: StudioItemCategory };
 
 export const ItemCategory = styled(Category).attrs<ItemCategoryProps>((props) => ({
   'data-category': props.category,

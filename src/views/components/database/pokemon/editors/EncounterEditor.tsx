@@ -34,7 +34,7 @@ type ItemHeldComponentProps = {
 const ItemHeldComponent = ({ title, name, itemHeld, items, itemHeldOptions, refreshUI, t }: ItemHeldComponentProps) => {
   const getItemName = useGetEntityNameText();
   const onChangeItem = (dbSymbol: string) => {
-    itemHeld.dbSymbol = dbSymbol;
+    itemHeld.dbSymbol = dbSymbol as DbSymbol;
     if (dbSymbol === '__undef__') itemHeld.chance = 0;
   };
 

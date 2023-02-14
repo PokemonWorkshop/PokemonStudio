@@ -16,6 +16,7 @@ import { showNotification } from '@utils/showNotification';
 import { useGetEntityNameText, useGetProjectText } from '@utils/ReadingProjectText';
 import { getTrainerMoney, StudioTrainer, TRAINER_AI_CATEGORIES, TRAINER_CLASS_TEXT_ID } from '@modelEntities/trainer';
 import { trainerSpriteBigPath, trainerSpritePath } from '@utils/path';
+import { ResourceImage } from '@components/ResourceImage';
 
 type TrainerFrameProps = {
   trainer: StudioTrainer;
@@ -106,11 +107,11 @@ export const TrainerFrame = ({ trainer, onClick }: TrainerFrameProps) => {
 
   useEffect(() => {
     window.api.fileExists(
-      { filePath: trainerSpritePath(trainer, state.projectPath!) },
+      { filePath: trainerSpritePath(trainer, state.projectPath) },
       ({ result }) => {
         setSpriteDp(result);
         window.api.fileExists(
-          { filePath: trainerSpriteBigPath(trainer, state.projectPath!) },
+          { filePath: trainerSpriteBigPath(trainer, state.projectPath) },
           ({ result: resultBig }) => {
             setSpriteBig(resultBig);
             setInitial(false);
@@ -146,12 +147,12 @@ export const TrainerFrame = ({ trainer, onClick }: TrainerFrameProps) => {
           <TrainerSpriteContainer show={initial ? 'show' : !spriteBig && !spriteDp ? 'not-show' : 'show'}>
             {spriteBig && (
               <div className="sprite-big">
-                <img src={trainerSpriteBigPath(trainer, state.projectPath)} />
+                <ResourceImage imagePathInProject={trainerSpriteBigPath(trainer)} />
               </div>
             )}
             {spriteDp && (
               <div className="sprite-dp">
-                <img src={trainerSpritePath(trainer, state.projectPath)} />
+                <ResourceImage imagePathInProject={trainerSpritePath(trainer)} />
               </div>
             )}
           </TrainerSpriteContainer>

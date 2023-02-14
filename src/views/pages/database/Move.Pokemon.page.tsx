@@ -4,7 +4,7 @@ import { DataBlockWithTitleCollapse, DataBlockWrapper } from '@components/databa
 import { MoveControlBar } from '@components/database/move/MoveControlBar';
 import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { SubPageTitle } from '@components/database/SubPageTitle';
 import { MovePokemonLevelLearnableTable } from '@components/database/move/moveTable/MovePokemonLevelLearnableTable';
@@ -17,7 +17,7 @@ import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
 
 export const MovePokemonPage = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const {
     projectDataValues: moves,
     selectedDataIdentifier: moveDbSymbol,
@@ -39,7 +39,7 @@ export const MovePokemonPage = () => {
   const onChange: SelectChangeEvent = (selected) => {
     setSelectedDataIdentifier({ move: selected.value });
   };
-  const onClickedBack = () => history.push('/database/moves');
+  const onClickedBack = () => navigate('/database/moves');
 
   return (
     <DatabasePageStyle>

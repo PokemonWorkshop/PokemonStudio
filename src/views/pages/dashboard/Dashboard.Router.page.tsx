@@ -1,6 +1,5 @@
 import { DashboardNavigation } from '@components/dashboard';
 import React, { ReactNode } from 'react';
-import { Switch, useRouteMatch, Route } from 'react-router';
 import styled from 'styled-components';
 import { DashboardInfosPage } from './Dashboard.Infos.page';
 import { DashboardLanguagePage } from './Dashboard.Language.page';
@@ -11,6 +10,7 @@ import { DashboardDisplayPage } from './Dashboard.Display.page';
 import { DashboardSavePage } from './Dashboard.Save.page';
 import { DashboardPage } from './Dashboard.page';
 import { DashboardGameStartPage } from './Dashboard.GameStart.page';
+import { Route, Routes } from 'react-router-dom';
 
 const DashboardRouterPageStyle = styled.div`
   display: flex;
@@ -31,64 +31,91 @@ const DashboardPageWithMenu = ({ children }: DashboardPageWithMenuProps) => {
 };
 
 const DashboardRouterComponent = () => {
-  const { path } = useRouteMatch();
-
   return (
-    <Switch>
-      <Route exact path={`${path}`}>
-        <DashboardPage />
-      </Route>
-      <Route path={`${path}/infos`}>
-        <DashboardPageWithMenu>
-          <DashboardInfosPage />
-        </DashboardPageWithMenu>
-      </Route>
-      <Route path={`${path}/language`}>
-        <DashboardPageWithMenu>
-          <DashboardLanguagePage />
-        </DashboardPageWithMenu>
-      </Route>
-      <Route path={`${path}/settings`}>
-        <DashboardPageWithMenu>
-          <DashboardSettingsPage />
-        </DashboardPageWithMenu>
-      </Route>
-      <Route path={`${path}/texts`}>
-        <DashboardPageWithMenu>
-          <div>Texts</div>
-        </DashboardPageWithMenu>
-      </Route>
-      <Route path={`${path}/options`}>
-        <DashboardPageWithMenu>
-          <div>Options</div>
-        </DashboardPageWithMenu>
-      </Route>
-      <Route path={`${path}/devices`}>
-        <DashboardPageWithMenu>
-          <DashboardDevicesPage />
-        </DashboardPageWithMenu>
-      </Route>
-      <Route path={`${path}/display`}>
-        <DashboardPageWithMenu>
-          <DashboardDisplayPage />
-        </DashboardPageWithMenu>
-      </Route>
-      <Route path={`${path}/graphics`}>
-        <DashboardPageWithMenu>
-          <DashboardGraphicsPage />
-        </DashboardPageWithMenu>
-      </Route>
-      <Route path={`${path}/save`}>
-        <DashboardPageWithMenu>
-          <DashboardSavePage />
-        </DashboardPageWithMenu>
-      </Route>
-      <Route path={`${path}/gamestart`}>
-        <DashboardPageWithMenu>
-          <DashboardGameStartPage />
-        </DashboardPageWithMenu>
-      </Route>
-    </Switch>
+    <Routes>
+      <Route path="/" element={<DashboardPage />} />
+      <Route
+        path="infos"
+        element={
+          <DashboardPageWithMenu>
+            <DashboardInfosPage />
+          </DashboardPageWithMenu>
+        }
+      />
+      <Route
+        path="language"
+        element={
+          <DashboardPageWithMenu>
+            <DashboardLanguagePage />
+          </DashboardPageWithMenu>
+        }
+      />
+      <Route
+        path="settings"
+        element={
+          <DashboardPageWithMenu>
+            <DashboardSettingsPage />
+          </DashboardPageWithMenu>
+        }
+      />
+      <Route
+        path="texts"
+        element={
+          <DashboardPageWithMenu>
+            <div>Texts</div>
+          </DashboardPageWithMenu>
+        }
+      />
+      <Route
+        path="options"
+        element={
+          <DashboardPageWithMenu>
+            <div>Options</div>
+          </DashboardPageWithMenu>
+        }
+      />
+      <Route
+        path="devices"
+        element={
+          <DashboardPageWithMenu>
+            <DashboardDevicesPage />
+          </DashboardPageWithMenu>
+        }
+      />
+      <Route
+        path="display"
+        element={
+          <DashboardPageWithMenu>
+            <DashboardDisplayPage />
+          </DashboardPageWithMenu>
+        }
+      />
+      <Route
+        path="graphics"
+        element={
+          <DashboardPageWithMenu>
+            <DashboardGraphicsPage />
+          </DashboardPageWithMenu>
+        }
+      />
+      <Route
+        path="save"
+        element={
+          <DashboardPageWithMenu>
+            <DashboardSavePage />
+          </DashboardPageWithMenu>
+        }
+      />
+
+      <Route
+        path="gameStart"
+        element={
+          <DashboardPageWithMenu>
+            <DashboardGameStartPage />
+          </DashboardPageWithMenu>
+        }
+      />
+    </Routes>
   );
 };
 

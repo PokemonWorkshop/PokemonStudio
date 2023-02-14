@@ -1,7 +1,7 @@
 import { ItemCategory } from '@components/categories';
 import { CopyIdentifier } from '@components/Copy';
+import { ResourceImage } from '@components/ResourceImage';
 import { ITEM_CATEGORY, StudioItem } from '@modelEntities/item';
-import { useGlobalState } from '@src/GlobalStateProvider';
 import { itemIconPath } from '@utils/path';
 import { useGetEntityDescriptionText, useGetEntityNameText } from '@utils/ReadingProjectText';
 import React from 'react';
@@ -20,7 +20,6 @@ type ItemFrameProps = { item: StudioItem; onClick: () => void };
 
 export const ItemFrame = ({ item, onClick }: ItemFrameProps) => {
   const { t } = useTranslation(['database_types']);
-  const [state] = useGlobalState();
   const getItemName = useGetEntityNameText();
   const getItemDescription = useGetEntityDescriptionText();
   const category = ITEM_CATEGORY[item.klass];
@@ -29,7 +28,7 @@ export const ItemFrame = ({ item, onClick }: ItemFrameProps) => {
     <DataBlockContainer size="full" onClick={onClick}>
       <DataGrid columns="118px minmax(min-content, 692px) auto">
         <DataSpriteContainer type="icon">
-          <img src={itemIconPath(item.icon, state.projectPath)} />
+          <ResourceImage imagePathInProject={itemIconPath(item.icon)} />
         </DataSpriteContainer>
         <DataInfoContainer>
           <DataInfoContainerHeader>
