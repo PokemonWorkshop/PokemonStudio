@@ -98,9 +98,9 @@ export const TrainerNewEditor = ({ onClose }: TrainerNewEditorProps) => {
   };
 
   const getSprite = () => {
-    if (spriteBig) return `${state.projectPath}/graphics/battlers/${battlerName}_big.png`;
-    if (spriteDp) return `${state.projectPath}/graphics/battlers/${battlerName}.png`;
-    return 'https://www.pokepedia.fr/images/8/87/Pok%C3%A9_Ball.png'; // placeholder here
+    if (spriteBig) return `graphics/battlers/${battlerName}_big.png`;
+    if (spriteDp) return `graphics/battlers/${battlerName}.png`;
+    return '';
   };
 
   const onClickNew = () => {
@@ -193,7 +193,7 @@ export const TrainerNewEditor = ({ onClose }: TrainerNewEditorProps) => {
             {t('trainer_sprite')}
           </Label>
           {!battlerName ? (
-            <DropInput name={t('trainer_sprite')} extensions={['png']} onFileChoosen={onBattlerChoosen} />
+            <DropInput destFolderToCopy="graphics/battlers" name={t('trainer_sprite')} extensions={['png']} onFileChoosen={onBattlerChoosen} />
           ) : !isLoading ? (
             <PictureInput
               name={t('trainer_sprite')}
@@ -209,7 +209,6 @@ export const TrainerNewEditor = ({ onClose }: TrainerNewEditorProps) => {
           <Label htmlFor="base-money">{t('base_money')}</Label>
           <Input type="number" name="base-money" min="0" max="99999" defaultValue={10} ref={baseMoneyRef} onChange={onBaseMoneyChange} />
         </InputWithLeftLabelContainer>
-
         <ButtonContainer>
           <ToolTipContainer>
             {checkDisabled() && <ToolTip bottom="100%">{t('fields_asterisk_required')}</ToolTip>}

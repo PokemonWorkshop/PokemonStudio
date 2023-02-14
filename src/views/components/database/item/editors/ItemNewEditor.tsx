@@ -40,7 +40,7 @@ const ButtonContainer = styled.div`
 `;
 
 export const ItemNewEditor = ({ onClose }: ItemNewEditorProps) => {
-  const { projectDataValues: items, setProjectDataValues: setItem, state } = useProjectItems();
+  const { projectDataValues: items, setProjectDataValues: setItem } = useProjectItems();
   const { t } = useTranslation(['database_items', 'database_types', 'database_moves']);
   const options = useMemo(() => itemCategoryEntries(t), [t]);
   const setText = useSetProjectText();
@@ -108,6 +108,7 @@ export const ItemNewEditor = ({ onClose }: ItemNewEditorProps) => {
           </Label>
           {!icon ? (
             <DropInput
+              destFolderToCopy="graphics/icons"
               imageWidth={32}
               imageHeight={32}
               name={t('database_items:icon_of_the_item')}
@@ -118,7 +119,8 @@ export const ItemNewEditor = ({ onClose }: ItemNewEditorProps) => {
             <IconInput
               name={t('database_items:icon_of_the_item')}
               extensions={['png']}
-              iconPath={itemIconPath(icon, state.projectPath)}
+              iconPathInProject={itemIconPath(icon)}
+              destFolderToCopy="graphics/icons"
               onIconChoosen={onIconChosen}
               onIconClear={() => setIcon('')}
             />

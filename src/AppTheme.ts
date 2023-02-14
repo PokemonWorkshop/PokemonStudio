@@ -30,6 +30,7 @@ const theme: DefaultTheme = {
 
     navigationTopIconColor: '#f4f4f5',
     navigationIconColor: '#656572',
+    navigationIconCloseColor: '#EC2D3A',
 
     overlay: 'rgba(145, 145, 161, 1)',
     dark8: 'rgba(19, 18, 22, 1)',
@@ -92,6 +93,10 @@ const theme: DefaultTheme = {
       font-family: Source Code Pro;
       font-weight: 400;
       font-size: 14px;`,
+    windowsIcons: `
+      font-family: Segoe MDL2 Assets;
+      font-weight: 400;
+      font-size: 10px;`,
   },
   breakpoints: {
     smallScreen: 'screen and (max-width: 1366px)',
@@ -120,8 +125,8 @@ const theme: DefaultTheme = {
     },
   },
   calc: {
-    height: process.platform === 'win32' ? 'calc(100vh - 26px)' : '100vh',
-    titleBarHeight: process.platform === 'win32' ? '26px' : '0',
+    height: window.api.platform === 'win32' ? 'calc(100vh - 26px)' : '100vh',
+    titleBarHeight: window.api.platform === 'win32' ? '26px' : '0',
   },
 };
 

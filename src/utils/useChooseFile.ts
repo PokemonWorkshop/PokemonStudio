@@ -28,7 +28,7 @@ export const useChoosefile = () => {
         return window.api.chooseFile(
           { name: state.payload.name, extensions: state.payload.extensions },
           ({ path: chosenFile }) => {
-            if (state.payload.destFolderToCopy) setState({ ...state, state: 'copyFile', chosenFile });
+            if (state.payload.destFolderToCopy !== undefined) setState({ ...state, state: 'copyFile', chosenFile });
             else {
               setState({ state: 'done' });
               callbacks?.onSuccess({ path: chosenFile });
@@ -40,7 +40,7 @@ export const useChoosefile = () => {
           }
         );
       case 'copyFile': {
-        if (!state.payload.destFolderToCopy) {
+        if (state.payload.destFolderToCopy === undefined) {
           setState({ state: 'done' });
           callbacks?.onSuccess({ path: state.chosenFile });
           return;

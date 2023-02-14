@@ -24,7 +24,7 @@ const RenderEarningContainer = styled(DataEarningGrid)`
     visibility: hidden;
   }
 
-  & :hover {
+  &:hover {
     .buttons:nth-child(3) {
       visibility: visible;
     }

@@ -9,13 +9,11 @@ import {
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useConfigInfos } from '@utils/useProjectConfig';
 import { useProjectStudio } from '@utils/useProjectStudio';
-import { join } from '@utils/path';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { Code } from '@components/Code';
-import { useImageSaving } from '@utils/useImageSaving';
-import { ReloadableImage } from '@components/ReloadableImage';
+import { ResourceImage } from '@components/ResourceImage';
 
 const ProjectVersionContainer = styled.div`
   color: ${({ theme }) => theme.colors.text400};
@@ -27,20 +25,12 @@ export const DashboardFrame = () => {
   const { projectStudioValues: projectStudio } = useProjectStudio();
   const { projectConfigValues: infos } = useConfigInfos();
   const { t } = useTranslation('dashboard');
-  const { getImage } = useImageSaving();
 
   return (
     <DataBlockContainer size="full" data-disabled={true}>
       <DataGrid columns="160px minmax(min-content, 1024px)" gap="24px">
         <DataSpriteContainer type="sprite">
-          <ReloadableImage
-            alt="project icon"
-            src={
-              state.projectPath
-                ? getImage('project_icon.png') ?? join(state.projectPath, projectStudio.iconPath)
-                : 'https://www.pokepedia.fr/images/8/87/Pok%C3%A9_Ball.png'
-            }
-          />
+          <ResourceImage imagePathInProject={projectStudio.iconPath} />
         </DataSpriteContainer>
         <DataInfoContainer>
           <DataInfoContainerHeader>

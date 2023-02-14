@@ -71,7 +71,6 @@ const MapLinkPage = () => {
     selectedDataIdentifier: mapId,
     setSelectedDataIdentifier,
     setProjectDataValues: setDataMapLink,
-    bindProjectDataValue: bindMapLink,
     removeProjectDataValue: removeMapLink,
     state,
   } = useProjectMapLinks();
@@ -153,7 +152,7 @@ const MapLinkPage = () => {
     deleteReverseMapLink(cardinal, deletedLink);
     if (isEmptyLinksFromMapLink(currentEditedMaplink)) {
       removeMapLink(mapLink.dbSymbol, { mapLink: mapLink.mapId.toString() });
-      setMapLink(bindMapLink(createMapLink(lastId, Number(mapLink.mapId))));
+      setMapLink(createMapLink(lastId, Number(mapLink.mapId)));
     } else {
       setDataMapLink({ [mapLink.dbSymbol]: currentEditedMaplink });
       setMapLink(currentEditedMaplink);

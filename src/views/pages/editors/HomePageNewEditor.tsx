@@ -10,6 +10,7 @@ import React, { FunctionComponent, useMemo, useState } from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
 import { TextInputError } from '@components/inputs/Input';
 import { StudioProject } from '@modelEntities/project';
+import { basename, dirname } from '@utils/path';
 
 const iconFileExtensions = ['png'];
 
@@ -76,7 +77,8 @@ export const HomePageNewEditor: FunctionComponent = () => {
               <Label htmlFor="project_icon">{t('project_icon')}</Label>
               <IconInput
                 name={t('project_icon')}
-                iconPath={projectData.icon}
+                iconPathInProject={basename(projectData.icon)}
+                projectPath={dirname(projectData.icon)}
                 onIconClear={() => {
                   refreshUI(setProjectData({ ...projectData, icon: undefined }));
                 }}

@@ -1,5 +1,6 @@
 import { InputWithTopLabelContainer, Label } from '@components/inputs';
 import { SelectMove } from '@components/selects';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { InputProps } from './InputProps';
@@ -13,7 +14,7 @@ export const MoveInput = ({ condition, index, onChange, currentType }: MoveInput
   return (
     <InputWithTopLabelContainer>
       <Label>{t('evolutionValue_move')}</Label>
-      <SelectMove dbSymbol={condition.value} onChange={(option) => onChange({ type: currentType, value: option.value }, index)} noLabel />
+      <SelectMove dbSymbol={condition.value} onChange={(option) => onChange({ type: currentType, value: option.value as DbSymbol }, index)} noLabel />
     </InputWithTopLabelContainer>
   );
 };

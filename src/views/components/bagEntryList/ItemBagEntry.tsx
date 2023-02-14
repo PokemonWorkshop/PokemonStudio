@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { PokemonBattlerContainer } from '@components/pokemonBattlerList/PokemonBattler';
-import { useGlobalState } from '@src/GlobalStateProvider';
 import { useProjectItems } from '@utils/useProjectData';
 import { Tag } from '@components/Tag';
 import { ClearButtonOnlyIcon } from '@components/buttons';
@@ -9,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
 import { itemIconPath } from '@utils/path';
 import { StudioTrainerBagEntry } from '@modelEntities/trainer';
+import { ResourceImage } from '@components/ResourceImage';
 
 type ItemBagEntryProps = {
   onClickDelete: (index: number) => void;
@@ -65,7 +65,6 @@ const ItemBagEntryHeader = styled.div`
 `;
 
 export const ItemBagEntry = ({ onClickDelete, onClickEdit, bagEntry, index }: ItemBagEntryProps) => {
-  const [state] = useGlobalState();
   const { projectDataValues: items } = useProjectItems();
   const getItemName = useGetEntityNameText();
   const item = items[bagEntry.dbSymbol];
@@ -84,7 +83,7 @@ export const ItemBagEntry = ({ onClickDelete, onClickEdit, bagEntry, index }: It
   return (
     <ItemBagEntryContainer onClick={onEdit}>
       <ItemBagEntryHeader>
-        <img draggable="false" src={itemIconPath(item?.icon || '000.png', state.projectPath)} alt="" />
+        <ResourceImage imagePathInProject={itemIconPath(item?.icon || '000.png')} />
         {item ? <span>{getItemName(item)}</span> : <span className="error">{t('item_deleted')}</span>}
         <div className="amount-delete-button">
           <Tag className="amount">{`x${bagEntry.amount}`}</Tag>

@@ -58,53 +58,6 @@ const GlobalStyle = createGlobalStyle`
     }
   }
 
-  .cet-titlebar {
-    height: 24px !important;
-  }
-
-  .cet-controls-container {
-    height: 24px !important;
-    align-items: center;
-
-    .cet-icon {
-      display: flex;
-      justify-content: center;
-      padding: 7px 0 7px 0;
-
-      svg {
-        fill: ${({ theme }) => theme.colors.text100} !important;
-      }
-
-      :hover {
-        background-color: ${({ theme }) => theme.colors.dark22} !important;
-      }
-
-      :active {
-        background-color: ${({ theme }) => theme.colors.dark24} !important;
-      }
-    }
-  }
-
-  .cet-titlebar.cet-windows, .cet-titlebar.cet-linux {
-    line-height: 24px !important;
-
-    .resizer {
-      display: none;
-    }
-  }
-
-  .cet-window-title {
-    ${(props) => props.theme.fonts.titlesStudio};
-    color: ${(props) => props.theme.colors.text500};
-    font-size: 10px;
-    line-height: 12px;
-    padding-left: 4px;
-  }
-
-  .cet-container {
-    top: 26px !important;
-  }
-
   .react-flow__attribution {
     &:before {
       content: 'powered by '

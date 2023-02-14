@@ -3,7 +3,7 @@ import { DataBlockWithAction, DataBlockWithActionTooltip, DataBlockWrapper } fro
 import { TypeControlBar } from '@components/database/type/TypeControlBar';
 import { TypeFrame } from '@components/database/type/TypeFrame';
 import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { TypeEfficiencyData } from '@components/database/type/TypeEfficiencyData';
@@ -36,7 +36,7 @@ export const TypePage = () => {
   } = useProjectTypes();
   const { t } = useTranslation('database_types');
   const getTypeName = useGetEntityNameTextUsingTextId();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { typeDbSymbol } = useParams<TypePageParams>();
   const currentType = types[typeDbSymbol || typeSelected] || types[typeSelected];
   const currentEditedType = useMemo(() => cloneEntity(currentType), [currentType]);
@@ -63,11 +63,11 @@ export const TypePage = () => {
 
   const onChange: SelectChangeEvent = (selected) => {
     setSelectedDataIdentifier({ type: selected.value });
-    history.push(`/database/types/${selected.value}`);
+    navigate(`/database/types/${selected.value}`);
   };
 
-  const onClickedMoveList = () => history.push(`/database/types/${currentType.dbSymbol}/moves`);
-  const onClickedPokemonList = () => history.push(`/database/types/${currentType.dbSymbol}/pokemon`);
+  const onClickedMoveList = () => navigate(`/database/types/${currentType.dbSymbol}/moves`);
+  const onClickedPokemonList = () => navigate(`/database/types/${currentType.dbSymbol}/pokemon`);
 
   const onCloseEditor = () => {
     if (currentEditor === 'frame' && getTypeName(currentEditedType) === '') return;
@@ -83,7 +83,7 @@ export const TypePage = () => {
       .sort((a, b) => a.index.localeCompare(b.index))[0].value;
     deleteType(currentType.dbSymbol, { type: firstDbSymbol });
     setCurrentDeletion(undefined);
-    history.push(`/database/types/${currentType.dbSymbol}`);
+    navigate(`/database/types/${currentType.dbSymbol}`);
   };
 
   const editors = {
@@ -102,7 +102,7 @@ export const TypePage = () => {
     ),
   };
 
-  const onClickTypeTable = () => history.push(`/database/types/table`);
+  const onClickTypeTable = () => navigate(`/database/types/table`);
 
   return (
     <DatabasePageStyle>

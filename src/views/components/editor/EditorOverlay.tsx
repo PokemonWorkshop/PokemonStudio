@@ -4,7 +4,7 @@ import { EditorContainer, EditorWithCollapseContainer } from './EditorContainer'
 
 export const EditorOverlayContainer = styled.div`
   position: absolute;
-  top: 0;
+  top: ${({ theme }) => theme.calc.titleBarHeight};
   left: 0;
   width: 100vw;
   height: ${({ theme }) => theme.calc.height};

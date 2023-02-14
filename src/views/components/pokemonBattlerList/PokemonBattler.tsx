@@ -128,7 +128,7 @@ const PokemonBattlerEVContainer = styled.div`
   padding: 8px;
   border-radius: 4px;
 
-  & :hover {
+  &:hover {
     background-color: ${({ theme }) => theme.colors.dark18};
   }
 `;
@@ -173,7 +173,7 @@ const PokemonBattlerMovesetContainer = styled.div`
     padding: 4px 8px;
   }
 
-  & :hover {
+  &:hover {
     background-color: ${({ theme }) => theme.colors.dark18};
   }
 `;
@@ -280,7 +280,7 @@ export const PokemonBattler = ({ onClickDelete, onEditPokemonProperty, pokemon, 
         </PokemonBattlerHeader>
         {itemSetup && (
           <PokemonBattlerItem>
-            {item && <img draggable="false" src={itemIconPath(item.icon, state.projectPath)} alt="" />}
+            {item && <ResourceImage imagePathInProject={itemIconPath(item.icon)} />}
             {item ? getEntityName(item) : <span className="error">{t('database_items:item_deleted')}</span>}
           </PokemonBattlerItem>
         )}

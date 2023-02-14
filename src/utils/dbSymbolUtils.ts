@@ -5,7 +5,7 @@ export const wrongDbSymbol = (dbSymbol: string) => {
   return !DB_SYMBOL_VALIDATOR.safeParse(dbSymbol).success;
 };
 
-export const checkDbSymbolExist = (data: ProjectData[''], newDbSymbol: string) => {
+export const checkDbSymbolExist = (data: ProjectData[keyof ProjectData], newDbSymbol: string) => {
   return Object.entries(data)
     .map(([value]) => value)
     .find((dbSymbol) => dbSymbol === newDbSymbol)

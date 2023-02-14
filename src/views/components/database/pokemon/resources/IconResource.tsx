@@ -18,7 +18,7 @@ const IconResourceContainer = styled(ResourceContainer)`
   width: 504px;
   height: 80px;
 
-  & :hover {
+  &:hover {
     padding: 15px 15px 15px 23px;
     cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
   }
@@ -102,7 +102,7 @@ export const IconResource = ({ form, resource, isFemale, disableGif, onResourceC
       copyFile(
         { srcFile: acceptedFiles[0].path, destFolder: dirname(formResourcesPath(form, resource)) },
         () =>
-          setImmediate(() => {
+          setTimeout(() => {
             onResourceChoosen(acceptedFiles[0].path, resource);
             setFlipFlap((last) => !last);
           }),
@@ -117,7 +117,7 @@ export const IconResource = ({ form, resource, isFemale, disableGif, onResourceC
     chooseFile(
       { name: t(resource), extensions, destFolderToCopy: dirname(formResourcesPath(form, resource)) },
       ({ path: resourcePath }) => {
-        setImmediate(() => {
+        setTimeout(() => {
           onResourceChoosen(resourcePath, resource);
           setFlipFlap((last) => !last);
           setIsDialogOpen(false);

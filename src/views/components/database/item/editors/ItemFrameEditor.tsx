@@ -6,7 +6,6 @@ import { SelectCustomSimple } from '@components/SelectCustom';
 import { UseProjectItemReturnType } from '@utils/useProjectData';
 import { DropInput } from '@components/inputs/DropInput';
 import { basename, itemIconPath } from '@utils/path';
-import { useGlobalState } from '@src/GlobalStateProvider';
 import type { OpenTranslationEditorFunction } from '@utils/useTranslationEditor';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 import { useGetEntityDescriptionText, useGetEntityNameText, useSetProjectText } from '@utils/ReadingProjectText';
@@ -38,7 +37,6 @@ export const ItemFrameEditor = forwardRef<EditorHandlingClose, ItemFrameEditorPr
   const options = useMemo(() => itemCategoryEntries(t), [t]);
   const getItemName = useGetEntityNameText();
   const getItemDescription = useGetEntityDescriptionText();
-  const [state] = useGlobalState();
   const setText = useSetProjectText();
   const nameRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
@@ -50,8 +48,11 @@ export const ItemFrameEditor = forwardRef<EditorHandlingClose, ItemFrameEditorPr
     if (!nameRef.current || !descriptionRef.current || !canClose()) return;
     setText(ITEM_NAME_TEXT_ID, item.id, nameRef.current.value);
     setText(ITEM_DESCRIPTION_TEXT_ID, item.id, descriptionRef.current.value);
+    item.icon = icon;
     if (itemCategory != ITEM_CATEGORY[item.klass]) {
       setItems({ [item.dbSymbol]: mutateItemInto(item, createItem(ITEM_CATEGORY_INITIAL_CLASSES[itemCategory], item.dbSymbol, item.id)) });
+    } else {
+      setItems({ [item.dbSymbol]: item });
     }
   };
   useEditorHandlingClose(ref, onClose, canClose);
@@ -99,6 +100,7 @@ export const ItemFrameEditor = forwardRef<EditorHandlingClose, ItemFrameEditorPr
           </Label>
           {item.icon.length === 0 ? (
             <DropInput
+              destFolderToCopy="graphics/icons"
               imageWidth={32}
               imageHeight={32}
               name={t('database_items:icon_of_the_item')}
@@ -109,7 +111,8 @@ export const ItemFrameEditor = forwardRef<EditorHandlingClose, ItemFrameEditorPr
             <IconInput
               name={t('database_items:icon_of_the_item')}
               extensions={['png']}
-              iconPath={itemIconPath(icon, state.projectPath)}
+              iconPathInProject={itemIconPath(icon)}
+              destFolderToCopy="graphics/icons"
               onIconChoosen={onIconChosen}
               onIconClear={() => setIcon('')}
             />

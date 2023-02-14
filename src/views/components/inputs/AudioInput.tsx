@@ -1,10 +1,13 @@
 import React, { DragEventHandler, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { ClearButtonOnlyIcon, EditButtonOnlyIcon } from '@components/buttons';
-import { basename } from '@utils/path';
+import { basename, join } from '@utils/path';
 import { showNotification } from '@utils/showNotification';
 import { useTranslation } from 'react-i18next';
 import { useChoosefile } from '@utils/useChooseFile';
+import { ResourceAudio } from '@components/ResourceAudio';
+import { useGlobalState } from '@src/GlobalStateProvider';
+import { useCopyFile } from '@utils/useCopyFile';
 
 const AudioInputContainer = styled.div`
   display: flex;
@@ -13,7 +16,7 @@ const AudioInputContainer = styled.div`
   align-items: center;
   user-select: none;
 
-  & div.music {
+  & div.audio {
     display: flex;
     flex-direction: row;
     gap: 12px;
@@ -50,41 +53,60 @@ const onDragOver: DragEventHandler<HTMLDivElement> = (event) => {
 };
 
 type AudioInputProps = {
-  musicPath: string;
+  audioPathInProject: string;
   name: string;
   extensions: string[];
-  onMusicChoosen: (iconPath: string) => void;
-  onMusicClear: () => void;
+  destFolderToCopy?: string;
+  onAudioChoosen: (iconPath: string) => void;
+  onAudioClear: () => void;
 };
 
-export const AudioInput = ({ musicPath, name, extensions, onMusicChoosen, onMusicClear }: AudioInputProps) => {
+export const AudioInput = ({ audioPathInProject, name, extensions, destFolderToCopy, onAudioChoosen, onAudioClear }: AudioInputProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [error, setError] = useState<boolean>(false);
   const { t } = useTranslation('audio');
   const chooseFile = useChoosefile();
+  const copyFile = useCopyFile();
+  const [state] = useGlobalState();
 
   const onDrop: DragEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
     event.stopPropagation();
     const acceptedFiles = Array.from(event.dataTransfer.files).filter((file) => !extensions || extensions.includes(file.name.split('.').pop() ?? ''));
-    if (acceptedFiles.length > 0) onMusicChoosen(acceptedFiles[0].path);
+    if (acceptedFiles.length > 0) {
+      if (destFolderToCopy === undefined) {
+        onAudioChoosen(acceptedFiles[0].path);
+      } else {
+        copyFile(
+          { srcFile: acceptedFiles[0].path, destFolder: destFolderToCopy },
+          ({ destFile }) => {
+            setTimeout(() => onAudioChoosen(destFile));
+          },
+          ({ errorMessage }) => console.log(errorMessage)
+        );
+      }
+    }
   };
 
   const onClick = async () => {
     setIsDialogOpen(true);
     chooseFile(
-      { name, extensions },
+      { name, extensions, destFolderToCopy },
       ({ path }) => {
-        onMusicChoosen(path);
-        setIsDialogOpen(false);
+        setTimeout(() => {
+          onAudioChoosen(path);
+          setIsDialogOpen(false);
+        });
       },
       () => setIsDialogOpen(false)
     );
   };
 
   useEffect(() => {
+    if (!state.projectPath) return;
+
     window.api.fileExists(
-      { filePath: musicPath },
+      { filePath: join(state.projectPath, audioPathInProject) },
       ({ result }) => setError(!result),
       ({ errorMessage }) => {
         setError(true);
@@ -92,17 +114,17 @@ export const AudioInput = ({ musicPath, name, extensions, onMusicChoosen, onMusi
       }
     );
     return () => window.api.cleanupFileExists();
-  }, [musicPath]);
+  }, [audioPathInProject]);
 
   return (
     <AudioInputContainer onDrop={onDrop} onDragOver={onDragOver}>
-      <div className="music">
-        <audio controls src={musicPath} />
-        {error ? <span className="error">{t('no_file_found')}</span> : <span>{basename(musicPath)}</span>}
+      <div className="audio">
+        <ResourceAudio audioPathInProject={audioPathInProject} />
+        {error ? <span className="error">{t('no_file_found')}</span> : <span>{basename(audioPathInProject)}</span>}
       </div>
       <div className="buttons">
         <EditButtonOnlyIcon disabled={isDialogOpen} onClick={isDialogOpen ? undefined : onClick} />
-        <ClearButtonOnlyIcon disabled={isDialogOpen} onClick={isDialogOpen ? undefined : onMusicClear} />
+        <ClearButtonOnlyIcon disabled={isDialogOpen} onClick={isDialogOpen ? undefined : onAudioClear} />
       </div>
     </AudioInputContainer>
   );

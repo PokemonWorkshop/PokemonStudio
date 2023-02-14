@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { ReactComponent as FileDrop } from '@assets/icons/global/drop.svg';
 import { useTranslation } from 'react-i18next';
 import { useChoosefile } from '@utils/useChooseFile';
+import { useCopyFile } from '@utils/useCopyFile';
 
 export const DropInputContainer = styled.div`
   display: flex;
@@ -64,30 +65,46 @@ type DropInputProps = {
   imageWidth?: number;
   imageHeight?: number;
   multipleFiles?: boolean;
+  destFolderToCopy?: string;
   name: string;
   extensions: string[];
   onFileChoosen: (filePath: string) => void;
 };
 
-export const DropInput = ({ imageWidth, imageHeight, multipleFiles, name, extensions, onFileChoosen }: DropInputProps) => {
+export const DropInput = ({ imageWidth, imageHeight, multipleFiles, destFolderToCopy, name, extensions, onFileChoosen }: DropInputProps) => {
   const { t } = useTranslation('drop');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const chooseFile = useChoosefile();
+  const copyFile = useCopyFile();
 
   const onDrop: DragEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
     event.stopPropagation();
     const acceptedFiles = Array.from(event.dataTransfer.files).filter((file) => !extensions || extensions.includes(file.name.split('.').pop() ?? ''));
-    if (acceptedFiles.length > 0) onFileChoosen(acceptedFiles[0].path);
+    if (acceptedFiles.length > 0) {
+      if (destFolderToCopy === undefined) {
+        onFileChoosen(acceptedFiles[0].path);
+      } else {
+        copyFile(
+          { srcFile: acceptedFiles[0].path, destFolder: destFolderToCopy },
+          ({ destFile }) => {
+            setTimeout(() => onFileChoosen(destFile));
+          },
+          ({ errorMessage }) => console.log(errorMessage)
+        );
+      }
+    }
   };
 
   const onClick = async () => {
     setIsDialogOpen(true);
     chooseFile(
-      { name, extensions },
+      { name, extensions, destFolderToCopy },
       ({ path }) => {
-        onFileChoosen(path);
-        if (multipleFiles) setIsDialogOpen(false);
+        setTimeout(() => {
+          onFileChoosen(path);
+          if (multipleFiles) setIsDialogOpen(false);
+        });
       },
       () => setIsDialogOpen(false)
     );

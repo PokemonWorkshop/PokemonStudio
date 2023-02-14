@@ -11,7 +11,7 @@ function sp2string(sp: SavingPath): string {
 
 function string2sp(str: string): SavingPath {
   const [key, id] = str.split('/', 2);
-  return { key, id };
+  return { key, id } as SavingPath;
 }
 
 export type SavingAction = 'UPDATE' | 'DELETE';

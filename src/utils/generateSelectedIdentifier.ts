@@ -38,13 +38,19 @@ const getSelectedIdentifier = <T extends keyof SelectedDataIdentifier>(
     const creature = preState.projectData.pokemon[identifier.specie];
     if (!creature) return undefined;
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     return {
       specie: identifier.specie,
       form: creature.forms[identifier.form] ? identifier.form : 0, // For some reason it's not actually storing the form (wtf)
     }; // Note: typescript is lost for whatever reeason, let's see on updates of typescript if it's no longer lost before rewriting this perfectly valid code
   }
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   const identifier = selectedFromStorage[key];
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   if (preState.projectData[dataKey][identifier]) return identifier;
 
   return undefined;

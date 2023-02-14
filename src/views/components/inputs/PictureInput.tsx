@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { ClearButtonOnlyIcon } from '@components/buttons';
+import { ResourceImage } from '@components/ResourceImage';
 
 type PictureInputContainerProps = {
   pixelated: boolean;
@@ -29,7 +30,7 @@ const PictureInputContainer = styled.div<PictureInputContainerProps>`
     }
   }
 
-  & :hover {
+  &:hover {
     .clear-button {
       position: absolute;
       display: inline-block;
@@ -54,7 +55,7 @@ export const PictureInput = ({ picturePath, pixelated, onIconClear }: PictureInp
   return (
     <PictureInputContainer pixelated={pixelated || false}>
       <div className="picture">
-        <img src={picturePath} draggable="false" />
+        <ResourceImage imagePathInProject={picturePath} />
         <div className="clear-button">
           <ClearButtonOnlyIcon onClick={onIconClear} />
         </div>

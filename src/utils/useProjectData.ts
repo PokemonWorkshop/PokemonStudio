@@ -49,7 +49,6 @@ const getNextDbSymbolByName = (values: (EntityTextIdWithDbSymbol | EntityIdWithD
  *  selectedDataIdentifier: itemDbSymbol,
  *  setSelectedDataIdentifier,
  *  setProjectDataValues: setItems,
- *  bindProjectDataValue: bindItem,
  *  removeProjectDataValue: deleteItem,
  * } = useProjectData('items', 'item');
  * // Change the item page
@@ -100,11 +99,6 @@ export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier
     });
   };
 
-  const bindProjectDataValue = (newData: ProjectData[typeof key][keyof ProjectData[typeof key]]) => {
-    newData.projectText = { texts: state.projectText, config: state.projectConfig.language_config };
-    return newData;
-  };
-
   const removeProjectDataValue = (identifier: keyof ProjectData[typeof key], newSelectedData: Pick<SelectedDataIdentifier, typeof selected>) => {
     if (newSelectedData[selected] === identifier) {
       throw new Error(`When deleting ${String(identifier)} you cannot use ${JSON.stringify(newSelectedData)} as newSelectedData parameter.`);
@@ -150,7 +144,6 @@ export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier
     selectedDataIdentifier: selectedDataIdentifier,
     setSelectedDataIdentifier,
     setProjectDataValues,
-    bindProjectDataValue,
     removeProjectDataValue,
     getPreviousDbSymbol,
     getNextDbSymbol,

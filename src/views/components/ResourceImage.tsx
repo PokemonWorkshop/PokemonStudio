@@ -18,21 +18,25 @@ type Props = {
   className?: string;
   versionId?: number; // Optional version id to update the resource display when it gets updated
   fallback?: string; // Optional fallback
+  projectPath?: string; // Optional projectPath, use this only to load an image coming from outside the current project
 };
 
-export const ResourceImage = ({ imagePathInProject, versionId, className, fallback }: Props) => {
-  const [{ projectPath }] = useGlobalState();
+export const ResourceImage = ({ imagePathInProject, versionId, className, fallback, projectPath }: Props) => {
+  const [{ projectPath: currentProjectPath }] = useGlobalState();
   // fallback is not added to deps on purpose: there's no reason to update fallback if wanted image did not update
   const imageSrc = useMemo(
-    () => buildImageSrc(imagePathInProject, projectPath || '', versionId, fallback),
-    [imagePathInProject, versionId, projectPath]
+    () => buildImageSrc(imagePathInProject, projectPath || currentProjectPath || '', versionId, fallback),
+    [imagePathInProject, versionId, currentProjectPath, projectPath]
   );
 
   return <img src={imageSrc} className={className} draggable="false" />;
 };
 
-export const useResourceImageSrc = (imagePathInProject: string, versionId?: number, fallback?: string) => {
-  const [{ projectPath }] = useGlobalState();
+export const useResourceImageSrc = (imagePathInProject: string, versionId?: number, fallback?: string, projectPath?: string) => {
+  const [{ projectPath: currentProjectPath }] = useGlobalState();
   // fallback is not added to deps on purpose: there's no reason to update fallback if wanted image did not update
-  return useMemo(() => buildImageSrc(imagePathInProject, projectPath || '', versionId, fallback), [imagePathInProject, versionId, projectPath]);
+  return useMemo(
+    () => buildImageSrc(imagePathInProject, projectPath || currentProjectPath || '', versionId, fallback),
+    [imagePathInProject, versionId, currentProjectPath, projectPath]
+  );
 };

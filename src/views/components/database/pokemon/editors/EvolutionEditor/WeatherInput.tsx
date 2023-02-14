@@ -1,5 +1,6 @@
 import { InputWithTopLabelContainer, Label } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { InputProps } from './InputProps';
@@ -25,7 +26,7 @@ export const WeatherInput = ({ condition, index, onChange }: InputProps) => {
           id="weather-DropDown"
           options={options}
           value={condition.value}
-          onChange={(value) => onChange({ type: 'weather', value }, index)}
+          onChange={(value) => onChange({ type: 'weather', value: value as DbSymbol }, index)}
         />
       </InputWithTopLabelContainer>
     );

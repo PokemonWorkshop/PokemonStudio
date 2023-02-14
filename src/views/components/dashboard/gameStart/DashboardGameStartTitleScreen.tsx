@@ -6,7 +6,6 @@ import { DashboardEditor } from '../DashboardEditor';
 import { Input, InputWithTopLabelContainer, InputWithLeftLabelContainer, Label, Toggle, InputContainer, AudioInput } from '@components/inputs';
 import { join, basename } from '@utils/path';
 import { DropInput } from '@components/inputs/DropInput';
-import { useImageSaving } from '@utils/useImageSaving';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { EmbeddedUnitInput } from '@components/inputs/EmbeddedUnitInput';
 import { cloneEntity } from '@utils/cloneEntity';
@@ -24,21 +23,18 @@ const DurationContainer = styled(InputWithLeftLabelContainer)`
 
 export const DashboardGameStartTitleScreen = () => {
   const { t } = useTranslation('dashboard_game_start');
-  const { projectConfigValues: gameStart, setProjectConfigValues: setGameStart, state } = useConfigSceneTitle();
+  const { projectConfigValues: gameStart, setProjectConfigValues: setGameStart } = useConfigSceneTitle();
   const { projectConfigValues: language } = useConfigLanguage();
-  const { addImage, removeImage, getImage } = useImageSaving();
   const currentEditedGameStart = useMemo(() => cloneEntity(gameStart), [gameStart]);
   const [titleScreenData, setTitleScreenData] = useState({ duration: gameStart.bgmDuration, controlWaitTime: gameStart.controlWaitTime });
 
   const onMusicChoosen = (musicPath: string) => {
     const musicFilename = basename(musicPath);
-    addImage(join('audio/bgm', musicFilename), musicPath);
     currentEditedGameStart.bgmName = join('audio/bgm', musicFilename).replaceAll('\\', '/');
     setGameStart(currentEditedGameStart);
   };
 
   const onMusicClear = () => {
-    removeImage(currentEditedGameStart.bgmName);
     currentEditedGameStart.bgmName = '';
     setGameStart(currentEditedGameStart);
   };
@@ -87,14 +83,20 @@ export const DashboardGameStartTitleScreen = () => {
       <InputWithTopLabelContainer>
         <Label htmlFor="music">{t('music')}</Label>
         {gameStart.bgmName.length === 0 ? (
-          <DropInput name={t('title_screen_music')} extensions={['ogg', 'mp3', 'midi', 'flac']} onFileChoosen={onMusicChoosen} />
-        ) : (
-          <AudioInput
-            musicPath={getImage(gameStart.bgmName) ?? join(state.projectPath || '', gameStart.bgmName)}
+          <DropInput
+            destFolderToCopy="audio/bgm"
             name={t('title_screen_music')}
             extensions={['ogg', 'mp3', 'midi', 'flac']}
-            onMusicChoosen={onMusicChoosen}
-            onMusicClear={onMusicClear}
+            onFileChoosen={onMusicChoosen}
+          />
+        ) : (
+          <AudioInput
+            audioPathInProject={gameStart.bgmName}
+            destFolderToCopy="audio/bgm"
+            name={t('title_screen_music')}
+            extensions={['ogg', 'mp3', 'midi', 'flac']}
+            onAudioChoosen={onMusicChoosen}
+            onAudioClear={onMusicClear}
           />
         )}
       </InputWithTopLabelContainer>

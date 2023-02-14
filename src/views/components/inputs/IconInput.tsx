@@ -1,8 +1,9 @@
 import { ClearButtonOnlyIcon, EditButtonOnlyIcon } from '@components/buttons';
 import React, { DragEventHandler, useState } from 'react';
 import styled from 'styled-components';
-import { ReloadableImage } from '@components/ReloadableImage';
 import { useChoosefile } from '@utils/useChooseFile';
+import { ResourceImage } from '@components/ResourceImage';
+import { useCopyFile } from '@utils/useCopyFile';
 
 type IconInputContainerProps = {
   borderless: boolean;
@@ -48,32 +49,63 @@ const onDragOver: DragEventHandler<HTMLDivElement> = (event) => {
 };
 
 type IconInputProps = {
-  iconPath: string;
+  iconPathInProject: string;
   name: string;
   extensions: string[];
   borderless?: boolean;
+  destFolderToCopy?: string;
+  projectPath?: string;
   onIconChoosen: (iconPath: string) => void;
   onIconClear: () => void;
 };
 
-export const IconInput = ({ iconPath, name, extensions, borderless, onIconChoosen, onIconClear }: IconInputProps) => {
+export const IconInput = ({
+  iconPathInProject,
+  name,
+  extensions,
+  borderless,
+  destFolderToCopy,
+  projectPath,
+  onIconChoosen,
+  onIconClear,
+}: IconInputProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [flipFlap, setFlipFlap] = useState(false);
   const chooseFile = useChoosefile();
+  const copyFile = useCopyFile();
 
   const onDrop: DragEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
     event.stopPropagation();
     const acceptedFiles = Array.from(event.dataTransfer.files).filter((file) => !extensions || extensions.includes(file.name.split('.').pop() ?? ''));
-    if (acceptedFiles.length > 0) onIconChoosen(acceptedFiles[0].path);
+    if (acceptedFiles.length > 0) {
+      if (destFolderToCopy === undefined) {
+        onIconChoosen(acceptedFiles[0].path);
+      } else {
+        copyFile(
+          { srcFile: acceptedFiles[0].path, destFolder: destFolderToCopy },
+          ({ destFile }) => {
+            setTimeout(() => {
+              onIconChoosen(destFile);
+              setFlipFlap((last) => !last);
+            });
+          },
+          ({ errorMessage }) => console.log(errorMessage)
+        );
+      }
+    }
   };
 
   const onClick = async () => {
     setIsDialogOpen(true);
     chooseFile(
-      { name, extensions },
+      { name, extensions, destFolderToCopy },
       ({ path }) => {
-        onIconChoosen(path);
-        setIsDialogOpen(false);
+        setTimeout(() => {
+          onIconChoosen(path);
+          setFlipFlap((last) => !last);
+          setIsDialogOpen(false);
+        });
       },
       () => setIsDialogOpen(false)
     );
@@ -82,7 +114,7 @@ export const IconInput = ({ iconPath, name, extensions, borderless, onIconChoose
   return (
     <IconInputContainer onDrop={onDrop} onDragOver={onDragOver} borderless={borderless || false}>
       <div className="icon">
-        <ReloadableImage src={iconPath} draggable="false" />
+        <ResourceImage imagePathInProject={iconPathInProject} versionId={flipFlap ? 2 : 1} projectPath={projectPath} />
       </div>
       <div className="buttons">
         <EditButtonOnlyIcon disabled={isDialogOpen} onClick={isDialogOpen ? undefined : onClick} />

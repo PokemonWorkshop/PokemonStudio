@@ -7,6 +7,7 @@ import { MovepoolType } from './MovepoolEditor';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
 import { cloneEntity } from '@utils/cloneEntity';
 import { getMoveKlass } from './MovepoolTable';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 
 type MovepoolDeletionProps = {
   type: MovepoolType;
@@ -34,7 +35,7 @@ export const MovepoolDeletion = ({ type, onClose }: MovepoolDeletionProps) => {
     if (type === 'level') {
       form.moveSet.push({
         klass: 'LevelLearnableMove',
-        move: getDefaultDbSymbol(moves),
+        move: getDefaultDbSymbol(moves) as DbSymbol,
         level: 1,
       });
     }

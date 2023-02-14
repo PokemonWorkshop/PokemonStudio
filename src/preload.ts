@@ -1,34 +1,20 @@
-const { Titlebar, Color } = require('custom-electron-titlebar');
-const { ipcRenderer, webFrame } = window.require('electron');
-const crypto = require('crypto');
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+import { ipcRenderer, contextBridge, webFrame, IpcRendererEvent } from 'electron';
+import type { BackendTaskWithGenericError, BackendTaskWithGenericErrorAndNoProgress, GenericBackendProgress } from '@utils/BackendTask';
+import type { PSDKVersion } from '@services/getPSDKVersion';
+import type { SavingData, SavingConfig, SavingText, SavingImage, ProjectStudioAction } from '@utils/SavingUtils';
+import type { StudioShortcut } from '@utils/useShortcuts';
+import type { ProjectFileType } from './backendTasks/chooseProjectFileToOpen';
+import type { ConfigureNewProjectMetaData } from './backendTasks/configureNewProject';
+import type { ShowMessageBoxTranslation } from './backendTasks/copyFile';
+import type { ProjectConfigsFromBackEnd } from './backendTasks/readProjectConfigs';
+import type { ProjectDataFromBackEnd } from './backendTasks/readProjectData';
+import type { ProjectText } from './GlobalStateProvider';
 
-window.addEventListener('DOMContentLoaded', () => {
-  if (process.platform === 'darwin' || process.platform === 'linux') return;
-
-  const titleBar = new Titlebar({
-    backgroundColor: Color.fromHex('#26252c'), // dark16
-    titleHorizontalAlignment: 'left',
-    containerOverflow: 'hidden',
-    onMinimize: () => ipcRenderer.send('window-minimize'),
-    onMaximize: () => ipcRenderer.send('window-maximize'),
-    onClose: () => ipcRenderer.send('window-close'),
-    isMaximized: () => ipcRenderer.sendSync('window-is-maximized'),
-    onMenuItemClick: () => {},
-  });
-
-  ipcRenderer.on('window-fullscreen', (event, isFullScreen) => {
-    titleBar.onWindowFullScreen(isFullScreen);
-  });
-
-  ipcRenderer.on('window-focus', (event, isFocused) => {
-    if (titleBar) titleBar.onWindowFocus(isFocused);
-  });
-});
-
-/*contextBridge.exposeInMainWorld('api', */
-window.api = {
+contextBridge.exposeInMainWorld('api', {
   clearCache: () => webFrame.clearCache(),
-  md5: (value) => crypto.createHash('md5').update(value, 'utf8').digest().toString('hex'),
+  md5: (value) => ipcRenderer.sendSync('get-md5-hash', value),
   shortcut: {
     on: (cb) => {
       const func = (_event, args) => cb(args);
@@ -36,6 +22,14 @@ window.api = {
       return func;
     },
     removeListener: (cb) => ipcRenderer.removeListener('request-shortcut', cb),
+  },
+  minimize: () => ipcRenderer.send('window-minimize'),
+  toggleMaximizeMode: () => ipcRenderer.send('window-maximize'),
+  close: () => ipcRenderer.send('window-close'),
+  safeClose: (shouldForceQuit: boolean) => ipcRenderer.send('window-safe-close', shouldForceQuit),
+  requestClose: {
+    on: (cb) => ipcRenderer.on('request-window-close', cb),
+    removeListener: (cb) => ipcRenderer.removeListener('request-window-close', cb),
   },
   getAppVersion: () => ipcRenderer.invoke('get-app-version'),
   getPSDKBinariesPath: () => ipcRenderer.invoke('get-psdk-binaries-path'),
@@ -57,16 +51,16 @@ window.api = {
     ipcRenderer.removeAllListeners('update-psdk/status');
     ipcRenderer.removeAllListeners('update-psdk/done');
   },
-  startPSDK: (projectPath) => {
+  startPSDK: (projectPath: string) => {
     ipcRenderer.send('start-psdk', projectPath);
   },
-  startPSDKDebug: (projectPath) => {
+  startPSDKDebug: (projectPath: string) => {
     ipcRenderer.send('start-psdk-debug', projectPath);
   },
-  startPSDKTags: (projectPath) => {
+  startPSDKTags: (projectPath: string) => {
     ipcRenderer.send('start-psdk-tags', projectPath);
   },
-  startPSDKWorldmap: (projectPath) => {
+  startPSDKWorldmap: (projectPath: string) => {
     ipcRenderer.send('start-psdk-worldmap', projectPath);
   },
   platform: process.platform,
@@ -507,4 +501,99 @@ window.api = {
     ipcRenderer.removeAllListeners(`open-studio-logs-folder/success`);
     ipcRenderer.removeAllListeners(`open-studio-logs-folder/failure`);
   },
-};
+});
+
+declare global {
+  interface Window {
+    api: {
+      clearCache: () => void;
+      md5: (value: string) => string;
+      shortcut: {
+        on: (cb: (shortcut: StudioShortcut) => unknown) => (event: IpcRendererEvent, args: unknown) => void;
+        removeListener: (listener: (event: IpcRendererEvent, args: unknown) => void) => void;
+      };
+      getAppVersion: () => Promise<string>;
+      getPSDKBinariesPath: () => Promise<string>;
+      getPSDKVersion: () => Promise<PSDKVersion>;
+      getLastPSDKVersion: () => Promise<PSDKVersion>;
+      requestClose: {
+        on: (cb: Parameters<typeof ipcRenderer.on>[1]) => ReturnType<typeof ipcRenderer.on>;
+        removeListener: (cb: Parameters<typeof ipcRenderer.on>[1]) => void;
+      };
+      minimize: () => void;
+      toggleMaximizeMode: () => void;
+      close: () => void;
+      safeClose: (shouldForceQuit: boolean) => void;
+      updatePSDK: (
+        currentVersion: number,
+        onStatusUpdate: (current: number, total: number, version: PSDKVersion) => void,
+        onDone: (success: boolean) => void
+      ) => void;
+      unregisterPSDKUpdateEvents: () => void;
+      startPSDK: (projectPath: string) => void;
+      startPSDKDebug: (projectPath: string) => void;
+      startPSDKTags: (projectPath: string) => void;
+      startPSDKWorldmap: (projectPath: string) => void;
+      platform: string;
+      getStudioVersion: BackendTaskWithGenericErrorAndNoProgress<Record<string, never>, { studioVersion: string }>;
+      cleanupGetStudioVersion: () => void;
+      chooseProjectFileToOpen: BackendTaskWithGenericErrorAndNoProgress<{ fileType: ProjectFileType }, { path: string; dirName: string }>;
+      cleanupChooseProjectFileToOpen: () => void;
+      getProjectInfo: BackendTaskWithGenericErrorAndNoProgress<{ path: string }, { gameTitle: string }>;
+      cleanupGetProjectInfo: () => void;
+      writeProjectMetadata: BackendTaskWithGenericErrorAndNoProgress<{ path: string; metaData: string }, Record<string, never>>;
+      cleanupWriteProjectMetadata: () => void;
+      readProjectMetadata: BackendTaskWithGenericErrorAndNoProgress<{ path: string }, { metaData: string }>;
+      cleanupReadProjectMetadata: () => void;
+      readProjectConfigs: BackendTaskWithGenericError<{ path: string }, ProjectConfigsFromBackEnd, GenericBackendProgress>;
+      cleanupReadProjectConfigs: () => void;
+      readProjectData: BackendTaskWithGenericError<{ path: string }, ProjectDataFromBackEnd, GenericBackendProgress>;
+      cleanupReadProjectData: () => void;
+      readProjectTexts: BackendTaskWithGenericError<{ path: string }, ProjectText, GenericBackendProgress>;
+      cleanupReadProjectTexts: () => void;
+      migrateData: BackendTaskWithGenericError<{ projectPath: string; projectVersion: string }, ProjectText, GenericBackendProgress>;
+      cleanupMigrateData: () => void;
+      fileExists: BackendTaskWithGenericErrorAndNoProgress<{ filePath: string }, { result: boolean }>;
+      cleanupFileExists: () => void;
+      updateMapInfos: BackendTaskWithGenericErrorAndNoProgress<{ projectPath: string }, Record<string, never>>;
+      cleanupUpdateMapInfos: () => void;
+      chooseFolder: BackendTaskWithGenericErrorAndNoProgress<Record<string, never>, { folderPath: string }>;
+      cleanupChooseFolder: () => void;
+      extractNewProject: BackendTaskWithGenericError<
+        { projectDirName: string },
+        Record<string, never>,
+        { step: number; total: number; stepText: string }
+      >;
+      cleanupExtractNewProject: () => void;
+      configureNewProject: BackendTaskWithGenericErrorAndNoProgress<
+        { projectDirName: string; metaData: ConfigureNewProjectMetaData },
+        Record<string, never>
+      >;
+      cleanupConfigureNewProject: () => void;
+      saveProjectData: BackendTaskWithGenericErrorAndNoProgress<{ path: string; data: SavingData }, Record<string, never>>;
+      cleanupSaveProjectData: () => void;
+      saveProjectConfigs: BackendTaskWithGenericErrorAndNoProgress<{ path: string; configs: SavingConfig }, Record<string, never>>;
+      cleanupSaveProjectConfigs: () => void;
+      saveProjectTexts: BackendTaskWithGenericErrorAndNoProgress<{ path: string; texts: SavingText }, Record<string, never>>;
+      cleanupSaveProjectTexts: () => void;
+      moveImage: BackendTaskWithGenericErrorAndNoProgress<{ path: string; images: SavingImage }, Record<string, never>>;
+      cleanupMoveImage: () => void;
+      projectStudioFile: BackendTaskWithGenericErrorAndNoProgress<
+        { path: string; action: ProjectStudioAction; data?: string },
+        { fileData?: string }
+      >;
+      cleanupProjectStudioFile: () => void;
+      chooseFile: BackendTaskWithGenericErrorAndNoProgress<{ name: string; extensions: string[] }, { path: string; dirName: string }>;
+      cleanupChooseFile: () => void;
+      showItemInFolder: BackendTaskWithGenericErrorAndNoProgress<{ filePath: string; extensions?: string[] }, Record<string, never>>;
+      cleanupShowItemInFolder: () => void;
+      copyFile: BackendTaskWithGenericErrorAndNoProgress<
+        { srcFile: string; destFile: string; translation: ShowMessageBoxTranslation },
+        Record<string, never>
+      >;
+      cleanupCopyFile: () => void;
+      openStudioLogsFolder: BackendTaskWithGenericErrorAndNoProgress<Record<string, never>, Record<string, never>>;
+      cleanupOpenStudioLogsFolder: () => void;
+    };
+  }
+}

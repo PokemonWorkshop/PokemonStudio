@@ -55,7 +55,7 @@ export const MapLinkCardWithClearButtonContainer = styled(MapLinkCardContainer)`
     display: none;
   }
 
-  & :hover {
+  &:hover {
     outline: 2px solid ${({ theme }) => theme.colors.dark22};
     outline-offset: -2px;
     cursor: pointer;

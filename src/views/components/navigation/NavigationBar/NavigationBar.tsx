@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { ThemeContext } from 'styled-components';
+import React from 'react';
+import { useTheme } from 'styled-components';
 import { NavigationBarItem } from '../NavigationBarItem';
 import { NavigationBarGroupSeparator } from '../NavigationBarGroupSeparator';
 import { BaseIcon } from '../../icons/BaseIcon';
@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { useToolTip } from '@utils/useToolTip';
 
 export const NavigationBarComponent = () => {
-  const theme = useContext(ThemeContext);
+  const theme = useTheme();
   const [state] = useGlobalState();
   const { t } = useTranslation('main_menu');
   const { buildOnMouseEnter, onMouseLeave, renderToolTip } = useToolTip();
