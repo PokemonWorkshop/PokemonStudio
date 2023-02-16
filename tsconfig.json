@@ -21,7 +21,8 @@
       "@services/*": ["src/services/*"],
       "@utils/*": ["src/utils/*"],
       "@assets/*": ["assets/*"],
-      "@src/*": ["src/*"]
+      "@src/*": ["src/*"],
+      "react": ["./node_modules/@types/react"]
     }
   },
   "include": ["src/**/*"]
