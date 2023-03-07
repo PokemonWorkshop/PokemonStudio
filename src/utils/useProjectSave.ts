@@ -73,7 +73,6 @@ export const useProjectSave = () => {
           });
         });
         if (isProjectTextSave || modified.value) {
-          if (modified.value) setState({ ...state, projectText: newProjectText });
           return window.api.saveProjectTexts(
             {
               path: state.projectPath!,
@@ -82,6 +81,7 @@ export const useProjectSave = () => {
             () => {
               projectTextSave.fill(false);
               setStateSave({ state: 'save_images' });
+              if (modified.value) setState({ ...state, projectText: newProjectText });
             },
             ({ errorMessage }) => {
               setStateSave({ state: 'done' });
@@ -128,12 +128,13 @@ export const useProjectSave = () => {
           tmpHackHasTextToSave: false,
           savingLanguage: [],
           savingImage: {},
+          textVersion: 0,
         });
         setStateSave({ state: 'done' });
         callbacks?.onSuccess();
         return;
     }
-  }, [stateSave, state, callbacks]);
+  }, [stateSave, state.textVersion, state, callbacks]);
 
   return {
     isDataToSave,

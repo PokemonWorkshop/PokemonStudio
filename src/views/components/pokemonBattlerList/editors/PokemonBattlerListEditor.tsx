@@ -151,9 +151,9 @@ export const PokemonBattlerListEditor = ({ type, model, currentBattler, onClose 
     battler.form = form;
   };
 
-  const onChangeAbility: SelectChangeEvent = (selected) => {
+  const onChangeAbility = (newDbSymbol: string) => {
     const abilitySetup = battler.expandPokemonSetup.find((eps) => eps.type === 'ability');
-    if (abilitySetup) abilitySetup.value = selected.value;
+    if (abilitySetup) abilitySetup.value = newDbSymbol;
   };
 
   const onChangeOrder = () => {
@@ -253,10 +253,8 @@ export const PokemonBattlerListEditor = ({ type, model, currentBattler, onClose 
               <SelectAbility
                 dbSymbol={battler.expandPokemonSetup.find((eps) => eps.type === 'ability')?.value as string}
                 onChange={(selected) => refreshUI(onChangeAbility(selected))}
+                undefValueOption={t('pokemon_battler_list:random')}
                 noLabel
-                noneValue
-                overwriteNoneValue={t('pokemon_battler_list:random')}
-                noneValueIsError={false}
               />
             </InputWithTopLabelContainer>
             <InputWithTopLabelContainer>

@@ -35,6 +35,7 @@ import { TYPE_VALIDATOR } from '@modelEntities/type';
 import { QUEST_VALIDATOR } from '@modelEntities/quest';
 import { PROJECT_VALIDATOR, StudioProject } from '@modelEntities/project';
 import { z } from 'zod';
+import { buildSelectOptionsFromScratch, buildSelectOptionsTextSourcesFromScratch } from './useSelectOptions';
 
 export type PreGlobalState = Omit<
   State,
@@ -300,6 +301,7 @@ export const useProjectLoad = () => {
               projectStudio: state.projectMetaData,
               projectText,
               rmxpMaps: state.projectData.rmxpMaps,
+              textVersion: 0,
             },
             integrityFailureCount: integrityFailureCount.count,
           });
@@ -321,7 +323,7 @@ export const useProjectLoad = () => {
                 loaderRef.current.setProgress(13, 13, tl('loading_project_identifier'));
                 sessionStorage.clear(); // Clear the whole session storage when loading is done so we don't carry garbage from other projects
                 const selectedDataIdentifier = generateSelectedIdentifier(state.preState);
-                setGlobalState({
+                const globalState = {
                   ...state.preState,
                   currentPSDKVersion,
                   lastPSDKVersion,
@@ -331,7 +333,10 @@ export const useProjectLoad = () => {
                   savingProjectStudio: false,
                   savingLanguage: [],
                   savingImage: {},
-                });
+                };
+                setGlobalState(globalState);
+                buildSelectOptionsTextSourcesFromScratch(globalState);
+                buildSelectOptionsFromScratch(globalState);
                 projectTextSave.fill(false);
                 addProjectToList({
                   projectStudio: state.preState.projectStudio,

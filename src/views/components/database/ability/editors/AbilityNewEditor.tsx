@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { forwardRef, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { Editor } from '@components/editor';
@@ -12,9 +12,10 @@ import { useSetProjectText } from '@utils/ReadingProjectText';
 import { ABILITY_DESCRIPTION_TEXT_ID, ABILITY_NAME_TEXT_ID } from '@modelEntities/ability';
 import { createAbility } from '@utils/entityCreation';
 import { DbSymbol } from '@modelEntities/dbSymbol';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 
-type AbilityNewEditorProps = {
-  onClose: () => void;
+type Props = {
+  closeDialog: () => void;
 };
 
 const ButtonContainer = styled.div`
@@ -24,15 +25,24 @@ const ButtonContainer = styled.div`
   gap: 8px;
 `;
 
-export const AbilityNewEditor = ({ onClose }: AbilityNewEditorProps) => {
+/**
+ * Dialog shown when user wants to create a new entity
+ */
+export const AbilityNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeDialog }, ref) => {
   const { projectDataValues: abilities, setProjectDataValues: setAbility } = useProjectAbilities();
   const { t } = useTranslation('database_abilities');
   const setText = useSetProjectText();
-  const [name, setName] = useState(''); // We can't use a ref because of the button behavior
+  const [name, setName] = useState(''); // We use a state because synchronizing dbSymbol is easier with a state
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const dbSymbolRef = useRef<HTMLInputElement>(null);
   const [dbSymbolErrorType, setDbSymbolErrorType] = useState<'value' | 'duplicate' | undefined>(undefined);
 
+  // This component can be cancelled under no conditions and don't need to handle anything for the close behavior
+  useEditorHandlingClose(ref);
+
+  /**
+   * Create the new ability based on all provided information and jump to that ability
+   */
   const onClickNew = () => {
     if (!dbSymbolRef.current || !name || !descriptionRef.current) return;
 
@@ -41,9 +51,12 @@ export const AbilityNewEditor = ({ onClose }: AbilityNewEditorProps) => {
     setText(ABILITY_NAME_TEXT_ID, newAbility.textId, name);
     setText(ABILITY_DESCRIPTION_TEXT_ID, newAbility.textId, descriptionRef.current.value);
     setAbility({ [dbSymbol]: newAbility }, { ability: dbSymbol });
-    onClose();
+    closeDialog();
   };
 
+  /**
+   * Handle the error validation of the dbSymbol when the dbSymbol is changed
+   */
   const onChangeDbSymbol = (value: string) => {
     if (wrongDbSymbol(value)) {
       if (dbSymbolErrorType !== 'value') setDbSymbolErrorType('value');
@@ -54,8 +67,13 @@ export const AbilityNewEditor = ({ onClose }: AbilityNewEditorProps) => {
     }
   };
 
+  /**
+   * Handle the change of name (also update dbSymbol if none were specified)
+   */
   const onChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!dbSymbolRef.current) return;
+
+    // Update the dbSymbol if it was equal to the default dbSymbol or not set
     if (dbSymbolRef.current.value === '' || dbSymbolRef.current.value === generateDefaultDbSymbol(name)) {
       dbSymbolRef.current.value = generateDefaultDbSymbol(event.currentTarget.value);
       onChangeDbSymbol(dbSymbolRef.current.value);
@@ -63,9 +81,10 @@ export const AbilityNewEditor = ({ onClose }: AbilityNewEditorProps) => {
     setName(event.currentTarget.value);
   };
 
-  const checkDisabled = () => {
-    return !name || !dbSymbolRef.current || !!dbSymbolErrorType;
-  };
+  /**
+   * Check if the entity cannot be created because of any validation error
+   */
+  const checkDisabled = () => !name || !!dbSymbolErrorType;
 
   return (
     <Editor type="creation" title={t('new')}>
@@ -102,9 +121,10 @@ export const AbilityNewEditor = ({ onClose }: AbilityNewEditorProps) => {
               {t('create_ability')}
             </PrimaryButton>
           </ToolTipContainer>
-          <DarkButton onClick={onClose}>{t('cancel')}</DarkButton>
+          <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
     </Editor>
   );
-};
+});
+AbilityNewEditor.displayName = 'AbilityNewEditor';
