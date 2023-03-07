@@ -1,14 +1,23 @@
 import React from 'react';
 import { DataBlockContainer, DataGrid, DataInfoContainer, DataInfoContainerHeader, DataInfoContainerHeaderTitle } from '../dataBlocks';
-import { AbilityDataProps } from './AbilityDataPropsInterface';
 import { CopyIdentifier } from '@components/Copy';
 import { useGetEntityDescriptionTextUsingTextId, useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
+import type { StudioAbility } from '@modelEntities/ability';
+import type { AbilityDialogsRef } from './editors/AbilityEditorOverlay';
 
-export const AbilityFrame = ({ ability, onClick }: AbilityDataProps) => {
+type Props = {
+  ability: StudioAbility;
+  dialogsRef: AbilityDialogsRef;
+};
+
+/**
+ * Frame showing the common information about the ability (name & description)
+ */
+export const AbilityFrame = ({ ability, dialogsRef }: Props) => {
   const getName = useGetEntityNameTextUsingTextId();
   const getDescription = useGetEntityDescriptionTextUsingTextId();
   return (
-    <DataBlockContainer size="full" onClick={onClick}>
+    <DataBlockContainer size="full" onClick={() => dialogsRef.current?.openDialog('frame')}>
       <DataGrid columns="minmax(min-content, 1024px)">
         <DataInfoContainer>
           <DataInfoContainerHeader>

@@ -2,6 +2,8 @@ import { DbSymbol } from '@modelEntities/dbSymbol';
 import { ProjectData, projectTextSave, SelectedDataIdentifier, State, useGlobalState } from '@src/GlobalStateProvider';
 import { getEntityNameText, getEntityNameTextUsingTextId } from './ReadingProjectText';
 import { SavingMap } from './SavingUtils';
+import { buildTextUpdate, TextUpdate } from './updateProjectText';
+import { addSelectOption, removeSelectOption } from './useSelectOptions';
 
 const getPreviousDbSymbolById = (values: { id: number; dbSymbol: DbSymbol }[], currentId: number) => {
   const sortedValues = values.sort((a, b) => b.id - a.id);
@@ -41,7 +43,6 @@ const getNextDbSymbolByName = (values: (EntityTextIdWithDbSymbol | EntityIdWithD
 
 /**
  * Captain Hook of the Hooks. This hook allow you to manipulate data from a specific screen by specifying the data key & data selected key to be able to mutate data.
- * @note This Hook **SHOULD NEVER** be used with `useGlobalState()` or `useGlobalSelectedDataIdentifier()`! **This cause data inconsistency**. If you need anything, this hook returns everything you need, just pass the result to children of your page!
  * @note This Hook is type safe as long as you use the corresponding `selected` key that should match the `key` you use to access data.
  * @example
  * const {
@@ -76,23 +77,33 @@ export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier
     }));
   };
 
-  const setProjectDataValues = (newDataValues: Partial<ProjectData[typeof key]>, newSelectedData?: Pick<SelectedDataIdentifier, typeof selected>) => {
+  const setProjectDataValues = (
+    newDataValues: Partial<ProjectData[typeof key]>,
+    newSelectedData?: Pick<SelectedDataIdentifier, typeof selected>,
+    textUpdates?: TextUpdate
+  ) => {
     const id = String(Object.keys(newDataValues)[0]);
     setState((currentState) => {
       const projectDataValues = currentState.projectData[key];
+      const projectText = textUpdates ? buildTextUpdate(textUpdates, currentState) : currentState.projectText;
       if (JSON.stringify(newDataValues[id]) !== JSON.stringify(projectDataValues[id])) {
-        return {
+        const newState = {
           ...currentState,
           projectData: { ...currentState.projectData, [key]: { ...projectDataValues, ...newDataValues } },
           selectedDataIdentifier: { ...currentState.selectedDataIdentifier, ...newSelectedData },
+          projectText,
           savingData: new SavingMap(currentState.savingData.set({ key, id }, 'UPDATE')),
           tmpHackHasTextToSave: projectTextSave.some((b) => b),
         };
+        // Add the new text
+        if (key !== 'trainers' && key !== 'mapLinks') addSelectOption(key === 'pokemon' ? 'creatures' : key, newState);
+        return newState;
       } else {
         return {
           ...currentState,
           projectData: { ...currentState.projectData, [key]: { ...projectDataValues, ...newDataValues } },
           selectedDataIdentifier: { ...currentState.selectedDataIdentifier, ...newSelectedData },
+          projectText,
           tmpHackHasTextToSave: projectTextSave.some((b) => b),
         };
       }
@@ -106,12 +117,15 @@ export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier
     setState((currentState) => {
       const newProjectDataValues = { ...currentState.projectData[key] };
       delete newProjectDataValues[identifier];
-      return {
+      const newState = {
         ...currentState,
         projectData: { ...currentState.projectData, [key]: newProjectDataValues },
         selectedDataIdentifier: { ...currentState.selectedDataIdentifier, ...newSelectedData },
         savingData: new SavingMap(currentState.savingData.set({ key, id: String(identifier) }, 'DELETE')),
       };
+      // Remove the text
+      if (key !== 'trainers' && key !== 'mapLinks') removeSelectOption(key === 'pokemon' ? 'creatures' : key, String(identifier));
+      return newState;
     });
   };
 
@@ -147,6 +161,33 @@ export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier
     removeProjectDataValue,
     getPreviousDbSymbol,
     getNextDbSymbol,
+    state,
+  };
+};
+
+/**
+ * Captain Hook of the Hooks. This hook allow you to read data from a specific screen by specifying the data key & data selected key.
+ * @note This Hook is type safe as long as you use the corresponding `selected` key that should match the `key` you use to access data.
+ * @example
+ * const {
+ *  projectDataValues: items,
+ *  selectedDataIdentifier: itemDbSymbol,
+ *  setSelectedDataIdentifier,
+ *  state, // For specific use like text
+ * } = useProjectData('items', 'item');
+ * @param key Key of the data collection you want to access from state.projectData
+ * @param selected Key of the data identifier you want to access from state.selectedDataIdentifier
+ */
+export const useProjectDataReadonly = <Key extends keyof ProjectData, SelectedIdentifier extends keyof SelectedDataIdentifier>(
+  key: Key,
+  selected: SelectedIdentifier
+) => {
+  const [state] = useGlobalState();
+  const selectedDataIdentifier = state.selectedDataIdentifier[selected];
+
+  return {
+    projectDataValues: state.projectData[key],
+    selectedDataIdentifier: selectedDataIdentifier,
     state,
   };
 };

@@ -9,10 +9,12 @@ import { TRAINER_NAME_TEXT_ID } from '@modelEntities/trainer';
 import { TYPE_NAME_TEXT_ID } from '@modelEntities/type';
 import { ZONE_DESCRIPTION_TEXT_ID, ZONE_NAME_TEXT_ID } from '@modelEntities/zone';
 import { State, ProjectText, projectTextKeys, projectTextSave, TextsWithLanguageConfig, useGlobalState } from '@src/GlobalStateProvider';
+import { getProjectTextChange } from './updateProjectText';
+import { updateSelectOptionsTextSource } from './useSelectOptions';
 
 type KeyProjectText = keyof ProjectText;
 
-const CSV_BASE = 100_000;
+export const CSV_BASE = 100_000;
 
 const getLanguage = (fileText: string[][], defaultLanguage: string) => {
   const language = fileText[0].indexOf(defaultLanguage || 'en');
@@ -95,10 +97,25 @@ export const useGetProjectText = () => {
 };
 
 export const useSetProjectText = () => {
-  const [{ projectText: texts, projectConfig }] = useGlobalState();
+  const [, setState] = useGlobalState();
 
-  return (fileId: number, textId: number, text: string) =>
-    setText({ texts, config: projectConfig.language_config }, fileId, textId, text, projectConfig.language_config.defaultLanguage);
+  return (fileId: number, textId: number, text: string) => {
+    setState((currentState) => {
+      const change = getProjectTextChange(currentState.projectConfig.language_config.defaultLanguage, textId, fileId, text, currentState.projectText);
+      const newState = {
+        ...currentState,
+        tmpHackHasTextToSave: projectTextSave.some((b) => b),
+        projectText: {
+          ...currentState.projectText,
+          [change[0]]: change[1],
+        },
+        textVersion: currentState.textVersion + 1,
+      };
+      // Ensure the selects have the right version of the text
+      updateSelectOptionsTextSource(fileId, textId, newState);
+      return newState;
+    });
+  };
 };
 
 const ENTITY_TO_NAME_TEXT = {

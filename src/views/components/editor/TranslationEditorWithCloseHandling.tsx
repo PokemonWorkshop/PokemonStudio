@@ -1,5 +1,5 @@
 import { DarkButton } from '@components/buttons';
-import React, { useMemo } from 'react';
+import React, { forwardRef, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { EditorTitle } from './Editor';
@@ -8,8 +8,9 @@ import { ReactComponent as ClearIcon } from '@assets/icons/global/clear-tag-icon
 import { projectTextSave, useGlobalState } from '@src/GlobalStateProvider';
 import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
 import { SecondaryTag } from '@components/Tag';
-import { getText } from '@utils/ReadingProjectText';
-import { getProjectTextChange } from '@utils/updateProjectText';
+import { getText, useGetProjectText } from '@utils/ReadingProjectText';
+import { EditorHandlingClose, useEditorHandlingClose } from './useHandleCloseEditor';
+import { getProjectMultiLanguageTextChange } from '@utils/updateProjectText';
 
 const TranslationEditorContainer = styled(EditorContainer)`
   position: absolute;
@@ -55,47 +56,18 @@ const TranslateEditorTitleContainer = styled.div`
 `;
 
 type TranslationInputProps = {
-  textId: number;
-  fileId: number;
-  languageCode: string;
+  defaultValue: string;
+  name: string;
   isMultiline: boolean | undefined;
+  inputRef: (element: HTMLTextAreaElement | HTMLInputElement | null) => void;
 };
 
-const TranslationInput = ({ textId, fileId, languageCode, isMultiline }: TranslationInputProps) => {
-  const [state, setState] = useGlobalState();
-  const projectText = { texts: state.projectText, config: state.projectConfig.language_config };
-
-  const handleChange = (text: string) =>
-    setState((currentState) => {
-      const change = getProjectTextChange(languageCode, textId, fileId, text, currentState.projectText);
-      return {
-        ...currentState,
-        tmpHackHasTextToSave: projectTextSave.some((b) => b),
-        projectText: {
-          ...currentState.projectText,
-          [change[0]]: change[1],
-        },
-      };
-    });
-
+const TranslationInput = ({ defaultValue, name, isMultiline, inputRef }: TranslationInputProps) => {
   if (isMultiline) {
-    return (
-      <MultiLineInput
-        name={languageCode}
-        value={getText(projectText, fileId, textId, languageCode)}
-        onChange={(event) => handleChange(event.currentTarget.value)}
-      />
-    );
+    return <MultiLineInput name={name} defaultValue={defaultValue} ref={inputRef} />;
   }
 
-  return (
-    <Input
-      type="text"
-      name={languageCode}
-      value={getText(projectText, fileId, textId, languageCode)}
-      onChange={(event) => handleChange(event.currentTarget.value)}
-    />
-  );
+  return <Input type="text" name={name} defaultValue={defaultValue} ref={inputRef} />;
 };
 
 export type TranslationEditorTitle =
@@ -106,6 +78,8 @@ export type TranslationEditorTitle =
   | 'translation_victory'
   | 'translation_defeat';
 
+type InputRefsType = Record<string, HTMLInputElement | HTMLTextAreaElement | null>;
+
 type TranslateEditorProps = {
   title: TranslationEditorTitle;
   name: string;
@@ -113,12 +87,14 @@ type TranslateEditorProps = {
   textId: number;
   fileId: number;
   isMultiline?: boolean;
+  inputRefs: React.MutableRefObject<InputRefsType>;
 };
 
-export const TranslationEditor = ({ title, name, textId, fileId, onClose, isMultiline }: TranslateEditorProps) => {
+const TranslationEditor = ({ title, name, textId, fileId, onClose, isMultiline, inputRefs }: TranslateEditorProps) => {
   const { t } = useTranslation('editor');
   const { t: tq } = useTranslation('pokemon_battler_list');
   const [state] = useGlobalState();
+  const projectText = { texts: state.projectText, config: state.projectConfig.language_config };
   const defaultLanguageCode = state.projectConfig.language_config.defaultLanguage;
   const languageOrder = useMemo(
     () =>
@@ -153,14 +129,28 @@ export const TranslationEditor = ({ title, name, textId, fileId, onClose, isMult
             <SecondaryTag>{tq('by_default')}</SecondaryTag>
           </Label>
           <InputContainer>
-            <TranslationInput textId={textId} fileId={fileId} languageCode={defaultLanguageCode} isMultiline={isMultiline} />
+            <TranslationInput
+              defaultValue={getText(projectText, fileId, textId, defaultLanguageCode)}
+              name={defaultLanguageCode}
+              isMultiline={isMultiline}
+              inputRef={(e) => {
+                inputRefs.current[defaultLanguageCode] = e;
+              }}
+            />
           </InputContainer>
         </InputWithTopLabelContainer>
         {languageOrder.map(([code, index]) => (
           <InputWithTopLabelContainer key={code}>
             <Label htmlFor={code}>{state.projectConfig.language_config.choosableLanguageTexts[index]}</Label>
             <InputContainer>
-              <TranslationInput textId={textId} fileId={fileId} languageCode={code} isMultiline={isMultiline} />
+              <TranslationInput
+                defaultValue={getText(projectText, fileId, textId, code)}
+                name={code}
+                isMultiline={isMultiline}
+                inputRef={(e) => {
+                  inputRefs.current[code] = e;
+                }}
+              />
             </InputContainer>
           </InputWithTopLabelContainer>
         ))}
@@ -168,3 +158,55 @@ export const TranslationEditor = ({ title, name, textId, fileId, onClose, isMult
     </TranslationEditorContainer>
   );
 };
+
+type TranslationEditorWithCloseHandlingProps = {
+  title: TranslationEditorTitle;
+  nameTextId: number;
+  fileId: number;
+  textIndex: number;
+  isMultiline: boolean;
+  closeDialog: () => void;
+  onClose: () => void;
+};
+
+/** Wrapper allowing the TranslationEditor to be used with EditorOverlayV2 */
+export const TranslationEditorWithCloseHandling = forwardRef<EditorHandlingClose, TranslationEditorWithCloseHandlingProps>(
+  ({ title, closeDialog, onClose, fileId, nameTextId, textIndex, isMultiline }, ref) => {
+    const [, setState] = useGlobalState();
+    const getNameText = useGetProjectText();
+    const inputRefs = useRef<InputRefsType>({});
+    // Save the name in state to prevent the re-render to change the title when saving new name
+    const [name] = useState(getNameText(nameTextId, textIndex));
+
+    const onDialogClose = () => {
+      setState((currentState) => {
+        const localeChanges = Object.entries(inputRefs.current).map(([key, value]) => [key, value?.value || ''] as const);
+        const change = getProjectMultiLanguageTextChange(localeChanges, textIndex, fileId, currentState.projectText);
+        return {
+          ...currentState,
+          tmpHackHasTextToSave: projectTextSave.some((b) => b),
+          projectText: {
+            ...currentState.projectText,
+            [change[0]]: change[1],
+          },
+        };
+      });
+      // Let react re-render the back components
+      setTimeout(() => onClose(), 0);
+    };
+    useEditorHandlingClose(ref, onDialogClose);
+
+    return (
+      <TranslationEditor
+        title={title}
+        name={name}
+        onClose={closeDialog}
+        fileId={fileId}
+        textId={textIndex}
+        isMultiline={isMultiline}
+        inputRefs={inputRefs}
+      />
+    );
+  }
+);
+TranslationEditorWithCloseHandling.displayName = 'TranslationEditorWithCloseHandling';

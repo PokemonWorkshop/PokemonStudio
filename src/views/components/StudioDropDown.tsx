@@ -167,7 +167,6 @@ const getCurrentOption = (options: DropDownOption[], value: string) => {
 };
 
 type StudioDropDownProps = {
-  id: string;
   value: string;
   options: DropDownOption[];
   onChange: (value: string) => void;
@@ -178,7 +177,7 @@ type StudioDropDownProps = {
   };
 };
 
-export const StudioDropDown = ({ id, value, options, onChange, optionals }: StudioDropDownProps) => {
+export const StudioDropDown = ({ value, options, onChange, optionals }: StudioDropDownProps) => {
   const [entry, setEntry] = useState<string>('');
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const optionsList = useMemo(() => research(options, entry), [options, entry]);
@@ -211,7 +210,7 @@ export const StudioDropDown = ({ id, value, options, onChange, optionals }: Stud
   };
 
   return (
-    <DropDownContainer id={id} className={isOpen ? 'open' : notOpenClass} onClick={onClick}>
+    <DropDownContainer className={isOpen ? 'open' : notOpenClass} onClick={onClick}>
       <Input
         ref={inputRef}
         className={notOpenClass}

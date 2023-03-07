@@ -159,6 +159,7 @@ export interface State {
   lastPSDKVersion: PSDKVersion;
   rmxpMaps: StudioRMXPMap[];
   tmpHackHasTextToSave?: boolean;
+  textVersion: number;
   savingLanguage: string[];
   savingImage: { [path: string]: string };
 }
@@ -186,6 +187,7 @@ const initialState = {
   savingProjectStudio: false,
   savingLanguage: [] as string[],
   savingImage: {},
+  textVersion: 0,
 };
 
 export type TextsWithLanguageConfig = {

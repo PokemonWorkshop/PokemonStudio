@@ -21,15 +21,15 @@ export const TalentsEditor: FunctionComponent<TalentEditorProps> = ({ currentPok
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="ability_1">{t('database_pokemon:ability_1')}</Label>
-          <SelectAbility dbSymbol={form.abilities[0]} onChange={(event) => refreshUI((form.abilities[0] = event.value as DbSymbol))} noLabel />
+          <SelectAbility dbSymbol={form.abilities[0]} onChange={(newDbSymbol) => refreshUI((form.abilities[0] = newDbSymbol as DbSymbol))} noLabel />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="ability_2">{t('database_pokemon:ability_2')}</Label>
-          <SelectAbility dbSymbol={form.abilities[1]} onChange={(event) => refreshUI((form.abilities[1] = event.value as DbSymbol))} noLabel />
+          <SelectAbility dbSymbol={form.abilities[1]} onChange={(newDbSymbol) => refreshUI((form.abilities[1] = newDbSymbol as DbSymbol))} noLabel />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="hidden_ability">{t('database_pokemon:hidden_ability')}</Label>
-          <SelectAbility dbSymbol={form.abilities[2]} onChange={(event) => refreshUI((form.abilities[2] = event.value as DbSymbol))} noLabel />
+          <SelectAbility dbSymbol={form.abilities[2]} onChange={(newDbSymbol) => refreshUI((form.abilities[2] = newDbSymbol as DbSymbol))} noLabel />
         </InputWithTopLabelContainer>
       </InputContainer>
     </Editor>
