@@ -113,3 +113,16 @@ export const TextInputError = styled.span`
   user-select: none;
   padding: 0 16px 0 16px;
 `;
+
+export const InputTable = styled(Input)`
+  height: 32px;
+  padding: 9.5px 11px;
+
+  &:hover {
+    padding: 8.5px 10px;
+  }
+
+  &:focus {
+    padding: 8.5px 10px;
+  }
+`;

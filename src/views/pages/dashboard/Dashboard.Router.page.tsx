@@ -11,6 +11,7 @@ import { DashboardSavePage } from './Dashboard.Save.page';
 import { DashboardPage } from './Dashboard.page';
 import { DashboardGameStartPage } from './Dashboard.GameStart.page';
 import { Route, Routes } from 'react-router-dom';
+import { DashboardTextsPage } from './Dashboard.Texts.page';
 
 const DashboardRouterPageStyle = styled.div`
   display: flex;
@@ -62,7 +63,7 @@ const DashboardRouterComponent = () => {
         path="texts"
         element={
           <DashboardPageWithMenu>
-            <div>Texts</div>
+            <DashboardTextsPage />
           </DashboardPageWithMenu>
         }
       />

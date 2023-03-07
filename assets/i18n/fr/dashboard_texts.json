@@ -1,0 +1,22 @@
+{
+  "texts": "Textes",
+  "fonts": "Polices",
+  "alt_sizes": "Tailles alternatives",
+  "special_characters_number": "Utiliser des caractères spéciaux pour les nombres",
+  "font_name": "Nom",
+  "size": "Taille",
+  "line_height": "Hauteur de ligne",
+  "delete_all": "Tout supprimer",
+  "add_a_font": "Ajouter une police d'écriture",
+  "add_the_font": "Ajouter la police d'écriture",
+  "add_a_alt_size": "Ajouter une taille alternative",
+  "add_the_alt_size": "Ajouter la taille alternative",
+  "fields_asterisk_required": "Les champs avec un astérisque sont requis.",
+  "cancel": "Annuler",
+  "no_font": "Aucune police",
+  "no_alt_size": "Aucune taille alternative",
+  "deletion_of_fonts": "Suppression des polices",
+  "deletion_message_fonts": "Vous êtes sur le point de supprimer définitivement les polices.",
+  "deletion_of_alt_sizes": "Suppression des tailles alternatives",
+  "deletion_message_alt_sizes": "Vous êtes sur le point de supprimer définitivement les tailles alternatives."
+}

@@ -10,6 +10,7 @@ import dashboard_language from '../../assets/i18n/en/dashboard_language.json';
 import dashboard_save from '../../assets/i18n/en/dashboard_save.json';
 import dashboard_settings from '../../assets/i18n/en/dashboard_settings.json';
 import dashboard_game_start from '../../assets/i18n/en/dashboard_game_start.json';
+import dashboard_texts from '../../assets/i18n/en/dashboard_texts.json';
 import database_abilities from '../../assets/i18n/en/database_abilities.json';
 import database_items from '../../assets/i18n/en/database_items.json';
 import database_moves from '../../assets/i18n/en/database_moves.json';
@@ -55,6 +56,7 @@ declare module 'react-i18next' {
       dashboard_save: typeof dashboard_save;
       dashboard_settings: typeof dashboard_settings;
       dashboard_game_start: typeof dashboard_game_start;
+      dashboard_texts: typeof dashboard_texts;
       database_abilities: typeof database_abilities;
       database_items: typeof database_items;
       database_moves: typeof database_moves;

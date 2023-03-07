@@ -1,4 +1,4 @@
-import { StudioDisplayConfig, StudioSaveConfig, StudioSettingConfig } from '@modelEntities/config';
+import { StudioDisplayConfig, StudioSaveConfig, StudioSettingConfig, StudioTextConfig } from '@modelEntities/config';
 import { StudioCreatureForm } from '@modelEntities/creature';
 import { StudioExpandPokemonSetup, StudioGroupEncounter, StudioIvEv } from '@modelEntities/groupEncounter';
 import { StudioItem } from '@modelEntities/item';
@@ -42,6 +42,30 @@ export const cleaningSaveNaNValues = (v: StudioSaveConfig) => {
 export const cleaningSettingsNaNValues = (v: StudioSettingConfig) => {
   v.pokemonMaxLevel = cleanNaNValue(v.pokemonMaxLevel, 100);
   v.maxBagItemCount = cleanNaNValue(v.maxBagItemCount);
+};
+
+export const cleaningTextNaNValues = (v: StudioTextConfig) => {
+  v.fonts.ttfFiles.forEach((ttfFile) => {
+    ttfFile.id = cleanNaNValue(ttfFile.id);
+    ttfFile.lineHeight = cleanNaNValue(ttfFile.lineHeight);
+    ttfFile.size = cleanNaNValue(ttfFile.size);
+  });
+  v.fonts.altSizes.forEach((altSize) => {
+    altSize.id = cleanNaNValue(altSize.id);
+    altSize.lineHeight = cleanNaNValue(altSize.lineHeight);
+    altSize.size = cleanNaNValue(altSize.size);
+  });
+  Object.values(v.messages).forEach((message) => {
+    message.lineCount = cleanNaNValue(message.lineCount);
+    message.borderSpacing = cleanNaNValue(message.borderSpacing);
+    message.defaultColor = cleanNaNValue(message.defaultColor);
+    message.defaultFont = cleanNaNValue(message.defaultFont);
+  });
+  Object.values(v.choices).forEach((choice) => {
+    choice.borderSpacing = cleanNaNValue(choice.borderSpacing);
+    choice.defaultColor = cleanNaNValue(choice.defaultColor);
+    choice.defaultFont = cleanNaNValue(choice.defaultFont);
+  });
 };
 
 export const cleaningCreatureFormNaNValues = (v: StudioCreatureForm) => {

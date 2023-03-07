@@ -1,0 +1,22 @@
+{
+  "texts": "Texts",
+  "fonts": "Fonts",
+  "alt_sizes": "Alternative sizes",
+  "special_characters_number": "Use special characters for numbers",
+  "font_name": "Name",
+  "size": "Size",
+  "line_height": "Line height",
+  "delete_all": "Delete all",
+  "add_a_font": "Add a font",
+  "add_the_font": "Add the font",
+  "add_a_alt_size": "Add an alternative size",
+  "add_the_alt_size": "Add the alternative size",
+  "fields_asterisk_required": "Fields with an asterisk are required.",
+  "cancel": "Cancel",
+  "no_font": "No font",
+  "no_alt_size": "No alternative size",
+  "deletion_of_fonts": "Deletion of fonts",
+  "deletion_message_fonts": "You are about to permanently delete the fonts.",
+  "deletion_of_alt_sizes": "Deletion of alternative sizes",
+  "deletion_message_alt_sizes": "You are about to permanently delete the alternative sizes."
+}
