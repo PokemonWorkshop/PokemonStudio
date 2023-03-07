@@ -12,7 +12,7 @@ export const DashboardNavigation = () => {
         <NavigationDatabaseItem path="/dashboard/infos" label={t('infos')} />
         <NavigationDatabaseItem path="/dashboard/language" label={t('language')} />
         <NavigationDatabaseItem path="/dashboard/settings" label={t('settings')} />
-        {/*<NavigationDatabaseItem path="/dashboard/texts" label={t('texts')} /> */}
+        <NavigationDatabaseItem path="/dashboard/texts" label={t('texts')} />
         <NavigationDatabaseItem path="/dashboard/devices" label={t('devices')} />
       </NavigationDatabaseGroup>
       <NavigationDatabaseGroup title={t('appearance')}>

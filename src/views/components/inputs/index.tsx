@@ -1,4 +1,4 @@
-export { Input, MultiLineInput } from './Input';
+export { Input, MultiLineInput, InputTable } from './Input';
 export { Label } from './Label';
 export { InputWithLeftLabelContainer } from './InputWithLeftLabelContainer';
 export { InputWithTopLabelContainer } from './InputWithTopLabelContainer';

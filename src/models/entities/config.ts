@@ -124,8 +124,8 @@ const FONT_CONFIG_VALIDATOR = z.object({
   altSizes: z.array(ALT_SIZE_VALIDATOR),
 });
 const MESSAGE_CONFIG_VALIDATOR = z.object({
-  windowskin: z.string().optional(),
-  nameWindowskin: z.string().optional(),
+  windowSkin: z.string().optional(),
+  nameWindowSkin: z.string().optional(),
   lineCount: POSITIVE_INT,
   borderSpacing: POSITIVE_OR_ZERO_INT,
   defaultFont: POSITIVE_OR_ZERO_INT,
@@ -140,6 +140,8 @@ export const TEXT_CONFIG_VALIDATOR = z.object({
   choices: z.record(CHOICE_CONFIG_VALIDATOR),
 });
 export type StudioTextConfig = z.infer<typeof TEXT_CONFIG_VALIDATOR>;
+export type StudioTextTtfFileConfig = z.infer<typeof TTF_FILE_VALIDATOR>;
+export type StudioTextAltSizeConfig = z.infer<typeof ALT_SIZE_VALIDATOR>;
 
 export const PSDK_CONFIG_VALIDATOR = z.object({
   gameTitle: z.string(),
