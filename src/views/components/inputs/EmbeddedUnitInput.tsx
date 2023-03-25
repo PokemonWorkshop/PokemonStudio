@@ -8,11 +8,6 @@ const EmbeddedUnitInputContainer = styled.div`
   & ${Input} {
     width: 100%;
     padding-right: 37px;
-    :hover,
-    :active,
-    :focus {
-      padding-right: 36px;
-    }
   }
 
   & span {

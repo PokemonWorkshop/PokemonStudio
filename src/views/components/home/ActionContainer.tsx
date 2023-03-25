@@ -43,6 +43,5 @@ export const ProjectCardContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   height: 240px;
-  overflow-y: hidden;
   gap: 16px;
 `;

@@ -38,16 +38,6 @@ const InputOffsetContainer = styled.div`
     width: 64px;
     padding: 5px 8px 5px 28px;
     ${({ theme }) => theme.fonts.normalSmall};
-
-    :hover {
-      padding: 4px 7px 4px 27px;
-    }
-
-    .active,
-    :active,
-    :focus {
-      padding: 4px 7px 4px 27px;
-    }
   }
 `;
 

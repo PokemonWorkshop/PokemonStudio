@@ -8,11 +8,6 @@ const CoordinateInputContainer = styled.div`
   & ${Input} {
     width: 100%;
     padding-left: 37px;
-    :hover,
-    :active,
-    :focus {
-      padding-left: 36px;
-    }
   }
 
   & span {

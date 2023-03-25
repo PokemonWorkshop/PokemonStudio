@@ -108,14 +108,6 @@ const RenderPokemonContainer = styled(DataPokemonGrid).attrs<RenderPokemonContai
   ${Input} {
     height: 32px;
     padding: 9.5px 11px;
-
-    &:hover {
-      padding: 8.5px 10px;
-    }
-
-    &:focus {
-      padding: 8.5px 10px;
-    }
   }
 
   @media ${theme.breakpoints.dataBox422} {
