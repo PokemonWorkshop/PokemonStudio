@@ -7,11 +7,6 @@ const PercentInputContainer = styled.div`
   position: relative;
   & ${Input} {
     padding-right: 37px;
-    :hover,
-    :active,
-    :focus {
-      padding-right: 36px;
-    }
   }
 
   & span {

@@ -17,18 +17,15 @@ export const Input = styled.input<InputProps>`
   text-align: ${(props) => (props.type === 'number' ? 'right' : 'left')};
 
   &:hover {
-    border-width: 2px;
-    padding: 8.5px 14px;
     border-color: ${({ theme }) => theme.colors.dark24};
+    outline: 1.5px solid ${({ theme }) => theme.colors.dark24};
   }
 
   &.active,
   &:active,
   &:focus {
-    border-width: 2px;
-    padding: 8.5px 14px;
-    border-color: #6562f8;
-    outline: none;
+    border-color: ${({ theme }) => theme.colors.primaryBase};
+    outline: 1.5px solid ${({ theme }) => theme.colors.primaryBase};
   }
 
   &::-webkit-outer-spin-button,
@@ -86,18 +83,15 @@ export const MultiLineInput = styled(TextareaAutosize)<MultiLineInputProps>`
   overflow: hidden;
 
   &:hover {
-    border-width: 2px;
-    padding: 8.5px 14px;
     border-color: ${({ theme }) => theme.colors.dark24};
+    outline: 1.5px solid ${({ theme }) => theme.colors.dark24};
   }
 
   &.active,
   &:active,
   &:focus {
-    border-width: 2px;
-    padding: 8.5px 14px;
-    border-color: #6562f8;
-    outline: none;
+    border-color: ${({ theme }) => theme.colors.primaryBase};
+    outline: 1.5px solid ${({ theme }) => theme.colors.primaryBase};
   }
 
   &::placeholder {
@@ -117,12 +111,4 @@ export const TextInputError = styled.span`
 export const InputTable = styled(Input)`
   height: 32px;
   padding: 9.5px 11px;
-
-  &:hover {
-    padding: 8.5px 10px;
-  }
-
-  &:focus {
-    padding: 8.5px 10px;
-  }
 `;

@@ -56,7 +56,7 @@ const ProjectCardContainer = styled(ActiveContainer)`
       color: inherit;
       border: none;
       font: inherit;
-      outline: inherit;
+      outline: none;
 
       &:hover {
         cursor: pointer;

@@ -129,6 +129,7 @@ const DropDownContainer = styled.div`
     padding: 0px;
     background-color: ${({ theme }) => theme.colors.dark20};
     border: none;
+    outline: none;
     cursor: default;
 
     &.error {

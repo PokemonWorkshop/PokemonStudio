@@ -11,16 +11,14 @@ export const ActiveContainer = styled.div`
 
   &:hover:not([data-disabled='true']):not([data-noactive='true']) {
     background-color: ${({ theme }) => theme.colors.dark14};
-    border-width: 2px;
-    padding: 23px;
     border-color: ${({ theme }) => theme.colors.dark24};
+    outline: 2px solid ${({ theme }) => theme.colors.dark24};
   }
 
   &.active:not([data-disabled='true']),
   &:active:not([data-disabled='true']):not([data-noactive='true']):not(:focus-within) {
     background-color: ${({ theme }) => theme.colors.dark15};
-    border-width: 2px;
-    padding: 23px;
     border-color: ${({ theme }) => theme.colors.primaryBase};
+    outline: 2px solid ${({ theme }) => theme.colors.primaryBase};
   }
 `;
