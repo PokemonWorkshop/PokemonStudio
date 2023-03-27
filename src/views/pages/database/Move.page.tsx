@@ -135,7 +135,7 @@ export const MovePage = () => {
             <StatisticsDataBlock move={currentMove} onClick={() => setCurrentEditor('statistics')} />
           </DataBlockWrapper>
           <DataBlockWrapper>
-            <DataBlockWithAction size="full" title={`${t('database_moves:pokemon_with_move')} ${getMoveName(currentMove)}`}>
+            <DataBlockWithAction size="full" title={t('database_moves:pokemon_with_move', { move: getMoveName(currentMove) })}>
               <DarkButton onClick={onClickedPokemonList}>{t('database_moves:button_list_pokemon')}</DarkButton>
             </DataBlockWithAction>
             <DataBlockWithAction size="full" title={t('database_moves:deleting')}>

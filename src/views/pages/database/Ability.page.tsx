@@ -29,7 +29,7 @@ export const AbilityPage = () => {
             {/* <AbilityParametersData ability={ability} dialogsRef={dialogsRef} /> */}
           </DataBlockWrapper>
           <DataBlockWrapper>
-            <DataBlockWithAction size="full" title={`${t('pokemon_with_ability')} ${abilityName}`}>
+            <DataBlockWithAction size="full" title={t('pokemon_with_ability', { ability: abilityName })}>
               <DarkButton onClick={onClickedPokemonList}>{t('button_list_pokemon')}</DarkButton>
             </DataBlockWithAction>
             <DataBlockWithAction size="full" title={t('deleting')}>

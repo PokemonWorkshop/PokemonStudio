@@ -267,10 +267,10 @@ export const PokemonBattler = ({ onClickDelete, onEditPokemonProperty, pokemon, 
             {specie ? getEntityName(specie) : <span className="error">{t('database_pokemon:pokemon_deleted')}</span>}
             <span className="level">
               {pokemon.levelSetup.kind === 'fixed'
-                ? t('pokemon_battler_list:level', { level: pokemon.levelSetup.level })
+                ? t('pokemon_battler_list:level_value', { level: pokemon.levelSetup.level })
                 : pokemon.levelSetup.level.minimumLevel === pokemon.levelSetup.level.maximumLevel
-                ? t('pokemon_battler_list:level', { level: pokemon.levelSetup.level.minimumLevel })
-                : t('pokemon_battler_list:levelTo', { min: pokemon.levelSetup.level.minimumLevel, max: pokemon.levelSetup.level.maximumLevel })}
+                ? t('pokemon_battler_list:level_value', { level: pokemon.levelSetup.level.minimumLevel })
+                : t('pokemon_battler_list:level_to', { min: pokemon.levelSetup.level.minimumLevel, max: pokemon.levelSetup.level.maximumLevel })}
             </span>
           </div>
           <div className="chance-delete-button">
