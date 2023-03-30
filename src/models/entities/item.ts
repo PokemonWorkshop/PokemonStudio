@@ -180,7 +180,7 @@ export type StudioItem = z.infer<typeof ITEM_VALIDATOR>;
 
 export const ITEM_DESCRIPTION_TEXT_ID = 13;
 export const ITEM_NAME_TEXT_ID = 12;
-export const ITEM_PLURAL_NAME_TEXT_ID = 9001;
+export const ITEM_PLURAL_NAME_TEXT_ID = -90_999; // 9001 - 100000
 export const ITEM_POCKET_NAME_TEXT_ID = 15;
 
 export const StudioItemCategories = ['ball', 'heal', 'repel', 'fleeing', 'event', 'stone', 'tech', 'generic'] as const;

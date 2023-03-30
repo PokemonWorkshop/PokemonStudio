@@ -8,7 +8,7 @@ import { DropInput } from '@components/inputs/DropInput';
 import { basename, itemIconPath } from '@utils/path';
 import type { OpenTranslationEditorFunction } from '@utils/useTranslationEditor';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
-import { useGetEntityDescriptionText, useGetEntityNameText, useSetProjectText } from '@utils/ReadingProjectText';
+import { useGetEntityDescriptionText, useGetEntityNameText, useGetItemPluralNameText, useSetProjectText } from '@utils/ReadingProjectText';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import {
   ITEM_CATEGORY,
@@ -37,8 +37,10 @@ export const ItemFrameEditor = forwardRef<EditorHandlingClose, ItemFrameEditorPr
   const options = useMemo(() => itemCategoryEntries(t), [t]);
   const getItemName = useGetEntityNameText();
   const getItemDescription = useGetEntityDescriptionText();
+  const getItemNamePlural = useGetItemPluralNameText();
   const setText = useSetProjectText();
   const nameRef = useRef<HTMLInputElement>(null);
+  const namePluralRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const [icon, setIcon] = useState(item.icon);
   const [itemCategory, setItemCategory] = useState(ITEM_CATEGORY[item.klass]);
@@ -81,6 +83,18 @@ export const ItemFrameEditor = forwardRef<EditorHandlingClose, ItemFrameEditorPr
           </Label>
           <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_name')}>
             <Input type="text" name="name" defaultValue={getItemName(item)} ref={nameRef} placeholder={t('database_items:example_name')} />
+          </TranslateInputContainer>
+        </InputWithTopLabelContainer>
+        <InputWithTopLabelContainer>
+          <Label htmlFor="name-plural">{t('database_items:name_plural')}</Label>
+          <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_name_plural')}>
+            <Input
+              type="text"
+              name="name-plural"
+              defaultValue={getItemNamePlural(item)}
+              ref={namePluralRef}
+              placeholder={t('database_items:example_name_plural')}
+            />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>

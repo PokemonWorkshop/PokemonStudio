@@ -15,6 +15,7 @@ import {
   ITEM_CATEGORY_INITIAL_CLASSES,
   ITEM_DESCRIPTION_TEXT_ID,
   ITEM_NAME_TEXT_ID,
+  ITEM_PLURAL_NAME_TEXT_ID,
   StudioItemCategories,
   StudioItemCategory,
 } from '@modelEntities/item';
@@ -45,6 +46,7 @@ export const ItemNewEditor = ({ onClose }: ItemNewEditorProps) => {
   const options = useMemo(() => itemCategoryEntries(t), [t]);
   const setText = useSetProjectText();
   const [name, setName] = useState(''); // We can't use a ref because of the button behavior
+  const namePluralRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const dbSymbolRef = useRef<HTMLInputElement>(null);
   const [dbSymbolErrorType, setDbSymbolErrorType] = useState<'value' | 'duplicate' | undefined>(undefined);
@@ -52,7 +54,7 @@ export const ItemNewEditor = ({ onClose }: ItemNewEditorProps) => {
   const [icon, setIcon] = useState('');
 
   const onClickNew = () => {
-    if (!dbSymbolRef.current || !name || !descriptionRef.current) return;
+    if (!dbSymbolRef.current || !name || !descriptionRef.current || !namePluralRef.current) return;
 
     const dbSymbol = dbSymbolRef.current.value as DbSymbol;
     const id = findFirstAvailableId(items, 1);
@@ -60,6 +62,7 @@ export const ItemNewEditor = ({ onClose }: ItemNewEditorProps) => {
     newItem.icon = icon;
     setText(ITEM_NAME_TEXT_ID, newItem.id, name);
     setText(ITEM_DESCRIPTION_TEXT_ID, newItem.id, descriptionRef.current.value);
+    setText(ITEM_PLURAL_NAME_TEXT_ID, newItem.id, namePluralRef.current.value);
     setItem({ [dbSymbol]: newItem }, { item: dbSymbol });
     onClose();
   };
@@ -97,6 +100,10 @@ export const ItemNewEditor = ({ onClose }: ItemNewEditorProps) => {
             {t('database_items:name')}
           </Label>
           <Input type="text" name="name" value={name} onChange={onChangeName} placeholder={t('database_items:example_name')} />
+        </InputWithTopLabelContainer>
+        <InputWithTopLabelContainer>
+          <Label htmlFor="name-plural">{t('database_items:name_plural')}</Label>
+          <Input type="text" name="name-plural" ref={namePluralRef} placeholder={t('database_items:example_name_plural')} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="descr">{t('database_items:description')}</Label>

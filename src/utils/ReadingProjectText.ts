@@ -2,7 +2,7 @@ import { ABILITY_DESCRIPTION_TEXT_ID, ABILITY_NAME_TEXT_ID } from '@modelEntitie
 import { CREATURE_DESCRIPTION_TEXT_ID, CREATURE_NAME_TEXT_ID } from '@modelEntities/creature';
 import { StudioDex } from '@modelEntities/dex';
 import { GROUP_NAME_TEXT_ID } from '@modelEntities/group';
-import { ITEM_DESCRIPTION_TEXT_ID, ITEM_NAME_TEXT_ID, ITEM_POCKET_NAME_TEXT_ID, StudioItem } from '@modelEntities/item';
+import { ITEM_DESCRIPTION_TEXT_ID, ITEM_NAME_TEXT_ID, ITEM_PLURAL_NAME_TEXT_ID, ITEM_POCKET_NAME_TEXT_ID, StudioItem } from '@modelEntities/item';
 import { MOVE_DESCRIPTION_TEXT_ID, MOVE_NAME_TEXT_ID } from '@modelEntities/move';
 import { QUEST_DESCRIPTION_TEXT_ID, QUEST_NAME_TEXT_ID } from '@modelEntities/quest';
 import { TRAINER_NAME_TEXT_ID } from '@modelEntities/trainer';
@@ -177,6 +177,12 @@ export const useGetItemPocketText = () => {
 
   return (entity: { klass: StudioItem['klass']; socket: number }) =>
     getEntityText(ITEM_POCKET_NAME_TEXT_ID, pocketMapping[entity.socket] || entity.socket);
+};
+
+export const useGetItemPluralNameText = () => {
+  const getEntityText = useGetProjectText();
+
+  return (entity: { klass: StudioItem['klass']; id: number }) => getEntityText(ITEM_PLURAL_NAME_TEXT_ID, entity.id);
 };
 
 export const useGetEntityNameUsingCSV = () => {

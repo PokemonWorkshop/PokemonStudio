@@ -124,8 +124,8 @@ const FONT_CONFIG_VALIDATOR = z.object({
   altSizes: z.array(ALT_SIZE_VALIDATOR),
 });
 const MESSAGE_CONFIG_VALIDATOR = z.object({
-  windowSkin: z.string().optional(),
-  nameWindowSkin: z.string().optional(),
+  windowSkin: z.union([z.string(), z.null()]).optional(),
+  nameWindowSkin: z.union([z.string(), z.null()]).optional(),
   lineCount: POSITIVE_INT,
   borderSpacing: POSITIVE_OR_ZERO_INT,
   defaultFont: POSITIVE_OR_ZERO_INT,
