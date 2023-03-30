@@ -17,5 +17,6 @@
   "translation_species": "Specie di {{name}}",
   "translation_class": "Classe di {{name}}",
   "translation_victory": "Vittoria di {{name}}",
-  "translation_defeat": "Sconfitta di {{name}}"
+  "translation_defeat": "Sconfitta di {{name}}",
+  "translation_name_plural": "Nome pluriel di {{name}}"
 }

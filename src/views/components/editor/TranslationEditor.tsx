@@ -104,7 +104,8 @@ export type TranslationEditorTitle =
   | 'translation_species'
   | 'translation_class'
   | 'translation_victory'
-  | 'translation_defeat';
+  | 'translation_defeat'
+  | 'translation_name_plural';
 
 type TranslateEditorProps = {
   title: TranslationEditorTitle;

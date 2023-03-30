@@ -38,6 +38,7 @@ import { useGetEntityNameText } from '@utils/ReadingProjectText';
 import { useEditorHandlingCloseRef } from '@components/editor/useHandleCloseEditor';
 import { cleaningItemNaNValues } from '@utils/cleanNaNValue';
 import { cloneEntity } from '@utils/cloneEntity';
+import { ITEM_DESCRIPTION_TEXT_ID, ITEM_NAME_TEXT_ID, ITEM_PLURAL_NAME_TEXT_ID } from '@modelEntities/item';
 
 export const ItemPage = () => {
   const {
@@ -69,8 +70,9 @@ export const ItemPage = () => {
   useShortcut(shortcutMap);
   const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
     {
-      translation_name: { fileId: 12 },
-      translation_description: { fileId: 13, isMultiline: true },
+      translation_name: { fileId: ITEM_NAME_TEXT_ID },
+      translation_name_plural: { fileId: ITEM_PLURAL_NAME_TEXT_ID },
+      translation_description: { fileId: ITEM_DESCRIPTION_TEXT_ID, isMultiline: true },
     },
     currentEditedItem.id,
     getItemName(currentEditedItem)
