@@ -10,6 +10,7 @@ export { IconInput } from './IconInput';
 export { InputWithSeparatorContainer } from './InputWithSeparatorContainer';
 export { CoordinateInput } from './CoordinateInput';
 export { InputWithCoordinateLabelContainer } from './InputWithCoordinateLabelContainer';
-export { PictureInput } from './PictureInput';
+export { TrainerPictureInput } from './TrainerPictureInput';
 export { InputOffset } from './InputOffset';
 export { AudioInput } from './AudioInput';
+export { PictureInput } from './PictureInput';

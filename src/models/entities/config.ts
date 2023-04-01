@@ -142,6 +142,8 @@ export const TEXT_CONFIG_VALIDATOR = z.object({
 export type StudioTextConfig = z.infer<typeof TEXT_CONFIG_VALIDATOR>;
 export type StudioTextTtfFileConfig = z.infer<typeof TTF_FILE_VALIDATOR>;
 export type StudioTextAltSizeConfig = z.infer<typeof ALT_SIZE_VALIDATOR>;
+export type StudioTextMessageConfig = z.infer<typeof MESSAGE_CONFIG_VALIDATOR>;
+export type StudioTextChoiceConfig = z.infer<typeof CHOICE_CONFIG_VALIDATOR>;
 
 export const PSDK_CONFIG_VALIDATOR = z.object({
   gameTitle: z.string(),

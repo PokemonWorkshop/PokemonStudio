@@ -2,12 +2,13 @@ import React, { FunctionComponent, ReactNode, useState } from 'react';
 import styled from 'styled-components';
 import { ReactComponent as UpIcon } from '@assets/icons/global/up-icon.svg';
 import { ReactComponent as DownIcon } from '@assets/icons/global/down-icon.svg';
-import { InputWithLeftLabelContainer, InputWithTopLabelContainer } from '.';
+import { ReactComponent as DeleteIcon } from '@assets/icons/global/delete-icon.svg';
 
 type CollapseGroupTitleStyleProps = {
   title: string;
   collapse: boolean;
   onClick: () => void;
+  onDelete?: () => void;
 };
 
 type InputGroupCollapseProps = {
@@ -16,15 +17,22 @@ type InputGroupCollapseProps = {
   gap?: string;
   noMargin?: true;
   collapseByDefault?: true;
+  onDelete?: () => void;
 };
 
 const CollapseGroupTitleStyle = styled.span`
   display: flex;
 `;
 
-const ArrowStyle = styled.div`
-  padding: 8px;
+const IconContainer = styled.div`
+  display: flex;
+  gap: 8px;
+  align-items: center;
   color: ${({ theme }) => theme.colors.text400};
+
+  .delete-icon:hover {
+    color: ${({ theme }) => theme.colors.text100};
+  }
 `;
 
 type CollapseGroupTitleContainerProps = {
@@ -33,7 +41,8 @@ type CollapseGroupTitleContainerProps = {
 
 const CollapseGroupTitleContainer = styled.div<CollapseGroupTitleContainerProps>`
   display: flex;
-  width: 228px;
+  min-width: 228px;
+  width: calc(100% - 32px);
   height: 40px;
   flex-direction: row;
   align-items: center;
@@ -46,11 +55,31 @@ const CollapseGroupTitleContainer = styled.div<CollapseGroupTitleContainerProps>
   cursor: pointer;
 `;
 
-const CollapseGroupTitle: FunctionComponent<CollapseGroupTitleStyleProps> = ({ title, collapse, onClick }: CollapseGroupTitleStyleProps) => {
+const CollapseGroupTitle: FunctionComponent<CollapseGroupTitleStyleProps> = ({
+  title,
+  collapse,
+  onClick,
+  onDelete,
+}: CollapseGroupTitleStyleProps) => {
   return (
     <CollapseGroupTitleContainer onClick={onClick} collapse={collapse}>
       <CollapseGroupTitleStyle>{title}</CollapseGroupTitleStyle>
-      <ArrowStyle>{collapse ? <UpIcon /> : <DownIcon />}</ArrowStyle>
+      {
+        <IconContainer>
+          {onDelete ? (
+            <DeleteIcon
+              className="delete-icon"
+              onClick={(event) => {
+                event.stopPropagation();
+                onDelete();
+              }}
+            />
+          ) : (
+            <></>
+          )}
+          {collapse ? <UpIcon /> : <DownIcon />}
+        </IconContainer>
+      }
     </CollapseGroupTitleContainer>
   );
 };
@@ -66,6 +95,8 @@ const CollapseGroupChildren = styled.div<CollapseGroupChildrenProps>`
   flex-direction: column;
   gap: ${({ gap }) => gap || '12px'};
   margin-bottom: ${({ collapse, noMargin }) => (collapse && !noMargin ? '16px' : '0')};
+  width: calc(100% - 32px);
+  min-width: 240px;
 `;
 
 const InputGroupCollapseContainer = styled.div`
@@ -73,10 +104,6 @@ const InputGroupCollapseContainer = styled.div`
   flex-direction: column;
   align-items: center;
   user-select: none;
-
-  ${InputWithLeftLabelContainer}, ${InputWithTopLabelContainer} {
-    width: 240px;
-  }
 `;
 
 export const InputGroupCollapse: FunctionComponent<InputGroupCollapseProps> = ({
@@ -85,6 +112,7 @@ export const InputGroupCollapse: FunctionComponent<InputGroupCollapseProps> = ({
   gap,
   noMargin,
   collapseByDefault,
+  onDelete,
 }: InputGroupCollapseProps) => {
   const [collapse, setCollapse] = useState(collapseByDefault || false);
   const onClickedCollapse = () => {
@@ -92,7 +120,7 @@ export const InputGroupCollapse: FunctionComponent<InputGroupCollapseProps> = ({
   };
   return (
     <InputGroupCollapseContainer>
-      <CollapseGroupTitle title={title} collapse={collapse} onClick={onClickedCollapse} />
+      <CollapseGroupTitle title={title} collapse={collapse} onClick={onClickedCollapse} onDelete={onDelete} />
       {collapse && (
         <CollapseGroupChildren gap={gap} noMargin={noMargin || false} collapse={collapse}>
           {children}

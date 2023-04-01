@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DashboardTemplate } from '@components/dashboard';
-import { DashboardFonts } from '@components/dashboard/texts';
+import { DashboardFonts, DashboardMessages } from '@components/dashboard/texts';
 import { DashboardFontsEditor, DashboardFontsNewEditor } from '@components/dashboard/texts/editors';
 import { EditorOverlay } from '@components/editor';
 import { Deletion, DeletionOverlay } from '@components/deletion';
@@ -81,6 +81,8 @@ export const DashboardTextsPage = () => {
         }}
         onDeleteAll={() => setCurrentDeletion('deleteAllAltSizes')}
       />
+      <DashboardMessages isChoice={false} />
+      <DashboardMessages isChoice={true} />
       <EditorOverlay currentEditor={currentEditor} editors={editors} onClose={onCloseEditor} />
       <DeletionOverlay currentDeletion={currentDeletion} deletions={deletions} onClose={() => setCurrentDeletion(undefined)} />
     </DashboardTemplate>

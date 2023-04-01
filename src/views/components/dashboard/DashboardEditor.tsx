@@ -24,6 +24,10 @@ const DashboardEditorContainer = styled(DataBlockEditorContainer)`
   margin: 0;
   background-color: ${({ theme }) => theme.colors.dark16};
   border: none;
+
+  ${ButtonContainer} {
+    border-top: 1px solid ${({ theme }) => theme.colors.dark20};
+  }
 `;
 
 const DashboardTitleContainer = styled(TitleContainer)`
