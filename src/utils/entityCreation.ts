@@ -420,3 +420,21 @@ export const createQuest = (dbSymbol: DbSymbol, id: number, isPrimary: boolean, 
   objectives: [],
   earnings: [],
 });
+
+export const createConfigTextsMessage = () => ({
+  windowSkin: null,
+  nameWindowSkin: null,
+  lineCount: 1,
+  borderSpacing: 0,
+  defaultFont: 0,
+  defaultColor: 0,
+  colorMapping: {},
+});
+
+export const createConfigTextsChoice = () => ({
+  windowSkin: null,
+  borderSpacing: 0,
+  defaultFont: 0,
+  defaultColor: 0,
+  colorMapping: {},
+});

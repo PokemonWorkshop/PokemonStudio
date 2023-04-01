@@ -2,7 +2,7 @@ import React, { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react'
 import { Editor } from '@components/editor';
 
 import { TFunction, useTranslation } from 'react-i18next';
-import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PictureInput } from '@components/inputs';
+import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, TrainerPictureInput } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import styled from 'styled-components';
 import { DropInput } from '@components/inputs/DropInput';
@@ -195,7 +195,7 @@ export const TrainerNewEditor = ({ onClose }: TrainerNewEditorProps) => {
           {!battlerName ? (
             <DropInput destFolderToCopy="graphics/battlers" name={t('trainer_sprite')} extensions={['png']} onFileChoosen={onBattlerChoosen} />
           ) : !isLoading ? (
-            <PictureInput
+            <TrainerPictureInput
               name={t('trainer_sprite')}
               picturePath={getSprite()}
               onIconClear={() => setBattlerName('')}

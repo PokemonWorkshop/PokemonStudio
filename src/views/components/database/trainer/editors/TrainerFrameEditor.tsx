@@ -9,7 +9,7 @@ import {
   InputWithTopLabelContainer,
   Label,
   PaddedInputContainer,
-  PictureInput,
+  TrainerPictureInput,
 } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
@@ -202,7 +202,7 @@ export const TrainerFrameEditor = ({ trainer, openTranslationEditor }: TrainerFr
             {trainer.battlers.length === 0 || (!spriteDp && !spriteBig) ? (
               <DropInput destFolderToCopy="graphics/battlers" name={t('trainer_sprite')} extensions={['png']} onFileChoosen={onBattlerChoosen} />
             ) : !isLoading ? (
-              <PictureInput
+              <TrainerPictureInput
                 name={t('trainer_sprite')}
                 picturePath={getSprite()}
                 onIconClear={() => refreshUI(trainer.battlers.pop())}
