@@ -13,9 +13,8 @@
     "url": "git+https://github.com/PokemonWorkshop/PokemonStudio.git"
   },
   "devEngines": {
-    "node": ">=16.x",
-    "npm": ">=8.x",
-    "yarn": ">=1.22.0"
+    "node": ">=18.15.0",
+    "npm": ">=9.5.0"
   },
   "scripts": {
     "start": "electron-forge start",
@@ -84,7 +83,7 @@
     "react-textarea-autosize": "^8.3.3",
     "react-tooltip": "^4.2.21",
     "react-tracked": "^1.7.4",
-    "react-virtualized": "^9.22.3",
+    "react-virtualized": "github:Toinane/react-virtualized",
     "styled-components": "^5.3.6",
     "ts-marshal": "^0.0.6",
     "zod": "^3.21.4"

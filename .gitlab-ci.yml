@@ -7,25 +7,21 @@ stages:
 
 linux-test:
   stage: test
-  image: node:14
+  image: node:18
   script:
-    - curl -o- -L https://yarnpkg.com/install.sh | bash
-    - export PATH=$HOME/.yarn/bin:$PATH
-    - yarn install --ignore-optional --no-lockfile
-    - yarn test
+    - npm ci
+    - npm test
   only:
     - develop
 
 linux-build:
   stage: build
   when: manual
-  image: node:14
+  image: node:18
   script:
-    - curl -o- -L https://yarnpkg.com/install.sh | bash
-    - export PATH=$HOME/.yarn/bin:$PATH
-    - yarn install --ignore-optional --no-lockfile
-    - yarn build
-    - yarn package
+    - npm ci
+    - npm run build
+    - npm run package
     - ls release/
   only:
     - develop
@@ -35,20 +31,18 @@ win-build:
   when: manual
   image: electronuserland/builder:wine
   script:
-    - yarn install
-    - yarn build
-    - yarn package:win
+    - npm install
+    - npm run build
+    - npm run package
     - ls release/
   only:
     - develop
 #osx-build:
 #  stage: build
 #  script:
-#    - curl -o- -L https://yarnpkg.com/install.sh | bash
-#    - export PATH=$HOME/.yarn/bin:$PATH
-#    - yarn install --ignore-optional --no-lockfile
-#    - yarn build
-#    - yarn package:mac
+#    - npm install --ignore-optional --no-lockfile
+#    - npm run build
+#    - npm run package
 #    - ls release/
 #  tags:
 #    - shared-macos-amd64
