@@ -33,10 +33,9 @@ First, clone the repo via git and install dependencies:
 
 ```bash
 git clone git@gitlab.com:pokemonsdk/pokemon-studio.git.pokemon-studio
-npm install yarn -g
 cd pokemon-studio
 git submodule update --init --recursive
-yarn
+npm i
 ```
 
 ## Starting Development
@@ -44,7 +43,7 @@ yarn
 Start the app in the `dev` environment:
 
 ```bash
-yarn start
+npm start
 ```
 
 ## Editor Configuration (not required) [from ERB docs](https://electron-react-boilerplate.js.org/docs/editor-configuration)
@@ -186,10 +185,10 @@ In that project, we choosed to use these rules :
 
 Building a production version of your app will optimize the JS, CSS, and SASS of your application.
 
-To create a production build, run yarn build:
+To create a production build, run npm run build:
 
 ```bash
-yarn build
+npm run build
 ```
 
 ## Packaging for Production
@@ -197,24 +196,7 @@ yarn build
 To package apps for the local platform:
 
 ```bash
-yarn package
-```
-
-## Packaging for Multiple platforms
-
-First refer to [Multi Platform Build](https://www.electron.build/multi-platform-build) for dependencies
-
-Then :
-
-```bash
-yarn package-all
-```
-
-To package apps with options:
-
-```bash
-yarn package --[option]
-# Example: yarn package --mac
+npm run package
 ```
 
 ## Adding Assets [from ERB docs](https://electron-react-boilerplate.js.org/docs/adding-assets)
