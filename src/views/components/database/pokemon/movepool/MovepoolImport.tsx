@@ -1,20 +1,16 @@
 import React, { useMemo, useState } from 'react';
 import { Editor } from '@components/editor';
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
-import { SelectCustom } from '@components/SelectCustom';
 import { useProjectData } from '@utils/useProjectData';
 import styled from 'styled-components';
-import { PokemonWithForm } from '../PokemonDataPropsInterface';
 import { DarkButton, PrimaryButton } from '@components/buttons';
-import { useGetEntityNameText } from '@utils/ReadingProjectText';
-import { getSelectDataOptionsOrderedById } from '@components/selects/SelectDataGeneric';
-import { StudioCreatureForm } from '@modelEntities/creature';
 import { getMoveKlass } from './MovepoolTable';
+import { cloneEntity } from '@utils/cloneEntity';
+import { SelectPokemon, SelectPokemonForm } from '@components/selects';
 
 type MovepoolImportProps = {
   type: 'level' | 'tutor' | 'tech' | 'breed' | 'evolution';
-  pokemonWithForm: PokemonWithForm;
   onClose: () => void;
 };
 
@@ -31,31 +27,25 @@ const ButtonContainer = styled.div`
   gap: 8px;
 `;
 
-const getFormOptions = (t: TFunction<'database_pokemon'[]>, allForms: StudioCreatureForm[]) =>
-  Object.entries(allForms).map(([value, formData]) => ({ value, label: t('database_pokemon:form#') + formData.form }));
-
-export const MovepoolImport = ({ type, pokemonWithForm, onClose }: MovepoolImportProps) => {
+export const MovepoolImport = ({ type, onClose }: MovepoolImportProps) => {
   const {
     projectDataValues: pokemon,
     selectedDataIdentifier: currentPokemon,
     setProjectDataValues: setPokemon,
-    state,
   } = useProjectData('pokemon', 'pokemon');
-  const getCreatureName = useGetEntityNameText();
-  const [selectedPokemon, setSelectedPokemon] = useState('bulbasaur');
+  const [selectedPokemon, setSelectedPokemon] = useState('__undef__');
   const [selectedForm, setSelectedForm] = useState(0);
   const { t } = useTranslation(['database_pokemon']);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const pokemonOptions = useMemo(() => getSelectDataOptionsOrderedById(state.projectData, 'pokemon', getCreatureName), [state.projectData]);
-  const formOptions = useMemo(() => getFormOptions(t, pokemon[selectedPokemon].forms), [pokemon, selectedPokemon, t]);
+  const currentEditedPokemon = useMemo(() => cloneEntity(pokemon[currentPokemon.specie]), [pokemon, currentPokemon.specie]);
 
   const onClickValidate = () => {
     const klass = type === 'level' ? 'LevelLearnableMove' : getMoveKlass(type);
-    pokemonWithForm.form.moveSet = [
-      ...pokemonWithForm.form.moveSet.filter((m) => m.klass !== klass),
-      ...pokemon[selectedPokemon].forms[selectedForm].moveSet.filter((m) => m.klass === klass),
-    ];
-    setPokemon({ [currentPokemon.specie]: pokemonWithForm.species });
+    const form = currentEditedPokemon.forms[currentPokemon.form];
+    const currentSelectedForm = pokemon[selectedPokemon].forms.find((f) => f.form === selectedForm);
+    if (!currentSelectedForm) return;
+
+    form.moveSet = [...form.moveSet.filter((m) => m.klass !== klass), ...currentSelectedForm.moveSet.filter((m) => m.klass === klass)];
+    setPokemon({ [currentPokemon.specie]: currentEditedPokemon });
     onClose();
   };
 
@@ -65,19 +55,22 @@ export const MovepoolImport = ({ type, pokemonWithForm, onClose }: MovepoolImpor
         <MovepoolImportInfo>{t(`database_pokemon:${type}_learnable_info` as never)}</MovepoolImportInfo>
         <InputWithTopLabelContainer>
           <Label htmlFor="pokemon">{t('database_pokemon:import_moves_from')}</Label>
-          <SelectCustom // TODO: Change to SelectPokemon
-            options={pokemonOptions}
+          <SelectPokemon
+            dbSymbol={selectedPokemon}
             onChange={(event) => {
               setSelectedPokemon(event.value);
               setSelectedForm(0);
             }}
-            noOptionsText={t('database_pokemon:no_option')}
+            noLabel
+            noneValueIsError
           />
-          {pokemon[selectedPokemon].forms.length > 1 && (
-            <SelectCustom options={formOptions} onChange={(event) => setSelectedForm(Number(event.value))} />
+          {selectedPokemon !== '__undef__' && pokemon[selectedPokemon].forms.length > 1 && (
+            <SelectPokemonForm dbSymbol={selectedPokemon} form={selectedForm} onChange={(event) => setSelectedForm(Number(event.value))} noLabel />
           )}
           <ButtonContainer>
-            <PrimaryButton onClick={onClickValidate}>{t('database_pokemon:validate')}</PrimaryButton>
+            <PrimaryButton onClick={onClickValidate} disabled={selectedPokemon === '__undef__'}>
+              {t('database_pokemon:validate')}
+            </PrimaryButton>
             <DarkButton onClick={onClose}>{t('database_pokemon:cancel')}</DarkButton>
           </ButtonContainer>
         </InputWithTopLabelContainer>

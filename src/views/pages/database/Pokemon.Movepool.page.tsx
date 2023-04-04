@@ -12,7 +12,6 @@ import { EditorOverlay } from '@components/editor';
 import { DeletionOverlay } from '@components/deletion';
 import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';
-import { cloneEntity } from '@utils/cloneEntity';
 
 export const PokemonMovepoolPage = () => {
   const {
@@ -26,11 +25,6 @@ export const PokemonMovepoolPage = () => {
   const currentPokemonWithForm: PokemonWithForm = {
     species: pokemon[pokemonIdentifier.specie],
     form: pokemon[pokemonIdentifier.specie].forms[pokemonIdentifier.form],
-  };
-  const currentEditedPokemon = useMemo(() => cloneEntity(pokemon[pokemonIdentifier.specie]), [pokemonIdentifier.specie, pokemon]);
-  const currentEditedPokemonWithForm: PokemonWithForm = {
-    species: currentEditedPokemon,
-    form: currentEditedPokemon.forms[pokemonIdentifier.form],
   };
 
   const onChangeSpecie: SelectChangeEvent = (selected) => {
@@ -65,11 +59,11 @@ export const PokemonMovepoolPage = () => {
   useShortcut(shortcutMap);
 
   const editors = {
-    level: <MovepoolImport type="level" pokemonWithForm={currentEditedPokemonWithForm} onClose={onCloseEditor} />,
-    tutor: <MovepoolImport type="tutor" pokemonWithForm={currentEditedPokemonWithForm} onClose={onCloseEditor} />,
-    tech: <MovepoolImport type="tech" pokemonWithForm={currentEditedPokemonWithForm} onClose={onCloseEditor} />,
-    breed: <MovepoolImport type="breed" pokemonWithForm={currentEditedPokemonWithForm} onClose={onCloseEditor} />,
-    evolution: <MovepoolImport type="evolution" pokemonWithForm={currentEditedPokemonWithForm} onClose={onCloseEditor} />,
+    level: <MovepoolImport type="level" onClose={onCloseEditor} />,
+    tutor: <MovepoolImport type="tutor" onClose={onCloseEditor} />,
+    tech: <MovepoolImport type="tech" onClose={onCloseEditor} />,
+    breed: <MovepoolImport type="breed" onClose={onCloseEditor} />,
+    evolution: <MovepoolImport type="evolution" onClose={onCloseEditor} />,
   };
 
   const deletions = {
