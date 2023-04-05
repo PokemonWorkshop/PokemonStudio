@@ -13,12 +13,16 @@ import { ResourceContainer } from './ResourcesContainer';
 import { CreatureFormResourcesPath, dirname, formResourcesPath, join } from '@utils/path';
 import { StudioCreatureForm } from '@modelEntities/creature';
 
-const SpriteResourceContainer = styled(ResourceContainer)`
+type SpriteResourceContainerProps = {
+  isCharacter: boolean;
+};
+
+const SpriteResourceContainer = styled(ResourceContainer)<SpriteResourceContainerProps>`
   position: relative;
   flex-direction: column;
   padding: 24px 24px 16px;
   width: 244px;
-  height: 244px;
+  height: ${({ isCharacter }) => (isCharacter ? '244px' : '270px')};
 
   &:hover {
     padding: 23px 23px 15px;
@@ -40,29 +44,39 @@ const SpriteResourceContainer = styled(ResourceContainer)`
   }
 
   & img {
-    height: 160px;
-    width: 160px;
+    height: ${({ isCharacter }) => (isCharacter ? '128px' : '192px')};
+    width: ${({ isCharacter }) => (isCharacter ? '128px' : '192px')};
   }
 
   & span.title {
     width: 100%;
   }
+
+  & div.image-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 160px;
+    min-height: 160px;
+  }
 `;
 
-const SpriteNoResourceContainer = styled(DropInputContainer)`
+type SpriteNoResourceContainerProps = SpriteResourceContainerProps;
+
+const SpriteNoResourceContainer = styled(DropInputContainer)<SpriteNoResourceContainerProps>`
   display: flex;
   padding: 24px 24px 16px;
   margin: 0 8px 0 8px;
   width: 244px;
-  height: 244px;
+  height: ${({ isCharacter }) => (isCharacter ? '244px' : '270px')};
   border: 1px dashed ${({ theme }) => theme.colors.dark20};
   background-color: inherit;
-  justify-content: space-between;
+  gap: ${({ isCharacter }) => (isCharacter ? '16px' : '24px')};
 
   & .drag-and-drop {
     display: flex;
     gap: 8px;
-    height: 174px;
+    height: ${({ isCharacter }) => (isCharacter ? '174px' : '192px')};
     justify-content: center;
   }
 
@@ -95,6 +109,10 @@ const onDragOver: DragEventHandler<HTMLDivElement> = (event) => {
 
 const isNoRessource = (form: StudioCreatureForm, resource: CreatureFormResourcesPath, isFemale: boolean) => {
   return isFemale ? form.resources[resource] === undefined : form.resources[resource]?.length === 0;
+};
+
+const isCharacterResource = (resource: CreatureFormResourcesPath) => {
+  return resource.startsWith('character');
 };
 
 type SpriteResourceProps = {
@@ -161,7 +179,7 @@ export const SpriteResource = ({ form, resource, isFemale, disableGif, onResourc
   };
 
   return isNoRessource(form, resource, isFemale) ? (
-    <SpriteNoResourceContainer onDrop={onDrop} onDragOver={onDragOver}>
+    <SpriteNoResourceContainer onDrop={onDrop} onDragOver={onDragOver} isCharacter={isCharacterResource(resource)}>
       <div className="drag-and-drop">
         <FileDrop />
         <div className="file">
@@ -174,7 +192,13 @@ export const SpriteResource = ({ form, resource, isFemale, disableGif, onResourc
       <span className="title">{t(`database_pokemon:${resource}`)}</span>
     </SpriteNoResourceContainer>
   ) : (
-    <SpriteResourceContainer onDrop={onDrop} onDragOver={onDragOver} onClick={isDialogOpen ? undefined : onClick} disabled={isDialogOpen}>
+    <SpriteResourceContainer
+      onDrop={onDrop}
+      onDragOver={onDragOver}
+      onClick={isDialogOpen ? undefined : onClick}
+      disabled={isDialogOpen}
+      isCharacter={isCharacterResource(resource)}
+    >
       <button className="folder-button">
         <FolderButtonOnlyIcon
           onClick={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => onClickFolder(formResourcesPath(form, resource), event)}
@@ -188,7 +212,9 @@ export const SpriteResource = ({ form, resource, isFemale, disableGif, onResourc
           }}
         />
       </button>
-      <ResourceImage imagePathInProject={formResourcesPath(form, resource)} versionId={flipFlap ? 2 : 1} />
+      <div className="image-container">
+        <ResourceImage imagePathInProject={formResourcesPath(form, resource)} versionId={flipFlap ? 2 : 1} />
+      </div>
       <span className="title">{t(`database_pokemon:${resource}`)}</span>
     </SpriteResourceContainer>
   );
