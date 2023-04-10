@@ -37,6 +37,13 @@ const ButtonContainer = styled.div`
 const mapIdIndexInGroup = (mapId: number, group: StudioGroup) =>
   group.customConditions.filter((condition) => condition.type === 'mapId').findIndex((condition) => condition.value === mapId);
 
+const setAllTagsMapsOnByDefault = (group: StudioGroup, zone: StudioZone) => {
+  zone.maps.forEach((mapId) => {
+    const index = mapIdIndexInGroup(mapId, group);
+    if (index === -1) group.customConditions.push({ type: 'mapId', relationWithPreviousCondition: 'OR', value: mapId });
+  });
+};
+
 type ZoneAddGroupEditorProps = {
   zone: StudioZone;
   groups: ProjectData['groups'];
@@ -54,6 +61,7 @@ export const ZoneAddGroupEditor = ({ zone, groups, onAddGroup, onClose }: ZoneAd
   const group = groups[selectedGroup];
   const currentEditedGroup = useMemo(() => cloneEntity(group), [group]);
   const refreshUI = useRefreshUI();
+  useMemo(() => setAllTagsMapsOnByDefault(currentEditedGroup, zone), [currentEditedGroup, zone]);
 
   const onClickTag = (mapId: number) => {
     const index = mapIdIndexInGroup(mapId, currentEditedGroup);
