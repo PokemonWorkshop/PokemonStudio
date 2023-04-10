@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import theme from '@src/AppTheme';
-import ReactFlow, { addEdge, Controls, useEdgesState, useNodesState, useReactFlow } from 'react-flow-renderer';
+import ReactFlow, { addEdge, Connection, Controls, Edge, useEdgesState, useNodesState, useReactFlow } from 'react-flow-renderer';
 import { CurrentMapLinkCardNode, MapLinkCardNode } from './mapLinkCard';
 import { NewLinkNode } from './NewLinkNode';
 import { PointNode } from './PointNode';
@@ -246,7 +246,7 @@ export const ReactFlowMapLink = ({
   const initialEdges = useMemo(() => createInitialsEdges(mapLink), [mapLink]);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
+  const onConnect = useCallback((params: Edge<never> | Connection) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
   const [currentMapId, setCurrentMapId] = useState<number>(mapLink.mapId);
 
   useEffect(() => {
