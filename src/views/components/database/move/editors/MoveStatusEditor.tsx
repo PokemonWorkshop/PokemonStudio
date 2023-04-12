@@ -1,173 +1,141 @@
-import React, { useMemo } from 'react';
-import { Editor, useRefreshUI } from '@components/editor';
+import React, { forwardRef, useMemo, useRef, useState } from 'react';
+import { Editor } from '@components/editor';
 import { TFunction, useTranslation } from 'react-i18next';
 import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PercentInput } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
-import styled from 'styled-components';
-import { cleanNaNValue } from '@utils/cleanNaNValue';
-import { MOVE_STATUS_LIST, StudioMove, StudioMoveStatusList } from '@modelEntities/move';
+import { MOVE_STATUS_LIST, StudioMoveStatus, StudioMoveStatusList } from '@modelEntities/move';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { useMovePage } from '@utils/usePage';
+import { useUpdateMove } from './useUpdateMove';
 
-const moveStatusEntries = (t: TFunction<'database_moves'[]>) => [
-  { value: '', label: t('database_moves:none') },
+type StudioMoveStatusListEditor = Exclude<StudioMoveStatusList, null> | '__undef__';
+
+const moveStatusEntries = (t: TFunction<'database_moves'>) => [
+  { value: '__undef__', label: t('none') },
   ...MOVE_STATUS_LIST.map((status) => ({
     value: status,
-    label: t(`database_moves:${status}`),
+    label: t(status),
   })).sort((a, b) => a.label.localeCompare(b.label)),
 ];
 
-const createDefaultStatus = (move: StudioMove) => {
-  if (move.moveStatus.length === 0) move.moveStatus.push({ status: null, luckRate: 0 });
-};
+const isValidStatus = (status: StudioMoveStatusListEditor, chance: number) => status !== '__undef__' || (chance > 0 && chance <= 100);
 
-/**
- * Remove useless move status
- * @param index The index of the status in move status
- */
-const removeUselessMoveStatus = (move: StudioMove, index: number) => {
-  if (move.moveStatus[index].status || move.moveStatus[index].luckRate !== 0) return;
-  if (index === 0) move.moveStatus = [{ status: null, luckRate: 0 }];
-  if (index === 1) move.moveStatus = [{ status: move.moveStatus[0].status, luckRate: move.moveStatus[0].luckRate }];
-  if (index === 2) move.moveStatus.pop();
-};
-
-/**
- * Set the move status of the move
- * @param index The index of the status in move status
- * @param status The status to set
- */
-const setMoveStatus = (move: StudioMove, index: number, status: StudioMoveStatusList | '') => {
-  if (index < move.moveStatus.length) move.moveStatus[index].status = status === '' ? null : status;
-  else move.moveStatus.push({ status: status || null, luckRate: 0 });
-  removeUselessMoveStatus(move, index);
-};
-
-/**
- * Set the luck rate of the move status of the move
- * @param index The index of the status in move status
- * @param luckRate The luck rate to set
- */
-const setMoveStatusLuckRate = (move: StudioMove, index: number, luckRate: number) => {
-  if (index < move.moveStatus.length) move.moveStatus[index].luckRate = luckRate;
-  else move.moveStatus.push({ status: null, luckRate: luckRate });
-  removeUselessMoveStatus(move, index);
-};
-
-type MoveStatusEditorProps = {
-  move: StudioMove;
-};
-
-const InputContainerStatus = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-`;
-
-export const MoveStatusEditor = ({ move }: MoveStatusEditorProps) => {
-  const { t } = useTranslation(['database_moves']);
+export const MoveStatusEditor = forwardRef<EditorHandlingClose>((_, ref) => {
+  const { t } = useTranslation('database_moves');
+  const { move } = useMovePage();
+  const updateMove = useUpdateMove(move);
   const statusOptions = useMemo(() => moveStatusEntries(t), [t]);
-  useMemo(() => createDefaultStatus(move), [move]);
-  const refreshUI = useRefreshUI();
+  const [status1, setStatus1] = useState<StudioMoveStatusListEditor>(move.moveStatus[0]?.status || '__undef__');
+  const [status2, setStatus2] = useState<StudioMoveStatusListEditor>(move.moveStatus[1]?.status || '__undef__');
+  const [status3, setStatus3] = useState<StudioMoveStatusListEditor>(move.moveStatus[2]?.status || '__undef__');
+  const [chance1, setChance1] = useState<number>(move.moveStatus[0]?.luckRate || 0);
+  const [chance2, setChance2] = useState<number>(move.moveStatus[1]?.luckRate || 0);
+  const chance3Ref = useRef<HTMLInputElement>(null);
+
+  const canClose = () => {
+    if (isNaN(chance1) || chance1 < 0 || chance1 > 100) return false;
+    if (isNaN(chance2) || chance2 < 0 || chance2 > 100) return false;
+    if (!chance3Ref.current) return true;
+    if (!chance3Ref.current.validity.valid || isNaN(chance3Ref.current.valueAsNumber)) return false;
+
+    return true;
+  };
+
+  const onClose = () => {
+    if (!canClose()) return;
+
+    const moveStatus: StudioMoveStatus[] = [];
+    if (status1 !== '__undef__' || chance1 !== 0) {
+      moveStatus.push({ status: status1 !== '__undef__' ? status1 : null, luckRate: chance1 });
+    } else {
+      return updateMove({ moveStatus });
+    }
+    if (status2 !== '__undef__' || chance2 !== 0) {
+      moveStatus.push({ status: status2 !== '__undef__' ? status2 : null, luckRate: chance2 });
+    } else {
+      return updateMove({ moveStatus });
+    }
+    if (status3 !== '__undef__' || (chance3Ref.current && chance3Ref.current.valueAsNumber !== 0)) {
+      moveStatus.push({ status: status3 !== '__undef__' ? status3 : null, luckRate: chance3Ref.current?.valueAsNumber || 0 });
+    } else {
+      return updateMove({ moveStatus });
+    }
+    updateMove({ moveStatus });
+  };
+
+  useEditorHandlingClose(ref, onClose, canClose);
 
   return (
-    <Editor type="edit" title={t('database_moves:statuses')}>
+    <Editor type="edit" title={t('statuses')}>
       <InputContainer>
-        <InputContainerStatus>
+        <InputContainer size="s">
           <InputWithTopLabelContainer>
-            <Label htmlFor="status_1">{t('database_moves:status_1')}</Label>
+            <Label htmlFor="status-1">{t('status_1')}</Label>
             <SelectCustomSimple
               id="select-status-1"
               options={statusOptions}
-              onChange={(value) => refreshUI(setMoveStatus(move, 0, value as StudioMoveStatusList))}
-              value={move.moveStatus[0].status || ''}
+              onChange={(value) => setStatus1(value as StudioMoveStatusListEditor)}
+              value={status1}
               noTooltip
             />
           </InputWithTopLabelContainer>
           <InputWithLeftLabelContainer>
-            <Label htmlFor="chance_1">{t('database_moves:chance')}</Label>
+            <Label htmlFor="chance-1">{t('chance')}</Label>
             <PercentInput
               type="number"
-              name="chance_1"
+              name="chance-1"
               min="0"
               max="100"
-              value={isNaN(move.moveStatus[0].luckRate) ? '' : move.moveStatus[0].luckRate}
-              onChange={(event) => {
-                const newValue = event.target.value === '' ? Number.NaN : Number(event.target.value);
-                if (newValue < 0 || newValue > 100) return event.preventDefault();
-                refreshUI(setMoveStatusLuckRate(move, 0, newValue));
-              }}
-              onBlur={() => refreshUI(setMoveStatusLuckRate(move, 0, cleanNaNValue(move.moveStatus[0].luckRate)))}
+              value={isNaN(chance1) ? '' : chance1}
+              onChange={(event) => setChance1(event.target.value === '' ? Number.NaN : Number(event.target.value))}
             />
           </InputWithLeftLabelContainer>
-        </InputContainerStatus>
-        {(move.moveStatus[0].status || (!isNaN(move.moveStatus[0].luckRate) && move.moveStatus[0].luckRate != 0)) && (
-          <InputContainerStatus>
+        </InputContainer>
+        {isValidStatus(status1, chance1) && (
+          <InputContainer size="s">
             <InputWithTopLabelContainer>
-              <Label htmlFor="status_2">{t('database_moves:status_2')}</Label>
+              <Label htmlFor="status-2">{t('status_2')}</Label>
               <SelectCustomSimple
                 id="select-status-2"
                 options={statusOptions}
-                onChange={(value) => refreshUI(setMoveStatus(move, 1, value as StudioMoveStatusList))}
-                value={move.moveStatus.length >= 2 ? move.moveStatus[1].status || '' : ''}
+                onChange={(value) => setStatus2(value as StudioMoveStatusListEditor)}
+                value={status2}
                 noTooltip
               />
             </InputWithTopLabelContainer>
             <InputWithLeftLabelContainer>
-              <Label htmlFor="chance_2">{t('database_moves:chance')}</Label>
+              <Label htmlFor="chance-2">{t('chance')}</Label>
               <PercentInput
                 type="number"
-                name="chance_2"
+                name="chance-2"
                 min="0"
                 max="100"
-                value={move.moveStatus.length >= 2 ? (isNaN(move.moveStatus[1].luckRate) ? '' : move.moveStatus[1].luckRate) : 0}
-                onChange={(event) => {
-                  const newValue = event.target.value === '' ? Number.NaN : Number(event.target.value);
-                  if (newValue < 0 || newValue > 100) return event.preventDefault();
-                  refreshUI(setMoveStatusLuckRate(move, 1, newValue));
-                }}
-                onBlur={() => {
-                  if (!move.moveStatus[1]) return;
-                  const luckRate = move.moveStatus[1].luckRate;
-                  refreshUI(setMoveStatusLuckRate(move, 1, cleanNaNValue(luckRate)));
-                }}
+                value={isNaN(chance2) ? '' : chance2}
+                onChange={(event) => setChance2(event.target.value === '' ? Number.NaN : Number(event.target.value))}
               />
             </InputWithLeftLabelContainer>
-          </InputContainerStatus>
+          </InputContainer>
         )}
-        {move.moveStatus.length >= 2 && (move.moveStatus[1].status || (!isNaN(move.moveStatus[1].luckRate) && move.moveStatus[1].luckRate != 0)) && (
-          <InputContainerStatus>
+        {isValidStatus(status1, chance1) && isValidStatus(status2, chance2) && (
+          <InputContainer size="s">
             <InputWithTopLabelContainer>
-              <Label htmlFor="status_3">{t('database_moves:status_3')}</Label>
+              <Label htmlFor="status-3">{t('status_3')}</Label>
               <SelectCustomSimple
                 id="select-status-3"
                 options={statusOptions}
-                onChange={(value) => refreshUI(setMoveStatus(move, 2, value as StudioMoveStatusList))}
-                value={move.moveStatus.length == 3 ? move.moveStatus[2].status || '' : ''}
+                onChange={(value) => setStatus3(value as StudioMoveStatusListEditor)}
+                value={status3}
                 noTooltip
               />
             </InputWithTopLabelContainer>
             <InputWithLeftLabelContainer>
-              <Label htmlFor="chance_3">{t('database_moves:chance')}</Label>
-              <PercentInput
-                type="number"
-                name="chance_3"
-                min="0"
-                max="100"
-                value={move.moveStatus.length == 3 ? (isNaN(move.moveStatus[2].luckRate) ? '' : move.moveStatus[2].luckRate) : 0}
-                onChange={(event) => {
-                  const newValue = event.target.value === '' ? Number.NaN : Number(event.target.value);
-                  if (newValue < 0 || newValue > 100) return event.preventDefault();
-                  refreshUI(setMoveStatusLuckRate(move, 2, newValue));
-                }}
-                onBlur={() => {
-                  if (!move.moveStatus[2]) return;
-                  const luckRate = move.moveStatus[2].luckRate;
-                  refreshUI(setMoveStatusLuckRate(move, 2, cleanNaNValue(luckRate)));
-                }}
-              />
+              <Label htmlFor="chance-3">{t('chance')}</Label>
+              <PercentInput type="number" name="chance-3" min="0" max="100" defaultValue={move.moveStatus[2]?.luckRate || 0} ref={chance3Ref} />
             </InputWithLeftLabelContainer>
-          </InputContainerStatus>
+          </InputContainer>
         )}
       </InputContainer>
     </Editor>
   );
-};
+});
+MoveStatusEditor.displayName = 'MoveStatusEditor';

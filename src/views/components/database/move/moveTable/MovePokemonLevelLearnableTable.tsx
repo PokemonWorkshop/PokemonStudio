@@ -2,7 +2,6 @@ import { State, useGlobalState } from '@src/GlobalStateProvider';
 import React from 'react';
 import styled from 'styled-components';
 import { DataGrid } from '@components/database/dataBlocks';
-import { MoveDataProps } from '../MoveDataPropsInterface';
 import { useTranslation } from 'react-i18next';
 import { TypeCategory } from '@components/categories';
 import { DataPokemonTable, NoPokemonFound, TypeContainer } from './MovePokemonTableStyle';
@@ -93,7 +92,11 @@ const getAllPokemonWithCurrentLevelLearnableMove = (state: State, move: StudioMo
   );
 };
 
-export const MovePokemonLevelLearnableTable = ({ move }: MoveDataProps) => {
+type MovePokemonLevelLearnableTableProps = {
+  move: StudioMove;
+};
+
+export const MovePokemonLevelLearnableTable = ({ move }: MovePokemonLevelLearnableTableProps) => {
   const [state] = useGlobalState();
   const { t } = useTranslation(['database_types', 'database_moves', 'database_pokemon']);
   const allPokemon = getAllPokemonWithCurrentLevelLearnableMove(state, move).sort((a, b) => a.id - b.id);

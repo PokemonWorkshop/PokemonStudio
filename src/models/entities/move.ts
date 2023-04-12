@@ -106,6 +106,16 @@ export const MOVE_VALIDATOR = z.object({
 });
 
 export type StudioMove = z.infer<typeof MOVE_VALIDATOR>;
+export type MoveBattleEngineMethodsType =
+  | 's_basic'
+  | 's_stat'
+  | 's_status'
+  | 's_multi_hit'
+  | 's_2hits'
+  | 's_ohko'
+  | 's_2turns'
+  | 's_self_stat'
+  | 's_self_status';
 
 export const MOVE_NAME_TEXT_ID = 6;
 export const MOVE_DESCRIPTION_TEXT_ID = 7;
@@ -125,7 +135,7 @@ export const MOVE_TARGETS = [
   'any_other_pokemon',
   'random_foe',
 ] as const;
-export const MOVE_BATTLE_ENGINE_METHODS = [
+export const MOVE_BATTLE_ENGINE_METHODS: Readonly<MoveBattleEngineMethodsType[]> = [
   's_basic',
   's_stat',
   's_status',
@@ -137,6 +147,7 @@ export const MOVE_BATTLE_ENGINE_METHODS = [
   's_self_status',
 ] as const;
 export const MOVE_STATUS_LIST = ['POISONED', 'PARALYZED', 'BURN', 'ASLEEP', 'FROZEN', 'TOXIC', 'CONFUSED', 'DEATH', 'FLINCH'] as const;
+export const TEXT_CRITICAL_RATES = ['no_critical_hit', 'normal', 'high', 'very_high', 'guaranteed'] as const;
 
 /**
  * Get the battle stage mod modificator

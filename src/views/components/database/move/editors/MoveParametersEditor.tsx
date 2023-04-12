@@ -1,75 +1,89 @@
-import React, { useMemo } from 'react';
-import { Editor, useRefreshUI } from '@components/editor';
+import React, { forwardRef, useMemo, useState } from 'react';
+import { Editor } from '@components/editor';
 import { TFunction, useTranslation } from 'react-i18next';
 import { Input, InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { wrongDbSymbol } from '@utils/dbSymbolUtils';
 import { TextInputError } from '@components/inputs/Input';
 import { SelectCustomSimple } from '@components/SelectCustom/SelectCustomSimple';
 import { MOVE_BATTLE_ENGINE_METHODS, MOVE_TARGETS, StudioMove, StudioMoveBattleEngineAimedTarget } from '@modelEntities/move';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { useMovePage } from '@utils/usePage';
+import { useUpdateMove } from './useUpdateMove';
 
-const determineBeMethod = (move: StudioMove) => {
-  if ((MOVE_BATTLE_ENGINE_METHODS as ReadonlyArray<string>).includes(move.battleEngineMethod)) return `s_${move.dbSymbol}`;
-  return move.battleEngineMethod;
+const determineBeMethod = (move: StudioMove, battleEngineMethod: string) => {
+  if ((MOVE_BATTLE_ENGINE_METHODS as ReadonlyArray<string>).includes(battleEngineMethod)) return `s_${move.dbSymbol}`;
+  return battleEngineMethod;
 };
 
-const moveTargetEntries = (t: TFunction<'database_moves'[]>) =>
-  MOVE_TARGETS.map((target) => ({ value: target, label: t(`database_moves:${target}`) }));
+const targetEntries = (t: TFunction<'database_moves'>) => MOVE_TARGETS.map((target) => ({ value: target, label: t(`${target}`) }));
 
-const moveBattleEngineMethodEntries = (t: TFunction<'database_moves'[]>, move: StudioMove) => [
-  ...MOVE_BATTLE_ENGINE_METHODS.map((beMethod) => ({ value: beMethod, label: t(`database_moves:${beMethod}`) })),
-  { value: determineBeMethod(move), label: t('database_moves:custom') },
+const battleEngineMethodEntries = (move: StudioMove, battleEngineMethod: string, t: TFunction<'database_moves'>) => [
+  ...MOVE_BATTLE_ENGINE_METHODS.map((beMethod) => ({ value: beMethod, label: t(`${beMethod}`) })),
+  { value: determineBeMethod(move, battleEngineMethod), label: t('custom') },
 ];
 
-type MoveParametersEditorProps = {
-  move: StudioMove;
-};
+export const MoveParametersEditor = forwardRef<EditorHandlingClose>((_, ref) => {
+  const { t } = useTranslation('database_moves');
+  const { move } = useMovePage();
+  const updateMove = useUpdateMove(move);
+  const [target, setTarget] = useState<StudioMoveBattleEngineAimedTarget>(move.battleEngineAimedTarget);
+  const [battleEngineMethod, setBattleEngineMethod] = useState<string>(move.battleEngineMethod);
+  const targetOptions = useMemo(() => targetEntries(t), [t]);
+  const categoryOptions = useMemo(() => battleEngineMethodEntries(move, battleEngineMethod, t), [move, battleEngineMethod, t]);
 
-export const MoveParametersEditor = ({ move }: MoveParametersEditorProps) => {
-  const { t } = useTranslation(['database_moves']);
-  const targetOptions = useMemo(() => moveTargetEntries(t), [t]);
-  const categoryOptions = moveBattleEngineMethodEntries(t, move);
-  const refreshUI = useRefreshUI();
+  const canClose = () => {
+    if (battleEngineMethod.length === 0 || wrongDbSymbol(battleEngineMethod)) return false;
+
+    return true;
+  };
+
+  const onClose = () => {
+    if (!canClose()) return;
+
+    updateMove({ battleEngineAimedTarget: target, battleEngineMethod });
+  };
+
+  useEditorHandlingClose(ref, onClose, canClose);
 
   return (
-    <Editor type="edit" title={t('database_moves:settings')}>
+    <Editor type="edit" title={t('settings')}>
       <InputContainer>
         <InputWithTopLabelContainer>
-          <Label htmlFor="target">{t('database_moves:target')}</Label>
+          <Label htmlFor="target">{t('target')}</Label>
           <SelectCustomSimple
             id="select-target"
-            value={move.battleEngineAimedTarget}
+            value={target}
             options={targetOptions}
-            onChange={(value) => refreshUI((move.battleEngineAimedTarget = value as StudioMoveBattleEngineAimedTarget))}
+            onChange={(value) => setTarget(value as StudioMoveBattleEngineAimedTarget)}
           />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
-          <Label htmlFor="category">{t('database_moves:procedure')}</Label>
+          <Label htmlFor="procedure">{t('procedure')}</Label>
           <SelectCustomSimple
-            id="select-category"
+            id="select-procedure"
             options={categoryOptions}
-            onChange={(value) => refreshUI((move.battleEngineMethod = value))}
-            value={move.battleEngineMethod}
+            onChange={(value) => setBattleEngineMethod(value)}
+            value={battleEngineMethod}
           />
         </InputWithTopLabelContainer>
-        {!(MOVE_BATTLE_ENGINE_METHODS as ReadonlyArray<string>).includes(move.battleEngineMethod) && (
+        {!(MOVE_BATTLE_ENGINE_METHODS as ReadonlyArray<string>).includes(battleEngineMethod) && (
           <InputWithTopLabelContainer>
             <Label htmlFor="function" required>
-              {t('database_moves:function')}
+              {t('function')}
             </Label>
             <Input
               type="text"
               name="function"
-              value={move.battleEngineMethod}
-              onChange={(event) => refreshUI((move.battleEngineMethod = event.target.value))}
-              error={wrongDbSymbol(move.battleEngineMethod)}
+              value={battleEngineMethod}
+              onChange={(event) => setBattleEngineMethod(event.target.value)}
+              error={battleEngineMethod.length !== 0 && wrongDbSymbol(battleEngineMethod)}
               placeholder={`s_${move.dbSymbol}`}
             />
-            {move.battleEngineMethod.length !== 0 && wrongDbSymbol(move.battleEngineMethod) && (
-              <TextInputError>{t('database_moves:incorrect_format')}</TextInputError>
-            )}
+            {battleEngineMethod.length !== 0 && wrongDbSymbol(battleEngineMethod) && <TextInputError>{t('incorrect_format')}</TextInputError>}
           </InputWithTopLabelContainer>
         )}
       </InputContainer>
     </Editor>
   );
-};
+});
+MoveParametersEditor.displayName = 'MoveParametersEditor';

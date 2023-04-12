@@ -4,23 +4,24 @@ import { TFunction, useTranslation } from 'react-i18next';
 import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
 import { SelectType } from '@components/selects';
 import { SelectCustomSimple } from '@components/SelectCustom';
-import type { OpenTranslationEditorFunction } from '@utils/useTranslationEditor';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 import { useGetEntityDescriptionText, useGetEntityNameText, useSetProjectText } from '@utils/ReadingProjectText';
-import { MOVE_CATEGORIES, MOVE_DESCRIPTION_TEXT_ID, MOVE_NAME_TEXT_ID, StudioMove, StudioMoveCategory } from '@modelEntities/move';
+import { MOVE_CATEGORIES, MOVE_DESCRIPTION_TEXT_ID, MOVE_NAME_TEXT_ID, StudioMoveCategory } from '@modelEntities/move';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { DbSymbol } from '@modelEntities/dbSymbol';
+import { useMovePage } from '@utils/usePage';
+import { useDialogsRef } from '@utils/useDialogsRef';
+import { MoveTranslationOverlay, TranslationEditorTitle } from './MoveTranslationOverlay';
+import { useUpdateMove } from './useUpdateMove';
 
 const moveCategoryEntries = (t: TFunction<('database_moves' | 'database_types')[]>) =>
   MOVE_CATEGORIES.map((category) => ({ value: category, label: t(`database_types:${category}`) })).sort((a, b) => a.label.localeCompare(b.label));
 
-type MoveFrameEditorProps = {
-  move: StudioMove;
-  openTranslationEditor: OpenTranslationEditorFunction;
-};
-
-export const MoveFrameEditor = forwardRef<EditorHandlingClose, MoveFrameEditorProps>(({ move, openTranslationEditor }, ref) => {
+export const MoveFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { t } = useTranslation(['database_moves', 'database_types']);
+  const { move } = useMovePage();
+  const updateMove = useUpdateMove(move);
+  const dialogsRef = useDialogsRef<TranslationEditorTitle>();
   const categoryOptions = useMemo(() => moveCategoryEntries(t), [t]);
   const getMoveName = useGetEntityNameText();
   const getMoveDescription = useGetEntityDescriptionText();
@@ -30,27 +31,33 @@ export const MoveFrameEditor = forwardRef<EditorHandlingClose, MoveFrameEditorPr
   const [type, setType] = useState(move.type);
   const [category, setCategory] = useState(move.category);
 
-  const canClose = () => !!nameRef.current?.value;
+  const saveTexts = () => {
+    if (!nameRef.current || !descriptionRef.current) return;
+
+    setText(MOVE_NAME_TEXT_ID, move.id, nameRef.current.value);
+    setText(MOVE_DESCRIPTION_TEXT_ID, move.id, descriptionRef.current.value);
+  };
+
+  const canClose = () => !!nameRef.current?.value && !dialogsRef.current?.currentDialog;
   const onClose = () => {
     if (!nameRef.current || !descriptionRef.current || !canClose()) return;
     setText(MOVE_NAME_TEXT_ID, move.id, nameRef.current.value);
     setText(MOVE_DESCRIPTION_TEXT_ID, move.id, descriptionRef.current.value);
-    move.type = type;
-    move.category = category;
+    updateMove({ type, category });
+    saveTexts();
   };
   useEditorHandlingClose(ref, onClose, canClose);
 
-  const handleTranslateClick = (editorTitle: Parameters<typeof openTranslationEditor>[0]) => () => {
+  const handleTranslateClick = (editorTitle: TranslationEditorTitle) => () => {
+    saveTexts();
+    setTimeout(() => dialogsRef.current?.openDialog(editorTitle), 0);
+  };
+
+  const onTranslationOverlayClose = () => {
     if (!nameRef.current || !descriptionRef.current) return;
-    onClose(); // Effectively set the translation values
-    openTranslationEditor(editorTitle, {
-      currentEntityName: nameRef.current.value,
-      onEditorClose: () => {
-        if (!nameRef.current || !descriptionRef.current) return;
-        nameRef.current.value = getMoveName(move);
-        descriptionRef.current.value = getMoveDescription(move);
-      },
-    });
+
+    nameRef.current.value = nameRef.current.defaultValue;
+    descriptionRef.current.value = descriptionRef.current.defaultValue;
   };
 
   return (
@@ -90,6 +97,7 @@ export const MoveFrameEditor = forwardRef<EditorHandlingClose, MoveFrameEditorPr
           />
         </InputWithTopLabelContainer>
       </InputContainer>
+      <MoveTranslationOverlay move={move} onClose={onTranslationOverlayClose} ref={dialogsRef} />
     </Editor>
   );
 });

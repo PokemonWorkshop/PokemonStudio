@@ -1,4 +1,4 @@
-import { getEntityNameTextUsingTextId } from './ReadingProjectText';
+import { getEntityNameTextUsingTextId, getEntityNameText } from './ReadingProjectText';
 import { useProjectDataReadonly } from './useProjectData';
 
 export const useAbilityPage = () => {
@@ -10,5 +10,17 @@ export const useAbilityPage = () => {
     ability,
     abilityName,
     cannotDelete: Object.keys(abilities).length <= 1,
+  };
+};
+
+export const useMovePage = () => {
+  const { projectDataValues: moves, selectedDataIdentifier: dbSymbol, state } = useProjectDataReadonly('moves', 'move');
+  const move = moves[dbSymbol];
+  const moveName = getEntityNameText(move, state);
+
+  return {
+    move,
+    moveName,
+    cannotDelete: Object.keys(moves).length <= 1,
   };
 };
