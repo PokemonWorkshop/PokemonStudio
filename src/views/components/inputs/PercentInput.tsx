@@ -1,4 +1,4 @@
-import React, { InputHTMLAttributes } from 'react';
+import React, { InputHTMLAttributes, forwardRef } from 'react';
 import styled from 'styled-components';
 import { Input } from '.';
 
@@ -19,9 +19,12 @@ const PercentInputContainer = styled.div`
   }
 `;
 
-export const PercentInput = (props: InputHTMLAttributes<HTMLInputElement>) => (
+type PercentInputProps = InputHTMLAttributes<HTMLInputElement>;
+
+export const PercentInput = forwardRef<HTMLInputElement, PercentInputProps>((props, ref) => (
   <PercentInputContainer>
-    <Input {...props} />
+    <Input {...props} ref={ref} />
     <span>%</span>
   </PercentInputContainer>
-);
+));
+PercentInput.displayName = 'PercentInput';

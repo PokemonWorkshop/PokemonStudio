@@ -5,3 +5,4 @@ export { MoveCharacteristicsEditor } from './MoveCharacteristicsEditor';
 export { MoveStatusEditor } from './MoveStatusEditor';
 export { MoveStatisticsEditor } from './MoveStatisticsEditor';
 export { MoveNewEditor } from './MoveNewEditor';
+export { MoveDeletion } from './MoveDeletion';

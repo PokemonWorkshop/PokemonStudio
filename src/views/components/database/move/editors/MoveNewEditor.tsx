@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { forwardRef, useMemo, useRef, useState } from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
 import { Editor } from '@components/editor';
 import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
@@ -12,9 +12,9 @@ import { checkDbSymbolExist, generateDefaultDbSymbol, wrongDbSymbol } from '@uti
 import { SelectType } from '@components/selects';
 import { MOVE_CATEGORIES, MOVE_DESCRIPTION_TEXT_ID, MOVE_NAME_TEXT_ID, StudioMoveCategory } from '@modelEntities/move';
 import { createMove } from '@utils/entityCreation';
-import { findFirstAvailableId } from '@utils/ModelUtils';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { useSetProjectText } from '@utils/ReadingProjectText';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 
 const moveCategoryEntries = (t: TFunction<('database_moves' | 'database_types')[]>) =>
   MOVE_CATEGORIES.map((category) => ({ value: category, label: t(`database_types:${category}`) })).sort((a, b) => a.label.localeCompare(b.label));
@@ -27,30 +27,32 @@ const ButtonContainer = styled.div`
 `;
 
 type MoveNewEditorProps = {
-  onClose: () => void;
+  closeDialog: () => void;
 };
 
-export const MoveNewEditor = ({ onClose }: MoveNewEditorProps) => {
+export const MoveNewEditor = forwardRef<EditorHandlingClose, MoveNewEditorProps>(({ closeDialog }, ref) => {
   const { projectDataValues: moves, setProjectDataValues: setMove } = useProjectMoves();
   const { t } = useTranslation(['database_moves', 'database_types']);
   const categoryOptions = useMemo(() => moveCategoryEntries(t), [t]);
   const setText = useSetProjectText();
   const [name, setName] = useState(''); // We can't use a ref because of the button behavior
   const [category, setCategory] = useState<StudioMoveCategory>('physical');
-  const [type, setType] = useState('normal');
+  const [type, setType] = useState<DbSymbol>('__undef__' as DbSymbol);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const dbSymbolRef = useRef<HTMLInputElement>(null);
   const [dbSymbolErrorType, setDbSymbolErrorType] = useState<'value' | 'duplicate' | undefined>(undefined);
 
+  useEditorHandlingClose(ref);
+
   const onClickNew = () => {
-    if (!dbSymbolRef.current || !name || !descriptionRef.current) return;
+    if (!dbSymbolRef.current || !name || type === '__undef__' || !descriptionRef.current) return;
 
     const dbSymbol = dbSymbolRef.current.value as DbSymbol;
-    const newMove = createMove(dbSymbol, findFirstAvailableId(moves, 1), type as DbSymbol, category);
+    const newMove = createMove(moves, dbSymbol, type, category);
     setText(MOVE_NAME_TEXT_ID, newMove.id, name);
     setText(MOVE_DESCRIPTION_TEXT_ID, newMove.id, descriptionRef.current.value);
     setMove({ [dbSymbol]: newMove }, { move: dbSymbol });
-    onClose();
+    closeDialog();
   };
 
   const onChangeDbSymbol = (value: string) => {
@@ -73,7 +75,7 @@ export const MoveNewEditor = ({ onClose }: MoveNewEditorProps) => {
   };
 
   const checkDisabled = () => {
-    return !name || !dbSymbolRef.current || !!dbSymbolErrorType;
+    return !name || type === '__undef__' || !dbSymbolRef.current || !!dbSymbolErrorType;
   };
 
   return (
@@ -90,8 +92,10 @@ export const MoveNewEditor = ({ onClose }: MoveNewEditorProps) => {
           <MultiLineInput id="descr" ref={descriptionRef} placeholder={t('database_moves:example_description')} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
-          <Label htmlFor="type">{t('database_moves:type')}</Label>
-          <SelectType dbSymbol={type} onChange={(event) => setType(event.value)} noLabel />
+          <Label htmlFor="type" required>
+            {t('database_moves:type')}
+          </Label>
+          <SelectType dbSymbol={type} onChange={(event) => setType(event.value as DbSymbol)} noLabel noneValueIsError />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="category">{t('database_moves:category')}</Label>
@@ -125,9 +129,10 @@ export const MoveNewEditor = ({ onClose }: MoveNewEditorProps) => {
               {t('database_moves:create_move')}
             </PrimaryButton>
           </ToolTipContainer>
-          <DarkButton onClick={onClose}>{t('database_moves:cancel')}</DarkButton>
+          <DarkButton onClick={closeDialog}>{t('database_moves:cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
     </Editor>
   );
-};
+});
+MoveNewEditor.displayName = 'MoveNewEditor';
