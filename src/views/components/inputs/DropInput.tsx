@@ -61,6 +61,11 @@ const onDragOver: DragEventHandler<HTMLDivElement> = (event) => {
   event.stopPropagation();
 };
 
+const getFormatsList = (extensions: string[]) => {
+  const formats = extensions.map((ext) => `.${ext}`);
+  return formats.toString().replaceAll(',', ', ');
+};
+
 type DropInputProps = {
   imageWidth?: number;
   imageHeight?: number;
@@ -68,10 +73,20 @@ type DropInputProps = {
   destFolderToCopy?: string;
   name: string;
   extensions: string[];
+  showAcceptedFormat?: true;
   onFileChoosen: (filePath: string) => void;
 };
 
-export const DropInput = ({ imageWidth, imageHeight, multipleFiles, destFolderToCopy, name, extensions, onFileChoosen }: DropInputProps) => {
+export const DropInput = ({
+  imageWidth,
+  imageHeight,
+  multipleFiles,
+  destFolderToCopy,
+  name,
+  extensions,
+  showAcceptedFormat,
+  onFileChoosen,
+}: DropInputProps) => {
   const { t } = useTranslation('drop');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const chooseFile = useChoosefile();
@@ -122,6 +137,11 @@ export const DropInput = ({ imageWidth, imageHeight, multipleFiles, destFolderTo
       {imageWidth && imageHeight && (
         <div className="recommanded-size">
           <span>{t('recommanded_size', { width: imageWidth, height: imageHeight })}</span>
+        </div>
+      )}
+      {showAcceptedFormat && (
+        <div className="recommanded-size">
+          <span>{t(extensions.length > 1 ? 'accepted_formats' : 'accepted_format', { formats: getFormatsList(extensions) })}</span>
         </div>
       )}
     </DropInputContainer>

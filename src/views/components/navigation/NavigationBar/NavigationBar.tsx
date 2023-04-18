@@ -43,6 +43,9 @@ export const NavigationBarComponent = () => {
         <NavigationBarItem path="/map" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('map'), 'right-center', true)}>
           <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="map" />
         </NavigationBarItem>
+        <NavigationBarItem path="/texts" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('text_management'), 'right-center', true)}>
+          <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="texts" />
+        </NavigationBarItem>
         <NavigationBarItem
           path="/code"
           disabled

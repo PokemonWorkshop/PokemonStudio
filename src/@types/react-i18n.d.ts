@@ -40,6 +40,7 @@ import unsaved_modal from '../../assets/i18n/en/unsaved_modal.json';
 import copy from '../../assets/i18n/en/copy.json';
 import audio from '../../assets/i18n/en/audio.json';
 import show_message_box from '../../assets/i18n/en/show_message_box.json';
+import text_management from '../../assets/i18n/en/text_management.json';
 
 // react-i18next versions higher than 11.11.0
 declare module 'react-i18next' {
@@ -86,6 +87,7 @@ declare module 'react-i18next' {
       copy: typeof copy;
       audio: typeof audio;
       show_message_box: typeof show_message_box;
+      text_management: typeof text_management;
     };
   }
 }

@@ -6,6 +6,7 @@ import { ReactComponent as DashboardIcon } from '../../../../../assets/icons/nav
 import { ReactComponent as UpdateIcon } from '../../../../../assets/icons/navigation/update-icon.svg';
 import { ReactComponent as Database } from '../../../../../assets/icons/navigation/database-icon.svg';
 import { ReactComponent as MapIcon } from '../../../../../assets/icons/navigation/map-icon.svg';
+import { ReactComponent as TextsIcon } from '../../../../../assets/icons/global/translate.svg';
 import { ReactComponent as CodeIcon } from '../../../../../assets/icons/navigation/code-icon.svg';
 import { ReactComponent as HelpIcon } from '../../../../../assets/icons/navigation/help-icon.svg';
 import { ReactComponent as SettingsIcon } from '../../../../../assets/icons/navigation/settings-icon.svg';
@@ -24,6 +25,7 @@ type IconName =
   | 'update'
   | 'database'
   | 'map'
+  | 'texts'
   | 'code'
   | 'help'
   | 'settings'
@@ -41,6 +43,7 @@ const iconNameToIcon: Record<IconName, typeof TopIcon> = {
   update: UpdateIcon,
   database: Database,
   map: MapIcon,
+  texts: TextsIcon,
   code: CodeIcon,
   help: HelpIcon,
   settings: SettingsIcon,

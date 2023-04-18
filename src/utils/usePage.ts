@@ -24,3 +24,17 @@ export const useMovePage = () => {
     cannotDelete: Object.keys(moves).length <= 1,
   };
 };
+
+export const useTextPage = () => {
+  //TODO: get data
+  const texts = {
+    filename: '100047',
+    name: 'Phrases de victoire',
+    description: "Ce fichier de texte contient les textes utilisés dans le cas d'une défaite du joueur contre un dresseur.",
+    data: [] as never[],
+  };
+  return {
+    texts,
+    cannotDelete: false,
+  };
+};

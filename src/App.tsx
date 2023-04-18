@@ -11,6 +11,7 @@ import HomePage from './views/pages/Home.page';
 import DatabasePage from './views/pages/database/Database/Database.page';
 import PSDKUpdatePage from './views/pages/PSDKUpdate.page';
 import MapLinkPage from './views/pages/mapLink/MapLink.page';
+import { TextsPage } from '@pages/texts/Texts.page';
 import DashboardRouter from '@pages/dashboard/Dashboard.Router.page';
 import { Loader } from '@components/Loader';
 import { LoaderContextProvider } from '@utils/loaderContext';
@@ -34,6 +35,7 @@ const App = () => {
               <Route path="/psdkupdate" element={<PSDKUpdatePage />} />
               <Route path="/database/*" element={<DatabasePage />} />
               <Route path="/map" element={<MapLinkPage />} />
+              <Route path="/texts/*" element={<TextsPage />} />
               <Route path="/code" />
               <Route path="/help" />
               <Route path="/settings" />
