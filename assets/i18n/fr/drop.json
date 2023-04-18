@@ -7,5 +7,7 @@
   "recommanded_size": "La taille d'image recommandée est de {{width}}*{{height}}px",
   "explore": "Parcourir",
   "explore_your_files": "Parcourez vos fichiers",
-  "or_explore_your_files": "parcourez vos fichiers"
+  "or_explore_your_files": "parcourez vos fichiers",
+  "accepted_format": "Format accepté : {{formats}}",
+  "accepted_formats": "Formats acceptés : {{formats}}"
 }

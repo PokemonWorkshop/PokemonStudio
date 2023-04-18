@@ -11,3 +11,4 @@ export { SelectType } from './SelectType';
 export { SelectZone } from './SelectZone';
 export { SelectDex } from './SelectDex';
 export { SelectRMXPMap } from './SelectRMXPMap';
+export { SelectText } from './SelectText';

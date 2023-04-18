@@ -14,3 +14,4 @@ export { TrainerPictureInput } from './TrainerPictureInput';
 export { InputOffset } from './InputOffset';
 export { AudioInput } from './AudioInput';
 export { PictureInput } from './PictureInput';
+export { ClearInput } from './ClearInput';

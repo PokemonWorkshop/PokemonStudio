@@ -37,6 +37,7 @@ import unsaved_modal from './unsaved_modal.json';
 import copy from './copy.json';
 import audio from './audio.json';
 import show_message_box from './show_message_box.json';
+import text_management from './text_management.json';
 
 export default {
   dashboard,
@@ -78,4 +79,5 @@ export default {
   copy,
   audio,
   show_message_box,
+  text_management,
 };
