@@ -3,9 +3,11 @@ import { Editor, useRefreshUI } from '@components/editor';
 
 import { useTranslation } from 'react-i18next';
 import { InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
-import { SelectPokemon, SelectPokemonForm } from '@components/selects';
 import { StudioDex, StudioDexCreature } from '@modelEntities/dex';
 import { DbSymbol } from '@modelEntities/dbSymbol';
+import { useSelectOptions } from '@utils/useSelectOptions';
+import { StudioDropDown } from '@components/StudioDropDown';
+import { SelectPokemonForm } from '@components/selects/SelectPokemonForm';
 
 const getPokemonUnavailable = (dex: StudioDex, creature: StudioDexCreature): string[] => {
   const dbSymbols = dex.creatures.map((c) => c.dbSymbol);
@@ -20,7 +22,11 @@ type DexPokemonListEditEditorProps = {
 };
 
 export const DexPokemonListEditEditor = ({ dex, creature }: DexPokemonListEditEditorProps) => {
-  const pokemonUnavailable = useMemo(() => getPokemonUnavailable(dex, creature), [dex, creature]);
+  const pokemonList = useSelectOptions('creatures');
+  const pokemonAvailable = useMemo(() => {
+    const unavailable = getPokemonUnavailable(dex, creature);
+    return pokemonList.filter(({ value }) => !unavailable.includes(value));
+  }, [dex, creature]);
   const { t } = useTranslation(['database_pokemon']);
   const refreshUI = useRefreshUI();
 
@@ -30,11 +36,10 @@ export const DexPokemonListEditEditor = ({ dex, creature }: DexPokemonListEditEd
         <InputContainer size="m">
           <InputWithTopLabelContainer>
             <Label htmlFor="name">{t('database_pokemon:pokemon')}</Label>
-            <SelectPokemon
-              dbSymbol={creature.dbSymbol}
-              onChange={(selected) => refreshUI((creature.dbSymbol = selected.value as DbSymbol))}
-              noLabel
-              rejected={pokemonUnavailable}
+            <StudioDropDown
+              options={pokemonAvailable}
+              value={creature.dbSymbol}
+              onChange={(value) => refreshUI((creature.dbSymbol = value as DbSymbol))}
             />
           </InputWithTopLabelContainer>
           {creature.dbSymbol !== '__undef__' && (
@@ -43,7 +48,7 @@ export const DexPokemonListEditEditor = ({ dex, creature }: DexPokemonListEditEd
               <SelectPokemonForm
                 dbSymbol={creature.dbSymbol}
                 form={creature.form}
-                onChange={(selected) => refreshUI((creature.form = Number(selected.value)))}
+                onChange={(value) => refreshUI((creature.form = Number(value)))}
                 noLabel
               />
             </InputWithTopLabelContainer>

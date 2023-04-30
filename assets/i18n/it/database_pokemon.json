@@ -25,7 +25,7 @@
   "base_friendship": "Amicizia di base",
   "stats": "Statistiche",
   "base_stats": "Statistiche di base",
-  "hit_points": "Punti Salute",
+  "hp": "Punti Salute",
   "attack": "Attacco",
   "defense": "Difesa",
   "special_attack": "Attacco Speciale",

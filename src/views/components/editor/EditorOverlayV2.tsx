@@ -144,7 +144,7 @@ export const defineEditorOverlay = <Keys extends string, Props extends Record<st
       if (!currentDialog) return null;
       return renderInnerDialog(currentDialog, handleCloseRef, closeDialog, props);
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentDialog]);
+    }, [currentDialog, props]);
 
     const onEscape = () => {
       if (handleCloseRef.current?.canClose()) closeDialog();

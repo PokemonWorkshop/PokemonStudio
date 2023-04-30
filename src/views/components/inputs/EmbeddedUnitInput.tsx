@@ -1,4 +1,4 @@
-import React, { InputHTMLAttributes } from 'react';
+import React, { InputHTMLAttributes, forwardRef } from 'react';
 import styled from 'styled-components';
 import { Input } from '.';
 
@@ -24,9 +24,10 @@ type EmbeddedUnitInputProps = {
   unit?: string;
 } & InputHTMLAttributes<HTMLInputElement>;
 
-export const EmbeddedUnitInput = ({ unit, ...props }: EmbeddedUnitInputProps) => (
+export const EmbeddedUnitInput = forwardRef<HTMLInputElement | null, EmbeddedUnitInputProps>(({ unit, ...props }, inputRef) => (
   <EmbeddedUnitInputContainer>
-    <Input {...props} />
+    <Input {...props} ref={inputRef} />
     <span>{unit ?? '%'}</span>
   </EmbeddedUnitInputContainer>
-);
+));
+EmbeddedUnitInput.displayName = 'EmbeddedUnitInput';

@@ -1,13 +1,13 @@
 import { useRefreshUI } from '@components/editor';
 import { InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
-import { SelectPokemon } from '@components/selects';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { InputNumber } from './InputNumber';
 import { QuestGoalProps } from './QuestGoalProps';
+import { SelectPokemon } from '@components/selects/SelectPokemon';
 
 export const QuestGoalBeatPokemon = ({ objective }: QuestGoalProps) => {
-  const { t } = useTranslation(['database_pokemon', 'database_quests']);
+  const { t } = useTranslation(['database_pokemon', 'database_quests', 'select']);
   const refreshUI = useRefreshUI();
   return (
     <PaddedInputContainer>
@@ -15,9 +15,9 @@ export const QuestGoalBeatPokemon = ({ objective }: QuestGoalProps) => {
         <Label htmlFor="select-pokemon">{t('database_pokemon:pokemon')}</Label>
         <SelectPokemon
           dbSymbol={objective.objectiveMethodArgs[0] as string}
-          onChange={(selected) => refreshUI((objective.objectiveMethodArgs[0] = selected.value))}
+          onChange={(value) => refreshUI((objective.objectiveMethodArgs[0] = value))}
+          undefValueOption={t('select:none')}
           noLabel
-          noneValue
         />
       </InputWithTopLabelContainer>
       <InputWithLeftLabelContainer>

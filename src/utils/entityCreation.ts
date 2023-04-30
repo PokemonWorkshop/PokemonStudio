@@ -75,19 +75,19 @@ export const createDex = (allDex: ProjectData['dex'], dbSymbol: DbSymbol, startI
  * @param allPokemon The project data containing the Pokémon
  * @returns The new Pokémon
  */
-export const createCreature = (allPokemon: ProjectData['pokemon']): StudioCreature => {
+export const createCreature = (allPokemon: ProjectData['pokemon'], dbSymbol: DbSymbol, type1: DbSymbol, type2: DbSymbol): StudioCreature => {
   const id = findFirstAvailableId(allPokemon, 1);
   return {
     klass: 'Specie',
     id,
-    dbSymbol: '' as DbSymbol,
+    dbSymbol,
     forms: [
       {
         form: 0,
         height: 0,
         weight: 0,
-        type1: 'normal' as DbSymbol,
-        type2: '__undef__' as DbSymbol,
+        type1,
+        type2,
         baseHp: 100,
         baseAtk: 100,
         baseDfe: 100,
@@ -108,7 +108,7 @@ export const createCreature = (allPokemon: ProjectData['pokemon']): StudioCreatu
         femaleRate: 50,
         breedGroups: [0, 0],
         hatchSteps: 1024,
-        babyDbSymbol: '' as DbSymbol,
+        babyDbSymbol: dbSymbol,
         babyForm: 0,
         itemHeld: [
           {

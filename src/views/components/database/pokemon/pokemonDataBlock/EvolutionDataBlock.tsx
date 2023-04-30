@@ -1,6 +1,6 @@
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
 import { useProjectPokemon } from '@utils/useProjectData';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataBlockWithTitlePagination, DataFieldsetField, DataGrid } from '../../dataBlocks';
 import { PokemonDataProps } from '../PokemonDataPropsInterface';
@@ -10,7 +10,7 @@ type EvolutionDataBlockProps = {
   setEvolutionIndex: (index: number) => void;
 } & PokemonDataProps;
 
-export const EvolutionDataBlock = ({ pokemonWithForm, evolutionIndex, setEvolutionIndex, onClick }: EvolutionDataBlockProps) => {
+export const EvolutionDataBlock = ({ pokemonWithForm, evolutionIndex, setEvolutionIndex, dialogsRef }: EvolutionDataBlockProps) => {
   const { projectDataValues: pokemon } = useProjectPokemon();
   const { t } = useTranslation('database_pokemon');
   const getEntityName = useGetEntityNameText();
@@ -31,6 +31,7 @@ export const EvolutionDataBlock = ({ pokemonWithForm, evolutionIndex, setEvoluti
       setEvolutionIndex(evolutionIndex + 1);
     }
   };
+
   const currentCreature = pokemon[megaPrefix ? species.dbSymbol : evolution?.dbSymbol || species.dbSymbol];
 
   return (
@@ -40,7 +41,7 @@ export const EvolutionDataBlock = ({ pokemonWithForm, evolutionIndex, setEvoluti
       index={evolutionIndex}
       max={evolutionCount}
       onChangeIndex={onChangeIndex}
-      onClick={onClick}
+      onClick={() => dialogsRef.current?.openDialog('evolution')}
     >
       {evolutionCount === 0 || !evolution ? (
         <DataGrid columns="1fr" rows="1fr 1fr 1fr">

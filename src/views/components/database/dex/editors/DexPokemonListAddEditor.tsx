@@ -5,12 +5,14 @@ import { Editor } from '@components/editor';
 import { useTranslation } from 'react-i18next';
 import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
 import { useProjectDex, useProjectPokemon } from '@utils/useProjectData';
-import { SelectPokemon, SelectPokemonForm } from '@components/selects';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { searchUnderAndEvolutions } from '@utils/dex';
 import { StudioDex, StudioDexCreature } from '@modelEntities/dex';
 import { DbSymbol } from '@modelEntities/dbSymbol';
+import { useSelectOptions } from '@utils/useSelectOptions';
+import { StudioDropDown } from '@components/StudioDropDown';
+import { SelectPokemonForm } from '@components/selects/SelectPokemonForm';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -30,9 +32,13 @@ type DexPokemonListAddEditorProps = {
 export const DexPokemonListAddEditor = ({ dex, onClose }: DexPokemonListAddEditorProps) => {
   const { setProjectDataValues: setDex } = useProjectDex();
   const { projectDataValues: allPokemon } = useProjectPokemon();
-  const [creature, setCreature] = useState<StudioDexCreature>({ dbSymbol: '__undef__' as DbSymbol, form: 0 });
-  const pokemonUnavailable = useMemo(() => getPokemonUnavailable(dex), [dex]);
-  const { t } = useTranslation(['database_dex', 'database_pokemon', 'database_moves']);
+  const { t } = useTranslation(['database_dex', 'database_pokemon', 'database_moves', 'select']);
+  const pokemonList = useSelectOptions('creatures');
+  const pokemonAvailable = useMemo(() => {
+    const unavailable = getPokemonUnavailable(dex);
+    return pokemonList.filter(({ value }) => !unavailable.includes(value));
+  }, [dex]);
+  const [creature, setCreature] = useState<StudioDexCreature>({ dbSymbol: (pokemonAvailable[0]?.value || '__undef__') as DbSymbol, form: 0 });
   const [isAddingEvolutions, setIsAddingEvolutions] = useState(false);
 
   const onClickAdd = () => {
@@ -56,13 +62,10 @@ export const DexPokemonListAddEditor = ({ dex, onClose }: DexPokemonListAddEdito
             <Label htmlFor="name" required>
               {t('database_pokemon:pokemon')}
             </Label>
-            <SelectPokemon
-              dbSymbol={creature.dbSymbol}
-              onChange={(selected) => setCreature({ ...creature, dbSymbol: selected.value as DbSymbol })}
-              noLabel
-              noneValue
-              noneValueIsError
-              rejected={pokemonUnavailable}
+            <StudioDropDown
+              value={creature.dbSymbol}
+              options={pokemonAvailable}
+              onChange={(value) => setCreature({ ...creature, dbSymbol: value as DbSymbol })}
             />
           </InputWithTopLabelContainer>
           {creature.dbSymbol !== '__undef__' && allPokemon[creature.dbSymbol].forms.length > 1 && (
@@ -71,7 +74,7 @@ export const DexPokemonListAddEditor = ({ dex, onClose }: DexPokemonListAddEdito
               <SelectPokemonForm
                 dbSymbol={creature.dbSymbol}
                 form={creature.form}
-                onChange={(selected) => setCreature({ ...creature, form: Number(selected.value) })}
+                onChange={(value) => setCreature({ ...creature, form: Number(value) })}
                 noLabel
               />
             </InputWithTopLabelContainer>

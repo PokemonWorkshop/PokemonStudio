@@ -1,36 +1,36 @@
 import { InputWithTopLabelContainer, Label } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import { DbSymbol } from '@modelEntities/dbSymbol';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { InputProps } from './InputProps';
+import { EvolutionConditionEditorInput } from './InputProps';
 
-export const WeatherInput = ({ condition, index, onChange }: InputProps) => {
+export const WeatherInput = ({ type, state, dispatch }: EvolutionConditionEditorInput) => {
   const { t } = useTranslation('database_pokemon');
-  const options = [
-    { value: 'none', label: t('evolutionValue_weather_none') },
-    { value: 'rain', label: t('evolutionValue_weather_rain') },
-    { value: 'sunny', label: t('evolutionValue_weather_sunny') },
-    { value: 'sandstorm', label: t('evolutionValue_weather_sandstorm') },
-    { value: 'hail', label: t('evolutionValue_weather_hail') },
-    { value: 'fog', label: t('evolutionValue_weather_fog') },
-    { value: 'hardsun', label: t('evolutionValue_weather_hardsun') },
-    { value: 'hardrain', label: t('evolutionValue_weather_hardrain') },
-  ];
+  const options = useMemo(
+    () => [
+      { value: '__undef__', label: t('evolutionValue_weather_none') } as const,
+      { value: 'rain', label: t('evolutionValue_weather_rain') } as const,
+      { value: 'sunny', label: t('evolutionValue_weather_sunny') } as const,
+      { value: 'sandstorm', label: t('evolutionValue_weather_sandstorm') } as const,
+      { value: 'hail', label: t('evolutionValue_weather_hail') } as const,
+      { value: 'fog', label: t('evolutionValue_weather_fog') } as const,
+      { value: 'hardsun', label: t('evolutionValue_weather_hardsun') } as const,
+      { value: 'hardrain', label: t('evolutionValue_weather_hardrain') } as const,
+    ],
+    []
+  );
+  if (type !== 'weather') return null;
 
-  if (condition.type === 'weather') {
-    return (
-      <InputWithTopLabelContainer>
-        <Label>{t('evolutionValue_weather')}</Label>
-        <SelectCustomSimple
-          id="weather-DropDown"
-          options={options}
-          value={condition.value}
-          onChange={(value) => onChange({ type: 'weather', value: value as DbSymbol }, index)}
-        />
-      </InputWithTopLabelContainer>
-    );
-  }
-
-  return <></>;
+  return (
+    <InputWithTopLabelContainer>
+      <Label>{t('evolutionValue_weather')}</Label>
+      <SelectCustomSimple
+        id="weather-DropDown"
+        options={options}
+        value={state[type]}
+        onChange={(value) => dispatch({ type: 'update', key: type, value: value as DbSymbol })}
+      />
+    </InputWithTopLabelContainer>
+  );
 };

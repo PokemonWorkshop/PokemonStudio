@@ -25,7 +25,7 @@
   "base_friendship": "Bonheur de base",
   "stats": "Statistiques",
   "base_stats": "Statistiques de base",
-  "hit_points": "Points de vie",
+  "hp": "Points de vie",
   "attack": "Attaque",
   "defense": "Défense",
   "special_attack": "Attaque spéciale",

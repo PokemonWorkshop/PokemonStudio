@@ -7,12 +7,13 @@ import { SelectCustomSimple } from '@components/SelectCustom';
 import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
 import { useRefreshUI } from '@components/editor';
 import { InputNumber } from './InputNumber';
-import { SelectPokemon, SelectType } from '@components/selects';
+import { SelectType } from '@components/selects';
 import { ReactComponent as PlusIcon } from '@assets/icons/global/plus-icon2.svg';
 import { SelectNature } from '@components/selects/SelectNature';
 import { CREATURE_QUEST_CONDITIONS, StudioCreatureQuestCondition, StudioCreatureQuestConditionType } from '@modelEntities/quest';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { createCreatureQuestCondition } from '@utils/entityCreation';
+import { SelectPokemon } from '@components/selects/SelectPokemon';
 
 type SelectConditionProps = {
   condition: StudioCreatureQuestCondition;
@@ -78,6 +79,7 @@ type ValueConditionProps = {
 
 const ValueCondition = ({ condition }: ValueConditionProps) => {
   const { t } = useTranslation('database_quests');
+  const { t: tSelect } = useTranslation('select');
   const refreshUI = useRefreshUI();
   const { type, value } = condition;
 
@@ -114,9 +116,9 @@ const ValueCondition = ({ condition }: ValueConditionProps) => {
         <Label htmlFor="pokemon">{t('condition_pokemon')}</Label>
         <SelectPokemon
           dbSymbol={value as string}
-          onChange={(selected) => refreshUI((condition.value = selected.value as DbSymbol))}
+          onChange={(value) => refreshUI((condition.value = value as DbSymbol))}
+          undefValueOption={tSelect('none')}
           noLabel
-          noneValue
         />
       </InputWithTopLabelContainer>
     );

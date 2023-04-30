@@ -5,13 +5,13 @@ import { useTranslation } from 'react-i18next';
 import { DataBlockWithTitle, DataFieldsetField, DataGrid } from '../../dataBlocks';
 import { PokemonDataProps } from '../PokemonDataPropsInterface';
 
-export const PokedexDataBlock = ({ pokemonWithForm, onClick }: PokemonDataProps) => {
+export const PokedexDataBlock = ({ pokemonWithForm, dialogsRef }: PokemonDataProps) => {
   const { species, form } = pokemonWithForm;
   const { t } = useTranslation('database_pokemon');
   const getText = useGetProjectText();
 
   return (
-    <DataBlockWithTitle size="fourth" title="Pokédex" onClick={onClick}>
+    <DataBlockWithTitle size="fourth" title="Pokédex" onClick={() => dialogsRef.current?.openDialog('pokedex')}>
       <DataGrid columns="1fr" rows="1fr 1fr 1fr">
         <DataFieldsetField label={t('height')} data={form.height + ' m'} />
         <DataFieldsetField label={t('weight')} data={form.weight + ' kg'} />

@@ -1,19 +1,18 @@
-import { useRefreshUI } from '@components/editor';
 import { Editor } from '@components/editor/Editor';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
 import { EmbeddedUnitInput } from '@components/inputs/EmbeddedUnitInput';
 import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
-import { SelectDataGeneric } from '@components/selects';
-import { StudioCreature, StudioCreatureForm, StudioItemHeld } from '@modelEntities/creature';
+import { StudioDropDown } from '@components/StudioDropDown';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 
-import { ProjectData } from '@src/GlobalStateProvider';
-import { useGetEntityNameText } from '@utils/ReadingProjectText';
-import { useProjectItems } from '@utils/useProjectData';
+import { useCreaturePage } from '@utils/usePage';
+import { useSelectOptions } from '@utils/useSelectOptions';
 
-import React, { useMemo } from 'react';
-import { TFunction, useTranslation } from 'react-i18next';
+import React, { forwardRef, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { useUpdateForm } from './useUpdateForm';
 
 const ItemHeldContainer = styled.div`
   display: flex;
@@ -21,173 +20,124 @@ const ItemHeldContainer = styled.div`
   gap: 16px;
 `;
 
-type ItemHeldComponentProps = {
+type ItemHeldEditorProps = {
   title: string;
-  name: string;
-  itemHeld: StudioItemHeld;
-  items: ProjectData['items'];
-  itemHeldOptions: SelectOption[];
-  refreshUI: (_: unknown) => void;
-  t: TFunction<('database_pokemon' | 'database_items')[]>;
+  index: number;
+  originalChance: number;
+  options: SelectOption[];
+  rarityRefs: React.MutableRefObject<(HTMLInputElement | null | undefined)[]>;
+  itemDbSymbolRefs: React.MutableRefObject<DbSymbol[]>;
 };
 
-const ItemHeldComponent = ({ title, name, itemHeld, items, itemHeldOptions, refreshUI, t }: ItemHeldComponentProps) => {
-  const getItemName = useGetEntityNameText();
-  const onChangeItem = (dbSymbol: string) => {
-    itemHeld.dbSymbol = dbSymbol as DbSymbol;
-    if (dbSymbol === '__undef__') itemHeld.chance = 0;
-  };
+const ItemHeldEditor = ({ title, index, originalChance, options, rarityRefs, itemDbSymbolRefs }: ItemHeldEditorProps) => {
+  const { t } = useTranslation(['database_pokemon', 'database_items']);
+  const [itemDbSymbol, setItemDbSymbol] = useState(itemDbSymbolRefs.current[index]);
+  const name = `creature-item-held-editor-${index}`;
+  const divStyle = { display: itemDbSymbol === '__undef__' ? 'none' : undefined };
 
   return (
     <ItemHeldContainer>
       <InputWithTopLabelContainer>
         <Label htmlFor={name}>{title}</Label>
-        <SelectDataGeneric
-          data={{
-            value: itemHeld.dbSymbol,
-            label: items[itemHeld.dbSymbol] ? getItemName(items[itemHeld.dbSymbol]) : t('database_items:item_deleted'),
+        <StudioDropDown
+          options={options}
+          value={itemDbSymbol}
+          onChange={(value) => {
+            itemDbSymbolRefs.current[index] = value as DbSymbol;
+            setItemDbSymbol(value as DbSymbol);
           }}
-          options={itemHeldOptions}
-          onChange={(option) => refreshUI(onChangeItem(option.value))}
-          noOptionsText={t('database_items:no_option')}
-          error={!items[itemHeld.dbSymbol] && itemHeld.dbSymbol !== '__undef__'}
-          noneValue
         />
       </InputWithTopLabelContainer>
-      {itemHeld.dbSymbol !== '__undef__' && (
-        <InputWithLeftLabelContainer>
-          <Label htmlFor={`chance-${name}`}>{t('database_pokemon:chance')}</Label>
-          <EmbeddedUnitInput
-            unit="%"
-            name={`chance-${name}`}
-            type="number"
-            min="0"
-            max="100"
-            step="1"
-            value={isNaN(itemHeld.chance) ? '' : itemHeld.chance}
-            onChange={(event) => {
-              const value = parseInt(event.target.value);
-              if (value < 0 || value > 100) return event.preventDefault();
-              refreshUI((itemHeld.chance = value));
-            }}
-            onBlur={() => refreshUI((itemHeld.chance = isNaN(itemHeld.chance) ? 0 : itemHeld.chance))}
-          />
-        </InputWithLeftLabelContainer>
-      )}
+      <InputWithLeftLabelContainer style={divStyle}>
+        <Label htmlFor={`chance-${name}`}>{t('database_pokemon:chance')}</Label>
+        <EmbeddedUnitInput
+          unit="%"
+          name={`chance-${name}`}
+          type="number"
+          min="0"
+          max="100"
+          step="1"
+          defaultValue={originalChance}
+          ref={(ref) => {
+            rarityRefs.current[index] = ref;
+          }}
+        />
+      </InputWithLeftLabelContainer>
     </ItemHeldContainer>
   );
 };
 
-type EncounterEditorProps = {
-  currentPokemon: StudioCreature;
-  currentFormIndex: number;
-};
+export const EncounterEditor = forwardRef<EditorHandlingClose>((_, ref) => {
+  const { t } = useTranslation(['database_pokemon', 'database_items', 'select']);
+  const { creature, form } = useCreaturePage();
+  const updateForm = useUpdateForm(creature, form);
+  const itemOptions = useSelectOptions('itemHeld');
+  const itemOptionsWithNone = useMemo(() => [{ value: 'none', label: t('select:none') }, ...itemOptions], []);
+  const [genderLess, setGenderLess] = useState(form.femaleRate === -1);
+  const femaleRateRef = useRef<HTMLInputElement>(null);
+  const catchRateRef = useRef<HTMLInputElement>(null);
+  // TODO: use the fact those refs are array to allow more than 2 items :)
+  const rarityRefs = useRef<(HTMLInputElement | null | undefined)[]>([]);
+  const itemDbSymbolRefs = useRef<DbSymbol[]>(Array.from({ length: 2 }, (_, i) => form.itemHeld[i]?.dbSymbol || ('none' as DbSymbol)));
+  const divStyle = { display: genderLess ? 'none' : undefined };
 
-const getItemHeldOptions = (allItems: ProjectData['items'], getItemName: ReturnType<typeof useGetEntityNameText>) =>
-  Object.values(allItems)
-    .filter((itemData) => itemData.isHoldable)
-    .sort((a, b) => a.id - b.id)
-    .map((itemData) => ({ value: itemData.dbSymbol, label: getItemName(itemData) }));
+  const canClose = () => {
+    if (!rarityRefs.current.every((v, i) => !v || itemDbSymbolRefs.current[i] === 'none' || v.validity.valid)) return false;
+    if (!genderLess && femaleRateRef.current && !femaleRateRef.current.validity.valid) return false;
+    if (!catchRateRef.current || !catchRateRef.current.validity.valid) return false;
 
-const defaultValuesItemHeld = (form: StudioCreatureForm) => {
-  if (form.itemHeld.length === 0)
-    form.itemHeld = [
-      {
-        dbSymbol: 'none' as DbSymbol,
-        chance: 0,
+    return true;
+  };
+  const onClose = () => {
+    if (!catchRateRef.current || !canClose()) return;
+
+    const femaleRate = genderLess ? -1 : femaleRateRef.current?.valueAsNumber || 0;
+    updateForm({
+      itemHeld: itemDbSymbolRefs.current.map((dbSymbol, i) => ({ dbSymbol, chance: rarityRefs.current[i]?.valueAsNumber || 0 })),
+      catchRate: catchRateRef.current.valueAsNumber,
+      femaleRate,
+      resources: {
+        ...form.resources,
+        // Not sure about this logic I don't get why original was forcing hasFemale for 100%
+        hasFemale: femaleRate <= 0 || femaleRate === 100 ? femaleRate === 100 : form.resources.hasFemale,
       },
-      {
-        dbSymbol: 'none' as DbSymbol,
-        chance: 0,
-      },
-    ];
-};
-
-export const EncounterEditor = ({ currentPokemon, currentFormIndex }: EncounterEditorProps) => {
-  const { t } = useTranslation(['database_pokemon', 'database_items']);
-  const refreshUI = useRefreshUI();
-  const form = currentPokemon.forms[currentFormIndex];
-  const { projectDataValues: items } = useProjectItems();
-  const getItemName = useGetEntityNameText();
-  const itemHeldOptions = useMemo(() => getItemHeldOptions(items, getItemName), [items, getItemName]);
-  useMemo(() => defaultValuesItemHeld(form), [form]);
-  useMemo(() => {
-    form.itemHeld.forEach((itemHeld) => {
-      if (itemHeld.dbSymbol === 'none') itemHeld.dbSymbol = '__undef__' as DbSymbol;
     });
-  }, [form]);
+  };
+  useEditorHandlingClose(ref, onClose, canClose);
 
   return (
     <Editor type="edit" title={t('database_pokemon:encounter')}>
       <InputContainer>
         <InputWithLeftLabelContainer>
           <Label htmlFor="catch_rate">{t('database_pokemon:catch_rate')}</Label>
-          <Input
-            name="catch_rate"
-            type="number"
-            value={isNaN(form.catchRate) ? '' : form.catchRate}
-            onChange={(event) => {
-              const value = parseInt(event.target.value);
-              if (value < 0 || value > 255) return event.preventDefault();
-              refreshUI((form.catchRate = value));
-            }}
-            onBlur={() => refreshUI((form.catchRate = isNaN(form.catchRate) ? 0 : form.catchRate))}
-          />
+          <Input name="catch_rate" type="number" defaultValue={form.catchRate} ref={catchRateRef} />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
           <Label htmlFor="genderless">{t('database_pokemon:genderless')}</Label>
-          <Toggle
-            checked={form.femaleRate === -1}
-            name="genderless"
-            onChange={(event) => {
-              form.resources.hasFemale = false;
-              refreshUI((form.femaleRate = event.target.checked ? -1 : 0));
-            }}
-          />
+          <Toggle checked={genderLess} name="genderless" onChange={(event) => setGenderLess(event.target.checked)} />
         </InputWithLeftLabelContainer>
-        {form.femaleRate !== -1 && (
-          <InputWithLeftLabelContainer>
-            <Label htmlFor="female_rate">{t('database_pokemon:female_rate')}</Label>
-            <EmbeddedUnitInput
-              unit="%"
-              name="female_rate"
-              type="number"
-              step="0.1"
-              value={form.femaleRate}
-              onChange={(event) => {
-                const value = Number(event.target.value);
-                if (value < 0 || value > 100) return event.preventDefault();
-                if (value === 0) form.resources.hasFemale = false;
-                if (value === 100) form.resources.hasFemale = true;
-                refreshUI((form.femaleRate = value));
-              }}
-              onBlur={() => {
-                form.femaleRate = isNaN(form.femaleRate) ? 0 : form.femaleRate;
-                if (form.femaleRate === 0) form.resources.hasFemale = false;
-                if (form.femaleRate === 100) form.resources.hasFemale = true;
-              }}
-            />
-          </InputWithLeftLabelContainer>
-        )}
-        <ItemHeldComponent
+        <InputWithLeftLabelContainer style={divStyle}>
+          <Label htmlFor="female_rate">{t('database_pokemon:female_rate')}</Label>
+          <EmbeddedUnitInput unit="%" name="female_rate" type="number" step="0.1" defaultValue={form.femaleRate} ref={femaleRateRef} />
+        </InputWithLeftLabelContainer>
+        <ItemHeldEditor
+          index={0}
           title={t('database_pokemon:common_item_held')}
-          name="common-item"
-          itemHeld={form.itemHeld[0]}
-          items={items}
-          itemHeldOptions={itemHeldOptions}
-          refreshUI={refreshUI}
-          t={t}
+          options={itemOptionsWithNone}
+          originalChance={form.itemHeld[0]?.chance || 0}
+          rarityRefs={rarityRefs}
+          itemDbSymbolRefs={itemDbSymbolRefs}
         />
-        <ItemHeldComponent
+        <ItemHeldEditor
+          index={1}
           title={t('database_pokemon:rare_item_held')}
-          name="rare-item"
-          itemHeld={form.itemHeld[1]}
-          items={items}
-          itemHeldOptions={itemHeldOptions}
-          refreshUI={refreshUI}
-          t={t}
+          options={itemOptionsWithNone}
+          originalChance={form.itemHeld[1]?.chance || 0}
+          rarityRefs={rarityRefs}
+          itemDbSymbolRefs={itemDbSymbolRefs}
         />
       </InputContainer>
     </Editor>
   );
-};
+});
+EncounterEditor.displayName = 'EncounterEditor';

@@ -2,35 +2,26 @@ import { InputWithLeftLabelContainer, Input, InputWithTopLabelContainer, Label }
 import { TextInputError } from '@components/inputs/Input';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { InputProps } from './InputProps';
+import { EvolutionConditionEditorInput } from './InputProps';
 
-type NumberInputProps = InputProps & {
-  currentType: 'maxLevel' | 'minLevel' | 'maxLoyalty' | 'minLoyalty' | 'env';
+type NumberInputProps = EvolutionConditionEditorInput & {
   min: number;
   max?: number;
   label: string;
 };
 
-export const NumberInput = ({ condition, index, onChange, currentType, min, max, label }: NumberInputProps) => {
+const validInputs = ['maxLevel', 'minLevel', 'maxLoyalty', 'minLoyalty', 'env'] as const;
+type NumberType = (typeof validInputs)[number];
+const isTypeValidInput = (type: unknown): type is NumberType => validInputs.includes(type as NumberType);
+
+export const NumberInput = ({ state, inputRefs, type, min, max, label }: NumberInputProps) => {
   const { t } = useTranslation('database_pokemon');
-  const [currentValue, setCurrentValue] = useState(condition.value?.toString() || '');
   const [error, setError] = useState(false);
+  if (!isTypeValidInput(type)) return null;
 
-  if (condition.type !== currentType) return <></>;
-
-  const onBlur = () => {
-    const inputValue = Number(currentValue);
-    if (isFinite(inputValue)) {
-      const minClamped = inputValue < min ? min : inputValue;
-      const value = max && minClamped > max ? max : minClamped;
-      onChange({ type: currentType, value }, index);
-    } else {
-      onChange({ type: currentType, value: min }, index);
-    }
-  };
+  const value = state.defaults[type];
 
   const onInputChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
-    setCurrentValue(event.target.value);
     const inputValue = Number(event.target.value);
     if (event.target.value.length === 0 || inputValue < min || (max && inputValue > max)) {
       setError(true);
@@ -38,14 +29,22 @@ export const NumberInput = ({ condition, index, onChange, currentType, min, max,
     } else if (error) {
       setError(false);
     }
-    onChange({ type: currentType, value: inputValue }, index);
   };
 
   return (
     <InputWithTopLabelContainer>
       <InputWithLeftLabelContainer>
         <Label>{label}</Label>
-        <Input type="number" value={currentValue} onChange={onInputChange} onBlur={onBlur} />
+        <Input
+          type="number"
+          min={min}
+          max={max}
+          step={1}
+          ref={(ref) => (inputRefs.current[type] = ref)}
+          defaultValue={value?.toString()}
+          onChange={onInputChange}
+          required
+        />
       </InputWithLeftLabelContainer>
       {error && <TextInputError>{max ? t('numberInputErrorMinMax', { min, max }) : t('numberInputErrorMin', { min })}</TextInputError>}
     </InputWithTopLabelContainer>
