@@ -1,15 +1,18 @@
-import { Editor, useRefreshUI } from '@components/editor';
+import { Editor } from '@components/editor';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 import { SelectType } from '@components/selects';
-import { CREATURE_DESCRIPTION_TEXT_ID, CREATURE_NAME_TEXT_ID, StudioCreature } from '@modelEntities/creature';
+import { CREATURE_DESCRIPTION_TEXT_ID, CREATURE_NAME_TEXT_ID } from '@modelEntities/creature';
 import { DbSymbol } from '@modelEntities/dbSymbol';
-import { cleanNaNValue } from '@utils/cleanNaNValue';
-import { useGetEntityDescriptionText, useGetEntityNameText, useSetProjectText } from '@utils/ReadingProjectText';
-import type { OpenTranslationEditorFunction } from '@utils/useTranslationEditor';
-import React, { FunctionComponent } from 'react';
+import { useGetEntityDescriptionText, useSetProjectText } from '@utils/ReadingProjectText';
+import { useDialogsRef } from '@utils/useDialogsRef';
+import { useCreaturePage } from '@utils/usePage';
+import React, { forwardRef, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { CreatureTranslationOverlay, TranslationEditorTitle } from './CreatureTranslationOverlay';
+import { useUpdateForm } from './useUpdateForm';
 
 const OffsetInfo = styled.div`
   ${({ theme }) => theme.fonts.normalSmall};
@@ -17,85 +20,87 @@ const OffsetInfo = styled.div`
   user-select: none;
 `;
 
-type InformationsEditorProps = {
-  currentPokemon: StudioCreature;
-  currentFormIndex: number;
-  openTranslationEditor: OpenTranslationEditorFunction;
-};
-
-export const InformationsEditor: FunctionComponent<InformationsEditorProps> = ({
-  currentPokemon,
-  currentFormIndex,
-  openTranslationEditor,
-}: InformationsEditorProps) => {
-  const { t } = useTranslation(['database_pokemon', 'database_types']);
-  const getCreatureName = useGetEntityNameText();
+export const InformationsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
+  const { t } = useTranslation('database_pokemon');
+  const dialogsRef = useDialogsRef<TranslationEditorTitle>();
+  const { creature, form, creatureName } = useCreaturePage();
+  const updateForm = useUpdateForm(creature, form);
   const getCreatureDescription = useGetEntityDescriptionText();
   const setText = useSetProjectText();
-  const refreshUI = useRefreshUI();
-  const form = currentPokemon.forms[currentFormIndex];
+  const nameRef = useRef<HTMLInputElement>(null);
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
+  const offsetRef = useRef<HTMLInputElement>(null);
+  const [type1, setType1] = useState(form.type1);
+  const [type2, setType2] = useState(form.type2);
+
+  const saveTexts = () => {
+    if (!nameRef.current || !descriptionRef.current) return;
+
+    setText(CREATURE_NAME_TEXT_ID, creature.id, nameRef.current.value);
+    setText(CREATURE_DESCRIPTION_TEXT_ID, creature.id, descriptionRef.current.value);
+  };
+
+  const canClose = () =>
+    !!nameRef.current?.value &&
+    !dialogsRef.current?.currentDialog &&
+    !!offsetRef.current &&
+    offsetRef.current.valueAsNumber >= -999 &&
+    offsetRef.current.valueAsNumber <= 999;
+  const onClose = () => {
+    if (!nameRef.current || !descriptionRef.current || !offsetRef.current || !canClose()) return;
+    if (dialogsRef.current?.currentDialog) dialogsRef.current.closeDialog();
+
+    saveTexts();
+    updateForm({ type1, type2, frontOffsetY: offsetRef.current.valueAsNumber });
+  };
+  useEditorHandlingClose(ref, onClose, canClose);
+
+  const handleTranslateClick = (editorTitle: TranslationEditorTitle) => () => {
+    saveTexts();
+    setTimeout(() => dialogsRef.current?.openDialog(editorTitle), 0);
+  };
+  const onTranslationOverlayClose = () => {
+    if (!nameRef.current || !descriptionRef.current) return;
+    // Since translation Editor sets the texts we can rely on default value that is recomputed on state changes
+    nameRef.current.value = nameRef.current.defaultValue;
+    descriptionRef.current.value = descriptionRef.current.defaultValue;
+  };
 
   return (
-    <Editor type="edit" title={t('database_pokemon:information')}>
+    <Editor type="edit" title={t('information')}>
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="name" required>
-            {t('database_pokemon:name')}
+            {t('name')}
           </Label>
-          <TranslateInputContainer onTranslateClick={() => openTranslationEditor('translation_name')}>
-            <Input
-              type="text"
-              name="name"
-              value={getCreatureName(currentPokemon)} // TODO: Do it like ability names :<
-              onChange={(event) => refreshUI(setText(CREATURE_NAME_TEXT_ID, currentPokemon.id, event.target.value))}
-              placeholder={t('database_pokemon:example_name')}
-            />
+          <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_name')}>
+            <Input type="text" name="name" defaultValue={creatureName} ref={nameRef} placeholder={t('example_name')} />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
-          <Label htmlFor="description">{t('database_pokemon:description')}</Label>
-          <TranslateInputContainer onTranslateClick={() => openTranslationEditor('translation_description')}>
-            <MultiLineInput
-              name="description"
-              value={getCreatureDescription(currentPokemon)}
-              onChange={(event) => refreshUI(setText(CREATURE_DESCRIPTION_TEXT_ID, currentPokemon.id, event.target.value))}
-            />
+          <Label htmlFor="description">{t('description')}</Label>
+          <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_description')}>
+            <MultiLineInput name="description" defaultValue={getCreatureDescription(creature)} ref={descriptionRef} />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
-          <Label htmlFor="type1">{t('database_pokemon:type1')}</Label>
-          <SelectType dbSymbol={form.type1} onChange={(event) => refreshUI((form.type1 = event.value as DbSymbol))} noLabel rejected={[form.type2]} />
+          <Label htmlFor="type1">{t('type1')}</Label>
+          <SelectType dbSymbol={type1} onChange={(event) => setType1(event.value as DbSymbol)} noLabel rejected={[type2]} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
-          <Label htmlFor="type2">{t('database_pokemon:type2')}</Label>
-          <SelectType
-            dbSymbol={form.type2}
-            onChange={(event) => refreshUI((form.type2 = event.value as DbSymbol))}
-            noLabel
-            rejected={[form.type1]}
-            noneValue
-          />
+          <Label htmlFor="type2">{t('type2')}</Label>
+          <SelectType dbSymbol={type2} onChange={(event) => setType2(event.value as DbSymbol)} noLabel rejected={[type1]} noneValue />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <InputWithLeftLabelContainer>
-            <Label htmlFor="offset">{t('database_pokemon:offset')}</Label>
-            <Input
-              type="number"
-              name="offset"
-              min="-999"
-              max="999"
-              value={isNaN(form.frontOffsetY) ? '' : form.frontOffsetY}
-              onChange={(event) => {
-                const newValue = parseInt(event.target.value);
-                if (newValue < -999 || newValue > 999) return event.preventDefault();
-                refreshUI((form.frontOffsetY = newValue));
-              }}
-              onBlur={() => refreshUI((form.frontOffsetY = cleanNaNValue(form.frontOffsetY)))}
-            />
+            <Label htmlFor="offset">{t('offset')}</Label>
+            <Input type="number" name="offset" min="-999" max="999" defaultValue={form.frontOffsetY} ref={offsetRef} />
           </InputWithLeftLabelContainer>
-          <OffsetInfo>{t('database_pokemon:offset_info')}</OffsetInfo>
+          <OffsetInfo>{t('offset_info')}</OffsetInfo>
         </InputWithTopLabelContainer>
       </InputContainer>
+      <CreatureTranslationOverlay creature={creature} onClose={onTranslationOverlayClose} ref={dialogsRef} />
     </Editor>
   );
-};
+});
+InformationsEditor.displayName = 'InformationsEditor';

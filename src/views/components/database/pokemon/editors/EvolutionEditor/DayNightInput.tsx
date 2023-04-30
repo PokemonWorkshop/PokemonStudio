@@ -1,31 +1,35 @@
 import { InputWithTopLabelContainer, Label } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { InputProps } from './InputProps';
+import { EvolutionConditionEditorInput } from './InputProps';
 
-export const DayNightInput = ({ condition, index, onChange }: InputProps) => {
+export const DayNightInput = ({ state, inputRefs }: EvolutionConditionEditorInput) => {
   const { t } = useTranslation('database_pokemon');
-  const options = [
-    { value: '3', label: t('evolutionValue_dayNight_day') },
-    { value: '1', label: t('evolutionValue_dayNight_sunset') },
-    { value: '0', label: t('evolutionValue_dayNight_night') },
-    { value: '2', label: t('evolutionValue_dayNight_morning') },
-  ];
+  const [value, setValue] = useState<string | undefined>(state.defaults.dayNight?.toString());
+  const options = useMemo(
+    () => [
+      { value: '3', label: t('evolutionValue_dayNight_day') } as const,
+      { value: '1', label: t('evolutionValue_dayNight_sunset') } as const,
+      { value: '0', label: t('evolutionValue_dayNight_night') } as const,
+      { value: '2', label: t('evolutionValue_dayNight_morning') } as const,
+    ],
+    []
+  );
 
-  if (condition.type === 'dayNight') {
-    return (
-      <InputWithTopLabelContainer>
-        <Label>{t('evolutionValue_dayNight')}</Label>
-        <SelectCustomSimple
-          id="dayNight-DropDown"
-          options={options}
-          value={condition.value.toString()}
-          onChange={(value) => onChange({ type: 'dayNight', value: Number(value) as 0 | 1 | 2 | 3 }, index)}
-        />
-      </InputWithTopLabelContainer>
-    );
-  }
-
-  return <></>;
+  return (
+    <InputWithTopLabelContainer>
+      <Label>{t('evolutionValue_dayNight')}</Label>
+      <SelectCustomSimple
+        id="dayNight-DropDown"
+        options={options}
+        value={value || '0'}
+        onChange={(value) => {
+          if (inputRefs.current.dayNight) inputRefs.current.dayNight.value = value;
+          setValue(value);
+        }}
+      />
+      <input type="hidden" ref={(ref) => (inputRefs.current.dayNight = ref)} defaultValue={value} />
+    </InputWithTopLabelContainer>
+  );
 };

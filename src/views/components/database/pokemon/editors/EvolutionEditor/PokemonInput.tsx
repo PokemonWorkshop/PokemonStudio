@@ -1,22 +1,21 @@
 import { InputWithTopLabelContainer, Label } from '@components/inputs';
-import { SelectPokemon } from '@components/selects';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { InputProps } from './InputProps';
+import { EvolutionConditionEditorInput } from './InputProps';
+import { SelectPokemon } from '@components/selects/SelectPokemon';
 
-type PokemonInputProps = InputProps & { currentType: 'tradeWith' };
-
-export const PokemonInput = ({ condition, index, onChange, currentType }: PokemonInputProps) => {
-  const { t } = useTranslation('database_pokemon');
-  if (condition.type !== currentType) return <></>;
+export const PokemonInput = ({ type, state, dispatch }: EvolutionConditionEditorInput) => {
+  const { t } = useTranslation(['database_pokemon', 'select']);
+  if (type !== 'tradeWith') return null;
 
   return (
     <InputWithTopLabelContainer>
-      <Label>{t('evolutionValue_pokemon')}</Label>
+      <Label>{t('database_pokemon:evolutionValue_pokemon')}</Label>
       <SelectPokemon
-        dbSymbol={condition.value}
-        onChange={(option) => onChange({ type: currentType, value: option.value as DbSymbol }, index)}
+        dbSymbol={state[type]}
+        onChange={(value) => dispatch({ type: 'update', key: type, value: value as DbSymbol })}
+        undefValueOption={t('select:none')}
         noLabel
       />
     </InputWithTopLabelContainer>

@@ -24,7 +24,7 @@ const BREEDING_GROUPS = [
   'unknown',
 ] as const;
 
-export const ReproductionDataBlock = ({ pokemonWithForm, onClick }: PokemonDataProps) => {
+export const ReproductionDataBlock = ({ pokemonWithForm, dialogsRef }: PokemonDataProps) => {
   const { projectDataValues: pokemons } = useProjectPokemon();
   const getCreatureName = useGetEntityNameText();
   const { form } = pokemonWithForm;
@@ -32,7 +32,7 @@ export const ReproductionDataBlock = ({ pokemonWithForm, onClick }: PokemonDataP
   const creatureBreedingGroups = useMemo(() => form.breedGroups.map((group) => BREEDING_GROUPS[group]), [form.breedGroups]);
 
   return (
-    <DataBlockWithTitle size="fourth" title={t('breeding')} onClick={onClick}>
+    <DataBlockWithTitle size="fourth" title={t('breeding')} onClick={() => dialogsRef.current?.openDialog('breeding')}>
       <DataGrid columns="1fr" rows="1fr 1fr 1fr">
         <DataFieldsetField
           label={t('baby')}

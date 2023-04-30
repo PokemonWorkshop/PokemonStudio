@@ -48,7 +48,7 @@ export const PokemonBattlerListIEVsEditor = ({ type, battler, collapseByDefault 
       {ievs && (ievs.type === 'evs' || ievs.type === 'ivs') && (
         <PaddedInputContainer size="xs">
           <InputWithLeftLabelContainer>
-            <Label htmlFor="hp">{t('database_pokemon:hit_points')}</Label>
+            <Label htmlFor="hp">{t('database_pokemon:hp')}</Label>
             <InputNumber name="hp" value={ievs.value.hp} setValue={(value: number) => refreshUI((ievs.value.hp = value))} />
           </InputWithLeftLabelContainer>
           <InputWithLeftLabelContainer>

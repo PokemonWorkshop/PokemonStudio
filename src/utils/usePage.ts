@@ -25,6 +25,21 @@ export const useMovePage = () => {
   };
 };
 
+export const useCreaturePage = () => {
+  const { projectDataValues: creatures, selectedDataIdentifier: identifier, state } = useProjectDataReadonly('pokemon', 'pokemon');
+  const creature = creatures[identifier.specie];
+  const form = creature.forms.find((f) => f.form === identifier.form) || creature.forms[0];
+  const creatureName = getEntityNameText(creature, state);
+
+  return {
+    creature,
+    form,
+    creatureName,
+    formName: '',
+    cannotDelete: Object.keys(creatures).length <= 1,
+  };
+};
+
 export const useTextPage = () => {
   //TODO: get data
   const texts = {

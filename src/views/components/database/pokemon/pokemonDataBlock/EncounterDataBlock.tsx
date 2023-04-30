@@ -41,13 +41,13 @@ const ItemHeldComponent = ({ itemHeld, items, t }: ItemHeldComponentProps) => {
   );
 };
 
-export const EncounterDataBlock = ({ pokemonWithForm, onClick }: PokemonDataProps) => {
+export const EncounterDataBlock = ({ pokemonWithForm, dialogsRef }: PokemonDataProps) => {
   const { form } = pokemonWithForm;
   const { projectDataValues: items } = useProjectItems();
   const { t } = useTranslation(['database_pokemon', 'database_items']);
 
   return (
-    <DataBlockWithTitle size="fourth" title={t('database_pokemon:encounter')} onClick={onClick}>
+    <DataBlockWithTitle size="fourth" title={t('database_pokemon:encounter')} onClick={() => dialogsRef.current?.openDialog('encounter')}>
       <DataGrid columns="1fr" rows="42px 42px 1fr">
         <DataFieldsetField label={t('database_pokemon:catch_rate')} data={form.catchRate} />
         <DataFieldsetField

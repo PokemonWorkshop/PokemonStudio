@@ -10,7 +10,7 @@ import {
   PaddedInputContainer,
 } from '@components/inputs';
 import { useTranslation } from 'react-i18next';
-import { SelectAbility, SelectPokemon, SelectPokemonForm } from '@components/selects';
+import { SelectAbility } from '@components/selects';
 import { PokemonBattlerListIEVsEditor } from './PokemonBattlerListIEVsEditor';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
@@ -30,6 +30,8 @@ import { createExpandPokemonSetup, StudioGroupEncounter } from '@modelEntities/g
 import { createEncounter } from '@utils/entityCreation';
 import { StudioTrainer, updatePartyTrainerName } from '@modelEntities/trainer';
 import { DbSymbol } from '@modelEntities/dbSymbol';
+import { SelectPokemon } from '@components/selects/SelectPokemon';
+import { SelectPokemonForm } from '@components/selects/SelectPokemonForm';
 
 const GroupCollapseContainer = styled.div`
   display: flex;
@@ -120,7 +122,7 @@ export const PokemonBattlerListEditor = ({ type, model, currentBattler, onClose 
   const { setProjectDataValues: setTrainer } = useProjectTrainers();
   const { setProjectDataValues: setGroup } = useProjectGroups();
   const [state] = useGlobalState();
-  const { t } = useTranslation(['database_pokemon', 'database_abilities', 'pokemon_battler_list']);
+  const { t } = useTranslation(['database_pokemon', 'database_abilities', 'pokemon_battler_list', 'select']);
   const refreshUI = useRefreshUI();
   const getEntityName = useGetEntityNameText();
   createOptionalExpandPokemonSetup(battler);
@@ -139,15 +141,15 @@ export const PokemonBattlerListEditor = ({ type, model, currentBattler, onClose 
     if (onClose) onClose();
   };
 
-  const onChangePokemon: SelectChangeEvent = (selected) => {
-    battler.specie = selected.value as DbSymbol;
+  const onChangePokemon = (value: string) => {
+    battler.specie = value as DbSymbol;
     battler.form = 0;
     updateGivenName(battler, species, getEntityName);
     updateRareness(battler, species);
   };
 
-  const onChangeForm: SelectChangeEvent = (selected) => {
-    const form = selected.value === '__undef__' ? -1 : Number(selected.value);
+  const onChangeForm = (value: string) => {
+    const form = value === '__undef__' ? -1 : Number(value);
     battler.form = form;
   };
 
@@ -174,7 +176,12 @@ export const PokemonBattlerListEditor = ({ type, model, currentBattler, onClose 
               <Label htmlFor="select-pokemon" required>
                 {t('database_pokemon:pokemon')}
               </Label>
-              <SelectPokemon onChange={(value) => refreshUI(onChangePokemon(value))} dbSymbol={battler.specie} noLabel noneValue noneValueIsError />
+              <SelectPokemon
+                onChange={(value) => refreshUI(onChangePokemon(value))}
+                dbSymbol={battler.specie}
+                undefValueOption={t('select:none')}
+                noLabel
+              />
             </InputWithTopLabelContainer>
           </PaddedInputContainer>
         ) : (
@@ -183,7 +190,12 @@ export const PokemonBattlerListEditor = ({ type, model, currentBattler, onClose 
               <Label htmlFor="select-pokemon" required>
                 {t('database_pokemon:pokemon')}
               </Label>
-              <SelectPokemon onChange={(value) => refreshUI(onChangePokemon(value))} dbSymbol={battler.specie} noLabel noneValue noneValueIsError />
+              <SelectPokemon
+                onChange={(value) => refreshUI(onChangePokemon(value))}
+                dbSymbol={battler.specie}
+                undefValueOption={t('select:none')}
+                noLabel
+              />
             </InputWithTopLabelContainer>
             {(species[battler.specie].forms.length > 1 || !species[battler.specie].forms.find((form) => form.form === battler.form)) && (
               <InputWithTopLabelContainer>
@@ -192,8 +204,7 @@ export const PokemonBattlerListEditor = ({ type, model, currentBattler, onClose 
                   onChange={(value) => refreshUI(onChangeForm(value))}
                   dbSymbol={battler.specie}
                   form={battler.form}
-                  noneValue
-                  overwriteNoneValue={t('pokemon_battler_list:random')}
+                  undefValueOption={t('pokemon_battler_list:random')}
                   noLabel
                 />
               </InputWithTopLabelContainer>

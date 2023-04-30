@@ -5,19 +5,16 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { ReactComponent as DeleteIcon } from '@assets/icons/global/delete-icon.svg';
 import { Input, InputWithTopLabelContainer, Label } from '@components/inputs';
-import { InputProps } from './InputProps';
 import { DayNightInput } from './DayNightInput';
 import { ItemInput } from './ItemInput';
 import { GenderInput } from './GenderInput';
 import { MoveInput } from './MoveInput';
 import { PokemonInput } from './PokemonInput';
 import { WeatherInput } from './WeatherInput';
-import { SecondaryNoBackground } from '@components/buttons';
-import { ReactComponent as PlusIcon } from '@assets/icons/global/plus-icon2.svg';
 import { NumberInput } from './NumberInput';
 import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
-import { StudioEvolutionCondition, StudioEvolutionConditionKey } from '@modelEntities/creature';
-import { DbSymbol } from '@modelEntities/dbSymbol';
+import { StudioEvolutionConditionKey } from '@modelEntities/creature';
+import { EvolutionConditionEditorInput } from './InputProps';
 
 export const EVOLUTION_CONDITION_KEYS: StudioEvolutionConditionKey[] = [
   'minLevel',
@@ -120,57 +117,16 @@ const EvolutionInfo = styled.p`
   margin: 0;
 `;
 
-const newEvolutionCondition = (type: StudioEvolutionConditionKey): StudioEvolutionCondition => {
-  switch (type) {
-    case 'dayNight':
-    case 'gender':
-    case 'env':
-      return { type, value: 0 };
-    case 'func':
-      return { type, value: 'void' };
-    case 'gemme':
-    case 'itemHold':
-    case 'stone':
-    case 'skill1':
-    case 'skill2':
-    case 'skill3':
-    case 'skill4':
-    case 'tradeWith':
-      return { type, value: '__undef__' as DbSymbol };
-    case 'maps':
-      return { type, value: [-1] };
-    case 'maxLevel':
-    case 'minLevel':
-    case 'maxLoyalty':
-    case 'minLoyalty':
-      return { type, value: 1 };
-    case 'none':
-      return { type, value: undefined };
-    case 'trade':
-      return { type, value: true }; // dbSymbol
-    case 'weather': // Weather type
-      return { type, value: 'rain' as DbSymbol };
-    default:
-      assertUnreachable(type);
-      return { type, value: undefined };
-  }
-};
-
-type EvolutionConditionEditorProps = InputProps & { allConditions: StudioEvolutionCondition[] };
-
-const ConditionFields = ({ condition, allConditions, index, onChange }: EvolutionConditionEditorProps) => {
+const ConditionFields = ({ type, state, dispatch, inputRefs }: EvolutionConditionEditorInput) => {
   const { t } = useTranslation('database_pokemon');
-  const { type } = condition;
-  const keysToExclude = allConditions
-    .filter((otherCondition) => otherCondition.type !== type)
-    .reduce((keys, curr) => [...keys, curr.type], [] as StudioEvolutionConditionKey[]);
-  const onKeyChange = (newKey: StudioEvolutionConditionKey) => onChange(newEvolutionCondition(newKey), index);
+  const keysToExclude = state.conditionInUse.filter((otherCondition) => otherCondition !== type);
+  const onKeyChange = (newKey: StudioEvolutionConditionKey) => dispatch({ type: 'swap', originalKey: type, targetKey: newKey });
 
   switch (type) {
     case 'dayNight': // 0-3
       return (
         <ConditionContainerWithSelect currentType={type} keysToExclude={keysToExclude} onChange={onKeyChange}>
-          <DayNightInput condition={condition} index={index} onChange={onChange} />
+          <DayNightInput type={type} state={state} dispatch={dispatch} inputRefs={inputRefs} />
         </ConditionContainerWithSelect>
       );
     case 'func': // string
@@ -178,7 +134,7 @@ const ConditionFields = ({ condition, allConditions, index, onChange }: Evolutio
         <ConditionContainerWithSelect currentType={type} keysToExclude={keysToExclude} onChange={onKeyChange}>
           <InputWithTopLabelContainer>
             <Label>{t('evolutionValue_func')}</Label>
-            <Input type="text" value={condition.value} onChange={(event) => onChange({ type, value: event.target.value }, index)} />
+            <Input type="text" defaultValue={state.defaults.func?.toString()} ref={(ref) => (inputRefs.current.func = ref)} />
             <EvolutionInfo>{t('evolution_func_info')}</EvolutionInfo>
           </InputWithTopLabelContainer>
         </ConditionContainerWithSelect>
@@ -188,13 +144,13 @@ const ConditionFields = ({ condition, allConditions, index, onChange }: Evolutio
     case 'stone': // item string
       return (
         <ConditionContainerWithSelect currentType={type} keysToExclude={keysToExclude} onChange={onKeyChange}>
-          <ItemInput condition={condition} index={index} onChange={onChange} currentType={type} />
+          <ItemInput type={type} state={state} dispatch={dispatch} inputRefs={inputRefs} />
         </ConditionContainerWithSelect>
       );
     case 'gender': // 0-2
       return (
         <ConditionContainerWithSelect currentType={type} keysToExclude={keysToExclude} onChange={onKeyChange}>
-          <GenderInput condition={condition} index={index} onChange={onChange} />
+          <GenderInput type={type} state={state} dispatch={dispatch} inputRefs={inputRefs} />
         </ConditionContainerWithSelect>
       );
     case 'maps': // number[]
@@ -202,11 +158,7 @@ const ConditionFields = ({ condition, allConditions, index, onChange }: Evolutio
         <ConditionContainerWithSelect currentType={type} keysToExclude={keysToExclude} onChange={onKeyChange}>
           <InputWithTopLabelContainer>
             <Label>{t('evolutionValue_maps')}</Label>
-            <Input
-              type="text"
-              value={condition.value.join(',')}
-              onChange={(event) => onChange({ type, value: event.target.value.split(',').map((item) => Number(item.trim())) }, index)}
-            />
+            <Input type="text" defaultValue={state.defaults.maps?.toString()} ref={(ref) => (inputRefs.current.maps = ref)} />
             <EvolutionInfo>{t('evolution_maps_info')}</EvolutionInfo>
           </InputWithTopLabelContainer>
         </ConditionContainerWithSelect>
@@ -215,22 +167,14 @@ const ConditionFields = ({ condition, allConditions, index, onChange }: Evolutio
     case 'minLevel': // number
       return (
         <ConditionContainerWithSelect currentType={type} keysToExclude={keysToExclude} onChange={onKeyChange}>
-          <NumberInput label={t('evolutionValue_level')} min={1} currentType={type} onChange={onChange} condition={condition} index={index} />
+          <NumberInput label={t('evolutionValue_level')} min={1} type={type} state={state} dispatch={dispatch} inputRefs={inputRefs} />
         </ConditionContainerWithSelect>
       );
     case 'maxLoyalty': // number
     case 'minLoyalty': // number
       return (
         <ConditionContainerWithSelect currentType={type} keysToExclude={keysToExclude} onChange={onKeyChange}>
-          <NumberInput
-            label={t('evolutionValue_loyalty')}
-            min={1}
-            max={255}
-            currentType={type}
-            onChange={onChange}
-            condition={condition}
-            index={index}
-          />
+          <NumberInput label={t('evolutionValue_loyalty')} min={1} max={255} type={type} state={state} dispatch={dispatch} inputRefs={inputRefs} />
         </ConditionContainerWithSelect>
       );
     case 'skill1': // skill string
@@ -239,7 +183,7 @@ const ConditionFields = ({ condition, allConditions, index, onChange }: Evolutio
     case 'skill4': // skill string
       return (
         <ConditionContainerWithSelect currentType={type} keysToExclude={keysToExclude} onChange={onKeyChange}>
-          <MoveInput condition={condition} index={index} onChange={onChange} currentType={type} />
+          <MoveInput type={type} state={state} dispatch={dispatch} inputRefs={inputRefs} />
         </ConditionContainerWithSelect>
       );
     case 'none':
@@ -252,19 +196,19 @@ const ConditionFields = ({ condition, allConditions, index, onChange }: Evolutio
     case 'tradeWith': // dbSymbol
       return (
         <ConditionContainerWithSelect currentType={type} keysToExclude={keysToExclude} onChange={onKeyChange}>
-          <PokemonInput condition={condition} index={index} onChange={onChange} currentType={type} />
+          <PokemonInput type={type} state={state} dispatch={dispatch} inputRefs={inputRefs} />
         </ConditionContainerWithSelect>
       );
     case 'weather': // Weather type
       return (
         <ConditionContainerWithSelect currentType={type} keysToExclude={keysToExclude} onChange={onKeyChange}>
-          <WeatherInput condition={condition} index={index} onChange={onChange} />
+          <WeatherInput type={type} state={state} dispatch={dispatch} inputRefs={inputRefs} />
         </ConditionContainerWithSelect>
       );
     case 'env': // number
       return (
         <ConditionContainerWithSelect currentType={type} keysToExclude={keysToExclude} onChange={onKeyChange}>
-          <NumberInput label={t('evolutionValue_env')} min={0} currentType={type} onChange={onChange} condition={condition} index={index} />
+          <NumberInput label={t('evolutionValue_env')} min={0} type={type} state={state} dispatch={dispatch} inputRefs={inputRefs} />
         </ConditionContainerWithSelect>
       );
     default:
@@ -301,23 +245,18 @@ const EvolutionConditionEditorContainer = styled.div`
   gap: 24px;
 `;
 
-export const EvolutionConditionEditor = ({ condition, allConditions, index, onChange }: EvolutionConditionEditorProps) => {
+type EvolutionConditionEditorProps = { index: number } & EvolutionConditionEditorInput;
+
+export const EvolutionConditionEditor = ({ type, state, dispatch, inputRefs, index }: EvolutionConditionEditorProps) => {
   const { t } = useTranslation('database_pokemon');
-  const shouldShowAddCondition = index === allConditions.length - 1 && !allConditions.some((otherCondition) => otherCondition.type === 'none');
 
   return (
     <EvolutionConditionEditorContainer>
       <TitleContainer>
         <span>{t('evolutionCondition', { number: index + 1 })}</span>
-        {allConditions.length > 1 && <DeleteIcon onClick={() => onChange(undefined, index)} />}
+        <DeleteIcon onClick={() => dispatch({ type: 'remove', key: type })} />
       </TitleContainer>
-      <ConditionFields condition={condition} allConditions={allConditions} index={index} onChange={onChange} />
-      {shouldShowAddCondition && (
-        <SecondaryNoBackground onClick={() => onChange({ type: 'none', value: undefined }, allConditions.length)}>
-          <PlusIcon />
-          <span>{t('evolutionAddCondition')}</span>
-        </SecondaryNoBackground>
-      )}
+      <ConditionFields type={type} state={state} dispatch={dispatch} inputRefs={inputRefs} />
     </EvolutionConditionEditorContainer>
   );
 };

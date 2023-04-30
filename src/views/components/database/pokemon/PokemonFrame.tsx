@@ -18,7 +18,7 @@ import {
 } from '../dataBlocks';
 import { PokemonDataProps } from './PokemonDataPropsInterface';
 
-export const PokemonFrame = ({ pokemonWithForm, onClick }: PokemonDataProps) => {
+export const PokemonFrame = ({ pokemonWithForm, dialogsRef }: PokemonDataProps) => {
   const { species, form } = pokemonWithForm;
   const [state] = useGlobalState();
   const getCreatureName = useGetEntityNameText();
@@ -26,7 +26,7 @@ export const PokemonFrame = ({ pokemonWithForm, onClick }: PokemonDataProps) => 
   const types = state.projectData.types;
 
   return (
-    <DataBlockContainer size="full" onClick={onClick}>
+    <DataBlockContainer size="full" onClick={() => dialogsRef.current?.openDialog('information')}>
       <DataGrid columns="160px minmax(min-content, 610px) auto">
         <DataSpriteContainer type="sprite">
           <ResourceImage imagePathInProject={pokemonSpritePath(form)} />

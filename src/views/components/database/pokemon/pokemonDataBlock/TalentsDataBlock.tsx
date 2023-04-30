@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { DataBlockWithTitle, DataFieldsetField, DataGrid } from '../../dataBlocks';
 import { PokemonDataProps } from '../PokemonDataPropsInterface';
 
-export const TalentsDataBlock = ({ pokemonWithForm, onClick }: PokemonDataProps) => {
+export const TalentsDataBlock = ({ pokemonWithForm, dialogsRef }: PokemonDataProps) => {
   const { form } = pokemonWithForm;
   const { projectDataValues: abilities } = useProjectAbilities();
   const getAbilityName = useGetEntityNameTextUsingTextId();
@@ -19,7 +19,7 @@ export const TalentsDataBlock = ({ pokemonWithForm, onClick }: PokemonDataProps)
   };
 
   return (
-    <DataBlockWithTitle size="fourth" title={t('abilities')} onClick={onClick}>
+    <DataBlockWithTitle size="fourth" title={t('abilities')} onClick={() => dialogsRef.current?.openDialog('abilities')}>
       <DataGrid columns="1fr" rows="1fr 1fr 1fr">
         <DataFieldsetField
           label={t('ability_1')}

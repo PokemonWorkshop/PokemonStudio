@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import React, { forwardRef, useMemo, useState } from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
-import { Editor, useRefreshUI } from '@components/editor';
+import { Editor } from '@components/editor';
 import { InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import styled from 'styled-components';
 import { DarkButton, PrimaryButton } from '@components/buttons';
@@ -11,9 +11,11 @@ import { SelectCustomSimple } from '@components/SelectCustom';
 import { cloneEntity } from '@utils/cloneEntity';
 import { StudioCreature } from '@modelEntities/creature';
 import { DbSymbol } from '@modelEntities/dbSymbol';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { useCreaturePage } from '@utils/usePage';
 
 export const FormCategories = ['classic', 'mega-evolution'] as const;
-export type FormCategory = typeof FormCategories[number];
+export type FormCategory = (typeof FormCategories)[number];
 
 const InputWithError = styled.div`
   display: flex;
@@ -28,46 +30,48 @@ const ButtonContainer = styled.div`
   gap: 8px;
 `;
 
-type PokemonFormNewEditorProps = {
-  currentPokemon: StudioCreature;
-  onClose: () => void;
+type Props = {
+  closeDialog: () => void;
+  setEvolutionIndex: (index: number) => void;
 };
 
-const findFirstFormNotUsed = (pokemon: StudioCreature, start: number, end: number) => {
+const findFirstFormNotUsed = (pokemon: StudioCreature, category: FormCategory) => {
+  const [start, end] = category === 'classic' ? [0, 29] : [30, 39];
   const formIds = pokemon.forms.map((form) => form.form).sort((a, b) => a - b);
   for (let i = start; i <= end; i++) if (!formIds.includes(i)) return i;
   return -1;
 };
+
 const formCategoryEntries = (t: TFunction<('database_pokemon' | 'database_moves')[]>) =>
   FormCategories.map((category) => ({ value: category, label: t(`database_pokemon:${category}`) })).sort((a, b) => a.label.localeCompare(b.label));
 
-export const PokemonFormNewEditor = ({ currentPokemon, onClose }: PokemonFormNewEditorProps) => {
+export const PokemonFormNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeDialog, setEvolutionIndex }, ref) => {
   const { t } = useTranslation(['database_pokemon', 'database_moves']);
-  const { projectDataValues: allPokemon, setProjectDataValues: setPokemon } = useProjectPokemon();
-  const formCategoryOptions = useMemo(() => formCategoryEntries(t), [t]);
-  const [newFormId, setNewFormId] = useState(findFirstFormNotUsed(currentPokemon, 0, 29));
+  const { creature, form } = useCreaturePage();
+  const { projectDataValues: creatures, setProjectDataValues: setCreature } = useProjectPokemon();
+  const formCategoryOptions = useMemo(() => formCategoryEntries(t), []);
   const [formCategory, setFormCategory] = useState<FormCategory>('classic');
-  const [types] = useState({ type1: currentPokemon.forms[0].type1, type2: currentPokemon.forms[0].type2 });
-  const refreshUI = useRefreshUI();
+  const [type1, setType1] = useState(form.type1);
+  const [type2, setType2] = useState(form.type2);
+  const newFormId = findFirstFormNotUsed(creature, formCategory);
+
+  useEditorHandlingClose(ref);
 
   const onClickNew = () => {
-    const form = cloneEntity(currentPokemon.forms[0]);
-    form.form = newFormId;
-    form.type1 = types.type1;
-    form.type2 = types.type2;
-    if (newFormId <= 29 && allPokemon[form.babyDbSymbol]?.forms.find((f) => f.form === newFormId)) form.babyForm = newFormId;
-    currentPokemon.forms.push(form);
-    currentPokemon.forms.sort((a, b) => a.form - b.form);
-    const formIndex = currentPokemon.forms.findIndex((f) => f.form === newFormId);
-    setPokemon({ [currentPokemon.dbSymbol]: currentPokemon }, { pokemon: { specie: currentPokemon.dbSymbol, form: formIndex } });
-    onClose();
+    const newForm = cloneEntity(form);
+    newForm.form = newFormId;
+    newForm.type1 = type1;
+    newForm.type2 = type2;
+    // TODO: Make a better implementation of that, it's overwriting the original value!
+    if (newFormId <= 29 && creatures[form.babyDbSymbol]?.forms.find((f) => f.form === newFormId)) form.babyForm = newFormId;
+    const updatedCreature = cloneEntity(creature);
+    updatedCreature.forms = [...updatedCreature.forms, newForm].sort((a, b) => a.form - b.form) as typeof updatedCreature.forms; // The non-empty thing is confused by sort
+    const formIndex = updatedCreature.forms.findIndex((f) => f.form === newFormId);
+    setEvolutionIndex(0);
+    setCreature({ [updatedCreature.dbSymbol]: updatedCreature }, { pokemon: { specie: updatedCreature.dbSymbol, form: formIndex } });
+    closeDialog();
   };
-
-  const onChangeForm = (value: FormCategory) => {
-    setFormCategory(value);
-    if (value === 'classic') setNewFormId(findFirstFormNotUsed(currentPokemon, 0, 29));
-    if (value === 'mega-evolution') setNewFormId(findFirstFormNotUsed(currentPokemon, 30, 39));
-  };
+  const checkDisabled = () => type1 === '__undef__' || newFormId === -1;
 
   return (
     <Editor type="creation" title={t('database_pokemon:new_form')}>
@@ -79,7 +83,7 @@ export const PokemonFormNewEditor = ({ currentPokemon, onClose }: PokemonFormNew
               id="select-form"
               value={formCategory}
               options={formCategoryOptions}
-              onChange={(value) => onChangeForm(value as FormCategory)}
+              onChange={(value) => setFormCategory(value as FormCategory)}
               noTooltip
             />
             {newFormId === -1 && formCategory === 'classic' && <TextInputError>{t('database_pokemon:error_classic_form')}</TextInputError>}
@@ -90,30 +94,20 @@ export const PokemonFormNewEditor = ({ currentPokemon, onClose }: PokemonFormNew
         </InputWithError>
         <InputWithTopLabelContainer>
           <Label htmlFor="type1">{t('database_pokemon:type1')}</Label>
-          <SelectType
-            dbSymbol={types.type1}
-            onChange={(event) => refreshUI((types.type1 = event.value as DbSymbol))}
-            rejected={[types.type2]}
-            noLabel
-          />
+          <SelectType dbSymbol={type1} onChange={(event) => setType1(event.value as DbSymbol)} rejected={[type2]} noLabel />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="type2">{t('database_pokemon:type2')}</Label>
-          <SelectType
-            dbSymbol={types.type2}
-            onChange={(event) => refreshUI((types.type2 = event.value as DbSymbol))}
-            rejected={[types.type1]}
-            noneValue
-            noLabel
-          />
+          <SelectType dbSymbol={type2} onChange={(event) => setType2(event.value as DbSymbol)} rejected={[type1]} noneValue noLabel />
         </InputWithTopLabelContainer>
         <ButtonContainer>
-          <PrimaryButton onClick={onClickNew} disabled={newFormId === -1}>
+          <PrimaryButton onClick={onClickNew} disabled={checkDisabled()}>
             {t('database_pokemon:create_form')}
           </PrimaryButton>
-          <DarkButton onClick={onClose}>{t('database_moves:cancel')}</DarkButton>
+          <DarkButton onClick={closeDialog}>{t('database_moves:cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
     </Editor>
   );
-};
+});
+PokemonFormNewEditor.displayName = 'PokemonFormNewEditor';

@@ -3,18 +3,16 @@ import { SelectMove } from '@components/selects';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { InputProps } from './InputProps';
+import { EvolutionConditionEditorInput } from './InputProps';
 
-type MoveInputProps = InputProps & { currentType: 'skill1' | 'skill2' | 'skill3' | 'skill4' };
-
-export const MoveInput = ({ condition, index, onChange, currentType }: MoveInputProps) => {
+export const MoveInput = ({ type, state, dispatch }: EvolutionConditionEditorInput) => {
   const { t } = useTranslation('database_pokemon');
-  if (condition.type !== currentType) return <></>;
+  if (type !== 'skill1' && type !== 'skill2' && type !== 'skill3' && type !== 'skill4') return null;
 
   return (
     <InputWithTopLabelContainer>
       <Label>{t('evolutionValue_move')}</Label>
-      <SelectMove dbSymbol={condition.value} onChange={(option) => onChange({ type: currentType, value: option.value as DbSymbol }, index)} noLabel />
+      <SelectMove dbSymbol={state[type]} onChange={(option) => dispatch({ type: 'update', key: type, value: option.value as DbSymbol })} noLabel />
     </InputWithTopLabelContainer>
   );
 };

@@ -1,7 +1,6 @@
 import { StudioEvolutionCondition } from '@modelEntities/creature';
+import { EvolutionEditorStateHookOutput } from './useEvolutionEditorState';
 
-export type InputProps = {
-  condition: StudioEvolutionCondition;
-  index: number;
-  onChange: (condition: StudioEvolutionCondition | undefined, index: number) => void;
-};
+export type EvolutionConditionEditorInput = {
+  type: StudioEvolutionCondition['type'];
+} & Pick<EvolutionEditorStateHookOutput, 'state' | 'dispatch' | 'inputRefs'>;

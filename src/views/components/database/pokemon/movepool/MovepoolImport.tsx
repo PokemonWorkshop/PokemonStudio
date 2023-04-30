@@ -5,9 +5,10 @@ import { InputContainer, InputWithTopLabelContainer, Label } from '@components/i
 import { useProjectData } from '@utils/useProjectData';
 import styled from 'styled-components';
 import { DarkButton, PrimaryButton } from '@components/buttons';
+import { SelectPokemon } from '@components/selects/SelectPokemon';
 import { getMoveKlass } from './MovepoolTable';
 import { cloneEntity } from '@utils/cloneEntity';
-import { SelectPokemon, SelectPokemonForm } from '@components/selects';
+import { SelectPokemonForm } from '@components/selects/SelectPokemonForm';
 
 type MovepoolImportProps = {
   type: 'level' | 'tutor' | 'tech' | 'breed' | 'evolution';
@@ -58,14 +59,13 @@ export const MovepoolImport = ({ type, onClose }: MovepoolImportProps) => {
           <SelectPokemon
             dbSymbol={selectedPokemon}
             onChange={(event) => {
-              setSelectedPokemon(event.value);
+              setSelectedPokemon(event);
               setSelectedForm(0);
             }}
             noLabel
-            noneValueIsError
           />
           {selectedPokemon !== '__undef__' && pokemon[selectedPokemon].forms.length > 1 && (
-            <SelectPokemonForm dbSymbol={selectedPokemon} form={selectedForm} onChange={(event) => setSelectedForm(Number(event.value))} noLabel />
+            <SelectPokemonForm dbSymbol={selectedPokemon} form={selectedForm} onChange={(event) => setSelectedForm(Number(event))} noLabel />
           )}
           <ButtonContainer>
             <PrimaryButton onClick={onClickValidate} disabled={selectedPokemon === '__undef__'}>
