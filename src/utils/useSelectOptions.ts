@@ -7,10 +7,12 @@ import { MOVE_NAME_TEXT_ID } from '@modelEntities/move';
 import { QUEST_NAME_TEXT_ID } from '@modelEntities/quest';
 import { TYPE_NAME_TEXT_ID } from '@modelEntities/type';
 import { ZONE_NAME_TEXT_ID } from '@modelEntities/zone';
+import { TEXT_INFO_NAME_TEXT_ID } from '@modelEntities/textInfo';
 import { State } from '@src/GlobalStateProvider';
 import { assertUnreachable } from './assertUnreachable';
 import { cloneEntity } from './cloneEntity';
-import { CSV_BASE, getText, pocketMapping } from './ReadingProjectText';
+import { getText, pocketMapping } from './ReadingProjectText';
+import { DEX_DEFAULT_NAME_TEXT_ID } from '@modelEntities/dex';
 
 // Note: Regexp to search all options in the code: (\{ value:|\{ label:)
 
@@ -29,8 +31,9 @@ const OPTION_SOURCE_KEYS = [
   'quests',
   'types',
   'zones',
+  'textInfos',
 ] as const;
-export type OptionSourceKey = typeof OPTION_SOURCE_KEYS[number];
+export type OptionSourceKey = (typeof OPTION_SOURCE_KEYS)[number];
 // Record holding all the options in the order they should appear on the select
 const OptionSources: Record<OptionSourceKey, SelectOption[]> = {
   pocket: [],
@@ -46,10 +49,11 @@ const OptionSources: Record<OptionSourceKey, SelectOption[]> = {
   quests: [],
   types: [],
   zones: [],
+  textInfos: [],
 };
 
-const TEXT_SOURCE_KEYS = ['pocket', 'items', 'moves', 'abilities', 'dex', 'groups', 'creatures', 'quests', 'types', 'zones'] as const;
-type TextSourceKey = typeof TEXT_SOURCE_KEYS[number];
+const TEXT_SOURCE_KEYS = ['pocket', 'items', 'moves', 'abilities', 'dex', 'groups', 'creatures', 'quests', 'types', 'zones', 'textInfos'] as const;
+type TextSourceKey = (typeof TEXT_SOURCE_KEYS)[number];
 // Record holding the mapping from option source to text source
 const OptionToTextKey: Record<OptionSourceKey, TextSourceKey> = {
   pocket: 'pocket',
@@ -65,6 +69,7 @@ const OptionToTextKey: Record<OptionSourceKey, TextSourceKey> = {
   quests: 'quests',
   types: 'types',
   zones: 'zones',
+  textInfos: 'textInfos',
 };
 // Record holding all the optionSource groups
 const OptionSourceGroups: Record<TextSourceKey, OptionSourceKey[]> = {
@@ -78,6 +83,7 @@ const OptionSourceGroups: Record<TextSourceKey, OptionSourceKey[]> = {
   quests: ['quests'],
   types: ['types'],
   zones: ['zones'],
+  textInfos: ['textInfos'],
 };
 // Record holding all the file ids for the required text sources
 const TextFileIds: Record<TextSourceKey, number> = {
@@ -85,12 +91,13 @@ const TextFileIds: Record<TextSourceKey, number> = {
   items: ITEM_NAME_TEXT_ID,
   moves: MOVE_NAME_TEXT_ID,
   abilities: ABILITY_NAME_TEXT_ID,
-  dex: 63,
+  dex: DEX_DEFAULT_NAME_TEXT_ID,
   groups: GROUP_NAME_TEXT_ID,
   creatures: CREATURE_NAME_TEXT_ID,
   quests: QUEST_NAME_TEXT_ID,
   types: TYPE_NAME_TEXT_ID,
   zones: ZONE_NAME_TEXT_ID,
+  textInfos: TEXT_INFO_NAME_TEXT_ID,
 };
 // Record holding the link between fileId and textSource
 const TextFileIdsToSource = Object.fromEntries(Object.entries(TextFileIds).map(([key, value]) => [value, key])) as Record<number, TextSourceKey>;
@@ -106,6 +113,7 @@ const TextSources: Record<TextSourceKey, SelectOption[]> = {
   quests: [],
   types: [],
   zones: [],
+  textInfos: [],
 };
 
 const getTextSource = (projectText: Parameters<typeof getText>[0], fileId: number, index: number, originalObjects: SelectOption[]) => {
@@ -122,7 +130,7 @@ const buildTextSourceFromScratch = (key: TextSourceKey, state: State) => {
   const projectText = { texts: state.projectText, config: state.projectConfig.language_config };
   const fileId = TextFileIds[key];
   const originalObjects = TextSources[key];
-  const length = state.projectText[(CSV_BASE + fileId) as keyof typeof state.projectText].length;
+  const length = state.projectText[fileId].length;
   TextSources[key] = Array.from({ length }, (_, index) => getTextSource(projectText, fileId, index, originalObjects));
 };
 
@@ -205,6 +213,11 @@ const buildSelectOptionsFromKey = (key: OptionSourceKey, state: State) => {
       return Object.values(state.projectData.zones)
         .sort((a, b) => a.id - b.id)
         .map((data) => adjustSelectOptionValue(originalObjects[data.id] || cloneEntity(originalObjects[0]), data.dbSymbol));
+    case 'textInfos':
+      return state.textInfos
+        .slice()
+        .sort((a, b) => a.fileId - b.fileId)
+        .map((data) => adjustSelectOptionValue(originalObjects[data.textId] || cloneEntity(originalObjects[0]), data.fileId.toString()));
     default:
       assertUnreachable(key);
   }

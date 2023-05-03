@@ -69,6 +69,14 @@ const getMapLinkIdentifier = (selectedFromStorage: SelectedDataIdentifier, maps:
   );
 };
 
+const getTextInfoIdentifier = (selectedFromStorage: SelectedDataIdentifier, textInfos: PreGlobalState['textInfos']) => {
+  const expectedTextInfosFileId = Number(selectedFromStorage.textInfo);
+
+  if (textInfos.find(({ fileId }) => fileId === expectedTextInfosFileId)) return expectedTextInfosFileId;
+
+  return textInfos.sort(({ fileId: a, fileId: b }) => a - b)[0]?.fileId || 0;
+};
+
 export const generateSelectedIdentifier = (preState: PreGlobalState): SelectedDataIdentifier => {
   const projectData = preState.projectData;
   const selectedFromStorage = getSelectedIdentifierFromStorage(preState);
@@ -90,5 +98,6 @@ export const generateSelectedIdentifier = (preState: PreGlobalState): SelectedDa
     group: getSelectedIdentifier(preState, selectedFromStorage, 'group', 'groups') || firstById(projectData.groups),
     dex: getSelectedIdentifier(preState, selectedFromStorage, 'dex', 'dex') || firstById(projectData.dex),
     mapLink: getMapLinkIdentifier(selectedFromStorage, preState.rmxpMaps, validMaps),
+    textInfo: getTextInfoIdentifier(selectedFromStorage, preState.textInfos),
   };
 };

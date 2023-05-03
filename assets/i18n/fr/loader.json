@@ -22,6 +22,7 @@
   "loading_project_last_psdk_version": "Récupération de la dernière version de PSDK",
   "loading_project_identifier": "Finalisation",
   "loading_update_map_infos": "Mise à jour de la liste des cartes",
+  "loading_update_text_infos": "Mise à jour de la liste des fichiers de textes",
   "creating_project_opening_path": "Choix du dossier parent",
   "creating_project_checking": "Vérification que le projet n'existe pas",
   "creating_project_child_folder_exist_error": "Le projet existe déjà",
@@ -34,5 +35,7 @@
   "importing_project_writing_meta": "Sauvegarde des métadonnées du projet",
   "importing_project_checking": "Vérification du projet",
   "importing_not_import_studio_project": "Vous ne pouvez pas importer un projet Pokémon Studio.",
-  "integrity_message": "{{count}} fichiers non conformes ont été détectés et n'ont pas été chargés. Vous pouvez obtenir davantage d'informations en accédant aux logs de Pokémon Studio."
+  "integrity_message": "{{count}} fichiers non conformes ont été détectés et n'ont pas été chargés. Vous pouvez obtenir davantage d'informations en accédant aux logs de Pokémon Studio.",
+  "failed_deserialization": "Échec de l'interprétation",
+  "error_project_version": "Votre projet a été ouvert ou créé avec une version plus récente de l'application. Veuillez mettre à jour Pokémon Studio."
 }

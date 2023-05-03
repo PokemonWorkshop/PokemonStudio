@@ -501,6 +501,60 @@ contextBridge.exposeInMainWorld('api', {
     ipcRenderer.removeAllListeners(`open-studio-logs-folder/success`);
     ipcRenderer.removeAllListeners(`open-studio-logs-folder/failure`);
   },
+  updateTextInfos: (taskPayload, onSuccess, onFailure) => {
+    // Register success event
+    ipcRenderer.once(`update-text-infos/success`, (_, payload) => {
+      ipcRenderer.removeAllListeners(`update-text-infos/failure`);
+      onSuccess(payload);
+    });
+    // Register failure event
+    ipcRenderer.once(`update-text-infos/failure`, (_, error) => {
+      ipcRenderer.removeAllListeners(`update-text-infos/success`);
+      onFailure(error);
+    });
+    // Call service
+    ipcRenderer.send('update-text-infos', taskPayload);
+  },
+  cleanupUpdateTextInfos: () => {
+    ipcRenderer.removeAllListeners(`update-text-infos/success`);
+    ipcRenderer.removeAllListeners(`update-text-infos/failure`);
+  },
+  saveTextInfos: (taskPayload, onSuccess, onFailure) => {
+    // Register success event
+    ipcRenderer.once(`save-text-infos/success`, (_, payload) => {
+      ipcRenderer.removeAllListeners(`save-text-infos/failure`);
+      onSuccess(payload);
+    });
+    // Register failure event
+    ipcRenderer.once(`save-text-infos/failure`, (_, error) => {
+      ipcRenderer.removeAllListeners(`save-text-infos/success`);
+      onFailure(error);
+    });
+    // Call service
+    ipcRenderer.send('save-text-infos', taskPayload);
+  },
+  cleanupSaveTextInfos: () => {
+    ipcRenderer.removeAllListeners(`save-text-infos/success`);
+    ipcRenderer.removeAllListeners(`save-text-infos/failure`);
+  },
+  readCsvFile: (taskPayload, onSuccess, onFailure) => {
+    // Register success event
+    ipcRenderer.once(`read-csv-file/success`, (_, payload) => {
+      ipcRenderer.removeAllListeners(`read-csv-file/failure`);
+      onSuccess(payload);
+    });
+    // Register failure event
+    ipcRenderer.once(`read-csv-file/failure`, (_, error) => {
+      ipcRenderer.removeAllListeners(`read-csv-file/success`);
+      onFailure(error);
+    });
+    // Call service
+    ipcRenderer.send('read-csv-file', taskPayload);
+  },
+  cleanupReadCsvFile: () => {
+    ipcRenderer.removeAllListeners(`read-csv-file/success`);
+    ipcRenderer.removeAllListeners(`read-csv-file/failure`);
+  },
 });
 
 declare global {
@@ -594,6 +648,12 @@ declare global {
       cleanupCopyFile: () => void;
       openStudioLogsFolder: BackendTaskWithGenericErrorAndNoProgress<Record<string, never>, Record<string, never>>;
       cleanupOpenStudioLogsFolder: () => void;
+      updateTextInfos: BackendTaskWithGenericErrorAndNoProgress<{ projectPath: string; currentLanguage: string }, Record<string, never>>;
+      cleanupUpdateTextInfos: () => void;
+      saveTextInfos: BackendTaskWithGenericErrorAndNoProgress<{ projectPath: string; textInfos: string }, Record<string, never>>;
+      cleanupSaveTextInfos: () => void;
+      readCsvFile: BackendTaskWithGenericError<{ filePath: string; fileId: number }, ProjectText, GenericBackendProgress>;
+      cleanupReadCsvFile: () => void;
     };
   }
 }

@@ -178,13 +178,13 @@ export const ITEM_VALIDATOR = z.discriminatedUnion('klass', [
 ]);
 export type StudioItem = z.infer<typeof ITEM_VALIDATOR>;
 
-export const ITEM_DESCRIPTION_TEXT_ID = 13;
-export const ITEM_NAME_TEXT_ID = 12;
-export const ITEM_PLURAL_NAME_TEXT_ID = -90_999; // 9001 - 100000
-export const ITEM_POCKET_NAME_TEXT_ID = 15;
+export const ITEM_DESCRIPTION_TEXT_ID = 100013;
+export const ITEM_NAME_TEXT_ID = 100012;
+export const ITEM_PLURAL_NAME_TEXT_ID = 9001;
+export const ITEM_POCKET_NAME_TEXT_ID = 100015;
 
 export const StudioItemCategories = ['ball', 'heal', 'repel', 'fleeing', 'event', 'stone', 'tech', 'generic'] as const;
-export type StudioItemCategory = typeof StudioItemCategories[number];
+export type StudioItemCategory = (typeof StudioItemCategories)[number];
 export type StudioItemEditors = 'generic' | 'parameters' | 'exploration' | 'battle' | 'tech' | 'progress' | 'heal' | 'catch' | 'berries' | 'cooking';
 
 export const LOCKED_ITEM_EDITOR: Readonly<Record<StudioItem['klass'], Readonly<StudioItemEditors[]>>> = {

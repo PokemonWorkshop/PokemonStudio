@@ -8,6 +8,7 @@ import styled from 'styled-components';
 import { SelectText } from '@components/selects';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
+import { useImportProjectText } from '@utils/ReadingProjectText';
 
 const ImportInfoContainer = styled.span`
   ${({ theme }) => theme.fonts.normalSmall}
@@ -31,15 +32,15 @@ type Props = {
  * Component that is mainly responsive of importing the texts file when we click on the button "Import texts"
  */
 export const TextImportEditor = forwardRef<EditorHandlingClose, Props>(({ closeDialog }, ref) => {
-  const { texts } = useTextPage();
+  const { textInfo } = useTextPage();
+  const setImportProjectText = useImportProjectText();
   const { t } = useTranslation('text_management');
   const [textSelected, setTextSelected] = useState('__undef__');
 
   useEditorHandlingClose(ref);
 
   const onClickImport = () => {
-    // TODO: code it!
-    console.log(textSelected);
+    setImportProjectText(Number(textSelected), textInfo.fileId);
     closeDialog();
   };
 
@@ -53,7 +54,7 @@ export const TextImportEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
           <Label htmlFor="import" required>
             {t('import_texts_file')}
           </Label>
-          <SelectText dbSymbol={textSelected} onChange={(selected) => setTextSelected(selected)} undefValueOption={t('none')} noLabel />
+          <SelectText fileId={textSelected} onChange={(selected) => setTextSelected(selected)} undefValueOption={t('none')} noLabel />
         </InputWithTopLabelContainer>
         <ButtonContainer>
           <ToolTipContainer>

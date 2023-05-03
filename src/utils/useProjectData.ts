@@ -1,7 +1,7 @@
 import { DbSymbol } from '@modelEntities/dbSymbol';
-import { ProjectData, projectTextSave, SelectedDataIdentifier, State, useGlobalState } from '@src/GlobalStateProvider';
+import { ProjectData, SelectedDataIdentifier, State, useGlobalState } from '@src/GlobalStateProvider';
 import { getEntityNameText, getEntityNameTextUsingTextId } from './ReadingProjectText';
-import { SavingMap } from './SavingUtils';
+import { SavingMap, SavingTextMap } from './SavingUtils';
 import { buildTextUpdate, TextUpdate } from './updateProjectText';
 import { addSelectOption, removeSelectOption } from './useSelectOptions';
 
@@ -63,7 +63,7 @@ const getNextDbSymbolByName = (values: (EntityTextIdWithDbSymbol | EntityIdWithD
  * @param key Key of the data collection you want to access from state.projectData
  * @param selected Key of the data identifier you want to access from state.selectedDataIdentifier
  */
-export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier extends keyof SelectedDataIdentifier>(
+export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier extends keyof Omit<SelectedDataIdentifier, 'textInfo'>>(
   key: Key,
   selected: SelectedIdentifier
 ) => {
@@ -85,7 +85,9 @@ export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier
     const id = String(Object.keys(newDataValues)[0]);
     setState((currentState) => {
       const projectDataValues = currentState.projectData[key];
-      const projectText = textUpdates ? buildTextUpdate(textUpdates, currentState) : currentState.projectText;
+      const { fileIdUpdatedTexts, projectText } = textUpdates
+        ? buildTextUpdate(textUpdates, currentState)
+        : { fileIdUpdatedTexts: [], projectText: currentState.projectText };
       if (JSON.stringify(newDataValues[id]) !== JSON.stringify(projectDataValues[id])) {
         const newState = {
           ...currentState,
@@ -93,7 +95,7 @@ export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier
           selectedDataIdentifier: { ...currentState.selectedDataIdentifier, ...newSelectedData },
           projectText,
           savingData: new SavingMap(currentState.savingData.set({ key, id }, 'UPDATE')),
-          tmpHackHasTextToSave: projectTextSave.some((b) => b),
+          savingText: new SavingTextMap(currentState.savingText.setMultiple(fileIdUpdatedTexts, 'UPDATE')),
         };
         // Add the new text
         if (key !== 'trainers' && key !== 'mapLinks') addSelectOption(key === 'pokemon' ? 'creatures' : key, newState);
@@ -104,7 +106,6 @@ export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier
           projectData: { ...currentState.projectData, [key]: { ...projectDataValues, ...newDataValues } },
           selectedDataIdentifier: { ...currentState.selectedDataIdentifier, ...newSelectedData },
           projectText,
-          tmpHackHasTextToSave: projectTextSave.some((b) => b),
         };
       }
     });
@@ -178,7 +179,7 @@ export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier
  * @param key Key of the data collection you want to access from state.projectData
  * @param selected Key of the data identifier you want to access from state.selectedDataIdentifier
  */
-export const useProjectDataReadonly = <Key extends keyof ProjectData, SelectedIdentifier extends keyof SelectedDataIdentifier>(
+export const useProjectDataReadonly = <Key extends keyof ProjectData, SelectedIdentifier extends keyof Omit<SelectedDataIdentifier, 'textInfo'>>(
   key: Key,
   selected: SelectedIdentifier
 ) => {

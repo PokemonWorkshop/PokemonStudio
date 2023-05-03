@@ -1,10 +1,19 @@
 import { useEffect, useState } from 'react';
-import { useGlobalState, projectTextSave, projectTextKeys } from '@src/GlobalStateProvider';
+import { useGlobalState } from '@src/GlobalStateProvider';
 import { updateProjectEditDate, updateProjectStudio as updateProjectStudioLocalStorage } from './projectList';
-import { SavingConfigMap, SavingMap } from './SavingUtils';
+import { SavingConfigMap, SavingMap, SavingTextMap } from './SavingUtils';
 
 type ProjectSaveStateObject = {
-  state: 'done' | 'save_data' | 'save_configs' | 'save_texts' | 'save_images' | 'update_studio_file' | 'update_project_list' | 'reset_saving';
+  state:
+    | 'done'
+    | 'save_data'
+    | 'save_configs'
+    | 'save_texts'
+    | 'save_text_infos'
+    | 'save_images'
+    | 'update_studio_file'
+    | 'update_project_list'
+    | 'reset_saving';
 };
 
 type ProjectSaveFailureCallback = (error: { errorMessage: string }) => void;
@@ -21,12 +30,12 @@ export const useProjectSave = () => {
   const [callbacks, setCallbacks] = useState<{ onFailure: ProjectSaveFailureCallback; onSuccess: ProjectSaveSuccessCallback } | undefined>(undefined);
   const [stateSave, setStateSave] = useState<ProjectSaveStateObject>({ state: 'done' });
 
-  const isProjectTextSave = projectTextSave.some((b) => b) || !!state.tmpHackHasTextToSave;
   const isDataToSave =
     state.savingData.map.size > 0 ||
     state.savingConfig.map.size > 0 ||
+    state.savingText.map.size > 0 ||
     state.savingProjectStudio ||
-    isProjectTextSave ||
+    state.savingTextInfos ||
     Object.keys(state.savingImage).length > 0;
 
   useEffect(() => {
@@ -35,6 +44,7 @@ export const useProjectSave = () => {
         window.api.cleanupSaveProjectData();
         window.api.cleanupSaveProjectConfigs();
         window.api.cleanupSaveProjectTexts();
+        window.api.cleanupSaveTextInfos();
         window.api.cleanupMoveImage();
         window.api.cleanupProjectStudioFile();
         return;
@@ -59,40 +69,26 @@ export const useProjectSave = () => {
           }
         );
       case 'save_texts': {
-        const newProjectText = Object.assign({}, state.projectText);
-        const newProjectTextSave = [...projectTextSave];
-        const modified = { value: false };
-        state.savingLanguage.forEach((code) => {
-          projectTextKeys.forEach((k, saveIndex) => {
-            if (newProjectText[k] !== undefined && !newProjectText[k][0].includes(code)) {
-              const defaultIndex = newProjectText[k][0].indexOf(state.projectConfig.language_config.defaultLanguage);
-              newProjectText[k] = newProjectText[k].map((line, i) => [...line, i == 0 ? code : line[defaultIndex === -1 ? 0 : defaultIndex]]);
-              modified.value = true;
-              newProjectTextSave[saveIndex] = true;
-            }
-          });
-        });
-        if (isProjectTextSave || modified.value) {
-          return window.api.saveProjectTexts(
-            {
-              path: state.projectPath!,
-              texts: { keys: projectTextKeys, projectText: JSON.stringify(newProjectText), projectTextSave: newProjectTextSave },
-            },
-            () => {
-              projectTextSave.fill(false);
-              setStateSave({ state: 'save_images' });
-              if (modified.value) setState({ ...state, projectText: newProjectText });
-            },
-            ({ errorMessage }) => {
-              setStateSave({ state: 'done' });
-              fail(callbacks, errorMessage);
-            }
-          );
-        } else {
-          setStateSave({ state: 'save_images' });
-        }
-        return;
+        if (state.savingText.map.size === 0) return setStateSave({ state: 'save_text_infos' });
+        return window.api.saveProjectTexts(
+          { path: state.projectPath!, texts: state.savingText.getSavingText(state.projectText) },
+          () => setStateSave({ state: 'save_text_infos' }),
+          ({ errorMessage }) => {
+            setStateSave({ state: 'done' });
+            fail(callbacks, errorMessage);
+          }
+        );
       }
+      case 'save_text_infos':
+        if (!state.savingTextInfos) return setStateSave({ state: 'save_images' });
+        return window.api.saveTextInfos(
+          { projectPath: state.projectPath!, textInfos: JSON.stringify(state.textInfos, null, 2) },
+          () => setStateSave({ state: 'save_images' }),
+          ({ errorMessage }) => {
+            setStateSave({ state: 'done' });
+            fail(callbacks, errorMessage);
+          }
+        );
       case 'save_images':
         if (Object.keys(state.savingImage).length === 0) return setStateSave({ state: 'update_studio_file' });
         return window.api.moveImage(
@@ -124,10 +120,11 @@ export const useProjectSave = () => {
           ...state,
           savingData: new SavingMap(),
           savingConfig: new SavingConfigMap(),
+          savingText: new SavingTextMap(),
           savingProjectStudio: false,
-          tmpHackHasTextToSave: false,
           savingLanguage: [],
           savingImage: {},
+          savingTextInfos: false,
           textVersion: 0,
         });
         setStateSave({ state: 'done' });

@@ -11,5 +11,5 @@ export const ABILITY_VALIDATOR = z.object({
 
 export type StudioAbility = z.infer<typeof ABILITY_VALIDATOR>;
 
-export const ABILITY_NAME_TEXT_ID = 4;
-export const ABILITY_DESCRIPTION_TEXT_ID = 5;
+export const ABILITY_NAME_TEXT_ID = 100004;
+export const ABILITY_DESCRIPTION_TEXT_ID = 100005;

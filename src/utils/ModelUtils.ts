@@ -1,3 +1,4 @@
+import { StudioTextInfo } from '@modelEntities/textInfo';
 import { ProjectData } from '@src/GlobalStateProvider';
 
 /**
@@ -5,7 +6,7 @@ import { ProjectData } from '@src/GlobalStateProvider';
  * @param allData The project data containing the abilities or types
  * @returns The text id
  */
-export const findFirstAvailableTextId = (allData: ProjectData['abilities'] | ProjectData['types']) => {
+export const findFirstAvailableTextId = (allData: ProjectData['abilities'] | ProjectData['types'] | StudioTextInfo[]) => {
   const textIdSet = Object.values(allData)
     .map(({ textId }) => textId) // Fetch all ids
     .filter((textId, index, array) => index === array.indexOf(textId)) // reject all duplicates

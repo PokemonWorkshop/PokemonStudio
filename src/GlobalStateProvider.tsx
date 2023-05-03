@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { createContainer } from 'react-tracked';
-import { SavingConfigMap, SavingMap } from '@utils/SavingUtils';
+import { SavingConfigMap, SavingMap, SavingTextMap } from '@utils/SavingUtils';
 import type { PSDKVersion } from '@services/getPSDKVersion';
 import { StudioAbility } from '@modelEntities/ability';
 import {
@@ -28,6 +28,7 @@ import { StudioZone } from '@modelEntities/zone';
 import { StudioType } from '@modelEntities/type';
 import { StudioQuest } from '@modelEntities/quest';
 import { StudioProject } from '@modelEntities/project';
+import { StudioTextInfo } from '@modelEntities/textInfo';
 
 export interface ProjectData {
   items: {
@@ -65,37 +66,8 @@ export interface ProjectData {
   };
 }
 
-export const projectTextKeys: (keyof ProjectText)[] = [
-  9001, 100000, 100001, 100002, 100003, 100004, 100005, 100006, 100007, 100008, 100010, 100012, 100013, 100015, 100029, 100045, 100046, 100047,
-  100048, 100061, 100062, 100063, 100064,
-];
-
-export const projectTextSave: boolean[] = new Array(projectTextKeys.length).fill(false);
-
 export interface ProjectText {
-  9001: string[][]; // Items plural names
-  100000: string[][]; // Pokémon names
-  100001: string[][]; // Pokémon species
-  100002: string[][]; // Pokémon descriptions
-  100003: string[][]; // Types names
-  100004: string[][]; // Abilities names
-  100005: string[][]; // Abilities descriptions
-  100006: string[][]; // Moves names
-  100007: string[][]; // Moves descriptions
-  100008: string[][]; // Natures names
-  100010: string[][]; // Zones names
-  100012: string[][]; // Items names
-  100013: string[][]; // Items descriptions
-  100015: string[][]; // Bag pockets names
-  100029: string[][]; // Trainers class names
-  100045: string[][]; // Quests names
-  100046: string[][]; // Quests descriptions
-  100047: string[][]; // Victory sentences (trainer)
-  100048: string[][]; // Defeat sentences (trainer)
-  100061: string[][]; // Groups names
-  100062: string[][]; // Trainers names
-  100063: string[][]; // Pokédex
-  100064: string[][]; // Zone descriptions
+  [fileId: number]: string[][];
 }
 
 export const psdkConfigKeys: (keyof PSDKConfigs)[] = [
@@ -143,6 +115,7 @@ export type SelectedDataIdentifier = {
   group: string;
   dex: string;
   mapLink: string;
+  textInfo: number;
 };
 
 export interface State {
@@ -154,14 +127,16 @@ export interface State {
   selectedDataIdentifier: SelectedDataIdentifier;
   savingData: SavingMap;
   savingConfig: SavingConfigMap;
+  savingText: SavingTextMap;
   savingProjectStudio: boolean;
   currentPSDKVersion: PSDKVersion;
   lastPSDKVersion: PSDKVersion;
   rmxpMaps: StudioRMXPMap[];
-  tmpHackHasTextToSave?: boolean;
+  textInfos: StudioTextInfo[];
   textVersion: number;
   savingLanguage: string[];
   savingImage: { [path: string]: string };
+  savingTextInfos: boolean;
 }
 
 const initialState = {
@@ -180,13 +155,17 @@ const initialState = {
     group: 'group_0',
     dex: 'national',
     mapLink: '__undef__',
+    textInfo: 0,
   },
   savingData: new SavingMap(),
   savingConfig: new SavingConfigMap(),
+  savingText: new SavingTextMap(),
   rmxpMaps: [] as StudioRMXPMap[],
+  textInfos: [] as StudioTextInfo[],
   savingProjectStudio: false,
   savingLanguage: [] as string[],
   savingImage: {},
+  savingTextInfos: false,
   textVersion: 0,
 };
 

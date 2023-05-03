@@ -29,7 +29,7 @@
   "clear_all": "Tout effacer",
   "no_text": "Aucun texte pour ce fichier de textes",
   "importation": "Importation",
-  "importation_info": "Vous pouvez importer les textes d'un autre fichier.",
+  "importation_info": "Vous pouvez importer les textes d'un autre fichier. Attention, cette opération remplace les textes déjà présents.",
   "import_texts_file": "Importer les textes du fichier",
   "import": "Importer",
   "none": "Aucun"

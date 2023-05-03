@@ -23,5 +23,5 @@ export const ZONE_VALIDATOR = z.object({
 });
 export type StudioZone = z.infer<typeof ZONE_VALIDATOR>;
 
-export const ZONE_DESCRIPTION_TEXT_ID = 64;
-export const ZONE_NAME_TEXT_ID = 10;
+export const ZONE_DESCRIPTION_TEXT_ID = 100064;
+export const ZONE_NAME_TEXT_ID = 100010;

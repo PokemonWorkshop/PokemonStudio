@@ -1,38 +1,27 @@
-import { IpcMainEvent } from "electron";
-import path from "path";
-import fs from "fs";
-import { ProjectText, projectTextKeys } from "@src/GlobalStateProvider";
-import { parse } from "csv-parse";
-
-const loadCSV = async (textPath: string, id: keyof ProjectText): Promise<string[][]> => {
-  const data: string[][] = [];
-  return new Promise((resolve, reject) => {
-    fs.createReadStream(path.join(textPath, `${id}.csv`))
-      .on("error", (err) => reject(`${id} ${err.message}`))
-      .pipe(parse({ delimiter: "," }))
-      .on("data", (csvrow: string[]) => data.push(csvrow))
-      .on("end", () => resolve(data));
-  });
-};
+import { IpcMainEvent } from 'electron';
+import path from 'path';
+import { ProjectText } from '@src/GlobalStateProvider';
+import { getTextFileList, loadCSV } from '@utils/textManagement';
 
 const readProjectTexts = async (event: IpcMainEvent, payload: { path: string }) => {
-  console.info("read-project-texts");
+  console.info('read-project-texts');
   try {
-    const projectTexts = await projectTextKeys.reduce(async (prev, curr, index) => {
+    const textFileList = getTextFileList(payload.path, true);
+    const projectTexts = await textFileList.reduce(async (prev, curr, index) => {
       const previousResult = await prev;
-      event.sender.send("read-project-texts/progress", { step: index + 1, total: projectTextKeys.length, stepText: `${curr}.csv` });
-      const currentText = await loadCSV(path.join(payload.path, "Data/Text/Dialogs"), curr);
+      event.sender.send('read-project-texts/progress', { step: index + 1, total: textFileList.length, stepText: `${curr}.csv` });
+      const currentText = await loadCSV(path.join(payload.path, curr >= 200000 ? `Data/Text/Studio/${curr}` : `Data/Text/Dialogs/${curr}`));
       return { ...previousResult, [curr]: currentText };
     }, Promise.resolve({} as ProjectText));
 
-    console.info("read-project-texts/success");
-    event.sender.send("read-project-texts/success", projectTexts);
+    console.info('read-project-texts/success');
+    event.sender.send('read-project-texts/success', projectTexts);
   } catch (error) {
-    console.error("read-project-texts/failure", error);
-    event.sender.send("read-project-texts/failure", { errorMessage: `${error instanceof Error ? error.message : error}` });
+    console.error('read-project-texts/failure', error);
+    event.sender.send('read-project-texts/failure', { errorMessage: `${error instanceof Error ? error.message : error}` });
   }
 };
 
 export const registerReadProjectTexts = (ipcMain: Electron.IpcMain) => {
-  ipcMain.on("read-project-texts", readProjectTexts);
+  ipcMain.on('read-project-texts', readProjectTexts);
 };

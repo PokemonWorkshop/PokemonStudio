@@ -5,11 +5,12 @@ import styled from 'styled-components';
 import { EditorTitle } from './Editor';
 import { EditorContainer } from './EditorContainer';
 import { ReactComponent as ClearIcon } from '@assets/icons/global/clear-tag-icon.svg';
-import { projectTextSave, useGlobalState } from '@src/GlobalStateProvider';
+import { useGlobalState } from '@src/GlobalStateProvider';
 import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
 import { SecondaryTag } from '@components/Tag';
 import { getText } from '@utils/ReadingProjectText';
 import { getProjectTextChange } from '@utils/updateProjectText';
+import { SavingTextMap } from '@utils/SavingUtils';
 
 const TranslationEditorContainer = styled(EditorContainer)`
   position: absolute;
@@ -62,19 +63,23 @@ type TranslationInputProps = {
 };
 
 const TranslationInput = ({ textId, fileId, languageCode, isMultiline }: TranslationInputProps) => {
-  const [state, setState] = useGlobalState();
-  const projectText = { texts: state.projectText, config: state.projectConfig.language_config };
+  const [{ projectText: texts, projectConfig }, setState] = useGlobalState();
+  const projectText = { texts, config: projectConfig.language_config };
 
   const handleChange = (text: string) =>
     setState((currentState) => {
+      const currentText = getText(projectText, fileId, textId, projectConfig.language_config.defaultLanguage);
+      if (currentText === text) {
+        return currentState;
+      }
       const change = getProjectTextChange(languageCode, textId, fileId, text, currentState.projectText);
       return {
         ...currentState,
-        tmpHackHasTextToSave: projectTextSave.some((b) => b),
         projectText: {
           ...currentState.projectText,
-          [change[0]]: change[1],
+          [change[0]]: change[1] as string[][],
         },
+        savingText: new SavingTextMap(currentState.savingText.set(fileId, 'UPDATE')),
       };
     });
 

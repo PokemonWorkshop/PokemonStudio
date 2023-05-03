@@ -1,7 +1,7 @@
 import { StudioAbility } from '@modelEntities/ability';
 import { StudioCreature } from '@modelEntities/creature';
 import { DbSymbol } from '@modelEntities/dbSymbol';
-import { StudioDex, StudioDexCreature } from '@modelEntities/dex';
+import { DEX_DEFAULT_NAME_TEXT_ID, StudioDex, StudioDexCreature } from '@modelEntities/dex';
 import { StudioCustomGroupCondition, StudioGroup, StudioGroupSystemTag, StudioGroupTool } from '@modelEntities/group';
 import { createExpandPokemonSetup, StudioGroupEncounter } from '@modelEntities/groupEncounter';
 import { StudioItem, StudioItemStatusCondition } from '@modelEntities/item';
@@ -24,6 +24,7 @@ import { ProjectData } from '@src/GlobalStateProvider';
 import { assertUnreachable } from './assertUnreachable';
 import { findFirstAvailableId, findFirstAvailableTextId } from './ModelUtils';
 import { padStr } from './PadStr';
+import { StudioTextInfo } from '@modelEntities/textInfo';
 
 /**
  * Create a new ability with default values
@@ -64,7 +65,7 @@ export const createDex = (allDex: ProjectData['dex'], dbSymbol: DbSymbol, startI
   dbSymbol,
   startId,
   csv: {
-    csvFileId: Object.values(allDex).sort((a, b) => a.id - b.id)[0]?.csv?.csvFileId || 63,
+    csvFileId: Object.values(allDex).sort((a, b) => a.id - b.id)[0]?.csv?.csvFileId || DEX_DEFAULT_NAME_TEXT_ID,
     csvTextIndex: findFirstAvailableDexCsvTextIndex(allDex),
   },
   creatures,
@@ -441,3 +442,17 @@ export const createConfigTextsChoice = () => ({
   defaultColor: 0,
   colorMapping: {},
 });
+
+export const createTextInfo = (textInfos: StudioTextInfo[]): StudioTextInfo => {
+  const allTextInfos: Record<string, { id: number; textId: number }> = {};
+  textInfos.forEach(({ fileId, textId }) => {
+    allTextInfos[fileId.toString()] = { id: fileId, textId };
+  });
+  const id = findFirstAvailableId(allTextInfos, 0);
+  const textId = findFirstAvailableTextId(textInfos);
+  return {
+    klass: 'TextInfo',
+    fileId: id,
+    textId,
+  };
+};

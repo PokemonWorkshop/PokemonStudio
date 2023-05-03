@@ -1,5 +1,6 @@
 import { getEntityNameTextUsingTextId, getEntityNameText } from './ReadingProjectText';
 import { useProjectDataReadonly } from './useProjectData';
+import { useTextInfosReadonly } from './useTextInfos';
 
 export const useAbilityPage = () => {
   const { projectDataValues: abilities, selectedDataIdentifier: dbSymbol, state } = useProjectDataReadonly('abilities', 'ability');
@@ -41,15 +42,9 @@ export const useCreaturePage = () => {
 };
 
 export const useTextPage = () => {
-  //TODO: get data
-  const texts = {
-    filename: '100047',
-    name: 'Phrases de victoire',
-    description: "Ce fichier de texte contient les textes utilisés dans le cas d'une défaite du joueur contre un dresseur.",
-    data: [] as never[],
-  };
+  const { currentTextInfo } = useTextInfosReadonly();
   return {
-    texts,
-    cannotDelete: false,
+    textInfo: currentTextInfo,
+    cannotDelete: currentTextInfo.fileId >= 8997,
   };
 };

@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AutoSizer, List } from 'react-virtualized';
 import { TextDialogsRef } from './editors/TextEditorOverlay';
 import { useTranslation } from 'react-i18next';
 import { ButtonContainer, ButtonRightContainer, DataBlockEditorContainer } from '@components/editor/DataBlockEditorStyle';
 import { DarkButton, ClearButtonWithIcon, SecondaryButtonWithPlusIconResponsive } from '@components/buttons';
-import { ClearInput, Input } from '@components/inputs';
+import { ClearInput } from '@components/inputs';
 import { DataTextGrid, DataTextList, DataTextListTable, TableEmpty, TitleContainer } from './TextListStyle';
 import { padStr } from '@utils/PadStr';
 import { ReactComponent as TranslationIcon } from '@assets/icons/global/translate.svg';
+import { useGetTextList, useSetProjectText } from '@utils/ReadingProjectText';
+import { useTextPage } from '@utils/usePage';
 
 const getHeight = (length: number) => (length > 8 ? 408 : length * 48);
 
@@ -16,59 +18,87 @@ type TextListProps = {
 };
 
 export const TextList = ({ dialogsRef }: TextListProps) => {
-  // TODO: get real data
-  const texts = [
-    "J'ai gagné !",
-    'Tu as encore des progrès à faire...',
-    '[~ 2]',
-    '[~ 3]',
-    '[~ 4]',
-    '[~ 5]',
-    '[~ 6]',
-    '[~ 7]',
-    '[~ 8]',
-    '[~ 9]',
-    '[~ 10]',
-  ];
   const { t } = useTranslation('text_management');
   const [research, setResearch] = useState<string>('');
+  const [scrollToEnd, setScrollToEnd] = useState<boolean>(false);
+  const { textInfo } = useTextPage();
+  const getTextList = useGetTextList();
+  const setText = useSetProjectText();
+  const texts = useMemo(() => getTextList(textInfo.fileId), [getTextList, textInfo.fileId]);
+  const textsFiltered = useMemo(
+    () => (research === '' ? texts : texts.filter((text) => text.dialog.toLowerCase().indexOf(research) !== -1)),
+    [texts, research]
+  );
+  const listRef = useRef<List>(null);
+  const onClearAll = () => textsFiltered.forEach((text) => setText(textInfo.fileId, text.textId, ''));
+  const onAdd = () => {
+    setText(textInfo.fileId, texts.length === 0 ? 0 : texts[texts.length - 1].textId + 1, '');
+    setScrollToEnd(true);
+  };
 
-  // TODO: code it!
-  const onClearAll = () => console.log('clear all');
-  const onAdd = () => console.log('add');
+  // reset the research and the scroll when we change texts file
+  useEffect(() => {
+    setResearch('');
+    listRef.current?.scrollToRow(0);
+  }, [textInfo.fileId]);
+
+  // scroll to end of the list when a new text is added in the list
+  useEffect(() => {
+    if (scrollToEnd) {
+      listRef.current?.scrollToRow(textsFiltered.length);
+      setScrollToEnd(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [textsFiltered.length]);
 
   return (
     <DataBlockEditorContainer size="full" color="light" data-noactive>
       <TitleContainer>
         <h3>{t('texts')}</h3>
-        <Input name="research" value={research} onChange={(event) => setResearch(event.target.value)} placeholder={t('search_text')} />
+        <ClearInput
+          name="research"
+          value={research}
+          onChange={(event) => setResearch(event.target.value.toLowerCase())}
+          placeholder={t('search_text')}
+          onClear={() => setResearch('')}
+        />
       </TitleContainer>
-      {texts.length > 0 ? (
+      {textsFiltered.length > 0 ? (
         <DataTextListTable>
           <DataTextGrid gap="8px" className="header">
             <span>ID</span>
             <span>{t('text')}</span>
             <span />
           </DataTextGrid>
-          <DataTextList height={getHeight(texts.length)}>
+          <DataTextList height={getHeight(textsFiltered.length)}>
             <AutoSizer>
               {({ width, height }) => {
                 return (
                   <List
+                    ref={listRef}
                     className="scrollable-view"
                     width={width}
                     height={height}
                     rowHeight={48}
-                    rowCount={texts.length}
+                    rowCount={textsFiltered.length}
                     rowRenderer={({ key, index, style }) => {
                       return (
-                        <div className="line" key={key} style={{ ...style, width: 'calc(100% - 4px)' }}>
-                          <span className="line-number">#{padStr(index, 4)}</span>
+                        <div
+                          className="line"
+                          key={`${textInfo.fileId}-${textsFiltered[index].textId}-${key}`}
+                          style={{ ...style, width: 'calc(100% - 4px)' }}
+                        >
+                          <span className="line-number">#{padStr(textsFiltered[index].textId, 4)}</span>
                           <ClearInput
-                            defaultValue={texts[index]}
+                            key={`${textsFiltered[index].textId}-${textsFiltered[index].dialog}`}
+                            defaultValue={textsFiltered[index].dialog}
                             placeholder={`[~ ${index}]`}
-                            onBlur={(event) => console.log(`save ${event.target.value}`)} // TODO: code it!
-                            onClear={() => console.log(`clear ${index}`)} // TODO: code it!
+                            onBlur={(event) => {
+                              const newText = event.target.value;
+                              if (newText === event.target.defaultValue) return;
+                              setText(textInfo.fileId, textsFiltered[index].textId, newText);
+                            }}
+                            onClear={() => setText(textInfo.fileId, textsFiltered[index].textId, '')}
                           />
                           <DarkButton onClick={() => console.log(`go translation ${index}`)}>
                             <TranslationIcon />
@@ -87,7 +117,7 @@ export const TextList = ({ dialogsRef }: TextListProps) => {
         <TableEmpty>{t('no_text')}</TableEmpty>
       )}
       <ButtonContainer color="light">
-        <ClearButtonWithIcon onClick={onClearAll} disabled={texts.length === 0}>
+        <ClearButtonWithIcon onClick={onClearAll} disabled={textsFiltered.length === 0}>
           {t('clear_all')}
         </ClearButtonWithIcon>
         <ButtonRightContainer>

@@ -63,4 +63,4 @@ export const GROUP_VALIDATOR = z.object({
 });
 export type StudioGroup = z.infer<typeof GROUP_VALIDATOR>;
 
-export const GROUP_NAME_TEXT_ID = 61;
+export const GROUP_NAME_TEXT_ID = 100061;

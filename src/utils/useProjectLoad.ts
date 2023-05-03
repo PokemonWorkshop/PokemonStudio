@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLoaderRef } from './loaderContext';
 import type { ProjectDataFromBackEnd } from '@src/backendTasks/readProjectData';
-import { ProjectData, ProjectText, projectTextSave, PSDKConfigs, State, useGlobalState } from '@src/GlobalStateProvider';
+import { ProjectData, ProjectText, PSDKConfigs, State, useGlobalState } from '@src/GlobalStateProvider';
 import log from 'electron-log';
 import { deserializeZodConfig, deserializeZodData, deserializeZodDiscriminatedData, zodDataToEntries } from './SerializationUtils';
 import { generateSelectedIdentifier } from './generateSelectedIdentifier';
-import { SavingConfigMap, SavingMap } from './SavingUtils';
+import { SavingConfigMap, SavingMap, SavingTextMap } from './SavingUtils';
 import { addProjectToList, updateProjectStudio } from './projectList';
 import { ABILITY_VALIDATOR } from '@modelEntities/ability';
 import {
@@ -36,18 +36,21 @@ import { QUEST_VALIDATOR } from '@modelEntities/quest';
 import { PROJECT_VALIDATOR, StudioProject } from '@modelEntities/project';
 import { z } from 'zod';
 import { buildSelectOptionsFromScratch, buildSelectOptionsTextSourcesFromScratch } from './useSelectOptions';
+import i18n from '@src/i18n';
 
 export type PreGlobalState = Omit<
   State,
   | 'selectedDataIdentifier'
   | 'savingData'
   | 'savingConfig'
+  | 'savingText'
   | 'savingProjectStudio'
   | 'currentPSDKVersion'
   | 'lastPSDKVersion'
   | 'projectPath'
   | 'savingLanguage'
   | 'savingImage'
+  | 'savingTextInfos'
 > & { projectPath: string };
 type ProjectLoadFailureCallback = (error: { errorMessage: string }) => void;
 type ProjectLoadSuccessCallback = (payload: Record<string, never>) => void;
@@ -58,6 +61,7 @@ type ProjectLoadStateObject =
   | { state: 'readProjectMetadata'; projectDirName: string; studioVersion: string }
   | { state: 'writeProjectMetadata'; projectDirName: string; studioVersion: string; projectMetaData: StudioProject }
   | { state: 'updateMapInfos'; projectDirName: string; studioVersion: string; projectMetaData: StudioProject }
+  | { state: 'updateTextInfos'; projectDirName: string; studioVersion: string; projectMetaData: StudioProject }
   | { state: 'readProjectConfigs'; projectDirName: string; studioVersion: string; projectMetaData: StudioProject }
   | {
       state: 'readProjectData';
@@ -127,6 +131,7 @@ export const useProjectLoad = () => {
         window.api.cleanupReadProjectTexts();
         window.api.cleanupMigrateData();
         window.api.cleanupUpdateMapInfos();
+        window.api.cleanupUpdateTextInfos();
         return;
       case 'choosingProjectFile':
         loaderRef.current.open('loading_project', 0, 0, tl('importing_project_choose_project'));
@@ -139,7 +144,7 @@ export const useProjectLoad = () => {
           }
         );
       case 'readingVersion':
-        loaderRef.current.setProgress(1, 13, tl('importing_project_reading_version'));
+        loaderRef.current.setProgress(1, 14, tl('importing_project_reading_version'));
         window.api.clearCache();
         return window.api.getStudioVersion(
           {},
@@ -150,14 +155,14 @@ export const useProjectLoad = () => {
           }
         );
       case 'readProjectMetadata':
-        loaderRef.current.open('loading_project', 2, 13, tl('loading_project_meta'));
+        loaderRef.current.open('loading_project', 2, 14, tl('loading_project_meta'));
         return window.api.readProjectMetadata(
           { path: state.projectDirName },
           ({ metaData }) => {
-            loaderRef.current.setProgress(3, 13, tl('loading_project_meta_deserialization'));
+            loaderRef.current.setProgress(3, 14, tl('loading_project_meta_deserialization'));
             const projectMetaData = PROJECT_VALIDATOR.safeParse(metaData);
             if (!projectMetaData.success) {
-              loaderRef.current.setError('loading_project_error', 'Failed to deserialize'); // TODO: translate error text
+              loaderRef.current.setError('loading_project_error', tl('failed_deserialize'));
               setState({ state: 'done' });
               return;
             }
@@ -165,10 +170,7 @@ export const useProjectLoad = () => {
               setState({ ...state, state: 'updateMapInfos', projectMetaData: projectMetaData.data });
             } else {
               if (projectMetaData.data.studioVersion.localeCompare(state.studioVersion) === 1) {
-                loaderRef.current.setError(
-                  'loading_project_error',
-                  'Your project was opened or created with a newer version of the application. Please update Pokémon Studio.'
-                ); // TODO: translate error text
+                loaderRef.current.setError('loading_project_error', tl('error_project_version'));
                 setState({ state: 'done' });
                 return;
               }
@@ -194,7 +196,7 @@ export const useProjectLoad = () => {
           }
         );
       case 'writeProjectMetadata':
-        loaderRef.current.open('loading_project', 4, 13, tl('importing_project_writing_meta'));
+        loaderRef.current.open('loading_project', 4, 14, tl('importing_project_writing_meta'));
         return window.api.writeProjectMetadata(
           { path: state.projectDirName, metaData: JSON.stringify(state.projectMetaData) },
           () => {
@@ -206,9 +208,21 @@ export const useProjectLoad = () => {
           }
         );
       case 'updateMapInfos':
-        loaderRef.current.setProgress(5, 13, tl('loading_update_map_infos'));
+        loaderRef.current.setProgress(5, 14, tl('loading_update_map_infos'));
         return window.api.updateMapInfos(
           { projectPath: state.projectDirName },
+          () => {
+            setState({ ...state, state: 'updateTextInfos' });
+          },
+          ({ errorMessage }) => {
+            setState({ state: 'done' });
+            fail(callbacks, errorMessage);
+          }
+        );
+      case 'updateTextInfos':
+        loaderRef.current.setProgress(6, 14, tl('loading_update_text_infos'));
+        return window.api.updateTextInfos(
+          { projectPath: state.projectDirName, currentLanguage: i18n.language },
           () => {
             setState({ ...state, state: 'readProjectConfigs' });
           },
@@ -218,11 +232,11 @@ export const useProjectLoad = () => {
           }
         );
       case 'readProjectConfigs':
-        loaderRef.current.setProgress(6, 13, tl('loading_project_config'));
+        loaderRef.current.setProgress(7, 14, tl('loading_project_config'));
         return window.api.readProjectConfigs(
           { path: state.projectDirName },
           (configs) => {
-            loaderRef.current.setProgress(7, 13, tl('loading_project_config_deserialization'));
+            loaderRef.current.setProgress(8, 14, tl('loading_project_config_deserialization'));
             try {
               const projectConfigs: PSDKConfigs = {
                 credits_config: deserializeZodConfig(configs.credits_config, CREDIT_CONFIG_VALIDATOR),
@@ -250,7 +264,7 @@ export const useProjectLoad = () => {
           }
         );
       case 'readProjectData':
-        loaderRef.current.setProgress(8, 13, tl('loading_project_data'));
+        loaderRef.current.setProgress(9, 14, tl('loading_project_data'));
         return window.api.readProjectData(
           { path: state.projectDirName },
           (projectData) => {
@@ -262,7 +276,7 @@ export const useProjectLoad = () => {
           }
         );
       case 'readProjectText':
-        loaderRef.current.setProgress(9, 13, tl('loading_project_text'));
+        loaderRef.current.setProgress(10, 14, tl('loading_project_text'));
         return window.api.readProjectTexts(
           { path: state.projectDirName },
           (projectTexts) => {
@@ -274,7 +288,7 @@ export const useProjectLoad = () => {
           }
         );
       case 'deserializeProjectData':
-        loaderRef.current.setProgress(10, 13, tl('loading_project_data_deserialization'));
+        loaderRef.current.setProgress(11, 14, tl('loading_project_data_deserialization'));
         try {
           const integrityFailureCount = { count: 0 };
           const projectText = state.projectTexts;
@@ -301,6 +315,7 @@ export const useProjectLoad = () => {
               projectStudio: state.projectMetaData,
               projectText,
               rmxpMaps: state.projectData.rmxpMaps,
+              textInfos: state.projectData.textInfos,
               textVersion: 0,
             },
             integrityFailureCount: integrityFailureCount.count,
@@ -312,15 +327,15 @@ export const useProjectLoad = () => {
         break;
       case 'finalizeGlobalState':
         // TODO: make a better version of that shit
-        loaderRef.current.setProgress(11, 13, tl('loading_project_psdk_version'));
+        loaderRef.current.setProgress(12, 14, tl('loading_project_psdk_version'));
         window.api
           .getPSDKVersion()
           .then((currentPSDKVersion) => {
-            loaderRef.current.setProgress(12, 13, tl('loading_project_last_psdk_version'));
+            loaderRef.current.setProgress(13, 14, tl('loading_project_last_psdk_version'));
             window.api
               .getLastPSDKVersion()
               .then((lastPSDKVersion) => {
-                loaderRef.current.setProgress(13, 13, tl('loading_project_identifier'));
+                loaderRef.current.setProgress(14, 14, tl('loading_project_identifier'));
                 sessionStorage.clear(); // Clear the whole session storage when loading is done so we don't carry garbage from other projects
                 const selectedDataIdentifier = generateSelectedIdentifier(state.preState);
                 const globalState = {
@@ -330,14 +345,15 @@ export const useProjectLoad = () => {
                   selectedDataIdentifier,
                   savingData: new SavingMap(),
                   savingConfig: new SavingConfigMap(),
+                  savingText: new SavingTextMap(),
                   savingProjectStudio: false,
                   savingLanguage: [],
                   savingImage: {},
+                  savingTextInfos: false,
                 };
                 setGlobalState(globalState);
                 buildSelectOptionsTextSourcesFromScratch(globalState);
                 buildSelectOptionsFromScratch(globalState);
-                projectTextSave.fill(false);
                 addProjectToList({
                   projectStudio: state.preState.projectStudio,
                   projectPath: state.preState.projectPath,

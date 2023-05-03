@@ -18,7 +18,7 @@ export const TYPE_VALIDATOR = z.object({
 });
 export type StudioType = z.infer<typeof TYPE_VALIDATOR>;
 
-export const TYPE_NAME_TEXT_ID = 3;
+export const TYPE_NAME_TEXT_ID = 100003;
 
 const getTypesFromFactor = (allTypes: StudioType[], damageTo: StudioDamageTo[], factor: number) =>
   damageTo

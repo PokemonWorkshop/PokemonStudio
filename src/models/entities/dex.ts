@@ -23,3 +23,5 @@ export const DEX_VALIDATOR = z.object({
 
 export type StudioDex = z.infer<typeof DEX_VALIDATOR>;
 export type StudioDexType = 'national' | 'regional';
+
+export const DEX_DEFAULT_NAME_TEXT_ID = 100063;

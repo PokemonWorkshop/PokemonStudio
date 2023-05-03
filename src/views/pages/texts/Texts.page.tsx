@@ -14,7 +14,7 @@ import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';
 
 export const TextsPage = () => {
   const dialogsRef = useDialogsRef<TextEditorAndDeletionKeys>();
-  const { texts, cannotDelete } = useTextPage();
+  const { textInfo, cannotDelete } = useTextPage();
   const { t } = useTranslation('text_management');
 
   return (
@@ -32,7 +32,7 @@ export const TextsPage = () => {
             />
           </DataBlockWrapper>
           <DataBlockWrapper>
-            <TextFrame texts={texts} dialogsRef={dialogsRef} />
+            <TextFrame textInfo={textInfo} dialogsRef={dialogsRef} />
             <TextList dialogsRef={dialogsRef} />
           </DataBlockWrapper>
           <DataBlockWrapper>
