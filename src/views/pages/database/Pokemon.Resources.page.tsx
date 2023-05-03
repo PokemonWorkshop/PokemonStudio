@@ -3,50 +3,30 @@ import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { DataBlockWrapper } from '@components/database/dataBlocks';
 import { PokemonControlBar } from '@components/database/pokemon/PokemonControlBar';
 import { PokemonWithForm } from '@components/database/pokemon/PokemonDataPropsInterface';
-import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { useProjectPokemon } from '@utils/useProjectData';
 import { useTranslation } from 'react-i18next';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
-import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';
 import { BattlersResources, CharactersResources, IconsResources, ResourceWrapper } from '@components/database/pokemon/resources';
 import { basename, CreatureFormResourcesFemalePath, CreatureFormResourcesPath } from '@utils/path';
 import { cloneEntity } from '@utils/cloneEntity';
 
 export const PokemonResourcesPage = () => {
-  const {
-    projectDataValues: pokemon,
-    selectedDataIdentifier: pokemonIdentifier,
-    setSelectedDataIdentifier,
-    setProjectDataValues: setPokemon,
-    getPreviousDbSymbol,
-    getNextDbSymbol,
-  } = useProjectPokemon();
+  const { projectDataValues: pokemon, selectedDataIdentifier: pokemonIdentifier, setProjectDataValues: setPokemon } = useProjectPokemon();
   const { t } = useTranslation('database_pokemon');
-  const currentPokemonWithForm: PokemonWithForm = {
-    species: pokemon[pokemonIdentifier.specie],
-    form: pokemon[pokemonIdentifier.specie].forms[pokemonIdentifier.form],
-  };
+  const currentPokemonWithForm: PokemonWithForm = useMemo(
+    () => ({
+      species: pokemon[pokemonIdentifier.specie],
+      form:
+        pokemon[pokemonIdentifier.specie].forms.find((form) => form.form === pokemonIdentifier.form) || pokemon[pokemonIdentifier.specie].forms[0],
+    }),
+    [pokemon, pokemonIdentifier.form, pokemonIdentifier.specie]
+  );
   const [isShowFemale, setIsShowFemale] = useState<boolean>(currentPokemonWithForm.form.resources.hasFemale);
   const currentEditedPokemon = useMemo(() => cloneEntity(pokemon[pokemonIdentifier.specie]), [pokemonIdentifier.specie, pokemon]);
   const currentEditedPokemonWithForm: PokemonWithForm = {
     species: currentEditedPokemon,
     form: currentEditedPokemon.forms[pokemonIdentifier.form],
-  };
-
-  const onChangeSpecie: SelectChangeEvent = (selected) => {
-    setIsShowFemale(pokemon[selected.value].forms[0].resources.hasFemale);
-    setSelectedDataIdentifier({ pokemon: { specie: selected.value, form: 0 } });
-  };
-  const onChangeForm: SelectChangeEvent = (selected) => {
-    const indexForm = pokemon[pokemonIdentifier.specie].forms.findIndex((f) => f.form === Number(selected.value));
-    setIsShowFemale(pokemon[pokemonIdentifier.specie].forms[indexForm].resources.hasFemale);
-    setSelectedDataIdentifier({
-      pokemon: {
-        specie: pokemonIdentifier.specie,
-        form: indexForm,
-      },
-    });
   };
 
   const onResourceChoosen = (filePath: string, resource: CreatureFormResourcesPath) => {
@@ -66,25 +46,9 @@ export const PokemonResourcesPage = () => {
     setPokemon({ [currentEditedPokemon.dbSymbol]: currentEditedPokemon });
   };
 
-  const shortcutMap = useMemo<StudioShortcutActions>(() => {
-    return {
-      db_previous: () => {
-        const dbSymbol = getPreviousDbSymbol('id');
-        setIsShowFemale(pokemon[dbSymbol].forms[0].resources.hasFemale);
-        setSelectedDataIdentifier({ pokemon: { specie: dbSymbol, form: 0 } });
-      },
-      db_next: () => {
-        const dbSymbol = getNextDbSymbol('id');
-        setIsShowFemale(pokemon[dbSymbol].forms[0].resources.hasFemale);
-        setSelectedDataIdentifier({ pokemon: { specie: dbSymbol, form: 0 } });
-      },
-    };
-  }, [getPreviousDbSymbol, pokemon, setSelectedDataIdentifier, getNextDbSymbol]);
-  useShortcut(shortcutMap);
-
   return (
     <DatabasePageStyle>
-      <PokemonControlBar onPokemonChange={onChangeSpecie} onFormChange={onChangeForm} currentPokemonWithForm={currentPokemonWithForm} />
+      <PokemonControlBar />
       <PageContainerStyle>
         <PageDataConstrainerStyle>
           <DataBlockWrapper>

@@ -62,12 +62,13 @@ export const MovepoolEditor = ({ type, setCurrentEditor, setCurrentDeletion }: M
   const { t } = useTranslation(['database_pokemon']);
 
   const onClickAdd = () => {
-    setLearnableMove(currentEditedPokemon.forms[currentPokemon.form], type, items, moves);
+    const index = currentEditedPokemon.forms.findIndex((form) => form.form === currentPokemon.form);
+    setLearnableMove(currentEditedPokemon.forms[index === -1 ? 0 : index], type, items, moves);
     setPokemon({ [currentPokemon.specie]: currentEditedPokemon });
   };
 
   const disabledDeletion = () => {
-    const form = pokemon[currentPokemon.specie].forms[currentPokemon.form];
+    const form = pokemon[currentPokemon.specie].forms.find((form) => form.form === currentPokemon.form) || pokemon[currentPokemon.specie].forms[0];
     if (type === 'level') return form.moveSet.filter((m) => m.klass === 'LevelLearnableMove').length <= 1;
 
     const klass = getMoveKlass(type);

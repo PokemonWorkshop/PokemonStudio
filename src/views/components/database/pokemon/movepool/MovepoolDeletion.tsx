@@ -29,7 +29,7 @@ export const MovepoolDeletion = ({ type, onClose }: MovepoolDeletionProps) => {
 
   const onClickDelete = () => {
     const currentEditedPokemon = cloneEntity(pokemon[currentPokemon.specie]);
-    const form = currentEditedPokemon.forms[currentPokemon.form];
+    const form = currentEditedPokemon.forms.find((form) => form.form === currentPokemon.form) || currentEditedPokemon.forms[0];
     const klass = type === 'level' ? 'LevelLearnableMove' : getMoveKlass(type);
     form.moveSet = form.moveSet.filter((m) => m.klass !== klass);
     if (type === 'level') {

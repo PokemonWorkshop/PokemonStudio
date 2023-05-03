@@ -220,10 +220,12 @@ export const MovepoolLevelLearnableTable = () => {
   const currentEditedPokemon = cloneEntity(pokemon[pokemonIdentifier.specie]);
   const getMoveName = useGetEntityNameText();
   const moveOptions = useMemo(() => getMoveOptions(moves, getMoveName), [moves, getMoveName]);
-  const movePool = currentEditedPokemon.forms[pokemonIdentifier.form].moveSet.filter(
-    (m): m is StudioLevelLearnableMove => m.klass === 'LevelLearnableMove'
+  const form = useMemo(
+    () => currentEditedPokemon.forms.find((form) => form.form === pokemonIdentifier.form) || currentEditedPokemon.forms[0],
+    [currentEditedPokemon.forms, pokemonIdentifier.form]
   );
-  const occurrences = getOccurrences(currentEditedPokemon.forms[pokemonIdentifier.form]);
+  const movePool = form.moveSet.filter((m): m is StudioLevelLearnableMove => m.klass === 'LevelLearnableMove');
+  const occurrences = getOccurrences(form);
 
   return movePool.length === 0 ? (
     <NoMoveFound>{t('database_moves:no_option')}</NoMoveFound>

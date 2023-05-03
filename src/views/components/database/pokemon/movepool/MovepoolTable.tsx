@@ -219,8 +219,12 @@ export const MovepoolTable = ({ movepoolType }: MovepoolTableProps) => {
   const { t } = useTranslation(['database_pokemon', 'database_moves']);
   const getEntityName = useGetEntityNameText();
   const currentEditedPokemon = cloneEntity(pokemon[pokemonIdentifier.specie]);
-  const movepoolData = getMovepoolData(movepoolType, moves, items, currentEditedPokemon.forms[pokemonIdentifier.form], t, getEntityName);
-  const occurrences = getOccurrences(currentEditedPokemon.forms[pokemonIdentifier.form], movepoolType);
+  const form = useMemo(
+    () => currentEditedPokemon.forms.find((form) => form.form === pokemonIdentifier.form) || currentEditedPokemon.forms[0],
+    [currentEditedPokemon.forms, pokemonIdentifier.form]
+  );
+  const movepoolData = getMovepoolData(movepoolType, moves, items, form, t, getEntityName);
+  const occurrences = getOccurrences(form, movepoolType);
 
   const moveOptions = useMemo(
     () =>
