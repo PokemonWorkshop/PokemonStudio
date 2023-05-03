@@ -12,7 +12,7 @@ export const CREATURE_QUEST_CONDITION_VALIDATOR = z.discriminatedUnion('type', [
 ]);
 export type StudioCreatureQuestCondition = z.infer<typeof CREATURE_QUEST_CONDITION_VALIDATOR>;
 export const CREATURE_QUEST_CONDITIONS = ['pokemon', 'type', 'nature', 'minLevel', 'maxLevel', 'level'] as const;
-export type StudioCreatureQuestConditionType = typeof CREATURE_QUEST_CONDITIONS[number];
+export type StudioCreatureQuestConditionType = (typeof CREATURE_QUEST_CONDITIONS)[number];
 
 export const QUEST_OBJECTIVE_VALIDATOR = z.object({
   objectiveMethodName: z.union([
@@ -49,14 +49,14 @@ export const QUEST_VALIDATOR = z.object({
 });
 export type StudioQuest = z.infer<typeof QUEST_VALIDATOR>;
 
-export const QUEST_DESCRIPTION_TEXT_ID = 46;
-export const QUEST_NAME_TEXT_ID = 45;
+export const QUEST_DESCRIPTION_TEXT_ID = 100046;
+export const QUEST_NAME_TEXT_ID = 100045;
 
 export const QUEST_CATEGORIES = ['primary', 'secondary'] as const;
-export type StudioQuestCategory = typeof QUEST_CATEGORIES[number];
+export type StudioQuestCategory = (typeof QUEST_CATEGORIES)[number];
 
 export const QUEST_RESOLUTIONS = ['default', 'progressive'] as const;
-export type StudioQuestResolution = typeof QUEST_RESOLUTIONS[number];
+export type StudioQuestResolution = (typeof QUEST_RESOLUTIONS)[number];
 
 export const QUEST_OBJECTIVES = [
   'objective_speak_to',
@@ -68,11 +68,11 @@ export const QUEST_OBJECTIVES = [
   'objective_obtain_egg',
   'objective_hatch_egg',
 ] as const;
-export type StudioQuestObjectiveType = typeof QUEST_OBJECTIVES[number];
+export type StudioQuestObjectiveType = (typeof QUEST_OBJECTIVES)[number];
 export type StudioQuestObjectiveCategoryType = 'interaction' | 'battle' | 'discovery' | 'exploration';
 
 export const QUEST_EARNINGS = ['earning_money', 'earning_item', 'earning_pokemon', 'earning_egg'] as const;
-export type StudioQuestEarningType = typeof QUEST_EARNINGS[number];
+export type StudioQuestEarningType = (typeof QUEST_EARNINGS)[number];
 export type StudioQuestEarningCategoryType = 'money' | 'item' | 'pokemon' | 'egg';
 
 export const updateIndexSpeakToBeatNpc = (quest: StudioQuest) => {

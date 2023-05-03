@@ -5,12 +5,13 @@ import styled from 'styled-components';
 import { EditorTitle } from './Editor';
 import { EditorContainer } from './EditorContainer';
 import { ReactComponent as ClearIcon } from '@assets/icons/global/clear-tag-icon.svg';
-import { projectTextSave, useGlobalState } from '@src/GlobalStateProvider';
+import { useGlobalState } from '@src/GlobalStateProvider';
 import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
 import { SecondaryTag } from '@components/Tag';
 import { getText, useGetProjectText } from '@utils/ReadingProjectText';
 import { EditorHandlingClose, useEditorHandlingClose } from './useHandleCloseEditor';
 import { getProjectMultiLanguageTextChange } from '@utils/updateProjectText';
+import { SavingTextMap } from '@utils/SavingUtils';
 
 const TranslationEditorContainer = styled(EditorContainer)`
   position: absolute;
@@ -172,7 +173,7 @@ type TranslationEditorWithCloseHandlingProps = {
 /** Wrapper allowing the TranslationEditor to be used with EditorOverlayV2 */
 export const TranslationEditorWithCloseHandling = forwardRef<EditorHandlingClose, TranslationEditorWithCloseHandlingProps>(
   ({ title, closeDialog, onClose, fileId, nameTextId, textIndex, isMultiline }, ref) => {
-    const [, setState] = useGlobalState();
+    const [{ projectText: texts, projectConfig }, setState] = useGlobalState();
     const getNameText = useGetProjectText();
     const inputRefs = useRef<InputRefsType>({});
     // Save the name in state to prevent the re-render to change the title when saving new name
@@ -181,14 +182,20 @@ export const TranslationEditorWithCloseHandling = forwardRef<EditorHandlingClose
     const onDialogClose = () => {
       setState((currentState) => {
         const localeChanges = Object.entries(inputRefs.current).map(([key, value]) => [key, value?.value || ''] as const);
+        const hasChanged = localeChanges.some(
+          ([language, textChanged]) => getText({ texts, config: projectConfig.language_config }, fileId, textIndex, language) !== textChanged
+        );
+        if (!hasChanged) {
+          return currentState;
+        }
         const change = getProjectMultiLanguageTextChange(localeChanges, textIndex, fileId, currentState.projectText);
         return {
           ...currentState,
-          tmpHackHasTextToSave: projectTextSave.some((b) => b),
           projectText: {
             ...currentState.projectText,
-            [change[0]]: change[1],
+            [change[0]]: change[1] as string[][],
           },
+          savingText: new SavingTextMap(currentState.savingText.set(fileId, 'UPDATE')),
         };
       });
       // Let react re-render the back components

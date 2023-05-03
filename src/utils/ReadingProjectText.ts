@@ -8,13 +8,13 @@ import { QUEST_DESCRIPTION_TEXT_ID, QUEST_NAME_TEXT_ID } from '@modelEntities/qu
 import { TRAINER_NAME_TEXT_ID } from '@modelEntities/trainer';
 import { TYPE_NAME_TEXT_ID } from '@modelEntities/type';
 import { ZONE_DESCRIPTION_TEXT_ID, ZONE_NAME_TEXT_ID } from '@modelEntities/zone';
-import { State, ProjectText, projectTextKeys, projectTextSave, TextsWithLanguageConfig, useGlobalState } from '@src/GlobalStateProvider';
+import { State, ProjectText, TextsWithLanguageConfig, useGlobalState } from '@src/GlobalStateProvider';
 import { getProjectTextChange } from './updateProjectText';
 import { updateSelectOptionsTextSource } from './useSelectOptions';
+import { TEXT_INFO_DESCRIPTION_TEXT_ID, TEXT_INFO_NAME_TEXT_ID } from '@modelEntities/textInfo';
+import { SavingTextMap } from './SavingUtils';
 
 type KeyProjectText = keyof ProjectText;
-
-export const CSV_BASE = 100_000;
 
 const getLanguage = (fileText: string[][], defaultLanguage: string) => {
   const language = fileText[0].indexOf(defaultLanguage || 'en');
@@ -46,7 +46,7 @@ export const getDialogMessage = (projectText: TextsWithLanguageConfig, fileId: n
  * @returns the text
  */
 export const getText = (projectText: TextsWithLanguageConfig, fileId: number, textId: number, language?: string) => {
-  return getDialogMessage(projectText, CSV_BASE + fileId, textId, language);
+  return getDialogMessage(projectText, fileId, textId, language);
 };
 
 export const getNatureText = (state: State, natureDbSymbol: string) => {
@@ -57,38 +57,6 @@ export const getNatureText = (state: State, natureDbSymbol: string) => {
   );
 };
 
-/**
- * Set a dialog message
- * @param projectText The text of the project
- * @param fileId id of the dialog file
- * @param textId id of the dialog message in the file (0 = 2nd line of csv, 1 = 3rd line of csv)
- * @param text text to set
- * @param language language code of the language to get
- */
-export const setDialogMessage = (projectText: TextsWithLanguageConfig, fileId: number, textId: number, text: string, language?: string) => {
-  projectTextSave[projectTextKeys.indexOf(fileId as KeyProjectText)] = true;
-  const fileText = projectText.texts[fileId as KeyProjectText];
-  if (!fileText) return;
-
-  if (!fileText[textId + 1]) {
-    fileText[textId + 1] = new Array(fileText[0].length).fill(text);
-  } else {
-    fileText[textId + 1][getLanguage(fileText, language ?? projectText.config.defaultLanguage)] = text;
-  }
-};
-
-/**
- * Get a text front the text database
- * @param projectText The text of the project
- * @param fileId ID of the text file
- * @param textId ID of the text in the file
- * @param text text to set
- * @param language language code of the language to get
- */
-export const setText = (projectText: TextsWithLanguageConfig, fileId: number, textId: number, text: string, language?: string) => {
-  return setDialogMessage(projectText, CSV_BASE + fileId, textId, text, language);
-};
-
 export const useGetProjectText = () => {
   const [{ projectText: texts, projectConfig }] = useGlobalState();
 
@@ -96,23 +64,108 @@ export const useGetProjectText = () => {
     getText({ texts, config: projectConfig.language_config }, fileId, textId, projectConfig.language_config.defaultLanguage);
 };
 
+export type UseGetTextListReturnType = {
+  dialog: string;
+  textId: number;
+};
+
+export const useGetTextList = () => {
+  const [{ projectText: texts, projectConfig }] = useGlobalState();
+
+  return (fileId: number): UseGetTextListReturnType[] => {
+    const fileText = texts[fileId];
+    if (!fileText) return [];
+
+    const language = getLanguage(fileText, projectConfig.language_config.defaultLanguage);
+    const textList = fileText.map((dialog, index) => {
+      const textId = index - 1;
+      if (!dialog) return { dialog: `Unable to find text ${textId} in dialog file ${fileId}.`, textId };
+      return { dialog: dialog[language], textId };
+    });
+    textList.shift();
+    return textList;
+  };
+};
+
 export const useSetProjectText = () => {
-  const [, setState] = useGlobalState();
+  const [{ projectText: texts, projectConfig }, setState] = useGlobalState();
 
   return (fileId: number, textId: number, text: string) => {
     setState((currentState) => {
+      const currentText = getText({ texts, config: projectConfig.language_config }, fileId, textId, projectConfig.language_config.defaultLanguage);
+      if (currentText === text) {
+        return currentState;
+      }
       const change = getProjectTextChange(currentState.projectConfig.language_config.defaultLanguage, textId, fileId, text, currentState.projectText);
       const newState = {
         ...currentState,
-        tmpHackHasTextToSave: projectTextSave.some((b) => b),
+        savingText: new SavingTextMap(currentState.savingText.set(fileId, 'UPDATE')),
         projectText: {
           ...currentState.projectText,
-          [change[0]]: change[1],
+          [change[0]]: change[1] as string[][],
         },
         textVersion: currentState.textVersion + 1,
       };
       // Ensure the selects have the right version of the text
       updateSelectOptionsTextSource(fileId, textId, newState);
+      return newState;
+    });
+  };
+};
+
+export const useNewProjectText = () => {
+  const [, setState] = useGlobalState();
+
+  return (fileId: number, newTexts?: string[][]) => {
+    setState((currentState) => {
+      const newState = {
+        ...currentState,
+        savingText: new SavingTextMap(currentState.savingText.set(fileId, 'UPDATE')),
+        projectText: {
+          ...currentState.projectText,
+          [fileId]: newTexts ?? [currentState.projectConfig.language_config.choosableLanguageCode],
+        },
+        textVersion: currentState.textVersion + 1,
+      };
+      return newState;
+    });
+  };
+};
+
+export const useDeleteProjectText = () => {
+  const [, setState] = useGlobalState();
+
+  return (fileId: number) => {
+    setState((currentState) => {
+      const projectText = currentState.projectText;
+      delete projectText[fileId];
+      const newState = {
+        ...currentState,
+        savingText: new SavingTextMap(currentState.savingText.set(fileId, 'DELETE')),
+        projectText: {
+          ...projectText,
+        },
+        textVersion: currentState.textVersion + 1,
+      };
+      return newState;
+    });
+  };
+};
+
+export const useImportProjectText = () => {
+  const [, setState] = useGlobalState();
+
+  return (fileIdSrc: number, fileIdDest: number) => {
+    setState((currentState) => {
+      const newState = {
+        ...currentState,
+        savingText: new SavingTextMap(currentState.savingText.set(fileIdDest, 'UPDATE')),
+        projectText: {
+          ...currentState.projectText,
+          [fileIdDest]: currentState.projectText[fileIdSrc],
+        },
+        textVersion: currentState.textVersion + 1,
+      };
       return newState;
     });
   };
@@ -146,6 +199,7 @@ const ENTITY_TO_NAME_TEXT = {
   Type: TYPE_NAME_TEXT_ID,
   Zone: ZONE_NAME_TEXT_ID,
   Group: GROUP_NAME_TEXT_ID,
+  TextInfo: TEXT_INFO_NAME_TEXT_ID,
 };
 
 // TODO: All entities must accept undefined! (due to getting entity from state unsafely) => returns empty string and let UI manage it
@@ -153,14 +207,14 @@ const ENTITY_TO_NAME_TEXT = {
 export const useGetEntityNameText = () => {
   const getEntityText = useGetProjectText();
 
-  return (entity: { klass: keyof Omit<typeof ENTITY_TO_NAME_TEXT, 'Ability' | 'Type'>; id: number }) =>
+  return (entity: { klass: keyof Omit<typeof ENTITY_TO_NAME_TEXT, 'Ability' | 'Type' | 'TextInfo'>; id: number }) =>
     getEntityText(ENTITY_TO_NAME_TEXT[entity.klass], entity.id);
 };
 
 export const useGetEntityNameTextUsingTextId = () => {
   const getEntityText = useGetProjectText();
 
-  return (entity: { klass: 'Ability' | 'Type'; textId: number }) => getEntityText(ENTITY_TO_NAME_TEXT[entity.klass], entity.textId);
+  return (entity: { klass: 'Ability' | 'Type' | 'TextInfo'; textId: number }) => getEntityText(ENTITY_TO_NAME_TEXT[entity.klass], entity.textId);
 };
 
 // Mapping between pocket id and pocket name id
@@ -216,23 +270,24 @@ const ENTITY_TO_DESCRIPTION_TEXT = {
   Move: MOVE_DESCRIPTION_TEXT_ID,
   Quest: QUEST_DESCRIPTION_TEXT_ID,
   Zone: ZONE_DESCRIPTION_TEXT_ID,
+  TextInfo: TEXT_INFO_DESCRIPTION_TEXT_ID,
 };
 
 export const useGetEntityDescriptionText = () => {
   const getEntityText = useGetProjectText();
 
-  return (entity: { klass: keyof Omit<typeof ENTITY_TO_DESCRIPTION_TEXT, 'Ability'>; id: number }) =>
+  return (entity: { klass: keyof Omit<typeof ENTITY_TO_DESCRIPTION_TEXT, 'Ability' | 'TextInfo'>; id: number }) =>
     getEntityText(ENTITY_TO_DESCRIPTION_TEXT[entity.klass], entity.id);
 };
 
 export const useGetEntityDescriptionTextUsingTextId = () => {
   const getEntityText = useGetProjectText();
 
-  return (entity: { klass: 'Ability'; textId: number }) => getEntityText(ENTITY_TO_DESCRIPTION_TEXT.Ability, entity.textId);
+  return (entity: { klass: 'Ability' | 'TextInfo'; textId: number }) => getEntityText(ENTITY_TO_DESCRIPTION_TEXT[entity.klass], entity.textId);
 };
 
 export const getEntityNameText = (
-  entity: { klass: keyof Omit<typeof ENTITY_TO_NAME_TEXT, 'Ability' | 'Type'>; id: number },
+  entity: { klass: keyof Omit<typeof ENTITY_TO_NAME_TEXT, 'Ability' | 'Type' | 'TextInfo'>; id: number },
   { projectText: texts, projectConfig }: Pick<State, 'projectText' | 'projectConfig'>
 ) => {
   return getText(
@@ -244,7 +299,7 @@ export const getEntityNameText = (
 };
 
 export const getEntityNameTextUsingTextId = (
-  entity: { klass: 'Ability' | 'Type'; textId: number },
+  entity: { klass: 'Ability' | 'Type' | 'TextInfo'; textId: number },
   { projectText: texts, projectConfig }: Pick<State, 'projectText' | 'projectConfig'>
 ) => {
   return getText(

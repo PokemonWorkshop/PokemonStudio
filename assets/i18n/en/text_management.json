@@ -29,7 +29,7 @@
   "clear_all": "Clear all",
   "no_text": "No text for this texts file",
   "importation": "Importation",
-  "importation_info": "You can import texts from another file.",
+  "importation_info": "You can import texts from another file. Warning, this operation replaces the texts already present.",
   "import_texts_file": "Import texts from file",
   "import": "Import",
   "none": "None"

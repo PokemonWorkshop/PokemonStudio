@@ -28,6 +28,9 @@ const ClearInputContainer = styled.div`
     & svg {
       visibility: visible;
     }
+    ${Input} {
+      padding: 9.5px 40px 9.5px 15px;
+    }
   }
 `;
 

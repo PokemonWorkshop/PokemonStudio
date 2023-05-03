@@ -143,6 +143,6 @@ export const CREATURE_VALIDATOR = z.object({
 });
 export type StudioCreature = z.infer<typeof CREATURE_VALIDATOR>;
 
-export const CREATURE_DESCRIPTION_TEXT_ID = 2;
-export const CREATURE_NAME_TEXT_ID = 0;
-export const CREATURE_SPECIE_TEXT_ID = 1;
+export const CREATURE_DESCRIPTION_TEXT_ID = 100002;
+export const CREATURE_NAME_TEXT_ID = 100000;
+export const CREATURE_SPECIE_TEXT_ID = 100001;

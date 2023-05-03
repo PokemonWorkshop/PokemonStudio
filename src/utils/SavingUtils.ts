@@ -93,11 +93,48 @@ export class SavingConfigMap {
   }
 }
 
+export type SavingTextFilename = keyof ProjectText;
+
 export type SavingText = {
-  projectTextSave: boolean[];
-  projectText: string;
-  keys: (keyof ProjectText)[];
-};
+  savingFilename: string;
+  data: string | undefined;
+  savingAction: SavingAction;
+}[];
+
+export class SavingTextMap {
+  map: Map<string, SavingAction>;
+
+  constructor(map?: Map<string, SavingAction>) {
+    this.map = !map ? new Map<string, SavingAction>() : new Map(map);
+  }
+
+  set(filename: SavingTextFilename, sa: SavingAction): Map<string, SavingAction> {
+    return this.map.set(filename.toString(), sa);
+  }
+
+  setMultiple(filenames: SavingTextFilename[], sa: SavingAction): Map<string, SavingAction> {
+    filenames.forEach((fileId) => this.map.set(fileId.toString(), sa));
+    return this.map;
+  }
+
+  getSavingText(projectText: ProjectText): SavingText {
+    return Array.from(this.map.entries()).map(([filename, sa]) => {
+      if (sa === 'DELETE') {
+        return {
+          savingFilename: filename,
+          data: undefined,
+          savingAction: sa,
+        };
+      }
+
+      return {
+        savingFilename: filename,
+        data: JSON.stringify(projectText[filename as unknown as keyof ProjectText]),
+        savingAction: sa,
+      };
+    });
+  }
+}
 
 export type SavingImage = { [path: string]: string };
 

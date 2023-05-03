@@ -24,10 +24,10 @@ export const TRAINER_VALIDATOR = z.object({
 });
 export type StudioTrainer = z.infer<typeof TRAINER_VALIDATOR>;
 
-export const TRAINER_CLASS_TEXT_ID = 29;
-export const TRAINER_NAME_TEXT_ID = 62;
-export const TRAINER_VICTORY_SENTENCE_TEXT_ID = 47;
-export const TRAINER_DEFEAT_SENTENCE_TEXT_ID = 48;
+export const TRAINER_CLASS_TEXT_ID = 100029;
+export const TRAINER_NAME_TEXT_ID = 100062;
+export const TRAINER_VICTORY_SENTENCE_TEXT_ID = 100047;
+export const TRAINER_DEFEAT_SENTENCE_TEXT_ID = 100048;
 export const getTrainerMoney = (trainer: StudioTrainer) => {
   if (trainer.party.length === 0 || isNaN(trainer.baseMoney)) return 0;
 

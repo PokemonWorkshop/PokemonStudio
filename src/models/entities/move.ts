@@ -117,8 +117,8 @@ export type MoveBattleEngineMethodsType =
   | 's_self_stat'
   | 's_self_status';
 
-export const MOVE_NAME_TEXT_ID = 6;
-export const MOVE_DESCRIPTION_TEXT_ID = 7;
+export const MOVE_NAME_TEXT_ID = 100006;
+export const MOVE_DESCRIPTION_TEXT_ID = 100007;
 export const MOVE_CATEGORIES = ['physical', 'special', 'status'] as const;
 export const MOVE_CRITICAL_RATES = [0, 1, 2, 3, 4] as const;
 export const MOVE_TARGETS = [
