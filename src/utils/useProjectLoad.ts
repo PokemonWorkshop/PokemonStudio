@@ -198,7 +198,7 @@ export const useProjectLoad = () => {
       case 'writeProjectMetadata':
         loaderRef.current.open('loading_project', 4, 14, tl('importing_project_writing_meta'));
         return window.api.writeProjectMetadata(
-          { path: state.projectDirName, metaData: JSON.stringify(state.projectMetaData) },
+          { path: state.projectDirName, metaData: JSON.stringify(state.projectMetaData, null, 2) },
           () => {
             setState({ ...state, state: 'updateMapInfos' });
           },
