@@ -3,8 +3,9 @@
   "settings": "Paramètres",
   "save_filename": "Nom de base de la sauvegarde",
   "save_header": "En-tête de la sauvegarde",
+  "save_header_info": "L'en-tête de la sauvegarde doit posséder exactement 5 caractères.",
   "save_key": "Clé de la sauvegarde",
-  "save_any_location": "Possibilité de sauvegarder sur n’importe quel emplacement",
+  "save_any_location": "Possibilité de sauvegarder sur n'importe quel emplacement",
   "save_unlimited_count": "Nombre de sauvegardes illimité",
   "save_max_count": "Nombre maximum de sauvegardes possibles"
 }
