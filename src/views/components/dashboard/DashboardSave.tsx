@@ -15,6 +15,11 @@ const InputKey = styled(Input)`
   text-align: left;
 `;
 
+const HeaderInfoContainer = styled.span`
+  ${({ theme }) => theme.fonts.normalSmall}
+  color: ${({ theme }) => theme.colors.text400};
+`;
+
 export const DashboardSave = () => {
   const { t } = useTranslation('dashboard_save');
   const { projectConfigValues: save, setProjectConfigValues: setSave } = useConfigSave();
@@ -47,7 +52,7 @@ export const DashboardSave = () => {
   };
 
   const onBlurHeader = (event: React.ChangeEvent<HTMLInputElement>) => {
-    currentEditedSave.saveHeader = event.target.value.length === 0 ? 'PKPRT' : event.target.value;
+    currentEditedSave.saveHeader = event.target.value.length !== 5 ? currentEditedSave.saveHeader : event.target.value;
     updateSaveConfig();
   };
 
@@ -92,7 +97,8 @@ export const DashboardSave = () => {
       </InputWithTopLabelContainer>
       <InputWithTopLabelContainer>
         <Label htmlFor="header">{t('save_header')}</Label>
-        <Input type="text" name="header" value={header} onChange={onChangeHeader} onBlur={onBlurHeader} placeholder="PKPRT" />
+        <Input type="text" name="header" value={header} onChange={onChangeHeader} onBlur={onBlurHeader} placeholder="PKPRT" maxLength={5} />
+        <HeaderInfoContainer>{t('save_header_info')}</HeaderInfoContainer>
       </InputWithTopLabelContainer>
       <InputWithTopLabelContainer>
         <Label htmlFor="key">{t('save_key')}</Label>
