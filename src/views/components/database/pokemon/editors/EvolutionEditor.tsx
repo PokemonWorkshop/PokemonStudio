@@ -32,9 +32,10 @@ const EvolutionEditorContainer = styled.div`
 type Props = {
   evolutionIndex: number;
   setEvolutionIndex: (index: number) => void;
+  closeDialog: () => void;
 };
 
-export const EvolutionEditor = forwardRef<EditorHandlingClose, Props>(({ evolutionIndex, setEvolutionIndex }, ref) => {
+export const EvolutionEditor = forwardRef<EditorHandlingClose, Props>(({ evolutionIndex, setEvolutionIndex, closeDialog }, ref) => {
   const { t } = useTranslation('database_pokemon');
   const { t: tSelect } = useTranslation('select');
   const { creature, creatureName, form } = useCreaturePage();
@@ -74,6 +75,9 @@ export const EvolutionEditor = forwardRef<EditorHandlingClose, Props>(({ evoluti
   };
 
   const onRemoveEvolution = () => {
+    if (evolutionCount <= 1) {
+      closeDialog(); // Must be done before remove evolution as it saves the current data
+    }
     removeEvolution();
     if (evolutionIndex > 0) setEvolutionIndex(evolutionIndex - 1);
   };
@@ -97,7 +101,7 @@ export const EvolutionEditor = forwardRef<EditorHandlingClose, Props>(({ evoluti
                 <SelectPokemon
                   dbSymbol={state.evolveTo}
                   onChange={(value) => dispatch({ type: 'updateSpecie', value: value as DbSymbol })}
-                  undefValueOption={tSelect('none')}
+                  undefValueOption={state.evolveTo === '__undef__' ? tSelect('none') : undefined}
                   noLabel
                 />
               )}
@@ -117,22 +121,20 @@ export const EvolutionEditor = forwardRef<EditorHandlingClose, Props>(({ evoluti
           {state.conditionInUse.map((type, index) => (
             <EvolutionConditionEditor type={type} state={state} dispatch={dispatch} inputRefs={inputRefs} index={index} key={`cdn-editor-${type}`} />
           ))}
-          {state.conditionInUse.length < EVOLUTION_CONDITION_KEYS.length && state.conditionInUse.every((type) => type !== 'none') && (
-            <SecondaryNoBackground onClick={() => dispatch({ type: 'add', key: 'none' })}>
-              <PlusIcon />
-              <span>{t('evolutionAddCondition')}</span>
-            </SecondaryNoBackground>
-          )}
+          {state.conditionInUse.length < EVOLUTION_CONDITION_KEYS.length &&
+            state.conditionInUse.every((type) => type !== 'none') &&
+            state.evolveTo !== '__undef__' && (
+              <SecondaryNoBackground onClick={() => dispatch({ type: 'add', key: 'none' })}>
+                <PlusIcon />
+                <span>{t('evolutionAddCondition')}</span>
+              </SecondaryNoBackground>
+            )}
         </EvolutionEditorContainer>
         <SubEditorContainer>
-          {evolutionCount > 1 && (
-            <>
-              <SubEditorTopButtonContainer>
-                <DeleteButton onClick={onRemoveEvolution}>{t('removeEvolution')}</DeleteButton>
-              </SubEditorTopButtonContainer>
-              <SubEditorSeparator parentEditorHasScrollBar />
-            </>
-          )}
+          <SubEditorTopButtonContainer>
+            <DeleteButton onClick={onRemoveEvolution}>{t('removeEvolution')}</DeleteButton>
+          </SubEditorTopButtonContainer>
+          <SubEditorSeparator parentEditorHasScrollBar />
           <Editor type="creation" title={t('additionalEvolution')}>
             <SecondaryButtonWithPlusIcon onClick={onAddEvolution} disabled={state.evolveTo === '__undef__'}>
               {t('addNewEvolution')}

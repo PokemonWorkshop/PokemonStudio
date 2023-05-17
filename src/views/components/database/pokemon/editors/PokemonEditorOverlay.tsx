@@ -49,7 +49,14 @@ export const PokemonEditorOverlay = defineEditorOverlay<
     case 'encounter':
       return <EncounterEditor ref={handleCloseRef} />;
     case 'evolution':
-      return <EvolutionEditor evolutionIndex={props.evolutionIndex} setEvolutionIndex={props.setEvolutionIndex} ref={handleCloseRef} />;
+      return (
+        <EvolutionEditor
+          closeDialog={closeDialog}
+          evolutionIndex={props.evolutionIndex}
+          setEvolutionIndex={props.setEvolutionIndex}
+          ref={handleCloseRef}
+        />
+      );
     case 'exp':
       return <ExperienceEditor ref={handleCloseRef} />;
     case 'information':
