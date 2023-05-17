@@ -172,18 +172,21 @@ export const useEvolutionEditorState = ({ evolutionIndex, creature, form }: Evol
   const commitChanges = () => {
     if (!areConditionValid()) return;
 
-    updateForm({
-      evolutions: form.evolutions.map((evolution, index) => {
-        if (index !== evolutionIndex) return evolution;
+    if (form.evolutions.length === 0 && state.evolveTo !== '__undef__') {
+      addEvolution();
+    } else {
+      updateForm({
+        evolutions: form.evolutions.map((evolution, index) => {
+          if (index !== evolutionIndex) return evolution;
 
-        return getEvolutionChanges();
-      }),
-    });
+          return getEvolutionChanges();
+        }),
+      });
+    }
   };
 
   const addEvolution = () => {
     if (!areConditionValid()) return;
-
     updateForm({
       evolutions: [
         ...form.evolutions.map((evolution, index) => {
@@ -191,16 +194,17 @@ export const useEvolutionEditorState = ({ evolutionIndex, creature, form }: Evol
 
           return getEvolutionChanges();
         }),
-        {
-          ...form.evolutions[evolutionIndex],
-          conditions: [],
-        },
+        form.evolutions.length === 0
+          ? getEvolutionChanges()
+          : {
+              ...form.evolutions[evolutionIndex],
+              conditions: [],
+            },
       ],
     });
   };
 
   const removeEvolution = () => {
-    if (form.evolutions.length <= 1) return;
     updateForm({
       evolutions: form.evolutions.filter((_, index) => index !== evolutionIndex),
     });
