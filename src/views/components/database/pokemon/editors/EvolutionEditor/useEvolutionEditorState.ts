@@ -197,7 +197,8 @@ export const useEvolutionEditorState = ({ evolutionIndex, creature, form }: Evol
         form.evolutions.length === 0
           ? getEvolutionChanges()
           : {
-              ...form.evolutions[evolutionIndex],
+              dbSymbol: '__undef__' as DbSymbol,
+              form: 0,
               conditions: [],
             },
       ],
