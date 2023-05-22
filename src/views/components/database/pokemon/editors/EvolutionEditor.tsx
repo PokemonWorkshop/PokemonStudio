@@ -12,8 +12,7 @@ import { PaginationWithTitleProps } from '@components/PaginationWithTitle';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
 import { useCreaturePage } from '@utils/usePage';
 import { useProjectPokemon } from '@utils/useProjectData';
-import React from 'react';
-import { forwardRef } from 'react';
+import React, { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useEvolutionEditorState } from './EvolutionEditor/useEvolutionEditorState';
@@ -48,6 +47,7 @@ export const EvolutionEditor = forwardRef<EditorHandlingClose, Props>(({ evoluti
   });
 
   const inputValidityEnsured = () => {
+    if (state.evolveTo === '__undef__' && evolutionIndex !== 0) return false;
     if (areConditionValid()) return true;
     Object.values(inputRefs.current).forEach((input) => input && (!input.validity.valid || input.validity.valueMissing) && input.focus());
     return false;
@@ -94,7 +94,7 @@ export const EvolutionEditor = forwardRef<EditorHandlingClose, Props>(({ evoluti
         <EvolutionEditorContainer>
           <PaddedInputContainer size="s">
             <InputWithTopLabelContainer>
-              <Label>{t('evolves_into')}</Label>
+              <Label required>{t('evolves_into')}</Label>
               {state.isMega ? (
                 <Input type="text" value={`Mega-${creatureName}`} disabled />
               ) : (
@@ -106,7 +106,7 @@ export const EvolutionEditor = forwardRef<EditorHandlingClose, Props>(({ evoluti
                 />
               )}
             </InputWithTopLabelContainer>
-            {state.evolveTo !== '__undef__' && creatures[state.evolveTo].forms.length > 1 && (
+            {state.evolveTo !== '__undef__' && creatures[state.evolveTo]?.forms.length > 1 && (
               <InputWithTopLabelContainer>
                 <Label>{t('form')}</Label>
                 <SelectPokemonForm

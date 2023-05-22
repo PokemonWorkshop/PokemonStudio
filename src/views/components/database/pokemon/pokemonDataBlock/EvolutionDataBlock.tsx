@@ -1,6 +1,6 @@
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
 import { useProjectPokemon } from '@utils/useProjectData';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataBlockWithTitlePagination, DataFieldsetField, DataGrid } from '../../dataBlocks';
 import { PokemonDataProps } from '../PokemonDataPropsInterface';
@@ -19,7 +19,7 @@ export const EvolutionDataBlock = ({ pokemonWithForm, evolutionIndex, setEvoluti
   const evolutionCount = form.evolutions.length;
   const evolution = form.evolutions[evolutionIndex];
   const megaPrefix = evolution && evolution.conditions.some((condition) => condition.type === 'gemme') ? 'Mega-' : '';
-  const minLevel = evolution?.conditions.find((condition) => condition.type === 'minLevel')?.value || '-';
+  const minLevel = evolution?.conditions.find((condition) => condition.type === 'minLevel')?.value;
   const conditionType = evolution?.conditions.find((condition) => condition.type !== 'minLevel')?.type;
 
   const onChangeIndex = (arrow: 'left' | 'right') => {
@@ -46,18 +46,19 @@ export const EvolutionDataBlock = ({ pokemonWithForm, evolutionIndex, setEvoluti
       {evolutionCount === 0 || !evolution ? (
         <DataGrid columns="1fr" rows="1fr 1fr 1fr">
           <DataFieldsetField label={t('evolves_into')} disabled data={t('none')} />
-          <DataFieldsetField label={t('at_level')} disabled data="-" />
-          <DataFieldsetField label={t('evolves_if')} disabled data={t('no_condition')} />
         </DataGrid>
       ) : (
         <DataGrid columns="1fr" rows="1fr 1fr 1fr">
-          <DataFieldsetField label={t('evolves_into')} data={`${megaPrefix}${currentCreature ? getEntityName(currentCreature) : '__undef__'}`} />
-          <DataFieldsetField label={t('at_level')} disabled={minLevel === '-'} data={minLevel.toString()} />
           <DataFieldsetField
-            label={t('evolves_if')}
-            disabled={conditionType === undefined}
-            data={conditionType ? t(`evolutionCondition_${conditionType}`) : t('no_condition')}
+            label={t('evolves_into')}
+            data={`${megaPrefix}${
+              currentCreature ? getEntityName(currentCreature) : evolution?.dbSymbol === '__undef__' ? t('none') : t('pokemon_deleted')
+            }`}
+            error={evolution?.dbSymbol !== '__undef__' && currentCreature === undefined}
+            disabled={evolution?.dbSymbol === '__undef__'}
           />
+          {minLevel !== undefined && <DataFieldsetField label={t('at_level')} data={minLevel.toString()} />}
+          {conditionType !== undefined && <DataFieldsetField label={t('evolves_if')} data={t(`evolutionCondition_${conditionType}`)} />}
         </DataGrid>
       )}
     </DataBlockWithTitlePagination>
