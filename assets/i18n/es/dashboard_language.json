@@ -1,0 +1,14 @@
+{
+  "language": "Idioma",
+  "settings": "Ajustes",
+  "supported_languages": "Idiomas compatibles",
+  "default_language": "Idioma por defecto",
+  "prefix": "Prefijo",
+  "fields_asterisk_required": "Los campos con asterisco son obligatorios.",
+  "add_language": "Añadir el idioma",
+  "cancel": "Cancelar",
+  "code_error": "El prefijo ya está en uso.",
+  "code_info": "El prefijo está siendo utilizado en ficheros CSV para identificar la columna usada.",
+  "placeholder_language": "Ej: Japonés",
+  "placeholder_prefix": "Ej: jp"
+}
