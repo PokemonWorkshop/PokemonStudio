@@ -1,0 +1,13 @@
+{
+  "drop_your_file_or": "Suelta tu archivo o",
+  "drop_your_files_or": "Suelta tus archivos o",
+  "drop_your_file_here_or": "Suelta tu archivo aquí, o",
+  "drop_your_file_here": "Suelta tu archivo aquí",
+  "or": "o",
+  "recommanded_size": "El tamaño recomendado de imagen es {{width}}*{{height}}px",
+  "explore": "Explorar",
+  "explore_your_files": "Explorar tus archivos",
+  "or_explore_your_files": "explorar tus archivos",
+  "accepted_format": "Formato aceptado: {{formats}}",
+  "accepted_formats": "Formatos aceptados: {{formats}}"
+}

@@ -1,0 +1,19 @@
+{
+  "home": "Principal",
+  "search": "Buscar",
+  "dashboard": "Panel",
+  "update": "Actualización de PSDK",
+  "database": "Base de datos",
+  "map": "Conexiones entre Mapas",
+  "text_management": "Gestión de textos",
+  "event_editor": "Editor de eventos",
+  "deployment": "Despliegue",
+  "parameters": "Parámetros",
+  "test": "Probar el proyecto",
+  "save": "Guardar el proyecto",
+  "play_release_mode": "Jugar al juego",
+  "play_debug_mode": "Modo Debug",
+  "play_tags_mode": "Editor de System Tags",
+  "play_worldmap_mode": "Editor de World Maps",
+  "not_available_yet": "Disponible en una versión futura"
+}

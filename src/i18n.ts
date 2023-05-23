@@ -4,6 +4,7 @@ import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
 import translationEN from '../assets/i18n/en';
+import translationES from '../assets/i18n/es';
 import translationFR from '../assets/i18n/fr';
 import translationIT from '../assets/i18n/it';
 // import translationXX from '../assets/i18n/xx';
@@ -23,6 +24,7 @@ i18n
     fallbackLng: 'en',
     resources: {
       en: translationEN,
+      es: translationES,
       fr: translationFR,
       it: translationIT,
       // XX: translationXX,

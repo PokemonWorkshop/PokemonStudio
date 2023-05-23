@@ -1,0 +1,6 @@
+{
+  "successTitle": "Guardar el proyecto",
+  "successMessage": "Tus modificaciones han sido guardadas correctamente.",
+  "errorTitle": "Guardar el proyecto",
+  "errorMessage": "¡Ha ocurrido un error!"
+}

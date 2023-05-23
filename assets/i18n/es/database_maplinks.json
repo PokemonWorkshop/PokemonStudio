@@ -1,0 +1,21 @@
+{
+  "maplinks": "Conexión entre mapas",
+  "maplink_deleted": "Conexión entre mapas borrada",
+  "no_option": "Mapa no detectado",
+  "maplink_new": "Nueva conexión entre mapas",
+  "maps": "Mapas",
+  "map": "Mapa",
+  "map_deleted": "Mapa eliminado",
+  "none": "Ninguno",
+  "map_located": "Mapa localizado en el {{cardinal}}",
+  "north": "Norte",
+  "east": "Este",
+  "south": "Sur",
+  "west": "Oeste",
+  "offset": "Desplazamiento",
+  "offset_info": "Este desplazamiento se expresa en el número de tiles. Un valor positivo sugiere un {{shift}}.",
+  "offset_shift_right": "movimiento hacia la derecha",
+  "offset_downward_shift": "movimiento hacia abajo",
+  "add_link": "Añadir la conexión",
+  "no_map": "El mapa no existe o es un mapa de interior."
+}

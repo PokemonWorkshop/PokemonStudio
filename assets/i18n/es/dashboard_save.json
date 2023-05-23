@@ -1,0 +1,10 @@
+{
+  "save": "Guardar",
+  "settings": "Ajustes",
+  "save_filename": "Nombre base del archivo de guardado",
+  "save_header": "Cabecera del guardado",
+  "save_key": "Clave de guardado",
+  "save_any_location": "Posibilidad de guardar en cualquier localización",
+  "save_unlimited_count": "Archivos de guardado ilimitados",
+  "save_max_count": "Máximo número de archivos de guardado"
+}
