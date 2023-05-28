@@ -38,6 +38,7 @@ import { z } from 'zod';
 import { buildSelectOptionsFromScratch, buildSelectOptionsTextSourcesFromScratch } from './useSelectOptions';
 import i18n from '@src/i18n';
 import { useDefaultTextInfoTranslation } from './useDefaultTextInfoTranslation';
+import { PSDKVersion } from '@services/getPSDKVersion';
 
 export type PreGlobalState = Omit<
   State,
@@ -88,7 +89,16 @@ type ProjectLoadStateObject =
       projectData: ProjectDataFromBackEnd;
       projectTexts: ProjectText;
     }
-  | { state: 'finalizeGlobalState'; preState: PreGlobalState; integrityFailureCount: number };
+  | { state: 'readCurrentPSDKVersion'; preState: PreGlobalState; integrityFailureCount: number }
+  | { state: 'checkLastPSDKVersion'; preState: PreGlobalState; integrityFailureCount: number; currentPSDKVersion: PSDKVersion }
+  | {
+      state: 'finalizeGlobalState';
+      preState: PreGlobalState;
+      currentPSDKVersion: PSDKVersion;
+      lastPSDKVersion: PSDKVersion;
+      integrityFailureCount: number;
+    }
+  | { state: 'openProject' };
 
 const fail = (callbacks: { onFailure: ProjectLoadFailureCallback } | undefined, error: unknown) => {
   if (callbacks) {
@@ -309,7 +319,7 @@ export const useProjectLoad = () => {
           };
           setState({
             ...state,
-            state: 'finalizeGlobalState',
+            state: 'readCurrentPSDKVersion',
             preState: {
               projectConfig: state.projectConfigs,
               projectData,
@@ -327,54 +337,68 @@ export const useProjectLoad = () => {
           fail(callbacks, error);
         }
         break;
-      case 'finalizeGlobalState':
-        // TODO: make a better version of that shit
+      case 'readCurrentPSDKVersion':
         loaderRef.current.setProgress(12, 14, tl('loading_project_psdk_version'));
         window.api
           .getPSDKVersion()
           .then((currentPSDKVersion) => {
-            loaderRef.current.setProgress(13, 14, tl('loading_project_last_psdk_version'));
-            window.api
-              .getLastPSDKVersion()
-              .then((lastPSDKVersion) => {
-                loaderRef.current.setProgress(14, 14, tl('loading_project_identifier'));
-                sessionStorage.clear(); // Clear the whole session storage when loading is done so we don't carry garbage from other projects
-                const selectedDataIdentifier = generateSelectedIdentifier(state.preState);
-                const globalState = {
-                  ...state.preState,
-                  currentPSDKVersion,
-                  lastPSDKVersion,
-                  selectedDataIdentifier,
-                  savingData: new SavingMap(),
-                  savingConfig: new SavingConfigMap(),
-                  savingText: new SavingTextMap(),
-                  savingProjectStudio: false,
-                  savingLanguage: [],
-                  savingImage: {},
-                  savingTextInfos: false,
-                };
-                setGlobalState(globalState);
-                buildSelectOptionsTextSourcesFromScratch(globalState);
-                buildSelectOptionsFromScratch(globalState);
-                addProjectToList({
-                  projectStudio: state.preState.projectStudio,
-                  projectPath: state.preState.projectPath,
-                  lastEdit: new Date(),
-                });
-                updateProjectStudio(state.preState.projectPath, state.preState.projectStudio);
-                setState({ state: 'done' });
-                if (state.integrityFailureCount) callbacks?.onIntegrityFailure(state.integrityFailureCount);
-                else callbacks?.onSuccess({});
-              })
-              .catch((error) => {
-                setState({ state: 'done' });
-                fail(callbacks, error);
-              });
+            setState({ ...state, state: 'checkLastPSDKVersion', currentPSDKVersion });
           })
           .catch((error) => {
             setState({ state: 'done' });
             fail(callbacks, error);
           });
+        break;
+      case 'checkLastPSDKVersion':
+        loaderRef.current.setProgress(13, 14, tl('loading_project_last_psdk_version'));
+        window.api
+          .getLastPSDKVersion()
+          .then((lastPSDKVersion) => {
+            setState({ ...state, state: 'finalizeGlobalState', lastPSDKVersion });
+          })
+          .catch((error) => {
+            setState({ state: 'done' });
+            fail(callbacks, error);
+          });
+        break;
+      case 'finalizeGlobalState': {
+        loaderRef.current.setProgress(14, 14, tl('loading_project_identifier'));
+        sessionStorage.clear(); // Clear the whole session storage when loading is done so we don't carry garbage from other projects
+        const selectedDataIdentifier = generateSelectedIdentifier(state.preState);
+        const globalState = {
+          ...state.preState,
+          currentPSDKVersion: state.currentPSDKVersion,
+          lastPSDKVersion: state.lastPSDKVersion,
+          selectedDataIdentifier,
+          savingData: new SavingMap(),
+          savingConfig: new SavingConfigMap(),
+          savingText: new SavingTextMap(),
+          savingProjectStudio: false,
+          savingLanguage: [],
+          savingImage: {},
+          savingTextInfos: false,
+        };
+        setGlobalState(globalState);
+        buildSelectOptionsTextSourcesFromScratch(globalState);
+        buildSelectOptionsFromScratch(globalState);
+        addProjectToList({
+          projectStudio: state.preState.projectStudio,
+          projectPath: state.preState.projectPath,
+          lastEdit: new Date(),
+        });
+        updateProjectStudio(state.preState.projectPath, state.preState.projectStudio);
+        if (state.integrityFailureCount) {
+          callbacks?.onIntegrityFailure(state.integrityFailureCount);
+          setState({ state: 'done' });
+        } else {
+          setState({ state: 'openProject' });
+        }
+        break;
+      }
+      case 'openProject':
+        loaderRef.current.setProgress(0, 0, tl('loading_project_opening'));
+        callbacks?.onSuccess({});
+        setState({ state: 'done' });
     }
   }, [state, callbacks]);
 

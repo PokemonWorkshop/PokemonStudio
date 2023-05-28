@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { ReactNotifications } from 'react-notifications-component';
 import { MemoryRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
@@ -51,13 +51,6 @@ const App = () => {
   );
 };
 
-render(
-  <Suspense fallback={null}>
-    <App />
-  </Suspense>,
-  document.getElementById('root')
-);
-
 const TitleBarApp = () => {
   return (
     <ThemeProvider theme={theme}>
@@ -66,9 +59,16 @@ const TitleBarApp = () => {
   );
 };
 
-render(
+const root = createRoot(document.getElementById('root') as HTMLElement);
+root.render(
+  <Suspense fallback={null}>
+    <App />
+  </Suspense>
+);
+
+const titlebar = createRoot(document.getElementById('titlebar') as HTMLElement);
+titlebar.render(
   <Suspense fallback={null}>
     <TitleBarApp />
-  </Suspense>,
-  document.getElementById('titlebar')
+  </Suspense>
 );
