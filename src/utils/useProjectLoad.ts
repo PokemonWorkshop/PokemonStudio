@@ -37,6 +37,7 @@ import { PROJECT_VALIDATOR, StudioProject } from '@modelEntities/project';
 import { z } from 'zod';
 import { buildSelectOptionsFromScratch, buildSelectOptionsTextSourcesFromScratch } from './useSelectOptions';
 import i18n from '@src/i18n';
+import { useDefaultTextInfoTranslation } from './useDefaultTextInfoTranslation';
 
 export type PreGlobalState = Omit<
   State,
@@ -115,6 +116,7 @@ const countZodDiscriminatedDataIntegrityFailure = <K extends string, Options ext
 export const useProjectLoad = () => {
   const loaderRef = useLoaderRef();
   const [, setGlobalState] = useGlobalState();
+  const defaultTextInfoTranslation = useDefaultTextInfoTranslation();
   const { t: tl } = useTranslation('loader');
   const [callbacks, setCallbacks] = useState<
     | { onFailure: ProjectLoadFailureCallback; onSuccess: ProjectLoadSuccessCallback; onIntegrityFailure: ProjectLoadIntegrityFailureCallback }
@@ -222,7 +224,7 @@ export const useProjectLoad = () => {
       case 'updateTextInfos':
         loaderRef.current.setProgress(6, 14, tl('loading_update_text_infos'));
         return window.api.updateTextInfos(
-          { projectPath: state.projectDirName, currentLanguage: i18n.language },
+          { projectPath: state.projectDirName, currentLanguage: i18n.language, textInfoTranslation: defaultTextInfoTranslation() },
           () => {
             setState({ ...state, state: 'readProjectConfigs' });
           },
