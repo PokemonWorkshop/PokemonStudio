@@ -21,6 +21,7 @@
   "loading_project_psdk_version": "Lecture de la version actuelle de PSDK",
   "loading_project_last_psdk_version": "Récupération de la dernière version de PSDK",
   "loading_project_identifier": "Finalisation",
+  "loading_project_opening": "Ouverture du projet",
   "loading_update_map_infos": "Mise à jour de la liste des cartes",
   "loading_update_text_infos": "Mise à jour de la liste des fichiers de textes",
   "creating_project_opening_path": "Choix du dossier parent",
