@@ -3,5 +3,9 @@
   "update": "Mettre à jour",
   "uptodate": "À jour",
   "latest_version__latest_version_sdk": "Dernière version : {{LATEST_VERSION_SDK}}",
-  "see_the_changelog": "Voir les nouveautés"
+  "see_the_changelog": "Voir les nouveautés",
+  "studio_update_available_title": "Mise à jour disponible",
+  "studio_update_available": "Une nouvelle version de l'application est disponible. Le téléchargement va commencer automatiquement.",
+  "studio_update_downloaded_title": "Mise à jour terminée",
+  "studio_update_downloaded": "La nouvelle version a été téléchargée. Redémarrer l'application pour profiter des dernières fonctionnalités."
 }

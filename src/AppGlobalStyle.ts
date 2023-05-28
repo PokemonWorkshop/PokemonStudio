@@ -33,7 +33,7 @@ const GlobalStyle = createGlobalStyle`
     }
   }
 
-  .notifications-component {
+  .rnc__base {
     position: fixed;
     z-index: 9000;
     pointer-events: none;
@@ -41,8 +41,8 @@ const GlobalStyle = createGlobalStyle`
     height: 100%;
   }
 
-  .notification-container--bottom-right {
-    min-width: 400px;
+  .rnc__notification-container--bottom-right {
+    width: 480px;
     position: absolute;
     pointer-events: all;
     bottom: 20px;
@@ -51,8 +51,8 @@ const GlobalStyle = createGlobalStyle`
     flex-direction: column;
     gap: 16px;
 
-    .notification {
-      min-width: 400px;
+    .rnc__notification {
+      width: 480px;
       width: unset !important;
       margin-left: auto;
     }

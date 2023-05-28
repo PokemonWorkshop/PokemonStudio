@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { showNotification } from '@utils/showNotification';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 const TitleBarContainer = styled.div`
@@ -62,11 +64,31 @@ const TitleBarActions = styled.div`
 
 export const TitleBar = () => {
   const [isMaximized, setIsMaximized] = useState(true);
+  const { t } = useTranslation('update');
 
-  const toggleMaximizeMode = () => {
+  const listenerUpdateAvailable: Parameters<typeof window.api.requestUpdateAvailable.on>[0] = async () => {
+    showNotification('info', t('studio_update_available_title'), t('studio_update_available'));
+  };
+
+  const listenerUpdateDownloaded: Parameters<typeof window.api.requestUpdateDownloaded.on>[0] = async () => {
+    showNotification('info', t('studio_update_downloaded_title'), t('studio_update_downloaded'));
+  };
+
+  const onClickToggleMaximizeMode = () => {
     setIsMaximized(!isMaximized);
     window.api.toggleMaximizeMode();
   };
+
+  useEffect(() => {
+    window.api.checkUpdate();
+    window.api.requestUpdateAvailable.on(listenerUpdateAvailable);
+    window.api.requestUpdateDownloaded.on(listenerUpdateDownloaded);
+
+    return () => {
+      window.api.requestUpdateAvailable.removeListener(listenerUpdateAvailable);
+      window.api.requestUpdateDownloaded.removeListener(listenerUpdateDownloaded);
+    };
+  });
 
   return window.api.platform === 'win32' ? (
     <TitleBarContainer>
@@ -75,7 +97,7 @@ export const TitleBar = () => {
         <span className="minimize" onClick={window.api.minimize}>
           &#xE921;
         </span>
-        <span className="maximize" onClick={toggleMaximizeMode}>
+        <span className="maximize" onClick={onClickToggleMaximizeMode}>
           &#xE922;
         </span>
         <span className="close" onClick={window.api.close}>
