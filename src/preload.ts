@@ -11,6 +11,7 @@ import type { ShowMessageBoxTranslation } from './backendTasks/copyFile';
 import type { ProjectConfigsFromBackEnd } from './backendTasks/readProjectConfigs';
 import type { ProjectDataFromBackEnd } from './backendTasks/readProjectData';
 import type { ProjectText } from './GlobalStateProvider';
+import { UseDefaultTextInfoTranslationReturnType } from '@utils/useDefaultTextInfoTranslation';
 
 contextBridge.exposeInMainWorld('api', {
   clearCache: () => webFrame.clearCache(),
@@ -666,7 +667,10 @@ declare global {
       cleanupCopyFile: () => void;
       openStudioLogsFolder: BackendTaskWithGenericErrorAndNoProgress<Record<string, never>, Record<string, never>>;
       cleanupOpenStudioLogsFolder: () => void;
-      updateTextInfos: BackendTaskWithGenericErrorAndNoProgress<{ projectPath: string; currentLanguage: string }, Record<string, never>>;
+      updateTextInfos: BackendTaskWithGenericErrorAndNoProgress<
+        { projectPath: string; currentLanguage: string; textInfoTranslation: UseDefaultTextInfoTranslationReturnType },
+        Record<string, never>
+      >;
       cleanupUpdateTextInfos: () => void;
       saveTextInfos: BackendTaskWithGenericErrorAndNoProgress<{ projectPath: string; textInfos: string }, Record<string, never>>;
       cleanupSaveTextInfos: () => void;
