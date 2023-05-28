@@ -3,8 +3,8 @@
 import crypto from 'crypto';
 import path from 'path';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
-import { autoUpdater } from 'electron-updater';
 import MenuBuilder from './menu';
+import updater from 'electron-simple-updater';
 import { getPSDKBinariesPath, getPSDKVersion } from '../services/getPSDKVersion';
 import { getLastPSDKVersion } from '../services/getLastPSDKVersion';
 import { updatePSDK } from '../services/updatePSDK';
@@ -41,11 +41,6 @@ import { registerReadCsvFile } from '@src/backendTasks/readCsvFile';
 // whether you're running in development or production).
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
-export default class AppUpdater {
-  constructor() {
-    autoUpdater.checkForUpdatesAndNotify().catch((err) => console.info('Failed to check for update', err));
-  }
-}
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -107,9 +102,20 @@ const createWindow = async () => {
     return { action: 'deny' };
   });
 
-  // Remove this if your app does not use auto updates
-  // eslint-disable-next-line
-  new AppUpdater();
+  // Updater
+  if (app.isPackaged) {
+    updater.init({
+      autoDownload: true,
+      checkUpdateOnStart: false,
+      url: 'https://raw.githubusercontent.com/PokemonWorkshop/PokemonStudio/main/updates.json',
+    });
+    updater.on('update-available', () => {
+      mainWindow?.webContents.send('request-update-available');
+    });
+    updater.on('update-downloaded', () => {
+      mainWindow?.webContents.send('request-update-downloaded');
+    });
+  }
 };
 
 /**
@@ -167,6 +173,7 @@ ipcMain.on('window-is-maximized', (event) => {
 ipcMain.handle('get-psdk-binaries-path', () => getPSDKBinariesPath());
 ipcMain.handle('get-psdk-version', () => getPSDKVersion());
 ipcMain.handle('get-app-version', () => app.getVersion());
+ipcMain.once('studio-check-update', () => app.isPackaged && updater.checkForUpdates());
 ipcMain.on('get-last-psdk-version', getLastPSDKVersion);
 ipcMain.on('update-psdk', updatePSDK);
 ipcMain.on('start-psdk', (_, projectPath: string) => startPSDK(projectPath));

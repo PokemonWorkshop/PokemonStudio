@@ -31,6 +31,15 @@ contextBridge.exposeInMainWorld('api', {
     on: (cb) => ipcRenderer.on('request-window-close', cb),
     removeListener: (cb) => ipcRenderer.removeListener('request-window-close', cb),
   },
+  requestUpdateAvailable: {
+    on: (listener) => ipcRenderer.on('request-update-available', listener),
+    removeListener: (listener) => ipcRenderer.removeListener('request-update-available', listener),
+  },
+  requestUpdateDownloaded: {
+    on: (listener) => ipcRenderer.on('request-update-downloaded', listener),
+    removeListener: (listener) => ipcRenderer.removeListener('request-update-downloaded', listener),
+  },
+  checkUpdate: () => ipcRenderer.send('studio-check-update'),
   getAppVersion: () => ipcRenderer.invoke('get-app-version'),
   getPSDKBinariesPath: () => ipcRenderer.invoke('get-psdk-binaries-path'),
   getPSDKVersion: () => ipcRenderer.invoke('get-psdk-version'),
@@ -574,6 +583,15 @@ declare global {
         on: (cb: Parameters<typeof ipcRenderer.on>[1]) => ReturnType<typeof ipcRenderer.on>;
         removeListener: (cb: Parameters<typeof ipcRenderer.on>[1]) => void;
       };
+      requestUpdateAvailable: {
+        on: (cb: Parameters<typeof ipcRenderer.on>[1]) => ReturnType<typeof ipcRenderer.on>;
+        removeListener: (cb: Parameters<typeof ipcRenderer.on>[1]) => void;
+      };
+      requestUpdateDownloaded: {
+        on: (cb: Parameters<typeof ipcRenderer.on>[1]) => ReturnType<typeof ipcRenderer.on>;
+        removeListener: (cb: Parameters<typeof ipcRenderer.on>[1]) => void;
+      };
+      checkUpdate: () => void;
       minimize: () => void;
       toggleMaximizeMode: () => void;
       close: () => void;
