@@ -107,10 +107,12 @@ const DropDownContainer = styled.div`
 
     ${DropDownOptions} {
       visibility: visible;
+      cursor: pointer;
     }
 
     & ${Input} {
       background-color: ${({ theme }) => theme.colors.dark12};
+      cursor: default;
     }
   }
 
