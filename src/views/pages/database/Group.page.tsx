@@ -25,6 +25,7 @@ import { useGetEntityNameText } from '@utils/ReadingProjectText';
 import { defineRelationCustomCondition } from '@utils/GroupUtils';
 import { cleanExpandPokemonSetup, cleanNaNValue } from '@utils/cleanNaNValue';
 import { cloneEntity } from '@utils/cloneEntity';
+import { GROUP_NAME_TEXT_ID } from '@modelEntities/group';
 
 export const GroupPage = () => {
   const {
@@ -61,7 +62,7 @@ export const GroupPage = () => {
   });
   const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
     {
-      translation_name: { fileId: 61 },
+      translation_name: { fileId: GROUP_NAME_TEXT_ID },
     },
     currentEditedGroup.id,
     getGroupName(currentEditedGroup)

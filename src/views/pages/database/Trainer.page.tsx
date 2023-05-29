@@ -18,7 +18,14 @@ import { BagEntryList, BagEntryListEditor } from '@components/bagEntryList';
 import { useTranslationEditor } from '@utils/useTranslationEditor';
 import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 import { useGetEntityNameText, useGetProjectText } from '@utils/ReadingProjectText';
-import { reduceBagEntries, TRAINER_CLASS_TEXT_ID, updatePartyTrainerName } from '@modelEntities/trainer';
+import {
+  reduceBagEntries,
+  TRAINER_CLASS_TEXT_ID,
+  TRAINER_DEFEAT_SENTENCE_TEXT_ID,
+  TRAINER_NAME_TEXT_ID,
+  TRAINER_VICTORY_SENTENCE_TEXT_ID,
+  updatePartyTrainerName,
+} from '@modelEntities/trainer';
 import { cleanExpandPokemonSetup, cleaningTrainerNaNValues } from '@utils/cleanNaNValue';
 import { cloneEntity } from '@utils/cloneEntity';
 import { trainerSpriteBigPath, trainerSpritePath } from '@utils/path';
@@ -60,10 +67,10 @@ export const TrainerPage = () => {
   const [state] = useGlobalState();
   const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
     {
-      translation_name: { fileId: 62 },
-      translation_class: { fileId: 29 },
-      translation_victory: { fileId: 47, isMultiline: true },
-      translation_defeat: { fileId: 48, isMultiline: true },
+      translation_name: { fileId: TRAINER_NAME_TEXT_ID },
+      translation_class: { fileId: TRAINER_CLASS_TEXT_ID },
+      translation_victory: { fileId: TRAINER_VICTORY_SENTENCE_TEXT_ID, isMultiline: true },
+      translation_defeat: { fileId: TRAINER_DEFEAT_SENTENCE_TEXT_ID, isMultiline: true },
     },
     currentEditedTrainer.id,
     `${getText(TRAINER_CLASS_TEXT_ID, currentEditedTrainer.id)} ${getTrainerName(currentEditedTrainer)}`

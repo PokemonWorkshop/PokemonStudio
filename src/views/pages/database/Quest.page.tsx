@@ -25,7 +25,7 @@ import {
 import { useTranslationEditor } from '@utils/useTranslationEditor';
 import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
-import { updateIndexSpeakToBeatNpc } from '@modelEntities/quest';
+import { QUEST_DESCRIPTION_TEXT_ID, QUEST_NAME_TEXT_ID, updateIndexSpeakToBeatNpc } from '@modelEntities/quest';
 import { cleaningQuestNaNValues } from '@utils/cleanNaNValue';
 import { cloneEntity } from '@utils/cloneEntity';
 
@@ -59,8 +59,8 @@ export const QuestPage = () => {
   useShortcut(shortcutMap);
   const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
     {
-      translation_name: { fileId: 45 },
-      translation_description: { fileId: 46, isMultiline: true },
+      translation_name: { fileId: QUEST_NAME_TEXT_ID },
+      translation_description: { fileId: QUEST_DESCRIPTION_TEXT_ID, isMultiline: true },
     },
     currentEditedQuest.id,
     getQuestName(currentEditedQuest)

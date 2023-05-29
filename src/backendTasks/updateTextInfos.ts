@@ -60,7 +60,7 @@ export const updateTextInfos = async (
   event: IpcMainEvent,
   payload: { projectPath: string; currentLanguage: string; textInfoTranslation: UseDefaultTextInfoTranslationReturnType }
 ) => {
-  console.info('update-text-infos', payload);
+  console.info('update-text-infos', { projectPath: payload.projectPath, currentLanguage: payload.currentLanguage });
   const textInfosFilePath = path.join(payload.projectPath, TEXT_INFOS_PATH);
   const studioTextPath = path.join(payload.projectPath, STUDIO_CSV_PATH);
   const languages = payload.textInfoTranslation.textInfoGenerics.map(({ lang }) => lang);
