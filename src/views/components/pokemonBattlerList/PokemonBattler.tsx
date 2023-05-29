@@ -51,6 +51,7 @@ export const PokemonBattlerContainer = styled.div`
   box-sizing: border-box;
   height: 100%;
   ${({ theme }) => theme.fonts.normalMedium}
+  cursor: pointer;
 
   & ${Tag} {
     background-color: ${({ theme }) => theme.colors.dark20};
@@ -107,6 +108,7 @@ const PokemonBattlerItem = styled.div`
   flex-direction: row;
   gap: 8px;
   align-items: center;
+  cursor: pointer;
 
   & img {
     max-width: 32px;

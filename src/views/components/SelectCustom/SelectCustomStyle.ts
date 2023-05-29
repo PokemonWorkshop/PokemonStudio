@@ -7,6 +7,7 @@ import { SelectElementType } from './SelectCustomPropsInterface';
 // @ts-ignore TODO: Fix this for real
 export const ListElement = styled(List)`
   padding: 0px 4px;
+  cursor: pointer;
 
   ::-webkit-scrollbar {
     width: 8px;
@@ -45,6 +46,7 @@ export const SelectElement = styled(Select)<SelectElementType>`
 
   .react-select__control:hover {
     border: 2px solid ${({ theme }) => theme.colors.text500};
+    cursor: pointer;
   }
 
   .react-select__control--is-focused {
@@ -113,6 +115,7 @@ export const SelectElement = styled(Select)<SelectElementType>`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    cursor: pointer;
   }
 
   .react-select__option:hover {

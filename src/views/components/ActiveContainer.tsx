@@ -13,6 +13,7 @@ export const ActiveContainer = styled.div`
     background-color: ${({ theme }) => theme.colors.dark14};
     border-color: ${({ theme }) => theme.colors.dark24};
     outline: 2px solid ${({ theme }) => theme.colors.dark24};
+    cursor: pointer;
   }
 
   &.active:not([data-disabled='true']),
