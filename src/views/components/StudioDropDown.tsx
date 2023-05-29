@@ -22,6 +22,7 @@ const DropDownOptions = styled.div<DropDownOptionsProps>`
   z-index: 2;
   box-sizing: border-box;
   user-select: none;
+  cursor: default;
 
   & .scrollable-view {
     ::-webkit-scrollbar {
@@ -55,6 +56,7 @@ const DropDownOptions = styled.div<DropDownOptionsProps>`
       color: ${({ theme }) => theme.colors.text400};
       overflow: hidden;
       text-overflow: ellipsis;
+      cursor: pointer;
     }
 
     & span.current {
@@ -89,6 +91,7 @@ const DropDownContainer = styled.div`
   border: 2px solid transparent;
   white-space: nowrap;
   user-select: none;
+  cursor: pointer;
 
   &:hover {
     border: 2px solid ${({ theme }) => theme.colors.text500};
@@ -107,12 +110,11 @@ const DropDownContainer = styled.div`
 
     ${DropDownOptions} {
       visibility: visible;
-      cursor: pointer;
     }
 
     & ${Input} {
       background-color: ${({ theme }) => theme.colors.dark12};
-      cursor: default;
+      cursor: text;
     }
   }
 
@@ -132,7 +134,7 @@ const DropDownContainer = styled.div`
     background-color: ${({ theme }) => theme.colors.dark20};
     border: none;
     outline: none;
-    cursor: default;
+    cursor: pointer;
 
     &.error {
       &::placeholder {

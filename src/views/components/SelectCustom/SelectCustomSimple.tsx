@@ -54,6 +54,7 @@ const DropDownOptions = styled.div`
   z-index: 2;
   box-sizing: border-box;
   user-select: none;
+  cursor: default;
 `;
 
 const DropDownOptionsScrollableView = styled(ScrollableView)`
@@ -70,6 +71,7 @@ const DropDownOptionsScrollableView = styled(ScrollableView)`
     color: ${({ theme }) => theme.colors.text400};
     overflow: hidden;
     text-overflow: ellipsis;
+    cursor: pointer;
   }
 
   & span.current {
@@ -98,6 +100,7 @@ const DropDownContainer = styled.div`
   border: 2px solid transparent;
   white-space: nowrap;
   user-select: none;
+  cursor: pointer;
 
   & span.value {
     min-width: 180px;

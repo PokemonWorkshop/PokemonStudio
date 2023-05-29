@@ -19,6 +19,7 @@ import { useTranslationEditor } from '@utils/useTranslationEditor';
 import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 import { useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
 import { cloneEntity } from '@utils/cloneEntity';
+import { TYPE_NAME_TEXT_ID } from '@modelEntities/type';
 
 type TypePageParams = {
   typeDbSymbol?: string;
@@ -54,7 +55,7 @@ export const TypePage = () => {
   useShortcut(shortcutMap);
   const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
     {
-      translation_name: { fileId: 3 },
+      translation_name: { fileId: TYPE_NAME_TEXT_ID },
     },
     currentEditedType.textId,
     getTypeName(currentEditedType)

@@ -27,6 +27,7 @@ import { defineRelationCustomCondition } from '@utils/GroupUtils';
 import { cloneEntity } from '@utils/cloneEntity';
 import { StudioGroup } from '@modelEntities/group';
 import { cleaningZoneNaNValues } from '@utils/cleanNaNValue';
+import { ZONE_DESCRIPTION_TEXT_ID, ZONE_NAME_TEXT_ID } from '@modelEntities/zone';
 
 export const ZonePage = () => {
   const {
@@ -60,8 +61,8 @@ export const ZonePage = () => {
   useShortcut(shortcutMap);
   const { translationEditor, openTranslationEditor, closeTranslationEditor } = useTranslationEditor(
     {
-      translation_name: { fileId: 10 },
-      translation_description: { fileId: 64, isMultiline: true },
+      translation_name: { fileId: ZONE_NAME_TEXT_ID },
+      translation_description: { fileId: ZONE_DESCRIPTION_TEXT_ID, isMultiline: true },
     },
     currentEditedZone.id,
     getZoneName(currentEditedZone)
