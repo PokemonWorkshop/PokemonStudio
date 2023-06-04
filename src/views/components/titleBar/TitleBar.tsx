@@ -88,7 +88,8 @@ export const TitleBar = () => {
       window.api.requestUpdateAvailable.removeListener(listenerUpdateAvailable);
       window.api.requestUpdateDownloaded.removeListener(listenerUpdateDownloaded);
     };
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return window.api.platform === 'win32' ? (
     <TitleBarContainer>
