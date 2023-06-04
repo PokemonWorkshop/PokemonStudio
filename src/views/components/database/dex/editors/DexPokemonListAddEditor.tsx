@@ -46,7 +46,9 @@ export const DexPokemonListAddEditor = ({ dex, onClose }: DexPokemonListAddEdito
     const pokemonForm = isAddingEvolutions && allPokemon[creature.dbSymbol]?.forms.find((form) => form.form === creature.form);
     const creatures = pokemonForm ? searchUnderAndEvolutions(pokemonForm, creature, allPokemon) : [creature];
     const alreadyInCreatures = dex.creatures.map(({ dbSymbol }) => dbSymbol);
-    const creaturesToAdd = creatures.filter((other) => !alreadyInCreatures.includes(other.dbSymbol));
+    const creaturesToAdd = creatures
+      .filter((other) => !alreadyInCreatures.includes(other.dbSymbol))
+      .filter((dexc, i, self) => self.findIndex((c) => c.dbSymbol === dexc.dbSymbol) === i);
     if (creaturesToAdd.length !== 0) {
       newDex.creatures = [...dex.creatures, ...creaturesToAdd];
       setDex({ [dex.dbSymbol]: newDex });

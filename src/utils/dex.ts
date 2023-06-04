@@ -71,7 +71,7 @@ export const searchUnderAndEvolutions = (
 };
 
 export const isCreaturesAlreadyInDex = (dexCreatures: StudioDexCreature[], newCreatures: StudioDexCreature[]) => {
-  return newCreatures.every((newCreature) => dexCreatures.find((dc) => dc.dbSymbol === newCreature.dbSymbol && dc.form === newCreature.form));
+  return newCreatures.every((newCreature) => dexCreatures.find((dc) => dc.dbSymbol === newCreature.dbSymbol));
 };
 
 export const isCreatureHasNotEvolution = (creatures: StudioDexCreature[], creature: StudioDexCreature) => {
