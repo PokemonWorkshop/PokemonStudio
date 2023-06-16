@@ -19,7 +19,8 @@ const MIGRATIONS: Record<string, MigrationTask[]> = {
   '1.4.0': [fixCsvFileIdDex],
   '1.4.1': [fixCsvFileIdDex],
   '1.4.2': [fixCsvFileIdDex],
-  '1.4.3': [fixCsvFileIdDex], // Don't forget to add the official version coming up
+  '1.4.3': [fixCsvFileIdDex],
+  '1.4.4': [fixCsvFileIdDex], // Don't forget to add the official version coming up
 };
 
 // Don't forget to extend those array with the new tasks that gets added by the time!
@@ -72,7 +73,8 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
   '1.4.0': ['Fix the csv file id of the dex'],
   '1.4.1': ['Fix the csv file id of the dex'],
   '1.4.2': ['Fix the csv file id of the dex'],
-  '1.4.3': ['Fix the csv file id of the dex'], // Don't forget to add the official version coming up
+  '1.4.3': ['Fix the csv file id of the dex'],
+  '1.4.4': ['Fix the csv file id of the dex'], // Don't forget to add the official version coming up
 };
 
 const migrateData = async (event: IpcMainEvent, payload: { projectPath: string; projectVersion: string }) => {
