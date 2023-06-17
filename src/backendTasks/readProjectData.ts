@@ -1,4 +1,5 @@
 import { IpcMain, IpcMainEvent } from 'electron';
+import log from 'electron-log';
 import path from 'path';
 import fs from 'fs';
 import fsPromises from 'fs/promises';
@@ -53,7 +54,7 @@ export const readProjectFolder = async (projectPath: string, key: ProjectDataFro
 };
 
 const readProjectData = async (event: IpcMainEvent, payload: { path: string }) => {
-  console.info('read-project-data');
+  log.info('read-project-data');
   try {
     const rmxpMapsJson = await fsPromises.readFile(path.join(payload.path, 'Data/Studio', 'rmxp_maps.json'), { encoding: 'utf-8' });
     const textInfosJson = await fsPromises.readFile(path.join(payload.path, 'Data/Studio', 'text_info.json'), { encoding: 'utf-8' });
@@ -61,16 +62,16 @@ const readProjectData = async (event: IpcMainEvent, payload: { path: string }) =
     const textInfos: StudioTextInfo[] = JSON.parse(textInfosJson);
     const projectData = await projectDataKeys.reduce(async (prev, curr, index) => {
       const prevData = await prev;
-      console.info('read-project-data/progress', curr);
+      log.info('read-project-data/progress', curr);
       event.sender.send('read-project-data/progress', { step: index + 1, total: projectDataKeys.length, stepText: curr });
       const data = await readProjectFolder(payload.path, curr);
       return { ...prevData, [curr]: data };
     }, Promise.resolve({ rmxpMaps, textInfos } as ProjectDataFromBackEnd));
 
-    console.info('read-project-data/success');
+    log.info('read-project-data/success');
     event.sender.send('read-project-data/success', projectData);
   } catch (error) {
-    console.error('read-project-data/failure', error);
+    log.error('read-project-data/failure', error);
     event.sender.send('read-project-data/failure', { errorMessage: `${error instanceof Error ? error.message : error}` });
   }
 };

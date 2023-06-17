@@ -7,10 +7,10 @@ const saveTextInfos = async (event: IpcMainEvent, payload: { projectPath: string
   log.info('save-text-infos');
   try {
     fs.writeFileSync(path.join(payload.projectPath, 'Data', 'Studio', 'text_info.json'), payload.textInfos);
-    console.info('save-text-infos/success');
+    log.info('save-text-infos/success');
     event.sender.send('save-text-infos/success', {});
   } catch (error) {
-    console.error('save-text-infos/failure', error);
+    log.error('save-text-infos/failure', error);
     event.sender.send('save-text-infos/failure', { errorMessage: `${error instanceof Error ? error.message : error}` });
   }
 };

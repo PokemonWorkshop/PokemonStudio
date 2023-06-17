@@ -4,6 +4,7 @@ import { linkResourcesToCreatures } from '@src/migrations/linkResourcesToCreatur
 import { migrateHeadbutt } from '@src/migrations/migrateHeadbutt';
 import { migrateMapLinks } from '@src/migrations/migrateMapLinks';
 import { IpcMainEvent, IpcMain } from 'electron';
+import log from 'electron-log';
 
 export type MigrationTask = (event: IpcMainEvent, projectPath: string) => Promise<void>;
 
@@ -78,24 +79,24 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
 };
 
 const migrateData = async (event: IpcMainEvent, payload: { projectPath: string; projectVersion: string }) => {
-  console.info('migrate-data', payload.projectVersion);
+  log.info('migrate-data', payload.projectVersion);
   try {
     const dataToMigrate = MIGRATIONS[payload.projectVersion];
     const stepTexts = MIGRATION_STEP_TEXTS[payload.projectVersion];
     if (dataToMigrate && stepTexts) {
-      console.info('migrate-data', `Found ${dataToMigrate.length} migrations`);
+      log.info('migrate-data', `Found ${dataToMigrate.length} migrations`);
       await dataToMigrate.reduce(async (prev, curr, index) => {
         await prev;
         event.sender.send('migrate-data/progress', { step: index + 1, total: dataToMigrate.length, stepText: stepTexts[index] });
         await curr(event, payload.projectPath);
       }, Promise.resolve());
     } else {
-      console.info('migrate-data', 'No data to migrate found!');
+      log.info('migrate-data', 'No data to migrate found!');
     }
-    console.info('migrate-data/success');
+    log.info('migrate-data/success');
     event.sender.send('migrate-data/success', {});
   } catch (error) {
-    console.error('migrate-data/failure', error);
+    log.error('migrate-data/failure', error);
     event.sender.send('migrate-data/failure', { errorMessage: `${error instanceof Error ? error.message : error}` });
   }
 };

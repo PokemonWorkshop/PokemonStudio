@@ -77,7 +77,7 @@ export const ErrorDialog = ({ title, message, isLogsAvailable, onClose }: Deleti
   const onClickLogs = async () => {
     openStudioLogsFolder(
       () => {},
-      ({ errorMessage }) => console.log(errorMessage)
+      ({ errorMessage }) => window.api.log.error(errorMessage)
     );
   };
 

@@ -7,10 +7,10 @@ const writeProjectMetadata = async (event: IpcMainEvent, payload: { path: string
   log.info('write-project-metadata');
   try {
     fs.writeFileSync(path.join(payload.path, 'project.studio'), payload.metaData);
-    console.info('write-project-metadata/success');
+    log.info('write-project-metadata/success');
     event.sender.send('write-project-metadata/success', {});
   } catch (error) {
-    console.error('write-project-metadata/failure', error);
+    log.error('write-project-metadata/failure', error);
     event.sender.send('write-project-metadata/failure', { errorMessage: `${error instanceof Error ? error.message : error}` });
   }
 };

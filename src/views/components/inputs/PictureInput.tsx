@@ -88,7 +88,7 @@ export const PictureInput = ({ picturePathInProject, name, extensions, destFolde
           ({ destFile }) => {
             setTimeout(() => onPictureChoosen(destFile));
           },
-          ({ errorMessage }) => console.log(errorMessage)
+          ({ errorMessage }) => window.api.log.error(errorMessage)
         );
       }
     }

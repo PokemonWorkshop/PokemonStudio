@@ -75,7 +75,7 @@ export type CreatureFormResourcesPath =
 
 export const formResourcesPath = (form: StudioCreatureForm, resource: CreatureFormResourcesPath) => {
   if (!form.resources) {
-    console.error('Resources object missing on', form);
+    window.api.log.error('Resources object missing on', form);
     return '';
   }
 

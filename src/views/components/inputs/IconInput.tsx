@@ -90,7 +90,7 @@ export const IconInput = ({
               setFlipFlap((last) => !last);
             });
           },
-          ({ errorMessage }) => console.log(errorMessage)
+          ({ errorMessage }) => window.api.log.error(errorMessage)
         );
       }
     }

@@ -82,7 +82,7 @@ export const AudioInput = ({ audioPathInProject, name, extensions, destFolderToC
           ({ destFile }) => {
             setTimeout(() => onAudioChoosen(destFile));
           },
-          ({ errorMessage }) => console.log(errorMessage)
+          ({ errorMessage }) => window.api.log.error(errorMessage)
         );
       }
     }

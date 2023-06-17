@@ -105,7 +105,7 @@ export const DropInput = ({
           ({ destFile }) => {
             setTimeout(() => onFileChoosen(destFile));
           },
-          ({ errorMessage }) => console.log(errorMessage)
+          ({ errorMessage }) => window.api.log.error(errorMessage)
         );
       }
     }

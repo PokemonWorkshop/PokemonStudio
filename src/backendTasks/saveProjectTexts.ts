@@ -1,11 +1,12 @@
 import { IpcMain, IpcMainEvent } from 'electron';
+import log from 'electron-log';
 import fs from 'fs';
 import path from 'path';
 import { stringify } from 'csv-stringify/sync';
 import { SavingText } from '@utils/SavingUtils';
 
 const saveProjectTexts = async (event: IpcMainEvent, payload: { path: string; texts: SavingText }) => {
-  console.info('save-project-texts', { path: payload.path });
+  log.info('save-project-texts', { path: payload.path });
   try {
     Promise.all(
       payload.texts.map(async (sd) => {
@@ -19,15 +20,15 @@ const saveProjectTexts = async (event: IpcMainEvent, payload: { path: string; te
       })
     )
       .then(() => {
-        console.info('save-project-texts/success');
+        log.info('save-project-texts/success');
         return event.sender.send('save-project-texts/success', {});
       })
       .catch((error) => {
-        console.error('save-project-texts/failure', error);
+        log.error('save-project-texts/failure', error);
         return event.sender.send('save-project-texts/failure', { errorMessage: `${error instanceof Error ? error.message : error}` });
       });
   } catch (error) {
-    console.error('save-project-texts/failure', error);
+    log.error('save-project-texts/failure', error);
     event.sender.send('save-project-texts/failure', { errorMessage: `${error instanceof Error ? error.message : error}` });
   }
 };

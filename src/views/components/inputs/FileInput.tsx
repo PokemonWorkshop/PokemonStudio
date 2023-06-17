@@ -95,7 +95,7 @@ export const FileInput = ({ filePath, name, extensions, destFolderToCopy, isAbso
           ({ destFile }) => {
             setTimeout(() => onFileChoosen(destFile));
           },
-          ({ errorMessage }) => console.log(errorMessage)
+          ({ errorMessage }) => window.api.log.error(errorMessage)
         );
       }
     }
