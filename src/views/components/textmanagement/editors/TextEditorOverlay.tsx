@@ -4,8 +4,9 @@ import { assertUnreachable } from '@utils/assertUnreachable';
 import { DialogRefData } from '@utils/useDialogsRef';
 import { TextDeletion } from './TextDeletion';
 import { TextFrameEditor, TextImportEditor, TextNewEditor } from '.';
+import { TextListClear } from './TextListClear';
 
-export type TextEditorAndDeletionKeys = 'new' | 'frame' | 'import' | 'deletion';
+export type TextEditorAndDeletionKeys = 'new' | 'frame' | 'import' | 'deletion' | 'clear';
 export type TextDialogsRef = React.RefObject<DialogRefData<TextEditorAndDeletionKeys>>;
 
 /**
@@ -22,6 +23,8 @@ export const TextEditorOverlay = defineEditorOverlay<TextEditorAndDeletionKeys>(
       return <TextImportEditor closeDialog={closeDialog} ref={handleCloseRef} />;
     case 'deletion':
       return <TextDeletion closeDialog={closeDialog} ref={handleCloseRef} />;
+    case 'clear':
+      return <TextListClear closeDialog={closeDialog} ref={handleCloseRef} />;
     default:
       return assertUnreachable(dialogToShow);
   }

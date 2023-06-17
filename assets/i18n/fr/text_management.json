@@ -28,6 +28,8 @@
   "add_a_text": "Ajouter un texte",
   "clear_all": "Tout effacer",
   "no_text": "Aucun texte pour ce fichier de textes",
+  "clearing_texts": "Effacement des textes",
+  "clearing_texts_message": "Vous êtes sur le point d'effacer définitivement les textes du fichier de textes «\u00a0{{name}}\u00a0» pour la langue en cours d'édition.",
   "importation": "Importation",
   "importation_info": "Vous pouvez importer les textes d'un autre fichier. Attention, cette opération remplace les textes déjà présents.",
   "import_texts_file": "Importer les textes du fichier",

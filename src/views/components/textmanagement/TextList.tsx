@@ -30,7 +30,7 @@ export const TextList = ({ dialogsRef }: TextListProps) => {
     [texts, research]
   );
   const listRef = useRef<List>(null);
-  const onClearAll = () => textsFiltered.forEach((text) => setText(textInfo.fileId, text.textId, ''));
+  const onClearAll = () => dialogsRef.current?.openDialog('clear', true);
   const onAdd = () => {
     setText(textInfo.fileId, texts.length === 0 ? 0 : texts[texts.length - 1].textId + 1, '');
     setScrollToEnd(true);

@@ -28,6 +28,8 @@
   "add_a_text": "Add a text",
   "clear_all": "Clear all",
   "no_text": "No text for this texts file",
+  "clearing_texts": "Clearing texts",
+  "clearing_texts_message": "You are about to permanently clear the texts of the texts file «\u00a0{{name}}\u00a0» for the current language.",
   "importation": "Importation",
   "importation_info": "You can import texts from another file. Warning, this operation replaces the texts already present.",
   "import_texts_file": "Import texts from file",
