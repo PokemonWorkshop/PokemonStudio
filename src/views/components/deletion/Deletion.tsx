@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { DeletionContainer } from './DeletionContainer';
 import { DeleteButton } from '@components/buttons';
 import { BaseIcon } from '@components/icons/BaseIcon';
+import SvgContainer from '@components/icons/BaseIcon/SvgContainer';
 
 const TitleWithIconContainer = styled.div`
   display: flex;
@@ -30,6 +31,11 @@ const DeleteIcon = styled.div`
   border-radius: 100%;
   background-color: ${theme.colors.dangerSoft};
   color: ${theme.colors.dangerBase};
+
+  ${SvgContainer} {
+    align-items: center;
+    justify-content: center;
+  }
 `;
 
 const TextWarningContainer = styled.div`
@@ -74,28 +80,29 @@ const CancelLink = styled.span`
 type DeletionProps = {
   title: string;
   message: string;
+  icon?: 'delete' | 'clear';
   onClickDelete: () => void;
   onClose: () => void;
 };
 
-export const Deletion = ({ title, message, onClickDelete, onClose }: DeletionProps) => {
-  const { t } = useTranslation(['deletion']);
+export const Deletion = ({ title, message, icon, onClickDelete, onClose }: DeletionProps) => {
+  const { t } = useTranslation('deletion');
 
   return (
     <DeletionContainer>
       <TitleWithIconContainer>
         <DeleteIcon>
-          <BaseIcon icon="delete" size="s" color={theme.colors.dangerBase} />
+          <BaseIcon icon={icon || 'delete'} size="s" color={theme.colors.dangerBase} />
         </DeleteIcon>
         <h3>{title}</h3>
       </TitleWithIconContainer>
       <TextWarningContainer>
         <p>{message}</p>
-        <p className="red">{t('deletion:action_irreversible')}</p>
+        <p className="red">{t('action_irreversible')}</p>
       </TextWarningContainer>
       <ActionContainer>
-        <CancelLink onClick={onClose}>{t('deletion:cancel')}</CancelLink>
-        <DeleteButton onClick={onClickDelete}>{t('deletion:delete')}</DeleteButton>
+        <CancelLink onClick={onClose}>{t('cancel')}</CancelLink>
+        <DeleteButton onClick={onClickDelete}>{t(icon || 'delete')}</DeleteButton>
       </ActionContainer>
     </DeletionContainer>
   );
