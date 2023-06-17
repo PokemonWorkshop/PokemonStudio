@@ -11,7 +11,9 @@ import type { ShowMessageBoxTranslation } from './backendTasks/copyFile';
 import type { ProjectConfigsFromBackEnd } from './backendTasks/readProjectConfigs';
 import type { ProjectDataFromBackEnd } from './backendTasks/readProjectData';
 import type { ProjectText } from './GlobalStateProvider';
-import { UseDefaultTextInfoTranslationReturnType } from '@utils/useDefaultTextInfoTranslation';
+import type { UseDefaultTextInfoTranslationReturnType } from '@utils/useDefaultTextInfoTranslation';
+import type { LogRendererType } from '@utils/logRenderer';
+import * as logRenderer from '@utils/logRenderer';
 
 contextBridge.exposeInMainWorld('api', {
   clearCache: () => webFrame.clearCache(),
@@ -24,6 +26,7 @@ contextBridge.exposeInMainWorld('api', {
     },
     removeListener: (cb) => ipcRenderer.removeListener('request-shortcut', cb),
   },
+  log: logRenderer,
   minimize: () => ipcRenderer.send('window-minimize'),
   toggleMaximizeMode: () => ipcRenderer.send('window-maximize'),
   close: () => ipcRenderer.send('window-close'),
@@ -576,6 +579,7 @@ declare global {
         on: (cb: (shortcut: StudioShortcut) => unknown) => (event: IpcRendererEvent, args: unknown) => void;
         removeListener: (listener: (event: IpcRendererEvent, args: unknown) => void) => void;
       };
+      log: LogRendererType;
       getAppVersion: () => Promise<string>;
       getPSDKBinariesPath: () => Promise<string>;
       getPSDKVersion: () => Promise<PSDKVersion>;

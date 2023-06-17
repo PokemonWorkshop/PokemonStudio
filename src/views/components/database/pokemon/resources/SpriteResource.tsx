@@ -146,7 +146,7 @@ export const SpriteResource = ({ form, resource, isFemale, disableGif, onResourc
             onResourceChoosen(destFile, resource);
             setFlipFlap((last) => !last);
           }),
-        ({ errorMessage }) => console.log(errorMessage)
+        ({ errorMessage }) => window.api.log.error(errorMessage)
       );
     }
   };

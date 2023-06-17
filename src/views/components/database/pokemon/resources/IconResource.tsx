@@ -106,7 +106,7 @@ export const IconResource = ({ form, resource, isFemale, disableGif, onResourceC
             onResourceChoosen(acceptedFiles[0].path, resource);
             setFlipFlap((last) => !last);
           }),
-        ({ errorMessage }) => console.log(errorMessage)
+        ({ errorMessage }) => window.api.log.error(errorMessage)
       );
     }
   };

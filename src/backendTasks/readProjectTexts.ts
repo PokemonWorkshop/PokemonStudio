@@ -1,10 +1,11 @@
 import { IpcMainEvent } from 'electron';
+import log from 'electron-log';
 import path from 'path';
 import { ProjectText } from '@src/GlobalStateProvider';
 import { getTextFileList, loadCSV } from '@utils/textManagement';
 
 const readProjectTexts = async (event: IpcMainEvent, payload: { path: string }) => {
-  console.info('read-project-texts');
+  log.info('read-project-texts');
   try {
     const textFileList = getTextFileList(payload.path, true);
     const projectTexts = await textFileList.reduce(async (prev, curr, index) => {
@@ -14,10 +15,10 @@ const readProjectTexts = async (event: IpcMainEvent, payload: { path: string }) 
       return { ...previousResult, [curr]: currentText };
     }, Promise.resolve({} as ProjectText));
 
-    console.info('read-project-texts/success');
+    log.info('read-project-texts/success');
     event.sender.send('read-project-texts/success', projectTexts);
   } catch (error) {
-    console.error('read-project-texts/failure', error);
+    log.error('read-project-texts/failure', error);
     event.sender.send('read-project-texts/failure', { errorMessage: `${error instanceof Error ? error.message : error}` });
   }
 };

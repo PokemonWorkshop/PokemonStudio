@@ -1,4 +1,5 @@
 import { IpcMainEvent } from 'electron';
+import log from 'electron-log';
 import path from 'path';
 import fs from 'fs';
 import { StudioTextInfo, TEXT_INFO_DESCRIPTION_TEXT_ID, TEXT_INFO_NAME_TEXT_ID } from '@modelEntities/textInfo';
@@ -60,7 +61,7 @@ export const updateTextInfos = async (
   event: IpcMainEvent,
   payload: { projectPath: string; currentLanguage: string; textInfoTranslation: UseDefaultTextInfoTranslationReturnType }
 ) => {
-  console.info('update-text-infos', { projectPath: payload.projectPath, currentLanguage: payload.currentLanguage });
+  log.info('update-text-infos', { projectPath: payload.projectPath, currentLanguage: payload.currentLanguage });
   const textInfosFilePath = path.join(payload.projectPath, TEXT_INFOS_PATH);
   const studioTextPath = path.join(payload.projectPath, STUDIO_CSV_PATH);
   const languages = payload.textInfoTranslation.textInfoGenerics.map(({ lang }) => lang);
@@ -72,7 +73,7 @@ export const updateTextInfos = async (
     if (fs.existsSync(textInfosFilePath)) {
       // check if text_infos file and csv files should be updated
       if (!mustTextInfosBeUpdated(payload.projectPath)) {
-        console.info('update-text-infos/success', 'nothing to update');
+        log.info('update-text-infos/success', 'nothing to update');
         return event.sender.send('update-text-infos/success', {});
       }
       const textFileList = getTextFileList(payload.projectPath);
@@ -100,7 +101,7 @@ export const updateTextInfos = async (
       saveCSV(payload.projectPath, 200000, names);
       saveCSV(payload.projectPath, 200001, descriptions);
       fs.writeFileSync(path.join(payload.projectPath, TEXT_INFOS_PATH), JSON.stringify(textInfosUpdated, null, 2));
-      console.info('update-text-infos/success', 'updated file');
+      log.info('update-text-infos/success', 'updated file');
       event.sender.send('update-text-infos/success', {});
     } else {
       // text_infos file doesn't exist, so we create and the csv files associated
@@ -117,11 +118,11 @@ export const updateTextInfos = async (
       fs.writeFileSync(path.join(payload.projectPath, TEXT_INFOS_PATH), JSON.stringify(textInfos, null, 2));
       saveCSV(payload.projectPath, 200000, names, languages);
       saveCSV(payload.projectPath, 200001, descriptions, languages);
-      console.info('update-text-infos/success', 'file created');
+      log.info('update-text-infos/success', 'file created');
       event.sender.send('update-text-infos/success', {});
     }
   } catch (error) {
-    console.error('update-text-infos/failure', error);
+    log.error('update-text-infos/failure', error);
     event.sender.send('update-text-infos/failure', { errorMessage: `${error instanceof Error ? error.message : error}` });
   }
 };

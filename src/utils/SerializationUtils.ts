@@ -1,5 +1,4 @@
 import { DbSymbol } from '@modelEntities/dbSymbol';
-import log from 'electron-log';
 import { z } from 'zod';
 
 export const deserializeZodData = <I extends z.ZodRawShape>(inputObjects: string[], validator: z.ZodObject<I>) => {
@@ -8,7 +7,7 @@ export const deserializeZodData = <I extends z.ZodRawShape>(inputObjects: string
     .map((str) => {
       const res = validator.safeParse(JSON.parse(str));
       if (!res.success) {
-        log.error('Deserialization Error', str, res.error);
+        window.api.log.error('Deserialization Error', str, res.error);
         integrityFailureCount.count++;
       }
       return res;
@@ -30,7 +29,7 @@ export const deserializeZodDiscriminatedData = <K extends string, Options extend
     .map((str) => {
       const res = validator.safeParse(JSON.parse(str));
       if (!res.success) {
-        log.error('Deserialization Error', str, res.error);
+        window.api.log.error('Deserialization Error', str, res.error);
         integrityFailureCount.count++;
       }
       return res;
