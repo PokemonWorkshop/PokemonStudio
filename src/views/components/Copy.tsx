@@ -21,15 +21,16 @@ export const CopyStyle = styled.button`
 type CopyProps = {
   dataToCopy: string;
   message: string;
+  noColon?: true;
 };
 
-const Copy = ({ dataToCopy, message }: CopyProps) => {
+const Copy = ({ dataToCopy, message, noColon }: CopyProps) => {
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const { t } = useTranslation('copy');
 
   const onClickCopy: React.MouseEventHandler<HTMLButtonElement> = (event) => {
     event.stopPropagation();
-    navigator.clipboard.writeText(`:${dataToCopy}`);
+    navigator.clipboard.writeText(`${noColon ? '' : ':'}${dataToCopy}`);
     setIsCopied(true);
   };
 
@@ -45,7 +46,7 @@ const Copy = ({ dataToCopy, message }: CopyProps) => {
 
 type CopyIdentifierProps = Omit<CopyProps, 'message'>;
 
-export const CopyIdentifier = ({ dataToCopy }: CopyIdentifierProps) => {
+export const CopyIdentifier = ({ dataToCopy, noColon }: CopyIdentifierProps) => {
   const { t } = useTranslation('copy');
-  return <Copy dataToCopy={dataToCopy} message={t('identifier_message')} />;
+  return <Copy dataToCopy={dataToCopy} message={t('identifier_message')} noColon={noColon} />;
 };

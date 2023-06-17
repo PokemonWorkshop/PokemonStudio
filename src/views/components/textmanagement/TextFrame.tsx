@@ -53,7 +53,7 @@ export const TextFrame = ({ textInfo, dialogsRef }: Props) => {
             <DataInfoContainerHeaderTitle>
               <h1>{getName(textInfo)}</h1>
               <span className="data-id">{`#${textInfo.fileId}`}</span>
-              <CopyIdentifier dataToCopy={textInfo.fileId.toString()} />
+              <CopyIdentifier dataToCopy={textInfo.fileId.toString()} noColon />
             </DataInfoContainerHeaderTitle>
           </DataInfoContainerHeader>
           <p>{getDescription(textInfo)}</p>
