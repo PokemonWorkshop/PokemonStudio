@@ -20,16 +20,18 @@ Load and save a project, update PokémonSDK (the Starter Kit), import maps from 
 
 The PSDK binaries are important, they let Studio start PSDK projects and perform operations over them.
 
-## Get JSON Files from PSDK
+## How to start developping
 
-1. Have a PSDK project or make sure `psdk-lite` has been pulled using `git submodule update --init --recursive`
-2. Import the PSDK project (unless you have pulled `psdk-lite`)
+### Prerequires
 
-## Install
+You'll need to **install NodeJS** first: https://nodejs.org/en/download
 
-- **If you have installation or compilation issues with this project, please see [debugging guide](https://github.com/electron-react-boilerplate/electron-react-boilerplate/issues/400)**
+We recommend using [NVM](https://github.com/nvm-sh/nvm) (MacOS/Linux) or [Volta](https://volta.sh/) (Windows) to manage easely your NodeJS version.
+We use the version **18** of NodeJS.
 
-First, clone the repo via git and install dependencies:
+### Installation
+
+Next, clone the repo via git and install dependencies:
 
 ```bash
 git clone git@gitlab.com:pokemonsdk/pokemon-studio.git.pokemon-studio
@@ -46,14 +48,12 @@ Start the app in the `dev` environment:
 npm start
 ```
 
-## Editor Configuration (not required) [from ERB docs](https://electron-react-boilerplate.js.org/docs/editor-configuration)
+## Editor Configuration (not required)
 
 If you would like to manually install the plugins you can use the code executable. If you have code in your PATH, you can run the following command:
 
 ```bash
 code --install-extension dbaeumer.vscode-eslint
-code --install-extension dzannotti.vscode-babel-coloring
-code --install-extension EditorConfig.EditorConfig
 ```
 
 ## Folders Hierarchy
@@ -121,8 +121,8 @@ projectData/
 
 If you want to create the component for a data `foo` for example, you must :
 
-- Create the model `src/models/entities/foo.model.ts`, a class that takes a data dictionary as a constructor parameter and assigns the data fields to itself.
-- Create the functional component `src/views/components/data/foo.model.tsx` which has the property of an ID (In PSDK the data is organized by ID) and retrieves an object from the `GlobalStateProvider` using its ID
+- Create the model `src/models/entities/foo.ts`, a type representing the data you wish to use (item, move, etc.).
+- Create the functional component `src/views/components/database/foo.tsx` which has the property of a dbSymbol (In PSDK the data is organized by dbSymbol) and retrieves an object from the `GlobalStateProvider` using its dbSymbol.
 
 There is an example of a data component in the source code.
 
@@ -130,43 +130,57 @@ To modify an object with a rather simple syntax in an immutable way (necessary t
 
 ## Electron Services
 
-For the creation of a service, check `src/services/time.info.channel.service.ts` example which implements a service that retrieves the current date. Each added service should be added to the `ipcChannels` array in `src/main.dev.ts` (to activate the listeners).
+For the creation of a service, check `src/backendTasks/chooseFile.ts` example which implements a service that retrieves the chosen file. Each added service should be registered in `src/main/index.ts` (to activate the listeners).
+
+The service must be added to the `window.api` (in the `preload.ts` file) to be able to call the service from the front end.
+
+In the `Window` interface :
+
+```typescript
+  chooseFile: BackendTaskWithGenericErrorAndNoProgress<{ name: string; extensions: string[] }, { path: string; dirName: string }>;
+  cleanupChooseFile: () => void;
+```
+
+In the `contextBridge.exposeInMainWorld` :
+
+```typescript
+    chooseFile: (taskPayload, onSuccess, onFailure) => {
+    // Register success event
+    ipcRenderer.once(`choose-file/success`, (_, payload) => {
+      ipcRenderer.removeAllListeners(`choose-file/failure`);
+      onSuccess(payload);
+    });
+    // Register failure event
+    ipcRenderer.once(`choose-file/failure`, (_, error) => {
+      ipcRenderer.removeAllListeners(`choose-file/success`);
+      onFailure(error);
+    });
+    // Call service
+    ipcRenderer.send('choose-file', taskPayload);
+  },
+  cleanupChooseFile: () => {
+    ipcRenderer.removeAllListeners(`choose-file/success`);
+    ipcRenderer.removeAllListeners(`choose-file/failure`);
+  }
+```
 
 The request of a service is done by calling the following code :
 
 ```typescript
-const ipc = new IpcService();
-ipc.send<TypeOfTheResponse>('name-of-the-channel'); // asynchronous call
+window.api.chooseFile(
+  { name: 'Pokémon Studio Project', extensions: ['studio'] },
+  ({ path }) => {
+    // success
+  },
+  () => {
+    // failure
+  }
+);
 ```
 
 ### Example
 
-Here is an example of how to use the service that gives the current date, a button that updates the view with the current date :
-
-```typescript
-  const [state, setState] = useGlobalState();
-  const update = () => {
-    ipc
-      .send<{ date: string }>('time-info')
-      .then(({ date }) =>
-        setState((prev) => ({
-          ...prev,
-          date: date,
-        }))
-      )
-      .catch((err) => console.log(err));
-  };
-
-  return (
-    <div>
-      <span>Date: {state.date}</span>
-      <button type="button" onClick={update}>
-        Update
-      </button>
-    </div>
-  );
-};
-```
+There are examples of `chooseFile` being used in hooks `useChooseFile`, `useProjectLoad` and `useProjectNew`.
 
 ## Unit Tests
 
@@ -181,16 +195,6 @@ In that project, we choosed to use these rules :
 - Use **Hook**
 - Create Unit tests
 
-## Build an App [from ERB docs](https://electron-react-boilerplate.js.org/docs/building)
-
-Building a production version of your app will optimize the JS, CSS, and SASS of your application.
-
-To create a production build, run npm run build:
-
-```bash
-npm run build
-```
-
 ## Packaging for Production
 
 To package apps for the local platform:
@@ -198,70 +202,6 @@ To package apps for the local platform:
 ```bash
 npm run package
 ```
-
-## Adding Assets [from ERB docs](https://electron-react-boilerplate.js.org/docs/adding-assets)
-
-Out of the box, ERB supports the following assets:
-
-**Asset Supported Extensions**
-Images : .jpg, .png, .jpg
-Fonts : .svg, .ttf, .eot
-
-**Use in code :**
-
-```js
-import catImage from './cat.jpg';
-
-const CatComponent = () => {
-  return <img src={catImage} />;
-};
-```
-
-## Adding Dependencies
-
-**How to add modules to the project**
-You will need to add other modules to this boilerplate, depending on the requirements of your project. For example, you may want to add node-postgres to communicate with PostgreSQL database, or material-ui to reuse React UI components.
-
-### Module Structure
-
-This boilerplate uses a two package.json structure. This means you will have two package.json files :
-
-**./package.json** in the root of your project
-**./app/package.json** inside app folder
-
-**Rule of thumb is:** all modules go into ./package.json except for native modules, or modules with native dependencies or peer dependencies. Native modules, or packages with native dependencies should go into ./app/package.json.
-
-1. If the module is native to a platform (like node-postgres), it should be listed under dependencies in ./app/package.json
-2. If a module is imported by another module, include it in dependencies in ./package.json. See this ESLint rule. Examples of such modules are material-ui, redux-form, and moment.
-3. Otherwise, modules used for building, testing, and debugging should be included in devDependencies in ./package.json.
-
-## Styling
-
-### CSS modules
-
-This boilerplate is configured to use css-modules out of the box.
-
-All .css file extensions will use css-modules unless it has .global.css.
-
-If you need global styles, stylesheets with .global.css will not go through the css-modules loader. e.g. app.global.css
-
-If you want to import global css libraries (like bootstrap), you can just write the following code in .global.css:
-
-```css
-@import '~bootstrap/dist/css/bootstrap.css';
-```
-
-### How to import CSS file from node_modules
-
-Say, you want to import css file from font-awesome module. Use following syntax
-
-```css
-@import '~font-awesome/css/font-awesome.css';
-```
-
-Note the tilde ~ placed before module name.
-
-Similar syntax is used for SCSS too.
 
 ## Texts and translations
 
