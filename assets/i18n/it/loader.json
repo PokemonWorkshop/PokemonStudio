@@ -24,6 +24,7 @@
   "loading_project_opening": "Apertura del progetto",
   "loading_update_map_infos": "Aggiornamento dell'elenco delle mappe",
   "loading_update_text_infos": "Aggiornamento dell'elenco dei file di testo",
+  "loading_check_maps_modified": "Controllo delle mappe",
   "creating_project_opening_path": "Scelta della cartella principale",
   "creating_project_checking": "Verifica che il progetto non esista",
   "creating_project_child_folder_exist_error": "Il progetto esiste già",
