@@ -29,6 +29,8 @@ import { StudioType } from '@modelEntities/type';
 import { StudioQuest } from '@modelEntities/quest';
 import { StudioProject } from '@modelEntities/project';
 import { StudioTextInfo } from '@modelEntities/textInfo';
+import { StudioMap } from '@modelEntities/map';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 
 export interface ProjectData {
   items: {
@@ -63,6 +65,9 @@ export interface ProjectData {
   };
   mapLinks: {
     [mapLink: string]: StudioMapLink;
+  };
+  maps: {
+    [map: string]: StudioMap;
   };
 }
 
@@ -115,6 +120,7 @@ export type SelectedDataIdentifier = {
   group: string;
   dex: string;
   mapLink: string;
+  map: string;
   textInfo: number;
 };
 
@@ -137,6 +143,7 @@ export interface State {
   savingLanguage: string[];
   savingImage: { [path: string]: string };
   savingTextInfos: boolean;
+  mapsModified: DbSymbol[];
 }
 
 const initialState = {
@@ -155,6 +162,7 @@ const initialState = {
     group: 'group_0',
     dex: 'national',
     mapLink: '__undef__',
+    map: 'map001',
     textInfo: 0,
   },
   savingData: new SavingMap(),
@@ -167,6 +175,7 @@ const initialState = {
   savingImage: {},
   savingTextInfos: false,
   textVersion: 0,
+  mapsModified: [] as DbSymbol[],
 };
 
 export type TextsWithLanguageConfig = {

@@ -99,5 +99,6 @@ export const generateSelectedIdentifier = (preState: PreGlobalState): SelectedDa
     dex: getSelectedIdentifier(preState, selectedFromStorage, 'dex', 'dex') || firstById(projectData.dex),
     mapLink: getMapLinkIdentifier(selectedFromStorage, preState.rmxpMaps, validMaps),
     textInfo: getTextInfoIdentifier(selectedFromStorage, preState.textInfos),
+    map: getSelectedIdentifier(preState, selectedFromStorage, 'map', 'maps') || firstById(projectData.maps),
   };
 };

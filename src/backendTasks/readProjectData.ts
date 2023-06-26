@@ -20,6 +20,7 @@ const projectDataKeys = [
   'worldmaps',
   'maplinks',
   'zones',
+  'maps',
 ] as const;
 type ProjectDataFromBackEndKey = (typeof projectDataKeys)[number];
 export type ProjectDataFromBackEnd = Record<ProjectDataFromBackEndKey, string[]> & { rmxpMaps: StudioRMXPMap[]; textInfos: StudioTextInfo[] };

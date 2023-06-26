@@ -1,0 +1,5 @@
+{
+  "checking_maps": "Vérifications des cartes",
+  "checking_maps_message": "Des cartes modifiées ont été détectées.",
+  "error_no_project_load": "Impossible de vérifier si les cartes ont été modifiées si le projet n'a pas été chargé."
+}

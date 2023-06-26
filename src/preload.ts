@@ -10,9 +10,11 @@ import type { ConfigureNewProjectMetaData } from './backendTasks/configureNewPro
 import type { ShowMessageBoxTranslation } from './backendTasks/copyFile';
 import type { ProjectConfigsFromBackEnd } from './backendTasks/readProjectConfigs';
 import type { ProjectDataFromBackEnd } from './backendTasks/readProjectData';
+import type { CheckMapsModifiedMethod } from './backendTasks/checkMapsModified';
 import type { ProjectText } from './GlobalStateProvider';
 import type { UseDefaultTextInfoTranslationReturnType } from '@utils/useDefaultTextInfoTranslation';
 import type { LogRendererType } from '@utils/logRenderer';
+import type { DbSymbol } from '@modelEntities/dbSymbol';
 import * as logRenderer from '@utils/logRenderer';
 
 contextBridge.exposeInMainWorld('api', {
@@ -568,6 +570,24 @@ contextBridge.exposeInMainWorld('api', {
     ipcRenderer.removeAllListeners(`read-csv-file/success`);
     ipcRenderer.removeAllListeners(`read-csv-file/failure`);
   },
+  checkMapsModified: (taskPayload, onSuccess, onFailure) => {
+    // Register success event
+    ipcRenderer.once(`check-maps-modified/success`, (_, payload) => {
+      ipcRenderer.removeAllListeners(`check-maps-modified/failure`);
+      onSuccess(payload);
+    });
+    // Register failure event
+    ipcRenderer.once(`check-maps-modified/failure`, (_, error) => {
+      ipcRenderer.removeAllListeners(`check-maps-modified/success`);
+      onFailure(error);
+    });
+    // Call service
+    ipcRenderer.send('check-maps-modified', taskPayload);
+  },
+  cleanupCheckMapsModified: () => {
+    ipcRenderer.removeAllListeners(`check-maps-modified/success`);
+    ipcRenderer.removeAllListeners(`check-maps-modified/failure`);
+  },
 });
 
 declare global {
@@ -680,6 +700,11 @@ declare global {
       cleanupSaveTextInfos: () => void;
       readCsvFile: BackendTaskWithGenericError<{ filePath: string; fileId: number }, ProjectText, GenericBackendProgress>;
       cleanupReadCsvFile: () => void;
+      checkMapsModified: BackendTaskWithGenericErrorAndNoProgress<
+        { projectPath: string; maps: string[]; method: CheckMapsModifiedMethod },
+        { dbSymbols: DbSymbol[] }
+      >;
+      cleanupCheckMapsModified: () => void;
     };
   }
 }

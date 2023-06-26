@@ -39,6 +39,8 @@ import { buildSelectOptionsFromScratch, buildSelectOptionsTextSourcesFromScratch
 import i18n from '@src/i18n';
 import { useDefaultTextInfoTranslation } from './useDefaultTextInfoTranslation';
 import { PSDKVersion } from '@services/getPSDKVersion';
+import { MAP_VALIDATOR } from '@modelEntities/map';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 
 export type PreGlobalState = Omit<
   State,
@@ -53,6 +55,7 @@ export type PreGlobalState = Omit<
   | 'savingLanguage'
   | 'savingImage'
   | 'savingTextInfos'
+  | 'mapsModified'
 > & { projectPath: string };
 type ProjectLoadFailureCallback = (error: { errorMessage: string }) => void;
 type ProjectLoadSuccessCallback = (payload: Record<string, never>) => void;
@@ -89,14 +92,22 @@ type ProjectLoadStateObject =
       projectData: ProjectDataFromBackEnd;
       projectTexts: ProjectText;
     }
-  | { state: 'readCurrentPSDKVersion'; preState: PreGlobalState; integrityFailureCount: number }
-  | { state: 'checkLastPSDKVersion'; preState: PreGlobalState; integrityFailureCount: number; currentPSDKVersion: PSDKVersion }
+  | { state: 'checkMapsModified'; preState: PreGlobalState; integrityFailureCount: number }
+  | { state: 'readCurrentPSDKVersion'; preState: PreGlobalState; integrityFailureCount: number; mapsModified: DbSymbol[] }
+  | {
+      state: 'checkLastPSDKVersion';
+      preState: PreGlobalState;
+      integrityFailureCount: number;
+      mapsModified: DbSymbol[];
+      currentPSDKVersion: PSDKVersion;
+    }
   | {
       state: 'finalizeGlobalState';
       preState: PreGlobalState;
+      integrityFailureCount: number;
+      mapsModified: DbSymbol[];
       currentPSDKVersion: PSDKVersion;
       lastPSDKVersion: PSDKVersion;
-      integrityFailureCount: number;
     }
   | { state: 'openProject' };
 
@@ -144,6 +155,7 @@ export const useProjectLoad = () => {
         window.api.cleanupMigrateData();
         window.api.cleanupUpdateMapInfos();
         window.api.cleanupUpdateTextInfos();
+        window.api.cleanupCheckMapsModified();
         return;
       case 'choosingProjectFile':
         loaderRef.current.open('loading_project', 0, 0, tl('importing_project_choose_project'));
@@ -156,7 +168,7 @@ export const useProjectLoad = () => {
           }
         );
       case 'readingVersion':
-        loaderRef.current.setProgress(1, 14, tl('importing_project_reading_version'));
+        loaderRef.current.setProgress(1, 15, tl('importing_project_reading_version'));
         window.api.clearCache();
         return window.api.getStudioVersion(
           {},
@@ -167,11 +179,11 @@ export const useProjectLoad = () => {
           }
         );
       case 'readProjectMetadata':
-        loaderRef.current.open('loading_project', 2, 14, tl('loading_project_meta'));
+        loaderRef.current.open('loading_project', 2, 15, tl('loading_project_meta'));
         return window.api.readProjectMetadata(
           { path: state.projectDirName },
           ({ metaData }) => {
-            loaderRef.current.setProgress(3, 14, tl('loading_project_meta_deserialization'));
+            loaderRef.current.setProgress(3, 15, tl('loading_project_meta_deserialization'));
             const projectMetaData = PROJECT_VALIDATOR.safeParse(metaData);
             if (!projectMetaData.success) {
               loaderRef.current.setError('loading_project_error', tl('failed_deserialize'));
@@ -208,7 +220,7 @@ export const useProjectLoad = () => {
           }
         );
       case 'writeProjectMetadata':
-        loaderRef.current.open('loading_project', 4, 14, tl('importing_project_writing_meta'));
+        loaderRef.current.open('loading_project', 4, 15, tl('importing_project_writing_meta'));
         return window.api.writeProjectMetadata(
           { path: state.projectDirName, metaData: JSON.stringify(state.projectMetaData, null, 2) },
           () => {
@@ -220,7 +232,7 @@ export const useProjectLoad = () => {
           }
         );
       case 'updateMapInfos':
-        loaderRef.current.setProgress(5, 14, tl('loading_update_map_infos'));
+        loaderRef.current.setProgress(5, 15, tl('loading_update_map_infos'));
         return window.api.updateMapInfos(
           { projectPath: state.projectDirName },
           () => {
@@ -232,7 +244,7 @@ export const useProjectLoad = () => {
           }
         );
       case 'updateTextInfos':
-        loaderRef.current.setProgress(6, 14, tl('loading_update_text_infos'));
+        loaderRef.current.setProgress(6, 15, tl('loading_update_text_infos'));
         return window.api.updateTextInfos(
           { projectPath: state.projectDirName, currentLanguage: i18n.language, textInfoTranslation: defaultTextInfoTranslation() },
           () => {
@@ -244,11 +256,11 @@ export const useProjectLoad = () => {
           }
         );
       case 'readProjectConfigs':
-        loaderRef.current.setProgress(7, 14, tl('loading_project_config'));
+        loaderRef.current.setProgress(7, 15, tl('loading_project_config'));
         return window.api.readProjectConfigs(
           { path: state.projectDirName },
           (configs) => {
-            loaderRef.current.setProgress(8, 14, tl('loading_project_config_deserialization'));
+            loaderRef.current.setProgress(8, 15, tl('loading_project_config_deserialization'));
             try {
               const projectConfigs: PSDKConfigs = {
                 credits_config: deserializeZodConfig(configs.credits_config, CREDIT_CONFIG_VALIDATOR),
@@ -276,7 +288,7 @@ export const useProjectLoad = () => {
           }
         );
       case 'readProjectData':
-        loaderRef.current.setProgress(9, 14, tl('loading_project_data'));
+        loaderRef.current.setProgress(9, 15, tl('loading_project_data'));
         return window.api.readProjectData(
           { path: state.projectDirName },
           (projectData) => {
@@ -288,7 +300,7 @@ export const useProjectLoad = () => {
           }
         );
       case 'readProjectText':
-        loaderRef.current.setProgress(10, 14, tl('loading_project_text'));
+        loaderRef.current.setProgress(10, 15, tl('loading_project_text'));
         return window.api.readProjectTexts(
           { path: state.projectDirName },
           (projectTexts) => {
@@ -300,7 +312,7 @@ export const useProjectLoad = () => {
           }
         );
       case 'deserializeProjectData':
-        loaderRef.current.setProgress(11, 14, tl('loading_project_data_deserialization'));
+        loaderRef.current.setProgress(11, 15, tl('loading_project_data_deserialization'));
         try {
           const integrityFailureCount = { count: 0 };
           const projectText = state.projectTexts;
@@ -316,10 +328,11 @@ export const useProjectLoad = () => {
             groups: zodDataToEntries(countZodDataIntegrityFailure(state.projectData.groups, GROUP_VALIDATOR, integrityFailureCount)),
             dex: zodDataToEntries(countZodDataIntegrityFailure(state.projectData.dex, DEX_VALIDATOR, integrityFailureCount)),
             mapLinks: zodDataToEntries(countZodDataIntegrityFailure(state.projectData.maplinks, MAP_LINK_VALIDATOR, integrityFailureCount)),
+            maps: zodDataToEntries(countZodDataIntegrityFailure(state.projectData.maps, MAP_VALIDATOR, integrityFailureCount)),
           };
           setState({
             ...state,
-            state: 'readCurrentPSDKVersion',
+            state: 'checkMapsModified',
             preState: {
               projectConfig: state.projectConfigs,
               projectData,
@@ -337,8 +350,23 @@ export const useProjectLoad = () => {
           fail(callbacks, error);
         }
         break;
+      case 'checkMapsModified':
+        loaderRef.current.setProgress(12, 15, tl('loading_check_maps_modified'));
+        window.api.checkMapsModified(
+          {
+            projectPath: state.preState.projectPath,
+            maps: Object.values(state.preState.projectData.maps).map((map) => JSON.stringify(map)),
+            method: 'sha1',
+          },
+          ({ dbSymbols }) => setState({ ...state, state: 'readCurrentPSDKVersion', mapsModified: dbSymbols }),
+          ({ errorMessage }) => {
+            setState({ state: 'done' });
+            fail(callbacks, errorMessage);
+          }
+        );
+        break;
       case 'readCurrentPSDKVersion':
-        loaderRef.current.setProgress(12, 14, tl('loading_project_psdk_version'));
+        loaderRef.current.setProgress(13, 15, tl('loading_project_psdk_version'));
         window.api
           .getPSDKVersion()
           .then((currentPSDKVersion) => {
@@ -350,7 +378,7 @@ export const useProjectLoad = () => {
           });
         break;
       case 'checkLastPSDKVersion':
-        loaderRef.current.setProgress(13, 14, tl('loading_project_last_psdk_version'));
+        loaderRef.current.setProgress(14, 15, tl('loading_project_last_psdk_version'));
         window.api
           .getLastPSDKVersion()
           .then((lastPSDKVersion) => {
@@ -362,7 +390,7 @@ export const useProjectLoad = () => {
           });
         break;
       case 'finalizeGlobalState': {
-        loaderRef.current.setProgress(14, 14, tl('loading_project_identifier'));
+        loaderRef.current.setProgress(15, 15, tl('loading_project_identifier'));
         sessionStorage.clear(); // Clear the whole session storage when loading is done so we don't carry garbage from other projects
         const selectedDataIdentifier = generateSelectedIdentifier(state.preState);
         const globalState = {
@@ -377,6 +405,7 @@ export const useProjectLoad = () => {
           savingLanguage: [],
           savingImage: {},
           savingTextInfos: false,
+          mapsModified: state.mapsModified,
         };
         setGlobalState(globalState);
         buildSelectOptionsTextSourcesFromScratch(globalState);
