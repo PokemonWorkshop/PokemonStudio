@@ -27,10 +27,13 @@ export type ProjectDataFromBackEnd = Record<ProjectDataFromBackEndKey, string[]>
 
 export const readProjectFolder = async (projectPath: string, key: ProjectDataFromBackEndKey): Promise<string[]> => {
   const folderName = path.join(projectPath, 'Data/Studio', key);
+  if (!fs.existsSync(folderName)) {
+    fs.mkdirSync(folderName);
+  }
   const entries = fs.readdirSync(folderName).filter((f) => {
     return f.endsWith('.json');
   });
-  if (entries.length === 0) {
+  if (entries.length === 0 && key !== 'maps') {
     throw new Error(`Missing data in ${key}`);
   }
 

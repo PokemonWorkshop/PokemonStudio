@@ -12,7 +12,7 @@ const firstByNameUsingTextId = (
 };
 
 const firstById = <T extends { id: number; dbSymbol: string }>(data: Record<string, T>): string => {
-  return Object.values(data).sort((a, b) => a.id - b.id)[0].dbSymbol;
+  return Object.values(data).sort((a, b) => a.id - b.id)[0]?.dbSymbol || '__undef__';
 };
 
 const getSelectedIdentifierFromStorage = (preState: PreGlobalState) => {
