@@ -1,4 +1,4 @@
-import { Menu, shell, BrowserWindow, MenuItemConstructorOptions } from "electron";
+import { Menu, shell, BrowserWindow, MenuItemConstructorOptions } from 'electron';
 
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
@@ -9,12 +9,12 @@ export default class MenuBuilder {
 
   constructor(mainWindow: BrowserWindow) {
     this.mainWindow = mainWindow;
-    this.isDarwin = process.platform === "darwin";
-    this.isDev = process.env.NODE_ENV === "development" || process.env.DEBUG_PROD === "true";
+    this.isDarwin = process.platform === 'darwin';
+    this.isDev = process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
   }
 
   buildMenu(): Menu {
-    if (process.env.NODE_ENV === "development" || process.env.DEBUG_PROD === "true") {
+    if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
       this.setupDevelopmentEnvironment();
     }
 
@@ -28,12 +28,12 @@ export default class MenuBuilder {
   }
 
   setupDevelopmentEnvironment(): void {
-    this.mainWindow.webContents.on("context-menu", (_, props) => {
+    this.mainWindow.webContents.on('context-menu', (_, props) => {
       const { x, y } = props;
 
       Menu.buildFromTemplate([
         {
-          label: "Inspect element",
+          label: 'Inspect element',
           click: () => {
             this.mainWindow.webContents.inspectElement(x, y);
           },
@@ -45,91 +45,99 @@ export default class MenuBuilder {
   buildDefaultTemplate(): MenuItemConstructorOptions[] {
     const templateDefault: MenuItemConstructorOptions[] = [
       {
-        label: "Pokémon Studio",
+        label: 'Pokémon Studio',
         submenu: [
           {
-            label: "About Pokémon Studio",
-            role: "about",
+            label: 'About Pokémon Studio',
+            role: 'about',
           },
-          { type: "separator" },
-          { label: "Services", submenu: [] },
-          { type: "separator" },
+          { type: 'separator' },
+          { label: 'Services', submenu: [] },
+          { type: 'separator' },
           {
-            label: "Hide Pokémon Studio",
-            accelerator: "CmdOrCtrl+H",
-            role: this.isDarwin ? "hide" : "minimize",
+            label: 'Hide Pokémon Studio',
+            accelerator: 'CmdOrCtrl+H',
+            role: this.isDarwin ? 'hide' : 'minimize',
           },
           {
-            label: "Hide Others",
+            label: 'Hide Others',
             visible: this.isDarwin,
-            accelerator: "Cmd+Shift+H",
-            role: "hideOthers",
+            accelerator: 'Cmd+Shift+H',
+            role: 'hideOthers',
           },
           {
-            label: "Show All",
+            label: 'Show All',
             visible: this.isDarwin,
-            role: "unhide",
+            role: 'unhide',
           },
-          { type: "separator" },
+          { type: 'separator' },
           {
-            label: "Quit",
-            accelerator: "Meta+Q",
+            label: 'Save',
+            accelerator: 'CmdOrCtrl+S',
             click: () => {
-              this.mainWindow.webContents.send("request-window-close", true);
+              this.mainWindow.webContents.send('request-shortcut', 'db_save');
+            },
+          },
+          { type: 'separator' },
+          {
+            label: 'Quit',
+            accelerator: 'Meta+Q',
+            click: () => {
+              this.mainWindow.webContents.send('request-window-close', true);
             },
           },
         ],
       },
       {
-        label: "Edit",
+        label: 'Edit',
         submenu: [
           {
-            label: "New Database item",
-            accelerator: "CmdOrCtrl+N",
+            label: 'New Database item',
+            accelerator: 'CmdOrCtrl+N',
             click: () => {
-              this.mainWindow.webContents.send("request-shortcut", "db_new");
+              this.mainWindow.webContents.send('request-shortcut', 'db_new');
             },
           },
-          { type: "separator" },
-          { role: "cut" },
-          { role: "copy" },
-          { role: "paste" },
-          { role: "selectAll" },
+          { type: 'separator' },
+          { role: 'cut' },
+          { role: 'copy' },
+          { role: 'paste' },
+          { role: 'selectAll' },
         ],
       },
       {
-        label: "View",
+        label: 'View',
         submenu: [
           {
-            label: "Previous Database item",
-            accelerator: this.isDarwin ? "Alt+Left" : "Ctrl+Left",
+            label: 'Previous Database item',
+            accelerator: this.isDarwin ? 'Alt+Left' : 'Ctrl+Left',
             click: (_, __, e) => {
               if (!e.triggeredByAccelerator) {
-                this.mainWindow.webContents.send("request-shortcut", "db_previous");
+                this.mainWindow.webContents.send('request-shortcut', 'db_previous');
               }
             },
           },
           {
-            label: "Next Database item",
-            accelerator: this.isDarwin ? "Alt+Right" : "Ctrl+Right",
+            label: 'Next Database item',
+            accelerator: this.isDarwin ? 'Alt+Right' : 'Ctrl+Right',
             click: (_, __, e) => {
               if (!e.triggeredByAccelerator) {
-                this.mainWindow.webContents.send("request-shortcut", "db_next");
+                this.mainWindow.webContents.send('request-shortcut', 'db_next');
               }
             },
           },
-          { type: "separator" },
+          { type: 'separator' },
           {
-            label: "Toggle Full Screen",
-            accelerator: this.isDarwin ? "Ctrl+Command+F" : "F11",
+            label: 'Toggle Full Screen',
+            accelerator: this.isDarwin ? 'Ctrl+Command+F' : 'F11',
             click: () => {
               this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
             },
           },
           {
-            label: "Toggle Developer Tools",
+            label: 'Toggle Developer Tools',
             visible: this.isDev,
-            accelerator: "CmdOrCtrl+Alt+I",
+            accelerator: 'CmdOrCtrl+Alt+I',
             click: () => {
               this.mainWindow.webContents.toggleDevTools();
             },
@@ -137,34 +145,34 @@ export default class MenuBuilder {
         ],
       },
       {
-        label: "Window",
-        role: "windowMenu",
+        label: 'Window',
+        role: 'windowMenu',
       },
       {
-        label: "Help",
+        label: 'Help',
         submenu: [
           {
-            label: "Documentation",
+            label: 'Documentation',
             click() {
-              shell.openExternal("https://psdk.pokemonworkshop.com/yard/");
+              shell.openExternal('https://psdk.pokemonworkshop.com/yard/');
             },
           },
           {
-            label: "Getting started",
+            label: 'Getting started',
             click() {
-              shell.openExternal("https://psdk.pokemonworkshop.fr/wiki/en/index.html");
+              shell.openExternal('https://psdk.pokemonworkshop.fr/wiki/en/index.html');
             },
           },
           {
-            label: "Discord",
+            label: 'Discord',
             click() {
-              shell.openExternal("https://discord.com/invite/0noB0gBDd91B8pMk");
+              shell.openExternal('https://discord.com/invite/0noB0gBDd91B8pMk');
             },
           },
           {
-            label: "Twitter",
+            label: 'Twitter',
             click() {
-              shell.openExternal("https://twitter.com/pokemonworkshop");
+              shell.openExternal('https://twitter.com/pokemonworkshop');
             },
           },
         ],

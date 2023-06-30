@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import React from 'react';
+import React, { useMemo } from 'react';
 import theme from '@src/AppTheme';
 import { BaseIcon } from '@components/icons/BaseIcon';
 import SvgContainer from '@components/icons/BaseIcon/SvgContainer';
@@ -7,6 +7,7 @@ import SvgContainer from '@components/icons/BaseIcon/SvgContainer';
 import { BaseButtonStyle } from './GenericButtons';
 import { useProjectSave } from '@utils/useProjectSave';
 import { useLoaderRef } from '@utils/loaderContext';
+import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 
 const SaveProjectButtonContainer = styled(BaseButtonStyle)`
   display: inline-block;
@@ -55,7 +56,22 @@ export const SaveProjectButton = () => {
   const { isDataToSave, save } = useProjectSave();
   const loaderRef = useLoaderRef();
 
-  const handleClick = async () => {
+  const shortcutMap = useMemo<StudioShortcutActions>(() => {
+    // No shortcut if an editor is opened and no data to save
+    const isShortcutEnabled = () => !document.querySelector('#dialogs')?.textContent && isDataToSave;
+    return {
+      db_save: () =>
+        isShortcutEnabled() &&
+        save(
+          () => loaderRef.current.close(),
+          ({ errorMessage }) => loaderRef.current.setError('saving_project_error', errorMessage)
+        ),
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [save, isDataToSave]);
+  useShortcut(shortcutMap);
+
+  const handleSave = async () => {
     save(
       () => loaderRef.current.close(),
       ({ errorMessage }) => loaderRef.current.setError('saving_project_error', errorMessage)
@@ -63,7 +79,7 @@ export const SaveProjectButton = () => {
   };
 
   return (
-    <SaveProjectButtonContainer onClick={handleClick} disabled={!isDataToSave}>
+    <SaveProjectButtonContainer onClick={handleSave} disabled={!isDataToSave}>
       <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="save" disabled={!isDataToSave} />
       <BadgeContainer>
         <Badge visible={isDataToSave} />
