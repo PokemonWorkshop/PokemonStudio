@@ -30,6 +30,6 @@ export const usePokemonShortcutNavigation = () => {
 
   return (specie: string, form = 0) => {
     setSelectedDataIdentifier({ pokemon: { specie, form } });
-    navigate('database/pokemon');
+    navigate('/database/pokemon');
   };
 };

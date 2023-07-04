@@ -4,6 +4,9 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataBlockWithTitle, DataGrid, DataFieldsetField } from '../../dataBlocks';
 import { PokemonDataProps } from '../PokemonDataPropsInterface';
+import { CONTROL } from '@utils/useKeyPress';
+import { usePokemonShortcutNavigation } from '@utils/useShortcutNavigation';
+import { useKeyPress } from 'react-flow-renderer';
 
 const BREEDING_GROUPS = [
   'undefined',
@@ -30,9 +33,11 @@ export const ReproductionDataBlock = ({ pokemonWithForm, dialogsRef }: PokemonDa
   const { form } = pokemonWithForm;
   const { t } = useTranslation('database_pokemon');
   const creatureBreedingGroups = useMemo(() => form.breedGroups.map((group) => BREEDING_GROUPS[group]), [form.breedGroups]);
+  const isClickable: boolean = useKeyPress(CONTROL);
+  const shortcutNavigation = usePokemonShortcutNavigation();
 
   return (
-    <DataBlockWithTitle size="fourth" title={t('breeding')} onClick={() => dialogsRef.current?.openDialog('breeding')}>
+    <DataBlockWithTitle size="fourth" title={t('breeding')} onClick={() => (isClickable ? null : dialogsRef.current?.openDialog('breeding'))}>
       <DataGrid columns="1fr" rows="1fr 1fr 1fr">
         <DataFieldsetField
           label={t('baby')}
@@ -44,6 +49,10 @@ export const ReproductionDataBlock = ({ pokemonWithForm, dialogsRef }: PokemonDa
               : t('pokemon_deleted')
           }
           error={!pokemons[form.babyDbSymbol]}
+          clickable={{
+            isClickable,
+            callback: () => shortcutNavigation(form.babyDbSymbol, form.babyForm),
+          }}
         />
         <DataFieldsetField
           label={t('egg_groups')}

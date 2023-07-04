@@ -4,6 +4,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataBlockWithTitlePagination, DataFieldsetField, DataGrid } from '../../dataBlocks';
 import { PokemonDataProps } from '../PokemonDataPropsInterface';
+import { CONTROL } from '@utils/useKeyPress';
+import { useKeyPress } from 'react-flow-renderer';
+import { usePokemonShortcutNavigation } from '@utils/useShortcutNavigation';
 
 type EvolutionDataBlockProps = {
   evolutionIndex: number;
@@ -21,6 +24,9 @@ export const EvolutionDataBlock = ({ pokemonWithForm, evolutionIndex, setEvoluti
   const megaPrefix = evolution && evolution.conditions.some((condition) => condition.type === 'gemme') ? 'Mega-' : '';
   const minLevel = evolution?.conditions.find((condition) => condition.type === 'minLevel')?.value;
   const conditionType = evolution?.conditions.find((condition) => condition.type !== 'minLevel')?.type;
+
+  const isClickable: boolean = useKeyPress(CONTROL);
+  const shortcutNavigation = usePokemonShortcutNavigation();
 
   const onChangeIndex = (arrow: 'left' | 'right') => {
     if (arrow === 'left') {
@@ -41,7 +47,7 @@ export const EvolutionDataBlock = ({ pokemonWithForm, evolutionIndex, setEvoluti
       index={evolutionIndex}
       max={evolutionCount}
       onChangeIndex={onChangeIndex}
-      onClick={() => dialogsRef.current?.openDialog('evolution')}
+      onClick={() => (isClickable ? null : dialogsRef.current?.openDialog('evolution'))}
     >
       {evolutionCount === 0 || !evolution ? (
         <DataGrid columns="1fr" rows="1fr 1fr 1fr">
@@ -56,6 +62,10 @@ export const EvolutionDataBlock = ({ pokemonWithForm, evolutionIndex, setEvoluti
             }`}
             error={evolution?.dbSymbol !== '__undef__' && currentCreature === undefined}
             disabled={evolution?.dbSymbol === '__undef__'}
+            clickable={{
+              isClickable,
+              callback: () => shortcutNavigation(evolution?.dbSymbol || currentCreature.dbSymbol, evolution?.form),
+            }}
           />
           {minLevel !== undefined && <DataFieldsetField label={t('at_level')} data={minLevel.toString()} />}
           {conditionType !== undefined && <DataFieldsetField label={t('evolves_if')} data={t(`evolutionCondition_${conditionType}`)} />}
