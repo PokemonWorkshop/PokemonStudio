@@ -4,12 +4,16 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataBlockWithTitle, DataFieldsetField, DataGrid } from '../../dataBlocks';
 import { PokemonDataProps } from '../PokemonDataPropsInterface';
+import { useKeyPress, CONTROL } from '@utils/useKeyPress';
+import { useShortcutNavigation } from '@utils/useShortcutNavigation';
 
-export const TalentsDataBlock = ({ pokemonWithForm, dialogsRef }: PokemonDataProps) => {
+export const AbilitiesDataBlock = ({ pokemonWithForm, dialogsRef }: PokemonDataProps) => {
   const { form } = pokemonWithForm;
   const { projectDataValues: abilities } = useProjectAbilities();
   const getAbilityName = useGetEntityNameTextUsingTextId();
   const { t } = useTranslation('database_pokemon');
+  const isClickable: boolean = useKeyPress(CONTROL);
+  const shortcutNavigation = useShortcutNavigation('abilities', 'ability', '/database/abilities/');
 
   const getAbilityNameByIndex = (index: number) => {
     if (!form.abilities[index] || form.abilities[index] === '__undef__') return '---';
@@ -26,18 +30,21 @@ export const TalentsDataBlock = ({ pokemonWithForm, dialogsRef }: PokemonDataPro
           data={getAbilityNameByIndex(0)}
           error={abilities[form.abilities[0]] ? false : true}
           disabled={form.abilities[0] === '__undef__'}
+          clickable={{ isClickable, callback: () => shortcutNavigation(form.abilities[0]) }}
         />
         <DataFieldsetField
           label={t('ability_2')}
           data={getAbilityNameByIndex(1)}
           error={abilities[form.abilities[1]] ? false : true}
           disabled={form.abilities[1] === '__undef__'}
+          clickable={{ isClickable, callback: () => shortcutNavigation(form.abilities[1]) }}
         />
         <DataFieldsetField
           label={t('hidden_ability')}
           data={getAbilityNameByIndex(2)}
           error={abilities[form.abilities[2]] ? false : true}
           disabled={form.abilities[2] === '__undef__'}
+          clickable={{ isClickable, callback: () => shortcutNavigation(form.abilities[2]) }}
         />
       </DataGrid>
     </DataBlockWithTitle>
