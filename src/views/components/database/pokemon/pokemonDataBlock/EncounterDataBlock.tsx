@@ -8,6 +8,9 @@ import { TFunction, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { DataBlockWithTitle, DataFieldsetField, DataGrid } from '../../dataBlocks';
 import { PokemonDataProps } from '../PokemonDataPropsInterface';
+import { IClickable, useShortcutNavigation } from '@utils/useShortcutNavigation';
+import { CONTROL } from '@utils/useKeyPress';
+import { useKeyPress } from 'react-flow-renderer';
 
 const ItemHeldStyle = styled.div`
   display: flex;
@@ -17,22 +20,29 @@ const ItemHeldStyle = styled.div`
     color: ${({ theme }) => theme.colors.text400};
     ${({ theme }) => theme.fonts.normalMedium};
   }
+
+  &.clickable {
+    :hover {
+      text-decoration: underline;
+    }
+  }
 `;
 
 type ItemHeldComponentProps = {
   itemHeld: StudioItemHeld;
   items: ProjectData['items'];
   t: TFunction<('database_pokemon' | 'database_items')[]>;
+  clickable?: IClickable;
 };
 
-const ItemHeldComponent = ({ itemHeld, items, t }: ItemHeldComponentProps) => {
+const ItemHeldComponent = ({ itemHeld, items, t, clickable }: ItemHeldComponentProps) => {
   const getItemName = useGetEntityNameText();
   return (
     <FieldData disabled={false} error={items[itemHeld.dbSymbol] === undefined}>
       {items[itemHeld.dbSymbol] === undefined ? (
         t('database_items:item_deleted')
       ) : (
-        <ItemHeldStyle>
+        <ItemHeldStyle onClick={clickable?.isClickable ? clickable.callback : undefined} className={clickable?.isClickable ? 'clickable' : undefined}>
           {getItemName(items[itemHeld.dbSymbol])}
           <span className="chance">{`(${itemHeld.chance}%)`}</span>
         </ItemHeldStyle>
@@ -46,8 +56,15 @@ export const EncounterDataBlock = ({ pokemonWithForm, dialogsRef }: PokemonDataP
   const { projectDataValues: items } = useProjectItems();
   const { t } = useTranslation(['database_pokemon', 'database_items']);
 
+  const isClickable: boolean = useKeyPress(CONTROL);
+  const shortcutNavigation = useShortcutNavigation('items', 'item', '/database/items');
+
   return (
-    <DataBlockWithTitle size="fourth" title={t('database_pokemon:encounter')} onClick={() => dialogsRef.current?.openDialog('encounter')}>
+    <DataBlockWithTitle
+      size="fourth"
+      title={t('database_pokemon:encounter')}
+      onClick={() => (isClickable ? null : dialogsRef.current?.openDialog('encounter'))}
+    >
       <DataGrid columns="1fr" rows="42px 42px 1fr">
         <DataFieldsetField label={t('database_pokemon:catch_rate')} data={form.catchRate} />
         <DataFieldsetField
@@ -58,8 +75,18 @@ export const EncounterDataBlock = ({ pokemonWithForm, dialogsRef }: PokemonDataP
           <DataFieldsetField label={t('database_pokemon:items_held')} data={t('database_pokemon:none_item')} disabled />
         ) : (
           <DataFieldsetFieldWithChild label={t('database_pokemon:items_held')}>
-            {form.itemHeld[0].dbSymbol !== 'none' && <ItemHeldComponent itemHeld={form.itemHeld[0]} items={items} t={t} />}
-            {form.itemHeld[1].dbSymbol !== 'none' && <ItemHeldComponent itemHeld={form.itemHeld[1]} items={items} t={t} />}
+            {[0, 1].map(
+              (index) =>
+                form.itemHeld[index].dbSymbol !== 'none' && (
+                  <ItemHeldComponent
+                    clickable={{ isClickable, callback: () => shortcutNavigation(form.itemHeld[index].dbSymbol) }}
+                    key={index}
+                    itemHeld={form.itemHeld[index]}
+                    items={items}
+                    t={t}
+                  />
+                )
+            )}
           </DataFieldsetFieldWithChild>
         )}
       </DataGrid>
