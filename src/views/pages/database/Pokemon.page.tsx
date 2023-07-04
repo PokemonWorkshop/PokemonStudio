@@ -7,7 +7,7 @@ import { EvolutionDataBlock } from '@components/database/pokemon/pokemonDataBloc
 import { ExperienceDataBlock } from '@components/database/pokemon/pokemonDataBlock/ExperienceDataBlock';
 import { PokedexDataBlock } from '@components/database/pokemon/pokemonDataBlock/PokedexDataBlock';
 import { ReproductionDataBlock } from '@components/database/pokemon/pokemonDataBlock/ReproductionDataBlock';
-import { TalentsDataBlock } from '@components/database/pokemon/pokemonDataBlock/TalentsDataBlock';
+import { AbilitiesDataBlock } from '@components/database/pokemon/pokemonDataBlock/AbilitiesDataBlock';
 import { PokemonFrame } from '@components/database/pokemon/PokemonFrame';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
@@ -49,7 +49,7 @@ export const PokemonPage = () => {
               setEvolutionIndex={setEvolutionIndex}
               dialogsRef={dialogsRef}
             />
-            <TalentsDataBlock pokemonWithForm={pokemonWithForm} dialogsRef={dialogsRef} />
+            <AbilitiesDataBlock pokemonWithForm={pokemonWithForm} dialogsRef={dialogsRef} />
             <ExperienceDataBlock pokemonWithForm={pokemonWithForm} dialogsRef={dialogsRef} />
             <ReproductionDataBlock pokemonWithForm={pokemonWithForm} dialogsRef={dialogsRef} />
             <EncounterDataBlock pokemonWithForm={pokemonWithForm} dialogsRef={dialogsRef} />

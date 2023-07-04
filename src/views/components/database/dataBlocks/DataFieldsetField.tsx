@@ -1,3 +1,4 @@
+import { IClickable } from '@utils/useShortcutNavigation';
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 
@@ -19,6 +20,7 @@ type DataFieldsetFieldProps = {
   data: string | number;
   disabled?: boolean;
   error?: boolean;
+  clickable?: IClickable;
 };
 
 type DataFieldsetFieldCodeProps = {
@@ -55,6 +57,12 @@ export const FieldData = styled.span<FieldDataProps>`
   font-size: 14px;
   color: ${(props) => (props.disabled ? props.theme.colors.text500 : props.error ? props.theme.colors.dangerBase : props.theme.colors.text100)};
   user-select: text;
+
+  &.clickable {
+    :hover {
+      text-decoration: underline;
+    }
+  }
 `;
 
 const FieldCode = styled.span`
@@ -67,14 +75,22 @@ const FieldCode = styled.span`
   user-select: text;
 `;
 
-export const DataFieldsetField = ({ label, data, size, disabled, error }: DataFieldsetFieldProps) => (
-  <Fieldset size={size}>
-    <FieldLabel>{label}</FieldLabel>
-    <FieldData disabled={disabled || false} error={error || false}>
-      {data}
-    </FieldData>
-  </Fieldset>
-);
+export const DataFieldsetField = ({ label, data, size, disabled, error, clickable }: DataFieldsetFieldProps) => {
+  return (
+    <Fieldset size={size}>
+      <FieldLabel>{label}</FieldLabel>
+      <FieldData
+        key={label}
+        disabled={disabled || false}
+        error={error || false}
+        onClick={clickable?.isClickable ? clickable.callback : undefined}
+        className={clickable?.isClickable ? 'clickable' : undefined}
+      >
+        {data}
+      </FieldData>
+    </Fieldset>
+  );
+};
 
 export const DataFieldsetFieldWithChild = ({ label, children, size }: DataFieldsetFieldWithChildProps) => (
   <Fieldset size={size}>
