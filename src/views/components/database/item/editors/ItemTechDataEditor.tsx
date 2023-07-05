@@ -44,7 +44,7 @@ export const ItemTechDataEditor = ({ item }: ItemTechDataEditorProps) => {
         {isTechItem && (
           <InputWithTopLabelContainer>
             <Label htmlFor="move_learnt">{t('database_items:move_learnt')}</Label>
-            <SelectMove dbSymbol={item.move} onChange={(selected) => refreshUI((item.move = selected.value as DbSymbol))} noLabel />
+            <SelectMove dbSymbol={item.move} onChange={(dbSymbol) => refreshUI((item.move = dbSymbol as DbSymbol))} noLabel />
           </InputWithTopLabelContainer>
         )}
         <InputWithLeftLabelContainer>

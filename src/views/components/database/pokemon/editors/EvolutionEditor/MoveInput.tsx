@@ -12,7 +12,7 @@ export const MoveInput = ({ type, state, dispatch }: EvolutionConditionEditorInp
   return (
     <InputWithTopLabelContainer>
       <Label>{t('evolutionValue_move')}</Label>
-      <SelectMove dbSymbol={state[type]} onChange={(option) => dispatch({ type: 'update', key: type, value: option.value as DbSymbol })} noLabel />
+      <SelectMove dbSymbol={state[type]} onChange={(dbSymbol) => dispatch({ type: 'update', key: type, value: dbSymbol as DbSymbol })} noLabel />
     </InputWithTopLabelContainer>
   );
 };
