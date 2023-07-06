@@ -12,7 +12,7 @@ export const MAP_VALIDATOR = z.object({
   bgs: z.string(),
   tiledFilename: z.string(),
   mtime: POSITIVE_INT,
-  sha1: SHA1_VALIDATOR,
+  sha1: SHA1_VALIDATOR.or(z.literal('')),
   tileMetadata: z.unknown(),
 });
 export type StudioMap = z.infer<typeof MAP_VALIDATOR>;

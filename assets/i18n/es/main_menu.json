@@ -4,7 +4,7 @@
   "dashboard": "Panel",
   "update": "Actualización de PSDK",
   "database": "Base de datos",
-  "map": "Conexiones entre Mapas",
+  "world_management": "Gestión mundial",
   "text_management": "Gestión de textos",
   "event_editor": "Editor de eventos",
   "deployment": "Despliegue",

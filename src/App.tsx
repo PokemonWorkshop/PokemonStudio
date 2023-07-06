@@ -10,13 +10,13 @@ import { NavigationBarComponent } from './views/components/navigation/Navigation
 import HomePage from './views/pages/Home.page';
 import DatabasePage from './views/pages/database/Database/Database.page';
 import PSDKUpdatePage from './views/pages/PSDKUpdate.page';
-import MapLinkPage from './views/pages/mapLink/MapLink.page';
 import { TextsPage } from '@pages/texts/Texts.page';
 import DashboardRouter from '@pages/dashboard/Dashboard.Router.page';
 import { Loader } from '@components/Loader';
 import { LoaderContextProvider } from '@utils/loaderContext';
 import { UnsavedWarningModal } from '@components/modals/UnsavedWarningModal';
 import { TitleBar } from '@components/titleBar/TitleBar';
+import WorldRouter from '@pages/world/World.Router.page';
 
 import './i18n';
 
@@ -34,7 +34,7 @@ const App = () => {
               <Route path="/dashboard/*" element={<DashboardRouter />} />
               <Route path="/psdkupdate" element={<PSDKUpdatePage />} />
               <Route path="/database/*" element={<DatabasePage />} />
-              <Route path="/map" element={<MapLinkPage />} />
+              <Route path="/world/*" element={<WorldRouter />} />
               <Route path="/texts/*" element={<TextsPage />} />
               <Route path="/code" />
               <Route path="/help" />

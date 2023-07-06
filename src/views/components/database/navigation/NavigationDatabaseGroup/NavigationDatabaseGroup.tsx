@@ -9,7 +9,7 @@ interface NavigationDatabaseGroupProps {
 export const NavigationDatabaseGroup = ({ title, children }: NavigationDatabaseGroupProps) => {
   return (
     <NavigationDatabaseGroupStyle>
-      <span>{title}</span>
+      <span className="title">{title}</span>
       {children}
     </NavigationDatabaseGroupStyle>
   );

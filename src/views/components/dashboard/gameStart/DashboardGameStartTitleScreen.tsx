@@ -9,6 +9,7 @@ import { DropInput } from '@components/inputs/DropInput';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { EmbeddedUnitInput } from '@components/inputs/EmbeddedUnitInput';
 import { cloneEntity } from '@utils/cloneEntity';
+import { AUDIO_EXT } from '@components/inputs/AudioInput';
 
 const DurationInfoContainer = styled.span`
   ${({ theme }) => theme.fonts.normalSmall}
@@ -83,18 +84,13 @@ export const DashboardGameStartTitleScreen = () => {
       <InputWithTopLabelContainer>
         <Label htmlFor="music">{t('music')}</Label>
         {gameStart.bgmName.length === 0 ? (
-          <DropInput
-            destFolderToCopy="audio/bgm"
-            name={t('title_screen_music')}
-            extensions={['ogg', 'mp3', 'midi', 'flac']}
-            onFileChoosen={onMusicChoosen}
-          />
+          <DropInput destFolderToCopy="audio/bgm" name={t('title_screen_music')} extensions={AUDIO_EXT} onFileChoosen={onMusicChoosen} />
         ) : (
           <AudioInput
             audioPathInProject={gameStart.bgmName}
             destFolderToCopy="audio/bgm"
             name={t('title_screen_music')}
-            extensions={['ogg', 'mp3', 'midi', 'flac']}
+            extensions={AUDIO_EXT}
             onAudioChoosen={onMusicChoosen}
             onAudioClear={onMusicClear}
           />

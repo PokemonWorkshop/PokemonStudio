@@ -103,3 +103,17 @@ export const DeleteButton = styled(BaseButtonStyle)`
     background-color: ${({ theme }) => theme.colors.dangerSoft};
   }
 `;
+
+export const WarningButton = styled(BaseButtonStyle)`
+  ${({ theme }) => theme.fonts.normalMedium}
+  color: ${({ theme }) => theme.colors.dark8};
+  background-color: ${({ theme }) => theme.colors.warningBase};
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.warningHover};
+  }
+
+  &:active {
+    background-color: ${({ theme }) => theme.colors.warningBase};
+  }
+`;

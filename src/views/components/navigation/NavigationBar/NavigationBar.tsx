@@ -40,20 +40,21 @@ export const NavigationBarComponent = () => {
         <NavigationBarItem path="/database" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('database'), 'right-center', true)}>
           <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="database" />
         </NavigationBarItem>
-        <NavigationBarItem path="/map" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('map'), 'right-center', true)}>
+        <NavigationBarItem path="/texts" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('text_management'), 'right-center', true)}>
+          <BaseIcon color={theme.colors.navigationIconColor} size="m" icon="texts" />
+        </NavigationBarItem>
+        <NavigationBarItem path="/world" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('world_management'), 'right-center', true)}>
           <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="map" />
         </NavigationBarItem>
-        <NavigationBarItem path="/texts" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('text_management'), 'right-center', true)}>
-          <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="texts" />
-        </NavigationBarItem>
-        <NavigationBarItem
+
+        {/*<NavigationBarItem
           path="/code"
           disabled
           onMouseLeave={onMouseLeave}
           onMouseEnter={buildOnMouseEnter(t('not_available_yet'), 'right-center', true)}
         >
           <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="code" disabled />
-        </NavigationBarItem>
+        </NavigationBarItem>*/}
       </div>
       <div id="navigation-bar-bottom">
         <PlayButton />

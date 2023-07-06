@@ -25,6 +25,7 @@ import { assertUnreachable } from './assertUnreachable';
 import { findFirstAvailableId, findFirstAvailableTextId } from './ModelUtils';
 import { padStr } from './PadStr';
 import { StudioTextInfo } from '@modelEntities/textInfo';
+import { StudioMap } from '@modelEntities/map';
 
 /**
  * Create a new ability with default values
@@ -454,5 +455,21 @@ export const createTextInfo = (textInfos: StudioTextInfo[]): StudioTextInfo => {
     klass: 'TextInfo',
     fileId: id,
     textId,
+  };
+};
+
+export const createMap = (allMaps: ProjectData['maps'], stepsAverage: number, tiledFilename: string, bgm: string, bgs: string): StudioMap => {
+  const id = findFirstAvailableId(allMaps, 1);
+  const dbSymbol = `map${padStr(id, 3)}` as DbSymbol;
+  return {
+    klass: 'Map',
+    id,
+    dbSymbol,
+    stepsAverage,
+    bgm,
+    bgs,
+    mtime: 1,
+    sha1: '',
+    tiledFilename,
   };
 };

@@ -13,6 +13,7 @@ import { getProjectTextChange } from './updateProjectText';
 import { updateSelectOptionsTextSource } from './useSelectOptions';
 import { TEXT_INFO_DESCRIPTION_TEXT_ID, TEXT_INFO_NAME_TEXT_ID } from '@modelEntities/textInfo';
 import { SavingTextMap } from './SavingUtils';
+import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID } from '@modelEntities/map';
 
 type KeyProjectText = keyof ProjectText;
 
@@ -200,6 +201,7 @@ const ENTITY_TO_NAME_TEXT = {
   Zone: ZONE_NAME_TEXT_ID,
   Group: GROUP_NAME_TEXT_ID,
   TextInfo: TEXT_INFO_NAME_TEXT_ID,
+  Map: MAP_NAME_TEXT_ID,
 };
 
 // TODO: All entities must accept undefined! (due to getting entity from state unsafely) => returns empty string and let UI manage it
@@ -271,6 +273,7 @@ const ENTITY_TO_DESCRIPTION_TEXT = {
   Quest: QUEST_DESCRIPTION_TEXT_ID,
   Zone: ZONE_DESCRIPTION_TEXT_ID,
   TextInfo: TEXT_INFO_DESCRIPTION_TEXT_ID,
+  Map: MAP_DESCRIPTION_TEXT_ID,
 };
 
 export const useGetEntityDescriptionText = () => {

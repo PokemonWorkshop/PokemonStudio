@@ -98,7 +98,7 @@ export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier
           savingText: new SavingTextMap(currentState.savingText.setMultiple(fileIdUpdatedTexts, 'UPDATE')),
         };
         // Add the new text
-        if (key !== 'trainers' && key !== 'mapLinks' && key !== 'maps') addSelectOption(key === 'pokemon' ? 'creatures' : key, newState);
+        if (key !== 'trainers' && key !== 'mapLinks') addSelectOption(key === 'pokemon' ? 'creatures' : key, newState);
         return newState;
       } else {
         return {
@@ -125,7 +125,7 @@ export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier
         savingData: new SavingMap(currentState.savingData.set({ key, id: String(identifier) }, 'DELETE')),
       };
       // Remove the text
-      if (key !== 'trainers' && key !== 'mapLinks' && key !== 'maps') removeSelectOption(key === 'pokemon' ? 'creatures' : key, String(identifier));
+      if (key !== 'trainers' && key !== 'mapLinks') removeSelectOption(key === 'pokemon' ? 'creatures' : key, String(identifier));
       return newState;
     });
   };
@@ -215,5 +215,5 @@ export const useProjectDex = () => useProjectData('dex', 'dex');
 export type UseProjectDexReturnType = ReturnType<typeof useProjectDex>;
 export const useProjectMapLinks = () => useProjectData('mapLinks', 'mapLink');
 export type UseProjectMapLinksReturnType = ReturnType<typeof useProjectMapLinks>;
-export const useProjectMap = () => useProjectData('maps', 'map');
-export type UseProjectMapReturnType = ReturnType<typeof useProjectMap>;
+export const useProjectMaps = () => useProjectData('maps', 'map');
+export type UseProjectMapsReturnType = ReturnType<typeof useProjectMaps>;
