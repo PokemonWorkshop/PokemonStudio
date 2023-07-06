@@ -4,7 +4,7 @@
   "dashboard": "Vue d'ensemble",
   "update": "Mise à jour de Pokémon SDK",
   "database": "Base de données",
-  "map": "Liaison des Cartes",
+  "world_management": "Gestion du monde",
   "text_management": "Gestion des textes",
   "event_editor": "Éditeur d'événements",
   "deployment": "Déploiement",

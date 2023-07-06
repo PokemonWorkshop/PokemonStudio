@@ -43,6 +43,10 @@ const FileInputContainer = styled.div`
     white-space: nowrap;
   }
 
+  & span.no-icon {
+    width: 140px;
+  }
+
   & .error {
     color: ${({ theme }) => theme.colors.dangerBase};
   }
@@ -65,6 +69,7 @@ type FileInputProps = {
   extensions: string[];
   destFolderToCopy?: string;
   isAbsolutePath?: true;
+  noIcon?: true;
   onFileChoosen: (filePath: string) => void;
   onFileClear: () => void;
 };
@@ -74,7 +79,7 @@ type FileInputProps = {
  * @param filePath If the file is in the project, the project path must be not specified.
  * @param isAbsolutePath Use this if you use the absolute path.
  */
-export const FileInput = ({ filePath, name, extensions, destFolderToCopy, isAbsolutePath, onFileChoosen, onFileClear }: FileInputProps) => {
+export const FileInput = ({ filePath, name, extensions, destFolderToCopy, isAbsolutePath, noIcon, onFileChoosen, onFileClear }: FileInputProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [error, setError] = useState<boolean>(false);
   const { t } = useTranslation('audio');
@@ -133,10 +138,12 @@ export const FileInput = ({ filePath, name, extensions, destFolderToCopy, isAbso
   return (
     <FileInputContainer onDrop={onDrop} onDragOver={onDragOver}>
       <div className="icon-filename">
-        <div className="icon">
-          <ImageIcon />
-        </div>
-        {error ? <span className="error">{t('no_file_found')}</span> : <span>{basename(filePath)}</span>}
+        {!noIcon && (
+          <div className="icon">
+            <ImageIcon />
+          </div>
+        )}
+        {error ? <span className="error">{t('no_file_found')}</span> : <span className={noIcon ? 'no-icon' : undefined}>{basename(filePath)}</span>}
       </div>
       <div className="buttons">
         <EditButtonOnlyIcon disabled={isDialogOpen} onClick={isDialogOpen ? undefined : onClick} />

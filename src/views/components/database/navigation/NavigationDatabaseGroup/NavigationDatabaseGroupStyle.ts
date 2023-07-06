@@ -5,7 +5,7 @@ export const NavigationDatabaseGroupStyle = styled.div`
   flex-direction: column;
   gap: 4px;
 
-  span {
+  span.title {
     ${({ theme }) => theme.fonts.titlesOverline};
     line-height: 14px;
     letter-spacing: 1.5px;

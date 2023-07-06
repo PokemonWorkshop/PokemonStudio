@@ -3,7 +3,7 @@ import { ActiveContainer } from '@components/ActiveContainer';
 import { CopyStyle } from '@components/Copy';
 
 export type DataBlockCOntainerSize = 'full' | 'half' | 'fourth' | 'dashboard';
-export type DataBlockContainerColor = 'light' | 'dark';
+export type DataBlockContainerColor = 'light' | 'dark' | 'warning';
 export type DataBlockContainerProps = {
   size: DataBlockCOntainerSize;
   color?: DataBlockContainerColor;
@@ -25,6 +25,13 @@ export const DataBlockContainer = styled(ActiveContainer)<DataBlockContainerProp
     `
     background-color: ${theme.colors.dark16};
     border: none;
+  `};
+
+  ${({ theme, color }) =>
+    color === 'warning' &&
+    `
+    background-color: ${theme.colors.warningSoft};
+    border-color: ${theme.colors.warningSoft};
   `};
 
   ${CopyStyle} {

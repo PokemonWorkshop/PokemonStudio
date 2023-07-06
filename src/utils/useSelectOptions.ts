@@ -13,6 +13,7 @@ import { assertUnreachable } from './assertUnreachable';
 import { cloneEntity } from './cloneEntity';
 import { getText, pocketMapping } from './ReadingProjectText';
 import { DEX_DEFAULT_NAME_TEXT_ID } from '@modelEntities/dex';
+import { MAP_NAME_TEXT_ID } from '@modelEntities/map';
 
 // Note: Regexp to search all options in the code: (\{ value:|\{ label:)
 
@@ -32,6 +33,7 @@ const OPTION_SOURCE_KEYS = [
   'types',
   'zones',
   'textInfos',
+  'maps',
 ] as const;
 export type OptionSourceKey = (typeof OPTION_SOURCE_KEYS)[number];
 // Record holding all the options in the order they should appear on the select
@@ -50,9 +52,23 @@ const OptionSources: Record<OptionSourceKey, SelectOption[]> = {
   types: [],
   zones: [],
   textInfos: [],
+  maps: [],
 };
 
-const TEXT_SOURCE_KEYS = ['pocket', 'items', 'moves', 'abilities', 'dex', 'groups', 'creatures', 'quests', 'types', 'zones', 'textInfos'] as const;
+const TEXT_SOURCE_KEYS = [
+  'pocket',
+  'items',
+  'moves',
+  'abilities',
+  'dex',
+  'groups',
+  'creatures',
+  'quests',
+  'types',
+  'zones',
+  'textInfos',
+  'maps',
+] as const;
 type TextSourceKey = (typeof TEXT_SOURCE_KEYS)[number];
 // Record holding the mapping from option source to text source
 const OptionToTextKey: Record<OptionSourceKey, TextSourceKey> = {
@@ -70,6 +86,7 @@ const OptionToTextKey: Record<OptionSourceKey, TextSourceKey> = {
   types: 'types',
   zones: 'zones',
   textInfos: 'textInfos',
+  maps: 'maps',
 };
 // Record holding all the optionSource groups
 const OptionSourceGroups: Record<TextSourceKey, OptionSourceKey[]> = {
@@ -84,6 +101,7 @@ const OptionSourceGroups: Record<TextSourceKey, OptionSourceKey[]> = {
   types: ['types'],
   zones: ['zones'],
   textInfos: ['textInfos'],
+  maps: ['maps'],
 };
 // Record holding all the file ids for the required text sources
 const TextFileIds: Record<TextSourceKey, number> = {
@@ -98,6 +116,7 @@ const TextFileIds: Record<TextSourceKey, number> = {
   types: TYPE_NAME_TEXT_ID,
   zones: ZONE_NAME_TEXT_ID,
   textInfos: TEXT_INFO_NAME_TEXT_ID,
+  maps: MAP_NAME_TEXT_ID,
 };
 // Record holding the link between fileId and textSource
 const TextFileIdsToSource = Object.fromEntries(Object.entries(TextFileIds).map(([key, value]) => [value, key])) as Record<number, TextSourceKey>;
@@ -114,6 +133,7 @@ const TextSources: Record<TextSourceKey, SelectOption[]> = {
   types: [],
   zones: [],
   textInfos: [],
+  maps: [],
 };
 
 const getTextSource = (projectText: Parameters<typeof getText>[0], fileId: number, index: number, originalObjects: SelectOption[]) => {
@@ -218,6 +238,10 @@ const buildSelectOptionsFromKey = (key: OptionSourceKey, state: State) => {
         .slice()
         .sort((a, b) => a.fileId - b.fileId)
         .map((data) => adjustSelectOptionValue(originalObjects[data.textId] || cloneEntity(originalObjects[0]), data.fileId.toString()));
+    case 'maps':
+      return Object.values(state.projectData.maps)
+        .sort((a, b) => a.id - b.id)
+        .map((data) => adjustSelectOptionValue(originalObjects[data.id] || cloneEntity(originalObjects[0]), data.dbSymbol));
     default:
       assertUnreachable(key);
   }

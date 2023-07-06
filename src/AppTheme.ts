@@ -21,7 +21,7 @@ const theme: DefaultTheme = {
     infoSoft: 'rgba(53, 175, 243, 0.12)',
 
     warningBase: 'rgba(245, 171, 61, 1)',
-    warningHover: 'rgba(245, 171, 61, 0.16)',
+    warningHover: 'rgba(246, 180, 81, 1)',
     warningSoft: 'rgba(245, 171, 61, 0.12)',
 
     successBase: 'rgba(53, 221, 131, 1)',

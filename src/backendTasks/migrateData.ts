@@ -1,3 +1,4 @@
+import { baseForMaps } from '@src/migrations/baseForMaps';
 import { fixBeMethodMoveSelfStatus } from '@src/migrations/fixBeMethodMoveSelfStatus';
 import { fixCsvFileIdDex } from '@src/migrations/fixCsvFileIdDex';
 import { linkResourcesToCreatures } from '@src/migrations/linkResourcesToCreatures';
@@ -10,18 +11,18 @@ export type MigrationTask = (event: IpcMainEvent, projectPath: string) => Promis
 
 // Don't forget to extend those array with the new tasks that gets added by the time!
 const MIGRATIONS: Record<string, MigrationTask[]> = {
-  '1.0.0': [migrateMapLinks, linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus, fixCsvFileIdDex],
-  '1.0.1': [migrateMapLinks, linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus, fixCsvFileIdDex],
-  '1.0.2': [migrateMapLinks, linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus, fixCsvFileIdDex],
-  '1.1.0': [linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus, fixCsvFileIdDex],
-  '1.1.1': [linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus, fixCsvFileIdDex],
-  '1.2.0': [linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus, fixCsvFileIdDex],
-  '1.3.0': [linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus, fixCsvFileIdDex],
-  '1.4.0': [fixCsvFileIdDex],
-  '1.4.1': [fixCsvFileIdDex],
-  '1.4.2': [fixCsvFileIdDex],
-  '1.4.3': [fixCsvFileIdDex],
-  '1.4.4': [fixCsvFileIdDex], // Don't forget to add the official version coming up
+  '1.0.0': [migrateMapLinks, linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus, fixCsvFileIdDex, baseForMaps],
+  '1.0.1': [migrateMapLinks, linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus, fixCsvFileIdDex, baseForMaps],
+  '1.0.2': [migrateMapLinks, linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus, fixCsvFileIdDex, baseForMaps],
+  '1.1.0': [linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus, fixCsvFileIdDex, baseForMaps],
+  '1.1.1': [linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus, fixCsvFileIdDex, baseForMaps],
+  '1.2.0': [linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus, fixCsvFileIdDex, baseForMaps],
+  '1.3.0': [linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus, fixCsvFileIdDex, baseForMaps],
+  '1.4.0': [fixCsvFileIdDex, baseForMaps],
+  '1.4.1': [fixCsvFileIdDex, baseForMaps],
+  '1.4.2': [fixCsvFileIdDex, baseForMaps],
+  '1.4.3': [fixCsvFileIdDex, baseForMaps],
+  '1.4.4': [fixCsvFileIdDex, baseForMaps], // Don't forget to add the official version coming up
 };
 
 // Don't forget to extend those array with the new tasks that gets added by the time!
@@ -32,6 +33,7 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
     'Move Headbutt tool in the system tag',
     'Fix battle engine method of the moves',
     'Fix the csv file id of the dex',
+    'Add files and folder for the maps',
   ],
   '1.0.1': [
     'Migrate MapLinks',
@@ -39,6 +41,7 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
     'Move Headbutt tool in the system tag',
     'Fix battle engine method of the moves',
     'Fix the csv file id of the dex',
+    'Add files and folder for the maps',
   ],
   '1.0.2': [
     'Migrate MapLinks',
@@ -46,36 +49,41 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
     'Move Headbutt tool in the system tag',
     'Fix battle engine method of the moves',
     'Fix the csv file id of the dex',
+    'Add files and folder for the maps',
   ],
   '1.1.0': [
     'Link the resources to the Pokémon',
     'Move Headbutt tool in the system tag',
     'Fix battle engine method of the moves',
     'Fix the csv file id of the dex',
+    'Add files and folder for the maps',
   ],
   '1.1.1': [
     'Link the resources to the Pokémon',
     'Move Headbutt tool in the system tag',
     'Fix battle engine method of the moves',
     'Fix the csv file id of the dex',
+    'Add files and folder for the maps',
   ],
   '1.2.0': [
     'Link the resources to the Pokémon',
     'Move Headbutt tool in the system tag',
     'Fix battle engine method of the moves',
     'Fix the csv file id of the dex',
+    'Add files and folder for the maps',
   ],
   '1.3.0': [
     'Link the resources to the Pokémon',
     'Move Headbutt tool in the system tag',
     'Fix battle engine method of the moves',
     'Fix the csv file id of the dex',
+    'Add files and folder for the maps',
   ],
-  '1.4.0': ['Fix the csv file id of the dex'],
-  '1.4.1': ['Fix the csv file id of the dex'],
-  '1.4.2': ['Fix the csv file id of the dex'],
-  '1.4.3': ['Fix the csv file id of the dex'],
-  '1.4.4': ['Fix the csv file id of the dex'], // Don't forget to add the official version coming up
+  '1.4.0': ['Fix the csv file id of the dex', 'Add files and folder for the maps'],
+  '1.4.1': ['Fix the csv file id of the dex', 'Add files and folder for the maps'],
+  '1.4.2': ['Fix the csv file id of the dex', 'Add files and folder for the maps'],
+  '1.4.3': ['Fix the csv file id of the dex', 'Add files and folder for the maps'],
+  '1.4.4': ['Fix the csv file id of the dex', 'Add files and folder for the maps'], // Don't forget to add the official version coming up
 };
 
 const migrateData = async (event: IpcMainEvent, payload: { projectPath: string; projectVersion: string }) => {

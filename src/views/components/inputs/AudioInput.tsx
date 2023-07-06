@@ -9,6 +9,8 @@ import { ResourceAudio } from '@components/ResourceAudio';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useCopyFile } from '@utils/useCopyFile';
 
+export const AUDIO_EXT = ['ogg', 'mp3', 'midi', 'mid', 'aac', 'wav', 'flac'];
+
 const AudioInputContainer = styled.div`
   display: flex;
   flex-direction: row;

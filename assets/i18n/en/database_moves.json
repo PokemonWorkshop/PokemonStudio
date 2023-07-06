@@ -14,7 +14,7 @@
   "pp": "PP",
   "critical_rate": "Critical rate",
   "priority": "Priority",
-  "no_critical_hit": "No critial hit (0 %)",
+  "no_critical_hit": "No critical hit (0 %)",
   "normal": "Normal (6.25 %)",
   "high": "High (12.5 %)",
   "very_high": "Very high (50 %)",

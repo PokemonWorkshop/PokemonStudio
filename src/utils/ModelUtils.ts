@@ -27,7 +27,10 @@ export const findFirstAvailableTextId = (allData: ProjectData['abilities'] | Pro
  * @returns The first available id
  */
 export const findFirstAvailableId = (allData: Record<string, { id: number }>, startId: number) => {
-  const idSet = Object.values(allData)
+  const values = Object.values(allData);
+  if (values.length === 0) return startId;
+
+  const idSet = values
     .map(({ id }) => id) // Fetch all ids
     .filter((id, index, array) => index === array.indexOf(id)) // reject all duplicates
     .sort((a, b) => a - b); // sort id by ascending order

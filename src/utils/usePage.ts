@@ -48,3 +48,14 @@ export const useTextPage = () => {
     cannotDelete: currentTextInfo.fileId >= 8997,
   };
 };
+
+export const useMapPage = () => {
+  const { projectDataValues: maps, selectedDataIdentifier: dbSymbol, state } = useProjectDataReadonly('maps', 'map');
+  const map = maps[dbSymbol];
+
+  return {
+    map,
+    hasMap: dbSymbol !== '__undef__',
+    hasMapModified: state.mapsModified.length !== 0,
+  };
+};
