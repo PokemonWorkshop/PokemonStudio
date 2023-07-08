@@ -26,3 +26,25 @@ export const hexToColor = (hex: string): StudioBallItem['color'] => {
     alpha: 255,
   };
 };
+
+/**
+ * Transform hex to Rgba
+ * @param type Type pokemon
+ * @param alpha opacity betwenn 0 and 1
+ * @returns
+ */
+export const hexToRgba = (type: string, alpha: number) => {
+  if (!type || !type.startsWith('#')) return `rgba(195, 181, 178, ${alpha})`;
+  const color = hexToColor(type);
+  return `rgba(${color.red}, ${color.green}, ${color.blue}, ${alpha})`;
+};
+
+/**
+ * Passed background color and determine text-color
+ * @param color the color
+ * @returns White or black depending on the background color passed
+ */
+export const determineTextColor = (color: StudioBallItem['color']) => {
+  const bgDelta: number = color.red * 0.299 + color.green * 0.587 + color.blue * 0.114;
+  return 255 - bgDelta < 106 ? '#000000' : '#ffffff';
+};

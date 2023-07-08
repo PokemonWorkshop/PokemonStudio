@@ -1,18 +1,15 @@
-import { hexToColor } from '@utils/ColorUtils';
+import { determineTextColor, hexToColor, hexToRgba } from '@utils/ColorUtils';
 import { useProjectTypes } from '@utils/useProjectData';
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 import { Category, CategoryLarge } from './Category';
+import { CONTROL } from '@utils/useKeyPress';
+import { useShortcutNavigation } from '@utils/useShortcutNavigation';
+import { useKeyPress } from 'react-flow-renderer';
 
 type TypeCategoryProps = {
   type: string;
   children: ReactNode;
-};
-
-const hexToRgba = (type: string, alpha: number) => {
-  if (!type || !type.startsWith('#')) return `rgba(195, 181, 178, ${alpha})`;
-  const color = hexToColor(type);
-  return `rgba(${color.red}, ${color.green}, ${color.blue}, ${alpha})`;
 };
 
 const TypeCategoryStyle = styled(Category).attrs<TypeCategoryProps>((props) => ({
@@ -111,6 +108,15 @@ const TypeCategoryStyle = styled(Category).attrs<TypeCategoryProps>((props) => (
   &[data-type*='#'] {
     background: ${({ type }) => hexToRgba(type, 0.12)};
     color: ${({ type }) => hexToRgba(type, 1)};
+
+    &.clickable {
+      :hover {
+        background: ${({ type }) => hexToRgba(type, 0.82)};
+        color: ${({ type }) => determineTextColor(hexToColor(type))};
+        cursor: pointer;
+        text-decoration: underline;
+      }
+    }
   }
 `;
 
@@ -218,7 +224,18 @@ const TypeTableCategoryStyle = styled(CategoryLarge).attrs<TypeCategoryProps>((p
 export const TypeCategory = ({ type, children }: TypeCategoryProps) => {
   const { projectDataValues: types } = useProjectTypes();
   const currentType = types[type];
-  return <TypeCategoryStyle type={currentType ? currentType.color || currentType.dbSymbol : 'normal'}>{children}</TypeCategoryStyle>;
+  const isClickable: boolean = useKeyPress(CONTROL);
+  const shortcutNavigation = useShortcutNavigation('types', 'type', '/database/types/');
+
+  return (
+    <TypeCategoryStyle
+      onClick={isClickable && currentType ? () => shortcutNavigation(currentType.dbSymbol) : undefined}
+      className={isClickable ? 'clickable' : undefined}
+      type={currentType ? currentType.color || currentType.dbSymbol : 'normal'}
+    >
+      {children}
+    </TypeCategoryStyle>
+  );
 };
 
 export const TypeCategoryPreview = ({ type, children }: TypeCategoryProps) => {
