@@ -1,5 +1,5 @@
 import React from 'react';
-import { hexToColor } from '@utils/ColorUtils';
+import { hexToRgba } from '@utils/ColorUtils';
 import { useProjectTypes } from '@utils/useProjectData';
 import styled from 'styled-components';
 import { CategoryIcon } from './CategoryIcon';
@@ -26,12 +26,6 @@ import { ReactComponent as FairyIcon } from '@assets/icons/types/fairy.svg';
 type TypeCategoryIconProps = {
   type: string;
   className?: string;
-};
-
-const hexToRgba = (type: string, alpha: number) => {
-  if (!type || !type.startsWith('#')) return `rgba(195, 181, 178, ${alpha})`;
-  const color = hexToColor(type);
-  return `rgba(${color.red}, ${color.green}, ${color.blue}, ${alpha})`;
 };
 
 const TypeCategoryIconStyle = styled(CategoryIcon).attrs<TypeCategoryIconProps>((props) => ({
