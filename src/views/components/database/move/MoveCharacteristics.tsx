@@ -31,6 +31,7 @@ const atLeastOneCharacteristic = (move: StudioMove) => {
     move.isCharge ||
     move.isRecharge ||
     move.isSoundAttack ||
+    move.isSlicingAttack ||
     move.isBite ||
     move.isBallistics ||
     move.isPulse ||
@@ -38,6 +39,7 @@ const atLeastOneCharacteristic = (move: StudioMove) => {
     move.isPowder ||
     move.isDance ||
     move.isUnfreeze ||
+    move.isWind ||
     move.isHeal ||
     move.isGravity ||
     move.isNonSkyBattle
@@ -68,6 +70,7 @@ export const MoveCharacteristics = ({ move, dialogsRef }: MoveCharacteristicsPro
           {move.isCharge && <Tag>{t('charge')}</Tag>}
           {move.isRecharge && <Tag>{t('recharge')}</Tag>}
           {move.isSoundAttack && <Tag>{t('sound')}</Tag>}
+          {move.isSlicingAttack && <Tag>{t('slice')}</Tag>}
           {move.isBite && <Tag>{t('bite')}</Tag>}
           {move.isBallistics && <Tag>{t('ballistics')}</Tag>}
           {move.isPulse && <Tag>{t('pulse')}</Tag>}
@@ -75,6 +78,7 @@ export const MoveCharacteristics = ({ move, dialogsRef }: MoveCharacteristicsPro
           {move.isPowder && <Tag>{t('powder')}</Tag>}
           {move.isDance && <Tag>{t('dance')}</Tag>}
           {move.isUnfreeze && <Tag>{t('unfreeze')}</Tag>}
+          {move.isWind && <Tag>{t('wind')}</Tag>}
           {move.isHeal && <Tag>{t('heal')}</Tag>}
           {move.isGravity && <Tag>{t('gravity')}</Tag>}
           {move.isNonSkyBattle && <Tag>{t('non_sky_battle')}</Tag>}
