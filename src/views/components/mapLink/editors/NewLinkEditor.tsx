@@ -6,7 +6,7 @@ import { TFunction, useTranslation } from 'react-i18next';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
-import { SelectRMXPMap } from '@components/selects';
+import { SelectMaplink } from '@components/selects';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { getLinksFromMapLink, MAP_LINK_CARDINAL_LIST, StudioMapLink, StudioMapLinkCardinal } from '@modelEntities/mapLink';
 
@@ -52,7 +52,7 @@ export const NewLinkEditor = ({ mapLink, cardinal, onClose, onAddLink }: NewLink
             <Label htmlFor="map" required>
               {t('database_maplinks:map_located', { cardinal: t(`database_maplinks:${cardinal}`) })}
             </Label>
-            <SelectRMXPMap
+            <SelectMaplink
               mapId={selectedMap}
               onChange={(selected) => setSelectedMap(selected.value)}
               noneValue

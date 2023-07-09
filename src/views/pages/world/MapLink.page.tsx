@@ -9,35 +9,21 @@ import { LinkEditor, NewLinkEditor } from '@components/mapLink/editors';
 
 import { EditorOverlay } from '@components/editor';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
-import { State } from '@src/GlobalStateProvider';
+import { ProjectData, State } from '@src/GlobalStateProvider';
 import { useTranslation } from 'react-i18next';
 import { assertUnreachable } from '@utils/assertUnreachable';
-import {
-  getLinksFromMapLink,
-  setLinksFromMapLink,
-  StudioMapLink,
-  StudioMapLinkCardinal,
-  StudioMapLinkLink,
-  StudioRMXPMap,
-} from '@modelEntities/mapLink';
+import { getLinksFromMapLink, setLinksFromMapLink, StudioMapLink, StudioMapLinkCardinal, StudioMapLinkLink } from '@modelEntities/mapLink';
 import { findFirstAvailableId } from '@utils/ModelUtils';
 import { createMapLink } from '@utils/entityCreation';
 import { cloneEntity } from '@utils/cloneEntity';
-
-const createMapData = (rmxpMaps: StudioRMXPMap[]): Map<number, string> => {
-  const mapData = new Map();
-  rmxpMaps.forEach((rmxpMap) => {
-    mapData.set(rmxpMap.id, rmxpMap.name);
-  });
-  return mapData;
-};
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
 
 const checkValidMaplink = (mapId: string, state: State) => {
   const validMaps = Object.values(state.projectData.zones)
     .filter((zone) => zone.isFlyAllowed && !zone.isWarpDisallowed)
     .flatMap((zone) => zone.maps);
-  const rmxpMapsFiltered = Object.values(state.rmxpMaps).filter(({ id }) => validMaps.includes(id));
-  return rmxpMapsFiltered.find((rmxpMap) => rmxpMap.id.toString() === mapId) ? true : false;
+  const mapsFiltered = Object.values(state.projectData.maps).filter(({ id }) => validMaps.includes(id));
+  return mapsFiltered.find((map) => map.id.toString() === mapId) ? true : false;
 };
 
 const getCardinalOpposed = (cardinal: StudioMapLinkCardinal): StudioMapLinkCardinal => {
@@ -81,10 +67,16 @@ const MapLinkPage = () => {
   const [cardinalSelected, setCardinalSelected] = useState<StudioMapLinkCardinal>('north');
   const [indexSelected, setIndexSelected] = useState<number>(0);
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
-  const mapData = useMemo(() => createMapData(state.rmxpMaps), [state.rmxpMaps]);
+
   const currentEditedMaplink = useMemo(() => cloneEntity(mapLink), [mapLink]);
   const isValidMaplink = useMemo(() => checkValidMaplink(mapId, state), [mapId, state]);
   const { t } = useTranslation('database_maplinks');
+  const getMapName = useGetEntityNameText();
+
+  const createMapData = (maps: ProjectData['maps']): Map<number, string> => {
+    return new Map<number, string>(Object.values(maps).map((map) => [map.id, getMapName(map)]));
+  };
+  const mapData = useMemo(() => createMapData(state.projectData.maps), [state.projectData.maps]);
 
   const addReverseMapLink = (selectedMap: number, cardinal: StudioMapLinkCardinal, offset: number) => {
     const mapLinkSelectedMap = cloneEntity(Object.values(mapLinks).find((mapL) => mapL.mapId === selectedMap) || createMapLink(lastId, selectedMap));

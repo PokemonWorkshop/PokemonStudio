@@ -23,7 +23,7 @@ import { StudioItem } from '@modelEntities/item';
 import { StudioMove } from '@modelEntities/move';
 import { StudioGroup } from '@modelEntities/group';
 import { StudioTrainer } from '@modelEntities/trainer';
-import { StudioMapLink, StudioRMXPMap } from '@modelEntities/mapLink';
+import { StudioMapLink } from '@modelEntities/mapLink';
 import { StudioZone } from '@modelEntities/zone';
 import { StudioType } from '@modelEntities/type';
 import { StudioQuest } from '@modelEntities/quest';
@@ -137,7 +137,6 @@ export interface State {
   savingProjectStudio: boolean;
   currentPSDKVersion: PSDKVersion;
   lastPSDKVersion: PSDKVersion;
-  rmxpMaps: StudioRMXPMap[];
   textInfos: StudioTextInfo[];
   textVersion: number;
   savingLanguage: string[];
@@ -168,7 +167,6 @@ const initialState = {
   savingData: new SavingMap(),
   savingConfig: new SavingConfigMap(),
   savingText: new SavingTextMap(),
-  rmxpMaps: [] as StudioRMXPMap[],
   textInfos: [] as StudioTextInfo[],
   savingProjectStudio: false,
   savingLanguage: [] as string[],

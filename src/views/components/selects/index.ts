@@ -8,6 +8,6 @@ export { SelectTrainer } from './SelectTrainer';
 export { SelectType } from './SelectType';
 export { SelectZone } from './SelectZone';
 export { SelectDex } from './SelectDex';
-export { SelectRMXPMap } from './SelectRMXPMap';
+export { SelectMaplink } from './SelectMaplink';
 export { SelectText } from './SelectText';
 export { SelectMap } from './SelectMap';
