@@ -29,6 +29,7 @@ export const MoveCharacteristicsEditor = forwardRef<EditorHandlingClose>((_, ref
   const chargeRef = useRef<HTMLInputElement>(null);
   const rechargeRef = useRef<HTMLInputElement>(null);
   const soundRef = useRef<HTMLInputElement>(null);
+  const slicingRef = useRef<HTMLInputElement>(null);
   const biteRef = useRef<HTMLInputElement>(null);
   const ballisticsRef = useRef<HTMLInputElement>(null);
   const pulseRef = useRef<HTMLInputElement>(null);
@@ -36,6 +37,7 @@ export const MoveCharacteristicsEditor = forwardRef<EditorHandlingClose>((_, ref
   const powderRef = useRef<HTMLInputElement>(null);
   const danceRef = useRef<HTMLInputElement>(null);
   const unfreezeRef = useRef<HTMLInputElement>(null);
+  const windRef = useRef<HTMLInputElement>(null);
   const healRef = useRef<HTMLInputElement>(null);
   const gravityRef = useRef<HTMLInputElement>(null);
   const nonSkyBattleRef = useRef<HTMLInputElement>(null);
@@ -53,6 +55,7 @@ export const MoveCharacteristicsEditor = forwardRef<EditorHandlingClose>((_, ref
     if (!chargeRef.current) return false;
     if (!rechargeRef.current) return false;
     if (!soundRef.current) return false;
+    if (!slicingRef.current) return false;
     if (!biteRef.current) return false;
     if (!ballisticsRef.current) return false;
     if (!pulseRef.current) return false;
@@ -60,6 +63,7 @@ export const MoveCharacteristicsEditor = forwardRef<EditorHandlingClose>((_, ref
     if (!powderRef.current) return false;
     if (!danceRef.current) return false;
     if (!unfreezeRef.current) return false;
+    if (!windRef.current) return false;
     if (!healRef.current) return false;
     if (!gravityRef.current) return false;
     if (!nonSkyBattleRef.current) return false;
@@ -81,6 +85,7 @@ export const MoveCharacteristicsEditor = forwardRef<EditorHandlingClose>((_, ref
       !chargeRef.current ||
       !rechargeRef.current ||
       !soundRef.current ||
+      !slicingRef.current ||
       !biteRef.current ||
       !ballisticsRef.current ||
       !pulseRef.current ||
@@ -88,6 +93,7 @@ export const MoveCharacteristicsEditor = forwardRef<EditorHandlingClose>((_, ref
       !powderRef.current ||
       !danceRef.current ||
       !unfreezeRef.current ||
+      !windRef.current ||
       !healRef.current ||
       !gravityRef.current ||
       !nonSkyBattleRef.current ||
@@ -108,6 +114,7 @@ export const MoveCharacteristicsEditor = forwardRef<EditorHandlingClose>((_, ref
       isCharge: chargeRef.current.checked,
       isRecharge: rechargeRef.current.checked,
       isSoundAttack: soundRef.current.checked,
+      isSlicingAttack: slicingRef.current.checked,
       isBite: biteRef.current.checked,
       isBallistics: ballisticsRef.current.checked,
       isPulse: pulseRef.current.checked,
@@ -115,6 +122,7 @@ export const MoveCharacteristicsEditor = forwardRef<EditorHandlingClose>((_, ref
       isPowder: powderRef.current.checked,
       isDance: danceRef.current.checked,
       isUnfreeze: unfreezeRef.current.checked,
+      isWind: windRef.current.checked,
       isHeal: healRef.current.checked,
       isGravity: gravityRef.current.checked,
       isNonSkyBattle: nonSkyBattleRef.current.checked,
@@ -176,6 +184,10 @@ export const MoveCharacteristicsEditor = forwardRef<EditorHandlingClose>((_, ref
           <Toggle name="sound" defaultChecked={move.isSoundAttack} ref={soundRef} />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
+          <Label htmlFor="slicing">{t('description_slicing')}</Label>
+          <Toggle name="slicing" defaultChecked={move.isSlicingAttack} ref={slicingRef} />
+        </InputWithLeftLabelContainer>
+        <InputWithLeftLabelContainer>
           <Label htmlFor="bite">{t('description_bite')}</Label>
           <Toggle name="bite" defaultChecked={move.isBite} ref={biteRef} />
         </InputWithLeftLabelContainer>
@@ -194,6 +206,10 @@ export const MoveCharacteristicsEditor = forwardRef<EditorHandlingClose>((_, ref
         <InputWithLeftLabelContainer>
           <Label htmlFor="powder">{t('description_powder')}</Label>
           <Toggle name="powder" defaultChecked={move.isPowder} ref={powderRef} />
+        </InputWithLeftLabelContainer>
+        <InputWithLeftLabelContainer>
+          <Label htmlFor="wind">{t('description_wind')}</Label>
+          <Toggle name="wind" defaultChecked={move.isWind} ref={windRef} />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
           <Label htmlFor="dance">{t('description_dance')}</Label>
