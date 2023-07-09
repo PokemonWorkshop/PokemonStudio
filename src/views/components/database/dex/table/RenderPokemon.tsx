@@ -18,6 +18,8 @@ import { useGetEntityNameText } from '@utils/ReadingProjectText';
 import { StudioDex } from '@modelEntities/dex';
 import { pokemonIconPath } from '@utils/path';
 import { StudioCreature } from '@modelEntities/creature';
+import { CONTROL, useKeyPress } from '@utils/useKeyPress';
+import { usePokemonShortcutNavigation } from '@utils/useShortcutNavigation';
 
 type RenderPokemonContainerProps = {
   isDragging: boolean;
@@ -64,6 +66,13 @@ const RenderPokemonContainer = styled(DataPokemonGrid).attrs<RenderPokemonContai
         width: 32px;
         padding: 0px;
       }
+    }
+  }
+
+  & .clickable {
+    :hover {
+      cursor: pointer;
+      text-decoration: underline;
     }
   }
 
@@ -153,6 +162,8 @@ export const RenderPokemon = React.forwardRef<HTMLInputElement, RenderPokemonPro
     const getCreatureName = useGetEntityNameText();
     const [state] = useGlobalState();
     const [pokemonId, setPokemonId] = useState<number>(pokemon.id);
+    const isClickable: boolean = useKeyPress(CONTROL);
+    const shortcutNavigation = usePokemonShortcutNavigation();
 
     useEffect(() => {
       setPokemonId(pokemon.id);
@@ -210,7 +221,12 @@ export const RenderPokemon = React.forwardRef<HTMLInputElement, RenderPokemonPro
           )}
         </span>
         {pokemon.data ? (
-          <span className={pokemonForm ? 'name' : 'error'}>{getCreatureName(pokemon.data)}</span>
+          <span
+            className={`${pokemonForm ? 'name' : 'error'}, ${isClickable ? 'clickable' : undefined}`}
+            onClick={() => (isClickable && pokemon?.data?.dbSymbol ? shortcutNavigation(pokemon.data.dbSymbol, pokemon.form) : undefined)}
+          >
+            {getCreatureName(pokemon.data)}
+          </span>
         ) : (
           <span className="error">{pokemon.undef ? t('database_dex:free_slot') : t('database_pokemon:pokemon_deleted')}</span>
         )}
