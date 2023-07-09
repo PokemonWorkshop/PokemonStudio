@@ -18,4 +18,7 @@ export const baseForMaps = async (_: IpcMainEvent, projectPath: string) => {
   if (!fs.existsSync(path.join(projectPath, 'Data/Tiled'))) {
     fs.mkdirSync(path.join(projectPath, 'Data/Tiled'));
   }
+  if (fs.existsSync(path.join(projectPath, 'Data/Studio/rmxp_maps.json'))) {
+    fs.unlinkSync(path.join(projectPath, 'Data/Studio/rmxp_maps.json'));
+  }
 };

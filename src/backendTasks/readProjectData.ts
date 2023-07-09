@@ -4,7 +4,6 @@ import path from 'path';
 import fs from 'fs';
 import fsPromises from 'fs/promises';
 import { batchArray } from '@utils/batchArray';
-import { StudioRMXPMap } from '@modelEntities/mapLink';
 import { StudioTextInfo } from '@modelEntities/textInfo';
 
 const projectDataKeys = [
@@ -23,7 +22,7 @@ const projectDataKeys = [
   'maps',
 ] as const;
 type ProjectDataFromBackEndKey = (typeof projectDataKeys)[number];
-export type ProjectDataFromBackEnd = Record<ProjectDataFromBackEndKey, string[]> & { rmxpMaps: StudioRMXPMap[]; textInfos: StudioTextInfo[] };
+export type ProjectDataFromBackEnd = Record<ProjectDataFromBackEndKey, string[]> & { textInfos: StudioTextInfo[] };
 
 export const readProjectFolder = async (projectPath: string, key: ProjectDataFromBackEndKey): Promise<string[]> => {
   const folderName = path.join(projectPath, 'Data/Studio', key);
@@ -60,9 +59,7 @@ export const readProjectFolder = async (projectPath: string, key: ProjectDataFro
 const readProjectData = async (event: IpcMainEvent, payload: { path: string }) => {
   log.info('read-project-data');
   try {
-    const rmxpMapsJson = await fsPromises.readFile(path.join(payload.path, 'Data/Studio', 'rmxp_maps.json'), { encoding: 'utf-8' });
     const textInfosJson = await fsPromises.readFile(path.join(payload.path, 'Data/Studio', 'text_info.json'), { encoding: 'utf-8' });
-    const rmxpMaps: StudioRMXPMap[] = JSON.parse(rmxpMapsJson);
     const textInfos: StudioTextInfo[] = JSON.parse(textInfosJson);
     const projectData = await projectDataKeys.reduce(async (prev, curr, index) => {
       const prevData = await prev;
@@ -70,7 +67,7 @@ const readProjectData = async (event: IpcMainEvent, payload: { path: string }) =
       event.sender.send('read-project-data/progress', { step: index + 1, total: projectDataKeys.length, stepText: curr });
       const data = await readProjectFolder(payload.path, curr);
       return { ...prevData, [curr]: data };
-    }, Promise.resolve({ rmxpMaps, textInfos } as ProjectDataFromBackEnd));
+    }, Promise.resolve({ textInfos } as ProjectDataFromBackEnd));
 
     log.info('read-project-data/success');
     event.sender.send('read-project-data/success', projectData);

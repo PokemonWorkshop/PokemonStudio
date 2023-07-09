@@ -24,10 +24,9 @@ export const RMXP_MAP_VALIDATOR = z.object({
   id: z.number().finite(),
   name: z.string(),
 });
-export type StudioRMXPMap = z.infer<typeof RMXP_MAP_VALIDATOR>;
 
 export const MAP_LINK_CARDINAL_LIST = ['north', 'east', 'south', 'west'] as const;
-export type StudioMapLinkCardinal = typeof MAP_LINK_CARDINAL_LIST[number];
+export type StudioMapLinkCardinal = (typeof MAP_LINK_CARDINAL_LIST)[number];
 
 export const getLinksFromMapLink = (mapLink: StudioMapLink, cardinal: StudioMapLinkCardinal): StudioMapLinkLink[] => {
   switch (cardinal) {

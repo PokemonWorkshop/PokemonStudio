@@ -56,8 +56,9 @@ const getSelectedIdentifier = <T extends keyof SelectedDataIdentifier>(
   return undefined;
 };
 
-const getMapLinkIdentifier = (selectedFromStorage: SelectedDataIdentifier, maps: PreGlobalState['rmxpMaps'], validMaps: number[]) => {
+const getMapLinkIdentifier = (selectedFromStorage: SelectedDataIdentifier, preState: PreGlobalState, validMaps: number[]) => {
   const expectedMapId = Number(selectedFromStorage.mapLink);
+  const maps = Object.values(preState.projectData.maps);
 
   if (maps.find(({ id }) => id === expectedMapId)) return expectedMapId.toString();
 
@@ -97,7 +98,7 @@ export const generateSelectedIdentifier = (preState: PreGlobalState): SelectedDa
     ability: getSelectedIdentifier(preState, selectedFromStorage, 'ability', 'abilities') || firstByNameUsingTextId(projectData.abilities, preState),
     group: getSelectedIdentifier(preState, selectedFromStorage, 'group', 'groups') || firstById(projectData.groups),
     dex: getSelectedIdentifier(preState, selectedFromStorage, 'dex', 'dex') || firstById(projectData.dex),
-    mapLink: getMapLinkIdentifier(selectedFromStorage, preState.rmxpMaps, validMaps),
+    mapLink: getMapLinkIdentifier(selectedFromStorage, preState, validMaps),
     textInfo: getTextInfoIdentifier(selectedFromStorage, preState.textInfos),
     map: getSelectedIdentifier(preState, selectedFromStorage, 'map', 'maps') || firstById(projectData.maps),
   };

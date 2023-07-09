@@ -279,24 +279,6 @@ contextBridge.exposeInMainWorld('api', {
     ipcRenderer.removeAllListeners(`file-exists/success`);
     ipcRenderer.removeAllListeners(`file-exists/failure`);
   },
-  updateMapInfos: (taskPayload, onSuccess, onFailure) => {
-    // Register success event
-    ipcRenderer.once(`update-map-infos/success`, (_, payload) => {
-      ipcRenderer.removeAllListeners(`update-map-infos/failure`);
-      onSuccess(payload);
-    });
-    // Register failure event
-    ipcRenderer.once(`update-map-infos/failure`, (_, error) => {
-      ipcRenderer.removeAllListeners(`update-map-infos/success`);
-      onFailure(error);
-    });
-    // Call service
-    ipcRenderer.send('update-map-infos', taskPayload);
-  },
-  cleanupUpdateMapInfos: () => {
-    ipcRenderer.removeAllListeners(`update-map-infos/success`);
-    ipcRenderer.removeAllListeners(`update-map-infos/failure`);
-  },
   chooseFolder: (taskPayload, onSuccess, onFailure) => {
     // Register success event
     ipcRenderer.once(`choose-folder/success`, (_, payload) => {
@@ -652,8 +634,6 @@ declare global {
       cleanupMigrateData: () => void;
       fileExists: BackendTaskWithGenericErrorAndNoProgress<{ filePath: string }, { result: boolean }>;
       cleanupFileExists: () => void;
-      updateMapInfos: BackendTaskWithGenericErrorAndNoProgress<{ projectPath: string }, Record<string, never>>;
-      cleanupUpdateMapInfos: () => void;
       chooseFolder: BackendTaskWithGenericErrorAndNoProgress<Record<string, never>, { folderPath: string }>;
       cleanupChooseFolder: () => void;
       extractNewProject: BackendTaskWithGenericError<

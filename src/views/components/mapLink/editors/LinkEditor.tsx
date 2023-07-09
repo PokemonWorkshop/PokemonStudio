@@ -4,9 +4,9 @@ import { Editor, useRefreshUI } from '@components/editor';
 
 import { TFunction, useTranslation } from 'react-i18next';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
-import { SelectRMXPMap } from '@components/selects';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { getLinksFromMapLink, MAP_LINK_CARDINAL_LIST, StudioMapLink, StudioMapLinkCardinal } from '@modelEntities/mapLink';
+import { SelectMaplink } from '@components/selects';
 
 const OffsetInfo = styled.div`
   ${({ theme }) => theme.fonts.normalSmall};
@@ -51,7 +51,7 @@ export const LinkEditor = ({ mapLink, cardinal, index }: NewLinkEditorProps) => 
           <Label htmlFor="map" required>
             {t('map_located', { cardinal: t(cardinal) })}
           </Label>
-          <SelectRMXPMap
+          <SelectMaplink
             mapId={link.mapId.toString()}
             onChange={(selected) => refreshUI((link.mapId = Number(selected.value)))}
             excludeMaps={mapsAlreadyAssigned(mapLink, cardinal, index)}
