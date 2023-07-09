@@ -8,9 +8,11 @@ import { useProjectAbilities } from '@utils/useProjectData';
 import { getNameType } from '@utils/getNameType';
 import { ResourceImage } from '@components/ResourceImage';
 import { StudioAbility } from '@modelEntities/ability';
-import { StudioCreature } from '@modelEntities/creature';
+import { StudioCreature, StudioCreatureForm } from '@modelEntities/creature';
 import { pokemonIconPath } from '@utils/resourcePath';
 import { useGetEntityNameText, useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
+import { CONTROL, useKeyPress } from '@utils/useKeyPress';
+import { usePokemonShortcutNavigation, useShortcutNavigation } from '@utils/useShortcutNavigation';
 
 type AbilityPokemonTableProps = {
   ability: StudioAbility;
@@ -50,6 +52,13 @@ const DataPokemonGrid = styled(DataGrid)`
     color: ${({ theme }) => theme.colors.text100};
   }
 
+  & .clickable {
+    :hover {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  }
+
   & .error {
     color: ${({ theme }) => theme.colors.dangerBase};
   }
@@ -84,7 +93,7 @@ const TypeContainer = styled.span`
   gap: 8px;
 `;
 
-const getFormWithCurrentAbility = (pokemon: StudioCreature, ability: StudioAbility) =>
+const getFormWithCurrentAbility = (pokemon: StudioCreature, ability: StudioAbility): StudioCreatureForm =>
   pokemon.forms.find(
     (form) => form.abilities[0] === ability.dbSymbol || form.abilities[1] === ability.dbSymbol || form.abilities[2] === ability.dbSymbol
   ) || pokemon.forms[0];
@@ -100,12 +109,16 @@ const getAllPokemonWithCurrentAbility = (state: State, ability: StudioAbility): 
 };
 
 const RenderPokemon = ({ pokemon, ability, state }: RenderAbilityProps) => {
-  const form = getFormWithCurrentAbility(pokemon, ability);
+  const form: StudioCreatureForm = getFormWithCurrentAbility(pokemon, ability);
   const { projectDataValues: abilities } = useProjectAbilities();
   const getAbilityName = useGetEntityNameTextUsingTextId();
   const getCreatureName = useGetEntityNameText();
   const { t } = useTranslation('database_abilities');
   const types = state.projectData.types;
+
+  const isClickable: boolean = useKeyPress(CONTROL);
+  const shortcutPokemonNavigation = usePokemonShortcutNavigation();
+  const shortcutAbilityNavigation = useShortcutNavigation('abilities', 'ability', '/database/abilities/');
 
   return (
     <RenderPokemonContainer gap="16px">
@@ -116,20 +129,26 @@ const RenderPokemon = ({ pokemon, ability, state }: RenderAbilityProps) => {
           className="icon"
         />
       </span>
-      <span className="name">{pokemon ? getCreatureName(pokemon) : '---'}</span>
+      <span className={isClickable ? 'clickable name' : 'name'} onClick={isClickable ? () => shortcutPokemonNavigation(pokemon.dbSymbol) : undefined}>
+        {pokemon ? getCreatureName(pokemon) : '---'}
+      </span>
       <TypeContainer>
         {form.type1 !== '__undef__' ? <TypeCategory type={form.type1}>{getNameType(types, form.type1, state)}</TypeCategory> : <span></span>}
         {form.type2 !== '__undef__' ? <TypeCategory type={form.type2}>{getNameType(types, form.type2, state)}</TypeCategory> : <span></span>}
       </TypeContainer>
-      <span className={abilities[form.abilities[0]] ? '' : 'error'}>
-        {form.abilities[0] ? (abilities[form.abilities[0]] ? getAbilityName(abilities[form.abilities[0]]) : t('ability_deleted')) : '---'}
-      </span>
-      <span className={abilities[form.abilities[1]] ? '' : 'error'}>
-        {form.abilities[1] ? (abilities[form.abilities[1]] ? getAbilityName(abilities[form.abilities[1]]) : t('ability_deleted')) : '---'}
-      </span>
-      <span className={abilities[form.abilities[2]] ? '' : 'error'}>
-        {form.abilities[2] ? (abilities[form.abilities[2]] ? getAbilityName(abilities[form.abilities[2]]) : t('ability_deleted')) : '---'}
-      </span>
+      {[0, 1, 2].map((index) => (
+        <span
+          key={index}
+          className={`${abilities[form.abilities[index]] ? undefined : 'error'}, ${isClickable ? 'clickable' : undefined}`}
+          onClick={isClickable ? () => shortcutAbilityNavigation(form.abilities[index]) : undefined}
+        >
+          {form.abilities[index]
+            ? abilities[form.abilities[index]]
+              ? getAbilityName(abilities[form.abilities[index]])
+              : t('ability_deleted')
+            : '---'}
+        </span>
+      ))}
     </RenderPokemonContainer>
   );
 };
