@@ -1,3 +1,4 @@
+import { StudioMove } from '@modelEntities/move';
 import { getEntityNameTextUsingTextId, getEntityNameText } from './ReadingProjectText';
 import { useProjectDataReadonly } from './useProjectData';
 import { useTextInfosReadonly } from './useTextInfos';
@@ -16,7 +17,7 @@ export const useAbilityPage = () => {
 
 export const useMovePage = () => {
   const { projectDataValues: moves, selectedDataIdentifier: dbSymbol, state } = useProjectDataReadonly('moves', 'move');
-  const move = moves[dbSymbol];
+  const move: StudioMove = moves[dbSymbol];
   const moveName = getEntityNameText(move, state);
 
   return {
