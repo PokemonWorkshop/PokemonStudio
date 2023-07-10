@@ -6,11 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { SubPageTitle } from '@components/database/SubPageTitle';
-import { MovePokemonLevelLearnableTable } from '@components/database/move/moveTable/MovePokemonLevelLearnableTable';
-import { MovePokemonTutorLearnableTable } from '@components/database/move/moveTable/MovePokemonTutorLearnableTable';
-import { MovePokemonTechLearnableTable } from '@components/database/move/moveTable/MovePokemonTechLearnableTable';
-import { MovePokemonBreedLearnableTable } from '@components/database/move/moveTable/MovePokemonBreedLearnableTable';
-import { MovePokemonEvolutionLearnableTable } from '@components/database/move/moveTable/MovePokemonEvolutionLearnableTable';
+import { MovePokemonTable, FilterType } from '@components/database/move/moveTable/MovePokemonTable';
 import { useMovePage } from '@utils/usePage';
 
 export const MovePokemonPage = () => {
@@ -18,6 +14,13 @@ export const MovePokemonPage = () => {
   const { t } = useTranslation('database_moves');
   const navigate = useNavigate();
   const onClickedBack = () => navigate('/database/moves');
+  const parameters: Array<{ title: any; filter: FilterType }> = [
+    { title: 'level_learnable_move', filter: 'LevelLearnableMove' },
+    { title: 'tutor_learnable_move', filter: 'TutorLearnableMove' },
+    { title: 'tech_learnable_move', filter: 'TechLearnableMove' },
+    { title: 'breed_learnable_move', filter: 'BreedLearnableMove' },
+    { title: 'evolution_learnable_move', filter: 'EvolutionLearnableMove' },
+  ];
 
   return (
     <DatabasePageStyle>
@@ -26,21 +29,11 @@ export const MovePokemonPage = () => {
         <PageDataConstrainerStyle>
           <DataBlockWrapper>
             <SubPageTitle title={t('pokemon_with_move', { move: moveName })} onClickedBack={onClickedBack} />
-            <DataBlockWithTitleCollapse title={t('level_learnable_move', { move: moveName })} size="full">
-              <MovePokemonLevelLearnableTable move={move} />
-            </DataBlockWithTitleCollapse>
-            <DataBlockWithTitleCollapse title={t('tutor_learnable_move', { move: moveName })} size="full">
-              <MovePokemonTutorLearnableTable move={move} />
-            </DataBlockWithTitleCollapse>
-            <DataBlockWithTitleCollapse title={t('tech_learnable_move', { move: moveName })} size="full">
-              <MovePokemonTechLearnableTable move={move} />
-            </DataBlockWithTitleCollapse>
-            <DataBlockWithTitleCollapse title={t('breed_learnable_move', { move: moveName })} size="full">
-              <MovePokemonBreedLearnableTable move={move} />
-            </DataBlockWithTitleCollapse>
-            <DataBlockWithTitleCollapse title={t('evolution_learnable_move', { move: moveName })} size="full">
-              <MovePokemonEvolutionLearnableTable move={move} />
-            </DataBlockWithTitleCollapse>
+            {parameters.map((params, i) => (
+              <DataBlockWithTitleCollapse key={i} title={t(params.title, { move: moveName })} size="full">
+                <MovePokemonTable move={move} filter={params.filter} />
+              </DataBlockWithTitleCollapse>
+            ))}
           </DataBlockWrapper>
         </PageDataConstrainerStyle>
       </PageContainerStyle>

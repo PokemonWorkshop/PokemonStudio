@@ -15,7 +15,7 @@ export const DataPokemonTable = styled.div`
 export const DataPokemonGrid = styled(DataGrid)`
   ${({ theme }) => theme.fonts.normalRegular};
   color: ${({ theme }) => theme.colors.text400};
-  grid-template-columns: 32px 140px 158px auto;
+  grid-template-columns: 32px 140px 158px 60px auto;
   align-items: center;
 
   &:hover:not(.header) {
@@ -27,6 +27,17 @@ export const DataPokemonGrid = styled(DataGrid)`
   & .name {
     ${({ theme }) => theme.fonts.normalMedium};
     color: ${({ theme }) => theme.colors.text100};
+  }
+
+  & .clickable {
+    :hover {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  }
+
+  & span:nth-child(4) {
+    text-align: right;
   }
 `;
 
