@@ -18,6 +18,8 @@ export const useShortcutNavigation = <
   const navigate: NavigateFunction = useNavigate();
 
   return (dbSymbol: string) => {
+    if (!dbSymbol) return;
+
     setSelectedDataIdentifier({ [selected]: dbSymbol } as Record<SelectedIdentifier, string>);
 
     if (path) navigate(path);
@@ -29,6 +31,8 @@ export const usePokemonShortcutNavigation = () => {
   const navigate: NavigateFunction = useNavigate();
 
   return (specie: string, form = 0) => {
+    if (!specie) return;
+
     setSelectedDataIdentifier({ pokemon: { specie, form } });
     navigate('/database/pokemon');
   };

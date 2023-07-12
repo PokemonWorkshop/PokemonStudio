@@ -4,6 +4,8 @@ import { getEntityNameText } from '@utils/ReadingProjectText';
 import React from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
 import { DataBlockWithTitle, DataFieldsetField, DataGrid } from '../dataBlocks';
+import { useShortcutNavigation } from '@utils/useShortcutNavigation';
+import { useKeyPress, CONTROL } from '@utils/useKeyPress';
 
 type ItemTechDataProps = { item: StudioItem; onClick: () => void };
 
@@ -18,6 +20,9 @@ export const ItemTechData = ({ item, onClick }: ItemTechDataProps) => {
   const [state] = useGlobalState();
   const isItemTech = item.klass === 'TechItem';
   const isDisabled = LOCKED_ITEM_EDITOR[item.klass].includes('tech');
+  const moveName = isItemTech ? getMoveName(state, item, t) : '---';
+  const isClickable: boolean = useKeyPress(CONTROL) && moveName !== t('database_moves:move_deleted');
+  const shortcutNavigation = useShortcutNavigation('moves', 'move', '/database/moves/');
 
   return (
     <DataBlockWithTitle size="fourth" title={t('database_items:techniques')} disabled={isDisabled} onClick={isDisabled ? undefined : onClick}>
@@ -30,9 +35,10 @@ export const ItemTechData = ({ item, onClick }: ItemTechDataProps) => {
           />
           <DataFieldsetField
             label={t('database_items:move_learnt')}
-            data={isItemTech ? getMoveName(state, item, t) : '---'}
+            data={moveName}
             disabled={!isItemTech}
             error={isItemTech ? !state.projectData.moves[item.move] : false}
+            clickable={{ isClickable, callback: () => (isItemTech ? shortcutNavigation(state.projectData.moves[item.move]?.dbSymbol) : null) }}
           />
           <DataFieldsetField label={t('database_items:fling')} data={item.flingPower} />
         </DataGrid>

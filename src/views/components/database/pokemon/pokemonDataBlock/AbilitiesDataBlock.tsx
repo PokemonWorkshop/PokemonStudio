@@ -30,21 +30,21 @@ export const AbilitiesDataBlock = ({ pokemonWithForm, dialogsRef }: PokemonDataP
           data={getAbilityNameByIndex(0)}
           error={abilities[form.abilities[0]] ? false : true}
           disabled={form.abilities[0] === '__undef__'}
-          clickable={{ isClickable, callback: () => shortcutNavigation(form.abilities[0]) }}
+          clickable={{ isClickable: isClickable && !!abilities[form.abilities[0]], callback: () => shortcutNavigation(form.abilities[0]) }}
         />
         <DataFieldsetField
           label={t('ability_2')}
           data={getAbilityNameByIndex(1)}
           error={abilities[form.abilities[1]] ? false : true}
           disabled={form.abilities[1] === '__undef__'}
-          clickable={{ isClickable, callback: () => shortcutNavigation(form.abilities[1]) }}
+          clickable={{ isClickable: isClickable && !!abilities[form.abilities[1]], callback: () => shortcutNavigation(form.abilities[1]) }}
         />
         <DataFieldsetField
           label={t('hidden_ability')}
           data={getAbilityNameByIndex(2)}
           error={abilities[form.abilities[2]] ? false : true}
           disabled={form.abilities[2] === '__undef__'}
-          clickable={{ isClickable, callback: () => shortcutNavigation(form.abilities[2]) }}
+          clickable={{ isClickable: isClickable && !!abilities[form.abilities[2]], callback: () => shortcutNavigation(form.abilities[2]) }}
         />
       </DataGrid>
     </DataBlockWithTitle>
