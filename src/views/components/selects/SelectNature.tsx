@@ -11,7 +11,7 @@ const getNatureOptions = (state: State): SelectOption[] =>
     value,
     label: getText(
       { texts: state.projectText, config: state.projectConfig.language_config },
-      8,
+      100008,
       (state.projectConfig.natures.data[natureId] || [0])[0]
     ),
   }));

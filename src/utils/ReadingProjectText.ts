@@ -53,7 +53,7 @@ export const getText = (projectText: TextsWithLanguageConfig, fileId: number, te
 export const getNatureText = (state: State, natureDbSymbol: string) => {
   return getText(
     { texts: state.projectText, config: state.projectConfig.language_config },
-    8,
+    100008,
     (state.projectConfig.natures.data[state.projectConfig.natures.db_symbol_to_id[natureDbSymbol] || 0] || [0])[0]
   );
 };
