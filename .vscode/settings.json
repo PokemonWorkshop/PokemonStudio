@@ -25,5 +25,10 @@
     "package-lock.json": true,
     "*.{css,sass,scss}.d.ts": true
   },
-  "cSpell.words": ["movepool", "Pokedex"]
+  "cSpell.words": [
+    "movepool",
+    "Pokedex"
+  ],
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
 }
