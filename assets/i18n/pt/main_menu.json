@@ -1,0 +1,19 @@
+{
+  "home": "Home",
+  "search": "Buscar",
+  "dashboard": "Visão geral",
+  "update": "PSDK Update",
+  "database": "Base de dados",
+  "map": "Ligação de mapas",
+  "event_editor": "Editor de eventos",
+  "text_editor": "Editor de texto",
+  "deployment": "Implantação",
+  "parameters": "Definições",
+  "test": "Testar o projeto",
+  "save": "Guadar as modificações",
+  "play_release_mode": "Iniciar o jogo",
+  "play_debug_mode": "Mode Debug",
+  "play_tags_mode": "Editor de System Tag",
+  "play_worldmap_mode": "Editor de World Maps",
+  "not_available_yet": "Disponível numa proxima versão"
+}

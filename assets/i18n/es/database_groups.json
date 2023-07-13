@@ -21,7 +21,7 @@
   "pokemon_group": "Pokémon del grupo",
   "fields_asterisk_required": "Los campos con asterisco son obligatorios.",
   "battler_deletion_of": "Eliminar a {{pokemon}}",
-  "battler_deletion_message": "Estás a punto de eliminar a « {{battler}} » del grupo « {{group}} ».",
+  "battler_deletion_message": "Estás a punto de eliminar a «\u00a0{{battler}}\u00a0» del grupo «\u00a0{{group}}\u00a0».",
   "import": "Importar",
   "battler_import_info": "Puedes importar Pokémon desde otro grupo.",
   "import_battler_from": "Importar Pokémon de",

@@ -1,0 +1,11 @@
+{
+  "save": "Save",
+  "settings": "Definições",
+  "save_filename": "Nome de base do save",
+  "save_header": "Cabeçalho de salvamento",
+  "save_header_info": "O cabeçalho de salvamento deve ter exatamente 5 caracteres de comprimento.",
+  "save_key": "Chave do save",
+  "save_any_location": "Possibilidade de guardar o save em qualquer lugar",
+  "save_unlimited_count": "Número de saves ilimitados",
+  "save_max_count": "Número máximo de saves possiveis"
+}

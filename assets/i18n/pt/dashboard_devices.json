@@ -1,0 +1,7 @@
+{
+  "devices": "Dispositivos periféricos",
+  "mouse": "Rato",
+  "use_mouse": "Utilização do rato",
+  "mouse_image": "Imagem do cursor do rato",
+  "info_mouse_image": "A imagem tem de estar na pasta «\u00a0graphics/windowskins\u00a0»."
+}

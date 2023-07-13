@@ -1,0 +1,9 @@
+{
+  "settings": "Definições",
+  "general": "Geral",
+  "max_pokemon_level": "Nivel maximo dos Pokémon",
+  "evolution_form": "Sempre use a forma de base para evoluções",
+  "evolution_form_no_data": "Usar a forma de base se nenhum dado de evolução estiver disponível",
+  "max_bag_item_count": "Número máximo do mesmo item",
+  "unlimited_items": "Você pode definir esse dado como 0 se desejar que o número máximo do mesmo item não seja limitado."
+}
