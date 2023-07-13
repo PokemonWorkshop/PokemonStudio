@@ -1,0 +1,16 @@
+{
+  "display": "Display",
+  "resolution": "Resolução",
+  "game_resolution": "Resolução do jogo",
+  "game_resolution_advice": "A resolução do jogo é mais complicada de editar do que parece, você terá que modificar cada interface do usuário para se adequar à sua nova resolução. Portanto, tenha cuidado antes de modificar esses valores.",
+  "window_scale": "Escala da janela",
+  "full_screen": "Full screen",
+  "game_window_centered": "O jogador está sempre no centro da tela",
+  "tilemap": "Tilemap",
+  "class": "Classe",
+  "tilemap_size": "Tamanho do Tilemap",
+  "tile_zoom": "Escala de elementos gráficos (Tiles)",
+  "scale_characters": "Escala de caracteres no mapa",
+  "images_per_animation": "Número de imagens por animação",
+  "old_map_linker": "Usar o antigo sistema de ligação entre os mapas"
+}

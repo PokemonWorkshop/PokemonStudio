@@ -1,0 +1,17 @@
+{
+  "title": "Pokémon SDK",
+  "version": "Versão {{version}}",
+  "update": "Update",
+  "view_latest_changes": "Ver as ultimas modificações",
+  "latest_version": "Ultima versão :",
+  "project_up_to_date": "Vosso projeto está em dia !",
+  "wiki": "Wiki",
+  "documentation": "Documentação",
+  "gitlab": "Gitlab",
+  "twitter": "Twitter",
+  "notif_title": "Update do Pokémon SDK",
+  "update_success": "Vosso projeto levou update até a ultima versão com sucesso !",
+  "update_error": "Impossivel de fazer download do update !",
+  "update_status": "Download da versão {{version}}",
+  "update_pending": "Em espera..."
+}

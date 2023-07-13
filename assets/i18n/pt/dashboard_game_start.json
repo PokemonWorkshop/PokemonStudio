@@ -1,0 +1,15 @@
+{
+  "game_start": "Iniciando o jogo",
+  "cinematic": "Cinemática",
+  "show_cinematic": "Mostar uma cinemática",
+  "map_cinematic_id": "Numero do mapa que tem uma cinemática",
+  "title_screen": "Title screen",
+  "show_language_selection": "Mostrar a seleção das línguas",
+  "music": "Música",
+  "title_screen_music": "Música do title screen",
+  "music_duration": "Duração da música",
+  "duration_info": "A duração é expressa em amostras. É calculado usando a seguinte fórmula: Duração (segundos) * 44100.",
+  "control_wait_time": "Tempo de espera antes de aparecer os butões do title screen",
+  "splash_screens": "Splash screens",
+  "splash_screens_name": "Imagem do splash screens"
+}

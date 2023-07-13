@@ -1,0 +1,21 @@
+{
+  "maplinks": "Ligação de mapas",
+  "maplink_deleted": "Ligação de mapas apagada",
+  "no_option": "Nenhum mapa encontrado",
+  "maplink_new": "Nova ligação de mapas",
+  "maps": "Mapas",
+  "map": "Mapa",
+  "map_deleted": "Mapa apagado",
+  "none": "Nenhuma",
+  "map_located": "Mapa {{cardinal}}",
+  "north": "ao Norte",
+  "east": "ao Leste",
+  "south": "ao Sul",
+  "west": "ao Oeste",
+  "offset": "Decalagem",
+  "offset_info": "A mudança é expressa em número de ladrilhos. Um valor positivo sugere uma mudança para {{shift}}.",
+  "offset_shift_right": "para a direita",
+  "offset_downward_shift": "para baixo",
+  "add_link": "Adicionar uma ligação",
+  "no_map": "O mapa não existe ou é um mapa interior."
+}
