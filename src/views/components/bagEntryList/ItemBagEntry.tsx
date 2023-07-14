@@ -9,6 +9,8 @@ import { useGetEntityNameText } from '@utils/ReadingProjectText';
 import { itemIconPath } from '@utils/path';
 import { StudioTrainerBagEntry } from '@modelEntities/trainer';
 import { ResourceImage } from '@components/ResourceImage';
+import { useShortcutNavigation } from '@utils/useShortcutNavigation';
+import { CONTROL, useKeyPress } from '@utils/useKeyPress';
 
 type ItemBagEntryProps = {
   onClickDelete: (index: number) => void;
@@ -62,6 +64,13 @@ const ItemBagEntryHeader = styled.div`
   & .delete-button {
     display: none;
   }
+
+  & .clickable {
+    :hover {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  }
 `;
 
 export const ItemBagEntry = ({ onClickDelete, onClickEdit, bagEntry, index }: ItemBagEntryProps) => {
@@ -69,6 +78,8 @@ export const ItemBagEntry = ({ onClickDelete, onClickEdit, bagEntry, index }: It
   const getItemName = useGetEntityNameText();
   const item = items[bagEntry.dbSymbol];
   const { t } = useTranslation('database_items');
+  const isClickable: boolean = useKeyPress(CONTROL);
+  const shortcutItemNavigation = useShortcutNavigation('items', 'item', '/database/items/');
 
   const onDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
@@ -81,10 +92,16 @@ export const ItemBagEntry = ({ onClickDelete, onClickEdit, bagEntry, index }: It
   };
 
   return (
-    <ItemBagEntryContainer onClick={onEdit}>
+    <ItemBagEntryContainer onClick={isClickable ? undefined : onEdit}>
       <ItemBagEntryHeader>
         <ResourceImage imagePathInProject={itemIconPath(item?.icon || '000.png')} />
-        {item ? <span>{getItemName(item)}</span> : <span className="error">{t('item_deleted')}</span>}
+        {item ? (
+          <span onClick={isClickable ? () => shortcutItemNavigation(item.dbSymbol) : undefined} className={isClickable ? 'clickable' : undefined}>
+            {getItemName(item)}
+          </span>
+        ) : (
+          <span className="error">{t('item_deleted')}</span>
+        )}
         <div className="amount-delete-button">
           <Tag className="amount">{`x${bagEntry.amount}`}</Tag>
           <ClearButtonOnlyIcon className="delete-button" onClick={(event: React.MouseEvent<HTMLButtonElement>) => onDelete(event)} />
