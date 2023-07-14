@@ -12,6 +12,8 @@ import { padStr } from '@utils/PadStr';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
 import { StudioGroup } from '@modelEntities/group';
 import { StudioZone } from '@modelEntities/zone';
+import { CONTROL, useKeyPress } from '@utils/useKeyPress';
+import { useShortcutNavigation } from '@utils/useShortcutNavigation';
 
 type RenderGroupContainerProps = {
   isDragging: boolean;
@@ -95,6 +97,13 @@ const RenderGroupContainer = styled(DataGroupGrid).attrs<RenderGroupContainerPro
       display: none;
     }
   }
+
+  & .clickable {
+    :hover {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  }
 `;
 
 type RenderGroupProps = {
@@ -111,6 +120,9 @@ export const RenderGroup = React.forwardRef<HTMLInputElement, RenderGroupProps>(
   ({ group, zone, provided, isDragging, dragOn, onClickEdit, onClickDelete }, ref) => {
     const { t } = useTranslation('database_groups');
     const getGroupName = useGetEntityNameText();
+    const isClickable: boolean = useKeyPress(CONTROL);
+    const shortcutNavigation = useShortcutNavigation('groups', 'group', '/database/groups/');
+
     return (
       <RenderGroupContainer
         gap="16px"
@@ -126,7 +138,13 @@ export const RenderGroup = React.forwardRef<HTMLInputElement, RenderGroupProps>(
         <span className="drag-icon" {...provided.dragHandleProps}>
           <DragIcon />
         </span>
-        {group ? <span>{getGroupName(group)}</span> : <span className="error">{t('group_deleted')}</span>}
+        {group ? (
+          <span onClick={isClickable ? () => shortcutNavigation(group.dbSymbol) : undefined} className={isClickable ? 'clickable' : undefined}>
+            {getGroupName(group)}
+          </span>
+        ) : (
+          <span className="error">{t('group_deleted')}</span>
+        )}
         {group ? <span className="environment">{t(group.systemTag)}</span> : <span className="environment" />}
         {group ? (
           <div className="present-on-map">

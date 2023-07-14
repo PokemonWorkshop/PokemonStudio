@@ -13,6 +13,8 @@ import { getNatureText, useGetEntityNameText, useGetEntityNameTextUsingTextId } 
 import { ResourceImage } from '@components/ResourceImage';
 import { itemIconPath, pokemonIconPath } from '@utils/path';
 import { StudioGroupEncounter, StudioIvEv } from '@modelEntities/groupEncounter';
+import { CONTROL, useKeyPress } from '@utils/useKeyPress';
+import { usePokemonShortcutNavigation, useShortcutNavigation } from '@utils/useShortcutNavigation';
 
 type PokemonBattlerProps = {
   onClickDelete: (index: number) => void;
@@ -60,6 +62,13 @@ export const PokemonBattlerContainer = styled.div`
   & span.error {
     ${({ theme }) => theme.fonts.normalMedium};
     color: ${({ theme }) => theme.colors.dangerBase};
+  }
+
+  & .clickable {
+    :hover {
+      cursor: pointer;
+      text-decoration: underline;
+    }
   }
 `;
 
@@ -189,17 +198,24 @@ const PokemonBattlerMoveset = ({ moveset, onClick }: PokemonBattlerMovesetProps)
   const { projectDataValues: moves } = useProjectMoves();
   const { t } = useTranslation('database_moves');
   const getMoveName = useGetEntityNameText();
+  const isClickable: boolean = useKeyPress(CONTROL);
+  const shortcutNavigation = useShortcutNavigation('moves', 'move', '/database/moves/');
 
   return moveset.filter((move) => move === '__undef__' || move === '__remove__').length === moveset.length ? (
     <></>
   ) : (
-    <PokemonBattlerMovesetContainer onClick={onClick} data-has-hover>
+    <PokemonBattlerMovesetContainer onClick={isClickable ? undefined : onClick} data-has-hover>
       {moveset.map(
         (move, index) =>
           move !== '__undef__' &&
           move !== '__remove__' &&
           (moves[move] ? (
-            <TypeCategoryPokemonBattler key={`moveset-${move}-${index}`} type={moves[move].type}>
+            <TypeCategoryPokemonBattler
+              key={`moveset-${move}-${index}`}
+              type={moves[move].type}
+              isClickable={isClickable}
+              shortcutNavigation={() => shortcutNavigation(moves[move].dbSymbol)}
+            >
               {getMoveName(moves[move])}
             </TypeCategoryPokemonBattler>
           ) : (
@@ -209,6 +225,14 @@ const PokemonBattlerMoveset = ({ moveset, onClick }: PokemonBattlerMovesetProps)
           ))
       )}
     </PokemonBattlerMovesetContainer>
+  );
+};
+
+const RenderSpanClickable = ({ isClickable, label, shortcut }: { isClickable: boolean; label: string; shortcut: () => void }) => {
+  return (
+    <span onClick={isClickable ? () => shortcut() : undefined} className={isClickable ? 'clickable' : undefined}>
+      {label}
+    </span>
   );
 };
 
@@ -229,6 +253,11 @@ export const PokemonBattler = ({ onClickDelete, onEditPokemonProperty, pokemon, 
   const { t } = useTranslation(['database_abilities', 'database_pokemon', 'database_items', 'pokemon_battler_list']);
   const [allowParentHover, setAllowParentHover] = useState(true);
   const getEntityName = useGetEntityNameText();
+
+  const isClickable: boolean = useKeyPress(CONTROL);
+  const shortcutPokemonNavigation = usePokemonShortcutNavigation();
+  const shortcutAbilityNavigation = useShortcutNavigation('abilities', 'ability', '/database/abilities/');
+  const shortcutItemNavigation = useShortcutNavigation('items', 'item', '/database/items/');
 
   const onDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
@@ -252,7 +281,7 @@ export const PokemonBattler = ({ onClickDelete, onEditPokemonProperty, pokemon, 
   return (
     <PokemonBattlerMainContainer>
       <PokemonBattlerContainer
-        onClick={() => onEditPokemonProperty(index, 'default')}
+        onClick={() => (isClickable ? null : onEditPokemonProperty(index, 'default'))}
         onMouseOver={(event) => handleParentHover(event)}
         className={allowParentHover ? 'can-have-hover' : 'cannot-have-hover'}
       >
@@ -266,7 +295,15 @@ export const PokemonBattler = ({ onClickDelete, onEditPokemonProperty, pokemon, 
             <ResourceImage imagePathInProject="graphics/pokedex/pokeicon/000.png" />
           )}
           <div className="name-level">
-            {specie ? getEntityName(specie) : <span className="error">{t('database_pokemon:pokemon_deleted')}</span>}
+            {specie ? (
+              <RenderSpanClickable
+                label={getEntityName(specie)}
+                isClickable={isClickable}
+                shortcut={() => shortcutPokemonNavigation(specie.dbSymbol, pokemon.form)}
+              />
+            ) : (
+              <span className="error">{t('database_pokemon:pokemon_deleted')}</span>
+            )}
             <span className="level">
               {pokemon.levelSetup.kind === 'fixed'
                 ? t('pokemon_battler_list:level_value', { level: pokemon.levelSetup.level })
@@ -283,14 +320,26 @@ export const PokemonBattler = ({ onClickDelete, onEditPokemonProperty, pokemon, 
         {itemSetup && (
           <PokemonBattlerItem>
             {item && <ResourceImage imagePathInProject={itemIconPath(item.icon)} />}
-            {item ? getEntityName(item) : <span className="error">{t('database_items:item_deleted')}</span>}
+            {item ? (
+              <RenderSpanClickable label={getEntityName(item)} isClickable={isClickable} shortcut={() => shortcutItemNavigation(item.dbSymbol)} />
+            ) : (
+              <span className="error">{t('database_items:item_deleted')}</span>
+            )}
           </PokemonBattlerItem>
         )}
         {(abilitySetup || nature) && (
           <PokemonBattlerAbilityNature>
             {abilitySetup && (
               <DataFieldsetFieldWithChild label={t('database_abilities:ability')}>
-                {ability ? getAbilityName(ability) : <span className="error">{t('database_abilities:ability_deleted')}</span>}
+                {ability ? (
+                  <RenderSpanClickable
+                    label={getAbilityName(ability)}
+                    isClickable={isClickable}
+                    shortcut={() => shortcutAbilityNavigation(ability.dbSymbol)}
+                  />
+                ) : (
+                  <span className="error">{t('database_abilities:ability_deleted')}</span>
+                )}
               </DataFieldsetFieldWithChild>
             )}
             {nature && (
