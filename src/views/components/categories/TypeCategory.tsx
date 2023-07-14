@@ -3,13 +3,14 @@ import { useProjectTypes } from '@utils/useProjectData';
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 import { Category, CategoryLarge } from './Category';
-import { CONTROL } from '@utils/useKeyPress';
+import { CONTROL, useKeyPress } from '@utils/useKeyPress';
 import { useShortcutNavigation } from '@utils/useShortcutNavigation';
-import { useKeyPress } from 'react-flow-renderer';
 
 type TypeCategoryProps = {
   type: string;
   children: ReactNode;
+  isClickable?: boolean;
+  shortcutNavigation?: () => void;
 };
 
 const TypeCategoryStyle = styled(Category).attrs<TypeCategoryProps>((props) => ({
@@ -242,11 +243,16 @@ export const TypeCategoryPreview = ({ type, children }: TypeCategoryProps) => {
   return <TypeCategoryStyle type={type}>{children}</TypeCategoryStyle>;
 };
 
-export const TypeCategoryPokemonBattler = ({ type, children }: TypeCategoryProps) => {
+export const TypeCategoryPokemonBattler = ({ type, children, isClickable, shortcutNavigation }: TypeCategoryProps) => {
   const { projectDataValues: types } = useProjectTypes();
   const currentType = types[type];
   return (
-    <TypeCategoryStyle type={currentType ? currentType.color || currentType.dbSymbol : 'normal'} data-has-hover>
+    <TypeCategoryStyle
+      onClick={isClickable && currentType ? shortcutNavigation : undefined}
+      className={isClickable ? 'clickable' : undefined}
+      type={currentType ? currentType.color || currentType.dbSymbol : 'normal'}
+      data-has-hover
+    >
       {children}
     </TypeCategoryStyle>
   );
