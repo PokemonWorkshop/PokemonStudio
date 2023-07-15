@@ -11,6 +11,8 @@ import { useGetEntityNameText, useGetEntityNameTextUsingTextId } from '@utils/Re
 import { pokemonIconPath } from '@utils/path';
 import { StudioCreature } from '@modelEntities/creature';
 import { StudioType } from '@modelEntities/type';
+import { CONTROL, useKeyPress } from '@utils/useKeyPress';
+import { usePokemonShortcutNavigation, useShortcutNavigation } from '@utils/useShortcutNavigation';
 
 type TypePokemonTableProps = {
   type: StudioType;
@@ -48,6 +50,13 @@ const DataPokemonGrid = styled(DataGrid)`
   & .name {
     ${({ theme }) => theme.fonts.normalMedium};
     color: ${({ theme }) => theme.colors.text100};
+  }
+
+  & .clickable {
+    :hover {
+      cursor: pointer;
+      text-decoration: underline;
+    }
   }
 
   & .error {
@@ -95,6 +104,10 @@ const RenderPokemon = ({ pokemon, type, state }: RenderMoveProps) => {
   const { projectDataValues: abilities } = useProjectAbilities();
   const types = state.projectData.types;
 
+  const isClickable: boolean = useKeyPress(CONTROL);
+  const shortcutPokemonNavigation = usePokemonShortcutNavigation();
+  const shortcutAbilityNavigation = useShortcutNavigation('abilities', 'ability', '/database/abilities/');
+
   const getAbilityNameByIndex = (index: number) => {
     if (!form.abilities[index]) return '---';
     if (abilities[form.abilities[index]]) return getAbilityName(abilities[form.abilities[index]]);
@@ -111,14 +124,28 @@ const RenderPokemon = ({ pokemon, type, state }: RenderMoveProps) => {
           className="icon"
         />
       </span>
-      <span className="name">{getCreatureName(pokemon)}</span>
+      <span
+        onClick={isClickable ? () => shortcutPokemonNavigation(pokemon.dbSymbol, form.form) : undefined}
+        className={`${isClickable ? 'clickable' : null} name`}
+      >
+        {getCreatureName(pokemon)}
+      </span>
       <TypeContainer>
         <TypeCategory type={form.type1}>{getNameType(types, form.type1, state)}</TypeCategory>
         {form.type2 !== '__undef__' ? <TypeCategory type={form.type2}>{getNameType(types, form.type2, state)}</TypeCategory> : <span></span>}
       </TypeContainer>
-      <span className={abilities[form.abilities[0]] ? '' : 'error'}>{getAbilityNameByIndex(0)}</span>
-      <span className={abilities[form.abilities[1]] ? '' : 'error'}>{getAbilityNameByIndex(1)}</span>
-      <span className={abilities[form.abilities[2]] ? '' : 'error'}>{getAbilityNameByIndex(2)}</span>
+      {[0, 1, 2].map((index) => {
+        const ability = abilities[form.abilities[index]];
+        return (
+          <span
+            key={index}
+            onClick={isClickable && ability ? () => shortcutAbilityNavigation(ability.dbSymbol) : undefined}
+            className={`${isClickable && ability ? 'clickable' : null} ${ability ? '' : 'error'}`}
+          >
+            {getAbilityNameByIndex(index)}
+          </span>
+        );
+      })}
     </RenderPokemonContainer>
   );
 };
