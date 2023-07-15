@@ -7,6 +7,8 @@ import React from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { DataGrid } from '../dataBlocks';
+import { CONTROL, useKeyPress } from '@utils/useKeyPress';
+import { useShortcutNavigation } from '@utils/useShortcutNavigation';
 
 type TypeMovesTableProps = {
   type: StudioType;
@@ -46,6 +48,13 @@ const DataMoveGrid = styled(DataGrid)`
     color: ${({ theme }) => theme.colors.text100};
   }
 
+  & .clickable {
+    :hover {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  }
+
   & span:nth-child(4),
   & span:nth-child(5),
   & span:nth-child(6) {
@@ -71,9 +80,15 @@ const RenderMoveContainer = styled(DataMoveGrid)`
 const RenderMove = ({ move, state, t }: RenderMoveProps) => {
   const getTypeName = useGetEntityNameTextUsingTextId();
   const getMoveName = useGetEntityNameText();
+
+  const isClickable: boolean = useKeyPress(CONTROL);
+  const shortcutAbilityNavigation = useShortcutNavigation('moves', 'move', '/database/moves/');
+
   return (
     <RenderMoveContainer gap="8px">
-      <span className="name">{getMoveName(move)}</span>
+      <span onClick={isClickable ? () => shortcutAbilityNavigation(move.dbSymbol) : undefined} className={`${isClickable ? 'clickable' : null} name`}>
+        {getMoveName(move)}
+      </span>
       <TypeCategory type={move.type}>{getTypeName(state.projectData.types[move.type])}</TypeCategory>
       <MoveCategory category={move.category}>{t(move.category as never)}</MoveCategory>
       <span>{move.pp}</span>
