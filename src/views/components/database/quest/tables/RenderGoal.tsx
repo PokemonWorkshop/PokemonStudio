@@ -11,7 +11,15 @@ import { DeleteButtonOnlyIcon, EditButtonOnlyIcon } from '@components/buttons';
 import { EditButtonOnlyIconContainer } from '@components/buttons/EditButtonOnlyIcon';
 import theme from '@src/AppTheme';
 import { DraggableProvided } from 'react-beautiful-dnd';
-import { StudioQuestObjective, StudioQuestObjectiveCategoryType, StudioQuestObjectiveType } from '@modelEntities/quest';
+import {
+  StudioQuestObjective,
+  StudioQuestObjectiveCategoryType,
+  StudioQuestObjectiveType,
+  StudioQuestCategoryClickable,
+  StudioCreatureQuestCondition,
+} from '@modelEntities/quest';
+import { CONTROL, useKeyPress } from '@utils/useKeyPress';
+import { usePokemonShortcutNavigation, useShortcutNavigation } from '@utils/useShortcutNavigation';
 
 type RenderGoalContainerProps = {
   isDragging: boolean;
@@ -56,6 +64,13 @@ const RenderGoalContainer = styled(DataGoalGrid).attrs<RenderGoalContainerProps>
     border-radius: 8px;
   }
 
+  & .clickable {
+    :hover {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  }
+
   ${EditButtonOnlyIconContainer} {
     background-color: ${theme.colors.primarySoft};
 
@@ -88,6 +103,17 @@ const categoryGoal: Record<StudioQuestObjectiveType, StudioQuestObjectiveCategor
   objective_hatch_egg: 'discovery',
 };
 
+const categoryClickable: Record<StudioQuestObjectiveType, StudioQuestCategoryClickable | null> = {
+  objective_speak_to: null,
+  objective_obtain_item: 'item',
+  objective_see_pokemon: 'pokemon',
+  objective_beat_pokemon: 'specific',
+  objective_catch_pokemon: 'specific',
+  objective_beat_npc: null,
+  objective_obtain_egg: null,
+  objective_hatch_egg: null,
+};
+
 type RenderGoalProps = {
   objective: StudioQuestObjective;
   index: number;
@@ -102,6 +128,62 @@ export const RenderGoal = React.forwardRef<HTMLInputElement, RenderGoalProps>(
   ({ objective, index, provided, isDragging, dragOn, onClickEdit, onClickDelete }, ref) => {
     const [state] = useGlobalState();
     const { t } = useTranslation('database_quests');
+    const objectiveText: string = buildGoalText(objective, state, t);
+    const category = categoryClickable[objective.objectiveMethodName];
+    let specificPokemonDbSymbol!: string | undefined;
+
+    const determineIfQuestConditionIsClickable = (): boolean => {
+      if (objective.objectiveMethodArgs[0] && typeof objective.objectiveMethodArgs[0] === 'object') {
+        const conditionsBoolean: boolean[] = (objective.objectiveMethodArgs[0] as unknown as StudioCreatureQuestCondition[]).map(
+          ({ type, value }) => {
+            switch (type) {
+              case 'pokemon':
+                specificPokemonDbSymbol = value;
+                return true;
+              case 'type':
+              case 'nature':
+              case 'minLevel':
+              case 'maxLevel':
+              case 'level':
+              default:
+                return false;
+            }
+          }
+        );
+        return conditionsBoolean[0];
+      }
+
+      if (objective.objectiveMethodArgs[0] && typeof objective.objectiveMethodArgs[0] === 'string') {
+        specificPokemonDbSymbol = objective.objectiveMethodArgs[0];
+        return true;
+      }
+
+      return false;
+    };
+
+    // If category is specific, we need to determine what's and where's the dbsymbol and if hes clickable
+    const earningClickable: boolean = category ? (category === 'specific' ? determineIfQuestConditionIsClickable() : true) : false;
+    const isClickable: boolean = useKeyPress(CONTROL) && earningClickable && !objectiveText.includes('???');
+    const shortcutPokemonNavigation = usePokemonShortcutNavigation();
+    const shortcutItemNavigation = useShortcutNavigation('items', 'item', '/database/items/');
+
+    const shortcutToTheRightPlace = () => {
+      if (category === 'specific' && specificPokemonDbSymbol) {
+        // TODO implement form
+        return shortcutPokemonNavigation(specificPokemonDbSymbol, 0);
+      }
+      const dbSymbol = objective.objectiveMethodArgs[0] as string;
+      if (!dbSymbol) return;
+      if (category === 'pokemon') {
+        // TODO implement form
+        return shortcutPokemonNavigation(dbSymbol, 0);
+      }
+
+      if (category === 'item') {
+        return shortcutItemNavigation(dbSymbol);
+      }
+    };
+
     return (
       <RenderGoalContainer
         gap="16px"
@@ -119,7 +201,9 @@ export const RenderGoal = React.forwardRef<HTMLInputElement, RenderGoalProps>(
         <span>#{padStr(index + 1, 2)}</span>
         <span>{t(objective.objectiveMethodName)}</span>
         <GoalCategory category={categoryGoal[objective.objectiveMethodName]}>{t(categoryGoal[objective.objectiveMethodName])}</GoalCategory>
-        <span>{buildGoalText(objective, state, t)}</span>
+        <span onClick={isClickable ? () => shortcutToTheRightPlace() : undefined} className={isClickable ? 'clickable' : undefined}>
+          {objectiveText}
+        </span>
         <div className="buttons">
           <EditButtonOnlyIcon size="s" color={theme.colors.primaryBase} onClick={onClickEdit} />
           <DeleteButtonOnlyIcon size="s" onClick={onClickDelete} />
