@@ -8,7 +8,9 @@ import { EditButtonOnlyIconContainer } from '@components/buttons/EditButtonOnlyI
 import theme from '@src/AppTheme';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { buildEarningText } from '@utils/QuestUtils';
-import { StudioQuestEarning, StudioQuestEarningCategoryType, StudioQuestEarningType } from '@modelEntities/quest';
+import { StudioQuestCategoryClickable, StudioQuestEarning, StudioQuestEarningCategoryType, StudioQuestEarningType } from '@modelEntities/quest';
+import { CONTROL, useKeyPress } from '@utils/useKeyPress';
+import { usePokemonShortcutNavigation, useShortcutNavigation } from '@utils/useShortcutNavigation';
 
 const RenderEarningContainer = styled(DataEarningGrid)`
   box-sizing: border-box;
@@ -27,6 +29,13 @@ const RenderEarningContainer = styled(DataEarningGrid)`
   &:hover {
     .buttons:nth-child(3) {
       visibility: visible;
+    }
+  }
+
+  & .clickable {
+    :hover {
+      cursor: pointer;
+      text-decoration: underline;
     }
   }
 
@@ -50,6 +59,13 @@ const categoryEarning: Record<StudioQuestEarningType, StudioQuestEarningCategory
   earning_egg: 'egg',
 };
 
+const categoryClickable: Record<StudioQuestEarningType, StudioQuestCategoryClickable | null> = {
+  earning_money: null,
+  earning_item: 'item',
+  earning_pokemon: 'pokemon',
+  earning_egg: 'pokemon',
+};
+
 type RenderEarningProps = {
   earning: StudioQuestEarning;
   onClickEdit: () => void;
@@ -59,9 +75,30 @@ type RenderEarningProps = {
 export const RenderEarning = ({ earning, onClickEdit, onClickDelete }: RenderEarningProps) => {
   const [state] = useGlobalState();
   const { t } = useTranslation('database_quests');
+  const earningText: string = buildEarningText(earning, state);
+  const earningClickable: boolean = categoryClickable[earning.earningMethodName] ? true : false;
+  const isClickable: boolean = useKeyPress(CONTROL) && earningClickable && !earningText.includes('???');
+  const shortcutPokemonNavigation = usePokemonShortcutNavigation();
+  const shortcutItemNavigation = useShortcutNavigation('items', 'item', '/database/items/');
+
+  const shortcutToTheRightPlace = () => {
+    const dbSymbol = earning.earningArgs[0] as string;
+    if (!dbSymbol) return;
+    if (categoryClickable[earning.earningMethodName] === 'pokemon') {
+      // TODO implement form
+      return shortcutPokemonNavigation(dbSymbol, 0);
+    }
+
+    if (categoryClickable[earning.earningMethodName] === 'item') {
+      return shortcutItemNavigation(dbSymbol);
+    }
+  };
+
   return (
     <RenderEarningContainer gap="48px">
-      <span>{buildEarningText(earning, state)}</span>
+      <span onClick={isClickable ? () => shortcutToTheRightPlace() : undefined} className={isClickable ? 'clickable' : undefined}>
+        {earningText}
+      </span>
       <EarningCategory category={categoryEarning[earning.earningMethodName]}>{t(categoryEarning[earning.earningMethodName])}</EarningCategory>
       <div className="buttons">
         <EditButtonOnlyIcon size="s" color={theme.colors.primaryBase} onClick={onClickEdit} />

@@ -71,6 +71,8 @@ export const QUEST_OBJECTIVES = [
 export type StudioQuestObjectiveType = (typeof QUEST_OBJECTIVES)[number];
 export type StudioQuestObjectiveCategoryType = 'interaction' | 'battle' | 'discovery' | 'exploration';
 
+export type StudioQuestCategoryClickable = 'pokemon' | 'item' | 'specific';
+
 export const QUEST_EARNINGS = ['earning_money', 'earning_item', 'earning_pokemon', 'earning_egg'] as const;
 export type StudioQuestEarningType = (typeof QUEST_EARNINGS)[number];
 export type StudioQuestEarningCategoryType = 'money' | 'item' | 'pokemon' | 'egg';
