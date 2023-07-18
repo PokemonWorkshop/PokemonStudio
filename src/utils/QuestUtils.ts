@@ -56,8 +56,7 @@ const buildConditionsText = (conditions: StudioCreatureQuestCondition[], state: 
         return ((v: never) => v)(type);
     }
   });
-  const conditionsText = conditionsTexts.join(', ');
-  return conditionsText === '' ? '-' : conditionsText[0].toUpperCase() + conditionsText.slice(1); // <= We should probably use CSS instead using the ::first-letter pseudo class
+  return conditionsTexts;
 };
 
 const buildBeatPokemonText = (objective: StudioQuestObjective, state: State) => {
@@ -86,7 +85,10 @@ const buildObtainEgg = (objective: StudioQuestObjective, _state: State, t: TFunc
   return `${objective.objectiveMethodArgs[0]} ${t('eggs')}`;
 };
 
-const goalTexts: Record<StudioQuestObjectiveType, (objective: StudioQuestObjective, state: State, t: TFunction<'database_quests'>) => string> = {
+const goalTexts: Record<
+  StudioQuestObjectiveType,
+  (objective: StudioQuestObjective, state: State, t: TFunction<'database_quests'>) => string | string[]
+> = {
   objective_speak_to: buildSpeakToText,
   objective_obtain_item: buildObtainItemText,
   objective_see_pokemon: buildSeePokemonText,
