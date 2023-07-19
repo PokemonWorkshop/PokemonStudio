@@ -94,3 +94,4 @@ psdk-binaries/Game.rb
 psdk-binaries/*.dll
 psdk-binaries/*.exe
 psdk-binaries/psdk.bat
+psdk-binaries/ruby-dist

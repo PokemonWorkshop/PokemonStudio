@@ -83,7 +83,7 @@ const PlayButtonContainer = styled.div`
   }
 `;
 
-const isWindows = () => window.api.platform === 'win32';
+const isEnabled = () => window.api.platform === 'win32' || window.api.platform === 'darwin';
 
 export const PlayButton = () => {
   const [state] = useGlobalState();
@@ -96,9 +96,9 @@ export const PlayButton = () => {
   };
 
   return (
-    <PlayButtonContainer className={isOpen ? 'open' : undefined} data-disabled={(!isWindows()).toString()} onMouseLeave={() => setIsOpen(false)}>
-      <StyledNavLinkActionItem data-disabled={(!isWindows()).toString()} onMouseEnter={() => isWindows() && setIsOpen(true)}>
-        <NavigationBarItemContainer onClick={() => isWindows() && startPSDKAndCloseMenu(window.api.startPSDKDebug)} disabled={!isWindows()}>
+    <PlayButtonContainer className={isOpen ? 'open' : undefined} data-disabled={(!isEnabled()).toString()} onMouseLeave={() => setIsOpen(false)}>
+      <StyledNavLinkActionItem data-disabled={(!isEnabled()).toString()} onMouseEnter={() => isEnabled() && setIsOpen(true)}>
+        <NavigationBarItemContainer onClick={() => isEnabled() && startPSDKAndCloseMenu(window.api.startPSDKDebug)} disabled={!isEnabled()}>
           <PlayIcon />
           <span className="triangle" />
         </NavigationBarItemContainer>
