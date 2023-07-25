@@ -19,32 +19,27 @@ export const useCopyFile = () => {
   const { t } = useTranslation('show_message_box');
 
   useEffect(() => {
-    switch (state.state) {
-      case 'done':
-        window.api.cleanupCopyFile();
-        return;
-      case 'copyFile': {
-        if (dirname(state.payload.srcFile) === join(globalState.projectPath || '', state.payload.destFolder)) {
-          setState({ state: 'done' });
-          callbacks?.onSuccess({ destFile: state.payload.srcFile });
-          return;
-        }
-        const filename = basename(state.payload.srcFile);
-        const destFile = join(globalState.projectPath || '', state.payload.destFolder, filename);
-        return window.api.copyFile(
-          { srcFile: state.payload.srcFile, destFile: destFile, translation: { title: t('copy_title'), message: t('copy_message', { filename }) } },
-          () => {
-            window.api.clearCache();
-            setState({ state: 'done' });
-            callbacks?.onSuccess({ destFile });
-          },
-          ({ errorMessage }) => {
-            setState({ state: 'done' });
-            callbacks?.onFailure({ errorMessage });
-          }
-        );
-      }
+    if (state.state !== 'copyFile') return;
+
+    if (dirname(state.payload.srcFile) === join(globalState.projectPath || '', state.payload.destFolder)) {
+      setState({ state: 'done' });
+      callbacks?.onSuccess({ destFile: state.payload.srcFile });
+      return;
     }
+    const filename = basename(state.payload.srcFile);
+    const destFile = join(globalState.projectPath || '', state.payload.destFolder, filename);
+    return window.api.copyFile(
+      { srcFile: state.payload.srcFile, destFile: destFile, translation: { title: t('copy_title'), message: t('copy_message', { filename }) } },
+      () => {
+        window.api.clearCache();
+        setState({ state: 'done' });
+        callbacks?.onSuccess({ destFile });
+      },
+      ({ errorMessage }) => {
+        setState({ state: 'done' });
+        callbacks?.onFailure({ errorMessage });
+      }
+    );
   }, [state, callbacks]);
 
   return (payload: CopyFilePayload, onSuccess: CopyFileSuccessCallback, onFailure: CopyFileFailureCallback) => {

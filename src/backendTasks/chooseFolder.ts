@@ -1,29 +1,20 @@
-import Electron, { BrowserWindow, dialog, IpcMainEvent } from 'electron';
+import { BrowserWindow, dialog } from 'electron';
 import log from 'electron-log';
+import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 
-const chooseFolder = async (event: IpcMainEvent) => {
+export type ChooseFolderOutput = { folderPath: string };
+
+const chooseFolder = async (): Promise<ChooseFolderOutput> => {
   log.info('choose-folder');
-  try {
-    const filePaths = await dialog.showOpenDialog(BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0], {
-      properties: ['openDirectory', 'createDirectory', 'promptToCreate'],
-    });
+  const filePaths = await dialog.showOpenDialog(BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0], {
+    properties: ['openDirectory', 'createDirectory', 'promptToCreate'],
+  });
 
-    if (filePaths.canceled) {
-      log.info('choose-folder/failure', 'cancel');
-      return event.sender.send('choose-folder/failure', { errorMessage: 'Pressed cancel' });
-    }
-    if (filePaths.filePaths.length === 0) {
-      log.info('choose-folder/failure', 'no files');
-      return event.sender.send('choose-folder/failure', { errorMessage: 'No folder selected' });
-    }
-    log.info('choose-folder/success', { folderPath: filePaths.filePaths[0] });
-    event.sender.send('choose-folder/success', { folderPath: filePaths.filePaths[0] });
-  } catch (error) {
-    log.error('choose-folder/failure', error);
-    event.sender.send('choose-folder/failure', { errorMessage: `${error instanceof Error ? error.message : error}` });
-  }
+  if (filePaths.canceled) throw 'Pressed cancel';
+  if (filePaths.filePaths.length === 0) throw 'No folder selected';
+
+  log.info('choose-folder/success', { folderPath: filePaths.filePaths[0] });
+  return { folderPath: filePaths.filePaths[0] };
 };
 
-export const registerChooseFolder = (ipcMain: Electron.IpcMain) => {
-  ipcMain.on('choose-folder', chooseFolder);
-};
+export const registerChooseFolder = defineBackendServiceFunction('choose-folder', chooseFolder);

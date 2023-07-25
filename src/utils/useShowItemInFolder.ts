@@ -16,23 +16,19 @@ export const useShowItemInFolder = () => {
   const [state, setState] = useState<ShowItemInFolderStateObject>({ state: 'done' });
 
   useEffect(() => {
-    switch (state.state) {
-      case 'done':
-        window.api.cleanupShowItemInFolder();
-        return;
-      case 'showItemInFolder':
-        return window.api.showItemInFolder(
-          { filePath: state.payload.filePath, extensions: state.payload.extensions },
-          () => {
-            setState({ state: 'done' });
-            callbacks?.onSuccess();
-          },
-          () => {
-            setState({ state: 'done' });
-            callbacks?.onFailure();
-          }
-        );
-    }
+    if (state.state !== 'showItemInFolder') return;
+
+    return window.api.showItemInFolder(
+      { filePath: state.payload.filePath, extensions: state.payload.extensions },
+      () => {
+        setState({ state: 'done' });
+        callbacks?.onSuccess();
+      },
+      () => {
+        setState({ state: 'done' });
+        callbacks?.onFailure();
+      }
+    );
   }, [state, callbacks]);
 
   return (payload: ShowItemInFolderPayload, onSuccess: ShowItemInFolderSuccessCallback, onFailure: ShowItemInFolderFailureCallback) => {

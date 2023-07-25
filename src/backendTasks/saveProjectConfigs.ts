@@ -1,16 +1,18 @@
-import { IpcMain, IpcMainEvent } from 'electron';
 import log from 'electron-log';
 import fs from 'fs';
 import { SavingConfig } from '@utils/SavingUtils';
 import path from 'path';
+import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 
-const saveProjectConfigs = async (event: IpcMainEvent, payload: { path: string; configs: SavingConfig }) => {
+export type SaveProjectConfigInput = { path: string; configs: SavingConfig };
+
+const saveProjectConfigs = async (payload: SaveProjectConfigInput) => {
   log.info('save-project-configs', {
     ...payload,
     configs: payload.configs.map(({ savingFilename, savingAction }) => ({ savingFilename, savingAction })),
   });
   const configsPath = path.join(payload.path, 'Data/configs');
-  Promise.all(
+  return Promise.all(
     payload.configs.map(async (sd) => {
       const filePath = path.join(configsPath, sd.savingFilename + '.json');
       if (sd.savingAction === 'DELETE' && fs.existsSync(filePath)) {
@@ -19,17 +21,10 @@ const saveProjectConfigs = async (event: IpcMainEvent, payload: { path: string; 
         fs.writeFileSync(filePath, sd.data);
       }
     })
-  )
-    .then(() => {
-      log.info('save-project-configs/success');
-      return event.sender.send('save-project-configs/success', {});
-    })
-    .catch((error) => {
-      log.error('save-project-configs/failure', error);
-      return event.sender.send('save-project-configs/failure', { errorMessage: `${error instanceof Error ? error.message : error}` });
-    });
+  ).then(() => {
+    log.info('save-project-configs/success');
+    return {};
+  });
 };
 
-export const registerSaveProjectConfigs = (ipcMain: IpcMain) => {
-  ipcMain.on('save-project-configs', saveProjectConfigs);
-};
+export const registerSaveProjectConfigs = defineBackendServiceFunction('save-project-configs', saveProjectConfigs);

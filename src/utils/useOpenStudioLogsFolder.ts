@@ -18,23 +18,19 @@ export const useOpenStudioLogsFolder = () => {
   const [state, setState] = useState<OpenStudioLogsFolderStateObject>({ state: 'done' });
 
   useEffect(() => {
-    switch (state.state) {
-      case 'done':
-        window.api.cleanupOpenStudioLogsFolder();
-        return;
-      case 'open_studio_logs_folder':
-        return window.api.openStudioLogsFolder(
-          {},
-          () => {
-            setState({ state: 'done' });
-            callbacks?.onSuccess();
-          },
-          ({ errorMessage }) => {
-            setState({ state: 'done' });
-            fail(callbacks, errorMessage);
-          }
-        );
-    }
+    if (state.state !== 'open_studio_logs_folder') return;
+
+    return window.api.openStudioLogsFolder(
+      {},
+      () => {
+        setState({ state: 'done' });
+        callbacks?.onSuccess();
+      },
+      ({ errorMessage }) => {
+        setState({ state: 'done' });
+        fail(callbacks, errorMessage);
+      }
+    );
   }, [state, callbacks]);
 
   return (onSuccess: OpenStudioLogsFolderSuccessCallback, onFailure: OpenStudioLogsFolderFailureCallback) => {

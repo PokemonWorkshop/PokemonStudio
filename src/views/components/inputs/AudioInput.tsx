@@ -107,7 +107,7 @@ export const AudioInput = ({ audioPathInProject, name, extensions, destFolderToC
   useEffect(() => {
     if (!state.projectPath) return;
 
-    window.api.fileExists(
+    return window.api.fileExists(
       { filePath: join(state.projectPath, audioPathInProject) },
       ({ result }) => setError(!result),
       ({ errorMessage }) => {
@@ -115,7 +115,6 @@ export const AudioInput = ({ audioPathInProject, name, extensions, destFolderToC
         showNotification('danger', t('error'), errorMessage);
       }
     );
-    return () => window.api.cleanupFileExists();
   }, [audioPathInProject]);
 
   return (

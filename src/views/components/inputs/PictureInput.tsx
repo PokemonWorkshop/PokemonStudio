@@ -111,7 +111,7 @@ export const PictureInput = ({ picturePathInProject, name, extensions, destFolde
   useEffect(() => {
     if (!state.projectPath) return;
 
-    window.api.fileExists(
+    return window.api.fileExists(
       { filePath: join(state.projectPath, picturePathInProject) },
       ({ result }) => setError(!result),
       ({ errorMessage }) => {
@@ -119,7 +119,6 @@ export const PictureInput = ({ picturePathInProject, name, extensions, destFolde
         showNotification('danger', t('error'), errorMessage);
       }
     );
-    return () => window.api.cleanupFileExists();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [picturePathInProject]);
 

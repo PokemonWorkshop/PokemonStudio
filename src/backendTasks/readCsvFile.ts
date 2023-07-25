@@ -1,20 +1,14 @@
-import { IpcMainEvent } from 'electron';
 import log from 'electron-log';
 import { loadCSV } from '@utils/textManagement';
-import { ProjectText } from '@src/GlobalStateProvider';
+import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 
-const readCsvFile = async (event: IpcMainEvent, payload: { filePath: string; fileId: number }) => {
+export type ReadCsvFileInput = { filePath: string; fileId: number };
+
+const readCsvFile = async (payload: ReadCsvFileInput) => {
   log.info('read-csv-file');
-  try {
-    const text = await loadCSV(payload.filePath);
-    log.info('read-csv-file/success');
-    event.sender.send('read-csv-file/success', { [payload.fileId]: text } as ProjectText);
-  } catch (error) {
-    log.error('read-csv-file/failure', error);
-    event.sender.send('read-csv-file/failure', { errorMessage: `${error instanceof Error ? error.message : error}` });
-  }
+  const text = await loadCSV(payload.filePath);
+  log.info('read-csv-file/success');
+  return { [payload.fileId]: text };
 };
 
-export const registerReadCsvFile = (ipcMain: Electron.IpcMain) => {
-  ipcMain.on('read-csv-file', readCsvFile);
-};
+export const registerReadCsvFile = defineBackendServiceFunction('read-csv-file', readCsvFile);

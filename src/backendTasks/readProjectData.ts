@@ -1,10 +1,12 @@
-import { IpcMain, IpcMainEvent } from 'electron';
+import type { IpcMainEvent } from 'electron';
 import log from 'electron-log';
 import path from 'path';
 import fs from 'fs';
 import fsPromises from 'fs/promises';
 import { batchArray } from '@utils/batchArray';
 import { StudioTextInfo } from '@modelEntities/textInfo';
+import { defineBackendServiceFunction } from './defineBackendServiceFunction';
+import { ChannelNames, sendProgress } from '@utils/BackendTask';
 
 const projectDataKeys = [
   'abilities',
@@ -56,27 +58,23 @@ export const readProjectFolder = async (projectPath: string, key: ProjectDataFro
   return fileData;
 };
 
-const readProjectData = async (event: IpcMainEvent, payload: { path: string }) => {
+export type ReadProjectDataInput = { path: string };
+
+const readProjectData = async (payload: ReadProjectDataInput, event: IpcMainEvent, channels: ChannelNames) => {
   log.info('read-project-data');
-  try {
-    const textInfosJson = await fsPromises.readFile(path.join(payload.path, 'Data/Studio', 'text_info.json'), { encoding: 'utf-8' });
-    const textInfos: StudioTextInfo[] = JSON.parse(textInfosJson);
-    const projectData = await projectDataKeys.reduce(async (prev, curr, index) => {
-      const prevData = await prev;
-      log.info('read-project-data/progress', curr);
-      event.sender.send('read-project-data/progress', { step: index + 1, total: projectDataKeys.length, stepText: curr });
-      const data = await readProjectFolder(payload.path, curr);
-      return { ...prevData, [curr]: data };
-    }, Promise.resolve({ textInfos } as ProjectDataFromBackEnd));
 
-    log.info('read-project-data/success');
-    event.sender.send('read-project-data/success', projectData);
-  } catch (error) {
-    log.error('read-project-data/failure', error);
-    event.sender.send('read-project-data/failure', { errorMessage: `${error instanceof Error ? error.message : error}` });
-  }
+  const textInfosJson = await fsPromises.readFile(path.join(payload.path, 'Data/Studio', 'text_info.json'), { encoding: 'utf-8' });
+  const textInfos: StudioTextInfo[] = JSON.parse(textInfosJson);
+  const projectData = await projectDataKeys.reduce(async (prev, curr, index) => {
+    const prevData = await prev;
+    log.info('read-project-data/progress', curr);
+    sendProgress(event, channels, { step: index + 1, total: projectDataKeys.length, stepText: curr });
+    const data = await readProjectFolder(payload.path, curr);
+    return { ...prevData, [curr]: data };
+  }, Promise.resolve({ textInfos } as ProjectDataFromBackEnd));
+
+  log.info('read-project-data/success');
+  return projectData;
 };
 
-export const registerReadProjectData = (ipcMain: IpcMain) => {
-  ipcMain.on('read-project-data', readProjectData);
-};
+export const registerReadProjectData = defineBackendServiceFunction('read-project-data', readProjectData);

@@ -89,7 +89,7 @@ export const TrainerFrameEditor = ({ trainer, openTranslationEditor }: TrainerFr
   useEffect(() => {
     if (!isLoading) return;
 
-    window.api.fileExists(
+    return window.api.fileExists(
       { filePath: trainerSpritePath(trainer, state.projectPath) },
       ({ result }) => {
         setSpriteDp(result);
@@ -104,7 +104,6 @@ export const TrainerFrameEditor = ({ trainer, openTranslationEditor }: TrainerFr
       },
       ({ errorMessage }) => showNotification('danger', t('error'), errorMessage)
     );
-    return () => window.api.cleanupFileExists();
   }, [trainer, isLoading]);
 
   const onBattlerChoosen = (battlerPath: string) => {

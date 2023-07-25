@@ -140,7 +140,6 @@ export interface State {
   textInfos: StudioTextInfo[];
   textVersion: number;
   savingLanguage: string[];
-  savingImage: { [path: string]: string };
   savingTextInfos: boolean;
   mapsModified: DbSymbol[];
 }
@@ -170,7 +169,6 @@ const initialState = {
   textInfos: [] as StudioTextInfo[],
   savingProjectStudio: false,
   savingLanguage: [] as string[],
-  savingImage: {},
   savingTextInfos: false,
   textVersion: 0,
   mapsModified: [] as DbSymbol[],

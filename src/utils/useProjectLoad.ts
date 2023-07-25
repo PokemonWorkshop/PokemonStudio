@@ -53,7 +53,6 @@ export type PreGlobalState = Omit<
   | 'lastPSDKVersion'
   | 'projectPath'
   | 'savingLanguage'
-  | 'savingImage'
   | 'savingTextInfos'
   | 'mapsModified'
 > & { projectPath: string };
@@ -146,15 +145,6 @@ export const useProjectLoad = () => {
 
   useEffect(() => {
     switch (state.state) {
-      case 'done':
-        window.api.cleanupReadProjectConfigs();
-        window.api.cleanupReadProjectData();
-        window.api.cleanupReadProjectMetadata();
-        window.api.cleanupReadProjectTexts();
-        window.api.cleanupMigrateData();
-        window.api.cleanupUpdateTextInfos();
-        window.api.cleanupCheckMapsModified();
-        return;
       case 'choosingProjectFile':
         loaderRef.current.open('loading_project', 0, 0, tl('importing_project_choose_project'));
         return window.api.chooseProjectFileToOpen(
@@ -337,7 +327,7 @@ export const useProjectLoad = () => {
         break;
       case 'checkMapsModified':
         loaderRef.current.setProgress(11, 14, tl('loading_check_maps_modified'));
-        window.api.checkMapsModified(
+        return window.api.checkMapsModified(
           {
             projectPath: state.preState.projectPath,
             maps: Object.values(state.preState.projectData.maps).map((map) => JSON.stringify(map)),
@@ -349,7 +339,6 @@ export const useProjectLoad = () => {
             fail(callbacks, errorMessage);
           }
         );
-        break;
       case 'readCurrentPSDKVersion':
         loaderRef.current.setProgress(12, 14, tl('loading_project_psdk_version'));
         window.api
@@ -388,7 +377,6 @@ export const useProjectLoad = () => {
           savingText: new SavingTextMap(),
           savingProjectStudio: false,
           savingLanguage: [],
-          savingImage: {},
           savingTextInfos: false,
           mapsModified: state.mapsModified,
         };

@@ -1,19 +1,16 @@
-import Electron, { IpcMainEvent } from 'electron';
 import log from 'electron-log';
 import fs from 'fs';
+import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 
-const fileExists = (event: IpcMainEvent, payload: { filePath: string }) => {
+export type FileExistsInput = { filePath: string };
+export type FileExistsOutput = { result: boolean };
+
+const fileExists = async (payload: FileExistsInput): Promise<FileExistsOutput> => {
   log.info('file-exists');
-  try {
-    const result = fs.existsSync(payload.filePath);
-    log.info('file-exists/success', { result });
-    return event.sender.send('file-exists/success', { result });
-  } catch (error) {
-    log.error('file-exists/failure', error);
-    event.sender.send('file-exists/failure', { errorMessage: `${error instanceof Error ? error.message : error}` });
-  }
+
+  const result = fs.existsSync(payload.filePath);
+  log.info('file-exists/success', { result });
+  return { result };
 };
 
-export const registerFileExists = (ipcMain: Electron.IpcMain) => {
-  ipcMain.on('file-exists', fileExists);
-};
+export const registerFileExists = defineBackendServiceFunction('file-exists', fileExists);

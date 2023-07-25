@@ -21,9 +21,6 @@ export const useChoosefile = () => {
 
   useEffect(() => {
     switch (state.state) {
-      case 'done':
-        window.api.cleanupChooseFile();
-        return;
       case 'choosingFile':
         return window.api.chooseFile(
           { name: state.payload.name, extensions: state.payload.extensions },

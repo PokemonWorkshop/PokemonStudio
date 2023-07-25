@@ -123,7 +123,7 @@ export const FileInput = ({ filePath, name, extensions, destFolderToCopy, isAbso
   useEffect(() => {
     if (!state.projectPath) return;
 
-    window.api.fileExists(
+    return window.api.fileExists(
       { filePath: isAbsolutePath ? filePath : join(state.projectPath, filePath) },
       ({ result }) => setError(!result),
       ({ errorMessage }) => {
@@ -131,7 +131,6 @@ export const FileInput = ({ filePath, name, extensions, destFolderToCopy, isAbso
         showNotification('danger', t('error'), errorMessage);
       }
     );
-    return () => window.api.cleanupFileExists();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filePath]);
 

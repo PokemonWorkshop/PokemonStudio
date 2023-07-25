@@ -105,24 +105,25 @@ export const TrainerFrame = ({ trainer, onClick }: TrainerFrameProps) => {
 
   const trainerName = useMemo(() => `${getText(TRAINER_CLASS_TEXT_ID, trainer.id)} ${getTrainerName(trainer)}`, [trainer]);
 
-  useEffect(() => {
-    window.api.fileExists(
-      { filePath: trainerSpritePath(trainer, state.projectPath) },
-      ({ result }) => {
-        setSpriteDp(result);
-        window.api.fileExists(
-          { filePath: trainerSpriteBigPath(trainer, state.projectPath) },
-          ({ result: resultBig }) => {
-            setSpriteBig(resultBig);
-            setInitial(false);
-          },
-          ({ errorMessage }) => showNotification('danger', t('error'), errorMessage)
-        );
-      },
-      ({ errorMessage }) => showNotification('danger', t('error'), errorMessage)
-    );
-    return () => window.api.cleanupFileExists();
-  }, [trainer]);
+  useEffect(
+    () =>
+      window.api.fileExists(
+        { filePath: trainerSpritePath(trainer, state.projectPath) },
+        ({ result }) => {
+          setSpriteDp(result);
+          window.api.fileExists(
+            { filePath: trainerSpriteBigPath(trainer, state.projectPath) },
+            ({ result: resultBig }) => {
+              setSpriteBig(resultBig);
+              setInitial(false);
+            },
+            ({ errorMessage }) => showNotification('danger', t('error'), errorMessage)
+          );
+        },
+        ({ errorMessage }) => showNotification('danger', t('error'), errorMessage)
+      ),
+    [trainer]
+  );
 
   return (
     <DataBlockContainer size="full" onClick={onClick}>
