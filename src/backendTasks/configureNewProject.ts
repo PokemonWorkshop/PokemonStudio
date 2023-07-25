@@ -1,9 +1,9 @@
 import { generatePSDKBatFileContent } from '@services/generatePSDKBatFileContent';
-import Electron, { IpcMainEvent } from 'electron';
 import log from 'electron-log';
 import path from 'path';
 import { copyFileSync, existsSync, readFileSync, writeFileSync } from 'fs';
 import { GAME_OPTION_CONFIG_VALIDATOR, INFO_CONFIG_VALIDATOR } from '@modelEntities/config';
+import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 
 export type ConfigureNewProjectMetaData = {
   projectStudioData: string;
@@ -35,33 +35,28 @@ const updateGameOptionsConfig = (gameOptionsConfigPath: string) => {
   writeFileSync(gameOptionsConfigPath, JSON.stringify(gameOptionConfigValidation.data, null, 2));
 };
 
-const configureNewProject = (event: IpcMainEvent, payload: { projectDirName: string; metaData: ConfigureNewProjectMetaData }) => {
+export type ConfigureNewProjectInput = { projectDirName: string; metaData: ConfigureNewProjectMetaData };
+
+const configureNewProject = async (payload: ConfigureNewProjectInput) => {
   log.info('configure-new-project', payload);
-  try {
-    log.info('configure-new-project/create project.studio file');
-    writeFileSync(path.join(payload.projectDirName, 'project.studio'), payload.metaData.projectStudioData);
-    log.info('configure-new-project/create psdk.bat file');
-    writeFileSync(path.join(payload.projectDirName, 'psdk.bat'), generatePSDKBatFileContent());
-    log.info('configure-new-project/update icon');
-    copyFileSync(
-      payload.metaData.iconPath || path.join(payload.projectDirName, 'graphics/icons/game.png'),
-      path.join(payload.projectDirName, 'project_icon.png')
-    );
-    log.info('configure-new-project/update language config');
-    writeFileSync(path.join(payload.projectDirName, 'Data/configs/language_config.json'), payload.metaData.languageConfig);
-    log.info('configure-new-project/update infos config');
-    updateInfosConfig(path.join(payload.projectDirName, 'Data/configs/infos_config.json'), payload.metaData.projectTitle);
-    if (!payload.metaData.multiLanguage) {
-      log.info('configure-new-project/update game options config');
-      updateGameOptionsConfig(path.join(payload.projectDirName, 'Data/configs/game_options_config.json'));
-    }
-    return event.sender.send('configure-new-project/success', {});
-  } catch (error) {
-    log.error('configure-new-project/failure', error);
-    event.sender.send('configure-new-project/failure', { errorMessage: `${error instanceof Error ? error.message : error}` });
+  log.info('configure-new-project/create project.studio file');
+  writeFileSync(path.join(payload.projectDirName, 'project.studio'), payload.metaData.projectStudioData);
+  log.info('configure-new-project/create psdk.bat file');
+  writeFileSync(path.join(payload.projectDirName, 'psdk.bat'), generatePSDKBatFileContent());
+  log.info('configure-new-project/update icon');
+  copyFileSync(
+    payload.metaData.iconPath || path.join(payload.projectDirName, 'graphics/icons/game.png'),
+    path.join(payload.projectDirName, 'project_icon.png')
+  );
+  log.info('configure-new-project/update language config');
+  writeFileSync(path.join(payload.projectDirName, 'Data/configs/language_config.json'), payload.metaData.languageConfig);
+  log.info('configure-new-project/update infos config');
+  updateInfosConfig(path.join(payload.projectDirName, 'Data/configs/infos_config.json'), payload.metaData.projectTitle);
+  if (!payload.metaData.multiLanguage) {
+    log.info('configure-new-project/update game options config');
+    updateGameOptionsConfig(path.join(payload.projectDirName, 'Data/configs/game_options_config.json'));
   }
+  return {};
 };
 
-export const registerConfigureNewProject = (ipcMain: Electron.IpcMain) => {
-  ipcMain.on('configure-new-project', configureNewProject);
-};
+export const registerConfigureNewProject = defineBackendServiceFunction('configure-new-project', configureNewProject);

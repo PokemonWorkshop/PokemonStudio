@@ -1,37 +1,30 @@
-import { IpcMain, IpcMainEvent } from 'electron';
 import log from 'electron-log';
 import fs from 'fs';
 import path from 'path';
-import { ProjectStudioAction } from '@utils/SavingUtils';
+import type { ProjectStudioAction } from '@utils/SavingUtils';
+import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 
-const projectStudioFile = async (event: IpcMainEvent, payload: { path: string; action: ProjectStudioAction; data?: string }) => {
+export type ProjectStudioFileInput = { path: string; action: ProjectStudioAction; data?: string };
+export type ProjectStudioFileOutput = { fileData?: string };
+
+// TODO: Split this in to as much logical function as needed (pretty sure delete is not needed).
+const projectStudioFile = async (payload: { path: string; action: ProjectStudioAction; data?: string }): Promise<ProjectStudioFileOutput> => {
   log.info('project-studio-file', { path: payload.path, action: payload.action });
   const projectStudioPath = path.join(payload.path, 'project.studio');
-  try {
-    switch (payload.action) {
-      case 'READ': {
-        const fileData = fs.readFileSync(projectStudioPath, { encoding: 'utf-8' });
-        log.info('project-studio-file/success');
-        return event.sender.send('project-studio-file/success', { fileData });
-      }
-      case 'UPDATE':
-        if (payload.data) {
-          fs.writeFileSync(projectStudioPath, payload.data);
-          return event.sender.send('project-studio-file/success', {});
-        } else {
-          log.error('project-studio-file/failure', 'data are missing');
-          return event.sender.send('project-studio-file/failure', { errorMessage: 'data are missing' });
-        }
-      case 'DELETE':
-        if (fs.existsSync(projectStudioPath)) fs.unlinkSync(projectStudioPath);
-        return event.sender.send('project-studio-file/success', {});
+  switch (payload.action) {
+    case 'READ': {
+      const fileData = fs.readFileSync(projectStudioPath, { encoding: 'utf-8' });
+      log.info('project-studio-file/success');
+      return { fileData };
     }
-  } catch (error) {
-    log.error('project-studio-file/failure', error);
-    event.sender.send('project-studio-file/failure', { errorMessage: `${error instanceof Error ? error.message : error}` });
+    case 'UPDATE':
+      if (!payload.data) throw 'data are missing';
+      fs.writeFileSync(projectStudioPath, payload.data);
+      return {};
+    case 'DELETE':
+      if (fs.existsSync(projectStudioPath)) fs.unlinkSync(projectStudioPath);
+      return {};
   }
 };
 
-export const registerProjectStudioFile = (ipcMain: IpcMain) => {
-  ipcMain.on('project-studio-file', projectStudioFile);
-};
+export const registerProjectStudioFile = defineBackendServiceFunction('project-studio-file', projectStudioFile);

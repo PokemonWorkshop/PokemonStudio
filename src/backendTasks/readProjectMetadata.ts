@@ -1,22 +1,19 @@
-import { IpcMainEvent } from 'electron';
 import log from 'electron-log';
 import path from 'path';
 import fs from 'fs';
 import { StudioProject } from '@modelEntities/project';
+import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 
-const readProjectMetadata = async (event: IpcMainEvent, payload: { path: string }) => {
+export type ReadProjectMetadataInput = { path: string };
+export type ReadProjectMetadataOutput = { metaData: StudioProject };
+
+const readProjectMetadata = async (payload: ReadProjectMetadataInput): Promise<ReadProjectMetadataOutput> => {
   log.info('read-project-metadata');
-  try {
-    const metaDataJson = fs.readFileSync(path.join(payload.path, 'project.studio'), { encoding: 'utf-8' });
-    const metaData: StudioProject = JSON.parse(metaDataJson);
-    log.info('read-project-metadata/success', { metaData });
-    event.sender.send('read-project-metadata/success', { metaData });
-  } catch (error) {
-    log.error('read-project-metadata/failure', error);
-    event.sender.send('read-project-metadata/failure', { errorMessage: `${error instanceof Error ? error.message : error}` });
-  }
+
+  const metaDataJson = fs.readFileSync(path.join(payload.path, 'project.studio'), { encoding: 'utf-8' });
+  const metaData: StudioProject = JSON.parse(metaDataJson);
+  log.info('read-project-metadata/success', { metaData });
+  return { metaData };
 };
 
-export const registerReadProjectMetadata = (ipcMain: Electron.IpcMain) => {
-  ipcMain.on('read-project-metadata', readProjectMetadata);
-};
+export const registerReadProjectMetadata = defineBackendServiceFunction('read-project-metadata', readProjectMetadata);

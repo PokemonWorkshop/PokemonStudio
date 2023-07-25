@@ -4,16 +4,7 @@ import { updateProjectEditDate, updateProjectStudio as updateProjectStudioLocalS
 import { SavingConfigMap, SavingMap, SavingTextMap } from './SavingUtils';
 
 type ProjectSaveStateObject = {
-  state:
-    | 'done'
-    | 'save_data'
-    | 'save_configs'
-    | 'save_texts'
-    | 'save_text_infos'
-    | 'save_images'
-    | 'update_studio_file'
-    | 'update_project_list'
-    | 'reset_saving';
+  state: 'done' | 'save_data' | 'save_configs' | 'save_texts' | 'save_text_infos' | 'update_studio_file' | 'update_project_list' | 'reset_saving';
 };
 
 type ProjectSaveFailureCallback = (error: { errorMessage: string }) => void;
@@ -35,19 +26,10 @@ export const useProjectSave = () => {
     state.savingConfig.map.size > 0 ||
     state.savingText.map.size > 0 ||
     state.savingProjectStudio ||
-    state.savingTextInfos ||
-    Object.keys(state.savingImage).length > 0;
+    state.savingTextInfos;
 
   useEffect(() => {
     switch (stateSave.state) {
-      case 'done':
-        window.api.cleanupSaveProjectData();
-        window.api.cleanupSaveProjectConfigs();
-        window.api.cleanupSaveProjectTexts();
-        window.api.cleanupSaveTextInfos();
-        window.api.cleanupMoveImage();
-        window.api.cleanupProjectStudioFile();
-        return;
       case 'save_data':
         if (state.savingData.map.size === 0) return setStateSave({ state: 'save_configs' });
         return window.api.saveProjectData(
@@ -80,19 +62,9 @@ export const useProjectSave = () => {
         );
       }
       case 'save_text_infos':
-        if (!state.savingTextInfos) return setStateSave({ state: 'save_images' });
+        if (!state.savingTextInfos) return setStateSave({ state: 'update_studio_file' });
         return window.api.saveTextInfos(
           { projectPath: state.projectPath!, textInfos: JSON.stringify(state.textInfos, null, 2) },
-          () => setStateSave({ state: 'save_images' }),
-          ({ errorMessage }) => {
-            setStateSave({ state: 'done' });
-            fail(callbacks, errorMessage);
-          }
-        );
-      case 'save_images':
-        if (Object.keys(state.savingImage).length === 0) return setStateSave({ state: 'update_studio_file' });
-        return window.api.moveImage(
-          { path: state.projectPath!, images: { ...state.savingImage } },
           () => setStateSave({ state: 'update_studio_file' }),
           ({ errorMessage }) => {
             setStateSave({ state: 'done' });
@@ -123,7 +95,6 @@ export const useProjectSave = () => {
           savingText: new SavingTextMap(),
           savingProjectStudio: false,
           savingLanguage: [],
-          savingImage: {},
           savingTextInfos: false,
           textVersion: 0,
         });

@@ -5,8 +5,10 @@ import { fixCsvFileIdDex } from '@src/migrations/fixCsvFileIdDex';
 import { linkResourcesToCreatures } from '@src/migrations/linkResourcesToCreatures';
 import { migrateHeadbutt } from '@src/migrations/migrateHeadbutt';
 import { migrateMapLinks } from '@src/migrations/migrateMapLinks';
-import { IpcMainEvent, IpcMain } from 'electron';
+import { IpcMainEvent } from 'electron';
 import log from 'electron-log';
+import { defineBackendServiceFunction } from './defineBackendServiceFunction';
+import { ChannelNames, sendProgress } from '@utils/BackendTask';
 
 export type MigrationTask = (event: IpcMainEvent, projectPath: string) => Promise<void>;
 
@@ -117,29 +119,25 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
   '1.4.4': ['Fix the csv file id of the dex', 'Add files and folder for the maps', 'Add new characteristics in the moves'], // Don't forget to add the official version coming up
 };
 
-const migrateData = async (event: IpcMainEvent, payload: { projectPath: string; projectVersion: string }) => {
+export type MigrateDataInput = { projectPath: string; projectVersion: string };
+
+const migrateData = async (payload: MigrateDataInput, event: IpcMainEvent, channels: ChannelNames) => {
   log.info('migrate-data', payload.projectVersion);
-  try {
-    const dataToMigrate = MIGRATIONS[payload.projectVersion];
-    const stepTexts = MIGRATION_STEP_TEXTS[payload.projectVersion];
-    if (dataToMigrate && stepTexts) {
-      log.info('migrate-data', `Found ${dataToMigrate.length} migrations`);
-      await dataToMigrate.reduce(async (prev, curr, index) => {
-        await prev;
-        event.sender.send('migrate-data/progress', { step: index + 1, total: dataToMigrate.length, stepText: stepTexts[index] });
-        await curr(event, payload.projectPath);
-      }, Promise.resolve());
-    } else {
-      log.info('migrate-data', 'No data to migrate found!');
-    }
-    log.info('migrate-data/success');
-    event.sender.send('migrate-data/success', {});
-  } catch (error) {
-    log.error('migrate-data/failure', error);
-    event.sender.send('migrate-data/failure', { errorMessage: `${error instanceof Error ? error.message : error}` });
+
+  const dataToMigrate = MIGRATIONS[payload.projectVersion];
+  const stepTexts = MIGRATION_STEP_TEXTS[payload.projectVersion];
+  if (dataToMigrate && stepTexts) {
+    log.info('migrate-data', `Found ${dataToMigrate.length} migrations`);
+    await dataToMigrate.reduce(async (prev, curr, index) => {
+      await prev;
+      sendProgress(event, channels, { step: index + 1, total: dataToMigrate.length, stepText: stepTexts[index] });
+      await curr(event, payload.projectPath);
+    }, Promise.resolve());
+  } else {
+    log.info('migrate-data', 'No data to migrate found!');
   }
+  log.info('migrate-data/success');
+  return {};
 };
 
-export const registerMigrateData = (ipcMain: IpcMain) => {
-  ipcMain.on('migrate-data', migrateData);
-};
+export const registerMigrateData = defineBackendServiceFunction('migrate-data', migrateData);

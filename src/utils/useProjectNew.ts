@@ -34,13 +34,6 @@ export const useProjectNew = () => {
 
   useEffect(() => {
     switch (state.state) {
-      case 'done':
-        window.api.cleanupChooseFolder();
-        window.api.cleanupFileExists();
-        window.api.cleanupGetStudioVersion();
-        window.api.cleanupExtractNewProject();
-        window.api.cleanupConfigureNewProject();
-        return;
       case 'choosingDestinationFolder':
         loaderRef.current.open('creating_project', 0, 0, tl('creating_project_opening_path'));
         return window.api.chooseFolder(

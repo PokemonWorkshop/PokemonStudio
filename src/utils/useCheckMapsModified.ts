@@ -23,37 +23,32 @@ export const useCheckMapsModified = () => {
   const { t } = useTranslation('database_maps');
 
   useEffect(() => {
-    switch (state.state) {
-      case 'done':
-        window.api.cleanupCheckMapsModified();
-        break;
-      case 'checkMapsModified': {
-        if (!globalState.projectPath) {
-          const errorMessage = t('error_no_project_load');
-          showNotification('danger', t('checking_maps'), errorMessage);
-          setState({ state: 'done' });
-          callbacks?.onFailure({ errorMessage });
-          break;
-        }
-        const maps = Object.values(globalState.projectData.maps).map((map) => JSON.stringify(map));
-        window.api.checkMapsModified(
-          { projectPath: globalState.projectPath, maps, method: state.payload.method },
-          ({ dbSymbols }) => {
-            if (state.payload.forceToast || (dbSymbols.length !== 0 && globalState.mapsModified.length === 0)) {
-              showNotification('info', t('checking_maps'), t('checking_maps_message'));
-            }
-            setGlobalState((currentState) => ({ ...currentState, mapModified: dbSymbols }));
-            setState({ state: 'done' });
-            callbacks?.onSuccess({ dbSymbols });
-          },
-          ({ errorMessage }) => {
-            showNotification('danger', t('checking_maps'), errorMessage);
-            setState({ state: 'done' });
-            callbacks?.onFailure({ errorMessage });
-          }
-        );
-      }
+    if (state.state !== 'checkMapsModified') return;
+    if (!globalState.projectPath) {
+      const errorMessage = t('error_no_project_load');
+      showNotification('danger', t('checking_maps'), errorMessage);
+      setState({ state: 'done' });
+      callbacks?.onFailure({ errorMessage });
+      return;
     }
+
+    const maps = Object.values(globalState.projectData.maps).map((map) => JSON.stringify(map));
+    return window.api.checkMapsModified(
+      { projectPath: globalState.projectPath, maps, method: state.payload.method },
+      ({ dbSymbols }) => {
+        if (state.payload.forceToast || (dbSymbols.length !== 0 && globalState.mapsModified.length === 0)) {
+          showNotification('info', t('checking_maps'), t('checking_maps_message'));
+        }
+        setGlobalState((currentState) => ({ ...currentState, mapModified: dbSymbols }));
+        setState({ state: 'done' });
+        callbacks?.onSuccess({ dbSymbols });
+      },
+      ({ errorMessage }) => {
+        showNotification('danger', t('checking_maps'), errorMessage);
+        setState({ state: 'done' });
+        callbacks?.onFailure({ errorMessage });
+      }
+    );
   }, [state, callbacks]);
 
   return (payload: CheckMapsModifiedPayload, onSuccess: CheckMapsModifiedSuccessCallback, onFailure: CheckMapsModifiedFailureCallback) => {

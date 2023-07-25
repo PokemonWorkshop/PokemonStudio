@@ -71,7 +71,7 @@ export const TrainerNewEditor = ({ onClose }: TrainerNewEditorProps) => {
   useEffect(() => {
     if (!isLoading) return;
 
-    window.api.fileExists(
+    return window.api.fileExists(
       { filePath: `${state.projectPath}/graphics/battlers/${battlerName}.png` },
       ({ result }) => {
         setSpriteDp(result);
@@ -86,7 +86,6 @@ export const TrainerNewEditor = ({ onClose }: TrainerNewEditorProps) => {
       },
       ({ errorMessage }) => showNotification('danger', t('error'), errorMessage)
     );
-    return () => window.api.cleanupFileExists();
   }, [battlerName, isLoading]);
 
   const onBattlerChoosen = (battlerPath: string) => {

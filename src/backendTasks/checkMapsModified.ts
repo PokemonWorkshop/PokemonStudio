@@ -1,10 +1,10 @@
-import { IpcMain, IpcMainEvent } from 'electron';
 import log from 'electron-log';
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import type { StudioMap } from '@modelEntities/map';
 import type { DbSymbol } from '@modelEntities/dbSymbol';
+import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 
 export type CheckMapsModifiedMethod = 'mtime' | 'sha1';
 
@@ -40,46 +40,43 @@ const getFileStats = (filePath: string): Promise<fs.Stats> => {
   });
 };
 
-export const checkMapsModified = async (event: IpcMainEvent, payload: { projectPath: string; maps: string[]; method: CheckMapsModifiedMethod }) => {
+export type CheckMapModifiedInput = { projectPath: string; maps: string[]; method: CheckMapsModifiedMethod };
+export type CheckMapModifiedOutput = Awaited<ReturnType<typeof checkMapsModified>>;
+
+export const checkMapsModified = async (payload: CheckMapModifiedInput) => {
   log.info('check-maps-modified', { method: payload.method });
   const studioMaps: StudioMap[] = payload.maps.map((map) => JSON.parse(map));
-  try {
-    const tiledMapPath = path.join(payload.projectPath, 'data/tiled');
 
-    const mapsModified = await studioMaps.reduce(async (accPromise, map) => {
-      const acc = await accPromise;
-      const filePath = path.join(tiledMapPath, map.tiledFilename + '.tmx');
-      if (!fs.existsSync(filePath)) return acc;
+  const tiledMapPath = path.join(payload.projectPath, 'data/tiled');
 
-      if (payload.method === 'sha1') {
-        try {
-          const sha1 = await calculateFileSha1(filePath);
-          if (sha1 !== map.sha1) {
-            return [...acc, map.dbSymbol];
-          } else {
-            return acc;
-          }
-        } catch (error) {
-          log.error('SHA-1 calculation error', error);
-          return acc;
-        }
-      } else {
-        const stat = await getFileStats(filePath);
-        if (stat.mtime.getTime() !== map.mtime) {
+  const mapsModified = await studioMaps.reduce(async (accPromise, map) => {
+    const acc = await accPromise;
+    const filePath = path.join(tiledMapPath, map.tiledFilename + '.tmx');
+    if (!fs.existsSync(filePath)) return acc;
+
+    if (payload.method === 'sha1') {
+      try {
+        const sha1 = await calculateFileSha1(filePath);
+        if (sha1 !== map.sha1) {
           return [...acc, map.dbSymbol];
         } else {
           return acc;
         }
+      } catch (error) {
+        log.error('SHA-1 calculation error', error);
+        return acc;
       }
-    }, Promise.resolve([] as DbSymbol[]));
-    log.info('check-maps-modified/success', { dbSymbols: mapsModified });
-    event.sender.send('check-maps-modified/success', { dbSymbols: mapsModified });
-  } catch (error) {
-    log.error('check-maps-modified/failure', error);
-    event.sender.send('check-maps-modified/failure', { errorMessage: `${error instanceof Error ? error.message : error}` });
-  }
+    } else {
+      const stat = await getFileStats(filePath);
+      if (stat.mtime.getTime() !== map.mtime) {
+        return [...acc, map.dbSymbol];
+      } else {
+        return acc;
+      }
+    }
+  }, Promise.resolve([] as DbSymbol[]));
+  log.info('check-maps-modified/success', { dbSymbols: mapsModified });
+  return { dbSymbols: mapsModified };
 };
 
-export const registerCheckMapsModified = (ipcMain: IpcMain) => {
-  ipcMain.on('check-maps-modified', checkMapsModified);
-};
+export const registerCheckMapsModified = defineBackendServiceFunction('check-maps-modified', checkMapsModified);

@@ -112,7 +112,40 @@ To see some examples, you can have a look at `src\views\components\database\poke
 
 ### BackendTasks
 
-TODO: rewrite the `renderer.ts` file and write this section.
+The backend tasks is a concept allowing React and Electron to be friend. The service model of Electron supports Promises but unfortunately for us **JS do not support promise cancellation**. To counter that we had to go back to the callback times with the concept of BackEndTasks.
+
+Basically, the BackEndTask consist of 3 channels:
+
+- success channel (you get what you wanted)
+- failure channel (you get your error feedback)
+- progress channel (you get some info about progress of the task)
+
+This mode of operation allows one big thing: if the app moves away from a task that isn't done, there will be no memory leak because the channels will all get removed from electron listeners!
+
+#### Example of backend task
+
+There's two main kind of backend tasks: progressing and instant tasks.
+
+- Example of progressing backend task: [readProjectTexts](src/backendTasks/readProjectTexts.ts)
+- Example of instant task: [fileExists](src/backendTasks/fileExists.ts)
+
+Thanks to the `defineBackendServiceFunction` all we have to do is focus on the logic:
+
+- If there is an error, throw one (string is sent because class instances cannot travel through ipc).
+- If the result is computed, we normally return it.
+- If there's any progress report to report, we call the sendProgress function with the extra event & channels parameters.
+
+#### How to expose the backend task
+
+To make the backend task available to the App you need to perform two task:
+
+1. Call the return function from `defineBackendServiceFunction` in [main](src/main/index.ts)
+2. Define the type and expose the backend task in [preload](src/preload.ts)
+
+There is plenty of examples, you should follow those who use `defineBackendTask` and `BackendTaskWithGenericError` or `BackendTaskWithGenericErrorAndNoProgress`.
+
+Note: You need to define both exposure to main world and backend task type.
+Note: To avoid issues, you should use `import type` when you need information like Input type or Output type from where the backend task function is implemented.
 
 ### Page responsibility
 

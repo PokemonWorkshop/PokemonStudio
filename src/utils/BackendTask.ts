@@ -1,58 +1,115 @@
-export type GenericBackendProgress = { step: number; total: number; stepText: string };
+import type { IpcMainEvent } from 'electron/main';
+import type { IpcRenderer } from 'electron/renderer';
+
+export type ChannelNames = {
+  successChannelName: string;
+  failureChannelName: string;
+  progressChannelName: string;
+};
 
 /**
- * BackendTask are meant to be used instead of ipcRenderer.invoke.
- * Promises in useEffect on renderer side are not good because they're hard to cleanup since Promises cannot be cancelled!
- *
- * BackendTask defines a task that stands over 4 channels:
- * - taskName : which receive the payload of the frontEnd in order to perform the task
- * - taskName/success : which receive the output payload when the task successfully performed its task
- * - taskName/failure : which receive the error coming from the task if something went wrong (in such case no success nor progress will be sent after)
- * - taskName/progress : which receive the progress of the task when it's pretty long
- *
- * You can use defineBackendTask(ipcRenderer, taskName) in order to define the task in contextBridge.
- * You can also use cleanupBackendTask(ipcRenderer, taskName) in order to define the task cleanup in contextBridge so front end can call it!
- *
- * TODO: Test the two last functions when preload.js will be preload.ts!
+ * Type to use when defining a mainProcess service task
+ * @example
+ * const doStuff = async (event: IpcMainEvent, { channels, payload }: BackendTaskFunctionInput<{ path: string }>) => {
+ *   event.sender.send(channels.successChannelName, payload.path);
+ * }
+ */
+export type BackendTaskFunctionInput<TaskInputPayloadType extends Record<string, unknown>> = {
+  channels: ChannelNames;
+  payload: TaskInputPayloadType;
+};
+
+export type GenericBackendProgress = { step: number; total: number; stepText: string };
+export type GenericBackendError = { errorMessage: string };
+
+/**
+ * Type to use when defining a rendererProcess api method
+ * @example
+ * declare global {
+ *   interface Window {
+ *     yourAPI: { yourFunction: BackendTask<{ input: number }, { output: number }, GenericBackendError, GenericBackendProgress> }
+ *   }
+ * }
+ * // in another file
+ * useEffect(() => {
+ *   return window.yourAPI.yourFunction({ input: 5 }, ({ output }) => setState(output), ({ errorMessage }) => setError(errorMessage));
+ * }, [])
  */
 export type BackendTask<
-  TaskInputPayloadType extends {},
-  TaskOutputPayloadType extends {},
-  ErrorType extends { errorMessage: string },
+  TaskInputPayloadType extends Record<string, never>,
+  TaskOutputPayloadType extends Record<string, never>,
+  ErrorType extends GenericBackendError,
   ProgressPayloadType extends GenericBackendProgress
 > = (
   taskPayload: TaskInputPayloadType,
   onSuccess: (payload: TaskOutputPayloadType) => void,
   onFailure: (error: ErrorType) => void,
   onProgress?: (payload: ProgressPayloadType) => void
-) => void;
+) => () => void;
 
+/**
+ * Type to use when defining a rendererProcess api method without having to defined error type
+ * @example
+ * declare global {
+ *   interface Window {
+ *     yourAPI: { yourFunction: BackendTaskWithGenericError<{ input: number }, { output: number }, GenericBackendProgress> }
+ *   }
+ * }
+ * // in another file
+ * useEffect(() => {
+ *   return window.yourAPI.yourFunction({ input: 5 }, ({ output }) => setState(output), ({ errorMessage }) => setError(errorMessage));
+ * }, [])
+ */
 export type BackendTaskWithGenericError<
-  TaskInputPayloadType extends {},
-  TaskOutputPayloadType extends {},
+  TaskInputPayloadType extends Record<string, never>,
+  TaskOutputPayloadType extends Record<string, never>,
   ProgressPayloadType extends GenericBackendProgress
 > = BackendTask<TaskInputPayloadType, TaskOutputPayloadType, { errorMessage: string }, ProgressPayloadType>;
 
+/**
+ * Type to use when defining a rendererProcess api method with no progress
+ * @example
+ * declare global {
+ *   interface Window {
+ *     yourAPI: { yourFunction: BackendTaskWithNoProgress<{ input: number }, { output: number }, GenericBackendError> }
+ *   }
+ * }
+ * // in another file
+ * useEffect(() => {
+ *   return window.yourAPI.yourFunction({ input: 5 }, ({ output }) => setState(output), ({ errorMessage }) => setError(errorMessage));
+ * }, [])
+ */
 export type BackendTaskWithNoProgress<
-  TaskInputPayloadType extends {},
-  TaskOutputPayloadType extends {},
+  TaskInputPayloadType extends Record<string, never>,
+  TaskOutputPayloadType extends Record<string, never>,
   ErrorType extends { errorMessage: string }
-> = (taskPayload: TaskInputPayloadType, onSuccess: (payload: TaskOutputPayloadType) => void, onFailure: (error: ErrorType) => void) => void;
+> = (taskPayload: TaskInputPayloadType, onSuccess: (payload: TaskOutputPayloadType) => void, onFailure: (error: ErrorType) => void) => () => void;
 
-export type BackendTaskWithGenericErrorAndNoProgress<TaskInputPayloadType extends {}, TaskOutputPayloadType extends {}> = BackendTaskWithNoProgress<
-  TaskInputPayloadType,
-  TaskOutputPayloadType,
-  { errorMessage: string }
->;
+/**
+ * Type to use when defining a rendererProcess api method with generic error & no progress
+ * @example
+ * declare global {
+ *   interface Window {
+ *     yourAPI: { yourFunction: BackendTaskWithGenericErrorAndNoProgress<{ input: number }, { output: number }> }
+ *   }
+ * }
+ * // in another file
+ * useEffect(() => {
+ *   return window.yourAPI.yourFunction({ input: 5 }, ({ output }) => setState(output), ({ errorMessage }) => setError(errorMessage));
+ * }, [])
+ */
+export type BackendTaskWithGenericErrorAndNoProgress<
+  TaskInputPayloadType extends Record<string, never>,
+  TaskOutputPayloadType extends Record<string, never>
+> = BackendTaskWithNoProgress<TaskInputPayloadType, TaskOutputPayloadType, { errorMessage: string }>;
 
-// TODO: use this function when preload.js will be preload.ts :)
 export const defineBackendTask = <
-  TaskInputPayloadType extends {},
-  TaskOutputPayloadType extends {},
+  TaskInputPayloadType extends Record<string, unknown>,
+  TaskOutputPayloadType extends Record<string, unknown>,
   ErrorType extends { errorMessage: string },
   ProgressPayloadType extends { step: number; total: number; stepText: string }
 >(
-  ipcRenderer: Electron.IpcRenderer,
+  ipcRenderer: IpcRenderer,
   serviceName: string
 ) => {
   return (
@@ -61,28 +118,42 @@ export const defineBackendTask = <
     onFailure: (error: ErrorType) => void,
     onProgress?: (payload: ProgressPayloadType) => void
   ) => {
+    const now = Date.now();
+    const successChannelName = `${serviceName}/success-${now}`;
+    const failureChannelName = `${serviceName}/failure-${now}`;
+    const progressChannelName = `${serviceName}/progress-${now}`;
+    const cleanup = () => {
+      ipcRenderer.removeAllListeners(successChannelName);
+      ipcRenderer.removeAllListeners(failureChannelName);
+      ipcRenderer.removeAllListeners(progressChannelName);
+    };
     // Register success event
-    ipcRenderer.once(`${serviceName}/success`, (_, payload) => {
-      ipcRenderer.removeAllListeners(`${serviceName}/failure`);
-      ipcRenderer.removeAllListeners(`${serviceName}/progress`);
+    ipcRenderer.once(successChannelName, (_, payload) => {
+      cleanup();
       onSuccess(payload);
     });
     // Register failure event
-    ipcRenderer.once(`${serviceName}/failure`, (_, error) => {
-      ipcRenderer.removeAllListeners(`${serviceName}/success`);
-      ipcRenderer.removeAllListeners(`${serviceName}/progress`);
+    ipcRenderer.once(failureChannelName, (_, error) => {
+      cleanup();
       onFailure(error);
     });
     // Register progress event
-    if (onProgress) ipcRenderer.on(`${serviceName}/progress`, (_, payload) => onProgress(payload));
+    if (onProgress) ipcRenderer.on(progressChannelName, (_, payload) => onProgress(payload));
     // Call service
-    ipcRenderer.send(serviceName, taskPayload);
+    ipcRenderer.send(serviceName, { channels: { successChannelName, failureChannelName, progressChannelName }, payload: taskPayload });
+
+    return cleanup;
   };
 };
 
-// TODO: use this function when preload.js will be preload.ts :)
-export const cleanupBackendTask = (ipcRenderer: Electron.IpcRenderer, serviceName: string) => () => {
-  ipcRenderer.removeAllListeners(`${serviceName}/success`);
-  ipcRenderer.removeAllListeners(`${serviceName}/failure`);
-  ipcRenderer.removeAllListeners(`${serviceName}/progress`);
+export const sendFailure = (event: IpcMainEvent, channels: ChannelNames, error: unknown) => {
+  event.sender.send(channels.failureChannelName, { errorMessage: `${error instanceof Error ? error.message : error}` });
+};
+
+export const sendSuccess = <OutputPayload extends Record<string, unknown>>(event: IpcMainEvent, channels: ChannelNames, payload: OutputPayload) => {
+  event.sender.send(channels.successChannelName, payload);
+};
+
+export const sendProgress = (event: IpcMainEvent, channels: ChannelNames, progress: GenericBackendProgress) => {
+  event.sender.send(channels.progressChannelName, progress);
 };

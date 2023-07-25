@@ -29,9 +29,6 @@ export const useImportCsvFile = () => {
 
   useEffect(() => {
     switch (localState.state) {
-      case 'done':
-        window.api.cleanupReadCsvFile();
-        return;
       case 'readCsvFile':
         return window.api.readCsvFile(
           { filePath: localState.payload.filePath, fileId: localState.payload.fileId },
