@@ -6,7 +6,7 @@ import { BaseIcon } from '../../icons/BaseIcon';
 import { NavigationBarContainer } from './NavigationBarContainer';
 import { useGlobalState } from '../../../../GlobalStateProvider';
 import { SaveProjectButton } from '@components/buttons/SaveProjectButton';
-import { PlayButton } from '@components/buttons';
+import { PlayButton, WorldButton } from '@components/buttons';
 import { useTranslation } from 'react-i18next';
 import { useToolTip } from '@utils/useToolTip';
 
@@ -21,33 +21,32 @@ export const NavigationBarComponent = () => {
     <div />
   ) : (
     <NavigationBarContainer>
-      <div id="navigation-bar-top">
-        <NavigationBarItem path="/home">
-          <BaseIcon color={theme.colors.navigationTopIconColor} size="m" icon="top" />
-        </NavigationBarItem>
-
+      <div>
+        <div className="navigation-bar-items">
+          <NavigationBarItem path="/home">
+            <BaseIcon color={theme.colors.navigationTopIconColor} size="m" icon="top" />
+          </NavigationBarItem>
+        </div>
         <NavigationBarGroupSeparator />
-
-        <NavigationBarItem path="/dashboard" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('dashboard'), 'right-center', true)}>
-          <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="dashboard" />
-        </NavigationBarItem>
-        <NavigationBarItem path="/psdkupdate" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('update'), 'right-center', true)}>
-          <BaseIcon color={needUpdate ? theme.colors.successBase : theme.colors.navigationIconColor} size="s" icon="update" />
-        </NavigationBarItem>
-
+        <div className="navigation-bar-items">
+          <NavigationBarItem path="/dashboard" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('dashboard'), 'right-center', true)}>
+            <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="dashboard" />
+          </NavigationBarItem>
+          <NavigationBarItem path="/psdkupdate" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('update'), 'right-center', true)}>
+            <BaseIcon color={needUpdate ? theme.colors.successBase : theme.colors.navigationIconColor} size="s" icon="update" />
+          </NavigationBarItem>
+        </div>
         <NavigationBarGroupSeparator />
+        <div className="navigation-bar-items">
+          <NavigationBarItem path="/database" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('database'), 'right-center', true)}>
+            <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="database" />
+          </NavigationBarItem>
+          <NavigationBarItem path="/texts" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('text_management'), 'right-center', true)}>
+            <BaseIcon color={theme.colors.navigationIconColor} size="m" icon="texts" />
+          </NavigationBarItem>
+          <WorldButton path="/world" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('world_management'), 'right-center', true)} />
 
-        <NavigationBarItem path="/database" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('database'), 'right-center', true)}>
-          <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="database" />
-        </NavigationBarItem>
-        <NavigationBarItem path="/texts" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('text_management'), 'right-center', true)}>
-          <BaseIcon color={theme.colors.navigationIconColor} size="m" icon="texts" />
-        </NavigationBarItem>
-        <NavigationBarItem path="/world" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('world_management'), 'right-center', true)}>
-          <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="map" />
-        </NavigationBarItem>
-
-        {/*<NavigationBarItem
+          {/*<NavigationBarItem
           path="/code"
           disabled
           onMouseLeave={onMouseLeave}
@@ -55,24 +54,27 @@ export const NavigationBarComponent = () => {
         >
           <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="code" disabled />
         </NavigationBarItem>*/}
+        </div>
       </div>
-      <div id="navigation-bar-bottom">
-        <PlayButton />
+      <div>
+        <div className="navigation-bar-items">
+          <PlayButton />
 
-        {/* <NavigationBarItem path="/help">
+          {/* <NavigationBarItem path="/help">
           <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="help" />
         </NavigationBarItem>
         <NavigationBarItem path="/settings">
           <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="settings" />
         </NavigationBarItem> */}
-
+        </div>
         <NavigationBarGroupSeparator />
-
-        <SaveProjectButton />
-        <NavigationBarItem path="/account" disabled>
-          <BaseIcon color="" size="l" icon="account" />
-        </NavigationBarItem>
-        {renderToolTip()}
+        <div className="navigation-bar-items">
+          <SaveProjectButton />
+          <NavigationBarItem path="/account" disabled>
+            <BaseIcon color="" size="l" icon="account" />
+          </NavigationBarItem>
+          {renderToolTip()}
+        </div>
       </div>
     </NavigationBarContainer>
   );
