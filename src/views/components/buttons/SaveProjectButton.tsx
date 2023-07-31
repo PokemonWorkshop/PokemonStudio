@@ -14,7 +14,6 @@ const SaveProjectButtonContainer = styled(BaseButtonStyle)`
   width: 48px;
   height: 48px;
   border-radius: 8px;
-  margin-bottom: 4px; /* remove this when a gap will used in navigation bar */
   padding: 14px 6px 6px 14px;
 
   &[data-disabled] {
