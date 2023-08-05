@@ -2,7 +2,7 @@ import { DbSymbol } from '@modelEntities/dbSymbol';
 import { SelectedDataIdentifier } from '@src/GlobalStateProvider';
 import log from 'electron-log';
 import { getEntityNameTextUsingTextId } from './ReadingProjectText';
-import { PreGlobalState } from './useProjectLoad';
+import type { PreGlobalState } from './useProjectLoad/types';
 
 const firstByNameUsingTextId = (
   data: Record<string, Parameters<typeof getEntityNameTextUsingTextId>[0] & { dbSymbol: DbSymbol }>,
