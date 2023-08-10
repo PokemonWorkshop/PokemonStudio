@@ -4,6 +4,7 @@ import { DataBlockEditor } from '@components/editor';
 import { DexPokemonListTable } from './table';
 import { ProjectData } from '@src/GlobalStateProvider';
 import { StudioDex } from '@modelEntities/dex';
+import { DexDialogsRef } from './editors/DexEditorOverlay';
 
 const checkAddUnavailable = (dex: StudioDex, allPokemon: ProjectData['pokemon']): boolean => {
   const sortPokemonDbSymbol = Object.entries(allPokemon)
@@ -20,16 +21,13 @@ const checkAddUnavailable = (dex: StudioDex, allPokemon: ProjectData['pokemon'])
 
 type DexPokemonListProps = {
   dex: StudioDex;
-  allDex: ProjectData['dex'];
+  cannotImport: boolean;
   allPokemon: ProjectData['pokemon'];
-  onDelete: () => void;
-  onImport: () => void;
-  onNew: () => void;
-  onEdit: (index: number) => void;
-  onAddEvolution: (index: number) => void;
+  dialogsRef: DexDialogsRef;
+  setCreatureIndex: (index: number) => void;
 };
 
-export const DexPokemonList = ({ dex, allDex, allPokemon, onDelete, onImport, onNew, onEdit, onAddEvolution }: DexPokemonListProps) => {
+export const DexPokemonList = ({ dex, cannotImport, allPokemon, dialogsRef, setCreatureIndex }: DexPokemonListProps) => {
   const isAddUnavailable = useMemo(() => checkAddUnavailable(dex, allPokemon), [dex, allPokemon]);
   const { t } = useTranslation('database_dex');
   return (
@@ -37,14 +35,14 @@ export const DexPokemonList = ({ dex, allDex, allPokemon, onDelete, onImport, on
       size="full"
       color="light"
       title={t('dex_pokemon_list_title')}
-      onClickDelete={onDelete}
-      importation={{ label: t('import_a_pokemon_list'), onClick: onImport }}
-      add={{ label: t('add_a_pokemon'), onClick: onNew }}
+      onClickDelete={() => dialogsRef?.current?.openDialog('deletion_list', true)}
+      importation={{ label: t('import_a_pokemon_list'), onClick: () => dialogsRef?.current?.openDialog('import') }}
+      add={{ label: t('add_a_pokemon'), onClick: () => dialogsRef?.current?.openDialog('add_pokemon') }}
       disabledDeletion={dex.creatures.length === 0}
-      disabledImport={Object.entries(allDex).length <= 1}
+      disabledImport={cannotImport}
       disabledAdd={isAddUnavailable}
     >
-      <DexPokemonListTable dex={dex} onEdit={onEdit} onAddEvolution={onAddEvolution} />
+      <DexPokemonListTable dex={dex} dialogsRef={dialogsRef} setCreatureIndex={setCreatureIndex} />
     </DataBlockEditor>
   );
 };

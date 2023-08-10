@@ -1,54 +1,34 @@
 import React, { useMemo } from 'react';
-import { useGlobalState } from '@src/GlobalStateProvider';
 import { useTranslation } from 'react-i18next';
-import { getSelectDataOptionsOrderedById, SelectDataGeneric } from './SelectDataGeneric';
-import { SelectDataProps } from './SelectDataProps';
-import { useGetEntityNameUsingCSV } from '@utils/ReadingProjectText';
+import { useSelectOptions } from '@utils/useSelectOptions';
+import { StudioDropDown } from '@components/StudioDropDown';
+import { SelectContainerWithLabel } from './SelectContainerWithLabel';
 
-/**
- * Component to show a select dex.
- * @param dbSymbol The dbSymbol of the dex
- * @param onChange Set this function to get the value selected in the select
- * @param noLabel If true, the label is not shown
- * @param rejected List of dbSymbol who no must be show in the select
- * @param breakpoint Set the breakpoint for hide the label if necessary
- * @param noneValue Add on the top of the select 'None' value
- * @param noneValueIsError The noneValue is considered as error
- * @param overwriteNoneValue Overwrite the label of the 'None'
- */
-export const SelectDex = ({
-  dbSymbol,
-  onChange,
-  noLabel,
-  rejected,
-  breakpoint,
-  noneValue,
-  noneValueIsError,
-  overwriteNoneValue,
-}: SelectDataProps) => {
-  const { t } = useTranslation('database_dex');
-  const [state] = useGlobalState();
-  const getDexText = useGetEntityNameUsingCSV();
+type SelectDexProps = {
+  dbSymbol: string;
+  onChange: (dbSymbol: string) => void;
+  undefValueOption?: string;
+  noLabel?: boolean;
+  noneValue?: boolean;
+};
+
+export const SelectDex = ({ dbSymbol, onChange, noLabel, noneValue, undefValueOption }: SelectDexProps) => {
+  const { t } = useTranslation(['database_dex', 'select']);
+  const dexOptions = useSelectOptions('dex');
+  const options = useMemo(() => {
+    if (undefValueOption) return [{ value: '__undef__', label: undefValueOption }, ...dexOptions];
+    if (noneValue) return [{ value: '__undef__', label: t('select:none') }, ...dexOptions];
+    return dexOptions;
+  }, [dexOptions, undefValueOption, noneValue]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const options = useMemo(() => getSelectDataOptionsOrderedById(state.projectData, 'dex', getDexText), [state.projectData]);
+  const optionals = useMemo(() => ({ deletedOption: t('database_dex:dex_deleted') }), []);
 
-  const getData = () => {
-    const currentDex = state.projectData.dex[dbSymbol];
-    return { value: dbSymbol, label: currentDex ? getDexText(currentDex) : t('dex_deleted') };
-  };
+  if (noLabel) return <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />;
 
   return (
-    <SelectDataGeneric
-      data={getData()}
-      options={options}
-      label={noLabel ? undefined : t('dex')}
-      noOptionsText={t('no_option')}
-      error={!state.projectData.dex[dbSymbol] && (noneValueIsError ? true : dbSymbol !== '__undef__')}
-      onChange={onChange}
-      rejected={rejected}
-      breakpoint={breakpoint}
-      noneValue={noneValue}
-      overwriteNoneValue={overwriteNoneValue}
-    />
+    <SelectContainerWithLabel>
+      <span>{t('database_dex:dex')}</span>
+      <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />
+    </SelectContainerWithLabel>
   );
 };

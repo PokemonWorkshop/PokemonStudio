@@ -1,26 +1,27 @@
-import React, { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Deletion } from '@components/deletion';
-import { useProjectDex } from '@utils/useProjectData';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { useGetEntityNameUsingCSV } from '@utils/ReadingProjectText';
 import { cloneEntity } from '@utils/cloneEntity';
+import { useProjectDex } from '@utils/useProjectData';
+import React, { forwardRef, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useUpdateDex } from './useUpdateDex';
 
 type DexDeletionProps = {
   type: 'dex' | 'list';
   onClose: () => void;
 };
 
-export const DexDeletion = ({ type, onClose }: DexDeletionProps) => {
-  const {
-    projectDataValues: allDex,
-    selectedDataIdentifier: dexDbSymbol,
-    setProjectDataValues: setDex,
-    removeProjectDataValue: removeDex,
-  } = useProjectDex();
+/**
+ * Component responsive of asking the user if they really want to delete the move before doing so.
+ */
+export const DexDeletion = forwardRef<EditorHandlingClose, DexDeletionProps>(({ type, onClose }, ref) => {
   const { t } = useTranslation('database_dex');
+  const { projectDataValues: allDex, selectedDataIdentifier: dexDbSymbol, removeProjectDataValue: removeDex } = useProjectDex();
   const getDexName = useGetEntityNameUsingCSV();
   const dex = allDex[dexDbSymbol];
   const currentDex = useMemo(() => cloneEntity(dex), [dex]);
+  const updateDex = useUpdateDex(dex);
 
   const onClickDelete = () => {
     if (type === 'dex') {
@@ -31,17 +32,20 @@ export const DexDeletion = ({ type, onClose }: DexDeletionProps) => {
       removeDex(dexDbSymbol, { dex: firstDbSymbol });
     } else if (type === 'list') {
       currentDex.creatures = [];
-      setDex({ [dex.dbSymbol]: currentDex });
+      updateDex(currentDex);
     }
     onClose();
   };
 
+  useEditorHandlingClose(ref);
+
   return (
     <Deletion
-      title={t(`${type}_deletion_of`)}
-      message={t(`${type}_deletion_message`, { dex: getDexName(dex).replaceAll(' ', '\u00a0') })}
+      title={t('list_deletion_of')}
+      message={t('list_deletion_message', { dex: getDexName(dex).replaceAll(' ', '\u00a0') })}
       onClickDelete={onClickDelete}
       onClose={onClose}
     />
   );
-};
+});
+DexDeletion.displayName = 'DexDeletion';

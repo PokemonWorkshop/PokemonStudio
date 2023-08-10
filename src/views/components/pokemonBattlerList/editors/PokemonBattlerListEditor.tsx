@@ -15,7 +15,6 @@ import { PokemonBattlerListIEVsEditor } from './PokemonBattlerListIEVsEditor';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { useProjectGroups, useProjectPokemon, useProjectTrainers } from '@utils/useProjectData';
-import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { PokemonBattlerListMoveEditor } from './PokemonBattlerListMoveEditor';
 import { PokemonBattlerListMoreInfoEditor } from './PokemonBattlerListMoreInfoEditor';
 import styled from 'styled-components';

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { forwardRef, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Editor } from '@components/editor';
 
@@ -13,6 +13,8 @@ import { DbSymbol } from '@modelEntities/dbSymbol';
 import { useSelectOptions } from '@utils/useSelectOptions';
 import { StudioDropDown } from '@components/StudioDropDown';
 import { SelectPokemonForm } from '@components/selects/SelectPokemonForm';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { useDexPage } from '@utils/usePage';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -25,13 +27,14 @@ const getPokemonUnavailable = (dex: StudioDex): string[] => {
 };
 
 type DexPokemonListAddEditorProps = {
-  dex: StudioDex;
+  // dex: StudioDex;
   onClose: () => void;
 };
 
-export const DexPokemonListAddEditor = ({ dex, onClose }: DexPokemonListAddEditorProps) => {
+export const DexPokemonListAddEditor = forwardRef<EditorHandlingClose, DexPokemonListAddEditorProps>(({ onClose }, ref) => {
   const { setProjectDataValues: setDex } = useProjectDex();
   const { projectDataValues: allPokemon } = useProjectPokemon();
+  const { dex } = useDexPage();
   const { t } = useTranslation(['database_dex', 'database_pokemon', 'database_moves', 'select']);
   const pokemonList = useSelectOptions('creatures');
   const pokemonAvailable = useMemo(() => {
@@ -40,6 +43,8 @@ export const DexPokemonListAddEditor = ({ dex, onClose }: DexPokemonListAddEdito
   }, [dex]);
   const [creature, setCreature] = useState<StudioDexCreature>({ dbSymbol: (pokemonAvailable[0]?.value || '__undef__') as DbSymbol, form: 0 });
   const [isAddingEvolutions, setIsAddingEvolutions] = useState(false);
+
+  useEditorHandlingClose(ref);
 
   const onClickAdd = () => {
     const newDex = { ...dex, creatures: [] as StudioDexCreature[] };
@@ -98,4 +103,6 @@ export const DexPokemonListAddEditor = ({ dex, onClose }: DexPokemonListAddEdito
       </InputContainer>
     </Editor>
   );
-};
+});
+
+DexPokemonListAddEditor.displayName = 'DexPokemonListAddEditor';

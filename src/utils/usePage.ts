@@ -2,6 +2,7 @@ import { StudioMove } from '@modelEntities/move';
 import { getEntityNameTextUsingTextId, getEntityNameText } from './ReadingProjectText';
 import { useProjectDataReadonly } from './useProjectData';
 import { useTextInfosReadonly } from './useTextInfos';
+import { StudioDex } from '@modelEntities/dex';
 
 export const useAbilityPage = () => {
   const { projectDataValues: abilities, selectedDataIdentifier: dbSymbol, state } = useProjectDataReadonly('abilities', 'ability');
@@ -58,5 +59,19 @@ export const useMapPage = () => {
     map,
     hasMap: dbSymbol !== '__undef__',
     hasMapModified: state.mapsModified.length !== 0,
+  };
+};
+
+export const useDexPage = () => {
+  const { projectDataValues: allPokemon } = useProjectDataReadonly('pokemon', 'pokemon');
+  const { projectDataValues: allDex, selectedDataIdentifier: dbSymbol } = useProjectDataReadonly('dex', 'dex');
+  const dex: StudioDex = allDex[dbSymbol];
+  const cannot = Object.keys(allDex).length <= 1;
+
+  return {
+    dex,
+    allPokemon,
+    cannotDelete: cannot,
+    cannotImport: cannot,
   };
 };
