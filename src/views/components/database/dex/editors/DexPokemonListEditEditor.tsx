@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { Editor, useRefreshUI } from '@components/editor';
+import React, { forwardRef, useMemo, useState } from 'react';
+import { Editor } from '@components/editor';
 
 import { useTranslation } from 'react-i18next';
 import { InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
@@ -8,6 +8,10 @@ import { DbSymbol } from '@modelEntities/dbSymbol';
 import { useSelectOptions } from '@utils/useSelectOptions';
 import { StudioDropDown } from '@components/StudioDropDown';
 import { SelectPokemonForm } from '@components/selects/SelectPokemonForm';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { useDexPage } from '@utils/usePage';
+import { cloneEntity } from '@utils/cloneEntity';
+import { useUpdateDex } from './useUpdateDex';
 
 const getPokemonUnavailable = (dex: StudioDex, creature: StudioDexCreature): string[] => {
   const dbSymbols = dex.creatures.map((c) => c.dbSymbol);
@@ -17,18 +21,31 @@ const getPokemonUnavailable = (dex: StudioDex, creature: StudioDexCreature): str
 };
 
 type DexPokemonListEditEditorProps = {
-  dex: StudioDex;
-  creature: StudioDexCreature;
+  creatureIndex: number;
 };
 
-export const DexPokemonListEditEditor = ({ dex, creature }: DexPokemonListEditEditorProps) => {
+export const DexPokemonListEditEditor = forwardRef<EditorHandlingClose, DexPokemonListEditEditorProps>(({ creatureIndex }, ref) => {
+  const { t } = useTranslation(['database_pokemon']);
+  const { dex } = useDexPage();
+  const updateDex = useUpdateDex(dex);
+  const memoDex = useMemo(() => cloneEntity(dex), [dex]);
+  const creature = memoDex.creatures[creatureIndex];
+  const [dbSymbol, setDbSymbol] = useState(creature.dbSymbol);
+  const [form, setForm] = useState(creature.form);
+
   const pokemonList = useSelectOptions('creatures');
   const pokemonAvailable = useMemo(() => {
-    const unavailable = getPokemonUnavailable(dex, creature);
+    const unavailable = getPokemonUnavailable(memoDex, creature);
     return pokemonList.filter(({ value }) => !unavailable.includes(value));
-  }, [dex, creature]);
-  const { t } = useTranslation(['database_pokemon']);
-  const refreshUI = useRefreshUI();
+  }, [memoDex, creature, pokemonList]);
+
+  const onClose = () => {
+    creature.dbSymbol = dbSymbol;
+    creature.form = form;
+    updateDex(memoDex);
+  };
+
+  useEditorHandlingClose(ref, onClose);
 
   return (
     <Editor type="edit" title={t('database_pokemon:pokemon')}>
@@ -38,17 +55,21 @@ export const DexPokemonListEditEditor = ({ dex, creature }: DexPokemonListEditEd
             <Label htmlFor="name">{t('database_pokemon:pokemon')}</Label>
             <StudioDropDown
               options={pokemonAvailable}
-              value={creature.dbSymbol}
-              onChange={(value) => refreshUI((creature.dbSymbol = value as DbSymbol))}
+              value={dbSymbol}
+              onChange={(value) => {
+                setDbSymbol(value as DbSymbol);
+              }}
             />
           </InputWithTopLabelContainer>
           {creature.dbSymbol !== '__undef__' && (
             <InputWithTopLabelContainer>
               <Label htmlFor="form">{t('database_pokemon:form')}</Label>
               <SelectPokemonForm
-                dbSymbol={creature.dbSymbol}
-                form={creature.form}
-                onChange={(value) => refreshUI((creature.form = Number(value)))}
+                dbSymbol={dbSymbol}
+                form={form}
+                onChange={(value) => {
+                  setForm(Number(value));
+                }}
                 noLabel
               />
             </InputWithTopLabelContainer>
@@ -57,4 +78,5 @@ export const DexPokemonListEditEditor = ({ dex, creature }: DexPokemonListEditEd
       </InputContainer>
     </Editor>
   );
-};
+});
+DexPokemonListEditEditor.displayName = 'DexPokemonListEditEditor';

@@ -5,19 +5,20 @@ import { useTranslation } from 'react-i18next';
 import { CopyIdentifier } from '@components/Copy';
 import { useGetEntityNameUsingCSV } from '@utils/ReadingProjectText';
 import { StudioDex, StudioDexType } from '@modelEntities/dex';
+import { DexDialogsRef } from './editors/DexEditorOverlay';
 
 type DexFrameProps = {
   dex: StudioDex;
-  onClick: () => void;
+  dialogsRef: DexDialogsRef;
 };
 
 const getDexType = (dex: StudioDex): StudioDexType => (dex.dbSymbol === 'national' ? 'national' : 'regional');
 
-export const DexFrame = ({ dex, onClick }: DexFrameProps) => {
+export const DexFrame = ({ dex, dialogsRef }: DexFrameProps) => {
   const { t } = useTranslation('database_dex');
   const getDexName = useGetEntityNameUsingCSV();
   return (
-    <DataBlockContainer size="full" onClick={onClick}>
+    <DataBlockContainer size="full" onClick={() => dialogsRef?.current?.openDialog('frame')}>
       <DataGrid columns="minmax(min-content, 1024px)">
         <DataInfoContainer>
           <DataInfoContainerHeader>

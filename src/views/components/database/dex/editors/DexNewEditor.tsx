@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { forwardRef, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { EditorWithCollapse } from '@components/editor';
 
@@ -15,6 +15,7 @@ import { createDex } from '@utils/entityCreation';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { cloneEntity } from '@utils/cloneEntity';
 import { useSetProjectText } from '@utils/ReadingProjectText';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 
 const DexImportInfo = styled.div`
   ${({ theme }) => theme.fonts.normalRegular};
@@ -32,7 +33,7 @@ type DexNewEditorProps = {
   onClose: () => void;
 };
 
-export const DexNewEditor = ({ onClose }: DexNewEditorProps) => {
+export const DexNewEditor = forwardRef<EditorHandlingClose, DexNewEditorProps>(({ onClose }, ref) => {
   const { projectDataValues: allDex, setProjectDataValues: setDex } = useProjectDex();
   const { t } = useTranslation(['database_dex', 'database_moves']);
   const setText = useSetProjectText();
@@ -42,6 +43,8 @@ export const DexNewEditor = ({ onClose }: DexNewEditorProps) => {
   const [dbSymbolErrorType, setDbSymbolErrorType] = useState<'value' | 'duplicate' | undefined>(undefined);
   const [startIdErrorType, setStartIdErrorType] = useState<'value' | undefined>(undefined);
   const [selectedDexImport, setSelectedDexImport] = useState<string>('__undef__');
+
+  useEditorHandlingClose(ref);
 
   const onClickNew = () => {
     if (!dbSymbolRef.current || !startIdRef.current) return;
@@ -135,7 +138,7 @@ export const DexNewEditor = ({ onClose }: DexNewEditorProps) => {
             <DexImportInfo>{t('database_dex:import_info')}</DexImportInfo>
             <InputWithTopLabelContainer>
               <Label>{t('database_dex:import_list_dex')}</Label>
-              <SelectDex dbSymbol={selectedDexImport} onChange={(selected) => setSelectedDexImport(selected.value)} noLabel noneValue />
+              <SelectDex dbSymbol={selectedDexImport} onChange={(selected) => setSelectedDexImport(selected)} noLabel noneValue />
             </InputWithTopLabelContainer>
           </PaddedInputContainer>
         </InputGroupCollapse>
@@ -151,4 +154,6 @@ export const DexNewEditor = ({ onClose }: DexNewEditorProps) => {
       </InputContainer>
     </EditorWithCollapse>
   );
-};
+});
+
+DexNewEditor.displayName = 'DexNewEditor';

@@ -5,6 +5,10 @@ import { useTranslation } from 'react-i18next';
 
 import { DeleteButton } from '@components/buttons';
 import { DeletionContainer } from '@components/deletion/DeletionContainer';
+import { useProjectPokemon } from '@utils/useProjectData';
+import { DbSymbol } from '@modelEntities/dbSymbol';
+import { useDexPage } from '@utils/usePage';
+import { useUpdateDex } from './editors/useUpdateDex';
 
 const TitleContainer = styled.div`
   padding-top: 8px;
@@ -53,12 +57,23 @@ const CancelLink = styled.span`
 `;
 
 type DexResetNationalPopUpProps = {
-  onClickReset: () => void;
   onClose: () => void;
 };
 
-export const DexResetNationalPopUp = ({ onClickReset, onClose }: DexResetNationalPopUpProps) => {
+export const DexResetNationalPopUp = ({ onClose }: DexResetNationalPopUpProps) => {
   const { t } = useTranslation(['deletion', 'database_dex']);
+  const { projectDataValues: allPokemon } = useProjectPokemon();
+  const { dex } = useDexPage();
+  const updateDex = useUpdateDex(dex);
+
+  const onClickReset = () => {
+    dex.creatures = Object.entries(allPokemon)
+      .map(([dbSymbol, pokemonData]) => ({ dbSymbol: dbSymbol as DbSymbol, index: pokemonData.id }))
+      .sort((a, b) => a.index - b.index)
+      .map((data) => ({ dbSymbol: data.dbSymbol, form: 0 }));
+    updateDex(dex);
+    onClose();
+  };
 
   return (
     <DeletionContainer>

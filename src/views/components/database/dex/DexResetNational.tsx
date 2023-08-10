@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { DataBlockContainer } from '../dataBlocks';
+import { DexDialogsRef } from './editors/DexEditorOverlay';
 
 const DexResetNationalContainer = styled(DataBlockContainer)`
   h2 {
@@ -34,17 +35,17 @@ const ResetStyle = styled.span`
 `;
 
 type DexResetNationalProps = {
-  onClickReset: () => void;
+  dialogsRef: DexDialogsRef;
 };
 
-export const DexResetNational = ({ onClickReset }: DexResetNationalProps) => {
+export const DexResetNational = ({ dialogsRef }: DexResetNationalProps) => {
   const { t } = useTranslation('database_dex');
   return (
     <DexResetNationalContainer size="full" data-noactive>
       <h2>{t('reset_national_title')}</h2>
       <InfoResetContainer>
         <DexResetInfo>{t('reset_national_info')}</DexResetInfo>
-        <ResetStyle onClick={onClickReset}>{t('reset_national_action')}</ResetStyle>
+        <ResetStyle onClick={() => dialogsRef?.current?.openDialog('reset', true)}>{t('reset_national_action')}</ResetStyle>
       </InfoResetContainer>
     </DexResetNationalContainer>
   );

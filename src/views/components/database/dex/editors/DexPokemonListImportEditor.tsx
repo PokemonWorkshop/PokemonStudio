@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { forwardRef, useState } from 'react';
 import styled from 'styled-components';
 import { Editor } from '@components/editor';
 
@@ -9,7 +9,8 @@ import { useProjectDex } from '@utils/useProjectData';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { SelectDex } from '@components/selects';
 import { cloneEntity } from '@utils/cloneEntity';
-import { StudioDex } from '@modelEntities/dex';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { useDexPage } from '@utils/usePage';
 
 const DexImportInfo = styled.div`
   ${({ theme }) => theme.fonts.normalRegular};
@@ -24,23 +25,25 @@ const ButtonContainer = styled.div`
 `;
 
 type DexPokemonListImportEditorProps = {
-  dex: StudioDex;
-  onClose: () => void;
+  closeDialog: () => void;
 };
 
-export const DexPokemonListImportEditor = ({ dex, onClose }: DexPokemonListImportEditorProps) => {
+export const DexPokemonListImportEditor = forwardRef<EditorHandlingClose, DexPokemonListImportEditorProps>(({ closeDialog }, ref) => {
   const { projectDataValues: allDex, setProjectDataValues: setDex } = useProjectDex();
   const { t } = useTranslation('database_dex');
+  const { dex } = useDexPage();
   const firstDbSymbol = Object.entries(allDex)
     .map(([value, dexData]) => ({ value, index: dexData.id }))
     .filter((d) => d.value !== dex.dbSymbol)
     .sort((a, b) => a.index - b.index)[0].value;
   const [selectedDexImport, setSelectedDexImport] = useState<string>(firstDbSymbol);
 
+  useEditorHandlingClose(ref);
+
   const onClickImport = () => {
     dex.creatures = cloneEntity(allDex[selectedDexImport].creatures);
     setDex({ [dex.dbSymbol]: dex });
-    onClose();
+    closeDialog();
   };
 
   return (
@@ -50,14 +53,15 @@ export const DexPokemonListImportEditor = ({ dex, onClose }: DexPokemonListImpor
           <DexImportInfo>{t('import_info')}</DexImportInfo>
           <InputWithTopLabelContainer>
             <Label>{t('import_list_dex')}</Label>
-            <SelectDex dbSymbol={selectedDexImport} onChange={(selected) => setSelectedDexImport(selected.value)} noLabel rejected={[dex.dbSymbol]} />
+            <SelectDex dbSymbol={selectedDexImport} onChange={(selected) => setSelectedDexImport(selected)} noLabel />
           </InputWithTopLabelContainer>
         </InputContainer>
         <ButtonContainer>
           <PrimaryButton onClick={onClickImport}>{t('import_the_list')}</PrimaryButton>
-          <DarkButton onClick={onClose}>{t('cancel')}</DarkButton>
+          <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
     </Editor>
   );
-};
+});
+DexPokemonListImportEditor.displayName = 'DexPokemonListImportEditor';

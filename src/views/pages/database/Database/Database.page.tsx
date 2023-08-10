@@ -17,7 +17,7 @@ import { QuestPage } from '../Quest.page';
 import { TrainerPage } from '../Trainer.page';
 import { GroupPage } from '../Group.page';
 import { ZonePage } from '../Zone.page';
-import { DexPage } from '../Dex.page';
+import { DexPage } from '../Dex/Dex.page';
 import { PokemonResourcesPage } from '../Pokemon.Resources.page';
 
 const DatabasePageStyle = styled.div`
