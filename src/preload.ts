@@ -27,6 +27,8 @@ import type { ReadProjectTextInput } from './backendTasks/readProjectTexts';
 import type { ReadProjectMetadataInput, ReadProjectMetadataOutput } from './backendTasks/readProjectMetadata';
 import type { WriteProjectMetadataInput } from './backendTasks/writeProjectMetadata';
 import type { GetStudioVersionOutput } from './backendTasks/getStudioVersion';
+import type { ConvertTMXInput } from './backendTasks/convertTiledMapToTileMetadata';
+import type { PartialStudioMap } from 'ts-tiled-converter';
 
 contextBridge.exposeInMainWorld('api', {
   clearCache: () => webFrame.clearCache(),
@@ -114,6 +116,7 @@ contextBridge.exposeInMainWorld('api', {
   saveTextInfos: defineBackendTask(ipcRenderer, 'save-text-infos'),
   readCsvFile: defineBackendTask(ipcRenderer, 'read-csv-file'),
   checkMapsModified: defineBackendTask(ipcRenderer, 'check-maps-modified'),
+  convertTiledMapToTileMetadata: defineBackendTask(ipcRenderer, 'convertTiledMapToTileMetadata'),
 });
 
 type AnyObj = Record<string, never>;
@@ -184,6 +187,7 @@ declare global {
       saveTextInfos: BackendTaskWithGenericErrorAndNoProgress<SaveTextInfosInput, AnyObj>;
       readCsvFile: BackendTaskWithGenericError<ReadCsvFileInput, ProjectText, GenericBackendProgress>;
       checkMapsModified: BackendTaskWithGenericErrorAndNoProgress<CheckMapModifiedInput, CheckMapModifiedOutput>;
+      convertTiledMapToTileMetadata: BackendTaskWithGenericErrorAndNoProgress<ConvertTMXInput, PartialStudioMap>;
     };
   }
 }
