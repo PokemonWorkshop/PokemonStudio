@@ -4,7 +4,16 @@ import { updateProjectEditDate, updateProjectStudio as updateProjectStudioLocalS
 import { SavingConfigMap, SavingMap, SavingTextMap } from './SavingUtils';
 
 type ProjectSaveStateObject = {
-  state: 'done' | 'save_data' | 'save_configs' | 'save_texts' | 'save_text_infos' | 'update_studio_file' | 'update_project_list' | 'reset_saving';
+  state:
+    | 'done'
+    | 'save_data'
+    | 'save_configs'
+    | 'save_texts'
+    | 'save_text_infos'
+    | 'save_map_info'
+    | 'update_studio_file'
+    | 'update_project_list'
+    | 'reset_saving';
 };
 
 type ProjectSaveFailureCallback = (error: { errorMessage: string }) => void;
@@ -26,7 +35,8 @@ export const useProjectSave = () => {
     state.savingConfig.map.size > 0 ||
     state.savingText.map.size > 0 ||
     state.savingProjectStudio ||
-    state.savingTextInfos;
+    state.savingTextInfos ||
+    state.savingMapInfo;
 
   useEffect(() => {
     switch (stateSave.state) {
@@ -62,10 +72,20 @@ export const useProjectSave = () => {
         );
       }
       case 'save_text_infos':
-        if (!state.savingTextInfos) return setStateSave({ state: 'update_studio_file' });
+        if (!state.savingTextInfos) return setStateSave({ state: 'save_map_info' });
         return window.api.saveTextInfos(
           { projectPath: state.projectPath!, textInfos: JSON.stringify(state.textInfos, null, 2) },
-          () => setStateSave({ state: 'update_studio_file' }),
+          () => setStateSave({ state: 'save_map_info' }),
+          ({ errorMessage }) => {
+            setStateSave({ state: 'done' });
+            fail(callbacks, errorMessage);
+          }
+        );
+      case 'save_map_info':
+        if (!state.savingMapInfo) return setStateSave({ state: 'update_project_list' });
+        return window.api.saveMapInfo(
+          { projectPath: state.projectPath!, mapInfo: JSON.stringify(state.mapInfo, null, 2) },
+          () => setStateSave({ state: 'update_project_list' }),
           ({ errorMessage }) => {
             setStateSave({ state: 'done' });
             fail(callbacks, errorMessage);
@@ -96,13 +116,14 @@ export const useProjectSave = () => {
           savingProjectStudio: false,
           savingLanguage: [],
           savingTextInfos: false,
+          savingMapInfo: false,
           textVersion: 0,
         });
         setStateSave({ state: 'done' });
         callbacks?.onSuccess();
         return;
     }
-  }, [stateSave, state.textVersion, state, callbacks]);
+  }, [stateSave, state.textVersion, state, state.textInfos, state.mapInfo, callbacks]);
 
   return {
     isDataToSave,

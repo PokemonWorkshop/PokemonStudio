@@ -153,6 +153,7 @@ export const useProjectLoadProcessor = () => {
                   projectText,
                   textInfos: state.projectData.textInfos,
                   textVersion: 0,
+                  mapInfo: state.projectData.mapInfo,
                 },
               });
             }
@@ -220,6 +221,7 @@ export const useProjectLoadProcessor = () => {
             savingProjectStudio: false,
             savingLanguage: [],
             savingTextInfos: false,
+            savingMapInfo: false,
             mapsModified: state.mapsModified,
           };
           setGlobalState(globalState);
