@@ -29,6 +29,7 @@ import type { WriteProjectMetadataInput } from './backendTasks/writeProjectMetad
 import type { GetStudioVersionOutput } from './backendTasks/getStudioVersion';
 import type { ConvertTMXInput } from './backendTasks/convertTiledMapToTileMetadata';
 import type { PartialStudioMap } from 'ts-tiled-converter';
+import type { SaveMapInfoInput } from './backendTasks/saveMapInfo';
 
 contextBridge.exposeInMainWorld('api', {
   clearCache: () => webFrame.clearCache(),
@@ -117,6 +118,7 @@ contextBridge.exposeInMainWorld('api', {
   readCsvFile: defineBackendTask(ipcRenderer, 'read-csv-file'),
   checkMapsModified: defineBackendTask(ipcRenderer, 'check-maps-modified'),
   convertTiledMapToTileMetadata: defineBackendTask(ipcRenderer, 'convertTiledMapToTileMetadata'),
+  saveMapInfo: defineBackendTask(ipcRenderer, 'save-map-info'),
 });
 
 type AnyObj = Record<string, never>;
@@ -188,6 +190,7 @@ declare global {
       readCsvFile: BackendTaskWithGenericError<ReadCsvFileInput, ProjectText, GenericBackendProgress>;
       checkMapsModified: BackendTaskWithGenericErrorAndNoProgress<CheckMapModifiedInput, CheckMapModifiedOutput>;
       convertTiledMapToTileMetadata: BackendTaskWithGenericErrorAndNoProgress<ConvertTMXInput, PartialStudioMap>;
+      saveMapInfo: BackendTaskWithGenericErrorAndNoProgress<SaveMapInfoInput, AnyObj>;
     };
   }
 }

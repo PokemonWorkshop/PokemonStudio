@@ -11,7 +11,7 @@ const WorldNavigationStyle = styled.div`
   flex-direction: column;
   box-sizing: border-box;
   gap: 2px;
-  min-width: 238px;
+  min-width: 262px;
 `;
 
 const WorldBuildingNavigationStyle = styled(NavigationDatabaseStyle)`

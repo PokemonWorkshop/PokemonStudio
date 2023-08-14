@@ -5,8 +5,8 @@
   "delete": "Supprimer cette carte",
   "deleting": "Suppression",
   "no_option": "Aucune carte trouvée",
-  "deletion_of": "Suppression de {{map}}",
-  "deletion_message": "Vous êtes sur le point de supprimer définitivement {{map}}.",
+  "deletion_of": "Suppression de la carte",
+  "deletion_message": "Vous êtes sur le point de supprimer définitivement la carte «\u00a0{{map}}\u00a0». Les cartes rattachées à la carte «\u00a0{{map}}\u00a0» seront également supprimées.",
   "map_deleted": "Carte supprimée",
   "data": "Données",
   "musics": "Musiques",
@@ -31,5 +31,12 @@
   "update_maps_button": "Mettre à jour les cartes modifiées",
   "checking_maps": "Vérifications des cartes",
   "checking_maps_message": "Des cartes modifiées ont été détectées.",
-  "error_no_project_load": "Impossible de vérifier si les cartes ont été modifiées si le projet n'a pas été chargé."
+  "error_no_project_load": "Impossible de vérifier si les cartes ont été modifiées si le projet n'a pas été chargé.",
+  "map_research": "Rechercher une carte...",
+  "new_folder": "Nouveau dossier",
+  "duplicate": "Dupliquer",
+  "context_menu_delete": "Supprimer",
+  "map_copy_name": "{{name}} (Copie)",
+  "deletion_folder_of": "Suppression du dossier",
+  "deletion_folder_message": "Vous êtes sur le point de supprimer définitivement le dossier «\u00a0{{folder}}\u00a0» et toutes les cartes qu'il contient."
 }

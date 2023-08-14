@@ -5,8 +5,8 @@
   "delete": "Delete this map",
   "deleting": "Deleting",
   "no_option": "No map found",
-  "deletion_of": "Deletion of {{map}}",
-  "deletion_message": "You are about to permanently delete {{map}}.",
+  "deletion_of": "Deletion of the map",
+  "deletion_message": "You are about to permanently delete the map «\u00a0{{map}}\u00a0». Maps linked to the map «\u00a0{{map}}\u00a0» will also be deleted.",
   "map_deleted": "Map deleted",
   "data": "Data",
   "musics": "Musics",
@@ -31,5 +31,12 @@
   "update_maps_button": "Update modified maps",
   "checking_maps": "Checking maps",
   "checking_maps_message": "Modified maps have been detected.",
-  "error_no_project_load": "Impossible to check if the maps have been modified if the project has not been loaded."
+  "error_no_project_load": "Impossible to check if the maps have been modified if the project has not been loaded.",
+  "map_research": "Find a map...",
+  "new_folder": "New folder",
+  "duplicate": "Duplicate",
+  "context_menu_delete": "Delete",
+  "map_copy_name": "{{name}} (Copy)",
+  "deletion_folder_of": "Deleting the folder",
+  "deletion_folder_message": "You are about to permanently delete the folder «\u00a0{{folder}}\u00a0» and all the maps it contains."
 }

@@ -14,6 +14,7 @@ import { updateSelectOptionsTextSource } from './useSelectOptions';
 import { TEXT_INFO_DESCRIPTION_TEXT_ID, TEXT_INFO_NAME_TEXT_ID } from '@modelEntities/textInfo';
 import { SavingTextMap } from './SavingUtils';
 import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID } from '@modelEntities/map';
+import { MAP_INFO_FOLDER_NAME_TEXT_ID } from '@modelEntities/mapInfo';
 
 type KeyProjectText = keyof ProjectText;
 
@@ -202,6 +203,7 @@ const ENTITY_TO_NAME_TEXT = {
   Group: GROUP_NAME_TEXT_ID,
   TextInfo: TEXT_INFO_NAME_TEXT_ID,
   Map: MAP_NAME_TEXT_ID,
+  MapInfoFolder: MAP_INFO_FOLDER_NAME_TEXT_ID,
 };
 
 // TODO: All entities must accept undefined! (due to getting entity from state unsafely) => returns empty string and let UI manage it
@@ -209,14 +211,15 @@ const ENTITY_TO_NAME_TEXT = {
 export const useGetEntityNameText = () => {
   const getEntityText = useGetProjectText();
 
-  return (entity: { klass: keyof Omit<typeof ENTITY_TO_NAME_TEXT, 'Ability' | 'Type' | 'TextInfo'>; id: number }) =>
+  return (entity: { klass: keyof Omit<typeof ENTITY_TO_NAME_TEXT, 'Ability' | 'Type' | 'TextInfo' | 'MapInfoFolder'>; id: number }) =>
     getEntityText(ENTITY_TO_NAME_TEXT[entity.klass], entity.id);
 };
 
 export const useGetEntityNameTextUsingTextId = () => {
   const getEntityText = useGetProjectText();
 
-  return (entity: { klass: 'Ability' | 'Type' | 'TextInfo'; textId: number }) => getEntityText(ENTITY_TO_NAME_TEXT[entity.klass], entity.textId);
+  return (entity: { klass: 'Ability' | 'Type' | 'TextInfo' | 'MapInfoFolder'; textId: number }) =>
+    getEntityText(ENTITY_TO_NAME_TEXT[entity.klass], entity.textId);
 };
 
 // Mapping between pocket id and pocket name id
@@ -290,7 +293,7 @@ export const useGetEntityDescriptionTextUsingTextId = () => {
 };
 
 export const getEntityNameText = (
-  entity: { klass: keyof Omit<typeof ENTITY_TO_NAME_TEXT, 'Ability' | 'Type' | 'TextInfo'>; id: number },
+  entity: { klass: keyof Omit<typeof ENTITY_TO_NAME_TEXT, 'Ability' | 'Type' | 'TextInfo' | 'MapInfoFolder'>; id: number },
   { projectText: texts, projectConfig }: Pick<State, 'projectText' | 'projectConfig'>
 ) => {
   return getText(
@@ -302,7 +305,7 @@ export const getEntityNameText = (
 };
 
 export const getEntityNameTextUsingTextId = (
-  entity: { klass: 'Ability' | 'Type' | 'TextInfo'; textId: number },
+  entity: { klass: 'Ability' | 'Type' | 'TextInfo' | 'MapInfoFolder'; textId: number },
   { projectText: texts, projectConfig }: Pick<State, 'projectText' | 'projectConfig'>
 ) => {
   return getText(

@@ -16,7 +16,7 @@ import styled from 'styled-components';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID } from '@modelEntities/map';
-import { createMap } from '@utils/entityCreation';
+import { createMap, createMapInfo } from '@utils/entityCreation';
 import { useSetProjectText } from '@utils/ReadingProjectText';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
@@ -24,6 +24,10 @@ import { DropInput } from '@components/inputs/DropInput';
 import { basename } from '@utils/path';
 import { useNavigate } from 'react-router-dom';
 import { AUDIO_EXT } from '@components/inputs/AudioInput';
+import { cloneEntity } from '@utils/cloneEntity';
+import { useMapInfo } from '@utils/useMapInfo';
+import { StudioMapInfo, StudioMapInfoMap } from '@modelEntities/mapInfo';
+import { mapInfoNewMapWithParent } from '@utils/MapInfoUtils';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -33,10 +37,12 @@ const ButtonContainer = styled.div`
 
 type MapNewEditorProps = {
   closeDialog: () => void;
+  mapInfoParent?: StudioMapInfo;
 };
 
-export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>(({ closeDialog }, ref) => {
+export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>(({ closeDialog, mapInfoParent }, ref) => {
   const { projectDataValues: maps, setProjectDataValues: setMap } = useProjectMaps();
+  const { mapInfoValues: mapInfoValues, setMapInfoValues: setMapInfo } = useMapInfo();
   const { t } = useTranslation(['database_moves', 'database_maps']);
   const navigate = useNavigate();
   const setText = useSetProjectText();
@@ -54,6 +60,15 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
 
     const newMap = createMap(maps, stepsAverage, tiledFilename, bgm, bgs);
     const dbSymbol = newMap.dbSymbol;
+    const newMapInfoMap = createMapInfo(mapInfoValues, { klass: 'MapInfoMap', mapDbSymbol: dbSymbol }) as StudioMapInfoMap;
+    if (mapInfoParent) {
+      const mapInfoCloned = mapInfoNewMapWithParent(mapInfoValues, mapInfoParent.id, newMapInfoMap);
+      setMapInfo(mapInfoCloned);
+    } else {
+      const mapInfoCloned = cloneEntity(mapInfoValues);
+      mapInfoCloned.push(newMapInfoMap);
+      setMapInfo(mapInfoCloned);
+    }
     setText(MAP_NAME_TEXT_ID, newMap.id, name);
     setText(MAP_DESCRIPTION_TEXT_ID, newMap.id, descriptionRef.current.value);
     setMap({ [dbSymbol]: newMap }, { map: dbSymbol });

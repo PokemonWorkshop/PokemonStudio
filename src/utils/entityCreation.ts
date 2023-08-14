@@ -26,6 +26,8 @@ import { findFirstAvailableId, findFirstAvailableTextId } from './ModelUtils';
 import { padStr } from './PadStr';
 import { StudioTextInfo } from '@modelEntities/textInfo';
 import { StudioMap } from '@modelEntities/map';
+import { StudioMapInfo } from '@modelEntities/mapInfo';
+import { mapInfoFindFirstAvailableId, mapInfoFindFirstAvailableTextId } from './MapInfoUtils';
 
 /**
  * Create a new ability with default values
@@ -236,7 +238,7 @@ export const createMove = (allMoves: ProjectData['moves'], dbSymbol: DbSymbol, t
     isRecharge: false,
     isSnatchable: false,
     isSoundAttack: false,
-    isSlicingAttack : false,
+    isSlicingAttack: false,
     isUnfreeze: false,
     isWind: false,
     power: 0,
@@ -474,4 +476,38 @@ export const createMap = (allMaps: ProjectData['maps'], stepsAverage: number, ti
     sha1: '',
     tiledFilename,
   };
+};
+
+export const duplicateMap = (allMaps: ProjectData['maps'], mapToDuplicate: StudioMap): StudioMap => {
+  const id = findFirstAvailableId(allMaps, 1);
+  const dbSymbol = `map${padStr(id, 3)}` as DbSymbol;
+  return {
+    ...mapToDuplicate,
+    id,
+    dbSymbol,
+  };
+};
+
+export const createMapInfo = (
+  mapInfo: StudioMapInfo[],
+  data: { klass: 'MapInfoMap'; mapDbSymbol: DbSymbol } | { klass: 'MapInfoFolder' }
+): StudioMapInfo => {
+  const id = mapInfoFindFirstAvailableId(mapInfo);
+  if (data.klass === 'MapInfoMap') {
+    return {
+      klass: 'MapInfoMap',
+      id,
+      mapDbSymbol: data.mapDbSymbol,
+      collapsed: true,
+      children: [],
+    };
+  } else {
+    return {
+      klass: 'MapInfoFolder',
+      id,
+      textId: mapInfoFindFirstAvailableTextId(mapInfo),
+      collapsed: true,
+      children: [],
+    };
+  }
 };

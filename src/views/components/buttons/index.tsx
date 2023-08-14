@@ -12,3 +12,4 @@ export { PlayButton } from './PlayButton';
 export { FolderButtonOnlyIcon } from './FolderButtonOnlyIcon';
 export { ClearButtonWithIcon } from './ClearButtonWithIcon';
 export { WorldButton } from './WorldButton';
+export { NewFolderButtonOnlyIcon } from './NewFolderButtonOnlyIcon';
