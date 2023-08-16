@@ -28,7 +28,7 @@ export const DataBlockWithActionTooltip = ({ title, size, children, disabled, to
   <DataBoxWithActionStyle size={size} data-noactive data-disabled={disabled}>
     <h2>{title}</h2>
     <ToolTipContainerForButton>
-      <ToolTip top="100%">{tooltipMessage}</ToolTip>
+      {tooltipMessage && <ToolTip top="100%">{tooltipMessage}</ToolTip>}
       {children}
     </ToolTipContainerForButton>
   </DataBoxWithActionStyle>

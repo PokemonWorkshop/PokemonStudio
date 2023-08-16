@@ -58,7 +58,7 @@ export const Input = styled.input<InputProps>`
     :hover::after,
     :active::after,
     :focus::after {
-      top: 8.5px;
+      top: 9.5px;
     }
   }
 

@@ -1,8 +1,9 @@
 import { StudioMove } from '@modelEntities/move';
-import { getEntityNameTextUsingTextId, getEntityNameText } from './ReadingProjectText';
-import { useProjectDataReadonly } from './useProjectData';
+import { getEntityNameTextUsingTextId, getEntityNameText, useGetEntityNameTextUsingTextId } from './ReadingProjectText';
+import { useProjectDataReadonly, useProjectTypes } from './useProjectData';
 import { useTextInfosReadonly } from './useTextInfos';
 import { StudioDex } from '@modelEntities/dex';
+import { StudioType } from '@modelEntities/type';
 
 export const useAbilityPage = () => {
   const { projectDataValues: abilities, selectedDataIdentifier: dbSymbol, state } = useProjectDataReadonly('abilities', 'ability');
@@ -73,5 +74,18 @@ export const useDexPage = () => {
     allPokemon,
     cannotDelete: cannot,
     cannotImport: cannot,
+  };
+};
+
+export const useTypePage = () => {
+  const { projectDataValues: types, selectedDataIdentifier: typeSelected } = useProjectTypes();
+  const getTypeName = useGetEntityNameTextUsingTextId();
+  const currentType: StudioType = types[typeSelected] || types[typeSelected];
+
+  return {
+    types,
+    typeDbSymbol: typeSelected,
+    currentTypeName: getTypeName(currentType),
+    currentType,
   };
 };

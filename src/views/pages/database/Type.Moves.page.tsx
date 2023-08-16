@@ -1,61 +1,40 @@
-import React, { useMemo } from 'react';
-import { useGlobalState } from '@src/GlobalStateProvider';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
-import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { useNavigate } from 'react-router-dom';
 import { DataBlockWithTitleNoActive, DataBlockWrapper } from '@components/database/dataBlocks';
 import { TypeControlBar } from '@components/database/type/TypeControlBar';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { SubPageTitle } from '@components/database/SubPageTitle';
 import { TypeMovesTable } from '@components/database/type/TypeMovesTable';
+import { useTypePage } from '@utils/usePage';
 import { useProjectTypes } from '@utils/useProjectData';
-import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
-import { useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
-
-type TypeMovesPageParams = {
-  typeDbSymbol: string;
-};
 
 export const TypeMovesPage = () => {
   const navigate = useNavigate();
-  const [state] = useGlobalState();
-  const getTypeName = useGetEntityNameTextUsingTextId();
-  const { setSelectedDataIdentifier: setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol } = useProjectTypes();
+  const { selectedDataIdentifier } = useProjectTypes();
+  const { currentTypeName, currentType: type, types } = useTypePage();
   const { t } = useTranslation('database_types');
-  const shortcutMap = useMemo<StudioShortcutActions>(() => {
-    return {
-      db_previous: () => {
-        const nextDbSymbol = getPreviousDbSymbol('name');
-        setSelectedDataIdentifier({ type: nextDbSymbol });
-        navigate(`/database/types/${nextDbSymbol}/moves`);
-      },
-      db_next: () => {
-        const previousDbSymbol = getNextDbSymbol('name');
-        setSelectedDataIdentifier({ type: previousDbSymbol });
-        navigate(`/database/types/${previousDbSymbol}/moves`);
-      },
-    };
-  }, [getPreviousDbSymbol, setSelectedDataIdentifier, history, getNextDbSymbol]);
-  useShortcut(shortcutMap);
-  const { typeDbSymbol } = useParams<TypeMovesPageParams>();
-  const currentType = state.projectData.types[typeDbSymbol!];
-
-  const onChange: SelectChangeEvent = (selected) => {
-    setSelectedDataIdentifier({ type: selected.value });
-    navigate(`/database/types/${selected.value}/moves`);
-  };
+  const [currentType, setCurrentType] = useState(type);
 
   const onClickedBack = () => navigate(`/database/types/${currentType.dbSymbol}`);
 
+  useEffect(() => {
+    if (!currentType) return;
+
+    if (selectedDataIdentifier !== currentType.dbSymbol) {
+      setCurrentType(types[selectedDataIdentifier]);
+    }
+  }, [currentType, selectedDataIdentifier]);
+
   return (
     <DatabasePageStyle>
-      <TypeControlBar onChange={onChange} type={currentType} onClickTypeTable={() => navigate('/database/types/table')} />
+      <TypeControlBar onRedirect="moves" />
       <PageContainerStyle>
         <PageDataConstrainerStyle>
           <DataBlockWrapper>
-            <SubPageTitle title={t('move_with_type', { type: getTypeName(currentType) })} onClickedBack={onClickedBack} />
-            <DataBlockWithTitleNoActive title={t('move_with_type', { type: getTypeName(currentType) })} size="full">
+            <SubPageTitle title={t('move_with_type', { type: currentTypeName })} onClickedBack={onClickedBack} />
+            <DataBlockWithTitleNoActive title={t('move_with_type', { type: currentTypeName })} size="full">
               <TypeMovesTable type={currentType} />
             </DataBlockWithTitleNoActive>
           </DataBlockWrapper>
