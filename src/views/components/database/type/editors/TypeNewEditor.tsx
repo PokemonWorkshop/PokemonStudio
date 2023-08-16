@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { forwardRef, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Editor } from '@components/editor';
 import {
@@ -22,6 +22,7 @@ import { DbSymbol } from '@modelEntities/dbSymbol';
 import { createType } from '@utils/entityCreation';
 import { useSetProjectText } from '@utils/ReadingProjectText';
 import { TYPE_NAME_TEXT_ID } from '@modelEntities/type';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -32,10 +33,9 @@ const ButtonContainer = styled.div`
 
 type TypeNewEditorProps = {
   from: 'type' | 'typeTable';
-  onClose: () => void;
+  closeDialog: () => void;
 };
-
-export const TypeNewEditor = ({ from, onClose }: TypeNewEditorProps) => {
+export const TypeNewEditor = forwardRef<EditorHandlingClose, TypeNewEditorProps>(({ from, closeDialog }, ref) => {
   const { projectDataValues: types, setProjectDataValues: setType } = useProjectTypes();
   const { t } = useTranslation(['database_types', 'database_moves']);
   const setText = useSetProjectText();
@@ -45,6 +45,8 @@ export const TypeNewEditor = ({ from, onClose }: TypeNewEditorProps) => {
   const [dbSymbolErrorType, setDbSymbolErrorType] = useState<'value' | 'duplicate' | undefined>(undefined);
   const colorRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+
+  useEditorHandlingClose(ref);
 
   const onClickNew = () => {
     if (!dbSymbolRef.current || !colorRef.current) return;
@@ -58,7 +60,7 @@ export const TypeNewEditor = ({ from, onClose }: TypeNewEditorProps) => {
     if (from === 'type') navigate(`/database/types/${dbSymbol}`);
     else navigate(`/database/types/table`);
 
-    onClose();
+    closeDialog();
   };
 
   const onChangeDbSymbol = (value: string) => {
@@ -127,9 +129,10 @@ export const TypeNewEditor = ({ from, onClose }: TypeNewEditorProps) => {
               {t('database_types:create_type')}
             </PrimaryButton>
           </ToolTipContainer>
-          <DarkButton onClick={onClose}>{t('database_moves:cancel')}</DarkButton>
+          <DarkButton onClick={closeDialog}>{t('database_moves:cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
     </Editor>
   );
-};
+});
+TypeNewEditor.displayName = 'TypeNewEditor';

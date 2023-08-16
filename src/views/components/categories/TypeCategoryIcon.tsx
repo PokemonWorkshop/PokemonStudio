@@ -1,6 +1,6 @@
 import React from 'react';
 import { hexToRgba } from '@utils/ColorUtils';
-import { useProjectTypes } from '@utils/useProjectData';
+import { useTypePage } from '@utils/usePage';
 import styled from 'styled-components';
 import { CategoryIcon } from './CategoryIcon';
 
@@ -175,11 +175,12 @@ const renderSVGIcon = (type: string) => {
 };
 
 export const TypeCategoryIcon = ({ type, className }: TypeCategoryIconProps) => {
-  const { projectDataValues: types } = useProjectTypes();
+  const { types } = useTypePage();
   const currentType = types[type];
+
   return (
     <TypeCategoryIconStyle type={currentType ? currentType.color || currentType.dbSymbol : 'normal'} className={className}>
-      {renderSVGIcon(type)}
+      {renderSVGIcon(currentType.dbSymbol)}
     </TypeCategoryIconStyle>
   );
 };

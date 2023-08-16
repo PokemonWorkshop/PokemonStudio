@@ -6,11 +6,7 @@ import { TypeCategory } from '@components/categories';
 import { TypeList } from './TypeList';
 import { useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
 import { StudioType } from '@modelEntities/type';
-
-type TypeResistanceDataProps = {
-  type: StudioType;
-  types: StudioType[];
-};
+import { useTypePage } from '@utils/usePage';
 
 type RenderResistanceProps = {
   t: TFunction<'database_types'>;
@@ -48,7 +44,9 @@ const getResistances = (allTypes: StudioType[], type: StudioType) => {
   };
 };
 
-export const TypeResistanceData = ({ type, types }: TypeResistanceDataProps) => {
+export const TypeResistanceData = () => {
+  const { types: allTypes, currentType: type } = useTypePage();
+  const types: StudioType[] = Object.values(allTypes);
   const { t } = useTranslation('database_types');
   const efficiencyData = getResistances(types, type);
 

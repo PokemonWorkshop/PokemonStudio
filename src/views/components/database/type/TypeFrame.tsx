@@ -9,24 +9,24 @@ import {
   DataInfoContainerHeaderBadges,
   DataInfoContainerHeaderTitle,
 } from '../dataBlocks';
-import { TypeFrameProps } from './TypeDataPropsInterface';
 import { CopyIdentifier } from '@components/Copy';
-import { useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
+import { useTypePage } from '@utils/usePage';
+import { TypeDialogsRef } from './editors/TypeEditorOverlay';
 
-export const TypeFrame = ({ type, onClick }: TypeFrameProps) => {
-  const getTypeName = useGetEntityNameTextUsingTextId();
+export const TypeFrame = ({ dialogsRef }: { dialogsRef: TypeDialogsRef }) => {
+  const { currentTypeName, typeDbSymbol } = useTypePage();
   return (
-    <DataBlockContainer size="full" onClick={onClick}>
+    <DataBlockContainer size="full" onClick={() => dialogsRef?.current?.openDialog('frame')}>
       <DataGrid columns="minmax(min-content, 692px) auto">
         <DataInfoContainer>
           <DataInfoContainerHeader>
             <DataInfoContainerHeaderTitle>
-              <h1>{getTypeName(type)}</h1>
-              <CopyIdentifier dataToCopy={type.dbSymbol} />
+              <h1>{currentTypeName}</h1>
+              <CopyIdentifier dataToCopy={typeDbSymbol} />
             </DataInfoContainerHeaderTitle>
             <DataInfoContainerHeaderBadges>
-              <TypeCategory type={type.dbSymbol}>{getTypeName(type)}</TypeCategory>
-              <TypeCategoryIcon type={type.dbSymbol} />
+              <TypeCategory type={typeDbSymbol}>{currentTypeName}</TypeCategory>
+              <TypeCategoryIcon type={typeDbSymbol}></TypeCategoryIcon>
             </DataInfoContainerHeaderBadges>
           </DataInfoContainerHeader>
         </DataInfoContainer>

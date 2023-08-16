@@ -4,13 +4,9 @@ import { DataBlockWithTitleNoActive, DataGrid } from '../dataBlocks';
 import { DataFieldsetField, DataFieldsetFieldWithChild } from '../dataBlocks/DataFieldsetField';
 import { TypeCategory } from '@components/categories';
 import { TypeList } from './TypeList';
-import { useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
 import { getEfficiencies, StudioType } from '@modelEntities/type';
-
-type TypeEfficiencyDataProps = {
-  type: StudioType;
-  types: StudioType[];
-};
+import { useTypePage } from '@utils/usePage';
+import { useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
 
 type RenderEfficienceProps = {
   t: TFunction<'database_types'>;
@@ -37,7 +33,9 @@ const RenderEfficience = ({ t, efficience, types }: RenderEfficienceProps) => {
   );
 };
 
-export const TypeEfficiencyData = ({ type, types }: TypeEfficiencyDataProps) => {
+export const TypeEfficiencyData = () => {
+  const { types: allTypes, currentType: type } = useTypePage();
+  const types: StudioType[] = Object.values(allTypes);
   const { t } = useTranslation('database_types');
   const efficiencyData = getEfficiencies(types, type);
 

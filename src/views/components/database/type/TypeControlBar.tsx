@@ -1,30 +1,64 @@
 import { SecondaryButtonWithPlusIcon, SecondaryButton } from '@components/buttons';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ControlBar, ControlBarLabelContainer } from '@components/ControlBar';
-import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { SelectType } from '@components/selects';
-import { StudioType } from '@modelEntities/type';
 import { useSetCurrentDatabasePath } from '@utils/useSetCurrentDatabasePage';
+import { useProjectTypes } from '@utils/useProjectData';
+import { useNavigate } from 'react-router-dom';
+import { TypeDialogsRef } from './editors/TypeEditorOverlay';
+import { useTypePage } from '@utils/usePage';
+import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 
 type TypeControlBarProps = {
-  onChange: SelectChangeEvent;
-  onClickNewType?: () => void;
-  onClickTypeTable?: () => void;
-  type: StudioType;
+  dialogsRef?: TypeDialogsRef;
+  onRedirect?: 'pokemon' | 'table' | 'moves';
 };
 
-export const TypeControlBar = ({ onChange, onClickNewType, type, onClickTypeTable }: TypeControlBarProps) => {
+export const TypeControlBar = ({ dialogsRef, onRedirect }: TypeControlBarProps) => {
+  const { typeDbSymbol } = useTypePage();
   const { t } = useTranslation('database_types');
+  const navigate = useNavigate();
+  const { setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol } = useProjectTypes();
   useSetCurrentDatabasePath();
+
+  const shortcutMap = useMemo<StudioShortcutActions>(() => {
+    const isShortcutEnabled = () => dialogsRef?.current?.currentDialog === undefined;
+
+    return {
+      db_previous: () => {
+        const previousDbSymbol = getPreviousDbSymbol('name');
+        if (!isShortcutEnabled()) return;
+        setSelectedDataIdentifier({ type: previousDbSymbol });
+      },
+      db_next: () => {
+        const nextDbSymbol = getNextDbSymbol('name');
+        if (!isShortcutEnabled()) return;
+        setSelectedDataIdentifier({ type: nextDbSymbol });
+      },
+      db_new: () => isShortcutEnabled() && dialogsRef?.current?.openDialog(onRedirect === 'table' ? 'newTable' : 'newType'),
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getPreviousDbSymbol, setSelectedDataIdentifier, getNextDbSymbol]);
+  useShortcut(shortcutMap);
+
+  const onClickNew =
+    dialogsRef && (onRedirect === 'table' || !onRedirect)
+      ? () => dialogsRef.current?.openDialog(onRedirect === 'table' ? 'newTable' : 'newType')
+      : undefined;
 
   return (
     <ControlBar>
       <ControlBarLabelContainer>
-        {onClickNewType && <SecondaryButtonWithPlusIcon onClick={onClickNewType}>{t('new')}</SecondaryButtonWithPlusIcon>}
-        {onClickTypeTable && <SecondaryButton onClick={onClickTypeTable}>{t('type_table')}</SecondaryButton>}
+        {onClickNew && <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new')}</SecondaryButtonWithPlusIcon>}
+        {onRedirect !== 'table' && <SecondaryButton onClick={() => navigate(`/database/types/table`)}>{t('type_table')}</SecondaryButton>}
       </ControlBarLabelContainer>
-      <SelectType dbSymbol={type.dbSymbol} onChange={onChange} />
+      <SelectType
+        dbSymbol={typeDbSymbol}
+        onChange={(value) => {
+          setSelectedDataIdentifier({ type: value });
+        }}
+      />
     </ControlBar>
   );
 };
