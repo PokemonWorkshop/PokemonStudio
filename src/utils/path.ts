@@ -137,6 +137,7 @@ export const trainerSpritePath = (trainer: StudioTrainer, projectPath?: string |
 
   return `graphics/battlers/${trainer.battlers[0]}.png`;
 };
+
 export const trainerSpriteBigPath = (trainer: StudioTrainer, projectPath?: string | null) => {
   if (projectPath) return `${projectPath}/graphics/battlers/${trainer.battlers[0]}_big.png`;
 

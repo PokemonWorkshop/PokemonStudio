@@ -5,3 +5,4 @@ export { CharactersResources } from './CharactersResources';
 export { ResourceWrapper } from './ResourceWrapper';
 export { IconsResources } from './IconsResources';
 export { IconResource } from './IconResource';
+export { CryResource } from './CryResource';
