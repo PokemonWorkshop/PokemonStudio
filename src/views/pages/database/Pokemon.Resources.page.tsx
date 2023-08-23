@@ -7,7 +7,7 @@ import { useProjectPokemon } from '@utils/useProjectData';
 import { useTranslation } from 'react-i18next';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';
-import { BattlersResources, CharactersResources, IconsResources, ResourceWrapper } from '@components/database/pokemon/resources';
+import { BattlersResources, CharactersResources, IconsResources, ResourceWrapper, CryResource } from '@components/database/pokemon/resources';
 import { basename, CreatureFormResourcesFemalePath, CreatureFormResourcesPath } from '@utils/path';
 import { cloneEntity } from '@utils/cloneEntity';
 
@@ -82,6 +82,15 @@ export const PokemonResourcesPage = () => {
             <CharactersResources
               form={currentPokemonWithForm.form}
               isShowFemale={isShowFemale}
+              onResourceChoosen={onResourceChoosen}
+              onResourceClean={onResourceClean}
+            />
+          </ResourceWrapper>
+          <ResourceWrapper>
+            <CryResource
+              form={currentPokemonWithForm.form}
+              resource="cry"
+              isFemale={false}
               onResourceChoosen={onResourceChoosen}
               onResourceClean={onResourceClean}
             />
