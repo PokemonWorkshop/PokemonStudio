@@ -101,13 +101,7 @@ const ValueCondition = ({ condition }: ValueConditionProps) => {
     return (
       <InputWithTopLabelContainer>
         <Label htmlFor="type">{t('type')}</Label>
-        <SelectType
-          dbSymbol={value as string}
-          onChange={(selected) => refreshUI((condition.value = selected.value as DbSymbol))}
-          noLabel
-          noneValue
-          noneValueIsError
-        />
+        <SelectType dbSymbol={value as string} onChange={(value) => refreshUI((condition.value = value as DbSymbol))} noLabel noneValue />
       </InputWithTopLabelContainer>
     );
   } else {

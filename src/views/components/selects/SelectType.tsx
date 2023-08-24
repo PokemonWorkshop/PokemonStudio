@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StudioDropDown } from '@components/StudioDropDown';
+import { StudioDropDown, StudioDropDownFilter } from '@components/StudioDropDown';
 import { SelectContainerWithLabel } from './SelectContainerWithLabel';
 import { useSelectOptions } from '@utils/useSelectOptions';
 
@@ -10,9 +10,10 @@ type SelectTypeProps = {
   undefValueOption?: string;
   noLabel?: boolean;
   noneValue?: boolean;
+  filter?: StudioDropDownFilter;
 };
 
-export const SelectType = ({ dbSymbol, onChange, noLabel, noneValue, undefValueOption }: SelectTypeProps) => {
+export const SelectType = ({ dbSymbol, onChange, noLabel, noneValue, undefValueOption, filter }: SelectTypeProps) => {
   const { t } = useTranslation(['database_types', 'select']);
   const typeOptions = useSelectOptions('types');
 
@@ -22,8 +23,7 @@ export const SelectType = ({ dbSymbol, onChange, noLabel, noneValue, undefValueO
     return typeOptions;
   }, [undefValueOption, typeOptions, noneValue, t]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const optionals = useMemo(() => ({ deletedOption: t('database_types:type_deleted') }), []);
+  const optionals = { deletedOption: t('database_types:type_deleted'), filter };
 
   if (noLabel) return <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />;
 

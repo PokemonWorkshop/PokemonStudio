@@ -85,11 +85,11 @@ export const InformationsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="type1">{t('type1')}</Label>
-          <SelectType dbSymbol={type1} onChange={(event) => setType1(event.value as DbSymbol)} noLabel rejected={[type2]} />
+          <SelectType dbSymbol={type1} onChange={(value) => setType1(value as DbSymbol)} noLabel filter={(value) => value !== type2} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="type2">{t('type2')}</Label>
-          <SelectType dbSymbol={type2} onChange={(event) => setType2(event.value as DbSymbol)} noLabel rejected={[type1]} noneValue />
+          <SelectType dbSymbol={type2} onChange={(value) => setType2(value as DbSymbol)} noLabel filter={(value) => value !== type1} noneValue />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <InputWithLeftLabelContainer>

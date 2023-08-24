@@ -94,11 +94,11 @@ export const PokemonFormNewEditor = forwardRef<EditorHandlingClose, Props>(({ cl
         </InputWithError>
         <InputWithTopLabelContainer>
           <Label htmlFor="type1">{t('database_pokemon:type1')}</Label>
-          <SelectType dbSymbol={type1} onChange={(event) => setType1(event.value as DbSymbol)} rejected={[type2]} noLabel />
+          <SelectType dbSymbol={type1} onChange={(value) => setType1(value as DbSymbol)} filter={(value) => value !== type2} noLabel />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="type2">{t('database_pokemon:type2')}</Label>
-          <SelectType dbSymbol={type2} onChange={(event) => setType2(event.value as DbSymbol)} rejected={[type1]} noneValue noLabel />
+          <SelectType dbSymbol={type2} onChange={(value) => setType2(value as DbSymbol)} filter={(value) => value !== type1} noneValue noLabel />
         </InputWithTopLabelContainer>
         <ButtonContainer>
           <PrimaryButton onClick={onClickNew} disabled={checkDisabled()}>
