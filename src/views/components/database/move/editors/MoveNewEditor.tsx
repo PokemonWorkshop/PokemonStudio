@@ -95,7 +95,7 @@ export const MoveNewEditor = forwardRef<EditorHandlingClose, MoveNewEditorProps>
           <Label htmlFor="type" required>
             {t('database_moves:type')}
           </Label>
-          <SelectType dbSymbol={type} onChange={(event) => setType(event.value as DbSymbol)} noLabel noneValueIsError />
+          <SelectType dbSymbol={type} onChange={(value) => setType(value as DbSymbol)} noLabel noneValue />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="category">{t('database_moves:category')}</Label>

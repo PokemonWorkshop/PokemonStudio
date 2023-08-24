@@ -84,7 +84,7 @@ export const MoveFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="type">{t('database_moves:type')}</Label>
-          <SelectType dbSymbol={type} onChange={(event) => setType(event.value as DbSymbol)} noLabel />
+          <SelectType dbSymbol={type} onChange={(value) => setType(value as DbSymbol)} noLabel />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="type">{t('database_moves:category')}</Label>

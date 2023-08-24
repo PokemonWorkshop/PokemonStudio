@@ -5,6 +5,7 @@ import { ReactComponent as DownIcon } from '@assets/icons/global/down-icon.svg';
 import { Input } from './inputs';
 import { useTranslation } from 'react-i18next';
 
+export type StudioDropDownFilter = (value: string) => boolean;
 type DropDownOptionsProps = {
   height: number;
 };
@@ -153,6 +154,12 @@ type DropDownOption = {
   label: string;
 };
 
+const applyFilter = (options: DropDownOption[], filter?: StudioDropDownFilter) => {
+  if (!filter) return options;
+
+  return options.filter((option) => option.value === '__undef__' || filter(option.value));
+};
+
 const research = (options: DropDownOption[], entry: string) => {
   if (!entry) return options;
 
@@ -179,13 +186,15 @@ type StudioDropDownProps = {
     noOptionLabel?: string; // No move found, No Pokémon found, etc.
     deletedOption?: string; // Move deleted, Ability deleted, etc.
     disabledResearch?: true;
+    filter?: StudioDropDownFilter;
   };
 };
 
 export const StudioDropDown = ({ value, options, onChange, optionals }: StudioDropDownProps) => {
   const [entry, setEntry] = useState<string>('');
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const optionsList = useMemo(() => research(options, entry), [options, entry]);
+  const optionsFilter = useMemo(() => applyFilter(options, optionals?.filter), [options, optionals?.filter]);
+  const optionsList = useMemo(() => research(optionsFilter, entry), [optionsFilter, entry]);
   const currentOption = useMemo(() => getCurrentOption(optionsList, value), [optionsList, value]);
   const inputRef = useRef<HTMLInputElement>(null);
   const { t } = useTranslation('select');
