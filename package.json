@@ -33,6 +33,9 @@
     "@electron/rebuild": "^3.2.10",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
     "@svgr/webpack": "^7.0.0",
+    "@toinane/electron-forge-maker-nsis": "^1.0.0",
+    "@types/lodash.groupby": "^4.6.7",
+    "@types/lodash.uniq": "^4.5.7",
     "@types/react": "^18.0.29",
     "@types/react-beautiful-dnd": "^13.1.4",
     "@types/react-dom": "^18.0.11",
@@ -90,5 +93,32 @@
     "ts-marshal": "^0.0.6",
     "ts-tiled-converter": "0.0.1",
     "zod": "^3.21.4"
+  },
+  "build": {
+    "appId": "com.pokemon.studio",
+    "fileAssociations": {
+      "ext": "studio",
+      "name": "Studio",
+      "description": "Pokémon Studio Project file"
+    },
+    "directories": {
+      "output": "out/make"
+    },
+    "extraResources": [
+      "./assets/**"
+    ],
+    "extraFiles": [
+      "psdk-binaries",
+      "new-project.zip"
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "assets/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false
+    }
   }
 }

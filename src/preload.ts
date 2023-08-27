@@ -30,6 +30,7 @@ import type { GetStudioVersionOutput } from './backendTasks/getStudioVersion';
 import type { ConvertTMXInput } from './backendTasks/convertTiledMapToTileMetadata';
 import type { PartialStudioMap } from 'ts-tiled-converter';
 import type { SaveMapInfoInput } from './backendTasks/saveMapInfo';
+import { StartupStudioFileOutput } from './backendTasks/startupStudioFile';
 
 contextBridge.exposeInMainWorld('api', {
   clearCache: () => webFrame.clearCache(),
@@ -119,6 +120,7 @@ contextBridge.exposeInMainWorld('api', {
   checkMapsModified: defineBackendTask(ipcRenderer, 'check-maps-modified'),
   convertTiledMapToTileMetadata: defineBackendTask(ipcRenderer, 'convertTiledMapToTileMetadata'),
   saveMapInfo: defineBackendTask(ipcRenderer, 'save-map-info'),
+  startupStudioFile: defineBackendTask(ipcRenderer, 'startup-studio-file'),
 });
 
 type AnyObj = Record<string, never>;
@@ -191,6 +193,7 @@ declare global {
       checkMapsModified: BackendTaskWithGenericErrorAndNoProgress<CheckMapModifiedInput, CheckMapModifiedOutput>;
       convertTiledMapToTileMetadata: BackendTaskWithGenericErrorAndNoProgress<ConvertTMXInput, PartialStudioMap>;
       saveMapInfo: BackendTaskWithGenericErrorAndNoProgress<SaveMapInfoInput, AnyObj>;
+      startupStudioFile: BackendTaskWithGenericErrorAndNoProgress<AnyObj, StartupStudioFileOutput>;
     };
   }
 }
