@@ -1,9 +1,10 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SecondaryButton } from '../GenericButtons';
 import { useLoaderRef } from '@utils/loaderContext';
 import { useProjectLoad } from '@utils/useProjectLoad';
 import { useTranslation } from 'react-i18next';
+import { useGlobalState } from '@src/GlobalStateProvider';
 
 type LoadProjectButtonProps = { children: ReactNode };
 
@@ -13,9 +14,9 @@ export const LoadProjectButton = ({ children }: LoadProjectButtonProps) => {
   const projectLoad = useProjectLoad();
   const { t } = useTranslation(['loader']);
 
-  const handleClick = async () => {
+  const handleClick = async (projectDirName?: string) => {
     projectLoad(
-      {},
+      { projectDirName },
       () => {
         loaderRef.current.close();
         navigate('/dashboard');
@@ -25,5 +26,17 @@ export const LoadProjectButton = ({ children }: LoadProjectButtonProps) => {
     );
   };
 
-  return <SecondaryButton onClick={handleClick}>{children}</SecondaryButton>;
+  useEffect(
+    () =>
+      window.api.startupStudioFile(
+        {},
+        ({ projectPath }) => {
+          if (projectPath) handleClick(projectPath);
+        },
+        () => {}
+      ),
+    []
+  );
+
+  return <SecondaryButton onClick={() => handleClick()}>{children}</SecondaryButton>;
 };

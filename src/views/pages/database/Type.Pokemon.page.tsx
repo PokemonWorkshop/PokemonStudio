@@ -15,7 +15,7 @@ import { useProjectTypes } from '@utils/useProjectData';
 export const TypePokemonPage = () => {
   const dialogsRef = useDialogsRef<TypeEditorAndDeletionKeys>();
   const { selectedDataIdentifier } = useProjectTypes();
-  const { getCurrentTypeName, currentType: type, types } = useTypePage();
+  const { currentTypeName, currentType: type, types } = useTypePage();
   const [currentType, setCurrentType] = useState(type);
   const navigate = useNavigate();
   const { t } = useTranslation('database_types');
@@ -36,8 +36,8 @@ export const TypePokemonPage = () => {
       <PageContainerStyle>
         <PageDataConstrainerStyle>
           <DataBlockWrapper>
-            <SubPageTitle title={t('pokemon_with_type', { type: getCurrentTypeName })} onClickedBack={onClickedBack} />
-            <DataBlockWithTitleNoActive title={t('pokemon_with_type', { type: getCurrentTypeName })} size="full">
+            <SubPageTitle title={t('pokemon_with_type', { type: currentTypeName })} onClickedBack={onClickedBack} />
+            <DataBlockWithTitleNoActive title={t('pokemon_with_type', { type: currentTypeName })} size="full">
               <TypePokemonTable type={currentType} />
             </DataBlockWithTitleNoActive>
           </DataBlockWrapper>
