@@ -47,7 +47,7 @@ export const checkMapsModified = async (payload: CheckMapModifiedInput) => {
   log.info('check-maps-modified', { method: payload.method });
   const studioMaps: StudioMap[] = payload.maps.map((map) => JSON.parse(map));
 
-  const tiledMapPath = path.join(payload.projectPath, 'data/tiled');
+  const tiledMapPath = path.join(payload.projectPath, 'Data/Tiled/Maps');
 
   const mapsModified = await studioMaps.reduce(async (accPromise, map) => {
     const acc = await accPromise;

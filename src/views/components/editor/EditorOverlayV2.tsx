@@ -184,3 +184,8 @@ export const defineEditorOverlay = <Keys extends string, Props extends Record<st
   reactComponent.displayName = displayName;
   return reactComponent;
 };
+
+export const editorOverlayHidden = (hidden: boolean) => {
+  const dialog = document.getElementById('dialogs');
+  if (dialog) dialog.hidden = hidden;
+};

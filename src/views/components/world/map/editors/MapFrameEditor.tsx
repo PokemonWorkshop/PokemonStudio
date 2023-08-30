@@ -97,13 +97,13 @@ export const MapFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
               <DropInput
                 name={t('tiled_file')}
                 extensions={['tmx']}
-                destFolderToCopy="Data/Tiled"
+                destFolderToCopy="Data/Tiled/Maps"
                 onFileChoosen={(filePath) => setTiledFilename(basename(filePath, '.tmx'))}
                 showAcceptedFormat
               />
             ) : (
               <FileInput
-                filePath={`Data/Tiled/${tiledFilename}.tmx`}
+                filePath={`Data/Tiled/Maps/${tiledFilename}.tmx`}
                 name={t('tiled_file')}
                 extensions={['tmx']}
                 onFileChoosen={(filePath) => setTiledFilename(basename(filePath, '.tmx'))}
