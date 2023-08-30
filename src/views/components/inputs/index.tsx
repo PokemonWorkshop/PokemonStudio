@@ -16,3 +16,4 @@ export { AudioInput } from './AudioInput';
 export { PictureInput } from './PictureInput';
 export { ClearInput } from './ClearInput';
 export { FileInput } from './FileInput';
+export { DropInputFolder } from './DropInputFolder';

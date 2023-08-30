@@ -1,12 +1,21 @@
 import React, { createContext, ReactChild, useContext, useEffect, useRef, useState } from 'react';
+import { editorOverlayHidden } from '@components/editor/EditorOverlayV2';
 
-type LoaderTitle = 'creating_project' | 'importing_project' | 'saving_project' | 'loading_project' | 'updating_psdk' | 'migrating_data';
+type LoaderTitle =
+  | 'creating_project'
+  | 'importing_project'
+  | 'saving_project'
+  | 'loading_project'
+  | 'updating_psdk'
+  | 'migrating_data'
+  | 'importing_tiled_maps';
 type LoaderErrorTitle =
   | 'creating_project_error'
   | 'importing_project_error'
   | 'saving_project_error'
   | 'loading_project_error'
-  | 'updating_psdk_error';
+  | 'updating_psdk_error'
+  | 'importing_tiled_maps_error';
 
 type LoaderState = {
   thingInProgress: LoaderTitle;
@@ -69,8 +78,11 @@ const useLoaderContextService = (): LoaderContext => {
 
   return {
     ...loaderState,
-    close: () => setLoaderState({ ...loaderState, isOpen: false }),
-    open: (thingInProgress: LoaderTitle, step: number, total: number, stepText: string) =>
+    close: () => {
+      setLoaderState({ ...loaderState, isOpen: false });
+      editorOverlayHidden(false);
+    },
+    open: (thingInProgress: LoaderTitle, step: number, total: number, stepText: string) => {
       setLoaderState({
         ...loaderState,
         thingInProgress,
@@ -80,7 +92,9 @@ const useLoaderContextService = (): LoaderContext => {
         errorTitle: undefined,
         errorText: '',
         isOpen: true,
-      }),
+      });
+      editorOverlayHidden(true);
+    },
     setProgress: (step: number, total: number, stepText: string) =>
       setLoaderState({
         ...loaderState,

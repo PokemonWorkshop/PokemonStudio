@@ -1,5 +1,5 @@
 import React, { useState, MouseEvent } from 'react';
-import ReactDOM from 'react-dom';
+import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 
 const ToolTipContainer = styled.div`
@@ -16,6 +16,7 @@ const ToolTipElement = styled.div`
   background-color: ${({ theme }) => theme.colors.dark8};
   color: ${({ theme }) => theme.colors.text100};
   ${({ theme }) => theme.fonts.normalRegular}
+  user-select: none;
 
   &.left-arrow::after {
     content: ' ';
@@ -65,14 +66,20 @@ type ToolTipPosition =
   | 'right-center'
   | 'right-end';
 
-const computeToolTipStyles = <U extends HTMLElement>(position: ToolTipPosition, e: MouseEvent<U>, arrow: boolean): ToolTipStyles => {
+const computeToolTipStyles = <U extends HTMLElement>(
+  position: ToolTipPosition,
+  e: MouseEvent<U>,
+  arrow: boolean,
+  customId?: string
+): ToolTipStyles => {
   const element = e.currentTarget;
   // Get screen accurate coordinate of currentTarget
   const rect = e.currentTarget.getBoundingClientRect();
   const titleBarHeight = document.querySelector('.cet-titlebar')?.clientHeight || 0;
+  const parent = customId ? document.getElementById(customId)?.parentElement?.getBoundingClientRect() : undefined;
   // Precompute all required variables
-  const top = Math.floor(rect.top) - titleBarHeight;
-  const left = Math.floor(rect.left);
+  const top = Math.floor(rect.top) - Math.floor(parent?.top || 0) - titleBarHeight;
+  const left = Math.floor(rect.left) - Math.floor(parent?.left || 0);
   const bottom = top + element.offsetHeight;
   const right = left + element.offsetWidth;
   const middleX = Math.floor(left + element.offsetWidth / 2);
@@ -171,7 +178,7 @@ const ARROW_MAP: Record<ToolTipPosition, 'left-arrow' | 'right-arrow' | 'top-arr
  *  </SomeComplexPage>
  * )
  */
-export const useToolTip = <U extends HTMLElement>() => {
+export const useToolTip = <U extends HTMLElement>(customId?: string) => {
   const [toolTip, setToolTip] = useState<{ text: string; className?: string }>({ text: '', className: undefined });
   const [toolTipStyles, setToolTipStyles] = useState<ToolTipStyles>({ anchor: {}, element: {} });
 
@@ -180,19 +187,21 @@ export const useToolTip = <U extends HTMLElement>() => {
       (text: string, position: ToolTipPosition, arrow = false) =>
       (e: MouseEvent<U>) => {
         setToolTip({ text, className: arrow ? ARROW_MAP[position] : undefined });
-        setToolTipStyles(computeToolTipStyles(position, e, arrow));
+        setToolTipStyles(computeToolTipStyles(position, e, arrow, customId));
       },
     onMouseLeave: () => {
       setToolTipStyles((current) => ({ ...current, anchor: { ...current.anchor, visibility: undefined } }));
     },
     renderToolTip: () =>
-      ReactDOM.createPortal(
+      createPortal(
         <ToolTipContainer style={toolTipStyles.anchor}>
           <ToolTipElement style={toolTipStyles.element} className={toolTip.className}>
             {toolTip.text}
           </ToolTipElement>
         </ToolTipContainer>,
-        document.querySelector('#tooltip') || document.createElement('div')
+        customId
+          ? document.querySelector(`#${customId}`) || document.createElement('div')
+          : document.querySelector('#tooltip') || document.createElement('div')
       ),
   };
 };

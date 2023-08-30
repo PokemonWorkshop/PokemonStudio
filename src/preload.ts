@@ -31,6 +31,8 @@ import type { ConvertTMXInput } from './backendTasks/convertTiledMapToTileMetada
 import type { PartialStudioMap } from 'ts-tiled-converter';
 import type { SaveMapInfoInput } from './backendTasks/saveMapInfo';
 import { StartupStudioFileOutput } from './backendTasks/startupStudioFile';
+import type { GetFilePathsFromFolderInput, GetFilePathsFromFolderOutput } from './backendTasks/getFilePathsFromFolder';
+import type { CopyTiledFilesInput, CopyTiledFilesOutput } from './backendTasks/copyTiledFiles';
 
 contextBridge.exposeInMainWorld('api', {
   clearCache: () => webFrame.clearCache(),
@@ -121,6 +123,8 @@ contextBridge.exposeInMainWorld('api', {
   convertTiledMapToTileMetadata: defineBackendTask(ipcRenderer, 'convertTiledMapToTileMetadata'),
   saveMapInfo: defineBackendTask(ipcRenderer, 'save-map-info'),
   startupStudioFile: defineBackendTask(ipcRenderer, 'startup-studio-file'),
+  getFilePathsFromFolder: defineBackendTask(ipcRenderer, 'get-file-paths-from-folder'),
+  copyTiledFiles: defineBackendTask(ipcRenderer, 'copy-tiled-files'),
 });
 
 type AnyObj = Record<string, never>;
@@ -194,6 +198,8 @@ declare global {
       convertTiledMapToTileMetadata: BackendTaskWithGenericErrorAndNoProgress<ConvertTMXInput, PartialStudioMap>;
       saveMapInfo: BackendTaskWithGenericErrorAndNoProgress<SaveMapInfoInput, AnyObj>;
       startupStudioFile: BackendTaskWithGenericErrorAndNoProgress<AnyObj, StartupStudioFileOutput>;
+      getFilePathsFromFolder: BackendTaskWithGenericErrorAndNoProgress<GetFilePathsFromFolderInput, GetFilePathsFromFolderOutput>;
+      copyTiledFiles: BackendTaskWithGenericErrorAndNoProgress<CopyTiledFilesInput, CopyTiledFilesOutput>;
     };
   }
 }
