@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ReactComponent as CopyIcon } from '@assets/icons/global/copy.svg';
 import { ReactComponent as DeleteIcon } from '@assets/icons/global/delete-icon.svg';
+import { ReactComponent as EditIcon } from '@assets/icons/global/edit-icon.svg';
 import { MapDialogsRef } from '../editors/MapEditorOverlay';
 import { useMapInfo } from '@utils/useMapInfo';
 import { mapInfoDuplicateMap, mapInfoRemoveFolder } from '@utils/MapInfoUtils';
@@ -14,10 +15,11 @@ import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID } from '@modelEntities/map';
 type MapTreeContextMenuProps = {
   mapInfo: StudioMapInfo;
   isDeleted: boolean;
+  enableRename: () => void;
   dialogsRef?: MapDialogsRef;
 };
 
-export const MapTreeContextMenu = ({ mapInfo, isDeleted, dialogsRef }: MapTreeContextMenuProps) => {
+export const MapTreeContextMenu = ({ mapInfo, isDeleted, enableRename, dialogsRef }: MapTreeContextMenuProps) => {
   const { t } = useTranslation('database_maps');
   const { mapInfoValues: mapInfoValues, setMapInfoValues: setMapInfo } = useMapInfo();
   const { projectDataValues: maps, setProjectDataValues: setMap } = useProjectMaps();
@@ -55,6 +57,14 @@ export const MapTreeContextMenu = ({ mapInfo, isDeleted, dialogsRef }: MapTreeCo
 
   return (
     <>
+      {!isDeleted && (
+        <div onClick={() => enableRename()}>
+          <span className="icon">
+            <EditIcon />
+          </span>
+          {t('rename')}
+        </div>
+      )}
       {!isFolder && !isDeleted && (
         <div onClick={onClickDuplicate}>
           <span className="icon">

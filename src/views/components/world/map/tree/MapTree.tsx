@@ -128,6 +128,8 @@ const MapTreeItemComponent = forwardRef<HTMLDivElement, TreeItemComponentProps<S
     return getMapName(map);
   };
 
+  const name = isFolder ? getFolderName(mapInfo) : mapName(mapInfo.mapDbSymbol);
+
   return (
     <MapTreeItemWrapper
       {...props}
@@ -136,8 +138,9 @@ const MapTreeItemComponent = forwardRef<HTMLDivElement, TreeItemComponentProps<S
       countChildren={countChildren}
       contentClassName={isFolder ? 'folder' : 'map'}
       indentationWidth={22}
+      defaultName={name}
     >
-      <span className={isDeleted ? 'error' : 'name'}>{isFolder ? getFolderName(mapInfo) : mapName(mapInfo.mapDbSymbol)}</span>
+      <span className={isDeleted ? 'error' : 'name'}>{name}</span>
     </MapTreeItemWrapper>
   );
 });

@@ -35,6 +35,7 @@
   "map_research": "Find a map...",
   "new_folder": "New folder",
   "duplicate": "Duplicate",
+  "rename": "Rename",
   "context_menu_delete": "Delete",
   "map_copy_name": "{{name}} (Copy)",
   "deletion_folder_of": "Deleting the folder",
