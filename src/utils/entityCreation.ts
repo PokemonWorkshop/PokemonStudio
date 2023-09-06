@@ -262,7 +262,8 @@ export const createGroup = (
   terrainTag: number,
   tool: StudioGroupTool,
   isDoubleBattle: boolean,
-  customCondition: StudioCustomGroupCondition | undefined
+  customCondition: StudioCustomGroupCondition | undefined,
+  stepsAverage: number
 ): StudioGroup => ({
   klass: 'Group',
   id,
@@ -274,6 +275,7 @@ export const createGroup = (
   customConditions: customCondition ? [customCondition] : [],
   tool,
   isHordeBattle: false,
+  stepsAverage,
 });
 
 export const createEncounter = (isWild: boolean): StudioGroupEncounter => ({

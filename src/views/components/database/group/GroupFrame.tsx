@@ -64,6 +64,7 @@ export const GroupFrame = ({ group, onClick }: GroupFrameProps) => {
                 <span>{`(${variationText ? t(variationText) : '???'})`}</span>
               </EnvironmentContainer>
             </DataFieldsetFieldWithChild>
+            <DataFieldsetField label={t('steps_average')} data={group.stepsAverage} />
           </GroupSubInfoContainer>
         </GroupInfoContainer>
       </DataGrid>

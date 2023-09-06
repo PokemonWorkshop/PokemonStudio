@@ -44,6 +44,16 @@ export const GroupFrameEditor = ({ group, openTranslationEditor }: GroupFrameEdi
   const variationOptions = useMemo(() => groupVariationEntries(t), [t]);
   const refreshUI = useRefreshUI();
 
+  const handleGroupStepsAverage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number(event.target.value);
+
+    if (value > 999 || value < 1) {
+      return event.preventDefault();
+    }
+
+    group.stepsAverage = value;
+  };
+
   return (
     <Editor type="edit" title={t('informations')}>
       <InputContainer>
@@ -121,6 +131,10 @@ export const GroupFrameEditor = ({ group, openTranslationEditor }: GroupFrameEdi
             noTooltip
           />
         </InputWithTopLabelContainer>
+        <InputWithLeftLabelContainer>
+          <Label htmlFor="steps-average">{t('steps_average')}</Label>
+          <Input name="steps-average" type="number" min={1} max={999} step={1} defaultValue={group.stepsAverage} onChange={handleGroupStepsAverage} />
+        </InputWithLeftLabelContainer>
       </InputContainer>
     </Editor>
   );

@@ -1,4 +1,5 @@
 import { addMoveCharacteristics } from '@src/migrations/addMoveCharacteristics';
+import { addStepsAverageToGroup } from '@src/migrations/addStepsAverageToGroup';
 import { baseForMaps } from '@src/migrations/baseForMaps';
 import { fixBeMethodMoveSelfStatus } from '@src/migrations/fixBeMethodMoveSelfStatus';
 import { fixCsvFileIdDex } from '@src/migrations/fixCsvFileIdDex';
@@ -22,6 +23,7 @@ const MIGRATIONS: Record<string, MigrationTask[]> = {
     fixCsvFileIdDex,
     baseForMaps,
     addMoveCharacteristics,
+    addStepsAverageToGroup,
   ],
   '1.0.1': [
     migrateMapLinks,
@@ -31,6 +33,7 @@ const MIGRATIONS: Record<string, MigrationTask[]> = {
     fixCsvFileIdDex,
     baseForMaps,
     addMoveCharacteristics,
+    addStepsAverageToGroup,
   ],
   '1.0.2': [
     migrateMapLinks,
@@ -40,16 +43,49 @@ const MIGRATIONS: Record<string, MigrationTask[]> = {
     fixCsvFileIdDex,
     baseForMaps,
     addMoveCharacteristics,
+    addStepsAverageToGroup,
   ],
-  '1.1.0': [linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus, fixCsvFileIdDex, baseForMaps, addMoveCharacteristics],
-  '1.1.1': [linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus, fixCsvFileIdDex, baseForMaps, addMoveCharacteristics],
-  '1.2.0': [linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus, fixCsvFileIdDex, baseForMaps, addMoveCharacteristics],
-  '1.3.0': [linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus, fixCsvFileIdDex, baseForMaps, addMoveCharacteristics],
-  '1.4.0': [fixCsvFileIdDex, baseForMaps, addMoveCharacteristics],
-  '1.4.1': [fixCsvFileIdDex, baseForMaps, addMoveCharacteristics],
-  '1.4.2': [fixCsvFileIdDex, baseForMaps, addMoveCharacteristics],
-  '1.4.3': [fixCsvFileIdDex, baseForMaps, addMoveCharacteristics],
-  '1.4.4': [fixCsvFileIdDex, baseForMaps, addMoveCharacteristics], // Don't forget to add the official version coming up
+  '1.1.0': [
+    linkResourcesToCreatures,
+    migrateHeadbutt,
+    fixBeMethodMoveSelfStatus,
+    fixCsvFileIdDex,
+    baseForMaps,
+    addMoveCharacteristics,
+    addStepsAverageToGroup,
+  ],
+  '1.1.1': [
+    linkResourcesToCreatures,
+    migrateHeadbutt,
+    fixBeMethodMoveSelfStatus,
+    fixCsvFileIdDex,
+    baseForMaps,
+    addMoveCharacteristics,
+    addStepsAverageToGroup,
+  ],
+  '1.2.0': [
+    linkResourcesToCreatures,
+    migrateHeadbutt,
+    fixBeMethodMoveSelfStatus,
+    fixCsvFileIdDex,
+    baseForMaps,
+    addMoveCharacteristics,
+    addStepsAverageToGroup,
+  ],
+  '1.3.0': [
+    linkResourcesToCreatures,
+    migrateHeadbutt,
+    fixBeMethodMoveSelfStatus,
+    fixCsvFileIdDex,
+    baseForMaps,
+    addMoveCharacteristics,
+    addStepsAverageToGroup,
+  ],
+  '1.4.0': [fixCsvFileIdDex, baseForMaps, addMoveCharacteristics, addStepsAverageToGroup],
+  '1.4.1': [fixCsvFileIdDex, baseForMaps, addMoveCharacteristics, addStepsAverageToGroup],
+  '1.4.2': [fixCsvFileIdDex, baseForMaps, addMoveCharacteristics, addStepsAverageToGroup],
+  '1.4.3': [fixCsvFileIdDex, baseForMaps, addMoveCharacteristics, addStepsAverageToGroup],
+  '1.4.4': [fixCsvFileIdDex, baseForMaps, addMoveCharacteristics, addStepsAverageToGroup], // Don't forget to add the official version coming up
 };
 
 // Don't forget to extend those array with the new tasks that gets added by the time!
@@ -62,6 +98,7 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
     'Fix the csv file id of the dex',
     'Add files and folder for the maps',
     'Add new characteristics in the moves',
+    'Add steps average at the groups',
   ],
   '1.0.1': [
     'Migrate MapLinks',
@@ -71,6 +108,7 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
     'Fix the csv file id of the dex',
     'Add files and folder for the maps',
     'Add new characteristics in the moves',
+    'Add steps average at the groups',
   ],
   '1.0.2': [
     'Migrate MapLinks',
@@ -80,6 +118,7 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
     'Fix the csv file id of the dex',
     'Add files and folder for the maps',
     'Add new characteristics in the moves',
+    'Add steps average at the groups',
   ],
   '1.1.0': [
     'Link the resources to the Pokémon',
@@ -88,6 +127,7 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
     'Fix the csv file id of the dex',
     'Add files and folder for the maps',
     'Add new characteristics in the moves',
+    'Add steps average at the groups',
   ],
   '1.1.1': [
     'Link the resources to the Pokémon',
@@ -96,6 +136,7 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
     'Fix the csv file id of the dex',
     'Add files and folder for the maps',
     'Add new characteristics in the moves',
+    'Add steps average at the groups',
   ],
   '1.2.0': [
     'Link the resources to the Pokémon',
@@ -104,6 +145,7 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
     'Fix the csv file id of the dex',
     'Add files and folder for the maps',
     'Add new characteristics in the moves',
+    'Add steps average at the groups',
   ],
   '1.3.0': [
     'Link the resources to the Pokémon',
@@ -111,12 +153,39 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
     'Fix battle engine method of the moves',
     'Fix the csv file id of the dex',
     'Add files and folder for the maps',
+    'Add new characteristics in the moves',
+    'Add steps average at the groups',
   ],
-  '1.4.0': ['Fix the csv file id of the dex', 'Add files and folder for the maps', 'Add new characteristics in the moves'],
-  '1.4.1': ['Fix the csv file id of the dex', 'Add files and folder for the maps', 'Add new characteristics in the moves'],
-  '1.4.2': ['Fix the csv file id of the dex', 'Add files and folder for the maps', 'Add new characteristics in the moves'],
-  '1.4.3': ['Fix the csv file id of the dex', 'Add files and folder for the maps', 'Add new characteristics in the moves'],
-  '1.4.4': ['Fix the csv file id of the dex', 'Add files and folder for the maps', 'Add new characteristics in the moves'], // Don't forget to add the official version coming up
+  '1.4.0': [
+    'Fix the csv file id of the dex',
+    'Add files and folder for the maps',
+    'Add new characteristics in the moves',
+    'Add steps average at the groups',
+  ],
+  '1.4.1': [
+    'Fix the csv file id of the dex',
+    'Add files and folder for the maps',
+    'Add new characteristics in the moves',
+    'Add steps average at the groups',
+  ],
+  '1.4.2': [
+    'Fix the csv file id of the dex',
+    'Add files and folder for the maps',
+    'Add new characteristics in the moves',
+    'Add steps average at the groups',
+  ],
+  '1.4.3': [
+    'Fix the csv file id of the dex',
+    'Add files and folder for the maps',
+    'Add new characteristics in the moves',
+    'Add steps average at the groups',
+  ],
+  '1.4.4': [
+    'Fix the csv file id of the dex',
+    'Add files and folder for the maps',
+    'Add new characteristics in the moves',
+    'Add steps average at the groups',
+  ], // Don't forget to add the official version coming up
 };
 
 export type MigrateDataInput = { projectPath: string; projectVersion: string };

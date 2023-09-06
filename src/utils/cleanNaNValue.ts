@@ -6,6 +6,7 @@ import { StudioMove } from '@modelEntities/move';
 import { StudioQuest } from '@modelEntities/quest';
 import { StudioTrainer } from '@modelEntities/trainer';
 import { StudioZone } from '@modelEntities/zone';
+import { StudioGroup } from '@modelEntities/group';
 import { ProjectData, State } from '@src/GlobalStateProvider';
 import { getEntityNameText } from './ReadingProjectText';
 
@@ -221,4 +222,8 @@ export const cleaningQuestNaNValues = (v: StudioQuest) => {
         break;
     }
   });
+};
+
+export const cleaningGroupNaNValues = (v: StudioGroup) => {
+  v.stepsAverage = cleanNaNValue(v.stepsAverage, 30);
 };

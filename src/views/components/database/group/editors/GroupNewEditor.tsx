@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useRef } from 'react';
 import { Editor } from '@components/editor';
 
 import { TFunction, useTranslation } from 'react-i18next';
@@ -44,11 +44,12 @@ export const GroupNewEditor = ({ onClose }: GroupNewEditorProps) => {
   const setText = useSetProjectText();
 
   const [name, setName] = useState<string>('');
-  const [activation, setActivation] = useState<typeof activationOptions[number]['value']>('always');
-  const [battleType, setBattleType] = useState<typeof battleTypeOptions[number]['value']>('simple');
+  const [activation, setActivation] = useState<(typeof activationOptions)[number]['value']>('always');
+  const [battleType, setBattleType] = useState<(typeof battleTypeOptions)[number]['value']>('simple');
   const [systemTag, setSystemTag] = useState<StudioGroupSystemTag>('Grass');
-  const [variation, setVariation] = useState<typeof variationOptions[number]['value']>('0');
+  const [variation, setVariation] = useState<(typeof variationOptions)[number]['value']>('0');
   const [switchId, setSwitchId] = useState(1);
+  const stepsAverageRef = useRef<HTMLInputElement>(null);
 
   const onClickNew = () => {
     const id = findFirstAvailableId(groups, 0);
@@ -56,6 +57,11 @@ export const GroupNewEditor = ({ onClose }: GroupNewEditorProps) => {
     const tool = isTool(variation) ? variation : null;
     const terrainTag = tool ? 0 : Number(variation);
     const activationSwitchId = activation === 'custom' ? switchId : Number(activation);
+
+    if (!stepsAverageRef.current?.validity.valid) {
+      return;
+    }
+
     const group = createGroup(
       dbSymbol,
       id,
@@ -63,7 +69,8 @@ export const GroupNewEditor = ({ onClose }: GroupNewEditorProps) => {
       terrainTag,
       tool,
       battleType === 'double',
-      activation === 'always' ? undefined : { value: activationSwitchId, type: 'enabledSwitch', relationWithPreviousCondition: 'AND' }
+      activation === 'always' ? undefined : { value: activationSwitchId, type: 'enabledSwitch', relationWithPreviousCondition: 'AND' },
+      Number(stepsAverageRef.current.value)
     );
     defineRelationCustomCondition(group);
     setText(GROUP_NAME_TEXT_ID, group.id, name);
@@ -139,6 +146,10 @@ export const GroupNewEditor = ({ onClose }: GroupNewEditorProps) => {
             noTooltip
           />
         </InputWithTopLabelContainer>
+        <InputWithLeftLabelContainer>
+          <Label htmlFor="steps-average">{t('steps_average')}</Label>
+          <Input name="steps-average" type="number" min={1} max={999} step={1} defaultValue={30} ref={stepsAverageRef} />
+        </InputWithLeftLabelContainer>
         <ButtonContainer>
           <ToolTipContainer>
             {!name && <ToolTip bottom="100%">{t('fields_asterisk_required')}</ToolTip>}

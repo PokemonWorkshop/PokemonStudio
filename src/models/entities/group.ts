@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { POSITIVE_OR_ZERO_INT } from './common';
+import { POSITIVE_INT, POSITIVE_OR_ZERO_INT } from './common';
 import { DB_SYMBOL_VALIDATOR } from './dbSymbol';
 import { ENCOUNTER_VALIDATOR } from './groupEncounter';
 
@@ -60,6 +60,7 @@ export const GROUP_VALIDATOR = z.object({
   isHordeBattle: z.boolean().default(false),
   customConditions: z.array(CUSTOM_GROUP_CONDITION_VALIDATOR),
   encounters: z.array(ENCOUNTER_VALIDATOR),
+  stepsAverage: POSITIVE_INT,
 });
 export type StudioGroup = z.infer<typeof GROUP_VALIDATOR>;
 
