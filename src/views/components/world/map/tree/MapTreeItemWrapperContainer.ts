@@ -5,6 +5,7 @@ type MapTreeItemWrapperContainerProps = {
   hasChildren: boolean;
   maxWidth: number;
   maxWidthWhenHover: number;
+  disableHover: boolean;
 };
 
 export const MapTreeItemWrapperContainer = styled.div<MapTreeItemWrapperContainerProps>`
@@ -26,6 +27,7 @@ export const MapTreeItemWrapperContainer = styled.div<MapTreeItemWrapperContaine
     .title.map {
       display: flex;
       gap: 4px;
+      align-items: center;
 
       .name {
         max-width: ${({ maxWidth }) => `${maxWidth}px`};
@@ -36,10 +38,21 @@ export const MapTreeItemWrapperContainer = styled.div<MapTreeItemWrapperContaine
       display: flex;
       gap: 8px;
       background-color: unset;
+      align-items: center;
 
       .name {
         max-width: ${({ hasChildren }) => (hasChildren ? '140px' : '164px')};
       }
+    }
+
+    .input-map {
+      max-width: ${({ maxWidth }) => `${maxWidth}px`};
+      height: 33px;
+    }
+
+    .input-folder {
+      max-width: ${({ hasChildren }) => (hasChildren ? '140px' : '164px')};
+      height: 33px;
     }
 
     .icon {
@@ -135,22 +148,26 @@ export const MapTreeItemWrapperContainer = styled.div<MapTreeItemWrapperContaine
       gap: 8px;
     }
 
-    :hover {
-      background-color: ${({ theme }) => theme.colors.dark20};
+    ${({ theme, disableHover }) =>
+      !disableHover &&
+      `:hover {
+        background-color: ${theme.colors.dark20};
 
-      .count-children {
-        display: none;
-      }
-    }
+        .count-children {
+          display: none;
+        }
+      }`}
   }
 
   .map {
     border-radius: 8px;
     ${({ theme, isCurrent }) => isCurrent && `background-color: ${theme.colors.dark20};`}
 
-    :hover {
-      background-color: ${({ theme }) => theme.colors.dark20};
-    }
+    ${({ theme, disableHover }) =>
+      !disableHover &&
+      `:hover {
+        background-color: ${theme.colors.dark20};
+      }`}
   }
 
   .clone > .tree-item {

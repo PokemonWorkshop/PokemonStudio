@@ -52,9 +52,10 @@ type ContextMenuStyles = {
   visibility?: 'visible';
 };
 
-const computePosition = <U extends HTMLElement>(e: MouseEvent<U>, height: number): ContextMenuStyles => {
+const computePosition = <U extends HTMLElement>(e: MouseEvent<U>, height: number, followMouse?: boolean): ContextMenuStyles => {
   // Get screen accurate coordinate of currentTarget
-  const rect = e.currentTarget.getBoundingClientRect();
+  const rect = followMouse ? DOMRectReadOnly.fromRect({ x: e.clientX, y: e.clientY }) : e.currentTarget.getBoundingClientRect();
+
   // Compute all required variables
   const top = Math.floor(rect.bottom) + 4;
   const left = Math.floor(rect.left);
@@ -113,12 +114,12 @@ export const useContextMenu = <U extends HTMLElement>() => {
   }, [contextMenuStyles]);
 
   return {
-    buildOnClick: (e: MouseEvent<U>) => {
+    buildOnClick: (e: MouseEvent<U>, followMouse?: boolean) => {
       e.stopPropagation();
       if (contextMenuStyles?.visibility) {
         setContextMenuStyles({ visibility: undefined });
       } else {
-        setContextMenuStyles(computePosition(e, contextMenuRef.current?.clientHeight || 0));
+        setContextMenuStyles(computePosition(e, contextMenuRef.current?.clientHeight || 0, followMouse));
         closeOtherContextMenu(contextMenuRef);
       }
     },

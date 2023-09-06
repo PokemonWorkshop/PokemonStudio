@@ -35,6 +35,7 @@
   "map_research": "Rechercher une carte...",
   "new_folder": "Nouveau dossier",
   "duplicate": "Dupliquer",
+  "rename": "Renommer",
   "context_menu_delete": "Supprimer",
   "map_copy_name": "{{name}} (Copie)",
   "deletion_folder_of": "Suppression du dossier",
