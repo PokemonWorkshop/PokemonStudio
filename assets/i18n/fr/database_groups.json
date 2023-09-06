@@ -17,6 +17,7 @@
   "battle_type": "Type de combat",
   "environment": "Environnement",
   "variation": "Variation",
+  "steps_average": "Pas moyens requis",
   "example_name": "Bourg Palette - Herbes 1",
   "pokemon_group": "Pokémon du groupe",
   "fields_asterisk_required": "Les champs avec un astérisque sont requis.",

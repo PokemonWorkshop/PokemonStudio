@@ -16,6 +16,7 @@
   "battle_type": "Battle type",
   "environment": "Environment",
   "variation": "Variation",
+  "steps_average": "Average number of steps",
   "switch": "Switch",
   "example_name": "Pallet Town - Grass 1",
   "pokemon_group": "Pokémon of the group",

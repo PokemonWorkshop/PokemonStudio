@@ -23,7 +23,7 @@ import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
 import { defineRelationCustomCondition } from '@utils/GroupUtils';
-import { cleanExpandPokemonSetup, cleanNaNValue } from '@utils/cleanNaNValue';
+import { cleanExpandPokemonSetup, cleanNaNValue, cleaningGroupNaNValues } from '@utils/cleanNaNValue';
 import { cloneEntity } from '@utils/cloneEntity';
 import { GROUP_NAME_TEXT_ID } from '@modelEntities/group';
 
@@ -84,6 +84,7 @@ export const GroupPage = () => {
     currentEditedGroup.customConditions
       .filter((condition) => condition.type === 'enabledSwitch')
       .forEach((condition) => (condition.value = cleanNaNValue(condition.value)));
+    cleaningGroupNaNValues(currentEditedGroup);
     setGroup({ [group.dbSymbol]: cloneEntity(currentEditedGroup) });
     setCurrentEditor(undefined);
     closeTranslationEditor();
