@@ -11,7 +11,7 @@ import { SelectType } from '@components/selects';
 import { useProjectPokemon, useProjectDex } from '@utils/useProjectData';
 import { createCreature } from '@utils/entityCreation';
 import { useSetProjectText } from '@utils/ReadingProjectText';
-import { CREATURE_DESCRIPTION_TEXT_ID, CREATURE_NAME_TEXT_ID } from '@modelEntities/creature';
+import { CREATURE_DESCRIPTION_TEXT_ID, CREATURE_NAME_TEXT_ID, CREATURE_SPECIE_TEXT_ID } from '@modelEntities/creature';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { cloneEntity } from '@utils/cloneEntity';
@@ -48,6 +48,8 @@ export const PokemonNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
     const newCreature = createCreature(creatures, dbSymbol, type1, type2);
     setText(CREATURE_NAME_TEXT_ID, newCreature.id, name);
     setText(CREATURE_DESCRIPTION_TEXT_ID, newCreature.id, descriptionRef.current.value);
+    setText(CREATURE_SPECIE_TEXT_ID, newCreature.id, '-');
+
     setCreature({ [dbSymbol]: newCreature }, { pokemon: { specie: dbSymbol, form: 0 } });
     const editedDex = cloneEntity(dex.national);
     editedDex.creatures.push({ dbSymbol, form: 0 });
