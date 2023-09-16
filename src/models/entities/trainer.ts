@@ -9,11 +9,14 @@ export const TRAINER_BAG_ENTRY_VALIDATOR = z.object({
 });
 export type StudioTrainerBagEntry = z.infer<typeof TRAINER_BAG_ENTRY_VALIDATOR>;
 
+export const TRAINER_VS_TYPE = z.union([z.literal(1), z.literal(2), z.literal(3)]);
+export type StudioTrainerVsType = z.infer<typeof TRAINER_VS_TYPE>;
+
 export const TRAINER_VALIDATOR = z.object({
   klass: z.literal('TrainerBattleSetup'),
   id: POSITIVE_OR_ZERO_INT,
   dbSymbol: DB_SYMBOL_VALIDATOR,
-  vsType: z.union([z.literal(1), z.literal(2), z.literal(3)]),
+  vsType: TRAINER_VS_TYPE,
   isCouple: z.boolean(),
   baseMoney: POSITIVE_OR_ZERO_INT,
   battlers: z.array(z.string()).nonempty(),
@@ -45,12 +48,12 @@ export const updatePartyTrainerName = (trainer: StudioTrainer, name: string) => 
     });
   });
 };
-export const reduceBagEntries = (trainer: StudioTrainer) => {
+export const reduceBagEntries = (trainerBagEntries: StudioTrainerBagEntry[]) => {
   const bagEntries: StudioTrainerBagEntry[] = [];
-  trainer.bagEntries.forEach((bagEntry) => {
+  trainerBagEntries.forEach((bagEntry) => {
     const result = bagEntries.find((be) => be.dbSymbol === bagEntry.dbSymbol);
     if (result) result.amount += bagEntry.amount;
     else bagEntries.push(bagEntry);
   });
-  trainer.bagEntries = bagEntries;
+  return bagEntries;
 };

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   DataBlockContainer,
@@ -17,10 +17,11 @@ import { useGetEntityNameText, useGetProjectText } from '@utils/ReadingProjectTe
 import { getTrainerMoney, StudioTrainer, TRAINER_AI_CATEGORIES, TRAINER_CLASS_TEXT_ID } from '@modelEntities/trainer';
 import { trainerSpriteBigPath, trainerSpritePath } from '@utils/path';
 import { ResourceImage } from '@components/ResourceImage';
+import { TrainerDialogsRef } from './editors/TrainerEditorOverlay';
 
 type TrainerFrameProps = {
   trainer: StudioTrainer;
-  onClick: () => void;
+  dialogsRef: TrainerDialogsRef;
 };
 
 const DataGridTrainer = styled(DataGrid)`
@@ -94,7 +95,7 @@ const TrainerSpriteContainer = styled.div.attrs<TrainerSpriteProps>((props) => (
   }
 `;
 
-export const TrainerFrame = ({ trainer, onClick }: TrainerFrameProps) => {
+export const TrainerFrame = ({ trainer, dialogsRef }: TrainerFrameProps) => {
   const { t } = useTranslation('database_trainers');
   const [state] = useGlobalState();
   const getTrainerName = useGetEntityNameText();
@@ -102,9 +103,10 @@ export const TrainerFrame = ({ trainer, onClick }: TrainerFrameProps) => {
   const [spriteDp, setSpriteDp] = useState(false);
   const [spriteBig, setSpriteBig] = useState(false);
   const [initial, setInitial] = useState(true);
+  const trainerClass = getText(TRAINER_CLASS_TEXT_ID, trainer.id);
+  const trainerName = `${trainerClass} ${getTrainerName(trainer)}`;
 
-  const trainerName = useMemo(() => `${getText(TRAINER_CLASS_TEXT_ID, trainer.id)} ${getTrainerName(trainer)}`, [trainer]);
-
+  // TODO: remove this when the trainer resource page will be implemented
   useEffect(
     () =>
       window.api.fileExists(
@@ -126,7 +128,7 @@ export const TrainerFrame = ({ trainer, onClick }: TrainerFrameProps) => {
   );
 
   return (
-    <DataBlockContainer size="full" onClick={onClick}>
+    <DataBlockContainer size="full" onClick={() => dialogsRef.current?.openDialog('frame')}>
       <DataGridTrainer columns="440px minmax(min-content, 1024px)" gap="24px">
         <TrainerInfoContainer>
           <DataInfoContainerHeader>
@@ -139,7 +141,7 @@ export const TrainerFrame = ({ trainer, onClick }: TrainerFrameProps) => {
             {trainer.vsType === 2 && <TrainerCategory category="double">{t('vs_type2')}</TrainerCategory>}
           </DataInfoContainerHeader>
           <TrainerSubInfoContainer>
-            <DataFieldsetField label={t('trainer_class')} data={getText(TRAINER_CLASS_TEXT_ID, trainer.id)} />
+            <DataFieldsetField label={t('trainer_class')} data={trainerClass} />
             <DataFieldsetField label={t('ai_level')} data={t(TRAINER_AI_CATEGORIES[trainer.ai - 1])} />
             <DataFieldsetField label={t('money_given')} data={`${getTrainerMoney(trainer)} P$`} />
           </TrainerSubInfoContainer>

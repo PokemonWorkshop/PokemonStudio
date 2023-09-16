@@ -11,7 +11,7 @@ const getFormOptions = (t: TFunction<'database_pokemon'>, forms: StudioCreatureF
 
 type SelectPokemonFormProps = {
   dbSymbol: string;
-  form: number;
+  form: number | string;
   onChange: (form: string) => void;
   undefValueOption?: string;
   breakpoint?: string;
@@ -27,7 +27,7 @@ export const SelectPokemonForm = ({ dbSymbol, form, onChange, noLabel, breakpoin
     return formOptions;
   }, [dbSymbol, undefValueOption, form, state]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const optionals = useMemo(() => ({ deletedOption: t('pokemon_deleted') }), []);
+  const optionals = useMemo(() => ({ deletedOption: t('form_deleted') }), []);
 
   if (noLabel) return <StudioDropDown value={form.toString()} options={options} onChange={onChange} optionals={optionals} />;
 

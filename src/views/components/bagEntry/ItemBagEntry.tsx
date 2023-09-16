@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Dispatch } from 'react';
 import styled from 'styled-components';
 import { PokemonBattlerContainer } from '@components/pokemonBattlerList/PokemonBattler';
 import { useProjectItems } from '@utils/useProjectData';
@@ -11,12 +11,18 @@ import { StudioTrainerBagEntry } from '@modelEntities/trainer';
 import { ResourceImage } from '@components/ResourceImage';
 import { useShortcutNavigation } from '@utils/useShortcutNavigation';
 import { CONTROL, useKeyPress } from '@utils/useKeyPress';
+import type { BagEntryDialogsRef, BagEntryFrom } from './editors/BagEntryEditorOverlay';
+import { assertUnreachable } from '@utils/assertUnreachable';
+import { useTrainerPage } from '@utils/usePage';
+import { useUpdateTrainer } from '@components/database/trainer/editors/useUpdateTrainer';
+import { cloneEntity } from '@utils/cloneEntity';
 
 type ItemBagEntryProps = {
-  onClickDelete: (index: number) => void;
-  onClickEdit: (index: number) => void;
+  dialogsRef: BagEntryDialogsRef;
   bagEntry: StudioTrainerBagEntry;
+  from: BagEntryFrom;
   index: number;
+  setIndex: Dispatch<React.SetStateAction<number>>;
 };
 
 const ItemBagEntryContainer = styled(PokemonBattlerContainer)`
@@ -73,22 +79,33 @@ const ItemBagEntryHeader = styled.div`
   }
 `;
 
-export const ItemBagEntry = ({ onClickDelete, onClickEdit, bagEntry, index }: ItemBagEntryProps) => {
+export const ItemBagEntry = ({ dialogsRef, bagEntry, from, index, setIndex }: ItemBagEntryProps) => {
   const { projectDataValues: items } = useProjectItems();
   const getItemName = useGetEntityNameText();
   const item = items[bagEntry.dbSymbol];
+  const { trainer } = useTrainerPage();
+  const updateTrainer = useUpdateTrainer(trainer);
   const { t } = useTranslation('database_items');
   const isClickable: boolean = useKeyPress(CONTROL);
   const shortcutItemNavigation = useShortcutNavigation('items', 'item', '/database/items/');
 
   const onDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
-    onClickDelete(index);
+    switch (from) {
+      case 'trainer': {
+        const newBagEntries = cloneEntity(trainer.bagEntries);
+        newBagEntries.splice(index, 1);
+        return updateTrainer({ bagEntries: newBagEntries });
+      }
+      default:
+        assertUnreachable(from);
+    }
   };
 
   const onEdit = (event: React.MouseEvent<HTMLDivElement | HTMLSpanElement>) => {
     event.stopPropagation();
-    onClickEdit(index);
+    setIndex(index);
+    dialogsRef.current?.openDialog('edit');
   };
 
   return (

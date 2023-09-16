@@ -55,5 +55,6 @@
   "scripted_dialog": "Dialogue scénarisé",
   "new_dialog": "Nouveau dialogue",
   "available_future_release": "Disponible dans une prochaine version",
-  "error": "Erreur"
+  "error": "Erreur",
+  "party_length_limit": "Un dresseur ne peut pas avoir plus de 6 Pokémon."
 }

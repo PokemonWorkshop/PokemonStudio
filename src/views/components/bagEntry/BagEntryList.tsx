@@ -1,27 +1,28 @@
 import styled from 'styled-components';
 import { PokemonBattlerListComponent, PokemonBattlerListGrid, PokemonBattlerListHeader } from '@components/pokemonBattlerList/PokemonBattlerList';
 import { useTranslation } from 'react-i18next';
-import React from 'react';
+import React, { useState } from 'react';
 import { DarkButton, SecondaryButtonWithPlusIconResponsive } from '@components/buttons';
 import { ItemBagEntry } from './ItemBagEntry';
 import { StudioTrainerBagEntry } from '@modelEntities/trainer';
+import { BagEntryEditorOverlay, type BagEntryEditorAndDeletionKeys, type BagEntryFrom } from './editors/BagEntryEditorOverlay';
+import { useDialogsRef } from '@utils/useDialogsRef';
 
 type BagEntryListProps = {
   title: string;
-  onClickAdd: () => void;
-  onClickImport: () => void;
-  onClickDelete: (index: number) => void;
-  onClickEdit: (index: number) => void;
   bagEntries: StudioTrainerBagEntry[];
   disabledImport: boolean;
+  from: BagEntryFrom;
 };
 
 const BagEntryListComponent = styled(PokemonBattlerListComponent)``;
 const BagEntryListHeader = styled(PokemonBattlerListHeader)``;
 const BagEntryListGrid = styled(PokemonBattlerListGrid)``;
 
-export const BagEntryList = ({ title, onClickAdd, onClickImport, onClickDelete, onClickEdit, bagEntries, disabledImport }: BagEntryListProps) => {
+export const BagEntryList = ({ title, bagEntries, disabledImport, from }: BagEntryListProps) => {
+  const dialogsRef = useDialogsRef<BagEntryEditorAndDeletionKeys>();
   const { t } = useTranslation('bag_entry_list');
+  const [index, setIndex] = useState<number>(0);
 
   return (
     <BagEntryListComponent size="full" data-noactive>
@@ -29,16 +30,16 @@ export const BagEntryList = ({ title, onClickAdd, onClickImport, onClickDelete, 
         <div className="title">{title}</div>
         <div className="buttons">
           <div className="button-import-full">
-            <DarkButton onClick={onClickImport} disabled={disabledImport}>
+            <DarkButton onClick={() => dialogsRef.current?.openDialog('import')} disabled={disabledImport}>
               {t('import_item')}
             </DarkButton>
           </div>
           <div className="button-import-reduce">
-            <DarkButton onClick={onClickImport} disabled={disabledImport}>
+            <DarkButton onClick={() => dialogsRef.current?.openDialog('import')} disabled={disabledImport}>
               {t('import')}
             </DarkButton>
           </div>
-          <SecondaryButtonWithPlusIconResponsive onClick={onClickAdd} tooltip={{ right: '100%', top: '100%' }}>
+          <SecondaryButtonWithPlusIconResponsive onClick={() => dialogsRef.current?.openDialog('new')} tooltip={{ right: '100%', top: '100%' }}>
             {t('add_item')}
           </SecondaryButtonWithPlusIconResponsive>
         </div>
@@ -48,10 +49,11 @@ export const BagEntryList = ({ title, onClickAdd, onClickImport, onClickDelete, 
       ) : (
         <BagEntryListGrid>
           {bagEntries.map((bagEntry, index) => (
-            <ItemBagEntry key={`item-bag-entry-${index}`} onClickDelete={onClickDelete} onClickEdit={onClickEdit} bagEntry={bagEntry} index={index} />
+            <ItemBagEntry key={`item-bag-entry-${index}`} dialogsRef={dialogsRef} bagEntry={bagEntry} from={from} index={index} setIndex={setIndex} />
           ))}
         </BagEntryListGrid>
       )}
+      <BagEntryEditorOverlay ref={dialogsRef} index={index} from={from} />
     </BagEntryListComponent>
   );
 };

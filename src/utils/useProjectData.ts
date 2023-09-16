@@ -98,7 +98,7 @@ export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier
           savingText: new SavingTextMap(currentState.savingText.setMultiple(fileIdUpdatedTexts, 'UPDATE')),
         };
         // Add the new text
-        if (key !== 'trainers' && key !== 'mapLinks') addSelectOption(key === 'pokemon' ? 'creatures' : key, newState);
+        if (key !== 'mapLinks') addSelectOption(key === 'pokemon' ? 'creatures' : key, newState);
         return newState;
       } else {
         return {
@@ -125,7 +125,7 @@ export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier
         savingData: new SavingMap(currentState.savingData.set({ key, id: String(identifier) }, 'DELETE')),
       };
       // Remove the text
-      if (key !== 'trainers' && key !== 'mapLinks') removeSelectOption(key === 'pokemon' ? 'creatures' : key, String(identifier));
+      if (key !== 'mapLinks') removeSelectOption(key === 'pokemon' ? 'creatures' : key, String(identifier));
       return newState;
     });
   };

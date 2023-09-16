@@ -1,6 +1,6 @@
 import { StudioMove } from '@modelEntities/move';
 import { getEntityNameTextUsingTextId, getEntityNameText, useGetEntityNameTextUsingTextId } from './ReadingProjectText';
-import { useProjectDataReadonly, useProjectTypes } from './useProjectData';
+import { useProjectDataReadonly } from './useProjectData';
 import { useTextInfosReadonly } from './useTextInfos';
 import { StudioDex } from '@modelEntities/dex';
 import { StudioType } from '@modelEntities/type';
@@ -78,7 +78,7 @@ export const useDexPage = () => {
 };
 
 export const useTypePage = () => {
-  const { projectDataValues: types, selectedDataIdentifier: typeSelected } = useProjectTypes();
+  const { projectDataValues: types, selectedDataIdentifier: typeSelected } = useProjectDataReadonly('types', 'type');
   const getTypeName = useGetEntityNameTextUsingTextId();
   const currentType: StudioType = types[typeSelected] || types[typeSelected];
 
@@ -87,5 +87,29 @@ export const useTypePage = () => {
     typeDbSymbol: typeSelected,
     currentTypeName: getTypeName(currentType),
     currentType,
+  };
+};
+
+export const useTrainerPage = () => {
+  const { projectDataValues: trainers, selectedDataIdentifier: trainerSelected, state } = useProjectDataReadonly('trainers', 'trainer');
+  const trainer = trainers[trainerSelected];
+  const trainerName = getEntityNameText(trainer, state);
+
+  return {
+    trainer,
+    trainerName,
+    cannotDelete: Object.keys(trainers).length <= 1,
+  };
+};
+
+export const useGroupPage = () => {
+  const { projectDataValues: groups, selectedDataIdentifier: groupSelected, state } = useProjectDataReadonly('groups', 'group');
+  const group = groups[groupSelected];
+  const groupName = getEntityNameText(group, state);
+
+  return {
+    group,
+    groupName,
+    cannotDelete: Object.keys(groups).length <= 1,
   };
 };

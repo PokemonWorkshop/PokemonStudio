@@ -55,5 +55,6 @@
   "scripted_dialog": "Scripted dialog",
   "new_dialog": "New dialog",
   "available_future_release": "Available in a future release",
-  "error": "Error"
+  "error": "Error",
+  "party_length_limit": "A trainer cannot have more than 6 Pokémon."
 }

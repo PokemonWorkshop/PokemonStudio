@@ -35,11 +35,13 @@ export const SHINY_SETUP_VALIDATOR = z.object({
   kind: z.literal('automatic').or(z.literal('rate')),
   rate: z.number(),
 });
+export type StudioEncounterShiny = z.infer<typeof SHINY_SETUP_VALIDATOR>;
 
 export const LEVEL_MIN_MAX_VALIDATOR = z.object({
   minimumLevel: POSITIVE_OR_ZERO_INT,
   maximumLevel: POSITIVE_OR_ZERO_INT,
 });
+export type StudioEncounterLevelMinMax = z.infer<typeof LEVEL_MIN_MAX_VALIDATOR>;
 
 export const LEVEL_SETUP_VALIDATOR = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('fixed'), level: POSITIVE_OR_ZERO_INT }),
