@@ -2,7 +2,6 @@
 
 import crypto from 'crypto';
 import path from 'path';
-import { join } from '@utils/path';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import log, { FileTransport, PathVariables } from 'electron-log';
 import MenuBuilder from './menu';
@@ -52,7 +51,7 @@ declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 log.initialize({ preload: true });
 
 const resolvePathFn = (vars: PathVariables) => {
-  return join(vars.libraryDefaultDir, `renderer.log`);
+  return path.join(vars.libraryDefaultDir, `renderer.log`);
 };
 const rendererLog = log.create({ logId: 'renderer' });
 const fileTransport: FileTransport = <FileTransport>rendererLog.transports.file;

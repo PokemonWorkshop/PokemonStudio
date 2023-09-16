@@ -1,19 +1,16 @@
-import React, { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
+import React, { ChangeEvent, forwardRef, useMemo, useRef, useState } from 'react';
 import { Editor } from '@components/editor';
 
 import { TFunction, useTranslation } from 'react-i18next';
-import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, TrainerPictureInput } from '@components/inputs';
+import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import styled from 'styled-components';
-import { DropInput } from '@components/inputs/DropInput';
-import { basename } from '@utils/path';
 import { padStr } from '@utils/PadStr';
 import { useProjectTrainers } from '@utils/useProjectData';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
-import { useGlobalState } from '@src/GlobalStateProvider';
-import { showNotification } from '@utils/showNotification';
 import {
+  StudioTrainerVsType,
   TRAINER_AI_CATEGORIES,
   TRAINER_CLASS_TEXT_ID,
   TRAINER_DEFEAT_SENTENCE_TEXT_ID,
@@ -22,20 +19,14 @@ import {
   TRAINER_VS_TYPE_CATEGORIES,
 } from '@modelEntities/trainer';
 import { useSetProjectText } from '@utils/ReadingProjectText';
-import { findFirstAvailableId } from '@utils/ModelUtils';
-import { DbSymbol } from '@modelEntities/dbSymbol';
 import { createTrainer } from '@utils/entityCreation';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 
 const ButtonContainer = styled.div`
   display: flex;
   flex-direction: column;
   padding: 16px 0 0 0;
   gap: 8px;
-`;
-
-const WaitingPicture = styled.div`
-  display: flex;
-  height: 160px;
 `;
 
 const aiCategoryEntries = (t: TFunction<'database_trainers'>) =>
@@ -45,82 +36,36 @@ const vsTypeCategoryEntries = (t: TFunction<'database_trainers'>) =>
   TRAINER_VS_TYPE_CATEGORIES.map((category) => ({ value: category.toString(), label: t(`vs_type${category}`) }));
 
 type TrainerNewEditorProps = {
-  onClose: () => void;
+  closeDialog: () => void;
 };
 
-export const TrainerNewEditor = ({ onClose }: TrainerNewEditorProps) => {
-  const [state] = useGlobalState();
+export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditorProps>(({ closeDialog }, ref) => {
   const { projectDataValues: trainers, setProjectDataValues: setTrainer } = useProjectTrainers();
   const { t } = useTranslation('database_trainers');
   const aiOptions = useMemo(() => aiCategoryEntries(t), [t]);
   const vsTypeOptions = useMemo(() => vsTypeCategoryEntries(t), [t]);
-  const [spriteDp, setSpriteDp] = useState(false);
-  const [spriteBig, setSpriteBig] = useState(false);
-  const [isLoading, setLoading] = useState(false);
-  const [battlerName, setBattlerName] = useState('');
-  const [name, setName] = useState('');
-  const [tClass, setTClass] = useState('');
+  const [name, setName] = useState(''); // We can't use a ref because of the button behavior
+  const [trainerClass, setTrainerClass] = useState(''); // We can't use a ref because of the button behavior
   const [ai, setAi] = useState(1);
-  const [vsType, setVsType] = useState(1);
+  const [vsType, setVsType] = useState<StudioTrainerVsType>(1);
   const battleIdRef = useRef<HTMLInputElement>(null);
   const [battleIdError, setBattleIdError] = useState<'value' | undefined>(undefined);
   const baseMoneyRef = useRef<HTMLInputElement>(null);
   const [baseMoneyError, setBaseMoneyError] = useState<'value' | undefined>(undefined);
   const setText = useSetProjectText();
 
-  useEffect(() => {
-    if (!isLoading) return;
-
-    return window.api.fileExists(
-      { filePath: `${state.projectPath}/graphics/battlers/${battlerName}.png` },
-      ({ result }) => {
-        setSpriteDp(result);
-        window.api.fileExists(
-          { filePath: `${state.projectPath}/graphics/battlers/${battlerName}_big.png` },
-          ({ result: resultBig }) => {
-            setSpriteBig(resultBig);
-            setLoading(false);
-          },
-          ({ errorMessage }) => showNotification('danger', t('error'), errorMessage)
-        );
-      },
-      ({ errorMessage }) => showNotification('danger', t('error'), errorMessage)
-    );
-  }, [battlerName, isLoading]);
-
-  const onBattlerChoosen = (battlerPath: string) => {
-    const battler = basename(battlerPath)
-      .split('.')[0]
-      .replace(/_big|_sma/, '');
-    setBattlerName(battler);
-    setLoading(true);
-  };
-
-  const getSprite = () => {
-    if (spriteBig) return `graphics/battlers/${battlerName}_big.png`;
-    if (spriteDp) return `graphics/battlers/${battlerName}.png`;
-    return '';
-  };
+  useEditorHandlingClose(ref);
 
   const onClickNew = () => {
     if (!baseMoneyRef.current || !battleIdRef.current) return;
-    const id = findFirstAvailableId(trainers, 0);
-    const dbSymbol = `trainer_${id}` as DbSymbol;
-    const trainer = createTrainer(
-      dbSymbol,
-      id,
-      ai,
-      vsType as 1 | 2 | 3,
-      battleIdRef.current.valueAsNumber,
-      baseMoneyRef.current.valueAsNumber,
-      battlerName
-    );
-    setText(TRAINER_CLASS_TEXT_ID, id, tClass);
-    setText(TRAINER_NAME_TEXT_ID, id, name);
-    setText(TRAINER_VICTORY_SENTENCE_TEXT_ID, id, '');
-    setText(TRAINER_DEFEAT_SENTENCE_TEXT_ID, id, '');
-    setTrainer({ [dbSymbol]: trainer }, { trainer: dbSymbol });
-    onClose();
+
+    const newTrainer = createTrainer(trainers, ai, vsType, battleIdRef.current.valueAsNumber, baseMoneyRef.current.valueAsNumber);
+    setText(TRAINER_CLASS_TEXT_ID, newTrainer.id, trainerClass);
+    setText(TRAINER_NAME_TEXT_ID, newTrainer.id, name);
+    setText(TRAINER_VICTORY_SENTENCE_TEXT_ID, newTrainer.id, '');
+    setText(TRAINER_DEFEAT_SENTENCE_TEXT_ID, newTrainer.id, '');
+    setTrainer({ [newTrainer.dbSymbol]: newTrainer }, { trainer: newTrainer.dbSymbol });
+    closeDialog();
   };
 
   const onBaseMoneyChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -134,14 +79,14 @@ export const TrainerNewEditor = ({ onClose }: TrainerNewEditorProps) => {
 
   const onBattleIdChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.currentTarget.valueAsNumber;
-    if (isNaN(value) || value < 0) {
+    if (isNaN(value) || value < 0 || value > 9999) {
       if (!battleIdError) setBattleIdError('value');
     } else {
       if (battleIdError) setBattleIdError(undefined);
     }
   };
 
-  const checkDisabled = () => !name || !tClass || !battlerName || !!baseMoneyError || !!battleIdError;
+  const checkDisabled = () => !name || !trainerClass || !!baseMoneyError || !!battleIdError;
 
   return (
     <Editor type="creation" title={t('new')}>
@@ -159,8 +104,8 @@ export const TrainerNewEditor = ({ onClose }: TrainerNewEditorProps) => {
           <Input
             type="text"
             name="name"
-            value={tClass}
-            onChange={(event) => setTClass(event.target.value)}
+            value={trainerClass}
+            onChange={(event) => setTrainerClass(event.target.value)}
             placeholder={t('example_trainer_class')}
           />
         </InputWithTopLabelContainer>
@@ -173,7 +118,7 @@ export const TrainerNewEditor = ({ onClose }: TrainerNewEditorProps) => {
           <SelectCustomSimple
             id="select-vs-type"
             options={vsTypeOptions}
-            onChange={(value) => setVsType(Number(value))}
+            onChange={(value) => setVsType(Number(value) as StudioTrainerVsType)}
             value={vsType.toString()}
             noTooltip
           />
@@ -185,25 +130,8 @@ export const TrainerNewEditor = ({ onClose }: TrainerNewEditorProps) => {
               {t('battle_id')}
             </ToolTipContainer>
           </Label>
-          <Input type="number" name="battle-id" min="0" defaultValue={0} ref={battleIdRef} onChange={onBattleIdChange} />
+          <Input type="number" name="battle-id" min="0" max="9999" defaultValue={0} ref={battleIdRef} onChange={onBattleIdChange} />
         </InputWithLeftLabelContainer>
-        <InputWithTopLabelContainer>
-          <Label htmlFor="battler" required>
-            {t('trainer_sprite')}
-          </Label>
-          {!battlerName ? (
-            <DropInput destFolderToCopy="graphics/battlers" name={t('trainer_sprite')} extensions={['png']} onFileChoosen={onBattlerChoosen} />
-          ) : !isLoading ? (
-            <TrainerPictureInput
-              name={t('trainer_sprite')}
-              picturePath={getSprite()}
-              onIconClear={() => setBattlerName('')}
-              pixelated={!spriteBig && spriteDp}
-            />
-          ) : (
-            <WaitingPicture />
-          )}
-        </InputWithTopLabelContainer>
         <InputWithLeftLabelContainer>
           <Label htmlFor="base-money">{t('base_money')}</Label>
           <Input type="number" name="base-money" min="0" max="99999" defaultValue={10} ref={baseMoneyRef} onChange={onBaseMoneyChange} />
@@ -215,9 +143,10 @@ export const TrainerNewEditor = ({ onClose }: TrainerNewEditorProps) => {
               {t('create_trainer')}
             </PrimaryButton>
           </ToolTipContainer>
-          <DarkButton onClick={onClose}>{t('cancel')}</DarkButton>
+          <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
     </Editor>
   );
-};
+});
+TrainerNewEditor.displayName = 'TrainerNewEditor';

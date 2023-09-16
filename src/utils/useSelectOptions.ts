@@ -14,6 +14,7 @@ import { cloneEntity } from './cloneEntity';
 import { getText, pocketMapping } from './ReadingProjectText';
 import { DEX_DEFAULT_NAME_TEXT_ID } from '@modelEntities/dex';
 import { MAP_NAME_TEXT_ID } from '@modelEntities/map';
+import { TRAINER_CLASS_TEXT_ID, TRAINER_NAME_TEXT_ID } from '@modelEntities/trainer';
 
 // Note: Regexp to search all options in the code: (\{ value:|\{ label:)
 
@@ -24,6 +25,7 @@ const OPTION_SOURCE_KEYS = [
   'itemHeld',
   'itemStone',
   'itemGem',
+  'itemBall',
   'moves',
   'abilities',
   'dex',
@@ -34,6 +36,7 @@ const OPTION_SOURCE_KEYS = [
   'zones',
   'textInfos',
   'maps',
+  'trainers',
 ] as const;
 export type OptionSourceKey = (typeof OPTION_SOURCE_KEYS)[number];
 // Record holding all the options in the order they should appear on the select
@@ -43,6 +46,7 @@ const OptionSources: Record<OptionSourceKey, SelectOption[]> = {
   itemHeld: [],
   itemStone: [],
   itemGem: [],
+  itemBall: [],
   moves: [],
   abilities: [],
   dex: [],
@@ -53,6 +57,7 @@ const OptionSources: Record<OptionSourceKey, SelectOption[]> = {
   zones: [],
   textInfos: [],
   maps: [],
+  trainers: [],
 };
 
 const TEXT_SOURCE_KEYS = [
@@ -68,6 +73,7 @@ const TEXT_SOURCE_KEYS = [
   'zones',
   'textInfos',
   'maps',
+  'trainers',
 ] as const;
 type TextSourceKey = (typeof TEXT_SOURCE_KEYS)[number];
 // Record holding the mapping from option source to text source
@@ -77,6 +83,7 @@ const OptionToTextKey: Record<OptionSourceKey, TextSourceKey> = {
   itemHeld: 'items',
   itemStone: 'items',
   itemGem: 'items',
+  itemBall: 'items',
   moves: 'moves',
   abilities: 'abilities',
   dex: 'dex',
@@ -87,11 +94,12 @@ const OptionToTextKey: Record<OptionSourceKey, TextSourceKey> = {
   zones: 'zones',
   textInfos: 'textInfos',
   maps: 'maps',
+  trainers: 'trainers',
 };
 // Record holding all the optionSource groups
 const OptionSourceGroups: Record<TextSourceKey, OptionSourceKey[]> = {
   pocket: ['pocket'],
-  items: ['items', 'itemHeld', 'itemStone', 'itemGem'],
+  items: ['items', 'itemHeld', 'itemStone', 'itemGem', 'itemBall'],
   moves: ['moves'],
   abilities: ['abilities'],
   dex: ['dex'],
@@ -102,24 +110,31 @@ const OptionSourceGroups: Record<TextSourceKey, OptionSourceKey[]> = {
   zones: ['zones'],
   textInfos: ['textInfos'],
   maps: ['maps'],
+  trainers: ['trainers'],
 };
 // Record holding all the file ids for the required text sources
-const TextFileIds: Record<TextSourceKey, number> = {
-  pocket: ITEM_POCKET_NAME_TEXT_ID,
-  items: ITEM_NAME_TEXT_ID,
-  moves: MOVE_NAME_TEXT_ID,
-  abilities: ABILITY_NAME_TEXT_ID,
-  dex: DEX_DEFAULT_NAME_TEXT_ID,
-  groups: GROUP_NAME_TEXT_ID,
-  creatures: CREATURE_NAME_TEXT_ID,
-  quests: QUEST_NAME_TEXT_ID,
-  types: TYPE_NAME_TEXT_ID,
-  zones: ZONE_NAME_TEXT_ID,
-  textInfos: TEXT_INFO_NAME_TEXT_ID,
-  maps: MAP_NAME_TEXT_ID,
+const TextFileIds: Record<TextSourceKey, number[]> = {
+  pocket: [ITEM_POCKET_NAME_TEXT_ID],
+  items: [ITEM_NAME_TEXT_ID],
+  moves: [MOVE_NAME_TEXT_ID],
+  abilities: [ABILITY_NAME_TEXT_ID],
+  dex: [DEX_DEFAULT_NAME_TEXT_ID],
+  groups: [GROUP_NAME_TEXT_ID],
+  creatures: [CREATURE_NAME_TEXT_ID],
+  quests: [QUEST_NAME_TEXT_ID],
+  types: [TYPE_NAME_TEXT_ID],
+  zones: [ZONE_NAME_TEXT_ID],
+  textInfos: [TEXT_INFO_NAME_TEXT_ID],
+  maps: [MAP_NAME_TEXT_ID],
+  trainers: [TRAINER_CLASS_TEXT_ID, TRAINER_NAME_TEXT_ID],
 };
 // Record holding the link between fileId and textSource
-const TextFileIdsToSource = Object.fromEntries(Object.entries(TextFileIds).map(([key, value]) => [value, key])) as Record<number, TextSourceKey>;
+const TextFileIdsToSource: Record<number, TextSourceKey> = {};
+Object.entries(TextFileIds).forEach(([sourceKey, ids]) => {
+  ids.forEach((id) => {
+    TextFileIdsToSource[id] = sourceKey as TextSourceKey;
+  });
+});
 // Record holding all the texts (options) in the order of the texts in the text files
 const TextSources: Record<TextSourceKey, SelectOption[]> = {
   pocket: [],
@@ -134,6 +149,7 @@ const TextSources: Record<TextSourceKey, SelectOption[]> = {
   zones: [],
   textInfos: [],
   maps: [],
+  trainers: [],
 };
 
 const getTextSource = (projectText: Parameters<typeof getText>[0], fileId: number, index: number, originalObjects: SelectOption[]) => {
@@ -148,10 +164,33 @@ const getTextSource = (projectText: Parameters<typeof getText>[0], fileId: numbe
 // Build a text source
 const buildTextSourceFromScratch = (key: TextSourceKey, state: State) => {
   const projectText = { texts: state.projectText, config: state.projectConfig.language_config };
-  const fileId = TextFileIds[key];
+  const fileIds = TextFileIds[key];
   const originalObjects = TextSources[key];
-  const length = state.projectText[fileId].length;
-  TextSources[key] = Array.from({ length }, (_, index) => getTextSource(projectText, fileId, index, originalObjects));
+  if (fileIds.length === 0) {
+    throw new Error(`No file id defines for ${key} key`);
+  }
+
+  if (fileIds.length === 1) {
+    const fileId = fileIds[0];
+    const length = state.projectText[fileId].length;
+    TextSources[key] = Array.from({ length }, (_, index) => getTextSource(projectText, fileId, index, originalObjects));
+  } else {
+    TextSources[key] = [];
+    fileIds.forEach((fileId) => {
+      const length = state.projectText[fileId].length;
+      if (TextSources[key].length === 0) {
+        TextSources[key] = Array.from({ length }, (_, index) => getTextSource(projectText, fileId, index, originalObjects));
+      } else {
+        TextSources[key] = TextSources[key].map((option, index) => {
+          if (index < length) {
+            return { value: option.value, label: `${option.label} ${getTextSource(projectText, fileId, index, originalObjects).label}` };
+          } else {
+            return option;
+          }
+        });
+      }
+    });
+  }
 };
 
 // Build all the text from scratch
@@ -165,7 +204,18 @@ export const updateSelectOptionsTextSource = (fileId: number, textId: number, st
   if (!key) return;
   const originalObjects = TextSources[key];
   const projectText = { texts: state.projectText, config: state.projectConfig.language_config };
-  originalObjects[textId] = getTextSource(projectText, fileId, textId, originalObjects);
+  const fileIds = TextFileIds[key];
+  if (fileIds.length === 0) {
+    throw new Error(`No file id defines for ${key} key`);
+  }
+
+  if (fileIds.length === 1) {
+    originalObjects[textId] = getTextSource(projectText, fileId, textId, originalObjects);
+  } else {
+    const option = { value: '', label: '' };
+    fileIds.forEach((fileId) => (option.label = `${option.label} ${getTextSource(projectText, fileId, textId, originalObjects).label}`));
+    originalObjects[textId] = option;
+  }
 };
 
 const adjustSelectOptionValue = (option: SelectOption, value: string) => {
@@ -199,6 +249,11 @@ const buildSelectOptionsFromKey = (key: OptionSourceKey, state: State) => {
     case 'itemGem':
       return Object.values(state.projectData.items)
         .filter((data) => data.klass === 'Item' && data.isHoldable)
+        .sort((a, b) => a.id - b.id)
+        .map((data) => adjustSelectOptionValue(originalObjects[data.id] || cloneEntity(originalObjects[0]), data.dbSymbol));
+    case 'itemBall':
+      return Object.values(state.projectData.items)
+        .filter((data) => data.klass === 'BallItem')
         .sort((a, b) => a.id - b.id)
         .map((data) => adjustSelectOptionValue(originalObjects[data.id] || cloneEntity(originalObjects[0]), data.dbSymbol));
     case 'moves':
@@ -240,6 +295,10 @@ const buildSelectOptionsFromKey = (key: OptionSourceKey, state: State) => {
         .map((data) => adjustSelectOptionValue(originalObjects[data.textId] || cloneEntity(originalObjects[0]), data.fileId.toString()));
     case 'maps':
       return Object.values(state.projectData.maps)
+        .sort((a, b) => a.id - b.id)
+        .map((data) => adjustSelectOptionValue(originalObjects[data.id] || cloneEntity(originalObjects[0]), data.dbSymbol));
+    case 'trainers':
+      return Object.values(state.projectData.trainers)
         .sort((a, b) => a.id - b.id)
         .map((data) => adjustSelectOptionValue(originalObjects[data.id] || cloneEntity(originalObjects[0]), data.dbSymbol));
     default:

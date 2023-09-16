@@ -17,7 +17,7 @@ import {
   StudioQuestObjectiveType,
   StudioQuestResolution,
 } from '@modelEntities/quest';
-import { StudioTrainer } from '@modelEntities/trainer';
+import { StudioTrainer, StudioTrainerVsType } from '@modelEntities/trainer';
 import { StudioType } from '@modelEntities/type';
 import { StudioZone } from '@modelEntities/zone';
 import { ProjectData } from '@src/GlobalStateProvider';
@@ -296,26 +296,28 @@ export const createEncounter = (isWild: boolean): StudioGroupEncounter => ({
 });
 
 export const createTrainer = (
-  dbSymbol: DbSymbol,
-  id: number,
+  allTrainers: ProjectData['trainers'],
   ai: number,
-  vsType: 1 | 2 | 3,
+  vsType: StudioTrainerVsType,
   battleId: number,
-  baseMoney: number,
-  battler: string
-): StudioTrainer => ({
-  klass: 'TrainerBattleSetup',
-  id,
-  dbSymbol,
-  vsType,
-  isCouple: false,
-  baseMoney,
-  ai,
-  battlers: [battler],
-  party: [],
-  bagEntries: [],
-  battleId,
-});
+  baseMoney: number
+): StudioTrainer => {
+  const id = findFirstAvailableId(allTrainers, 0);
+  const dbSymbol = `trainer_${id}` as DbSymbol;
+  return {
+    klass: 'TrainerBattleSetup',
+    id,
+    dbSymbol,
+    vsType,
+    isCouple: false,
+    baseMoney,
+    ai,
+    battlers: ['025'], //TODO: remove this when the trainer resource page will be implemented
+    party: [],
+    bagEntries: [],
+    battleId,
+  };
+};
 
 export const createMapLink = (id: number, mapId: number): StudioMapLink => ({
   klass: 'MapLink',

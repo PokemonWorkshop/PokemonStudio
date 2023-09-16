@@ -1,47 +1,33 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { EditorWithCollapse, useRefreshUI } from '@components/editor';
+import React, { forwardRef, useMemo, useRef, useState } from 'react';
+import { EditorWithCollapse } from '@components/editor';
 
 import { TFunction, useTranslation } from 'react-i18next';
-import {
-  Input,
-  InputContainer,
-  InputWithLeftLabelContainer,
-  InputWithTopLabelContainer,
-  Label,
-  PaddedInputContainer,
-  TrainerPictureInput,
-} from '@components/inputs';
+import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import styled from 'styled-components';
-import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { Tag } from '@components/Tag';
-import { DropInput } from '@components/inputs/DropInput';
-import { basename, trainerSpriteBigPath, trainerSpritePath } from '@utils/path';
 import { padStr } from '@utils/PadStr';
-import { useGlobalState } from '@src/GlobalStateProvider';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
-import type { OpenTranslationEditorFunction } from '@utils/useTranslationEditor';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
-import { showNotification } from '@utils/showNotification';
 import {
   getTrainerMoney,
-  StudioTrainer,
+  StudioTrainerVsType,
   TRAINER_AI_CATEGORIES,
   TRAINER_CLASS_TEXT_ID,
   TRAINER_NAME_TEXT_ID,
   TRAINER_VS_TYPE_CATEGORIES,
 } from '@modelEntities/trainer';
 import { useGetProjectText, useSetProjectText } from '@utils/ReadingProjectText';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { useTrainerPage } from '@utils/usePage';
+import { useUpdateTrainer } from './useUpdateTrainer';
+import { useDialogsRef } from '@utils/useDialogsRef';
+import { TrainerTranslationOverlay, TrainerTranslationEditorTitle } from './TrainerTranslationOverlay';
 
 const BaseMoneyInfoContainer = styled.span`
   ${({ theme }) => theme.fonts.normalSmall}
   color: ${({ theme }) => theme.colors.text400};
-`;
-
-const WaitingPicture = styled.div`
-  display: flex;
-  height: 160px;
 `;
 
 const MoneyContainer = styled.div`
@@ -69,56 +55,58 @@ const aiCategoryEntries = (t: TFunction<'database_trainers'>) =>
 const vsTypeCategoryEntries = (t: TFunction<'database_trainers'>) =>
   TRAINER_VS_TYPE_CATEGORIES.map((category) => ({ value: category.toString(), label: t(`vs_type${category}`) }));
 
-type TrainerFrameEditorProps = {
-  trainer: StudioTrainer;
-  openTranslationEditor: OpenTranslationEditorFunction;
-};
-
-export const TrainerFrameEditor = ({ trainer, openTranslationEditor }: TrainerFrameEditorProps) => {
-  const [state] = useGlobalState();
+export const TrainerFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { t } = useTranslation('database_trainers');
+  const { trainer } = useTrainerPage();
+  const updateTrainer = useUpdateTrainer(trainer);
+  const dialogsRef = useDialogsRef<TrainerTranslationEditorTitle>();
   const aiOptions = useMemo(() => aiCategoryEntries(t), [t]);
   const vsTypeOptions = useMemo(() => vsTypeCategoryEntries(t), [t]);
-  const [spriteDp, setSpriteDp] = useState(false);
-  const [spriteBig, setSpriteBig] = useState(false);
-  const [isLoading, setLoading] = useState(true);
   const setText = useSetProjectText();
   const getText = useGetProjectText();
-  const refreshUI = useRefreshUI();
+  const trainerNameRef = useRef<HTMLInputElement>(null);
+  const trainerClassRef = useRef<HTMLInputElement>(null);
+  const battleIdRef = useRef<HTMLInputElement>(null);
+  const [baseMoney, setBaseMoney] = useState<number>(trainer.baseMoney);
+  const [aiLevel, setAiLevel] = useState<number>(trainer.ai);
+  const [vsType, setVsType] = useState<StudioTrainerVsType>(trainer.vsType);
 
-  useEffect(() => {
-    if (!isLoading) return;
+  const saveTexts = () => {
+    if (!trainerNameRef.current || !trainerClassRef.current) return;
 
-    return window.api.fileExists(
-      { filePath: trainerSpritePath(trainer, state.projectPath) },
-      ({ result }) => {
-        setSpriteDp(result);
-        window.api.fileExists(
-          { filePath: trainerSpriteBigPath(trainer, state.projectPath) },
-          ({ result: resultBig }) => {
-            setSpriteBig(resultBig);
-            setLoading(false);
-          },
-          ({ errorMessage }) => showNotification('danger', t('error'), errorMessage)
-        );
-      },
-      ({ errorMessage }) => showNotification('danger', t('error'), errorMessage)
-    );
-  }, [trainer, isLoading]);
-
-  const onBattlerChoosen = (battlerPath: string) => {
-    const battler = basename(battlerPath)
-      .split('.')[0]
-      .replace(/_big|_sma/, '');
-    if (trainer.battlers[0]) refreshUI((trainer.battlers[0] = battler));
-    else refreshUI(trainer.battlers.push(battler));
-    setLoading(true);
+    setText(TRAINER_NAME_TEXT_ID, trainer.id, trainerNameRef.current.value);
+    setText(TRAINER_CLASS_TEXT_ID, trainer.id, trainerClassRef.current.value);
   };
 
-  const getSprite = () => {
-    if (spriteBig) return trainerSpriteBigPath(trainer);
-    if (spriteDp) return trainerSpritePath(trainer);
-    return '';
+  const canClose = () => {
+    const result = !!trainerNameRef.current?.value && !!trainerClassRef.current?.value && !!battleIdRef.current?.validity.valid;
+    return result && (isNaN(baseMoney) || (baseMoney >= 0 && baseMoney <= 99999)) && !dialogsRef.current?.currentDialog;
+  };
+
+  const onClose = () => {
+    if (!battleIdRef.current || !canClose()) return;
+
+    updateTrainer({
+      battleId: battleIdRef.current.value === '' ? trainer.battleId : battleIdRef.current.valueAsNumber,
+      baseMoney: isNaN(baseMoney) ? trainer.baseMoney : baseMoney,
+      ai: aiLevel,
+      vsType: vsType,
+    });
+    saveTexts();
+  };
+
+  useEditorHandlingClose(ref, onClose, canClose);
+
+  const handleTranslateClick = (editorTitle: TrainerTranslationEditorTitle) => () => {
+    saveTexts();
+    setTimeout(() => dialogsRef.current?.openDialog(editorTitle), 0);
+  };
+
+  const onTranslationOverlayClose = () => {
+    if (!trainerNameRef.current || !trainerClassRef.current) return;
+
+    trainerNameRef.current.value = trainerNameRef.current.defaultValue;
+    trainerClassRef.current.value = trainerClassRef.current.defaultValue;
   };
 
   return (
@@ -129,12 +117,12 @@ export const TrainerFrameEditor = ({ trainer, openTranslationEditor }: TrainerFr
             <Label htmlFor="trainer-name" required>
               {t('trainer_name')}
             </Label>
-            <TranslateInputContainer onTranslateClick={() => openTranslationEditor('translation_name')}>
+            <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_name')}>
               <Input
                 type="text"
                 name="name"
-                value={getText(TRAINER_NAME_TEXT_ID, trainer.id)}
-                onChange={(event) => refreshUI(setText(TRAINER_NAME_TEXT_ID, trainer.id, event.target.value))}
+                defaultValue={getText(TRAINER_NAME_TEXT_ID, trainer.id)}
+                ref={trainerNameRef}
                 placeholder={t('example_trainer_name')}
               />
             </TranslateInputContainer>
@@ -143,12 +131,12 @@ export const TrainerFrameEditor = ({ trainer, openTranslationEditor }: TrainerFr
             <Label htmlFor="trainer-class" required>
               {t('trainer_class')}
             </Label>
-            <TranslateInputContainer onTranslateClick={() => openTranslationEditor('translation_class')}>
+            <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_class')}>
               <Input
                 type="text"
                 name="name"
-                value={getText(TRAINER_CLASS_TEXT_ID, trainer.id)}
-                onChange={(event) => refreshUI(setText(TRAINER_CLASS_TEXT_ID, trainer.id, event.target.value))}
+                defaultValue={getText(TRAINER_CLASS_TEXT_ID, trainer.id)}
+                ref={trainerClassRef}
                 placeholder={t('example_trainer_class')}
               />
             </TranslateInputContainer>
@@ -158,8 +146,8 @@ export const TrainerFrameEditor = ({ trainer, openTranslationEditor }: TrainerFr
             <SelectCustomSimple
               id="select-ai-level"
               options={aiOptions}
-              onChange={(value) => refreshUI((trainer.ai = Number(value)))}
-              value={trainer.ai.toString()}
+              onChange={(value) => setAiLevel(Number(value))}
+              value={aiLevel.toString()}
               noTooltip
             />
           </InputWithTopLabelContainer>
@@ -168,8 +156,8 @@ export const TrainerFrameEditor = ({ trainer, openTranslationEditor }: TrainerFr
             <SelectCustomSimple
               id="select-vs-type"
               options={vsTypeOptions}
-              onChange={(value) => refreshUI((trainer.vsType = Number(value) as 1))}
-              value={trainer.vsType.toString()}
+              onChange={(value) => setVsType(Number(value) as StudioTrainerVsType)}
+              value={vsType.toString()}
               noTooltip
             />
           </InputWithTopLabelContainer>
@@ -180,37 +168,8 @@ export const TrainerFrameEditor = ({ trainer, openTranslationEditor }: TrainerFr
                 {t('battle_id')}
               </ToolTipContainer>
             </Label>
-            <Input
-              type="number"
-              name="battle-id"
-              min="0"
-              max="9999"
-              value={isNaN(trainer.battleId) ? '' : trainer.battleId}
-              onChange={(event) => {
-                const newValue = parseInt(event.target.value);
-                if (newValue < 0 || newValue > 9999) return event.preventDefault();
-                refreshUI((trainer.battleId = newValue));
-              }}
-              onBlur={() => refreshUI((trainer.battleId = cleanNaNValue(trainer.battleId)))}
-            />
+            <Input type="number" name="battle-id" min="0" max="9999" defaultValue={trainer.battleId} ref={battleIdRef} />
           </InputWithLeftLabelContainer>
-          <InputWithTopLabelContainer>
-            <Label htmlFor="battler" required>
-              {t('trainer_sprite')}
-            </Label>
-            {trainer.battlers.length === 0 || (!spriteDp && !spriteBig) ? (
-              <DropInput destFolderToCopy="graphics/battlers" name={t('trainer_sprite')} extensions={['png']} onFileChoosen={onBattlerChoosen} />
-            ) : !isLoading ? (
-              <TrainerPictureInput
-                name={t('trainer_sprite')}
-                picturePath={getSprite()}
-                onIconClear={() => refreshUI(trainer.battlers.pop())}
-                pixelated={!spriteBig && spriteDp}
-              />
-            ) : (
-              <WaitingPicture />
-            )}
-          </InputWithTopLabelContainer>
         </PaddedInputContainer>
         <InputGroupCollapse title={t('money')} gap="16px" collapseByDefault>
           <PaddedInputContainer size="s">
@@ -221,23 +180,20 @@ export const TrainerFrameEditor = ({ trainer, openTranslationEditor }: TrainerFr
                 name="base-money"
                 min="0"
                 max="99999"
-                value={isNaN(trainer.baseMoney) ? '' : trainer.baseMoney}
-                onChange={(event) => {
-                  const newValue = event.target.value === '' ? Number.NaN : parseInt(event.target.value);
-                  if (newValue < 0 || newValue > 99999) return event.preventDefault();
-                  refreshUI((trainer.baseMoney = newValue));
-                }}
-                onBlur={() => refreshUI((trainer.baseMoney = cleanNaNValue(trainer.baseMoney)))}
+                value={baseMoney}
+                onChange={(event) => setBaseMoney(event.currentTarget.valueAsNumber)}
               />
             </InputWithLeftLabelContainer>
             <BaseMoneyInfoContainer>{t('base_money_info')}</BaseMoneyInfoContainer>
             <MoneyContainer>
               <span className="title">{t('money_title')}</span>
-              <Tag>{`${getTrainerMoney(trainer)} P$`}</Tag>
+              <Tag>{`${getTrainerMoney({ ...trainer, baseMoney })} P$`}</Tag>
             </MoneyContainer>
           </PaddedInputContainer>
         </InputGroupCollapse>
       </InputContainer>
+      <TrainerTranslationOverlay trainer={trainer} onClose={onTranslationOverlayClose} ref={dialogsRef} />
     </EditorWithCollapse>
   );
-};
+});
+TrainerFrameEditor.displayName = 'TrainerFrameEditor';

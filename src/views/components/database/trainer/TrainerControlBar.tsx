@@ -1,26 +1,39 @@
-import { SecondaryButtonWithPlusIcon } from '@components/buttons';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { SecondaryButtonWithPlusIcon } from '@components/buttons';
 import { ControlBar } from '@components/ControlBar';
 import { SelectTrainer } from '@components/selects';
-import { StudioTrainer } from '@modelEntities/trainer';
 import { useSetCurrentDatabasePath } from '@utils/useSetCurrentDatabasePage';
+import { useProjectTrainers } from '@utils/useProjectData';
+import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
+import { TrainerDialogsRef } from './editors/TrainerEditorOverlay';
 
 type TrainerControlBarProps = {
-  onChange: SelectChangeEvent;
-  trainer: StudioTrainer;
-  onClickNewTrainer: () => void;
+  dialogsRef?: TrainerDialogsRef;
 };
 
-export const TrainerControlBar = ({ onChange, trainer, onClickNewTrainer }: TrainerControlBarProps) => {
+export const TrainerControlBar = ({ dialogsRef }: TrainerControlBarProps) => {
   const { t } = useTranslation('database_trainers');
+  const { selectedDataIdentifier: trainerDbSymbol, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol } = useProjectTrainers();
   useSetCurrentDatabasePath();
+
+  const shortcutMap = useMemo<StudioShortcutActions>(() => {
+    const isShortcutEnabled = () => dialogsRef?.current?.currentDialog === undefined;
+    return {
+      db_previous: () => isShortcutEnabled() && setSelectedDataIdentifier({ trainer: getPreviousDbSymbol('id') }),
+      db_next: () => isShortcutEnabled() && setSelectedDataIdentifier({ trainer: getNextDbSymbol('id') }),
+      db_new: () => isShortcutEnabled() && dialogsRef?.current?.openDialog('new'),
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [trainerDbSymbol]);
+  useShortcut(shortcutMap);
+
+  const onClickNew = dialogsRef ? () => dialogsRef.current?.openDialog('new') : undefined;
 
   return (
     <ControlBar>
-      <SecondaryButtonWithPlusIcon onClick={onClickNewTrainer}>{t('new')}</SecondaryButtonWithPlusIcon>
-      <SelectTrainer dbSymbol={trainer.dbSymbol} onChange={onChange} />
+      {onClickNew ? <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new')}</SecondaryButtonWithPlusIcon> : <div />}
+      <SelectTrainer dbSymbol={trainerDbSymbol} onChange={(dbSymbol) => setSelectedDataIdentifier({ trainer: dbSymbol })} />
     </ControlBar>
   );
 };
