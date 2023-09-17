@@ -3,6 +3,9 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { BaseButtonStyle, WarningButton } from '@components/buttons';
 import { DataBlockContainer } from '@components/database/dataBlocks';
+import { useMapUpdate } from '@utils/useMapUpdate';
+import { showNotification } from '@utils/showNotification';
+import { useLoaderRef } from '@utils/loaderContext';
 
 const MapUpdateContainer = styled.div`
   display: flex;
@@ -33,6 +36,26 @@ const MapUpdateContainer = styled.div`
 
 export const MapUpdate = () => {
   const { t } = useTranslation('database_maps');
+  const mapUpdate = useMapUpdate();
+  const loaderRef = useLoaderRef();
+
+  const handleUpdate = async () => {
+    mapUpdate(
+      () => {
+        loaderRef.current.close();
+        showNotification('success', t('update_maps'), t('update_maps_success'));
+      },
+      (error, genericError) => {
+        if (error.length !== 0) {
+          error.forEach((err) => window.api.log.error(`[Map update] ${err.filename}.tmx:`, err.errorMessage));
+          loaderRef.current.setError('updating_maps_error', t('update_maps_error_convert'), true);
+        } else {
+          loaderRef.current.setError('updating_maps_error', genericError || t('update_maps_error_generic'), true);
+        }
+      }
+    );
+  };
+
   return (
     <DataBlockContainer size="full" color="warning" data-disabled="true">
       <MapUpdateContainer>
@@ -40,7 +63,7 @@ export const MapUpdate = () => {
           <h2>{t('update_maps')}</h2>
           <span className="message">{t('update_maps_message')}</span>
         </div>
-        <WarningButton onClick={() => console.log('update maps')}>{t('update_maps_button')}</WarningButton>
+        <WarningButton onClick={handleUpdate}>{t('update_maps_button')}</WarningButton>
       </MapUpdateContainer>
     </DataBlockContainer>
   );

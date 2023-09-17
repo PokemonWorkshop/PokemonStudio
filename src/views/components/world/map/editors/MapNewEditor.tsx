@@ -31,6 +31,7 @@ import { mapInfoNewMapWithParent } from '@utils/MapInfoUtils';
 import { EditorChildWithSubEditorContainer, SubEditorContainer, SubEditorSeparator } from '@components/editor/EditorContainer';
 import { MapImportEditorTitle, MapImportOverlay } from './MapImport/MapImportOverlay';
 import { useDialogsRef } from '@utils/useDialogsRef';
+import { useUpdateMapModified } from './useUpdateMapModified';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -45,8 +46,9 @@ type MapNewEditorProps = {
 };
 
 export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>(({ closeDialog, mapInfoParent }, ref) => {
-  const { projectDataValues: maps, setProjectDataValues: setMap } = useProjectMaps();
+  const { projectDataValues: maps, setProjectDataValues: setMap, state } = useProjectMaps();
   const { mapInfoValues: mapInfoValues, setMapInfoValues: setMapInfo } = useMapInfo();
+  const updateMapModified = useUpdateMapModified();
   const { t } = useTranslation(['database_moves', 'database_maps']);
   const dialogsRef = useDialogsRef<MapImportEditorTitle>();
   const navigate = useNavigate();
@@ -74,6 +76,12 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
       mapInfoCloned.push(newMapInfoMap);
       setMapInfo(mapInfoCloned);
     }
+    if (tiledFilename !== '') {
+      const mapModifiedUpdated = cloneEntity(state.mapsModified);
+      mapModifiedUpdated.push(dbSymbol);
+      updateMapModified(mapModifiedUpdated);
+    }
+
     setText(MAP_NAME_TEXT_ID, newMap.id, name);
     setText(MAP_DESCRIPTION_TEXT_ID, newMap.id, descriptionRef.current.value);
     setMap({ [dbSymbol]: newMap }, { map: dbSymbol });

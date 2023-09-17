@@ -123,7 +123,7 @@ export const useProjectSave = () => {
         callbacks?.onSuccess();
         return;
     }
-  }, [stateSave, state.textVersion, state, state.textInfos, state.mapInfo, callbacks]);
+  }, [stateSave, state.textVersion, state, state.textInfos, state.mapInfo, state.mapsModified, callbacks]);
 
   return {
     isDataToSave,

@@ -8,14 +8,16 @@ type LoaderTitle =
   | 'loading_project'
   | 'updating_psdk'
   | 'migrating_data'
-  | 'importing_tiled_maps';
+  | 'importing_tiled_maps'
+  | 'updating_maps';
 type LoaderErrorTitle =
   | 'creating_project_error'
   | 'importing_project_error'
   | 'saving_project_error'
   | 'loading_project_error'
   | 'updating_psdk_error'
-  | 'importing_tiled_maps_error';
+  | 'importing_tiled_maps_error'
+  | 'updating_maps_error';
 
 type LoaderState = {
   thingInProgress: LoaderTitle;

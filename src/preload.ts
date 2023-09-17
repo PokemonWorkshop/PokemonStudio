@@ -28,7 +28,6 @@ import type { ReadProjectMetadataInput, ReadProjectMetadataOutput } from './back
 import type { WriteProjectMetadataInput } from './backendTasks/writeProjectMetadata';
 import type { GetStudioVersionOutput } from './backendTasks/getStudioVersion';
 import type { ConvertTMXInput } from './backendTasks/convertTiledMapToTileMetadata';
-import type { PartialStudioMap } from 'ts-tiled-converter';
 import type { SaveMapInfoInput } from './backendTasks/saveMapInfo';
 import { StartupStudioFileOutput } from './backendTasks/startupStudioFile';
 import type { GetFilePathsFromFolderInput, GetFilePathsFromFolderOutput } from './backendTasks/getFilePathsFromFolder';
@@ -195,7 +194,7 @@ declare global {
       saveTextInfos: BackendTaskWithGenericErrorAndNoProgress<SaveTextInfosInput, AnyObj>;
       readCsvFile: BackendTaskWithGenericError<ReadCsvFileInput, ProjectText, GenericBackendProgress>;
       checkMapsModified: BackendTaskWithGenericErrorAndNoProgress<CheckMapModifiedInput, CheckMapModifiedOutput>;
-      convertTiledMapToTileMetadata: BackendTaskWithGenericErrorAndNoProgress<ConvertTMXInput, PartialStudioMap>;
+      convertTiledMapToTileMetadata: BackendTaskWithGenericErrorAndNoProgress<ConvertTMXInput, ConvertTMXOutput>;
       saveMapInfo: BackendTaskWithGenericErrorAndNoProgress<SaveMapInfoInput, AnyObj>;
       startupStudioFile: BackendTaskWithGenericErrorAndNoProgress<AnyObj, StartupStudioFileOutput>;
       getFilePathsFromFolder: BackendTaskWithGenericErrorAndNoProgress<GetFilePathsFromFolderInput, GetFilePathsFromFolderOutput>;
