@@ -52,7 +52,7 @@ export const checkMapsModified = async (payload: CheckMapModifiedInput) => {
   const mapsModified = await studioMaps.reduce(async (accPromise, map) => {
     const acc = await accPromise;
     const filePath = path.join(tiledMapPath, map.tiledFilename + '.tmx');
-    if (!fs.existsSync(filePath)) return acc;
+    if (map.tiledFilename === '' || !fs.existsSync(filePath)) return acc;
 
     if (payload.method === 'sha1') {
       try {

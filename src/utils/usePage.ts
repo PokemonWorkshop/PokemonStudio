@@ -60,6 +60,7 @@ export const useMapPage = () => {
     map,
     hasMap: dbSymbol !== '__undef__',
     hasMapModified: state.mapsModified.length !== 0,
+    state,
   };
 };
 

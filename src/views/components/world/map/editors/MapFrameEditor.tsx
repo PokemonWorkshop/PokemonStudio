@@ -22,11 +22,14 @@ import { TranslateInputContainer } from '@components/inputs/TranslateInputContai
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import { DropInput } from '@components/inputs/DropInput';
 import { basename } from '@utils/path';
+import { useUpdateMapModified } from './useUpdateMapModified';
+import { cloneEntity } from '@utils/cloneEntity';
 
 export const MapFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { t } = useTranslation('database_maps');
-  const { map } = useMapPage();
+  const { map, state } = useMapPage();
   const updateMap = useUpdateMap(map);
+  const updateMapModified = useUpdateMapModified();
   const dialogsRef = useDialogsRef<TranslationEditorTitle>();
   const getMapName = useGetEntityNameText();
   const getMapDescription = useGetEntityDescriptionText();
@@ -47,10 +50,22 @@ export const MapFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const onClose = () => {
     if (!nameRef.current || !descriptionRef.current || !stepsAverageRef.current || !canClose()) return;
 
+    const mapModifiedUpdated = cloneEntity(state.mapsModified);
+    if (tiledFilename === '') {
+      const index = mapModifiedUpdated.findIndex((dbSymbol) => dbSymbol === map.dbSymbol);
+      if (index !== -1) {
+        mapModifiedUpdated.splice(index, 1);
+        updateMapModified(mapModifiedUpdated);
+      }
+    } else if (tiledFilename !== map.tiledFilename && !mapModifiedUpdated.includes(map.dbSymbol)) {
+      mapModifiedUpdated.push(map.dbSymbol);
+      updateMapModified(mapModifiedUpdated);
+    }
+
     const stepsAverage = isNaN(stepsAverageRef.current.valueAsNumber) ? map.stepsAverage : stepsAverageRef.current.valueAsNumber;
     setText(MAP_NAME_TEXT_ID, map.id, nameRef.current.value);
     setText(MAP_DESCRIPTION_TEXT_ID, map.id, descriptionRef.current.value);
-    updateMap({ stepsAverage, tiledFilename });
+    updateMap({ stepsAverage, tiledFilename, tileMetadata: tiledFilename === '' ? {} : map.tiledFilename });
     saveTexts();
   };
   useEditorHandlingClose(ref, onClose, canClose);
