@@ -56,5 +56,17 @@
   "new_dialog": "Nouveau dialogue",
   "available_future_release": "Disponible dans une prochaine version",
   "error": "Erreur",
-  "party_length_limit": "Un dresseur ne peut pas avoir plus de 6 Pokémon."
+  "party_length_limit": "Un dresseur ne peut pas avoir plus de 6 Pokémon.",
+  "resources": "Ressources",
+  "battlers": "Battlers",
+  "battle_sprite": "Battle sprite",
+  "artwork_full": "Artwork - Full",
+  "artwork_small": "Artwork - Small",
+  "character": "Character",
+  "musics": "Musiques",
+  "encounter_music": "Musique de rencontre",
+  "victory_music": "Musique de victoire du dresseur",
+  "defeat_music": "Musique de défaite du dresseur",
+  "bgm_music": "Musique de combat",
+  "character_v3_message": "Le character sera utilisé à partir de la version 3.0 de l'application."
 }
