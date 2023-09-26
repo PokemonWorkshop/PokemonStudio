@@ -117,6 +117,7 @@ export const formResourcesPath = (form: StudioCreatureForm, resource: CreatureFo
 };
 
 export const pokemonSpritePath = (form: StudioCreatureForm) => {
+  if (form.femaleRate === 100 || form.resources.front === '') return formResourcesPath(form, 'frontF');
   return formResourcesPath(form, 'front');
 };
 

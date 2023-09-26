@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { DataBlockWrapper } from '@components/database/dataBlocks';
 import { PokemonControlBar } from '@components/database/pokemon/PokemonControlBar';
@@ -45,6 +45,10 @@ export const PokemonResourcesPage = () => {
     currentEditedPokemonWithForm.form.resources.hasFemale = female;
     setPokemon({ [currentEditedPokemon.dbSymbol]: currentEditedPokemon });
   };
+
+  useEffect(() => {
+    setIsShowFemale(currentPokemonWithForm.form.resources.hasFemale);
+  }, [currentPokemonWithForm]);
 
   return (
     <DatabasePageStyle>
