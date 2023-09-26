@@ -12,6 +12,23 @@ export type StudioTrainerBagEntry = z.infer<typeof TRAINER_BAG_ENTRY_VALIDATOR>;
 export const TRAINER_VS_TYPE = z.union([z.literal(1), z.literal(2), z.literal(3)]);
 export type StudioTrainerVsType = z.infer<typeof TRAINER_VS_TYPE>;
 
+export const TRAINER_MUSICS_VALIDATOR = z.object({
+  encounter: z.string(),
+  victory: z.string(),
+  defeat: z.string(),
+  bgm: z.string(),
+});
+export type StudioTrainerMusics = z.infer<typeof TRAINER_MUSICS_VALIDATOR>;
+
+export const TRAINER_RESOURCES_VALIDATOR = z.object({
+  sprite: z.string(),
+  artworkFull: z.string(),
+  artworkSmall: z.string(),
+  character: z.string(),
+  musics: TRAINER_MUSICS_VALIDATOR,
+});
+export type StudioTrainerResources = z.infer<typeof TRAINER_RESOURCES_VALIDATOR>;
+
 export const TRAINER_VALIDATOR = z.object({
   klass: z.literal('TrainerBattleSetup'),
   id: POSITIVE_OR_ZERO_INT,
@@ -19,11 +36,11 @@ export const TRAINER_VALIDATOR = z.object({
   vsType: TRAINER_VS_TYPE,
   isCouple: z.boolean(),
   baseMoney: POSITIVE_OR_ZERO_INT,
-  battlers: z.array(z.string()).nonempty(),
   bagEntries: z.array(TRAINER_BAG_ENTRY_VALIDATOR),
   battleId: POSITIVE_OR_ZERO_INT,
   ai: POSITIVE_OR_ZERO_INT.default(1),
   party: z.array(ENCOUNTER_VALIDATOR),
+  resources: TRAINER_RESOURCES_VALIDATOR,
 });
 export type StudioTrainer = z.infer<typeof TRAINER_VALIDATOR>;
 

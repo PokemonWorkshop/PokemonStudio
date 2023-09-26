@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   DataBlockContainer,
@@ -9,13 +9,11 @@ import {
   DataInfoContainerHeaderTitle,
 } from '../dataBlocks';
 import styled from 'styled-components';
-import { useGlobalState } from '@src/GlobalStateProvider';
 import { padStr } from '@utils/PadStr';
 import { TrainerCategory } from '@components/categories';
-import { showNotification } from '@utils/showNotification';
 import { useGetEntityNameText, useGetProjectText } from '@utils/ReadingProjectText';
 import { getTrainerMoney, StudioTrainer, TRAINER_AI_CATEGORIES, TRAINER_CLASS_TEXT_ID } from '@modelEntities/trainer';
-import { trainerSpriteBigPath, trainerSpritePath } from '@utils/path';
+import { trainerResourcePath } from '@utils/path';
 import { ResourceImage } from '@components/ResourceImage';
 import { TrainerDialogsRef } from './editors/TrainerEditorOverlay';
 
@@ -42,28 +40,18 @@ const TrainerSubInfoContainer = styled.div`
   gap: 48px;
 `;
 
-type TrainerSpriteProps = {
-  show: string;
-};
-
-const TrainerSpriteContainer = styled.div.attrs<TrainerSpriteProps>((props) => ({
-  'data-show': props.show,
-}))<TrainerSpriteProps>`
+const TrainerSpriteContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: 8px;
   justify-content: right;
   height: 160px;
 
-  &[data-show='not-show'] {
-    display: none;
-  }
-
   @media ${({ theme }) => theme.breakpoints.dataBox422} {
     justify-content: left;
   }
 
-  & .sprite-dp {
+  & .sprite {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -73,7 +61,7 @@ const TrainerSpriteContainer = styled.div.attrs<TrainerSpriteProps>((props) => (
     border-radius: 4px;
   }
 
-  & .sprite-big {
+  & .artwork-full {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -97,35 +85,10 @@ const TrainerSpriteContainer = styled.div.attrs<TrainerSpriteProps>((props) => (
 
 export const TrainerFrame = ({ trainer, dialogsRef }: TrainerFrameProps) => {
   const { t } = useTranslation('database_trainers');
-  const [state] = useGlobalState();
   const getTrainerName = useGetEntityNameText();
   const getText = useGetProjectText();
-  const [spriteDp, setSpriteDp] = useState(false);
-  const [spriteBig, setSpriteBig] = useState(false);
-  const [initial, setInitial] = useState(true);
   const trainerClass = getText(TRAINER_CLASS_TEXT_ID, trainer.id);
   const trainerName = `${trainerClass} ${getTrainerName(trainer)}`;
-
-  // TODO: remove this when the trainer resource page will be implemented
-  useEffect(
-    () =>
-      window.api.fileExists(
-        { filePath: trainerSpritePath(trainer, state.projectPath) },
-        ({ result }) => {
-          setSpriteDp(result);
-          window.api.fileExists(
-            { filePath: trainerSpriteBigPath(trainer, state.projectPath) },
-            ({ result: resultBig }) => {
-              setSpriteBig(resultBig);
-              setInitial(false);
-            },
-            ({ errorMessage }) => showNotification('danger', t('error'), errorMessage)
-          );
-        },
-        ({ errorMessage }) => showNotification('danger', t('error'), errorMessage)
-      ),
-    [trainer]
-  );
 
   return (
     <DataBlockContainer size="full" onClick={() => dialogsRef.current?.openDialog('frame')}>
@@ -146,20 +109,19 @@ export const TrainerFrame = ({ trainer, dialogsRef }: TrainerFrameProps) => {
             <DataFieldsetField label={t('money_given')} data={`${getTrainerMoney(trainer)} P$`} />
           </TrainerSubInfoContainer>
         </TrainerInfoContainer>
-        {trainer.battlers.length !== 0 && state.projectPath && (
-          <TrainerSpriteContainer show={initial ? 'show' : !spriteBig && !spriteDp ? 'not-show' : 'show'}>
-            {spriteBig && (
-              <div className="sprite-big">
-                <ResourceImage imagePathInProject={trainerSpriteBigPath(trainer)} />
-              </div>
-            )}
-            {spriteDp && (
-              <div className="sprite-dp">
-                <ResourceImage imagePathInProject={trainerSpritePath(trainer)} />
-              </div>
-            )}
-          </TrainerSpriteContainer>
-        )}
+
+        <TrainerSpriteContainer>
+          {trainer.resources.artworkFull && (
+            <div className="artwork-full">
+              <ResourceImage imagePathInProject={trainerResourcePath(trainer, 'artworkFull')} />
+            </div>
+          )}
+          {trainer.resources.sprite && (
+            <div className="sprite">
+              <ResourceImage imagePathInProject={trainerResourcePath(trainer, 'sprite')} />
+            </div>
+          )}
+        </TrainerSpriteContainer>
       </DataGridTrainer>
     </DataBlockContainer>
   );

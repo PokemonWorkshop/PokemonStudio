@@ -1,8 +1,4 @@
-import { addMoveCharacteristics } from '@src/migrations/addMoveCharacteristics';
-import { addStepsAverageToGroup } from '@src/migrations/addStepsAverageToGroup';
-import { baseForMaps } from '@src/migrations/baseForMaps';
 import { fixBeMethodMoveSelfStatus } from '@src/migrations/fixBeMethodMoveSelfStatus';
-import { fixCsvFileIdDex } from '@src/migrations/fixCsvFileIdDex';
 import { linkResourcesToCreatures } from '@src/migrations/linkResourcesToCreatures';
 import { migrateHeadbutt } from '@src/migrations/migrateHeadbutt';
 import { migrateMapLinks } from '@src/migrations/migrateMapLinks';
@@ -10,82 +6,24 @@ import { IpcMainEvent } from 'electron';
 import log from 'electron-log';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import { ChannelNames, sendProgress } from '@utils/BackendTask';
+import { migrationV2 } from '@src/migrations/migrationV2';
 
 export type MigrationTask = (event: IpcMainEvent, projectPath: string) => Promise<void>;
 
 // Don't forget to extend those array with the new tasks that gets added by the time!
 const MIGRATIONS: Record<string, MigrationTask[]> = {
-  '1.0.0': [
-    migrateMapLinks,
-    linkResourcesToCreatures,
-    migrateHeadbutt,
-    fixBeMethodMoveSelfStatus,
-    fixCsvFileIdDex,
-    baseForMaps,
-    addMoveCharacteristics,
-    addStepsAverageToGroup,
-  ],
-  '1.0.1': [
-    migrateMapLinks,
-    linkResourcesToCreatures,
-    migrateHeadbutt,
-    fixBeMethodMoveSelfStatus,
-    fixCsvFileIdDex,
-    baseForMaps,
-    addMoveCharacteristics,
-    addStepsAverageToGroup,
-  ],
-  '1.0.2': [
-    migrateMapLinks,
-    linkResourcesToCreatures,
-    migrateHeadbutt,
-    fixBeMethodMoveSelfStatus,
-    fixCsvFileIdDex,
-    baseForMaps,
-    addMoveCharacteristics,
-    addStepsAverageToGroup,
-  ],
-  '1.1.0': [
-    linkResourcesToCreatures,
-    migrateHeadbutt,
-    fixBeMethodMoveSelfStatus,
-    fixCsvFileIdDex,
-    baseForMaps,
-    addMoveCharacteristics,
-    addStepsAverageToGroup,
-  ],
-  '1.1.1': [
-    linkResourcesToCreatures,
-    migrateHeadbutt,
-    fixBeMethodMoveSelfStatus,
-    fixCsvFileIdDex,
-    baseForMaps,
-    addMoveCharacteristics,
-    addStepsAverageToGroup,
-  ],
-  '1.2.0': [
-    linkResourcesToCreatures,
-    migrateHeadbutt,
-    fixBeMethodMoveSelfStatus,
-    fixCsvFileIdDex,
-    baseForMaps,
-    addMoveCharacteristics,
-    addStepsAverageToGroup,
-  ],
-  '1.3.0': [
-    linkResourcesToCreatures,
-    migrateHeadbutt,
-    fixBeMethodMoveSelfStatus,
-    fixCsvFileIdDex,
-    baseForMaps,
-    addMoveCharacteristics,
-    addStepsAverageToGroup,
-  ],
-  '1.4.0': [fixCsvFileIdDex, baseForMaps, addMoveCharacteristics, addStepsAverageToGroup],
-  '1.4.1': [fixCsvFileIdDex, baseForMaps, addMoveCharacteristics, addStepsAverageToGroup],
-  '1.4.2': [fixCsvFileIdDex, baseForMaps, addMoveCharacteristics, addStepsAverageToGroup],
-  '1.4.3': [fixCsvFileIdDex, baseForMaps, addMoveCharacteristics, addStepsAverageToGroup],
-  '1.4.4': [fixCsvFileIdDex, baseForMaps, addMoveCharacteristics, addStepsAverageToGroup], // Don't forget to add the official version coming up
+  '1.0.0': [migrateMapLinks, linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus, migrationV2],
+  '1.0.1': [migrateMapLinks, linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus, migrationV2],
+  '1.0.2': [migrateMapLinks, linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus, migrationV2],
+  '1.1.0': [linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus, migrationV2],
+  '1.1.1': [linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus, migrationV2],
+  '1.2.0': [linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus, migrationV2],
+  '1.3.0': [linkResourcesToCreatures, migrateHeadbutt, fixBeMethodMoveSelfStatus, migrationV2],
+  '1.4.0': [migrationV2],
+  '1.4.1': [migrationV2],
+  '1.4.2': [migrationV2],
+  '1.4.3': [migrationV2],
+  '1.4.4': [migrationV2], // Don't forget to add the official version coming up
 };
 
 // Don't forget to extend those array with the new tasks that gets added by the time!
@@ -95,97 +33,51 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
     'Link the resources to the Pokémon',
     'Move Headbutt tool in the system tag',
     'Fix battle engine method of the moves',
-    'Fix the csv file id of the dex',
-    'Add files and folder for the maps',
-    'Add new characteristics in the moves',
-    'Add steps average at the groups',
+    'Migration to version 2.0',
   ],
   '1.0.1': [
     'Migrate MapLinks',
     'Link the resources to the Pokémon',
     'Move Headbutt tool in the system tag',
     'Fix battle engine method of the moves',
-    'Fix the csv file id of the dex',
-    'Add files and folder for the maps',
-    'Add new characteristics in the moves',
-    'Add steps average at the groups',
+    'Migration to version 2.0',
   ],
   '1.0.2': [
     'Migrate MapLinks',
     'Link the resources to the Pokémon',
     'Move Headbutt tool in the system tag',
     'Fix battle engine method of the moves',
-    'Fix the csv file id of the dex',
-    'Add files and folder for the maps',
-    'Add new characteristics in the moves',
-    'Add steps average at the groups',
+    'Migration to version 2.0',
   ],
   '1.1.0': [
     'Link the resources to the Pokémon',
     'Move Headbutt tool in the system tag',
     'Fix battle engine method of the moves',
-    'Fix the csv file id of the dex',
-    'Add files and folder for the maps',
-    'Add new characteristics in the moves',
-    'Add steps average at the groups',
+    'Migration to version 2.0',
   ],
   '1.1.1': [
     'Link the resources to the Pokémon',
     'Move Headbutt tool in the system tag',
     'Fix battle engine method of the moves',
-    'Fix the csv file id of the dex',
-    'Add files and folder for the maps',
-    'Add new characteristics in the moves',
-    'Add steps average at the groups',
+    'Migration to version 2.0',
   ],
   '1.2.0': [
     'Link the resources to the Pokémon',
     'Move Headbutt tool in the system tag',
     'Fix battle engine method of the moves',
-    'Fix the csv file id of the dex',
-    'Add files and folder for the maps',
-    'Add new characteristics in the moves',
-    'Add steps average at the groups',
+    'Migration to version 2.0',
   ],
   '1.3.0': [
     'Link the resources to the Pokémon',
     'Move Headbutt tool in the system tag',
     'Fix battle engine method of the moves',
-    'Fix the csv file id of the dex',
-    'Add files and folder for the maps',
-    'Add new characteristics in the moves',
-    'Add steps average at the groups',
+    'Migration to version 2.0',
   ],
-  '1.4.0': [
-    'Fix the csv file id of the dex',
-    'Add files and folder for the maps',
-    'Add new characteristics in the moves',
-    'Add steps average at the groups',
-  ],
-  '1.4.1': [
-    'Fix the csv file id of the dex',
-    'Add files and folder for the maps',
-    'Add new characteristics in the moves',
-    'Add steps average at the groups',
-  ],
-  '1.4.2': [
-    'Fix the csv file id of the dex',
-    'Add files and folder for the maps',
-    'Add new characteristics in the moves',
-    'Add steps average at the groups',
-  ],
-  '1.4.3': [
-    'Fix the csv file id of the dex',
-    'Add files and folder for the maps',
-    'Add new characteristics in the moves',
-    'Add steps average at the groups',
-  ],
-  '1.4.4': [
-    'Fix the csv file id of the dex',
-    'Add files and folder for the maps',
-    'Add new characteristics in the moves',
-    'Add steps average at the groups',
-  ], // Don't forget to add the official version coming up
+  '1.4.0': ['Migration to version 2.0'],
+  '1.4.1': ['Migration to version 2.0'],
+  '1.4.2': ['Migration to version 2.0'],
+  '1.4.3': ['Migration to version 2.0'],
+  '1.4.4': ['Migration to version 2.0'], // Don't forget to add the official version coming up
 };
 
 export type MigrateDataInput = { projectPath: string; projectVersion: string };

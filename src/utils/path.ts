@@ -1,6 +1,6 @@
 import { StudioCreature, StudioCreatureForm } from '@modelEntities/creature';
-import { StudioTrainer } from '@modelEntities/trainer';
 import { assertUnreachable } from './assertUnreachable';
+import { StudioTrainer } from '@modelEntities/trainer';
 
 export const join = (...strs: string[]): string => {
   return strs.reduce((previousValue, str, index) => {
@@ -133,14 +133,28 @@ export const itemIconPath = (icon: string) => {
   return join('graphics/icons/', `${icon}.png`);
 };
 
-export const trainerSpritePath = (trainer: StudioTrainer, projectPath?: string | null) => {
-  if (projectPath) return `${projectPath}/graphics/battlers/${trainer.battlers[0]}.png`;
+export type TrainerResourcesPath = 'sprite' | 'artworkFull' | 'artworkSmall' | 'character' | 'bgm' | 'victory' | 'defeat' | 'encounter';
+export type TrainerMusicsPath = Exclude<TrainerResourcesPath, 'sprite' | 'artworkFull' | 'artworkSmall' | 'character'>;
 
-  return `graphics/battlers/${trainer.battlers[0]}.png`;
-};
+export const trainerResourcePath = (trainer: StudioTrainer, resource: TrainerResourcesPath) => {
+  const resources = trainer.resources;
+  const musics = trainer.resources.musics;
 
-export const trainerSpriteBigPath = (trainer: StudioTrainer, projectPath?: string | null) => {
-  if (projectPath) return `${projectPath}/graphics/battlers/${trainer.battlers[0]}_big.png`;
+  switch (resource) {
+    case 'artworkFull':
+    case 'artworkSmall':
+    case 'sprite':
+      return `graphics/battlers/${resources[resource]}`;
+    case 'character':
+      return `graphics/characters/${resources.character}`;
+    case 'bgm':
+    case 'victory':
+    case 'defeat':
+    case 'encounter':
+      return `audio/bgm/${musics[resource]}`;
+    default:
+      assertUnreachable(resource);
+  }
 
-  return `graphics/battlers/${trainer.battlers[0]}_big.png`;
+  return '';
 };

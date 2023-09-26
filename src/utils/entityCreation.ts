@@ -312,10 +312,21 @@ export const createTrainer = (
     isCouple: false,
     baseMoney,
     ai,
-    battlers: ['025'], //TODO: remove this when the trainer resource page will be implemented
     party: [],
     bagEntries: [],
     battleId,
+    resources: {
+      artworkFull: '',
+      artworkSmall: '',
+      character: '',
+      musics: {
+        bgm: '',
+        defeat: '',
+        encounter: '',
+        victory: '',
+      },
+      sprite: '',
+    },
   };
 };
 

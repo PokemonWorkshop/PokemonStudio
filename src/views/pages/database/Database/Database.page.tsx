@@ -19,6 +19,7 @@ import { GroupPage } from '../Group.page';
 import { ZonePage } from '../Zone.page';
 import { DexPage } from '../Dex/Dex.page';
 import { PokemonResourcesPage } from '../Pokemon.Resources.page';
+import { TrainerResourcesPage } from '../Trainer.Resources.page';
 
 const DatabasePageStyle = styled.div`
   display: flex;
@@ -44,6 +45,7 @@ const DatabasePageComponent = () => {
         <Route path="types/:typeDbSymbol?" element={<TypePage />} />
         <Route path="quests" element={<QuestPage />} />
         <Route path="trainers" element={<TrainerPage />} />
+        <Route path="trainers/resources" element={<TrainerResourcesPage />} />
         <Route path="groups" element={<GroupPage />} />
         <Route path="zones" element={<ZonePage />} />
         <Route path="dex" element={<DexPage />} />

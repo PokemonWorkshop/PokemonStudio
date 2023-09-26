@@ -2,6 +2,7 @@ import { app, protocol } from 'electron';
 import electronIsDev from 'electron-is-dev';
 import path from 'path';
 import fs from 'fs';
+import querystring from 'querystring';
 
 const FALLBACK_IMAGE = 'icons/navigation/help-icon.svg';
 
@@ -12,7 +13,7 @@ export const registerElectronProtocolWhenAppRead = (resourcePath: string) => {
     if (!projectPath) return callBack(path.join(resourcePath, FALLBACK_IMAGE));
 
     const resourceType = url.searchParams.get('type');
-    const filepath = path.join(projectPath, url.pathname);
+    const filepath = path.join(projectPath, querystring.unescape(url.pathname));
     if (resourceType === 'image') {
       const isExtension = filepath.endsWith('.png') || filepath.endsWith('.gif');
       if (isExtension) {

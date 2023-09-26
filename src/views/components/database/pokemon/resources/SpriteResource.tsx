@@ -1,17 +1,14 @@
 import { ClearButtonOnlyIcon, FolderButtonOnlyIcon } from '@components/buttons';
 import { DropInputContainer } from '@components/inputs/DropInput';
 import { ResourceImage } from '@components/ResourceImage';
-import React, { DragEventHandler, useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { ReactComponent as FileDrop } from '@assets/icons/global/drop.svg';
-import { useChoosefile } from '@utils/useChooseFile';
-import { useGlobalState } from '@src/GlobalStateProvider';
-import { useShowItemInFolder } from '@utils/useShowItemInFolder';
-import { useCopyFile } from '@utils/useCopyFile';
 import { ResourceContainer } from './ResourcesContainer';
-import { CreatureFormResourcesPath, dirname, formResourcesPath, join } from '@utils/path';
+import { CreatureFormResourcesPath, formResourcesPath } from '@utils/path';
 import { StudioCreatureForm } from '@modelEntities/creature';
+import { useResource } from '@utils/useResource';
 
 type SpriteResourceContainerProps = {
   isCharacter: boolean;
@@ -102,11 +99,6 @@ const LinkContainer = styled.div<LinkContainerProps>`
   }
 `;
 
-const onDragOver: DragEventHandler<HTMLDivElement> = (event) => {
-  event.preventDefault();
-  event.stopPropagation();
-};
-
 const isNoRessource = (form: StudioCreatureForm, resource: CreatureFormResourcesPath, isFemale: boolean) => {
   return isFemale ? form.resources[resource] === undefined : form.resources[resource]?.length === 0;
 };
@@ -125,58 +117,13 @@ type SpriteResourceProps = {
 };
 
 export const SpriteResource = ({ form, resource, isFemale, disableGif, onResourceChoosen, onResourceClean }: SpriteResourceProps) => {
-  const [state] = useGlobalState();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [flipFlap, setFlipFlap] = useState(false);
   const { t } = useTranslation(['database_pokemon', 'drop']);
-  const chooseFile = useChoosefile();
-  const copyFile = useCopyFile();
-  const showItemInFolder = useShowItemInFolder();
-
-  const onDrop: DragEventHandler<HTMLDivElement> = async (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    const extensions = disableGif ? ['png'] : ['png', 'gif'];
-    const acceptedFiles = Array.from(event.dataTransfer.files).filter((file) => extensions.includes(file.name.split('.').pop() ?? ''));
-    if (acceptedFiles.length > 0) {
-      copyFile(
-        { srcFile: acceptedFiles[0].path, destFolder: dirname(formResourcesPath(form, resource)) },
-        ({ destFile }) =>
-          setTimeout(() => {
-            onResourceChoosen(destFile, resource);
-            setFlipFlap((last) => !last);
-          }),
-        ({ errorMessage }) => window.api.log.error(errorMessage)
-      );
-    }
-  };
-
-  const onClick = async () => {
-    setIsDialogOpen(true);
-    const extensions = disableGif ? ['png'] : ['png', 'gif'];
-    chooseFile(
-      { name: t(`database_pokemon:${resource}`), extensions, destFolderToCopy: dirname(formResourcesPath(form, resource)) },
-      ({ path: resourcePath }) => {
-        setTimeout(() => {
-          onResourceChoosen(resourcePath, resource);
-          setFlipFlap((last) => !last);
-          setIsDialogOpen(false);
-        });
-      },
-      () => setIsDialogOpen(false)
-    );
-  };
-
-  const onClickFolder = async (filePath: string, event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
-    event.stopPropagation();
-    if (!state.projectPath) return;
-
-    showItemInFolder(
-      { filePath: join(state.projectPath, filePath), extensions: ['.gif', '.png'] },
-      () => {},
-      () => {}
-    );
-  };
+  const { onDrop, onDragOver, onClick, onClickFolder, isDialogOpen, flipFlap } = useResource({
+    name: t(`database_pokemon:${resource}`),
+    path: formResourcesPath(form, resource),
+    extensions: disableGif ? ['png'] : ['png', 'gif'],
+    onResourceChoosen: (resourcePath) => onResourceChoosen(resourcePath, resource),
+  });
 
   return isNoRessource(form, resource, isFemale) ? (
     <SpriteNoResourceContainer onDrop={onDrop} onDragOver={onDragOver} isCharacter={isCharacterResource(resource)}>

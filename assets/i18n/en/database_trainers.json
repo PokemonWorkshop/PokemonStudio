@@ -56,5 +56,17 @@
   "new_dialog": "New dialog",
   "available_future_release": "Available in a future release",
   "error": "Error",
-  "party_length_limit": "A trainer cannot have more than 6 Pokémon."
+  "party_length_limit": "A trainer cannot have more than 6 Pokémon.",
+  "resources": "Resources",
+  "battlers": "Battlers",
+  "battle_sprite": "Battle sprite",
+  "artwork_full": "Artwork - Full",
+  "artwork_small": "Artwork - Small",
+  "character": "Character",
+  "musics": "Musics",
+  "encounter_music": "Encounter music",
+  "victory_music": "Victory music of the trainer",
+  "defeat_music": "Defeat music of the trainer",
+  "bgm_music": "Battle music",
+  "character_v3_message": "The character will be used from version 3.0 of the application."
 }

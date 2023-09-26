@@ -44,7 +44,13 @@ export const PageContainerStyle = styled.div`
 export const PageDataConstrainerStyle = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 32px;
   margin-bottom: 24px;
   max-width: 1024px;
+`;
+
+export const PageResourceContainerStyle = styled(PageContainerStyle)`
+  @media ${(props) => props.theme.breakpoints.smallScreen} {
+    margin: 0;
+  }
 `;

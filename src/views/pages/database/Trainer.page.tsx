@@ -11,6 +11,7 @@ import { BagEntryList } from '@components/bagEntry';
 import { useDialogsRef } from '@utils/useDialogsRef';
 import { TrainerEditorAndDeletionKeys, TrainerEditorOverlay } from '@components/database/trainer/editors/TrainerEditorOverlay';
 import { useTrainerPage } from '@utils/usePage';
+import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';
 
 export const TrainerPage = () => {
   const dialogsRef = useDialogsRef<TrainerEditorAndDeletionKeys>();
@@ -22,6 +23,15 @@ export const TrainerPage = () => {
       <TrainerControlBar dialogsRef={dialogsRef} />
       <PageContainerStyle>
         <PageDataConstrainerStyle>
+          <DataBlockWrapper>
+            <DatabaseTabsBar
+              currentTabIndex={0}
+              tabs={[
+                { label: t('trainer'), path: '/database/trainers' },
+                { label: t('resources'), path: '/database/trainers/resources' },
+              ]}
+            />
+          </DataBlockWrapper>
           <DataBlockWrapper>
             <TrainerFrame trainer={trainer} dialogsRef={dialogsRef} />
             <TrainerDialog trainer={trainer} dialogsRef={dialogsRef} />
