@@ -15,7 +15,7 @@ export const QuestGoalObtainItem = ({ objective }: QuestGoalProps) => {
         <Label htmlFor="select-item">{t('database_items:item')}</Label>
         <SelectItem
           dbSymbol={objective.objectiveMethodArgs[0] as string}
-          onChange={(selected) => refreshUI((objective.objectiveMethodArgs[0] = selected.value))}
+          onChange={(selected) => refreshUI((objective.objectiveMethodArgs[0] = selected))}
           noLabel
           noneValue
         />

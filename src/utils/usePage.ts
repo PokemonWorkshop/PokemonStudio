@@ -1,9 +1,10 @@
 import { StudioMove } from '@modelEntities/move';
-import { getEntityNameTextUsingTextId, getEntityNameText, useGetEntityNameTextUsingTextId } from './ReadingProjectText';
+import { getEntityNameTextUsingTextId, getEntityNameText, useGetEntityNameTextUsingTextId, useGetEntityNameText } from './ReadingProjectText';
 import { useProjectDataReadonly } from './useProjectData';
 import { useTextInfosReadonly } from './useTextInfos';
 import { StudioDex } from '@modelEntities/dex';
 import { StudioType } from '@modelEntities/type';
+import { StudioItem } from '@modelEntities/item';
 
 export const useAbilityPage = () => {
   const { projectDataValues: abilities, selectedDataIdentifier: dbSymbol, state } = useProjectDataReadonly('abilities', 'ability');
@@ -88,6 +89,19 @@ export const useTypePage = () => {
     typeDbSymbol: typeSelected,
     currentTypeName: getTypeName(currentType),
     currentType,
+  };
+};
+
+export const useItemPage = () => {
+  const { projectDataValues: items, selectedDataIdentifier: itemSelected } = useProjectDataReadonly('items', 'item');
+  const getItemName = useGetEntityNameText();
+  const currentItem: StudioItem = items[itemSelected];
+
+  return {
+    items,
+    itemDbSymbol: itemSelected,
+    currentItemName: getItemName(currentItem),
+    currentItem,
   };
 };
 

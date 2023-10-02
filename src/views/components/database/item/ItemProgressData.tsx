@@ -1,16 +1,24 @@
-import { LOCKED_ITEM_EDITOR, StudioItem } from '@modelEntities/item';
+import { LOCKED_ITEM_EDITOR } from '@modelEntities/item';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataBlockWithTitle, DataFieldsetField, DataGrid } from '../dataBlocks';
+import { ItemDialogsRef } from './editors/ItemEditorOverlay';
+import { useItemPage } from '@utils/usePage';
 
-type ItemProgressDataProps = { item: StudioItem; onClick: () => void };
+type ItemProgressDataProps = { dialogsRef: ItemDialogsRef };
 
-export const ItemProgressData = ({ item, onClick }: ItemProgressDataProps) => {
+export const ItemProgressData = ({ dialogsRef }: ItemProgressDataProps) => {
+  const { currentItem: item } = useItemPage();
   const { t } = useTranslation('database_items');
   const isItemEvBoost = item.klass === 'EVBoostItem';
   const isDisabled = LOCKED_ITEM_EDITOR[item.klass].includes('progress');
   return (
-    <DataBlockWithTitle size="fourth" title={t('progress_title')} disabled={isDisabled} onClick={isDisabled ? undefined : onClick}>
+    <DataBlockWithTitle
+      size="fourth"
+      title={t('progress_title')}
+      disabled={isDisabled}
+      onClick={isDisabled ? undefined : () => dialogsRef?.current?.openDialog('progress')}
+    >
       {!isDisabled && (
         <DataGrid rows="1fr 1fr 1fr">
           <DataFieldsetField label={t('progress_category')} data={t(isItemEvBoost ? 'EV_PROGRESS' : 'LEVEL_PROGRESS')} />

@@ -1,13 +1,15 @@
-import { LOCKED_ITEM_EDITOR, StudioItem, StudioTechItem } from '@modelEntities/item';
+import { LOCKED_ITEM_EDITOR, StudioTechItem } from '@modelEntities/item';
 import { State, useGlobalState } from '@src/GlobalStateProvider';
-import { getEntityNameText } from '@utils/ReadingProjectText';
+import { getEntityNameText, useGetEntityNameText } from '@utils/ReadingProjectText';
 import React from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
 import { DataBlockWithTitle, DataFieldsetField, DataGrid } from '../dataBlocks';
 import { useShortcutNavigation } from '@utils/useShortcutNavigation';
 import { useKeyPress, CONTROL } from '@utils/useKeyPress';
+import { useItemPage } from '@utils/usePage';
+import { ItemDialogsRef } from './editors/ItemEditorOverlay';
 
-type ItemTechDataProps = { item: StudioItem; onClick: () => void };
+type ItemTechDataProps = { dialogsRef: ItemDialogsRef };
 
 const getMoveName = (state: State, techItem: StudioTechItem, t: TFunction<('database_items' | 'database_moves')[]>): string => {
   const move = state.projectData.moves[techItem.move];
@@ -15,17 +17,24 @@ const getMoveName = (state: State, techItem: StudioTechItem, t: TFunction<('data
   return move ? getEntityNameText(move, state) : t('database_moves:move_deleted');
 };
 
-export const ItemTechData = ({ item, onClick }: ItemTechDataProps) => {
+export const ItemTechData = ({ dialogsRef }: ItemTechDataProps) => {
+  const { currentItem: item } = useItemPage();
   const { t } = useTranslation(['database_items', 'database_moves']);
   const [state] = useGlobalState();
   const isItemTech = item.klass === 'TechItem';
   const isDisabled = LOCKED_ITEM_EDITOR[item.klass].includes('tech');
   const moveName = isItemTech ? getMoveName(state, item, t) : '---';
+
   const isClickable: boolean = useKeyPress(CONTROL) && moveName !== t('database_moves:move_deleted');
   const shortcutNavigation = useShortcutNavigation('moves', 'move', '/database/moves/');
 
   return (
-    <DataBlockWithTitle size="fourth" title={t('database_items:techniques')} disabled={isDisabled} onClick={isDisabled ? undefined : onClick}>
+    <DataBlockWithTitle
+      size="fourth"
+      title={t('database_items:techniques')}
+      disabled={isDisabled}
+      onClick={isDisabled ? undefined : () => dialogsRef?.current?.openDialog('tech')}
+    >
       {!isDisabled && (
         <DataGrid rows="1fr 1fr 1fr">
           <DataFieldsetField
