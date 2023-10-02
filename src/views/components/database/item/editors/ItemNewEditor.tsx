@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { forwardRef, useMemo, useRef, useState } from 'react';
 import { Editor } from '@components/editor';
 import { TFunction, useTranslation } from 'react-i18next';
 import { IconInput, Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
@@ -23,6 +23,8 @@ import { findFirstAvailableId } from '@utils/ModelUtils';
 import { createItem } from '@utils/entityCreation';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { useSetProjectText } from '@utils/ReadingProjectText';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { useItemPage } from '@utils/usePage';
 
 const itemCategoryEntries = (t: TFunction<('database_items' | 'database_types' | 'database_moves')[]>) =>
   StudioItemCategories.map((category) => ({ value: category, label: t(`database_types:${category}`) })).sort((a, b) =>
@@ -30,7 +32,7 @@ const itemCategoryEntries = (t: TFunction<('database_items' | 'database_types' |
   );
 
 type ItemNewEditorProps = {
-  onClose: () => void;
+  closeDialog: () => void;
 };
 
 const ButtonContainer = styled.div`
@@ -40,8 +42,9 @@ const ButtonContainer = styled.div`
   gap: 8px;
 `;
 
-export const ItemNewEditor = ({ onClose }: ItemNewEditorProps) => {
-  const { projectDataValues: items, setProjectDataValues: setItem } = useProjectItems();
+export const ItemNewEditor = forwardRef<EditorHandlingClose, ItemNewEditorProps>(({ closeDialog }, ref) => {
+  const { setProjectDataValues: setItem } = useProjectItems();
+  const { items } = useItemPage();
   const { t } = useTranslation(['database_items', 'database_types', 'database_moves']);
   const options = useMemo(() => itemCategoryEntries(t), [t]);
   const setText = useSetProjectText();
@@ -52,6 +55,8 @@ export const ItemNewEditor = ({ onClose }: ItemNewEditorProps) => {
   const [dbSymbolErrorType, setDbSymbolErrorType] = useState<'value' | 'duplicate' | undefined>(undefined);
   const [itemCategory, setItemCategory] = useState<StudioItemCategory>('generic');
   const [icon, setIcon] = useState('');
+
+  useEditorHandlingClose(ref);
 
   const onClickNew = () => {
     if (!dbSymbolRef.current || !name || !descriptionRef.current || !namePluralRef.current) return;
@@ -64,7 +69,7 @@ export const ItemNewEditor = ({ onClose }: ItemNewEditorProps) => {
     setText(ITEM_DESCRIPTION_TEXT_ID, newItem.id, descriptionRef.current.value);
     setText(ITEM_PLURAL_NAME_TEXT_ID, newItem.id, namePluralRef.current.value);
     setItem({ [dbSymbol]: newItem }, { item: dbSymbol });
-    onClose();
+    closeDialog();
   };
 
   const onChangeDbSymbol = (value: string) => {
@@ -159,9 +164,10 @@ export const ItemNewEditor = ({ onClose }: ItemNewEditorProps) => {
               {t('database_items:create_item')}
             </PrimaryButton>
           </ToolTipContainer>
-          <DarkButton onClick={onClose}>{t('database_moves:cancel')}</DarkButton>
+          <DarkButton onClick={closeDialog}>{t('database_moves:cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
     </Editor>
   );
-};
+});
+ItemNewEditor.displayName = 'ItemNewEditor';

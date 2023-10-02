@@ -1,9 +1,9 @@
 import { ItemCategory } from '@components/categories';
 import { CopyIdentifier } from '@components/Copy';
 import { ResourceImage } from '@components/ResourceImage';
-import { ITEM_CATEGORY, StudioItem } from '@modelEntities/item';
+import { ITEM_CATEGORY } from '@modelEntities/item';
 import { itemIconPath } from '@utils/path';
-import { useGetEntityDescriptionText, useGetEntityNameText } from '@utils/ReadingProjectText';
+import { useGetEntityDescriptionText } from '@utils/ReadingProjectText';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -15,17 +15,19 @@ import {
   DataInfoContainerHeaderTitle,
   DataSpriteContainer,
 } from '../dataBlocks';
+import { useItemPage } from '@utils/usePage';
+import { ItemDialogsRef } from './editors/ItemEditorOverlay';
 
-type ItemFrameProps = { item: StudioItem; onClick: () => void };
+type ItemFrameProps = { dialogsRef: ItemDialogsRef };
 
-export const ItemFrame = ({ item, onClick }: ItemFrameProps) => {
+export const ItemFrame = ({ dialogsRef }: ItemFrameProps) => {
+  const { currentItem: item, currentItemName } = useItemPage();
   const { t } = useTranslation(['database_types']);
-  const getItemName = useGetEntityNameText();
   const getItemDescription = useGetEntityDescriptionText();
   const category = ITEM_CATEGORY[item.klass];
 
   return (
-    <DataBlockContainer size="full" onClick={onClick}>
+    <DataBlockContainer size="full" onClick={() => dialogsRef?.current?.openDialog('frame')}>
       <DataGrid columns="118px minmax(min-content, 692px) auto">
         <DataSpriteContainer type="icon">
           <ResourceImage imagePathInProject={itemIconPath(item.icon)} />
@@ -33,7 +35,7 @@ export const ItemFrame = ({ item, onClick }: ItemFrameProps) => {
         <DataInfoContainer>
           <DataInfoContainerHeader>
             <DataInfoContainerHeaderTitle>
-              <h1>{getItemName(item)}</h1>
+              <h1>{currentItemName}</h1>
               <CopyIdentifier dataToCopy={item.dbSymbol} />
             </DataInfoContainerHeaderTitle>
             <DataInfoContainerHeaderBadges>

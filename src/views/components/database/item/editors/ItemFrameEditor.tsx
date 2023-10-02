@@ -3,39 +3,37 @@ import { Editor } from '@components/editor';
 import { TFunction, useTranslation } from 'react-i18next';
 import { IconInput, Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
-import { UseProjectItemReturnType } from '@utils/useProjectData';
+import { useProjectItems } from '@utils/useProjectData';
 import { DropInput } from '@components/inputs/DropInput';
 import { basename, itemIconPath } from '@utils/path';
-import type { OpenTranslationEditorFunction } from '@utils/useTranslationEditor';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
-import { useGetEntityDescriptionText, useGetEntityNameText, useGetItemPluralNameText, useSetProjectText } from '@utils/ReadingProjectText';
+import { useGetEntityDescriptionText, useGetItemPluralNameText, useSetProjectText } from '@utils/ReadingProjectText';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import {
   ITEM_CATEGORY,
   ITEM_CATEGORY_INITIAL_CLASSES,
   ITEM_DESCRIPTION_TEXT_ID,
   ITEM_NAME_TEXT_ID,
+  ITEM_PLURAL_NAME_TEXT_ID,
   mutateItemInto,
-  StudioItem,
   StudioItemCategories,
 } from '@modelEntities/item';
 import { createItem } from '@utils/entityCreation';
+import { useDialogsRef } from '@utils/useDialogsRef';
+import { useItemPage } from '@utils/usePage';
+import { ItemTranslationOverlay, TranslationEditorTitle } from './ItemTranslationOverlay';
 
 const itemCategoryEntries = (t: TFunction<('database_items' | 'database_types')[]>) =>
   StudioItemCategories.map((category) => ({ value: category, label: t(`database_types:${category}`) })).sort((a, b) =>
     a.label.localeCompare(b.label)
   );
 
-type ItemFrameEditorProps = {
-  item: StudioItem;
-  setItems: UseProjectItemReturnType['setProjectDataValues'];
-  openTranslationEditor: OpenTranslationEditorFunction;
-};
-
-export const ItemFrameEditor = forwardRef<EditorHandlingClose, ItemFrameEditorProps>(({ item, setItems, openTranslationEditor }, ref) => {
+export const ItemFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
+  const { currentItem: item, currentItemName } = useItemPage();
+  const { setProjectDataValues: setItems } = useProjectItems();
+  const dialogsRef = useDialogsRef<TranslationEditorTitle>();
   const { t } = useTranslation(['database_items', 'database_types']);
   const options = useMemo(() => itemCategoryEntries(t), [t]);
-  const getItemName = useGetEntityNameText();
   const getItemDescription = useGetEntityDescriptionText();
   const getItemNamePlural = useGetItemPluralNameText();
   const setText = useSetProjectText();
@@ -45,10 +43,11 @@ export const ItemFrameEditor = forwardRef<EditorHandlingClose, ItemFrameEditorPr
   const [icon, setIcon] = useState(item.icon);
   const [itemCategory, setItemCategory] = useState(ITEM_CATEGORY[item.klass]);
 
-  const canClose = () => !!nameRef.current?.value && !!icon;
+  const canClose = () => !!nameRef.current?.value && !!descriptionRef.current && !!icon;
   const onClose = () => {
-    if (!nameRef.current || !descriptionRef.current || !canClose()) return;
+    if (!nameRef.current || !namePluralRef.current || !descriptionRef.current || !canClose()) return;
     setText(ITEM_NAME_TEXT_ID, item.id, nameRef.current.value);
+    setText(ITEM_PLURAL_NAME_TEXT_ID, item.id, namePluralRef.current.value);
     setText(ITEM_DESCRIPTION_TEXT_ID, item.id, descriptionRef.current.value);
     item.icon = icon;
     if (itemCategory != ITEM_CATEGORY[item.klass]) {
@@ -59,17 +58,19 @@ export const ItemFrameEditor = forwardRef<EditorHandlingClose, ItemFrameEditorPr
   };
   useEditorHandlingClose(ref, onClose, canClose);
 
-  const handleTranslateClick = (editorTitle: Parameters<typeof openTranslationEditor>[0]) => () => {
+  const handleTranslateClick = (editor: TranslationEditorTitle) => {
     if (!nameRef.current || !descriptionRef.current) return;
     onClose(); // Effectively set the translation values
-    openTranslationEditor(editorTitle, {
-      currentEntityName: nameRef.current.value,
-      onEditorClose: () => {
-        if (!nameRef.current || !descriptionRef.current) return;
-        nameRef.current.value = getItemName(item);
-        descriptionRef.current.value = getItemDescription(item);
-      },
-    });
+
+    setTimeout(() => dialogsRef.current?.openDialog(editor), 0);
+  };
+
+  const onTranslationOverlayClose = () => {
+    if (!nameRef.current || !namePluralRef.current || !descriptionRef.current) return;
+
+    nameRef.current.value = nameRef.current.defaultValue;
+    namePluralRef.current.value = namePluralRef.current.defaultValue;
+    descriptionRef.current.value = descriptionRef.current.defaultValue;
   };
 
   const onIconChosen = (iconPath: string) => setIcon(basename(iconPath).split('.')[0]);
@@ -81,13 +82,13 @@ export const ItemFrameEditor = forwardRef<EditorHandlingClose, ItemFrameEditorPr
           <Label htmlFor="name" required>
             {t('database_items:name')}
           </Label>
-          <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_name')}>
-            <Input type="text" name="name" defaultValue={getItemName(item)} ref={nameRef} placeholder={t('database_items:example_name')} />
+          <TranslateInputContainer onTranslateClick={() => handleTranslateClick('translation_name')}>
+            <Input type="text" name="name" defaultValue={currentItemName} ref={nameRef} placeholder={t('database_items:example_name')} />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="name-plural">{t('database_items:name_plural')}</Label>
-          <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_name_plural')}>
+          <TranslateInputContainer onTranslateClick={() => handleTranslateClick('translation_name_plural')}>
             <Input
               type="text"
               name="name-plural"
@@ -99,7 +100,7 @@ export const ItemFrameEditor = forwardRef<EditorHandlingClose, ItemFrameEditorPr
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="descr">{t('database_items:description')}</Label>
-          <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_description')}>
+          <TranslateInputContainer onTranslateClick={() => handleTranslateClick('translation_description')}>
             <MultiLineInput
               id="descr"
               defaultValue={getItemDescription(item)}
@@ -143,6 +144,8 @@ export const ItemFrameEditor = forwardRef<EditorHandlingClose, ItemFrameEditorPr
           />
         </InputWithTopLabelContainer>
       </InputContainer>
+      {/* todo look why this is wrong */}
+      <ItemTranslationOverlay item={item} onClose={onTranslationOverlayClose} ref={dialogsRef} />
     </Editor>
   );
 });

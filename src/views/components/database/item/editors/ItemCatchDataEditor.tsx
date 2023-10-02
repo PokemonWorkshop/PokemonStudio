@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { forwardRef, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Editor, useRefreshUI } from '@components/editor';
+import { Editor } from '@components/editor';
 import {
   Input,
   InputContainer,
@@ -9,17 +9,46 @@ import {
   InputWithTopLabelContainer,
   Label,
 } from '@components/inputs';
-import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { colorToHex, hexToColor } from '@utils/ColorUtils';
-import { LOCKED_ITEM_EDITOR, StudioItem } from '@modelEntities/item';
+import { LOCKED_ITEM_EDITOR, StudioBallItem } from '@modelEntities/item';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { useItemPage } from '@utils/usePage';
+import { useUpdateItem } from './useUpdateItem';
 
-type ItemCatchDataEditorProps = {
-  item: StudioItem;
-};
+export const ItemCatchDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
+  const { currentItem } = useItemPage();
+  const item = currentItem as StudioBallItem;
 
-export const ItemCatchDataEditor = ({ item }: ItemCatchDataEditorProps) => {
   const { t } = useTranslation('database_items');
-  const refreshUI = useRefreshUI();
+  const setItems = useUpdateItem(item);
+
+  const catchRateRef = useRef<HTMLInputElement>(null);
+  const spriteFilenameRef = useRef<HTMLInputElement>(null);
+
+  const [color, setColor] = useState(item.color);
+
+  const canClose = () => {
+    if (!!spriteFilenameRef.current && !spriteFilenameRef.current?.validity.valid) return false;
+    if (!!catchRateRef.current && !catchRateRef.current?.validity.valid) return false;
+
+    return true;
+  };
+
+  const handleClose = () => {
+    if (!spriteFilenameRef.current || !spriteFilenameRef.current.value || !canClose()) return;
+
+    const catchRate =
+      catchRateRef?.current && !isNaN(catchRateRef?.current?.valueAsNumber) && catchRateRef.current?.validity.valid
+        ? catchRateRef?.current?.valueAsNumber
+        : item.catchRate;
+    setItems({
+      catchRate,
+      spriteFilename: spriteFilenameRef.current.value,
+      color: color,
+    } as Partial<StudioBallItem>);
+  };
+
+  useEditorHandlingClose(ref, handleClose, canClose);
 
   return LOCKED_ITEM_EDITOR[item.klass].includes('catch') ? (
     <></>
@@ -29,44 +58,21 @@ export const ItemCatchDataEditor = ({ item }: ItemCatchDataEditorProps) => {
         <InputContainer>
           <InputWithLeftLabelContainer>
             <Label htmlFor="catch_rate">{t('catch_rate')}</Label>
-            <Input
-              type="number"
-              name="catch_rate"
-              value={isNaN(item.catchRate) ? '' : item.catchRate}
-              min="0"
-              max="255"
-              step="0.1"
-              onChange={(event) => {
-                const newValue = event.target.value == '' ? Number.NaN : Number(event.target.value);
-                if (newValue < 0 || newValue > 255) return event.preventDefault();
-                refreshUI((item.catchRate = newValue));
-              }}
-              onBlur={() => refreshUI((item.catchRate = cleanNaNValue(item.catchRate)))}
-            />
+            <Input type="number" name="catchRate" defaultValue={item.catchRate} min="0" max="255" step="0.1" ref={catchRateRef} />
           </InputWithLeftLabelContainer>
           <InputWithTopLabelContainer>
             <Label htmlFor="spritesheet" required>
               {t('spritesheet')}
             </Label>
-            <Input
-              type="text"
-              name="spritesheet"
-              value={item.spriteFilename}
-              onChange={(event) => refreshUI((item.spriteFilename = event.target.value))}
-              placeholder="ball_1"
-            />
+            <Input type="text" required name="spriteFilename" defaultValue={item.spriteFilename} ref={spriteFilenameRef} placeholder="ball_1" />
           </InputWithTopLabelContainer>
           <InputWithColorLabelContainer>
             <Label htmlFor="color">{t('color')}</Label>
-            <Input
-              type="color"
-              name="color"
-              value={colorToHex(item.color)}
-              onChange={(event) => refreshUI((item.color = hexToColor(event.target.value)))}
-            />
+            <Input type="color" name="color" value={colorToHex(color)} onChange={(event) => setColor(hexToColor(event.target.value))} />
           </InputWithColorLabelContainer>
         </InputContainer>
       )}
     </Editor>
   );
-};
+});
+ItemCatchDataEditor.displayName = 'ItemCatchDataEditor';

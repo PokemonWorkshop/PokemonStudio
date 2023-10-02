@@ -31,7 +31,7 @@ export const ItemInput = ({ type, state, dispatch }: EvolutionConditionEditorInp
           noneValue
         />
       ) : (
-        <SelectItem dbSymbol={dbSymbol} onChange={(option) => dispatch({ type: 'update', key: type, value: option.value as DbSymbol })} noLabel />
+        <SelectItem dbSymbol={dbSymbol} onChange={(value) => dispatch({ type: 'update', key: type, value: value as DbSymbol })} noLabel />
       )}
     </InputWithTopLabelContainer>
   );

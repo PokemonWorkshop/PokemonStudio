@@ -15,7 +15,7 @@ export const QuestEarningItem = ({ earning }: QuestEarningProps) => {
         <Label htmlFor="select-item">{t('database_items:item')}</Label>
         <SelectItem
           dbSymbol={earning.earningArgs[0] as string}
-          onChange={(selected) => refreshUI((earning.earningArgs[0] = selected.value))}
+          onChange={(selected) => refreshUI((earning.earningArgs[0] = selected))}
           noLabel
           noneValue
         />

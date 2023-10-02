@@ -73,6 +73,7 @@ const TranslationInput = ({ defaultValue, name, isMultiline, inputRef }: Transla
 
 export type TranslationEditorTitle =
   | 'translation_name'
+  | 'translation_name_plural'
   | 'translation_description'
   | 'translation_species'
   | 'translation_class'

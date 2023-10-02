@@ -1,19 +1,27 @@
-import React, { useMemo } from 'react';
+import React, { forwardRef, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Editor, useRefreshUI } from '@components/editor';
+import { Editor } from '@components/editor';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PercentInput } from '@components/inputs';
-import { UseProjectItemReturnType } from '@utils/useProjectData';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import { HealingItemCategories, mutateItemToProgressionCategory } from './mutateItemToHealingCategory';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { LOCKED_ITEM_EDITOR, StudioItem, StudioItemStatusCondition } from '@modelEntities/item';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { useItemPage } from '@utils/usePage';
+import { cloneEntity } from '@utils/cloneEntity';
+import { useProjectItems } from '@utils/useProjectData';
 
-type ItemHealDataEditorProps = {
-  item: StudioItem;
-  setItems: UseProjectItemReturnType['setProjectDataValues'];
+type ItemType = {
+  hpCount?: number;
+  hpRate?: number;
+  ppCount?: number;
+  isMax?: boolean;
+  statusList?: string[];
+  loyaltyMalus?: number;
 };
 
-export const getHealedStatus = (statusList: StudioItemStatusCondition[]) => {
+export const getHealedStatus: (statusList: StudioItemStatusCondition[]) => StudioItemStatusCondition | 'ALL' | 'NONE' = (statusList) => {
+  if (!statusList) return 'NONE';
   if (statusList.length === 0) return 'NONE';
   if (statusList.length === 1) return statusList[0];
 
@@ -26,15 +34,65 @@ const PPIncreaseOptions = [
   { value: 'Max', label: 'Max' },
 ];
 
-export const ItemHealDataEditor = ({ item, setItems }: ItemHealDataEditorProps) => {
+const getFormHealData: (item: StudioItem) => ItemType = (item) => {
+  return {
+    hpCount: 'hpCount' in item ? item.hpCount : undefined,
+    hpRate: 'hpRate' in item && !isNaN(item.hpRate) ? item.hpRate : undefined,
+    ppCount: 'ppCount' in item && !isNaN(item.ppCount) ? item.ppCount : undefined,
+    isMax: 'isMax' in item ? item.isMax : undefined,
+    statusList: 'statusList' in item ? [getHealedStatus(item.statusList)] : undefined,
+    loyaltyMalus: 'loyaltyMalus' in item && !isNaN(item.loyaltyMalus) ? item.loyaltyMalus : undefined,
+  };
+};
+
+export const ItemHealDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
+  const { currentItem } = useItemPage();
+  const { setProjectDataValues: setProjectItem } = useProjectItems();
+
   const { t } = useTranslation('database_items');
-  const refreshUI = useRefreshUI();
   const healingOptions = useMemo(
     () => HealingItemCategories.map((category) => ({ value: category, label: t(category) })).sort((a, b) => a.label.localeCompare(b.label)),
     [t]
   );
   const statusesOptions = useMemo(() => Statuses.map((status) => ({ value: status, label: t(status) })), [t]);
-  const healedStatus = 'statusList' in item ? getHealedStatus(item.statusList) : undefined;
+
+  const [item, setItem] = useState(cloneEntity(currentItem));
+  const [klass, setKlass] = useState<string>(item.klass);
+
+  const [healChanges, setHealChanges] = useState<ItemType>(getFormHealData(item));
+
+  const handleClose = () => {
+    const filteredFormData: ItemType = Object.entries(healChanges)
+      .filter(([_, value]) => value !== undefined)
+      .map(([key, value]) => {
+        if (typeof value === 'number') return [key, cleanNaNValue(value, (item as never)[key])];
+        return [key, value];
+      })
+      .reduce((acc, [key, value]) => {
+        (acc[key as keyof ItemType] as unknown) = value as ItemType[keyof ItemType];
+        return acc;
+      }, {} as ItemType);
+
+    const newItem = {
+      ...item,
+      ...filteredFormData,
+    };
+    setProjectItem({ [item.dbSymbol]: newItem as StudioItem });
+  };
+
+  const canClose = () => {
+    if ('hpRate' in healChanges && (healChanges.hpRate === 0 || (!!healChanges.hpRate && (healChanges.hpRate < 0.01 || healChanges.hpRate > 100)))) {
+      return false;
+    }
+    return true;
+  };
+
+  useEditorHandlingClose(ref, handleClose, canClose);
+
+  useEffect(() => {
+    setKlass(item.klass);
+    setHealChanges(getFormHealData(item));
+  }, [item, klass]);
 
   return LOCKED_ITEM_EDITOR[item.klass].includes('heal') ? (
     <></>
@@ -48,7 +106,7 @@ export const ItemHealDataEditor = ({ item, setItems }: ItemHealDataEditorProps) 
             options={healingOptions}
             value={item.klass}
             onChange={(value) => {
-              setItems({ [item.dbSymbol]: mutateItemToProgressionCategory(item, value as typeof healingOptions[number]['value']) });
+              setItem(mutateItemToProgressionCategory(item, value as (typeof healingOptions)[number]['value']));
             }}
           />
         </InputWithTopLabelContainer>
@@ -60,31 +118,29 @@ export const ItemHealDataEditor = ({ item, setItems }: ItemHealDataEditorProps) 
               name="value"
               min="0"
               max="9999"
-              value={isNaN(item.hpCount) ? '' : item.hpCount}
+              value={healChanges.hpCount}
               onChange={(event) => {
-                const newValue = parseInt(event.target.value);
+                const newValue: number = parseInt(event.target.value);
                 if (newValue < 0 || newValue > 9999) return event.preventDefault();
-                refreshUI((item.hpCount = newValue));
+                setHealChanges((prevFormData) => ({ ...prevFormData, hpCount: newValue }));
               }}
-              onBlur={() => refreshUI((item.hpCount = cleanNaNValue(item.hpCount)))}
             />
           </InputWithLeftLabelContainer>
         )}
-        {'hpRate' in item && (
+        {'hpRate' in item && healChanges.hpRate !== undefined && (
           <InputWithLeftLabelContainer>
             <Label htmlFor="value">{t('healed_hp')}</Label>
             <PercentInput
               type="number"
               name="value"
-              min="0"
+              min="1"
               max="100"
-              value={isNaN(item.hpRate) ? '' : (item.hpRate * 100).toFixed(0)}
+              value={(healChanges.hpRate * 100).toFixed(0)}
               onChange={(event) => {
                 const newValue = parseInt(event.target.value);
                 if (newValue < 0 || newValue > 100) return event.preventDefault();
-                refreshUI((item.hpRate = newValue / 100));
+                setHealChanges((prevFormData) => ({ ...prevFormData, hpRate: newValue / 100 }));
               }}
-              onBlur={() => refreshUI((item.hpRate = cleanNaNValue(item.hpRate)))}
             />
           </InputWithLeftLabelContainer>
         )}
@@ -94,15 +150,14 @@ export const ItemHealDataEditor = ({ item, setItems }: ItemHealDataEditorProps) 
             <Input
               type="number"
               name="value"
-              value={isNaN(item.ppCount) ? '' : item.ppCount}
+              value={healChanges.ppCount}
               min="0"
               max="99"
               onChange={(event) => {
                 const newValue = parseInt(event.target.value);
                 if (newValue < 0 || newValue > 99) return event.preventDefault();
-                refreshUI((item.ppCount = newValue));
+                setHealChanges((prevFormData) => ({ ...prevFormData, ppCount: newValue }));
               }}
-              onBlur={() => refreshUI((item.ppCount = cleanNaNValue(item.ppCount)))}
             />
           </InputWithLeftLabelContainer>
         )}
@@ -112,27 +167,26 @@ export const ItemHealDataEditor = ({ item, setItems }: ItemHealDataEditorProps) 
             <SelectCustomSimple
               id="select-value"
               options={PPIncreaseOptions}
-              value={item.isMax ? 'Max' : '+20%'}
-              onChange={(value) => refreshUI((item.isMax = value === 'Max'))}
+              value={healChanges.isMax ? 'Max' : '+20%'}
+              onChange={(value) => setHealChanges((prevFormData) => ({ ...prevFormData, isMax: value === 'Max' }))}
               noTooltip
             />
           </InputWithTopLabelContainer>
         )}
-        {'statusList' in item && (
+        {'statusList' in item && healChanges.statusList && (
           <InputWithTopLabelContainer>
             <Label htmlFor="status">{t('healed_status')}</Label>
             <SelectCustomSimple
               id="select-status"
               options={statusesOptions}
-              value={healedStatus || '???'}
-              onChange={(value) =>
-                refreshUI(
-                  (item.statusList = (value === 'ALL' ? Statuses.slice(0, -3) : [value]) as [
-                    StudioItemStatusCondition,
-                    ...StudioItemStatusCondition[]
-                  ])
-                )
-              }
+              value={healChanges.statusList[0] || '???'}
+              onChange={(value) => {
+                const newValue = (item.statusList = (value === 'ALL' ? Statuses.slice(0, -3) : [value]) as [
+                  StudioItemStatusCondition,
+                  ...StudioItemStatusCondition[]
+                ]);
+                setHealChanges((prevFormData) => ({ ...prevFormData, statusList: newValue }));
+              }}
               noTooltip
             />
           </InputWithTopLabelContainer>
@@ -143,19 +197,19 @@ export const ItemHealDataEditor = ({ item, setItems }: ItemHealDataEditorProps) 
             <Input
               type="number"
               name="hapiness_malus"
-              value={isNaN(item.loyaltyMalus) ? '' : item.loyaltyMalus}
+              value={healChanges.loyaltyMalus}
               min="-255"
               max="255"
               onChange={(event) => {
-                const newValue = parseInt(event.target.value);
+                const newValue: number = parseInt(event.target.value);
                 if (newValue < -255 || newValue > 255) return event.preventDefault();
-                refreshUI((item.loyaltyMalus = newValue));
+                setHealChanges((prevFormData) => ({ ...prevFormData, loyaltyMalus: newValue }));
               }}
-              onBlur={() => refreshUI((item.loyaltyMalus = cleanNaNValue(item.loyaltyMalus)))}
             />
           </InputWithLeftLabelContainer>
         )}
       </InputContainer>
     </Editor>
   );
-};
+});
+ItemHealDataEditor.displayName = 'ItemHealDataEditor';

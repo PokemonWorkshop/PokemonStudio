@@ -110,7 +110,7 @@ export const BagEntryEditor = forwardRef<EditorHandlingClose, BagEntryEditorProp
           </Label>
           <SelectItem
             dbSymbol={bagEntry.dbSymbol}
-            onChange={(selected) => setBagEntry((bagEntry) => ({ ...bagEntry, dbSymbol: selected.value as DbSymbol }))}
+            onChange={(selected) => setBagEntry((bagEntry) => ({ ...bagEntry, dbSymbol: selected as DbSymbol }))}
             noLabel
             noneValue={action === 'creation' ? true : undefined}
           />
