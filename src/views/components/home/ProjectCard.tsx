@@ -5,11 +5,13 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useLoaderRef } from '@utils/loaderContext';
-import { ClearButtonOnlyIcon } from '@components/buttons';
+import { ClearButtonOnlyIcon, FolderButtonOnlyIcon } from '@components/buttons';
 import { Code } from '@components/Code';
 import { useProjectLoad } from '@utils/useProjectLoad';
 import { Project } from '@utils/projectList';
 import { ResourceImage } from '@components/ResourceImage';
+import { useShowItemInFolder } from '@utils/useShowItemInFolder';
+import { join } from '@utils/path';
 
 const ProjectCardContainer = styled(ActiveContainer)`
   position: relative;
@@ -45,11 +47,10 @@ const ProjectCardContainer = styled(ActiveContainer)`
   &:hover {
     cursor: pointer;
 
-    & button.clear-button {
+    & button.clear-button, & button.folder-button {
       position: absolute;
       display: inline-block;
       top: 16px;
-      right: 16px;
       height: 50px;
       width: 52px;
       background: none;
@@ -57,18 +58,26 @@ const ProjectCardContainer = styled(ActiveContainer)`
       border: none;
       font: inherit;
       outline: none;
-
-      &:hover {
-        cursor: pointer;
-      }
     }
-  }
+    .clear-button {
+      right: 16px;
+    }
+    
+    .folder-button {
+      right: 60px;
+    }
+  } 
+
 
   &[data-disabled='true']:hover {
     cursor: default;
   }
 
   & button.clear-button {
+    display: none;
+  }
+
+  & button.folder-button {
     display: none;
   }
 
@@ -90,6 +99,7 @@ export const ProjectCard = ({ project, onDeleteProjectToList }: ProjectCardProps
   const loaderRef = useLoaderRef();
   const projectLoad = useProjectLoad();
   const navigate = useNavigate();
+  const showItemInFolder = useShowItemInFolder();
 
   const handleClick = () => {
     if (!project) return;
@@ -102,6 +112,17 @@ export const ProjectCard = ({ project, onDeleteProjectToList }: ProjectCardProps
       },
       ({ errorMessage }) => loaderRef.current.setError('loading_project_error', errorMessage),
       (count) => loaderRef.current.setError('loading_project_error', t('loader:integrity_message', { count }), true)
+    );
+  };
+
+  const onClickFolder = async (path: string, event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+    event.stopPropagation();
+    if (!path) return;
+
+    showItemInFolder(
+      { filePath: join(path,'project.studio')},
+      () => {},
+      () => {}
     );
   };
 
@@ -119,6 +140,11 @@ export const ProjectCard = ({ project, onDeleteProjectToList }: ProjectCardProps
         })}
       </p>
       <Code>{`/${project.projectPath.replaceAll('\\', '/').split('/').splice(-1)[0]}`}</Code>
+      <button className="folder-button">
+        <FolderButtonOnlyIcon
+          onClick={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => onClickFolder(project.projectPath,event)}
+        />
+      </button>
       <button className="clear-button">
         <ClearButtonOnlyIcon onClick={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => onDeleteProjectToList(event, project.projectPath)} />
       </button>
