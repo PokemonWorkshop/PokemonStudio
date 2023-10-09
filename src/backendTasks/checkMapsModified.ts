@@ -2,11 +2,17 @@ import log from 'electron-log';
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
-import type { StudioMap } from '@modelEntities/map';
 import type { DbSymbol } from '@modelEntities/dbSymbol';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
+import { Sha1 } from '@modelEntities/sha1';
 
 export type CheckMapsModifiedMethod = 'mtime' | 'sha1';
+type StudioMapBackend = {
+  dbSymbol: DbSymbol;
+  mtime: number;
+  sha1: Sha1;
+  tiledFilename: string;
+};
 
 const calculateFileSha1 = async (filePath: string): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -45,7 +51,7 @@ export type CheckMapModifiedOutput = Awaited<ReturnType<typeof checkMapsModified
 
 export const checkMapsModified = async (payload: CheckMapModifiedInput) => {
   log.info('check-maps-modified', { method: payload.method });
-  const studioMaps: StudioMap[] = payload.maps.map((map) => JSON.parse(map));
+  const studioMaps: StudioMapBackend[] = payload.maps.map((map) => JSON.parse(map));
 
   const tiledMapPath = path.join(payload.projectPath, 'Data/Tiled/Maps');
 

@@ -60,5 +60,6 @@
   "copy_tiled_files": "Copie des cartes Tiled dans le répertoire du projet",
   "create_new_maps": "Création des nouvelles cartes",
   "import_success_message_singular": "La carte a été importée avec succès.",
-  "import_success_message_plurial": "Les cartes ont été importées avec succès."
+  "import_success_message_plurial": "Les cartes ont été importées avec succès.",
+  "no_map_found": "Aucun carte n'a été trouvée"
 }

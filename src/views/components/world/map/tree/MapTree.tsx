@@ -1,9 +1,9 @@
-import React, { useState, useEffect, forwardRef } from 'react';
+import React, { useState, useEffect, forwardRef, useMemo } from 'react';
 import { SortableTree } from '@components/sortabletree/SortableTree';
 import { FlattenedItem, ProjectionItem, TreeItemComponentProps } from '@components/sortabletree/TreeTypes';
 import { MapTreeItemWrapper } from './MapTreeItemWrapper';
 import styled from 'styled-components';
-import { Input } from '@components/inputs';
+import { ClearInput, Input } from '@components/inputs';
 import { useTranslation } from 'react-i18next';
 import { StudioMapInfo } from '@modelEntities/mapInfo';
 import { useProjectMaps } from '@utils/useProjectData';
@@ -14,8 +14,13 @@ import { findMaxDepth, getCountChildren, mapIsInFolder } from '@utils/MapTreeUti
 import { cloneEntity } from '@utils/cloneEntity';
 import { emitScrollContextMenu } from '@utils/useContextMenu';
 import { buildMapInfo } from '@utils/MapInfoUtils';
+import { MapList } from './MapList';
 
-const MapTreeContainer = styled.div`
+type MapTreeContainerProps = {
+  hideMapTree: boolean;
+};
+
+const MapTreeContainer = styled.div<MapTreeContainerProps>`
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -23,7 +28,8 @@ const MapTreeContainer = styled.div`
   .tree-scrollbar {
     height: calc(100vh - 291px);
     overflow-y: scroll;
-    margin-right: -9px; //-10px
+    margin-right: -9px;
+    display: ${({ hideMapTree }) => (hideMapTree ? 'none' : 'block')};
 
     ::-webkit-scrollbar {
       width: 6px;
@@ -48,7 +54,7 @@ const MapTreeContainer = styled.div`
     display: flex;
     flex-direction: column;
     gap: 4px;
-    padding-right: 3px; //2px
+    padding-right: 3px;
   }
 
   ${Input} {
@@ -89,24 +95,35 @@ export const MapTree = () => {
     return false;
   };
 
-  return (
-    <MapTreeContainer>
-      <Input value={research} onChange={(event) => setResearch(event.target.value)} placeholder={t('map_research')} />
+  const mapTreeComponent = useMemo(
+    () => (
       <div className="tree-scrollbar" onScroll={emitScrollContextMenu}>
         <div className="tree">
-          {
-            <SortableTree<StudioMapInfo>
-              items={items}
-              onItemsChanged={(value) => {
-                setSaveFlipFlap((flipFlap) => !flipFlap);
-                setItems(value);
-              }}
-              TreeItemComponent={MapTreeItemComponent}
-              sortableTreeLimitation={mapTreeLimitation}
-            />
-          }
+          <SortableTree<StudioMapInfo>
+            items={items}
+            onItemsChanged={(value) => {
+              setSaveFlipFlap((flipFlap) => !flipFlap);
+              setItems(value);
+            }}
+            TreeItemComponent={MapTreeItemComponent}
+            sortableTreeLimitation={mapTreeLimitation}
+          />
         </div>
       </div>
+    ),
+    [items]
+  );
+
+  return (
+    <MapTreeContainer hideMapTree={research !== ''}>
+      <ClearInput
+        value={research}
+        onChange={(event) => setResearch(event.target.value)}
+        onClear={() => setResearch('')}
+        placeholder={t('map_research')}
+      />
+      {research !== '' && <MapList research={research} />}
+      {mapTreeComponent}
     </MapTreeContainer>
   );
 };
