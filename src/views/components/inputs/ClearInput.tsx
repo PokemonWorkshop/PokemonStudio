@@ -13,8 +13,9 @@ const ClearInputContainer = styled.div`
 
   & svg {
     position: absolute;
-    right: 16px;
-    top: 12px;
+    right: 4px;
+    top: 50%;
+    transform: translate(-50%, -50%);
     color: ${({ theme }) => theme.colors.text500};
     visibility: hidden;
 

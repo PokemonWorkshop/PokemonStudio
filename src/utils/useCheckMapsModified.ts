@@ -26,7 +26,9 @@ export const useCheckMapsModified = () => {
       return;
     }
 
-    const maps = Object.values(globalState.projectData.maps).map((map) => JSON.stringify(map));
+    const maps = Object.values(globalState.projectData.maps)
+      .map((map) => ({ dbSymbol: map.dbSymbol, tiledFilename: map.tiledFilename, sha1: map.sha1, mtime: map.mtime }))
+      .map((data) => JSON.stringify(data));
     return window.api.checkMapsModified(
       { projectPath: globalState.projectPath, maps, method: state.payload.method },
       ({ dbSymbols }) => {
