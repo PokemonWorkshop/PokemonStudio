@@ -1,4 +1,4 @@
-import { DarkButton, SecondaryButtonWithPlusIcon } from '@components/buttons';
+import { DarkButton, SecondaryButtonWithPlusIconResponsive } from '@components/buttons';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ControlBar } from '@components/ControlBar';
@@ -7,6 +7,9 @@ import { TextDialogsRef } from './editors/TextEditorOverlay';
 import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 import styled from 'styled-components';
 import { useTextInfos } from '@utils/useTextInfos';
+
+const NEW_TOOLTIP = { left: '100%', top: '100%' };
+const NEW_BREAKPOINT = 'screen and (max-width: 1100px)';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -46,8 +49,14 @@ export const TextControlBar = ({ dialogsRef }: TextControlBarProps) => {
   return (
     <ControlBar>
       <ButtonContainer>
-        {onClickNew ? <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new')}</SecondaryButtonWithPlusIcon> : <></>}
-        <DarkButton>{t('manage_languages')}</DarkButton>
+        {onClickNew ? (
+          <SecondaryButtonWithPlusIconResponsive onClick={onClickNew} tooltip={NEW_TOOLTIP} breakpoint={NEW_BREAKPOINT}>
+            {t('new')}
+          </SecondaryButtonWithPlusIconResponsive>
+        ) : (
+          <></>
+        )}
+        <DarkButton disabled={true}>{t('manage_languages')}</DarkButton>
       </ButtonContainer>
       <SelectText fileId={fileId.toString()} onChange={(fileId) => setSelectedDataIdentifier({ textInfo: Number(fileId) })} />
     </ControlBar>

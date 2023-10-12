@@ -11,6 +11,15 @@ import { useDialogsRef } from '@utils/useDialogsRef';
 import { TextEditorAndDeletionKeys, TextEditorOverlay } from '@components/textmanagement/editors/TextEditorOverlay';
 import { useTextPage } from '@utils/usePage';
 import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';
+import styled from 'styled-components';
+
+const TextsPageContainerStyle = styled(PageContainerStyle)`
+  @media ${(props) => props.theme.breakpoints.smallScreen} {
+    display: flex;
+    margin: 0 4px;
+    overflow-x: hidden;
+  }
+`;
 
 export const TextsPage = () => {
   const dialogsRef = useDialogsRef<TextEditorAndDeletionKeys>();
@@ -20,7 +29,7 @@ export const TextsPage = () => {
   return (
     <DatabasePageStyle>
       <TextControlBar dialogsRef={dialogsRef} />
-      <PageContainerStyle>
+      <TextsPageContainerStyle>
         <PageDataConstrainerStyle>
           <DataBlockWrapper>
             <DatabaseTabsBar
@@ -44,7 +53,7 @@ export const TextsPage = () => {
           </DataBlockWrapper>
           <TextEditorOverlay ref={dialogsRef} />
         </PageDataConstrainerStyle>
-      </PageContainerStyle>
+      </TextsPageContainerStyle>
     </DatabasePageStyle>
   );
 };
