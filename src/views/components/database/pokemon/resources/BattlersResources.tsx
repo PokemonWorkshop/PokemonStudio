@@ -25,12 +25,27 @@ export const BattlersResources = ({ form, isShowFemale, onResourceChoosen, onRes
       <DataBlockWrapper>
         {form.femaleRate !== 100 && (
           <>
-            <SpriteResource form={form} resource="front" isFemale={false} onResourceChoosen={onResourceChoosen} onResourceClean={onResourceClean} />
-            <SpriteResource form={form} resource="back" isFemale={false} onResourceChoosen={onResourceChoosen} onResourceClean={onResourceClean} />
+            <SpriteResource
+              form={form}
+              resource="front"
+              isFemale={false}
+              canBeFemale={isShowFemale}
+              onResourceChoosen={onResourceChoosen}
+              onResourceClean={onResourceClean}
+            />
+            <SpriteResource
+              form={form}
+              resource="back"
+              isFemale={false}
+              canBeFemale={isShowFemale}
+              onResourceChoosen={onResourceChoosen}
+              onResourceClean={onResourceClean}
+            />
             <SpriteResource
               form={form}
               resource="frontShiny"
               isFemale={false}
+              canBeFemale={isShowFemale}
               onResourceChoosen={onResourceChoosen}
               onResourceClean={onResourceClean}
             />
@@ -38,6 +53,7 @@ export const BattlersResources = ({ form, isShowFemale, onResourceChoosen, onRes
               form={form}
               resource="backShiny"
               isFemale={false}
+              canBeFemale={isShowFemale}
               onResourceChoosen={onResourceChoosen}
               onResourceClean={onResourceClean}
             />
@@ -45,12 +61,27 @@ export const BattlersResources = ({ form, isShowFemale, onResourceChoosen, onRes
         )}
         {isShowFemale && (
           <>
-            <SpriteResource form={form} resource="frontF" isFemale={true} onResourceChoosen={onResourceChoosen} onResourceClean={onResourceClean} />
-            <SpriteResource form={form} resource="backF" isFemale={true} onResourceChoosen={onResourceChoosen} onResourceClean={onResourceClean} />
+            <SpriteResource
+              form={form}
+              resource="frontF"
+              isFemale={true}
+              canBeFemale={true}
+              onResourceChoosen={onResourceChoosen}
+              onResourceClean={onResourceClean}
+            />
+            <SpriteResource
+              form={form}
+              resource="backF"
+              isFemale={true}
+              canBeFemale={true}
+              onResourceChoosen={onResourceChoosen}
+              onResourceClean={onResourceClean}
+            />
             <SpriteResource
               form={form}
               resource="frontShinyF"
               isFemale={true}
+              canBeFemale={true}
               onResourceChoosen={onResourceChoosen}
               onResourceClean={onResourceClean}
             />
@@ -58,6 +89,7 @@ export const BattlersResources = ({ form, isShowFemale, onResourceChoosen, onRes
               form={form}
               resource="backShinyF"
               isFemale={true}
+              canBeFemale={true}
               onResourceChoosen={onResourceChoosen}
               onResourceClean={onResourceClean}
             />

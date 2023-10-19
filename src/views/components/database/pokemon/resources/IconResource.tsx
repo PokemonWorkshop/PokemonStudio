@@ -71,12 +71,13 @@ type IconResourceProps = {
   form: StudioCreatureForm;
   resource: CreatureFormResourcesPath;
   isFemale: boolean;
+  canBeFemale: boolean;
   disableGif?: true;
   onResourceChoosen: (filePath: string, resource: CreatureFormResourcesPath) => void;
   onResourceClean: (resource: CreatureFormResourcesPath, isFemale: boolean) => void;
 };
 
-export const IconResource = ({ form, resource, isFemale, disableGif, onResourceChoosen, onResourceClean }: IconResourceProps) => {
+export const IconResource = ({ form, resource, isFemale, canBeFemale, disableGif, onResourceChoosen, onResourceClean }: IconResourceProps) => {
   const { t } = useTranslation('database_pokemon');
   const { onDrop, onDragOver, onClick, onClickFolder, isDialogOpen, flipFlap } = useResource({
     name: t(resource),
@@ -85,20 +86,26 @@ export const IconResource = ({ form, resource, isFemale, disableGif, onResourceC
     onResourceChoosen: (resourcePath) => onResourceChoosen(resourcePath, resource),
   });
 
+  const getTitle = () => {
+    if (isFemale) return t(resource);
+    else if (canBeFemale) return t(`${resource}_alt` as never);
+    return t(resource);
+  };
+
   return isNoRessource(form, resource, isFemale) ? (
     <IconNoResourceContainer onDrop={onDrop} onDragOver={onDragOver} onClick={isDialogOpen ? undefined : onClick} disabled={isDialogOpen}>
       <div className="icon-title">
         <div className="svg-container">
           <FileDrop />
         </div>
-        <span className="title">{t(resource)}</span>
+        <span className="title">{getTitle()}</span>
       </div>
     </IconNoResourceContainer>
   ) : (
     <IconResourceContainer onDrop={onDrop} onDragOver={onDragOver} onClick={isDialogOpen ? undefined : onClick} disabled={isDialogOpen}>
       <div className="icon-title">
         <ResourceImage imagePathInProject={formResourcesPath(form, resource)} versionId={flipFlap ? 2 : 1} />
-        <span className="title">{t(resource)}</span>
+        <span className="title">{getTitle()}</span>
       </div>
       <div className="buttons">
         <button className="folder-button">
