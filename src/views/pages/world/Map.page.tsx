@@ -10,7 +10,7 @@ import { useDialogsRef } from '@utils/useDialogsRef';
 import { useMapPage } from '@utils/usePage';
 import { MapEditorOverlay } from '@components/world/map/editors';
 import { MapEditorAndDeletionKeys } from '@components/world/map/editors/MapEditorOverlay';
-import { MapFrame, MapMusics, MapUpdate } from '@components/world/map';
+import { MapBreadcrumb, MapFrame, MapMusics, MapUpdate } from '@components/world/map';
 import { DeleteButtonWithIcon } from '@components/buttons';
 
 const MapPageStyle = styled.div`
@@ -33,6 +33,7 @@ export const MapPage = () => {
       <PageContainerStyle>
         <PageDataConstrainerStyle>
           <DataBlockWrapper>
+            <MapBreadcrumb />
             <DatabaseTabsBar
               currentTabIndex={0}
               tabs={[
