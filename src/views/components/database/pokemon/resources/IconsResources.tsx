@@ -22,20 +22,49 @@ export const IconsResources = ({ form, isShowFemale, onResourceChoosen, onResour
       <ResourceWrapper>
         {form.femaleRate !== 100 && (
           <>
-            <IconResource form={form} resource="icon" isFemale={false} onResourceChoosen={onResourceChoosen} onResourceClean={onResourceClean} />
-            <IconResource form={form} resource="iconShiny" isFemale={false} onResourceChoosen={onResourceChoosen} onResourceClean={onResourceClean} />
+            <IconResource
+              form={form}
+              resource="icon"
+              isFemale={false}
+              canBeFemale={isShowFemale}
+              onResourceChoosen={onResourceChoosen}
+              onResourceClean={onResourceClean}
+            />
+            <IconResource
+              form={form}
+              resource="iconShiny"
+              isFemale={false}
+              canBeFemale={isShowFemale}
+              onResourceChoosen={onResourceChoosen}
+              onResourceClean={onResourceClean}
+            />
           </>
         )}
         {isShowFemale && (
           <>
-            <IconResource form={form} resource="iconF" isFemale={true} onResourceChoosen={onResourceChoosen} onResourceClean={onResourceClean} />
-            <IconResource form={form} resource="iconShinyF" isFemale={true} onResourceChoosen={onResourceChoosen} onResourceClean={onResourceClean} />
+            <IconResource
+              form={form}
+              resource="iconF"
+              isFemale={true}
+              canBeFemale={true}
+              onResourceChoosen={onResourceChoosen}
+              onResourceClean={onResourceClean}
+            />
+            <IconResource
+              form={form}
+              resource="iconShinyF"
+              isFemale={true}
+              canBeFemale={true}
+              onResourceChoosen={onResourceChoosen}
+              onResourceClean={onResourceClean}
+            />
           </>
         )}
         <IconResource
           form={form}
           resource="footprint"
           isFemale={false}
+          canBeFemale={false}
           disableGif={true}
           onResourceChoosen={onResourceChoosen}
           onResourceClean={onResourceClean}

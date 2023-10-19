@@ -111,12 +111,13 @@ type SpriteResourceProps = {
   form: StudioCreatureForm;
   resource: CreatureFormResourcesPath;
   isFemale: boolean;
+  canBeFemale: boolean;
   disableGif?: true;
   onResourceChoosen: (filePath: string, resource: CreatureFormResourcesPath) => void;
   onResourceClean: (resource: CreatureFormResourcesPath, isFemale: boolean) => void;
 };
 
-export const SpriteResource = ({ form, resource, isFemale, disableGif, onResourceChoosen, onResourceClean }: SpriteResourceProps) => {
+export const SpriteResource = ({ form, resource, isFemale, canBeFemale, disableGif, onResourceChoosen, onResourceClean }: SpriteResourceProps) => {
   const { t } = useTranslation(['database_pokemon', 'drop']);
   const { onDrop, onDragOver, onClick, onClickFolder, isDialogOpen, flipFlap } = useResource({
     name: t(`database_pokemon:${resource}`),
@@ -124,6 +125,12 @@ export const SpriteResource = ({ form, resource, isFemale, disableGif, onResourc
     extensions: disableGif ? ['png'] : ['png', 'gif'],
     onResourceChoosen: (resourcePath) => onResourceChoosen(resourcePath, resource),
   });
+
+  const getTitle = () => {
+    if (isFemale) return t(`database_pokemon:${resource}`);
+    else if (canBeFemale) return t(`database_pokemon:${resource}_alt` as never);
+    return t(`database_pokemon:${resource}`);
+  };
 
   return isNoRessource(form, resource, isFemale) ? (
     <SpriteNoResourceContainer onDrop={onDrop} onDragOver={onDragOver} isCharacter={isCharacterResource(resource)}>
@@ -136,7 +143,7 @@ export const SpriteResource = ({ form, resource, isFemale, disableGif, onResourc
           </LinkContainer>
         </div>
       </div>
-      <span className="title">{t(`database_pokemon:${resource}`)}</span>
+      <span className="title">{getTitle()}</span>
     </SpriteNoResourceContainer>
   ) : (
     <SpriteResourceContainer
@@ -162,7 +169,7 @@ export const SpriteResource = ({ form, resource, isFemale, disableGif, onResourc
       <div className="image-container">
         <ResourceImage imagePathInProject={formResourcesPath(form, resource)} versionId={flipFlap ? 2 : 1} />
       </div>
-      <span className="title">{t(`database_pokemon:${resource}`)}</span>
+      <span className="title">{getTitle()}</span>
     </SpriteResourceContainer>
   );
 };
