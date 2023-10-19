@@ -65,7 +65,7 @@ export const MapFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
     const stepsAverage = isNaN(stepsAverageRef.current.valueAsNumber) ? map.stepsAverage : stepsAverageRef.current.valueAsNumber;
     setText(MAP_NAME_TEXT_ID, map.id, nameRef.current.value);
     setText(MAP_DESCRIPTION_TEXT_ID, map.id, descriptionRef.current.value);
-    updateMap({ stepsAverage, tiledFilename, tileMetadata: tiledFilename === '' ? {} : map.tiledFilename });
+    updateMap({ stepsAverage, tiledFilename, tileMetadata: tiledFilename === '' ? null : map.tileMetadata });
     saveTexts();
   };
   useEditorHandlingClose(ref, onClose, canClose);
