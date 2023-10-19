@@ -14,7 +14,7 @@ type StudioMapBackend = {
   tiledFilename: string;
 };
 
-const calculateFileSha1 = async (filePath: string): Promise<string> => {
+export const calculateFileSha1 = async (filePath: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     const hash = crypto.createHash('sha1');
     const stream = fs.createReadStream(filePath, 'utf8');
