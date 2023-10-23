@@ -1,6 +1,6 @@
 import React, { Dispatch } from 'react';
 import styled from 'styled-components';
-import { PokemonBattlerContainer } from '@components/pokemonBattlerList/PokemonBattler';
+import { PokemonBattlerContainer } from '@components/pokemonBattler/PokemonBattler';
 import { useProjectItems } from '@utils/useProjectData';
 import { Tag } from '@components/Tag';
 import { ClearButtonOnlyIcon } from '@components/buttons';

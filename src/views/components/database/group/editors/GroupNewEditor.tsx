@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useRef } from 'react';
+import React, { forwardRef, useMemo, useState } from 'react';
 import { Editor } from '@components/editor';
 
 import { TFunction, useTranslation } from 'react-i18next';
@@ -8,12 +8,21 @@ import styled from 'styled-components';
 import { useProjectGroups } from '@utils/useProjectData';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
-import { defineRelationCustomCondition, GroupActivationsMap, GroupBattleTypes, GroupVariationsMap } from '@utils/GroupUtils';
+import {
+  defineRelationCustomCondition,
+  GroupActivationsMap,
+  StudioGroupActivationType,
+  GroupBattleTypes,
+  GroupVariationsMap,
+  getSwitchValue,
+  onSwitchUpdateActivation,
+} from '@utils/GroupUtils';
 import { GROUP_NAME_TEXT_ID, GROUP_SYSTEM_TAGS, StudioGroupSystemTag, StudioGroupTool } from '@modelEntities/group';
 import { useSetProjectText } from '@utils/ReadingProjectText';
 import { createGroup } from '@utils/entityCreation';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { findFirstAvailableId } from '@utils/ModelUtils';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 
 const groupActivationEntries = (t: TFunction<'database_groups'>) =>
   GroupActivationsMap.map((activation) => ({ value: activation.value, label: t(activation.label) }));
@@ -31,10 +40,10 @@ const ButtonContainer = styled.div`
 `;
 
 type GroupNewEditorProps = {
-  onClose: () => void;
+  closeDialog: () => void;
 };
 
-export const GroupNewEditor = ({ onClose }: GroupNewEditorProps) => {
+export const GroupNewEditor = forwardRef<EditorHandlingClose, GroupNewEditorProps>(({ closeDialog }, ref) => {
   const { projectDataValues: groups, setProjectDataValues: setGroup } = useProjectGroups();
   const { t } = useTranslation('database_groups');
   const activationOptions = useMemo(() => groupActivationEntries(t), [t]);
@@ -44,12 +53,14 @@ export const GroupNewEditor = ({ onClose }: GroupNewEditorProps) => {
   const setText = useSetProjectText();
 
   const [name, setName] = useState<string>('');
-  const [activation, setActivation] = useState<(typeof activationOptions)[number]['value']>('always');
+  const [activation, setActivation] = useState<StudioGroupActivationType>('always');
   const [battleType, setBattleType] = useState<(typeof battleTypeOptions)[number]['value']>('simple');
   const [systemTag, setSystemTag] = useState<StudioGroupSystemTag>('Grass');
   const [variation, setVariation] = useState<(typeof variationOptions)[number]['value']>('0');
   const [switchId, setSwitchId] = useState(1);
-  const stepsAverageRef = useRef<HTMLInputElement>(null);
+  const [stepsAverage, setStepsAverage] = useState<number>(30);
+
+  useEditorHandlingClose(ref);
 
   const onClickNew = () => {
     const id = findFirstAvailableId(groups, 0);
@@ -57,10 +68,6 @@ export const GroupNewEditor = ({ onClose }: GroupNewEditorProps) => {
     const tool = isTool(variation) ? variation : null;
     const terrainTag = tool ? 0 : Number(variation);
     const activationSwitchId = activation === 'custom' ? switchId : Number(activation);
-
-    if (!stepsAverageRef.current?.validity.valid) {
-      return;
-    }
 
     const group = createGroup(
       dbSymbol,
@@ -70,12 +77,20 @@ export const GroupNewEditor = ({ onClose }: GroupNewEditorProps) => {
       tool,
       battleType === 'double',
       activation === 'always' ? undefined : { value: activationSwitchId, type: 'enabledSwitch', relationWithPreviousCondition: 'AND' },
-      Number(stepsAverageRef.current.value)
+      stepsAverage
     );
-    defineRelationCustomCondition(group);
+    group.customConditions = defineRelationCustomCondition(group.customConditions);
     setText(GROUP_NAME_TEXT_ID, group.id, name);
     setGroup({ [dbSymbol]: group }, { group: dbSymbol });
-    onClose();
+    closeDialog();
+  };
+
+  const canNew = () => {
+    if (!name) return false;
+    if (isNaN(stepsAverage) || stepsAverage < 1 || stepsAverage > 999) return false;
+    if (isNaN(switchId) || switchId < 1 || switchId > 99999) return false;
+
+    return true;
   };
 
   return (
@@ -93,23 +108,28 @@ export const GroupNewEditor = ({ onClose }: GroupNewEditorProps) => {
             <SelectCustomSimple
               id="select-activation"
               options={activationOptions}
-              onChange={(value) => setActivation(value as typeof activation)}
+              onChange={(value) => {
+                setActivation(value as StudioGroupActivationType);
+                setSwitchId(getSwitchValue(value as StudioGroupActivationType));
+              }}
               value={activation}
               noTooltip
             />
             {activation === 'custom' && (
               <InputWithLeftLabelContainer>
-                <Label htmlFor="switch">{t('switch')}</Label>
+                <Label htmlFor="switch" required>
+                  {t('switch')}
+                </Label>
                 <Input
                   type="number"
                   name="switch"
                   min="1"
                   max="99999"
-                  value={switchId || ''}
+                  value={isNaN(switchId) ? '' : switchId}
                   onChange={(event) => {
-                    const newValue = parseInt(event.target.value);
-                    if (newValue < 1 || newValue > 99999) return event.preventDefault();
+                    const newValue = event.target.valueAsNumber;
                     setSwitchId(newValue);
+                    setActivation(onSwitchUpdateActivation(newValue));
                   }}
                 />
               </InputWithLeftLabelContainer>
@@ -147,19 +167,30 @@ export const GroupNewEditor = ({ onClose }: GroupNewEditorProps) => {
           />
         </InputWithTopLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="steps-average">{t('steps_average')}</Label>
-          <Input name="steps-average" type="number" min={1} max={999} step={1} defaultValue={30} ref={stepsAverageRef} />
+          <Label htmlFor="steps-average" required>
+            {t('steps_average')}
+          </Label>
+          <Input
+            name="steps-average"
+            type="number"
+            min={1}
+            max={999}
+            step={1}
+            value={isNaN(stepsAverage) ? '' : stepsAverage}
+            onChange={(event) => setStepsAverage(event.target.valueAsNumber)}
+          />
         </InputWithLeftLabelContainer>
         <ButtonContainer>
           <ToolTipContainer>
-            {!name && <ToolTip bottom="100%">{t('fields_asterisk_required')}</ToolTip>}
-            <PrimaryButton onClick={onClickNew} disabled={!name}>
+            {!canNew() && <ToolTip bottom="100%">{t('fields_asterisk_required')}</ToolTip>}
+            <PrimaryButton onClick={onClickNew} disabled={!canNew()}>
               {t('create_group')}
             </PrimaryButton>
           </ToolTipContainer>
-          <DarkButton onClick={onClose}>{t('cancel')}</DarkButton>
+          <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
     </Editor>
   );
-};
+});
+GroupNewEditor.displayName = 'GroupNewEditor';

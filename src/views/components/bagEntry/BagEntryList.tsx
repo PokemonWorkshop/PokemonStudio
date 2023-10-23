@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { PokemonBattlerListComponent, PokemonBattlerListGrid, PokemonBattlerListHeader } from '@components/pokemonBattlerList/PokemonBattlerList';
+import { PokemonBattlerListComponent, PokemonBattlerListGrid, PokemonBattlerListHeader } from '@components/pokemonBattler/PokemonBattlerList';
 import { useTranslation } from 'react-i18next';
 import React, { useState } from 'react';
 import { DarkButton, SecondaryButtonWithPlusIconResponsive } from '@components/buttons';

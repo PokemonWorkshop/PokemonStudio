@@ -73,7 +73,7 @@ export const ZonePage = () => {
     if (currentEditor === 'new') return setCurrentEditor(undefined);
     if (currentEditor === 'addGroup' || currentEditor === 'importGroup') return setCurrentEditor(undefined);
     if (currentEditor === 'editGroup' && currentEditedGroup) {
-      defineRelationCustomCondition(currentEditedGroup.data);
+      currentEditedGroup.data.customConditions = defineRelationCustomCondition(currentEditedGroup.data.customConditions);
       setZone({ [zone.dbSymbol]: currentEditedZone });
       setGroup({ [currentEditedGroup.data.dbSymbol]: currentEditedGroup.data });
       return setCurrentEditor(undefined);
@@ -86,7 +86,7 @@ export const ZonePage = () => {
 
   const onAddGroup = (editedGroup: StudioGroup) => {
     currentEditedZone.wildGroups.push(editedGroup.dbSymbol);
-    defineRelationCustomCondition(editedGroup);
+    editedGroup.customConditions = defineRelationCustomCondition(editedGroup.customConditions);
     setZone({ [zone.dbSymbol]: currentEditedZone });
     setGroup({ [editedGroup.dbSymbol]: editedGroup });
     setCurrentEditor(undefined);
