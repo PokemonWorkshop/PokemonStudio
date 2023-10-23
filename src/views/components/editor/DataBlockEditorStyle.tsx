@@ -50,5 +50,6 @@ export const ButtonContainer = styled.div<ButtonContainerProps>`
 export const ButtonRightContainer = styled.div`
   display: flex;
   flex-direction: row;
+  justify-content: end;
   gap: 12px;
 `;
