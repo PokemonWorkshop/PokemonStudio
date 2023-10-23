@@ -1,4 +1,5 @@
 import { StudioCustomGroupCondition, StudioGroup, StudioGroupTool } from '@modelEntities/group';
+import { assertUnreachable } from './assertUnreachable';
 
 export const CustomConditionTypes = ['enabledSwitch', 'mapId'] as const;
 export const GroupActivationsMap = [
@@ -24,6 +25,7 @@ export const GroupVariationsMap = [
   { value: 'RockSmash', label: 'RockSmash' },
 ] as const;
 export const GroupBattleTypes = ['simple', 'double'] as const;
+export type StudioGroupActivationType = (typeof GroupActivationsMap)[number]['value'];
 
 export const getActivationValue = (newGroup: StudioGroup) => {
   const conditions = newGroup.customConditions ? newGroup.customConditions.filter((condition) => condition.type === CustomConditionTypes[0]) : [];
@@ -53,17 +55,17 @@ export const getActivationLabel = (newGroup: StudioGroup) => {
   }
 };
 
-export const onActivationChange = (value: string, newGroup: StudioGroup, refreshUI: (_: unknown) => void) => {
-  let conditions = newGroup.customConditions;
+export const updateActivation = (value: string, group: StudioGroup, switchValue: number) => {
+  let conditions = Object.assign([], group.customConditions) as StudioCustomGroupCondition[];
   if (!conditions || value === 'always') {
     conditions = conditions.filter((condition) => condition.type !== CustomConditionTypes[0]);
   }
 
-  if (value != 'always') {
+  if (value !== 'always') {
     const index = conditions ? conditions.findIndex((condition) => condition.type === CustomConditionTypes[0]) : -1;
     const condition: StudioCustomGroupCondition = {
       type: CustomConditionTypes[0],
-      value: value != 'custom' ? Number(value) : 0,
+      value: value !== 'custom' ? Number(value) : isNaN(switchValue) ? 0 : switchValue,
       relationWithPreviousCondition: 'AND',
     };
     if (index > -1) {
@@ -72,31 +74,40 @@ export const onActivationChange = (value: string, newGroup: StudioGroup, refresh
       conditions.push(condition);
     }
   }
-
-  refreshUI((newGroup.customConditions = conditions));
+  return conditions;
 };
 
-export const needSwitchInput = (group: StudioGroup) => {
-  const conditions = group.customConditions ? group.customConditions.filter((condition) => condition.type === CustomConditionTypes[0]) : [];
-  return conditions.length !== 0;
-};
-
-export const onSwitchInputChange = (value: number, group: StudioGroup, refreshUI: (_: unknown) => void) => {
-  const conditions = group.customConditions.filter((condition) => condition.type === CustomConditionTypes[0]);
-  if (conditions.length > 0) {
-    conditions[0].value = value;
+export const onSwitchUpdateActivation = (value: number): StudioGroupActivationType => {
+  switch (value) {
+    case 11:
+    case 12:
+    case 13:
+    case 14:
+      return value.toString() as StudioGroupActivationType;
   }
-  refreshUI(null); // No need to assign anything in that case
+  return 'custom';
 };
 
-export const getSwitchValue = (newGroup: StudioGroup) => {
-  const conditions = newGroup.customConditions ? newGroup.customConditions.filter((condition) => condition.type === CustomConditionTypes[0]) : [];
-  if (conditions.length > 0) return conditions[0].value;
-
-  return 0;
+export const getSwitchValue = (activation: StudioGroupActivationType) => {
+  switch (activation) {
+    case 'always':
+    case 'custom':
+      return 1;
+    case '11':
+    case '12':
+    case '13':
+    case '14':
+      return Number(activation);
+    default:
+      assertUnreachable(activation);
+  }
+  return 1;
 };
 
-export const onVariationChange = (value: string, group: StudioGroup, refreshUI: (_: unknown) => void) => {
+export const getSwitchDefaultValue = (group: StudioGroup) =>
+  group.customConditions.filter((condition) => condition.type === 'enabledSwitch')[0]?.value || 1;
+
+export const updateVariation = (value: string) => {
   let tool;
   let terrainTag;
   if (isNaN(Number(value))) {
@@ -106,18 +117,17 @@ export const onVariationChange = (value: string, group: StudioGroup, refreshUI: 
     tool = null;
     terrainTag = Number(value);
   }
-  refreshUI((group.tool = tool));
-  refreshUI((group.terrainTag = terrainTag));
+  return { tool, terrainTag };
 };
 
 export const getVariationValue = (group: StudioGroup) => {
   return group.tool ?? group.terrainTag.toString();
 };
 
-export const defineRelationCustomCondition = (group: StudioGroup) => {
-  const mapIdConditions = group.customConditions.filter((conditions) => conditions.type === 'mapId');
+export const defineRelationCustomCondition = (customConditions: StudioCustomGroupCondition[]) => {
+  const mapIdConditions = customConditions.filter((conditions) => conditions.type === 'mapId');
   mapIdConditions.forEach((conditions) => (conditions.relationWithPreviousCondition = 'OR'));
   if (mapIdConditions.length >= 1) mapIdConditions[0].relationWithPreviousCondition = 'AND';
-  const otherConditions = group.customConditions.filter((conditions) => conditions.type !== 'mapId');
-  group.customConditions = mapIdConditions.concat(otherConditions);
+  const otherConditions = customConditions.filter((conditions) => conditions.type !== 'mapId');
+  return mapIdConditions.concat(otherConditions);
 };

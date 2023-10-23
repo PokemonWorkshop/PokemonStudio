@@ -75,7 +75,12 @@ export const ZoneAddGroupEditor = ({ zone, groups, onAddGroup, onClose }: ZoneAd
         <InputWithTopLabelContainer>
           <Label htmlFor="groups">{t('database_groups:group')}</Label>
           <GroupContainer>
-            <SelectGroup dbSymbol={group.dbSymbol} onChange={(selected) => setSelectedGroup(selected.value)} rejected={zone.wildGroups} noLabel />
+            <SelectGroup
+              dbSymbol={group.dbSymbol}
+              onChange={(dbSymbol) => setSelectedGroup(dbSymbol)}
+              filter={(dbSymbol) => !zone.wildGroups.includes(dbSymbol as DbSymbol)}
+              noLabel
+            />
             <ToolTipContainer>
               <ToolTip bottom="100%">{t('database_trainers:available_future_release')}</ToolTip>
               <SecondaryButton disabled>{t('database_zones:create_new_group')}</SecondaryButton>

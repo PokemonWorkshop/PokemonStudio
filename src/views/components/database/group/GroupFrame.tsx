@@ -7,10 +7,11 @@ import { padStr } from '@utils/PadStr';
 import { DataFieldsetFieldWithChild } from '../dataBlocks/DataFieldsetField';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
 import { StudioGroup } from '@modelEntities/group';
+import { GroupDialogsRef } from './editors/GroupEditorOverlay';
 
 type GroupFrameProps = {
   group: StudioGroup;
-  onClick: () => void;
+  dialogsRef: GroupDialogsRef;
 };
 
 const GroupInfoContainer = styled(DataInfoContainer)`
@@ -40,13 +41,13 @@ const EnvironmentContainer = styled.div`
   }
 `;
 
-export const GroupFrame = ({ group, onClick }: GroupFrameProps) => {
+export const GroupFrame = ({ group, dialogsRef }: GroupFrameProps) => {
   const { t } = useTranslation('database_groups');
   const getGroupName = useGetEntityNameText();
   const variationText = GroupVariationsMap.find((variation) => variation.value === getVariationValue(group))?.label;
 
   return (
-    <DataBlockContainer size="full" onClick={onClick}>
+    <DataBlockContainer size="full" onClick={() => dialogsRef.current?.openDialog('frame')}>
       <DataGrid columns="minmax(min-content, 1024px)">
         <GroupInfoContainer>
           <DataInfoContainerHeaderTitle>

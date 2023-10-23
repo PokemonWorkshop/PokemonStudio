@@ -123,7 +123,12 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
             <ImportInfo>{t('database_groups:battler_import_info')}</ImportInfo>
             <InputWithTopLabelContainer>
               <Label htmlFor="group">{t('database_groups:import_battler_from')}</Label>
-              <SelectGroup dbSymbol={selectedEntity} onChange={(selected) => setSelectedEntity(selected.value)} rejected={[group.dbSymbol]} noLabel />
+              <SelectGroup
+                dbSymbol={selectedEntity}
+                onChange={(dbSymbol) => setSelectedEntity(dbSymbol)}
+                filter={(dbSymbol) => dbSymbol !== group.dbSymbol}
+                noLabel
+              />
             </InputWithTopLabelContainer>
           </>
         ) : (

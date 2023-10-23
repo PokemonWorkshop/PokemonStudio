@@ -1,26 +1,42 @@
-import { SecondaryButtonWithPlusIcon } from '@components/buttons';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
-import { ControlBar } from '@components/ControlBar';
-import { SelectGroup } from '@components/selects';
-import { StudioGroup } from '@modelEntities/group';
-import { useSetCurrentDatabasePath } from '@utils/useSetCurrentDatabasePage';
 
-type GroupControlBarProps = {
-  onChange: SelectChangeEvent;
-  group: StudioGroup;
-  onClickNewGroup: () => void;
+import { ControlBar } from '@components/ControlBar';
+import { SecondaryButtonWithPlusIcon } from '@components/buttons';
+import { SelectGroup } from '@components/selects';
+
+import { useProjectGroups } from '@utils/useProjectData';
+import { useSetCurrentDatabasePath } from '@utils/useSetCurrentDatabasePage';
+import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
+
+import { GroupDialogsRef } from './editors/GroupEditorOverlay';
+
+type GroupContralBarProps = {
+  dialogsRef?: GroupDialogsRef;
 };
 
-export const GroupControlBar = ({ onChange, group, onClickNewGroup }: GroupControlBarProps) => {
+export const GroupControlBar = ({ dialogsRef }: GroupContralBarProps) => {
   const { t } = useTranslation('database_groups');
+  const { selectedDataIdentifier: groupDbSymbol, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol } = useProjectGroups();
+
   useSetCurrentDatabasePath();
+
+  const shortcutMap = useMemo<StudioShortcutActions>(() => {
+    const isShortcutEnabled = () => dialogsRef?.current?.currentDialog === undefined;
+    return {
+      db_previous: () => isShortcutEnabled() && setSelectedDataIdentifier({ group: getPreviousDbSymbol('id') }),
+      db_next: () => isShortcutEnabled() && setSelectedDataIdentifier({ group: getNextDbSymbol('id') }),
+      db_new: () => isShortcutEnabled() && dialogsRef?.current?.openDialog('new'),
+    };
+  }, [dialogsRef, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol]);
+  useShortcut(shortcutMap);
+
+  const onClickNew = dialogsRef ? () => dialogsRef.current?.openDialog('new') : undefined;
 
   return (
     <ControlBar>
-      <SecondaryButtonWithPlusIcon onClick={onClickNewGroup}>{t('new')}</SecondaryButtonWithPlusIcon>
-      <SelectGroup dbSymbol={group.dbSymbol} onChange={onChange} />
+      <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new')}</SecondaryButtonWithPlusIcon>
+      <SelectGroup dbSymbol={groupDbSymbol} onChange={(dbSymbol) => setSelectedDataIdentifier({ group: dbSymbol })} />
     </ControlBar>
   );
 };

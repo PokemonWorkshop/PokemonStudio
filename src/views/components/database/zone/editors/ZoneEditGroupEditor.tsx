@@ -60,8 +60,8 @@ export const ZoneEditGroupEditor = ({ zone, groups, group, index }: ZoneEditGrou
           <Label htmlFor="groups">{t('database_groups:group')}</Label>
           <SelectGroup
             dbSymbol={group.data.dbSymbol}
-            onChange={(selected) => refreshUI(onChangeGroup(selected.value))}
-            rejected={rejectedGroup(zone.wildGroups, group.data)}
+            onChange={(dbSymbol) => refreshUI(onChangeGroup(dbSymbol))}
+            filter={(dbSymbol) => !rejectedGroup(zone.wildGroups, group.data).includes(dbSymbol as DbSymbol)}
             noLabel
           />
         </InputWithTopLabelContainer>
