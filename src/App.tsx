@@ -10,7 +10,7 @@ import { NavigationBarComponent } from './views/components/navigation/Navigation
 import HomePage from './views/pages/Home.page';
 import DatabasePage from './views/pages/database/Database/Database.page';
 import PSDKUpdatePage from './views/pages/PSDKUpdate.page';
-import { TextsPage } from '@pages/texts/Texts.page';
+import TextsRouter from '@pages/texts/Texts.Router.page';
 import DashboardRouter from '@pages/dashboard/Dashboard.Router.page';
 import { Loader } from '@components/Loader';
 import { LoaderContextProvider } from '@utils/loaderContext';
@@ -35,7 +35,7 @@ const App = () => {
               <Route path="/psdkupdate" element={<PSDKUpdatePage />} />
               <Route path="/database/*" element={<DatabasePage />} />
               <Route path="/world/*" element={<WorldRouter />} />
-              <Route path="/texts/*" element={<TextsPage />} />
+              <Route path="/texts/*" element={<TextsRouter />} />
               <Route path="/code" />
               <Route path="/help" />
               <Route path="/settings" />

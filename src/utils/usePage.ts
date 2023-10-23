@@ -5,6 +5,7 @@ import { useTextInfosReadonly } from './useTextInfos';
 import { StudioDex } from '@modelEntities/dex';
 import { StudioType } from '@modelEntities/type';
 import { StudioItem } from '@modelEntities/item';
+import { Language } from '@pages/texts/Translation.page';
 
 export const useAbilityPage = () => {
   const { projectDataValues: abilities, selectedDataIdentifier: dbSymbol, state } = useProjectDataReadonly('abilities', 'ability');
@@ -50,6 +51,37 @@ export const useTextPage = () => {
   return {
     textInfo: currentTextInfo,
     cannotDelete: currentTextInfo.fileId >= 8997,
+  };
+};
+
+export const useTranslationPage = (positionLanguage?: number) => {
+  const { currentTextInfo, state } = useTextInfosReadonly();
+  const allTextsFromFile = state.projectText[currentTextInfo.fileId];
+  const allLanguageByIndex: Language[] =
+    allTextsFromFile[0] &&
+    allTextsFromFile[0]
+      .map((element, index) => ({
+        index,
+        value: element,
+      }))
+      .filter((element) => element.value.indexOf('index') === -1 && element.value.indexOf('Index') === -1);
+  const defaultLanguageIndexFromFile: Language = allLanguageByIndex.find(
+    (li) => li.value === state.projectConfig.language_config.defaultLanguage
+  ) ?? { value: 'en', index: 0 };
+  const languageByIndexFiltered = allLanguageByIndex.filter((language) => {
+    if (language.value === defaultLanguageIndexFromFile.value) return;
+    return language;
+  });
+
+  return {
+    state,
+    defaultLanguageIndexFromFile,
+    textInfo: currentTextInfo,
+    allTextsFromFile,
+    currentTextFromFile: allTextsFromFile[positionLanguage || 1],
+    defaultLanguage: state.projectConfig.language_config.defaultLanguage,
+    allLanguageByIndex,
+    languageByIndexFiltered,
   };
 };
 

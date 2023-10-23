@@ -13,6 +13,7 @@ import { createMapInfo } from '@utils/entityCreation';
 import { cloneEntity } from '@utils/cloneEntity';
 import { MAP_INFO_FOLDER_NAME_TEXT_ID, StudioMapInfoFolder } from '@modelEntities/mapInfo';
 import { useSetProjectText } from '@utils/ReadingProjectText';
+import { SeparatorGreyLine } from '@components/separators/SeparatorGreyLine';
 
 const MapMenuContainer = styled(NavigationDatabaseStyle)`
   height: 100vh;
@@ -35,12 +36,6 @@ const MapSubMenuContainer = styled.div`
       width: 100%;
     }
   }
-`;
-
-const Separator = styled.div`
-  display: block;
-  height: 1px;
-  background-color: ${({ theme }) => theme.colors.dark20};
 `;
 
 export const MapMenu = () => {
@@ -67,7 +62,7 @@ export const MapMenu = () => {
             </SecondaryButtonWithPlusIcon>
             <NewFolderButtonOnlyIcon onClick={handleNewFolder} />
           </div>
-          <Separator />
+          <SeparatorGreyLine />
           <MapTree />
         </MapSubMenuContainer>
       </NavigationDatabaseGroup>
