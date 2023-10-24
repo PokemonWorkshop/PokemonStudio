@@ -1,0 +1,16 @@
+{
+  "display": "Anzeige",
+  "resolution": "Auflösung",
+  "game_resolution": "Auflösung des Spiels",
+  "game_resolution_advice": "Die Auflösung des Spiels ist komplizierter zu bearbeiten als es scheint, da Sie jede Benutzeroberfläche an die neue Auflösung anpassen müssen. Seien Sie also vorsichtig, bevor Sie diese Werte ändern.",
+  "window_scale": "Fenstergröße",
+  "full_screen": "Vollbild",
+  "game_window_centered": "Der Spieler befindet sich immer in der Mitte des Bildschirms",
+  "tilemap": "Tilemap",
+  "class": "Klasse",
+  "tilemap_size": "Größe der Tilemap",
+  "tile_zoom": "Tilezoom",
+  "scale_characters": "Character Größe auf der Karte",
+  "images_per_animation": "Anzahl der Bilder pro Animation",
+  "old_map_linker": "Verwenden Sie das alte Kartenverknüpfungssystem"
+}

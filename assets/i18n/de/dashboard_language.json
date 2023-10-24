@@ -1,0 +1,14 @@
+{
+  "language": "Sprache",
+  "settings": "Einstellungen",
+  "supported_languages": "Unterstützte Sprachen",
+  "default_language": "Standardsprache",
+  "prefix": "Prefix",
+  "fields_asterisk_required": "Die mit einem Sternchen versehenen Felder sind Erforderlich.",
+  "add_language": "Sprache hinzufügen",
+  "cancel": "Abbrechen",
+  "code_error": "Dieser Präfix wird bereits verwendet.",
+  "code_info": "Dieser Präfix wird in CSV-Dateien verwendet, um die verwendete Spalte zu identifizieren.",
+  "placeholder_language": "Beispiel: Japanisch",
+  "placeholder_prefix": "Beispiel: jp"
+}

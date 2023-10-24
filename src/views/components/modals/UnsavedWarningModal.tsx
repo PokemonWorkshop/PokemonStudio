@@ -63,10 +63,6 @@ const ActionContainer = styled.div`
   align-items: center;
   gap: 16px;
   padding-top: 8px;
-
-  ${PrimaryButton} {
-    width: min-content;
-  }
 `;
 
 const Button = styled.span`

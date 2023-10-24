@@ -1,0 +1,19 @@
+{
+  "home": "Startseite",
+  "search": "Suche",
+  "dashboard": "Dashboard",
+  "update": "Pokémon SDK-Aktualisierung",
+  "database": "Datenbank",
+  "map": "Karten-Links",
+  "event_editor": "Ereignis-Editor",
+  "text_editor": "Text-Editor",
+  "deployment": "Einsatz",
+  "parameters": "Parameter",
+  "test": "Testen Sie das Projekt",
+  "save": "Änderungen speichern",
+  "play_release_mode": "Spielen Sie das Spiel",
+  "play_debug_mode": "Debug-Modus",
+  "play_tags_mode": "System-Tags-Editor",
+  "play_worldmap_mode": "Weltkarten-Editor",
+  "not_available_yet": "Verfügbar in einer zukünftigen Version"
+}

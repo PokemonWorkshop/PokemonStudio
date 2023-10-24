@@ -25,7 +25,7 @@ export const BrandingButtonContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
-  width: 240px;
+  min-width: 240px;
 
   & span {
     ${({ theme }) => theme.fonts.normalMedium};

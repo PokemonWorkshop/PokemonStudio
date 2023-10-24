@@ -8,6 +8,7 @@ import translationES from '../assets/i18n/es';
 import translationFR from '../assets/i18n/fr';
 import translationIT from '../assets/i18n/it';
 import translationPT from '../assets/i18n/pt';
+import translationDE from '../assets/i18n/de';
 // import translationXX from '../assets/i18n/xx';
 
 i18n
@@ -29,6 +30,7 @@ i18n
       fr: translationFR,
       it: translationIT,
       pt: translationPT,
+      //de: translationDE,
       // XX: translationXX,
     },
   });

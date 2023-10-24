@@ -1,0 +1,19 @@
+{
+  "project_version": "Version {{project_version}}",
+  "project_settings": "Projekt Einstellungen",
+  "change_project_settings": "Projekteinstellungen ändern",
+  "general_settings": "Allgemeine Einstellungen",
+  "infos": "Informationen",
+  "language": "Sprache",
+  "settings": "Einstellungen",
+  "texts": "Texte",
+  "options": "Spiel Optionen",
+  "devices": "Geräte",
+  "appearance": "Erscheinungsbild",
+  "display": "Anzeige",
+  "graphic_settings": "Grafikeinstellungen",
+  "config": "Konfigurationen",
+  "game_start": "Start des Spiels",
+  "save": "Speichern",
+  "credits": "Spiel Credits"
+}

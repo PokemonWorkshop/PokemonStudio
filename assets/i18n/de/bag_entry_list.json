@@ -1,0 +1,11 @@
+{
+  "import_item": "Gegenstand importieren",
+  "import": "Importieren",
+  "add_item": "Einen Gegenstand hinzufügen",
+  "no_item": "Kein Gegenstand",
+  "item": "Gegenstand",
+  "amount": "Menge",
+  "add_the_item": "Gegenstand hinzufügen",
+  "cancel": "Abbrechen",
+  "fields_asterisk_required": "Die mit einem Sternchen versehenen Felder sind Erforderlich."
+}
