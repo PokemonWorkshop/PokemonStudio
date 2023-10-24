@@ -62,10 +62,6 @@ const ActionContainer = styled.div`
   align-items: center;
   gap: 16px;
   padding-top: 8px;
-
-  ${DeleteButton} {
-    width: min-content;
-  }
 `;
 
 const CancelLink = styled.span`

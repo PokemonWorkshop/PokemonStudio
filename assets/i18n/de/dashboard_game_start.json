@@ -1,0 +1,15 @@
+{
+  "game_start": "Start des Spiels",
+  "cinematic": "Filmsequenz",
+  "show_cinematic": "Zeige eine Filmsequenz",
+  "map_cinematic_id": "Nummer der Karte, die die Filmsequenz enthält",
+  "title_screen": "Titelbildschirm",
+  "show_language_selection": "Sprachauswahl anzeigen",
+  "music": "Musik",
+  "title_screen_music": "Musik des Titelbildschirms",
+  "music_duration": "Musikdauer",
+  "duration_info": "Die Dauer wird in Stichproben ausgedrückt. Sie wird nach der folgenden Formel berechnet: Dauer (Sekunden) * 44100.",
+  "control_wait_time": "Wartezeit, bevor die Schaltflächen des Titelbildschirms angezeigt werden",
+  "splash_screens": "Startbildschirm",
+  "splash_screens_name": "Bild des Startbildschirms"
+}

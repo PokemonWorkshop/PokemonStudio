@@ -1,0 +1,22 @@
+{
+  "edit": "Bearbeiten",
+  "movepool": "Movepool",
+  "studio": "Pokémon-Studio",
+  "creation": "Erstellung",
+  "group": "Gruppe",
+  "quest": "Suche",
+  "trainer": "Trainer",
+  "zone": "Zone",
+  "addition": "Zusatz",
+  "infos": "Informationen",
+  "all_delete": "Alles löschen",
+  "importation": "Importieren",
+  "translation": "Übersetzung",
+  "translation_name": "Name von {{name}}",
+  "translation_description": "Beschreibung von {{name}}",
+  "translation_species": "Arten von {{name}}",
+  "translation_class": "Klasse von {{name}}",
+  "translation_victory": "Sieg von {{name}}",
+  "translation_defeat": "Niederlage von {{name}}",
+  "translation_name_plural": "Plural von {{name}}"
+}

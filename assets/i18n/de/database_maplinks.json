@@ -1,0 +1,21 @@
+{
+  "maplinks": "Karten-Link",
+  "maplink_deleted": "Kartenlink gelöscht",
+  "no_option": "Keine Karte gefunden",
+  "maplink_new": "Neuer Kartenlink",
+  "maps": "Karten",
+  "map": "Karte",
+  "map_deleted": "Karte gelöscht",
+  "none": "Keine",
+  "map_located": "Karte befindet sich in der {{cardinal}}",
+  "north": "Norden",
+  "east": "Osten",
+  "south": "Süden",
+  "west": "Westen",
+  "offset": "Versatz",
+  "offset_info": "Der Versatz wird in der Anzahl der Kacheln ausgedrückt. Ein positiver Wert bedeutet eine {{shift}}.",
+  "offset_shift_right": "Verschiebung nach rechts",
+  "offset_downward_shift": "Verschiebung nach unten",
+  "add_link": "Den Link hinzufügen",
+  "no_map": "Die Karte existiert nicht oder ist eine Innenkarte."
+}

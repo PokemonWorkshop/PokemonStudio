@@ -1,0 +1,7 @@
+{
+  "devices": "Geräte",
+  "mouse": "Maus",
+  "use_mouse": "Maus im Spiel verwenden",
+  "mouse_image": "Bild des Mauszeigers",
+  "info_mouse_image": "Das Bild muss sich im Ordner « graphics/windowskins » befinden."
+}

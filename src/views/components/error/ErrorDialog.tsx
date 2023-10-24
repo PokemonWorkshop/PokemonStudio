@@ -57,10 +57,6 @@ const ActionContainer = styled.div`
   align-items: center;
   gap: 16px;
   padding-top: 8px;
-
-  ${DarkButton} {
-    width: min-content;
-  }
 `;
 
 type DeletionProps = {
