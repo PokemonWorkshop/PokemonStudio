@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTrainerPage } from '@utils/usePage';
 import { useTranslation } from 'react-i18next';
 import { useUpdateTrainer } from '../editors/useUpdateTrainer';
 import { ResourceWrapper, ResourcesContainer, SpriteResource, TitleResource } from '@components/resources';
@@ -7,6 +6,7 @@ import { basename, trainerResourcePath } from '@utils/path';
 import styled from 'styled-components';
 import { ReactComponent as HelpIcon } from '@assets/icons/navigation/help-icon.svg';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
+import { StudioTrainer } from '@modelEntities/trainer';
 
 const HelpContainer = styled.div`
   display: flex;
@@ -30,9 +30,12 @@ const HelpContainer = styled.div`
   }
 `;
 
-export const CharacterResource = () => {
+type CharacterResourceProps = {
+  trainer: StudioTrainer;
+};
+
+export const CharacterResource = ({ trainer }: CharacterResourceProps) => {
   const { t } = useTranslation('database_trainers');
-  const { trainer } = useTrainerPage();
   const updateTrainer = useUpdateTrainer(trainer);
 
   const handleResourceChoosen = (resourcePath: string) => {

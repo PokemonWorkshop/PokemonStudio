@@ -1,13 +1,16 @@
 import React from 'react';
-import { useTrainerPage } from '@utils/usePage';
 import { useTranslation } from 'react-i18next';
 import { useUpdateTrainer } from '../editors/useUpdateTrainer';
 import { ResourceWrapper, ResourcesContainer, SpriteResource, TitleResource } from '@components/resources';
 import { TrainerResourcesPath, basename, trainerResourcePath } from '@utils/path';
+import { StudioTrainer } from '@modelEntities/trainer';
 
-export const BattlersResources = () => {
+type BattlersResourcesProps = {
+  trainer: StudioTrainer;
+};
+
+export const BattlersResources = ({ trainer }: BattlersResourcesProps) => {
   const { t } = useTranslation('database_trainers');
-  const { trainer } = useTrainerPage();
   const updateTrainer = useUpdateTrainer(trainer);
 
   const handleResourceChoosen = (resourcePath: string, resource: TrainerResourcesPath) => {
