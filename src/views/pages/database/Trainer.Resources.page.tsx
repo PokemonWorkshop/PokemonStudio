@@ -8,9 +8,11 @@ import { PageResourceContainerStyle, PageDataConstrainerStyle } from './PageCont
 import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';
 import { MusicResources } from '@components/database/trainer/resources/MusicResources';
 import { BattlersResources, CharacterResource } from '@components/database/trainer/resources';
+import { useTrainerPage } from '@utils/usePage';
 
 export const TrainerResourcesPage = () => {
   const { t } = useTranslation('database_trainers');
+  const { trainer } = useTrainerPage();
 
   return (
     <DatabasePageStyle>
@@ -26,9 +28,9 @@ export const TrainerResourcesPage = () => {
               ]}
             />
           </DataBlockWrapper>
-          <BattlersResources />
-          <CharacterResource />
-          <MusicResources />
+          <BattlersResources trainer={trainer} />
+          <CharacterResource trainer={trainer} />
+          <MusicResources trainer={trainer} />
         </PageDataConstrainerStyle>
       </PageResourceContainerStyle>
     </DatabasePageStyle>

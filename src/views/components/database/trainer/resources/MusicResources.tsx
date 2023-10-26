@@ -1,14 +1,17 @@
 import React from 'react';
-import { useTrainerPage } from '@utils/usePage';
 import { useUpdateTrainer } from '../editors/useUpdateTrainer';
 import { useTranslation } from 'react-i18next';
 import { MusicResource, ResourceWrapper, ResourcesContainer, TitleResource } from '@components/resources';
 import { TrainerMusicsPath, basename, trainerResourcePath } from '@utils/path';
 import { AUDIO_EXT } from '@components/inputs/AudioInput';
+import { StudioTrainer } from '@modelEntities/trainer';
 
-export const MusicResources = () => {
+type MusicResourcesProps = {
+  trainer: StudioTrainer;
+};
+
+export const MusicResources = ({ trainer }: MusicResourcesProps) => {
   const { t } = useTranslation('database_trainers');
-  const { trainer } = useTrainerPage();
   const updateTrainer = useUpdateTrainer(trainer);
 
   const handleResourceChoosen = (filePath: string, resource: TrainerMusicsPath) => {
