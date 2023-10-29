@@ -8,6 +8,7 @@ import { useTranslationPage } from '@utils/usePage';
 import { TranslateList } from '@components/textmanagement/TranslateList';
 import { TranslateTarget } from '@components/textmanagement/TranslateTarget';
 import { TranslateAttachedTexts } from '@components/textmanagement/TranslateAttachedTexts';
+import { useLocation } from 'react-router-dom';
 
 export type Language = { index: number; value: string };
 export const LanguageContext = createContext({
@@ -19,11 +20,22 @@ export const LanguageContext = createContext({
 
 export const TranslationPage = () => {
   const { allTextsFromFile, languageByIndexFiltered } = useTranslationPage();
-
   const [language, setLanguage] = useState<Language>({ value: languageByIndexFiltered[0].value, index: languageByIndexFiltered[0].index });
   const [positionLanguage, setPositionLanguage] = useState<number>(1);
   const { t } = useTranslation('text_management');
   const languageExistInFile = allTextsFromFile[0].includes(language.value);
+  const { state } = useLocation();
+
+  const redirectlocationState = () => {
+    if (state && state.position) {
+      setPositionLanguage(state.position);
+    }
+  };
+
+  // Call once when load
+  useEffect(() => {
+    redirectlocationState();
+  }, []);
 
   useEffect(() => {
     if (!allTextsFromFile[positionLanguage]) {
