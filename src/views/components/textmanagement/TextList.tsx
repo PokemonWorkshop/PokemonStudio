@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AutoSizer, List } from 'react-virtualized';
 import { TextDialogsRef } from './editors/TextEditorOverlay';
 import { useTranslation } from 'react-i18next';
@@ -21,6 +22,7 @@ export const TextList = ({ dialogsRef }: TextListProps) => {
   const { t } = useTranslation('text_management');
   const [research, setResearch] = useState<string>('');
   const [scrollToEnd, setScrollToEnd] = useState<boolean>(false);
+  const navigate = useNavigate();
   const { textInfo } = useTextPage();
   const getTextList = useGetTextList();
   const setText = useSetProjectText();
@@ -100,7 +102,15 @@ export const TextList = ({ dialogsRef }: TextListProps) => {
                             }}
                             onClear={() => setText(textInfo.fileId, textsFiltered[index].textId, '')}
                           />
-                          <DarkButton onClick={() => console.log(`go translation ${index}`)}>
+                          <DarkButton
+                            onClick={() => {
+                              navigate('/texts/translation', {
+                                state: {
+                                  position: textsFiltered[index].textId + 1,
+                                },
+                              });
+                            }}
+                          >
                             <TranslationIcon />
                           </DarkButton>
                         </div>
