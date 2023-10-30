@@ -7,13 +7,14 @@ import { NewFolderButtonOnlyIcon, SecondaryButtonWithPlusIcon } from '@component
 import { NavigationDatabaseGroupStyle } from '@components/database/navigation/NavigationDatabaseGroup/NavigationDatabaseGroupStyle';
 import { useDialogsRef } from '@utils/useDialogsRef';
 import { MapEditorAndDeletionKeys, MapEditorOverlay } from './editors/MapEditorOverlay';
-import { MapTree } from './tree/MapTree';
 import { useMapInfo } from '@utils/useMapInfo';
 import { createMapInfo } from '@utils/entityCreation';
 import { cloneEntity } from '@utils/cloneEntity';
 import { MAP_INFO_FOLDER_NAME_TEXT_ID, StudioMapInfoFolder } from '@modelEntities/mapInfo';
 import { useSetProjectText } from '@utils/ReadingProjectText';
 import { SeparatorGreyLine } from '@components/separators/SeparatorGreyLine';
+import { MapTreeV2 } from './tree/MapTreeV2';
+import { MapTree } from './tree/MapTree';
 
 const MapMenuContainer = styled(NavigationDatabaseStyle)`
   height: 100vh;
@@ -63,7 +64,7 @@ export const MapMenu = () => {
             <NewFolderButtonOnlyIcon onClick={handleNewFolder} />
           </div>
           <SeparatorGreyLine />
-          <MapTree />
+          <MapTreeV2 />
         </MapSubMenuContainer>
       </NavigationDatabaseGroup>
       <MapEditorOverlay ref={dialogsRef} />
