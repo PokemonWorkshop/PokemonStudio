@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef } from 'react';
+import React, { forwardRef, useRef, useState } from 'react';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import type { CurrentBattlerType, PokemonBattlerFrom } from './PokemonBattlerEditorOverlay';
 import { useTranslation } from 'react-i18next';
@@ -23,6 +23,7 @@ import { SelectAbility } from '@components/selects';
 import { SelectNature } from '@components/selects/SelectNature';
 import { PokemonBattlerMoreInfoEditor, PokemonBattlerMoveEditor, PokemonBattlerStatsEditor } from '.';
 import { EmbeddedUnitInputNumber, InputNumber } from './InputNumber';
+import { TextInputError } from '@components/inputs/Input';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -59,6 +60,7 @@ export const PokemonBattlerEditor = forwardRef<EditorHandlingClose, PokemonBattl
     const levelMinRef = useRef<HTMLInputElement>(null);
     const levelMaxRef = useRef<HTMLInputElement>(null);
     const encounterChanceRef = useRef<HTMLInputElement>(null);
+    const [minMaxLevelError, setMinMaxLevelError] = useState<boolean>(false);
 
     const handleNew = () => {
       if (!canNew) return;
@@ -130,44 +132,51 @@ export const PokemonBattlerEditor = forwardRef<EditorHandlingClose, PokemonBattl
                   </InputWithLeftLabelContainer>
                 )}
                 {from === 'group' && encounter.levelSetup.kind === 'minmax' && (
-                  <InputWithLeftLabelContainer>
-                    <Label htmlFor="minmax-level">{t('pokemon_battler_list:level')}</Label>
-                    <InputWithSeparatorContainer>
-                      <InputNumber
-                        name="min-level"
-                        min="1"
-                        max={state.projectConfig.settings_config.pokemonMaxLevel}
-                        defaultValue={encounter.levelSetup.level.minimumLevel}
-                        onChange={(value) => {
-                          const level = encounter.levelSetup.level as StudioEncounterLevelMinMax;
-                          updateEncounter({
-                            levelSetup: {
-                              kind: 'minmax',
-                              level: { ...level, minimumLevel: value },
-                            },
-                          });
-                        }}
-                        ref={levelMinRef}
-                      />
-                      <span className="separator">{t('pokemon_battler_list:level_separator')}</span>
-                      <InputNumber
-                        name="max-level"
-                        min="1"
-                        max={state.projectConfig.settings_config.pokemonMaxLevel}
-                        defaultValue={encounter.levelSetup.level.maximumLevel}
-                        onChange={(value) => {
-                          const level = encounter.levelSetup.level as StudioEncounterLevelMinMax;
-                          updateEncounter({
-                            levelSetup: {
-                              kind: 'minmax',
-                              level: { ...level, maximumLevel: value },
-                            },
-                          });
-                        }}
-                        ref={levelMaxRef}
-                      />
-                    </InputWithSeparatorContainer>
-                  </InputWithLeftLabelContainer>
+                  <InputWithTopLabelContainer>
+                    <InputWithLeftLabelContainer>
+                      <Label htmlFor="minmax-level">{t('pokemon_battler_list:level')}</Label>
+                      <InputWithSeparatorContainer>
+                        <InputNumber
+                          name="min-level"
+                          min="1"
+                          max={state.projectConfig.settings_config.pokemonMaxLevel}
+                          defaultValue={encounter.levelSetup.level.minimumLevel}
+                          onChange={(value) => {
+                            const level = encounter.levelSetup.level as StudioEncounterLevelMinMax;
+                            updateEncounter({
+                              levelSetup: {
+                                kind: 'minmax',
+                                level: { ...level, minimumLevel: value },
+                              },
+                            });
+                            setMinMaxLevelError(value > level.maximumLevel);
+                          }}
+                          error={minMaxLevelError}
+                          ref={levelMinRef}
+                        />
+                        <span className="separator">{t('pokemon_battler_list:level_separator')}</span>
+                        <InputNumber
+                          name="max-level"
+                          min="1"
+                          max={state.projectConfig.settings_config.pokemonMaxLevel}
+                          defaultValue={encounter.levelSetup.level.maximumLevel}
+                          onChange={(value) => {
+                            const level = encounter.levelSetup.level as StudioEncounterLevelMinMax;
+                            updateEncounter({
+                              levelSetup: {
+                                kind: 'minmax',
+                                level: { ...level, maximumLevel: value },
+                              },
+                            });
+                            setMinMaxLevelError(value < level.minimumLevel);
+                          }}
+                          ref={levelMaxRef}
+                          error={minMaxLevelError}
+                        />
+                      </InputWithSeparatorContainer>
+                    </InputWithLeftLabelContainer>
+                    {minMaxLevelError && <TextInputError>{t('pokemon_battler_list:min_max_level_error')}</TextInputError>}
+                  </InputWithTopLabelContainer>
                 )}
                 {from === 'group' && (
                   <InputWithLeftLabelContainer>

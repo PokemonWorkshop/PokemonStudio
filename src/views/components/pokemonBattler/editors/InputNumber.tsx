@@ -8,9 +8,10 @@ type InputNumberProps = {
   min: string | number;
   max: string | number;
   onChange: (value: number) => void;
+  error?: boolean;
 };
 
-export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(({ name, defaultValue, min, max, onChange }, ref) => {
+export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(({ name, defaultValue, min, max, onChange, error }, ref) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const saveDefaultValue = useMemo(() => (isNaN(defaultValue) ? '' : defaultValue), []);
   return (
@@ -21,6 +22,7 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(({ nam
       max={max}
       defaultValue={saveDefaultValue}
       onChange={(event) => onChange(event.target.valueAsNumber)}
+      error={error}
       ref={ref}
     />
   );

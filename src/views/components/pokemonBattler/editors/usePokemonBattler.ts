@@ -223,7 +223,13 @@ export const usePokemonBattler = ({ action, currentBattler, from }: Props) => {
       const minLevel = levelSetup.level.minimumLevel;
       const maxLevel = levelSetup.level.maximumLevel;
       const pokemonMaxLevel = state.projectConfig.settings_config.pokemonMaxLevel;
-      if (isNaN(minLevel) || isNaN(maxLevel) || notBetween(minLevel, 1, pokemonMaxLevel) || notBetween(maxLevel, 1, pokemonMaxLevel)) {
+      if (
+        isNaN(minLevel) ||
+        isNaN(maxLevel) ||
+        notBetween(minLevel, 1, pokemonMaxLevel) ||
+        notBetween(maxLevel, 1, pokemonMaxLevel) ||
+        maxLevel < minLevel
+      ) {
         return false;
       }
     }
@@ -264,7 +270,7 @@ export const usePokemonBattler = ({ action, currentBattler, from }: Props) => {
       const pokemonMaxLevel = state.projectConfig.settings_config.pokemonMaxLevel;
       const minLevel = levelSetup.level.minimumLevel;
       const maxLevel = levelSetup.level.maximumLevel;
-      if (notBetween(minLevel, 1, pokemonMaxLevel) || notBetween(maxLevel, 1, pokemonMaxLevel)) return false;
+      if (notBetween(minLevel, 1, pokemonMaxLevel) || notBetween(maxLevel, 1, pokemonMaxLevel) || maxLevel < minLevel) return false;
     }
 
     const shinySetup = encounter.shinySetup;
