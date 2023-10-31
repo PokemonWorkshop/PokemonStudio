@@ -15,6 +15,7 @@ import { cloneEntity } from '@utils/cloneEntity';
 import { emitScrollContextMenu } from '@utils/useContextMenu';
 import { buildMapInfo } from '@utils/MapInfoUtils';
 import { MapList } from './MapList';
+import { MapTreeComponent } from './MapTreeComponent';
 
 type MapTreeContainerProps = {
   hideMapTree: boolean;
@@ -123,7 +124,8 @@ export const MapTree = () => {
         placeholder={t('map_research')}
       />
       {research !== '' && <MapList research={research} />}
-      {mapTreeComponent}
+      {/* {mapTreeComponent} */}
+      <MapTreeComponent></MapTreeComponent>
     </MapTreeContainer>
   );
 };
