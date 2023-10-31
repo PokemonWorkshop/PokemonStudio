@@ -9,7 +9,7 @@ import Tree, {
   ItemId,
   TreeSourcePosition,
   TreeDestinationPosition,
-} from '@atlaskit/tree';
+} from '@components/tree';
 import { ReactComponent as LeftIcon } from '@assets/icons/global/left-icon.svg';
 import { ReactComponent as RightIcon } from '@assets/icons/global/right-icon.svg';
 import { ReactComponent as CircleIcon } from '@assets/icons/global/circle.svg';
@@ -58,10 +58,11 @@ const MapListContainer = styled.div`
       background-color: ${({ theme }) => theme.colors.dark15};
       border-color: ${({ theme }) => theme.colors.text400};
     }
-  .no-maps {
-    ${({ theme }) => theme.fonts.normalRegular}
-    color: ${({ theme }) => theme.colors.text400};
-    padding: 9.5px 15px;
+    .no-maps {
+      ${({ theme }) => theme.fonts.normalRegular}
+      color: ${({ theme }) => theme.colors.text400};
+      padding: 9.5px 15px;
+    }
   }
 `;
 
