@@ -15,7 +15,8 @@
     "plugin:import/typescript"
   ],
   "rules": {
-    "react/jsx-uses-react": "warn"
+    "react/jsx-uses-react": "warn",
+    "@typescript-eslint/no-empty-function": "warn"
   },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {

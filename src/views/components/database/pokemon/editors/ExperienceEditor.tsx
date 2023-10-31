@@ -51,3 +51,4 @@ export const ExperienceEditor = forwardRef<EditorHandlingClose>((_, ref) => {
     </Editor>
   );
 });
+ExperienceEditor.displayName = 'ExperienceEditor';
