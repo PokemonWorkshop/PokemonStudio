@@ -9,7 +9,7 @@ on:
       force_build_node_module:
         description: 'Force build node_modules'
         type: boolean
-        default: false
+        default: true
         required: true
 
 jobs:
