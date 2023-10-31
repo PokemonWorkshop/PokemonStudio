@@ -1,5 +1,5 @@
 name: Package Studio
-description: Package Studio into executable files'
+description: 'Package Studio into executable files'
 
 runs:
   using: composite
