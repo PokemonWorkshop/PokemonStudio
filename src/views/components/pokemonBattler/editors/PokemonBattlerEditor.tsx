@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useState } from 'react';
+import React, { forwardRef, useState } from 'react';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import type { CurrentBattlerType, PokemonBattlerFrom } from './PokemonBattlerEditorOverlay';
 import { useTranslation } from 'react-i18next';
@@ -56,10 +56,6 @@ export const PokemonBattlerEditor = forwardRef<EditorHandlingClose, PokemonBattl
       formAvailable,
       state,
     } = usePokemonBattler({ action, currentBattler, from });
-    const levelFixedRef = useRef<HTMLInputElement>(null);
-    const levelMinRef = useRef<HTMLInputElement>(null);
-    const levelMaxRef = useRef<HTMLInputElement>(null);
-    const encounterChanceRef = useRef<HTMLInputElement>(null);
     const [minMaxLevelError, setMinMaxLevelError] = useState<boolean>(false);
 
     const handleNew = () => {
@@ -127,7 +123,6 @@ export const PokemonBattlerEditor = forwardRef<EditorHandlingClose, PokemonBattl
                       max={state.projectConfig.settings_config.pokemonMaxLevel}
                       defaultValue={encounter.levelSetup.level}
                       onChange={(value) => updateEncounter({ levelSetup: { kind: 'fixed', level: value } })}
-                      ref={levelFixedRef}
                     />
                   </InputWithLeftLabelContainer>
                 )}
@@ -152,7 +147,6 @@ export const PokemonBattlerEditor = forwardRef<EditorHandlingClose, PokemonBattl
                             setMinMaxLevelError(value > level.maximumLevel);
                           }}
                           error={minMaxLevelError}
-                          ref={levelMinRef}
                         />
                         <span className="separator">{t('pokemon_battler_list:level_separator')}</span>
                         <InputNumber
@@ -170,7 +164,6 @@ export const PokemonBattlerEditor = forwardRef<EditorHandlingClose, PokemonBattl
                             });
                             setMinMaxLevelError(value < level.minimumLevel);
                           }}
-                          ref={levelMaxRef}
                           error={minMaxLevelError}
                         />
                       </InputWithSeparatorContainer>
@@ -188,7 +181,6 @@ export const PokemonBattlerEditor = forwardRef<EditorHandlingClose, PokemonBattl
                       unit="%"
                       defaultValue={encounter.randomEncounterChance}
                       onChange={(value) => updateEncounter({ randomEncounterChance: value })}
-                      ref={encounterChanceRef}
                     />
                   </InputWithLeftLabelContainer>
                 )}
