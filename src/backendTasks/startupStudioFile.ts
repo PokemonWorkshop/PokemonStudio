@@ -8,7 +8,7 @@ const startupStudioFile = async (): Promise<StartupStudioFileOutput> => {
   log.info('startup-studio-file', { startupFiles });
   const file = startupFiles.pop();
 
-  return { projectPath: file?.replace(/[\/\\][^/\\]+.studio$/, '') };
+  return { projectPath: file?.replace(/[/\\][^/\\]+.studio$/, '') };
 };
 
 export const registerStartupStudioFile = defineBackendServiceFunction('startup-studio-file', startupStudioFile);

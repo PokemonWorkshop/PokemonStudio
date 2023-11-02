@@ -1,0 +1,33 @@
+name: Setup Environment
+description: 'Setup CI environment with NodeJS. Can caching node_modules folder'
+
+inputs:
+  force_build_node_module:
+    description: 'Force build node_modules'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Setup NodeJS
+      uses: actions/setup-node@v3
+      with:
+        node-version-file: '.nvmrc'
+
+    - name: Prepare cache
+      id: cache
+      uses: actions/cache@v3
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-cache-${{ github.ref_name }}-${{ hashFile('**/package-lock.json') }}
+        restore-keys: ${{ runner.os }}-cache-${{ github.ref_name }}
+
+    - name: Display if using cache
+      shell: bash
+      run: |
+        echo "Using NodeJS cache: ${{ steps.cache.outputs.cache-hit }}"
+
+    - name: Install dependencies
+      if: ${{ (inputs.force_build_node_module == 'true' || steps.cache.outputs.cache-hit != 'true') }}
+      shell: bash
+      run: npm ci

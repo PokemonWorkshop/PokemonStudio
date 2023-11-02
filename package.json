@@ -13,7 +13,7 @@
     "url": "git+https://github.com/PokemonWorkshop/PokemonStudio.git"
   },
   "devEngines": {
-    "node": ">=18.15.0",
+    "node": ">=20.9.0",
     "npm": ">=9.5.0"
   },
   "scripts": {
@@ -120,5 +120,8 @@
     "nsis": {
       "oneClick": false
     }
+  },
+  "volta": {
+    "node": "20.9.0"
   }
 }

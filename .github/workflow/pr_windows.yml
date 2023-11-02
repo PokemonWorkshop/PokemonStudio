@@ -1,0 +1,39 @@
+name: PR - Windows Build
+
+on:
+  push:
+    branches-ignore:
+      - develop
+      - main
+
+  workflow_dispatch:
+    inputs:
+      force_build_node_module:
+        description: 'Force build node_modules'
+        type: boolean
+        default: false
+        required: true
+
+jobs:
+  build:
+    name: Build Studio
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Environment
+        uses: ./.github/actions/setup_environment
+        with:
+          force_build_node_module: ${{ inputs.force_build_node_module || false }}
+
+      - name: Run linting
+        shell: bash
+        run: npm run lint
+
+      - name: Package Studio
+        uses: ./.github/actions/package_studio

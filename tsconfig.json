@@ -25,5 +25,5 @@
       "react": ["./node_modules/@types/react"]
     }
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "config/**/*", "forge.config.ts"]
 }

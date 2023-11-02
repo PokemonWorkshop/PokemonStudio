@@ -1,0 +1,20 @@
+name: Package Studio
+description: 'Package Studio into executable files'
+
+runs:
+  using: composite
+  steps:
+    - name: Package Studio
+      shell: bash
+      run: npm run package
+
+    - name: Make Studio executable
+      shell: bash
+      run: |
+        npm run make
+
+    - name: Save to Github Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: studio_${{ env.BRANCH_NAME }}_${{ runner.os }}
+        path: ./out/make
