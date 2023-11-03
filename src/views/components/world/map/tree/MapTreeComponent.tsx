@@ -10,13 +10,17 @@ import Tree, {
   TreeSourcePosition,
   TreeDestinationPosition,
 } from '@components/tree';
+import { ReactComponent as FolderIcon } from '@assets/icons/global/folder.svg';
+import { ReactComponent as FolderOpenIcon } from '@assets/icons/global/folder_open.svg';
 import { ReactComponent as LeftIcon } from '@assets/icons/global/left-icon.svg';
-import { ReactComponent as RightIcon } from '@assets/icons/global/right-icon.svg';
 import { ReactComponent as CircleIcon } from '@assets/icons/global/circle.svg';
 import { useMapInfo } from '@utils/useMapInfo';
 import { StudioMapInfoFolder, StudioMapInfoMap } from '@modelEntities/mapInfo';
 import { cloneEntity } from '@utils/cloneEntity';
 import { useProjectMaps } from '@utils/useProjectData';
+import { useGetEntityNameText, useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
+import { DbSymbol } from '@modelEntities/dbSymbol';
+import { useTranslation } from 'react-i18next';
 
 const MapListContainer = styled.div`
   height: calc(100vh - 291px);
@@ -76,6 +80,7 @@ const TreeItem = styled.div`
   color: ${({ theme }) => theme.colors.text100};
   box-sizing: border-box;
   margin: 4px 0;
+  ${({ theme }) => theme.fonts.normalRegular}
 
   .name {
     overflow: hidden;
@@ -88,24 +93,52 @@ const TreeItem = styled.div`
     background-color: ${({ theme }) => theme.colors.dark18};
   }
 
-  svg,
-  button {
-    cursor: pointer;
-    background-color: transparent;
-    border: none;
-    color: ${({ theme }) => theme.colors.text400};
-    height: 18px;
-    width: 18px;
+  .left-icons {
+    display: flex;
+    gap: 8px;
   }
-  button {
-    height: 12px;
+
+  .icon {
+    display: flex;
+    width: 18px;
+    height: 18px;
+    color: ${({ theme }) => theme.colors.text400};
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+  }
+
+  .collapse-button {
+    transform: rotate(-90deg);
+    transition: transform 250ms ease;
+    cursor: pointer;
+
+    :hover {
+      background-color: ${({ theme }) => theme.colors.dark22};
+    }
+  }
+
+  .collapse-button-collapsed {
+    transform: rotate(-180deg);
   }
 `;
 
+// TODO: remove this after mapinfo refacto
 const convertMapInfo = (mapInfo: (StudioMapInfoMap | StudioMapInfoFolder)[]) => {
   const items = mapInfo.reduce((acc, item) => {
     // TODO, Check children to work
     if (item.klass === 'MapInfoFolder') {
+      acc[item.id.toString()] = {
+        id: item.id,
+        children: cloneEntity(item.children.map((child) => child.id)),
+        hasChildren: item.children.length > 0,
+        isExpanded: !item.collapsed,
+        isChildrenLoading: false,
+        data: {
+          klass: item.klass,
+          textId: item.textId,
+        },
+      };
       return acc;
     }
     acc[item.id.toString()] = {
@@ -116,7 +149,6 @@ const convertMapInfo = (mapInfo: (StudioMapInfoMap | StudioMapInfoFolder)[]) => 
       isChildrenLoading: false,
       data: {
         klass: item.klass,
-        name: `${item.klass} ${item.id}`,
         mapDbSymbol: item.mapDbSymbol,
       },
     };
@@ -130,7 +162,6 @@ const convertMapInfo = (mapInfo: (StudioMapInfoMap | StudioMapInfoFolder)[]) => 
     isExpanded: true,
     isChildrenLoading: false,
   };
-  console.log(items);
   return {
     rootId: 0,
     items,
@@ -139,9 +170,13 @@ const convertMapInfo = (mapInfo: (StudioMapInfoMap | StudioMapInfoFolder)[]) => 
 
 export const MapTreeComponent = () => {
   const { mapInfoValues: mapInfo } = useMapInfo();
+  const { projectDataValues: maps } = useProjectMaps();
   const [tree, setTree] = useState<TreeData>(convertMapInfo(mapInfo));
   const [isDraging, setIsDraging] = useState<ItemId | undefined>();
   const { selectedDataIdentifier: currentMap, setSelectedDataIdentifier: setCurrentMap } = useProjectMaps();
+  const getMapName = useGetEntityNameText();
+  const getFolderName = useGetEntityNameTextUsingTextId();
+  const { t } = useTranslation('database_maps');
 
   const onExpand = (itemId: ItemId) => {
     setTree(mutateTree(tree, itemId, { isExpanded: true }));
@@ -156,18 +191,54 @@ export const MapTreeComponent = () => {
   };
 
   const getIcon = (item: TreeItem, onExpand: (itemId: string) => void, onCollapse: (itemId: string) => void) => {
-    if (item.children && item.children.length > 0) {
-      return item.isExpanded ? (
-        <button onClick={() => onCollapse(item.id.toString())}>
-          <LeftIcon />
-        </button>
-      ) : (
-        <button onClick={() => onExpand(item.id.toString())}>
-          <RightIcon />
-        </button>
-      );
-    }
-    return <CircleIcon />;
+    return (
+      <div className="left-icons">
+        {item.children && item.children.length > 0 ? (
+          item.isExpanded ? (
+            <span
+              className="icon collapse-button"
+              onClick={(e) => {
+                e.preventDefault();
+                onCollapse(item.id.toString());
+              }}
+            >
+              <LeftIcon />
+            </span>
+          ) : (
+            <span
+              className="icon collapse-button collapse-button-collapsed"
+              onClick={(e) => {
+                e.preventDefault();
+                onExpand(item.id.toString());
+              }}
+            >
+              <LeftIcon />
+            </span>
+          )
+        ) : item.data?.klass === 'MapInfoFolder' ? (
+          <span className="icon" />
+        ) : (
+          <span className="icon">
+            <CircleIcon />
+          </span>
+        )}
+        {item.data?.klass === 'MapInfoFolder' && <span className="icon">{item.isExpanded ? <FolderOpenIcon /> : <FolderIcon />}</span>}
+      </div>
+    );
+  };
+
+  const mapName = (mapDbSymbol: DbSymbol) => {
+    const map = maps[mapDbSymbol];
+    if (!map) return t('map_deleted');
+
+    return getMapName(map);
+  };
+
+  const getName = (item: TreeItem) => {
+    if (!item.data) return '';
+
+    const isFolder = item.data.klass === 'MapInfoFolder';
+    return isFolder ? getFolderName({ klass: item.data.klass, textId: item.data.textId }) : mapName(item.data.mapDbSymbol);
   };
 
   const renderItem = ({ item, onExpand, onCollapse, provided, snapshot }: RenderItemParams) => {
@@ -183,7 +254,7 @@ export const MapTreeComponent = () => {
           {...provided.dragHandleProps}
         >
           {getIcon(item, onExpand, onCollapse)}
-          {item.data ? item.data.name : ''}
+          {getName(item)}
         </TreeItem>
       </div>
     );
@@ -209,6 +280,7 @@ export const MapTreeComponent = () => {
         onDragStart={onDragStart}
         onCollapse={onCollapse}
         onDragEnd={onDragEnd}
+        offsetPerLevel={30}
         isDragEnabled
         isNestingEnabled
       />
