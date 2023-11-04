@@ -22,6 +22,18 @@ import { useGetEntityNameText, useGetEntityNameTextUsingTextId } from '@utils/Re
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { useTranslation } from 'react-i18next';
 
+// TODO Replace it in utils
+export const getCountChildren = (tree: TreeData, item: TreeItem): number => {
+  let count = 0;
+  item.children.forEach((childId) => {
+    count++;
+    if (tree.items[childId]) {
+      count += getCountChildren(tree, tree.items[childId]);
+    }
+  });
+  return count;
+};
+
 const MapListContainer = styled.div`
   height: calc(100vh - 291px);
 
@@ -71,6 +83,7 @@ const MapListContainer = styled.div`
 `;
 
 const TreeItem = styled.div`
+  position: relative;
   display: flex;
   height: 35px;
   padding: 0px 8px;
@@ -120,6 +133,19 @@ const TreeItem = styled.div`
 
   .collapse-button-collapsed {
     transform: rotate(-180deg);
+  }
+
+  .count-children {
+    position: absolute;
+    right: 8px;
+    display: flex;
+    height: 18px;
+    padding: 2px 4px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    background-color: ${({ theme }) => theme.colors.primarySoft};
+    color: ${({ theme }) => theme.colors.primaryBase};
   }
 `;
 
@@ -172,7 +198,6 @@ export const MapTreeComponent = () => {
   const { mapInfoValues: mapInfo } = useMapInfo();
   const { projectDataValues: maps } = useProjectMaps();
   const [tree, setTree] = useState<TreeData>(convertMapInfo(mapInfo));
-  const [isDraging, setIsDraging] = useState<ItemId | undefined>();
   const { selectedDataIdentifier: currentMap, setSelectedDataIdentifier: setCurrentMap } = useProjectMaps();
   const getMapName = useGetEntityNameText();
   const getFolderName = useGetEntityNameTextUsingTextId();
@@ -184,10 +209,6 @@ export const MapTreeComponent = () => {
 
   const onCollapse = (itemId: ItemId) => {
     setTree(mutateTree(tree, itemId, { isExpanded: false }));
-  };
-
-  const onDragStart = (itemId: ItemId) => {
-    setIsDraging(itemId);
   };
 
   const getIcon = (item: TreeItem, onExpand: (itemId: string) => void, onCollapse: (itemId: string) => void) => {
@@ -242,27 +263,27 @@ export const MapTreeComponent = () => {
   };
 
   const renderItem = ({ item, onExpand, onCollapse, provided, snapshot }: RenderItemParams) => {
+    const isFolder = item.data.klass === 'MapInfoFolder';
+    const countChildren = isFolder ? getCountChildren(tree, item) : undefined;
     return (
       <div ref={provided.innerRef} {...provided.draggableProps}>
         <TreeItem
           className={currentMap === item.data.mapDbSymbol ? 'map-selected' : 'map'}
           onClick={() => {
-            console.log(item, currentMap);
-            if (!item.data.mapDbSymbol || item.data.klass === 'MapInfoFolder') return;
+            if (!item.data.mapDbSymbol || isFolder) return;
             setCurrentMap({ map: item.data.mapDbSymbol });
           }}
           {...provided.dragHandleProps}
         >
           {getIcon(item, onExpand, onCollapse)}
           {getName(item)}
+          {isFolder && countChildren !== undefined && <span className="count-children">{countChildren}</span>}
         </TreeItem>
       </div>
     );
   };
 
   const onDragEnd = (source: TreeSourcePosition, destination?: TreeDestinationPosition) => {
-    setIsDraging(undefined);
-
     if (!destination) {
       return;
     }
@@ -277,7 +298,6 @@ export const MapTreeComponent = () => {
         tree={tree}
         renderItem={renderItem}
         onExpand={onExpand}
-        onDragStart={onDragStart}
         onCollapse={onCollapse}
         onDragEnd={onDragEnd}
         offsetPerLevel={30}
