@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 import Tree, {
   mutateTree,
@@ -14,13 +14,21 @@ import { ReactComponent as FolderIcon } from '@assets/icons/global/folder.svg';
 import { ReactComponent as FolderOpenIcon } from '@assets/icons/global/folder_open.svg';
 import { ReactComponent as LeftIcon } from '@assets/icons/global/left-icon.svg';
 import { ReactComponent as CircleIcon } from '@assets/icons/global/circle.svg';
+import { ReactComponent as PlusIcon } from '@assets/icons/global/plus-icon.svg';
+import { ReactComponent as DotIcon } from '@assets/icons/global/dot.svg';
 import { useMapInfo } from '@utils/useMapInfo';
-import { StudioMapInfoFolder, StudioMapInfoMap } from '@modelEntities/mapInfo';
+import { MAP_INFO_FOLDER_NAME_TEXT_ID, StudioMapInfoFolder, StudioMapInfoMap } from '@modelEntities/mapInfo';
 import { cloneEntity } from '@utils/cloneEntity';
 import { useProjectMaps } from '@utils/useProjectData';
-import { useGetEntityNameText, useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
+import { useGetEntityNameText, useGetEntityNameTextUsingTextId, useSetProjectText } from '@utils/ReadingProjectText';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { useTranslation } from 'react-i18next';
+import { Input } from '@components/inputs';
+import { MAP_NAME_TEXT_ID } from '@modelEntities/map';
+import { useContextMenu } from '@utils/useContextMenu';
+import { MapEditorAndDeletionKeys, MapEditorOverlay } from '../editors/MapEditorOverlay';
+import { useDialogsRef } from '@utils/useDialogsRef';
+import { MapTreeContextMenu } from './MapTreeContextMenu';
 
 // TODO Replace it in utils
 export const getCountChildren = (tree: TreeData, item: TreeItem): number => {
@@ -32,6 +40,11 @@ export const getCountChildren = (tree: TreeData, item: TreeItem): number => {
     }
   });
   return count;
+};
+
+// TODO Improve this max width or find a work around
+const computeMaxWidth = () => {
+  return 140;
 };
 
 const MapListContainer = styled.div`
@@ -82,9 +95,18 @@ const MapListContainer = styled.div`
   }
 `;
 
-const TreeItem = styled.div`
-  position: relative;
+type MapTreeItemWrapperContainerProps = {
+  isCurrent?: boolean;
+  hasChildren: boolean;
+  maxWidth: number;
+  maxWidthWhenHover: number;
+  disableHover?: boolean;
+};
+
+const TreeItem = styled.div<MapTreeItemWrapperContainerProps>`
   display: flex;
+  justify-content: space-between;
+  flex-direction: row;
   height: 35px;
   padding: 0px 8px;
   align-items: center;
@@ -100,10 +122,18 @@ const TreeItem = styled.div`
     text-overflow: ellipsis;
     white-space: nowrap;
     ${({ theme }) => theme.fonts.normalRegular}
+    max-width: ${({ maxWidth }) => `${maxWidth}px`};
   }
 
   :hover {
     background-color: ${({ theme }) => theme.colors.dark18};
+    cursor: auto;
+
+    .left-title {
+      .name {
+        max-width: ${({ maxWidthWhenHover }) => `${maxWidthWhenHover}px`};
+      }
+    }
   }
 
   .left-icons {
@@ -121,6 +151,12 @@ const TreeItem = styled.div`
     border-radius: 2px;
   }
 
+  .title {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+  }
+
   .collapse-button {
     transform: rotate(-90deg);
     transition: transform 250ms ease;
@@ -136,8 +172,6 @@ const TreeItem = styled.div`
   }
 
   .count-children {
-    position: absolute;
-    right: 8px;
     display: flex;
     height: 18px;
     padding: 2px 4px;
@@ -146,6 +180,43 @@ const TreeItem = styled.div`
     border-radius: 4px;
     background-color: ${({ theme }) => theme.colors.primarySoft};
     color: ${({ theme }) => theme.colors.primaryBase};
+  }
+
+  .actions {
+    display: none;
+
+    .icon-plus {
+      :hover {
+        background-color: ${({ theme }) => theme.colors.primarySoft};
+        color: ${({ theme }) => theme.colors.primaryBase};
+        cursor: pointer;
+      }
+    }
+
+    .icon-dot {
+      :hover {
+        background-color: ${({ theme }) => theme.colors.dark22};
+        cursor: pointer;
+      }
+    }
+  }
+
+  :hover {
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .title.map {
+      .name {
+        max-width: ${({ maxWidthWhenHover }) => `${maxWidthWhenHover}px`};
+      }
+    }
+    .title.folder {
+      .name {
+        max-width: ${({ hasChildren }) => (hasChildren ? '122px' : '146px')};
+      }
+    }
   }
 `;
 
@@ -196,12 +267,19 @@ const convertMapInfo = (mapInfo: (StudioMapInfoMap | StudioMapInfoFolder)[]) => 
 
 export const MapTreeComponent = () => {
   const { mapInfoValues: mapInfo } = useMapInfo();
-  const { projectDataValues: maps } = useProjectMaps();
+  const setText = useSetProjectText();
+  const { selectedDataIdentifier, projectDataValues: maps } = useProjectMaps();
   const [tree, setTree] = useState<TreeData>(convertMapInfo(mapInfo));
   const { selectedDataIdentifier: currentMap, setSelectedDataIdentifier: setCurrentMap } = useProjectMaps();
   const getMapName = useGetEntityNameText();
   const getFolderName = useGetEntityNameTextUsingTextId();
   const { t } = useTranslation('database_maps');
+  const renameRef = useRef<HTMLInputElement>(null);
+  const [canRename, setCanRename] = useState<boolean>(false);
+  const [isDeleted, setIsDeleted] = useState<boolean>(false);
+  const { buildOnClick, renderContextMenu } = useContextMenu();
+  const [isDisabledNavigation, setIsDisabledNavigation] = useState<boolean>(false);
+  const dialogsRef = useDialogsRef<MapEditorAndDeletionKeys>();
 
   const onExpand = (itemId: ItemId) => {
     setTree(mutateTree(tree, itemId, { isExpanded: true }));
@@ -265,9 +343,28 @@ export const MapTreeComponent = () => {
   const renderItem = ({ item, onExpand, onCollapse, provided, snapshot }: RenderItemParams) => {
     const isFolder = item.data.klass === 'MapInfoFolder';
     const countChildren = isFolder ? getCountChildren(tree, item) : undefined;
+    const mapInfoItem = mapInfo.find((map) => map.id === item.id);
+    const handleRename = () => {
+      if (!renameRef.current) return setCanRename(false);
+      const value = renameRef.current.value === '' ? renameRef.current.defaultValue : renameRef.current.value;
+
+      if (isFolder) {
+        setText(MAP_INFO_FOLDER_NAME_TEXT_ID, item.data.textId, value);
+      } else {
+        const map = maps[item.data.mapDbSymbol];
+        setText(MAP_NAME_TEXT_ID, map.id, value);
+      }
+      setCanRename(false);
+    };
+
     return (
       <div ref={provided.innerRef} {...provided.draggableProps}>
         <TreeItem
+          isCurrent={!isFolder && item.data?.mapDbSymbol === selectedDataIdentifier}
+          maxWidth={computeMaxWidth()}
+          maxWidthWhenHover={computeMaxWidth() - 30}
+          hasChildren={!!countChildren}
+          disableHover={canRename}
           className={currentMap === item.data.mapDbSymbol ? 'map-selected' : 'map'}
           onClick={() => {
             if (!item.data.mapDbSymbol || isFolder) return;
@@ -275,9 +372,49 @@ export const MapTreeComponent = () => {
           }}
           {...provided.dragHandleProps}
         >
-          {getIcon(item, onExpand, onCollapse)}
-          {getName(item)}
+          <div className="title">
+            <span>{getIcon(item, onExpand, onCollapse)}</span>
+            <span className="name">
+              {canRename ? (
+                <Input
+                  ref={renameRef}
+                  defaultValue={getName(item)}
+                  placeholder={getName(item)}
+                  onBlur={handleRename}
+                  onKeyDown={(event) => event.key === 'Enter' && renameRef.current?.blur()}
+                  className={isFolder ? 'input-folder' : 'input-map'}
+                />
+              ) : (
+                getName(item)
+              )}
+            </span>
+          </div>
           {isFolder && countChildren !== undefined && <span className="count-children">{countChildren}</span>}
+          {/* !clone && */}
+          {!canRename && (
+            <div className="actions">
+              <span className="icon icon-dot" onClick={buildOnClick}>
+                <DotIcon />
+              </span>
+              {/* {depth < (mapIsInFolder({ klass: item.klass, parent }) ? 3 : 2) && !isDeleted && ( */}
+              <span
+                className="icon icon-plus"
+                onClick={() => dialogsRef.current?.openDialog('new')}
+                onMouseEnter={() => setIsDisabledNavigation(true)}
+                onMouseLeave={() => setIsDisabledNavigation(false)}
+              >
+                <PlusIcon />
+              </span>
+              {/* )} */}
+            </div>
+          )}
+          {/* TODO make menu work */}
+          {mapInfoItem &&
+            renderContextMenu(
+              <MapTreeContextMenu mapInfo={mapInfoItem} isDeleted={isDeleted} enableRename={() => setCanRename(true)} dialogsRef={dialogsRef} />
+            )}
+          {/* TODO fix delete */}
+          <MapEditorOverlay mapInfo={mapInfoItem} ref={dialogsRef} />
         </TreeItem>
       </div>
     );

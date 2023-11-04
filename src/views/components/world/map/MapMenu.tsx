@@ -64,6 +64,7 @@ export const MapMenu = () => {
             <NewFolderButtonOnlyIcon onClick={handleNewFolder} />
           </div>
           <SeparatorGreyLine />
+          <MapTree />
           <MapTreeV2 />
         </MapSubMenuContainer>
       </NavigationDatabaseGroup>

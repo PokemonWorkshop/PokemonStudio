@@ -27,7 +27,7 @@ const MapTreeContainer = styled.div<MapTreeContainerProps>`
   gap: 8px;
 
   .tree-scrollbar {
-    height: calc(100vh - 291px);
+    height: auto;
     overflow-y: scroll;
     margin-right: -9px;
     display: ${({ hideMapTree }) => (hideMapTree ? 'none' : 'block')};
@@ -124,8 +124,7 @@ export const MapTree = () => {
         placeholder={t('map_research')}
       />
       {research !== '' && <MapList research={research} />}
-      {/* {mapTreeComponent} */}
-      <MapTreeComponent></MapTreeComponent>
+      {mapTreeComponent}
     </MapTreeContainer>
   );
 };
