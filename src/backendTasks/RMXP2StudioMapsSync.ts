@@ -4,10 +4,12 @@ import fsPromise from 'fs/promises';
 import { isMarshalHash, isMarshalStandardObject, Marshal } from 'ts-marshal';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import { readProjectFolder } from './readProjectData';
-import { MAP_VALIDATOR, StudioMap } from '@modelEntities/map';
+import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID, MAP_VALIDATOR, StudioMap } from '@modelEntities/map';
 import { padStr } from '@utils/PadStr';
 import { MAP_INFO_DATA_VALIDATOR } from '@modelEntities/mapInfo';
 import { createMapInfo } from '@utils/entityCreation';
+import { addLineCSV, loadCSV } from '@utils/textManagement';
+import { stringify } from 'csv-stringify/sync';
 
 export type RMXP2StudioMapsSyncInput = { projectPath: string };
 
@@ -43,9 +45,9 @@ const readRMXPMapInfo = async (mapInfoFilePath: string) => {
 };
 
 const readStudioMapInfo = async (mapInfoStudioFilePath: string) => {
-  const studioMapInfoData = await fsPromise.readFile(path.join(mapInfoStudioFilePath, 'Data/Studio', 'map_info.json'), { encoding: 'utf-8' });
+  const studioMapInfoData = await fsPromise.readFile(mapInfoStudioFilePath, { encoding: 'utf-8' });
   const mapInfoParsed = MAP_INFO_DATA_VALIDATOR.safeParse(JSON.parse(studioMapInfoData));
-  if (!mapInfoParsed.success) throw new Error('Fail to parse the file map_info.json');
+  if (!mapInfoParsed.success) throw new Error('Failed to parse the file map_info.json');
 
   return mapInfoParsed.data;
 };
@@ -65,13 +67,18 @@ const RMXP2StudioMapsSync = async (payload: RMXP2StudioMapsSyncInput) => {
     }
     return data;
   }, [] as StudioMap[]);
+  const mapNames = await loadCSV(path.join(payload.projectPath, 'Data/Text/Studio', `${MAP_NAME_TEXT_ID}.csv`));
+  const mapNameColumnLength = mapNames[0]?.length || 0;
+  const mapDescriptions = await loadCSV(path.join(payload.projectPath, 'Data/Text/Studio', `${MAP_DESCRIPTION_TEXT_ID}.csv`));
+  const mapDescrColumnLength = mapDescriptions[0]?.length || 0;
 
   await rmxpMapInfoData.reduce(async (lastPromise, rmxpMap) => {
     await lastPromise;
 
     const isMapExists = studioMaps.find((studioMap) => studioMap.id === rmxpMap.id);
     if (isMapExists) {
-      // TODO: update map name in csv
+      addLineCSV(new Array(mapNameColumnLength).fill(rmxpMap.name), rmxpMap.id + 1, 0, mapNames);
+      addLineCSV(new Array(mapDescrColumnLength).fill(''), rmxpMap.id + 1, 0, mapDescriptions);
     } else {
       const newMap = {
         klass: 'Map',
@@ -80,19 +87,23 @@ const RMXP2StudioMapsSync = async (payload: RMXP2StudioMapsSyncInput) => {
         stepsAverage: 1,
         bgm: '',
         bgs: '',
-        mtime: 0,
+        mtime: 1,
         sha1: '',
         tiledFilename: '',
       } as StudioMap;
       const newMapInfo = createMapInfo(studioMapInfoData, { klass: 'MapInfoMap', mapDbSymbol: newMap.dbSymbol });
       studioMapInfoData.push(newMapInfo);
       fsPromise.writeFile(path.join(payload.projectPath, 'Data/Studio/maps', `${newMap.dbSymbol}.json`), JSON.stringify(newMap, null, 2));
-      // TODO: add the map name in the csv
+      addLineCSV(new Array(mapNameColumnLength).fill(rmxpMap.name), rmxpMap.id + 1, 0, mapNames);
+      addLineCSV(new Array(mapDescrColumnLength).fill(''), rmxpMap.id + 1, 0, mapDescriptions);
     }
   }, Promise.resolve());
 
   await fsPromise.writeFile(mapInfoStudioFilePath, JSON.stringify(studioMapInfoData, null, 2));
+  await fsPromise.writeFile(path.join(payload.projectPath, 'Data/Text/Studio', `${MAP_NAME_TEXT_ID}.csv`), stringify(mapNames));
+  await fsPromise.writeFile(path.join(payload.projectPath, 'Data/Text/Studio', `${MAP_DESCRIPTION_TEXT_ID}.csv`), stringify(mapDescriptions));
 
+  log.info('rmxp-to-studio-maps-sync/success');
   return {};
 };
 

@@ -29,6 +29,7 @@
   "loading_update_map_infos": "Updating the list of maps",
   "loading_update_text_infos": "Updating the list of texts files",
   "loading_check_maps_modified": "Checking maps",
+  "loading_rmxp_to_studio_maps_sync": "Synchronizing maps with RPG Maker XP",
   "creating_project_opening_path": "Parent folder choice",
   "creating_project_checking": "Checking that the project does not exist",
   "creating_project_child_folder_exist_error": "The project already exists",

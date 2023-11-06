@@ -35,3 +35,17 @@ export const getTextFileList = (projectPath: string, includeStudioTextsFile?: tr
   });
   return textFileList;
 };
+
+export const addLineCSV = (newLine: string[], lineIndex: number, startId: number, csvData: string[][]) => {
+  if (csvData[lineIndex] !== undefined) {
+    csvData[lineIndex] = newLine;
+  } else {
+    const headersLength = csvData[0]?.length || 0;
+    const countMissingLines = lineIndex - csvData.length;
+    for (let index = 0; index < countMissingLines; index++) {
+      const line = new Array(headersLength).fill(`[~${csvData.length - 1 + startId}]`);
+      csvData.push(line);
+    }
+    csvData[lineIndex] = newLine;
+  }
+};
