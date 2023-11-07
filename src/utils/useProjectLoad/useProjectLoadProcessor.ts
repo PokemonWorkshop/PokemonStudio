@@ -103,13 +103,16 @@ export const useProjectLoadProcessor = () => {
         );
       },
       RMXP2StudioMapsSync: (state, setState) => {
-        //if (state.projectMetaData.isTiledMode) return toAsyncProcess(() => setState({...state, state: 'readProjectConfigs'}));
-        loaderRef.current.setProgress(6, STEPS_TOTAL, t('loading_rmxp_to_studio_maps_sync'));
-        return window.api.RMXP2StudioMapsSync(
-          { projectPath: state.projectDirName },
-          () => setState({ ...state, state: 'readProjectConfigs' }),
-          handleFailure(setState, binding)
-        );
+        if (state.projectMetaData.isTiledMode === false) {
+          loaderRef.current.setProgress(6, STEPS_TOTAL, t('loading_rmxp_to_studio_maps_sync'));
+          return window.api.RMXP2StudioMapsSync(
+            { projectPath: state.projectDirName },
+            () => setState({ ...state, state: 'readProjectConfigs' }),
+            handleFailure(setState, binding)
+          );
+        } else {
+          return toAsyncProcess(() => setState({ ...state, state: 'readProjectConfigs' }));
+        }
       },
       readProjectConfigs: (state, setState) => {
         loaderRef.current.setProgress(7, STEPS_TOTAL, t('loading_project_config'));

@@ -48,7 +48,7 @@ type DialogProps = {
   title: string;
   subTitle: string;
   children: ReactNode;
-  closeDialog: () => void;
+  closeDialog?: () => void;
   hasError?: boolean;
 };
 
@@ -60,7 +60,7 @@ export const Dialog = ({ title, subTitle, children, closeDialog, hasError }: Dia
           <span className="title">{title}</span>
           <span className={`sub-title ${hasError && 'error'}`}>{subTitle}</span>
         </div>
-        <ClearButtonOnlyIcon onClick={closeDialog} />
+        <ClearButtonOnlyIcon onClick={closeDialog} disabled={!closeDialog} />
       </div>
       {children}
     </DialogContainer>
