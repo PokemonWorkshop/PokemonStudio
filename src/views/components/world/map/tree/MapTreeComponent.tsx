@@ -48,13 +48,20 @@ const computeMaxWidth = () => {
 
 // TODO: remove this after mapinfo refacto
 const convertMapInfo = (mapInfo: (StudioMapInfoMap | StudioMapInfoFolder)[]) => {
+  const childrenArrayId: number[] = [];
   const items = mapInfo.reduce((acc, item) => {
+    const hasChildren = item.children.length > 0;
+    if (hasChildren) {
+      for (const iterator of item.children) {
+        childrenArrayId.push(Number(iterator.id));
+      }
+    }
     // TODO, Check children to work
     if (item.klass === 'MapInfoFolder') {
       acc[item.id.toString()] = {
         id: item.id,
         children: cloneEntity(item.children.map((child) => child.id)),
-        hasChildren: item.children.length > 0,
+        hasChildren: hasChildren,
         isExpanded: !item.collapsed,
         isChildrenLoading: false,
         data: {
@@ -67,12 +74,13 @@ const convertMapInfo = (mapInfo: (StudioMapInfoMap | StudioMapInfoFolder)[]) => 
     acc[item.id.toString()] = {
       id: item.id,
       children: cloneEntity(item.children.map((child) => child.id)),
-      hasChildren: item.children.length > 0,
+      hasChildren: hasChildren,
       isExpanded: !item.collapsed,
       isChildrenLoading: false,
       data: {
         klass: item.klass,
         mapDbSymbol: item.mapDbSymbol,
+        isChildren: childrenArrayId.find((id) => Number(id) === Number(item.id)) ? true : false,
       },
     };
     return acc;
@@ -210,6 +218,8 @@ export const MapTreeComponent = ({ mapInfos }: { mapInfos: (StudioMapInfoMap | S
           disableHover={!!canRename}
           className={currentMap === item.data.mapDbSymbol ? 'map-selected' : 'map'}
           onClick={() => {
+            console.log(item);
+
             if (!item.data.mapDbSymbol || isFolder || isDisabledNavigation) return;
             setCurrentMap({ map: item.data.mapDbSymbol });
           }}
@@ -262,11 +272,20 @@ export const MapTreeComponent = ({ mapInfos }: { mapInfos: (StudioMapInfoMap | S
   };
 
   const onDragEnd = (source: TreeSourcePosition, destination?: TreeDestinationPosition) => {
-    if (!destination) {
+    if (!destination || tree.items[destination.parentId].data.isChildren) {
       return;
     }
 
     const newTree = moveItemOnTree(tree, source, destination);
+    if (destination.parentId) {
+      const isBecameChild = newTree.items[destination.parentId].children;
+      for (const iterator of isBecameChild) {
+        newTree.items[iterator].data.isChildren = true;
+      }
+    } else if (destination.index && source.parentId) {
+      newTree.items[source.parentId].data.isChildren = false;
+    }
+
     setTree(newTree);
   };
 
