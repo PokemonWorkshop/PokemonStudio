@@ -28,7 +28,6 @@ export const MapTreeContextMenu = ({ mapInfo, isDeleted, enableRename, dialogsRe
   const getDescription = useGetEntityDescriptionText();
 
   const isFolder = mapInfo.klass === 'MapInfoFolder';
-
   const onClickDelete = () => {
     if (isFolder) {
       if (mapInfo.children.length === 0) {

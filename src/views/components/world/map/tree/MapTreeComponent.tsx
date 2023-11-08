@@ -44,7 +44,7 @@ export const getCountChildren = (tree: TreeData, item: TreeItem): number => {
 
 // TODO Improve this max width or find a work around
 const computeMaxWidth = () => {
-  return 140;
+  return 120;
 };
 
 const MapListContainer = styled.div`
@@ -125,6 +125,10 @@ const TreeItem = styled.div<MapTreeItemWrapperContainerProps>`
     max-width: ${({ maxWidth }) => `${maxWidth}px`};
   }
 
+  .input-map {
+    max-width: ${({ maxWidth }) => `${maxWidth}px`};
+  }
+
   :hover {
     background-color: ${({ theme }) => theme.colors.dark18};
     cursor: auto;
@@ -155,6 +159,7 @@ const TreeItem = styled.div<MapTreeItemWrapperContainerProps>`
     display: flex;
     flex-direction: row;
     gap: 8px;
+    align-items: center;
   }
 
   .collapse-button {
@@ -180,6 +185,17 @@ const TreeItem = styled.div<MapTreeItemWrapperContainerProps>`
     border-radius: 4px;
     background-color: ${({ theme }) => theme.colors.primarySoft};
     color: ${({ theme }) => theme.colors.primaryBase};
+  }
+
+    ${({ theme, disableHover }) =>
+      !disableHover &&
+      `:hover {
+        background-color: ${theme.colors.dark20};
+
+        .count-children {
+          display: none;
+        }
+      }`}
   }
 
   .actions {
@@ -275,7 +291,7 @@ export const MapTreeComponent = () => {
   const getFolderName = useGetEntityNameTextUsingTextId();
   const { t } = useTranslation('database_maps');
   const renameRef = useRef<HTMLInputElement>(null);
-  const [canRename, setCanRename] = useState<boolean>(false);
+  const [canRename, setCanRename] = useState<ItemId>();
   const [isDeleted, setIsDeleted] = useState<boolean>(false);
   const { buildOnClick, renderContextMenu } = useContextMenu();
   const [isDisabledNavigation, setIsDisabledNavigation] = useState<boolean>(false);
@@ -344,8 +360,9 @@ export const MapTreeComponent = () => {
     const isFolder = item.data.klass === 'MapInfoFolder';
     const countChildren = isFolder ? getCountChildren(tree, item) : undefined;
     const mapInfoItem = mapInfo.find((map) => map.id === item.id);
+
     const handleRename = () => {
-      if (!renameRef.current) return setCanRename(false);
+      if (!renameRef.current) return setCanRename(undefined);
       const value = renameRef.current.value === '' ? renameRef.current.defaultValue : renameRef.current.value;
 
       if (isFolder) {
@@ -354,19 +371,21 @@ export const MapTreeComponent = () => {
         const map = maps[item.data.mapDbSymbol];
         setText(MAP_NAME_TEXT_ID, map.id, value);
       }
-      setCanRename(false);
+      setCanRename(undefined);
     };
 
     return (
-      <div ref={provided.innerRef} {...provided.draggableProps}>
+      <div ref={provided.innerRef} {...provided.draggableProps} key={item.id}>
         <TreeItem
           isCurrent={!isFolder && item.data?.mapDbSymbol === selectedDataIdentifier}
           maxWidth={computeMaxWidth()}
           maxWidthWhenHover={computeMaxWidth() - 30}
           hasChildren={!!countChildren}
-          disableHover={canRename}
+          disableHover={!!canRename}
           className={currentMap === item.data.mapDbSymbol ? 'map-selected' : 'map'}
           onClick={() => {
+            console.log(item, mapInfoItem);
+
             if (!item.data.mapDbSymbol || isFolder) return;
             setCurrentMap({ map: item.data.mapDbSymbol });
           }}
@@ -375,7 +394,7 @@ export const MapTreeComponent = () => {
           <div className="title">
             <span>{getIcon(item, onExpand, onCollapse)}</span>
             <span className="name">
-              {canRename ? (
+              {canRename === item.id ? (
                 <Input
                   ref={renameRef}
                   defaultValue={getName(item)}
@@ -411,7 +430,14 @@ export const MapTreeComponent = () => {
           {/* TODO make menu work */}
           {mapInfoItem &&
             renderContextMenu(
-              <MapTreeContextMenu mapInfo={mapInfoItem} isDeleted={isDeleted} enableRename={() => setCanRename(true)} dialogsRef={dialogsRef} />
+              <MapTreeContextMenu
+                mapInfo={mapInfoItem}
+                isDeleted={isDeleted}
+                enableRename={() => {
+                  setCanRename(item.id);
+                }}
+                dialogsRef={dialogsRef}
+              />
             )}
           {/* TODO fix delete */}
           <MapEditorOverlay mapInfo={mapInfoItem} ref={dialogsRef} />
