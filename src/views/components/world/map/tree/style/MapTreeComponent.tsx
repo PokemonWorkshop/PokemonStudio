@@ -86,10 +86,8 @@ export const TreeItemContainer = styled.div<MapTreeItemWrapperContainerProps>`
     background-color: ${({ theme }) => theme.colors.dark18};
     cursor: auto;
 
-    .left-title {
-      .name {
+    .name {
         max-width: ${({ maxWidthWhenHover }) => `${maxWidthWhenHover}px`};
-      }
     }
   }
 

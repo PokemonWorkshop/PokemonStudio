@@ -41,9 +41,12 @@ export const getCountChildren = (tree: TreeData, item: TreeItem): number => {
   return count;
 };
 
-// TODO Improve this max width or find a work around
-const computeMaxWidth = () => {
-  return 120;
+const computeMaxWidth = (depth: number, hovered = false) => {
+  const indentationWidth = 22;
+  if (hovered) {
+    return 130 - indentationWidth * depth;
+  }
+  return 154 - indentationWidth * depth;
 };
 
 // TODO: remove this after mapinfo refacto
@@ -191,7 +194,7 @@ export const MapTreeComponent = ({ mapInfos }: { mapInfos: (StudioMapInfoMap | S
     return isFolder ? getFolderName({ klass: item.data.klass, textId: item.data.textId }) : mapName(item.data.mapDbSymbol);
   };
 
-  const renderItem = ({ item, onExpand, onCollapse, provided, snapshot }: RenderItemParams) => {
+  const renderItem = ({ item, depth, onExpand, onCollapse, provided, snapshot }: RenderItemParams) => {
     const isFolder = item.data.klass === 'MapInfoFolder';
     const countChildren = isFolder ? getCountChildren(tree, item) : undefined;
 
@@ -212,8 +215,8 @@ export const MapTreeComponent = ({ mapInfos }: { mapInfos: (StudioMapInfoMap | S
       <div ref={provided.innerRef} {...provided.draggableProps} key={item.id}>
         <TreeItemContainer
           isCurrent={!isFolder && item.data?.mapDbSymbol === currentMap}
-          maxWidth={computeMaxWidth()}
-          maxWidthWhenHover={computeMaxWidth() - 30}
+          maxWidth={computeMaxWidth(isFolder ? depth + 1 : depth, false)}
+          maxWidthWhenHover={computeMaxWidth(isFolder ? depth + 1 : depth, true)}
           hasChildren={!!countChildren}
           disableHover={!!canRename}
           className={currentMap === item.data.mapDbSymbol ? 'map-selected' : 'map'}
@@ -256,7 +259,7 @@ export const MapTreeComponent = ({ mapInfos }: { mapInfos: (StudioMapInfoMap | S
               </span>
               <span
                 className="icon icon-plus"
-                onClick={(e) => {
+                onClick={() => {
                   dialogsRef.current?.openDialog('new');
                 }}
                 onMouseEnter={() => setIsDisabledNavigation(true)}
@@ -272,7 +275,7 @@ export const MapTreeComponent = ({ mapInfos }: { mapInfos: (StudioMapInfoMap | S
   };
 
   const onDragEnd = (source: TreeSourcePosition, destination?: TreeDestinationPosition) => {
-    if (!destination || tree.items[destination.parentId].data.isChildren) {
+    if (!destination || tree.items[destination.parentId].data?.isChildren) {
       return;
     }
 
