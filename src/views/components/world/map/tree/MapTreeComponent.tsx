@@ -275,7 +275,7 @@ export const MapTreeComponent = ({ mapInfos }: { mapInfos: (StudioMapInfoMap | S
   };
 
   const onDragEnd = (source: TreeSourcePosition, destination?: TreeDestinationPosition) => {
-    if (!destination || tree.items[destination.parentId].data?.isChildren) {
+    if (!destination || (tree.items[destination.parentId].data?.isChildren && tree.items[destination.parentId].data?.klass === 'MapInfoMap')) {
       return;
     }
 
