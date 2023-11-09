@@ -90,10 +90,10 @@ export const Deletion = ({ title, message, icon, onClickDelete, onClose }: Delet
         onClickDelete();
       }
     };
-    window.addEventListener('keydown', DeleteKeyListener);
+    window.addEventListener('keydown', deleteKeyListener);
 
     return () => {
-      window.removeEventListener('keydown', DeleteKeyListener);
+      window.removeEventListener('keydown', deleteKeyListener);
     };
   }, []);
 
