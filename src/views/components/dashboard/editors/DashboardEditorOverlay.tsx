@@ -2,9 +2,9 @@ import React from 'react';
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import { DialogRefData } from '@utils/useDialogsRef';
-import { DashboardStudioModeModal } from './DashboardStudioModeModal';
+import { DashboardStudioModeMessageBox } from './DashboardStudioModeMessageBox';
 
-export type DashboardEditorAndDeletionKeys = 'studio_mode_modal';
+export type DashboardEditorAndDeletionKeys = 'studio_mode_message_box';
 export type DashboardDialogsRef = React.RefObject<DialogRefData<DashboardEditorAndDeletionKeys>>;
 
 /**
@@ -15,8 +15,8 @@ export const DashboardEditorOverlay = defineEditorOverlay<DashboardEditorAndDele
   'DashboardEditorOverlay',
   (dialogToShow, handleCloseRef, closeDialog) => {
     switch (dialogToShow) {
-      case 'studio_mode_modal':
-        return <DashboardStudioModeModal closeDialog={closeDialog} />;
+      case 'studio_mode_message_box':
+        return <DashboardStudioModeMessageBox closeDialog={closeDialog} />;
       default:
         return assertUnreachable(dialogToShow);
     }

@@ -15,5 +15,9 @@
   "config": "Configurations",
   "game_start": "Game start",
   "save": "Save",
-  "credits": "Game Credits"
+  "credits": "Game Credits",
+  "title_studio_mode_message_box": "Choosing the software to create your maps",
+  "message_studio_mode_message_box": "When creating your game, do you want to use Tiled or RPG Maker XP to create your maps?",
+  "button_use_rmxp": "Use RPG Maker XP",
+  "button_use_tiled": "Use Tiled"
 }

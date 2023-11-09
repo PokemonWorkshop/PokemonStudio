@@ -26,7 +26,7 @@ export const DashboardPage = () => {
   useEffect(() => {
     if (projectStudio.isTiledMode !== null) return;
 
-    if (!dialogsRef.current?.currentDialog) dialogsRef.current?.openDialog('studio_mode_modal', true);
+    if (!dialogsRef.current?.currentDialog) dialogsRef.current?.openDialog('studio_mode_message_box', true);
   }, [dialogsRef, projectStudio]);
 
   return (

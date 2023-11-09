@@ -1,56 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { Dialog } from '@components/Dialog';
 import { useLoaderRef } from '@utils/loaderContext';
-import styled from 'styled-components';
-import { SecondaryButton } from '@components/buttons';
+import { PrimaryButton, SecondaryButton } from '@components/buttons';
 import { useProjectStudio } from '@utils/useProjectStudio';
 import { useTranslation } from 'react-i18next';
 import { useProjectLoad } from '@utils/useProjectLoad';
 import { showNotification } from '@utils/showNotification';
+import {
+  MessageBoxActionContainer,
+  MessageBoxContainer,
+  MessageBoxIconContainer,
+  MessageBoxTextContainer,
+  MessageBoxTitleIconContainer,
+} from '@components/MessageBoxContainer';
+import theme from '@src/AppTheme';
+import { BaseIcon } from '@components/icons/BaseIcon';
 
-const DashboardStudioModeModalContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-  width: 100%;
+type DashboardStudioModeMessageBoxState = 'select_mode' | 'save' | 'reload_project';
 
-  .message {
-    display: flex;
-    //align-items: center;
-    //justify-content: center;
-    //height: 100%;
-    user-select: none;
-
-    ${({ theme }) => theme.fonts.normalRegular}
-    color: ${({ theme }) => theme.colors.text400};
-  }
-
-  .bottom {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    user-select: none;
-
-    .right-action {
-      display: flex;
-      flex-direction: row;
-      gap: 24px;
-      align-items: center;
-    }
-  }
-`;
-
-type DashboardStudioModeModalState = 'select_mode' | 'save' | 'reload_project';
-
-type DashboardStudioModeModalProps = {
+type DashboardStudioModeMessageBoxProps = {
   closeDialog: () => void;
 };
 
-export const DashboardStudioModeModal = ({ closeDialog }: DashboardStudioModeModalProps) => {
+export const DashboardStudioModeMessageBox = ({ closeDialog }: DashboardStudioModeMessageBoxProps) => {
   const loaderRef = useLoaderRef();
   const projectLoad = useProjectLoad();
-  const [state, setState] = useState<DashboardStudioModeModalState>('select_mode');
+  const [state, setState] = useState<DashboardStudioModeMessageBoxState>('select_mode');
   const [mode, setMode] = useState<'tiled' | 'rmxp' | undefined>(undefined);
   const { projectStudioValues: projectStudio, state: globalState } = useProjectStudio();
   const { t } = useTranslation(['loader', 'dashboard']);
@@ -85,16 +59,20 @@ export const DashboardStudioModeModal = ({ closeDialog }: DashboardStudioModeMod
   }, [state, mode]);
 
   return (
-    <Dialog title={'Choix du mode de Pokémon Studio'} subTitle={'Choisissez le mode'}>
-      <DashboardStudioModeModalContainer>
-        <div className="message">Bienvenue dans la version 2.0 ou supérieur de l&apos;application. etc.</div>
-        <div className="bottom">
-          <div className="right-action">
-            <SecondaryButton onClick={() => setMode('rmxp')}>Mode RMXP</SecondaryButton>
-            <SecondaryButton onClick={() => setMode('tiled')}>Mode Tiled</SecondaryButton>
-          </div>
-        </div>
-      </DashboardStudioModeModalContainer>
-    </Dialog>
+    <MessageBoxContainer>
+      <MessageBoxTitleIconContainer>
+        <MessageBoxIconContainer>
+          <BaseIcon icon="map" size="s" color={theme.colors.primaryBase} />
+        </MessageBoxIconContainer>
+        <h3>{'Choix du logiciel de création de vos cartes'}</h3>
+      </MessageBoxTitleIconContainer>
+      <MessageBoxTextContainer>
+        <p>{'Lors de la création de votre jeu, souhaitez-vous utiliser Tiled ou RPG Maker XP pour la création de vos cartes ?'}</p>
+      </MessageBoxTextContainer>
+      <MessageBoxActionContainer>
+        <SecondaryButton onClick={() => setMode('rmxp')}>{'Utiliser RPG Maker XP'}</SecondaryButton>
+        <PrimaryButton onClick={() => setMode('tiled')}>{'Utiliser Tiled'}</PrimaryButton>
+      </MessageBoxActionContainer>
+    </MessageBoxContainer>
   );
 };
