@@ -85,7 +85,7 @@ export const Deletion = ({ title, message, icon, onClickDelete, onClose }: Delet
   const { t } = useTranslation('deletion');
 
   useEffect(() => {
-    const DeleteKeyListener = (event: KeyboardEvent) => {
+    const deleteKeyListener = (event: KeyboardEvent) => {
       if (event.key === 'Enter') {
         onClickDelete();
       }
