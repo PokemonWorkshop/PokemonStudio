@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { ClearInput, Input } from '@components/inputs';
 import { useTranslation } from 'react-i18next';
-import { useMapInfo } from '@utils/useMapInfo';
-import { cloneEntity } from '@utils/cloneEntity';
 import { MapList } from './MapList';
 import { MapTreeComponent } from './MapTreeComponent';
 import { emitScrollContextMenu } from '@utils/useContextMenu';
@@ -55,17 +53,8 @@ const MapTreeContainer = styled.div<MapTreeContainerProps>`
 `;
 
 export const MapTreeV2 = () => {
-  const { mapInfoValues: mapInfos, setMapInfoValues: setMapInfo } = useMapInfo();
-  const [saveFlipFlap, setSaveFlipFlap] = useState(false);
   const [research, setResearch] = useState('');
   const { t } = useTranslation('database_maps');
-
-  /*
-   useEffect(() => {
-    setMapInfo(buildMapInfo(items));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [saveFlipFlap]);
-*/
 
   return (
     <MapTreeContainer hideMapTree={research !== ''}>
@@ -78,7 +67,7 @@ export const MapTreeV2 = () => {
       {research !== '' && <MapList research={research} />}
       <div className="tree-scrollbar" onScroll={emitScrollContextMenu}>
         <div className="tree">
-          <MapTreeComponent mapInfos={mapInfos} />
+          <MapTreeComponent />
         </div>
       </div>
     </MapTreeContainer>

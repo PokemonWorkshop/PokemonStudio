@@ -2,6 +2,7 @@ import { DbSymbol } from '@modelEntities/dbSymbol';
 import { StudioMapInfo, StudioMapInfoFolder, StudioMapInfoMap } from '@modelEntities/mapInfo';
 import { cloneEntity } from './cloneEntity';
 import { TreeItem } from '@components/sortabletree/TreeTypes';
+import { TreeItem as TreeMapItem, TreeData } from '@components/tree';
 
 export const mapInfoFindFirstAvailableId = (mapInfo: StudioMapInfo[]): number => {
   const read = (mapInfo: StudioMapInfo[]): number[] => {
@@ -158,4 +159,79 @@ const buildMapInfoRec = (mapInfoMaps: TreeItem<StudioMapInfoMap>[] & StudioMapIn
     collapsed: mapInfo.collapsed,
     children: buildMapInfoRec(mapInfo.children),
   }));
+};
+
+// TODO: remove this after mapinfo refacto
+export const convertMapInfoToTreeItem = (mapInfo: (StudioMapInfoMap | StudioMapInfoFolder)[]) => {
+  const childrenArrayId: number[] = [];
+  const items = mapInfo.reduce((acc, item) => {
+    const hasChildren = item.children.length > 0;
+    if (hasChildren) {
+      for (const iterator of item.children) {
+        childrenArrayId.push(Number(iterator.id));
+      }
+    }
+    // TODO, Check children to work
+    if (item.klass === 'MapInfoFolder') {
+      acc[item.id.toString()] = {
+        id: item.id,
+        children: cloneEntity(item.children.map((child) => child.id)),
+        hasChildren: hasChildren,
+        isExpanded: !item.collapsed,
+        isChildrenLoading: false,
+        data: {
+          ...item,
+        },
+      };
+      return acc;
+    }
+    acc[item.id.toString()] = {
+      id: item.id,
+      children: cloneEntity(item.children.map((child) => child.id)),
+      hasChildren: hasChildren,
+      isExpanded: !item.collapsed,
+      isChildrenLoading: false,
+      data: {
+        isChildren: childrenArrayId.find((id) => Number(id) === Number(item.id)) ? true : false,
+        ...item,
+      },
+    };
+    return acc;
+  }, {} as Record<string, TreeMapItem>);
+  // root item
+  items['0'] = {
+    id: 0,
+    children: Object.keys(items),
+    hasChildren: true,
+    isExpanded: true,
+    isChildrenLoading: false,
+  };
+  return {
+    rootId: 0,
+    items,
+  };
+};
+
+export const convertTreeToMapInfo = (tree: TreeData): (StudioMapInfoMap | StudioMapInfoFolder)[] => {
+  const studioMaps: (StudioMapInfoMap | StudioMapInfoFolder)[] = [];
+
+  // Iterate over the tree items
+  for (const item of Object.values(tree.items)) {
+    // If the item is children, or is not a valid item, then smash it
+    if (item.data?.isChildren || !item.data?.klass) {
+      continue;
+    }
+    // Delete non mapInfo property
+    if (item.data && Reflect.has(item.data, 'isChildren')) {
+      Reflect.deleteProperty(item.data, 'isChildren');
+    }
+    const mapItem: StudioMapInfoMap | StudioMapInfoFolder = {
+      ...item.data,
+      id: Number(item.id),
+    };
+
+    studioMaps.push(mapItem);
+  }
+  // console.log(tree, 'mapItemInfo::', studioMaps);
+  return studioMaps;
 };

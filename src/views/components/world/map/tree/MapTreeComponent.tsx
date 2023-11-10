@@ -28,8 +28,9 @@ import { MapEditorAndDeletionKeys, MapEditorOverlay } from '../editors/MapEditor
 import { useDialogsRef } from '@utils/useDialogsRef';
 import { MapTreeContextMenu } from './MapTreeContextMenu';
 import { MapListContainer, TreeItemContainer } from './style/MapTreeComponent';
+import { useMapInfo } from '@utils/useMapInfo';
+import { convertMapInfoToTreeItem, convertTreeToMapInfo } from '@utils/MapInfoUtils';
 
-// TODO Replace it in utils
 export const getCountChildren = (tree: TreeData, item: TreeItem): number => {
   let count = 0;
   item.children.forEach((childId) => {
@@ -49,63 +50,11 @@ const computeMaxWidth = (depth: number, hovered = false) => {
   return 154 - indentationWidth * depth;
 };
 
-// TODO: remove this after mapinfo refacto
-const convertMapInfo = (mapInfo: (StudioMapInfoMap | StudioMapInfoFolder)[]) => {
-  const childrenArrayId: number[] = [];
-  const items = mapInfo.reduce((acc, item) => {
-    const hasChildren = item.children.length > 0;
-    if (hasChildren) {
-      for (const iterator of item.children) {
-        childrenArrayId.push(Number(iterator.id));
-      }
-    }
-    // TODO, Check children to work
-    if (item.klass === 'MapInfoFolder') {
-      acc[item.id.toString()] = {
-        id: item.id,
-        children: cloneEntity(item.children.map((child) => child.id)),
-        hasChildren: hasChildren,
-        isExpanded: !item.collapsed,
-        isChildrenLoading: false,
-        data: {
-          klass: item.klass,
-          textId: item.textId,
-        },
-      };
-      return acc;
-    }
-    acc[item.id.toString()] = {
-      id: item.id,
-      children: cloneEntity(item.children.map((child) => child.id)),
-      hasChildren: hasChildren,
-      isExpanded: !item.collapsed,
-      isChildrenLoading: false,
-      data: {
-        klass: item.klass,
-        mapDbSymbol: item.mapDbSymbol,
-        isChildren: childrenArrayId.find((id) => Number(id) === Number(item.id)) ? true : false,
-      },
-    };
-    return acc;
-  }, {} as Record<string, TreeItem>);
-  // root item
-  items['0'] = {
-    id: 0,
-    children: Object.keys(items),
-    hasChildren: true,
-    isExpanded: true,
-    isChildrenLoading: false,
-  };
-  return {
-    rootId: 0,
-    items,
-  };
-};
-
-export const MapTreeComponent = ({ mapInfos }: { mapInfos: (StudioMapInfoMap | StudioMapInfoFolder)[] }) => {
-  // const { mapInfoValues: mapInfos } = useMapInfo();
+export const MapTreeComponent = () => {
+  const { mapInfoValues: mapInfos, setMapInfoValues: setMapInfo } = useMapInfo();
+  // const [items, setItems] = useState(cloneEntity(mapInfos));
   const setText = useSetProjectText();
-  const [tree, setTree] = useState<TreeData>(convertMapInfo(mapInfos));
+  const [tree, setTree] = useState<TreeData>(convertMapInfoToTreeItem(mapInfos));
   const { selectedDataIdentifier: currentMap, setSelectedDataIdentifier: setCurrentMap, projectDataValues: maps } = useProjectMaps();
   const getMapName = useGetEntityNameText();
   const getFolderName = useGetEntityNameTextUsingTextId();
@@ -121,7 +70,7 @@ export const MapTreeComponent = ({ mapInfos }: { mapInfos: (StudioMapInfoMap | S
   const [mapInfoSelected, setMapInfoSelected] = useState<StudioMapInfoMap | StudioMapInfoFolder>();
 
   useEffect(() => {
-    setTree(convertMapInfo(mapInfos));
+    setTree(convertMapInfoToTreeItem(mapInfos));
   }, [mapInfos]);
 
   useEffect(() => {
@@ -281,15 +230,22 @@ export const MapTreeComponent = ({ mapInfos }: { mapInfos: (StudioMapInfoMap | S
 
     const newTree = moveItemOnTree(tree, source, destination);
     if (destination.parentId) {
-      const isBecameChild = newTree.items[destination.parentId].children;
-      for (const iterator of isBecameChild) {
+      const becameChild = newTree.items[destination.parentId].children;
+
+      for (const iterator of becameChild) {
         newTree.items[iterator].data.isChildren = true;
       }
+      // Make child in item, for easier conversion
+      newTree.items[destination.parentId].data.children = mapInfos.filter((map) => becameChild.find((c) => map.id === Number(c)));
     } else if (destination.index && source.parentId) {
       newTree.items[source.parentId].data.isChildren = false;
     }
 
+    // TODO newTree seems to not change index of item, so mapInfo cant be trigger for changes
+    console.log(newTree);
+
     setTree(newTree);
+    setMapInfo(convertTreeToMapInfo(newTree));
   };
 
   return (
@@ -317,6 +273,14 @@ export const MapTreeComponent = ({ mapInfos }: { mapInfos: (StudioMapInfoMap | S
           />
         )}
       <MapEditorOverlay mapInfo={mapInfoSelected} ref={dialogsRef} />
+      <button
+        onClick={() => {
+          console.log(mapInfos, tree);
+          setMapInfo(convertTreeToMapInfo(tree));
+        }}
+      >
+        Convertisser moi
+      </button>
     </MapListContainer>
   );
 };
