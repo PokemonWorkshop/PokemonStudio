@@ -64,14 +64,14 @@ export const DashboardStudioModeMessageBox = ({ closeDialog }: DashboardStudioMo
         <MessageBoxIconContainer>
           <BaseIcon icon="map" size="s" color={theme.colors.primaryBase} />
         </MessageBoxIconContainer>
-        <h3>{'Choix du logiciel de création de vos cartes'}</h3>
+        <h3>{t('dashboard:title_studio_mode_message_box')}</h3>
       </MessageBoxTitleIconContainer>
       <MessageBoxTextContainer>
-        <p>{'Lors de la création de votre jeu, souhaitez-vous utiliser Tiled ou RPG Maker XP pour la création de vos cartes ?'}</p>
+        <p>{t('dashboard:message_studio_mode_message_box')}</p>
       </MessageBoxTextContainer>
       <MessageBoxActionContainer>
-        <SecondaryButton onClick={() => setMode('rmxp')}>{'Utiliser RPG Maker XP'}</SecondaryButton>
-        <PrimaryButton onClick={() => setMode('tiled')}>{'Utiliser Tiled'}</PrimaryButton>
+        <SecondaryButton onClick={() => setMode('rmxp')}>{t('dashboard:button_use_rmxp')}</SecondaryButton>
+        <PrimaryButton onClick={() => setMode('tiled')}>{t('dashboard:button_use_tiled')}</PrimaryButton>
       </MessageBoxActionContainer>
     </MessageBoxContainer>
   );
