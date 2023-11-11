@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { StyledNavLinkActionItem } from '@components/navigation/NavigationBarItem/StyledNavLink';
 import { NavigationBarItemContainer } from '@components/navigation/NavigationBarItem/NavigationBarItemContainer';
 import { ReactComponent as PlayIcon } from '@assets/icons/global/play.svg';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useTranslation } from 'react-i18next';
+import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 
 const PlayMenuButtonContainer = styled.div`
   position: fixed;
@@ -94,6 +95,16 @@ export const PlayButton = () => {
     startPSDK(state.projectPath || '');
     setIsOpen(false);
   };
+
+  const shortcutMap = useMemo<StudioShortcutActions>(() => {
+    // No shortcut if an editor is opened
+    const isShortcutEnabled = () => !document.querySelector('#dialogs')?.textContent;
+    return {
+      play: () => isShortcutEnabled() && startPSDKAndCloseMenu(window.api.startPSDKDebug),
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useShortcut(shortcutMap);
 
   return (
     <PlayButtonContainer className={isOpen ? 'open' : undefined} data-disabled={(!isEnabled()).toString()} onMouseLeave={() => setIsOpen(false)}>

@@ -59,7 +59,7 @@ export const SaveProjectButton = () => {
     // No shortcut if an editor is opened and no data to save
     const isShortcutEnabled = () => !document.querySelector('#dialogs')?.textContent && isDataToSave;
     return {
-      db_save: () =>
+      save: () =>
         isShortcutEnabled() &&
         save(
           () => loaderRef.current.close(),

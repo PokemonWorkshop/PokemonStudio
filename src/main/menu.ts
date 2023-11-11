@@ -75,7 +75,14 @@ export default class MenuBuilder {
             label: 'Save',
             accelerator: 'CmdOrCtrl+S',
             click: () => {
-              this.mainWindow.webContents.send('request-shortcut', 'db_save');
+              this.mainWindow.webContents.send('request-shortcut', 'save');
+            },
+          },
+          {
+            label: 'Play',
+            accelerator: 'CmdOrCtrl+P',
+            click: () => {
+              this.mainWindow.webContents.send('request-shortcut', 'play');
             },
           },
           { type: 'separator' },
