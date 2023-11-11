@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import theme from '@src/AppTheme';
 import { useTranslation } from 'react-i18next';
@@ -83,6 +83,19 @@ type DeletionProps = {
 
 export const Deletion = ({ title, message, icon, onClickDelete, onClose }: DeletionProps) => {
   const { t } = useTranslation('deletion');
+
+  useEffect(() => {
+    const deleteKeyListener = (event: KeyboardEvent) => {
+      if (event.key === 'Enter') {
+        onClickDelete();
+      }
+    };
+    window.addEventListener('keydown', deleteKeyListener);
+
+    return () => {
+      window.removeEventListener('keydown', deleteKeyListener);
+    };
+  }, []);
 
   return (
     <DeletionContainer>
