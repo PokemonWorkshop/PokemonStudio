@@ -3,6 +3,7 @@ import fs from 'fs';
 import { SavingData } from '@utils/SavingUtils';
 import path from 'path';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
+import { processSavedMaps } from './studioMapToRMXPConversionFacilitator';
 
 export type SaveProjectDataInput = { path: string; data: SavingData };
 
@@ -13,6 +14,12 @@ const saveProjectData = async (payload: SaveProjectDataInput) => {
   // Ensure PSDK will rebuild the data
   const psdkDatPath = path.join(projectDataPath, 'psdk.dat');
   if (fs.existsSync(psdkDatPath)) fs.unlinkSync(psdkDatPath);
+
+  // Process all the map that changed
+  await processSavedMaps(
+    projectDataPath,
+    payload.data.filter(({ savingPath, savingAction }) => savingPath.startsWith('maps/') && savingAction !== 'DELETE').map(({ data }) => data || '{}')
+  );
 
   return Promise.all(
     payload.data.map(async (sd) => {
