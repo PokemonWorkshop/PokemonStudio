@@ -42,3 +42,13 @@ export const findFirstAvailableId = (allData: Record<string, { id: number }>, st
 
   return idSet[holeIndex - 1] + 1;
 };
+
+export const findFirstAndSecondAvailableId = (allData: Record<string, { id: number }>, startId: number) => {
+  const firstId = findFirstAvailableId(allData, startId);
+  const newAllData = {
+    ...allData,
+    [`data_${firstId}`]: { id: firstId },
+  };
+  const secondId = findFirstAvailableId(newAllData, startId);
+  return { firstId, secondId };
+};
