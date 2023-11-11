@@ -19,7 +19,7 @@ runs:
       uses: actions/cache@v3
       with:
         path: node_modules
-        key: ${{ runner.os }}-cache-${{ github.ref_name }}-${{ hashFile('**/package-lock.json') }}
+        key: ${{ runner.os }}-cache-${{ github.ref_name }}-${{ hashFiles('**/package-lock.json') }}
         restore-keys: ${{ runner.os }}-cache-${{ github.ref_name }}
 
     - name: Display if using cache
