@@ -36,5 +36,6 @@
   "ivs_title": "Individual Values",
   "evs_title": "Effort Values",
   "pokemon_first_position": "Pokémon in first position",
-  "none": "None"
+  "none": "None",
+  "min_max_level_error": "The maximum level must be higher than the minimum level."
 }
