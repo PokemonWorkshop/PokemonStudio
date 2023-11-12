@@ -33,4 +33,6 @@ export type StudioMapInfoFolder = z.infer<typeof MAP_INFO_FOLDER_VALIDATOR>;
 export const MAP_INFO_VALIDATOR = z.union([MAP_INFO_MAP_VALIDATOR, MAP_INFO_FOLDER_VALIDATOR]);
 export type StudioMapInfo = z.infer<typeof MAP_INFO_VALIDATOR>;
 
+export const MAP_INFO_DATA_VALIDATOR = z.array(MAP_INFO_VALIDATOR);
+
 export const MAP_INFO_FOLDER_NAME_TEXT_ID = 200004;

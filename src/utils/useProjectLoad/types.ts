@@ -30,6 +30,7 @@ export type ProjectLoadStateObject =
   | { state: 'migrateProjectData'; projectDirName: string; studioVersion: string; projectMetaData: StudioProject }
   | { state: 'writeProjectMetadata'; projectDirName: string; studioVersion: string; projectMetaData: StudioProject }
   | { state: 'updateTextInfos'; projectDirName: string; studioVersion: string; projectMetaData: StudioProject }
+  | { state: 'RMXP2StudioMapsSync'; projectDirName: string; studioVersion: string; projectMetaData: StudioProject }
   | { state: 'readProjectConfigs'; projectDirName: string; studioVersion: string; projectMetaData: StudioProject }
   | {
       state: 'readProjectData';

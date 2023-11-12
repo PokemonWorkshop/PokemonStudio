@@ -4,74 +4,24 @@ import { useTranslation } from 'react-i18next';
 
 import theme from '@src/AppTheme';
 import { EditorOverlayContainer } from '@components/editor';
-import { DeletionContainer } from '@components/deletion/DeletionContainer';
 import { PrimaryButton } from '@components/buttons';
 import { BaseIcon } from '@components/icons/BaseIcon';
 import { useProjectSave } from '@utils/useProjectSave';
 import { useLoaderRef } from '@utils/loaderContext';
+import {
+  MessageBoxActionContainer,
+  MessageBoxCancelLink,
+  MessageBoxContainer,
+  MessageBoxIconContainer,
+  MessageBoxTextContainer,
+  MessageBoxTitleIconContainer,
+} from '@components/MessageBoxContainer';
 
 const OverlayContainer = styled(EditorOverlayContainer)`
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 8001;
-`;
-
-const TitleWithIconContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: center;
-  padding-top: 8px;
-
-  & > h3 {
-    ${theme.fonts.titlesHeadline6};
-    margin: 0;
-    line-height: 22px;
-    text-align: center;
-  }
-`;
-
-const SavingIcon = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 100%;
-  background-color: ${theme.colors.primarySoft};
-  color: ${theme.colors.primaryBase};
-`;
-
-const TextWarningContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  ${theme.fonts.normalMedium};
-  color: ${theme.colors.text400};
-
-  & > p {
-    margin: 0;
-    text-align: center;
-  }
-`;
-
-const ActionContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-self: flex-end;
-  align-items: center;
-  gap: 16px;
-  padding-top: 8px;
-`;
-
-const Button = styled.span`
-  ${theme.fonts.normalMedium};
-  color: ${theme.colors.text400};
-
-  :hover {
-    cursor: pointer;
-  }
 `;
 
 export const UnsavedWarningModal = () => {
@@ -125,22 +75,22 @@ export const UnsavedWarningModal = () => {
 
   return show ? (
     <OverlayContainer className="active">
-      <DeletionContainer>
-        <TitleWithIconContainer>
-          <SavingIcon>
+      <MessageBoxContainer>
+        <MessageBoxTitleIconContainer>
+          <MessageBoxIconContainer>
             <BaseIcon icon="save" size="s" color={theme.colors.primaryBase} />
-          </SavingIcon>
+          </MessageBoxIconContainer>
           <h3>{t('unsaved_modal:title')}</h3>
-        </TitleWithIconContainer>
-        <TextWarningContainer>
+        </MessageBoxTitleIconContainer>
+        <MessageBoxTextContainer>
           <p>{t('unsaved_modal:description')}</p>
-        </TextWarningContainer>
-        <ActionContainer>
-          <Button onClick={() => setShow(false)}>{t('unsaved_modal:cancel')}</Button>
-          <Button onClick={onQuit}>{t('unsaved_modal:quit')}</Button>
+        </MessageBoxTextContainer>
+        <MessageBoxActionContainer>
+          <MessageBoxCancelLink onClick={() => setShow(false)}>{t('unsaved_modal:cancel')}</MessageBoxCancelLink>
+          <MessageBoxCancelLink onClick={onQuit}>{t('unsaved_modal:quit')}</MessageBoxCancelLink>
           <PrimaryButton onClick={onSave}>{t('unsaved_modal:save')}</PrimaryButton>
-        </ActionContainer>
-      </DeletionContainer>
+        </MessageBoxActionContainer>
+      </MessageBoxContainer>
     </OverlayContainer>
   ) : null;
 };
