@@ -48,7 +48,7 @@ export const useMapUpdateProcessor = () => {
           }
 
           const file = files[index];
-          const path = join(globalState.projectPath!, 'Data/Tiled/Maps', `${file.filename}.tmx`);
+          const path = join(globalState.projectPath || '', 'Data/Tiled/Maps', `${file.filename}.tmx`);
           return window.api.convertTiledMapToTileMetadata(
             { tmxPath: path },
             (payload) => {

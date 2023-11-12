@@ -46,7 +46,7 @@ export const ItemProgressDataEditor = forwardRef<EditorHandlingClose>((_, ref) =
       levelCount: cleanNaNValue(levelCount),
     };
     const r = !isItemEvBoost ? 'count' : 'levelCount';
-    const { [r]: removedProperty, ...changes } = changesToReview;
+    const { [r]: _removedProperty, ...changes } = changesToReview;
     setItems({ klass, ...changes } as Partial<StudioItem>);
   };
 

@@ -8,7 +8,7 @@ import { ButtonRightContainer, DataBlockEditorContainer } from '@components/edit
 import { SeparatorGreyLine } from '@components/separators/SeparatorGreyLine';
 import { MultiLineInput } from '@components/inputs';
 import { DarkButton } from '@components/buttons';
-import { ReactComponent as TranslateIcon } from '@assets/icons/global/translate.svg';
+// import { ReactComponent as TranslateIcon } from '@assets/icons/global/translate.svg';
 import { ReactComponent as CopyIcon } from '@assets/icons/global/copy.svg';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { SavingTextMap } from '@utils/SavingUtils';
@@ -19,8 +19,8 @@ import { CONTROL } from '@utils/useKeyPress';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 
 const calculateTranlatedTexts = (allTextsFromFile: string[][], index: number) => {
-  const rowsWithEmpty = allTextsFromFile.filter((ligne, i) => ligne && ligne.includes(''));
-  const textsTranslatedEmpty = rowsWithEmpty.reduce((total, ligne, i) => {
+  const rowsWithEmpty = allTextsFromFile.filter((ligne, _i) => ligne && ligne.includes(''));
+  const textsTranslatedEmpty = rowsWithEmpty.reduce((total, ligne, _i) => {
     if (ligne[index] === '') {
       total += 1;
     }

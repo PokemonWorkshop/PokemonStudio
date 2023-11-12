@@ -3,7 +3,7 @@ import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/
 import { cloneEntity } from '@utils/cloneEntity';
 import { useCreaturePage } from '@utils/usePage';
 import { useProjectPokemon } from '@utils/useProjectData';
-import React, { forwardRef, useMemo } from 'react';
+import React, { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type CreatureFormDeletionProps = {
@@ -13,7 +13,7 @@ type CreatureFormDeletionProps = {
 export const CreatureFormDeletion = forwardRef<EditorHandlingClose, CreatureFormDeletionProps>(({ closeDialog }, ref) => {
   const { t } = useTranslation('database_pokemon');
   const { creature, form } = useCreaturePage();
-  const { projectDataValues: creatures, selectedDataIdentifier: currentPokemon, setProjectDataValues: setCreature } = useProjectPokemon();
+  const { projectDataValues: _creatures, selectedDataIdentifier: currentPokemon, setProjectDataValues: setCreature } = useProjectPokemon();
 
   const onClickDelete = () => {
     const updatedCreature = cloneEntity(creature);

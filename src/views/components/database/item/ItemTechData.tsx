@@ -1,6 +1,6 @@
 import { LOCKED_ITEM_EDITOR, StudioTechItem } from '@modelEntities/item';
 import { State, useGlobalState } from '@src/GlobalStateProvider';
-import { getEntityNameText, useGetEntityNameText } from '@utils/ReadingProjectText';
+import { getEntityNameText } from '@utils/ReadingProjectText';
 import React from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
 import { DataBlockWithTitle, DataFieldsetField, DataGrid } from '../dataBlocks';

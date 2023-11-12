@@ -14,6 +14,7 @@ export const MovePokemonPage = () => {
   const { t } = useTranslation('database_moves');
   const navigate = useNavigate();
   const onClickedBack = () => navigate('/database/moves');
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const parameters: Array<{ title: any; filter: FilterType }> = [
     { title: 'level_learnable_move', filter: 'LevelLearnableMove' },
     { title: 'tutor_learnable_move', filter: 'TutorLearnableMove' },

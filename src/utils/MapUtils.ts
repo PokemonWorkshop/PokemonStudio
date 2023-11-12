@@ -1,7 +1,6 @@
 import { ProjectData } from '@src/GlobalStateProvider';
 
-import { useGetEntityNameTextUsingTextId } from './ReadingProjectText';
-import { useGetEntityNameText } from '@utils/ReadingProjectText';
+import { useGetEntityNameText, useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
 import { useProjectDataReadonly } from '@utils/useProjectData';
 import { useMapInfo } from '@utils/useMapInfo';
 import { StudioMapInfoMap, StudioMapInfoFolder } from '@modelEntities/mapInfo';

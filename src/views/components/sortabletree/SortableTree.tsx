@@ -132,11 +132,13 @@ export const SortableTree = <TreeItemData extends Record<string, unknown>, TElem
   itemsRef.current = items;
   const handleRemove = useCallback(
     (id: string) => {
-      const item = findItemDeep(itemsRef.current, id)!;
-      onItemsChanged(removeItem(itemsRef.current, id), {
-        type: 'removed',
-        item,
-      });
+      const item = findItemDeep(itemsRef.current, id);
+      if (item) {
+        onItemsChanged(removeItem(itemsRef.current, id), {
+          type: 'removed',
+          item,
+        });
+      }
     },
     [onItemsChanged]
   );
@@ -205,16 +207,18 @@ export const SortableTree = <TreeItemData extends Record<string, unknown>, TElem
 
   const handleCollapse = useCallback(
     (id: string) => {
-      const item = findItemDeep(itemsRef.current, id)!;
-      onItemsChanged(
-        setProperty(itemsRef.current, id, 'collapsed', ((value: boolean) => {
-          return !value;
-        }) as never),
-        {
-          type: item.collapsed ? 'collapsed' : 'expanded',
-          item: item,
-        }
-      );
+      const item = findItemDeep(itemsRef.current, id);
+      if (item) {
+        onItemsChanged(
+          setProperty(itemsRef.current, id, 'collapsed', ((value: boolean) => {
+            return !value;
+          }) as never),
+          {
+            type: item.collapsed ? 'collapsed' : 'expanded',
+            item: item,
+          }
+        );
+      }
     },
     [onItemsChanged]
   );
@@ -281,21 +285,23 @@ export const SortableTree = <TreeItemData extends Record<string, unknown>, TElem
       const draggedFromParent = activeTreeItem.parent;
       const sortedItems = arrayMove(clonedItems, activeIndex, overIndex);
       const newItems = buildTree(sortedItems);
-      const newActiveItem = sortedItems.find((x) => x.id === active.id)!;
-      const currentParent = newActiveItem.parentId ? sortedItems.find((x) => x.id === newActiveItem.parentId)! : null;
+      const newActiveItem = sortedItems.find((x) => x.id === active.id);
+      const currentParent = newActiveItem?.parentId ? sortedItems.find((x) => x.id === newActiveItem.parentId) : null;
       // removing setTimeout leads to an unwanted scrolling
       // Use case:
       //   There are a lot of items in a tree (so that the scroll exists).
       //   You take the node from the bottom and move it to the top
       //   Without `setTimeout` when you drop the node the list gets scrolled to the bottom.
-      setTimeout(() =>
-        onItemsChanged(newItems, {
-          type: 'dropped',
-          draggedItem: newActiveItem,
-          draggedFromParent: draggedFromParent,
-          droppedToParent: currentParent,
-        })
-      );
+      if (newActiveItem && currentParent) {
+        setTimeout(() =>
+          onItemsChanged(newItems, {
+            type: 'dropped',
+            draggedItem: newActiveItem,
+            draggedFromParent: draggedFromParent,
+            droppedToParent: currentParent,
+          })
+        );
+      }
     }
   };
 

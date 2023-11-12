@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { DataGroupGrid } from './ZoneTableStyle';
@@ -116,7 +116,7 @@ type RenderGroupProps = {
   onClickDelete: () => void;
 };
 
-export const RenderGroup = React.forwardRef<HTMLInputElement, RenderGroupProps>(
+export const RenderGroup = forwardRef<HTMLInputElement, RenderGroupProps>(
   ({ group, zone, provided, isDragging, dragOn, onClickEdit, onClickDelete }, ref) => {
     const { t } = useTranslation('database_groups');
     const getGroupName = useGetEntityNameText();

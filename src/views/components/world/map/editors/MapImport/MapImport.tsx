@@ -99,7 +99,7 @@ export const MapImport = ({ closeDialog, closeParentDialog }: MapImportProps) =>
     switch (state) {
       case 'searching_files':
         return window.api.getFilePathsFromFolder(
-          { folderPath: folderPath!, extensions: ['.tmx'], isRecursive: true },
+          { folderPath: folderPath || '', extensions: ['.tmx'], isRecursive: true },
           ({ filePaths }) => {
             setFiles(
               filePaths.map((filePath) => ({
@@ -120,7 +120,7 @@ export const MapImport = ({ closeDialog, closeParentDialog }: MapImportProps) =>
       case 'import': {
         const filesToImport = files.filter((file) => file.shouldBeImport);
         mapImport(
-          { filesToImport, tiledFilesSrcPath: folderPath! },
+          { filesToImport, tiledFilesSrcPath: folderPath || '' },
           () => {
             // we wait the end of the close dialog animation to close the loader and show a notification
             setTimeout(() => {

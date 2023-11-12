@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, forwardRef } from 'react';
 import styled from 'styled-components';
 import theme from '@src/AppTheme';
 import { useTranslation } from 'react-i18next';
@@ -157,7 +157,7 @@ type RenderPokemonProps = {
   setCreatureIndex: (index: number) => void;
 };
 
-export const RenderPokemon = React.forwardRef<HTMLInputElement, RenderPokemonProps>(
+export const RenderPokemon = forwardRef<HTMLInputElement, RenderPokemonProps>(
   ({ style, pokemon, provided, isDragging, dragOn, index, dex, dialogsRef, setScrollToRow, setCreatureIndex }, ref) => {
     const { projectDataValues: types } = useProjectTypes();
     const { projectDataValues: allPokemon } = useProjectPokemon();

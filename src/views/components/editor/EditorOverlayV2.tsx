@@ -1,7 +1,7 @@
 import { useEditorHandlingCloseRef } from '@components/editor/useHandleCloseEditor';
 import { DialogRefData } from '@utils/useDialogsRef';
 import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import ReactDOM from 'react-dom';
+import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 
 export const DialogContainer = styled.dialog`
@@ -174,7 +174,7 @@ export const defineEditorOverlay = <Keys extends string, Props extends Record<st
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentDialog]);
 
-    return ReactDOM.createPortal(
+    return createPortal(
       <DialogContainer ref={dialogRef} onClick={onClickOutside} className={isCenter ? 'center' : 'right'}>
         {currentlyRenderedDialog}
       </DialogContainer>,

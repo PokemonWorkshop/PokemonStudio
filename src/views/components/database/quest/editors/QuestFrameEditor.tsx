@@ -7,12 +7,12 @@ import { SelectCustomSimple } from '@components/SelectCustom';
 import type { OpenTranslationEditorFunction } from '@utils/useTranslationEditor';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 import { useGetEntityDescriptionText, useGetEntityNameText, useSetProjectText } from '@utils/ReadingProjectText';
-import { QUEST_CATEGORIES, QUEST_DESCRIPTION_TEXT_ID, QUEST_NAME_TEXT_ID, QUEST_RESOLUTIONS, StudioQuest } from '@modelEntities/quest';
+import { QUEST_CATEGORIES, QUEST_DESCRIPTION_TEXT_ID, QUEST_NAME_TEXT_ID, /* QUEST_RESOLUTIONS, */ StudioQuest } from '@modelEntities/quest';
 
 const questCategoryEntries = (t: TFunction<'database_quests'>) => QUEST_CATEGORIES.map((category) => ({ value: category, label: t(category) }));
 
-const questResolutionEntries = (t: TFunction<'database_quests'>) =>
-  QUEST_RESOLUTIONS.map((resolution) => ({ value: resolution, label: t(resolution) }));
+// const questResolutionEntries = (t: TFunction<'database_quests'>) =>
+//   QUEST_RESOLUTIONS.map((resolution) => ({ value: resolution, label: t(resolution) }));
 
 type QuestFrameEditorProps = {
   quest: StudioQuest;
@@ -25,7 +25,7 @@ export const QuestFrameEditor = ({ quest, openTranslationEditor }: QuestFrameEdi
   const getQuestDescription = useGetEntityDescriptionText();
   const setText = useSetProjectText();
   const categoryOptions = useMemo(() => questCategoryEntries(t), [t]);
-  const resolutionOptions = useMemo(() => questResolutionEntries(t), [t]);
+  // const resolutionOptions = useMemo(() => questResolutionEntries(t), [t]);
   const refreshUI = useRefreshUI();
 
   return (

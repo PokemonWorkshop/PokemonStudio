@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import { useProjectQuests } from '@utils/useProjectData';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
-import { QUEST_CATEGORIES, QUEST_DESCRIPTION_TEXT_ID, QUEST_NAME_TEXT_ID, QUEST_RESOLUTIONS, StudioQuestCategory } from '@modelEntities/quest';
+import { QUEST_CATEGORIES, QUEST_DESCRIPTION_TEXT_ID, QUEST_NAME_TEXT_ID, /* QUEST_RESOLUTIONS, */ StudioQuestCategory } from '@modelEntities/quest';
 import { useSetProjectText } from '@utils/ReadingProjectText';
 import { findFirstAvailableId } from '@utils/ModelUtils';
 import { DbSymbol } from '@modelEntities/dbSymbol';
@@ -16,8 +16,8 @@ import { createQuest } from '@utils/entityCreation';
 
 const questCategoryEntries = (t: TFunction<'database_quests'>) => QUEST_CATEGORIES.map((category) => ({ value: category, label: t(category) }));
 
-const questResolutionEntries = (t: TFunction<'database_quests'>) =>
-  QUEST_RESOLUTIONS.map((resolution) => ({ value: resolution, label: t(resolution) }));
+// const questResolutionEntries = (t: TFunction<'database_quests'>) =>
+//   QUEST_RESOLUTIONS.map((resolution) => ({ value: resolution, label: t(resolution) }));
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -35,7 +35,7 @@ export const QuestNewEditor = ({ onClose }: QuestNewEditorProps) => {
   const { t } = useTranslation('database_quests');
   const setText = useSetProjectText();
   const categoryOptions = useMemo(() => questCategoryEntries(t), [t]);
-  const resolutionOptions = useMemo(() => questResolutionEntries(t), [t]);
+  // const resolutionOptions = useMemo(() => questResolutionEntries(t), [t]);
   const [name, setName] = useState(''); // We can't use a ref because of the button behavior
   const [category, setCategory] = useState<StudioQuestCategory>('primary');
   const descriptionRef = useRef<HTMLTextAreaElement>(null);

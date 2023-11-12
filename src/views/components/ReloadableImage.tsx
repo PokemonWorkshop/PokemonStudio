@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ImgHTMLAttributes } from 'react';
 
 /** With this function, react can reload an image when the content of a file change,
  * see https://stackoverflow.com/questions/47922687/force-react-to-reload-an-image-file
@@ -8,7 +8,7 @@ function img2URL(path: string): string {
   return `file://${path}?${Date.now()}`;
 }
 
-interface ReloadableImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+interface ReloadableImageProps extends ImgHTMLAttributes<HTMLImageElement> {
   src: string;
 }
 

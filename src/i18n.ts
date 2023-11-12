@@ -1,4 +1,4 @@
-import i18n from 'i18next';
+import { use } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
 import LanguageDetector from 'i18next-browser-languagedetector';
@@ -8,13 +8,12 @@ import translationES from '../assets/i18n/es';
 import translationFR from '../assets/i18n/fr';
 import translationIT from '../assets/i18n/it';
 import translationPT from '../assets/i18n/pt';
-import translationDE from '../assets/i18n/de';
+// import translationDE from '../assets/i18n/de';
 // import translationXX from '../assets/i18n/xx';
 
-i18n
-  // detect user language
-  // learn more: https://github.com/i18next/i18next-browser-languageDetector
-  .use(LanguageDetector)
+// detect user language
+// learn more: https://github.com/i18next/i18next-browser-languageDetector
+const i18n = use(LanguageDetector)
   // pass the i18n instance to react-i18next.
   .use(initReactI18next)
   // init i18next

@@ -163,7 +163,7 @@ export const MapImportList = ({ files, setFiles }: MapImportListType) => {
                         <div className="filename">
                           <span>{file.filename}</span>
                           {hasError && (
-                            <span className="icon" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(file.error!, 'top-begin')}>
+                            <span className="icon" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(file.error || '', 'top-begin')}>
                               <ErrorIcon />
                             </span>
                           )}

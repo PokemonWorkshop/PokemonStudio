@@ -43,7 +43,7 @@ export const useProjectSave = () => {
       case 'save_data':
         if (state.savingData.map.size === 0) return setStateSave({ state: 'save_configs' });
         return window.api.saveProjectData(
-          { path: state.projectPath!, data: state.savingData.getSavingData(state.projectData) },
+          { path: state.projectPath || '', data: state.savingData.getSavingData(state.projectData) },
           () => setStateSave({ state: 'save_configs' }),
           ({ errorMessage }) => {
             setStateSave({ state: 'done' });
@@ -53,7 +53,7 @@ export const useProjectSave = () => {
       case 'save_configs':
         if (state.savingConfig.map.size === 0) return setStateSave({ state: 'save_texts' });
         return window.api.saveProjectConfigs(
-          { path: state.projectPath!, configs: state.savingConfig.getSavingConfig(state.projectConfig) },
+          { path: state.projectPath || '', configs: state.savingConfig.getSavingConfig(state.projectConfig) },
           () => setStateSave({ state: 'save_texts' }),
           ({ errorMessage }) => {
             setStateSave({ state: 'done' });
@@ -63,7 +63,7 @@ export const useProjectSave = () => {
       case 'save_texts': {
         if (state.savingText.map.size === 0) return setStateSave({ state: 'save_text_infos' });
         return window.api.saveProjectTexts(
-          { path: state.projectPath!, texts: state.savingText.getSavingText(state.projectText) },
+          { path: state.projectPath || '', texts: state.savingText.getSavingText(state.projectText) },
           () => setStateSave({ state: 'save_text_infos' }),
           ({ errorMessage }) => {
             setStateSave({ state: 'done' });
@@ -74,7 +74,7 @@ export const useProjectSave = () => {
       case 'save_text_infos':
         if (!state.savingTextInfos) return setStateSave({ state: 'save_map_info' });
         return window.api.saveTextInfos(
-          { projectPath: state.projectPath!, textInfos: JSON.stringify(state.textInfos, null, 2) },
+          { projectPath: state.projectPath || '', textInfos: JSON.stringify(state.textInfos, null, 2) },
           () => setStateSave({ state: 'save_map_info' }),
           ({ errorMessage }) => {
             setStateSave({ state: 'done' });
@@ -84,7 +84,7 @@ export const useProjectSave = () => {
       case 'save_map_info':
         if (!state.savingMapInfo) return setStateSave({ state: 'update_project_list' });
         return window.api.saveMapInfo(
-          { projectPath: state.projectPath!, mapInfo: JSON.stringify(state.mapInfo, null, 2) },
+          { projectPath: state.projectPath || '', mapInfo: JSON.stringify(state.mapInfo, null, 2) },
           () => setStateSave({ state: 'update_project_list' }),
           ({ errorMessage }) => {
             setStateSave({ state: 'done' });
@@ -94,7 +94,7 @@ export const useProjectSave = () => {
       case 'update_studio_file':
         if (!state.savingProjectStudio) return setStateSave({ state: 'update_project_list' });
         return window.api.projectStudioFile(
-          { path: state.projectPath!, action: 'UPDATE', data: JSON.stringify(state.projectStudio, null, 2) },
+          { path: state.projectPath || '', action: 'UPDATE', data: JSON.stringify(state.projectStudio, null, 2) },
           () => setStateSave({ state: 'update_project_list' }),
           ({ errorMessage }) => {
             setStateSave({ state: 'done' });

@@ -14,8 +14,8 @@ export type Language = { index: number; value: string };
 export const LanguageContext = createContext({
   language: { value: 'en', index: 0 },
   positionLanguage: 1,
-  setLanguage: (value: Language) => {},
-  setPositionLanguage: (value: number) => {},
+  setLanguage: (_value: Language) => {},
+  setPositionLanguage: (_value: number) => {},
 });
 
 export const TranslationPage = () => {

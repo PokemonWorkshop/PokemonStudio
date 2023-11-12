@@ -14,7 +14,7 @@ import {
 } from 'react-beautiful-dnd';
 import { RenderPokemon } from './RenderPokemon';
 import { AutoSizer, List } from 'react-virtualized';
-import ReactDOM from 'react-dom';
+import { findDOMNode } from 'react-dom';
 import { StudioDex } from '@modelEntities/dex';
 import { DexDialogsRef } from '../editors/DexEditorOverlay';
 import { cloneEntity } from '@utils/cloneEntity';
@@ -103,7 +103,7 @@ export const DexPokemonListTable = ({ dex, dialogsRef, setCreatureIndex }: DexPo
                       // So we use the `ReactDOM.findDOMNode(ref)` escape hatch to get the ref
                       if (ref) {
                         // eslint-disable-next-line react/no-find-dom-node
-                        const whatHasMyLifeComeTo = ReactDOM.findDOMNode(ref);
+                        const whatHasMyLifeComeTo = findDOMNode(ref);
                         if (whatHasMyLifeComeTo instanceof HTMLElement) {
                           droppableProvided.innerRef(whatHasMyLifeComeTo);
                         }

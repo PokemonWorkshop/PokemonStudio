@@ -71,7 +71,7 @@ export const useMapImportProcessor = () => {
       copyTmxFiles: ({ mapsToImport, tiledFilesSrcPath }, setState) => {
         loaderRef.current.setProgress(2, 3, t('copy_tiled_files'));
         return window.api.copyTiledFiles(
-          { projectPath: globalState.projectPath!, tiledMaps: JSON.stringify(mapsToImport), tiledSrcPath: tiledFilesSrcPath },
+          { projectPath: globalState.projectPath || '', tiledMaps: JSON.stringify(mapsToImport), tiledSrcPath: tiledFilesSrcPath },
           ({ tiledMaps }) => {
             setState({ state: 'createNewMap', mapsToImport: JSON.parse(tiledMaps) });
           },

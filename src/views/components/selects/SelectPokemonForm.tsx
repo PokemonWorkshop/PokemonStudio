@@ -26,7 +26,6 @@ export const SelectPokemonForm = ({ dbSymbol, form, onChange, noLabel, breakpoin
     if (undefValueOption) return [{ value: '__undef__', label: undefValueOption }, ...formOptions];
     return formOptions;
   }, [dbSymbol, undefValueOption, form, state]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const optionals = useMemo(() => ({ deletedOption: t('form_deleted') }), []);
 
   if (noLabel) return <StudioDropDown value={form.toString()} options={options} onChange={onChange} optionals={optionals} />;

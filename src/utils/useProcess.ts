@@ -44,4 +44,4 @@ export type SpecialStateProcessors<T extends SpecialState> = {
 };
 
 export const DEFAULT_PROCESS_STATE = { state: 'done' } as const;
-export const PROCESS_DONE_STATE = { done: (state: typeof DEFAULT_PROCESS_STATE) => () => {} };
+export const PROCESS_DONE_STATE = { done: (_state: typeof DEFAULT_PROCESS_STATE) => () => {} };
