@@ -17,7 +17,7 @@ const saveProjectData = async (payload: SaveProjectDataInput) => {
 
   // Process all the map that changed
   await processSavedMaps(
-    projectDataPath,
+    projectDataPath.replaceAll('\\', '/'),
     payload.data.filter(({ savingPath, savingAction }) => savingPath.startsWith('maps/') && savingAction !== 'DELETE').map(({ data }) => data || '{}')
   );
 
