@@ -4,10 +4,6 @@ description: 'Package Studio into executable files'
 runs:
   using: composite
   steps:
-    - name: Package Studio
-      shell: bash
-      run: npm run package
-
     - name: Make Studio executable
       shell: bash
       run: |
