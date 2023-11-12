@@ -1,1 +1,1 @@
-export * from './NavigationBarItem';
+export { NavigationBarItem } from './NavigationBarItem';

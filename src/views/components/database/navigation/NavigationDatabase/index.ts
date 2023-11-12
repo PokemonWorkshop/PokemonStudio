@@ -1,1 +1,1 @@
-export * from './NavigationDatabase';
+export { NavigationDatabase } from './NavigationDatabase';

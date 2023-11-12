@@ -79,7 +79,7 @@ interface IconProps {
  * @param icon the icon name
  * @param size the size of the icon
  */
-const BaseIcon = ({ color, icon, size, disabled }: IconProps) => {
+export const BaseIcon = ({ color, icon, size, disabled }: IconProps) => {
   const Renderer = iconNameToIcon[icon];
 
   return (
@@ -88,5 +88,3 @@ const BaseIcon = ({ color, icon, size, disabled }: IconProps) => {
     </SvgContainer>
   );
 };
-
-export { BaseIcon };

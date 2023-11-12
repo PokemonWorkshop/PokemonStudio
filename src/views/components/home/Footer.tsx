@@ -15,7 +15,7 @@ const LinkContainer = styled.div`
   ${({ theme }) => theme.fonts.normalMedium}
 `;
 
-const Footer = () => {
+export const Footer = () => {
   const { t } = useTranslation(['homepage']);
 
   return (
@@ -29,5 +29,3 @@ const Footer = () => {
     </FooterContainer>
   );
 };
-
-export { Footer };
