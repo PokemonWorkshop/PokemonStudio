@@ -64,6 +64,7 @@ const buildAnimatedTilesRecord = (tiledFolder: string, tilesets: string[]) =>
       tilesByTileset[name] = {
         animatedTiles: tiles.animatedTiles,
         assetSourceInTileset: tiles.assetSource.inTileset,
+        transparency: tiles.assetSource.transparency || null,
       };
     }
     return tilesByTileset;
