@@ -60,7 +60,7 @@ const buildAnimatedTilesRecord = (tiledFolder: string, tilesets: string[]) =>
     const name = tilesetFilename.replace(tiledFolder, '').slice(1);
     const tiles = getTilesetImageAndAnimatedTiles(tilesetFilename);
 
-    if (!(tiles instanceof Error) && tiles.animatedTiles.length > 0) {
+    if (!(tiles instanceof Error)) {
       tilesByTileset[name] = {
         animatedTiles: tiles.animatedTiles,
         assetSourceInTileset: tiles.assetSource.inTileset,
