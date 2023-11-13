@@ -1,7 +1,6 @@
 import { ProjectData } from '@src/GlobalStateProvider';
 
-import { useGetEntityNameTextUsingTextId } from './ReadingProjectText';
-import { useGetEntityNameText } from '@utils/ReadingProjectText';
+import { useGetEntityNameText, useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
 import { useProjectDataReadonly } from '@utils/useProjectData';
 import { useMapInfo } from '@utils/useMapInfo';
 import { StudioMapInfoMap, StudioMapInfoFolder } from '@modelEntities/mapInfo';
@@ -20,9 +19,12 @@ export const getSelectedMapDbSymbol = (maps: ProjectData['maps'], mapDbSymbols: 
 };
 
 export const useMapBreadcrumb = (mapDbSymbol: string) => {
-  const { mapInfoValues: mapInfo } = useMapInfo();
+  const { mapInfo } = useMapInfo();
 
-  const pathArr = mapInfo.map((item) => getMapPathArr(item, mapDbSymbol)).find((pathArr) => pathArr.length > 0) || [];
+  const pathArr =
+    Object.values(mapInfo)
+      .map((item) => getMapPathArr(item, mapDbSymbol))
+      .find((pathArr) => pathArr.length > 0) || [];
 
   const { projectDataValues: maps } = useProjectDataReadonly('maps', 'map');
   const getFolderMapName = useGetEntityNameTextUsingTextId();
@@ -55,9 +57,9 @@ export const useMapBreadcrumb = (mapDbSymbol: string) => {
 };
 
 const getMapPathArr = (object: StudioMapInfoMap | StudioMapInfoFolder, search: string): MapPath[] => {
-  const klass = object.klass || 'root';
-  if (object.klass == 'MapInfoMap') {
-    if (object.mapDbSymbol === search) return [{ klass, selected: object.mapDbSymbol }];
+  const klass = object.data.klass || 'root';
+  if (object.data.klass == 'MapInfoMap') {
+    if (object.data.mapDbSymbol === search) return [{ klass, selected: object.data.mapDbSymbol }];
   }
 
   if (object.children || Array.isArray(object)) {
@@ -65,8 +67,9 @@ const getMapPathArr = (object: StudioMapInfoMap | StudioMapInfoFolder, search: s
     for (const child of children) {
       const result = getMapPathArr(child, search);
       if (result.length > 0) {
-        if (object.klass == 'MapInfoFolder') result.unshift({ klass, selected: object.textId.toString() });
-        if (object.klass == 'MapInfoMap') result.unshift({ klass, selected: object.mapDbSymbol });
+        const data = object.data;
+        if (data.klass == 'MapInfoFolder') result.unshift({ klass, selected: data.textId.toString() });
+        if (data.klass == 'MapInfoMap') result.unshift({ klass, selected: data.mapDbSymbol });
         return result;
       }
     }

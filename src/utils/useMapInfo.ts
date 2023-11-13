@@ -11,26 +11,26 @@ import { StudioMapInfo } from '@modelEntities/mapInfo';
  */
 export const useMapInfo = () => {
   const [state, setState] = useGlobalState();
-  const mapInfoValues = state.mapInfo;
+  const mapInfo = state.mapInfo;
 
-  const setMapInfoValues = (newMapInfoValues: StudioMapInfo[]) => {
-    if (JSON.stringify(newMapInfoValues) !== JSON.stringify(mapInfoValues)) {
+  const setMapInfo = (newMapInfo: StudioMapInfo) => {
+    if (JSON.stringify(newMapInfo) !== JSON.stringify(mapInfo)) {
       setState((currentState) => ({
         ...currentState,
-        mapInfo: newMapInfoValues,
+        mapInfo: newMapInfo,
         savingMapInfo: true,
       }));
     } else {
       setState((currentState) => ({
         ...currentState,
-        mapInfo: newMapInfoValues,
+        mapInfo: newMapInfo,
       }));
     }
   };
 
   return {
-    mapInfoValues,
-    setMapInfoValues,
+    mapInfo,
+    setMapInfo,
     state,
   };
 };
@@ -47,7 +47,7 @@ export const useMapInfoReadonly = () => {
   const [state] = useGlobalState();
 
   return {
-    mapInfoValues: state.mapInfo,
+    mapInfo: state.mapInfo,
     state,
   };
 };

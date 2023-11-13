@@ -26,8 +26,8 @@ import { useNavigate } from 'react-router-dom';
 import { AUDIO_EXT } from '@components/inputs/AudioInput';
 import { cloneEntity } from '@utils/cloneEntity';
 import { useMapInfo } from '@utils/useMapInfo';
-import { StudioMapInfo, StudioMapInfoMap } from '@modelEntities/mapInfo';
-import { mapInfoNewMapWithParent } from '@utils/MapInfoUtils';
+import { StudioMapInfoMap, StudioMapInfoValue } from '@modelEntities/mapInfo';
+import { addNewMapInfo, mapInfoNewMapWithParent } from '@utils/MapInfoUtils';
 import { EditorChildWithSubEditorContainer, SubEditorContainer, SubEditorSeparator } from '@components/editor/EditorContainer';
 import { MapImportEditorTitle, MapImportOverlay } from './MapImport/MapImportOverlay';
 import { useDialogsRef } from '@utils/useDialogsRef';
@@ -42,12 +42,12 @@ const ButtonContainer = styled.div`
 
 type MapNewEditorProps = {
   closeDialog: () => void;
-  mapInfoParent?: StudioMapInfo;
+  mapInfoParent?: StudioMapInfoValue;
 };
 
 export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>(({ closeDialog, mapInfoParent }, ref) => {
   const { projectDataValues: maps, setProjectDataValues: setMap, state } = useProjectMaps();
-  const { mapInfoValues: mapInfoValues, setMapInfoValues: setMapInfo } = useMapInfo();
+  const { mapInfo, setMapInfo } = useMapInfo();
   const updateMapModified = useUpdateMapModified();
   const { t } = useTranslation(['database_moves', 'database_maps']);
   const dialogsRef = useDialogsRef<MapImportEditorTitle>();
@@ -67,14 +67,11 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
 
     const newMap = createMap(maps, stepsAverage, tiledFilename, bgm, bgs);
     const dbSymbol = newMap.dbSymbol;
-    const newMapInfoMap = createMapInfo(mapInfoValues, { klass: 'MapInfoMap', mapDbSymbol: dbSymbol }) as StudioMapInfoMap;
+    const newMapInfoMap = createMapInfo(mapInfo, { klass: 'MapInfoMap', mapDbSymbol: dbSymbol }) as StudioMapInfoMap;
     if (mapInfoParent) {
-      const mapInfoCloned = mapInfoNewMapWithParent(mapInfoValues, mapInfoParent.id, newMapInfoMap);
-      setMapInfo(mapInfoCloned);
+      setMapInfo(mapInfoNewMapWithParent(mapInfo, mapInfoParent.id, newMapInfoMap));
     } else {
-      const mapInfoCloned = cloneEntity(mapInfoValues);
-      mapInfoCloned.push(newMapInfoMap);
-      setMapInfo(mapInfoCloned);
+      setMapInfo(addNewMapInfo(mapInfo, newMapInfoMap));
     }
     if (tiledFilename !== '') {
       const mapModifiedUpdated = cloneEntity(state.mapsModified);

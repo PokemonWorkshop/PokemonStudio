@@ -140,7 +140,7 @@ export interface State {
   lastPSDKVersion: PSDKVersion;
   textInfos: StudioTextInfo[];
   textVersion: number;
-  mapInfo: StudioMapInfo[];
+  mapInfo: StudioMapInfo;
   savingLanguage: string[];
   savingTextInfos: boolean;
   savingMapInfo: boolean;
@@ -170,7 +170,7 @@ const initialState = {
   savingConfig: new SavingConfigMap(),
   savingText: new SavingTextMap(),
   textInfos: [] as StudioTextInfo[],
-  mapInfo: [] as StudioMapInfo[],
+  mapInfo: {} as StudioMapInfo,
   savingProjectStudio: false,
   savingLanguage: [] as string[],
   savingTextInfos: false,

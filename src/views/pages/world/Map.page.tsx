@@ -33,7 +33,7 @@ export const MapPage = () => {
       <PageContainerStyle>
         <PageDataConstrainerStyle>
           <DataBlockWrapper>
-            <MapBreadcrumb />
+            {/*<MapBreadcrumb />*/}
             <DatabaseTabsBar
               currentTabIndex={0}
               tabs={[

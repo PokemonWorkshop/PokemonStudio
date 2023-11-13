@@ -20,7 +20,7 @@ type MapDeletionProps = {
 export const MapDeletion = forwardRef<EditorHandlingClose, MapDeletionProps>(({ closeDialog, dbSymbol }, ref) => {
   const { t } = useTranslation('database_maps');
   const { projectDataValues: maps, selectedDataIdentifier: currentDbSymbol, removeProjectDataValue: deleteMap, state } = useProjectMaps();
-  const { mapInfoValues: mapInfo, setMapInfoValues: setMapInfo } = useMapInfo();
+  const { mapInfo, setMapInfo } = useMapInfo();
   const map = maps[dbSymbol || currentDbSymbol];
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const mapName = useMemo(() => (map ? getEntityNameText(map, state) : t('map_deleted')), []);
