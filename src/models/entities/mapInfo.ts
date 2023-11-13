@@ -37,6 +37,4 @@ export type StudioMapInfoValue = z.infer<typeof MAP_INFO_VALUE_VALIDATOR>;
 export const MAP_INFO_VALIDATOR = z.record(z.string(), MAP_INFO_VALUE_VALIDATOR);
 export type StudioMapInfo = z.infer<typeof MAP_INFO_VALIDATOR>;
 
-export const MAP_INFO_DATA_VALIDATOR = z.array(MAP_INFO_VALIDATOR);
-
 export const MAP_INFO_FOLDER_NAME_TEXT_ID = 200004;
