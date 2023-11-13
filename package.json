@@ -91,7 +91,7 @@
     "react-virtualized": "^9.22.5",
     "styled-components": "^5.3.6",
     "ts-marshal": "^0.0.7",
-    "ts-tiled-converter": "^0.0.6",
+    "ts-tiled-converter": "^0.0.7",
     "zod": "^3.22.4"
   },
   "build": {
