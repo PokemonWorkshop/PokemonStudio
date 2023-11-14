@@ -146,7 +146,7 @@ export const MapTreeComponent = () => {
 
   const renderItem = ({ item, depth, onExpand, onCollapse, provided, snapshot }: RenderItemParams) => {
     const isFolder = item.data.klass === 'MapInfoFolder';
-    console.log(item);
+    //console.log(item);
     const countChildren = isFolder ? getCountChildren(tree, item) : undefined;
 
     const handleRename = () => {
@@ -245,7 +245,18 @@ export const MapTreeComponent = () => {
     }*/
 
     // TODO newTree seems to not change index of item, so mapInfo cant be trigger for changes
-    console.log(newTree);
+
+    // update parentId
+    if (destination.parentId !== undefined) {
+      const parent = newTree.items[destination.parentId];
+      // If the index doesn't exist, the item is drop at the end of the list, so it is last children
+      const index = destination.index === undefined ? parent.children.length - 1 : destination.index;
+      const childId = parent.children[index];
+      const treeItem = newTree.items[childId];
+      if (treeItem.data.klass === 'MapInfoMap') {
+        treeItem.data.parentId = Number(destination.parentId);
+      }
+    }
 
     setTree(newTree);
     setMapInfo(newTree.items as unknown as StudioMapInfo);

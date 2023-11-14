@@ -46,7 +46,11 @@ export const MapTreeContextMenu = ({ mapInfoValue, isDeleted, enableRename, dial
     const mapToDuplicate = maps[mapInfoValue.data.mapDbSymbol];
     const newMap = duplicateMap(maps, mapToDuplicate);
     const dbSymbol = newMap.dbSymbol;
-    const newMapInfoMap = createMapInfo(mapInfo, { klass: 'MapInfoMap', mapDbSymbol: dbSymbol }) as StudioMapInfoMap;
+    const newMapInfoMap = createMapInfo(mapInfo, {
+      klass: 'MapInfoMap',
+      mapDbSymbol: dbSymbol,
+      parentId: mapInfoValue.data.parentId,
+    }) as StudioMapInfoMap;
     const newMapInfo = mapInfoDuplicateMap(mapInfo, mapInfoValue.data.mapDbSymbol, newMapInfoMap);
     setText(MAP_NAME_TEXT_ID, newMap.id, t('map_copy_name', { name: getName(mapToDuplicate) }));
     setText(MAP_DESCRIPTION_TEXT_ID, newMap.id, getDescription(mapToDuplicate));

@@ -21,6 +21,7 @@ export const MAP_INFO_MAP_VALIDATOR = MAP_INFO_BASE_VALIDATOR.extend({
   data: z.object({
     klass: z.literal('MapInfoMap'),
     mapDbSymbol: DB_SYMBOL_VALIDATOR,
+    parentId: POSITIVE_OR_ZERO_INT,
   }),
 });
 export type StudioMapInfoMap = z.infer<typeof MAP_INFO_MAP_VALIDATOR>;

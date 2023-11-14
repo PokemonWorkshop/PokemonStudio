@@ -164,7 +164,10 @@ const RMXP2StudioMapsSync = async (payload: RMXP2StudioMapsSyncInput) => {
         sha1: '',
         tiledFilename: '',
       } as StudioMap;
-      studioMapInfoData = addNewMapInfo(studioMapInfoData, createMapInfo(studioMapInfoData, { klass: 'MapInfoMap', mapDbSymbol: newMap.dbSymbol }));
+      studioMapInfoData = addNewMapInfo(
+        studioMapInfoData,
+        createMapInfo(studioMapInfoData, { klass: 'MapInfoMap', mapDbSymbol: newMap.dbSymbol, parentId: 0 })
+      );
       fsPromise.writeFile(path.join(payload.projectPath, 'Data/Studio/maps', `${newMap.dbSymbol}.json`), JSON.stringify(newMap, null, 2));
       addLineCSV(new Array(mapNameColumnLength).fill(rmxpMap.name), rmxpMap.id + 1, 0, mapNames);
       addLineCSV(new Array(mapDescrColumnLength).fill(''), rmxpMap.id + 1, 0, mapDescriptions);

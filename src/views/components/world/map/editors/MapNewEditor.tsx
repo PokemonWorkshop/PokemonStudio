@@ -67,10 +67,11 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
 
     const newMap = createMap(maps, stepsAverage, tiledFilename, bgm, bgs);
     const dbSymbol = newMap.dbSymbol;
-    const newMapInfoMap = createMapInfo(mapInfo, { klass: 'MapInfoMap', mapDbSymbol: dbSymbol }) as StudioMapInfoMap;
     if (mapInfoParent) {
+      const newMapInfoMap = createMapInfo(mapInfo, { klass: 'MapInfoMap', mapDbSymbol: dbSymbol, parentId: mapInfoParent.id }) as StudioMapInfoMap;
       setMapInfo(mapInfoNewMapWithParent(mapInfo, mapInfoParent.id, newMapInfoMap));
     } else {
+      const newMapInfoMap = createMapInfo(mapInfo, { klass: 'MapInfoMap', mapDbSymbol: dbSymbol, parentId: 0 }) as StudioMapInfoMap;
       setMapInfo(addNewMapInfo(mapInfo, newMapInfoMap));
     }
     if (tiledFilename !== '') {

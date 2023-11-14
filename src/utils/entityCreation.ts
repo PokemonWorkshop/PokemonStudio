@@ -26,7 +26,7 @@ import { findFirstAvailableId, findFirstAvailableTextId } from './ModelUtils';
 import { padStr } from './PadStr';
 import { StudioTextInfo } from '@modelEntities/textInfo';
 import { StudioMap } from '@modelEntities/map';
-import { StudioMapInfo } from '@modelEntities/mapInfo';
+import { StudioMapInfo, StudioMapInfoMap } from '@modelEntities/mapInfo';
 import { mapInfoFindFirstAvailableId, mapInfoFindFirstAvailableTextId } from './MapInfoUtils';
 
 /**
@@ -503,7 +503,7 @@ export const duplicateMap = (allMaps: ProjectData['maps'], mapToDuplicate: Studi
   };
 };
 
-export const createMapInfo = (mapInfo: StudioMapInfo, data: { klass: 'MapInfoMap'; mapDbSymbol: DbSymbol } | { klass: 'MapInfoFolder' }) => {
+export const createMapInfo = (mapInfo: StudioMapInfo, data: StudioMapInfoMap['data'] | { klass: 'MapInfoFolder' }) => {
   const id = mapInfoFindFirstAvailableId(mapInfo);
   const defaultMapInfo = {
     id,

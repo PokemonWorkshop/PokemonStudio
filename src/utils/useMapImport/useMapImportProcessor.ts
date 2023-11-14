@@ -95,7 +95,7 @@ export const useMapImportProcessor = () => {
           newMap.sha1 = mapToImport.sha1 as Sha1;
           newMap.tileMetadata = mapToImport.tileMetadata;
           const dbSymbol = newMap.dbSymbol;
-          const newMapInfoMap = createMapInfo(mapInfo, { klass: 'MapInfoMap', mapDbSymbol: dbSymbol }) as StudioMapInfoMap;
+          const newMapInfoMap = createMapInfo(mapInfo, { klass: 'MapInfoMap', mapDbSymbol: dbSymbol, parentId: 0 }) as StudioMapInfoMap;
           const newMapInfo = addNewMapInfo(mapInfo, newMapInfoMap);
           setText(MAP_NAME_TEXT_ID, newMap.id, mapToImport.mapName);
           setText(MAP_DESCRIPTION_TEXT_ID, newMap.id, '');

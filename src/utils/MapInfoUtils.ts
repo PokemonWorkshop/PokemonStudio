@@ -2,11 +2,6 @@ import { DbSymbol } from '@modelEntities/dbSymbol';
 import { StudioMapInfo, StudioMapInfoFolder, StudioMapInfoMap, StudioMapInfoValue } from '@modelEntities/mapInfo';
 import { cloneEntity } from './cloneEntity';
 
-const findMapInfoMap = (mapInfo: StudioMapInfo, mapDbSymbol: DbSymbol) => {
-  const values = Object.values(mapInfo);
-  return values.find((mi) => mi.data.klass === 'MapInfoMap' && mi.data.mapDbSymbol === mapDbSymbol);
-};
-
 const removeMapInfoChildren = (mapInfo: StudioMapInfo, id: number) => {
   const values = Object.values(mapInfo);
   const mapInfoValue = values.find((mi) => mi.children.includes(id));
@@ -28,6 +23,12 @@ const getMapInfoChildrenIdRec = (mapInfo: StudioMapInfo, mapInfoValue: StudioMap
 const getMapInfoChildrenId = (mapInfo: StudioMapInfo, mapInfoValue: StudioMapInfoValue): number[] => {
   if (mapInfoValue.children.length === 0) return [];
   return [...mapInfoValue.children, ...getMapInfoChildrenIdRec(mapInfo, mapInfoValue)];
+};
+
+export const findMapInfoMap = (mapInfo: StudioMapInfo, mapDbSymbol: DbSymbol): StudioMapInfoMap | undefined => {
+  const values = Object.values(mapInfo);
+  const mapInfoMap = values.find((mi) => mi.data.klass === 'MapInfoMap' && mi.data.mapDbSymbol === mapDbSymbol);
+  return mapInfoMap as StudioMapInfoMap | undefined;
 };
 
 export const mapInfoFindFirstAvailableId = (mapInfo: StudioMapInfo): number => {
@@ -134,6 +135,26 @@ export const addNewMapInfo = (mapInfo: StudioMapInfo, newMapInfo: StudioMapInfoV
   };
 };
 
+export const convertMapInfoToTreeItem = (mapInfo: StudioMapInfo) => {
+  return {
+    rootId: 0,
+    items: cloneEntity(mapInfo),
+  };
+};
+
+const getMapInfoParentIdRec = (mapInfo: StudioMapInfo, id: number): number[] => {
+  const mapInfoValue = mapInfo[id];
+  if (mapInfoValue.data.klass !== 'MapInfoMap') return [];
+
+  const parentId = mapInfoValue.data.parentId;
+  return [mapInfo[parentId].id, ...getMapInfoParentIdRec(mapInfo, parentId)];
+};
+
+export const getMapInfoParentId = (mapInfo: StudioMapInfo, mapInfoMap: StudioMapInfoMap) => {
+  const parentId = mapInfoMap.data.parentId;
+  return [parentId, ...getMapInfoParentIdRec(mapInfo, parentId)].reverse();
+};
+
 /*export const buildMapInfo = (items: TreeItem<StudioMapInfo>[] & StudioMapInfo[]): StudioMapInfo[] => {
   return items.map((item) => {
     if (item.klass === 'MapInfoFolder') {
@@ -165,13 +186,6 @@ const buildMapInfoRec = (mapInfoMaps: TreeItem<StudioMapInfoMap>[] & StudioMapIn
     children: buildMapInfoRec(mapInfo.children),
   }));
 };*/
-
-export const convertMapInfoToTreeItem = (mapInfo: StudioMapInfo) => {
-  return {
-    rootId: 0,
-    items: cloneEntity(mapInfo),
-  };
-};
 
 /*export const convertTreeToMapInfo = (tree: TreeData): (StudioMapInfoMap | StudioMapInfoFolder)[] => {
   const studioMaps: (StudioMapInfoMap | StudioMapInfoFolder)[] = [];
