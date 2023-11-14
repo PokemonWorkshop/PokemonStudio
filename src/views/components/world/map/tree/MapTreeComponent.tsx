@@ -28,7 +28,7 @@ import { useDialogsRef } from '@utils/useDialogsRef';
 import { MapTreeContextMenu } from './MapTreeContextMenu';
 import { MapListContainer, TreeItemContainer } from './style/MapTreeComponent';
 import { useMapInfo } from '@utils/useMapInfo';
-import { convertMapInfoToTreeItem } from '@utils/MapInfoUtils';
+import { convertMapInfoToTreeItem, getMapInfoParentId } from '@utils/MapInfoUtils';
 
 export const getCountChildren = (tree: TreeData, item: TreeItem): number => {
   let count = 0;
@@ -47,6 +47,11 @@ const computeMaxWidth = (depth: number, hovered = false) => {
     return 130 - indentationWidth * depth;
   }
   return 154 - indentationWidth * depth;
+};
+
+const getDepth = (tree: TreeData, item: TreeItem): number => {
+  const parentIds = getMapInfoParentId(tree.items as unknown as StudioMapInfo, item as unknown as StudioMapInfoValue);
+  return parentIds.length + 1;
 };
 
 export const MapTreeComponent = () => {
@@ -227,33 +232,27 @@ export const MapTreeComponent = () => {
   };
 
   const onDragEnd = (source: TreeSourcePosition, destination?: TreeDestinationPosition) => {
-    if (!destination || (tree.items[destination.parentId].data?.isChildren && tree.items[destination.parentId].data?.klass === 'MapInfoMap')) {
-      return;
-    }
+    if (!destination) return;
+
+    // We can only drop a folder in the root
+    const currentItem = tree.items[tree.items[source.parentId].children[source.index]];
+    if (currentItem.data?.klass === 'MapInfoFolder' && destination.parentId !== 0) return;
+
+    // We can only drop a map if the depth < 5
+    const depth = getDepth(tree, tree.items[destination.parentId]);
+    const sourceChildrenCount = getCountChildren(tree, currentItem);
+    if (depth + sourceChildrenCount >= 5) return;
 
     const newTree = moveItemOnTree(tree, source, destination);
-    /*if (destination.parentId) {
-      const becameChild = newTree.items[destination.parentId].children;
 
-      for (const iterator of becameChild) {
-        newTree.items[iterator].data.isChildren = true;
-      }
-      // Make child in item, for easier conversion
-      newTree.items[destination.parentId].data.children = mapInfo.filter((map) => becameChild.find((c) => map.id === Number(c)));
-    } else if (destination.index && source.parentId) {
-      newTree.items[source.parentId].data.isChildren = false;
-    }*/
-
-    // TODO newTree seems to not change index of item, so mapInfo cant be trigger for changes
-
-    // update parentId
+    // Update parentId in the item dropped
     if (destination.parentId !== undefined) {
       const parent = newTree.items[destination.parentId];
       // If the index doesn't exist, the item is drop at the end of the list, so it is last children
       const index = destination.index === undefined ? parent.children.length - 1 : destination.index;
       const childId = parent.children[index];
       const treeItem = newTree.items[childId];
-      if (treeItem.data.klass === 'MapInfoMap') {
+      if (treeItem.data?.klass === 'MapInfoMap') {
         treeItem.data.parentId = Number(destination.parentId);
       }
     }
@@ -287,14 +286,6 @@ export const MapTreeComponent = () => {
           />
         )}
       <MapEditorOverlay mapInfoValue={mapInfoSelected} ref={dialogsRef} />
-      {/*<button
-        onClick={() => {
-          console.log(mapInfos, tree);
-          setMapInfo(convertTreeToMapInfo(tree));
-        }}
-      >
-        Convertisser moi
-      </button>*/}
     </MapListContainer>
   );
 };

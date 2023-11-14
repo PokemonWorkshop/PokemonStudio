@@ -8,6 +8,7 @@ const removeMapInfoChildren = (mapInfo: StudioMapInfo, id: number) => {
   if (!mapInfoValue) return;
 
   mapInfoValue.children = mapInfoValue.children.filter((childId) => childId !== id);
+  mapInfoValue.hasChildren = mapInfoValue.children.length > 0;
 };
 
 const getMapInfoChildrenIdRec = (mapInfo: StudioMapInfo, mapInfoValue: StudioMapInfoValue): number[] => {
@@ -114,7 +115,10 @@ export const mapInfoNewMapWithParent = (mapInfo: StudioMapInfo, parentId: number
   if (!mapInfo[parentId.toString()]) return mapInfo;
 
   const newMapInfo = addNewMapInfo(mapInfo, newMapInfoMap, true);
-  newMapInfo[parentId.toString()].children.push(newMapInfoMap.id);
+  const newMapInfoValue = newMapInfo[parentId.toString()];
+  newMapInfoValue.children.push(newMapInfoMap.id);
+  newMapInfoValue.hasChildren = true;
+
   return newMapInfo;
 };
 
@@ -128,6 +132,7 @@ export const addNewMapInfo = (mapInfo: StudioMapInfo, newMapInfo: StudioMapInfoV
 
   const root = cloneEntity(mapInfo['0']);
   root.children.push(newMapInfo.id);
+  root.hasChildren = true;
   return {
     ...mapInfo,
     ['0']: root,
@@ -143,15 +148,19 @@ export const convertMapInfoToTreeItem = (mapInfo: StudioMapInfo) => {
 };
 
 const getMapInfoParentIdRec = (mapInfo: StudioMapInfo, id: number): number[] => {
-  const mapInfoValue = mapInfo[id];
-  if (mapInfoValue.data.klass !== 'MapInfoMap') return [];
+  const mapInfoValue = mapInfo[id.toString()];
+  if (mapInfoValue.data.klass === 'MapInfoRoot') return [];
+  if (mapInfoValue.data.klass === 'MapInfoFolder') return [0];
 
   const parentId = mapInfoValue.data.parentId;
   return [mapInfo[parentId].id, ...getMapInfoParentIdRec(mapInfo, parentId)];
 };
 
-export const getMapInfoParentId = (mapInfo: StudioMapInfo, mapInfoMap: StudioMapInfoMap) => {
-  const parentId = mapInfoMap.data.parentId;
+export const getMapInfoParentId = (mapInfo: StudioMapInfo, mapInfoValue: StudioMapInfoValue) => {
+  if (mapInfoValue.data.klass === 'MapInfoRoot') return [];
+  if (mapInfoValue.data.klass === 'MapInfoFolder') return [0];
+
+  const parentId = mapInfoValue.data.parentId;
   return [parentId, ...getMapInfoParentIdRec(mapInfo, parentId)].reverse();
 };
 
