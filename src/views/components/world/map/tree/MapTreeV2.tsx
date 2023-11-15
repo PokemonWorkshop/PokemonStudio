@@ -44,10 +44,9 @@ const MapTreeContainer = styled.div<MapTreeContainerProps>`
     display: flex;
     flex-direction: column;
     gap: 4px;
-    padding-right: 3px;
   }
 
-  ${Input} {
+  .research-input {
     height: 35px;
   }
 `;
@@ -63,6 +62,7 @@ export const MapTreeV2 = () => {
         onChange={(event) => setResearch(event.target.value)}
         onClear={() => setResearch('')}
         placeholder={t('map_research')}
+        className="research-input"
       />
       {research !== '' && <MapList research={research} />}
       <div className="tree-scrollbar" onScroll={emitScrollContextMenu}>

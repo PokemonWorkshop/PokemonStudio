@@ -80,6 +80,12 @@ export const TreeItemContainer = styled.div<MapTreeItemWrapperContainerProps>`
 
   .input-map {
     max-width: ${({ maxWidth }) => `${maxWidth}px`};
+    height: 31px;
+  }
+
+  .input-folder {
+    max-width: ${({ maxWidth }) => `${maxWidth}px`};
+    height: 31px;
   }
 
   :hover {
@@ -87,7 +93,7 @@ export const TreeItemContainer = styled.div<MapTreeItemWrapperContainerProps>`
     cursor: auto;
 
     .name {
-        max-width: ${({ maxWidthWhenHover }) => `${maxWidthWhenHover}px`};
+      max-width: ${({ maxWidthWhenHover }) => `${maxWidthWhenHover}px`};
     }
   }
 
@@ -138,16 +144,15 @@ export const TreeItemContainer = styled.div<MapTreeItemWrapperContainerProps>`
     color: ${({ theme }) => theme.colors.primaryBase};
   }
 
-    ${({ theme, disableHover }) =>
-      !disableHover &&
-      `:hover {
+  ${({ theme, disableHover }) =>
+    !disableHover &&
+    `:hover {
         background-color: ${theme.colors.dark20};
 
         .count-children {
           display: none;
         }
       }`}
-  }
 
   .actions {
     display: none;

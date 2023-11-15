@@ -41,12 +41,18 @@ export const getCountChildren = (tree: TreeData, item: TreeItem): number => {
   return count;
 };
 
-const computeMaxWidth = (depth: number, hovered = false) => {
-  const indentationWidth = 22;
+const computeMaxWidth = (depth: number, isFolder = false, hovered = false) => {
+  const indentationWidth = 30;
   if (hovered) {
-    return 130 - indentationWidth * depth;
+    if (isFolder) {
+      return 150 - indentationWidth * depth;
+    }
+    return 145 - indentationWidth * depth;
   }
-  return 154 - indentationWidth * depth;
+  if (isFolder) {
+    return 160 - indentationWidth * depth;
+  }
+  return 185 - indentationWidth * depth;
 };
 
 const getDepth = (tree: TreeData, item: TreeItem): number => {
@@ -56,7 +62,6 @@ const getDepth = (tree: TreeData, item: TreeItem): number => {
 
 export const MapTreeComponent = () => {
   const { mapInfo, setMapInfo } = useMapInfo();
-  // const [items, setItems] = useState(cloneEntity(mapInfos));
   const setText = useSetProjectText();
   const [tree, setTree] = useState<TreeData>(convertMapInfoToTreeItem(mapInfo));
   const { selectedDataIdentifier: currentMap, setSelectedDataIdentifier: setCurrentMap, projectDataValues: maps } = useProjectMaps();
@@ -66,7 +71,6 @@ export const MapTreeComponent = () => {
   const renameRef = useRef<HTMLInputElement>(null);
   const [canRename, setCanRename] = useState<ItemId>();
   const { buildOnClick, renderContextMenu } = useContextMenu();
-  const [isDisabledNavigation, setIsDisabledNavigation] = useState<boolean>(false);
   const [isDeleted, setIsDeleted] = useState<boolean>(false);
 
   const dialogsRef = useDialogsRef<MapEditorAndDeletionKeys>();
@@ -168,59 +172,66 @@ export const MapTreeComponent = () => {
     };
 
     return (
-      <div ref={provided.innerRef} {...provided.draggableProps} key={item.id}>
+      <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} key={item.id}>
         <TreeItemContainer
           isCurrent={!isFolder && item.data?.mapDbSymbol === currentMap}
-          maxWidth={computeMaxWidth(isFolder ? depth + 1 : depth, false)}
-          maxWidthWhenHover={computeMaxWidth(isFolder ? depth + 1 : depth, true)}
+          maxWidth={computeMaxWidth(isFolder ? depth + 1 : depth, isFolder, false)}
+          maxWidthWhenHover={computeMaxWidth(isFolder ? depth + 1 : depth, isFolder, true)}
           hasChildren={!!countChildren}
           disableHover={!!canRename}
           className={currentMap === item.data.mapDbSymbol ? 'map-selected' : 'map'}
           onClick={() => {
-            console.log(item);
+            //console.log(item);
 
-            if (!item.data.mapDbSymbol || isFolder || isDisabledNavigation) return;
+            if (!item.data.mapDbSymbol || isFolder) return;
+            if (item.id !== canRename) {
+              renameRef.current?.blur();
+            }
             setCurrentMap({ map: item.data.mapDbSymbol });
           }}
-          {...provided.dragHandleProps}
+          onContextMenu={(event) => {
+            event.preventDefault();
+            setIdSelected(item.id);
+            // timeout to wait that the id selected has been taken into account
+            setTimeout(() => buildOnClick(event, true));
+          }}
         >
           <div className="title">
             <span>{getIcon(item, onExpand, onCollapse)}</span>
-            <span className="name">
-              {canRename === item.id ? (
-                <Input
-                  ref={renameRef}
-                  defaultValue={getName(item)}
-                  placeholder={getName(item)}
-                  onBlur={handleRename}
-                  onKeyDown={(event) => event.key === 'Enter' && renameRef.current?.blur()}
-                  className={isFolder ? 'input-folder' : 'input-map'}
-                />
-              ) : (
-                getName(item)
-              )}
-            </span>
+            {canRename === item.id ? (
+              <Input
+                ref={renameRef}
+                defaultValue={getName(item)}
+                placeholder={getName(item)}
+                onBlur={handleRename}
+                onKeyDown={(event) => event.key === 'Enter' && renameRef.current?.blur()}
+                className={isFolder ? 'input-folder' : 'input-map'}
+              />
+            ) : (
+              <span className="name">{getName(item)}</span>
+            )}
           </div>
           {isFolder && countChildren !== undefined && <span className="count-children">{countChildren}</span>}
           {!canRename && (
             <div className="actions">
               <span
                 className="icon icon-dot"
-                onClick={(e) => {
+                onClick={(event) => {
                   setIdSelected(item.id);
-                  buildOnClick(e);
+                  // TODO: find a solution to fix glitch graphic issue (the duplicate option may appear briefly for a folder or vice versa)
+                  // timeout doesn't work because the event is already dead when buildOnClick is called
+                  buildOnClick(event);
                 }}
               >
                 <DotIcon />
               </span>
               <span
                 className="icon icon-plus"
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   setMapInfoSelected(mapInfo[item.id]);
                   dialogsRef.current?.openDialog('new');
                 }}
-                onMouseEnter={() => setIsDisabledNavigation(true)}
-                onMouseLeave={() => setIsDisabledNavigation(false)}
               >
                 <PlusIcon />
               </span>
