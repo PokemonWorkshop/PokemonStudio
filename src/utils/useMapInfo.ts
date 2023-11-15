@@ -1,5 +1,5 @@
 import { useGlobalState } from '@src/GlobalStateProvider';
-import { StudioMapInfo } from '@modelEntities/mapInfo';
+import { StudioMapInfo, StudioMapInfoValue } from '@modelEntities/mapInfo';
 
 /**
  * Captain Hook of the Hooks. This hook allow you to manipulate map info data from a specific screen.
@@ -28,9 +28,32 @@ export const useMapInfo = () => {
     }
   };
 
+  const setPartialMapInfo = (newMapInfoValue: StudioMapInfoValue, id: string) => {
+    const currentMapInfoValue = mapInfo[id];
+    if (JSON.stringify(currentMapInfoValue) !== JSON.stringify(newMapInfoValue)) {
+      setState((currentState) => ({
+        ...currentState,
+        mapInfo: {
+          ...mapInfo,
+          [id]: newMapInfoValue,
+        },
+        savingMapInfo: true,
+      }));
+    } else {
+      setState((currentState) => ({
+        ...currentState,
+        mapInfo: {
+          ...mapInfo,
+          [id]: newMapInfoValue,
+        },
+      }));
+    }
+  };
+
   return {
     mapInfo,
     setMapInfo,
+    setPartialMapInfo,
     state,
   };
 };

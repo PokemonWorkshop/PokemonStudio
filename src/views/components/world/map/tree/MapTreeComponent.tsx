@@ -61,7 +61,7 @@ const getDepth = (tree: TreeData, item: TreeItem): number => {
 };
 
 export const MapTreeComponent = () => {
-  const { mapInfo, setMapInfo } = useMapInfo();
+  const { mapInfo, setMapInfo, setPartialMapInfo } = useMapInfo();
   const { selectedDataIdentifier: currentMap, setSelectedDataIdentifier: setCurrentMap, projectDataValues: maps } = useProjectMaps();
   const setText = useSetProjectText();
   const getMapName = useGetEntityNameText();
@@ -93,11 +93,15 @@ export const MapTreeComponent = () => {
   }, [canRename]);
 
   const onExpand = (itemId: ItemId) => {
-    setTree(mutateTree(tree, itemId, { isExpanded: true }));
+    const newTree = mutateTree(tree, itemId, { isExpanded: true });
+    setTree(newTree);
+    setPartialMapInfo(newTree.items[itemId] as unknown as StudioMapInfoValue, itemId.toString());
   };
 
   const onCollapse = (itemId: ItemId) => {
-    setTree(mutateTree(tree, itemId, { isExpanded: false }));
+    const newTree = mutateTree(tree, itemId, { isExpanded: false });
+    setTree(newTree);
+    setPartialMapInfo(newTree.items[itemId] as unknown as StudioMapInfoValue, itemId.toString());
   };
 
   const getIcon = (item: TreeItem, onExpand: (itemId: string) => void, onCollapse: (itemId: string) => void) => {

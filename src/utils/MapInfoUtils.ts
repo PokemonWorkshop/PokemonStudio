@@ -118,6 +118,7 @@ export const mapInfoNewMapWithParent = (mapInfo: StudioMapInfo, parentId: number
   const newMapInfoValue = newMapInfo[parentId.toString()];
   newMapInfoValue.children.push(newMapInfoMap.id);
   newMapInfoValue.hasChildren = true;
+  newMapInfoValue.isExpanded = true;
 
   return newMapInfo;
 };
