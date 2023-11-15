@@ -62,20 +62,18 @@ const getDepth = (tree: TreeData, item: TreeItem): number => {
 
 export const MapTreeComponent = () => {
   const { mapInfo, setMapInfo } = useMapInfo();
-  const setText = useSetProjectText();
-  const [tree, setTree] = useState<TreeData>(convertMapInfoToTreeItem(mapInfo));
   const { selectedDataIdentifier: currentMap, setSelectedDataIdentifier: setCurrentMap, projectDataValues: maps } = useProjectMaps();
+  const setText = useSetProjectText();
   const getMapName = useGetEntityNameText();
   const getFolderName = useGetEntityNameTextUsingTextId();
-  const { t } = useTranslation('database_maps');
-  const renameRef = useRef<HTMLInputElement>(null);
-  const [canRename, setCanRename] = useState<ItemId>();
   const { buildOnClick, renderContextMenu } = useContextMenu();
-  const [isDeleted, setIsDeleted] = useState<boolean>(false);
-
-  const dialogsRef = useDialogsRef<MapEditorAndDeletionKeys>();
+  const { t } = useTranslation('database_maps');
+  const [tree, setTree] = useState<TreeData>(convertMapInfoToTreeItem(mapInfo));
+  const [canRename, setCanRename] = useState<ItemId>();
   const [idSelected, setIdSelected] = useState<ItemId>();
   const [mapInfoSelected, setMapInfoSelected] = useState<StudioMapInfoValue>();
+  const renameRef = useRef<HTMLInputElement>(null);
+  const dialogsRef = useDialogsRef<MapEditorAndDeletionKeys>();
 
   useEffect(() => {
     setTree(convertMapInfoToTreeItem(mapInfo));
@@ -157,6 +155,7 @@ export const MapTreeComponent = () => {
     const isFolder = item.data.klass === 'MapInfoFolder';
     //console.log(item);
     const countChildren = isFolder ? getCountChildren(tree, item) : undefined;
+    const isDeleted = item.data.klass === 'MapInfoMap' && !maps[item.data.mapDbSymbol];
 
     const handleRename = () => {
       if (!renameRef.current) return setCanRename(undefined);
@@ -183,10 +182,12 @@ export const MapTreeComponent = () => {
           onClick={() => {
             //console.log(item);
 
-            if (!item.data.mapDbSymbol || isFolder) return;
             if (item.id !== canRename) {
               renameRef.current?.blur();
             }
+            if (!item.data.mapDbSymbol || isFolder) return;
+            if (isDeleted) return;
+
             setCurrentMap({ map: item.data.mapDbSymbol });
           }}
           onContextMenu={(event) => {
@@ -208,7 +209,7 @@ export const MapTreeComponent = () => {
                 className={isFolder ? 'input-folder' : 'input-map'}
               />
             ) : (
-              <span className="name">{getName(item)}</span>
+              <span className={`name ${isDeleted ? 'error' : ''}`}>{getName(item)}</span>
             )}
           </div>
           {isFolder && countChildren !== undefined && <span className="count-children">{countChildren}</span>}
@@ -225,16 +226,18 @@ export const MapTreeComponent = () => {
               >
                 <DotIcon />
               </span>
-              <span
-                className="icon icon-plus"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setMapInfoSelected(mapInfo[item.id]);
-                  dialogsRef.current?.openDialog('new');
-                }}
-              >
-                <PlusIcon />
-              </span>
+              {!isDeleted && (
+                <span
+                  className="icon icon-plus"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setMapInfoSelected(mapInfo[item.id]);
+                    dialogsRef.current?.openDialog('new');
+                  }}
+                >
+                  <PlusIcon />
+                </span>
+              )}
             </div>
           )}
         </TreeItemContainer>
@@ -289,7 +292,7 @@ export const MapTreeComponent = () => {
         renderContextMenu(
           <MapTreeContextMenu
             mapInfoValue={mapInfoSelected}
-            isDeleted={isDeleted}
+            isDeleted={mapInfoSelected.data.klass === 'MapInfoMap' && !maps[mapInfoSelected.data.mapDbSymbol]}
             enableRename={() => {
               setCanRename(idSelected);
             }}

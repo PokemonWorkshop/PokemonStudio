@@ -78,6 +78,10 @@ export const TreeItemContainer = styled.div<MapTreeItemWrapperContainerProps>`
     max-width: ${({ maxWidth }) => `${maxWidth}px`};
   }
 
+  .error {
+    color: ${({ theme }) => theme.colors.dangerBase};
+  }
+
   .input-map {
     max-width: ${({ maxWidth }) => `${maxWidth}px`};
     height: 31px;
