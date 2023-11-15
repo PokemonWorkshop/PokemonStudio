@@ -15,7 +15,7 @@ import { ReactComponent as LeftIcon } from '@assets/icons/global/left-icon.svg';
 import { ReactComponent as CircleIcon } from '@assets/icons/global/circle.svg';
 import { ReactComponent as PlusIcon } from '@assets/icons/global/plus-icon.svg';
 import { ReactComponent as DotIcon } from '@assets/icons/global/dot.svg';
-import { MAP_INFO_FOLDER_NAME_TEXT_ID, StudioMapInfo, StudioMapInfoValue } from '@modelEntities/mapInfo';
+import { MAP_INFO_FOLDER_NAME_TEXT_ID, StudioMapInfoValue } from '@modelEntities/mapInfo';
 import { useProjectMaps } from '@utils/useProjectData';
 import { useGetEntityNameText, useGetEntityNameTextUsingTextId, useSetProjectText } from '@utils/ReadingProjectText';
 import { DbSymbol } from '@modelEntities/dbSymbol';
@@ -28,37 +28,14 @@ import { useDialogsRef } from '@utils/useDialogsRef';
 import { MapTreeContextMenu } from './MapTreeContextMenu';
 import { MapListContainer, TreeItemContainer } from './style/MapTreeComponent';
 import { useMapInfo } from '@utils/useMapInfo';
-import { convertMapInfoToTreeItem, getMapInfoParentId } from '@utils/MapInfoUtils';
-
-export const getCountChildren = (tree: TreeData, item: TreeItem): number => {
-  let count = 0;
-  item.children.forEach((childId) => {
-    count++;
-    if (tree.items[childId]) {
-      count += getCountChildren(tree, tree.items[childId]);
-    }
-  });
-  return count;
-};
-
-const computeMaxWidth = (depth: number, isFolder = false, hovered = false) => {
-  const indentationWidth = 30;
-  if (hovered) {
-    if (isFolder) {
-      return 150 - indentationWidth * depth;
-    }
-    return 145 - indentationWidth * depth;
-  }
-  if (isFolder) {
-    return 160 - indentationWidth * depth;
-  }
-  return 185 - indentationWidth * depth;
-};
-
-const getDepth = (tree: TreeData, item: TreeItem): number => {
-  const parentIds = getMapInfoParentId(tree.items as unknown as StudioMapInfo, item as unknown as StudioMapInfoValue);
-  return parentIds.length + 1;
-};
+import { convertMapInfoToTree } from '@utils/MapInfoUtils';
+import {
+  getMapTreeCountChildren,
+  getMapTreeDepth,
+  mapTreeComputeMaxWidth,
+  mapTreeConvertItemToMapInfoValue,
+  mapTreeConvertTreeToMapInfo,
+} from '@utils/MapTreeUtils';
 
 export const MapTreeComponent = () => {
   const { mapInfo, setMapInfo, setPartialMapInfo } = useMapInfo();
@@ -68,25 +45,15 @@ export const MapTreeComponent = () => {
   const getFolderName = useGetEntityNameTextUsingTextId();
   const { buildOnClick, renderContextMenu } = useContextMenu();
   const { t } = useTranslation('database_maps');
-  const [tree, setTree] = useState<TreeData>(convertMapInfoToTreeItem(mapInfo));
+  const [tree, setTree] = useState<TreeData>(convertMapInfoToTree(mapInfo));
   const [canRename, setCanRename] = useState<ItemId>();
-  const [idSelected, setIdSelected] = useState<ItemId>();
   const [mapInfoSelected, setMapInfoSelected] = useState<StudioMapInfoValue>();
   const renameRef = useRef<HTMLInputElement>(null);
   const dialogsRef = useDialogsRef<MapEditorAndDeletionKeys>();
 
   useEffect(() => {
-    setTree(convertMapInfoToTreeItem(mapInfo));
+    setTree(convertMapInfoToTree(mapInfo));
   }, [mapInfo]);
-
-  useEffect(() => {
-    if (idSelected === undefined) return;
-
-    const mapInfoSelected = mapInfo[idSelected];
-    if (mapInfoSelected) {
-      setMapInfoSelected(mapInfoSelected);
-    }
-  }, [idSelected]);
 
   useEffect(() => {
     if (canRename) renameRef.current?.focus();
@@ -95,13 +62,13 @@ export const MapTreeComponent = () => {
   const onExpand = (itemId: ItemId) => {
     const newTree = mutateTree(tree, itemId, { isExpanded: true });
     setTree(newTree);
-    setPartialMapInfo(newTree.items[itemId] as unknown as StudioMapInfoValue, itemId.toString());
+    setPartialMapInfo(mapTreeConvertItemToMapInfoValue(newTree.items[itemId]), itemId.toString());
   };
 
   const onCollapse = (itemId: ItemId) => {
     const newTree = mutateTree(tree, itemId, { isExpanded: false });
     setTree(newTree);
-    setPartialMapInfo(newTree.items[itemId] as unknown as StudioMapInfoValue, itemId.toString());
+    setPartialMapInfo(mapTreeConvertItemToMapInfoValue(newTree.items[itemId]), itemId.toString());
   };
 
   const getIcon = (item: TreeItem, onExpand: (itemId: string) => void, onCollapse: (itemId: string) => void) => {
@@ -155,10 +122,9 @@ export const MapTreeComponent = () => {
     return isFolder ? getFolderName({ klass: item.data.klass, textId: item.data.textId }) : mapName(item.data.mapDbSymbol);
   };
 
-  const renderItem = ({ item, depth, onExpand, onCollapse, provided, snapshot }: RenderItemParams) => {
+  const renderItem = ({ item, depth, onExpand, onCollapse, provided }: RenderItemParams) => {
     const isFolder = item.data.klass === 'MapInfoFolder';
-    //console.log(item);
-    const countChildren = isFolder ? getCountChildren(tree, item) : undefined;
+    const countChildren = isFolder ? getMapTreeCountChildren(tree, item) : undefined;
     const isDeleted = item.data.klass === 'MapInfoMap' && !maps[item.data.mapDbSymbol];
 
     const handleRename = () => {
@@ -175,17 +141,15 @@ export const MapTreeComponent = () => {
     };
 
     return (
-      <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} key={item.id}>
+      <div ref={provided.innerRef} {...provided.draggableProps} key={item.id}>
         <TreeItemContainer
           isCurrent={!isFolder && item.data?.mapDbSymbol === currentMap}
-          maxWidth={computeMaxWidth(isFolder ? depth + 1 : depth, isFolder, false)}
-          maxWidthWhenHover={computeMaxWidth(isFolder ? depth + 1 : depth, isFolder, true)}
+          maxWidth={mapTreeComputeMaxWidth(isFolder ? depth + 1 : depth, isFolder, false)}
+          maxWidthWhenHover={mapTreeComputeMaxWidth(isFolder ? depth + 1 : depth, isFolder, true)}
           hasChildren={!!countChildren}
           disableHover={!!canRename}
           className={currentMap === item.data.mapDbSymbol ? 'map-selected' : 'map'}
           onClick={() => {
-            //console.log(item);
-
             if (item.id !== canRename) {
               renameRef.current?.blur();
             }
@@ -196,10 +160,10 @@ export const MapTreeComponent = () => {
           }}
           onContextMenu={(event) => {
             event.preventDefault();
-            setIdSelected(item.id);
-            // timeout to wait that the id selected has been taken into account
-            setTimeout(() => buildOnClick(event, true));
+            setMapInfoSelected(mapInfo[item.id]);
+            buildOnClick(event, true);
           }}
+          {...provided.dragHandleProps}
         >
           <div className="title">
             <span>{getIcon(item, onExpand, onCollapse)}</span>
@@ -222,9 +186,7 @@ export const MapTreeComponent = () => {
               <span
                 className="icon icon-dot"
                 onClick={(event) => {
-                  setIdSelected(item.id);
-                  // TODO: find a solution to fix glitch graphic issue (the duplicate option may appear briefly for a folder or vice versa)
-                  // timeout doesn't work because the event is already dead when buildOnClick is called
+                  setMapInfoSelected(mapInfo[item.id]);
                   buildOnClick(event);
                 }}
               >
@@ -257,8 +219,8 @@ export const MapTreeComponent = () => {
     if (currentItem.data?.klass === 'MapInfoFolder' && destination.parentId !== 0) return;
 
     // We can only drop a map if the depth < 5
-    const depth = getDepth(tree, tree.items[destination.parentId]);
-    const sourceChildrenCount = getCountChildren(tree, currentItem);
+    const depth = getMapTreeDepth(tree, tree.items[destination.parentId]);
+    const sourceChildrenCount = getMapTreeCountChildren(tree, currentItem);
     if (depth + sourceChildrenCount >= 5) return;
 
     const newTree = moveItemOnTree(tree, source, destination);
@@ -273,10 +235,11 @@ export const MapTreeComponent = () => {
       if (treeItem.data?.klass === 'MapInfoMap') {
         treeItem.data.parentId = Number(destination.parentId);
       }
+      parent.isExpanded = true;
     }
 
     setTree(newTree);
-    setMapInfo(newTree.items as unknown as StudioMapInfo);
+    setMapInfo(mapTreeConvertTreeToMapInfo(newTree.items));
   };
 
   return (
@@ -291,15 +254,12 @@ export const MapTreeComponent = () => {
         isDragEnabled
         isNestingEnabled
       />
-      {idSelected &&
-        mapInfoSelected &&
+      {mapInfoSelected &&
         renderContextMenu(
           <MapTreeContextMenu
             mapInfoValue={mapInfoSelected}
             isDeleted={mapInfoSelected.data.klass === 'MapInfoMap' && !maps[mapInfoSelected.data.mapDbSymbol]}
-            enableRename={() => {
-              setCanRename(idSelected);
-            }}
+            enableRename={() => setCanRename(mapInfoSelected.id)}
             dialogsRef={dialogsRef}
           />
         )}

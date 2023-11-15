@@ -141,7 +141,7 @@ export const addNewMapInfo = (mapInfo: StudioMapInfo, newMapInfo: StudioMapInfoV
   };
 };
 
-export const convertMapInfoToTreeItem = (mapInfo: StudioMapInfo) => {
+export const convertMapInfoToTree = (mapInfo: StudioMapInfo) => {
   return {
     rootId: 0,
     items: cloneEntity(mapInfo),
@@ -164,60 +164,3 @@ export const getMapInfoParentId = (mapInfo: StudioMapInfo, mapInfoValue: StudioM
   const parentId = mapInfoValue.data.parentId;
   return [parentId, ...getMapInfoParentIdRec(mapInfo, parentId)].reverse();
 };
-
-/*export const buildMapInfo = (items: TreeItem<StudioMapInfo>[] & StudioMapInfo[]): StudioMapInfo[] => {
-  return items.map((item) => {
-    if (item.klass === 'MapInfoFolder') {
-      return {
-        klass: item.klass,
-        id: item.id,
-        textId: item.textId,
-        collapsed: item.collapsed,
-        children: buildMapInfoRec(item.children),
-      };
-    } else {
-      return {
-        klass: item.klass,
-        id: item.id,
-        mapDbSymbol: item.mapDbSymbol,
-        collapsed: item.collapsed,
-        children: buildMapInfoRec(item.children),
-      };
-    }
-  });
-};
-
-const buildMapInfoRec = (mapInfoMaps: TreeItem<StudioMapInfoMap>[] & StudioMapInfoMap[]): StudioMapInfoMap[] => {
-  return mapInfoMaps.map((mapInfo) => ({
-    klass: 'MapInfoMap',
-    id: mapInfo.id,
-    mapDbSymbol: mapInfo.mapDbSymbol,
-    collapsed: mapInfo.collapsed,
-    children: buildMapInfoRec(mapInfo.children),
-  }));
-};*/
-
-/*export const convertTreeToMapInfo = (tree: TreeData): (StudioMapInfoMap | StudioMapInfoFolder)[] => {
-  const studioMaps: (StudioMapInfoMap | StudioMapInfoFolder)[] = [];
-
-  // Iterate over the tree items
-  for (const item of Object.values(tree.items)) {
-    // If the item is children, or is not a valid item, then smash it
-    if (item.data?.isChildren || !item.data?.klass) {
-      continue;
-    }
-    // Delete non mapInfo property
-    if (item.data && Reflect.has(item.data, 'isChildren')) {
-      Reflect.deleteProperty(item.data, 'isChildren');
-    }
-    const mapItem: StudioMapInfoMap | StudioMapInfoFolder = {
-      ...item.data,
-      id: Number(item.id),
-    };
-
-    studioMaps.push(mapItem);
-  }
-  // console.log(tree, 'mapItemInfo::', studioMaps);
-  return studioMaps;
-};
-*/
