@@ -65,7 +65,11 @@ export const GroupFrame = ({ group, dialogsRef }: GroupFrameProps) => {
                 <span>{`(${variationText ? t(variationText) : '???'})`}</span>
               </EnvironmentContainer>
             </DataFieldsetFieldWithChild>
-            <DataFieldsetField label={t('steps_average')} data={group.stepsAverage} />
+            <DataFieldsetField
+              label={t('steps_average')}
+              data={group.stepsAverage ? group.stepsAverage : t('no_steps')}
+              disabled={group.stepsAverage === 0}
+            />
           </GroupSubInfoContainer>
         </GroupInfoContainer>
       </DataGrid>

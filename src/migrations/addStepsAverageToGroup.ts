@@ -12,7 +12,7 @@ type StudioGroupDataBeforeMigration = z.infer<typeof PRE_MIGRATION_GROUP_VALIDAT
 const addStepsAverage = (group: StudioGroupDataBeforeMigration): StudioGroup => {
   return {
     ...group,
-    stepsAverage: 30,
+    stepsAverage: 0,
   };
 };
 

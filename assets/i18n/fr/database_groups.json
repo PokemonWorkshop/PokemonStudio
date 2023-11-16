@@ -18,6 +18,7 @@
   "environment": "Environnement",
   "variation": "Variation",
   "steps_average": "Pas moyens requis",
+  "no_steps": "Défini par la carte",
   "example_name": "Bourg Palette - Herbes 1",
   "pokemon_group": "Pokémon du groupe",
   "fields_asterisk_required": "Les champs avec un astérisque sont requis.",

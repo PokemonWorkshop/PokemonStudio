@@ -166,7 +166,7 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
         </InputWithTopLabelContainer>
         <InputWithLeftLabelContainer>
           <Label htmlFor="steps-average">{t('steps_average')}</Label>
-          <Input name="steps-average" type="number" min={1} max={999} step={1} defaultValue={group.stepsAverage} ref={stepsAverageRef} />
+          <Input name="steps-average" type="number" min={0} max={999} step={1} defaultValue={group.stepsAverage} ref={stepsAverageRef} />
         </InputWithLeftLabelContainer>
       </InputContainer>
       <GroupTranslationOverlay group={group} onClose={onTranslationOverlayClose} ref={dialogsRef} />
