@@ -87,7 +87,7 @@ export const GroupNewEditor = forwardRef<EditorHandlingClose, GroupNewEditorProp
 
   const canNew = () => {
     if (!name) return false;
-    if (isNaN(stepsAverage) || stepsAverage < 1 || stepsAverage > 999) return false;
+    if (isNaN(stepsAverage) || stepsAverage < 0 || stepsAverage > 999) return false;
     if (isNaN(switchId) || switchId < 1 || switchId > 99999) return false;
 
     return true;
@@ -173,7 +173,7 @@ export const GroupNewEditor = forwardRef<EditorHandlingClose, GroupNewEditorProp
           <Input
             name="steps-average"
             type="number"
-            min={1}
+            min={0}
             max={999}
             step={1}
             value={isNaN(stepsAverage) ? '' : stepsAverage}
