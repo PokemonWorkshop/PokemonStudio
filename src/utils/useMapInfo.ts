@@ -28,7 +28,7 @@ export const useMapInfo = () => {
     }
   };
 
-  const setPartialMapInfo = (newMapInfoValue: StudioMapInfoValue, id: string) => {
+  const setPartialMapInfo = (newMapInfoValue: StudioMapInfoValue, id: keyof StudioMapInfo) => {
     const currentMapInfoValue = mapInfo[id];
     if (JSON.stringify(currentMapInfoValue) !== JSON.stringify(newMapInfoValue)) {
       setState((currentState) => ({

@@ -162,6 +162,14 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
       setCanRename(undefined);
     };
 
+    const openMenu = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+      event.preventDefault();
+      event.stopPropagation();
+      setMapInfoSelected(mapInfo[item.id]);
+      // timeout to wait that the mapinfo selected has been taken into account
+      setTimeout(() => buildOnClick(event, true));
+    };
+
     return (
       <div ref={provided.innerRef} {...provided.draggableProps} key={item.id}>
         <TreeItemContainer
@@ -180,12 +188,7 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
 
             setCurrentMap({ map: item.data.mapDbSymbol });
           }}
-          onContextMenu={(event) => {
-            event.preventDefault();
-            setMapInfoSelected(mapInfo[item.id]);
-            // timeout to wait that the mapinfo selected has been taken into account
-            setTimeout(() => buildOnClick(event, true));
-          }}
+          onContextMenu={openMenu}
           {...provided.dragHandleProps}
         >
           <div className="title">
@@ -206,14 +209,7 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
           {isFolder && countChildren !== undefined && <span className="count-children">{countChildren}</span>}
           {!canRename && (
             <div className="actions">
-              <span
-                className="icon icon-dot"
-                onClick={(event) => {
-                  setMapInfoSelected(mapInfo[item.id]);
-                  // timeout to wait that the mapinfo selected has been taken into account
-                  setTimeout(() => buildOnClick(event, true));
-                }}
-              >
+              <span className="icon icon-dot" onClick={openMenu}>
                 <DotIcon />
               </span>
               {!isDeleted && (

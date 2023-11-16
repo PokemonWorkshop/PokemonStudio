@@ -65,6 +65,7 @@ export const TreeItemContainer = styled.div<MapTreeItemWrapperContainerProps>`
   color: ${({ theme }) => theme.colors.text100};
   box-sizing: border-box;
   margin: 4px 0;
+  cursor: default !important;
   ${({ theme }) => theme.fonts.normalRegular}
 
   .name {
