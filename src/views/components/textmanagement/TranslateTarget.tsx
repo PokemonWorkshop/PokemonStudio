@@ -18,15 +18,14 @@ import { ProgressBar } from '@components/progress-bar/ProgressBar';
 import { CONTROL } from '@utils/useKeyPress';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 
-const calculateTranlatedTexts = (allTextsFromFile: string[][], index: number) => {
-  const rowsWithEmpty = allTextsFromFile.filter((ligne, i) => ligne && ligne.includes(''));
-  const textsTranslatedEmpty = rowsWithEmpty.reduce((total, ligne, i) => {
-    if (ligne[index] === '') {
-      total += 1;
-    }
-    return total;
-  }, 0);
-  return allTextsFromFile.length - 1 - textsTranslatedEmpty;
+const UNTRANSLATED_TEXT_REG = /^$|^NewText$|^\[~[^\]]+\]$/;
+
+const calculateTranslatedTexts = (allTextsFromFile: string[][], index: number) => {
+  const untranslatedTextCount = allTextsFromFile.reduce(
+    (count, line) => (!line || typeof line[index] !== 'string' || line[index].match(UNTRANSLATED_TEXT_REG) ? count + 1 : count),
+    0
+  );
+  return allTextsFromFile.length - 1 - untranslatedTextCount;
 };
 
 const DataBlockTranslateHeader = styled.div`
@@ -75,12 +74,12 @@ const DataBlockTextTranslate = ({ isDefault, languageTitle, textFromFileByIndex,
   const { allTextsFromFile } = useTranslationPage(languageContext.positionLanguage);
   const { t } = useTranslation('text_management');
   const [textTranslate, setTextTranslate] = useState<string>(textFromFileByIndex);
-  const [numberOfTextTranslated, setNumberOfTextTranslated] = useState(calculateTranlatedTexts(allTextsFromFile, languageContext.language.index));
+  const [numberOfTextTranslated, setNumberOfTextTranslated] = useState(calculateTranslatedTexts(allTextsFromFile, languageContext.language.index));
   const percentage: number = cleanNaNValue((numberOfTextTranslated / (allTextsFromFile.length - 1)) * 100);
 
   useEffect(() => {
     setTextTranslate(textFromFileByIndex);
-    setNumberOfTextTranslated(calculateTranlatedTexts(allTextsFromFile, languageContext.language.index));
+    setNumberOfTextTranslated(calculateTranslatedTexts(allTextsFromFile, languageContext.language.index));
   }, [textFromFileByIndex]);
 
   const saveText = (copyText?: string) => {
