@@ -2,6 +2,7 @@ import type { ItemId, TreeData, TreeItem } from '@components/tree/types';
 import { getMapInfoParentId } from './MapInfoUtils';
 import { StudioMapInfo, StudioMapInfoValue } from '@modelEntities/mapInfo';
 import theme from '@src/AppTheme';
+import Tree from '@components/tree';
 
 export const getMapTreeCountChildren = (tree: TreeData, item: TreeItem): number => {
   let count = 0;
@@ -33,25 +34,24 @@ export const getMapTreeDepth = (tree: TreeData, item: TreeItem): number => {
   return parentIds.length + 1;
 };
 
-export const renderDropBox = (targetId: string | null | undefined) => {
-  const tree = document.querySelector(`div[data-rbd-droppable-id="tree"]`) as HTMLDivElement | undefined;
-  if (!tree) return;
+export const renderDropBox = (targetId: string | null | undefined, tree: React.RefObject<Tree>) => {
+  if (!tree.current) return;
 
   if (targetId) {
-    const draggable = tree.querySelector(`div[data-rbd-draggable-id="${targetId}"]`)?.firstChild as HTMLDivElement | undefined;
-    if (!draggable) return;
+    const item = tree.current.itemsElement[targetId]?.firstChild as HTMLDivElement | undefined;
+    if (!item) return;
 
-    draggable.style.outline = `2px solid ${theme.colors.primaryBase}`;
-    draggable.style.outlineOffset = '-2px';
-    draggable.style.borderRadius = '8px';
+    item.style.outline = `2px solid ${theme.colors.primaryBase}`;
+    item.style.outlineOffset = '-2px';
+    item.style.borderRadius = '8px';
   } else {
     // clear dropbox
-    const draggables = tree.querySelectorAll(`div[data-rbd-draggable-id]`);
-    draggables.forEach((draggable) => {
-      const firstChild = draggable.firstChild;
+    const items = Object.values(tree.current.itemsElement);
+    items.forEach((item) => {
+      const firstChild = item?.firstChild as HTMLDivElement | undefined;
       if (!firstChild) return;
 
-      (firstChild as HTMLDivElement).style.outline = 'inherit';
+      firstChild.style.outline = 'inherit';
     });
   }
 };

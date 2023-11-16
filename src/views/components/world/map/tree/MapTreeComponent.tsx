@@ -49,6 +49,7 @@ export const MapTreeComponent = () => {
   const [tree, setTree] = useState<TreeData>(convertMapInfoToTree(mapInfo));
   const [canRename, setCanRename] = useState<ItemId>();
   const [mapInfoSelected, setMapInfoSelected] = useState<StudioMapInfoValue>();
+  const treeRef = useRef<Tree>(null);
   const renameRef = useRef<HTMLInputElement>(null);
   const dialogsRef = useDialogsRef<MapEditorAndDeletionKeys>();
 
@@ -128,7 +129,7 @@ export const MapTreeComponent = () => {
     const countChildren = isFolder ? getMapTreeCountChildren(tree, item) : undefined;
     const isDeleted = item.data.klass === 'MapInfoMap' && !maps[item.data.mapDbSymbol];
 
-    renderDropBox(snapshot.combineWith);
+    renderDropBox(snapshot.combineWith, treeRef);
 
     const handleRename = () => {
       if (!renameRef.current) return setCanRename(undefined);
@@ -248,6 +249,7 @@ export const MapTreeComponent = () => {
   return (
     <MapListContainer>
       <Tree
+        ref={treeRef}
         tree={tree}
         renderItem={renderItem}
         onExpand={onExpand}
