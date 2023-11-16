@@ -4,7 +4,8 @@ const STUDIO_SHORTCUTS = {
   db_previous: ['ArrowLeft', 'Left'],
   db_next: ['ArrowRight', 'Right'],
   db_new: ['KeyN'],
-  db_save: ['KeyS'],
+  save: ['KeyS'],
+  play: ['KeyP'],
 } as const;
 
 export type StudioShortcut = keyof typeof STUDIO_SHORTCUTS;
