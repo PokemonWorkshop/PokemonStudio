@@ -67,7 +67,7 @@ export const GroupFrame = ({ group, dialogsRef }: GroupFrameProps) => {
             </DataFieldsetFieldWithChild>
             <DataFieldsetField
               label={t('steps_average')}
-              data={group.stepsAverage ? group.stepsAverage : '---'}
+              data={group.stepsAverage ? group.stepsAverage : t('no_steps')}
               disabled={group.stepsAverage === 0}
             />
           </GroupSubInfoContainer>
