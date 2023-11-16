@@ -35,6 +35,7 @@ import {
   mapTreeComputeMaxWidth,
   mapTreeConvertItemToMapInfoValue,
   mapTreeConvertTreeToMapInfo,
+  renderDropBox,
 } from '@utils/MapTreeUtils';
 
 export const MapTreeComponent = () => {
@@ -122,10 +123,12 @@ export const MapTreeComponent = () => {
     return isFolder ? getFolderName({ klass: item.data.klass, textId: item.data.textId }) : mapName(item.data.mapDbSymbol);
   };
 
-  const renderItem = ({ item, depth, onExpand, onCollapse, provided }: RenderItemParams) => {
+  const renderItem = ({ item, depth, onExpand, onCollapse, provided, snapshot }: RenderItemParams) => {
     const isFolder = item.data.klass === 'MapInfoFolder';
     const countChildren = isFolder ? getMapTreeCountChildren(tree, item) : undefined;
     const isDeleted = item.data.klass === 'MapInfoMap' && !maps[item.data.mapDbSymbol];
+
+    renderDropBox(snapshot.combineWith);
 
     const handleRename = () => {
       if (!renameRef.current) return setCanRename(undefined);

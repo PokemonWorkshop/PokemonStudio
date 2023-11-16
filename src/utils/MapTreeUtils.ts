@@ -1,6 +1,7 @@
 import type { ItemId, TreeData, TreeItem } from '@components/tree/types';
 import { getMapInfoParentId } from './MapInfoUtils';
 import { StudioMapInfo, StudioMapInfoValue } from '@modelEntities/mapInfo';
+import theme from '@src/AppTheme';
 
 export const getMapTreeCountChildren = (tree: TreeData, item: TreeItem): number => {
   let count = 0;
@@ -30,6 +31,29 @@ export const mapTreeComputeMaxWidth = (depth: number, isFolder = false, hovered 
 export const getMapTreeDepth = (tree: TreeData, item: TreeItem): number => {
   const parentIds = getMapInfoParentId(tree.items as unknown as StudioMapInfo, item as unknown as StudioMapInfoValue);
   return parentIds.length + 1;
+};
+
+export const renderDropBox = (targetId: string | null | undefined) => {
+  const tree = document.querySelector(`div[data-rbd-droppable-id="tree"]`) as HTMLDivElement | undefined;
+  if (!tree) return;
+
+  if (targetId) {
+    const draggable = tree.querySelector(`div[data-rbd-draggable-id="${targetId}"]`)?.firstChild as HTMLDivElement | undefined;
+    if (!draggable) return;
+
+    draggable.style.outline = `2px solid ${theme.colors.primaryBase}`;
+    draggable.style.outlineOffset = '-2px';
+    draggable.style.borderRadius = '8px';
+  } else {
+    // clear dropbox
+    const draggables = tree.querySelectorAll(`div[data-rbd-draggable-id]`);
+    draggables.forEach((draggable) => {
+      const firstChild = draggable.firstChild;
+      if (!firstChild) return;
+
+      (firstChild as HTMLDivElement).style.outline = 'inherit';
+    });
+  }
 };
 
 /*
