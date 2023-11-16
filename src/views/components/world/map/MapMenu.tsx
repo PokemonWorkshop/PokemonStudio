@@ -13,7 +13,6 @@ import { MAP_INFO_FOLDER_NAME_TEXT_ID, StudioMapInfoFolder } from '@modelEntitie
 import { useSetProjectText } from '@utils/ReadingProjectText';
 import { SeparatorGreyLine } from '@components/separators/SeparatorGreyLine';
 import { MapTreeV2 } from './tree/MapTreeV2';
-import { MapTree } from './tree/MapTree';
 import { addNewMapInfo } from '@utils/MapInfoUtils';
 
 const MapMenuContainer = styled(NavigationDatabaseStyle)`
@@ -64,7 +63,6 @@ export const MapMenu = () => {
             <NewFolderButtonOnlyIcon onClick={handleNewFolder} />
           </div>
           <SeparatorGreyLine />
-          {/* <MapTree /> */}
           <MapTreeV2 />
         </MapSubMenuContainer>
       </NavigationDatabaseGroup>
