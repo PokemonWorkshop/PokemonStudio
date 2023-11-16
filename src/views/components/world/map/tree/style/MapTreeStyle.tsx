@@ -1,28 +1,20 @@
 import styled from 'styled-components';
 
-export const MapListContainer = styled.div`
-  height: calc(100vh - 291px);
+type MapTreeContainerProps = {
+  hideMapTree: boolean;
+};
 
+export const MapTreeContainer = styled.div<MapTreeContainerProps>`
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding-right: 3px;
+  gap: 8px;
 
-  .map,
-  .map-selected {
-    :hover {
-      background-color: ${({ theme }) => theme.colors.dark20};
-    }
-  }
+  .tree-scrollbar {
+    height: calc(100vh - 291px);
+    overflow-y: scroll;
+    margin-right: -9px;
+    display: ${({ hideMapTree }) => (hideMapTree ? 'none' : 'block')};
 
-  .map-selected {
-    background-color: ${({ theme }) => theme.colors.dark20};
-    :hover {
-      background-color: ${({ theme }) => theme.colors.dark20};
-    }
-  }
-
-  & .scrollable-view {
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -40,15 +32,20 @@ export const MapListContainer = styled.div`
       background-color: ${({ theme }) => theme.colors.dark15};
       border-color: ${({ theme }) => theme.colors.text400};
     }
-    .no-maps {
-      ${({ theme }) => theme.fonts.normalRegular}
-      color: ${({ theme }) => theme.colors.text400};
-      padding: 9.5px 15px;
-    }
+  }
+
+  .tree {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .research-input {
+    height: 35px;
   }
 `;
 
-export type MapTreeItemWrapperContainerProps = {
+type MapTreeItemWrapperContainerProps = {
   isCurrent?: boolean;
   hasChildren: boolean;
   maxWidth: number;

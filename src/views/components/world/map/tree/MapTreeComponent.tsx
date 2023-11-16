@@ -26,7 +26,6 @@ import { useContextMenu } from '@utils/useContextMenu';
 import { MapEditorAndDeletionKeys, MapEditorOverlay } from '../editors/MapEditorOverlay';
 import { useDialogsRef } from '@utils/useDialogsRef';
 import { MapTreeContextMenu } from './MapTreeContextMenu';
-import { MapListContainer, TreeItemContainer } from './style/MapTreeComponent';
 import { useMapInfo } from '@utils/useMapInfo';
 import { convertMapInfoToTree } from '@utils/MapInfoUtils';
 import {
@@ -37,6 +36,7 @@ import {
   mapTreeConvertTreeToMapInfo,
   renderDropBox,
 } from '@utils/MapTreeUtils';
+import { MapListContainer, TreeItemContainer } from './style';
 
 export const MapTreeComponent = () => {
   const { mapInfo, setMapInfo, setPartialMapInfo } = useMapInfo();
