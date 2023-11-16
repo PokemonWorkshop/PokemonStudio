@@ -60,7 +60,7 @@ export const GROUP_VALIDATOR = z.object({
   isHordeBattle: z.boolean().default(false),
   customConditions: z.array(CUSTOM_GROUP_CONDITION_VALIDATOR),
   encounters: z.array(ENCOUNTER_VALIDATOR),
-  stepsAverage: POSITIVE_INT,
+  stepsAverage: POSITIVE_OR_ZERO_INT,
 });
 export type StudioGroup = z.infer<typeof GROUP_VALIDATOR>;
 
