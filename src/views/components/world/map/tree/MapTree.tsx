@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { ClearInput } from '@components/inputs';
 import { useTranslation } from 'react-i18next';
 import { MapList } from './MapList';
@@ -9,6 +9,7 @@ import { MapTreeContainer } from './style';
 export const MapTree = () => {
   const [research, setResearch] = useState('');
   const { t } = useTranslation('database_maps');
+  const treeScrollbarRef = useRef<HTMLDivElement>(null);
 
   return (
     <MapTreeContainer hideMapTree={research !== ''}>
@@ -20,9 +21,9 @@ export const MapTree = () => {
         className="research-input"
       />
       {research !== '' && <MapList research={research} />}
-      <div className="tree-scrollbar" onScroll={emitScrollContextMenu}>
+      <div className="tree-scrollbar" onScroll={emitScrollContextMenu} ref={treeScrollbarRef}>
         <div className="tree">
-          <MapTreeComponent />
+          <MapTreeComponent treeScrollbarRef={treeScrollbarRef} />
         </div>
       </div>
     </MapTreeContainer>

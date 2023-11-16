@@ -38,7 +38,11 @@ import {
 } from '@utils/MapTreeUtils';
 import { MapListContainer, TreeItemContainer } from './style';
 
-export const MapTreeComponent = () => {
+type MapTreeComponentProps = {
+  treeScrollbarRef: React.RefObject<HTMLDivElement>;
+};
+
+export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) => {
   const { mapInfo, setMapInfo, setPartialMapInfo } = useMapInfo();
   const { selectedDataIdentifier: currentMap, setSelectedDataIdentifier: setCurrentMap, projectDataValues: maps } = useProjectMaps();
   const setText = useSetProjectText();
@@ -49,13 +53,27 @@ export const MapTreeComponent = () => {
   const [tree, setTree] = useState<TreeData>(convertMapInfoToTree(mapInfo));
   const [canRename, setCanRename] = useState<ItemId>();
   const [mapInfoSelected, setMapInfoSelected] = useState<StudioMapInfoValue>();
+  const [shouldScroll, setShouldScroll] = useState<boolean>(false);
   const treeRef = useRef<Tree>(null);
   const renameRef = useRef<HTMLInputElement>(null);
   const dialogsRef = useDialogsRef<MapEditorAndDeletionKeys>();
 
   useEffect(() => {
+    // Check if an item has added in the root children
+    if (mapInfo['0'].children.length > tree.items['0'].children.length) {
+      setShouldScroll(true);
+    }
     setTree(convertMapInfoToTree(mapInfo));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mapInfo]);
+
+  useEffect(() => {
+    if (shouldScroll && treeScrollbarRef.current) {
+      treeScrollbarRef.current.scrollTop = treeScrollbarRef.current.scrollHeight;
+      setShouldScroll(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shouldScroll]);
 
   useEffect(() => {
     if (canRename) renameRef.current?.focus();
@@ -165,7 +183,8 @@ export const MapTreeComponent = () => {
           onContextMenu={(event) => {
             event.preventDefault();
             setMapInfoSelected(mapInfo[item.id]);
-            buildOnClick(event, true);
+            // timeout to wait that the mapinfo selected has been taken into account
+            setTimeout(() => buildOnClick(event, true));
           }}
           {...provided.dragHandleProps}
         >
@@ -191,7 +210,8 @@ export const MapTreeComponent = () => {
                 className="icon icon-dot"
                 onClick={(event) => {
                   setMapInfoSelected(mapInfo[item.id]);
-                  buildOnClick(event);
+                  // timeout to wait that the mapinfo selected has been taken into account
+                  setTimeout(() => buildOnClick(event, true));
                 }}
               >
                 <DotIcon />
@@ -232,7 +252,7 @@ export const MapTreeComponent = () => {
     // Update parentId in the item dropped
     if (destination.parentId !== undefined) {
       const parent = newTree.items[destination.parentId];
-      // If the index doesn't exist, the item is drop at the end of the list, so it is last children
+      // If the index doesn't exist, the item is drop at the end of the list, so it is the last children
       const index = destination.index === undefined ? parent.children.length - 1 : destination.index;
       const childId = parent.children[index];
       const treeItem = newTree.items[childId];
