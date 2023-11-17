@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { RefObject, useEffect, useRef, useState } from 'react';
 import Tree, {
   mutateTree,
   moveItemOnTree,
@@ -30,16 +30,17 @@ import { useMapInfo } from '@utils/useMapInfo';
 import { convertMapInfoToTree } from '@utils/MapInfoUtils';
 import {
   getMapTreeCountChildren,
-  getMapTreeDepth,
+  getMapTreeSourceDepth,
   mapTreeComputeMaxWidth,
   mapTreeConvertItemToMapInfoValue,
   mapTreeConvertTreeToMapInfo,
   renderDropBox,
+  getMapTreeDestinationDepth,
 } from '@utils/MapTreeUtils';
 import { MapListContainer, TreeItemContainer } from './style';
 
 type MapTreeComponentProps = {
-  treeScrollbarRef: React.RefObject<HTMLDivElement>;
+  treeScrollbarRef: RefObject<HTMLDivElement>;
 };
 
 export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) => {
@@ -59,8 +60,8 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
   const dialogsRef = useDialogsRef<MapEditorAndDeletionKeys>();
 
   useEffect(() => {
-    // Check if an item has added in the root children
-    if (mapInfo['0'].children.length > tree.items['0'].children.length) {
+    // Check if an item has added and is in the root children
+    if (mapInfo['0'].children.length > tree.items['0'].children.length && Object.keys(mapInfo).length > Object.keys(tree.items).length) {
       setShouldScroll(true);
     }
     setTree(convertMapInfoToTree(mapInfo));
@@ -239,9 +240,9 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
     if (currentItem.data?.klass === 'MapInfoFolder' && destination.parentId !== 0) return;
 
     // We can only drop a map if the depth < 5
-    const depth = getMapTreeDepth(tree, tree.items[destination.parentId]);
-    const sourceChildrenCount = getMapTreeCountChildren(tree, currentItem);
-    if (depth + sourceChildrenCount >= 5) return;
+    const destinationDepth = getMapTreeDestinationDepth(tree, destination);
+    const sourceDepth = getMapTreeSourceDepth(tree, currentItem);
+    if (destinationDepth + sourceDepth > 4) return;
 
     const newTree = moveItemOnTree(tree, source, destination);
 

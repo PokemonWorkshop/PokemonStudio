@@ -1,8 +1,12 @@
-import type { ItemId, TreeData, TreeItem } from '@components/tree/types';
-import { getMapInfoParentId } from './MapInfoUtils';
+import type { ItemId, TreeData, TreeDestinationPosition, TreeItem } from '@components/tree/types';
 import { StudioMapInfo, StudioMapInfoValue } from '@modelEntities/mapInfo';
 import theme from '@src/AppTheme';
 import Tree from '@components/tree';
+
+const getMapTreeItemDepth = (tree: TreeData, item: TreeItem): number => {
+  if (item.data.parentId === 0) return 1;
+  return 1 + getMapTreeItemDepth(tree, tree.items[item.data.parentId]);
+};
 
 export const getMapTreeCountChildren = (tree: TreeData, item: TreeItem): number => {
   let count = 0;
@@ -13,6 +17,19 @@ export const getMapTreeCountChildren = (tree: TreeData, item: TreeItem): number 
     }
   });
   return count;
+};
+
+export const getMapTreeSourceDepth = (tree: TreeData, item: TreeItem): number => {
+  if (item.children.length === 0) return 1;
+
+  const childrenDepths = item.children.map((id) => getMapTreeSourceDepth(tree, tree.items[id]));
+  return 1 + Math.max(...childrenDepths);
+};
+
+export const getMapTreeDestinationDepth = (tree: TreeData, destination: TreeDestinationPosition): number => {
+  if (destination.parentId === 0) return 1;
+
+  return getMapTreeItemDepth(tree, tree.items[destination.parentId]);
 };
 
 export const mapTreeComputeMaxWidth = (depth: number, isFolder = false, hovered = false) => {
@@ -27,11 +44,6 @@ export const mapTreeComputeMaxWidth = (depth: number, isFolder = false, hovered 
     return 160 - indentationWidth * depth;
   }
   return 185 - indentationWidth * depth;
-};
-
-export const getMapTreeDepth = (tree: TreeData, item: TreeItem): number => {
-  const parentIds = getMapInfoParentId(tree.items as unknown as StudioMapInfo, item as unknown as StudioMapInfoValue);
-  return parentIds.length + 1;
 };
 
 export const renderDropBox = (targetId: string | null | undefined, tree: React.RefObject<Tree>) => {
