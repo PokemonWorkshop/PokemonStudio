@@ -114,6 +114,13 @@ export const TreeItemContainer = styled.div<MapTreeItemWrapperContainerProps>`
     border-radius: 2px;
   }
 
+  .point-icon {
+    width: 4px;
+    height: 4px;
+    background-color: ${({ theme }) => theme.colors.text400};
+    border-radius: 100%;
+  }
+
   .title {
     display: flex;
     flex-direction: row;

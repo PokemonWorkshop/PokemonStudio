@@ -12,7 +12,6 @@ import Tree, {
 import { ReactComponent as FolderIcon } from '@assets/icons/global/folder.svg';
 import { ReactComponent as FolderOpenIcon } from '@assets/icons/global/folder_open.svg';
 import { ReactComponent as LeftIcon } from '@assets/icons/global/left-icon.svg';
-import { ReactComponent as CircleIcon } from '@assets/icons/global/circle.svg';
 import { ReactComponent as PlusIcon } from '@assets/icons/global/plus-icon.svg';
 import { ReactComponent as DotIcon } from '@assets/icons/global/dot.svg';
 import { MAP_INFO_FOLDER_NAME_TEXT_ID, StudioMapInfoValue } from '@modelEntities/mapInfo';
@@ -118,10 +117,12 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
             </span>
           )
         ) : item.data?.klass === 'MapInfoFolder' ? (
-          <span className="icon" />
+          <span className="icon">
+            <span className="point-icon" />
+          </span>
         ) : (
           <span className="icon">
-            <CircleIcon />
+            <span className="point-icon" />
           </span>
         )}
         {item.data?.klass === 'MapInfoFolder' && <span className="icon">{item.isExpanded ? <FolderOpenIcon /> : <FolderIcon />}</span>}
@@ -207,7 +208,7 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
               <span className={`name ${isDeleted ? 'error' : ''}`}>{getName(item)}</span>
             )}
           </div>
-          {isFolder && countChildren !== undefined && <span className="count-children">{countChildren}</span>}
+          {isFolder && !!countChildren && <span className="count-children">{countChildren}</span>}
           {!canRename && (
             <div className="actions">
               <span className="icon icon-dot" onClick={openMenu}>
@@ -272,7 +273,7 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
         onExpand={onExpand}
         onCollapse={onCollapse}
         onDragEnd={onDragEnd}
-        offsetPerLevel={30}
+        offsetPerLevel={22}
         isDragEnabled
         isNestingEnabled
       />

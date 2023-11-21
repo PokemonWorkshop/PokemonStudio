@@ -33,7 +33,7 @@ export const getMapTreeDestinationDepth = (tree: TreeData, destination: TreeDest
 };
 
 export const mapTreeComputeMaxWidth = (depth: number, isFolder = false, hovered = false) => {
-  const indentationWidth = 30;
+  const indentationWidth = 22;
   if (hovered) {
     if (isFolder) {
       return 150 - indentationWidth * depth;
@@ -46,11 +46,11 @@ export const mapTreeComputeMaxWidth = (depth: number, isFolder = false, hovered 
   return 185 - indentationWidth * depth;
 };
 
-export const renderDropBox = (targetId: string | null | undefined, tree: React.RefObject<Tree>) => {
-  if (!tree.current) return;
+export const renderDropBox = (targetId: string | null | undefined, treeRef: React.RefObject<Tree>) => {
+  if (!treeRef.current) return;
 
   if (targetId) {
-    const item = tree.current.itemsElement[targetId]?.firstChild as HTMLDivElement | undefined;
+    const item = treeRef.current.itemsElement[targetId]?.firstChild as HTMLDivElement | undefined;
     if (!item) return;
 
     item.style.outline = `2px solid ${theme.colors.primaryBase}`;
@@ -58,7 +58,7 @@ export const renderDropBox = (targetId: string | null | undefined, tree: React.R
     item.style.borderRadius = '8px';
   } else {
     // clear dropbox
-    const items = Object.values(tree.current.itemsElement);
+    const items = Object.values(treeRef.current.itemsElement);
     items.forEach((item) => {
       const firstChild = item?.firstChild as HTMLDivElement | undefined;
       if (!firstChild) return;
