@@ -86,12 +86,12 @@ export const MapBreadcrumb = () => {
   return (
     <MapBreadcrumbStyle>
       {breadcrumb.map((selected, i) => (
-        <>
-          <span key={i} className={breadcrumbStyling(breadcrumb, selected, i)} onClick={() => handleClick(selected)}>
+        <React.Fragment key={i}>
+          <span className={breadcrumbStyling(breadcrumb, selected, i)} onClick={() => handleClick(selected)}>
             {selected.name}
           </span>
           {i < breadcrumb.length - 1 ? <span className="breadcrumb-divider"> / </span> : null}
-        </>
+        </React.Fragment>
       ))}
     </MapBreadcrumbStyle>
   );
