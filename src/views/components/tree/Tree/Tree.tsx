@@ -242,9 +242,15 @@ export default class Tree extends Component<Props, State> {
     }
 
     const isDragDisabled = typeof isDragEnabled === 'function' ? !isDragEnabled(flatItem.item) : !isDragEnabled;
+    const isDragDisabledOnParentExpanded = flatItem.item.hasChildren && flatItem.item.isExpanded;
 
     return (
-      <Draggable key={flatItem.item.id} draggableId={flatItem.item.id.toString()} index={index} isDragDisabled={isDragDisabled}>
+      <Draggable
+        key={flatItem.item.id}
+        draggableId={flatItem.item.id.toString()}
+        index={index}
+        isDragDisabled={isDragDisabled || isDragDisabledOnParentExpanded}
+      >
         {this.renderDraggableItem(flatItem)}
       </Draggable>
     );
