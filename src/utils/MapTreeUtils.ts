@@ -4,7 +4,7 @@ import theme from '@src/AppTheme';
 import Tree from '@components/tree';
 
 const getMapTreeItemDepth = (tree: TreeData, item: TreeItem): number => {
-  if (item.data.parentId === 0) return 1;
+  if (item.data.parentId === undefined || item.data.parentId === 0) return 1;
   return 1 + getMapTreeItemDepth(tree, tree.items[item.data.parentId]);
 };
 
