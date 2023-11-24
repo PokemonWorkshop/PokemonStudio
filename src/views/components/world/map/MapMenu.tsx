@@ -17,8 +17,6 @@ import { addNewMapInfo } from '@utils/MapInfoUtils';
 import { useToolTip } from '@utils/useToolTip';
 
 const MapMenuContainer = styled(NavigationDatabaseStyle)`
-  height: 100vh;
-
   ${NavigationDatabaseGroupStyle} {
     gap: 8px;
   }

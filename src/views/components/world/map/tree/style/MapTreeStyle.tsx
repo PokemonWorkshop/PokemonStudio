@@ -10,7 +10,6 @@ export const MapTreeContainer = styled.div<MapTreeContainerProps>`
   gap: 8px;
 
   .tree-scrollbar {
-    height: calc(100vh - 291px);
     overflow-y: scroll;
     margin-right: -9px;
     display: ${({ hideMapTree }) => (hideMapTree ? 'none' : 'block')};
