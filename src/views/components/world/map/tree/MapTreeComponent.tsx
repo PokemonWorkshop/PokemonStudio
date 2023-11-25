@@ -35,8 +35,10 @@ import {
   mapTreeConvertTreeToMapInfo,
   renderDropBox,
   getMapTreeDestinationDepth,
+  getMapTreeItemDepth,
 } from '@utils/MapTreeUtils';
 import { MapListContainer, TreeItemContainer } from './style';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 type MapTreeComponentProps = {
   treeScrollbarRef: RefObject<HTMLDivElement>;
@@ -48,6 +50,8 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
   const setText = useSetProjectText();
   const getMapName = useGetEntityNameText();
   const getFolderName = useGetEntityNameTextUsingTextId();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { buildOnClick, renderContextMenu } = useContextMenu();
   const { t } = useTranslation('database_maps');
   const [tree, setTree] = useState<TreeData>(convertMapInfoToTree(mapInfo));
@@ -61,7 +65,7 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
   useEffect(() => {
     // Check if an item has added and is in the root children
     if (mapInfo['0'].children.length > tree.items['0'].children.length && Object.keys(mapInfo).length > Object.keys(tree.items).length) {
-      setShouldScroll(true);
+      setTimeout(() => setShouldScroll(true), 20);
     }
     setTree(convertMapInfoToTree(mapInfo));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -148,6 +152,7 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
     const isFolder = item.data.klass === 'MapInfoFolder';
     const countChildren = isFolder ? getMapTreeCountChildren(tree, item) : undefined;
     const isDeleted = item.data.klass === 'MapInfoMap' && !maps[item.data.mapDbSymbol];
+    const currentDepth = getMapTreeItemDepth(tree, item);
 
     renderDropBox(snapshot.combineWith, treeRef);
 
@@ -189,6 +194,7 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
             if (isDeleted) return;
 
             setCurrentMap({ map: item.data.mapDbSymbol });
+            if (location.pathname !== '/world/map') navigate('/world/map');
           }}
           onContextMenu={openMenu}
           {...provided.dragHandleProps}
@@ -214,7 +220,7 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
               <span className="icon icon-dot" onClick={openMenu}>
                 <DotIcon />
               </span>
-              {!isDeleted && (
+              {!isDeleted && currentDepth <= 3 && (
                 <span
                   className="icon icon-plus"
                   onClick={(e) => {
