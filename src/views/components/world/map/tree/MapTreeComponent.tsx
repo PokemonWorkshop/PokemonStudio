@@ -66,7 +66,7 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
   useEffect(() => {
     // Check if an item has added and is in the root children
     if (mapInfo['0'].children.length > tree.items['0'].children.length && Object.keys(mapInfo).length > Object.keys(tree.items).length) {
-      setTimeout(() => setShouldScroll(true), 20);
+      setShouldScroll(true);
     }
     setTree(convertMapInfoToTree(mapInfo));
     // eslint-disable-next-line react-hooks/exhaustive-deps
