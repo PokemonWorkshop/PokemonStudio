@@ -33,7 +33,7 @@ export const getMapTreeDestinationDepth = (tree: TreeData, destination: TreeDest
 };
 
 export const mapTreeComputeMaxWidth = (depth: number, isFolder = false, hovered = false) => {
-  const indentationWidth = 22;
+  const indentationWidth = 26;
   if (hovered) {
     if (isFolder) {
       return 150 - indentationWidth * depth;
@@ -66,6 +66,17 @@ export const renderDropBox = (targetId: string | null | undefined, treeRef: Reac
       firstChild.style.outline = 'inherit';
     });
   }
+};
+
+export const searchIsUnderOpenFolder = (tree: TreeData, item: TreeItem) => {
+  if (item.data.klass === 'MapInfoMap' && item.data.parentId !== 0) return false;
+
+  const rootItem = tree.items['0'];
+  const index = rootItem.children.findIndex((itemId) => itemId === item.id);
+  if (index === 0) return false;
+
+  const previousId = rootItem.children[index - 1];
+  return tree.items[previousId].isExpanded || false;
 };
 
 /*

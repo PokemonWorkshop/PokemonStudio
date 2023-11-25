@@ -7,7 +7,7 @@ type MapTreeContainerProps = {
 export const MapTreeContainer = styled.div<MapTreeContainerProps>`
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 
   .tree-scrollbar {
     overflow-y: scroll;
@@ -50,6 +50,7 @@ type MapTreeItemWrapperContainerProps = {
   maxWidth: number;
   maxWidthWhenHover: number;
   disableHover?: boolean;
+  isUnderOpenFolder: boolean;
 };
 
 export const TreeItemContainer = styled.div<MapTreeItemWrapperContainerProps>`
@@ -63,7 +64,7 @@ export const TreeItemContainer = styled.div<MapTreeItemWrapperContainerProps>`
   border-radius: 8px;
   color: ${({ theme }) => theme.colors.text100};
   box-sizing: border-box;
-  margin: 4px 0;
+  margin: ${({ isUnderOpenFolder }) => (isUnderOpenFolder ? '12px 0 4px 0' : '4px 0')};
   cursor: default !important;
   ${({ theme }) => theme.fonts.normalRegular}
 
@@ -114,8 +115,8 @@ export const TreeItemContainer = styled.div<MapTreeItemWrapperContainerProps>`
   }
 
   .point-icon {
-    width: 4px;
-    height: 4px;
+    width: 2px;
+    height: 2px;
     background-color: ${({ theme }) => theme.colors.text400};
     border-radius: 100%;
   }

@@ -36,6 +36,7 @@ import {
   renderDropBox,
   getMapTreeDestinationDepth,
   getMapTreeItemDepth,
+  searchIsUnderOpenFolder,
 } from '@utils/MapTreeUtils';
 import { MapListContainer, TreeItemContainer } from './style';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -153,6 +154,7 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
     const countChildren = isFolder ? getMapTreeCountChildren(tree, item) : undefined;
     const isDeleted = item.data.klass === 'MapInfoMap' && !maps[item.data.mapDbSymbol];
     const currentDepth = getMapTreeItemDepth(tree, item);
+    const isUnderOpenFolder = searchIsUnderOpenFolder(tree, item);
 
     renderDropBox(snapshot.combineWith, treeRef);
 
@@ -185,6 +187,7 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
           maxWidthWhenHover={mapTreeComputeMaxWidth(isFolder ? depth + 1 : depth, isFolder, true)}
           hasChildren={!!countChildren}
           disableHover={!!canRename}
+          isUnderOpenFolder={isUnderOpenFolder}
           className={currentMap === item.data.mapDbSymbol ? 'map-selected' : 'map'}
           onClick={() => {
             if (item.id !== canRename) {
@@ -279,7 +282,7 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
         onExpand={onExpand}
         onCollapse={onCollapse}
         onDragEnd={onDragEnd}
-        offsetPerLevel={22}
+        offsetPerLevel={26}
         isDragEnabled
         isNestingEnabled
       />
