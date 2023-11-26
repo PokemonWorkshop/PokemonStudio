@@ -1,16 +1,20 @@
 # Pokémon Studio
 
-Pokémon Studio will be a standalone software allowing people to create their Pokémon fangame by editing data configuration & manage events.
-Load and save a project, update PokémonSDK (the Starter Kit), import maps from Tiled software to add events. Seems like it's time to leave aside RPG Maker XP and Ruby Host for a more modern and suitable tool!
+Pokémon Studio is a standalone software allowing people to create their monster taming game by:
+
+- editing game data (creatures, items...),
+- editing game settings,
+- editing and translating game texts,
+- updating [Pokémon SDK](https://gitlab.com/pokemonsdk/pokemonsdk) (game engine & starter kit),
+- managing maps and map links from Tiled (coming with 2.0 version),
+- manage events (coming with 3.0 version).
 
 ## Useful links
 
 - License: [English](LICENSE.md) - [Français](LICENSE-FR.md)
-- ClickUp folder: https://app.clickup.com/2606574/v/b/f/13144081?pr=4643354
-- Specifications: https://app.clickup.com/2606574/v/e/2fhfe-1436
-- Tree Structure: https://app.diagrams.net/#G1CqnzNqmpbQ-S41zNSOGdTY8fpMyNxGpY
-- Google Drive folder: https://drive.google.com/drive/folders/1uPbjHuuNgQFMVyUmQmDFhjUu2af0lA7L?usp=sharing
-- Pokémon Studio Figma: https://www.figma.com/file/xglOHHLb96zfPMTXd3v8i9/Pok%C3%A9mon-Studio
+- [GitHub project](https://github.com/users/PokemonWorkshop/projects/1)
+- [Pokémon Studio Wiki](https://github.com/PokemonWorkshop/PokemonStudio/wiki)
+- [Pokémon Studio Figma](https://www.figma.com/file/xglOHHLb96zfPMTXd3v8i9/Pok%C3%A9mon-Studio)
 
 ## Important notice
 
@@ -84,6 +88,9 @@ This script will create a `translations.csv` file, you can replace `your_languag
 Once you're done with the translations, the script `assets/i18n/csv2json.rb` will convert `translations.csv` to the respective i18n json files. The script ask you about location and locale of the translations.
 
 In each language directory the `index.js` file is used to group all the .json files in a single export, don't forget to build it when adding a new language (this might as simple as copying it from another translation folder).
+
+> [!NOTE]
+> We're planning on using [Weblate](https://weblate.org/) to make sure Pokémon Studio localization will be way easier to do.
 
 ### Add a new locale to Studio
 
