@@ -34,7 +34,7 @@ We use the version **18** of NodeJS.
 Next, clone the repo via git and install dependencies:
 
 ```bash
-git clone git@gitlab.com:pokemonsdk/pokemon-studio.git
+git clone git@github.com:PokemonWorkshop/PokemonStudio.git
 cd pokemon-studio
 git submodule update --init --recursive
 npm i
