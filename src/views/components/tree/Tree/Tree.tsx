@@ -76,25 +76,26 @@ export default class Tree extends Component<Props, State> {
 
   onDragStart = (result: DragStart) => {
     const { onDragStart } = this.props;
+    const element = this.itemsElement[result.draggableId];
+    const contentX = element ? getBox(element).contentBox.left : 0;
+
     this.dragState = {
       source: result.source,
       destination: result.source,
       mode: result.mode,
+      startContentX: contentX,
+      updatedContentX: contentX,
     };
-    this.setState({
-      draggedItemId: result.draggableId,
-    });
-    if (onDragStart) {
-      onDragStart(result.draggableId);
-    }
+
+    this.setState({ draggedItemId: result.draggableId });
+
+    if (onDragStart) onDragStart(result.draggableId);
   };
 
   onDragUpdate = (update: DragUpdate) => {
     const { onExpand } = this.props;
     const { flattenedTree } = this.state;
-    if (!this.dragState) {
-      return;
-    }
+    if (!this.dragState) return;
 
     this.expandTimer.stop();
     if (update.combine) {
@@ -131,7 +132,7 @@ export default class Tree extends Component<Props, State> {
       draggedItemId: undefined,
     });
 
-    const { sourcePosition, destinationPosition } = calculateFinalDropPositions(tree, flattenedTree, finalDragState);
+    const { sourcePosition, destinationPosition } = calculateFinalDropPositions(tree, flattenedTree, finalDragState, this.getDroppedLevel());
 
     onDragEnd(sourcePosition, destinationPosition);
 
@@ -139,11 +140,12 @@ export default class Tree extends Component<Props, State> {
   };
 
   onPointerMove = () => {
-    if (this.dragState) {
-      this.dragState = {
-        ...this.dragState,
-        horizontalLevel: this.getDroppedLevel(),
-      };
+    if (!this.dragState) return;
+
+    const element = this.state.draggedItemId && this.itemsElement[this.state.draggedItemId];
+    const contentX = element ? getBox(element).contentBox.left : this.dragState.updatedContentX;
+    if (Math.abs(this.dragState.startContentX - contentX) > this.props.offsetPerLevel / 4) {
+      this.dragState.updatedContentX = contentX;
     }
   };
 
@@ -151,7 +153,8 @@ export default class Tree extends Component<Props, State> {
     const { flattenedTree, draggedItemId } = this.state;
 
     if (this.dragState && draggedItemId === flatItem.item.id && (this.dragState.destination || this.dragState.combine)) {
-      const { source, destination, combine, horizontalLevel, mode } = this.dragState;
+      const { source, destination, combine, mode } = this.dragState;
+      const horizontalLevel = this.getDroppedLevel();
       // We only update the path when it's dragged by keyboard or drop is animated
       if (mode === 'SNAP' || snapshot.isDropAnimating) {
         if (destination) {
@@ -169,24 +172,13 @@ export default class Tree extends Component<Props, State> {
 
   isExpandable = (item: FlattenedItem): boolean => !!item.item.hasChildren && !item.item.isExpanded;
 
-  getDroppedLevel = (): number | undefined => {
+  getDroppedLevel = (): number => {
+    if (!this.dragState || !this.containerElement) return 1;
+
     const { offsetPerLevel } = this.props;
-    const { draggedItemId } = this.state;
-
-    if (!this.dragState || !this.containerElement) {
-      return undefined;
-    }
-
     const containerLeft = getBox(this.containerElement).contentBox.left;
-    const itemElement = this.itemsElement[draggedItemId!];
-
-    if (itemElement) {
-      const currentLeft: number = getBox(itemElement).contentBox.left;
-      const relativeLeft: number = Math.max(currentLeft - containerLeft, 0);
-      return Math.floor((relativeLeft + offsetPerLevel / 2) / offsetPerLevel) + 1;
-    }
-
-    return undefined;
+    const relativeLeft: number = Math.max(this.dragState.updatedContentX - containerLeft, 0);
+    return Math.floor((relativeLeft + offsetPerLevel / 2) / offsetPerLevel) + 1;
   };
 
   patchDroppableProvided = (provided: DroppableProvided): DroppableProvided => {

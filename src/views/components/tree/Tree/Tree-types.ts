@@ -43,8 +43,10 @@ export type DragState = {
   mode: string;
   // Pending destination location
   destination?: DraggableLocation;
-  // Last level, while the user moved an item horizontally
-  horizontalLevel?: number;
   // Combine for nesting operation
   combine?: Combine;
+  // Content box left position when starting to drag (to fix come back bug)
+  startContentX: number;
+  // Content box left position when starting to drag (to fix come back bug)
+  updatedContentX: number;
 };
