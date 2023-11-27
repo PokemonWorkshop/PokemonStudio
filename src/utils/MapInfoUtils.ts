@@ -90,7 +90,7 @@ export const mapInfoDuplicateMap = (mapInfo: StudioMapInfo, originalMapDbSymbol:
   const mapInfoWithChildren = Object.values(mapInfo).find((mi) => mi.children.includes(mapInfoMap.id));
   if (!mapInfoWithChildren) return mapInfo;
 
-  const newMapInfo = addNewMapInfo(mapInfo, newMapInfoMap, true);
+  const newMapInfo = addNewMapInfo(cloneEntity(mapInfo), newMapInfoMap, true);
   const index = mapInfoWithChildren.children.findIndex((id) => id === mapInfoMap.id);
   newMapInfo[mapInfoWithChildren.id].children.splice(index + 1, 0, newMapInfoMap.id);
   return newMapInfo;
