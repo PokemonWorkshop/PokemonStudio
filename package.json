@@ -12,6 +12,10 @@
     "type": "git",
     "url": "git+https://github.com/PokemonWorkshop/PokemonStudio.git"
   },
+  "engines": {
+    "node": ">=20.9.0",
+    "npm": ">=9.5.0"
+  },
   "devEngines": {
     "node": ">=20.9.0",
     "npm": ">=9.5.0"
