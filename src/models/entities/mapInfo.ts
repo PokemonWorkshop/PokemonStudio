@@ -1,38 +1,41 @@
-import { ZodType, ZodTypeDef, z } from 'zod';
+import { z } from 'zod';
 import { POSITIVE_OR_ZERO_INT } from './common';
 import { DB_SYMBOL_VALIDATOR } from './dbSymbol';
 
-const MAP_INFO_MAP_WITHOUT_CHILDREN_VALIDATOR = z.object({
-  klass: z.literal('MapInfoMap'),
+const MAP_INFO_BASE_VALIDATOR = z.object({
   id: POSITIVE_OR_ZERO_INT,
-  mapDbSymbol: DB_SYMBOL_VALIDATOR,
-  collapsed: z.boolean(),
+  children: z.array(POSITIVE_OR_ZERO_INT),
+  hasChildren: z.boolean(),
+  isExpanded: z.boolean(),
 });
 
-type StudioMapInfoMapInput = z.input<typeof MAP_INFO_MAP_WITHOUT_CHILDREN_VALIDATOR> & {
-  children: StudioMapInfoMapInput[];
-};
-
-export type StudioMapInfoMap = z.output<typeof MAP_INFO_MAP_WITHOUT_CHILDREN_VALIDATOR> & {
-  children: StudioMapInfoMap[];
-};
-
-export const MAP_INFO_MAP_VALIDATOR: ZodType<StudioMapInfoMap, ZodTypeDef, StudioMapInfoMapInput> = MAP_INFO_MAP_WITHOUT_CHILDREN_VALIDATOR.extend({
-  children: z.lazy(() => MAP_INFO_MAP_VALIDATOR.array()),
-});
-
-export const MAP_INFO_FOLDER_VALIDATOR = z.object({
-  klass: z.literal('MapInfoFolder'),
-  id: POSITIVE_OR_ZERO_INT,
-  textId: POSITIVE_OR_ZERO_INT,
-  collapsed: z.boolean(),
-  children: z.array(MAP_INFO_MAP_VALIDATOR),
+export const MAP_INFO_FOLDER_VALIDATOR = MAP_INFO_BASE_VALIDATOR.extend({
+  data: z.object({
+    klass: z.literal('MapInfoFolder'),
+    textId: POSITIVE_OR_ZERO_INT,
+  }),
 });
 export type StudioMapInfoFolder = z.infer<typeof MAP_INFO_FOLDER_VALIDATOR>;
 
-export const MAP_INFO_VALIDATOR = z.union([MAP_INFO_MAP_VALIDATOR, MAP_INFO_FOLDER_VALIDATOR]);
-export type StudioMapInfo = z.infer<typeof MAP_INFO_VALIDATOR>;
+export const MAP_INFO_MAP_VALIDATOR = MAP_INFO_BASE_VALIDATOR.extend({
+  data: z.object({
+    klass: z.literal('MapInfoMap'),
+    mapDbSymbol: DB_SYMBOL_VALIDATOR,
+    parentId: POSITIVE_OR_ZERO_INT,
+  }),
+});
+export type StudioMapInfoMap = z.infer<typeof MAP_INFO_MAP_VALIDATOR>;
 
-export const MAP_INFO_DATA_VALIDATOR = z.array(MAP_INFO_VALIDATOR);
+export const MAP_INFO_ROOT_VALIDATOR = MAP_INFO_BASE_VALIDATOR.extend({
+  data: z.object({
+    klass: z.literal('MapInfoRoot'),
+  }),
+});
+
+export const MAP_INFO_VALUE_VALIDATOR = z.union([MAP_INFO_FOLDER_VALIDATOR, MAP_INFO_MAP_VALIDATOR, MAP_INFO_ROOT_VALIDATOR]);
+export type StudioMapInfoValue = z.infer<typeof MAP_INFO_VALUE_VALIDATOR>;
+
+export const MAP_INFO_VALIDATOR = z.record(z.string(), MAP_INFO_VALUE_VALIDATOR);
+export type StudioMapInfo = z.infer<typeof MAP_INFO_VALIDATOR>;
 
 export const MAP_INFO_FOLDER_NAME_TEXT_ID = 200004;

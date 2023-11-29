@@ -6,33 +6,32 @@ import { ReactComponent as EditIcon } from '@assets/icons/global/edit-icon.svg';
 import { MapDialogsRef } from '../editors/MapEditorOverlay';
 import { useMapInfo } from '@utils/useMapInfo';
 import { mapInfoDuplicateMap, mapInfoRemoveFolder } from '@utils/MapInfoUtils';
-import { StudioMapInfo, StudioMapInfoMap } from '@modelEntities/mapInfo';
+import { StudioMapInfoFolder, StudioMapInfoMap, StudioMapInfoValue } from '@modelEntities/mapInfo';
 import { useProjectMaps } from '@utils/useProjectData';
 import { createMapInfo, duplicateMap } from '@utils/entityCreation';
 import { useGetEntityDescriptionText, useGetEntityNameText, useSetProjectText } from '@utils/ReadingProjectText';
 import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID } from '@modelEntities/map';
 
 type MapTreeContextMenuProps = {
-  mapInfo: StudioMapInfo;
+  mapInfoValue: StudioMapInfoValue;
   isDeleted: boolean;
   enableRename: () => void;
   dialogsRef?: MapDialogsRef;
 };
 
-export const MapTreeContextMenu = ({ mapInfo, isDeleted, enableRename, dialogsRef }: MapTreeContextMenuProps) => {
+export const MapTreeContextMenu = ({ mapInfoValue, isDeleted, enableRename, dialogsRef }: MapTreeContextMenuProps) => {
   const { t } = useTranslation('database_maps');
-  const { mapInfoValues: mapInfoValues, setMapInfoValues: setMapInfo } = useMapInfo();
+  const { mapInfo, setMapInfo } = useMapInfo();
   const { projectDataValues: maps, setProjectDataValues: setMap } = useProjectMaps();
   const setText = useSetProjectText();
   const getName = useGetEntityNameText();
   const getDescription = useGetEntityDescriptionText();
 
-  const isFolder = mapInfo.klass === 'MapInfoFolder';
-
+  const isFolder = mapInfoValue.data.klass === 'MapInfoFolder';
   const onClickDelete = () => {
     if (isFolder) {
-      if (mapInfo.children.length === 0) {
-        setMapInfo(mapInfoRemoveFolder(mapInfoValues, mapInfo));
+      if (mapInfoValue.children.length === 0) {
+        setMapInfo(mapInfoRemoveFolder(mapInfo, mapInfoValue as StudioMapInfoFolder));
       } else {
         dialogsRef?.current?.openDialog('deletion_folder', true);
       }
@@ -42,13 +41,17 @@ export const MapTreeContextMenu = ({ mapInfo, isDeleted, enableRename, dialogsRe
   };
 
   const onClickDuplicate = () => {
-    if (isFolder || isDeleted) return;
+    if (mapInfoValue.data.klass !== 'MapInfoMap' || isDeleted) return;
 
-    const mapToDuplicate = maps[mapInfo.mapDbSymbol];
+    const mapToDuplicate = maps[mapInfoValue.data.mapDbSymbol];
     const newMap = duplicateMap(maps, mapToDuplicate);
     const dbSymbol = newMap.dbSymbol;
-    const newMapInfoMap = createMapInfo(mapInfoValues, { klass: 'MapInfoMap', mapDbSymbol: dbSymbol }) as StudioMapInfoMap;
-    const newMapInfo = mapInfoDuplicateMap(mapInfoValues, mapInfo.mapDbSymbol, newMapInfoMap);
+    const newMapInfoMap = createMapInfo(mapInfo, {
+      klass: 'MapInfoMap',
+      mapDbSymbol: dbSymbol,
+      parentId: mapInfoValue.data.parentId,
+    }) as StudioMapInfoMap;
+    const newMapInfo = mapInfoDuplicateMap(mapInfo, mapInfoValue.data.mapDbSymbol, newMapInfoMap);
     setText(MAP_NAME_TEXT_ID, newMap.id, t('map_copy_name', { name: getName(mapToDuplicate) }));
     setText(MAP_DESCRIPTION_TEXT_ID, newMap.id, getDescription(mapToDuplicate));
     setMap({ [dbSymbol]: newMap }, { map: dbSymbol });

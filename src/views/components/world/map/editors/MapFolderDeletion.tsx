@@ -2,7 +2,7 @@ import { Deletion } from '@components/deletion';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { StudioMapInfoFolder } from '@modelEntities/mapInfo';
-import { mapInfoGetMapsFromFolder, mapInfoRemoveFolder } from '@utils/MapInfoUtils';
+import { mapInfoGetMapsFromMapInfoValue, mapInfoRemoveFolder } from '@utils/MapInfoUtils';
 import { getSelectedMapDbSymbol } from '@utils/MapUtils';
 import { getEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
 import { useMapInfo } from '@utils/useMapInfo';
@@ -27,10 +27,11 @@ export const MapFolderDeletion = forwardRef<EditorHandlingClose, MapFolderDeleti
     removeProjectDataValue: deleteMap,
     state,
   } = useProjectMaps();
-  const { mapInfoValues: mapInfo, setMapInfoValues: setMapInfo } = useMapInfo();
+  const { mapInfo, setMapInfo } = useMapInfo();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const folderName = useMemo(() => getEntityNameTextUsingTextId(mapInfoFolder, state), []);
-  const mapDbSymbols = mapInfoGetMapsFromFolder(mapInfoFolder);
+  const folderName = useMemo(() => getEntityNameTextUsingTextId(mapInfoFolder.data, state), []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const mapDbSymbols = useMemo(() => mapInfoGetMapsFromMapInfoValue(mapInfo, mapInfoFolder), []);
 
   const onClickDelete = () => {
     mapDbSymbols.forEach((dbSymbol) => deleteMap(dbSymbol, { map: '__undef__' }));

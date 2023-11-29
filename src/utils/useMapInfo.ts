@@ -1,5 +1,5 @@
 import { useGlobalState } from '@src/GlobalStateProvider';
-import { StudioMapInfo } from '@modelEntities/mapInfo';
+import { StudioMapInfo, StudioMapInfoValue } from '@modelEntities/mapInfo';
 
 /**
  * Captain Hook of the Hooks. This hook allow you to manipulate map info data from a specific screen.
@@ -11,26 +11,49 @@ import { StudioMapInfo } from '@modelEntities/mapInfo';
  */
 export const useMapInfo = () => {
   const [state, setState] = useGlobalState();
-  const mapInfoValues = state.mapInfo;
+  const mapInfo = state.mapInfo;
 
-  const setMapInfoValues = (newMapInfoValues: StudioMapInfo[]) => {
-    if (JSON.stringify(newMapInfoValues) !== JSON.stringify(mapInfoValues)) {
+  const setMapInfo = (newMapInfo: StudioMapInfo) => {
+    if (JSON.stringify(newMapInfo) !== JSON.stringify(mapInfo)) {
       setState((currentState) => ({
         ...currentState,
-        mapInfo: newMapInfoValues,
+        mapInfo: newMapInfo,
         savingMapInfo: true,
       }));
     } else {
       setState((currentState) => ({
         ...currentState,
-        mapInfo: newMapInfoValues,
+        mapInfo: newMapInfo,
+      }));
+    }
+  };
+
+  const setPartialMapInfo = (newMapInfoValue: StudioMapInfoValue, id: keyof StudioMapInfo) => {
+    const currentMapInfoValue = mapInfo[id];
+    if (JSON.stringify(currentMapInfoValue) !== JSON.stringify(newMapInfoValue)) {
+      setState((currentState) => ({
+        ...currentState,
+        mapInfo: {
+          ...mapInfo,
+          [id]: newMapInfoValue,
+        },
+        savingMapInfo: true,
+      }));
+    } else {
+      setState((currentState) => ({
+        ...currentState,
+        mapInfo: {
+          ...mapInfo,
+          [id]: newMapInfoValue,
+        },
       }));
     }
   };
 
   return {
-    mapInfoValues,
-    setMapInfoValues,
+    mapInfo,
+    setMapInfo,
+    setPartialMapInfo,
     state,
   };
 };
@@ -47,7 +70,7 @@ export const useMapInfoReadonly = () => {
   const [state] = useGlobalState();
 
   return {
-    mapInfoValues: state.mapInfo,
+    mapInfo: state.mapInfo,
     state,
   };
 };

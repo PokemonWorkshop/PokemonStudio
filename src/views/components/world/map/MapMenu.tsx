@@ -7,17 +7,16 @@ import { NewFolderButtonOnlyIcon, SecondaryButtonWithPlusIcon } from '@component
 import { NavigationDatabaseGroupStyle } from '@components/database/navigation/NavigationDatabaseGroup/NavigationDatabaseGroupStyle';
 import { useDialogsRef } from '@utils/useDialogsRef';
 import { MapEditorAndDeletionKeys, MapEditorOverlay } from './editors/MapEditorOverlay';
-import { MapTree } from './tree/MapTree';
 import { useMapInfo } from '@utils/useMapInfo';
 import { createMapInfo } from '@utils/entityCreation';
-import { cloneEntity } from '@utils/cloneEntity';
 import { MAP_INFO_FOLDER_NAME_TEXT_ID, StudioMapInfoFolder } from '@modelEntities/mapInfo';
 import { useSetProjectText } from '@utils/ReadingProjectText';
 import { SeparatorGreyLine } from '@components/separators/SeparatorGreyLine';
+import { MapTree } from './tree/MapTree';
+import { addNewMapInfo } from '@utils/MapInfoUtils';
+import { useToolTip } from '@utils/useToolTip';
 
 const MapMenuContainer = styled(NavigationDatabaseStyle)`
-  height: 100vh;
-
   ${NavigationDatabaseGroupStyle} {
     gap: 8px;
   }
@@ -40,16 +39,17 @@ const MapSubMenuContainer = styled.div`
 
 export const MapMenu = () => {
   const dialogsRef = useDialogsRef<MapEditorAndDeletionKeys>();
-  const { mapInfoValues: mapInfo, setMapInfoValues: setMapInfo } = useMapInfo();
+  const { mapInfo, setMapInfo } = useMapInfo();
   const setText = useSetProjectText();
+  const { buildOnMouseEnter, onMouseLeave, renderToolTip } = useToolTip();
   const { t } = useTranslation(['world', 'database_maps']);
 
   const handleNewFolder = () => {
     const newFolder = createMapInfo(mapInfo, { klass: 'MapInfoFolder' }) as StudioMapInfoFolder;
-    const mapInfoCloned = cloneEntity(mapInfo);
-    mapInfoCloned.push(newFolder);
-    setText(MAP_INFO_FOLDER_NAME_TEXT_ID, newFolder.textId, t('database_maps:new_folder'));
-    setMapInfo(mapInfoCloned);
+
+    const newMapInfo = addNewMapInfo(mapInfo, newFolder);
+    setText(MAP_INFO_FOLDER_NAME_TEXT_ID, newFolder.data.textId, t('database_maps:new_folder'));
+    setMapInfo(newMapInfo);
   };
 
   return (
@@ -60,13 +60,18 @@ export const MapMenu = () => {
             <SecondaryButtonWithPlusIcon className="new" onClick={() => dialogsRef.current?.openDialog('new')}>
               {t('database_maps:new')}
             </SecondaryButtonWithPlusIcon>
-            <NewFolderButtonOnlyIcon onClick={handleNewFolder} />
+            <NewFolderButtonOnlyIcon
+              onClick={handleNewFolder}
+              onMouseLeave={onMouseLeave}
+              onMouseEnter={buildOnMouseEnter(t('database_maps:new_folder'), 'top-begin')}
+            />
           </div>
           <SeparatorGreyLine />
           <MapTree />
         </MapSubMenuContainer>
       </NavigationDatabaseGroup>
       <MapEditorOverlay ref={dialogsRef} />
+      {renderToolTip()}
     </MapMenuContainer>
   );
 };

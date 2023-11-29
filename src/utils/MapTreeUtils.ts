@@ -1,35 +1,95 @@
-import type { StudioMapInfo } from '@modelEntities/mapInfo';
-import type { FlattenedItem, TreeItem } from '@components/sortabletree/TreeTypes';
-import type { TreeItemStudioMapInfo } from '@components/world/map/tree/MapTreeItemWrapper';
+import type { ItemId, TreeData, TreeDestinationPosition, TreeItem } from '@components/tree/types';
+import { StudioMapInfo, StudioMapInfoValue } from '@modelEntities/mapInfo';
+import theme from '@src/AppTheme';
+import Tree from '@components/tree';
 
-export const getCountChildren = (children: TreeItem<StudioMapInfo>[] & StudioMapInfo[]): number => {
+export const getMapTreeItemDepth = (tree: TreeData, item: TreeItem): number => {
+  if (item.data.parentId === undefined || item.data.parentId === 0) return 1;
+  return 1 + getMapTreeItemDepth(tree, tree.items[item.data.parentId]);
+};
+
+export const getMapTreeCountChildren = (tree: TreeData, item: TreeItem): number => {
   let count = 0;
-
-  children.forEach((child) => {
+  item.children.forEach((childId) => {
     count++;
-    count += getCountChildren(child.children);
+    if (tree.items[childId]) {
+      count += getMapTreeCountChildren(tree, tree.items[childId]);
+    }
   });
   return count;
 };
 
-export const findMaxDepth = (item: (FlattenedItem<StudioMapInfo> | TreeItem<StudioMapInfo>) & StudioMapInfo): number => {
-  if (item.children.length === 0) {
-    return 1;
-  }
+export const getMapTreeSourceDepth = (tree: TreeData, item: TreeItem): number => {
+  if (item.children.length === 0) return 1;
 
-  let maxDepth = 0;
-  item.children.forEach((child) => {
-    const childDepth = findMaxDepth(child);
-    maxDepth = Math.max(maxDepth, childDepth);
-  });
-
-  return maxDepth + 1;
+  const childrenDepths = item.children.map((id) => getMapTreeSourceDepth(tree, tree.items[id]));
+  return 1 + Math.max(...childrenDepths);
 };
 
-export const mapIsInFolder = (current: { klass: 'MapInfoFolder' | 'MapInfoMap'; parent: FlattenedItem<TreeItemStudioMapInfo> | null }): boolean => {
-  const parent = current.parent;
-  if (parent === null) {
-    return current.klass === 'MapInfoFolder';
+export const getMapTreeDestinationDepth = (tree: TreeData, destination: TreeDestinationPosition): number => {
+  if (destination.parentId === 0) return 1;
+
+  return getMapTreeItemDepth(tree, tree.items[destination.parentId]);
+};
+
+export const mapTreeComputeMaxWidth = (depth: number, isFolder = false, hovered = false) => {
+  const indentationWidth = 26;
+  if (hovered) {
+    if (isFolder) {
+      return 150 - indentationWidth * depth;
+    }
+    return 145 - indentationWidth * depth;
   }
-  return mapIsInFolder(parent);
+  if (isFolder) {
+    return 160 - indentationWidth * depth;
+  }
+  return 185 - indentationWidth * depth;
+};
+
+export const renderDropBox = (targetId: string | null | undefined, treeRef: React.RefObject<Tree>) => {
+  if (!treeRef.current) return;
+
+  if (targetId) {
+    const item = treeRef.current.itemsElement[targetId]?.firstChild as HTMLDivElement | undefined;
+    if (!item) return;
+
+    item.style.outline = `2px solid ${theme.colors.primaryBase}`;
+    item.style.outlineOffset = '-2px';
+    item.style.borderRadius = '8px';
+  } else {
+    // clear dropbox
+    const items = Object.values(treeRef.current.itemsElement);
+    items.forEach((item) => {
+      const firstChild = item?.firstChild as HTMLDivElement | undefined;
+      if (!firstChild) return;
+
+      firstChild.style.outline = 'inherit';
+    });
+  }
+};
+
+export const searchIsUnderOpenFolder = (tree: TreeData, item: TreeItem) => {
+  if (item.data.klass === 'MapInfoMap' && item.data.parentId !== 0) return false;
+
+  const rootItem = tree.items['0'];
+  const index = rootItem.children.findIndex((itemId) => itemId === item.id);
+  if (index === 0) return false;
+
+  const previousId = rootItem.children[index - 1];
+  return tree.items[previousId].isExpanded || false;
+};
+
+/*
+ * The tree does not change the structure of the TreeItem, whose data is provided by the mapinfo.
+ * This means that the data present in the input also exists in the output.
+ * The ItemId can be an Integer or a String, but this has no effect on the mapinfo.
+ * So "conversions" are safe.
+ */
+
+export const mapTreeConvertTreeToMapInfo = (items: Record<ItemId, TreeItem>) => {
+  return items as unknown as StudioMapInfo;
+};
+
+export const mapTreeConvertItemToMapInfoValue = (item: TreeItem) => {
+  return item as unknown as StudioMapInfoValue;
 };

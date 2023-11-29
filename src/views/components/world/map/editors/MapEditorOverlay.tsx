@@ -7,13 +7,13 @@ import { MapDeletion } from './MapDeletion';
 import { MapMusicsEditor } from './MapMusicsEditor';
 import { MapNewEditor } from './MapNewEditor';
 import { MapFolderDeletion } from './MapFolderDeletion';
-import { StudioMapInfo, StudioMapInfoFolder } from '@modelEntities/mapInfo';
+import { StudioMapInfoFolder, StudioMapInfoValue } from '@modelEntities/mapInfo';
 
 export type MapEditorAndDeletionKeys = 'new' | 'frame' | 'musics' | 'deletion' | 'deletion_folder';
 export type MapDialogsRef = React.RefObject<DialogRefData<MapEditorAndDeletionKeys>>;
 
 type Props = {
-  mapInfo?: StudioMapInfo;
+  mapInfoValue?: StudioMapInfoValue;
 };
 
 /**
@@ -22,20 +22,24 @@ type Props = {
  */
 export const MapEditorOverlay = defineEditorOverlay<MapEditorAndDeletionKeys, Props>(
   'MapEditorOverlay',
-  (dialogToShow, handleCloseRef, closeDialog, { mapInfo }) => {
+  (dialogToShow, handleCloseRef, closeDialog, { mapInfoValue }) => {
     switch (dialogToShow) {
       case 'new':
-        return <MapNewEditor ref={handleCloseRef} closeDialog={closeDialog} mapInfoParent={mapInfo} />;
+        return <MapNewEditor ref={handleCloseRef} closeDialog={closeDialog} mapInfoParent={mapInfoValue} />;
       case 'frame':
         return <MapFrameEditor ref={handleCloseRef} />;
       case 'musics':
         return <MapMusicsEditor ref={handleCloseRef} />;
       case 'deletion':
         return (
-          <MapDeletion closeDialog={closeDialog} ref={handleCloseRef} dbSymbol={mapInfo?.klass === 'MapInfoMap' ? mapInfo.mapDbSymbol : undefined} />
+          <MapDeletion
+            closeDialog={closeDialog}
+            ref={handleCloseRef}
+            dbSymbol={mapInfoValue?.data.klass === 'MapInfoMap' ? mapInfoValue.data.mapDbSymbol : undefined}
+          />
         );
       case 'deletion_folder':
-        return <MapFolderDeletion closeDialog={closeDialog} ref={handleCloseRef} mapInfoFolder={mapInfo as StudioMapInfoFolder} />;
+        return <MapFolderDeletion closeDialog={closeDialog} ref={handleCloseRef} mapInfoFolder={mapInfoValue as StudioMapInfoFolder} />;
       default:
         return assertUnreachable(dialogToShow);
     }

@@ -3,7 +3,7 @@ import theme from '@src/AppTheme';
 import styled from 'styled-components';
 
 import { useProjectMaps } from '@utils/useProjectData';
-import { useMapBreadcrumb } from '@utils/MapUtils';
+import { useMapBreadcrumb } from '@utils/useMapBreadcrumb';
 
 const MapBreadcrumbStyle = styled.div`
   user-select: none;

@@ -26,7 +26,7 @@ const projectDataKeys = [
   'maps',
 ] as const;
 type ProjectDataFromBackEndKey = (typeof projectDataKeys)[number];
-export type ProjectDataFromBackEnd = Record<ProjectDataFromBackEndKey, string[]> & { textInfos: StudioTextInfo[]; mapInfo: StudioMapInfo[] };
+export type ProjectDataFromBackEnd = Record<ProjectDataFromBackEndKey, string[]> & { textInfos: StudioTextInfo[]; mapInfo: StudioMapInfo };
 
 export const readProjectFolder = async (projectPath: string, key: ProjectDataFromBackEndKey): Promise<string[]> => {
   const folderName = path.join(projectPath, 'Data/Studio', key);
@@ -68,7 +68,7 @@ const readProjectData = async (payload: ReadProjectDataInput, event: IpcMainEven
   const textInfosJson = await fsPromises.readFile(path.join(payload.path, 'Data/Studio', 'text_info.json'), { encoding: 'utf-8' });
   const textInfos: StudioTextInfo[] = JSON.parse(textInfosJson);
   const mapInfoJson = await fsPromises.readFile(path.join(payload.path, 'Data/Studio', 'map_info.json'), { encoding: 'utf-8' });
-  const mapInfo: StudioMapInfo[] = JSON.parse(mapInfoJson);
+  const mapInfo: StudioMapInfo = JSON.parse(mapInfoJson);
   const projectData = await projectDataKeys.reduce(async (prev, curr, index) => {
     const prevData = await prev;
     log.info('read-project-data/progress', curr);

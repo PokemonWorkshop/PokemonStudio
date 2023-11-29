@@ -2,6 +2,7 @@ import { IpcMainEvent } from 'electron';
 import fs from 'fs';
 import path from 'path';
 import { stringify } from 'csv-stringify/sync';
+import { StudioMapInfo } from '@modelEntities/mapInfo';
 
 export const saveCSV = (projectPath: string, fileId: number, languages: string[], noData?: true) => {
   const csvPath = path.join(projectPath, 'Data/Text/Studio', `${fileId}.csv`);
@@ -23,6 +24,17 @@ export const baseForMaps = async (_: IpcMainEvent, projectPath: string) => {
     fs.unlinkSync(path.join(projectPath, 'Data/Studio/rmxp_maps.json'));
   }
   if (!fs.existsSync(path.join(projectPath, 'Data/Studio/map_info.json'))) {
-    fs.writeFileSync(path.join(projectPath, 'Data/Studio/map_info.json'), JSON.stringify([]));
+    const defaultMapInfo: StudioMapInfo = {
+      ['0']: {
+        id: 0,
+        children: [],
+        hasChildren: false,
+        isExpanded: true,
+        data: {
+          klass: 'MapInfoRoot',
+        },
+      },
+    };
+    fs.writeFileSync(path.join(projectPath, 'Data/Studio/map_info.json'), JSON.stringify(defaultMapInfo, null, 2));
   }
 };

@@ -7,10 +7,11 @@ import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import { readProjectFolder } from './readProjectData';
 import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID, MAP_VALIDATOR, StudioMap } from '@modelEntities/map';
 import { padStr } from '@utils/PadStr';
-import { MAP_INFO_DATA_VALIDATOR } from '@modelEntities/mapInfo';
+import { MAP_INFO_VALIDATOR } from '@modelEntities/mapInfo';
 import { createMapInfo } from '@utils/entityCreation';
 import { addLineCSV, loadCSV } from '@utils/textManagement';
 import { stringify } from 'csv-stringify/sync';
+import { addNewMapInfo } from '@utils/MapInfoUtils';
 
 export type RMXP2StudioMapsSyncInput = { projectPath: string };
 
@@ -96,7 +97,7 @@ const readRMXPMap = async (projectPath: string, mapId: number) => {
 
 const readStudioMapInfo = async (mapInfoStudioFilePath: string) => {
   const studioMapInfoData = await fsPromise.readFile(mapInfoStudioFilePath, { encoding: 'utf-8' });
-  const mapInfoParsed = MAP_INFO_DATA_VALIDATOR.safeParse(JSON.parse(studioMapInfoData));
+  const mapInfoParsed = MAP_INFO_VALIDATOR.safeParse(JSON.parse(studioMapInfoData));
   if (!mapInfoParsed.success) throw new Error('Failed to parse the file map_info.json');
 
   return mapInfoParsed.data;
@@ -119,7 +120,7 @@ const RMXP2StudioMapsSync = async (payload: RMXP2StudioMapsSyncInput) => {
   const mapInfoStudioFilePath = path.join(payload.projectPath, 'Data', 'Studio', 'map_info.json');
 
   const rmxpMapInfoData = await readRMXPMapInfo(mapInfoRMXPFilePath);
-  const studioMapInfoData = await readStudioMapInfo(mapInfoStudioFilePath);
+  let studioMapInfoData = await readStudioMapInfo(mapInfoStudioFilePath);
   const maps = await readProjectFolder(payload.projectPath, 'maps');
   const studioMaps = maps.reduce((data, map) => {
     const mapParsed = MAP_VALIDATOR.safeParse(JSON.parse(map));
@@ -163,7 +164,10 @@ const RMXP2StudioMapsSync = async (payload: RMXP2StudioMapsSyncInput) => {
         sha1: '',
         tiledFilename: '',
       } as StudioMap;
-      studioMapInfoData.push(createMapInfo(studioMapInfoData, { klass: 'MapInfoMap', mapDbSymbol: newMap.dbSymbol }));
+      studioMapInfoData = addNewMapInfo(
+        studioMapInfoData,
+        createMapInfo(studioMapInfoData, { klass: 'MapInfoMap', mapDbSymbol: newMap.dbSymbol, parentId: 0 })
+      );
       fsPromise.writeFile(path.join(payload.projectPath, 'Data/Studio/maps', `${newMap.dbSymbol}.json`), JSON.stringify(newMap, null, 2));
       addLineCSV(new Array(mapNameColumnLength).fill(rmxpMap.name), rmxpMap.id + 1, 0, mapNames);
       addLineCSV(new Array(mapDescrColumnLength).fill(''), rmxpMap.id + 1, 0, mapDescriptions);
