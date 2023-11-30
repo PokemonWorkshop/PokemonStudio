@@ -106,13 +106,7 @@ const updateMetadata = async (tiledMap: MapToImport, mapsFolderPath: string) => 
   tiledMap.sha1 = sha1;
 };
 
-const copyTiledFiles = async (payload: CopyTiledFilesInput) => {
-  log.info('copy-tiled-files');
-  const projectPath = payload.projectPath;
-  const mapsFolderPath = path.join(projectPath, MAPS_FOLDER);
-  const tilesetsFolderPath = path.join(projectPath, TILESETS_FOLDER);
-  const assetsFolderPath = path.join(projectPath, ASSETS_FOLDER);
-
+const createTargetFolders = (mapsFolderPath: string, tilesetsFolderPath: string, assetsFolderPath: string) => {
   if (!fs.existsSync(mapsFolderPath)) {
     fs.mkdirSync(mapsFolderPath);
   }
@@ -122,6 +116,16 @@ const copyTiledFiles = async (payload: CopyTiledFilesInput) => {
   if (!fs.existsSync(assetsFolderPath)) {
     fs.mkdirSync(assetsFolderPath);
   }
+};
+
+const copyTiledFiles = async (payload: CopyTiledFilesInput) => {
+  log.info('copy-tiled-files');
+  const projectPath = payload.projectPath;
+  const mapsFolderPath = path.join(projectPath, MAPS_FOLDER);
+  const tilesetsFolderPath = path.join(projectPath, TILESETS_FOLDER);
+  const assetsFolderPath = path.join(projectPath, ASSETS_FOLDER);
+
+  createTargetFolders(mapsFolderPath, tilesetsFolderPath, assetsFolderPath);
 
   const tiledMaps: MapToImport[] = JSON.parse(payload.tiledMaps);
   const originalTiledMapPaths = tiledMaps.map(({ path }) => path);
