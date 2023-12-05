@@ -149,7 +149,7 @@ const DropDownContainer = styled.div`
   }
 `;
 
-type DropDownOption = {
+export type DropDownOption = {
   value: string;
   label: string;
 };

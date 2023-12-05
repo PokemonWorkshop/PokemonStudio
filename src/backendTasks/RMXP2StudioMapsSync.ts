@@ -2,7 +2,7 @@ import log from 'electron-log';
 import path from 'path';
 import fs from 'fs';
 import fsPromise from 'fs/promises';
-import { isMarshalHash, isMarshalStandardObject, Marshal } from 'ts-marshal';
+import { isMarshalStandardObject, Marshal } from 'ts-marshal';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import { readProjectFolder } from './readProjectData';
 import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID, MAP_VALIDATOR, StudioMap } from '@modelEntities/map';
@@ -12,18 +12,9 @@ import { createMapInfo } from '@utils/entityCreation';
 import { addLineCSV, loadCSV } from '@utils/textManagement';
 import { stringify } from 'csv-stringify/sync';
 import { addNewMapInfo } from '@utils/MapInfoUtils';
+import { readRMXPMapInfo } from './readRMXPMapInfo';
 
 export type RMXP2StudioMapsSyncInput = { projectPath: string };
-
-type MapInfoData = {
-  '@scroll_x': number;
-  '@name': string;
-  '@expanded': boolean;
-  '@order': number;
-  '@scroll_y': number;
-  '@parent_id': number;
-  __class: symbol;
-};
 
 type AudioData = { '@name': string; '@volume': number; '@pitch': number };
 
@@ -40,13 +31,6 @@ type MapData = {
   '@data': unknown;
   '@events': unknown;
 };
-
-const isMapInfoObject = (object: unknown): object is MapInfoData =>
-  isMarshalStandardObject(object) &&
-  '@order' in object &&
-  '@name' in object &&
-  typeof object['@order'] === 'number' &&
-  typeof object['@name'] === 'string';
 
 const isMapObject = (object: unknown): object is MapData =>
   isMarshalStandardObject(object) &&
@@ -65,20 +49,6 @@ const addAudioExtensionFile = (projectPath: string, filename: string, type: 'bgm
   if (!ext) return filename;
 
   return `${filename}.${ext}`;
-};
-
-const readRMXPMapInfo = async (mapInfoFilePath: string) => {
-  const mapInfoData = await fsPromise.readFile(mapInfoFilePath);
-  const marshalData = Marshal.load(mapInfoData);
-  if (!isMarshalHash(marshalData)) throw new Error('Loaded object is not a Hash');
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { __class, __extendedModules, __default, ...mapInfos } = marshalData;
-  const mapInfoRecords = Object.entries(mapInfos)
-    .map(([id, data]) => (isMapInfoObject(data) ? { id: Number(id), order: data['@order'], name: data['@name'] } : undefined))
-    .filter(<T>(data: T): data is Exclude<T, undefined> => !!data);
-  const rmxpMapData = mapInfoRecords.sort((a, b) => a.order - b.order).map(({ id, name }) => ({ id, name }));
-  return rmxpMapData;
 };
 
 const readRMXPMap = async (projectPath: string, mapId: number) => {
