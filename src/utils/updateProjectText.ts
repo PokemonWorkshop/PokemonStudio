@@ -6,6 +6,18 @@ const getLanguage = (fileText: string[][], defaultLanguage: string) => {
   return language == -1 ? 0 : language;
 };
 
+const addText = (fileId: number, fileText: string[][], text: string, realIndex: number) => {
+  const defaultLine = new Array(fileText[0].length).fill('NewText');
+  // we create as many lines as necessary to reach the desired index
+  if (realIndex > fileText.length) {
+    const repeat = realIndex - fileText.length + 1;
+    const newLines = Array.from({ length: repeat }, () => [...defaultLine]);
+    newLines[newLines.length - 1] = new Array(fileText[0].length).fill(text);
+    return [fileId, [...fileText, ...newLines]] as const;
+  }
+  return [fileId, [...fileText.slice(0, realIndex), new Array(fileText[0].length).fill(text), ...fileText.slice(realIndex + 1)]] as const;
+};
+
 export type TextUpdate = {
   textIndex: number;
   texts: Record<number, string>;
@@ -19,7 +31,7 @@ export const getProjectTextChange = (language: string, textIndex: number, fileId
   const currentTextLine = fileText[realIndex];
 
   if (!currentTextLine) {
-    return [fileId, [...fileText.slice(0, realIndex), new Array(fileText[0].length).fill(text), ...fileText.slice(realIndex + 1)]] as const;
+    return addText(fileId, fileText, text, realIndex);
   } else {
     const localeIndex = getLanguage(fileText, language);
     if (currentTextLine[localeIndex] === text) return [fileId, fileText] as const;

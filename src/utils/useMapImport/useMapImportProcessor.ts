@@ -1,7 +1,7 @@
 import { useLoaderRef } from '@utils/loaderContext';
 import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { MapImportFunctionBinding, MapImportStateObject } from './types';
+import type { MapImportFunctionBinding, MapImportStateObject, MapToImport } from './types';
 import { DEFAULT_PROCESS_STATE, PROCESS_DONE_STATE, SpecialStateProcessors } from '@utils/useProcess';
 import { MapImportFiles } from '@components/world/map/editors/MapImport/MapImportType';
 import type { PartialStudioMap } from 'ts-tiled-converter';
@@ -15,6 +15,8 @@ import { useSetProjectText } from '@utils/ReadingProjectText';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { Sha1 } from '@modelEntities/sha1';
 import { addNewMapInfo } from '@utils/MapInfoUtils';
+import { padStr } from '@utils/PadStr';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 
 const DEFAULT_BINDING: MapImportFunctionBinding = {
   onFailure: () => {},
@@ -46,7 +48,13 @@ export const useMapImportProcessor = () => {
                 files.map((file) => ({ path: file.path, errorMessage: file.error }))
               );
             } else {
-              const mapsToImport = files.map((file, index) => ({ path: file.path, mapName: file.mapName, mtime: 0, ...tiledMetadata[index] }));
+              const mapsToImport = files.map((file, index) => ({
+                path: file.path,
+                mapName: file.mapName,
+                mapId: file.mapId,
+                mtime: 0,
+                ...tiledMetadata[index],
+              }));
               setState({ state: 'copyTmxFiles', mapsToImport, tiledFilesSrcPath });
             }
             return () => {};
@@ -73,7 +81,12 @@ export const useMapImportProcessor = () => {
         return window.api.copyTiledFiles(
           { projectPath: globalState.projectPath!, tiledMaps: JSON.stringify(mapsToImport), tiledSrcPath: tiledFilesSrcPath },
           ({ tiledMaps }) => {
-            setState({ state: 'createNewMap', mapsToImport: JSON.parse(tiledMaps) });
+            const mapsToImport: MapToImport[] = JSON.parse(tiledMaps);
+            // the news maps must be create after the maps with a map id defined
+            mapsToImport.sort((a, b) => {
+              return (a.mapId || 999_999) - (b.mapId || 999_999);
+            });
+            setState({ state: 'createNewMap', mapsToImport });
           },
           ({ errorMessage }) => {
             setState(DEFAULT_PROCESS_STATE);
@@ -91,6 +104,10 @@ export const useMapImportProcessor = () => {
 
           const mapToImport = mapsToImport[0];
           const newMap = createMap(maps, 30, mapToImport.path, '', '');
+          if (mapToImport.mapId !== undefined) {
+            newMap.id = mapToImport.mapId;
+            newMap.dbSymbol = `map${padStr(newMap.id, 3)}` as DbSymbol;
+          }
           newMap.mtime = mapToImport.mtime;
           newMap.sha1 = mapToImport.sha1 as Sha1;
           newMap.tileMetadata = mapToImport.tileMetadata;

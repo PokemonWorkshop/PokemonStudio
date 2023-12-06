@@ -149,6 +149,12 @@ export const MapImportList = ({ files, mapInfoOptions, setFiles }: MapImportList
     setFiles(filesCloned);
   };
 
+  const handleMapId = (value: string, index: number) => {
+    const filesCloned = cloneEntity(files);
+    filesCloned[index].mapId = value === 'new' ? undefined : Number(value);
+    setFiles(filesCloned);
+  };
+
   return (
     <MapImportListContainer>
       <div className="header">
@@ -186,7 +192,11 @@ export const MapImportList = ({ files, mapInfoOptions, setFiles }: MapImportList
                         </div>
                       </div>
                       <Input value={file.mapName} onChange={(event) => handleMapName(event.target.value, index)} />
-                      <StudioDropDown value="new" options={mapInfoOptions} onChange={() => {}} />
+                      <StudioDropDown
+                        value={file.mapId === undefined ? 'new' : `${file.mapId}`}
+                        options={mapInfoOptions}
+                        onChange={(value) => handleMapId(value, index)}
+                      />
                     </MapLineContainer>
                   );
                 }}
