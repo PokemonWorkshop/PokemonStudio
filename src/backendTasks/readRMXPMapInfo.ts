@@ -38,7 +38,7 @@ export const readRMXPMapInfo = async (mapInfoFilePath: string) => {
   return rmxpMapData;
 };
 
-const readRMXPMapInfoBackendService = async (payload: ReadRMXPMapInfoInput) => {
+const readRMXPMapInfoBackendService = async (payload: ReadRMXPMapInfoInput): Promise<ReadRMXPMapInfoOutput> => {
   log.info('read-rmxp-map-info', payload);
   const mapInfoRMXPFilePath = path.join(payload.projectPath, 'Data', 'MapInfos.rxdata');
 

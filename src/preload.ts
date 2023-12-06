@@ -34,6 +34,7 @@ import type { GetFilePathsFromFolderInput, GetFilePathsFromFolderOutput } from '
 import type { CopyTiledFilesInput, CopyTiledFilesOutput } from './backendTasks/copyTiledFiles';
 import type { RMXP2StudioMapsSyncInput } from './backendTasks/RMXP2StudioMapsSync';
 import type { ReadRMXPMapInfoInput, ReadRMXPMapInfoOutput } from './backendTasks/readRMXPMapInfo';
+import type { ReadRMXPMapInput, ReadRMXPMapOutput } from './backendTasks/readRMXPMap';
 
 contextBridge.exposeInMainWorld('api', {
   clearCache: () => webFrame.clearCache(),
@@ -128,6 +129,7 @@ contextBridge.exposeInMainWorld('api', {
   copyTiledFiles: defineBackendTask(ipcRenderer, 'copy-tiled-files'),
   RMXP2StudioMapsSync: defineBackendTask(ipcRenderer, 'rmxp-to-studio-maps-sync'),
   readRMXPMapInfo: defineBackendTask(ipcRenderer, 'read-rmxp-map-info'),
+  readRMXPMap: defineBackendTask(ipcRenderer, 'read-rmxp-map'),
 });
 
 type AnyObj = Record<string, never>;
@@ -205,6 +207,7 @@ declare global {
       copyTiledFiles: BackendTaskWithGenericErrorAndNoProgress<CopyTiledFilesInput, CopyTiledFilesOutput>;
       RMXP2StudioMapsSync: BackendTaskWithGenericErrorAndNoProgress<RMXP2StudioMapsSyncInput, AnyObj>;
       readRMXPMapInfo: BackendTaskWithGenericErrorAndNoProgress<ReadRMXPMapInfoInput, ReadRMXPMapInfoOutput>;
+      readRMXPMap: BackendTaskWithGenericErrorAndNoProgress<ReadRMXPMapInput, ReadRMXPMapOutput>;
     };
   }
 }

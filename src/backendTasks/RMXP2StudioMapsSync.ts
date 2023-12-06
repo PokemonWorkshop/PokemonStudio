@@ -2,7 +2,6 @@ import log from 'electron-log';
 import path from 'path';
 import fs from 'fs';
 import fsPromise from 'fs/promises';
-import { isMarshalStandardObject, Marshal } from 'ts-marshal';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import { readProjectFolder } from './readProjectData';
 import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID, MAP_VALIDATOR, StudioMap } from '@modelEntities/map';
@@ -13,57 +12,9 @@ import { addLineCSV, loadCSV } from '@utils/textManagement';
 import { stringify } from 'csv-stringify/sync';
 import { addNewMapInfo } from '@utils/MapInfoUtils';
 import { readRMXPMapInfo } from './readRMXPMapInfo';
+import { readRMXPMap } from './readRMXPMap';
 
 export type RMXP2StudioMapsSyncInput = { projectPath: string };
-
-type AudioData = { '@name': string; '@volume': number; '@pitch': number };
-
-type MapData = {
-  '@tileset_id': number;
-  '@width': number;
-  '@height': number;
-  '@autoplay_bgm': boolean;
-  '@bgm': AudioData;
-  '@autoplay_bgs': boolean;
-  '@bgs': AudioData;
-  '@encounter_list': unknown[];
-  '@encounter_step': number;
-  '@data': unknown;
-  '@events': unknown;
-};
-
-const isMapObject = (object: unknown): object is MapData =>
-  isMarshalStandardObject(object) &&
-  '@bgm' in object &&
-  '@bgs' in object &&
-  '@encounter_step' in object &&
-  typeof object['@bgm'] === 'object' &&
-  typeof object['@bgs'] === 'object' &&
-  typeof object['@encounter_step'] === 'number';
-
-const isRecord = (object: unknown): object is Record<string | symbol, unknown> => typeof object === 'object' && object !== null;
-
-const addAudioExtensionFile = (projectPath: string, filename: string, type: 'bgm' | 'bgs') => {
-  const filePath = path.join(projectPath, 'Audio', type, filename);
-  const ext = ['ogg', 'mp3', 'midi', 'mid', 'aac', 'wav', 'flac'].find((ext) => fs.existsSync(`${filePath}.${ext}`));
-  if (!ext) return filename;
-
-  return `${filename}.${ext}`;
-};
-
-const readRMXPMap = async (projectPath: string, mapId: number) => {
-  const mapData = await fsPromise.readFile(path.join(projectPath, 'Data', `Map${padStr(mapId, 3)}.rxdata`));
-  const marshalData = Marshal.load(mapData);
-  if (!isRecord(marshalData)) throw new Error('Loaded object is not a Record');
-
-  if (!isMapObject(marshalData)) return undefined;
-
-  return {
-    encounterStep: marshalData['@encounter_step'],
-    bgm: addAudioExtensionFile(projectPath, marshalData['@bgm']['@name'], 'bgm'),
-    bgs: addAudioExtensionFile(projectPath, marshalData['@bgs']['@name'], 'bgs'),
-  };
-};
 
 const readStudioMapInfo = async (mapInfoStudioFilePath: string) => {
   const studioMapInfoData = await fsPromise.readFile(mapInfoStudioFilePath, { encoding: 'utf-8' });
@@ -114,8 +65,8 @@ const RMXP2StudioMapsSync = async (payload: RMXP2StudioMapsSyncInput) => {
         const updateMap = {
           ...studioMap,
           stepsAverage: rmxpMapData?.encounterStep || studioMap.stepsAverage,
-          bgm: rmxpMapData?.bgm || studioMap.bgm,
-          bgs: rmxpMapData?.bgs || studioMap.bgs,
+          bgm: rmxpMapData?.bgm.name || studioMap.bgm,
+          bgs: rmxpMapData?.bgs.name || studioMap.bgs,
         };
         fsPromise.writeFile(path.join(payload.projectPath, 'Data/Studio/maps', `${updateMap.dbSymbol}.json`), JSON.stringify(updateMap, null, 2));
       }
@@ -128,8 +79,8 @@ const RMXP2StudioMapsSync = async (payload: RMXP2StudioMapsSyncInput) => {
         id: rmxpMap.id,
         dbSymbol: `map${padStr(rmxpMap.id, 3)}`,
         stepsAverage: rmxpMapData?.encounterStep || 1,
-        bgm: rmxpMapData?.bgm || '',
-        bgs: rmxpMapData?.bgs || '',
+        bgm: rmxpMapData?.bgm.name || '',
+        bgs: rmxpMapData?.bgs.name || '',
         mtime: 1,
         sha1: '',
         tiledFilename: '',

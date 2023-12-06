@@ -62,5 +62,6 @@
   "import_success_message_singular": "La carte a été importée avec succès.",
   "import_success_message_plurial": "Les cartes ont été importées avec succès.",
   "no_map_found": "Aucun carte n'a été trouvée",
-  "map_in_rmxp": "Carte dans RPG Maker XP"
+  "map_in_rmxp": "Carte dans RPG Maker XP",
+  "read_data_rmxp_maps": "Lecture des données des cartes de RPG Maker XP"
 }
