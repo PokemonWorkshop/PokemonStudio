@@ -10,8 +10,8 @@ import { DarkButton, PrimaryButton } from '@components/buttons';
 import styled from 'styled-components';
 import { useMapImport } from '@utils/useMapImport';
 import { useLoaderRef } from '@utils/loaderContext';
-import { useGlobalState } from '@src/GlobalStateProvider';
 import { DropDownOption } from '@components/StudioDropDown';
+import { useProjectDataReadonly } from '@utils/useProjectData';
 
 const MapImportContainer = styled.div`
   display: flex;
@@ -71,12 +71,13 @@ export const MapImport = ({ closeDialog, closeParentDialog }: MapImportProps) =>
   const { t } = useTranslation('database_maps');
   const loaderRef = useLoaderRef();
   const mapImport = useMapImport();
-  const [globalState] = useGlobalState();
+  const { projectDataValues: maps, state: globalState } = useProjectDataReadonly('maps', 'map');
   const [state, setState] = useState<MapImportState>('select_folder');
   const [folderPath, setFolderPath] = useState<string | undefined>(undefined);
   const [files, setFiles] = useState<MapImportFiles[]>([]);
   const [hasError, setHasError] = useState<boolean>(false);
   const [mapInfoOptions, setMapInfoOptions] = useState<DropDownOption[]>([{ value: 'new', label: t('new') }]);
+  const [mapIdsUsed, setMapIdsUsed] = useState<number[]>([]);
   const amountMapShouldBeImport = useMemo(() => files.filter((file) => file.shouldBeImport).length, [files]);
 
   const getSubTitle = () => {
@@ -127,8 +128,9 @@ export const MapImport = ({ closeDialog, closeParentDialog }: MapImportProps) =>
           { projectPath: globalState.projectPath! },
           ({ rmxpMapInfo }) => {
             const options = rmxpMapInfo.map(({ id, name }) => ({ value: id.toString(), label: `${name} (${id})` }));
+            const mapIds = Object.values(maps).map((map) => map.id);
             setMapInfoOptions((mapInfoOptions) => {
-              mapInfoOptions.push(...options);
+              mapInfoOptions.push(...options.filter((option) => option.value !== 'new' && !mapIds.includes(Number(option.value))));
               return mapInfoOptions;
             });
             setState('select_files');
@@ -173,6 +175,14 @@ export const MapImport = ({ closeDialog, closeParentDialog }: MapImportProps) =>
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
 
+  useEffect(() => {
+    if (state !== 'select_files') return;
+    const idsUsed = files.map(({ mapId }) => mapId).filter((mapId) => mapId !== undefined) as number[];
+    setMapIdsUsed(idsUsed);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [files]);
+
   return (
     <Dialog title={t('import_tiled_maps')} subTitle={getSubTitle()} closeDialog={closeDialog} hasError={hasError}>
       {state === 'select_folder' && (
@@ -189,7 +199,7 @@ export const MapImport = ({ closeDialog, closeParentDialog }: MapImportProps) =>
         <MapImportContainer>
           {state === 'select_files' && files.length === 0 && <div className="message">{t('no_files_found')}</div>}
           {((state === 'select_files' && files.length > 0) || state === 'import') && (
-            <MapImportList files={files} setFiles={setFiles} mapInfoOptions={mapInfoOptions} />
+            <MapImportList files={files} setFiles={setFiles} mapInfoOptions={mapInfoOptions} mapIdsUsed={mapIdsUsed} />
           )}
           {state === 'searching_files' && <div className="message">{t('searching_files')}</div>}
           <div className="bottom">

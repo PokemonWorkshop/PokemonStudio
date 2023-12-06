@@ -126,10 +126,11 @@ const MapLineContainer = styled.div<MapLineContainerProps>`
 type MapImportListType = {
   files: MapImportFiles[];
   mapInfoOptions: DropDownOption[];
+  mapIdsUsed: number[];
   setFiles: Dispatch<SetStateAction<MapImportFiles[]>>;
 };
 
-export const MapImportList = ({ files, mapInfoOptions, setFiles }: MapImportListType) => {
+export const MapImportList = ({ files, mapInfoOptions, mapIdsUsed, setFiles }: MapImportListType) => {
   const { t } = useTranslation('database_maps');
   const { buildOnMouseEnter, onMouseLeave, renderToolTip } = useToolTip('map-import-tooltip');
 
@@ -196,6 +197,7 @@ export const MapImportList = ({ files, mapInfoOptions, setFiles }: MapImportList
                         value={file.mapId === undefined ? 'new' : `${file.mapId}`}
                         options={mapInfoOptions}
                         onChange={(value) => handleMapId(value, index)}
+                        optionals={{ filter: (value) => file.mapId === Number(value) || !mapIdsUsed.includes(Number(value)) }}
                       />
                     </MapLineContainer>
                   );
