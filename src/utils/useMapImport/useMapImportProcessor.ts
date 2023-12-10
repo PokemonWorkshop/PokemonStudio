@@ -6,7 +6,7 @@ import { DEFAULT_PROCESS_STATE, PROCESS_DONE_STATE, SpecialStateProcessors } fro
 import { MapImportFiles } from '@components/world/map/editors/MapImport/MapImportType';
 import type { PartialStudioMap } from 'ts-tiled-converter';
 import { fail, toAsyncProcess } from './helpers';
-import { useProjectMaps } from '@utils/useProjectData';
+import { useProjectMapLinks, useProjectMaps } from '@utils/useProjectData';
 import { useMapInfo } from '@utils/useMapInfo';
 import { createMap, createMapInfo } from '@utils/entityCreation';
 import { StudioMapInfoMap } from '@modelEntities/mapInfo';
@@ -18,6 +18,7 @@ import { addNewMapInfo } from '@utils/MapInfoUtils';
 import { padStr } from '@utils/PadStr';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { RMXPMap } from '@src/backendTasks/readRMXPMap';
+import { getValidMaps } from '@utils/MapLinkUtils';
 
 const DEFAULT_BINDING: MapImportFunctionBinding = {
   onFailure: () => {},
@@ -29,6 +30,7 @@ export const useMapImportProcessor = () => {
   const loaderRef = useLoaderRef();
   const { projectDataValues: maps, setProjectDataValues: setMap } = useProjectMaps();
   const { mapInfo, setMapInfo } = useMapInfo();
+  const { projectDataValues: mapLinks, selectedDataIdentifier: currentMapLink, setSelectedDataIdentifier: setSelectedMapLink } = useProjectMapLinks();
   const setText = useSetProjectText();
   const { t } = useTranslation('database_maps');
   const binding = useRef<MapImportFunctionBinding>(DEFAULT_BINDING);
@@ -133,6 +135,13 @@ export const useMapImportProcessor = () => {
         return toAsyncProcess(() => {
           loaderRef.current.setProgress(4, 4, t('create_new_maps'));
           if (mapsToImportWithRMXPMap.length === 0) {
+            // update the selected maplink by default
+            const mapLinkValues = Object.values(mapLinks);
+            if (mapLinkValues.length > 0 && currentMapLink === '__undef__') {
+              const validMaps = getValidMaps(globalState.projectData.zones);
+              const mapLinkFiltered = mapLinkValues.filter((mapLink) => validMaps.includes(mapLink.mapId));
+              if (mapLinkFiltered.length > 0) setSelectedMapLink({ mapLink: mapLinkFiltered[0].mapId.toString() });
+            }
             binding.current.onSuccess({});
             return setState(DEFAULT_PROCESS_STATE);
           }
