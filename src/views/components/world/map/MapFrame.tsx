@@ -10,6 +10,7 @@ import { CopyIdentifier } from '@components/Copy';
 import { useGetEntityDescriptionText, useGetEntityNameText } from '@utils/ReadingProjectText';
 import { StudioMap } from '@modelEntities/map';
 import { MapDialogsRef } from './editors/MapEditorOverlay';
+import { padStr } from '@utils/PadStr';
 
 type Props = {
   map: StudioMap;
@@ -28,7 +29,10 @@ export const MapFrame = ({ map, dialogsRef }: Props) => {
         <DataInfoContainer>
           <DataInfoContainerHeader>
             <DataInfoContainerHeaderTitle>
-              <h1>{getName(map)}</h1>
+              <h1>
+                {getName(map)}
+                <span className="data-id">#{padStr(map.id, 3)}</span>
+              </h1>
               <CopyIdentifier dataToCopy={String(map.id)} noColon />
             </DataInfoContainerHeaderTitle>
             <p>{getDescription(map)}</p>

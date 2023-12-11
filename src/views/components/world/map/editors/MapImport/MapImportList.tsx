@@ -8,6 +8,7 @@ import { Input } from '@components/inputs';
 import { cloneEntity } from '@utils/cloneEntity';
 import { ReactComponent as ErrorIcon } from '@assets/icons/global/error2.svg';
 import { useToolTip } from '@utils/useToolTip';
+import { DropDownOption, StudioDropDown } from '@components/StudioDropDown';
 
 const MapImportListContainer = styled.div`
   ${({ theme }) => theme.fonts.normalRegular}
@@ -15,7 +16,7 @@ const MapImportListContainer = styled.div`
 
   .header {
     display: grid;
-    grid-template-columns: auto 308px;
+    grid-template-columns: 252px 192px auto;
     column-gap: 32px;
     color: ${({ theme }) => theme.colors.text400};
     padding-bottom: 12px;
@@ -25,18 +26,31 @@ const MapImportListContainer = styled.div`
 
   .map {
     display: grid;
-    grid-template-columns: 18px 274px;
+    grid-template-columns: 18px 218px;
     column-gap: 16px;
     user-select: none;
 
-    .filename {
+    .filename-icon {
       display: flex;
       align-items: center;
       gap: 8px;
       color: ${({ theme }) => theme.colors.text100};
-      width: 274px;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    }
+
+    .filename-icon {
+      .filename {
+        width: 218px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .filename-with-error {
+        width: 194px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
 
       .icon {
         height: 18px;
@@ -50,7 +64,7 @@ const MapImportListContainer = styled.div`
   }
 
   .list {
-    height: 402px;
+    height: 474px;
     margin-left: -8px;
     margin-right: -12px;
 
@@ -87,19 +101,18 @@ const MapLineContainer = styled.div<MapLineContainerProps>`
   align-items: center;
   gap: 32px;
   padding: 4px 4px 4px 8px;
-  height: 40px;
+  height: 48px;
   box-sizing: border-box;
   border-radius: 8px;
 
   .map {
-    .filename {
+    .filename-icon {
       ${({ hasError, theme }) => hasError && `color: ${theme.colors.dangerBase}`};
     }
   }
 
   ${Input} {
-    height: 32px;
-    width: 100%;
+    width: 192px;
   }
 
   ${({ checked, theme }) => checked && `background-color: ${theme.colors.dark19}`};
@@ -111,10 +124,12 @@ const MapLineContainer = styled.div<MapLineContainerProps>`
 
 type MapImportListType = {
   files: MapImportFiles[];
+  mapInfoOptions: DropDownOption[];
+  mapIdsUsed: number[];
   setFiles: Dispatch<SetStateAction<MapImportFiles[]>>;
 };
 
-export const MapImportList = ({ files, setFiles }: MapImportListType) => {
+export const MapImportList = ({ files, mapInfoOptions, mapIdsUsed, setFiles }: MapImportListType) => {
   const { t } = useTranslation('database_maps');
   const { buildOnMouseEnter, onMouseLeave, renderToolTip } = useToolTip('map-import-tooltip');
 
@@ -134,6 +149,12 @@ export const MapImportList = ({ files, setFiles }: MapImportListType) => {
     setFiles(filesCloned);
   };
 
+  const handleMapId = (value: string, index: number) => {
+    const filesCloned = cloneEntity(files);
+    filesCloned[index].mapId = value === 'new' ? undefined : Number(value);
+    setFiles(filesCloned);
+  };
+
   return (
     <MapImportListContainer>
       <div className="header">
@@ -141,7 +162,8 @@ export const MapImportList = ({ files, setFiles }: MapImportListType) => {
           <Checkbox checked={!files.some((file) => !file.shouldBeImport)} onChange={(event) => allFilesChecked(event.target.checked)} />
           <span>{t('file')}</span>
         </div>
-        {t('map_name')}
+        <span>{t('map_name')}</span>
+        <span>{t('map_in_rmxp')}</span>
       </div>
       <div className="list">
         <AutoSizer>
@@ -151,17 +173,17 @@ export const MapImportList = ({ files, setFiles }: MapImportListType) => {
                 className="scrollable-view"
                 width={width}
                 height={height}
-                rowHeight={42}
+                rowHeight={50}
                 rowCount={files.length}
                 rowRenderer={({ key, index, style }) => {
                   const file = files[index];
                   const hasError = file.error !== undefined;
                   return (
-                    <MapLineContainer key={key} style={{ ...style, height: '40px' }} checked={file.shouldBeImport} hasError={hasError}>
+                    <MapLineContainer key={key} style={{ ...style, height: '48px' }} checked={file.shouldBeImport} hasError={hasError}>
                       <div className="map">
                         <Checkbox checked={file.shouldBeImport} onChange={(event) => handleFileChecked(event.target.checked, index)} />
-                        <div className="filename">
-                          <span>{file.filename}</span>
+                        <div className="filename-icon">
+                          <span className={`filename${hasError ? '-with-error' : ''}`}>{file.filename}</span>
                           {hasError && (
                             <span className="icon" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(file.error!, 'top-begin')}>
                               <ErrorIcon />
@@ -170,6 +192,12 @@ export const MapImportList = ({ files, setFiles }: MapImportListType) => {
                         </div>
                       </div>
                       <Input value={file.mapName} onChange={(event) => handleMapName(event.target.value, index)} />
+                      <StudioDropDown
+                        value={file.mapId === undefined ? 'new' : `${file.mapId}`}
+                        options={mapInfoOptions}
+                        onChange={(value) => handleMapId(value, index)}
+                        optionals={{ filter: (value) => file.mapId === Number(value) || !mapIdsUsed.includes(Number(value)) }}
+                      />
                     </MapLineContainer>
                   );
                 }}

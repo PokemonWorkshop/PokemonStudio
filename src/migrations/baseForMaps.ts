@@ -14,6 +14,9 @@ export const saveCSV = (projectPath: string, fileId: number, languages: string[]
 
 export const baseForMaps = async (_: IpcMainEvent, projectPath: string) => {
   const languages = ['en', 'fr', 'it', 'es'];
+  if (!fs.existsSync(path.join(projectPath, 'Data/Text/Studio'))) {
+    fs.mkdirSync(path.join(projectPath, 'Data/Text/Studio'));
+  }
   saveCSV(projectPath, 200002, languages);
   saveCSV(projectPath, 200003, languages);
   saveCSV(projectPath, 200004, languages, true);

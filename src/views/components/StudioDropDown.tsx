@@ -21,6 +21,7 @@ const DropDownOptions = styled.div<DropDownOptionsProps>`
   padding: 8px 4px 8px 8px;
   left: -2px;
   z-index: 2;
+  box-shadow: 0px 2px 4px ${({ theme }) => theme.colors.dark14};
   box-sizing: border-box;
   user-select: none;
   cursor: default;
@@ -149,7 +150,7 @@ const DropDownContainer = styled.div`
   }
 `;
 
-type DropDownOption = {
+export type DropDownOption = {
   value: string;
   label: string;
 };
@@ -164,7 +165,7 @@ const research = (options: DropDownOption[], entry: string) => {
   if (!entry) return options;
 
   const entryLowerCase = entry.toLowerCase();
-  return options.filter((option) => option.value.match(entry) || option.label.toLowerCase().match(entryLowerCase));
+  return options.filter((option) => option.value.indexOf(entry) !== -1 || option.label.toLowerCase().indexOf(entryLowerCase) !== -1);
 };
 
 const getHeight = (options: DropDownOption[], isOpen: boolean) => {
@@ -201,17 +202,33 @@ export const StudioDropDown = ({ value, options, onChange, optionals }: StudioDr
   const notOpenClass = currentOption ? undefined : 'error';
   const label = currentOption?.option.label || optionals?.deletedOption || '???';
 
+  const closeDropDown = () => {
+    setIsOpen(false);
+    setEntry('');
+    inputRef.current?.blur();
+  };
+
   useEffect(() => {
     const eventFunction = () => {
       if (!isOpen && document.activeElement === inputRef.current) return setIsOpen(true);
-      setIsOpen(false);
-      setEntry('');
-      inputRef.current?.blur();
+      closeDropDown();
     };
     window.addEventListener('click', eventFunction);
-
     return () => window.removeEventListener('click', eventFunction);
   }, [isOpen]);
+
+  useEffect(() => {
+    const listener = (event: KeyboardEvent) => {
+      if (event.key !== 'Enter') return;
+
+      if (isOpen && optionsList.length === 1) {
+        onChange(optionsList[0].value);
+        closeDropDown();
+      }
+    };
+    window.addEventListener('keydown', listener);
+    return () => window.removeEventListener('keydown', listener);
+  }, [isOpen, onChange, optionsList]);
 
   const onClick = () => {
     if (!isOpen) inputRef.current?.focus();

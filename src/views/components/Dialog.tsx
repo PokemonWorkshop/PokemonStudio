@@ -4,8 +4,8 @@ import { ClearButtonOnlyIcon } from './buttons';
 
 const DialogContainer = styled.div`
   display: flex;
-  width: 700px;
-  height: 614px;
+  width: 800px;
+  height: 686px;
   padding: 24px 20px;
   flex-direction: column;
   align-items: flex-start;
