@@ -31,6 +31,7 @@
   "user_or_adjacent_ally": "Sur soi ou sur un Pokémon allié",
   "adjacent_ally": "Un Pokémon allié",
   "all_ally": "Tous les Pokémon côté allié",
+  "all_ally_but_user": "Tous les Pokémon côté allié à l'exception de l'utilisateur",
   "any_other_pokemon": "Un des autres Pokémon",
   "random_foe": "Un adversaire au hasard",
   "method": "Méthode",
