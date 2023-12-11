@@ -21,6 +21,7 @@ const DropDownOptions = styled.div<DropDownOptionsProps>`
   padding: 8px 4px 8px 8px;
   left: -2px;
   z-index: 2;
+  box-shadow: 0px 2px 4px ${({ theme }) => theme.colors.dark14};
   box-sizing: border-box;
   user-select: none;
   cursor: default;

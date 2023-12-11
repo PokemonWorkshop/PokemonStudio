@@ -16,7 +16,7 @@ const MapImportListContainer = styled.div`
 
   .header {
     display: grid;
-    grid-template-columns: 172px 172px auto;
+    grid-template-columns: 252px 192px auto;
     column-gap: 32px;
     color: ${({ theme }) => theme.colors.text400};
     padding-bottom: 12px;
@@ -26,7 +26,7 @@ const MapImportListContainer = styled.div`
 
   .map {
     display: grid;
-    grid-template-columns: 18px 138px;
+    grid-template-columns: 18px 218px;
     column-gap: 16px;
     user-select: none;
 
@@ -39,14 +39,14 @@ const MapImportListContainer = styled.div`
 
     .filename-icon {
       .filename {
-        width: 138px;
+        width: 218px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
 
       .filename-with-error {
-        width: 114px;
+        width: 194px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -112,8 +112,7 @@ const MapLineContainer = styled.div<MapLineContainerProps>`
   }
 
   ${Input} {
-    height: 32px;
-    width: 172px;
+    width: 192px;
   }
 
   ${({ checked, theme }) => checked && `background-color: ${theme.colors.dark19}`};
