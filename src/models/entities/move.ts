@@ -21,6 +21,7 @@ export const MOVE_BATTLE_ENGINE_AIMED_TARGET_VALIDATOR = z.union([
   z.literal('user_or_adjacent_ally'),
   z.literal('adjacent_ally'),
   z.literal('all_ally'),
+  z.literal('all_ally_but_user'),
   z.literal('any_other_pokemon'),
   z.literal('random_foe'),
 ]);
@@ -134,6 +135,7 @@ export const MOVE_TARGETS = [
   'user_or_adjacent_ally',
   'adjacent_ally',
   'all_ally',
+  'all_ally_but_user',
   'any_other_pokemon',
   'random_foe',
 ] as const;
