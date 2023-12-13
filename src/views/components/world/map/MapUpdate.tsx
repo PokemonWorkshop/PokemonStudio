@@ -7,7 +7,7 @@ import { useMapUpdate } from '@utils/useMapUpdate';
 import { showNotification } from '@utils/showNotification';
 import { useLoaderRef } from '@utils/loaderContext';
 
-const MapUpdateContainer = styled.div`
+export const MapUpdateContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
