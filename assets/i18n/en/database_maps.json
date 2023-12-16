@@ -65,6 +65,6 @@
   "map_in_rmxp": "Map in RPG Maker XP",
   "read_data_rmxp_maps": "Reading map data from RPG Maker XP",
   "update_rmxp_maps": "Synchronizing maps with RPG Maker XP",
-  "update_rmxp_maps_message": "Update your maps if you've made changes in RPG Maker XP, so that they're taken into account in Pokémon Studio.",
-  "update_rmxp_maps_button": "Update"
+  "update_rmxp_maps_message": "Update your maps if you've made changes in RPG Maker XP. These changes will be taken into account in Pokémon Studio.",
+  "update_rmxp_maps_button": "Update modified maps"
 }
