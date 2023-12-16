@@ -12,7 +12,7 @@ import { addLineCSV, loadCSV } from '@utils/textManagement';
 import { stringify } from 'csv-stringify/sync';
 import { addNewMapInfo } from '@utils/MapInfoUtils';
 import { readRMXPMapInfo } from './readRMXPMapInfo';
-import { readRMXPMap } from './readRMXPMap';
+import { RMXPMap, readRMXPMap } from './readRMXPMap';
 
 export type RMXP2StudioMapsSyncInput = { projectPath: string };
 
@@ -33,6 +33,14 @@ const updatedMapNeeded = (projectPath: string, id: number) => {
 const updatedCSVNeeded = (projectPath: string, mapInfoRMXPFilePath: string) => {
   const csvPath = path.join(projectPath, 'Data/Text/Studio', `${MAP_NAME_TEXT_ID}.csv`);
   return fs.statSync(mapInfoRMXPFilePath).mtime > fs.statSync(csvPath).mtime;
+};
+
+const getAudio = (rmxpMapData?: RMXPMap) => {
+  if (!rmxpMapData) return { bgm: undefined, bgs: undefined };
+
+  const bgm = rmxpMapData.autoplayBgm ? rmxpMapData.bgm.name : '';
+  const bgs = rmxpMapData.autoplayBgs ? rmxpMapData.bgs.name : '';
+  return { bgm, bgs };
 };
 
 const RMXP2StudioMapsSync = async (payload: RMXP2StudioMapsSyncInput) => {
@@ -60,13 +68,14 @@ const RMXP2StudioMapsSync = async (payload: RMXP2StudioMapsSyncInput) => {
 
     const rmxpMapData = await readRMXPMap(payload.projectPath, rmxpMap.id);
     const studioMap = studioMaps.find((studioMap) => studioMap.id === rmxpMap.id);
+    const { bgm, bgs } = getAudio(rmxpMapData);
     if (studioMap) {
       if (updatedMapNeeded(payload.projectPath, rmxpMap.id)) {
         const updateMap = {
           ...studioMap,
           stepsAverage: rmxpMapData?.encounterStep || studioMap.stepsAverage,
-          bgm: rmxpMapData?.bgm.name || studioMap.bgm,
-          bgs: rmxpMapData?.bgs.name || studioMap.bgs,
+          bgm: bgm === undefined ? studioMap.bgm : bgm,
+          bgs: bgs === undefined ? studioMap.bgs : bgs,
         };
         fsPromise.writeFile(path.join(payload.projectPath, 'Data/Studio/maps', `${updateMap.dbSymbol}.json`), JSON.stringify(updateMap, null, 2));
       }
@@ -79,8 +88,8 @@ const RMXP2StudioMapsSync = async (payload: RMXP2StudioMapsSyncInput) => {
         id: rmxpMap.id,
         dbSymbol: `map${padStr(rmxpMap.id, 3)}`,
         stepsAverage: rmxpMapData?.encounterStep || 1,
-        bgm: rmxpMapData?.bgm.name || '',
-        bgs: rmxpMapData?.bgs.name || '',
+        bgm: bgm || '',
+        bgs: bgs || '',
         mtime: 1,
         sha1: '',
         tiledFilename: '',

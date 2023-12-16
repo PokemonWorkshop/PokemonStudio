@@ -130,6 +130,7 @@ contextBridge.exposeInMainWorld('api', {
   RMXP2StudioMapsSync: defineBackendTask(ipcRenderer, 'rmxp-to-studio-maps-sync'),
   readRMXPMapInfo: defineBackendTask(ipcRenderer, 'read-rmxp-map-info'),
   readRMXPMap: defineBackendTask(ipcRenderer, 'read-rmxp-map'),
+  readMaps: defineBackendTask(ipcRenderer, 'read-maps'),
 });
 
 type AnyObj = Record<string, never>;
@@ -208,6 +209,7 @@ declare global {
       RMXP2StudioMapsSync: BackendTaskWithGenericErrorAndNoProgress<RMXP2StudioMapsSyncInput, AnyObj>;
       readRMXPMapInfo: BackendTaskWithGenericErrorAndNoProgress<ReadRMXPMapInfoInput, ReadRMXPMapInfoOutput>;
       readRMXPMap: BackendTaskWithGenericErrorAndNoProgress<ReadRMXPMapInput, ReadRMXPMapOutput>;
+      readMaps: BackendTaskWithGenericErrorAndNoProgress<ReadMapsInput, ReadMapsOutput>;
     };
   }
 }

@@ -63,5 +63,8 @@
   "import_success_message_plurial": "The maps has been successfully imported.",
   "no_map_found": "No map found",
   "map_in_rmxp": "Map in RPG Maker XP",
-  "read_data_rmxp_maps": "Reading map data from RPG Maker XP"
+  "read_data_rmxp_maps": "Reading map data from RPG Maker XP",
+  "update_rmxp_maps": "Synchronizing maps with RPG Maker XP",
+  "update_rmxp_maps_message": "Update your maps if you've made changes in RPG Maker XP. These changes will be taken into account in Pokémon Studio.",
+  "update_rmxp_maps_button": "Update modified maps"
 }

@@ -10,7 +10,7 @@ import { useDialogsRef } from '@utils/useDialogsRef';
 import { useMapPage } from '@utils/usePage';
 import { MapEditorOverlay } from '@components/world/map/editors';
 import { MapEditorAndDeletionKeys } from '@components/world/map/editors/MapEditorOverlay';
-import { MapBreadcrumb, MapFrame, MapMusics, MapUpdate } from '@components/world/map';
+import { MapBreadcrumb, MapFrame, MapMusics, MapRMXP2StudioUpdate, MapUpdate } from '@components/world/map';
 import { DeleteButtonWithIcon } from '@components/buttons';
 
 const MapPageStyle = styled.div`
@@ -25,7 +25,7 @@ const MapPageStyle = styled.div`
 
 export const MapPage = () => {
   const dialogsRef = useDialogsRef<MapEditorAndDeletionKeys>();
-  const { map, hasMap, hasMapModified } = useMapPage();
+  const { map, hasMap, hasMapModified, isRMXPMode } = useMapPage();
   const { t } = useTranslation('database_maps');
 
   return hasMap ? (
@@ -42,6 +42,7 @@ export const MapPage = () => {
               ]}
             />
             {hasMapModified && <MapUpdate />}
+            {isRMXPMode && <MapRMXP2StudioUpdate />}
           </DataBlockWrapper>
           <DataBlockWrapper>
             <MapFrame map={map} dialogsRef={dialogsRef} />
