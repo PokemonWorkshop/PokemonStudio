@@ -15,7 +15,7 @@ import { basename, dirname } from '@utils/path';
 const iconFileExtensions = ['png'];
 
 const DefaultLanguage = ['en', 'fr', 'es'] as const;
-export type DefaultLanguageType = typeof DefaultLanguage[number];
+export type DefaultLanguageType = (typeof DefaultLanguage)[number];
 export type ProjectCreationData = StudioProject & {
   icon?: string;
   defaultLanguage: DefaultLanguageType;
