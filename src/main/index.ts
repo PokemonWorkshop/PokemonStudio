@@ -191,7 +191,7 @@ ipcMain.on('window-is-maximized', (event) => {
 ipcMain.handle('get-psdk-binaries-path', () => getPSDKBinariesPath());
 ipcMain.handle('get-psdk-version', () => getPSDKVersion());
 ipcMain.handle('get-app-version', () => app.getVersion());
-ipcMain.once('studio-check-update', () => app.isPackaged && autoUpdater.checkForUpdatesAndNotify());
+ipcMain.once('studio-check-update', () => app.isPackaged && autoUpdater.checkForUpdates());
 ipcMain.on('get-last-psdk-version', getLastPSDKVersion);
 ipcMain.on('update-psdk', updatePSDK);
 ipcMain.on('start-psdk', (_, projectPath: string) => startPSDK(projectPath));
