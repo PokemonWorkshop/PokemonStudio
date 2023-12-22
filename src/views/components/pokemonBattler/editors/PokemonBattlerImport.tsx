@@ -10,6 +10,7 @@ import { Editor } from '@components/editor';
 import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
 
 import { useGroupPage, useTrainerPage } from '@utils/usePage';
+import { StudioDropDown } from '@components/StudioDropDown';
 import { useUpdateTrainer } from '@components/database/trainer/editors/useUpdateTrainer';
 import { useUpdateGroup } from '@components/database/group/editors/useUpdateGroup';
 import type { PokemonBattlerFrom } from './PokemonBattlerEditorOverlay';
@@ -54,6 +55,35 @@ const getFirstDbSymbol = (
       assertUnreachable(from);
   }
   return '__undef__';
+};
+
+type ImportInputProps = {
+  from: 'group' | 'trainer';
+  selectedEntity: string;
+  onChange: (dbSymbol: string) => void;
+  filterEntity: string;
+};
+
+const ImportInput: React.FC<ImportInputProps> = ({ from, selectedEntity, onChange, filterEntity }) => {
+  const { t } = useTranslation(['database_trainers', 'database_groups']);
+  const infoKey = from === 'group' ? 'database_groups:battler_import_info' : 'database_trainers:battler_import_info';
+  const labelKey = from === 'group' ? 'database_groups:import_battler_from' : 'database_trainers:import_battler_from';
+  const htmlForValue = from === 'group' ? 'group' : 'trainer';
+  const SelectComponent = from === 'group' ? SelectGroup : SelectTrainer;
+
+  return (
+    <>
+      <ImportInfo>{t(infoKey)}</ImportInfo>
+      <InputWithTopLabelContainer>
+        <Label htmlFor={htmlForValue}>{t(labelKey)}</Label>
+        <SelectComponent dbSymbol={selectedEntity} onChange={onChange} filter={(dbSymbol) => dbSymbol !== filterEntity} noLabel />
+      </InputWithTopLabelContainer>
+      <InputWithTopLabelContainer>
+        <Label htmlFor={htmlForValue}>{t(labelKey)}</Label>
+        <SelectComponent dbSymbol={selectedEntity} onChange={onChange} filter={(dbSymbol) => dbSymbol !== filterEntity} noLabel />
+      </InputWithTopLabelContainer>
+    </>
+  );
 };
 
 type PokemonBattlerImportProps = {
@@ -118,33 +148,12 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
   return (
     <Editor type={from} title={t('database_groups:import')}>
       <InputContainer size="m">
-        {from === 'group' ? (
-          <>
-            <ImportInfo>{t('database_groups:battler_import_info')}</ImportInfo>
-            <InputWithTopLabelContainer>
-              <Label htmlFor="group">{t('database_groups:import_battler_from')}</Label>
-              <SelectGroup
-                dbSymbol={selectedEntity}
-                onChange={(dbSymbol) => setSelectedEntity(dbSymbol)}
-                filter={(dbSymbol) => dbSymbol !== group.dbSymbol}
-                noLabel
-              />
-            </InputWithTopLabelContainer>
-          </>
-        ) : (
-          <>
-            <ImportInfo>{t('database_trainers:battler_import_info')}</ImportInfo>
-            <InputWithTopLabelContainer>
-              <Label htmlFor="group">{t('database_trainers:import_battler_from')}</Label>
-              <SelectTrainer
-                dbSymbol={selectedEntity}
-                onChange={(dbSymbol) => setSelectedEntity(dbSymbol)}
-                filter={(dbSymbol) => dbSymbol !== trainer.dbSymbol}
-                noLabel
-              />
-            </InputWithTopLabelContainer>
-          </>
-        )}
+        <ImportInput
+          from={from}
+          selectedEntity={selectedEntity}
+          onChange={(dbSymbol) => setSelectedEntity(dbSymbol)}
+          filterEntity={from === 'group' ? group.dbSymbol : trainer.dbSymbol}
+        />
         <InputWithLeftLabelContainer>
           <Label htmlFor="override">{t('database_groups:replace_battlers')}</Label>
           <Toggle name="override" checked={override} onChange={(event) => setOverride(event.target.checked)} />
