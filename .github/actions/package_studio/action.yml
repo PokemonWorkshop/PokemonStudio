@@ -8,6 +8,8 @@ runs:
       shell: bash
       run: |
         npm run make
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Save to Github Artifact
       uses: actions/upload-artifact@v3

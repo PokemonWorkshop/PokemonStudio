@@ -122,8 +122,7 @@
       "icon": "assets/icon.ico"
     },
     "nsis": {
-      "oneClick": false,
-      "publish": []
+      "oneClick": false
     }
   },
   "volta": {
