@@ -119,11 +119,14 @@
       "target": [
         "nsis"
       ],
-      "icon": "assets/icon.ico"
+      "icon": "assets/icon.ico",
+      "publish": "never"
     },
     "nsis": {
-      "oneClick": false
-    }
+      "oneClick": false,
+      "publish": "never"
+    },
+    "publish": "never"
   },
   "volta": {
     "node": "20.9.0"

@@ -7,7 +7,7 @@ runs:
     - name: Make Studio executable
       shell: bash
       run: |
-        npm run make -- --publish=never
+        npm run make
 
     - name: Save to Github Artifact
       uses: actions/upload-artifact@v3
