@@ -40,6 +40,8 @@
   "trainer_party": "{{name}}'s party",
   "trainer_bag": "{{name}}'s bag",
   "import": "Importation",
+  "default_option_label": "",
+  "showdown_option_label": "",
   "battler_import_info": "You can import Pokémon from an other trainer.",
   "item_import_info": "You can import items from an other trainer.",
   "import_battler_from": "Import Pokémon from",

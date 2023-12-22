@@ -40,6 +40,8 @@
   "trainer_party": "Equipa de {{name}}",
   "trainer_bag": "Mala de {{name}}",
   "import": "Importação",
+  "default_option_label": "",
+  "showdown_option_label": "",
   "battler_import_info": "Você pode importar os Pokémon de um outro trainer.",
   "item_import_info": "Você pode importar os items de um outro trainer.",
   "import_battler_from": "Importar os Pokémon de",

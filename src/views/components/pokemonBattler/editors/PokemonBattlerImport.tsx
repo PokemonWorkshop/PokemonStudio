@@ -66,22 +66,36 @@ type ImportInputProps = {
 
 const ImportInput: React.FC<ImportInputProps> = ({ from, selectedEntity, onChange, filterEntity }) => {
   const { t } = useTranslation(['database_trainers', 'database_groups']);
-  const infoKey = from === 'group' ? 'database_groups:battler_import_info' : 'database_trainers:battler_import_info';
-  const labelKey = from === 'group' ? 'database_groups:import_battler_from' : 'database_trainers:import_battler_from';
-  const htmlForValue = from === 'group' ? 'group' : 'trainer';
+  const [dropDownSelection, setDropDownSelection] = useState('default');
+  const translationContext = from === 'group' ? 'database_groups' : 'database_trainers';
+  const dropDownOptions = [
+    { value: 'default', label: t(`${translationContext}:default_option_label`) },
+    { value: 'showdown', label: t(`${translationContext}:showdown_option_label`) },
+  ];
+
   const SelectComponent = from === 'group' ? SelectGroup : SelectTrainer;
+
+  const handleDropDownChange = (value: string) => {
+    setDropDownSelection(value);
+  };
 
   return (
     <>
-      <ImportInfo>{t(infoKey)}</ImportInfo>
-      <InputWithTopLabelContainer>
-        <Label htmlFor={htmlForValue}>{t(labelKey)}</Label>
-        <SelectComponent dbSymbol={selectedEntity} onChange={onChange} filter={(dbSymbol) => dbSymbol !== filterEntity} noLabel />
-      </InputWithTopLabelContainer>
-      <InputWithTopLabelContainer>
-        <Label htmlFor={htmlForValue}>{t(labelKey)}</Label>
-        <SelectComponent dbSymbol={selectedEntity} onChange={onChange} filter={(dbSymbol) => dbSymbol !== filterEntity} noLabel />
-      </InputWithTopLabelContainer>
+      <ImportInfo>{t(from === 'group' ? `${translationContext}:battler_import_info` : `${translationContext}:battler_import_info`)}</ImportInfo>
+      <StudioDropDown value={dropDownSelection} options={dropDownOptions} onChange={handleDropDownChange} />
+
+      {dropDownSelection === 'default' && (
+        <>
+          <InputWithTopLabelContainer>
+            <Label htmlFor={from}>
+              {t(from === 'group' ? `${translationContext}:import_battler_from` : `${translationContext}:import_battler_from`)}
+            </Label>
+            <SelectComponent dbSymbol={selectedEntity} onChange={onChange} filter={(dbSymbol) => dbSymbol !== filterEntity} noLabel />
+          </InputWithTopLabelContainer>
+        </>
+      )}
+
+      {dropDownSelection === 'showdown' && <ImportInfo>Test</ImportInfo>}
     </>
   );
 };

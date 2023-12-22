@@ -40,6 +40,8 @@
   "trainer_party": "{{name}}'s Partei",
   "trainer_bag": "{{name}}'s Tasche",
   "import": "Importieren",
+  "default_option_label": "",
+  "showdown_option_label": "",
   "battler_import_info": "Du kannst Pokémon von einem anderen Trainer importieren.",
   "item_import_info": "Du kannst Items von einem anderen Trainer importieren.",
   "import_battler_from": "Pokémon importieren von",

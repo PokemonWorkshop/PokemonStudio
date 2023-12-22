@@ -24,6 +24,8 @@
   "battler_deletion_of": "Eliminar a {{pokemon}}",
   "battler_deletion_message": "Estás a punto de eliminar a «\u00a0{{battler}}\u00a0» del grupo «\u00a0{{group}}\u00a0».",
   "import": "Importar",
+  "default_option_label": "",
+  "showdown_option_label": "",
   "battler_import_info": "Puedes importar Pokémon desde otro grupo.",
   "import_battler_from": "Importar Pokémon de",
   "replace_battlers": "Reemplazar Pokémon",

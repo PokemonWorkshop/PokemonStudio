@@ -25,6 +25,8 @@
   "battler_deletion_of": "Suppression d'un Pokémon",
   "battler_deletion_message": "Vous êtes sur le point de supprimer définitivement le Pokémon «\u00a0{{battler}}\u00a0» du groupe «\u00a0{{group}}\u00a0».",
   "import": "Importation",
+  "default_option_label": "",
+  "showdown_option_label": "",
   "battler_import_info": "Vous pouvez importer les Pokémon d’un autre groupe ou en utilisant le format d’export de Showdown.",
   "import_battler_from": "Importer les Pokémon de",
   "replace_battlers": "Remplacer les Pokémon",
