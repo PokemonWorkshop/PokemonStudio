@@ -35,6 +35,7 @@ export const HomePageNewEditor: FunctionComponent = () => {
     multiLanguage: false,
     studioVersion: '1.0.0',
     iconPath: 'project_icon.png',
+    isTiledMode: null,
   });
   const refreshUI = useRefreshUI();
   const languageOptions = useMemo(() => languageEntries(t), [t]);
