@@ -12,10 +12,16 @@ const windowsSpecificResources = process.platform === 'win32' ? ['psdk-binaries'
 const config: ForgeConfig = {
   packagerConfig: {
     icon: './assets/icon',
+    executableName: 'pokemon-studio',
     extraResource: ['new-project.zip', ...windowsSpecificResources],
   },
   rebuildConfig: {},
-  makers: [new MakerNSIS({}), new MakerZIP({}, ['darwin']), new MakerRpm({}), new MakerDeb({})],
+  makers: [
+    new MakerNSIS({}),
+    new MakerZIP({}, ['darwin']),
+    new MakerRpm({ options: { icon: './assets/icon.png' } }),
+    new MakerDeb({ options: { icon: './assets/icon.png' } }),
+  ],
   plugins: [
     new WebpackPlugin({
       mainConfig,

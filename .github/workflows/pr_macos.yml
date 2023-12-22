@@ -1,15 +1,17 @@
-name: Production - CI Build
+name: PR - MacOS Build
 
 on:
   push:
-    branches: [develop, main]
+    branches-ignore:
+      - develop
+      - main
 
   workflow_dispatch:
     inputs:
       force_build_node_module:
         description: 'Force build node_modules'
         type: boolean
-        default: true
+        default: false
         required: true
 
 jobs:
@@ -20,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [macos-latest]
 
     steps:
       - uses: actions/checkout@v3
@@ -29,9 +31,10 @@ jobs:
         with:
           force_build_node_module: ${{ inputs.force_build_node_module || false }}
 
-      - name: Run linting
-        shell: bash
-        run: npm run lint
+      # # No linting because the team never actually agreed with any of those rules and eslint is 1000% of the time counter productive
+      # - name: Run linting
+      #   shell: bash
+      #   run: npm run lint
 
       - name: Package Studio
         uses: ./.github/actions/package_studio
