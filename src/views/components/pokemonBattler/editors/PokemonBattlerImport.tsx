@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
@@ -19,6 +19,7 @@ import { ProjectData } from '@src/GlobalStateProvider';
 import { StudioGroup } from '@modelEntities/group';
 import { StudioTrainer } from '@modelEntities/trainer';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
+import { handleShowdownInputChange } from '@utils/showdownUtils';
 
 const ImportInfo = styled.div`
   ${({ theme }) => theme.fonts.normalRegular};
@@ -124,6 +125,7 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
 
   const ImportInput: React.FC<ImportInputProps> = ({ from, selectedEntity, onChange, filterEntity }) => {
     const { t } = useTranslation(['database_trainers', 'database_groups']);
+    const inputRef = useRef<HTMLTextAreaElement>();
 
     const translationContext = from === 'group' ? 'database_groups' : 'database_trainers';
     const dropDownOptions = [
@@ -132,6 +134,13 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
     ];
 
     const SelectComponent = from === 'group' ? SelectGroup : SelectTrainer;
+
+    const handleBlur = () => {
+      const inputValue = inputRef.current?.value;
+      if (!inputValue) return;
+
+      handleShowdownInputChange(inputValue);
+    };
 
     return (
       <>
@@ -148,7 +157,7 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
             </InputWithTopLabelContainer>
           </>
         )}
-        {dropDownSelection === 'showdown' && <MultiLineInput>Test</MultiLineInput>}
+        {dropDownSelection === 'showdown' && <MultiLineInput ref={inputRef} onBlur={handleBlur}></MultiLineInput>}
       </>
     );
   };
