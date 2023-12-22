@@ -123,6 +123,8 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
     closeDialog();
   };
 
+  useEditorHandlingClose(ref);
+
   const ImportInput: React.FC<ImportInputProps> = ({ from, selectedEntity, onChange, filterEntity }) => {
     const { t } = useTranslation(['database_trainers', 'database_groups']);
     const inputRef = useRef<HTMLTextAreaElement>();
