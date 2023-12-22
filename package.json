@@ -120,13 +120,13 @@
         "nsis"
       ],
       "icon": "assets/icon.ico",
-      "publish": "never"
+      "publish": null
     },
     "nsis": {
       "oneClick": false,
-      "publish": "never"
+      "publish": null
     },
-    "publish": "never"
+    "publish": null
   },
   "volta": {
     "node": "20.9.0"
