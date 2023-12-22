@@ -7,7 +7,7 @@ import { useProjectGroups, useProjectTrainers } from '@utils/useProjectData';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { cloneEntity } from '@utils/cloneEntity';
 import { Editor } from '@components/editor';
-import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
+import { MultiLineInput, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
 
 import { useGroupPage, useTrainerPage } from '@utils/usePage';
 import { StudioDropDown } from '@components/StudioDropDown';
@@ -57,52 +57,16 @@ const getFirstDbSymbol = (
   return '__undef__';
 };
 
+type PokemonBattlerImportProps = {
+  closeDialog: () => void;
+  from: PokemonBattlerFrom;
+};
+
 type ImportInputProps = {
   from: 'group' | 'trainer';
   selectedEntity: string;
   onChange: (dbSymbol: string) => void;
   filterEntity: string;
-};
-
-const ImportInput: React.FC<ImportInputProps> = ({ from, selectedEntity, onChange, filterEntity }) => {
-  const { t } = useTranslation(['database_trainers', 'database_groups']);
-  const [dropDownSelection, setDropDownSelection] = useState('default');
-  const translationContext = from === 'group' ? 'database_groups' : 'database_trainers';
-  const dropDownOptions = [
-    { value: 'default', label: t(`${translationContext}:default_option_label`) },
-    { value: 'showdown', label: t(`${translationContext}:showdown_option_label`) },
-  ];
-
-  const SelectComponent = from === 'group' ? SelectGroup : SelectTrainer;
-
-  const handleDropDownChange = (value: string) => {
-    setDropDownSelection(value);
-  };
-
-  return (
-    <>
-      <ImportInfo>{t(from === 'group' ? `${translationContext}:battler_import_info` : `${translationContext}:battler_import_info`)}</ImportInfo>
-      <StudioDropDown value={dropDownSelection} options={dropDownOptions} onChange={handleDropDownChange} />
-
-      {dropDownSelection === 'default' && (
-        <>
-          <InputWithTopLabelContainer>
-            <Label htmlFor={from}>
-              {t(from === 'group' ? `${translationContext}:import_battler_from` : `${translationContext}:import_battler_from`)}
-            </Label>
-            <SelectComponent dbSymbol={selectedEntity} onChange={onChange} filter={(dbSymbol) => dbSymbol !== filterEntity} noLabel />
-          </InputWithTopLabelContainer>
-        </>
-      )}
-
-      {dropDownSelection === 'showdown' && <ImportInfo>Test</ImportInfo>}
-    </>
-  );
-};
-
-type PokemonBattlerImportProps = {
-  closeDialog: () => void;
-  from: PokemonBattlerFrom;
 };
 
 export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattlerImportProps>(({ closeDialog, from }, ref) => {
@@ -114,6 +78,7 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
   const updateGroup = useUpdateGroup(group);
   const [selectedEntity, setSelectedEntity] = useState(getFirstDbSymbol(from, groups, trainers, group, trainer));
   const [override, setOverride] = useState<boolean>(false);
+  const [dropDownSelection, setDropDownSelection] = useState('default');
   const { t } = useTranslation(['database_trainers', 'database_groups']);
 
   const canImport = () => {
@@ -155,6 +120,37 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
         assertUnreachable(from);
     }
     closeDialog();
+  };
+
+  const ImportInput: React.FC<ImportInputProps> = ({ from, selectedEntity, onChange, filterEntity }) => {
+    const { t } = useTranslation(['database_trainers', 'database_groups']);
+
+    const translationContext = from === 'group' ? 'database_groups' : 'database_trainers';
+    const dropDownOptions = [
+      { value: 'default', label: t(`${translationContext}:default_option_label`) },
+      { value: 'showdown', label: t(`${translationContext}:showdown_option_label`) },
+    ];
+
+    const SelectComponent = from === 'group' ? SelectGroup : SelectTrainer;
+
+    return (
+      <>
+        <ImportInfo>{t(from === 'group' ? `${translationContext}:battler_import_info` : `${translationContext}:battler_import_info`)}</ImportInfo>
+        <StudioDropDown value={dropDownSelection} options={dropDownOptions} onChange={(value) => setDropDownSelection(value)} />
+
+        {dropDownSelection === 'default' && (
+          <>
+            <InputWithTopLabelContainer>
+              <Label htmlFor={from}>
+                {t(from === 'group' ? `${translationContext}:import_battler_from` : `${translationContext}:import_battler_from`)}
+              </Label>
+              <SelectComponent dbSymbol={selectedEntity} onChange={onChange} filter={(dbSymbol) => dbSymbol !== filterEntity} noLabel />
+            </InputWithTopLabelContainer>
+          </>
+        )}
+        {dropDownSelection === 'showdown' && <MultiLineInput>Test</MultiLineInput>}
+      </>
+    );
   };
 
   useEditorHandlingClose(ref);
