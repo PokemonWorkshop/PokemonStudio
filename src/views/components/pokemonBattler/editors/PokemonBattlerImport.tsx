@@ -19,7 +19,8 @@ import { ProjectData } from '@src/GlobalStateProvider';
 import { StudioGroup } from '@modelEntities/group';
 import { StudioTrainer } from '@modelEntities/trainer';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
-import { handleShowdownInputChange } from '@utils/showdownUtils';
+import { convertShowdownInputChange } from '@utils/showdownUtils';
+import { StudioGroupEncounter } from '@modelEntities/groupEncounter';
 
 const ImportInfo = styled.div`
   ${({ theme }) => theme.fonts.normalRegular};
@@ -68,6 +69,8 @@ type ImportInputProps = {
   selectedEntity: string;
   onChange: (dbSymbol: string) => void;
   filterEntity: string;
+  setDropDownSelection: (selection: string) => void;
+  dropDownSelection: string;
 };
 
 export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattlerImportProps>(({ closeDialog, from }, ref) => {
@@ -79,8 +82,11 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
   const updateGroup = useUpdateGroup(group);
   const [selectedEntity, setSelectedEntity] = useState(getFirstDbSymbol(from, groups, trainers, group, trainer));
   const [override, setOverride] = useState<boolean>(false);
-  const [dropDownSelection, setDropDownSelection] = useState('default');
+
   const { t } = useTranslation(['database_trainers', 'database_groups']);
+
+  const [dropDownSelection, setDropDownSelection] = useState('default');
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const canImport = () => {
     if (from === 'group') return true;
@@ -94,75 +100,33 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
   const onClickImport = () => {
     if (!canImport()) return;
 
-    switch (from) {
-      case 'group': {
-        const encountersToImport = cloneEntity(groups[selectedEntity].encounters);
-        if (override) {
-          updateGroup({ encounters: encountersToImport });
-        } else {
-          const cloneEncounters = cloneEntity(group.encounters);
-          cloneEncounters.push(...encountersToImport);
-          updateGroup({ encounters: cloneEncounters });
-        }
-        break;
+    const handleImport = (entityType: string, newEntities: StudioGroupEncounter[]) => {
+      const updateFunction = entityType === 'group' ? updateGroup : updateTrainer;
+      const entityKey = entityType === 'group' ? 'encounters' : 'party';
+      const currentEntities = entityType === 'group' ? group.encounters : trainer.party;
+
+      if (override) {
+        updateFunction({ [entityKey]: newEntities });
+      } else {
+        const clonedEntities = cloneEntity(currentEntities);
+        clonedEntities.push(...newEntities);
+        updateFunction({ [entityKey]: clonedEntities });
       }
-      case 'trainer': {
-        const partyToImport = cloneEntity(trainers[selectedEntity].party);
-        console.log(partyToImport); // Temporaire, pour voir à quoi ressemble l'objet de Studio
-        if (override) {
-          updateTrainer({ party: partyToImport });
-        } else {
-          const cloneParty = cloneEntity(trainer.party);
-          cloneParty.push(...partyToImport);
-          updateTrainer({ party: cloneParty });
-        }
-        break;
-      }
-      default:
-        assertUnreachable(from);
-    }
-    closeDialog();
-  };
-
-  useEditorHandlingClose(ref);
-
-  const ImportInput: React.FC<ImportInputProps> = ({ from, selectedEntity, onChange, filterEntity }) => {
-    const { t } = useTranslation(['database_trainers', 'database_groups']);
-    const inputRef = useRef<HTMLTextAreaElement>();
-
-    const translationContext = from === 'group' ? 'database_groups' : 'database_trainers';
-    const dropDownOptions = [
-      { value: 'default', label: t(`${translationContext}:default_option_label`) },
-      { value: 'showdown', label: t(`${translationContext}:showdown_option_label`) },
-    ];
-
-    const SelectComponent = from === 'group' ? SelectGroup : SelectTrainer;
-
-    const handleBlur = () => {
-      const inputValue = inputRef.current?.value;
-      if (!inputValue) return;
-
-      handleShowdownInputChange(inputValue);
     };
 
-    return (
-      <>
-        <ImportInfo>{t(from === 'group' ? `${translationContext}:battler_import_info` : `${translationContext}:battler_import_info`)}</ImportInfo>
-        <StudioDropDown value={dropDownSelection} options={dropDownOptions} onChange={(value) => setDropDownSelection(value)} />
+    if (dropDownSelection === 'showdown' && inputRef.current) {
+      const showdownEncounter = convertShowdownInputChange(inputRef.current.value);
+      if (showdownEncounter.length === 0) {
+        inputRef.current.focus();
+        return;
+      }
+      handleImport(from, showdownEncounter);
+    } else {
+      const entitiesToImport = from === 'group' ? cloneEntity(groups[selectedEntity].encounters) : cloneEntity(trainers[selectedEntity].party);
+      handleImport(from, entitiesToImport);
+    }
 
-        {dropDownSelection === 'default' && (
-          <>
-            <InputWithTopLabelContainer>
-              <Label htmlFor={from}>
-                {t(from === 'group' ? `${translationContext}:import_battler_from` : `${translationContext}:import_battler_from`)}
-              </Label>
-              <SelectComponent dbSymbol={selectedEntity} onChange={onChange} filter={(dbSymbol) => dbSymbol !== filterEntity} noLabel />
-            </InputWithTopLabelContainer>
-          </>
-        )}
-        {dropDownSelection === 'showdown' && <MultiLineInput ref={inputRef} onBlur={handleBlur}></MultiLineInput>}
-      </>
-    );
+    closeDialog();
   };
 
   useEditorHandlingClose(ref);
@@ -175,6 +139,9 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
           selectedEntity={selectedEntity}
           onChange={(dbSymbol) => setSelectedEntity(dbSymbol)}
           filterEntity={from === 'group' ? group.dbSymbol : trainer.dbSymbol}
+          setDropDownSelection={setDropDownSelection}
+          dropDownSelection={dropDownSelection}
+          ref={inputRef}
         />
         <InputWithLeftLabelContainer>
           <Label htmlFor="override">{t('database_groups:replace_battlers')}</Label>
@@ -193,4 +160,59 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
     </Editor>
   );
 });
+
 PokemonBattlerImport.displayName = 'PokemonBattlerImport';
+
+const ImportInput = forwardRef<HTMLTextAreaElement, ImportInputProps>(
+  ({ from, selectedEntity, onChange, filterEntity, setDropDownSelection, dropDownSelection }, ref) => {
+    const { t } = useTranslation(['database_trainers', 'database_groups']);
+    const [error, setError] = useState('');
+
+    const translationContext = from === 'group' ? 'database_groups' : 'database_trainers';
+    const dropDownOptions = [
+      { value: 'default', label: t(`${translationContext}:default_option_label`) },
+      { value: 'showdown', label: t(`${translationContext}:showdown_option_label`) },
+    ];
+
+    const SelectComponent = from === 'group' ? SelectGroup : SelectTrainer;
+
+    const handleBlur: React.FocusEventHandler<HTMLTextAreaElement> = (event) => {
+      const inputValue = event.currentTarget.value;
+      const convertedTeam = convertShowdownInputChange(inputValue);
+
+      console.log(convertedTeam);
+
+      if (convertedTeam.length === 0) {
+        setError(t(`${translationContext}:error_message`));
+        event.target.focus();
+      } else {
+        setError('');
+      }
+    };
+
+    return (
+      <>
+        <ImportInfo>{t(from === 'group' ? `${translationContext}:battler_import_info` : `${translationContext}:battler_import_info`)}</ImportInfo>
+        <StudioDropDown value={dropDownSelection} options={dropDownOptions} onChange={(value) => setDropDownSelection(value)} />
+        {dropDownSelection === 'default' && (
+          <>
+            <InputWithTopLabelContainer>
+              <Label htmlFor={from}>
+                {t(from === 'group' ? `${translationContext}:import_battler_from` : `${translationContext}:import_battler_from`)}
+              </Label>
+              <SelectComponent dbSymbol={selectedEntity} onChange={onChange} filter={(dbSymbol) => dbSymbol !== filterEntity} noLabel />
+            </InputWithTopLabelContainer>
+          </>
+        )}
+        {dropDownSelection === 'showdown' && <MultiLineInput ref={ref} onBlur={handleBlur}></MultiLineInput>}
+        {error && (
+          <Label>
+            <span>{error}</span>
+          </Label>
+        )}
+      </>
+    );
+  }
+);
+
+ImportInput.displayName = 'ImportInput';
