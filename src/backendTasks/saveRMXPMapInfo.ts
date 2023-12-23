@@ -1,6 +1,7 @@
 import log from 'electron-log';
 import path from 'path';
 import fs from 'fs';
+import fsPromises from 'fs/promises';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import type { StudioMapInfo, StudioMapInfoValue } from '@modelEntities/mapInfo';
 import { Marshal, MarshalObject } from 'ts-marshal';
@@ -14,11 +15,11 @@ type MapData = {
   id: number;
 };
 
-const backupMapInfo = (projectPath: string, mapInfoRMXPFilePath: string) => {
+const backupMapInfo = async (projectPath: string, mapInfoRMXPFilePath: string) => {
   const backupFilePath = path.join(projectPath, 'Data', 'MapInfos.backup');
   if (fs.existsSync(backupFilePath)) return;
 
-  fs.copyFileSync(mapInfoRMXPFilePath, backupFilePath);
+  return fsPromises.copyFile(mapInfoRMXPFilePath, backupFilePath);
 };
 
 const getMap = (dbSymbol: DbSymbol, mapData: MapData[]) => {
@@ -80,7 +81,7 @@ const getRMXPMapInfo = (mapInfo: StudioMapInfo, mapData: MapData[]) => {
 const saveRMXPMapInfo = async (payload: SaveRMXPMapInfoInput) => {
   log.info('save-rmxp-map-info');
   const mapInfoRMXPFilePath = path.join(payload.projectPath, 'Data', 'MapInfos.rxdata');
-  backupMapInfo(payload.projectPath, mapInfoRMXPFilePath);
+  await backupMapInfo(payload.projectPath, mapInfoRMXPFilePath);
   const mapData: MapData[] = JSON.parse(payload.mapData);
   const rmxpMapInfo = getRMXPMapInfo(JSON.parse(payload.mapInfo), mapData);
   fs.writeFileSync(mapInfoRMXPFilePath, Marshal.dump(rmxpMapInfo, { omitStringEncoding: true }));

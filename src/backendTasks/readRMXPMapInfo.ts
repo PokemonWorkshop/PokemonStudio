@@ -5,7 +5,7 @@ import fsPromise from 'fs/promises';
 import { isMarshalHash, isMarshalStandardObject, Marshal } from 'ts-marshal';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 
-export type ReadRMXPMapInfoInput = { projectPath: string; useBackupIfExists?: boolean };
+export type ReadRMXPMapInfoInput = { projectPath: string };
 export type ReadRMXPMapInfoOutput = { rmxpMapInfo: { id: number; name: string }[] };
 
 type MapInfoData = {
@@ -22,7 +22,6 @@ const getMapInfoRMXPFilePath = (payload: ReadRMXPMapInfoInput) => {
   const mapInfoPath = path.join(payload.projectPath, 'Data', 'MapInfos.rxdata');
   const backupPath = path.join(payload.projectPath, 'Data', 'MapInfos.backup');
 
-  if (!payload.useBackupIfExists) return mapInfoPath;
   if (fs.existsSync(backupPath)) return backupPath;
   return mapInfoPath;
 };

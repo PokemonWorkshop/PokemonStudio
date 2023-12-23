@@ -125,7 +125,7 @@ export const MapImport = ({ closeDialog, closeParentDialog }: MapImportProps) =>
         );
       case 'load_rmxp_map_info':
         return window.api.readRMXPMapInfo(
-          { projectPath: globalState.projectPath!, useBackupIfExists: true },
+          { projectPath: globalState.projectPath! },
           ({ rmxpMapInfo }) => {
             const options = rmxpMapInfo.map(({ id, name }) => ({ value: id.toString(), label: `${name} (${id})` }));
             const mapIds = Object.values(maps).map((map) => map.id);
