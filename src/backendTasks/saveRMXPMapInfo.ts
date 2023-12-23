@@ -14,6 +14,13 @@ type MapData = {
   id: number;
 };
 
+const backupMapInfo = (projectPath: string, mapInfoRMXPFilePath: string) => {
+  const backupFilePath = path.join(projectPath, 'Data', 'MapInfos.backup');
+  if (fs.existsSync(backupFilePath)) return;
+
+  fs.copyFileSync(mapInfoRMXPFilePath, backupFilePath);
+};
+
 const getMap = (dbSymbol: DbSymbol, mapData: MapData[]) => {
   return mapData.find((mapData) => mapData.dbSymbol === dbSymbol);
 };
@@ -71,6 +78,7 @@ const getRMXPMapInfo = (mapInfo: StudioMapInfo, mapData: MapData[]) => {
 const saveRMXPMapInfo = async (payload: SaveRMXPMapInfoInput) => {
   log.info('save-rmxp-map-info');
   const mapInfoRMXPFilePath = path.join(payload.projectPath, 'Data', 'MapInfos.rxdata');
+  backupMapInfo(payload.projectPath, mapInfoRMXPFilePath);
   const mapData: MapData[] = JSON.parse(payload.mapData);
   const rmxpMapInfo = getRMXPMapInfo(JSON.parse(payload.mapInfo), mapData);
   fs.writeFileSync(mapInfoRMXPFilePath, Marshal.dump(rmxpMapInfo, { omitStringEncoding: true }));
