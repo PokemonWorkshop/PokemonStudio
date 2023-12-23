@@ -59,23 +59,28 @@ const buildOrders = (mapInfo: StudioMapInfo, id: number, orders: Record<number, 
 
 const getRMXPMapInfo = (mapInfo: StudioMapInfo, mapData: MapData[]) => {
   const orders = getOrders(mapInfo);
-  return Object.entries(mapInfo)
-    .filter(([, info]) => info.data.klass === 'MapInfoMap')
-    .reduce<Map<MarshalObject, MarshalObject>>((marshalObjectMap, [, mapInfoValue]) => {
-      const map = mapInfoValue.data.klass === 'MapInfoMap' ? getMap(mapInfoValue.data.mapDbSymbol, mapData) : undefined;
-      if (!map) return marshalObjectMap;
+  return new Map<MarshalObject, MarshalObject>(
+    Object.values(mapInfo)
+      .map((info) => {
+        if (info.data.klass !== 'MapInfoMap') return undefined;
+        const map = getMap(info.data.mapDbSymbol, mapData);
+        if (!map) return undefined;
 
-      marshalObjectMap.set(map.id, {
-        '@scroll_x': 0,
-        '@name': map.name,
-        '@expanded': mapInfoValue.isExpanded,
-        '@order': orders[mapInfoValue.id],
-        '@scroll_y': 0,
-        '@parent_id': getParendId(mapInfo, mapInfoValue, mapData),
-        __class: Symbol.for('RPG::MapInfo'),
-      });
-      return marshalObjectMap;
-    }, new Map<MarshalObject, MarshalObject>());
+        return [
+          map.id,
+          {
+            '@scroll_x': 0,
+            '@name': map.name,
+            '@expanded': info.isExpanded,
+            '@order': orders[info.id],
+            '@scroll_y': 0,
+            '@parent_id': getParendId(mapInfo, info, mapData),
+            __class: Symbol.for('RPG::MapInfo'),
+          },
+        ] as const;
+      })
+      .filter(<T>(v: T): v is Exclude<T, undefined> => !!v)
+  );
 };
 
 const saveRMXPMapInfo = async (payload: SaveRMXPMapInfoInput) => {
