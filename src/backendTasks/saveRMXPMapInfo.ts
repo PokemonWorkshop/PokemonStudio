@@ -1,10 +1,9 @@
 import log from 'electron-log';
 import path from 'path';
-import fsPromise from 'fs/promises';
 import fs from 'fs';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import type { StudioMapInfo, StudioMapInfoValue } from '@modelEntities/mapInfo';
-import { Marshal, MarshalObject, isMarshalHash } from 'ts-marshal';
+import { Marshal, MarshalObject } from 'ts-marshal';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 
 export type SaveRMXPMapInfoInput = { projectPath: string; mapInfo: string; mapData: string };
@@ -14,13 +13,6 @@ type MapData = {
   name: string;
   id: number;
 };
-
-/*const loadMarshalHash = async (mapInfoRMXPFilePath: string) => {
-  const mapInfoData = await fsPromise.readFile(mapInfoRMXPFilePath);
-  const marshalData = Marshal.load(mapInfoData);
-  if (!isMarshalHash(marshalData)) throw new Error('Loaded object is not a Hash');
-  return marshalData;
-};*/
 
 const getMap = (dbSymbol: DbSymbol, mapData: MapData[]) => {
   return mapData.find((mapData) => mapData.dbSymbol === dbSymbol);
@@ -37,33 +29,41 @@ const getParendId = (mapInfo: StudioMapInfo, currentMapInfo: StudioMapInfoValue,
   return parentMap ? parentMap.id : 0;
 };
 
+const getOrders = (mapInfo: StudioMapInfo) => {
+  const orders: Record<number, number> = {};
+  const rootChildren = mapInfo[0].children;
+  const count = { currentOrder: 1 };
+
+  rootChildren.forEach((children) => buildOrders(mapInfo, children, orders, count));
+  return orders;
+};
+
+const buildOrders = (mapInfo: StudioMapInfo, id: number, orders: Record<number, number>, count: { currentOrder: number }) => {
+  const mapInfoValue = mapInfo[id];
+  if (!mapInfoValue) return;
+
+  orders[id] = count.currentOrder;
+  count.currentOrder++;
+  mapInfoValue.children.forEach((children) => buildOrders(mapInfo, children, orders, count));
+};
+
 const getRMXPMapInfo = (mapInfo: StudioMapInfo, mapData: MapData[]) => {
+  const orders = getOrders(mapInfo);
   return Object.entries(mapInfo)
     .filter(([, info]) => info.data.klass === 'MapInfoMap')
-    .reduce<Map<MarshalObject, MarshalObject>>((marshalObjectMap, [, mapInfoValue], index) => {
+    .reduce<Map<MarshalObject, MarshalObject>>((marshalObjectMap, [, mapInfoValue]) => {
       const map = mapInfoValue.data.klass === 'MapInfoMap' ? getMap(mapInfoValue.data.mapDbSymbol, mapData) : undefined;
       if (!map) return marshalObjectMap;
-
-      /*const marshalObjectMapInfoValue = new Map<MarshalObject, MarshalObject>();
-      marshalObjectMapInfoValue.set('@scroll_x', 0);
-      marshalObjectMapInfoValue.set('@name', map.name);
-      marshalObjectMapInfoValue.set('@expanded', mapInfoValue.isExpanded);
-      marshalObjectMapInfoValue.set('@order', index); // TODO:
-      marshalObjectMapInfoValue.set('@scroll_y', 0);
-      marshalObjectMapInfoValue.set('@parent_id', getParendId(mapInfo, mapInfoValue, mapData));
-
-      marshalObjectMap.set(map.id, marshalObjectMapInfoValue);*/
 
       marshalObjectMap.set(map.id, {
         '@scroll_x': 0,
         '@name': map.name,
         '@expanded': mapInfoValue.isExpanded,
-        '@order': index, // TODO:
+        '@order': orders[mapInfoValue.id],
         '@scroll_y': 0,
         '@parent_id': getParendId(mapInfo, mapInfoValue, mapData),
-        __class: 'Hash',
+        __class: Symbol.for('RPG::MapInfo'),
       });
-
       return marshalObjectMap;
     }, new Map<MarshalObject, MarshalObject>());
 };
@@ -71,14 +71,9 @@ const getRMXPMapInfo = (mapInfo: StudioMapInfo, mapData: MapData[]) => {
 const saveRMXPMapInfo = async (payload: SaveRMXPMapInfoInput) => {
   log.info('save-rmxp-map-info');
   const mapInfoRMXPFilePath = path.join(payload.projectPath, 'Data', 'MapInfos.rxdata');
-  //const marshalHash = await loadMarshalHash(mapInfoRMXPFilePath);
   const mapData: MapData[] = JSON.parse(payload.mapData);
   const rmxpMapInfo = getRMXPMapInfo(JSON.parse(payload.mapInfo), mapData);
-
-  //const { __class, __extendedModules, __default } = marshalHash;
-  //const newMarshalObject = { __class, __extendedModules, __default, ...Object.fromEntries(rmxpMapInfo) };
-  //log.info(newMarshalObject);
-  fs.writeFileSync(mapInfoRMXPFilePath, Marshal.dump(rmxpMapInfo));
+  fs.writeFileSync(mapInfoRMXPFilePath, Marshal.dump(rmxpMapInfo, { omitStringEncoding: true }));
   log.info('save-rmxp-map-info/success');
   return {};
 };
