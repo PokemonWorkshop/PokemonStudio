@@ -108,6 +108,7 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
       }
       case 'trainer': {
         const partyToImport = cloneEntity(trainers[selectedEntity].party);
+        console.log(partyToImport); // Temporaire, pour voir à quoi ressemble l'objet de Studio
         if (override) {
           updateTrainer({ party: partyToImport });
         } else {
