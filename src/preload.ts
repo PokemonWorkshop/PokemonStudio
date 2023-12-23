@@ -35,6 +35,7 @@ import type { CopyTiledFilesInput, CopyTiledFilesOutput } from './backendTasks/c
 import type { RMXP2StudioMapsSyncInput } from './backendTasks/RMXP2StudioMapsSync';
 import type { ReadRMXPMapInfoInput, ReadRMXPMapInfoOutput } from './backendTasks/readRMXPMapInfo';
 import type { ReadRMXPMapInput, ReadRMXPMapOutput } from './backendTasks/readRMXPMap';
+import type { SaveRMXPMapInfoInput } from './backendTasks/saveRMXPMapInfo';
 
 contextBridge.exposeInMainWorld('api', {
   clearCache: () => webFrame.clearCache(),
@@ -131,6 +132,7 @@ contextBridge.exposeInMainWorld('api', {
   readRMXPMapInfo: defineBackendTask(ipcRenderer, 'read-rmxp-map-info'),
   readRMXPMap: defineBackendTask(ipcRenderer, 'read-rmxp-map'),
   readMaps: defineBackendTask(ipcRenderer, 'read-maps'),
+  saveRMXPMapInfo: defineBackendTask(ipcRenderer, 'save-rmxp-map-info'),
 });
 
 type AnyObj = Record<string, never>;
@@ -210,6 +212,7 @@ declare global {
       readRMXPMapInfo: BackendTaskWithGenericErrorAndNoProgress<ReadRMXPMapInfoInput, ReadRMXPMapInfoOutput>;
       readRMXPMap: BackendTaskWithGenericErrorAndNoProgress<ReadRMXPMapInput, ReadRMXPMapOutput>;
       readMaps: BackendTaskWithGenericErrorAndNoProgress<ReadMapsInput, ReadMapsOutput>;
+      saveRMXPMapInfo: BackendTaskWithGenericErrorAndNoProgress<SaveRMXPMapInfoInput, AnyObj>;
     };
   }
 }

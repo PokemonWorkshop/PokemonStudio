@@ -93,7 +93,7 @@
     "react-tracked": "^1.7.11",
     "react-virtualized": "^9.22.5",
     "styled-components": "^5.3.6",
-    "ts-marshal": "^0.0.7",
+    "ts-marshal": "^0.0.8",
     "ts-tiled-converter": "^0.0.9",
     "zod": "^3.22.4"
   },

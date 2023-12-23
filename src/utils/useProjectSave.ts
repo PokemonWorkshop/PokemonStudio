@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { updateProjectEditDate, updateProjectStudio as updateProjectStudioLocalStorage } from './projectList';
 import { SavingConfigMap, SavingMap, SavingTextMap } from './SavingUtils';
+import { useSelectOptions } from './useSelectOptions';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 
 type ProjectSaveStateObject = {
   state:
@@ -11,6 +13,7 @@ type ProjectSaveStateObject = {
     | 'save_texts'
     | 'save_text_infos'
     | 'save_map_info'
+    | 'save_rmxp_map_info'
     | 'update_studio_file'
     | 'update_project_list'
     | 'reset_saving';
@@ -29,6 +32,7 @@ export const useProjectSave = () => {
   const [state, setState] = useGlobalState();
   const [callbacks, setCallbacks] = useState<{ onFailure: ProjectSaveFailureCallback; onSuccess: ProjectSaveSuccessCallback } | undefined>(undefined);
   const [stateSave, setStateSave] = useState<ProjectSaveStateObject>({ state: 'done' });
+  const mapOptions = useSelectOptions('maps');
 
   const isDataToSave =
     state.savingData.map.size > 0 ||
@@ -82,15 +86,32 @@ export const useProjectSave = () => {
           }
         );
       case 'save_map_info':
-        if (!state.savingMapInfo) return setStateSave({ state: 'update_project_list' });
+        if (!state.savingMapInfo) return setStateSave({ state: 'save_rmxp_map_info' });
         return window.api.saveMapInfo(
           { projectPath: state.projectPath!, mapInfo: JSON.stringify(state.mapInfo, null, 2) },
-          () => setStateSave({ state: 'update_project_list' }),
+          () => setStateSave({ state: 'save_rmxp_map_info' }),
           ({ errorMessage }) => {
             setStateSave({ state: 'done' });
             fail(callbacks, errorMessage);
           }
         );
+      case 'save_rmxp_map_info': {
+        if (!state.savingMapInfo || state.projectStudio.isTiledMode !== true) return setStateSave({ state: 'update_studio_file' });
+        return window.api.saveRMXPMapInfo(
+          {
+            projectPath: state.projectPath!,
+            mapInfo: JSON.stringify(state.mapInfo),
+            mapData: JSON.stringify(
+              mapOptions.map((option) => ({ name: option.label, dbSymbol: option.value, id: state.projectData.maps[option.value as DbSymbol].id }))
+            ),
+          },
+          () => setStateSave({ state: 'update_studio_file' }),
+          ({ errorMessage }) => {
+            setStateSave({ state: 'done' });
+            fail(callbacks, errorMessage);
+          }
+        );
+      }
       case 'update_studio_file':
         if (!state.savingProjectStudio) return setStateSave({ state: 'update_project_list' });
         return window.api.projectStudioFile(
