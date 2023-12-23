@@ -42,6 +42,7 @@
   "import": "Importación",
   "default_option_label": "",
   "showdown_option_label": "",
+  "error_message": "",
   "battler_import_info": "Puedes importar Pokémon de otro entrenador.",
   "item_import_info": "Puedes importar objetos de otro entrenador.",
   "import_battler_from": "Importar Pokémon de",

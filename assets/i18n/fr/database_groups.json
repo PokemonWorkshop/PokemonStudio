@@ -27,6 +27,7 @@
   "import": "Importation",
   "default_option_label": "D'un autre groupe",
   "showdown_option_label": "Au format Showdown",
+  "error_message": "Le pokémon n'est pas dans un bon format",
   "battler_import_info": "Vous pouvez importer les Pokémon d’un autre groupe ou en utilisant le format d’export de Showdown.",
   "import_battler_from": "Importer les Pokémon de",
   "replace_battlers": "Remplacer les Pokémon",

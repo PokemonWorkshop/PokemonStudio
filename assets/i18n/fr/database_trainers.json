@@ -42,6 +42,7 @@
   "import": "Importation",
   "default_option_label": "D'un autre dresseur",
   "showdown_option_label": "Au format Showdown",
+  "error_message": "Le pokémon n'est pas dans un bon format",
   "battler_import_info": "Vous pouvez importer les Pokémon d’un autre dresseur ou en utilisant le format d’export de Showdown",
   "item_import_info": "Vous pouvez importer les objets d'un autre dresseur.",
   "import_battler_from": "Importer les Pokémon de",

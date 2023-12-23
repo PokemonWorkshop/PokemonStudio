@@ -26,6 +26,7 @@
   "import": "Importação",
   "default_option_label": "",
   "showdown_option_label": "",
+  "error_message": "",
   "battler_import_info": "Você pode importar Pokémon de um outro grupo.",
   "import_battler_from": "Importar os Pokémon de",
   "replace_battlers": "Remplaçar os Pokémon",
