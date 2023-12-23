@@ -49,8 +49,10 @@ const buildOrders = (mapInfo: StudioMapInfo, id: number, orders: Record<number, 
   const mapInfoValue = mapInfo[id];
   if (!mapInfoValue) return;
 
-  orders[id] = count.currentOrder;
-  count.currentOrder++;
+  if (mapInfoValue.data.klass === 'MapInfoMap') {
+    orders[id] = count.currentOrder;
+    count.currentOrder++;
+  }
   mapInfoValue.children.forEach((children) => buildOrders(mapInfo, children, orders, count));
 };
 
