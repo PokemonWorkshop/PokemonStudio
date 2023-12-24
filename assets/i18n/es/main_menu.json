@@ -8,7 +8,7 @@
   "text_management": "Gestión de textos",
   "event_editor": "Editor de eventos",
   "deployment": "Despliegue",
-  "parameters": "Parámetros",
+  "settings": "Parámetros de aplicación",
   "test": "Probar el proyecto",
   "save": "Guardar el proyecto",
   "play_release_mode": "Jugar al juego",

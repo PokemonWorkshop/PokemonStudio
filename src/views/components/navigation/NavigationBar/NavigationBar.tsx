@@ -59,13 +59,12 @@ export const NavigationBarComponent = () => {
       <div>
         <div className="navigation-bar-items">
           <PlayButton />
-
           {/* <NavigationBarItem path="/help">
           <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="help" />
-        </NavigationBarItem>
-        <NavigationBarItem path="/settings">
-          <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="settings" />
-        </NavigationBarItem> */}
+        </NavigationBarItem>*/}
+          <NavigationBarItem path="/settings" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('settings'), 'right-center', true)}>
+            <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="settings" />
+          </NavigationBarItem>
         </div>
         <NavigationBarGroupSeparator />
         <div className="navigation-bar-items">

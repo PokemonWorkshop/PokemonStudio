@@ -17,6 +17,7 @@ import { LoaderContextProvider } from '@utils/loaderContext';
 import { UnsavedWarningModal } from '@components/modals/UnsavedWarningModal';
 import { TitleBar } from '@components/titleBar/TitleBar';
 import WorldRouter from '@pages/world/World.Router.page';
+import SettingsRouter from '@pages/settings/Settings.Router.page';
 
 import './i18n';
 
@@ -38,7 +39,7 @@ const App = () => {
               <Route path="/texts/*" element={<TextsRouter />} />
               <Route path="/code" />
               <Route path="/help" />
-              <Route path="/settings" />
+              <Route path="/settings/*" element={<SettingsRouter />} />
               <Route path="/account" />
               <Route path="/" element={<Navigate to="/home" />} />
             </Routes>
