@@ -7,6 +7,7 @@ import { TextDialogsRef } from './editors/TextEditorOverlay';
 import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 import styled from 'styled-components';
 import { useTextInfos } from '@utils/useTextInfos';
+import { useNavigate } from 'react-router-dom';
 
 const NEW_TOOLTIP = { left: '100%', top: '100%' };
 const NEW_BREAKPOINT = 'screen and (max-width: 1100px)';
@@ -26,6 +27,7 @@ type TextControlBarProps = {
 export const TextControlBar = ({ dialogsRef }: TextControlBarProps) => {
   const { t } = useTranslation('text_management');
   const { selectedDataIdentifier: fileId, setSelectedDataIdentifier, getPreviousFileId, getNextFileId, state } = useTextInfos();
+  const navigate = useNavigate();
 
   // Definition of the control bar shortcuts
   const shortcutMap = useMemo<StudioShortcutActions>(() => {
@@ -56,7 +58,7 @@ export const TextControlBar = ({ dialogsRef }: TextControlBarProps) => {
         ) : (
           <></>
         )}
-        <DarkButton disabled={true}>{t('manage_languages')}</DarkButton>
+        <DarkButton onClick={() => navigate('/dashboard/language')}>{t('manage_languages')}</DarkButton>
       </ButtonContainer>
       <SelectText fileId={fileId.toString()} onChange={(fileId) => setSelectedDataIdentifier({ textInfo: Number(fileId) })} />
     </ControlBar>
