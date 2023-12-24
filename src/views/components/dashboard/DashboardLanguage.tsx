@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { EditorOverlay } from '@components/editor';
 import { useTranslation } from 'react-i18next';
-import { DashboardEditor } from './DashboardEditor';
+import { PageEditor } from '@components/pages';
 import { Input, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import { TagWithDeletion } from '@components/Tag';
@@ -130,7 +130,7 @@ export const DashboardLanguage = () => {
   };
 
   return (
-    <DashboardEditor editorTitle={t('language')} title={t('settings')}>
+    <PageEditor editorTitle={t('language')} title={t('settings')}>
       <InputWithTopLabelContainer>
         <Label htmlFor="supported-language">{t('supported_languages')}</Label>
         <Input
@@ -168,6 +168,6 @@ export const DashboardLanguage = () => {
         />
       </InputWithTopLabelContainer>
       <EditorOverlay currentEditor={currentEditor} editors={editors} onClose={onCloseEditor} />
-    </DashboardEditor>
+    </PageEditor>
   );
 };

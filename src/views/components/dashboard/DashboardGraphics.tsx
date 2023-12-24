@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { InputWithLeftLabelContainer, Label, Toggle } from '@components/inputs';
 import { useTranslation } from 'react-i18next';
-import { DashboardEditor } from './DashboardEditor';
+import { PageEditor } from '@components/pages';
 import { useConfigGraphic } from '@utils/useProjectConfig';
 import { cloneEntity } from '@utils/cloneEntity';
 
@@ -11,7 +11,7 @@ export const DashboardGraphics = () => {
   const currentEditedGraphics = useMemo(() => cloneEntity(graphics), [graphics]);
 
   return (
-    <DashboardEditor editorTitle={t('graphic_settings')} title={t('settings')}>
+    <PageEditor editorTitle={t('graphic_settings')} title={t('settings')}>
       <InputWithLeftLabelContainer>
         <Label htmlFor="textures">{t('texture_smoothing')}</Label>
         <Toggle
@@ -34,6 +34,6 @@ export const DashboardGraphics = () => {
           }}
         />
       </InputWithLeftLabelContainer>
-    </DashboardEditor>
+    </PageEditor>
   );
 };

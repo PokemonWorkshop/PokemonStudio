@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { ActiveContainer } from '@components/ActiveContainer';
 import { CopyStyle } from '@components/Copy';
 
-export type DataBlockCOntainerSize = 'full' | 'half' | 'fourth' | 'dashboard';
+export type DataBlockCOntainerSize = 'full' | 'half' | 'fourth' | 'default';
 export type DataBlockContainerColor = 'light' | 'dark' | 'warning';
 export type DataBlockContainerProps = {
   size: DataBlockCOntainerSize;

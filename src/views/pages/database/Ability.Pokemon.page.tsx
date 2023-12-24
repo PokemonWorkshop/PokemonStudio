@@ -5,7 +5,7 @@ import { AbilityControlBar, AbilityPokemonTable } from '@components/database/abi
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
-import { SubPageTitle } from '@components/database/SubPageTitle';
+import { SubPageTitle } from '@components/pages';
 import { useAbilityPage } from '@utils/usePage';
 
 export const AbilityPokemonPage = () => {

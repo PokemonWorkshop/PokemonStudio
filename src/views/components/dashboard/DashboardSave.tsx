@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Input, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
 import { useTranslation } from 'react-i18next';
-import { DashboardEditor } from './DashboardEditor';
+import { PageEditor } from '@components/pages';
 import { useConfigSave } from '@utils/useProjectConfig';
 import { cleaningSaveNaNValues, cleanNaNValue } from '@utils/cleanNaNValue';
 import styled from 'styled-components';
@@ -83,7 +83,7 @@ export const DashboardSave = () => {
   };
 
   return (
-    <DashboardEditor title={t('settings')} editorTitle={t('save')}>
+    <PageEditor title={t('settings')} editorTitle={t('save')}>
       <InputWithTopLabelContainer>
         <Label htmlFor="base_filename">{t('save_filename')}</Label>
         <Input
@@ -133,6 +133,6 @@ export const DashboardSave = () => {
           <Input type="number" name="max_saves" min="1" max="99" value={isNaN(maxSaves) ? '' : maxSaves} onChange={onChangeMax} onBlur={onBlurMax} />
         </InputWithLeftLabelContainer>
       )}
-    </DashboardEditor>
+    </PageEditor>
   );
 };

@@ -1,6 +1,5 @@
 import { DashboardNavigation } from '@components/dashboard';
-import React, { ReactNode } from 'react';
-import styled from 'styled-components';
+import React from 'react';
 import { DashboardInfosPage } from './Dashboard.Infos.page';
 import { DashboardLanguagePage } from './Dashboard.Language.page';
 import { DashboardSettingsPage } from './Dashboard.Settings.page';
@@ -12,24 +11,11 @@ import { DashboardPage } from './Dashboard.page';
 import { DashboardGameStartPage } from './Dashboard.GameStart.page';
 import { Route, Routes } from 'react-router-dom';
 import { DashboardTextsPage } from './Dashboard.Texts.page';
+import { PageWithMenu, PageWithMenuProps } from '@components/pages';
 
-const DashboardRouterPageStyle = styled.div`
-  display: flex;
-  flex-direction: row;
-`;
-
-type DashboardPageWithMenuProps = {
-  children: ReactNode;
-};
-
-const DashboardPageWithMenu = ({ children }: DashboardPageWithMenuProps) => {
-  return (
-    <DashboardRouterPageStyle>
-      <DashboardNavigation />
-      {children}
-    </DashboardRouterPageStyle>
-  );
-};
+const DashboardPageWithMenu = ({ children }: Omit<PageWithMenuProps, 'navigation'>) => (
+  <PageWithMenu navigation={<DashboardNavigation />}>{children}</PageWithMenu>
+);
 
 const DashboardRouterComponent = () => {
   return (

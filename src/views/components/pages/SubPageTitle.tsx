@@ -4,13 +4,14 @@ import styled from 'styled-components';
 import { ReactComponent as BackIcon } from '@assets/icons/global/back.svg';
 
 type SubPageTitleContainerProps = {
-  size: 'full' | 'half' | 'fourth' | 'dashboard';
+  size: 'full' | 'half' | 'fourth' | 'default';
+  hasBack: boolean;
 };
 
 export const SubPageTitleContainer = styled.div<SubPageTitleContainerProps>`
   display: flex;
   gap: 32px;
-  padding: 16px 0 24px 0;
+  padding: 16px 0 24px ${({ hasBack }) => (hasBack ? 0 : '24px')};
   margin: 0 8px 16px 8px;
   border-bottom: 1px solid ${({ theme }) => theme.colors.dark16};
   max-width: ${({ theme, size }) => theme.sizes[size].max}px;
@@ -25,17 +26,19 @@ export const SubPageTitleContainer = styled.div<SubPageTitleContainerProps>`
 `;
 
 export type SubPageTitleProps = {
-  onClickedBack: () => void;
   title: string;
-  size?: 'full' | 'half' | 'fourth' | 'dashboard';
+  size?: 'full' | 'half' | 'fourth' | 'default';
+  onClickedBack?: () => void;
 };
 
 export const SubPageTitle = ({ title, size, onClickedBack }: SubPageTitleProps) => {
   return (
-    <SubPageTitleContainer size={size || 'full'}>
-      <DarkButton onClick={onClickedBack}>
-        <BackIcon />
-      </DarkButton>
+    <SubPageTitleContainer size={size || 'full'} hasBack={!!onClickedBack}>
+      {onClickedBack && (
+        <DarkButton onClick={onClickedBack}>
+          <BackIcon />
+        </DarkButton>
+      )}
       <h1>{title}</h1>
     </SubPageTitleContainer>
   );

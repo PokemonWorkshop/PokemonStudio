@@ -1,12 +1,12 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { DashboardInfos, DashboardTemplate } from '@components/dashboard';
+import { PageEditor, PageTemplate } from '@components/pages';
 
 export const SettingsMapsPage = () => {
   const { t } = useTranslation('settings');
   return (
-    <DashboardTemplate title={t('map_management')}>
-      <div>Gestion des cartes</div>
-    </DashboardTemplate>
+    <PageTemplate title={t('map_management')} size="default">
+      <PageEditor title="Tiled" editorTitle={t('map_management')} />
+    </PageTemplate>
   );
 };

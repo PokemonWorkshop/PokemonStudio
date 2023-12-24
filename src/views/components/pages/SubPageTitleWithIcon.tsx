@@ -22,7 +22,7 @@ const BackIconWithIconContainer = styled.div`
 
 export const SubPageTitleWithIcon = ({ title, size, onClickedBack, icon }: SubPageTitleWithIconProps) => {
   return (
-    <SubPageTitleContainer size={size || 'full'}>
+    <SubPageTitleContainer size={size || 'full'} hasBack={!!onClickedBack}>
       <DarkButton onClick={onClickedBack}>
         <BackIconWithIconContainer>
           <BackIcon />

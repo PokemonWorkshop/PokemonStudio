@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { useConfigLanguage, useConfigSceneTitle } from '@utils/useProjectConfig';
 import { useTranslation } from 'react-i18next';
-import { DashboardEditor } from '../DashboardEditor';
+import { PageEditor } from '@components/pages';
 import { Input, InputWithTopLabelContainer, InputWithLeftLabelContainer, Label, Toggle, InputContainer, AudioInput } from '@components/inputs';
 import { join, basename } from '@utils/path';
 import { DropInput } from '@components/inputs/DropInput';
@@ -67,7 +67,7 @@ export const DashboardGameStartTitleScreen = () => {
   };
 
   return (
-    <DashboardEditor editorTitle={t('game_start')} title={t('title_screen')}>
+    <PageEditor editorTitle={t('game_start')} title={t('title_screen')}>
       {language.choosableLanguageCode.length > 1 && (
         <InputWithLeftLabelContainer>
           <Label htmlFor="show-language-selection">{t('show_language_selection')}</Label>
@@ -128,6 +128,6 @@ export const DashboardGameStartTitleScreen = () => {
           placeholder="0"
         />
       </InputWithLeftLabelContainer>
-    </DashboardEditor>
+    </PageEditor>
   );
 };
