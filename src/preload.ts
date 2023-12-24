@@ -36,6 +36,7 @@ import type { RMXP2StudioMapsSyncInput } from './backendTasks/RMXP2StudioMapsSyn
 import type { ReadRMXPMapInfoInput, ReadRMXPMapInfoOutput } from './backendTasks/readRMXPMapInfo';
 import type { ReadRMXPMapInput, ReadRMXPMapOutput } from './backendTasks/readRMXPMap';
 import type { SaveRMXPMapInfoInput } from './backendTasks/saveRMXPMapInfo';
+import type { OpenTiledPayload } from './backendTasks/openTiled';
 
 contextBridge.exposeInMainWorld('api', {
   clearCache: () => webFrame.clearCache(),
@@ -133,6 +134,7 @@ contextBridge.exposeInMainWorld('api', {
   readRMXPMap: defineBackendTask(ipcRenderer, 'read-rmxp-map'),
   readMaps: defineBackendTask(ipcRenderer, 'read-maps'),
   saveRMXPMapInfo: defineBackendTask(ipcRenderer, 'save-rmxp-map-info'),
+  openTiled: defineBackendTask(ipcRenderer, 'open-tiled'),
 });
 
 type AnyObj = Record<string, never>;
@@ -213,6 +215,7 @@ declare global {
       readRMXPMap: BackendTaskWithGenericErrorAndNoProgress<ReadRMXPMapInput, ReadRMXPMapOutput>;
       readMaps: BackendTaskWithGenericErrorAndNoProgress<ReadMapsInput, ReadMapsOutput>;
       saveRMXPMapInfo: BackendTaskWithGenericErrorAndNoProgress<SaveRMXPMapInfoInput, AnyObj>;
+      openTiled: BackendTaskWithGenericErrorAndNoProgress<OpenTiledPayload, AnyObj>;
     };
   }
 }
