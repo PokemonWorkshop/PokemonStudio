@@ -15,6 +15,7 @@ import { DeleteButtonWithIcon, PrimaryButton, SecondaryButton } from '@component
 import { BaseIcon } from '@components/icons/BaseIcon';
 import theme from '@src/AppTheme';
 import { useGlobalState } from '@src/GlobalStateProvider';
+import { useOpenTiled } from '@utils/useOpenTiled';
 
 const MapPageStyle = styled.div`
   display: flex;
@@ -29,21 +30,9 @@ const MapPageStyle = styled.div`
 export const MapPage = () => {
   const dialogsRef = useDialogsRef<MapEditorAndDeletionKeys>();
   const { map, hasMap, hasMapModified, isRMXPMode } = useMapPage();
-  const [{ projectPath }] = useGlobalState();
+  const openTiled = useOpenTiled();
   const { t } = useTranslation('database_maps');
   const { t: tSub } = useTranslation('submenu_database');
-  const onOpenTiled = () => {
-    if (!projectPath) return;
-    window.api.openTiled(
-      {
-        tiledPath: 'C:/Program Files/Tiled/tiled.exe',
-        projectPath,
-        tiledMapFilename: map.tiledFilename,
-      },
-      () => {},
-      () => {}
-    );
-  };
 
   return hasMap ? (
     <MapPageStyle>
@@ -67,7 +56,7 @@ export const MapPage = () => {
           </DataBlockWrapper>
           <DataBlockWrapper>
             <DataBlockWithAction size="full" title={tSub('edition')}>
-              <SecondaryButton onClick={onOpenTiled}>
+              <SecondaryButton onClick={() => openTiled(map.tiledFilename)}>
                 <BaseIcon icon="mapPadded" size="s" color={theme.colors.primaryBase} />
                 <span>{t('open_with_tiled')}</span>
               </SecondaryButton>

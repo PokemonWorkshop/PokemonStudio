@@ -13,6 +13,7 @@ import { createMapInfo, duplicateMap } from '@utils/entityCreation';
 import { useGetEntityDescriptionText, useGetEntityNameText, useSetProjectText } from '@utils/ReadingProjectText';
 import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID } from '@modelEntities/map';
 import { useGlobalState } from '@src/GlobalStateProvider';
+import { useOpenTiled } from '@utils/useOpenTiled';
 
 type MapTreeContextMenuProps = {
   mapInfoValue: StudioMapInfoValue;
@@ -23,12 +24,12 @@ type MapTreeContextMenuProps = {
 
 export const MapTreeContextMenu = ({ mapInfoValue, isDeleted, enableRename, dialogsRef }: MapTreeContextMenuProps) => {
   const { t } = useTranslation('database_maps');
-  const [{ projectPath }] = useGlobalState();
   const { mapInfo, setMapInfo } = useMapInfo();
   const { projectDataValues: maps, setProjectDataValues: setMap } = useProjectMaps();
   const setText = useSetProjectText();
   const getName = useGetEntityNameText();
   const getDescription = useGetEntityDescriptionText();
+  const openTiled = useOpenTiled();
 
   const isFolder = mapInfoValue.data.klass === 'MapInfoFolder';
   const onClickDelete = () => {
@@ -62,20 +63,10 @@ export const MapTreeContextMenu = ({ mapInfoValue, isDeleted, enableRename, dial
   };
 
   const onClickTiled = () => {
-    if (mapInfoValue.data.klass !== 'MapInfoMap' || isDeleted || !projectPath) return;
+    if (mapInfoValue.data.klass !== 'MapInfoMap' || isDeleted) return;
 
-    const tiledMapFilename = maps[mapInfoValue.data.mapDbSymbol]?.tiledFilename;
-    if (!tiledMapFilename) return;
-
-    window.api.openTiled(
-      {
-        tiledPath: 'C:/Program Files/Tiled/tiled.exe',
-        projectPath,
-        tiledMapFilename,
-      },
-      () => {},
-      () => {}
-    );
+    const tiledFilename = maps[mapInfoValue.data.mapDbSymbol]?.tiledFilename;
+    tiledFilename && openTiled(tiledFilename);
   };
 
   return (
