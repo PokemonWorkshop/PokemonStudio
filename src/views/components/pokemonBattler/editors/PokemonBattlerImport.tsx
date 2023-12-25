@@ -35,6 +35,21 @@ const ButtonContainer = styled.div`
   gap: 8px;
 `;
 
+type PokemonBattlerImportProps = {
+  closeDialog: () => void;
+  from: PokemonBattlerFrom;
+};
+
+type ImportInputProps = {
+  from: 'group' | 'trainer';
+  selectedEntity: string;
+  onChange: (dbSymbol: string) => void;
+  filterEntity: string;
+  setDropDownSelection: (selection: string) => void;
+  dropDownSelection: string;
+  override: boolean;
+};
+
 const getFirstDbSymbol = (
   from: PokemonBattlerFrom,
   groups: ProjectData['groups'],
@@ -57,20 +72,6 @@ const getFirstDbSymbol = (
       assertUnreachable(from);
   }
   return '__undef__';
-};
-
-type PokemonBattlerImportProps = {
-  closeDialog: () => void;
-  from: PokemonBattlerFrom;
-};
-
-type ImportInputProps = {
-  from: 'group' | 'trainer';
-  selectedEntity: string;
-  onChange: (dbSymbol: string) => void;
-  filterEntity: string;
-  setDropDownSelection: (selection: string) => void;
-  dropDownSelection: string;
 };
 
 export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattlerImportProps>(({ closeDialog, from }, ref) => {
@@ -116,10 +117,10 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
 
     if (dropDownSelection === 'showdown' && inputRef.current) {
       const showdownEncounter = convertShowdownInputChange(inputRef.current.value);
-      if (showdownEncounter.length === 0) {
-        inputRef.current.focus();
-        return;
-      }
+
+      if (showdownEncounter.length === 0) return false;
+      if (!override && showdownEncounter.length + trainer.party.length > 6) return false;
+
       handleImport(from, showdownEncounter);
     } else {
       const entitiesToImport = from === 'group' ? cloneEntity(groups[selectedEntity].encounters) : cloneEntity(trainers[selectedEntity].party);
@@ -141,6 +142,7 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
           filterEntity={from === 'group' ? group.dbSymbol : trainer.dbSymbol}
           setDropDownSelection={setDropDownSelection}
           dropDownSelection={dropDownSelection}
+          override={override}
           ref={inputRef}
         />
         <InputWithLeftLabelContainer>
@@ -164,8 +166,9 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
 PokemonBattlerImport.displayName = 'PokemonBattlerImport';
 
 const ImportInput = forwardRef<HTMLTextAreaElement, ImportInputProps>(
-  ({ from, selectedEntity, onChange, filterEntity, setDropDownSelection, dropDownSelection }, ref) => {
+  ({ from, selectedEntity, onChange, filterEntity, setDropDownSelection, dropDownSelection, override }, ref) => {
     const { t } = useTranslation(['database_trainers', 'database_groups']);
+    const { trainer } = useTrainerPage();
     const [error, setError] = useState('');
 
     const translationContext = from === 'group' ? 'database_groups' : 'database_trainers';
@@ -178,12 +181,14 @@ const ImportInput = forwardRef<HTMLTextAreaElement, ImportInputProps>(
 
     const handleBlur: React.FocusEventHandler<HTMLTextAreaElement> = (event) => {
       const inputValue = event.currentTarget.value;
+      if (!inputValue) return setError('');
+
       const convertedTeam = convertShowdownInputChange(inputValue);
-
-      console.log(convertedTeam);
-
       if (convertedTeam.length === 0) {
         setError(t(`${translationContext}:error_message`));
+        event.target.focus();
+      } else if (from === 'trainer' && convertedTeam.length + trainer.party.length > 6 && !override) {
+        setError(t('database_trainers:party_length_limit'));
         event.target.focus();
       } else {
         setError('');
