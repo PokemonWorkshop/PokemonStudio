@@ -18,8 +18,9 @@ runs:
       run: |
         git submodule update --init --recursive
         cd psdk-binaries
-        wget https://download.psdk.pokemonworkshop.com/binaries/{{ runner.os }}.7z
-        7z x {{ runner.os }}.7z
+        curl -s https://download.psdk.pokemonworkshop.com/binaries/${{ runner.os }}.7z -o binaries.7z
+        7z x binaries.7z
+        rm binaries.7z
         cd ..
         npm run make
       env:
