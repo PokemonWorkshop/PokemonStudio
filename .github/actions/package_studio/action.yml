@@ -4,16 +4,16 @@ description: 'Package Studio into executable files'
 runs:
   using: composite
   steps:
-    # - name: Make Studio executable (PR/Develop)
-    #   if: github.ref != 'refs/heads/main'
-    #   shell: bash
-    #   run: |
-    #     npm run make
-    #   env:
-    #     GH_TOKEN: ${{ github.token }}
+    - name: Make Studio executable (PR/Develop)
+      if: github.ref != 'refs/heads/main'
+      shell: bash
+      run: |
+        npm run make
+      env:
+        GH_TOKEN: ${{ github.token }}
 
     - name: Make Studio executable (Main)
-      if: github.ref != 'refs/heads/main'
+      if: github.ref == 'refs/heads/main'
       shell: bash
       run: |
         git submodule update --init --recursive

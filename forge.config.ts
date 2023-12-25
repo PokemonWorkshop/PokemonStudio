@@ -8,12 +8,11 @@ import { MakerNSIS } from '@toinane/electron-forge-maker-nsis';
 import { mainConfig } from './config/webpack.main.config';
 import { rendererConfig } from './config/webpack.renderer.config';
 
-const windowsSpecificResources = process.platform === 'win32' ? ['psdk-binaries'] : [];
 const config: ForgeConfig = {
   packagerConfig: {
     icon: './assets/icon',
     executableName: 'pokemon-studio',
-    extraResource: ['new-project.zip', ...windowsSpecificResources],
+    extraResource: ['new-project.zip', 'psdk-binaries'],
   },
   rebuildConfig: {},
   makers: [
