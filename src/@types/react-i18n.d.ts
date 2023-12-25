@@ -44,6 +44,7 @@ import show_message_box from '../../assets/i18n/en/show_message_box.json';
 import text_management from '../../assets/i18n/en/text_management.json';
 import world from '../../assets/i18n/en/world.json';
 import settings from '../../assets/i18n/en/settings.json';
+import settings_maps from '../../assets/i18n/en/settings_maps.json';
 
 // react-i18next versions higher than 11.11.0
 declare module 'react-i18next' {
@@ -94,6 +95,7 @@ declare module 'react-i18next' {
       text_management: typeof text_management;
       world: typeof world;
       settings: typeof settings;
+      settings_maps: typeof settings_maps;
     };
   }
 }

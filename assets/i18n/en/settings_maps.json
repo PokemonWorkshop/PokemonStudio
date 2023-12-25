@@ -1,0 +1,7 @@
+{
+  "use_tiled": "Use Tiled as a tool for creating game maps",
+  "tiled_path": "Tiled installation path",
+  "tiled_exe": "Tiled executable",
+  "download_message": "You can download Tiled directly from the",
+  "official_website": "official website."
+}

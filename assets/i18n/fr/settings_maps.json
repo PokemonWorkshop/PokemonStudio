@@ -1,0 +1,7 @@
+{
+  "use_tiled": "Utiliser Tiled comme outil de création des cartes du jeu",
+  "tiled_path": "Chemin d'installation de Tiled",
+  "tiled_exe": "Exécutable de Tiled",
+  "download_message": "Vous pouvez télécharger Tiled directement sur le",
+  "official_website": "site officiel."
+}
