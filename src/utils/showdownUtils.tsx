@@ -37,7 +37,7 @@ export const convertShowdownInputChange = (data: string) => {
 
 const convertShowdownToStudioFormat = (set: PokemonSet): StudioGroupEncounter => {
   const encounter: StudioGroupEncounter = {
-    specie: convertToDbSymbol(set.species),
+    specie: convertToDbSymbol(extractBaseName(set.species)),
     form: 0,
     shinySetup: set.shiny ? { kind: 'rate', rate: 1 } : { kind: 'automatic', rate: -1 },
     levelSetup: { kind: 'fixed', level: set.level ?? 1 },
@@ -65,6 +65,16 @@ const buildExpandPokemonSetupFromShowdown = (set: PokemonSet) => {
   ];
 
   return setupFields.filter((field) => field.value !== undefined);
+};
+
+const extractBaseName = (name: string): string => {
+  const exceptions = ['Ho-Oh', 'Porygon-Z'];
+  if (exceptions.includes(name)) return name;
+
+  const index = name.indexOf('-');
+  if (index === -1) return name;
+
+  return name.substring(0, index);
 };
 
 const convertToDbSymbol = (str: string | undefined): DbSymbol => str?.toLowerCase().replace(/[\s-]+/g, '_') as DbSymbol;
