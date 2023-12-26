@@ -13,7 +13,6 @@ import { useUpdateTrainer } from '@components/database/trainer/editors/useUpdate
 import { useUpdateGroup } from '@components/database/group/editors/useUpdateGroup';
 
 import { cloneEntity } from '@utils/cloneEntity';
-import { assertUnreachable } from '@utils/assertUnreachable';
 import { convertShowdownInputChange } from '@utils/showdownUtils';
 import { useProjectGroups, useProjectTrainers } from '@utils/useProjectData';
 import { useGroupPage, useTrainerPage } from '@utils/usePage';
@@ -24,6 +23,7 @@ import { StudioTrainer } from '@modelEntities/trainer';
 import { StudioGroupEncounter } from '@modelEntities/groupEncounter';
 
 import type { PokemonBattlerFrom } from './PokemonBattlerEditorOverlay';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 
 const ImportInfo = styled.div`
   ${({ theme }) => theme.fonts.normalRegular};
@@ -56,21 +56,13 @@ const getFirstDbSymbol = (
   group: StudioGroup,
   trainer: StudioTrainer
 ) => {
-  switch (from) {
-    case 'group':
-      return Object.entries(groups)
-        .map(([value, data]) => ({ value, index: data.id }))
-        .filter((d) => d.value !== group.dbSymbol)
-        .sort((a, b) => a.index - b.index)[0].value;
-    case 'trainer':
-      return Object.entries(trainers)
-        .map(([value, data]) => ({ value, index: data.id }))
-        .filter((d) => d.value !== trainer.dbSymbol)
-        .sort((a, b) => a.index - b.index)[0].value;
-    default:
-      assertUnreachable(from);
-  }
-  return '__undef__';
+  const getFirstSymbol = (entities: ProjectData['groups'] | ProjectData['trainers'], currentSymbol: DbSymbol) =>
+    Object.entries(entities)
+      .map(([value, data]) => ({ value, index: data.id }))
+      .filter(({ value }) => value !== currentSymbol)
+      .sort((a, b) => a.index - b.index)[0].value;
+
+  return from === 'group' ? getFirstSymbol(groups, group.dbSymbol) : from === 'trainer' ? getFirstSymbol(trainers, trainer.dbSymbol) : '__undef__';
 };
 
 export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattlerImportProps>(({ closeDialog, from }, ref) => {
