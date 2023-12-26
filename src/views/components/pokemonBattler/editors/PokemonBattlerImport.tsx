@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, useRef } from 'react';
+import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
@@ -35,6 +35,12 @@ const ButtonContainer = styled.div`
   gap: 8px;
 `;
 
+const ImportInfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
 type PokemonBattlerImportProps = {
   closeDialog: () => void;
   from: PokemonBattlerFrom;
@@ -48,6 +54,7 @@ type ImportInputProps = {
   setDropDownSelection: (selection: string) => void;
   dropDownSelection: string;
   override: boolean;
+  setShowdownEncounter: (encounters: StudioGroupEncounter[]) => void;
 };
 
 const getFirstDbSymbol = (
@@ -87,11 +94,20 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
   const { t } = useTranslation(['database_trainers', 'database_groups']);
 
   const [dropDownSelection, setDropDownSelection] = useState('default');
+  const [showdownEncounter, setShowdownEncounter] = useState<StudioGroupEncounter[]>([]);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const canImport = () => {
     if (from === 'group') return true;
     if (override) return true;
+    if (dropDownSelection === 'showdown') {
+      if (!inputRef.current) return false;
+
+      if (showdownEncounter.length === 0) return false;
+      if (!override && showdownEncounter.length + trainer.party.length > 6) return false;
+
+      return true;
+    }
 
     const lengthPartyToImport = trainers[selectedEntity].party.length;
     const currentPartyLength = trainer.party.length;
@@ -115,12 +131,10 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
       }
     };
 
-    if (dropDownSelection === 'showdown' && inputRef.current) {
+    if (dropDownSelection === 'showdown') {
+      if (!inputRef.current) return;
+
       const showdownEncounter = convertShowdownInputChange(inputRef.current.value);
-
-      if (showdownEncounter.length === 0) return false;
-      if (!override && showdownEncounter.length + trainer.party.length > 6) return false;
-
       handleImport(from, showdownEncounter);
     } else {
       const entitiesToImport = from === 'group' ? cloneEntity(groups[selectedEntity].encounters) : cloneEntity(trainers[selectedEntity].party);
@@ -143,6 +157,7 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
           setDropDownSelection={setDropDownSelection}
           dropDownSelection={dropDownSelection}
           override={override}
+          setShowdownEncounter={setShowdownEncounter}
           ref={inputRef}
         />
         <InputWithLeftLabelContainer>
@@ -151,7 +166,7 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
         </InputWithLeftLabelContainer>
         <ButtonContainer>
           <ToolTipContainer>
-            {!canImport() && <ToolTip bottom="100%">{t('database_trainers:party_length_limit')}</ToolTip>}
+            {dropDownSelection === 'default' && !canImport() && <ToolTip bottom="100%">{t('database_trainers:party_length_limit')}</ToolTip>}
             <PrimaryButton onClick={onClickImport} disabled={!canImport()}>
               {t('database_groups:to_import')}
             </PrimaryButton>
@@ -166,7 +181,7 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
 PokemonBattlerImport.displayName = 'PokemonBattlerImport';
 
 const ImportInput = forwardRef<HTMLTextAreaElement, ImportInputProps>(
-  ({ from, selectedEntity, onChange, filterEntity, setDropDownSelection, dropDownSelection, override }, ref) => {
+  ({ from, selectedEntity, onChange, filterEntity, setDropDownSelection, dropDownSelection, setShowdownEncounter, override }, ref) => {
     const { t } = useTranslation(['database_trainers', 'database_groups']);
     const { trainer } = useTrainerPage();
     const [error, setError] = useState('');
@@ -179,26 +194,48 @@ const ImportInput = forwardRef<HTMLTextAreaElement, ImportInputProps>(
 
     const SelectComponent = from === 'group' ? SelectGroup : SelectTrainer;
 
-    const handleBlur: React.FocusEventHandler<HTMLTextAreaElement> = (event) => {
+    // Prevent error from being displayed when dropDownSelection === 'default'.
+    useEffect(() => {
+      return setError('');
+    }, [dropDownSelection]);
+
+    // Manages display of team size limit error based on override
+    useEffect(() => {
+      if (override && error === t('database_trainers:party_length_limit')) return setError('');
+    }, [override, error, t]);
+
+    const handleChange: React.FocusEventHandler<HTMLTextAreaElement> = (event) => {
       const inputValue = event.currentTarget.value;
       if (!inputValue) return setError('');
 
       const convertedTeam = convertShowdownInputChange(inputValue);
       if (convertedTeam.length === 0) {
-        setError(t(`${translationContext}:error_message`));
-        event.target.focus();
-      } else if (from === 'trainer' && convertedTeam.length + trainer.party.length > 6 && !override) {
-        setError(t('database_trainers:party_length_limit'));
-        event.target.focus();
+        return setError(t(`${translationContext}:error_message`));
+      } else if (from === 'trainer' && !override && convertedTeam.length + trainer.party.length > 6) {
+        return setError(t('database_trainers:party_length_limit'));
       } else {
         setError('');
       }
+
+      setShowdownEncounter(convertedTeam);
     };
 
     return (
       <>
-        <ImportInfo>{t(from === 'group' ? `${translationContext}:battler_import_info` : `${translationContext}:battler_import_info`)}</ImportInfo>
-        <StudioDropDown value={dropDownSelection} options={dropDownOptions} onChange={(value) => setDropDownSelection(value)} />
+        <ImportInfoContainer>
+          <ImportInfo>{t(from === 'group' ? `${translationContext}:battler_import_info` : `${translationContext}:battler_import_info`)}</ImportInfo>
+          {dropDownSelection === 'showdown' && (
+            <ImportInfo>
+              {t(from === 'group' ? `${translationContext}:battler_import_details` : `${translationContext}:battler_import_details`)}
+            </ImportInfo>
+          )}
+        </ImportInfoContainer>
+
+        <InputWithTopLabelContainer>
+          <Label htmlFor={from}>{t(from === 'group' ? `${translationContext}:import_battler` : `${translationContext}:import_battler`)}</Label>
+          <StudioDropDown value={dropDownSelection} options={dropDownOptions} onChange={(value) => setDropDownSelection(value)} />
+        </InputWithTopLabelContainer>
+
         {dropDownSelection === 'default' && (
           <>
             <InputWithTopLabelContainer>
@@ -209,8 +246,17 @@ const ImportInput = forwardRef<HTMLTextAreaElement, ImportInputProps>(
             </InputWithTopLabelContainer>
           </>
         )}
-        {dropDownSelection === 'showdown' && <MultiLineInput ref={ref} onBlur={handleBlur}></MultiLineInput>}
-        {error && (
+
+        {dropDownSelection === 'showdown' && (
+          <InputWithTopLabelContainer>
+            <Label htmlFor={from}>
+              {t(from === 'group' ? `${translationContext}:import_battler_showdown` : `${translationContext}:import_battler_showdown`)}
+            </Label>
+            <MultiLineInput ref={ref} onChange={handleChange}></MultiLineInput>
+          </InputWithTopLabelContainer>
+        )}
+
+        {dropDownSelection === 'showdown' && error && (
           <Label>
             <span>{error}</span>
           </Label>
