@@ -1,6 +1,7 @@
 import { StudioExpandPokemonSetup, StudioGroupEncounter, StudioIvEv } from '@modelEntities/groupEncounter';
-import { Teams, PokemonSet } from '@pkmn/sim';
 import { DbSymbol } from '@modelEntities/dbSymbol';
+
+import { Teams, PokemonSet } from '@pkmn/sim';
 import { StatsTable } from '@pkmn/types';
 
 const splitIntoTeams = (data: string): string[] => {
