@@ -17,7 +17,7 @@ const isTeamValid = (pokemonSets: PokemonSet[]): boolean => {
   return pokemonSets.every((set) => set.species && set.ability);
 };
 
-export const convertShowdownInputChange = (data: string) => {
+export const convertShowdownToStudio = (data: string, from: string) => {
   const teamsData = splitIntoTeams(data);
 
   const convertedTeams = teamsData.flatMap((teamData) => {
@@ -27,7 +27,7 @@ export const convertShowdownInputChange = (data: string) => {
       return [];
     }
 
-    return validTeams.map(convertShowdownToStudioFormat);
+    return validTeams.map(convertShowdownFormatToStudioFormat(from));
   });
 
   if (teamsData.length !== convertedTeams.length) return [];
@@ -35,34 +35,39 @@ export const convertShowdownInputChange = (data: string) => {
   return convertedTeams;
 };
 
-const convertShowdownToStudioFormat = (set: PokemonSet): StudioGroupEncounter => {
-  const encounter: StudioGroupEncounter = {
-    specie: convertToDbSymbol(extractBaseName(set.species)),
-    form: 0,
-    shinySetup: set.shiny ? { kind: 'rate', rate: 1 } : { kind: 'automatic', rate: -1 },
-    levelSetup: { kind: 'fixed', level: set.level ?? 1 },
-    randomEncounterChance: 1,
-    expandPokemonSetup: buildExpandPokemonSetupFromShowdown(set),
+const convertShowdownFormatToStudioFormat =
+  (from: string) =>
+  (set: PokemonSet): StudioGroupEncounter => {
+    const encounter: StudioGroupEncounter = {
+      specie: convertToDbSymbol(extractBaseName(set.species)),
+      form: 0,
+      shinySetup: set.shiny ? { kind: 'rate', rate: 1 } : { kind: 'automatic', rate: -1 },
+      levelSetup: { kind: 'fixed', level: set.level ?? 1 },
+      randomEncounterChance: 1,
+      expandPokemonSetup: buildExpandPokemonSetup(set, from),
+    };
+
+    return encounter;
   };
 
-  return encounter;
-};
-
-const buildExpandPokemonSetupFromShowdown = (set: PokemonSet) => {
+const buildExpandPokemonSetup = (set: PokemonSet, from: string) => {
   const setupFields: StudioExpandPokemonSetup[] | undefined[] = [
-    { type: 'givenName', value: set.name || set.species },
     { type: 'ability', value: convertToDbSymbol(set.ability) },
-    { type: 'caughtWith', value: convertToDbSymbol(set.pokeball) || ('poke_ball' as DbSymbol) },
     { type: 'evs', value: formatStats(set.evs, 0) },
-    { type: 'ivs', value: formatStats(set.ivs, 31) },
     { type: 'gender', value: convertGender(set.gender) },
-    { type: 'itemHeld', value: convertToDbSymbol(set.item) },
-    { type: 'loyalty', value: set.happiness ?? 70 },
     { type: 'moves', value: convertMoves(set.moves) },
     { type: 'nature', value: convertToDbSymbol(set.nature) },
-    { type: 'originalTrainerId', value: 0 },
     { type: 'rareness', value: -1 },
   ];
+
+  if (from === 'trainer') {
+    setupFields.push({ type: 'caughtWith', value: convertToDbSymbol(set.pokeball) || ('poke_ball' as DbSymbol) });
+    setupFields.push({ type: 'itemHeld', value: convertToDbSymbol(set.item) });
+    setupFields.push({ type: 'givenName', value: set.name || set.species });
+    setupFields.push({ type: 'ivs', value: formatStats(set.ivs, 31) });
+    setupFields.push({ type: 'loyalty', value: set.happiness ?? 70 });
+    setupFields.push({ type: 'originalTrainerId', value: 0 });
+  }
 
   return setupFields.filter((field) => field.value !== undefined);
 };

@@ -13,7 +13,7 @@ import { useUpdateTrainer } from '@components/database/trainer/editors/useUpdate
 import { useUpdateGroup } from '@components/database/group/editors/useUpdateGroup';
 
 import { cloneEntity } from '@utils/cloneEntity';
-import { convertShowdownInputChange } from '@utils/showdownUtils';
+import { convertShowdownToStudio } from '@utils/showdownUtils';
 import { useProjectGroups, useProjectTrainers } from '@utils/useProjectData';
 import { useGroupPage, useTrainerPage } from '@utils/usePage';
 
@@ -93,6 +93,7 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
   ];
 
   useEffect(() => {
+    if (isGroup) return setError('');
     if (dropDownSelection === 'default') return setError('');
 
     const partySizeError = getTranslation('party_length_limit');
@@ -100,13 +101,13 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
 
     if (override && error === partySizeError) return setError('');
     if (!override && exceedsPartyLimit) return setError(partySizeError);
-  }, [dropDownSelection, override, error, t, showdownEncounter, trainer, getTranslation]);
+  }, [isGroup, dropDownSelection, override, error, t, showdownEncounter, trainer, getTranslation]);
 
   const handleChange: React.FocusEventHandler<HTMLTextAreaElement> = (event) => {
     const inputValue = event.currentTarget.value;
     if (!inputValue) return setError('');
 
-    const convertedTeam = convertShowdownInputChange(inputValue);
+    const convertedTeam = convertShowdownToStudio(inputValue, from);
     if (convertedTeam.length === 0) {
       setShowdownEncounter([]);
       return setError(getTranslation('error_message'));
@@ -189,15 +190,16 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
         {dropDownSelection === 'showdown' && (
           <>
             <InputWithTopLabelContainer>
-              <Label htmlFor={from}>{getTranslation('import_battler_showdown')}</Label>
-              <MultiLineInput onChange={handleChange}></MultiLineInput>
-            </InputWithTopLabelContainer>
-
-            {error && (
-              <Label>
-                <span>{error}</span>
+              <Label htmlFor={from} required>
+                {getTranslation('import_battler_showdown')}
               </Label>
-            )}
+              <MultiLineInput onChange={handleChange}></MultiLineInput>
+              {error && (
+                <Label>
+                  <span>{error}</span>
+                </Label>
+              )}
+            </InputWithTopLabelContainer>
           </>
         )}
 
