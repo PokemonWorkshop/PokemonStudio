@@ -13,6 +13,15 @@ const CheckboxInput = styled.input.attrs({ type: 'checkbox' })`
   &:checked {
     background-color: ${({ theme }) => theme.colors.primaryBase};
     border: none;
+
+    &:disabled {
+      background-color: ${({ theme }) => theme.colors.dark24};
+      border: none;
+    }
+  }
+
+  &:disabled {
+    border: 2px solid ${({ theme }) => theme.colors.dark20};
   }
 `;
 
@@ -38,6 +47,10 @@ const CheckboxContainer = styled.div`
 
   ${CheckboxInput}:checked + .icon {
     visibility: visible;
+  }
+
+  ${CheckboxInput}:disabled + .icon {
+    color: ${({ theme }) => theme.colors.text500};
   }
 `;
 

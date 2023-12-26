@@ -14,6 +14,10 @@ export const Toggle = styled.input.attrs(() => ({ type: 'checkbox' }))`
     background-color: ${({ theme }) => theme.colors.primaryBase};
   }
 
+  &:disabled {
+    background-color: ${({ theme }) => theme.colors.dark22};
+  }
+
   &::before {
     content: '';
     background-color: ${({ theme }) => theme.colors.text100};
@@ -28,5 +32,9 @@ export const Toggle = styled.input.attrs(() => ({ type: 'checkbox' }))`
 
   &:checked::before {
     left: 12px;
+  }
+
+  &:disabled::before {
+    background-color: ${({ theme }) => theme.colors.text500};
   }
 `;
