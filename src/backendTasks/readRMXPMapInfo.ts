@@ -1,5 +1,6 @@
 import log from 'electron-log';
 import path from 'path';
+import fs from 'fs';
 import fsPromise from 'fs/promises';
 import { isMarshalHash, isMarshalStandardObject, Marshal } from 'ts-marshal';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
@@ -15,6 +16,14 @@ type MapInfoData = {
   '@scroll_y': number;
   '@parent_id': number;
   __class: symbol;
+};
+
+const getMapInfoRMXPFilePath = (payload: ReadRMXPMapInfoInput) => {
+  const mapInfoPath = path.join(payload.projectPath, 'Data', 'MapInfos.rxdata');
+  const backupPath = path.join(payload.projectPath, 'Data', 'MapInfos.backup');
+
+  if (fs.existsSync(backupPath)) return backupPath;
+  return mapInfoPath;
 };
 
 const isMapInfoObject = (object: unknown): object is MapInfoData =>
@@ -40,8 +49,7 @@ export const readRMXPMapInfo = async (mapInfoFilePath: string) => {
 
 const readRMXPMapInfoBackendService = async (payload: ReadRMXPMapInfoInput): Promise<ReadRMXPMapInfoOutput> => {
   log.info('read-rmxp-map-info', payload);
-  const mapInfoRMXPFilePath = path.join(payload.projectPath, 'Data', 'MapInfos.rxdata');
-
+  const mapInfoRMXPFilePath = getMapInfoRMXPFilePath(payload);
   const rmxpMapInfoData = await readRMXPMapInfo(mapInfoRMXPFilePath);
   log.info('read-rmxp-map-info/success');
   return { rmxpMapInfo: rmxpMapInfoData };
