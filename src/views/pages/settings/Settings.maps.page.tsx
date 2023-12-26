@@ -7,6 +7,8 @@ import styled from 'styled-components';
 import { Link } from '@components/Link';
 import LinkStyle from '@components/Link/LinkStyle';
 import { getSetting, updateSettings } from '@utils/settings';
+import { SettingsEditorAndDeletionKeys, SettingsEditorOverlay } from '@components/settings/editors/SettingsEditorOverlay';
+import { useDialogsRef } from '@utils/useDialogsRef';
 
 const DownloadMessageContainer = styled.div`
   display: flex;
@@ -16,13 +18,13 @@ const DownloadMessageContainer = styled.div`
 
   ${LinkStyle} {
     color: ${({ theme }) => theme.colors.primaryBase};
-    cursor: pointer;
   }
 `;
 
 export const SettingsMapsPage = () => {
-  const { projectStudioValues: projectStudio, setProjectStudioValues: setProjectStudio } = useProjectStudio();
+  const { projectStudioValues: projectStudio } = useProjectStudio();
   const [tiledPath, setTiledPath] = useState(getSetting('tiledPath'));
+  const dialogsRef = useDialogsRef<SettingsEditorAndDeletionKeys>();
   const { t } = useTranslation(['settings', 'settings_maps']);
 
   const handleFileChoosen = (filePath: string) => {
@@ -43,7 +45,10 @@ export const SettingsMapsPage = () => {
           <Toggle
             name="use_tiled"
             checked={projectStudio.isTiledMode || false}
-            onChange={(event) => setProjectStudio({ ...projectStudio, isTiledMode: event.target.checked })}
+            onChange={(event) => {
+              event.preventDefault();
+              dialogsRef.current?.openDialog('use_tiled_message_box', true);
+            }}
             disabled={projectStudio.isTiledMode || false}
           />
         </InputWithLeftLabelContainer>
@@ -70,6 +75,7 @@ export const SettingsMapsPage = () => {
             </DownloadMessageContainer>
           </InputWithTopLabelContainer>
         )}
+        <SettingsEditorOverlay ref={dialogsRef} />
       </PageEditor>
     </PageTemplate>
   );

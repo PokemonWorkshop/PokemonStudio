@@ -69,7 +69,7 @@ export const NavigationBarComponent = () => {
           <NavigationBarItem path="/settings" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('settings'), 'right-center', true)}>
             <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="settings" />
           </NavigationBarItem>
-          <NavigationBarItem path="/account">
+          <NavigationBarItem path="/account" disabled>
             <BaseIcon color="" size="l" icon="account" />
           </NavigationBarItem>
         </div>

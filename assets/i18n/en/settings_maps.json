@@ -3,5 +3,9 @@
   "tiled_path": "Tiled installation path",
   "tiled_exe": "Tiled executable",
   "download_message": "You can download Tiled directly from the",
-  "official_website": "official website."
+  "official_website": "official website.",
+  "cancel": "Cancel",
+  "title_use_tiled_message_box": "Using Tiled",
+  "message_use_tiled_message_box": "Would you like to use Tiled as a tool for creating maps for your game?",
+  "important_use_tiled_message_box": "This choice is definitive."
 }

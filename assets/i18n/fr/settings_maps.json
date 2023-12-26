@@ -3,5 +3,9 @@
   "tiled_path": "Chemin d'installation de Tiled",
   "tiled_exe": "Exécutable de Tiled",
   "download_message": "Vous pouvez télécharger Tiled directement sur le",
-  "official_website": "site officiel."
+  "official_website": "site officiel.",
+  "cancel": "Annuler",
+  "title_use_tiled_message_box": "Utilisation de Tiled",
+  "message_use_tiled_message_box": "Souhaitez-vous utiliser Tiled comme outil de création de cartes de votre jeu ?",
+  "important_use_tiled_message_box": "Ce choix est définitif."
 }
