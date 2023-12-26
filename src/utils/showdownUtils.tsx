@@ -49,13 +49,14 @@ const convertShowdownToStudioFormat = (set: PokemonSet): StudioGroupEncounter =>
 };
 
 const buildExpandPokemonSetupFromShowdown = (set: PokemonSet) => {
-  const setupFields: StudioExpandPokemonSetup[] = [
+  const setupFields: StudioExpandPokemonSetup[] | undefined[] = [
+    { type: 'givenName', value: set.name || set.species },
     { type: 'ability', value: convertToDbSymbol(set.ability) },
     { type: 'caughtWith', value: convertToDbSymbol(set.pokeball) || ('poke_ball' as DbSymbol) },
     { type: 'evs', value: formatStats(set.evs, 0) },
     { type: 'ivs', value: formatStats(set.ivs, 31) },
     { type: 'gender', value: convertGender(set.gender) },
-    { type: 'itemHeld', value: convertToDbSymbol(set.item) || ('__undef__' as DbSymbol) },
+    { type: 'itemHeld', value: convertToDbSymbol(set.item) },
     { type: 'loyalty', value: set.happiness ?? 70 },
     { type: 'moves', value: convertMoves(set.moves) },
     { type: 'nature', value: convertToDbSymbol(set.nature) },
@@ -63,7 +64,7 @@ const buildExpandPokemonSetupFromShowdown = (set: PokemonSet) => {
     { type: 'rareness', value: -1 },
   ];
 
-  return setupFields;
+  return setupFields.filter((field) => field.value !== undefined);
 };
 
 const convertToDbSymbol = (str: string | undefined): DbSymbol => str?.toLowerCase().replace(/[\s-]+/g, '_') as DbSymbol;
@@ -91,7 +92,7 @@ const formatStats = (stats: StatsTable, defaultValue: number): StudioIvEv => {
 };
 
 const convertMoves = (moves: string[] | undefined) => {
-  const defaultMove = '__undef__' as DbSymbol;
+  const defaultMove = '__remove__' as DbSymbol;
   const movesConverted = moves ? moves.slice(0, 4).map((move) => convertMove(move)) : [];
 
   while (movesConverted.length < 4) {
