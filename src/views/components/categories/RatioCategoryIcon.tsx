@@ -137,7 +137,6 @@ export const RatioCategoryIcon = ({
       }
     }
     editType(offType);
-    setTypeHelperSelected({ offensiveType: offType, defensiveType });
   };
 
   const rightClick = () => {
@@ -164,12 +163,11 @@ export const RatioCategoryIcon = ({
       }
     }
     editType(offType);
-    setTypeHelperSelected({ offensiveType: offType, defensiveType });
   };
 
   const onMouseEnter = (offType: StudioType, defType: StudioType) => {
     setHoveredDefensiveType(defType.dbSymbol);
-    setTypeHelperSelected({ offensiveType: offType, defensiveType: defType });
+    setTypeHelperSelected({ offensiveType: offType.dbSymbol, defensiveType: defType.dbSymbol });
   };
 
   return (
