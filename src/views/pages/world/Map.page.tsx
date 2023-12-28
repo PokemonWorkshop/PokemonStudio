@@ -11,7 +11,11 @@ import { useMapPage } from '@utils/usePage';
 import { MapEditorOverlay } from '@components/world/map/editors';
 import { MapEditorAndDeletionKeys } from '@components/world/map/editors/MapEditorOverlay';
 import { MapBreadcrumb, MapFrame, MapMusics, MapRMXP2StudioUpdate, MapUpdate } from '@components/world/map';
-import { DeleteButtonWithIcon } from '@components/buttons';
+import { DeleteButtonWithIcon, PrimaryButton, SecondaryButton } from '@components/buttons';
+import { BaseIcon } from '@components/icons/BaseIcon';
+import theme from '@src/AppTheme';
+import { useGlobalState } from '@src/GlobalStateProvider';
+import { useOpenTiled } from '@utils/useOpenTiled';
 
 const MapPageStyle = styled.div`
   display: flex;
@@ -26,7 +30,9 @@ const MapPageStyle = styled.div`
 export const MapPage = () => {
   const dialogsRef = useDialogsRef<MapEditorAndDeletionKeys>();
   const { map, hasMap, hasMapModified, isRMXPMode } = useMapPage();
+  const openTiled = useOpenTiled();
   const { t } = useTranslation('database_maps');
+  const { t: tSub } = useTranslation('submenu_database');
 
   return hasMap ? (
     <MapPageStyle>
@@ -47,6 +53,14 @@ export const MapPage = () => {
           <DataBlockWrapper>
             <MapFrame map={map} dialogsRef={dialogsRef} />
             <MapMusics map={map} dialogsRef={dialogsRef} />
+          </DataBlockWrapper>
+          <DataBlockWrapper>
+            <DataBlockWithAction size="full" title={tSub('edition')}>
+              <SecondaryButton onClick={() => openTiled(map.tiledFilename)}>
+                <BaseIcon icon="mapPadded" size="s" color={theme.colors.primaryBase} />
+                <span>{t('open_with_tiled')}</span>
+              </SecondaryButton>
+            </DataBlockWithAction>
           </DataBlockWrapper>
           <DataBlockWrapper>
             <DataBlockWithAction size="full" title={t('deleting')}>

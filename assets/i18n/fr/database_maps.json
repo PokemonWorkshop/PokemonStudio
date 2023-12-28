@@ -38,6 +38,7 @@
   "map_research": "Rechercher une carte...",
   "new_folder": "Nouveau dossier",
   "duplicate": "Dupliquer",
+  "open_with_tiled": "Ouvrir avec Tiled",
   "rename": "Renommer",
   "context_menu_delete": "Supprimer",
   "map_copy_name": "{{name}} (Copie)",

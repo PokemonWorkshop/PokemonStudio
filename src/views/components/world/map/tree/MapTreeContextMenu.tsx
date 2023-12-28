@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ReactComponent as CopyIcon } from '@assets/icons/global/copy.svg';
 import { ReactComponent as DeleteIcon } from '@assets/icons/global/delete-icon.svg';
 import { ReactComponent as EditIcon } from '@assets/icons/global/edit-icon.svg';
+import { ReactComponent as MapPaddedIcon } from '@assets/icons/global/map-padded.svg';
 import { MapDialogsRef } from '../editors/MapEditorOverlay';
 import { useMapInfo } from '@utils/useMapInfo';
 import { mapInfoDuplicateMap, mapInfoRemoveFolder } from '@utils/MapInfoUtils';
@@ -11,6 +12,8 @@ import { useProjectMaps } from '@utils/useProjectData';
 import { createMapInfo, duplicateMap } from '@utils/entityCreation';
 import { useGetEntityDescriptionText, useGetEntityNameText, useSetProjectText } from '@utils/ReadingProjectText';
 import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID } from '@modelEntities/map';
+import { useGlobalState } from '@src/GlobalStateProvider';
+import { useOpenTiled } from '@utils/useOpenTiled';
 
 type MapTreeContextMenuProps = {
   mapInfoValue: StudioMapInfoValue;
@@ -26,6 +29,7 @@ export const MapTreeContextMenu = ({ mapInfoValue, isDeleted, enableRename, dial
   const setText = useSetProjectText();
   const getName = useGetEntityNameText();
   const getDescription = useGetEntityDescriptionText();
+  const openTiled = useOpenTiled();
 
   const isFolder = mapInfoValue.data.klass === 'MapInfoFolder';
   const onClickDelete = () => {
@@ -58,6 +62,13 @@ export const MapTreeContextMenu = ({ mapInfoValue, isDeleted, enableRename, dial
     setMapInfo(newMapInfo);
   };
 
+  const onClickTiled = () => {
+    if (mapInfoValue.data.klass !== 'MapInfoMap' || isDeleted) return;
+
+    const tiledFilename = maps[mapInfoValue.data.mapDbSymbol]?.tiledFilename;
+    tiledFilename && openTiled(tiledFilename);
+  };
+
   return (
     <>
       {!isDeleted && (
@@ -74,6 +85,14 @@ export const MapTreeContextMenu = ({ mapInfoValue, isDeleted, enableRename, dial
             <CopyIcon />
           </span>
           {t('duplicate')}
+        </div>
+      )}
+      {!isFolder && !isDeleted && (
+        <div onClick={onClickTiled}>
+          <span className="icon">
+            <MapPaddedIcon />
+          </span>
+          {t('open_with_tiled')}
         </div>
       )}
       <div className="delete" onClick={onClickDelete}>
