@@ -7,5 +7,6 @@
   "cancel": "Cancel",
   "title_use_tiled_message_box": "Using Tiled",
   "message_use_tiled_message_box": "Would you like to use Tiled as a tool for creating maps for your game?",
-  "important_use_tiled_message_box": "This choice is definitive."
+  "important_use_tiled_message_box": "This choice is definitive.",
+  "tiled_path_invalid_path_error": "The Tiled installation path chosen is invalid."
 }

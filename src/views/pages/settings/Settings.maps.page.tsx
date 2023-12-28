@@ -9,6 +9,8 @@ import LinkStyle from '@components/Link/LinkStyle';
 import { getSetting, updateSettings } from '@utils/settings';
 import { SettingsEditorAndDeletionKeys, SettingsEditorOverlay } from '@components/settings/editors/SettingsEditorOverlay';
 import { useDialogsRef } from '@utils/useDialogsRef';
+import { basename } from '@utils/path';
+import { showNotification } from '@utils/showNotification';
 
 const DownloadMessageContainer = styled.div`
   display: flex;
@@ -28,6 +30,11 @@ export const SettingsMapsPage = () => {
   const { t } = useTranslation(['settings', 'settings_maps']);
 
   const handleFileChoosen = (filePath: string) => {
+    if (basename(filePath).toLowerCase() !== 'tiled.exe') {
+      showNotification('danger', t('settings:map_management'), t('settings_maps:tiled_path_invalid_path_error'));
+      return;
+    }
+
     setTiledPath(filePath);
     updateSettings('tiledPath', filePath);
   };

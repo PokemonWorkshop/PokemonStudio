@@ -7,5 +7,6 @@
   "cancel": "Annuler",
   "title_use_tiled_message_box": "Utilisation de Tiled",
   "message_use_tiled_message_box": "Souhaitez-vous utiliser Tiled comme outil de création de cartes de\u00A0votre\u00A0jeu\u00A0?",
-  "important_use_tiled_message_box": "Ce choix est définitif."
+  "important_use_tiled_message_box": "Ce choix est définitif.",
+  "tiled_path_invalid_path_error": "Le chemin d'installation de Tiled choisi est invalide."
 }
