@@ -39,7 +39,7 @@ const MapSubMenuContainer = styled.div`
 
 export const MapMenu = () => {
   const dialogsRef = useDialogsRef<MapEditorAndDeletionKeys>();
-  const { mapInfo, setMapInfo } = useMapInfo();
+  const { mapInfo, isRMXPMode, setMapInfo } = useMapInfo();
   const setText = useSetProjectText();
   const { buildOnMouseEnter, onMouseLeave, renderToolTip } = useToolTip();
   const { t } = useTranslation(['world', 'database_maps']);
@@ -57,13 +57,14 @@ export const MapMenu = () => {
       <NavigationDatabaseGroup title={t('world:maps')}>
         <MapSubMenuContainer>
           <div className="buttons">
-            <SecondaryButtonWithPlusIcon className="new" onClick={() => dialogsRef.current?.openDialog('new')}>
+            <SecondaryButtonWithPlusIcon className="new" onClick={() => dialogsRef.current?.openDialog('new')} disabled={isRMXPMode}>
               {t('database_maps:new')}
             </SecondaryButtonWithPlusIcon>
             <NewFolderButtonOnlyIcon
               onClick={handleNewFolder}
               onMouseLeave={onMouseLeave}
               onMouseEnter={buildOnMouseEnter(t('database_maps:new_folder'), 'top-begin')}
+              disabled={isRMXPMode}
             />
           </div>
           <SeparatorGreyLine />

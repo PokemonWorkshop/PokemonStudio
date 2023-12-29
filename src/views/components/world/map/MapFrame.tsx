@@ -15,16 +15,17 @@ import { padStr } from '@utils/PadStr';
 type Props = {
   map: StudioMap;
   dialogsRef: MapDialogsRef;
+  disabled: boolean;
 };
 
 /**
  * Frame showing the common information about the map (name & description)
  */
-export const MapFrame = ({ map, dialogsRef }: Props) => {
+export const MapFrame = ({ map, dialogsRef, disabled }: Props) => {
   const getName = useGetEntityNameText();
   const getDescription = useGetEntityDescriptionText();
   return (
-    <DataBlockContainer size="full" onClick={() => dialogsRef.current?.openDialog('frame')}>
+    <DataBlockContainer size="full" data-disabled={disabled} onClick={() => dialogsRef.current?.openDialog('frame')}>
       <DataGrid columns="minmax(min-content, 1024px)">
         <DataInfoContainer>
           <DataInfoContainerHeader>

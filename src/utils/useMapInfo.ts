@@ -52,6 +52,7 @@ export const useMapInfo = () => {
 
   return {
     mapInfo,
+    isRMXPMode: !state.projectStudio.isTiledMode,
     setMapInfo,
     setPartialMapInfo,
     state,

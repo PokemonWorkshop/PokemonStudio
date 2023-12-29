@@ -43,4 +43,8 @@ export const DataBlockContainer = styled(ActiveContainer)<DataBlockContainerProp
       display: inline-block;
     }
   }
+
+  &[data-disabled] {
+    pointer-events: none;
+  }
 `;
