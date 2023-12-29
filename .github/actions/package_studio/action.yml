@@ -4,14 +4,27 @@ description: 'Package Studio into executable files'
 runs:
   using: composite
   steps:
-    - name: Package Studio
-      shell: bash
-      run: npm run package
-
-    - name: Make Studio executable
+    - name: Make Studio executable (PR/Develop)
+      if: github.ref != 'refs/heads/main'
       shell: bash
       run: |
         npm run make
+      env:
+        GH_TOKEN: ${{ github.token }}
+
+    - name: Make Studio executable (Main)
+      if: github.ref == 'refs/heads/main'
+      shell: bash
+      run: |
+        git submodule update --init --recursive
+        cd psdk-binaries
+        curl -s https://download.psdk.pokemonworkshop.com/binaries/${{ runner.os }}.7z -o binaries.7z
+        7z x binaries.7z
+        rm binaries.7z
+        cd ..
+        npm run make
+      env:
+        GH_TOKEN: ${{ github.token }}
 
     - name: Save to Github Artifact
       uses: actions/upload-artifact@v3
