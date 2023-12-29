@@ -118,7 +118,7 @@ export const DropInput = ({
       ({ path }) => {
         setTimeout(() => {
           onFileChoosen(path);
-          if (multipleFiles) setIsDialogOpen(false);
+          setIsDialogOpen(false);
         });
       },
       () => setIsDialogOpen(false)
