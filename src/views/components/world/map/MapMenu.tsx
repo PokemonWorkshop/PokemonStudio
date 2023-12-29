@@ -20,6 +20,7 @@ const MapMenuContainer = styled(NavigationDatabaseStyle)`
   ${NavigationDatabaseGroupStyle} {
     gap: 8px;
   }
+  height: 100vh;
 `;
 
 const MapSubMenuContainer = styled.div`
