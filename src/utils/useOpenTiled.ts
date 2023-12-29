@@ -1,19 +1,23 @@
 import { useGlobalState } from '@src/GlobalStateProvider';
+import { getSetting } from './settings';
+import { MapDialogsRef } from '@components/world/map/editors/MapEditorOverlay';
 
 export const useOpenTiled = () => {
   const [{ projectPath }] = useGlobalState();
+  const tiledPath = getSetting('tiledPath');
 
-  return (tiledMapFilename: string) =>
+  return (tiledMapFilename: string, dialogsRef: MapDialogsRef) =>
     projectPath &&
     window.api.openTiled(
       {
-        tiledPath: 'C:/Program Files/Tiled/tiled.exe',
+        tiledPath,
         projectPath,
         tiledMapFilename,
       },
       () => {},
       (e) => {
-        alert(e.errorMessage); // TODO: Open dialog for error and setting up tiled path
+        window.api.log.error(e.errorMessage);
+        dialogsRef.current?.openDialog('open_tiled_error', true);
       }
     );
 };

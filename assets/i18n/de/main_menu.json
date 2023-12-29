@@ -8,7 +8,7 @@
   "event_editor": "Ereignis-Editor",
   "text_editor": "Text-Editor",
   "deployment": "Einsatz",
-  "parameters": "Parameter",
+  "settings": "Parameter der Anwendung",
   "test": "Testen Sie das Projekt",
   "save": "Änderungen speichern",
   "play_release_mode": "Spielen Sie das Spiel",

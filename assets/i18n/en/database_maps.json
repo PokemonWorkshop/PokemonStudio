@@ -67,5 +67,10 @@
   "read_data_rmxp_maps": "Reading map data from RPG Maker XP",
   "update_rmxp_maps": "Synchronizing maps with RPG Maker XP",
   "update_rmxp_maps_message": "Update your maps if you've made changes in RPG Maker XP. These changes will be taken into account in Pokémon Studio.",
-  "update_rmxp_maps_button": "Update modified maps"
+  "update_rmxp_maps_button": "Update modified maps",
+  "title_open_tiled_error": "Error opening Tiled",
+  "message_config_open_tiled_error": "The Tiled installation path has not been configured.",
+  "message_open_tiled_error": "An error has occurred while opening Tiled.",
+  "close": "Close",
+  "configure_tiled_path": "Configure installation path"
 }

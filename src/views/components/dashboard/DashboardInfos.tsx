@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { IconInput, Input, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { DropInput } from '@components/inputs/DropInput';
 import { useTranslation } from 'react-i18next';
-import { DashboardEditor } from './DashboardEditor';
+import { PageEditor } from '@components/pages';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { useProjectStudio } from '@utils/useProjectStudio';
 import { useConfigInfos } from '@utils/useProjectConfig';
@@ -57,7 +57,7 @@ export const DashboardInfos = () => {
   };
 
   return (
-    <DashboardEditor editorTitle={t('dashboard:infos')} title={t('dashboard_infos:project')}>
+    <PageEditor editorTitle={t('dashboard:infos')} title={t('dashboard_infos:project')}>
       <InputWithTopLabelContainer>
         <Label htmlFor="project-name">{t('dashboard_infos:project_name')}</Label>
         <Input
@@ -104,6 +104,6 @@ export const DashboardInfos = () => {
           />
         )}
       </InputWithTopLabelContainer>
-    </DashboardEditor>
+    </PageEditor>
   );
 };

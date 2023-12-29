@@ -40,6 +40,8 @@ import audio from './audio.json';
 import show_message_box from './show_message_box.json';
 import text_management from './text_management.json';
 import world from './world.json';
+import settings from './settings.json';
+import settings_maps from './settings_maps.json';
 
 export default {
   dashboard,
@@ -84,4 +86,6 @@ export default {
   show_message_box,
   text_management,
   world,
+  settings,
+  settings_maps,
 };

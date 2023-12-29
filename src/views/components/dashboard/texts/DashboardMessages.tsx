@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { cloneEntity } from '@utils/cloneEntity';
 import { useConfigTexts } from '@utils/useProjectConfig';
 import { TFunction, useTranslation } from 'react-i18next';
-import { DashboardEditor } from '../DashboardEditor';
+import { PageEditor } from '@components/pages';
 import { PictureInput, Input, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import { useRefreshUI } from '@components/editor';
@@ -145,7 +145,7 @@ export const DashboardMessages = ({ isChoice }: DashboardMessagesProps) => {
   };
 
   return (
-    <DashboardEditor
+    <PageEditor
       editorTitle={t('texts')}
       title={isChoice ? t('choices') : t('messages')}
       add={{ label: isChoice ? t('add_choices_type') : t('add_messages_type'), onClick: onAdd }}
@@ -297,6 +297,6 @@ export const DashboardMessages = ({ isChoice }: DashboardMessagesProps) => {
           )}
         </InputGroupCollapse>
       ))}
-    </DashboardEditor>
+    </PageEditor>
   );
 };

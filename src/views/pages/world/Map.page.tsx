@@ -11,10 +11,9 @@ import { useMapPage } from '@utils/usePage';
 import { MapEditorOverlay } from '@components/world/map/editors';
 import { MapEditorAndDeletionKeys } from '@components/world/map/editors/MapEditorOverlay';
 import { MapBreadcrumb, MapFrame, MapMusics, MapRMXP2StudioUpdate, MapUpdate } from '@components/world/map';
-import { DeleteButtonWithIcon, PrimaryButton, SecondaryButton } from '@components/buttons';
+import { DeleteButtonWithIcon, SecondaryButton } from '@components/buttons';
 import { BaseIcon } from '@components/icons/BaseIcon';
 import theme from '@src/AppTheme';
-import { useGlobalState } from '@src/GlobalStateProvider';
 import { useOpenTiled } from '@utils/useOpenTiled';
 
 const MapPageStyle = styled.div`
@@ -56,7 +55,7 @@ export const MapPage = () => {
           </DataBlockWrapper>
           <DataBlockWrapper>
             <DataBlockWithAction size="full" title={tSub('edition')}>
-              <SecondaryButton onClick={() => openTiled(map.tiledFilename)}>
+              <SecondaryButton onClick={() => openTiled(map.tiledFilename, dialogsRef)}>
                 <BaseIcon icon="mapPadded" size="s" color={theme.colors.primaryBase} />
                 <span>{t('open_with_tiled')}</span>
               </SecondaryButton>

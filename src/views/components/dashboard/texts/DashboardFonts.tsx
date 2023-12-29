@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { cloneEntity } from '@utils/cloneEntity';
 import { useConfigTexts } from '@utils/useProjectConfig';
 import { useTranslation } from 'react-i18next';
-import { DashboardEditor } from '../DashboardEditor';
+import { PageEditor } from '@components/pages';
 import { InputWithLeftLabelContainer, Label, Toggle } from '@components/inputs';
 import { DashboardFontsTable } from './DashboardFontsTable';
 import { DashboardFontsTableWithButtons } from './DashboardFontsTableStyle';
@@ -21,7 +21,7 @@ export const DashboardFonts = ({ isAlternative, onNew, onEdit, onDeleteAll }: Da
   const { t } = useTranslation('dashboard_texts');
 
   return (
-    <DashboardEditor editorTitle={t('texts')} title={isAlternative ? t('alt_sizes') : t('fonts')}>
+    <PageEditor editorTitle={t('texts')} title={isAlternative ? t('alt_sizes') : t('fonts')}>
       {!isAlternative && (
         <InputWithLeftLabelContainer>
           <Label htmlFor="special-characters-number">{t('special_characters_number')}</Label>
@@ -41,6 +41,6 @@ export const DashboardFonts = ({ isAlternative, onNew, onEdit, onDeleteAll }: Da
           <SecondaryButtonWithPlusIcon onClick={onNew}>{isAlternative ? t('add_a_alt_size') : t('add_a_font')}</SecondaryButtonWithPlusIcon>
         </div>
       </DashboardFontsTableWithButtons>
-    </DashboardEditor>
+    </PageEditor>
   );
 };

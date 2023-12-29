@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { useTranslation } from 'react-i18next';
-import { SubPageTitle } from '@components/database/SubPageTitle';
+import { SubPageTitle } from '@components/pages';
 import { TypeTable } from '@components/database/type/TypeTable';
 import { DataBlockWrapperWithNoBreakpoint } from '@components/database/dataBlocks/DataBlockWrapper';
 import { TypeEditorAndDeletionKeys, TypeEditorOverlay } from '@components/database/type/editors/TypeEditorOverlay';

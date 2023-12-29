@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { IconInput, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
 import { DropInput } from '@components/inputs/DropInput';
 import { useTranslation } from 'react-i18next';
-import { DashboardEditor } from './DashboardEditor';
+import { PageEditor } from '@components/pages';
 import { useConfigDevices } from '@utils/useProjectConfig';
 import { cloneEntity } from '@utils/cloneEntity';
 
@@ -22,7 +22,7 @@ export const DashboardDevices = () => {
   };
 
   return (
-    <DashboardEditor editorTitle={t('devices')} title={t('mouse')}>
+    <PageEditor editorTitle={t('devices')} title={t('mouse')}>
       <InputWithLeftLabelContainer>
         <Label htmlFor="use_mouse">{t('use_mouse')}</Label>
         <Toggle
@@ -51,6 +51,6 @@ export const DashboardDevices = () => {
           )}
         </InputWithTopLabelContainer>
       )}
-    </DashboardEditor>
+    </PageEditor>
   );
 };

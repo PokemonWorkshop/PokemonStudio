@@ -1,18 +1,13 @@
 import React from 'react';
-import styled from 'styled-components';
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import MapLinkPage from '@pages/world/MapLink.page';
 import { WorldNavigation } from '@components/world/WorldNavigation';
 import { MapPage } from '@pages/world/Map.page';
-
-const WorldPageStyle = styled.div`
-  display: flex;
-  flex-direction: row;
-`;
+import { RouterPageStyle } from '@components/pages';
 
 const WorldRouterComponent = () => {
   return (
-    <WorldPageStyle>
+    <RouterPageStyle>
       <WorldNavigation />
       <Routes>
         <Route path="maplink" element={<MapLinkPage />} />
@@ -20,7 +15,7 @@ const WorldRouterComponent = () => {
         <Route path="map" element={<MapPage />} />
         <Route path="/" element={<Navigate to="map" />} />
       </Routes>
-    </WorldPageStyle>
+    </RouterPageStyle>
   );
 };
 

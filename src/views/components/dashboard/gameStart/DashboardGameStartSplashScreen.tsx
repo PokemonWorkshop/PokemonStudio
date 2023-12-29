@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { basename } from '@utils/path';
 import { useConfigSceneTitle } from '@utils/useProjectConfig';
-import { DashboardEditor } from '../DashboardEditor';
+import { PageEditor } from '@components/pages';
 import { ClearButtonOnlyIcon } from '@components/buttons';
 import { DropInput, DropInputContainer } from '@components/inputs/DropInput';
 import { DragDropContext, Draggable, DraggableProvided, Droppable, DroppableProvided, DropResult } from 'react-beautiful-dnd';
@@ -141,7 +141,7 @@ export const DashboardGameStartSplashScreen = () => {
   };
 
   return (
-    <DashboardEditor editorTitle={t('game_start')} title={t('splash_screens')}>
+    <PageEditor editorTitle={t('game_start')} title={t('splash_screens')}>
       {gameStart.additionalSplashes.length > 0 ? (
         <SplashScreenContainer splashScreenLength={gameStart.additionalSplashes.length}>
           <DragDropContext
@@ -192,6 +192,6 @@ export const DashboardGameStartSplashScreen = () => {
           multipleFiles={true}
         />
       )}
-    </DashboardEditor>
+    </PageEditor>
   );
 };

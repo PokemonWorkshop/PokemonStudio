@@ -67,5 +67,10 @@
   "read_data_rmxp_maps": "Lecture des données des cartes de RPG Maker XP",
   "update_rmxp_maps": "Synchronisation des cartes avec RPG Maker XP",
   "update_rmxp_maps_message": "Mettez à jour vos cartes si vous avez effectué des modifications dans RPG Maker XP. Ces modifications seront prises en compte sur Pokémon Studio.",
-  "update_rmxp_maps_button": "Mettre à jour les cartes modifiées"
+  "update_rmxp_maps_button": "Mettre à jour les cartes modifiées",
+  "title_open_tiled_error": "Erreur lors de l'ouverture de Tiled",
+  "message_config_open_tiled_error": "Le chemin d'installation de Tiled n'a pas été configuré.",
+  "message_open_tiled_error": "Une erreur est survenue lors de l'ouverture de Tiled.",
+  "close": "Fermer",
+  "configure_tiled_path": "Configurer le chemin d'installation"
 }

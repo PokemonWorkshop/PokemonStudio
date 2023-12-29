@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle, Input } from '@components/inputs';
 import { useTranslation } from 'react-i18next';
-import { DashboardEditor } from './DashboardEditor';
+import { PageEditor } from '@components/pages';
 import { useConfigDisplay } from '@utils/useProjectConfig';
 import { EmbeddedUnitInput } from '@components/inputs/EmbeddedUnitInput';
 import { cleaningDisplayNaNValues } from '@utils/cleanNaNValue';
@@ -178,7 +178,7 @@ export const DashboardDisplay = () => {
 
   return (
     <EditorsContainer>
-      <DashboardEditor editorTitle={t('display')} title={t('resolution')}>
+      <PageEditor editorTitle={t('display')} title={t('resolution')}>
         <InputWithInfoContainer>
           <InputWithLeftLabelContainer>
             <Label htmlFor="width">{t('game_resolution')}</Label>
@@ -245,8 +245,8 @@ export const DashboardDisplay = () => {
             }}
           />
         </InputWithLeftLabelContainer>
-      </DashboardEditor>
-      <DashboardEditor editorTitle={t('display')} title={t('tilemap')}>
+      </PageEditor>
+      <PageEditor editorTitle={t('display')} title={t('tilemap')}>
         <InputWithTopLabelContainer>
           <Label htmlFor="tileClass">{t('class')}</Label>
           <Input
@@ -336,7 +336,7 @@ export const DashboardDisplay = () => {
             }}
           />
         </InputWithLeftLabelContainer>
-      </DashboardEditor>
+      </PageEditor>
     </EditorsContainer>
   );
 };

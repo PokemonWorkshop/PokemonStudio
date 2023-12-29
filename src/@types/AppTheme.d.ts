@@ -73,7 +73,7 @@ interface Sizes {
   full: Size;
   half: Size;
   fourth: Size;
-  dashboard: Size;
+  default: Size;
 }
 
 interface Calc {

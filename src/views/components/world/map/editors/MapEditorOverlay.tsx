@@ -8,8 +8,9 @@ import { MapMusicsEditor } from './MapMusicsEditor';
 import { MapNewEditor } from './MapNewEditor';
 import { MapFolderDeletion } from './MapFolderDeletion';
 import { StudioMapInfoFolder, StudioMapInfoValue } from '@modelEntities/mapInfo';
+import { MapOpenTiledError } from './MapOpenTiledError';
 
-export type MapEditorAndDeletionKeys = 'new' | 'frame' | 'musics' | 'deletion' | 'deletion_folder';
+export type MapEditorAndDeletionKeys = 'new' | 'frame' | 'musics' | 'deletion' | 'deletion_folder' | 'open_tiled_error';
 export type MapDialogsRef = React.RefObject<DialogRefData<MapEditorAndDeletionKeys>>;
 
 type Props = {
@@ -40,6 +41,8 @@ export const MapEditorOverlay = defineEditorOverlay<MapEditorAndDeletionKeys, Pr
         );
       case 'deletion_folder':
         return <MapFolderDeletion closeDialog={closeDialog} ref={handleCloseRef} mapInfoFolder={mapInfoValue as StudioMapInfoFolder} />;
+      case 'open_tiled_error':
+        return <MapOpenTiledError closeDialog={closeDialog} ref={handleCloseRef} />;
       default:
         return assertUnreachable(dialogToShow);
     }

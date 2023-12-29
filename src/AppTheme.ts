@@ -118,7 +118,7 @@ const theme: DefaultTheme = {
       max: 504,
       middle: 25,
     },
-    dashboard: {
+    default: {
       min: 504,
       max: 708,
       middle: 100,

@@ -12,14 +12,13 @@ import { useProjectMaps } from '@utils/useProjectData';
 import { createMapInfo, duplicateMap } from '@utils/entityCreation';
 import { useGetEntityDescriptionText, useGetEntityNameText, useSetProjectText } from '@utils/ReadingProjectText';
 import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID } from '@modelEntities/map';
-import { useGlobalState } from '@src/GlobalStateProvider';
 import { useOpenTiled } from '@utils/useOpenTiled';
 
 type MapTreeContextMenuProps = {
   mapInfoValue: StudioMapInfoValue;
   isDeleted: boolean;
   enableRename: () => void;
-  dialogsRef?: MapDialogsRef;
+  dialogsRef: MapDialogsRef;
 };
 
 export const MapTreeContextMenu = ({ mapInfoValue, isDeleted, enableRename, dialogsRef }: MapTreeContextMenuProps) => {
@@ -66,7 +65,7 @@ export const MapTreeContextMenu = ({ mapInfoValue, isDeleted, enableRename, dial
     if (mapInfoValue.data.klass !== 'MapInfoMap' || isDeleted) return;
 
     const tiledFilename = maps[mapInfoValue.data.mapDbSymbol]?.tiledFilename;
-    tiledFilename && openTiled(tiledFilename);
+    tiledFilename && openTiled(tiledFilename, dialogsRef);
   };
 
   return (

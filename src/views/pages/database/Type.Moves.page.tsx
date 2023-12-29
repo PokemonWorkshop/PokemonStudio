@@ -5,7 +5,7 @@ import { DataBlockWithTitleNoActive, DataBlockWrapper } from '@components/databa
 import { TypeControlBar } from '@components/database/type/TypeControlBar';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
-import { SubPageTitle } from '@components/database/SubPageTitle';
+import { SubPageTitle } from '@components/pages';
 import { TypeMovesTable } from '@components/database/type/TypeMovesTable';
 import { useTypePage } from '@utils/usePage';
 import { useProjectTypes } from '@utils/useProjectData';

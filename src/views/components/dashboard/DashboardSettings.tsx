@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { InputWithLeftLabelContainer, Input, Label, Toggle, InputContainer } from '@components/inputs';
-import { DashboardEditor } from './DashboardEditor';
+import { PageEditor } from '@components/pages';
 import { useConfigSettings } from '@utils/useProjectConfig';
 import styled from 'styled-components';
 import { cleaningSettingsNaNValues } from '@utils/cleanNaNValue';
@@ -53,7 +53,7 @@ export const DashboardSettings = () => {
   };
 
   return (
-    <DashboardEditor editorTitle={t('settings')} title={t('general')}>
+    <PageEditor editorTitle={t('settings')} title={t('general')}>
       <InputWithLeftLabelContainer>
         <Label htmlFor="max-level">{t('max_pokemon_level')}</Label>
         <Input
@@ -105,6 +105,6 @@ export const DashboardSettings = () => {
         </InputWithLeftLabelContainer>
         <UnlimitedItemsInfoContainer>{t('unlimited_items')}</UnlimitedItemsInfoContainer>
       </InputContainer>
-    </DashboardEditor>
+    </PageEditor>
   );
 };

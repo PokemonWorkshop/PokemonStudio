@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useConfigSceneTitle } from '@utils/useProjectConfig';
-import { DashboardEditor } from '../DashboardEditor';
+import { PageEditor } from '@components/pages';
 import { Input, InputWithLeftLabelContainer, Label, Toggle } from '@components/inputs';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { cloneEntity } from '@utils/cloneEntity';
@@ -26,7 +26,7 @@ export const DashboardGameStartCinematic = () => {
   };
 
   return (
-    <DashboardEditor editorTitle={t('game_start')} title={t('cinematic')}>
+    <PageEditor editorTitle={t('game_start')} title={t('cinematic')}>
       <InputWithLeftLabelContainer>
         <Label htmlFor="show_cinematic">{t('show_cinematic')}</Label>
         <Toggle
@@ -54,6 +54,6 @@ export const DashboardGameStartCinematic = () => {
           />
         </InputWithLeftLabelContainer>
       )}
-    </DashboardEditor>
+    </PageEditor>
   );
 };

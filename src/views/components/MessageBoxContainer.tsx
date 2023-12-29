@@ -44,6 +44,11 @@ export const MessageBoxIconContainer = styled.div`
   }
 `;
 
+export const MessageBoxIconErrorContainer = styled(MessageBoxIconContainer)`
+  background-color: ${({ theme }) => theme.colors.dangerSoft};
+  color: ${({ theme }) => theme.colors.dangerBase};
+`;
+
 export const MessageBoxTextContainer = styled.div`
   display: flex;
   flex-direction: column;

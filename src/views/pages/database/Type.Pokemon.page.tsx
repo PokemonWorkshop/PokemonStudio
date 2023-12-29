@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { DataBlockWithTitleNoActive, DataBlockWrapper } from '@components/database/dataBlocks';
 import { TypeControlBar } from '@components/database/type/TypeControlBar';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
-import { SubPageTitle } from '@components/database/SubPageTitle';
+import { SubPageTitle } from '@components/pages';
 import { TypePokemonTable } from '@components/database/type/TypePokemonTable';
 import { useTypePage } from '@utils/usePage';
 import { useDialogsRef } from '@utils/useDialogsRef';

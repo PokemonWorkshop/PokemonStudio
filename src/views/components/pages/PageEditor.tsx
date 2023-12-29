@@ -5,21 +5,21 @@ import { useTranslation } from 'react-i18next';
 import { DarkButton, DeleteButtonWithIcon, SecondaryButtonWithPlusIconResponsive } from '@components/buttons';
 import { ButtonContainer, ButtonRightContainer, DataBlockEditorContainer, TitleContainer } from '@components/editor/DataBlockEditorStyle';
 
-type DashboardEditorButtonProps = {
+type PageEditorButtonProps = {
   label: string;
   onClick: () => void;
 };
 
-export type DashboardEditorProps = Omit<DataBlockWithTitleProps, 'size'> & {
+export type PageEditorProps = Omit<DataBlockWithTitleProps, 'size'> & {
   editorTitle: string;
   onClickDelete?: () => void;
-  importation?: DashboardEditorButtonProps;
-  add?: DashboardEditorButtonProps;
+  importation?: PageEditorButtonProps;
+  add?: PageEditorButtonProps;
   disabledDeletion?: boolean;
   disabledImport?: boolean;
 };
 
-const DashboardEditorContainer = styled(DataBlockEditorContainer)`
+const PageEditorContainer = styled(DataBlockEditorContainer)`
   width: calc(${({ theme, size }) => theme.sizes[size].middle}%);
   margin: 0;
   background-color: ${({ theme }) => theme.colors.dark16};
@@ -30,18 +30,18 @@ const DashboardEditorContainer = styled(DataBlockEditorContainer)`
   }
 `;
 
-const DashboardTitleContainer = styled(TitleContainer)`
+const PageTitleContainer = styled(TitleContainer)`
   padding-bottom: 16px;
   border-bottom: 1px solid ${({ theme }) => theme.colors.dark20};
 `;
 
-const DashboardDataContainer = styled.div`
+const PageDataContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
 `;
 
-export const DashboardEditor = ({
+export const PageEditor = ({
   editorTitle,
   title,
   children,
@@ -51,16 +51,16 @@ export const DashboardEditor = ({
   add,
   disabledDeletion,
   disabledImport,
-}: DashboardEditorProps) => {
+}: PageEditorProps) => {
   const { t } = useTranslation('editor');
 
   return (
-    <DashboardEditorContainer size="dashboard" data-disabled={disabled && 'true'} data-noactive>
-      <DashboardTitleContainer>
+    <PageEditorContainer size="default" data-disabled={disabled && 'true'} data-noactive>
+      <PageTitleContainer>
         <p>{editorTitle}</p>
         <h3>{title}</h3>
-      </DashboardTitleContainer>
-      <DashboardDataContainer>{children}</DashboardDataContainer>
+      </PageTitleContainer>
+      <PageDataContainer>{children}</PageDataContainer>
       {(onClickDelete || importation || add) && (
         <ButtonContainer>
           {onClickDelete ? (
@@ -84,6 +84,6 @@ export const DashboardEditor = ({
           </ButtonRightContainer>
         </ButtonContainer>
       )}
-    </DashboardEditorContainer>
+    </PageEditorContainer>
   );
 };

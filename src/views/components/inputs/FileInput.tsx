@@ -13,6 +13,7 @@ const FileInputContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  gap: 4px;
   align-items: center;
   user-select: none;
 
@@ -20,6 +21,7 @@ const FileInputContainer = styled.div`
     display: flex;
     gap: 16px;
     align-items: center;
+    min-width: 0;
   }
 
   & div.icon {
@@ -37,14 +39,9 @@ const FileInputContainer = styled.div`
   & span {
     ${({ theme }) => theme.fonts.normalRegular}
     color: ${({ theme }) => theme.colors.text400};
-    width: 90px;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
-  }
-
-  & span.no-icon {
-    width: 140px;
   }
 
   & .error {
@@ -70,6 +67,7 @@ type FileInputProps = {
   destFolderToCopy?: string;
   isAbsolutePath?: true;
   noIcon?: true;
+  showFullPath?: true;
   onFileChoosen: (filePath: string) => void;
   onFileClear: () => void;
 };
@@ -79,7 +77,17 @@ type FileInputProps = {
  * @param filePath If the file is in the project, the project path must be not specified.
  * @param isAbsolutePath Use this if you use the absolute path.
  */
-export const FileInput = ({ filePath, name, extensions, destFolderToCopy, isAbsolutePath, noIcon, onFileChoosen, onFileClear }: FileInputProps) => {
+export const FileInput = ({
+  filePath,
+  name,
+  extensions,
+  destFolderToCopy,
+  isAbsolutePath,
+  noIcon,
+  showFullPath,
+  onFileChoosen,
+  onFileClear,
+}: FileInputProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [error, setError] = useState<boolean>(false);
   const { t } = useTranslation('audio');
@@ -142,7 +150,7 @@ export const FileInput = ({ filePath, name, extensions, destFolderToCopy, isAbso
             <ImageIcon />
           </div>
         )}
-        {error ? <span className="error">{t('no_file_found')}</span> : <span className={noIcon ? 'no-icon' : undefined}>{basename(filePath)}</span>}
+        {error ? <span className="error">{t('no_file_found')}</span> : <span>{showFullPath ? filePath : basename(filePath)}</span>}
       </div>
       <div className="buttons">
         <EditButtonOnlyIcon disabled={isDialogOpen} onClick={isDialogOpen ? undefined : onClick} />
