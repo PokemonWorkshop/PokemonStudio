@@ -44,7 +44,7 @@ export const DataBlockContainer = styled(ActiveContainer)<DataBlockContainerProp
     }
   }
 
-  &[data-disabled] {
+  &[data-disabled='true'] {
     pointer-events: none;
   }
 `;
