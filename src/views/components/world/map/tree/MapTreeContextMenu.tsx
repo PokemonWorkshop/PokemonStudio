@@ -29,6 +29,7 @@ export const MapTreeContextMenu = ({ mapInfoValue, isDeleted, enableRename, dial
   const getName = useGetEntityNameText();
   const getDescription = useGetEntityDescriptionText();
   const openTiled = useOpenTiled();
+  const hideTiledOption = mapInfoValue.data.klass === 'MapInfoMap' ? !maps[mapInfoValue.data.mapDbSymbol]?.tiledFilename : true || isDeleted;
 
   const isFolder = mapInfoValue.data.klass === 'MapInfoFolder';
   const onClickDelete = () => {
@@ -86,7 +87,7 @@ export const MapTreeContextMenu = ({ mapInfoValue, isDeleted, enableRename, dial
           {t('duplicate')}
         </div>
       )}
-      {!isFolder && !isDeleted && !isRMXPMode && (
+      {!isFolder && !isDeleted && !isRMXPMode && !hideTiledOption && (
         <div onClick={onClickTiled}>
           <span className="icon">
             <MapPaddedIcon />

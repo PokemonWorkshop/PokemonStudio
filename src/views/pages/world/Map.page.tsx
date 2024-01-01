@@ -27,7 +27,7 @@ const MapPageStyle = styled.div`
 
 export const MapPage = () => {
   const dialogsRef = useDialogsRef<MapEditorAndDeletionKeys>();
-  const { map, hasMap, hasMapModified, isRMXPMode } = useMapPage();
+  const { map, hasMap, hasMapModified, isRMXPMode, disabledOpenTiled } = useMapPage();
   const openTiled = useOpenTiled();
   const { t } = useTranslation('database_maps');
   const { t: tSub } = useTranslation('submenu_database');
@@ -54,9 +54,9 @@ export const MapPage = () => {
             <MapMusics map={map} dialogsRef={dialogsRef} disabled={isRMXPMode} />
           </DataBlockWrapper>
           <DataBlockWrapper>
-            <DataBlockWithAction size="full" title={tSub('edition')} disabled={isRMXPMode}>
-              <SecondaryButton onClick={() => openTiled(map.tiledFilename, dialogsRef)} disabled={isRMXPMode}>
-                <BaseIcon icon="mapPadded" size="s" color={isRMXPMode ? theme.colors.text700 : theme.colors.primaryBase} />
+            <DataBlockWithAction size="full" title={tSub('edition')} disabled={disabledOpenTiled}>
+              <SecondaryButton onClick={() => openTiled(map.tiledFilename, dialogsRef)} disabled={disabledOpenTiled}>
+                <BaseIcon icon="mapPadded" size="s" color={disabledOpenTiled ? theme.colors.text700 : theme.colors.primaryBase} />
                 <span>{t('open_with_tiled')}</span>
               </SecondaryButton>
             </DataBlockWithAction>
