@@ -118,7 +118,14 @@ export const TypeNewEditor = forwardRef<EditorHandlingClose, TypeNewEditorProps>
           <Label htmlFor="dbSymbol" required>
             {t('database_moves:symbol')}
           </Label>
-          <Input type="text" name="dbSymbol" ref={dbSymbolRef} error={!!dbSymbolErrorType} placeholder={t('database_types:example_db_symbol')} />
+          <Input
+            type="text"
+            name="dbSymbol"
+            ref={dbSymbolRef}
+            onChange={(e) => onChangeDbSymbol(e.currentTarget.value)}
+            error={!!dbSymbolErrorType}
+            placeholder={t('database_types:example_db_symbol')}
+          />
           {dbSymbolErrorType == 'value' && <TextInputError>{t('database_moves:incorrect_format')}</TextInputError>}
           {dbSymbolErrorType == 'duplicate' && <TextInputError>{t('database_moves:db_symbol_already_used')}</TextInputError>}
         </InputWithTopLabelContainer>

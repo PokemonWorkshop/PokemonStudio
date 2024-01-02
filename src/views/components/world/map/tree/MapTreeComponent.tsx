@@ -46,7 +46,7 @@ type MapTreeComponentProps = {
 };
 
 export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) => {
-  const { mapInfo, setMapInfo, setPartialMapInfo } = useMapInfo();
+  const { mapInfo, isRMXPMode, setMapInfo, setPartialMapInfo } = useMapInfo();
   const { selectedDataIdentifier: currentMap, setSelectedDataIdentifier: setCurrentMap, projectDataValues: maps } = useProjectMaps();
   const setText = useSetProjectText();
   const getMapName = useGetEntityNameText();
@@ -223,7 +223,7 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
               <span className="icon icon-dot" onClick={openMenu}>
                 <DotIcon />
               </span>
-              {!isDeleted && currentDepth <= 3 && (
+              {!isDeleted && !isRMXPMode && currentDepth <= 3 && (
                 <span
                   className="icon icon-plus"
                   onClick={(e) => {
@@ -283,7 +283,7 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
         onCollapse={onCollapse}
         onDragEnd={onDragEnd}
         offsetPerLevel={26}
-        isDragEnabled
+        isDragEnabled={!isRMXPMode}
         isNestingEnabled
       />
       {mapInfoSelected &&

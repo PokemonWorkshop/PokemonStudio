@@ -28,6 +28,10 @@ export const DataBlockWithTitleStyle = styled(DataBlockContainer)`
   #root &[data-disabled='true'] h2 {
     color: ${({ theme }) => theme.colors.dark20};
   }
+
+  &[data-disabled='true'] {
+    pointer-events: none;
+  }
 `;
 
 export const DataBlockWithTitle = ({ title, size, children, disabled, onClick }: DataBlockWithTitleProps) => (

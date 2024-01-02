@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 
 import { PageContainerStyle, PageDataConstrainerStyle } from '@pages/database/PageContainerStyle';
 import { DataBlockWithAction, DataBlockWrapper } from '@components/database/dataBlocks';
-import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';
 
 import { useDialogsRef } from '@utils/useDialogsRef';
 import { useMapPage } from '@utils/usePage';
@@ -28,7 +27,7 @@ const MapPageStyle = styled.div`
 
 export const MapPage = () => {
   const dialogsRef = useDialogsRef<MapEditorAndDeletionKeys>();
-  const { map, hasMap, hasMapModified, isRMXPMode } = useMapPage();
+  const { map, hasMap, hasMapModified, isRMXPMode, disabledOpenTiled } = useMapPage();
   const openTiled = useOpenTiled();
   const { t } = useTranslation('database_maps');
   const { t: tSub } = useTranslation('submenu_database');
@@ -39,24 +38,25 @@ export const MapPage = () => {
         <PageDataConstrainerStyle>
           <DataBlockWrapper>
             <MapBreadcrumb />
-            <DatabaseTabsBar
+            {/** The component is commented on because it's currently useless */}
+            {/*<DatabaseTabsBar
               currentTabIndex={0}
               tabs={[
                 { label: t('data'), path: '/world/map' },
                 { label: t('map'), path: '/world/map/view', disabled: true },
               ]}
-            />
+            />*/}
             {hasMapModified && <MapUpdate />}
             {isRMXPMode && <MapRMXP2StudioUpdate />}
           </DataBlockWrapper>
           <DataBlockWrapper>
-            <MapFrame map={map} dialogsRef={dialogsRef} />
-            <MapMusics map={map} dialogsRef={dialogsRef} />
+            <MapFrame map={map} dialogsRef={dialogsRef} disabled={isRMXPMode} />
+            <MapMusics map={map} dialogsRef={dialogsRef} disabled={isRMXPMode} />
           </DataBlockWrapper>
           <DataBlockWrapper>
-            <DataBlockWithAction size="full" title={tSub('edition')}>
-              <SecondaryButton onClick={() => openTiled(map.tiledFilename, dialogsRef)}>
-                <BaseIcon icon="mapPadded" size="s" color={theme.colors.primaryBase} />
+            <DataBlockWithAction size="full" title={tSub('edition')} disabled={disabledOpenTiled}>
+              <SecondaryButton onClick={() => openTiled(map.tiledFilename, dialogsRef)} disabled={disabledOpenTiled}>
+                <BaseIcon icon="mapPadded" size="s" color={disabledOpenTiled ? theme.colors.text700 : theme.colors.primaryBase} />
                 <span>{t('open_with_tiled')}</span>
               </SecondaryButton>
             </DataBlockWithAction>
