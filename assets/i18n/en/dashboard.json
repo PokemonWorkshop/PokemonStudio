@@ -18,6 +18,7 @@
   "credits": "Game Credits",
   "title_studio_mode_message_box": "Choosing the software to create your maps",
   "message_studio_mode_message_box": "When creating your game, do you want to use Tiled or RPG Maker XP to create your maps?",
+  "warning_message": "You can switch to Tiled later. Make a backup of your project before chosing any option.",
   "button_use_rmxp": "Use RPG Maker XP",
   "button_use_tiled": "Use Tiled"
 }
