@@ -118,6 +118,11 @@
       "target": [
         "nsis"
       ],
+      "publish": {
+        "provider": "github",
+        "owner": "PokemonWorkshop",
+        "repo": "PokemonStudio"
+      },
       "icon": "assets/icon.ico"
     },
     "nsis": {
