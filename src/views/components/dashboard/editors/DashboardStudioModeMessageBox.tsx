@@ -68,6 +68,9 @@ export const DashboardStudioModeMessageBox = ({ closeDialog }: DashboardStudioMo
       </MessageBoxTitleIconContainer>
       <MessageBoxTextContainer>
         <p>{t('dashboard:message_studio_mode_message_box')}</p>
+        <p className="red" style={{ marginTop: '1rem' }}>
+          {t('dashboard:warning_message')}
+        </p>
       </MessageBoxTextContainer>
       <MessageBoxActionContainer>
         <SecondaryButton onClick={() => setMode('rmxp')}>{t('dashboard:button_use_rmxp')}</SecondaryButton>
