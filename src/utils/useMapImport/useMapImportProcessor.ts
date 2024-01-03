@@ -38,7 +38,7 @@ export const useMapImportProcessor = () => {
   const processors: SpecialStateProcessors<MapImportStateObject> = useMemo(
     () => ({
       ...PROCESS_DONE_STATE,
-      import: ({ filesToImport, tiledFilesSrcPath }, setState) => {
+      import: ({ filesToImport, tiledFilesSrcPath, rmxpMapIds }, setState) => {
         loaderRef.current.open('importing_tiled_maps', 1, 4, t('reading_data_tiled_files'));
         const tiledMetadata: PartialStudioMap[] = [];
 
@@ -58,7 +58,7 @@ export const useMapImportProcessor = () => {
                 mtime: 0,
                 ...tiledMetadata[index],
               }));
-              setState({ state: 'copyTmxFiles', mapsToImport, tiledFilesSrcPath });
+              setState({ state: 'copyTmxFiles', mapsToImport, tiledFilesSrcPath, rmxpMapIds });
             }
             return () => {};
           }
@@ -79,7 +79,7 @@ export const useMapImportProcessor = () => {
 
         return importTmxFiles(filesToImport, tiledMetadata);
       },
-      copyTmxFiles: ({ mapsToImport, tiledFilesSrcPath }, setState) => {
+      copyTmxFiles: ({ mapsToImport, tiledFilesSrcPath, rmxpMapIds }, setState) => {
         loaderRef.current.setProgress(2, 4, t('copy_tiled_files'));
         return window.api.copyTiledFiles(
           { projectPath: globalState.projectPath!, tiledMaps: JSON.stringify(mapsToImport), tiledSrcPath: tiledFilesSrcPath },
@@ -89,7 +89,7 @@ export const useMapImportProcessor = () => {
             mapsToImport.sort((a, b) => {
               return (a.mapId || 999_999) - (b.mapId || 999_999);
             });
-            setState({ state: 'getRMXPMapsData', mapsToImport });
+            setState({ state: 'getRMXPMapsData', mapsToImport, rmxpMapIds });
           },
           ({ errorMessage }) => {
             setState(DEFAULT_PROCESS_STATE);
@@ -97,14 +97,14 @@ export const useMapImportProcessor = () => {
           }
         );
       },
-      getRMXPMapsData: ({ mapsToImport }, setState) => {
+      getRMXPMapsData: ({ mapsToImport, rmxpMapIds }, setState) => {
         loaderRef.current.setProgress(3, 4, t('read_data_rmxp_maps'));
         const rmxpMaps: (RMXPMap | undefined)[] = [];
 
         const readRMXPMap = (mapsToImport: MapToImport[], rmxpMaps: (RMXPMap | undefined)[], index = 0) => {
           if (index >= mapsToImport.length) {
             const mapsToImportWithRMXPMap = mapsToImport.map((mapToImport, index) => ({ ...mapToImport, rmxpMap: rmxpMaps[index] }));
-            setState({ state: 'createNewMaps', mapsToImportWithRMXPMap });
+            setState({ state: 'createNewMaps', mapsToImportWithRMXPMap, rmxpMapIds });
             return () => {};
           }
 
@@ -131,7 +131,7 @@ export const useMapImportProcessor = () => {
 
         return readRMXPMap(mapsToImport, rmxpMaps);
       },
-      createNewMaps: ({ mapsToImportWithRMXPMap }, setState) => {
+      createNewMaps: ({ mapsToImportWithRMXPMap, rmxpMapIds }, setState) => {
         return toAsyncProcess(() => {
           loaderRef.current.setProgress(4, 4, t('create_new_maps'));
           if (mapsToImportWithRMXPMap.length === 0) {
@@ -148,7 +148,7 @@ export const useMapImportProcessor = () => {
 
           const mapToImport = mapsToImportWithRMXPMap[0];
           const rmxpMap = mapToImport.rmxpMap;
-          const newMap = createMap(maps, 30, mapToImport.path, '', '');
+          const newMap = createMap(maps, 30, mapToImport.path, '', '', rmxpMapIds);
           if (mapToImport.mapId !== undefined) {
             newMap.id = mapToImport.mapId;
             newMap.dbSymbol = `map${padStr(newMap.id, 3)}` as DbSymbol;

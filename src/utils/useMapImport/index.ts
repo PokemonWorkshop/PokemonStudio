@@ -8,11 +8,11 @@ export const useMapImport = () => {
   const setState = useProcess(processors, DEFAULT_PROCESS_STATE);
 
   return (
-    payload: { filesToImport: MapImportFiles[]; tiledFilesSrcPath: string },
+    payload: { filesToImport: MapImportFiles[]; tiledFilesSrcPath: string; rmxpMapIds: number[] },
     onSuccess: MapImportSuccessCallback,
     onFailure: MapImportFailureCallback
   ) => {
     binding.current = { onFailure, onSuccess };
-    setState({ state: 'import', filesToImport: payload.filesToImport, tiledFilesSrcPath: payload.tiledFilesSrcPath });
+    setState({ state: 'import', filesToImport: payload.filesToImport, tiledFilesSrcPath: payload.tiledFilesSrcPath, rmxpMapIds: payload.rmxpMapIds });
   };
 };

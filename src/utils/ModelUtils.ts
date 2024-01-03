@@ -24,10 +24,12 @@ export const findFirstAvailableTextId = (allData: ProjectData['abilities'] | Pro
  * Find the first available id
  * @param allData The project data containing the data (items, moves, etc.)
  * @param startId The first id usable
+ * @param excludeIds Exclude ids that are not to be used
  * @returns The first available id
  */
-export const findFirstAvailableId = (allData: Record<string, { id: number }>, startId: number) => {
+export const findFirstAvailableId = (allData: Record<string, { id: number }>, startId: number, excludeIds?: number[]) => {
   const values = Object.values(allData);
+  if (excludeIds) values.push(...excludeIds.map((id) => ({ id })));
   if (values.length === 0) return startId;
 
   const idSet = values
@@ -43,12 +45,12 @@ export const findFirstAvailableId = (allData: Record<string, { id: number }>, st
   return idSet[holeIndex - 1] + 1;
 };
 
-export const findFirstAndSecondAvailableId = (allData: Record<string, { id: number }>, startId: number) => {
-  const firstId = findFirstAvailableId(allData, startId);
+export const findFirstAndSecondAvailableId = (allData: Record<string, { id: number }>, startId: number, excludeIds?: number[]) => {
+  const firstId = findFirstAvailableId(allData, startId, excludeIds);
   const newAllData = {
     ...allData,
     [`data_${firstId}`]: { id: firstId },
   };
-  const secondId = findFirstAvailableId(newAllData, startId);
+  const secondId = findFirstAvailableId(newAllData, startId, excludeIds);
   return { firstId, secondId };
 };
