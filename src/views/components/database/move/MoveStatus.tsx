@@ -37,7 +37,7 @@ export const MoveStatus = ({ move, dialogsRef }: MoveStatusProps) => {
   return (
     <DataBlockWithTitle size="half" title={t('statuses')} onClick={() => dialogsRef?.current?.openDialog('status')}>
       <DataGrid columns="1fr 1fr 1fr" rows="1fr 1fr">
-        {move.moveStatus.map((status, index) => (
+        {move.moveStatus.map((_, index) => (
           <React.Fragment key={index}>
             <DataFieldsetField
               label={t(`status_${index + 1}`)}
