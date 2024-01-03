@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, useEffect, useCallback } from 'react';
+import React, { forwardRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -93,7 +93,6 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
   ];
 
   const handleChange: React.FocusEventHandler<HTMLTextAreaElement> = (event) => {
-    console.log(event);
     const inputValue = event.currentTarget.value;
     if (!inputValue) return setError('');
 
