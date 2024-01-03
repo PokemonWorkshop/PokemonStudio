@@ -66,7 +66,10 @@ const getFirstDbSymbol = (
 };
 
 export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattlerImportProps>(({ closeDialog, from }, ref) => {
-  const { t } = useTranslation(['database_trainers', 'database_groups']);
+  const isGroup = from === 'group';
+  const translationContext = isGroup ? 'database_groups' : 'database_trainers';
+  const { t } = useTranslation(translationContext);
+  const { t: tTrainer } = useTranslation('database_trainers');
 
   const { projectDataValues: trainers } = useProjectTrainers();
   const { projectDataValues: groups } = useProjectGroups();
@@ -82,37 +85,24 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
   const [override, setOverride] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
 
-  const isGroup = from === 'group';
-  const translationContext = isGroup ? 'database_groups' : 'database_trainers';
   const SelectComponent = isGroup ? SelectGroup : SelectTrainer;
-  const getTranslation = useCallback((key: string) => t(`${translationContext}:${key}`), [t, translationContext]);
 
   const dropDownOptions = [
-    { value: 'default', label: getTranslation('default_option_label') },
-    { value: 'showdown', label: getTranslation('showdown_option_label') },
+    { value: 'default', label: t('default_option_label') },
+    { value: 'showdown', label: t('showdown_option_label') },
   ];
 
-  useEffect(() => {
-    if (isGroup) return setError('');
-    if (dropDownSelection === 'default') return setError('');
-
-    const partySizeError = getTranslation('party_length_limit');
-    const exceedsPartyLimit = showdownEncounter.length + trainer.party.length > 6;
-
-    if (override && error === partySizeError) return setError('');
-    if (!override && exceedsPartyLimit) return setError(partySizeError);
-  }, [isGroup, dropDownSelection, override, error, t, showdownEncounter, trainer, getTranslation]);
-
   const handleChange: React.FocusEventHandler<HTMLTextAreaElement> = (event) => {
+    console.log(event);
     const inputValue = event.currentTarget.value;
     if (!inputValue) return setError('');
 
     const convertedTeam = convertShowdownToStudio(inputValue, from);
     if (convertedTeam.length === 0) {
       setShowdownEncounter([]);
-      return setError(getTranslation('error_message'));
+      return setError(t('error_message'));
     } else if (!isGroup && !override && convertedTeam.length + trainer.party.length > 6) {
-      setError(getTranslation('party_length_limit'));
+      setError(tTrainer('party_length_limit'));
     } else {
       setError('');
     }
@@ -120,7 +110,18 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
     setShowdownEncounter(convertedTeam);
   };
 
-  const canImport = () => {
+  const handleImportTypeChange = (type: string) => {
+    setDropDownSelection(type);
+    if (type === 'default') {
+      const lengthPartyToImport = trainers[selectedEntity].party.length;
+      setError(override || trainer.party.length + lengthPartyToImport <= 6 ? '' : tTrainer('party_length_limit'));
+    } else {
+      setError('');
+      setShowdownEncounter([]);
+    }
+  };
+
+  const canImport = (override: boolean) => {
     if (isGroup || (override && dropDownSelection === 'default')) return true;
 
     if (dropDownSelection === 'showdown') {
@@ -134,8 +135,17 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
     return trainer.party.length + lengthPartyToImport <= 6;
   };
 
+  const handleSetOverride = (newValue: boolean) => {
+    setOverride(newValue);
+    if (newValue) {
+      setError('');
+    } else {
+      setError(canImport(newValue) ? '' : tTrainer('party_length_limit'));
+    }
+  };
+
   const onClickImport = () => {
-    if (!canImport()) return;
+    if (!canImport(override)) return;
 
     const handleImport = (entityType: string, newEntities: StudioGroupEncounter[]) => {
       const updateFunction = entityType === 'group' ? updateGroup : updateTrainer;
@@ -164,20 +174,20 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
   useEditorHandlingClose(ref);
 
   return (
-    <Editor type={from} title={getTranslation('import')}>
+    <Editor type={from} title={t('import')}>
       <InputContainer size="m">
         <ImportInfoContainer>
-          <ImportInfo>{getTranslation('battler_import_info')}</ImportInfo>
-          {dropDownSelection === 'showdown' && <ImportInfo>{getTranslation('battler_import_details')}</ImportInfo>}
+          <ImportInfo>{t('battler_import_info')}</ImportInfo>
+          {dropDownSelection === 'showdown' && <ImportInfo>{t('battler_import_details')}</ImportInfo>}
         </ImportInfoContainer>
         <InputWithTopLabelContainer>
-          <Label htmlFor={from}>{getTranslation('import_battler')}</Label>
-          <StudioDropDown value={dropDownSelection} options={dropDownOptions} onChange={(value) => setDropDownSelection(value)} />
+          <Label htmlFor={from}>{t('import_battler')}</Label>
+          <StudioDropDown value={dropDownSelection} options={dropDownOptions} onChange={handleImportTypeChange} />
         </InputWithTopLabelContainer>
 
         {dropDownSelection === 'default' && (
           <InputWithTopLabelContainer>
-            <Label htmlFor={from}>{getTranslation('import_battler_from')}</Label>
+            <Label htmlFor={from}>{t('import_battler_from')}</Label>
             <SelectComponent
               dbSymbol={selectedEntity}
               onChange={(dbSymbol) => setSelectedEntity(dbSymbol)}
@@ -191,7 +201,7 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
           <>
             <InputWithTopLabelContainer>
               <Label htmlFor={from} required>
-                {getTranslation('import_battler_showdown')}
+                {t('import_battler_showdown')}
               </Label>
               <MultiLineInput onChange={handleChange}></MultiLineInput>
               {error && (
@@ -204,17 +214,17 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
         )}
 
         <InputWithLeftLabelContainer>
-          <Label htmlFor="override">{getTranslation('replace_battlers')}</Label>
-          <Toggle name="override" checked={override} onChange={(event) => setOverride(event.target.checked)} />
+          <Label htmlFor="override">{t('replace_battlers')}</Label>
+          <Toggle name="override" checked={override} onChange={(event) => handleSetOverride(event.target.checked)} />
         </InputWithLeftLabelContainer>
         <ButtonContainer>
           <ToolTipContainer>
-            {dropDownSelection === 'default' && !canImport() && <ToolTip bottom="100%">{getTranslation('party_length_limit')}</ToolTip>}
-            <PrimaryButton onClick={onClickImport} disabled={!canImport()}>
-              {getTranslation('to_import')}
+            {dropDownSelection === 'default' && !canImport(override) && <ToolTip bottom="100%">{tTrainer('party_length_limit')}</ToolTip>}
+            <PrimaryButton onClick={onClickImport} disabled={!canImport(override)}>
+              {t('to_import')}
             </PrimaryButton>
           </ToolTipContainer>
-          <DarkButton onClick={closeDialog}>{getTranslation('cancel')}</DarkButton>
+          <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
     </Editor>
