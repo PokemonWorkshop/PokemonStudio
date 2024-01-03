@@ -30,15 +30,29 @@ export const MoveStatus = ({ move, dialogsRef }: MoveStatusProps) => {
     return `${status[index].luckRate} %`;
   };
 
+  const shouldDisplayLuckRate = (status: StudioMoveStatus[] | null) => {
+    return status !== null && status.length > 1;
+  };
+
   return (
     <DataBlockWithTitle size="half" title={t('statuses')} onClick={() => dialogsRef?.current?.openDialog('status')}>
       <DataGrid columns="1fr 1fr 1fr" rows="1fr 1fr">
-        <DataFieldsetField label={t('status_1')} data={getStatus(move.moveStatus, 0)} disabled={isDisabledStatus(move.moveStatus, 0)} />
-        <DataFieldsetField label={t('chance')} data={getLuckRate(move.moveStatus, 0)} disabled={isDisabledLuckRate(move.moveStatus, 0)} />
-        <DataFieldsetField label={t('status_2')} data={getStatus(move.moveStatus, 1)} disabled={isDisabledStatus(move.moveStatus, 1)} />
-        <DataFieldsetField label={t('chance')} data={getLuckRate(move.moveStatus, 1)} disabled={isDisabledLuckRate(move.moveStatus, 1)} />
-        <DataFieldsetField label={t('status_3')} data={getStatus(move.moveStatus, 2)} disabled={isDisabledStatus(move.moveStatus, 2)} />
-        <DataFieldsetField label={t('chance')} data={getLuckRate(move.moveStatus, 2)} disabled={isDisabledLuckRate(move.moveStatus, 2)} />
+        {move.moveStatus.map((status, index) => (
+          <React.Fragment key={index}>
+            <DataFieldsetField
+              label={t(`status_${index + 1}`)}
+              data={getStatus(move.moveStatus, index)}
+              disabled={isDisabledStatus(move.moveStatus, index)}
+            />
+            {shouldDisplayLuckRate(move.moveStatus) && (
+              <DataFieldsetField
+                label={t('chance')}
+                data={getLuckRate(move.moveStatus, index)}
+                disabled={isDisabledLuckRate(move.moveStatus, index)}
+              />
+            )}
+          </React.Fragment>
+        ))}
       </DataGrid>
     </DataBlockWithTitle>
   );
