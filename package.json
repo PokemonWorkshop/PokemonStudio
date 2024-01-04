@@ -112,17 +112,13 @@
     ],
     "extraFiles": [
       "psdk-binaries",
-      "new-project.zip"
+      "new-project.zip",
+      "app-update.yml"
     ],
     "win": {
       "target": [
         "nsis"
       ],
-      "publish": {
-        "provider": "github",
-        "owner": "PokemonWorkshop",
-        "repo": "PokemonStudio"
-      },
       "icon": "assets/icon.ico"
     },
     "nsis": {
