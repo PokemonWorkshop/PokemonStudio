@@ -2,13 +2,30 @@ import { join } from '@utils/path';
 import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLoaderRef } from '@utils/loaderContext';
-import type { ProjectNewFunctionBinding, ProjectNewStateObject } from './types';
+import type { DefaultLanguageType, ProjectNewFunctionBinding, ProjectNewStateObject } from './types';
 import { DEFAULT_PROCESS_STATE, PROCESS_DONE_STATE, SpecialStateProcessors } from '@utils/useProcess';
 import { handleFailure } from './helpers';
+import { StudioLanguageConfig } from '@modelEntities/config';
 
 const DEFAULT_BINDING: ProjectNewFunctionBinding = {
   onFailure: () => {},
   onSuccess: () => {},
+};
+
+const languageTexts: Record<DefaultLanguageType, string> = {
+  en: 'English',
+  fr: 'French',
+  es: 'Spanish',
+};
+
+const getLanguageConfig = (projectData: { defaultLanguage: DefaultLanguageType; multiLanguage: boolean }): string => {
+  const config: StudioLanguageConfig = {
+    klass: 'Configs::Project::Language',
+    defaultLanguage: projectData.defaultLanguage,
+    choosableLanguageCode: projectData.multiLanguage ? ['en', 'fr', 'es'] : [projectData.defaultLanguage],
+    choosableLanguageTexts: projectData.multiLanguage ? ['English', 'French', 'Spanish'] : [languageTexts[projectData.defaultLanguage]],
+  };
+  return JSON.stringify(config, null, 2);
 };
 
 export const useProjectNewProcessor = () => {
@@ -22,7 +39,7 @@ export const useProjectNewProcessor = () => {
         loaderRef.current.open('creating_project', 0, 0, tl('creating_project_opening_path'));
         return window.api.chooseFolder(
           {},
-          ({ folderPath }) => setState({ ...state, state: 'checkingFolderExist', projectDirName: join(folderPath, state.payload.projectTitle) }),
+          ({ folderPath }) => setState({ ...state, state: 'checkingFolderExist', projectDirName: join(folderPath, state.payload.title) }),
           () => {
             setState(DEFAULT_PROCESS_STATE);
             loaderRef.current.close();
@@ -61,12 +78,25 @@ export const useProjectNewProcessor = () => {
       },
       configure: (state, setState) => {
         loaderRef.current.open('creating_project', 4, 4, tl('creating_project_configuration'));
+        const newProjectData = state.payload;
         return window.api.configureNewProject(
           {
             projectDirName: state.projectDirName,
             metaData: {
-              ...state.payload,
-              projectStudioData: JSON.stringify({ ...state.payload.projectStudioData, studioVersion: state.studioVersion }, null, 2),
+              projectStudioData: JSON.stringify(
+                {
+                  title: newProjectData.title,
+                  studioVersion: state.studioVersion,
+                  iconPath: 'project_icon.png',
+                  isTiledMode: null,
+                },
+                null,
+                2
+              ),
+              projectTitle: newProjectData.title,
+              iconPath: newProjectData.icon,
+              languageConfig: getLanguageConfig({ defaultLanguage: newProjectData.defaultLanguage, multiLanguage: newProjectData.multiLanguage }),
+              multiLanguage: newProjectData.multiLanguage,
             },
           },
           () => {

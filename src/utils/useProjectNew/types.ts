@@ -1,12 +1,13 @@
 import type { StudioProject } from '@modelEntities/project';
 
-export type ProjectNewPayload = {
-  projectStudioData: StudioProject;
-  languageConfig: string;
-  projectTitle: string;
-  iconPath: string | undefined;
+export type DefaultLanguageType = 'en' | 'fr' | 'es';
+export type NewProjectData = Omit<StudioProject, 'studioVersion' | 'iconPath' | 'isTiledMode'> & {
+  icon?: string;
+  defaultLanguage: DefaultLanguageType;
   multiLanguage: boolean;
 };
+
+export type ProjectNewPayload = NewProjectData;
 export type ProjectNewFailureCallback = (error: { errorMessage: string }) => void;
 export type ProjectNewSuccessCallback = (payload: { projectDirName: string }) => void;
 export type ProjectNewStateObject =
