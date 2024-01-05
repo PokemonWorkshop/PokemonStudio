@@ -11,7 +11,7 @@ import { rendererConfig } from './config/webpack.renderer.config';
 const config: ForgeConfig = {
   packagerConfig: {
     icon: './assets/icon',
-    executableName: 'pokemon-studio',
+    executableName: process.platform === 'win32' ? undefined : 'pokemon-studio',
     extraResource: ['new-project.zip', 'psdk-binaries'],
   },
   rebuildConfig: {},
