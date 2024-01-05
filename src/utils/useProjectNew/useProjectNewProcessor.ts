@@ -47,14 +47,15 @@ export const useProjectNewProcessor = () => {
         );
       },
       checkingFolderExist: (state, setState) => {
-        loaderRef.current.open('creating_project', 1, 4, tl('creating_project_checking'));
+        loaderRef.current.setProgress(1, 4, tl('creating_project_checking'));
         return window.api.fileExists(
           { filePath: state.projectDirName },
           ({ result }) => {
             if (result) {
-              loaderRef.current.setError('creating_project_error', tl('creating_project_child_folder_exist_error'));
-              setState(DEFAULT_PROCESS_STATE);
-            } else setState({ ...state, state: 'readingVersion' });
+              handleFailure(setState, binding)({ errorMessage: tl('creating_project_child_folder_exist_error') });
+            } else {
+              setState({ ...state, state: 'readingVersion' });
+            }
           },
           handleFailure(setState, binding)
         );
@@ -68,16 +69,16 @@ export const useProjectNewProcessor = () => {
         );
       },
       extract: (state, setState) => {
-        loaderRef.current.open('creating_project', 3, 4, tl('creating_project_extraction', { progress: 0 }));
+        loaderRef.current.setProgress(3, 4, tl('creating_project_extraction', { progress: 0 }));
         return window.api.extractNewProject(
           { projectDirName: state.projectDirName },
           () => setState({ ...state, state: 'configure' }),
           handleFailure(setState, binding),
-          ({ step }) => loaderRef.current.open('creating_project', 3, 4, tl('creating_project_extraction', { progress: step.toFixed(1) }))
+          ({ step }) => loaderRef.current.setProgress(3, 4, tl('creating_project_extraction', { progress: step.toFixed(1) }))
         );
       },
       configure: (state, setState) => {
-        loaderRef.current.open('creating_project', 4, 4, tl('creating_project_configuration'));
+        loaderRef.current.setProgress(4, 4, tl('creating_project_configuration'));
         const newProjectData = state.payload;
         return window.api.configureNewProject(
           {

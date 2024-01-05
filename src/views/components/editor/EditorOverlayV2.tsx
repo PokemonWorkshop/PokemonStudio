@@ -40,6 +40,10 @@ export const DialogContainer = styled.dialog`
   &.center[open] {
     opacity: 1;
   }
+
+  &:focus {
+    outline: 0;
+  }
 `;
 
 const onDialogCancel = (e: Event) => e.preventDefault();

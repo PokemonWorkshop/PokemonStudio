@@ -31,11 +31,20 @@ export const NewProjectButton = ({ newProjectData, disabled, closeDialog }: NewP
             loaderRef.current.close();
             navigate('/dashboard');
           },
-          ({ errorMessage }) => loaderRef.current.setError('loading_project_error', errorMessage),
-          (count) => loaderRef.current.setError('loading_project_error', t('loader:integrity_message', { count }), true)
+          ({ errorMessage }) => {
+            closeDialog();
+            loaderRef.current.setError('loading_project_error', errorMessage);
+          },
+          (count) => {
+            closeDialog();
+            loaderRef.current.setError('loading_project_error', t('loader:integrity_message', { count }), true);
+          }
         );
       },
-      ({ errorMessage }) => loaderRef.current.setError('creating_project_error', errorMessage)
+      ({ errorMessage }) => {
+        closeDialog();
+        loaderRef.current.setError('creating_project_error', errorMessage);
+      }
     );
   };
   return (

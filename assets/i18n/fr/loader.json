@@ -32,7 +32,7 @@
   "loading_rmxp_to_studio_maps_sync": "Synchronisation des cartes avec RPG Maker XP",
   "creating_project_opening_path": "Choix du dossier parent",
   "creating_project_checking": "Vérification que le projet n'existe pas",
-  "creating_project_child_folder_exist_error": "Le projet existe déjà",
+  "creating_project_child_folder_exist_error": "Le projet existe déjà.",
   "creating_project_extraction": "Extraction des fichiers du projet... ({{progress}} %)",
   "creating_project_configuration": "Génération des configuration du projet",
   "importing_project_choose_project": "Choix du fichier de projet",

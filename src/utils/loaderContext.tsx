@@ -1,4 +1,4 @@
-import React, { createContext, ReactChild, useContext, useEffect, useRef, useState } from 'react';
+import React, { createContext, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { editorOverlayHidden } from '@components/editor/EditorOverlayV2';
 
 type LoaderTitle =
@@ -114,7 +114,7 @@ const useLoaderContextService = (): LoaderContext => {
   };
 };
 
-export const LoaderContextProvider = ({ children }: { children: ReactChild }) => {
+export const LoaderContextProvider = ({ children }: { children: ReactNode }) => {
   const loaderContext = useLoaderContextService();
   return <LoaderContextHolder.Provider value={loaderContext}>{children}</LoaderContextHolder.Provider>;
 };

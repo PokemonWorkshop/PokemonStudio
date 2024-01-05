@@ -4,7 +4,6 @@ import { SecondaryButton } from '../GenericButtons';
 import { useLoaderRef } from '@utils/loaderContext';
 import { useProjectLoad } from '@utils/useProjectLoad';
 import { useTranslation } from 'react-i18next';
-import { useGlobalState } from '@src/GlobalStateProvider';
 
 type LoadProjectButtonProps = { children: ReactNode };
 

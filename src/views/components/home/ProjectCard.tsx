@@ -47,7 +47,8 @@ const ProjectCardContainer = styled(ActiveContainer)`
   &:hover {
     cursor: pointer;
 
-    & button.clear-button, & button.folder-button {
+    & button.clear-button,
+    & button.folder-button {
       position: absolute;
       display: inline-block;
       top: 16px;
@@ -62,12 +63,11 @@ const ProjectCardContainer = styled(ActiveContainer)`
     .clear-button {
       right: 16px;
     }
-    
+
     .folder-button {
       right: 60px;
     }
-  } 
-
+  }
 
   &[data-disabled='true']:hover {
     cursor: default;
@@ -101,7 +101,7 @@ export const ProjectCard = ({ project, onDeleteProjectToList }: ProjectCardProps
   const navigate = useNavigate();
   const showItemInFolder = useShowItemInFolder();
 
-  const handleClick = () => {
+  const handleClick = async () => {
     if (!project) return;
 
     projectLoad(
@@ -120,7 +120,7 @@ export const ProjectCard = ({ project, onDeleteProjectToList }: ProjectCardProps
     if (!path) return;
 
     showItemInFolder(
-      { filePath: join(path,'project.studio')},
+      { filePath: join(path, 'project.studio') },
       () => {},
       () => {}
     );
@@ -141,9 +141,7 @@ export const ProjectCard = ({ project, onDeleteProjectToList }: ProjectCardProps
       </p>
       <Code>{`/${project.projectPath.replaceAll('\\', '/').split('/').splice(-1)[0]}`}</Code>
       <button className="folder-button">
-        <FolderButtonOnlyIcon
-          onClick={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => onClickFolder(project.projectPath,event)}
-        />
+        <FolderButtonOnlyIcon onClick={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => onClickFolder(project.projectPath, event)} />
       </button>
       <button className="clear-button">
         <ClearButtonOnlyIcon onClick={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => onDeleteProjectToList(event, project.projectPath)} />
