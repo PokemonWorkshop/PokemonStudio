@@ -5,7 +5,7 @@ import path from 'path';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import log, { FileTransport, PathVariables } from 'electron-log';
 import MenuBuilder from './menu';
-import updater from 'electron-simple-updater';
+import { autoUpdater } from 'electron-updater';
 import { getPSDKBinariesPath, getPSDKVersion } from '../services/getPSDKVersion';
 import { getLastPSDKVersion } from '../services/getLastPSDKVersion';
 import { updatePSDK } from '../services/updatePSDK';
@@ -129,16 +129,11 @@ const createWindow = async () => {
 
   // Updater
   if (app.isPackaged) {
-    updater.init({
-      autoDownload: true,
-      checkUpdateOnStart: false,
-      url: 'https://raw.githubusercontent.com/PokemonWorkshop/PokemonStudio/main/updates.json',
-      logger: log,
-    });
-    updater.on('update-available', () => {
+    autoUpdater.logger = log;
+    autoUpdater.on('update-available', () => {
       mainWindow?.webContents.send('request-update-available');
     });
-    updater.on('update-downloaded', () => {
+    autoUpdater.on('update-downloaded', () => {
       mainWindow?.webContents.send('request-update-downloaded');
     });
   }
@@ -196,7 +191,7 @@ ipcMain.on('window-is-maximized', (event) => {
 ipcMain.handle('get-psdk-binaries-path', () => getPSDKBinariesPath());
 ipcMain.handle('get-psdk-version', () => getPSDKVersion());
 ipcMain.handle('get-app-version', () => app.getVersion());
-ipcMain.once('studio-check-update', () => app.isPackaged && updater.checkForUpdates());
+ipcMain.once('studio-check-update', () => app.isPackaged && autoUpdater.checkForUpdates());
 ipcMain.on('get-last-psdk-version', getLastPSDKVersion);
 ipcMain.on('update-psdk', updatePSDK);
 ipcMain.on('start-psdk', (_, projectPath: string) => startPSDK(projectPath));

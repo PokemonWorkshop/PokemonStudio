@@ -1,0 +1,4 @@
+owner: PokemonWorkshop
+repo: PokemonStudio
+provider: github
+updaterCacheDirName: pokemon-studio-updater
