@@ -1,4 +1,4 @@
-import React, { forwardRef, useMemo, useRef, useState } from 'react';
+import React, { forwardRef, useEffect, useMemo, useState } from 'react';
 import { Editor } from '@components/editor';
 import { TFunction, useTranslation } from 'react-i18next';
 import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PercentInput } from '@components/inputs';
@@ -18,25 +18,42 @@ const moveStatusEntries = (t: TFunction<'database_moves'>) => [
   })).sort((a, b) => a.label.localeCompare(b.label)),
 ];
 
-const isValidStatus = (status: StudioMoveStatusListEditor, chance: number) => status !== '__undef__' || (chance > 0 && chance <= 100);
+const isValidStatus = (status: StudioMoveStatusListEditor): status is Exclude<StudioMoveStatusList, null> => status !== '__undef__';
+const isValidChance = (chance: number) => !isNaN(chance) && chance > 0 && chance <= 100;
 
 export const MoveStatusEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { t } = useTranslation('database_moves');
   const { move } = useMovePage();
   const updateMove = useUpdateMove(move);
   const statusOptions = useMemo(() => moveStatusEntries(t), [t]);
-  const [status1, setStatus1] = useState<StudioMoveStatusListEditor>(move.moveStatus[0]?.status || '__undef__');
-  const [status2, setStatus2] = useState<StudioMoveStatusListEditor>(move.moveStatus[1]?.status || '__undef__');
-  const [status3, setStatus3] = useState<StudioMoveStatusListEditor>(move.moveStatus[2]?.status || '__undef__');
-  const [chance1, setChance1] = useState<number>(move.moveStatus[0]?.luckRate || 0);
-  const [chance2, setChance2] = useState<number>(move.moveStatus[1]?.luckRate || 0);
-  const chance3Ref = useRef<HTMLInputElement>(null);
+
+  const [status1, setStatus1] = useState<StudioMoveStatusListEditor>(move.moveStatus[0]?.status ?? '__undef__');
+  const [status2, setStatus2] = useState<StudioMoveStatusListEditor>(move.moveStatus[1]?.status ?? '__undef__');
+  const [status3, setStatus3] = useState<StudioMoveStatusListEditor>(move.moveStatus[2]?.status ?? '__undef__');
+  const [chance1, setChance1] = useState<number>(move.moveStatus[0]?.luckRate ?? 0);
+  const [chance2, setChance2] = useState<number>(move.moveStatus[1]?.luckRate ?? 0);
+  const [chance3, setChance3] = useState<number>(move.moveStatus[2]?.luckRate ?? 0);
+  const [error, setError] = useState<string>('');
+
+  const setStatusFunctions = [setStatus1, setStatus2, setStatus3];
+
+  const setChancesFunctions = [setChance1, setChance2, setChance3];
+
+  const isInitialStateStandard =
+    (chance1 === 100 && chance2 === 0 && chance3 === 0) ||
+    (chance1 === 50 && chance2 === 50 && chance3 === 0) ||
+    (chance1 === 33 && chance2 === 33 && chance3 === 33);
 
   const canClose = () => {
-    if (isNaN(chance1) || chance1 < 0 || chance1 > 100) return false;
-    if (isNaN(chance2) || chance2 < 0 || chance2 > 100) return false;
-    if (!chance3Ref.current) return true;
-    if (!chance3Ref.current.validity.valid || isNaN(chance3Ref.current.valueAsNumber)) return false;
+    if (!isValidStatus(status1)) return true;
+
+    if (isValidStatus(status1) && !isValidChance(chance1)) return false;
+    if (isValidStatus(status2) && !isValidChance(chance2)) return false;
+    if (isValidStatus(status3) && !isValidChance(chance3)) return false;
+    if (chance1 + chance2 + chance3 > 100) return false;
+
+    const validStatuses = [status1, status2, status3].filter((status) => isValidStatus(status));
+    if (new Set(validStatuses).size !== validStatuses.length) return false;
 
     return true;
   };
@@ -44,24 +61,72 @@ export const MoveStatusEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const onClose = () => {
     if (!canClose()) return;
 
+    const statuses = [status1, status2, status3];
+    const chances = [chance1, chance2, chance3];
+
     const moveStatus: StudioMoveStatus[] = [];
-    if (status1 !== '__undef__' || chance1 !== 0) {
-      moveStatus.push({ status: status1 !== '__undef__' ? status1 : null, luckRate: chance1 });
-    } else {
-      return updateMove({ moveStatus });
-    }
-    if (status2 !== '__undef__' || chance2 !== 0) {
-      moveStatus.push({ status: status2 !== '__undef__' ? status2 : null, luckRate: chance2 });
-    } else {
-      return updateMove({ moveStatus });
-    }
-    if (status3 !== '__undef__' || (chance3Ref.current && chance3Ref.current.valueAsNumber !== 0)) {
-      moveStatus.push({ status: status3 !== '__undef__' ? status3 : null, luckRate: chance3Ref.current?.valueAsNumber || 0 });
-    } else {
-      return updateMove({ moveStatus });
+    for (let i = 0; i < statuses.length; i++) {
+      const status = statuses[i];
+      if (isValidStatus(status)) {
+        moveStatus.push({ status, luckRate: chances[i] });
+      } else {
+        return updateMove({ moveStatus });
+      }
     }
     updateMove({ moveStatus });
   };
+
+  const resetStatusesFrom = (startIndex: number) => {
+    setStatusFunctions.slice(startIndex).forEach((setStatus) => setStatus('__undef__'));
+  };
+
+  const setChances = (chances: Array<number>) => {
+    setChancesFunctions.forEach((setChance, index) => setChance(chances[index]));
+  };
+
+  const handleStatusChange = (index: number, value: string) => {
+    const newValue = value as StudioMoveStatusListEditor;
+    setStatusFunctions[index](newValue);
+
+    if (!isValidStatus(newValue)) {
+      resetStatusesFrom(index);
+      if (index === 1) setChances([100, 0, 0]);
+      if (index === 2) setChances([50, 50, 0]);
+    } else {
+      switch (index) {
+        case 0:
+          setChances([100, 0, 0]);
+          break;
+        case 1:
+          if (isInitialStateStandard) {
+            setChances([50, 50, 0]);
+          }
+          break;
+        case 2:
+          if (isInitialStateStandard) {
+            setChances([33, 33, 33]);
+          }
+          break;
+      }
+    }
+  };
+
+  const handleChancesChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
+    const newChance = event.target.value === '' ? Number.NaN : Number(event.target.value);
+    setChancesFunctions[index](newChance);
+  };
+
+  useEffect(() => {
+    const validStatuses = [status1, status2, status3].filter((status) => isValidStatus(status));
+    if (new Set(validStatuses).size !== validStatuses.length) return setError(t('error_status'));
+
+    if (isValidStatus(status1) && !isValidChance(chance1)) return setError(t('error_chances'));
+    if (isValidStatus(status2) && !isValidChance(chance2)) return setError(t('error_chances'));
+    if (isValidStatus(status3) && !isValidChance(chance3)) return setError(t('error_chances'));
+    if (chance1 + chance2 + chance3 > 100) return setError(t('error_overflow'));
+
+    setError('');
+  }, [t, status1, status2, status3, chance1, chance2, chance3]);
 
   useEditorHandlingClose(ref, onClose, canClose);
 
@@ -74,22 +139,25 @@ export const MoveStatusEditor = forwardRef<EditorHandlingClose>((_, ref) => {
             <SelectCustomSimple
               id="select-status-1"
               options={statusOptions}
-              onChange={(value) => setStatus1(value as StudioMoveStatusListEditor)}
+              onChange={(value) => handleStatusChange(0, value)}
               value={status1}
               noTooltip
             />
           </InputWithTopLabelContainer>
-          <InputWithLeftLabelContainer>
-            <Label htmlFor="chance-1">{t('chance')}</Label>
-            <PercentInput
-              type="number"
-              name="chance-1"
-              min="0"
-              max="100"
-              value={isNaN(chance1) ? '' : chance1}
-              onChange={(event) => setChance1(event.target.value === '' ? Number.NaN : Number(event.target.value))}
-            />
-          </InputWithLeftLabelContainer>
+
+          {isValidStatus(status1) && isValidStatus(status2) && (
+            <InputWithLeftLabelContainer>
+              <Label htmlFor="chance-1">{t('chance')}</Label>
+              <PercentInput
+                type="number"
+                name="chance-1"
+                min="0"
+                max="100"
+                value={isNaN(chance1) ? '' : chance1}
+                onChange={(event) => handleChancesChange(0, event)}
+              />
+            </InputWithLeftLabelContainer>
+          )}
         </InputContainer>
         {isValidStatus(status1, chance1) && (
           <InputContainer size="s">
@@ -98,22 +166,25 @@ export const MoveStatusEditor = forwardRef<EditorHandlingClose>((_, ref) => {
               <SelectCustomSimple
                 id="select-status-2"
                 options={statusOptions}
-                onChange={(value) => setStatus2(value as StudioMoveStatusListEditor)}
+                onChange={(value) => handleStatusChange(1, value)}
                 value={status2}
                 noTooltip
               />
             </InputWithTopLabelContainer>
-            <InputWithLeftLabelContainer>
-              <Label htmlFor="chance-2">{t('chance')}</Label>
-              <PercentInput
-                type="number"
-                name="chance-2"
-                min="0"
-                max="100"
-                value={isNaN(chance2) ? '' : chance2}
-                onChange={(event) => setChance2(event.target.value === '' ? Number.NaN : Number(event.target.value))}
-              />
-            </InputWithLeftLabelContainer>
+
+            {isValidStatus(status2) && (
+              <InputWithLeftLabelContainer>
+                <Label htmlFor="chance-2">{t('chance')}</Label>
+                <PercentInput
+                  type="number"
+                  name="chance-2"
+                  min="0"
+                  max="100"
+                  value={isNaN(chance2) ? '' : chance2}
+                  onChange={(event) => handleChancesChange(1, event)}
+                />
+              </InputWithLeftLabelContainer>
+            )}
           </InputContainer>
         )}
         {isValidStatus(status1, chance1) && isValidStatus(status2, chance2) && (
@@ -123,15 +194,31 @@ export const MoveStatusEditor = forwardRef<EditorHandlingClose>((_, ref) => {
               <SelectCustomSimple
                 id="select-status-3"
                 options={statusOptions}
-                onChange={(value) => setStatus3(value as StudioMoveStatusListEditor)}
+                onChange={(value) => handleStatusChange(2, value)}
                 value={status3}
                 noTooltip
               />
             </InputWithTopLabelContainer>
-            <InputWithLeftLabelContainer>
-              <Label htmlFor="chance-3">{t('chance')}</Label>
-              <PercentInput type="number" name="chance-3" min="0" max="100" defaultValue={move.moveStatus[2]?.luckRate || 0} ref={chance3Ref} />
-            </InputWithLeftLabelContainer>
+
+            {isValidStatus(status3) && (
+              <InputWithLeftLabelContainer>
+                <Label htmlFor="chance-3">{t('chance')}</Label>
+                <PercentInput
+                  type="number"
+                  name="chance-3"
+                  min="0"
+                  max="100"
+                  value={isNaN(chance3) ? '' : chance3}
+                  onChange={(event) => handleChancesChange(2, event)}
+                />
+              </InputWithLeftLabelContainer>
+            )}
+
+            {error && (
+              <Label>
+                <span>{error}</span>
+              </Label>
+            )}
           </InputContainer>
         )}
       </InputContainer>
