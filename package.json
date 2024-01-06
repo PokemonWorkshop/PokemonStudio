@@ -122,7 +122,9 @@
       "icon": "assets/icon.ico"
     },
     "nsis": {
-      "oneClick": false
+      "oneClick": false,
+      "shortcutName": "Pokémon Studio",
+      "artifactName": "Pokemon-Studio-Setup-${version}.${ext}"
     }
   },
   "volta": {
