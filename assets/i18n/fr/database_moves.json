@@ -153,5 +153,8 @@
   "move_deleted": "Attaque supprimée",
   "no_characteristic": "Aucune caractéristique",
   "common_event": "Événement commun",
-  "always": "Toujours"
+  "always": "Toujours",
+  "error_status": "Vous ne pouvez pas avoir plusieurs fois le même statut !",
+  "error_chances": "Les chances d'appliquer un effet doivent être un nombre entier positif supérieur à 0 !",
+  "error_overflow": "La somme de vos chances ne doivent pas excéder 100% !"
 }

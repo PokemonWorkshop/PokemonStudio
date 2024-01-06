@@ -153,5 +153,8 @@
   "move_deleted": "Move deleted",
   "no_characteristic": "No characteristic",
   "common_event": "Common event",
-  "always": "Always"
+  "always": "Always",
+  "error_status": "You cannot have the same status multiple times!",
+  "error_chances": "The chances of applying an effect must be a positive integer greater than 0!",
+  "error_overflow": "The sum of your chances must not exceed 100%!"
 }
