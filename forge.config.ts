@@ -12,7 +12,7 @@ const config: ForgeConfig = {
   packagerConfig: {
     icon: './assets/icon',
     executableName: 'pokemon-studio',
-    extraResource: ['new-project.zip', 'psdk-binaries'],
+    extraResource: ['new-project.zip', 'psdk-binaries', 'app-update.yml'],
   },
   rebuildConfig: {},
   makers: [
