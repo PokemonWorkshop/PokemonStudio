@@ -115,7 +115,7 @@ export const TranslateAttachedTexts = () => {
 
   useEffect(() => {
     const listener = (event: KeyboardEvent) => {
-      if (languageContext.disabledNavigation) return;
+      if (languageContext.disabledNavigation || event.ctrlKey) return;
 
       switch (event.key) {
         case 'ArrowLeft':
