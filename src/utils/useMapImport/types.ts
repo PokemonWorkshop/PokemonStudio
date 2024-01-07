@@ -10,10 +10,10 @@ export type MapImportFailureCallback = (error: MapImportError[], genericError?: 
 export type MapImportSuccessCallback = (payload: Record<string, never>) => void;
 export type MapImportStateObject =
   | { state: 'done' }
-  | { state: 'import'; filesToImport: MapImportFiles[]; tiledFilesSrcPath: string }
-  | { state: 'copyTmxFiles'; mapsToImport: MapToImport[]; tiledFilesSrcPath: string }
-  | { state: 'getRMXPMapsData'; mapsToImport: MapToImport[] }
-  | { state: 'createNewMaps'; mapsToImportWithRMXPMap: MapToImportWithRMXPMap[] };
+  | { state: 'import'; filesToImport: MapImportFiles[]; tiledFilesSrcPath: string; rmxpMapIds: number[] }
+  | { state: 'copyTmxFiles'; mapsToImport: MapToImport[]; tiledFilesSrcPath: string; rmxpMapIds: number[] }
+  | { state: 'getRMXPMapsData'; mapsToImport: MapToImport[]; rmxpMapIds: number[] }
+  | { state: 'createNewMaps'; mapsToImportWithRMXPMap: MapToImportWithRMXPMap[]; rmxpMapIds: number[] };
 export type MapImportFunctionBinding = {
   onSuccess: MapImportSuccessCallback;
   onFailure: MapImportFailureCallback;

@@ -477,8 +477,15 @@ export const createTextInfo = (textInfos: StudioTextInfo[]): StudioTextInfo => {
   };
 };
 
-export const createMap = (allMaps: ProjectData['maps'], stepsAverage: number, tiledFilename: string, bgm: string, bgs: string): StudioMap => {
-  const id = findFirstAvailableId(allMaps, 1);
+export const createMap = (
+  allMaps: ProjectData['maps'],
+  stepsAverage: number,
+  tiledFilename: string,
+  bgm: string,
+  bgs: string,
+  excludeIds?: number[]
+): StudioMap => {
+  const id = findFirstAvailableId(allMaps, 1, excludeIds);
   const dbSymbol = `map${padStr(id, 3)}` as DbSymbol;
   return {
     klass: 'Map',

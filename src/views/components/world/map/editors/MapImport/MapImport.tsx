@@ -78,6 +78,7 @@ export const MapImport = ({ closeDialog, closeParentDialog }: MapImportProps) =>
   const [hasError, setHasError] = useState<boolean>(false);
   const [mapInfoOptions, setMapInfoOptions] = useState<DropDownOption[]>([{ value: 'new', label: t('new') }]);
   const [mapIdsUsed, setMapIdsUsed] = useState<number[]>([]);
+  const [rmxpMapIds, setRmxpMapIds] = useState<number[]>([]);
   const amountMapShouldBeImport = useMemo(() => files.filter((file) => file.shouldBeImport).length, [files]);
 
   const getSubTitle = () => {
@@ -133,6 +134,7 @@ export const MapImport = ({ closeDialog, closeParentDialog }: MapImportProps) =>
               mapInfoOptions.push(...options.filter((option) => option.value !== 'new' && !mapIds.includes(Number(option.value))));
               return mapInfoOptions;
             });
+            setRmxpMapIds(rmxpMapInfo.map(({ id }) => id));
             setState('select_files');
           },
           ({ errorMessage }) => {
@@ -143,7 +145,7 @@ export const MapImport = ({ closeDialog, closeParentDialog }: MapImportProps) =>
       case 'import': {
         const filesToImport = files.filter((file) => file.shouldBeImport);
         mapImport(
-          { filesToImport, tiledFilesSrcPath: folderPath! },
+          { filesToImport, tiledFilesSrcPath: folderPath!, rmxpMapIds },
           () => {
             // we wait the end of the close dialog animation to close the loader and show a notification
             setTimeout(() => {
@@ -208,6 +210,7 @@ export const MapImport = ({ closeDialog, closeParentDialog }: MapImportProps) =>
                 setFolderPath(undefined);
                 setFiles([]);
                 setMapInfoOptions([{ value: 'new', label: t('new') }]);
+                setRmxpMapIds([]);
                 setState('select_folder');
                 setHasError(false);
               }}
