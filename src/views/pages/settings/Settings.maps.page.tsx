@@ -65,8 +65,8 @@ export const SettingsMapsPage = () => {
             {tiledPath ? (
               <FileInput
                 filePath={tiledPath}
-                name={t('settings_maps:tiled_exe')}
-                extensions={['exe']}
+                name={window.api.platform === 'win32' ? t('settings_maps:tiled_exe') : 'Tiled'}
+                extensions={window.api.platform === 'win32' ? ['exe'] : []}
                 onFileChoosen={handleFileChoosen}
                 onFileClear={handleFileClear}
                 isAbsolutePath
