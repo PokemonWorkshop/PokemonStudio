@@ -14,8 +14,10 @@ export type Language = { index: number; value: string };
 export const LanguageContext = createContext({
   language: { value: 'en', index: 0 },
   positionLanguage: 1,
+  disabledNavigation: false,
   setLanguage: (value: Language) => {},
   setPositionLanguage: (value: number) => {},
+  setDisabledNavigation: (value: boolean) => {},
 });
 
 export const TranslationPage = () => {
@@ -23,6 +25,7 @@ export const TranslationPage = () => {
   const { state } = useLocation();
   const [language, setLanguage] = useState<Language>({ value: languageByIndexFiltered[0].value, index: languageByIndexFiltered[0].index });
   const [positionLanguage, setPositionLanguage] = useState<number>(state?.position || 1);
+  const [disabledNavigation, setDisabledNavigation] = useState<boolean>(false);
   const { t } = useTranslation('text_management');
   const languageExistInFile = allTextsFromFile[0].includes(language.value);
 
@@ -48,7 +51,7 @@ export const TranslationPage = () => {
   return (
     <DataBlockWrapper>
       {languageExistInFile && (
-        <LanguageContext.Provider value={{ language, positionLanguage, setLanguage, setPositionLanguage }}>
+        <LanguageContext.Provider value={{ language, positionLanguage, disabledNavigation, setLanguage, setPositionLanguage, setDisabledNavigation }}>
           <DataBlockWrapper>
             <TranslateAttachedTexts />
           </DataBlockWrapper>
