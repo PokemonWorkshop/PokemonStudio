@@ -17,7 +17,7 @@ type MoveStatusProps = {
   dialogsRef: MoveDialogsRef;
 };
 
-type StatusKey = 'status_1' | 'status_2' | 'status_3';
+const STATUS_KEY = ['status_1', 'status_2', 'status_3'] as const;
 
 export const MoveStatus = ({ move, dialogsRef }: MoveStatusProps) => {
   const { t } = useTranslation('database_moves');
@@ -42,7 +42,7 @@ export const MoveStatus = ({ move, dialogsRef }: MoveStatusProps) => {
         {move.moveStatus.map((_, index) => (
           <React.Fragment key={index}>
             <DataFieldsetField
-              label={t(`status_${index + 1}` as StatusKey)}
+              label={t(STATUS_KEY[index] || STATUS_KEY[0])}
               data={getStatus(move.moveStatus, index)}
               disabled={isDisabledStatus(move.moveStatus, index)}
             />
