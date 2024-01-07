@@ -11,8 +11,9 @@ import { rendererConfig } from './config/webpack.renderer.config';
 const config: ForgeConfig = {
   packagerConfig: {
     icon: './assets/icon',
-    executableName: process.platform === 'win32' ? undefined : 'pokemon-studio',
+    executableName: process.platform !== 'linux' ? undefined : 'pokemon-studio',
     extraResource: ['new-project.zip', 'psdk-binaries', 'app-update.yml'],
+    name: process.platform === 'darwin' ? "Pokemon Studio" : undefined
   },
   rebuildConfig: {},
   makers: [
