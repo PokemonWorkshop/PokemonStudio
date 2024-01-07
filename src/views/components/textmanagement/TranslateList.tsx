@@ -12,7 +12,6 @@ type RenderTextProps = {
 };
 
 const DataTranslateGrid = styled(DataGrid)`
-  ${({ theme }) => theme.fonts.normalRegular};
   color: ${({ theme }) => theme.colors.text400};
   grid-template-columns: 100px 655px 191px;
   align-items: center;
@@ -29,6 +28,10 @@ const DataTranslateGrid = styled(DataGrid)`
     .text {
       color: ${({ theme }) => theme.colors.text100};
     }
+  }
+
+  .language {
+    ${({ theme }) => theme.fonts.normalRegular}
   }
 
   & .error {
@@ -64,7 +67,7 @@ const RenderText = ({ text, language }: RenderTextProps) => {
 
   return (
     <RenderTranslateContainer gap="16px" onMouseOver={() => setHovered(true)} onMouseOut={() => setHovered(false)}>
-      <span>{languageToDisplay}</span>
+      <span className="language">{languageToDisplay}</span>
       <span className="text">{text}</span>
       <span>
         {hovered && (
