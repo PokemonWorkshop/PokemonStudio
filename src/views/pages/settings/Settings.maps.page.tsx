@@ -28,9 +28,10 @@ export const SettingsMapsPage = () => {
   const [tiledPath, setTiledPath] = useState(getSetting('tiledPath'));
   const dialogsRef = useDialogsRef<SettingsEditorAndDeletionKeys>();
   const { t } = useTranslation(['settings', 'settings_maps']);
+  const isWin32 = window.api.platform === 'win32';
 
   const handleFileChoosen = (filePath: string) => {
-    if (basename(filePath).toLowerCase() !== 'tiled.exe') {
+    if (isWin32 && basename(filePath).toLowerCase() !== 'tiled.exe') {
       showNotification('danger', t('settings:map_management'), t('settings_maps:tiled_path_invalid_path_error'));
       return;
     }
@@ -65,8 +66,8 @@ export const SettingsMapsPage = () => {
             {tiledPath ? (
               <FileInput
                 filePath={tiledPath}
-                name={window.api.platform === 'win32' ? t('settings_maps:tiled_exe') : 'Tiled'}
-                extensions={window.api.platform === 'win32' ? ['exe'] : []}
+                name={isWin32 ? t('settings_maps:tiled_exe') : 'Tiled'}
+                extensions={isWin32 ? ['exe'] : ['*']}
                 onFileChoosen={handleFileChoosen}
                 onFileClear={handleFileClear}
                 isAbsolutePath
@@ -74,7 +75,11 @@ export const SettingsMapsPage = () => {
                 noIcon
               />
             ) : (
-              <DropInput name={t('settings_maps:tiled_exe')} extensions={['exe']} onFileChoosen={handleFileChoosen} />
+              <DropInput
+                name={isWin32 ? t('settings_maps:tiled_exe') : 'Tiled'}
+                extensions={isWin32 ? ['exe'] : ['*']}
+                onFileChoosen={handleFileChoosen}
+              />
             )}
             <DownloadMessageContainer>
               {t('settings_maps:download_message')}
