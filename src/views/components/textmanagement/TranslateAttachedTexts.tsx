@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTranslationPage } from '@utils/usePage';
 import { DataBlockWrapper } from '@components/database/dataBlocks';
@@ -65,6 +65,7 @@ export const TranslateAttachedTexts = () => {
   const { allTextsFromFile, defaultLanguageIndexFromFile } = useTranslationPage(languageContext.positionLanguage);
   const textsWithoutIndex = allTextsFromFile.slice(1);
   const [position, setPosition] = useState<number>(languageContext.positionLanguage);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const getWantedText = (wanted: 'before' | 'after') => {
     // We use -2 for index cause we have to substract Index from allTextsFromFile too
@@ -115,7 +116,7 @@ export const TranslateAttachedTexts = () => {
 
   useEffect(() => {
     const listener = (event: KeyboardEvent) => {
-      if (languageContext.disabledNavigation || event.ctrlKey) return;
+      if (languageContext.disabledNavigation || event.ctrlKey || document.activeElement === inputRef.current) return;
 
       switch (event.key) {
         case 'ArrowLeft':
@@ -149,6 +150,7 @@ export const TranslateAttachedTexts = () => {
           }}
           onKeyDown={(event) => event.key === 'Enter' && validPosition()}
           onBlur={validPosition}
+          ref={inputRef}
         />
         / {allTextsFromFile.length - 1}
       </StyledTextNavigationItem>
