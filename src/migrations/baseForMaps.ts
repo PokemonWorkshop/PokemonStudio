@@ -12,17 +12,24 @@ export const saveCSV = (projectPath: string, fileId: number, languages: string[]
   }
 };
 
+const createFolder = (path: string) => {
+  if (!fs.existsSync(path)) {
+    fs.mkdirSync(path);
+  }
+};
+
 export const baseForMaps = async (_: IpcMainEvent, projectPath: string) => {
   const languages = ['en', 'fr', 'it', 'es'];
-  if (!fs.existsSync(path.join(projectPath, 'Data/Text/Studio'))) {
-    fs.mkdirSync(path.join(projectPath, 'Data/Text/Studio'));
-  }
+  createFolder(path.join(projectPath, 'Data/Text/Studio'));
   saveCSV(projectPath, 200002, languages);
   saveCSV(projectPath, 200003, languages);
   saveCSV(projectPath, 200004, languages, true);
-  if (!fs.existsSync(path.join(projectPath, 'Data/Tiled'))) {
-    fs.mkdirSync(path.join(projectPath, 'Data/Tiled'));
-  }
+
+  createFolder(path.join(projectPath, 'Data/Tiled'));
+  createFolder(path.join(projectPath, 'Data/Tiled/Assets'));
+  createFolder(path.join(projectPath, 'Data/Tiled/Maps'));
+  createFolder(path.join(projectPath, 'Data/Tiled/Tilesets'));
+
   if (fs.existsSync(path.join(projectPath, 'Data/Studio/rmxp_maps.json'))) {
     fs.unlinkSync(path.join(projectPath, 'Data/Studio/rmxp_maps.json'));
   }
