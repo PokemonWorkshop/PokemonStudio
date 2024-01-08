@@ -34,29 +34,19 @@ const DataBlockTranslateHeader = styled.div`
   justify-content: space-between;
 
   & > h4 {
-    ${({ theme }) => theme.fonts.titlesHeadline6}
+    ${({ theme }) => theme.fonts.titlesOverline}
     color: ${({ theme }) => theme.colors.text400};
     margin: 0;
     line-height: 22px;
     text-transform: uppercase;
-    font-family: Avenir Next;
-    font-size: 10px;
-    font-weight: 600;
-    line-height: 14px;
     letter-spacing: 1.5px;
-    text-align: left;
   }
 
   & > h3 {
     ${({ theme }) => theme.fonts.titlesHeadline6}
     color: ${({ theme }) => theme.colors.text100};
     margin: 0;
-    font-family: Gilroy;
-    font-size: 18px;
-    font-weight: 400;
     line-height: 22px;
-    letter-spacing: 0px;
-    text-align: left;
   }
 `;
 
@@ -131,7 +121,6 @@ const DataBlockTextTranslate = ({ isDefault, languageTitle, textFromFileByIndex,
         disabled={isDefault}
         id="descr"
         value={textTranslate}
-        style={{ fontFamily: 'Avenir Next' }}
         placeholder={t('example_description')}
         onChange={(event) => setTextTranslate(event.target.value)}
         onKeyDown={(e) => {
@@ -139,7 +128,11 @@ const DataBlockTextTranslate = ({ isDefault, languageTitle, textFromFileByIndex,
             saveText();
           }
         }}
-        onBlur={() => saveText()}
+        onFocus={() => languageContext.setDisabledNavigation(true)}
+        onBlur={() => {
+          saveText();
+          languageContext.setDisabledNavigation(false);
+        }}
       />
       {!isDefault && (
         <ButtonRightContainer>

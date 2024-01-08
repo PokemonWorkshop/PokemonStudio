@@ -12,7 +12,6 @@ type RenderTextProps = {
 };
 
 const DataTranslateGrid = styled(DataGrid)`
-  ${({ theme }) => theme.fonts.normalRegular};
   color: ${({ theme }) => theme.colors.text400};
   grid-template-columns: 100px 655px 191px;
   align-items: center;
@@ -24,8 +23,15 @@ const DataTranslateGrid = styled(DataGrid)`
 
   &:hover:not(.header) {
     background-color: ${({ theme }) => theme.colors.dark14};
-    color: ${({ theme }) => theme.colors.text100};
     border-radius: 8px;
+
+    .text {
+      color: ${({ theme }) => theme.colors.text100};
+    }
+  }
+
+  .language {
+    ${({ theme }) => theme.fonts.normalRegular}
   }
 
   & .error {
@@ -38,10 +44,6 @@ const RenderTranslateContainer = styled(DataTranslateGrid)`
   height: 40px;
   padding: 0 8px 0 8px;
   margin: 0 -8px 0 -8px;
-
-  .language {
-    color: ${({ theme }) => theme.colors.text400};
-  }
 
   span {
     white-space: nowrap;
@@ -66,7 +68,7 @@ const RenderText = ({ text, language }: RenderTextProps) => {
   return (
     <RenderTranslateContainer gap="16px" onMouseOver={() => setHovered(true)} onMouseOut={() => setHovered(false)}>
       <span className="language">{languageToDisplay}</span>
-      <span>{text}</span>
+      <span className="text">{text}</span>
       <span>
         {hovered && (
           <SecondaryButton
@@ -89,16 +91,9 @@ const DataTranslatesTable = styled.div`
 
   & span {
     color: ${({ theme }) => theme.colors.text400};
-    font-family: Avenir Next;
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 19px;
-    letter-spacing: 0px;
-    text-align: left;
+    ${({ theme }) => theme.fonts.normalMedium};
   }
 `;
-
-// type TranslateListProps = {};
 
 export const TranslateList = () => {
   const { t } = useTranslation('text_management');
