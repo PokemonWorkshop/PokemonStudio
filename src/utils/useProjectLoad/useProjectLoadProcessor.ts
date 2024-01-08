@@ -44,7 +44,7 @@ export const useProjectLoadProcessor = () => {
         );
       },
       readingVersion: (state, setState) => {
-        loaderRef.current.setProgress(1, STEPS_TOTAL, t('importing_project_reading_version'));
+        loaderRef.current.open('loading_project', 1, STEPS_TOTAL, t('importing_project_reading_version'));
         window.api.clearCache();
         return window.api.getStudioVersion(
           {},
@@ -60,15 +60,12 @@ export const useProjectLoadProcessor = () => {
             loaderRef.current.setProgress(3, STEPS_TOTAL, t('loading_project_meta_deserialization'));
             const projectMetaData = PROJECT_VALIDATOR.safeParse(metaData);
             if (!projectMetaData.success) {
-              loaderRef.current.setError('loading_project_error', t('failed_deserialize'));
-              setState(DEFAULT_PROCESS_STATE);
-              return;
+              return handleFailure(setState, binding)({ errorMessage: t('failed_deserialize') });
             }
             if (projectMetaData.data.studioVersion === state.studioVersion) {
               setState({ ...state, state: 'updateTextInfos', projectMetaData: projectMetaData.data });
             } else if (projectMetaData.data.studioVersion.localeCompare(state.studioVersion) === 1) {
-              loaderRef.current.setError('loading_project_error', t('error_project_version'));
-              setState(DEFAULT_PROCESS_STATE);
+              handleFailure(setState, binding)({ errorMessage: t('error_project_version') });
             } else {
               setState({ ...state, state: 'migrateProjectData', projectMetaData: projectMetaData.data });
             }

@@ -1,11 +1,10 @@
 import { deserializeZodData, deserializeZodDiscriminatedData } from '@utils/SerializationUtils';
-import log from 'electron-log';
 import type { z } from 'zod';
 import type { ProjectLoadFunctionBinding, ProjectLoadStateObject } from './types';
 import type { Dispatch, MutableRefObject, SetStateAction } from 'react';
 
 export const fail = (binding: MutableRefObject<ProjectLoadFunctionBinding>, error: unknown) => {
-  log.error('Failed to load project', error);
+  window.api.log.error('Failed to load project', error);
   binding.current.onFailure({ errorMessage: `${error instanceof Error ? error.message : error}` });
 };
 

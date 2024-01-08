@@ -14,30 +14,21 @@ import {
 } from '@components/home';
 import { ReactComponent as StudioIcon } from '@assets/icons/global/StudioIcon.svg';
 import { RecentProjectContainer } from '@components/home/ActionContainer';
-import { HomePageNewEditor } from './editors';
-import { EditorOverlay } from '@components/editor';
+import { HomeEditorAndDeletionKeys, HomeEditorOverlay } from '@components/home/editors/HomeEditorOverlay';
 import { deleteProjectToList, getProjectList } from '@utils/projectList';
+import { useDialogsRef } from '@utils/useDialogsRef';
 
 const HomePageComponent = () => {
-  const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
+  const dialogsRef = useDialogsRef<HomeEditorAndDeletionKeys>();
   const [appVersion, setAppVersion] = useState('');
   const [projectList, setProjectList] = useState(getProjectList());
-
-  const onCloseEditor = () => {
-    setCurrentEditor(undefined);
-  };
+  const { t } = useTranslation('homepage');
 
   const onDeleteProjectToList = (event: React.MouseEvent<HTMLSpanElement>, projectPath: string) => {
     event.stopPropagation();
     deleteProjectToList(projectPath);
     setProjectList(getProjectList());
   };
-
-  const editors = {
-    informationsEditor: <HomePageNewEditor />,
-  };
-
-  const { t } = useTranslation(['homepage']);
 
   useEffect(() => {
     window.api.getAppVersion().then((version) => setAppVersion(version));
@@ -48,7 +39,7 @@ const HomePageComponent = () => {
   return (
     <HomePageContainer>
       <Header>
-        {t('homepage:version_current_version_editor', {
+        {t('version_current_version_editor', {
           current_version_editor: appVersion,
         })}
       </Header>
@@ -58,12 +49,12 @@ const HomePageComponent = () => {
             <StudioIcon />
             <BrandingTitle>Pokémon Studio</BrandingTitle>
           </BrandingTitleContainer>
-          <LoadProjectButton>{t('homepage:open_a_project')}</LoadProjectButton>
-          <PrimaryButton onClick={() => setCurrentEditor('informationsEditor')}>{t('homepage:new_project')}</PrimaryButton>
+          <LoadProjectButton>{t('open_a_project')}</LoadProjectButton>
+          <PrimaryButton onClick={() => dialogsRef.current?.openDialog('new_project')}>{t('new_project')}</PrimaryButton>
         </BrandingActionContainer>
         {projectList.length !== 0 && (
           <RecentProjectContainer>
-            <div>{t('homepage:recent_projects')}</div>
+            <div>{t('recent_projects')}</div>
             <ProjectCardContainer>
               <ProjectCard project={projectList[0]} onDeleteProjectToList={onDeleteProjectToList} />
               <ProjectCard project={projectList[1]} onDeleteProjectToList={onDeleteProjectToList} />
@@ -74,7 +65,7 @@ const HomePageComponent = () => {
         )}
       </ActionContainer>
       <Footer />
-      <EditorOverlay editors={editors} currentEditor={currentEditor} onClose={onCloseEditor} />
+      <HomeEditorOverlay ref={dialogsRef} />
     </HomePageContainer>
   );
 };
