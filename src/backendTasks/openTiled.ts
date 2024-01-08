@@ -13,7 +13,11 @@ export type OpenTiledPayload = {
 const openTiled = async (payload: OpenTiledPayload) => {
   log.info('open-tiled', payload);
   const mapFilename = path.join(payload.projectPath, 'Data', 'Tiled', 'Maps', payload.tiledMapFilename + '.tmx');
-  await util.promisify(execFile)(payload.tiledPath, [mapFilename]);
+  if (process.platform === 'darwin') {
+    await util.promisify(execFile)('open', [payload.tiledPath, mapFilename]);
+  } else {
+    await util.promisify(execFile)(payload.tiledPath, [mapFilename]);
+  }
   return {};
 };
 
