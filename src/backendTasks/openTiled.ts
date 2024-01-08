@@ -15,6 +15,12 @@ const openTiled = async (payload: OpenTiledPayload) => {
   const mapFilename = path.join(payload.projectPath, 'Data', 'Tiled', 'Maps', payload.tiledMapFilename + '.tmx');
   if (process.platform === 'darwin') {
     await util.promisify(execFile)('open', [payload.tiledPath, mapFilename]);
+  }
+  else if (process.platform === 'linux') {
+    const defaultDir = process.cwd();
+    process.chdir(path.dirname(mapFilename));
+    await util.promisify(execFile)(payload.tiledPath, [path.basename(mapFilename)]);
+    process.chdir(defaultDir);
   } else {
     await util.promisify(execFile)(payload.tiledPath, [mapFilename]);
   }
