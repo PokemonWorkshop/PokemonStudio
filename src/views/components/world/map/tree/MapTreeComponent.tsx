@@ -220,9 +220,11 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
           {isFolder && !!countChildren && <span className="count-children">{countChildren}</span>}
           {!canRename && (
             <div className="actions">
-              <span className="icon icon-dot" onClick={openMenu}>
-                <DotIcon />
-              </span>
+              {!isRMXPMode && (
+                <span className="icon icon-dot" onClick={openMenu}>
+                  <DotIcon />
+                </span>
+              )}
               {!isDeleted && !isRMXPMode && currentDepth <= 3 && (
                 <span
                   className="icon icon-plus"

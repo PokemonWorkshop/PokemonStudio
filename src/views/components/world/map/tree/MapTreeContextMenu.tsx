@@ -23,7 +23,7 @@ type MapTreeContextMenuProps = {
 
 export const MapTreeContextMenu = ({ mapInfoValue, isDeleted, enableRename, dialogsRef }: MapTreeContextMenuProps) => {
   const { t } = useTranslation('database_maps');
-  const { mapInfo, isRMXPMode, setMapInfo } = useMapInfo();
+  const { mapInfo, setMapInfo } = useMapInfo();
   const { projectDataValues: maps, setProjectDataValues: setMap } = useProjectMaps();
   const setText = useSetProjectText();
   const getName = useGetEntityNameText();
@@ -71,7 +71,7 @@ export const MapTreeContextMenu = ({ mapInfoValue, isDeleted, enableRename, dial
 
   return (
     <>
-      {!isDeleted && !isRMXPMode && (
+      {!isDeleted && (
         <div onClick={() => enableRename()}>
           <span className="icon">
             <EditIcon />
@@ -79,7 +79,7 @@ export const MapTreeContextMenu = ({ mapInfoValue, isDeleted, enableRename, dial
           {t('rename')}
         </div>
       )}
-      {!isFolder && !isDeleted && !isRMXPMode && (
+      {!isFolder && !isDeleted && (
         <div onClick={onClickDuplicate}>
           <span className="icon">
             <CopyIcon />
@@ -87,7 +87,7 @@ export const MapTreeContextMenu = ({ mapInfoValue, isDeleted, enableRename, dial
           {t('duplicate')}
         </div>
       )}
-      {!isFolder && !isDeleted && !isRMXPMode && !hideTiledOption && (
+      {!isFolder && !isDeleted && !hideTiledOption && (
         <div onClick={onClickTiled}>
           <span className="icon">
             <MapPaddedIcon />
