@@ -104,7 +104,7 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
             <span
               className="icon collapse-button"
               onClick={(e) => {
-                e.preventDefault();
+                e.stopPropagation();
                 onCollapse(item.id.toString());
               }}
             >
@@ -114,7 +114,7 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
             <span
               className="icon collapse-button collapse-button-collapsed"
               onClick={(e) => {
-                e.preventDefault();
+                e.stopPropagation();
                 onExpand(item.id.toString());
               }}
             >
