@@ -3,11 +3,12 @@ import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { RMXP2StudioMapsUpdateFunctionBinding, RMXP2StudioMapsUpdateStateObject } from './types';
 import { DEFAULT_PROCESS_STATE, PROCESS_DONE_STATE, SpecialStateProcessors } from '@utils/useProcess';
-import { handleFailure, toAsyncProcess } from './helpers';
+import { getSelectedMap, handleFailure, toAsyncProcess } from './helpers';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { deserializeZodData, zodDataToEntries } from '@utils/SerializationUtils';
 import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID, MAP_VALIDATOR } from '@modelEntities/map';
 import { MAP_INFO_VALIDATOR } from '@modelEntities/mapInfo';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 
 const DEFAULT_BINDING: RMXP2StudioMapsUpdateFunctionBinding = {
   onFailure: () => {},
@@ -55,16 +56,22 @@ export const useRMXP2StudioMapsUpdateProcessor = () => {
       updateMap: ({ maps, mapInfo, mapNames, mapDescriptions }, setState) => {
         return toAsyncProcess(() => {
           loaderRef.current.setProgress(3, 3, t('update_maps'));
+          const projectDataMaps = zodDataToEntries(maps);
+          const selectedMap = getSelectedMap(projectDataMaps, globalState.selectedDataIdentifier.map as DbSymbol);
           setGlobalState((state) => ({
             ...state,
             projectData: {
               ...state.projectData,
-              maps: zodDataToEntries(maps),
+              maps: projectDataMaps,
             },
             projectText: {
               ...state.projectText,
               [MAP_NAME_TEXT_ID]: mapNames,
               [MAP_DESCRIPTION_TEXT_ID]: mapDescriptions,
+            },
+            selectedDataIdentifier: {
+              ...state.selectedDataIdentifier,
+              map: selectedMap,
             },
             mapInfo,
           }));
@@ -74,7 +81,7 @@ export const useRMXP2StudioMapsUpdateProcessor = () => {
       },
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [globalState]
   );
 
   return { processors, binding };

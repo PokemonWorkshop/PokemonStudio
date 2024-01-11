@@ -62,8 +62,10 @@ export const MapPage = () => {
             </DataBlockWithAction>
           </DataBlockWrapper>
           <DataBlockWrapper>
-            <DataBlockWithAction size="full" title={t('deleting')}>
-              <DeleteButtonWithIcon onClick={() => dialogsRef.current?.openDialog('deletion', true)}>{t('delete')}</DeleteButtonWithIcon>
+            <DataBlockWithAction size="full" title={t('deleting')} disabled={isRMXPMode}>
+              <DeleteButtonWithIcon onClick={() => dialogsRef.current?.openDialog('deletion', true)} disabled={isRMXPMode}>
+                {t('delete')}
+              </DeleteButtonWithIcon>
             </DataBlockWithAction>
           </DataBlockWrapper>
           <MapEditorOverlay ref={dialogsRef} />

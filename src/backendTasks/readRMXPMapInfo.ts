@@ -6,7 +6,7 @@ import { isMarshalHash, isMarshalStandardObject, Marshal } from 'ts-marshal';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 
 export type ReadRMXPMapInfoInput = { projectPath: string };
-export type ReadRMXPMapInfoOutput = { rmxpMapInfo: { id: number; name: string }[] };
+export type ReadRMXPMapInfoOutput = { rmxpMapInfo: { id: number; name: string; parentId: number }[] };
 
 type MapInfoData = {
   '@scroll_x': number;
@@ -41,9 +41,11 @@ export const readRMXPMapInfo = async (mapInfoFilePath: string) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { __class, __extendedModules, __default, ...mapInfos } = marshalData;
   const mapInfoRecords = Object.entries(mapInfos)
-    .map(([id, data]) => (isMapInfoObject(data) ? { id: Number(id), order: data['@order'], name: data['@name'] } : undefined))
+    .map(([id, data]) =>
+      isMapInfoObject(data) ? { id: Number(id), order: data['@order'], name: data['@name'], parentId: data['@parent_id'] } : undefined
+    )
     .filter(<T>(data: T): data is Exclude<T, undefined> => !!data);
-  const rmxpMapData = mapInfoRecords.sort((a, b) => a.order - b.order).map(({ id, name }) => ({ id, name }));
+  const rmxpMapData = mapInfoRecords.sort((a, b) => a.order - b.order).map(({ id, name, parentId }) => ({ id, name, parentId }));
   return rmxpMapData;
 };
 

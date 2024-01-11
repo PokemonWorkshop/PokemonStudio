@@ -1,5 +1,7 @@
 import { Dispatch, MutableRefObject, SetStateAction } from 'react';
 import { RMXP2StudioMapsUpdateFunctionBinding, RMXP2StudioMapsUpdateStateObject } from './types';
+import { ProjectData } from '@src/GlobalStateProvider';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 
 export const fail = (binding: MutableRefObject<RMXP2StudioMapsUpdateFunctionBinding>, error: unknown) => {
   window.api.log.error('Failed to synchronise maps:', error);
@@ -18,4 +20,10 @@ export const toAsyncProcess = (func: () => void) => {
     func();
   })();
   return () => {};
+};
+
+export const getSelectedMap = (newMaps: ProjectData['maps'], currentSelectedMap: DbSymbol) => {
+  if (newMaps[currentSelectedMap]) return currentSelectedMap;
+
+  return Object.keys(newMaps)[0] || '__undef__';
 };

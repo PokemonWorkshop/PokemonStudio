@@ -39,3 +39,15 @@ export const MAP_INFO_VALIDATOR = z.record(z.string(), MAP_INFO_VALUE_VALIDATOR)
 export type StudioMapInfo = z.infer<typeof MAP_INFO_VALIDATOR>;
 
 export const MAP_INFO_FOLDER_NAME_TEXT_ID = 200004;
+
+export const DEFAULT_MAP_INFO: StudioMapInfo = {
+  ['0']: {
+    id: 0,
+    children: [],
+    hasChildren: false,
+    isExpanded: true,
+    data: {
+      klass: 'MapInfoRoot',
+    },
+  },
+};
