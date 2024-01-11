@@ -6,23 +6,16 @@ import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import { readProjectFolder } from './readProjectData';
 import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID, MAP_VALIDATOR, StudioMap } from '@modelEntities/map';
 import { padStr } from '@utils/PadStr';
-import { MAP_INFO_VALIDATOR } from '@modelEntities/mapInfo';
+import { DEFAULT_MAP_INFO, StudioMapInfo } from '@modelEntities/mapInfo';
 import { createMapInfo } from '@utils/entityCreation';
 import { addLineCSV, loadCSV } from '@utils/textManagement';
 import { stringify } from 'csv-stringify/sync';
 import { addNewMapInfo } from '@utils/MapInfoUtils';
 import { readRMXPMapInfo } from './readRMXPMapInfo';
 import { RMXPMap, readRMXPMap } from './readRMXPMap';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 
 export type RMXP2StudioMapsSyncInput = { projectPath: string };
-
-const readStudioMapInfo = async (mapInfoStudioFilePath: string) => {
-  const studioMapInfoData = await fsPromise.readFile(mapInfoStudioFilePath, { encoding: 'utf-8' });
-  const mapInfoParsed = MAP_INFO_VALIDATOR.safeParse(JSON.parse(studioMapInfoData));
-  if (!mapInfoParsed.success) throw new Error('Failed to parse the file map_info.json');
-
-  return mapInfoParsed.data;
-};
 
 const updatedMapNeeded = (projectPath: string, id: number) => {
   const studioMapPath = path.join(projectPath, 'Data/Studio/Maps', `map${padStr(id, 3)}.json`);
@@ -49,7 +42,8 @@ const RMXP2StudioMapsSync = async (payload: RMXP2StudioMapsSyncInput) => {
   const mapInfoStudioFilePath = path.join(payload.projectPath, 'Data', 'Studio', 'map_info.json');
 
   const rmxpMapInfoData = await readRMXPMapInfo(mapInfoRMXPFilePath);
-  let studioMapInfoData = await readStudioMapInfo(mapInfoStudioFilePath);
+  const rmxpMapIds = rmxpMapInfoData.map(({ id }) => id);
+  let studioMapInfoData = DEFAULT_MAP_INFO;
   const maps = await readProjectFolder(payload.projectPath, 'maps');
   const studioMaps = maps.reduce((data, map) => {
     const mapParsed = MAP_VALIDATOR.safeParse(JSON.parse(map));
@@ -63,6 +57,49 @@ const RMXP2StudioMapsSync = async (payload: RMXP2StudioMapsSyncInput) => {
   const mapDescriptions = await loadCSV(path.join(payload.projectPath, 'Data/Text/Studio', `${MAP_DESCRIPTION_TEXT_ID}.csv`));
   const mapDescrColumnLength = mapDescriptions[0]?.length || 0;
 
+  // Update studio map info
+  rmxpMapInfoData.map((rmxpMapInfo) => {
+    const newMapInfo = createMapInfo(studioMapInfoData, {
+      klass: 'MapInfoMap',
+      mapDbSymbol: `map${padStr(rmxpMapInfo.id, 3)}` as DbSymbol,
+      parentId: 0,
+    });
+    studioMapInfoData = addNewMapInfo(studioMapInfoData, newMapInfo);
+  });
+  const studioMapInfoDataValues = Object.values(studioMapInfoData);
+  studioMapInfoDataValues.forEach((mapInfo) => {
+    if (mapInfo.data.klass !== 'MapInfoMap') return;
+
+    const mapDbSymbol = mapInfo.data.mapDbSymbol;
+    const rmxpMapInfo = rmxpMapInfoData.find((rmxpMapInfo) => mapDbSymbol === `map${padStr(rmxpMapInfo.id, 3)}`);
+    if (!rmxpMapInfo) return;
+
+    const studioMapInfo = studioMapInfoDataValues.find(
+      (studioMapInfo) => studioMapInfo.data.klass === 'MapInfoMap' && studioMapInfo.data.mapDbSymbol === `map${padStr(rmxpMapInfo.parentId, 3)}`
+    );
+    if (!studioMapInfo) return;
+
+    mapInfo.data.parentId = studioMapInfo.id;
+    studioMapInfo.children.push(mapInfo.id);
+    studioMapInfo.hasChildren = true;
+    const index = studioMapInfoDataValues[0].children.findIndex((child) => child === mapInfo.id);
+    if (index === -1) return;
+
+    studioMapInfoDataValues[0].children.splice(index, 1);
+  });
+
+  studioMapInfoData = studioMapInfoDataValues.reduce((prev, mapInfo) => {
+    prev[mapInfo.id.toString()] = mapInfo;
+    return prev;
+  }, {} as StudioMapInfo);
+  studioMapInfoData[0].children.forEach((id) => {
+    studioMapInfoData[id].isExpanded = studioMapInfoData[id].children.length > 0;
+  });
+
+  await fsPromise.writeFile(mapInfoStudioFilePath, JSON.stringify(studioMapInfoData, null, 2));
+
+  // CRUD map
+  // create and update
   await rmxpMapInfoData.reduce(async (lastPromise, rmxpMap) => {
     await lastPromise;
 
@@ -94,17 +131,24 @@ const RMXP2StudioMapsSync = async (payload: RMXP2StudioMapsSyncInput) => {
         sha1: '',
         tiledFilename: '',
       } as StudioMap;
-      studioMapInfoData = addNewMapInfo(
-        studioMapInfoData,
-        createMapInfo(studioMapInfoData, { klass: 'MapInfoMap', mapDbSymbol: newMap.dbSymbol, parentId: 0 })
-      );
       fsPromise.writeFile(path.join(payload.projectPath, 'Data/Studio/maps', `${newMap.dbSymbol}.json`), JSON.stringify(newMap, null, 2));
       addLineCSV(new Array(mapNameColumnLength).fill(rmxpMap.name), rmxpMap.id + 1, 0, mapNames);
       addLineCSV(new Array(mapDescrColumnLength).fill(''), rmxpMap.id + 1, 0, mapDescriptions);
     }
   }, Promise.resolve());
 
-  await fsPromise.writeFile(mapInfoStudioFilePath, JSON.stringify(studioMapInfoData, null, 2));
+  // delete map
+  await studioMaps.reduce(async (lastPromise, studioMap) => {
+    await lastPromise;
+
+    if (!rmxpMapIds.includes(studioMap.id)) {
+      const mapToDeletePath = path.join(payload.projectPath, 'Data/Studio/maps', `${studioMap.dbSymbol}.json`);
+      if (fs.existsSync(mapToDeletePath)) {
+        fsPromise.unlink(path.join(payload.projectPath, 'Data/Studio/maps', `${studioMap.dbSymbol}.json`));
+      }
+    }
+  }, Promise.resolve());
+
   await fsPromise.writeFile(path.join(payload.projectPath, 'Data/Text/Studio', `${MAP_NAME_TEXT_ID}.csv`), stringify(mapNames));
   await fsPromise.writeFile(path.join(payload.projectPath, 'Data/Text/Studio', `${MAP_DESCRIPTION_TEXT_ID}.csv`), stringify(mapDescriptions));
 
