@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelectOptions } from '@utils/useSelectOptions';
-import { StudioDropDown } from '@components/StudioDropDown';
+import { StudioDropDown, StudioDropDownFilter } from '@components/StudioDropDown';
 import { SelectContainerWithLabel } from './SelectContainerWithLabel';
 
 type SelectDexProps = {
@@ -10,9 +10,10 @@ type SelectDexProps = {
   undefValueOption?: string;
   noLabel?: boolean;
   noneValue?: boolean;
+  filter?: StudioDropDownFilter;
 };
 
-export const SelectDex = ({ dbSymbol, onChange, noLabel, noneValue, undefValueOption }: SelectDexProps) => {
+export const SelectDex = ({ dbSymbol, onChange, noLabel, noneValue, undefValueOption, filter }: SelectDexProps) => {
   const { t } = useTranslation(['database_dex', 'select']);
   const dexOptions = useSelectOptions('dex');
   const options = useMemo(() => {
@@ -20,8 +21,8 @@ export const SelectDex = ({ dbSymbol, onChange, noLabel, noneValue, undefValueOp
     if (noneValue) return [{ value: '__undef__', label: t('select:none') }, ...dexOptions];
     return dexOptions;
   }, [dexOptions, undefValueOption, noneValue]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const optionals = useMemo(() => ({ deletedOption: t('database_dex:dex_deleted') }), []);
+
+  const optionals = { deletedOption: t('database_dex:dex_deleted'), filter };
 
   if (noLabel) return <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />;
 

@@ -29,7 +29,7 @@ type DexPokemonListImportEditorProps = {
 };
 
 export const DexPokemonListImportEditor = forwardRef<EditorHandlingClose, DexPokemonListImportEditorProps>(({ closeDialog }, ref) => {
-  const { projectDataValues: allDex, setProjectDataValues: setDex } = useProjectDex();
+  const { projectDataValues: allDex, setProjectDataValues: setDex, selectedDataIdentifier: currentDex } = useProjectDex();
   const { t } = useTranslation('database_dex');
   const { dex } = useDexPage();
   const firstDbSymbol = Object.entries(allDex)
@@ -53,7 +53,12 @@ export const DexPokemonListImportEditor = forwardRef<EditorHandlingClose, DexPok
           <DexImportInfo>{t('import_info')}</DexImportInfo>
           <InputWithTopLabelContainer>
             <Label>{t('import_list_dex')}</Label>
-            <SelectDex dbSymbol={selectedDexImport} onChange={(selected) => setSelectedDexImport(selected)} noLabel />
+            <SelectDex
+              dbSymbol={selectedDexImport}
+              onChange={(selected) => setSelectedDexImport(selected)}
+              filter={(dbSymbol) => dbSymbol !== currentDex}
+              noLabel
+            />
           </InputWithTopLabelContainer>
         </InputContainer>
         <ButtonContainer>
