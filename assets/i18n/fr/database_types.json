@@ -23,7 +23,7 @@
   "show_all_pokemon": "Afficher la liste des Pokémon",
   "show_all_moves": "Afficher la liste des attaques",
   "pokemon_with_type": "Pokémon dotés du type {{type}}",
-  "move_with_type": "Attaques dotés du type {{type}}",
+  "move_with_type": "Attaques dotées du type {{type}}",
   "none": "Aucun",
   "deletion": "Suppression",
   "delete_this_type": "Supprimer ce type",

@@ -71,7 +71,7 @@ const updateTmxFile = (tiledMap: MapToImport, mapsFolderPath: string, originalTi
   const tilesetSources = resources.tilesetSources;
   tilesetSources.forEach((tileset) => {
     const basename = path.basename(tileset);
-    data = data.replaceAll(tileset, `../Tilesets/${basename}`);
+    data = data.replaceAll(`"${tileset}"`, `"../Tilesets/${basename}"`);
   });
   fs.writeFileSync(tmxFilePath, data);
 };
@@ -91,7 +91,7 @@ const updateTsxFile = (tiledMap: MapToImport, mapsFolderPath: string, tilesetsFo
     let data = fs.readFileSync(tsxFilePath).toString();
     assetSources.forEach((asset) => {
       const basename = path.basename(asset.inTileset);
-      data = data.replaceAll(asset.inTileset, `../Assets/${basename}`);
+      data = data.replaceAll(`"${asset.inTileset}"`, `"../Assets/${basename}"`);
     });
     fs.writeFileSync(tsxFilePath, data);
   });
@@ -132,6 +132,8 @@ const copyTiledFiles = async (payload: CopyTiledFilesInput) => {
 
   await tiledMaps.reduce(async (lastPromise, tiledMap, currentIndex) => {
     await lastPromise;
+
+    log.info('copy-tiled-files/process', tiledMap.path);
     copyTmxFile(tiledMap, mapsFolderPath, payload.tiledSrcPath);
     copyTsxFile(tiledMap, tilesetsFolderPath, payload.tiledSrcPath);
     copyAssetFile(tiledMap, assetsFolderPath, payload.tiledSrcPath);
