@@ -36,9 +36,7 @@ export const MoveStatusEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const [error, setError] = useState<string>('');
 
   const setStatusFunctions = [setStatus1, setStatus2, setStatus3];
-
   const setChancesFunctions = [setChance1, setChance2, setChance3];
-
   const isInitialStateStandard =
     (chance1 === 100 && chance2 === 0 && chance3 === 0) ||
     (chance1 === 50 && chance2 === 50 && chance3 === 0) ||
@@ -112,8 +110,10 @@ export const MoveStatusEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   };
 
   const handleChancesChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
-    const newChance = event.target.value === '' ? Number.NaN : Number(event.target.value);
-    setChancesFunctions[index](newChance);
+    let value = event.target.value === '' ? NaN : Number(event.target.value);
+    value = isNaN(value) ? NaN : Math.max(0, Math.min(100, value));
+
+    setChancesFunctions[index](value);
   };
 
   useEffect(() => {
@@ -147,7 +147,9 @@ export const MoveStatusEditor = forwardRef<EditorHandlingClose>((_, ref) => {
 
           {isValidStatus(status1) && isValidStatus(status2) && (
             <InputWithLeftLabelContainer>
-              <Label htmlFor="chance-1">{t('chance')}</Label>
+              <Label htmlFor="chance-1" required>
+                {t('chance')}
+              </Label>
               <PercentInput
                 type="number"
                 name="chance-1"
@@ -174,7 +176,9 @@ export const MoveStatusEditor = forwardRef<EditorHandlingClose>((_, ref) => {
 
             {isValidStatus(status2) && (
               <InputWithLeftLabelContainer>
-                <Label htmlFor="chance-2">{t('chance')}</Label>
+                <Label htmlFor="chance-2" required>
+                  {t('chance')}
+                </Label>
                 <PercentInput
                   type="number"
                   name="chance-2"
@@ -202,7 +206,9 @@ export const MoveStatusEditor = forwardRef<EditorHandlingClose>((_, ref) => {
 
             {isValidStatus(status3) && (
               <InputWithLeftLabelContainer>
-                <Label htmlFor="chance-3">{t('chance')}</Label>
+                <Label htmlFor="chance-3" required>
+                  {t('chance')}
+                </Label>
                 <PercentInput
                   type="number"
                   name="chance-3"
