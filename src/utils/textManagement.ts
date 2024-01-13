@@ -49,3 +49,22 @@ export const addLineCSV = (newLine: string[], lineIndex: number, startId: number
     csvData[lineIndex] = newLine;
   }
 };
+
+const isInRangeStudioText = (id: number) => id >= 200_000 && id < 300_000;
+
+export const getTextPath = (id: number) => (isInRangeStudioText(id) ? 'Data/Text/Studio' : 'Data/Text/Dialogs');
+
+/**
+ * Check if 2xxxxx.csv files exist in Data/Text/Dialogs
+ * @param textFileList The list of id of the text files
+ * @param projectPath The path of the project
+ * @returns True if 2xxxxx.csv files exist in Data/Text/Dialogs
+ */
+export const checkTextFileReserved = (textFileList: number[], projectPath: string) => {
+  const textFileListFiltered = textFileList.filter(isInRangeStudioText);
+  const dialogsPath = path.join(projectPath, 'Data/Text/Dialogs');
+  return textFileListFiltered.reduce(async (prev, curr) => {
+    const prevResult = await prev;
+    return prevResult || fs.existsSync(path.join(dialogsPath, `${curr}.csv`));
+  }, Promise.resolve(false));
+};

@@ -96,8 +96,8 @@ export const updateTextInfos = async (payload: UpdateTextInfosInput) => {
       textId >= descriptions.length ? descriptions.push(newDescriptions) : (descriptions[textId] = newDescriptions);
       return newTextInfo.textInfo;
     });
-    saveCSV(payload.projectPath, 200000, names);
-    saveCSV(payload.projectPath, 200001, descriptions);
+    saveCSV(payload.projectPath, TEXT_INFO_NAME_TEXT_ID, names);
+    saveCSV(payload.projectPath, TEXT_INFO_DESCRIPTION_TEXT_ID, descriptions);
     fs.writeFileSync(path.join(payload.projectPath, TEXT_INFOS_PATH), JSON.stringify(textInfosUpdated, null, 2));
     log.info('update-text-infos/success', 'updated file');
     return {};
@@ -114,8 +114,8 @@ export const updateTextInfos = async (payload: UpdateTextInfosInput) => {
       return { fileId: textInfo.textInfo.fileId, textId: textInfo.textInfo.textId, klass: textInfo.textInfo.klass };
     });
     fs.writeFileSync(path.join(payload.projectPath, TEXT_INFOS_PATH), JSON.stringify(textInfos, null, 2));
-    saveCSV(payload.projectPath, 200000, names, languages);
-    saveCSV(payload.projectPath, 200001, descriptions, languages);
+    saveCSV(payload.projectPath, TEXT_INFO_NAME_TEXT_ID, names, languages);
+    saveCSV(payload.projectPath, TEXT_INFO_DESCRIPTION_TEXT_ID, descriptions, languages);
     log.info('update-text-infos/success', 'file created');
     return {};
   }
