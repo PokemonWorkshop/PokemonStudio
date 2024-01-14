@@ -46,7 +46,7 @@ export const MapFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
     setText(MAP_DESCRIPTION_TEXT_ID, map.id, descriptionRef.current.value);
   };
 
-  const canClose = () => !!nameRef.current?.value && !dialogsRef.current?.currentDialog && !!stepsAverageRef.current?.validity.valid;
+  const canClose = () => !!nameRef.current?.value && !dialogsRef.current?.currentDialog && !!stepsAverageRef.current?.validity.valid && tiledFilename;
   const onClose = () => {
     if (!nameRef.current || !descriptionRef.current || !stepsAverageRef.current || !canClose()) return;
 
@@ -104,10 +104,10 @@ export const MapFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
             <Label htmlFor="steps-average">{t('steps_average')}</Label>
             <Input type="number" name="steps-average" min="1" max="999" defaultValue={map.stepsAverage} ref={stepsAverageRef} />
           </InputWithLeftLabelContainer>
-        </PaddedInputContainer>
-        <InputGroupCollapse title={t('advanced_settings')} noMargin collapseByDefault>
           <InputWithTopLabelContainer>
-            <Label htmlFor="tiled-file">{t('map_made_tiled')}</Label>
+            <Label htmlFor="tiled-file" required>
+              {t('map_made_tiled')}
+            </Label>
             {!tiledFilename ? (
               <DropInput
                 name={t('tiled_file')}
@@ -127,7 +127,7 @@ export const MapFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
               />
             )}
           </InputWithTopLabelContainer>
-        </InputGroupCollapse>
+        </PaddedInputContainer>
       </InputContainer>
       <MapTranslationOverlay map={map} onClose={onTranslationOverlayClose} ref={dialogsRef} />
     </EditorWithCollapse>

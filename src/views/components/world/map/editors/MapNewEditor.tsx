@@ -130,6 +130,29 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
                 onChange={(event) => onChangeStepsAverage(event.target.value)}
               />
             </InputWithLeftLabelContainer>
+            <InputWithTopLabelContainer>
+              <Label htmlFor="tiled-file" required>
+                {t('database_maps:map_made_tiled')}
+              </Label>
+              {!tiledFilename ? (
+                <DropInput
+                  name={t('database_maps:tiled_file')}
+                  extensions={['tmx']}
+                  destFolderToCopy="Data/Tiled/Maps"
+                  onFileChoosen={(filePath) => setTiledFilename(basename(filePath, '.tmx'))}
+                  showAcceptedFormat
+                />
+              ) : (
+                <FileInput
+                  filePath={`Data/Tiled/Maps/${tiledFilename}.tmx`}
+                  name={t('database_maps:tiled_file')}
+                  extensions={['tmx']}
+                  onFileChoosen={(filePath) => setTiledFilename(basename(filePath, '.tmx'))}
+                  onFileClear={() => setTiledFilename('')}
+                  noIcon
+                />
+              )}
+            </InputWithTopLabelContainer>
           </PaddedInputContainer>
           <InputGroupCollapse title={t('database_maps:musics')} noMargin>
             <InputWithTopLabelContainer>
@@ -168,29 +191,6 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
                   extensions={AUDIO_EXT}
                   onFileChoosen={(filePath) => setBgs(basename(filePath))}
                   onFileClear={() => setBgs('')}
-                  noIcon
-                />
-              )}
-            </InputWithTopLabelContainer>
-          </InputGroupCollapse>
-          <InputGroupCollapse title={t('database_maps:advanced_settings')} noMargin>
-            <InputWithTopLabelContainer>
-              <Label htmlFor="tiled-file">{t('database_maps:map_made_tiled')}</Label>
-              {!tiledFilename ? (
-                <DropInput
-                  name={t('database_maps:tiled_file')}
-                  extensions={['tmx']}
-                  destFolderToCopy="Data/Tiled/Maps"
-                  onFileChoosen={(filePath) => setTiledFilename(basename(filePath, '.tmx'))}
-                  showAcceptedFormat
-                />
-              ) : (
-                <FileInput
-                  filePath={`Data/Tiled/Maps/${tiledFilename}.tmx`}
-                  name={t('database_maps:tiled_file')}
-                  extensions={['tmx']}
-                  onFileChoosen={(filePath) => setTiledFilename(basename(filePath, '.tmx'))}
-                  onFileClear={() => setTiledFilename('')}
                   noIcon
                 />
               )}
