@@ -137,7 +137,7 @@ export const createCreature = (allPokemon: ProjectData['pokemon'], dbSymbol: DbS
           footprint: '',
           character: '',
           characterShiny: '',
-          cry: `${padStr(id, 3)}cry.ogg`,
+          cry: '',
           hasFemale: false,
         },
       },
