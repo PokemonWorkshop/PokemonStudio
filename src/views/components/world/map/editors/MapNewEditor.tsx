@@ -63,7 +63,7 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
   useEditorHandlingClose(ref);
 
   const onClickNew = () => {
-    if (!name || !descriptionRef.current) return;
+    if (!name || !descriptionRef.current || !tiledFilename) return;
 
     const newMap = createMap(maps, stepsAverage, tiledFilename, bgm, bgs);
     const dbSymbol = newMap.dbSymbol;
@@ -88,7 +88,7 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
   };
 
   const checkDisabled = () => {
-    return !name || stepsAverage < 1 || stepsAverage > 999 || isNaN(stepsAverage);
+    return !name || stepsAverage < 1 || stepsAverage > 999 || isNaN(stepsAverage) || !tiledFilename;
   };
 
   const onChangeStepsAverage = (value: string) => {
