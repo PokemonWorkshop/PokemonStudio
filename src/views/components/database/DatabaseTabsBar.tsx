@@ -92,7 +92,7 @@ export const DatabaseTabsBar = ({ currentTabIndex, tabs }: DatabaseTabBarProps) 
         <React.Fragment key={`database-tab-${index}`}>
           <TabContainer
             className={currentTabIndex === index ? 'current-tab' : undefined}
-            onClick={() => tab.disabled ?? navigate(tab.path)}
+            onClick={() => tab.disabled || navigate(tab.path)}
             disabled={tab.disabled}
           >
             <span>{tab.label}</span>

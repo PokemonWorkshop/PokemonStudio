@@ -47,10 +47,11 @@ export const useCreaturePage = () => {
 };
 
 export const useTextPage = () => {
-  const { currentTextInfo } = useTextInfosReadonly();
+  const { currentTextInfo, state } = useTextInfosReadonly();
   return {
     textInfo: currentTextInfo,
     cannotDelete: currentTextInfo.fileId >= 8997,
+    disabledTranslation: state.projectConfig.language_config.choosableLanguageCode.length <= 1,
   };
 };
 

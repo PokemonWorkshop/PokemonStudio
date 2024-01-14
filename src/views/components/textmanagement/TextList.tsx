@@ -16,9 +16,10 @@ const getHeight = (length: number) => (length > 8 ? 408 : length * 48);
 
 type TextListProps = {
   dialogsRef: TextDialogsRef;
+  disabledTranslation: boolean;
 };
 
-export const TextList = ({ dialogsRef }: TextListProps) => {
+export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => {
   const { t } = useTranslation('text_management');
   const [research, setResearch] = useState<string>('');
   const [scrollToEnd, setScrollToEnd] = useState<boolean>(false);
@@ -110,6 +111,7 @@ export const TextList = ({ dialogsRef }: TextListProps) => {
                                 },
                               });
                             }}
+                            disabled={disabledTranslation}
                           >
                             <TranslationIcon />
                           </DarkButton>

@@ -42,7 +42,7 @@ export const DashboardLanguageNewEditor = ({ defaultValue, onClose, onCloseNew }
   const { projectConfigValues: gameOption, setProjectConfigValues: setGameOption } = useConfigGameOptions();
   const [languageText, setLanguageText] = useState<LanguageDefaultValue>(defaultValue);
   const { t } = useTranslation('dashboard_language');
-  const { savingLanguage, setSavingLanguage } = useProjectSavingLanguage();
+  const { savingLanguage, setSavingLanguage, addNewLanguageProjectText } = useProjectSavingLanguage();
 
   const onClickNew = () => {
     const currentEditedLanguage = cloneEntity(language);
@@ -55,6 +55,7 @@ export const DashboardLanguageNewEditor = ({ defaultValue, onClose, onCloseNew }
     setSavingLanguage([...savingLanguage, languageText.code]);
     setLanguage(currentEditedLanguage);
     setGameOption(currentEditedGameOption);
+    addNewLanguageProjectText(languageText.code);
     onCloseNew();
   };
 
