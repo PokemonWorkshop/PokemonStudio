@@ -19,7 +19,6 @@ import {
 } from '@components/inputs';
 import { MapTranslationOverlay, TranslationEditorTitle } from './MapTranslationOverlay';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
-import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import { DropInput } from '@components/inputs/DropInput';
 import { basename } from '@utils/path';
 import { useUpdateMapModified } from './useUpdateMapModified';
@@ -46,7 +45,8 @@ export const MapFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
     setText(MAP_DESCRIPTION_TEXT_ID, map.id, descriptionRef.current.value);
   };
 
-  const canClose = () => !!nameRef.current?.value && !dialogsRef.current?.currentDialog && !!stepsAverageRef.current?.validity.valid && tiledFilename;
+  const canClose = () =>
+    !!nameRef.current?.value && !dialogsRef.current?.currentDialog && !!stepsAverageRef.current?.validity.valid && !!tiledFilename;
   const onClose = () => {
     if (!nameRef.current || !descriptionRef.current || !stepsAverageRef.current || !canClose()) return;
 
