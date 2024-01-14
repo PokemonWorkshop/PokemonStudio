@@ -47,7 +47,7 @@ export const EvolutionEditor = forwardRef<EditorHandlingClose, Props>(({ evoluti
   });
 
   const inputValidityEnsured = () => {
-    if (state.evolveTo === '__undef__' && evolutionIndex !== 0) return false;
+    if (state.evolveTo === '__undef__' && evolutionIndex !== 0 && !state.isMega) return false;
     if (areConditionValid()) return true;
     Object.values(inputRefs.current).forEach((input) => input && (!input.validity.valid || input.validity.valueMissing) && input.focus());
     return false;
@@ -136,7 +136,7 @@ export const EvolutionEditor = forwardRef<EditorHandlingClose, Props>(({ evoluti
           </SubEditorTopButtonContainer>
           <SubEditorSeparator parentEditorHasScrollBar />
           <Editor type="creation" title={t('additionalEvolution')}>
-            <SecondaryButtonWithPlusIcon onClick={onAddEvolution} disabled={state.evolveTo === '__undef__'}>
+            <SecondaryButtonWithPlusIcon onClick={onAddEvolution} disabled={state.evolveTo === '__undef__' && !state.isMega}>
               {t('addNewEvolution')}
             </SecondaryButtonWithPlusIcon>
           </Editor>
