@@ -11,14 +11,13 @@ import { useTextPage } from '@utils/usePage';
 
 export const TextsPage = () => {
   const dialogsRef: TextDialogsRef = useOutletContext();
-
-  const { textInfo, cannotDelete } = useTextPage();
+  const { textInfo, cannotDelete, disabledTranslation } = useTextPage();
   const { t } = useTranslation('text_management');
 
   return (
     <DataBlockWrapper>
       <TextFrame textInfo={textInfo} dialogsRef={dialogsRef} />
-      <TextList dialogsRef={dialogsRef} />
+      <TextList dialogsRef={dialogsRef} disabledTranslation={disabledTranslation} />
       <DataBlockWithAction size="full" title={t('deleting')}>
         <DeleteButtonWithIcon onClick={() => dialogsRef.current?.openDialog('deletion', true)} disabled={cannotDelete}>
           {t('delete')}
