@@ -9,7 +9,7 @@ import { StudioCreatureForm } from '@modelEntities/creature';
 import { TitleResource } from './TitleResource';
 import { ResourceWrapper } from './ResourceWrapper';
 import { useResource } from '@utils/useResource';
-import { MusicResourceContainer } from '@components/resources';
+import { MusicNoResourceContainer, MusicResourceContainer } from '@components/resources';
 import styled from 'styled-components';
 
 const CryResourceContainer = styled(MusicResourceContainer)`
@@ -17,7 +17,10 @@ const CryResourceContainer = styled(MusicResourceContainer)`
   margin: 0 8px 0 8px;
 `;
 
-const CryNoResourceContainer = styled(CryResourceContainer)``;
+const CryNoResourceContainer = styled(MusicNoResourceContainer)`
+  width: 504px;
+  margin: 0 8px 0 8px;
+`;
 
 const isNoResource = (form: StudioCreatureForm, resource: CreatureFormResourcesPath, isFemale: boolean) => {
   return isFemale ? form.resources[resource] === undefined : form.resources[resource]?.length === 0;
