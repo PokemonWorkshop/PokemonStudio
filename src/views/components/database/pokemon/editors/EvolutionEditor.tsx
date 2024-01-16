@@ -47,7 +47,7 @@ export const EvolutionEditor = forwardRef<EditorHandlingClose, Props>(({ evoluti
   });
 
   const inputValidityEnsured = () => {
-    if (state.evolveTo === '__undef__' && evolutionIndex !== 0 && !state.isMega) return false;
+    if (state.evolveTo === '__undef__' && !state.isMega && evolutionIndex !== 0) return false;
     if (areConditionValid()) return true;
     Object.values(inputRefs.current).forEach((input) => input && (!input.validity.valid || input.validity.valueMissing) && input.focus());
     return false;
@@ -106,7 +106,7 @@ export const EvolutionEditor = forwardRef<EditorHandlingClose, Props>(({ evoluti
                 />
               )}
             </InputWithTopLabelContainer>
-            {state.evolveTo !== '__undef__' && creatures[state.evolveTo]?.forms.length > 1 && (
+            {state.evolveTo !== '__undef__' && !state.isMega && creatures[state.evolveTo]?.forms.length > 1 && (
               <InputWithTopLabelContainer>
                 <Label>{t('form')}</Label>
                 <SelectPokemonForm
