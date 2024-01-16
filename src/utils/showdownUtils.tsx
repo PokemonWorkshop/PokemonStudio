@@ -68,6 +68,9 @@ const buildExpandPokemonSetup = (set: PokemonSet, from: string) => {
     setupFields.push({ type: 'ivs', value: formatStats(set.ivs, 31) });
     setupFields.push({ type: 'loyalty', value: set.happiness ?? 70 });
     setupFields.push({ type: 'originalTrainerId', value: 0 });
+
+    const rarenessField = setupFields.find((field) => field.type === 'rareness');
+    if (rarenessField) rarenessField.value = 0;
   }
 
   return setupFields.filter((field) => field.value !== undefined);
