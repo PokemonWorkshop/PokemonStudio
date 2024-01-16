@@ -4,6 +4,7 @@ import path from 'path';
 import { stringify } from 'csv-stringify/sync';
 import { SavingText } from '@utils/SavingUtils';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
+import { getTextPath } from '@utils/textManagement';
 
 export type SaveProjectTextsInput = { path: string; texts: SavingText };
 
@@ -12,7 +13,7 @@ const saveProjectTexts = async (payload: SaveProjectTextsInput) => {
   return Promise.all(
     payload.texts.map(async (sd) => {
       const file = Number(sd.savingFilename);
-      const filePath = path.join(payload.path, file >= 200000 ? 'Data/Text/Studio' : 'Data/Text/Dialogs', file.toString() + '.csv');
+      const filePath = path.join(payload.path, getTextPath(file), file.toString() + '.csv');
       if (sd.savingAction === 'DELETE' && fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
       } else if (sd.data !== undefined) {
