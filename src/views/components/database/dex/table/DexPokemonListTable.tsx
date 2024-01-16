@@ -37,7 +37,8 @@ export const DexPokemonListTable = ({ dex, dialogsRef, setCreatureIndex }: DexPo
   const { t } = useTranslation(['database_dex', 'database_pokemon', 'database_types']);
   const [dragOn, setDragOn] = useState(false);
   const [scrollToRow, setScrollToRow] = useState<number | undefined>(undefined);
-  const currentEditedDex = useMemo(() => cloneEntity(dex), [dex]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const currentEditedDex = useMemo(() => cloneEntity(dex), [dex, dex.creatures]);
 
   useMemo(() => {
     setScrollToRow(0);
