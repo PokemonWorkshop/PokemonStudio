@@ -71,7 +71,6 @@
   },
   "dependencies": {
     "@pkmn/sim": "^0.8.2",
-    "axios": "^1.6.5",
     "csv-parse": "^5.3.6",
     "csv-stringify": "^6.3.0",
     "electron-is-dev": "^2.0.0",
