@@ -1,10 +1,10 @@
 import log from 'electron-log';
 import fs from 'fs';
 import path from 'path';
-import crypto from 'crypto';
 import type { DbSymbol } from '@modelEntities/dbSymbol';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import { Sha1 } from '@modelEntities/sha1';
+import { calculateFileSha1 } from './calculateFileSha1';
 
 export type CheckMapsModifiedMethod = 'mtime' | 'sha1';
 type StudioMapBackend = {
@@ -12,26 +12,6 @@ type StudioMapBackend = {
   mtime: number;
   sha1: Sha1;
   tiledFilename: string;
-};
-
-export const calculateFileSha1 = async (filePath: string): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const hash = crypto.createHash('sha1');
-    const stream = fs.createReadStream(filePath, 'utf8');
-
-    stream.on('data', (data) => {
-      hash.update(data);
-    });
-
-    stream.on('end', () => {
-      const sha1 = hash.digest('hex');
-      resolve(sha1);
-    });
-
-    stream.on('error', (error) => {
-      reject(error);
-    });
-  });
 };
 
 const getFileStats = (filePath: string): Promise<fs.Stats> => {

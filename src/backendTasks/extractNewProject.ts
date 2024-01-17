@@ -24,7 +24,6 @@ const extractNewProject = async (payload: ExtractNewProjectInput, event: IpcMain
     onEntry: (_, zipFile: ZipFile) => {
       const progress = Number(((countEntry.value / zipFile.entryCount) * 100).toFixed(1));
       sendProgress(event, channels, { step: progress, total: 100, stepText: '' });
-      event.sender.send('extract-new-project/progress', { step: progress, total: 100, stepText: '' });
       countEntry.value++;
     },
   });

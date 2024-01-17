@@ -88,9 +88,12 @@ typings/
 # Electron-Forge
 out/
 
+# PSDK binaries
 psdk-binaries/lib
 psdk-binaries/ruby_builtin_dlls
 psdk-binaries/*.dll
 psdk-binaries/*.exe
 psdk-binaries/psdk.bat
 psdk-binaries/ruby-dist
+
+new-project.zip

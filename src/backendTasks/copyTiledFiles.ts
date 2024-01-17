@@ -4,7 +4,7 @@ import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import { MapToImport } from '@utils/useMapImport/types';
 import path from 'path';
 import { listResources } from 'ts-tiled-converter';
-import { calculateFileSha1 } from './checkMapsModified';
+import { calculateFileSha1 } from './calculateFileSha1';
 
 export type CopyTiledFilesInput = { projectPath: string; tiledSrcPath: string; tiledMaps: string };
 export type CopyTiledFilesOutput = { tiledMaps: string };
