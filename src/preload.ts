@@ -38,7 +38,7 @@ import type { ReadRMXPMapInput, ReadRMXPMapOutput } from './backendTasks/readRMX
 import type { SaveRMXPMapInfoInput } from './backendTasks/saveRMXPMapInfo';
 import type { OpenTiledPayload } from './backendTasks/openTiled';
 import type { DownloadFileInput } from './backendTasks/downloadFile';
-import type { RequestFileInput, RequestFileOutput } from './backendTasks/requestFile';
+import type { RequestJsonInput, RequestJsonOutput } from './backendTasks/requestJson';
 import type { CheckDownloadNewProjectInput, CheckDownloadNewProjectOutput } from './backendTasks/checkDownloadNewProject';
 
 contextBridge.exposeInMainWorld('api', {
@@ -139,7 +139,7 @@ contextBridge.exposeInMainWorld('api', {
   saveRMXPMapInfo: defineBackendTask(ipcRenderer, 'save-rmxp-map-info'),
   openTiled: defineBackendTask(ipcRenderer, 'open-tiled'),
   downloadFile: defineBackendTask(ipcRenderer, 'download-file'),
-  requestFile: defineBackendTask(ipcRenderer, 'request-file'),
+  requestJson: defineBackendTask(ipcRenderer, 'request-json'),
   checkDownloadNewProject: defineBackendTask(ipcRenderer, 'check-download-new-project'),
 });
 
@@ -223,7 +223,7 @@ declare global {
       saveRMXPMapInfo: BackendTaskWithGenericErrorAndNoProgress<SaveRMXPMapInfoInput, AnyObj>;
       openTiled: BackendTaskWithGenericErrorAndNoProgress<OpenTiledPayload, AnyObj>;
       downloadFile: BackendTaskWithGenericError<DownloadFileInput, AnyObj, GenericBackendProgress>;
-      requestFile: BackendTaskWithGenericErrorAndNoProgress<RequestFileInput, RequestFileOutput>;
+      requestJson: BackendTaskWithGenericErrorAndNoProgress<RequestJsonInput, RequestJsonOutput>;
       checkDownloadNewProject: BackendTaskWithGenericErrorAndNoProgress<CheckDownloadNewProjectInput, CheckDownloadNewProjectOutput>;
     };
   }
