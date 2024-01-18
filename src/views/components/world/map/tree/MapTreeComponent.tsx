@@ -174,6 +174,8 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
     const openMenu = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
       event.preventDefault();
       event.stopPropagation();
+      if (isRMXPMode) return;
+
       setMapInfoSelected(mapInfo[item.id]);
       // timeout to wait that the mapinfo selected has been taken into account
       setTimeout(() => buildOnClick(event, true));
