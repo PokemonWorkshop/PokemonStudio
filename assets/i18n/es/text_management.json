@@ -15,7 +15,7 @@
   "deletion_of": "Borrado de archivo de textos",
   "deletion_message": "Estás a punto de borrar permanentemente el archivo de textos « {{name}} »",
   "name": "Nombre",
-  "example_name": "Frases de victoria",
+  "example_name": "Ej: Nombres de criaturas",
   "description": "Descripción",
   "example_description": "Descripción del archivo de textos",
   "other_data": "Otros datos",

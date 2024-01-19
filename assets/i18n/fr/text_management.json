@@ -15,7 +15,7 @@
   "deletion_of": "Suppression du fichier de textes",
   "deletion_message": "Vous êtes sur le point de supprimer définitivement le fichier de textes «\u00a0{{name}}\u00a0».",
   "name": "Nom",
-  "example_name": "Phrases de victoire",
+  "example_name": "Ex : Noms des créatures",
   "description": "Description",
   "example_description": "Description du fichier de textes",
   "other_data": "Autres données",
