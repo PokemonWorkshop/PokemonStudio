@@ -72,7 +72,7 @@ const createWindow = async () => {
     return path.join(RESOURCES_PATH, ...paths);
   };
 
-  registerElectronProtocolWhenAppRead(RESOURCES_PATH);
+  registerElectronProtocolWhenAppRead();
 
   mainWindow = new BrowserWindow({
     show: false,

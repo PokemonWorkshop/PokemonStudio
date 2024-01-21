@@ -12,8 +12,8 @@ const config: ForgeConfig = {
   packagerConfig: {
     icon: './assets/icon',
     executableName: process.platform !== 'linux' ? undefined : 'pokemon-studio',
-    extraResource: ['new-project.zip', 'psdk-binaries', 'app-update.yml'],
-    name: process.platform === 'darwin' ? "Pokemon Studio" : undefined
+    extraResource: ['new-project.zip', 'psdk-binaries', 'app-update.yml', 'placeholder.svg'],
+    name: process.platform === 'darwin' ? 'Pokemon Studio' : undefined,
   },
   rebuildConfig: {},
   makers: [
