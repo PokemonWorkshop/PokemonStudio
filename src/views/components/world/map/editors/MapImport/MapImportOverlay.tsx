@@ -2,8 +2,11 @@ import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import React from 'react';
 import { MapImport } from './MapImport';
+import { DialogRefData } from '@utils/useDialogsRef';
 
 export type MapImportEditorTitle = 'import';
+export type MapImportDialogsRef = React.RefObject<DialogRefData<MapImportEditorTitle>>;
+
 type MapImportOverlayProps = {
   closeParentDialog: () => void;
 };

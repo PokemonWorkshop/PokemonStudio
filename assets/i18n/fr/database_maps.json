@@ -45,7 +45,7 @@
   "deletion_folder_of": "Suppression du dossier",
   "deletion_folder_message": "Vous êtes sur le point de supprimer définitivement le dossier «\u00a0{{folder}}\u00a0» et toutes les cartes qu'il contient.",
   "import_tiled_maps": "Importer des cartes Tiled",
-  "import": "Importer",
+  "import": "Importer des cartes",
   "import_select_folder": "Sélectionnez le dossier contenant les cartes à importer",
   "import_select_maps": "Sélectionnez les fichiers à importer",
   "import_error": "Certaines cartes ne peuvent pas être importées.",

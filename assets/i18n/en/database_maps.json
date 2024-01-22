@@ -45,7 +45,7 @@
   "deletion_folder_of": "Deleting the folder",
   "deletion_folder_message": "You are about to permanently delete the folder «\u00a0{{folder}}\u00a0» and all the maps it contains.",
   "import_tiled_maps": "Import Tiled maps",
-  "import": "Import",
+  "import": "Import maps",
   "import_select_folder": "Select the folder containing the maps to import",
   "import_select_maps": "Select the files to import",
   "import_error": "Some maps cannot be imported.",

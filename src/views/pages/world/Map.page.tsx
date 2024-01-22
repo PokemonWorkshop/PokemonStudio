@@ -14,6 +14,7 @@ import { DeleteButtonWithIcon, SecondaryButton } from '@components/buttons';
 import { BaseIcon } from '@components/icons/BaseIcon';
 import theme from '@src/AppTheme';
 import { useOpenTiled } from '@utils/useOpenTiled';
+import { MapImportEditorTitle, MapImportOverlay } from '@components/world/map/editors/MapImport/MapImportOverlay';
 
 const MapPageStyle = styled.div`
   display: flex;
@@ -27,6 +28,7 @@ const MapPageStyle = styled.div`
 
 export const MapPage = () => {
   const dialogsRef = useDialogsRef<MapEditorAndDeletionKeys>();
+  const dialogsMapImportRef = useDialogsRef<MapImportEditorTitle>();
   const { map, hasMap, hasMapModified, isRMXPMode, disabledOpenTiled } = useMapPage();
   const openTiled = useOpenTiled();
   const { t } = useTranslation('database_maps');
@@ -72,9 +74,10 @@ export const MapPage = () => {
           </PageDataConstrainerStyle>
         </PageContainerStyle>
       ) : (
-        !isRMXPMode && <MapEmptyState dialogsRef={dialogsRef} />
+        !isRMXPMode && <MapEmptyState dialogsRef={dialogsRef} dialogsMapImportRef={dialogsMapImportRef} />
       )}
       <MapEditorOverlay ref={dialogsRef} />
+      <MapImportOverlay ref={dialogsMapImportRef} closeParentDialog={() => {}} />
     </MapPageStyle>
   );
 };

@@ -4,8 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ReactComponent as MapIcon } from '@assets/icons/navigation/map-icon.svg';
 import { MapDialogsRef } from './editors/MapEditorOverlay';
 import { PrimaryButton, SecondaryButton } from '@components/buttons';
-import { useDialogsRef } from '@utils/useDialogsRef';
-import { MapImportEditorTitle, MapImportOverlay } from './editors/MapImport/MapImportOverlay';
+import { MapImportDialogsRef } from './editors/MapImport/MapImportOverlay';
 import styled from 'styled-components';
 
 const MapEmptyStateContainer = styled.div`
@@ -30,11 +29,11 @@ const MapEmptyStateContainer = styled.div`
 
 type MapEmptyStateProps = {
   dialogsRef: MapDialogsRef;
+  dialogsMapImportRef: MapImportDialogsRef;
 };
 
-export const MapEmptyState = ({ dialogsRef }: MapEmptyStateProps) => {
+export const MapEmptyState = ({ dialogsRef, dialogsMapImportRef }: MapEmptyStateProps) => {
   const { t } = useTranslation('database_maps');
-  const dialogsMapImportRef = useDialogsRef<MapImportEditorTitle>();
 
   return (
     <PageEmptyState title={t('title_empty_state')} icon={<MapIcon />} description={t('description_empty_state')}>
@@ -43,7 +42,6 @@ export const MapEmptyState = ({ dialogsRef }: MapEmptyStateProps) => {
         <SecondaryButton onClick={() => dialogsMapImportRef.current?.openDialog('import', true)}>{t('import')}</SecondaryButton>
         <span className="helper">{t('helper_empty_state')}</span>
       </MapEmptyStateContainer>
-      <MapImportOverlay ref={dialogsMapImportRef} closeParentDialog={() => {}} />
     </PageEmptyState>
   );
 };
