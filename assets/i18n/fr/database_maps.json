@@ -45,7 +45,7 @@
   "deletion_folder_of": "Suppression du dossier",
   "deletion_folder_message": "Vous êtes sur le point de supprimer définitivement le dossier «\u00a0{{folder}}\u00a0» et toutes les cartes qu'il contient.",
   "import_tiled_maps": "Importer des cartes Tiled",
-  "import": "Importer",
+  "import": "Importer des cartes",
   "import_select_folder": "Sélectionnez le dossier contenant les cartes à importer",
   "import_select_maps": "Sélectionnez les fichiers à importer",
   "import_error": "Certaines cartes ne peuvent pas être importées.",
@@ -72,5 +72,8 @@
   "message_config_open_tiled_error": "Le chemin d'installation de Tiled n'a pas été configuré.",
   "message_open_tiled_error": "Une erreur est survenue lors de l'ouverture de Tiled.",
   "close": "Fermer",
-  "configure_tiled_path": "Configurer le chemin d'installation"
+  "configure_tiled_path": "Configurer le chemin d'installation",
+  "title_empty_state": "Commencez à créer une carte !",
+  "description_empty_state": "Vous n'avez pas encore de carte. Vous pouvez créer une nouvelle carte ou importer des cartes existantes.",
+  "helper_empty_state": "Si vous avez un projet Tiled existant, vous devez d'abord importer toutes vos cartes."
 }
