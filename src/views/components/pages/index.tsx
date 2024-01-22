@@ -4,3 +4,4 @@ export { PageTemplate } from './PageTemplate';
 export { SubPageTitle } from './SubPageTitle';
 export { SubPageTitleWithIcon } from './SubPageTitleWithIcon';
 export { PageEditor } from './PageEditor';
+export { PageEmptyState } from './PageEmptyState';

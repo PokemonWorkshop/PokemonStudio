@@ -72,5 +72,8 @@
   "message_config_open_tiled_error": "The Tiled installation path has not been configured.",
   "message_open_tiled_error": "An error has occurred while opening Tiled.",
   "close": "Close",
-  "configure_tiled_path": "Configure installation path"
+  "configure_tiled_path": "Configure installation path",
+  "title_empty_state": "Start creating a map!",
+  "description_empty_state": "You don't have any map yet. You can create a new map or import existing ones.",
+  "helper_empty_state": "If you have an existing Tiled project, you need to import all your maps first."
 }
