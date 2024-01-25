@@ -1,5 +1,6 @@
 import log from 'electron-log';
 import fs from 'fs';
+import fsPromises from 'fs/promises';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import { MapToImport } from '@utils/useMapImport/types';
 import path from 'path';
@@ -106,6 +107,15 @@ const updateMetadata = async (tiledMap: MapToImport, mapsFolderPath: string) => 
   tiledMap.sha1 = sha1;
 };
 
+const copyRulesFile = async (tiledSrcPath: string, mapsFolderPath: string) => {
+  const rulesSrcPath = path.join(tiledSrcPath, 'rules.txt');
+  const rulesDestPath = path.join(mapsFolderPath, 'rules.txt');
+  if (!fs.existsSync(rulesSrcPath)) return;
+  if (fs.existsSync(rulesDestPath)) return;
+
+  await fsPromises.copyFile(rulesSrcPath, path.join(mapsFolderPath, 'rules.txt'));
+};
+
 const createTargetFolders = (mapsFolderPath: string, tilesetsFolderPath: string, assetsFolderPath: string) => {
   if (!fs.existsSync(mapsFolderPath)) {
     fs.mkdirSync(mapsFolderPath);
@@ -141,6 +151,8 @@ const copyTiledFiles = async (payload: CopyTiledFilesInput) => {
     updateTsxFile(tiledMap, mapsFolderPath, tilesetsFolderPath);
     await updateMetadata(tiledMap, mapsFolderPath);
   }, Promise.resolve());
+
+  await copyRulesFile(payload.tiledSrcPath, mapsFolderPath);
 
   log.info('copy-tiled-files/success', { projectPath: payload.projectPath, tiledSrcPath: payload.tiledSrcPath });
   return { tiledMaps: JSON.stringify(tiledMaps) };
