@@ -141,7 +141,7 @@ const copyTiledFiles = async (payload: CopyTiledFilesInput) => {
   const tilesetsFolderPath = path.join(projectPath, TILESETS_FOLDER);
   const assetsFolderPath = path.join(projectPath, ASSETS_FOLDER);
 
-  createTargetFolders(mapsFolderPath, tilesetsFolderPath, assetsFolderPath);
+  await createTargetFolders(mapsFolderPath, tilesetsFolderPath, assetsFolderPath);
 
   const tiledMaps: MapToImport[] = JSON.parse(payload.tiledMaps);
   const originalTiledMapPaths = tiledMaps.map(({ path }) => path);
