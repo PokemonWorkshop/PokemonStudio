@@ -74,8 +74,8 @@ export const processSavedMaps = async (projectDataPath: string, savedMaps: strin
   try {
     if (savedMaps.length === 0) return;
 
-    const newSavedMaps = savedMaps.map((s) => JSON.parse(s) as StudioMap);
-    if (newSavedMaps.some(({ tileMetadata }) => !tileMetadata)) return;
+    const newSavedMaps = savedMaps.map((s) => JSON.parse(s) as StudioMap).filter(({ tileMetadata }) => !!tileMetadata);
+    if (newSavedMaps.length === 0) return;
 
     const filteredMaps = filterOutMaps(newSavedMaps);
     const tilesets = getAllMapTilesets(projectDataPath, filteredMaps, newSavedMaps);
