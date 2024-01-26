@@ -22,7 +22,7 @@ const getResources = (path: string) => {
   return resources;
 };
 
-const copyTmxFile = async (tiledMap: MapToImport, mapsFolderPath: string, tiledSrcPath: string) => {
+const copyTmxFile = async (tiledMap: { path: string }, mapsFolderPath: string, tiledSrcPath: string) => {
   const tiledFilePath = tiledMap.path;
   const relativePath = path.dirname(path.relative(tiledSrcPath, tiledFilePath));
   const destFolderPath = path.join(mapsFolderPath, relativePath);
@@ -30,7 +30,9 @@ const copyTmxFile = async (tiledMap: MapToImport, mapsFolderPath: string, tiledS
     await fsPromises.mkdir(destFolderPath, { recursive: true });
   }
   const destPath = path.join(destFolderPath, path.basename(tiledFilePath));
-  await fsPromises.copyFile(tiledFilePath, destPath);
+  if (!fs.existsSync(destPath)) {
+    await fsPromises.copyFile(tiledFilePath, destPath);
+  }
   tiledMap.path = path.relative(mapsFolderPath, destPath).replaceAll('\\', '/').replaceAll('.tmx', '');
 };
 
@@ -74,7 +76,7 @@ const copyAssetFile = async (tiledMap: MapToImport, assetsFolderPath: string, ti
   }, Promise.resolve());
 };
 
-const updateTmxFile = async (tiledMap: MapToImport, mapsFolderPath: string, originalTiledMapPath: string) => {
+const updateTmxFile = async (tiledMap: { path: string }, mapsFolderPath: string, originalTiledMapPath: string) => {
   const tmxFilePath = `${path.join(mapsFolderPath, path.basename(tiledMap.path))}.tmx`;
   const resources = getResources(originalTiledMapPath);
 
@@ -120,6 +122,16 @@ const copyRulesFile = async (tiledSrcPath: string, mapsFolderPath: string) => {
 
   log.info('copy-tiled-files/process', rulesSrcPath);
   await fsPromises.copyFile(rulesSrcPath, rulesDestPath);
+  const rules = (await fsPromises.readFile(rulesDestPath)).toString();
+  const lines = rules.split(/\r\n|\r|\n/);
+  await lines.reduce(async (lastPromise, line) => {
+    await lastPromise;
+    if (line.startsWith('#')) return;
+
+    const tiledMap = { path: path.join(tiledSrcPath, line) };
+    await copyTmxFile(tiledMap, mapsFolderPath, tiledSrcPath);
+    await updateTmxFile(tiledMap, mapsFolderPath, path.join(tiledSrcPath, line));
+  }, Promise.resolve());
 };
 
 const createTargetFolders = async (mapsFolderPath: string, tilesetsFolderPath: string, assetsFolderPath: string) => {
