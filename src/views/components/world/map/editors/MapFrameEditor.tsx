@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useState } from 'react';
-import { EditorWithCollapse } from '@components/editor';
+import { Editor } from '@components/editor';
 import { useTranslation } from 'react-i18next';
 import { useMapPage } from '@utils/usePage';
 import { useUpdateMap } from './useUpdateMap';
@@ -45,8 +45,7 @@ export const MapFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
     setText(MAP_DESCRIPTION_TEXT_ID, map.id, descriptionRef.current.value);
   };
 
-  const canClose = () =>
-    !!nameRef.current?.value && !dialogsRef.current?.currentDialog && !!stepsAverageRef.current?.validity.valid && !!tiledFilename;
+  const canClose = () => !!nameRef.current?.value && !dialogsRef.current?.currentDialog && !!stepsAverageRef.current?.validity.valid;
   const onClose = () => {
     if (!nameRef.current || !descriptionRef.current || !stepsAverageRef.current || !canClose()) return;
 
@@ -83,7 +82,7 @@ export const MapFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   };
 
   return (
-    <EditorWithCollapse type="edit" title={t('information')}>
+    <Editor type="edit" title={t('information')}>
       <InputContainer size="l">
         <PaddedInputContainer size="m">
           <InputWithTopLabelContainer>
@@ -105,9 +104,7 @@ export const MapFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
             <Input type="number" name="steps-average" min="1" max="999" defaultValue={map.stepsAverage} ref={stepsAverageRef} />
           </InputWithLeftLabelContainer>
           <InputWithTopLabelContainer>
-            <Label htmlFor="tiled-file" required>
-              {t('map_made_tiled')}
-            </Label>
+            <Label htmlFor="tiled-file">{t('map_made_tiled')}</Label>
             {!tiledFilename ? (
               <DropInput
                 name={t('tiled_file')}
@@ -130,7 +127,7 @@ export const MapFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
         </PaddedInputContainer>
       </InputContainer>
       <MapTranslationOverlay map={map} onClose={onTranslationOverlayClose} ref={dialogsRef} />
-    </EditorWithCollapse>
+    </Editor>
   );
 });
 MapFrameEditor.displayName = 'MapFrameEditor';
