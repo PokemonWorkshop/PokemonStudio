@@ -37,7 +37,10 @@ const copyTmxFile = async (tiledMap: { path: string }, mapsFolderPath: string, t
 };
 
 const copyTsxFile = async (tiledMap: MapToImport, tilesetsFolderPath: string, tiledSrcPath: string) => {
-  return tiledMap.tileMetadata.tilesets.reduce(async (lastPromise, tileset) => {
+  const tileMetadata = tiledMap.tileMetadata;
+  if (!tileMetadata) return;
+
+  return tileMetadata.tilesets.reduce(async (lastPromise, tileset) => {
     await lastPromise;
 
     const tilesetPath = tileset.source;
