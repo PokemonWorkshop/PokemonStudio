@@ -12,6 +12,7 @@ import { useMapImport } from '@utils/useMapImport';
 import { useLoaderRef } from '@utils/loaderContext';
 import { DropDownOption } from '@components/StudioDropDown';
 import { useProjectDataReadonly } from '@utils/useProjectData';
+import type { RMXPMapInfo } from '@utils/useMapImport/types';
 
 const MapImportContainer = styled.div`
   display: flex;
@@ -78,7 +79,7 @@ export const MapImport = ({ closeDialog, closeParentDialog }: MapImportProps) =>
   const [hasError, setHasError] = useState<boolean>(false);
   const [mapInfoOptions, setMapInfoOptions] = useState<DropDownOption[]>([{ value: 'new', label: t('new') }]);
   const [mapIdsUsed, setMapIdsUsed] = useState<number[]>([]);
-  const [rmxpMapIds, setRmxpMapIds] = useState<number[]>([]);
+  const [rmxpMapInfo, setRmxpMapInfo] = useState<RMXPMapInfo[]>([]);
   const amountMapShouldBeImport = useMemo(() => files.filter((file) => file.shouldBeImport).length, [files]);
 
   const getSubTitle = () => {
@@ -127,14 +128,19 @@ export const MapImport = ({ closeDialog, closeParentDialog }: MapImportProps) =>
       case 'load_rmxp_map_info':
         return window.api.readRMXPMapInfo(
           { projectPath: globalState.projectPath! },
-          ({ rmxpMapInfo }) => {
-            const options = rmxpMapInfo.map(({ id, name }) => ({ value: id.toString(), label: `${name} (${id})` }));
+          ({ rmxpMapInfo: mapInfo }) => {
+            const options = mapInfo.map(({ id, name }) => ({ value: id.toString(), label: `${name} (${id})` }));
             const mapIds = Object.values(maps).map((map) => map.id);
             setMapInfoOptions((mapInfoOptions) => {
               mapInfoOptions.push(...options.filter((option) => option.value !== 'new' && !mapIds.includes(Number(option.value))));
               return mapInfoOptions;
             });
-            setRmxpMapIds(rmxpMapInfo.map(({ id }) => id));
+            setRmxpMapInfo(
+              mapInfo.map(({ id, name }) => ({
+                id,
+                name,
+              }))
+            );
             setState('select_files');
           },
           ({ errorMessage }) => {
@@ -145,7 +151,7 @@ export const MapImport = ({ closeDialog, closeParentDialog }: MapImportProps) =>
       case 'import': {
         const filesToImport = files.filter((file) => file.shouldBeImport);
         mapImport(
-          { filesToImport, tiledFilesSrcPath: folderPath!, rmxpMapIds },
+          { filesToImport, tiledFilesSrcPath: folderPath!, rmxpMapInfo },
           () => {
             // we wait the end of the close dialog animation to close the loader and show a notification
             setTimeout(() => {
@@ -210,7 +216,7 @@ export const MapImport = ({ closeDialog, closeParentDialog }: MapImportProps) =>
                 setFolderPath(undefined);
                 setFiles([]);
                 setMapInfoOptions([{ value: 'new', label: t('new') }]);
-                setRmxpMapIds([]);
+                setRmxpMapInfo([]);
                 setState('select_folder');
                 setHasError(false);
               }}

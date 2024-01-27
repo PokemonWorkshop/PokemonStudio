@@ -59,6 +59,7 @@
   "no_files_found": "No file found",
   "reading_data_tiled_files": "Reading data from Tiled maps",
   "copy_tiled_files": "Copy the Tiled maps to the project folder",
+  "add_missing_rmxp_maps": "Addition of missing RPG Maker XP maps",
   "create_new_maps": "Creating new maps",
   "import_success_message_singular": "The map has been successfully imported.",
   "import_success_message_plurial": "The maps has been successfully imported.",
