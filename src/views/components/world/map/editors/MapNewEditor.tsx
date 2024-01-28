@@ -63,7 +63,7 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
   useEditorHandlingClose(ref);
 
   const onClickNew = () => {
-    if (!name || !descriptionRef.current || !tiledFilename) return;
+    if (!name || !descriptionRef.current) return;
 
     const newMap = createMap(maps, stepsAverage, tiledFilename, bgm, bgs);
     const dbSymbol = newMap.dbSymbol;
@@ -88,7 +88,7 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
   };
 
   const checkDisabled = () => {
-    return !name || stepsAverage < 1 || stepsAverage > 999 || isNaN(stepsAverage) || !tiledFilename;
+    return !name || stepsAverage < 1 || stepsAverage > 999 || isNaN(stepsAverage);
   };
 
   const onChangeStepsAverage = (value: string) => {
@@ -131,9 +131,7 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
               />
             </InputWithLeftLabelContainer>
             <InputWithTopLabelContainer>
-              <Label htmlFor="tiled-file" required>
-                {t('database_maps:map_made_tiled')}
-              </Label>
+              <Label htmlFor="tiled-file">{t('database_maps:map_made_tiled')}</Label>
               {!tiledFilename ? (
                 <DropInput
                   name={t('database_maps:tiled_file')}
