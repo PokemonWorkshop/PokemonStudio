@@ -66,9 +66,8 @@ export const PokemonFormNewEditor = forwardRef<EditorHandlingClose, Props>(({ cl
     if (newFormId <= 29 && creatures[form.babyDbSymbol]?.forms.find((f) => f.form === newFormId)) form.babyForm = newFormId;
     const updatedCreature = cloneEntity(creature);
     updatedCreature.forms = [...updatedCreature.forms, newForm].sort((a, b) => a.form - b.form) as typeof updatedCreature.forms; // The non-empty thing is confused by sort
-    const formIndex = updatedCreature.forms.findIndex((f) => f.form === newFormId);
     setEvolutionIndex(0);
-    setCreature({ [updatedCreature.dbSymbol]: updatedCreature }, { pokemon: { specie: updatedCreature.dbSymbol, form: formIndex } });
+    setCreature({ [updatedCreature.dbSymbol]: updatedCreature }, { pokemon: { specie: updatedCreature.dbSymbol, form: newFormId } });
     closeDialog();
   };
   const checkDisabled = () => type1 === '__undef__' || newFormId === -1;
