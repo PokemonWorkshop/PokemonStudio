@@ -12,6 +12,7 @@ const DEFAULT_BINDING: ProjectNewFunctionBinding = {
   onFailure: () => {},
   onSuccess: () => {},
 };
+const REPOSITORY_URL = 'https://github.com/PokemonWorkshop/PSDKTechnicalDemo/releases/latest/download';
 
 const languageTexts: Record<DefaultLanguageType, string> = {
   en: 'English',
@@ -71,9 +72,8 @@ export const useProjectNewProcessor = () => {
       },
       checkingNeedDownload: (state, setState) => {
         loaderRef.current.setProgress(3, 6, tl('creating_project_checking_need_download'));
-        // TODO: update url
         return window.api.checkDownloadNewProject(
-          { url: 'https://github.com/Palbolsky/LouesSoientLesOris/releases/latest/download/latest.json' },
+          { url: new URL('latest.json', REPOSITORY_URL).href },
           (output) => {
             if (output.needDownload) {
               return setState({ ...state, state: 'download', latestFile: { filename: output.filename, sha1: output.sha1 } });
@@ -85,10 +85,9 @@ export const useProjectNewProcessor = () => {
       },
       download: (state, setState) => {
         loaderRef.current.setProgress(4, 6, tl('creating_project_downloading', { progress: 0, speed: downloadSpeed(0, tl) }));
-        // TODO: update url
         return window.api.downloadFile(
           {
-            url: `https://github.com/Palbolsky/LouesSoientLesOris/releases/latest/download/${state.latestFile.filename}`,
+            url: new URL(state.latestFile.filename, REPOSITORY_URL).href,
             dest: { target: 'studio', filename: 'new-project.zip' },
             sha1: state.latestFile.sha1,
           },

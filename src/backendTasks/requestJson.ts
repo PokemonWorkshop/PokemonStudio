@@ -6,6 +6,10 @@ export type RequestJsonOutput = { json: unknown };
 
 export const requestJson = async (url: string) => {
   const response = await fetch(url);
+  const status = response.status;
+  if (status >= 400) {
+    throw new Error(`Error during request to ${url}. Status code: ${status}`);
+  }
   const json = await response.json();
   return json;
 };
