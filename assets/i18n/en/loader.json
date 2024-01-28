@@ -33,6 +33,8 @@
   "creating_project_opening_path": "Parent folder choice",
   "creating_project_checking": "Checking that the project does not exist",
   "creating_project_child_folder_exist_error": "The project already exists.",
+  "creating_project_checking_need_download": "Check for available updates",
+  "creating_project_downloading": "Download current archive... ({{progress}} % @ {{speed}}) ",
   "creating_project_extraction": "Extracting project files... ({{progress}} %)",
   "creating_project_configuration": "Generating project configuration",
   "importing_project_choose_project": "Choosing project file",
@@ -44,5 +46,7 @@
   "importing_not_import_studio_project": "You can not import a Pokémon Studio project.",
   "integrity_message": "{{count}} non-compliant files have been detected and have not been loaded. You can get more information by accessing the Pokémon Studio logs.",
   "failed_deserialize": "Failed to deserialize",
-  "error_project_version": "Your project was opened or created with a newer version of the application. Please update Pokémon Studio."
+  "error_project_version": "Your project was opened or created with a newer version of the application. Please update Pokémon Studio.",
+  "MB": "MB",
+  "KB": "KB"
 }

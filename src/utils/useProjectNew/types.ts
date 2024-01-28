@@ -1,4 +1,5 @@
 import type { StudioProject } from '@modelEntities/project';
+import type { LatestNewProject } from '@src/backendTasks/checkDownloadNewProject';
 
 export type DefaultLanguageType = 'en' | 'fr' | 'es';
 export type NewProjectData = Omit<StudioProject, 'studioVersion' | 'iconPath' | 'isTiledMode'> & {
@@ -15,6 +16,8 @@ export type ProjectNewStateObject =
   | { state: 'choosingDestinationFolder'; payload: ProjectNewPayload }
   | { state: 'checkingFolderExist'; payload: ProjectNewPayload; projectDirName: string }
   | { state: 'readingVersion'; payload: ProjectNewPayload; projectDirName: string }
+  | { state: 'checkingNeedDownload'; payload: ProjectNewPayload; projectDirName: string; studioVersion: string }
+  | { state: 'download'; payload: ProjectNewPayload; projectDirName: string; studioVersion: string; latestFile: LatestNewProject }
   | { state: 'extract'; payload: ProjectNewPayload; projectDirName: string; studioVersion: string }
   | { state: 'configure'; payload: ProjectNewPayload; projectDirName: string; studioVersion: string };
 

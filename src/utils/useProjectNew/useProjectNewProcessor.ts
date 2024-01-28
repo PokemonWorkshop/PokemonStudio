@@ -6,11 +6,13 @@ import type { DefaultLanguageType, ProjectNewFunctionBinding, ProjectNewStateObj
 import { DEFAULT_PROCESS_STATE, PROCESS_DONE_STATE, SpecialStateProcessors } from '@utils/useProcess';
 import { handleFailure } from './helpers';
 import { StudioLanguageConfig } from '@modelEntities/config';
+import { downloadSpeed } from '@utils/downloadSpeed';
 
 const DEFAULT_BINDING: ProjectNewFunctionBinding = {
   onFailure: () => {},
   onSuccess: () => {},
 };
+const REPOSITORY_URL = 'https://github.com/PokemonWorkshop/PSDKTechnicalDemo/releases/latest/download/';
 
 const languageTexts: Record<DefaultLanguageType, string> = {
   en: 'English',
@@ -47,7 +49,7 @@ export const useProjectNewProcessor = () => {
         );
       },
       checkingFolderExist: (state, setState) => {
-        loaderRef.current.setProgress(1, 4, tl('creating_project_checking'));
+        loaderRef.current.setProgress(1, 6, tl('creating_project_checking'));
         return window.api.fileExists(
           { filePath: state.projectDirName },
           ({ result }) => {
@@ -61,15 +63,44 @@ export const useProjectNewProcessor = () => {
         );
       },
       readingVersion: (state, setState) => {
-        loaderRef.current.setProgress(2, 4, tl('importing_project_reading_version'));
+        loaderRef.current.setProgress(2, 6, tl('importing_project_reading_version'));
         return window.api.getStudioVersion(
           {},
-          (projectVersion) => setState({ ...state, state: 'extract', studioVersion: projectVersion.studioVersion }),
+          (projectVersion) => setState({ ...state, state: 'checkingNeedDownload', studioVersion: projectVersion.studioVersion }),
           handleFailure(setState, binding)
         );
       },
+      checkingNeedDownload: (state, setState) => {
+        loaderRef.current.setProgress(3, 6, tl('creating_project_checking_need_download'));
+        return window.api.checkDownloadNewProject(
+          { url: new URL('latest.json', REPOSITORY_URL).href },
+          (output) => {
+            if (output.needDownload) {
+              return setState({ ...state, state: 'download', latestFile: { filename: output.filename, sha1: output.sha1 } });
+            }
+            setState({ ...state, state: 'extract' });
+          },
+          handleFailure(setState, binding)
+        );
+      },
+      download: (state, setState) => {
+        loaderRef.current.setProgress(4, 6, tl('creating_project_downloading', { progress: 0, speed: downloadSpeed(0, tl) }));
+        return window.api.downloadFile(
+          {
+            url: new URL(state.latestFile.filename, REPOSITORY_URL).href,
+            dest: { target: 'studio', filename: 'new-project.zip' },
+            sha1: state.latestFile.sha1,
+          },
+          () => setState({ ...state, state: 'extract' }),
+          handleFailure(setState, binding),
+          ({ step, stepText }) => {
+            const speed = downloadSpeed(Number(stepText), tl);
+            loaderRef.current.setProgress(4, 6, tl('creating_project_downloading', { progress: `${step.toFixed(1)}`, speed }));
+          }
+        );
+      },
       extract: (state, setState) => {
-        loaderRef.current.setProgress(3, 4, tl('creating_project_extraction', { progress: 0 }));
+        loaderRef.current.setProgress(5, 6, tl('creating_project_extraction', { progress: 0 }));
         return window.api.extractNewProject(
           { projectDirName: state.projectDirName },
           () => setState({ ...state, state: 'configure' }),
@@ -78,7 +109,7 @@ export const useProjectNewProcessor = () => {
         );
       },
       configure: (state, setState) => {
-        loaderRef.current.setProgress(4, 4, tl('creating_project_configuration'));
+        loaderRef.current.setProgress(6, 6, tl('creating_project_configuration'));
         const newProjectData = state.payload;
         return window.api.configureNewProject(
           {
@@ -89,7 +120,7 @@ export const useProjectNewProcessor = () => {
                   title: newProjectData.title,
                   studioVersion: state.studioVersion,
                   iconPath: 'project_icon.png',
-                  isTiledMode: null,
+                  isTiledMode: true,
                 },
                 null,
                 2

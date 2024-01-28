@@ -113,7 +113,6 @@
     ],
     "extraFiles": [
       "psdk-binaries",
-      "new-project.zip",
       "app-update.yml",
       "placeholder.svg"
     ],
