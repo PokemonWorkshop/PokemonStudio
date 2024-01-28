@@ -120,7 +120,7 @@ export const useProjectNewProcessor = () => {
                   title: newProjectData.title,
                   studioVersion: state.studioVersion,
                   iconPath: 'project_icon.png',
-                  isTiledMode: null,
+                  isTiledMode: true,
                 },
                 null,
                 2
