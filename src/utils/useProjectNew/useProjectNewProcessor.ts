@@ -12,7 +12,7 @@ const DEFAULT_BINDING: ProjectNewFunctionBinding = {
   onFailure: () => {},
   onSuccess: () => {},
 };
-const REPOSITORY_URL = 'https://github.com/PokemonWorkshop/PSDKTechnicalDemo/releases/latest/download';
+const REPOSITORY_URL = 'https://github.com/PokemonWorkshop/PSDKTechnicalDemo/releases/latest/download/';
 
 const languageTexts: Record<DefaultLanguageType, string> = {
   en: 'English',
