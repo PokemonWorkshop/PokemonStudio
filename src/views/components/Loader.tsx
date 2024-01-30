@@ -61,7 +61,7 @@ const LoaderCurrentActionText = styled.span`
 `;
 
 export const Loader = () => {
-  const { thingInProgress, step, total, stepText, errorTitle, errorText, successIcon, successTitle, successText, isOpen, isLogsAvailable, close } =
+  const { thingInProgress, step, total, stepText, errorTitle, errorText, successTitle, successText, isOpen, isLogsAvailable, close } =
     useLoaderContext();
   const { t } = useTranslation('loader');
 
@@ -76,8 +76,8 @@ export const Loader = () => {
     if (errorTitle) {
       return <ErrorDialog title={t(errorTitle)} message={errorText} isLogsAvailable={isLogsAvailable} onClose={close} />;
     }
-    if (successIcon && successTitle) {
-      return <SuccessDialog icon={successIcon} title={t(successTitle)} message={successText} onClose={close} />;
+    if (successTitle) {
+      return <SuccessDialog title={t(successTitle)} message={successText} onClose={close} />;
     }
     return (
       <div>

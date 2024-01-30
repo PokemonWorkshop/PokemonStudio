@@ -28,7 +28,6 @@ type LoaderState = {
   stepText: string;
   errorTitle?: LoaderErrorTitle;
   errorText: string;
-  successIcon?: IconName;
   successTitle?: LoaderSuccessTitle;
   successText: string;
   isOpen: boolean;
@@ -40,7 +39,7 @@ export type LoaderContext = LoaderState & {
   open: (thingInProgress: LoaderTitle, step: number, total: number, stepText: string) => void;
   setProgress: (step: number, total: number, stepText: string) => void;
   setError: (errorTitle: LoaderErrorTitle, errorText: string, isLogsAvailable?: boolean) => void;
-  setSuccess: (successIcon: IconName, successTitle: LoaderSuccessTitle, successText: string) => void;
+  setSuccess: (successTitle: LoaderSuccessTitle, successText: string) => void;
 };
 
 const LoaderContextHolder = createContext<LoaderContext>({
@@ -50,7 +49,6 @@ const LoaderContextHolder = createContext<LoaderContext>({
   stepText: '',
   errorTitle: undefined,
   errorText: '',
-  successIcon: undefined,
   successTitle: undefined,
   successText: '',
   isOpen: false,
@@ -59,7 +57,7 @@ const LoaderContextHolder = createContext<LoaderContext>({
   open: (_thingInProgress: LoaderTitle, _step: number, _total: number, _stepText: string) => null,
   setProgress: (_step: number, _total: number, _stepText: string) => null,
   setError: (_errorTitle: LoaderErrorTitle, _errorText: string, _isLogsAvailable?: boolean) => null,
-  setSuccess: (_successIcon: IconName, _successTitle: LoaderSuccessTitle, _successText: string) => null,
+  setSuccess: (_successTitle: LoaderSuccessTitle, _successText: string) => null,
 });
 
 export const useLoaderContext = () => useContext(LoaderContextHolder);
@@ -105,7 +103,6 @@ const useLoaderContextService = (): LoaderContext => {
         stepText,
         errorTitle: undefined,
         errorText: '',
-        successIcon: undefined,
         successTitle: undefined,
         successText: '',
         isOpen: true,
@@ -126,10 +123,9 @@ const useLoaderContextService = (): LoaderContext => {
         errorText,
         isLogsAvailable: isLogsAvailable || false,
       }),
-    setSuccess: (successIcon: IconName, successTitle: LoaderSuccessTitle, successText: string) => {
+    setSuccess: (successTitle: LoaderSuccessTitle, successText: string) => {
       setLoaderState({
         ...loaderState,
-        successIcon,
         successTitle,
         successText,
       });

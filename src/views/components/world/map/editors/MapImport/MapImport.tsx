@@ -154,7 +154,7 @@ export const MapImport = ({ closeDialog, closeParentDialog }: MapImportProps) =>
           { filesToImport, tiledFilesSrcPath: folderPath!, rmxpMapInfo },
           () => {
             // we wait the end of the close dialog animation to show the result
-            setTimeout(() => loaderRef.current.setSuccess('map', 'importing_tiled_maps_success', t('import_success_message')), 200);
+            setTimeout(() => loaderRef.current.setSuccess('importing_tiled_maps_success', t('import_success_message')), 200);
             closeDialog();
             closeParentDialog();
           },

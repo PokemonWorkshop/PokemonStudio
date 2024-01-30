@@ -7,30 +7,29 @@ import {
   MessageBoxTextContainer,
   MessageBoxTitleIconContainer,
 } from '@components/MessageBoxContainer';
-import theme from '@src/AppTheme';
-import { BaseIcon, IconName } from '@components/icons/BaseIcon';
-import { SecondaryButton } from './buttons';
+import { ReactComponent as SuccessIcon } from '@assets/icons/global/success.svg';
+import { DarkButton } from './buttons';
 import styled from 'styled-components';
 
 const SuccessDialogIconContainer = styled(MessageBoxIconContainer)`
   background-color: ${({ theme }) => theme.colors.successHover};
+  color: ${({ theme }) => theme.colors.successBase};
 `;
 
 type SuccessDialogProps = {
-  icon: IconName;
   title: string;
   message: string;
   onClose: () => void;
 };
 
-export const SuccessDialog = ({ icon, title, message, onClose }: SuccessDialogProps) => {
+export const SuccessDialog = ({ title, message, onClose }: SuccessDialogProps) => {
   const { t } = useTranslation('loader');
 
   return (
     <MessageBoxContainer>
       <MessageBoxTitleIconContainer>
         <SuccessDialogIconContainer>
-          <BaseIcon icon={icon} size="s" color={theme.colors.successBase} />
+          <SuccessIcon />
         </SuccessDialogIconContainer>
         <h3>{title}</h3>
       </MessageBoxTitleIconContainer>
@@ -38,7 +37,7 @@ export const SuccessDialog = ({ icon, title, message, onClose }: SuccessDialogPr
         <p>{message}</p>
       </MessageBoxTextContainer>
       <MessageBoxActionContainer>
-        <SecondaryButton onClick={onClose}>{t('close')}</SecondaryButton>
+        <DarkButton onClick={onClose}>{t('close')}</DarkButton>
       </MessageBoxActionContainer>
     </MessageBoxContainer>
   );
