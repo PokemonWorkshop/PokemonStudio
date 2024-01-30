@@ -19,6 +19,9 @@ export const GroupVariationsMap = [
   { value: '5', label: 'variation_5' },
   { value: '6', label: 'variation_6' },
   { value: '7', label: 'variation_7' },
+] as const;
+export const GroupToolMap = [
+  { value: 'none', label: 'none' },
   { value: 'OldRod', label: 'OldRod' },
   { value: 'GoodRod', label: 'GoodRod' },
   { value: 'SuperRod', label: 'SuperRod' },
@@ -106,23 +109,6 @@ export const getSwitchValue = (activation: StudioGroupActivationType) => {
 
 export const getSwitchDefaultValue = (group: StudioGroup) =>
   group.customConditions.filter((condition) => condition.type === 'enabledSwitch')[0]?.value || 1;
-
-export const updateVariation = (value: string) => {
-  let tool;
-  let terrainTag;
-  if (isNaN(Number(value))) {
-    tool = value as StudioGroupTool;
-    terrainTag = 0;
-  } else {
-    tool = null;
-    terrainTag = Number(value);
-  }
-  return { tool, terrainTag };
-};
-
-export const getVariationValue = (group: StudioGroup) => {
-  return group.tool ?? group.terrainTag.toString();
-};
 
 export const defineRelationCustomCondition = (customConditions: StudioCustomGroupCondition[]) => {
   const mapIdConditions = customConditions.filter((conditions) => conditions.type === 'mapId');

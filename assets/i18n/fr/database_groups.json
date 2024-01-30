@@ -17,6 +17,8 @@
   "battle_type": "Type de combat",
   "environment": "Environnement",
   "variation": "Variation",
+  "tool": "Outil",
+  "none": "Aucun",
   "steps_average": "Pas moyens requis",
   "no_steps": "Défini par la carte",
   "example_name": "Bourg Palette - Herbes 1",

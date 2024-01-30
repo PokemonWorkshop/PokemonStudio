@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataBlockContainer, DataFieldsetField, DataGrid, DataInfoContainer, DataInfoContainerHeaderTitle } from '../dataBlocks';
-import { getActivationLabel, getVariationValue, GroupVariationsMap } from '@utils/GroupUtils';
+import { getActivationLabel, GroupToolMap, GroupVariationsMap } from '@utils/GroupUtils';
 import styled from 'styled-components';
 import { padStr } from '@utils/PadStr';
 import { DataFieldsetFieldWithChild } from '../dataBlocks/DataFieldsetField';
@@ -44,7 +44,9 @@ const EnvironmentContainer = styled.div`
 export const GroupFrame = ({ group, dialogsRef }: GroupFrameProps) => {
   const { t } = useTranslation('database_groups');
   const getGroupName = useGetEntityNameText();
-  const variationText = GroupVariationsMap.find((variation) => variation.value === getVariationValue(group))?.label;
+  const variationText = (
+    GroupToolMap.find((variation) => variation.value === group.tool) ?? GroupVariationsMap.find(({ value }) => Number(value) === group.terrainTag)
+  )?.label;
 
   return (
     <DataBlockContainer size="full" onClick={() => dialogsRef.current?.openDialog('frame')}>

@@ -16,6 +16,8 @@
   "battle_type": "Battle type",
   "environment": "Environment",
   "variation": "Variation",
+  "tool": "Tool",
+  "none": "None",
   "steps_average": "Average number of steps",
   "no_steps": "Defined by the map",
   "switch": "Switch",

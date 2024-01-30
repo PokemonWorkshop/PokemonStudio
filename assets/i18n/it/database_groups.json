@@ -16,6 +16,8 @@
   "battle_type": "Tipo di lotta",
   "environment": "Ambiente",
   "variation": "Variazione",
+  "tool": "Attrezzo",
+  "none": "Niente",
   "steps_average": "Numero medio di passi",
   "switch": "Switch",
   "example_name": "Biancavilla - Erba 1",

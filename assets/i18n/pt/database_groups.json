@@ -16,6 +16,8 @@
   "battle_type": "Tipo de combate",
   "environment": "Ambiente",
   "variation": "Variação",
+  "tool": "Ferramenta",
+  "none": "Nenhum",
   "steps_average": "Número médio de passos",
   "switch": "Comutador",
   "example_name": "Pallet Town - Relva 1",
