@@ -1,5 +1,6 @@
 import React, { createContext, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { editorOverlayHidden } from '@components/editor/EditorOverlayV2';
+import { IconName } from '@components/icons/BaseIcon';
 
 type LoaderTitle =
   | 'creating_project'
@@ -18,6 +19,7 @@ type LoaderErrorTitle =
   | 'updating_psdk_error'
   | 'importing_tiled_maps_error'
   | 'updating_maps_error';
+type LoaderSuccessTitle = 'importing_tiled_maps_success';
 
 type LoaderState = {
   thingInProgress: LoaderTitle;
@@ -26,6 +28,9 @@ type LoaderState = {
   stepText: string;
   errorTitle?: LoaderErrorTitle;
   errorText: string;
+  successIcon?: IconName;
+  successTitle?: LoaderSuccessTitle;
+  successText: string;
   isOpen: boolean;
   isLogsAvailable: boolean;
 };
@@ -35,6 +40,7 @@ export type LoaderContext = LoaderState & {
   open: (thingInProgress: LoaderTitle, step: number, total: number, stepText: string) => void;
   setProgress: (step: number, total: number, stepText: string) => void;
   setError: (errorTitle: LoaderErrorTitle, errorText: string, isLogsAvailable?: boolean) => void;
+  setSuccess: (successIcon: IconName, successTitle: LoaderSuccessTitle, successText: string) => void;
 };
 
 const LoaderContextHolder = createContext<LoaderContext>({
@@ -44,12 +50,16 @@ const LoaderContextHolder = createContext<LoaderContext>({
   stepText: '',
   errorTitle: undefined,
   errorText: '',
+  successIcon: undefined,
+  successTitle: undefined,
+  successText: '',
   isOpen: false,
   isLogsAvailable: false,
   close: () => null,
   open: (_thingInProgress: LoaderTitle, _step: number, _total: number, _stepText: string) => null,
   setProgress: (_step: number, _total: number, _stepText: string) => null,
   setError: (_errorTitle: LoaderErrorTitle, _errorText: string, _isLogsAvailable?: boolean) => null,
+  setSuccess: (_successIcon: IconName, _successTitle: LoaderSuccessTitle, _successText: string) => null,
 });
 
 export const useLoaderContext = () => useContext(LoaderContextHolder);
@@ -74,6 +84,8 @@ const useLoaderContextService = (): LoaderContext => {
     stepText: '',
     errorTitle: undefined,
     errorText: '',
+    successTitle: undefined,
+    successText: '',
     isOpen: false,
     isLogsAvailable: false,
   });
@@ -93,6 +105,9 @@ const useLoaderContextService = (): LoaderContext => {
         stepText,
         errorTitle: undefined,
         errorText: '',
+        successIcon: undefined,
+        successTitle: undefined,
+        successText: '',
         isOpen: true,
       });
       editorOverlayHidden(true);
@@ -111,6 +126,14 @@ const useLoaderContextService = (): LoaderContext => {
         errorText,
         isLogsAvailable: isLogsAvailable || false,
       }),
+    setSuccess: (successIcon: IconName, successTitle: LoaderSuccessTitle, successText: string) => {
+      setLoaderState({
+        ...loaderState,
+        successIcon,
+        successTitle,
+        successText,
+      });
+    },
   };
 };
 

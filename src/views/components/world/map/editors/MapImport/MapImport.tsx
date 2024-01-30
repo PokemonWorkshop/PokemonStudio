@@ -153,12 +153,8 @@ export const MapImport = ({ closeDialog, closeParentDialog }: MapImportProps) =>
         mapImport(
           { filesToImport, tiledFilesSrcPath: folderPath!, rmxpMapInfo },
           () => {
-            // we wait the end of the close dialog animation to close the loader and show a notification
-            setTimeout(() => {
-              loaderRef.current.close();
-              const message = filesToImport.length > 1 ? t('import_success_message_plurial') : t('import_success_message_singular');
-              showNotification('success', t('import_tiled_maps'), message);
-            }, 200);
+            // we wait the end of the close dialog animation to show the result
+            setTimeout(() => loaderRef.current.setSuccess('map', 'importing_tiled_maps_success', t('import_success_message')), 200);
             closeDialog();
             closeParentDialog();
           },
@@ -168,6 +164,7 @@ export const MapImport = ({ closeDialog, closeParentDialog }: MapImportProps) =>
               if (err) file.error = err.errorMessage;
             });
             if (genericError) {
+              // we wait the end of the close dialog animation to show the error
               setTimeout(() => loaderRef.current.setError('importing_tiled_maps_error', genericError, true), 200);
               closeDialog();
               closeParentDialog();

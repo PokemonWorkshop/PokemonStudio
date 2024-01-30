@@ -59,6 +59,7 @@ export const MessageBoxTextContainer = styled.div`
   & > p {
     margin: 0;
     text-align: center;
+    white-space: pre-line;
   }
 
   .red {

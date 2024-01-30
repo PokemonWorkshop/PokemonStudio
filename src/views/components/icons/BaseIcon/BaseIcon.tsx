@@ -20,7 +20,7 @@ import { ReactComponent as ClearIcon } from '../../../../../assets/icons/global/
 import { ReactComponent as FolderIcon } from '../../../../../assets/icons/global/folder.svg';
 import { ReactComponent as NewFolderIcon } from '../../../../../assets/icons/global/new-folder.svg';
 
-type IconName =
+export type IconName =
   | 'top'
   | 'dashboard'
   | 'update'

@@ -4,6 +4,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { ErrorDialog } from './error';
+import { SuccessDialog } from './SuccessDialog';
 
 const LoaderContainer = styled.div`
   visibility: hidden;
@@ -28,7 +29,8 @@ const LoaderContainer = styled.div`
     opacity: 1;
   }
 
-  &.has-error {
+  &.has-error,
+  &.has-success {
     background-color: rgba(10, 9, 11, 0.3);
   }
 
@@ -59,24 +61,34 @@ const LoaderCurrentActionText = styled.span`
 `;
 
 export const Loader = () => {
-  const { thingInProgress, step, total, stepText, errorTitle, errorText, isOpen, isLogsAvailable, close } = useLoaderContext();
+  const { thingInProgress, step, total, stepText, errorTitle, errorText, successIcon, successTitle, successText, isOpen, isLogsAvailable, close } =
+    useLoaderContext();
   const { t } = useTranslation('loader');
 
-  const containerClass = isOpen ? (errorTitle ? 'visible has-error' : 'visible') : undefined;
+  const containerClass = () => {
+    if (!isOpen) return undefined;
+    if (errorTitle) return 'visible has-error';
+    if (successTitle) return 'visible has-success';
+    return 'visible';
+  };
 
-  return (
-    <LoaderContainer className={containerClass}>
-      {errorTitle ? (
-        <ErrorDialog title={t(errorTitle)} message={errorText} isLogsAvailable={isLogsAvailable} onClose={close} />
-      ) : (
-        <div>
-          <MainIcon />
-          <LoaderReasonText>{t(thingInProgress)}</LoaderReasonText>
-          <LoaderCurrentActionText>
-            <strong>{total !== 0 && t('step', { step, total })}</strong> {stepText}
-          </LoaderCurrentActionText>
-        </div>
-      )}
-    </LoaderContainer>
-  );
+  const dialog = () => {
+    if (errorTitle) {
+      return <ErrorDialog title={t(errorTitle)} message={errorText} isLogsAvailable={isLogsAvailable} onClose={close} />;
+    }
+    if (successIcon && successTitle) {
+      return <SuccessDialog icon={successIcon} title={t(successTitle)} message={successText} onClose={close} />;
+    }
+    return (
+      <div>
+        <MainIcon />
+        <LoaderReasonText>{t(thingInProgress)}</LoaderReasonText>
+        <LoaderCurrentActionText>
+          <strong>{total !== 0 && t('step', { step, total })}</strong> {stepText}
+        </LoaderCurrentActionText>
+      </div>
+    );
+  };
+
+  return <LoaderContainer className={containerClass()}>{dialog()}</LoaderContainer>;
 };
