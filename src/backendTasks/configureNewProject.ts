@@ -54,8 +54,10 @@ const updateCSVFiles = async (projectPath: string, languageConfigData: string) =
         shouldBeSaved = true;
       }
     });
-    log.info('configure-new-project/update', 'CSV Files', textPath);
-    if (shouldBeSaved) saveCSV(textPath, csvData);
+    if (shouldBeSaved) {
+      log.info('configure-new-project/update', 'CSV Files', textPath);
+      saveCSV(textPath, csvData);
+    }
   }, Promise.resolve());
 };
 
