@@ -14,6 +14,7 @@
   "updating_psdk_error": "Error while updating PSDK",
   "importing_tiled_maps_error": "Error while importing Tiled maps",
   "updating_maps_error": "Error while updating maps",
+  "importing_tiled_maps_success": "Tiled maps successfully imported",
   "step": "Step {{step}}/{{total}}:",
   "loading_project_meta": "Loading project metadata",
   "loading_project_text": "Loading project texts",
@@ -48,5 +49,6 @@
   "failed_deserialize": "Failed to deserialize",
   "error_project_version": "Your project was opened or created with a newer version of the application. Please update Pokémon Studio.",
   "MB": "MB",
-  "KB": "KB"
+  "KB": "KB",
+  "close": "Close"
 }
