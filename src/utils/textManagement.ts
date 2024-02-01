@@ -1,6 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import { parse } from 'csv-parse';
+import { stringify } from 'csv-stringify/sync';
 
 export const loadCSV = async (filePath: string): Promise<string[][]> => {
   const data: string[][] = [];
@@ -67,4 +68,26 @@ export const checkTextFileReserved = (textFileList: number[], projectPath: strin
     const prevResult = await prev;
     return prevResult || fs.existsSync(path.join(dialogsPath, `${curr}.csv`));
   }, Promise.resolve(false));
+};
+
+export const languageAvailable = (languageCode: string, csvData: string[][]) => {
+  const result = csvData[0]?.indexOf(languageCode);
+  return result !== undefined && result !== -1;
+};
+
+export const addColumnCSV = (languageName: string, csvData: string[][]) => {
+  const englishIndex = csvData[0]?.indexOf('en');
+  const hasEnglish = englishIndex !== undefined && englishIndex !== -1;
+  csvData.forEach((line, index) => {
+    if (index === 0) return;
+
+    const data = hasEnglish ? line[englishIndex] : `[~${index - 1}]`;
+    line.push(data);
+  });
+  if (csvData.length === 0) csvData.push([]);
+  csvData[0].push(languageName);
+};
+
+export const saveCSV = (filePath: string, csvData: string[][]) => {
+  fs.writeFileSync(filePath, stringify(csvData));
 };

@@ -18,14 +18,15 @@ const languageTexts: Record<DefaultLanguageType, string> = {
   en: 'English',
   fr: 'French',
   es: 'Spanish',
+  pt: 'Portuguese',
 };
 
 const getLanguageConfig = (projectData: { defaultLanguage: DefaultLanguageType; multiLanguage: boolean }): string => {
   const config: StudioLanguageConfig = {
     klass: 'Configs::Project::Language',
     defaultLanguage: projectData.defaultLanguage,
-    choosableLanguageCode: projectData.multiLanguage ? ['en', 'fr', 'es'] : [projectData.defaultLanguage],
-    choosableLanguageTexts: projectData.multiLanguage ? ['English', 'French', 'Spanish'] : [languageTexts[projectData.defaultLanguage]],
+    choosableLanguageCode: projectData.multiLanguage ? Object.keys(languageTexts) : [projectData.defaultLanguage],
+    choosableLanguageTexts: projectData.multiLanguage ? Object.values(languageTexts) : [languageTexts[projectData.defaultLanguage]],
   };
   return JSON.stringify(config, null, 2);
 };

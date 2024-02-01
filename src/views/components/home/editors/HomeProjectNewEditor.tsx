@@ -10,12 +10,11 @@ import { TFunction, useTranslation } from 'react-i18next';
 import { TextInputError } from '@components/inputs/Input';
 import { basename, dirname } from '@utils/path';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import type { DefaultLanguageType, NewProjectData } from '@utils/useProjectNew/types';
+import { DefaultLanguages, DefaultLanguageType, NewProjectData } from '@utils/useProjectNew/types';
 
-const defaultLanguage: DefaultLanguageType[] = ['en', 'fr', 'es'];
 const iconFileExtensions = ['png'];
 
-const languageEntries = (t: TFunction<'homepage'>) => defaultLanguage.map((language) => ({ value: language, label: t(language) }));
+const languageEntries = (t: TFunction<'homepage'>) => DefaultLanguages.map((language) => ({ value: language, label: t(language) }));
 const wrongTitle = (title: string) => {
   return title.match('[\\\\/:*?"<>|$.]') !== null;
 };
