@@ -16,6 +16,8 @@
   "battle_type": "Kampfart",
   "environment": "Umgebung",
   "variation": "Variante",
+  "tool": "Werkzeug",
+  "none": "Keine",
   "switch": "Wechseln zu",
   "example_name": "Pallet Town - Gras 1",
   "pokemon_group": "Pokémon der Gruppe",

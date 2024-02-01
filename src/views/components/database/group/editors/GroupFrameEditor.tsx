@@ -9,18 +9,17 @@ import {
   getActivationValue,
   getSwitchDefaultValue,
   getSwitchValue,
-  getVariationValue,
   GroupActivationsMap,
   StudioGroupActivationType,
   GroupBattleTypes,
   GroupVariationsMap,
   onSwitchUpdateActivation,
   updateActivation,
-  updateVariation,
+  GroupToolMap,
 } from '@utils/GroupUtils';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 import { useGetEntityNameText, useSetProjectText } from '@utils/ReadingProjectText';
-import { GROUP_NAME_TEXT_ID, GROUP_SYSTEM_TAGS, StudioGroupSystemTag } from '@modelEntities/group';
+import { GROUP_NAME_TEXT_ID, GROUP_SYSTEM_TAGS, StudioGroupSystemTag, StudioGroupTool } from '@modelEntities/group';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { useGroupPage } from '@utils/usePage';
 import { useUpdateGroup } from './useUpdateGroup';
@@ -33,6 +32,7 @@ const groupBattleTypeEntries = (t: TFunction<'database_groups'>) => GroupBattleT
 const systemTagsEntries = (t: TFunction<'database_groups'>) => GROUP_SYSTEM_TAGS.map((tag) => ({ value: tag, label: t(tag) }));
 const groupVariationEntries = (t: TFunction<'database_groups'>) =>
   GroupVariationsMap.map((variation) => ({ value: variation.value, label: t(variation.label) }));
+const groupToolEntries = (t: TFunction<'database_groups'>) => GroupToolMap.map((option) => ({ value: option.value, label: t(option.label) }));
 
 export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { t } = useTranslation('database_groups');
@@ -45,12 +45,14 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const battleTypeOptions = useMemo(() => groupBattleTypeEntries(t), [t]);
   const systemTagsOptions = useMemo(() => systemTagsEntries(t), [t]);
   const variationOptions = useMemo(() => groupVariationEntries(t), [t]);
+  const toolOptions = useMemo(() => groupToolEntries(t), [t]);
   const nameRef = useRef<HTMLInputElement>(null);
   const stepsAverageRef = useRef<HTMLInputElement>(null);
   const [activation, setActivation] = useState<StudioGroupActivationType>(getActivationValue(group));
   const [battleType, setBattleType] = useState<(typeof battleTypeOptions)[number]['value']>(group.isDoubleBattle ? 'double' : 'simple');
   const [systemTag, setSystemTag] = useState<StudioGroupSystemTag>(group.systemTag ?? 'RegularGround');
-  const [variation, setVariation] = useState(getVariationValue(group));
+  const [variation, setVariation] = useState(group.terrainTag.toString());
+  const [tool, setTool] = useState(group.tool || 'none');
   const [switchValue, setSwitchValue] = useState<number>(getSwitchDefaultValue(group));
 
   const saveTexts = () => {
@@ -71,11 +73,11 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
     setText(GROUP_NAME_TEXT_ID, group.id, nameRef.current.value);
 
     const customConditions = defineRelationCustomCondition(updateActivation(activation, group, switchValue));
-    const { tool, terrainTag } = updateVariation(variation);
+    const newTool = tool === 'none' ? null : (tool as StudioGroupTool);
     const isDoubleBattle = battleType === 'double';
     const stepsAverage = isNaN(stepsAverageRef.current.valueAsNumber) ? group.stepsAverage : stepsAverageRef.current.valueAsNumber;
 
-    updateGroup({ customConditions, systemTag, tool, terrainTag, isDoubleBattle, stepsAverage });
+    updateGroup({ customConditions, systemTag, tool: newTool, terrainTag: Number(variation), isDoubleBattle, stepsAverage });
     saveTexts();
   };
   useEditorHandlingClose(ref, onClose, canClose);
@@ -163,6 +165,10 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
             value={variation}
             noTooltip
           />
+        </InputWithTopLabelContainer>
+        <InputWithTopLabelContainer>
+          <Label htmlFor="select-variation">{t('tool')}</Label>
+          <SelectCustomSimple id="select-tool" options={toolOptions} onChange={(value) => setTool(value)} value={tool} noTooltip />
         </InputWithTopLabelContainer>
         <InputWithLeftLabelContainer>
           <Label htmlFor="steps-average">{t('steps_average')}</Label>
