@@ -2,8 +2,9 @@ import { generatePSDKBatFileContent } from '@services/generatePSDKBatFileContent
 import log from 'electron-log';
 import path from 'path';
 import { copyFileSync, existsSync, readFileSync, writeFileSync } from 'fs';
-import { GAME_OPTION_CONFIG_VALIDATOR, INFO_CONFIG_VALIDATOR } from '@modelEntities/config';
+import { GAME_OPTION_CONFIG_VALIDATOR, INFO_CONFIG_VALIDATOR, StudioLanguageConfig } from '@modelEntities/config';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
+import { addColumnCSV, getTextFileList, getTextPath, languageAvailable, loadCSV, saveCSV } from '@utils/textManagement';
 
 export type ConfigureNewProjectMetaData = {
   projectStudioData: string;
@@ -35,6 +36,31 @@ const updateGameOptionsConfig = (gameOptionsConfigPath: string) => {
   writeFileSync(gameOptionsConfigPath, JSON.stringify(gameOptionConfigValidation.data, null, 2));
 };
 
+/**
+ * Update the csv files to add missing languages if necessary
+ */
+const updateCSVFiles = async (projectPath: string, languageConfigData: string) => {
+  const languageConfig = JSON.parse(languageConfigData) as StudioLanguageConfig;
+  const textFileList = getTextFileList(projectPath, true);
+  await textFileList.reduce(async (lastPromise, fileId) => {
+    await lastPromise;
+
+    const textPath = path.join(projectPath, getTextPath(fileId), `${fileId}.csv`);
+    const csvData = await loadCSV(textPath);
+    let shouldBeSaved = false;
+    languageConfig.choosableLanguageCode.forEach((languageCode) => {
+      if (!languageAvailable(languageCode, csvData)) {
+        addColumnCSV(languageCode, csvData);
+        shouldBeSaved = true;
+      }
+    });
+    if (shouldBeSaved) {
+      log.info('configure-new-project/update', 'CSV Files', textPath);
+      saveCSV(textPath, csvData);
+    }
+  }, Promise.resolve());
+};
+
 export type ConfigureNewProjectInput = { projectDirName: string; metaData: ConfigureNewProjectMetaData };
 
 const configureNewProject = async (payload: ConfigureNewProjectInput) => {
@@ -56,6 +82,8 @@ const configureNewProject = async (payload: ConfigureNewProjectInput) => {
     log.info('configure-new-project/update game options config');
     updateGameOptionsConfig(path.join(payload.projectDirName, 'Data/configs/game_options_config.json'));
   }
+  log.info('configure-new-project/update', 'CSV Files');
+  await updateCSVFiles(payload.projectDirName, payload.metaData.languageConfig);
   return {};
 };
 
