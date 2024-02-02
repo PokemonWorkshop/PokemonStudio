@@ -12,12 +12,16 @@ const Fieldgroup = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
   width: 167px;
 `;
 
 const FieldLabel = styled.span`
   font-size: 14px;
   color: ${(props) => props.theme.colors.text400};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const FieldData = styled.span`

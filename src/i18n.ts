@@ -30,7 +30,7 @@ i18n
       fr: translationFR,
       it: translationIT,
       pt: translationPT,
-      //de: translationDE,
+      de: translationDE,
       // XX: translationXX,
     },
   });
