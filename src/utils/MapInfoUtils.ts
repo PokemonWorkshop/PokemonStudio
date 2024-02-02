@@ -11,19 +11,14 @@ const removeMapInfoChildren = (mapInfo: StudioMapInfo, id: number) => {
   mapInfoValue.hasChildren = mapInfoValue.children.length > 0;
 };
 
-const getMapInfoChildrenIdRec = (mapInfo: StudioMapInfo, mapInfoValue: StudioMapInfoValue): number[] => {
-  if (mapInfoValue.children.length === 0) return [mapInfoValue.id];
-
-  const result: number[] = [];
-  mapInfoValue.children.forEach((id) => {
-    result.push(...getMapInfoChildrenIdRec(mapInfo, mapInfo[id.toString()]));
-  });
-  return result;
-};
-
 const getMapInfoChildrenId = (mapInfo: StudioMapInfo, mapInfoValue: StudioMapInfoValue): number[] => {
   if (mapInfoValue.children.length === 0) return [];
-  return [...mapInfoValue.children, ...getMapInfoChildrenIdRec(mapInfo, mapInfoValue)];
+
+  const children: number[] = [...mapInfoValue.children];
+  mapInfoValue.children.forEach((id) => {
+    children.push(...getMapInfoChildrenId(mapInfo, mapInfo[id.toString()]));
+  });
+  return children;
 };
 
 export const findMapInfoMap = (mapInfo: StudioMapInfo, mapDbSymbol: DbSymbol): StudioMapInfoMap | undefined => {
