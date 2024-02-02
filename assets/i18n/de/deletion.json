@@ -1,5 +1,5 @@
 {
-  "action_irreversible": "Diese Aktion ist nicht umkehrbar.",
+  "action_irreversible": "Diese Aktion kann nicht rückgängig gemacht werden.",
   "delete": "Löschen",
   "cancel": "Abbrechen"
 }

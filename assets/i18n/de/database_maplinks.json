@@ -1,8 +1,8 @@
 {
-  "maplinks": "Karten-Link",
-  "maplink_deleted": "Kartenlink gelöscht",
+  "maplinks": "Kartenverknüpfung",
+  "maplink_deleted": "Kartenverknüpfung gelöscht",
   "no_option": "Keine Karte gefunden",
-  "maplink_new": "Neuer Kartenlink",
+  "maplink_new": "Neue Kartenverknüpfung",
   "maps": "Karten",
   "map": "Karte",
   "map_deleted": "Karte gelöscht",
@@ -16,6 +16,6 @@
   "offset_info": "Der Versatz wird in der Anzahl der Kacheln ausgedrückt. Ein positiver Wert bedeutet eine {{shift}}.",
   "offset_shift_right": "Verschiebung nach rechts",
   "offset_downward_shift": "Verschiebung nach unten",
-  "add_link": "Den Link hinzufügen",
+  "add_link": "Die Verknüpfung hinzufügen",
   "no_map": "Die Karte existiert nicht oder ist eine Innenkarte."
 }
