@@ -1,8 +1,8 @@
 {
   "data": "Daten",
-  "moves": "Züge",
+  "moves": "Attacken",
   "pokemon": "Pokémon",
-  "items": "Gegenstände",
+  "items": "Items",
   "abilities": "Fähigkeiten",
   "types": "Typen",
   "level_design": "Level-Design",
@@ -11,8 +11,8 @@
   "quests": "Quests",
   "zones": "Zonen",
   "dex": "Pokédex",
-  "save_the_modifications": "Speichern Sie die Änderungen",
+  "save_the_modifications": "Änderungen speichern",
   "edition": "Ausgabe",
   "aide": "Hilfe",
-  "supprimer": "Supprimer"
+  "supprimer": "Löschen"
 }

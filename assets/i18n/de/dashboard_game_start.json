@@ -1,7 +1,7 @@
 {
-  "game_start": "Start des Spiels",
+  "game_start": "Spielstart",
   "cinematic": "Filmsequenz",
-  "show_cinematic": "Zeige eine Filmsequenz",
+  "show_cinematic": "Eine Filmsequenz zeigen",
   "map_cinematic_id": "Nummer der Karte, die die Filmsequenz enthält",
   "title_screen": "Titelbildschirm",
   "show_language_selection": "Sprachauswahl anzeigen",

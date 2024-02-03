@@ -19,6 +19,7 @@ const languageTexts: Record<DefaultLanguageType, string> = {
   fr: 'French',
   es: 'Spanish',
   pt: 'Portuguese',
+  de: 'German',
 };
 
 const getLanguageConfig = (projectData: { defaultLanguage: DefaultLanguageType; multiLanguage: boolean }): string => {

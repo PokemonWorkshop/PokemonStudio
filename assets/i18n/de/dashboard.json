@@ -1,19 +1,19 @@
 {
   "project_version": "Version {{project_version}}",
-  "project_settings": "Projekt Einstellungen",
+  "project_settings": "Projekteinstellungen",
   "change_project_settings": "Projekteinstellungen ändern",
   "general_settings": "Allgemeine Einstellungen",
   "infos": "Informationen",
   "language": "Sprache",
   "settings": "Einstellungen",
   "texts": "Texte",
-  "options": "Spiel Optionen",
+  "options": "Spieloptionen",
   "devices": "Geräte",
   "appearance": "Erscheinungsbild",
   "display": "Anzeige",
   "graphic_settings": "Grafikeinstellungen",
   "config": "Konfigurationen",
-  "game_start": "Start des Spiels",
+  "game_start": "Spielstart",
   "save": "Speichern",
-  "credits": "Spiel Credits"
+  "credits": "Spiel-Credits"
 }
