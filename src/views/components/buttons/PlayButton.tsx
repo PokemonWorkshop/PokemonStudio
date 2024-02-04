@@ -118,7 +118,7 @@ export const PlayButton = () => {
         <div className="play-menu">
           <span onClick={() => startPSDKAndCloseMenu(window.api.startPSDK)}>{t('play_release_mode')}</span>
           <span onClick={() => startPSDKAndCloseMenu(window.api.startPSDKDebug)}>{t('play_debug_mode')}</span>
-          <span onClick={() => startPSDKAndCloseMenu(window.api.startPSDKTags)}>{t('play_tags_mode')}</span>
+          {!state.projectStudio.isTiledMode && <span onClick={() => startPSDKAndCloseMenu(window.api.startPSDKTags)}>{t('play_tags_mode')}</span>}
           <span onClick={() => startPSDKAndCloseMenu(window.api.startPSDKWorldmap)}>{t('play_worldmap_mode')}</span>
         </div>
       </PlayMenuButtonContainer>
