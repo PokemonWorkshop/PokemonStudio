@@ -8,7 +8,7 @@ export const useMapImport = () => {
   const setState = useProcess(processors, DEFAULT_PROCESS_STATE);
 
   return (
-    payload: { filesToImport: MapImportFiles[]; tiledFilesSrcPath: string; rmxpMapInfo: RMXPMapInfo[] },
+    payload: { filesToImport: MapImportFiles[]; tiledFilesSrcPath: string; rmxpMapInfo: RMXPMapInfo[]; copyMode?: boolean },
     onSuccess: MapImportSuccessCallback,
     onFailure: MapImportFailureCallback
   ) => {
@@ -18,6 +18,7 @@ export const useMapImport = () => {
       filesToImport: payload.filesToImport,
       tiledFilesSrcPath: payload.tiledFilesSrcPath,
       rmxpMapInfo: payload.rmxpMapInfo,
+      copyMode: payload.copyMode || false,
     });
   };
 };

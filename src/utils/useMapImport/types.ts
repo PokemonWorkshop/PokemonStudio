@@ -14,8 +14,8 @@ export type MapImportFailureCallback = (error: MapImportError[], genericError?: 
 export type MapImportSuccessCallback = (payload: Record<string, never>) => void;
 export type MapImportStateObject =
   | { state: 'done' }
-  | { state: 'import'; filesToImport: MapImportFiles[]; tiledFilesSrcPath: string; rmxpMapInfo: RMXPMapInfo[] }
-  | { state: 'copyTmxFiles'; mapsToImport: MapToImport[]; tiledFilesSrcPath: string; rmxpMapInfo: RMXPMapInfo[] }
+  | { state: 'import'; filesToImport: MapImportFiles[]; tiledFilesSrcPath: string; rmxpMapInfo: RMXPMapInfo[]; copyMode: boolean }
+  | { state: 'copyTmxFiles'; mapsToImport: MapToImport[]; tiledFilesSrcPath: string; rmxpMapInfo: RMXPMapInfo[]; copyMode: boolean }
   | { state: 'addMissingRMXPMaps'; mapsToImport: MapToImport[]; rmxpMapInfo: RMXPMapInfo[] }
   | { state: 'getRMXPMapsData'; mapsToImport: MapToImport[]; rmxpMapIds: number[] }
   | { state: 'createNewMaps'; mapsToImport: MapToImport[]; rmxpMaps: Record<number, RMXPMap>; rmxpMapIds: number[] };
