@@ -15,6 +15,8 @@ const DEFAULT_BINDING: ProjectSaveFunctionBinding = {
   onSuccess: () => {},
 };
 
+const STEPS_TOTAL = 9;
+
 export const useProjectSaveProcessor = () => {
   const [globalState, setGlobalState] = useGlobalState();
   const loaderRef = useLoaderRef();
@@ -33,7 +35,7 @@ export const useProjectSaveProcessor = () => {
     () => ({
       ...PROCESS_DONE_STATE,
       saveData: (state, setState) => {
-        // TODO: loaderRef.open
+        loaderRef.current.open('saving_project', 1, STEPS_TOTAL, tl('saving_project_data'));
         if (globalState.savingData.map.size === 0) return toAsyncProcess(() => setState({ ...state, state: 'saveConfigs' }));
 
         return window.api.saveProjectData(
@@ -43,7 +45,7 @@ export const useProjectSaveProcessor = () => {
         );
       },
       saveConfigs: (state, setState) => {
-        // TODO: loaderRef.setProgress
+        loaderRef.current.setProgress(2, STEPS_TOTAL, tl('saving_project_config'));
         if (globalState.savingConfig.map.size === 0) return toAsyncProcess(() => setState({ ...state, state: 'saveTexts' }));
 
         return window.api.saveProjectConfigs(
@@ -53,7 +55,7 @@ export const useProjectSaveProcessor = () => {
         );
       },
       saveTexts: (state, setState) => {
-        // TODO: loaderRef.setProgress
+        loaderRef.current.setProgress(3, STEPS_TOTAL, tl('saving_project_texts'));
         if (globalState.savingText.map.size === 0) return toAsyncProcess(() => setState({ ...state, state: 'saveTextInfo' }));
 
         return window.api.saveProjectTexts(
@@ -63,7 +65,7 @@ export const useProjectSaveProcessor = () => {
         );
       },
       saveTextInfo: (state, setState) => {
-        // TODO: loaderRef.setProgress
+        loaderRef.current.setProgress(4, STEPS_TOTAL, tl('saving_text_info'));
         if (!globalState.savingTextInfos) return toAsyncProcess(() => setState({ ...state, state: 'saveMapInfo' }));
 
         return window.api.saveTextInfos(
@@ -73,7 +75,7 @@ export const useProjectSaveProcessor = () => {
         );
       },
       saveMapInfo: (state, setState) => {
-        // TODO: loaderRef.setProgress
+        loaderRef.current.setProgress(5, STEPS_TOTAL, tl('saving_map_info'));
         if (!globalState.savingMapInfo) return toAsyncProcess(() => setState({ ...state, state: 'saveRMXPMapInfo' }));
 
         return window.api.saveMapInfo(
@@ -83,12 +85,10 @@ export const useProjectSaveProcessor = () => {
         );
       },
       saveRMXPMapInfo: (state, setState) => {
-        // TODO: loaderRef.setProgress
-        // TODO: check condition
+        loaderRef.current.setProgress(6, STEPS_TOTAL, tl('saving_rmxp_map_info'));
         if (!globalState.savingMapInfo || globalState.projectStudio.isTiledMode !== true) {
           return toAsyncProcess(() => setState({ ...state, state: 'updateStudioFile' }));
         }
-
         return window.api.saveRMXPMapInfo(
           {
             projectPath: state.projectPath,
@@ -106,7 +106,7 @@ export const useProjectSaveProcessor = () => {
         );
       },
       updateStudioFile: (state, setState) => {
-        // TODO: loaderRef.setProgress
+        loaderRef.current.setProgress(7, STEPS_TOTAL, tl('saving_studio_file'));
         if (!globalState.savingProjectStudio) return toAsyncProcess(() => setState({ ...state, state: 'updateProjectList' }));
 
         return window.api.projectStudioFile(
@@ -116,7 +116,7 @@ export const useProjectSaveProcessor = () => {
         );
       },
       updateProjectList: (state, setState) => {
-        // TODO: loaderRef.setProgress
+        loaderRef.current.setProgress(8, STEPS_TOTAL, tl('saving_update_project_list'));
         return toAsyncProcess(() => {
           updateProjectEditDate(state.projectPath);
           updateProjectStudioLocalStorage(state.projectPath, globalState.projectStudio);
@@ -129,7 +129,7 @@ export const useProjectSaveProcessor = () => {
         });
       },
       resetSaving: (_, setState) => {
-        // TODO: loaderRef.setProgress
+        loaderRef.current.setProgress(9, STEPS_TOTAL, tl('saving_reset'));
         return toAsyncProcess(() => {
           setGlobalState({
             ...globalState,
