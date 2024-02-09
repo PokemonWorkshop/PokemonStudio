@@ -70,12 +70,12 @@ const updateCSVFiles = async (projectPath: string, languageConfigData: string) =
  */
 const updateMapsMtime = async (projectPath: string) => {
   const maps = await readProjectFolder(projectPath, 'maps');
+  const mtime = new Date().getTime();
   await maps.reduce(async (lastPromise, map) => {
     await lastPromise;
     const mapParsed = MAP_VALIDATOR.safeParse(JSON.parse(map));
     if (mapParsed.success) {
-      const stats = await getFileStats(`${path.join(projectPath, 'Data/Tiled/Maps', mapParsed.data.tiledFilename)}.tmx`);
-      mapParsed.data.mtime = stats.mtime.getTime();
+      mapParsed.data.mtime = mtime;
       await fsPromise.writeFile(
         path.join(projectPath, 'Data/Studio/maps', `${mapParsed.data.dbSymbol}.json`),
         JSON.stringify(mapParsed.data, null, 2)
