@@ -14,7 +14,7 @@ type StudioMapBackend = {
   tiledFilename: string;
 };
 
-const getFileStats = (filePath: string): Promise<fs.Stats> => {
+export const getFileStats = (filePath: string): Promise<fs.Stats> => {
   return new Promise((resolve, reject) => {
     fs.stat(filePath, (err, stats) => {
       if (err) {
