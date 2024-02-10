@@ -103,7 +103,7 @@ export const PlayButton = () => {
       play: () => isShortcutEnabled() && startPSDKAndCloseMenu(window.api.startPSDKDebug),
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [state.projectPath]);
   useShortcut(shortcutMap);
 
   return (
