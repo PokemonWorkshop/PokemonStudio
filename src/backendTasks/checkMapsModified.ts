@@ -14,7 +14,7 @@ type StudioMapBackend = {
   tiledFilename: string;
 };
 
-const getFileStats = (filePath: string): Promise<fs.Stats> => {
+export const getFileStats = (filePath: string): Promise<fs.Stats> => {
   return new Promise((resolve, reject) => {
     fs.stat(filePath, (err, stats) => {
       if (err) {
@@ -54,7 +54,7 @@ export const checkMapsModified = async (payload: CheckMapModifiedInput) => {
       }
     } else {
       const stat = await getFileStats(filePath);
-      if (stat.mtime.getTime() !== map.mtime) {
+      if (stat.mtime.getTime() > map.mtime) {
         return [...acc, map.dbSymbol];
       } else {
         return acc;

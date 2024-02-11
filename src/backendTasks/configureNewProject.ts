@@ -5,6 +5,10 @@ import { copyFileSync, existsSync, readFileSync, writeFileSync } from 'fs';
 import { GAME_OPTION_CONFIG_VALIDATOR, INFO_CONFIG_VALIDATOR, StudioLanguageConfig } from '@modelEntities/config';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import { addColumnCSV, getTextFileList, getTextPath, languageAvailable, loadCSV, saveCSV } from '@utils/textManagement';
+import { readProjectFolder } from './readProjectData';
+import { MAP_VALIDATOR } from '@modelEntities/map';
+import { getFileStats } from './checkMapsModified';
+import fsPromise from 'fs/promises';
 
 export type ConfigureNewProjectMetaData = {
   projectStudioData: string;
@@ -61,6 +65,25 @@ const updateCSVFiles = async (projectPath: string, languageConfigData: string) =
   }, Promise.resolve());
 };
 
+/**
+ * Update the mtime of the maps
+ */
+const updateMapsMtime = async (projectPath: string) => {
+  const maps = await readProjectFolder(projectPath, 'maps');
+  const mtime = new Date().getTime();
+  await maps.reduce(async (lastPromise, map) => {
+    await lastPromise;
+    const mapParsed = MAP_VALIDATOR.safeParse(JSON.parse(map));
+    if (mapParsed.success) {
+      mapParsed.data.mtime = mtime;
+      await fsPromise.writeFile(
+        path.join(projectPath, 'Data/Studio/maps', `${mapParsed.data.dbSymbol}.json`),
+        JSON.stringify(mapParsed.data, null, 2)
+      );
+    }
+  }, Promise.resolve());
+};
+
 export type ConfigureNewProjectInput = { projectDirName: string; metaData: ConfigureNewProjectMetaData };
 
 const configureNewProject = async (payload: ConfigureNewProjectInput) => {
@@ -84,6 +107,8 @@ const configureNewProject = async (payload: ConfigureNewProjectInput) => {
   }
   log.info('configure-new-project/update', 'CSV Files');
   await updateCSVFiles(payload.projectDirName, payload.metaData.languageConfig);
+  log.info('configure-new-project/update', 'Maps mtime');
+  await updateMapsMtime(payload.projectDirName);
   return {};
 };
 
