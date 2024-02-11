@@ -55,7 +55,7 @@ export const useMapImportProcessor = () => {
                 path: file.path,
                 mapName: file.mapName,
                 mapId: file.mapId,
-                mtime: 0,
+                mtime: 1,
                 ...tiledMetadata[index],
               }));
               setState({ state: 'copyTmxFiles', mapsToImport, tiledFilesSrcPath, rmxpMapInfo });
@@ -100,7 +100,7 @@ export const useMapImportProcessor = () => {
           rmxpMapInfo.forEach(({ id: rmxpMapId, name }) => {
             if (mapsToImport.find(({ mapId }) => mapId === rmxpMapId) || studioMaps.find(({ id }) => id === rmxpMapId)) return;
 
-            mapsToImport.push({ mapName: name, mtime: 0, sha1: '', path: '', tileMetadata: undefined, mapId: rmxpMapId });
+            mapsToImport.push({ mapName: name, mtime: 1, sha1: '', path: '', tileMetadata: undefined, mapId: rmxpMapId });
           });
           // the news maps must be create after the maps with a map id defined
           mapsToImport.sort((a, b) => {

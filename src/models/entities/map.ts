@@ -11,7 +11,7 @@ export const MAP_VALIDATOR = z.object({
   bgm: z.string(),
   bgs: z.string(),
   tiledFilename: z.string(),
-  mtime: POSITIVE_INT,
+  mtime: POSITIVE_OR_ZERO_INT,
   sha1: SHA1_VALIDATOR.or(z.literal('')),
   tileMetadata: z.unknown(),
 });

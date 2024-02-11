@@ -27,7 +27,7 @@ If you plan on using, modifying or doing anything related to Pokémon Studio. Yo
 You'll need to **install NodeJS** first: https://nodejs.org/en/download
 
 We recommend using [NVM](https://github.com/nvm-sh/nvm) (MacOS/Linux) or [Volta](https://volta.sh/) (Windows) to manage easely your NodeJS version.
-We use the version **18** of NodeJS.
+We use the version **20** of NodeJS.
 
 ### Cloning and installation
 
