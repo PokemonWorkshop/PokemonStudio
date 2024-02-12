@@ -26,7 +26,7 @@ export const PokemonResourcesPage = () => {
   const currentEditedPokemon = useMemo(() => cloneEntity(pokemon[pokemonIdentifier.specie]), [pokemonIdentifier.specie, pokemon]);
   const currentEditedPokemonWithForm: PokemonWithForm = {
     species: currentEditedPokemon,
-    form: currentEditedPokemon.forms[pokemonIdentifier.form],
+    form: currentEditedPokemon.forms.find((form) => form.form === pokemonIdentifier.form) || currentEditedPokemon.forms[0],
   };
 
   const onResourceChoosen = (filePath: string, resource: CreatureFormResourcesPath) => {
