@@ -38,7 +38,6 @@
     "@electron/rebuild": "^3.4.1",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
     "@svgr/webpack": "^7.0.0",
-    "@toinane/electron-forge-maker-nsis": "^1.0.0",
     "@types/lodash.groupby": "^4.6.7",
     "@types/lodash.uniq": "^4.5.7",
     "@types/react": "^18.0.29",
@@ -55,6 +54,7 @@
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.3",
     "electron": "^28.0.0",
+    "electron-forge-maker-nsis": "^24.13.0",
     "eslint": "^8.36.0",
     "eslint-import-resolver-typescript": "^3.5.3",
     "eslint-plugin-import": "^2.27.5",
@@ -125,7 +125,8 @@
     "nsis": {
       "oneClick": false,
       "shortcutName": "Pokémon Studio",
-      "artifactName": "Pokemon-Studio-Setup-${version}.${ext}"
+      "artifactName": "Pokemon-Studio-Setup-${version}.${ext}",
+      "selectPerMachineByDefault": false
     }
   },
   "volta": {
