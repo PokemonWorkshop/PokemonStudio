@@ -54,11 +54,11 @@ export const MoveStatus = ({ move, dialogsRef }: MoveStatusProps) => {
     <DataBlockWithTitle size="half" title={t('statuses')} onClick={() => dialogsRef?.current?.openDialog('status')}>
       <DataGrid columns="1fr 1fr 1fr" rows="1fr">
         {move.moveStatus.length === 0 ? (
-          <DataFieldsetField label={t(STATUS_KEY[0])} data={getStatus(move.moveStatus, 0)} disabled={isDisabledStatus(move.moveStatus, 0)} />
+          <DataFieldsetField label={t('status')} data={getStatus(move.moveStatus, 0)} disabled={isDisabledStatus(move.moveStatus, 0)} />
         ) : (
           move.moveStatus.map((_, index) => (
             <React.Fragment key={index}>
-              <DataFieldsetFieldWithChild label={t(STATUS_KEY[index])}>
+              <DataFieldsetFieldWithChild label={t(move.moveStatus.length > 1 ? STATUS_KEY[index] : 'status')}>
                 <StatusContainer>
                   <span>{getStatus(move.moveStatus, 0)}</span>
                   {shouldDisplayLuckRate(move.moveStatus) && <span>{`(${getLuckRate(move.moveStatus, index)})`}</span>}

@@ -135,7 +135,7 @@ export const MoveStatusEditor = forwardRef<EditorHandlingClose>((_, ref) => {
       <InputContainer>
         <InputContainer size="s">
           <InputWithTopLabelContainer>
-            <Label htmlFor="status-1">{t('status_1')}</Label>
+            <Label htmlFor="status-1">{t(isValidStatus(status1) ? 'status_1' : 'status')}</Label>
             <SelectCustomSimple
               id="select-status-1"
               options={statusOptions}
@@ -161,7 +161,7 @@ export const MoveStatusEditor = forwardRef<EditorHandlingClose>((_, ref) => {
             </InputWithLeftLabelContainer>
           )}
         </InputContainer>
-        {isValidStatus(status1, chance1) && (
+        {isValidStatus(status1) && (
           <InputContainer size="s">
             <InputWithTopLabelContainer>
               <Label htmlFor="status-2">{t('status_2')}</Label>
@@ -191,7 +191,7 @@ export const MoveStatusEditor = forwardRef<EditorHandlingClose>((_, ref) => {
             )}
           </InputContainer>
         )}
-        {isValidStatus(status1, chance1) && isValidStatus(status2, chance2) && (
+        {isValidStatus(status1) && isValidStatus(status2) && (
           <InputContainer size="s">
             <InputWithTopLabelContainer>
               <Label htmlFor="status-3">{t('status_3')}</Label>
