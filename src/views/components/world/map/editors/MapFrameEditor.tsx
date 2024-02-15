@@ -23,8 +23,15 @@ import { DropInput } from '@components/inputs/DropInput';
 import { basename } from '@utils/path';
 import { useUpdateMapModified } from './useUpdateMapModified';
 import { cloneEntity } from '@utils/cloneEntity';
+import { TextInputError } from '@components/inputs/Input';
+import { useMapCopy } from '@utils/useMapCopy';
+import { useLoaderRef } from '@utils/loaderContext';
 
-export const MapFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
+type MapFrameEditorProps = {
+  closeDialog: () => void;
+};
+
+export const MapFrameEditor = forwardRef<EditorHandlingClose, MapFrameEditorProps>(({ closeDialog }, ref) => {
   const { t } = useTranslation('database_maps');
   const { map, state } = useMapPage();
   const updateMap = useUpdateMap(map);
@@ -33,10 +40,13 @@ export const MapFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const getMapName = useGetEntityNameText();
   const getMapDescription = useGetEntityDescriptionText();
   const setText = useSetProjectText();
+  const mapCopy = useMapCopy();
+  const loaderRef = useLoaderRef();
   const nameRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const stepsAverageRef = useRef<HTMLInputElement>(null);
   const [tiledFilename, setTiledFilename] = useState<string>(map.tiledFilename);
+  const [error, setError] = useState<string>('');
 
   const saveTexts = () => {
     if (!nameRef.current || !descriptionRef.current) return;
@@ -64,7 +74,7 @@ export const MapFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
     const stepsAverage = isNaN(stepsAverageRef.current.valueAsNumber) ? map.stepsAverage : stepsAverageRef.current.valueAsNumber;
     setText(MAP_NAME_TEXT_ID, map.id, nameRef.current.value);
     setText(MAP_DESCRIPTION_TEXT_ID, map.id, descriptionRef.current.value);
-    updateMap({ stepsAverage, tiledFilename, tileMetadata: tiledFilename === '' ? null : map.tileMetadata });
+    updateMap({ stepsAverage, tiledFilename: basename(tiledFilename, '.tmx'), tileMetadata: tiledFilename === '' ? null : map.tileMetadata });
     saveTexts();
   };
   useEditorHandlingClose(ref, onClose, canClose);
@@ -79,6 +89,25 @@ export const MapFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
 
     nameRef.current.value = nameRef.current.defaultValue;
     descriptionRef.current.value = descriptionRef.current.defaultValue;
+  };
+
+  const copyTmxFile = (tmxFile: string) => {
+    setError('');
+    mapCopy(
+      { tmxFile },
+      () => {
+        loaderRef.current.close();
+        setTiledFilename(tmxFile);
+      },
+      (errorMessage) => {
+        loaderRef.current.close();
+        setError(errorMessage);
+      },
+      (genericError) => {
+        setTimeout(() => loaderRef.current.setError('importing_tiled_maps_error', genericError, true), 200);
+        closeDialog();
+      }
+    );
   };
 
   return (
@@ -106,23 +135,21 @@ export const MapFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
           <InputWithTopLabelContainer>
             <Label htmlFor="tiled-file">{t('map_made_tiled')}</Label>
             {!tiledFilename ? (
-              <DropInput
-                name={t('tiled_file')}
-                extensions={['tmx']}
-                destFolderToCopy="Data/Tiled/Maps"
-                onFileChoosen={(filePath) => setTiledFilename(basename(filePath, '.tmx'))}
-                showAcceptedFormat
-              />
+              <DropInput name={t('tiled_file')} extensions={['tmx']} onFileChoosen={copyTmxFile} showAcceptedFormat />
             ) : (
               <FileInput
-                filePath={`Data/Tiled/Maps/${tiledFilename}.tmx`}
+                filePath={`Data/Tiled/Maps/${basename(tiledFilename, '.tmx')}.tmx`}
                 name={t('tiled_file')}
                 extensions={['tmx']}
-                onFileChoosen={(filePath) => setTiledFilename(basename(filePath, '.tmx'))}
-                onFileClear={() => setTiledFilename('')}
+                onFileChoosen={copyTmxFile}
+                onFileClear={() => {
+                  setTiledFilename('');
+                  setError('');
+                }}
                 noIcon
               />
             )}
+            {error && <TextInputError>{error}</TextInputError>}
           </InputWithTopLabelContainer>
         </PaddedInputContainer>
       </InputContainer>

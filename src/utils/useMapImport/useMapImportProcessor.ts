@@ -38,7 +38,7 @@ export const useMapImportProcessor = () => {
   const processors: SpecialStateProcessors<MapImportStateObject> = useMemo(
     () => ({
       ...PROCESS_DONE_STATE,
-      import: ({ filesToImport, tiledFilesSrcPath, rmxpMapInfo }, setState) => {
+      import: ({ filesToImport, tiledFilesSrcPath, rmxpMapInfo, copyMode }, setState) => {
         loaderRef.current.open('importing_tiled_maps', 1, 5, t('reading_data_tiled_files'));
         const tiledMetadata: PartialStudioMap[] = [];
 
@@ -58,7 +58,7 @@ export const useMapImportProcessor = () => {
                 mtime: 1,
                 ...tiledMetadata[index],
               }));
-              setState({ state: 'copyTmxFiles', mapsToImport, tiledFilesSrcPath, rmxpMapInfo });
+              setState({ state: 'copyTmxFiles', mapsToImport, tiledFilesSrcPath, rmxpMapInfo, copyMode });
             }
             return () => {};
           }
@@ -79,13 +79,18 @@ export const useMapImportProcessor = () => {
 
         return importTmxFiles(filesToImport, tiledMetadata);
       },
-      copyTmxFiles: ({ mapsToImport, tiledFilesSrcPath, rmxpMapInfo }, setState) => {
+      copyTmxFiles: ({ mapsToImport, tiledFilesSrcPath, rmxpMapInfo, copyMode }, setState) => {
         loaderRef.current.setProgress(2, 5, t('copy_tiled_files'));
         return window.api.copyTiledFiles(
           { projectPath: globalState.projectPath!, tiledMaps: JSON.stringify(mapsToImport), tiledSrcPath: tiledFilesSrcPath },
           ({ tiledMaps }) => {
-            const mapsToImport: MapToImport[] = JSON.parse(tiledMaps);
-            setState({ state: 'addMissingRMXPMaps', mapsToImport, rmxpMapInfo });
+            if (copyMode) {
+              binding.current.onSuccess({});
+              setState(DEFAULT_PROCESS_STATE);
+            } else {
+              const mapsToImport: MapToImport[] = JSON.parse(tiledMaps);
+              setState({ state: 'addMissingRMXPMaps', mapsToImport, rmxpMapInfo });
+            }
           },
           ({ errorMessage }) => {
             setState(DEFAULT_PROCESS_STATE);

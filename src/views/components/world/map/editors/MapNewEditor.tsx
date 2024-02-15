@@ -32,6 +32,9 @@ import { EditorChildWithSubEditorContainer, SubEditorContainer, SubEditorSeparat
 import { MapImportEditorTitle, MapImportOverlay } from './MapImport/MapImportOverlay';
 import { useDialogsRef } from '@utils/useDialogsRef';
 import { useUpdateMapModified } from './useUpdateMapModified';
+import { useMapCopy } from '@utils/useMapCopy';
+import { useLoaderRef } from '@utils/loaderContext';
+import { TextInputError } from '@components/inputs/Input';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -53,19 +56,22 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
   const dialogsRef = useDialogsRef<MapImportEditorTitle>();
   const navigate = useNavigate();
   const setText = useSetProjectText();
+  const mapCopy = useMapCopy();
+  const loaderRef = useLoaderRef();
   const [name, setName] = useState(''); // We can't use a ref because of the button behavior
   const [stepsAverage, setStepsAverage] = useState(30);
   const [tiledFilename, setTiledFilename] = useState('');
   const [bgm, setBgm] = useState('');
   const [bgs, setBgs] = useState('');
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
+  const [error, setError] = useState<string>('');
 
   useEditorHandlingClose(ref);
 
   const onClickNew = () => {
     if (!name || !descriptionRef.current) return;
 
-    const newMap = createMap(maps, stepsAverage, tiledFilename, bgm, bgs);
+    const newMap = createMap(maps, stepsAverage, basename(tiledFilename, '.tmx'), bgm, bgs);
     const dbSymbol = newMap.dbSymbol;
     if (mapInfoParent) {
       const newMapInfoMap = createMapInfo(mapInfo, { klass: 'MapInfoMap', mapDbSymbol: dbSymbol, parentId: mapInfoParent.id }) as StudioMapInfoMap;
@@ -94,6 +100,25 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
   const onChangeStepsAverage = (value: string) => {
     const stepsAverage = value === '' ? NaN : Number(value);
     setStepsAverage(stepsAverage);
+  };
+
+  const copyTmxFile = (tmxFile: string) => {
+    setError('');
+    mapCopy(
+      { tmxFile },
+      () => {
+        loaderRef.current.close();
+        setTiledFilename(tmxFile);
+      },
+      (errorMessage) => {
+        loaderRef.current.close();
+        setError(errorMessage);
+      },
+      (genericError) => {
+        setTimeout(() => loaderRef.current.setError('importing_tiled_maps_error', genericError, true), 200);
+        closeDialog();
+      }
+    );
   };
 
   return (
@@ -133,20 +158,17 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
             <InputWithTopLabelContainer>
               <Label htmlFor="tiled-file">{t('database_maps:map_made_tiled')}</Label>
               {!tiledFilename ? (
-                <DropInput
-                  name={t('database_maps:tiled_file')}
-                  extensions={['tmx']}
-                  destFolderToCopy="Data/Tiled/Maps"
-                  onFileChoosen={(filePath) => setTiledFilename(basename(filePath, '.tmx'))}
-                  showAcceptedFormat
-                />
+                <DropInput name={t('database_maps:tiled_file')} extensions={['tmx']} onFileChoosen={copyTmxFile} showAcceptedFormat />
               ) : (
                 <FileInput
-                  filePath={`Data/Tiled/Maps/${tiledFilename}.tmx`}
+                  filePath={`Data/Tiled/Maps/${basename(tiledFilename, '.tmx')}.tmx`}
                   name={t('database_maps:tiled_file')}
                   extensions={['tmx']}
-                  onFileChoosen={(filePath) => setTiledFilename(basename(filePath, '.tmx'))}
-                  onFileClear={() => setTiledFilename('')}
+                  onFileChoosen={copyTmxFile}
+                  onFileClear={() => {
+                    setTiledFilename('');
+                    setError('');
+                  }}
                   noIcon
                 />
               )}
@@ -192,6 +214,7 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
                   noIcon
                 />
               )}
+              {error && <TextInputError>{error}</TextInputError>}
             </InputWithTopLabelContainer>
           </InputGroupCollapse>
           <ButtonContainer>
