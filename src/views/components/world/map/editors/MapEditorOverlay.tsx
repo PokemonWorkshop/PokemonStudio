@@ -28,7 +28,7 @@ export const MapEditorOverlay = defineEditorOverlay<MapEditorAndDeletionKeys, Pr
       case 'new':
         return <MapNewEditor ref={handleCloseRef} closeDialog={closeDialog} mapInfoParent={mapInfoValue} />;
       case 'frame':
-        return <MapFrameEditor ref={handleCloseRef} />;
+        return <MapFrameEditor ref={handleCloseRef} closeDialog={closeDialog} />;
       case 'musics':
         return <MapMusicsEditor ref={handleCloseRef} />;
       case 'deletion':
