@@ -50,5 +50,14 @@
   "error_project_version": "Your project was opened or created with a newer version of the application. Please update Pokémon Studio.",
   "MB": "MB",
   "KB": "KB",
-  "close": "Close"
+  "close": "Close",
+  "saving_project_data": "Saving project data",
+  "saving_project_config": "Saving project configurations",
+  "saving_project_texts": "Saving project texts",
+  "saving_text_info": "Saving the list of texts files",
+  "saving_map_info": "Saving the list of maps",
+  "saving_rmxp_map_info": "Saving the RPG Maker XP map list",
+  "saving_studio_file": "Saving project metadata",
+  "saving_update_project_list": "Update of the list of projects",
+  "saving_reset": "Finalizing project saving"
 }
