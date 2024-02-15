@@ -50,5 +50,14 @@
   "error_project_version": "Votre projet a été ouvert ou créé avec une version plus récente de l'application. Veuillez mettre à jour Pokémon Studio.",
   "MB": "Mo",
   "KB": "Ko",
-  "close": "Fermer"
+  "close": "Fermer",
+  "saving_project_data": "Sauvegarde des données",
+  "saving_project_config": "Sauvegarde des configurations",
+  "saving_project_texts": "Sauvegarde des textes",
+  "saving_text_info": "Sauvegarde de la liste des fichiers de textes",
+  "saving_map_info": "Sauvegarde de la liste des cartes",
+  "saving_rmxp_map_info": "Sauvegarde de la liste des cartes de RPG Maker XP",
+  "saving_studio_file": "Sauvegarde des métadonnées",
+  "saving_update_project_list": "Mise à jour de la liste des projets",
+  "saving_reset": "Finalisation"
 }
