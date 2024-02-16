@@ -2,7 +2,7 @@ export { DataBlockContainer } from './DataBlockContainer';
 export { DataBlockWrapper } from './DataBlockWrapper';
 export { DataBlockWithTitle, DataBlockWithTitleNoActive, DataBlockWithTitleCollapse, DataBlockWithTitlePagination } from './DataBlockWithTitle';
 export { DataBlockWithAction, DataBlockWithActionTooltip } from './DataBoxWithAction';
-export { DataFieldsetField } from './DataFieldsetField';
+export { DataFieldsetField, DataFieldsetFieldWithChild, DataFieldsetFieldCenteredWithChild, DataFieldsetFieldCode } from './DataFieldsetField';
 export { DataFieldgroup } from './DataFieldgroup';
 export { DataFieldgroupField } from './DataFieldgroupField';
 export { DataSpriteContainer } from './DataSpriteContainer';
