@@ -1,21 +1,37 @@
 import React from 'react';
-import { StudioMove, StudioMoveStatus, StudioMoveStatusList } from '@modelEntities/move';
+import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { DataBlockWithTitle, DataFieldsetField, DataGrid } from '../dataBlocks';
+import { StudioMove, StudioMoveStatus, StudioMoveStatusList } from '@modelEntities/move';
+import { DataBlockWithTitle, DataFieldsetField, DataFieldsetFieldWithChild, DataGrid } from '../dataBlocks';
 import { MoveDialogsRef } from './editors/MoveEditorOverlay';
 
-const isDisabledStatus = (status: StudioMoveStatus[] | null, index: number) => {
-  return status === null || status.length <= index || status[index].status === null ? true : undefined;
-};
+const StatusContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  color: ${({ theme }) => theme.colors.text100};
+  ${({ theme }) => theme.fonts.normalRegular}
 
-const isDisabledLuckRate = (status: StudioMoveStatus[] | null, index: number) => {
-  return status === null || status.length <= index || status[index].luckRate === 0 ? true : undefined;
-};
+  & span:nth-child(2) {
+    color: ${({ theme }) => theme.colors.text400};
+  }
+
+  @media ${({ theme }) => theme.breakpoints.dataBox422} {
+    flex-direction: column;
+    gap: 0px;
+  }
+`;
 
 type MoveStatusProps = {
   move: StudioMove;
   dialogsRef: MoveDialogsRef;
 };
+
+const isDisabledStatus = (status: StudioMoveStatus[] | null, index: number) => {
+  return status === null || status.length <= index || status[index].status === null ? true : undefined;
+};
+
+const STATUS_KEY = ['status_1', 'status_2', 'status_3'] as const;
 
 export const MoveStatus = ({ move, dialogsRef }: MoveStatusProps) => {
   const { t } = useTranslation('database_moves');
@@ -30,15 +46,27 @@ export const MoveStatus = ({ move, dialogsRef }: MoveStatusProps) => {
     return `${status[index].luckRate} %`;
   };
 
+  const shouldDisplayLuckRate = (status: StudioMoveStatus[] | null) => {
+    return status !== null && status.length > 1;
+  };
+
   return (
     <DataBlockWithTitle size="half" title={t('statuses')} onClick={() => dialogsRef?.current?.openDialog('status')}>
-      <DataGrid columns="1fr 1fr 1fr" rows="1fr 1fr">
-        <DataFieldsetField label={t('status_1')} data={getStatus(move.moveStatus, 0)} disabled={isDisabledStatus(move.moveStatus, 0)} />
-        <DataFieldsetField label={t('chance')} data={getLuckRate(move.moveStatus, 0)} disabled={isDisabledLuckRate(move.moveStatus, 0)} />
-        <DataFieldsetField label={t('status_2')} data={getStatus(move.moveStatus, 1)} disabled={isDisabledStatus(move.moveStatus, 1)} />
-        <DataFieldsetField label={t('chance')} data={getLuckRate(move.moveStatus, 1)} disabled={isDisabledLuckRate(move.moveStatus, 1)} />
-        <DataFieldsetField label={t('status_3')} data={getStatus(move.moveStatus, 2)} disabled={isDisabledStatus(move.moveStatus, 2)} />
-        <DataFieldsetField label={t('chance')} data={getLuckRate(move.moveStatus, 2)} disabled={isDisabledLuckRate(move.moveStatus, 2)} />
+      <DataGrid columns="1fr 1fr 1fr" rows="1fr">
+        {move.moveStatus.length === 0 ? (
+          <DataFieldsetField label={t('status')} data={getStatus(move.moveStatus, 0)} disabled={isDisabledStatus(move.moveStatus, 0)} />
+        ) : (
+          move.moveStatus.map((_, index) => (
+            <React.Fragment key={index}>
+              <DataFieldsetFieldWithChild label={t(move.moveStatus.length > 1 ? STATUS_KEY[index] : 'status')}>
+                <StatusContainer>
+                  <span>{getStatus(move.moveStatus, 0)}</span>
+                  {shouldDisplayLuckRate(move.moveStatus) && <span>{`(${getLuckRate(move.moveStatus, index)})`}</span>}
+                </StatusContainer>
+              </DataFieldsetFieldWithChild>
+            </React.Fragment>
+          ))
+        )}
       </DataGrid>
     </DataBlockWithTitle>
   );
