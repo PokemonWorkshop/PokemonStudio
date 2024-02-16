@@ -155,6 +155,6 @@
   "common_event": "Common event",
   "always": "Always",
   "error_status": "You cannot have the same status multiple times.",
-  "error_chances": "The chances of inflicting a status must be between 1 and 99.",
+  "error_chances": "The chances of inflicting a status must be between 1 and 100.",
   "error_overflow": "The sum of your chances to inflict a status must not exceed 100%."
 }
