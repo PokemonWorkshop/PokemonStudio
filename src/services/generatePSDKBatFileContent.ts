@@ -12,3 +12,10 @@ source ./setup.sh
 cd "${projectPath}"
 PSDK_BINARY_PATH="${getPSDKBinariesPath()}/" ruby Game.rb "$@"
 `;
+
+export const generateGameLinuxFileContent = (projectPath: string) => `#!/bin/bash
+cd "${getPSDKBinariesPath()}/ruby-dist"
+source ./setup.sh
+cd "${projectPath}"
+PSDK_BINARY_PATH="${getPSDKBinariesPath()}/" ruby --disable=gems,rubyopt,did_you_mean Game.rb "$@"
+`;

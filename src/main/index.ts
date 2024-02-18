@@ -86,6 +86,7 @@ const createWindow = async () => {
     useContentSize: true,
     icon: getAssetPath('icon.png'),
     titleBarStyle: process.platform === 'win32' ? 'hidden' : 'default',
+    autoHideMenuBar: process.platform === 'linux',
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
