@@ -2,5 +2,5 @@ export { ResourcesContainer, ResourceContainer, ResourceWrapper } from './Resour
 export { TitleResource, TitleResourceWithToggle } from './TitleResource';
 export { SpriteResourceContainer, SpriteNoResourceContainer, LinkContainer, SpriteResourceType } from './SpriteResourceStyle';
 export { SpriteResource } from './SpriteResource';
-export { MusicResource } from './MusicResource';
-export { MusicNoResourceContainer, MusicResourceContainer } from './MusicResourceStyle';
+export { OtherResource } from './OtherResource';
+export { OtherNoResourceContainer, OtherResourceContainer } from './OtherResourceStyle';
