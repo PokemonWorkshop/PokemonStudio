@@ -1,6 +1,9 @@
-name: Production - CI Build
+name: Development CI
 
 on:
+  push:
+    branches: [develop]
+
   workflow_dispatch:
     inputs:
       force_build_node_module:
@@ -31,5 +34,5 @@ jobs:
       #   shell: bash
       #   run: npm run lint
 
-      - name: Publish Studio
-        uses: ./.github/actions/publish_studio
+      - name: Package Studio
+        uses: ./.github/actions/package_studio
