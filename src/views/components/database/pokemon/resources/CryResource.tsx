@@ -4,6 +4,7 @@ import { formResourcesPath } from '@utils/path';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUpdateResources } from './useUpdateResources';
+import { AUDIO_EXT } from '@components/inputs/AudioInput';
 
 type CryResourceProps = {
   creature: StudioCreature;
@@ -22,7 +23,7 @@ export const CryResource = ({ creature, form }: CryResourceProps) => {
           type="music"
           title={t('pokemon_cry')}
           resourcePath={formResourcesPath(form, 'cry')}
-          extensions={['wav', 'ogg', 'mp3']}
+          extensions={AUDIO_EXT}
           onResourceChoosen={(resourcePath) => onCryChoosen(resourcePath)}
           onResourceClean={() => onResourceClean('cry')}
         />

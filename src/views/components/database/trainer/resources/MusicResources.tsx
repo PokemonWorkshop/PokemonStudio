@@ -1,10 +1,10 @@
 import React from 'react';
-import { useUpdateTrainer } from '../editors/useUpdateTrainer';
 import { useTranslation } from 'react-i18next';
 import { OtherResource, ResourceWrapper, ResourcesContainer, TitleResource } from '@components/resources';
-import { TrainerMusicsPath, basename, trainerResourcePath } from '@utils/path';
+import { TrainerMusicsPath, trainerResourcePath } from '@utils/path';
 import { AUDIO_EXT } from '@components/inputs/AudioInput';
 import { StudioTrainer } from '@modelEntities/trainer';
+import { useUpdateResources } from './useUpdateResources';
 
 type MusicResourcesProps = {
   trainer: StudioTrainer;
@@ -12,32 +12,7 @@ type MusicResourcesProps = {
 
 export const MusicResources = ({ trainer }: MusicResourcesProps) => {
   const { t } = useTranslation('database_trainers');
-  const updateTrainer = useUpdateTrainer(trainer);
-
-  const handleResourceChoosen = (filePath: string, resource: TrainerMusicsPath) => {
-    const filename = basename(filePath);
-    updateTrainer({
-      resources: {
-        ...trainer.resources,
-        musics: {
-          ...trainer.resources.musics,
-          [resource]: filename,
-        },
-      },
-    });
-  };
-
-  const handleResourceClean = (resource: TrainerMusicsPath) => {
-    updateTrainer({
-      resources: {
-        ...trainer.resources,
-        musics: {
-          ...trainer.resources.musics,
-          [resource]: '',
-        },
-      },
-    });
-  };
+  const { onResourceMusicsChoosen, onResourceMusicsClean } = useUpdateResources(trainer);
 
   return (
     <ResourcesContainer>
@@ -49,8 +24,8 @@ export const MusicResources = ({ trainer }: MusicResourcesProps) => {
             title={t(`${resource}_music`)}
             resourcePath={trainerResourcePath(trainer, resource)}
             extensions={AUDIO_EXT}
-            onResourceChoosen={(resourcePath) => handleResourceChoosen(resourcePath, resource)}
-            onResourceClean={() => handleResourceClean(resource)}
+            onResourceChoosen={(resourcePath) => onResourceMusicsChoosen(resourcePath, resource)}
+            onResourceClean={() => onResourceMusicsClean(resource)}
             key={resource}
           />
         ))}
