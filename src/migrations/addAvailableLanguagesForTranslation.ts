@@ -6,7 +6,7 @@ import { LANGUAGE_CONFIG_VALIDATOR, getProjectLanguagesTranslationFromLanguageCo
 
 const PRE_MIGRATION_PROJECT_VALIDATOR = PROJECT_VALIDATOR.omit({ languagesTranslation: true });
 
-export const addLanguagesTranslationAvailables = async (_: IpcMainEvent, projectPath: string) => {
+export const addAvailableLanguagesForTranslation = async (_: IpcMainEvent, projectPath: string) => {
   const configLanguageFile = await fsPromises.readFile(path.join(projectPath, 'Data/configs/language_config.json'), { encoding: 'utf-8' });
   const configLanguageParsed = LANGUAGE_CONFIG_VALIDATOR.safeParse(JSON.parse(configLanguageFile));
   if (!configLanguageParsed.success) throw new Error('Fail to parse language_config.json file');
