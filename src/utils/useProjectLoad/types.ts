@@ -27,7 +27,7 @@ export type ProjectLoadStateObject =
   | { state: 'choosingProjectFile' }
   | { state: 'readingVersion'; projectDirName: string }
   | { state: 'readProjectMetadata'; projectDirName: string; studioVersion: string }
-  | { state: 'migrateProjectData'; projectDirName: string; studioVersion: string; projectMetaData: StudioProject }
+  | { state: 'migrateProjectData'; projectDirName: string; studioVersion: string; projectVersion: string }
   | { state: 'writeProjectMetadata'; projectDirName: string; studioVersion: string; projectMetaData: StudioProject }
   | { state: 'updateTextInfos'; projectDirName: string; studioVersion: string; projectMetaData: StudioProject }
   | { state: 'RMXP2StudioMapsSync'; projectDirName: string; studioVersion: string; projectMetaData: StudioProject }

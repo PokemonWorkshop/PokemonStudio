@@ -22,7 +22,7 @@ import type { ProjectStudioFileInput, ProjectStudioFileOutput } from './backendT
 import type { SaveProjectTextsInput } from './backendTasks/saveProjectTexts';
 import type { SaveProjectConfigInput } from './backendTasks/saveProjectConfigs';
 import type { ExtractNewProjectInput } from './backendTasks/extractNewProject';
-import type { MigrateDataInput } from './backendTasks/migrateData';
+import type { MigrateDataInput, MigrateDataOutput } from './backendTasks/migrateData';
 import type { ReadProjectTextInput } from './backendTasks/readProjectTexts';
 import type { ReadProjectMetadataInput, ReadProjectMetadataOutput } from './backendTasks/readProjectMetadata';
 import type { WriteProjectMetadataInput } from './backendTasks/writeProjectMetadata';
@@ -194,7 +194,7 @@ declare global {
       readProjectConfigs: BackendTaskWithGenericError<ReadProjectConfigsInput, ProjectConfigsFromBackEnd, GenericBackendProgress>;
       readProjectData: BackendTaskWithGenericError<ReadProjectDataInput, ProjectDataFromBackEnd, GenericBackendProgress>;
       readProjectTexts: BackendTaskWithGenericError<ReadProjectTextInput, ProjectText, GenericBackendProgress>;
-      migrateData: BackendTaskWithGenericError<MigrateDataInput, ProjectText, GenericBackendProgress>;
+      migrateData: BackendTaskWithGenericError<MigrateDataInput, MigrateDataOutput, GenericBackendProgress>;
       fileExists: BackendTaskWithGenericErrorAndNoProgress<FileExistsInput, FileExistsOutput>;
       chooseFolder: BackendTaskWithGenericErrorAndNoProgress<AnyObj, ChooseFolderOutput>;
       extractNewProject: BackendTaskWithGenericError<ExtractNewProjectInput, AnyObj, GenericBackendProgress>;

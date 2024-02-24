@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { POSITIVE_FLOAT, POSITIVE_INT, POSITIVE_OR_ZERO_FLOAT, POSITIVE_OR_ZERO_INT } from './common';
+import { StudioProjectLanguageTranslation } from './project';
 
 export const CREDIT_CONFIG_VALIDATOR = z.object({
   klass: z.literal('Configs::Project::Credits'),
@@ -156,3 +157,7 @@ export const PROJECT_STUDIO_VALIDATOR = z.object({
   iconPath: z.string(),
 });
 export type StudioProjectStudio = z.infer<typeof PROJECT_STUDIO_VALIDATOR>;
+
+export const getProjectLanguagesTranslationFromLanguageConfig = (config: StudioLanguageConfig): StudioProjectLanguageTranslation[] => {
+  return config.choosableLanguageCode.map((code, index) => ({ code, name: config.choosableLanguageTexts[index] }));
+};

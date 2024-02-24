@@ -7,7 +7,6 @@ import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import { addColumnCSV, getTextFileList, getTextPath, languageAvailable, loadCSV, saveCSV } from '@utils/textManagement';
 import { readProjectFolder } from './readProjectData';
 import { MAP_VALIDATOR } from '@modelEntities/map';
-import { getFileStats } from './checkMapsModified';
 import fsPromise from 'fs/promises';
 
 export type ConfigureNewProjectMetaData = {

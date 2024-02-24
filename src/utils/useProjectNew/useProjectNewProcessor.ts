@@ -5,7 +5,7 @@ import { useLoaderRef } from '@utils/loaderContext';
 import type { DefaultLanguageType, ProjectNewFunctionBinding, ProjectNewStateObject } from './types';
 import { DEFAULT_PROCESS_STATE, PROCESS_DONE_STATE, SpecialStateProcessors } from '@utils/useProcess';
 import { handleFailure } from './helpers';
-import { StudioLanguageConfig } from '@modelEntities/config';
+import { StudioLanguageConfig, getProjectLanguagesTranslationFromLanguageConfig } from '@modelEntities/config';
 import { downloadSpeed } from '@utils/downloadSpeed';
 
 const DEFAULT_BINDING: ProjectNewFunctionBinding = {
@@ -22,14 +22,13 @@ const languageTexts: Record<DefaultLanguageType, string> = {
   de: 'German',
 };
 
-const getLanguageConfig = (projectData: { defaultLanguage: DefaultLanguageType; multiLanguage: boolean }): string => {
-  const config: StudioLanguageConfig = {
+const getLanguageConfig = (projectData: { defaultLanguage: DefaultLanguageType; multiLanguage: boolean }): StudioLanguageConfig => {
+  return {
     klass: 'Configs::Project::Language',
     defaultLanguage: projectData.defaultLanguage,
     choosableLanguageCode: projectData.multiLanguage ? Object.keys(languageTexts) : [projectData.defaultLanguage],
     choosableLanguageTexts: projectData.multiLanguage ? Object.values(languageTexts) : [languageTexts[projectData.defaultLanguage]],
   };
-  return JSON.stringify(config, null, 2);
 };
 
 export const useProjectNewProcessor = () => {
@@ -113,6 +112,7 @@ export const useProjectNewProcessor = () => {
       configure: (state, setState) => {
         loaderRef.current.setProgress(6, 6, tl('creating_project_configuration'));
         const newProjectData = state.payload;
+        const config = getLanguageConfig({ defaultLanguage: newProjectData.defaultLanguage, multiLanguage: newProjectData.multiLanguage });
         return window.api.configureNewProject(
           {
             projectDirName: state.projectDirName,
@@ -123,13 +123,14 @@ export const useProjectNewProcessor = () => {
                   studioVersion: state.studioVersion,
                   iconPath: 'project_icon.png',
                   isTiledMode: true,
+                  languagesTranslation: getProjectLanguagesTranslationFromLanguageConfig(config),
                 },
                 null,
                 2
               ),
               projectTitle: newProjectData.title,
               iconPath: newProjectData.icon,
-              languageConfig: getLanguageConfig({ defaultLanguage: newProjectData.defaultLanguage, multiLanguage: newProjectData.multiLanguage }),
+              languageConfig: JSON.stringify(config, null, 2),
               multiLanguage: newProjectData.multiLanguage,
             },
           },
