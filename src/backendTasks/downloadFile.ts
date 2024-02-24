@@ -5,10 +5,10 @@ import path from 'path';
 import * as stream from 'stream';
 import { promisify } from 'util';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
-import { getAppRootPath } from './getAppRootPath';
 import { ChannelNames, sendProgress } from '@utils/BackendTask';
 import { calculateFileSha1, compareSha1 } from './calculateFileSha1';
 import { Sha1 } from '@modelEntities/sha1';
+import { getStudioResourcesPath } from './getStudioResourcesPath';
 
 type DestFile = { target: 'studio'; path?: string; filename: string } | { target: 'project'; path: string; filename: string };
 export type DownloadFileInput = { url: string; dest: DestFile; sha1?: string };
@@ -17,8 +17,8 @@ const finished = promisify(stream.finished);
 
 const getDestPath = (destFile: DestFile) => {
   if (destFile.target === 'studio') {
-    if (destFile.path) return path.join(getAppRootPath(), destFile.path, destFile.filename);
-    return path.join(getAppRootPath(), destFile.filename);
+    if (destFile.path) return path.join(getStudioResourcesPath(), destFile.path, destFile.filename);
+    return path.join(getStudioResourcesPath(), destFile.filename);
   } else {
     return path.join(destFile.path, destFile.filename);
   }
