@@ -22,7 +22,8 @@ export const useCopyFile = () => {
   useEffect(() => {
     if (state.state !== 'copyFile') return;
 
-    if (dirname(state.payload.srcFile) === join(globalState.projectPath || '', state.payload.destFolder)) {
+    const srcFileDirname = dirname(state.payload.srcFile).replaceAll('\\', '/');
+    if (srcFileDirname === join(globalState.projectPath || '', state.payload.destFolder).replaceAll('\\', '/')) {
       setState({ state: 'done' });
       callbacks?.onSuccess({ destFile: state.payload.srcFile });
       return;
