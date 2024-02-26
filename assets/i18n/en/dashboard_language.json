@@ -1,7 +1,8 @@
 {
   "language": "Language",
   "settings": "Settings",
-  "supported_languages": "Supported languages",
+  "available_languages_translation": "Available languages for translation",
+  "available_languages_players": "Available languages for the players",
   "default_language": "Default language",
   "prefix": "Prefix",
   "fields_asterisk_required": "Fields with an asterisk are required.",
@@ -10,5 +11,6 @@
   "code_error": "The prefix is already used.",
   "code_info": "The prefix is used in CSV files to identify the column used.",
   "placeholder_language": "Ex: Japanese",
-  "placeholder_prefix": "Ex: jp"
+  "placeholder_prefix": "Ex: jp",
+  "supported_languages": ""
 }

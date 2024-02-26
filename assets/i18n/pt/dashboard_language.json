@@ -1,7 +1,6 @@
 {
   "language": "Idioma",
   "settings": "Definições",
-  "supported_languages": "Idiomas supportadas",
   "default_language": "Idioma por default",
   "prefix": "Prefixo",
   "fields_asterisk_required": "Campos com asterisco são obrigatórios",

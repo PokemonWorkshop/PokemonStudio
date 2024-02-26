@@ -1,7 +1,6 @@
 {
   "language": "Lingua",
   "settings": "Impostazioni",
-  "supported_languages": "Lingue supportate",
   "default_language": "Lingua predefinita",
   "prefix": "Prefisso",
   "fields_asterisk_required": "I campi con l'asterisco sono obbligatori.",

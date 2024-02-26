@@ -1,7 +1,8 @@
 {
   "language": "Langue",
   "settings": "Paramètres",
-  "supported_languages": "Langues supportées",
+  "available_languages_translation": "Langues disponibles à la traduction",
+  "available_languages_players": "Langues disponibles aux joueurs",
   "default_language": "Langue par défaut",
   "prefix": "Préfixe",
   "fields_asterisk_required": "Les champs avec un astérisque sont requis.",
