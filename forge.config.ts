@@ -22,6 +22,18 @@ const config: ForgeConfig = {
     new MakerRpm({ options: { icon: './assets/icon.png' } }),
     new MakerDeb({ options: { icon: './assets/icon.png' } }),
   ],
+  publishers: [
+    {
+      name: '@electron-forge/publisher-github',
+      config: {
+        repository: {
+          owner: 'PokemonWorkshop',
+          name: 'PokemonStudio',
+        },
+        draft: true,
+      },
+    },
+  ],
   plugins: [
     new WebpackPlugin({
       mainConfig,
