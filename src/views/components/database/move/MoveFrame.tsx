@@ -15,6 +15,7 @@ import {
 } from '../dataBlocks';
 import { StudioMove } from '@modelEntities/move';
 import { MoveDialogsRef } from './editors/MoveEditorOverlay';
+import { padStr } from '@utils/PadStr';
 
 type MoveFrameProps = {
   move: StudioMove;
@@ -33,7 +34,10 @@ export const MoveFrame = ({ move, dialogsRef }: MoveFrameProps) => {
         <DataInfoContainer>
           <DataInfoContainerHeader>
             <DataInfoContainerHeaderTitle>
-              <h1>{getMoveName(move)}</h1>
+              <h1>
+                {move && getMoveName(move)}
+                <span className="data-id">#{padStr(move?.id, 3)}</span>
+                </h1>
               <CopyIdentifier dataToCopy={move.dbSymbol} />
             </DataInfoContainerHeaderTitle>
             <DataInfoContainerHeaderBadges>
