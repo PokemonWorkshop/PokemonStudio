@@ -64,8 +64,8 @@ export const DexPokemonListTable = ({ dex, dialogsRef, setCreatureIndex }: DexPo
           const desI = result.destination?.index;
           if (desI === undefined) return;
 
-          dex.creatures.splice(desI, 0, dex.creatures.splice(srcI, 1)[0]);
-          setDex({ [dex.dbSymbol]: dex });
+          currentEditedDex.creatures.splice(desI, 0, currentEditedDex.creatures.splice(srcI, 1)[0]);
+          setDex({ [currentEditedDex.dbSymbol]: currentEditedDex });
         }}
       >
         <DataPokemonVirtualizedListContainer height={dex.creatures.length <= 10 ? 40 * dex.creatures.length : 420}>
