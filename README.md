@@ -35,7 +35,7 @@ Next, clone the repo via git and install dependencies:
 
 ```bash
 git clone git@github.com:PokemonWorkshop/PokemonStudio.git
-cd pokemon-studio
+cd PokemonStudio
 git submodule update --init --recursive
 npm i
 ```
@@ -48,9 +48,7 @@ To install them follow those steps:
 
 1. Download the binary archive from
 
-- Windows: https://www.mediafire.com/file/4lzb21b5tqte8ya/psdk-binaries.7z/file
-- MacOS: https://www.mediafire.com/file/0vnfqx5jkh0adwu/psdk-binaries-macos-arm64.7z/file (Note, this file needs to be updated with new dependencies)
-- Linux: **Not done yet**
+- https://download.psdk.pokemonworkshop.com/binaries/
 
 2. Extract the content of the archive to the root of this project
 
