@@ -50,7 +50,7 @@ To install them follow those steps:
 
 - https://download.psdk.pokemonworkshop.com/binaries/
 
-2. Extract the content of the archive to the root of this project
+2. Extract the content of the archive to the psdk-binaries folder.
 
 ### Adding the essential development extensions
 
