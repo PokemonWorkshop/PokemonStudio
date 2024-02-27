@@ -4,11 +4,13 @@ import { ReactComponent as FileDrop } from '@assets/icons/global/drop.svg';
 import { ReactComponent as PlayIcon } from '@assets/icons/global/play.svg';
 import { basename } from '@utils/path';
 import { useResource } from '@utils/useResource';
-import { MusicNoResourceContainer, MusicResourceContainer } from './MusicResourceStyle';
+import { OtherNoResourceContainer, OtherResourceContainer } from './OtherResourceStyle';
+import { ResourceImage } from '@components/ResourceImage';
 
 const isNoResource = (resourcePath: string) => resourcePath.endsWith('/');
 
-type MusicResourceProps = {
+type OtherResourceProps = {
+  type: 'icon' | 'music';
   title: string;
   resourcePath: string;
   extensions: string[];
@@ -16,8 +18,8 @@ type MusicResourceProps = {
   onResourceClean: () => void;
 };
 
-export const MusicResource = ({ title, resourcePath, extensions, onResourceChoosen, onResourceClean }: MusicResourceProps) => {
-  const { onDrop, onDragOver, onClick, onClickFolder, isDialogOpen } = useResource({
+export const OtherResource = ({ type, title, resourcePath, extensions, onResourceChoosen, onResourceClean }: OtherResourceProps) => {
+  const { onDrop, onDragOver, onClick, onClickFolder, isDialogOpen, flipFlap } = useResource({
     name: title,
     path: resourcePath,
     extensions,
@@ -25,24 +27,28 @@ export const MusicResource = ({ title, resourcePath, extensions, onResourceChoos
   });
 
   return isNoResource(resourcePath) ? (
-    <MusicNoResourceContainer onDrop={onDrop} onDragOver={onDragOver} onClick={isDialogOpen ? undefined : onClick} disabled={isDialogOpen}>
+    <OtherNoResourceContainer onDrop={onDrop} onDragOver={onDragOver} onClick={isDialogOpen ? undefined : onClick} disabled={isDialogOpen}>
       <div className="icon-title">
-        <div className="no-music-svg-container">
+        <div className="no-resource-svg-container">
           <FileDrop />
         </div>
         <span className="title">{title}</span>
       </div>
-    </MusicNoResourceContainer>
+    </OtherNoResourceContainer>
   ) : (
-    <MusicResourceContainer onDrop={onDrop} onDragOver={onDragOver} onClick={isDialogOpen ? undefined : onClick} disabled={isDialogOpen}>
+    <OtherResourceContainer onDrop={onDrop} onDragOver={onDragOver} onClick={isDialogOpen ? undefined : onClick} disabled={isDialogOpen}>
       <div className="icon-title">
-        <div className="svg-container">
-          <PlayIcon />
+        <div className={`svg-${type}-container`}>
+          {type === 'music' ? <PlayIcon /> : <ResourceImage imagePathInProject={resourcePath} versionId={flipFlap ? 2 : 1} />}
         </div>
-        <div className="music-name">
+        {type === 'music' ? (
+          <div className="resource-name">
+            <span className="title">{title}</span>
+            <span>{basename(resourcePath)}</span>
+          </div>
+        ) : (
           <span className="title">{title}</span>
-          <span>{basename(resourcePath)}</span>
-        </div>
+        )}
       </div>
       <div className="buttons">
         <button className="folder-button">
@@ -57,6 +63,6 @@ export const MusicResource = ({ title, resourcePath, extensions, onResourceChoos
           />
         </button>
       </div>
-    </MusicResourceContainer>
+    </OtherResourceContainer>
   );
 };

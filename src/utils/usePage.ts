@@ -43,6 +43,7 @@ export const useCreaturePage = () => {
     creatureName,
     formName: '',
     cannotDelete: Object.keys(creatures).length <= 1,
+    canShowFemale: form.resources.hasFemale,
   };
 };
 

@@ -1,4 +1,4 @@
 {
   "copy_title": "Copia del archivo",
-  "copy_message": "El archivo « ${{filename}} » ya existe. ¿Quieres reemplazarlo?"
+  "copy_message": "El archivo «\u00a0{{filename}}\u00a0» ya existe en la carpeta «\u00a0{{target}}\u00a0». ¿Quieres reemplazarlo?"
 }
