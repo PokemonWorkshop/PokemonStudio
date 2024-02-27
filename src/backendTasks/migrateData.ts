@@ -28,7 +28,8 @@ const MIGRATIONS: Record<string, MigrationTask[]> = {
   '1.4.4': [migrationV2, addAvailableLanguagesForTranslation],
   '2.0.0': [addAvailableLanguagesForTranslation],
   '2.0.1': [addAvailableLanguagesForTranslation],
-  '2.0.2': [addAvailableLanguagesForTranslation], // Don't forget to add the official version coming up
+  '2.0.2': [addAvailableLanguagesForTranslation],
+  '2.0.3': [addAvailableLanguagesForTranslation], // Don't forget to add the official version coming up
 };
 
 // Don't forget to extend those array with the new tasks that gets added by the time!
@@ -92,7 +93,8 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
   '1.4.4': ['Migration to version 2.0', 'Add available languages for translation'],
   '2.0.0': ['Add available languages for translation'],
   '2.0.1': ['Add available languages for translation'],
-  '2.0.2': ['Add available languages for translation'], // Don't forget to add the official version coming up
+  '2.0.2': ['Add available languages for translation'],
+  '2.0.3': ['Add available languages for translation'], // Don't forget to add the official version coming up
 };
 
 export type MigrateDataInput = { projectPath: string; projectVersion: string };

@@ -11,6 +11,5 @@
   "code_error": "The prefix is already used.",
   "code_info": "The prefix is used in CSV files to identify the column used.",
   "placeholder_language": "Ex: Japanese",
-  "placeholder_prefix": "Ex: jp",
-  "supported_languages": ""
+  "placeholder_prefix": "Ex: jp"
 }

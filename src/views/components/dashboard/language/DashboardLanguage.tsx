@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { EditorOverlay } from '@components/editor';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +12,11 @@ import { useProjectSavingLanguage } from '@utils/useProjectSavingLanguage';
 import { StudioLanguageConfig } from '@modelEntities/config';
 import { cloneEntity } from '@utils/cloneEntity';
 import { useProjectStudio } from '@utils/useProjectStudio';
+import { useDashboardLanguage } from './useDashboardLanguage';
+import { NewLanguage } from './editors/DashboardLanguageNewEditor';
+import { useDialogsRef } from '@utils/useDialogsRef';
+import { DashboardLanguageEditorAndDeletionKeys, DashboardLanguageEditorOverlay } from './editors/DashboardLanguageEditorOverlay';
+import { DashboardEditorOverlay } from '../editors/DashboardEditorOverlay';
 
 type TagLanguageContainerProps = {
   noHideCode: boolean;
@@ -42,7 +47,6 @@ const languageDefaultEntries = (language: StudioLanguageConfig) =>
     .map((code, index) => ({ value: code, label: language.choosableLanguageTexts[index] }))
     .sort((a, b) => a.label.localeCompare(b.label));
 
-const getCode = (languageText: string) => languageText.slice(0, languageText.length === 1 ? 1 : 2).toLocaleLowerCase();
 const isCodeUnique = (language: StudioLanguageConfig) => {
   return language.choosableLanguageCode.every(
     (code, codeIndex) => language.choosableLanguageCode.find((c, idx) => c === code && codeIndex !== idx) === undefined
@@ -56,53 +60,35 @@ const updateDefaultLanguage = (language: StudioLanguageConfig) => {
 };
 
 export const DashboardLanguage = () => {
-  const { projectConfigValues: language, setProjectConfigValues: setLanguage } = useConfigLanguage();
-  const { projectConfigValues: gameOption, setProjectConfigValues: setGameOption } = useConfigGameOptions();
-  const { projectStudioValues: projectStudio, setProjectStudioValues: setProjectStudio } = useProjectStudio();
-  const currentEditedLanguage = useMemo(() => cloneEntity(language), [language]);
-  const currentEditedGameOption = useMemo(() => cloneEntity(gameOption), [gameOption]);
-  const languageDefaultOptions = useMemo(() => languageDefaultEntries(language), [language]);
-  const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
-  const [newLanguage, setNewLanguage] = useState('');
-  const [languageIndex, setLanguageIndex] = useState(0);
+  const { languageConfig, projectStudio, onChangeDefaultLanguage, onDeleteLanguage } = useDashboardLanguage();
+  const dialogsRef = useDialogsRef<DashboardLanguageEditorAndDeletionKeys>();
   const { t } = useTranslation('dashboard_language');
-  const { savingLanguage, setSavingLanguage } = useProjectSavingLanguage();
+  /*const currentEditedLanguage = useMemo(() => cloneEntity(language), [language]);
+  const currentEditedGameOption = useMemo(() => cloneEntity(gameOptions), [gameOptions]);*/
+  const languageDefaultOptions = useMemo(() => languageDefaultEntries(languageConfig), [languageConfig]);
+  const [newLanguage, setNewLanguage] = useState<NewLanguage>({ from: 'player', name: '' });
+  const [languageIndex, setLanguageIndex] = useState(0);
+  const languagesTranslationRef = useRef<HTMLInputElement>(null);
+  const languagesPlayersRef = useRef<HTMLInputElement>(null);
 
-  const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (event) => {
+  const handleKeyDown = (from: 'translation' | 'player', event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       const target = event.target as HTMLInputElement;
       if (target.value.length === 0) return;
 
       target.blur();
-      setCurrentEditor('new');
+      setNewLanguage({ from, name: target.value });
+      dialogsRef.current?.openDialog('new');
     }
   };
 
   const onEditLanguage = (index: number) => {
     setLanguageIndex(index);
-    setCurrentEditor('edit');
+    //setCurrentEditor('edit');
+    // TODO: from and index
   };
 
-  const onDeleteLanguage = (index: number) => {
-    const currentCode = currentEditedLanguage.choosableLanguageCode[index];
-    setSavingLanguage(savingLanguage.filter((code) => code != currentCode));
-
-    currentEditedLanguage.choosableLanguageCode.splice(index, 1);
-    currentEditedLanguage.choosableLanguageTexts.splice(index, 1);
-    if (currentEditedLanguage.choosableLanguageCode.length <= 1) {
-      currentEditedGameOption.order = currentEditedGameOption.order.filter((k) => k !== 'language');
-    }
-    updateDefaultLanguage(currentEditedLanguage);
-    setLanguage(currentEditedLanguage);
-    setGameOption(currentEditedGameOption);
-  };
-
-  const onChangeDefaultLanguage = (defaultLanguage: string) => {
-    currentEditedLanguage.defaultLanguage = defaultLanguage;
-    setLanguage(currentEditedLanguage);
-  };
-
-  const onCloseEditor = () => {
+  /*const onCloseEditor = () => {
     if (currentEditor === 'new') setCurrentEditor(undefined);
     if (
       !isCodeUnique(currentEditedLanguage) ||
@@ -129,26 +115,20 @@ export const DashboardLanguage = () => {
       />
     ),
     edit: <DashboardLanguageEditor language={currentEditedLanguage} index={languageIndex} />,
-  };
+  };*/
 
   return (
     <PageEditor editorTitle={t('language')} title={t('settings')}>
       <InputWithTopLabelContainer>
         <Label htmlFor="languages-translation">{t('available_languages_translation')}</Label>
-        <Input
-          type="text"
-          name="languages-translation"
-          value={newLanguage}
-          onChange={(event) => setNewLanguage(event.target.value)}
-          onKeyDown={handleKeyDown}
-        />
+        <Input type="text" name="languages-translation" onKeyDown={(event) => handleKeyDown('translation', event)} ref={languagesTranslationRef} />
         <TagLanguageContainer noHideCode={projectStudio.languagesTranslation.length === 1}>
           {projectStudio.languagesTranslation.map((language, index) => (
             <TagWithDeletion
               key={`languages-translation-${language.code}-${index}`}
               index={index}
-              onClickDelete={onDeleteLanguage}
-              noDeletion={projectStudio.languagesTranslation.length === 1}
+              onClickDelete={() => onDeleteLanguage(index, 'translation')}
+              noDeletion={projectStudio.languagesTranslation.length === 1 || languageConfig.choosableLanguageCode.indexOf(language.code) !== -1}
               onClick={() => onEditLanguage(index)}
             >
               <TagLanguage>
@@ -161,24 +141,18 @@ export const DashboardLanguage = () => {
       </InputWithTopLabelContainer>
       <InputWithTopLabelContainer>
         <Label htmlFor="languages-players">{t('available_languages_players')}</Label>
-        <Input
-          type="text"
-          name="languages-players"
-          value={newLanguage}
-          onChange={(event) => setNewLanguage(event.target.value)}
-          onKeyDown={handleKeyDown}
-        />
-        <TagLanguageContainer noHideCode={language.choosableLanguageCode.length === 1}>
-          {language.choosableLanguageCode.map((code, index) => (
+        <Input type="text" name="languages-players" onKeyDown={(event) => handleKeyDown('player', event)} ref={languagesPlayersRef} />
+        <TagLanguageContainer noHideCode={languageConfig.choosableLanguageCode.length === 1}>
+          {languageConfig.choosableLanguageCode.map((code, index) => (
             <TagWithDeletion
               key={`language-players${code}-${index}`}
               index={index}
-              onClickDelete={onDeleteLanguage}
-              noDeletion={language.choosableLanguageCode.length === 1}
+              onClickDelete={() => onDeleteLanguage(index, 'player')}
+              noDeletion={languageConfig.choosableLanguageCode.length === 1}
               onClick={() => onEditLanguage(index)}
             >
               <TagLanguage>
-                <span className="text">{language.choosableLanguageTexts[index]}</span>
+                <span className="text">{languageConfig.choosableLanguageTexts[index]}</span>
                 <span className="code">{`- ${code}`}</span>
               </TagLanguage>
             </TagWithDeletion>
@@ -191,11 +165,11 @@ export const DashboardLanguage = () => {
           id="select-default-language"
           options={languageDefaultOptions}
           onChange={(value) => onChangeDefaultLanguage(value)}
-          value={language.defaultLanguage}
+          value={languageConfig.defaultLanguage}
           noTooltip
         />
       </InputWithTopLabelContainer>
-      <EditorOverlay currentEditor={currentEditor} editors={editors} onClose={onCloseEditor} />
+      <DashboardLanguageEditorOverlay ref={dialogsRef} newLanguage={newLanguage} />
     </PageEditor>
   );
 };

@@ -3,7 +3,6 @@ import { useGlobalState } from '@src/GlobalStateProvider';
 
 /**
  * Captain Hook of the Hooks. This hook allow you to manipulate projectStudio data from a specific screen.
- * @note This Hook **SHOULD NEVER** be used with `useGlobalState()`! **This cause data inconsistency**. If you need anything, this hook returns everything you need, just pass the result to children of your page!
  * @example
  * const {
  *  projectStudioValues: projectStudio,
@@ -32,6 +31,22 @@ export const useProjectStudio = () => {
   return {
     projectStudioValues,
     setProjectStudioValues,
+    state,
+  };
+};
+
+/**
+ * Captain Hook of the Hooks. This hook allow you to read projectStudio data from a specific screen.
+ * @example
+ * const {
+ *  projectStudioValues: projectStudio,
+ * } = useProjectStudioReadonly();
+ */
+export const useProjectStudioReadonly = () => {
+  const [state] = useGlobalState();
+
+  return {
+    projectStudioValues: state.projectStudio,
     state,
   };
 };

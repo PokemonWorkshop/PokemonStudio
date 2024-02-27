@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React, { forwardRef, useState } from 'react';
 import styled from 'styled-components';
 import { Editor } from '@components/editor';
 import { useTranslation } from 'react-i18next';
 import { Input, InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
-import { useConfigGameOptions, useConfigLanguage } from '@utils/useProjectConfig';
 import { useProjectSavingLanguage } from '@utils/useProjectSavingLanguage';
 import { cloneEntity } from '@utils/cloneEntity';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { useDashboardLanguage } from '../useDashboardLanguage';
+import { useUpdateLanguage } from './useUpdateLanguage';
+import { useUpdateGameOptions } from '@components/dashboard/gameOptions';
+import { useUpdateProjectStudio } from '@utils/useUpdateProjectStudio';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -26,37 +30,53 @@ const CodeErrorContainer = styled.span`
   color: ${({ theme }) => theme.colors.dangerBase};
 `;
 
+const getCode = (languageText: string) => languageText.slice(0, languageText.length === 1 ? 1 : 2).toLocaleLowerCase();
+
+export type NewLanguage = {
+  from: 'translation' | 'player';
+  name: string;
+};
+
 type LanguageDefaultValue = {
   text: string;
   code: string;
 };
 
 type DashboardLanguageNewEditorProps = {
-  defaultValue: LanguageDefaultValue;
-  onClose: () => void;
-  onCloseNew: () => void;
+  newLanguage: NewLanguage;
+  closeDialog: () => void;
 };
 
-export const DashboardLanguageNewEditor = ({ defaultValue, onClose, onCloseNew }: DashboardLanguageNewEditorProps) => {
-  const { projectConfigValues: language, setProjectConfigValues: setLanguage } = useConfigLanguage();
-  const { projectConfigValues: gameOption, setProjectConfigValues: setGameOption } = useConfigGameOptions();
-  const [languageText, setLanguageText] = useState<LanguageDefaultValue>(defaultValue);
+export const DashboardLanguageNewEditor = forwardRef<EditorHandlingClose, DashboardLanguageNewEditorProps>(({ newLanguage, closeDialog }, ref) => {
+  const { languageConfig, gameOptions, projectStudio } = useDashboardLanguage();
+  const updateLanguageConfig = useUpdateLanguage(languageConfig);
+  const updateGameOptions = useUpdateGameOptions(gameOptions);
+  const updateProjectStudio = useUpdateProjectStudio(projectStudio);
+  const { addNewLanguageProjectText } = useProjectSavingLanguage();
   const { t } = useTranslation('dashboard_language');
-  const { savingLanguage, setSavingLanguage, addNewLanguageProjectText } = useProjectSavingLanguage();
+  const [languageText, setLanguageText] = useState<LanguageDefaultValue>({ text: newLanguage.name, code: getCode(newLanguage.name) });
+
+  useEditorHandlingClose(ref);
 
   const onClickNew = () => {
-    const currentEditedLanguage = cloneEntity(language);
-    const currentEditedGameOption = cloneEntity(gameOption);
-    currentEditedLanguage.choosableLanguageTexts.push(languageText.text);
-    currentEditedLanguage.choosableLanguageCode.push(languageText.code);
-    if (currentEditedLanguage.choosableLanguageCode.length > 1 && !currentEditedGameOption.order.includes('language')) {
-      currentEditedGameOption.order.push('language');
+    if (checkDisabled()) return;
+
+    const languagesTranslation = cloneEntity(projectStudio.languagesTranslation);
+    languagesTranslation.push({ code: languageText.code, name: languageText.text });
+    if (newLanguage.from === 'player') {
+      const currentEditedLanguage = cloneEntity(languageConfig);
+      currentEditedLanguage.choosableLanguageTexts.push(languageText.text);
+      currentEditedLanguage.choosableLanguageCode.push(languageText.code);
+      if (currentEditedLanguage.choosableLanguageCode.length > 1 && !gameOptions.order.includes('language')) {
+        const order = cloneEntity(gameOptions.order);
+        order.push('language');
+        updateGameOptions({ order });
+      }
+      updateLanguageConfig(currentEditedLanguage);
     }
-    setSavingLanguage([...savingLanguage, languageText.code]);
-    setLanguage(currentEditedLanguage);
-    setGameOption(currentEditedGameOption);
     addNewLanguageProjectText(languageText.code);
-    onCloseNew();
+    updateProjectStudio({ languagesTranslation });
+    closeDialog();
   };
 
   const onChangePrefix = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,11 +86,12 @@ export const DashboardLanguageNewEditor = ({ defaultValue, onClose, onCloseNew }
     setLanguageText({ ...languageText, code: prefix });
   };
 
-  const isCodeUnique = () => language.choosableLanguageCode.find((code) => code === languageText.code) === undefined;
+  // TODO: save old projectStudio.languagesTranslation pour empêcher de voir une fausse erreur
+  const isCodeUnique = () => projectStudio.languagesTranslation.find(({ code }) => code === languageText.code) === undefined;
   const checkDisabled = () => languageText.text === '' || languageText.code === '' || !isCodeUnique();
 
   return (
-    <Editor type="creation" title={t('supported_languages')}>
+    <Editor type="creation" title={newLanguage.from === 'player' ? t('available_languages_players') : t('available_languages_translation')}>
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="language-text" required>
@@ -106,9 +127,10 @@ export const DashboardLanguageNewEditor = ({ defaultValue, onClose, onCloseNew }
               {t('add_language')}
             </PrimaryButton>
           </ToolTipContainer>
-          <DarkButton onClick={onClose}>{t('cancel')}</DarkButton>
+          <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
     </Editor>
   );
-};
+});
+DashboardLanguageNewEditor.displayName = 'DashboardLanguageNewEditor';
