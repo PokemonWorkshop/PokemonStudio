@@ -2,10 +2,10 @@ import log from 'electron-log';
 import fs from 'fs';
 import path from 'path';
 import { requestJson } from './requestJson';
-import { getAppRootPath } from './getAppRootPath';
 import { Sha1 } from '@modelEntities/sha1';
 import { calculateFileSha1, compareSha1 } from './calculateFileSha1';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
+import { getStudioResourcesPath } from './getStudioResourcesPath';
 
 export type CheckDownloadNewProjectInput = { url: string };
 export type CheckDownloadNewProjectOutput = { needDownload: false } | { needDownload: true; filename: string; sha1: Sha1 };
@@ -13,7 +13,7 @@ export type LatestNewProject = { filename: string; sha1: string };
 
 export const checkDownloadNewProject = async (payload: CheckDownloadNewProjectInput) => {
   log.info('check-download-new-project', payload);
-  const archivePath = path.join(getAppRootPath(), 'new-project.zip');
+  const archivePath = path.join(getStudioResourcesPath(), 'new-project.zip');
   const json = (await requestJson(payload.url)) as LatestNewProject;
   log.info('check-download-new-project/request-json', json);
 
