@@ -49,7 +49,7 @@ To install them follow those steps:
 1. Download the binary archive from
 
 - Windows: https://www.mediafire.com/file/4lzb21b5tqte8ya/psdk-binaries.7z/file
-- MacOS: https://www.mediafire.com/file/0vnfqx5jkh0adwu/psdk-binaries-macos-arm64.7z/file (Note, this file needs to be updated with new dependencies)
+- MacOS (M1/M2/M3): https://www.mediafire.com/file/0vnfqx5jkh0adwu/psdk-binaries-macos-arm64.7z/file (Note, this file needs to be updated with new dependencies)
 - Linux: **Not done yet**
 
 2. Extract the content of the archive to the root of this project
