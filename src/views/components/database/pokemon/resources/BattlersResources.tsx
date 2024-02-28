@@ -1,101 +1,55 @@
-import { DataBlockWrapper } from '@components/database/dataBlocks';
-import { StudioCreatureForm } from '@modelEntities/creature';
-import { CreatureFormResourcesPath } from '@utils/path';
+import { ResourceWrapper, ResourcesContainer, SpriteResource, TitleResource, TitleResourceWithToggle } from '@components/resources';
+import { StudioCreature, StudioCreatureForm } from '@modelEntities/creature';
 import React from 'react';
-import { ResourcesContainer } from './ResourcesContainer';
-import { SpriteResource } from './SpriteResource';
-import { TitleResource, TitleResourceWithToggle } from './TitleResource';
+import { useTranslation } from 'react-i18next';
+import { CreatureFormResourcesFemalePath, CreatureFormResourcesPath, formResourcesPath } from '@utils/path';
+import { useUpdateResources } from './useUpdateResources';
+import { useTitleResource } from './useTitleResource';
 
 type BattlersResourcesProps = {
+  creature: StudioCreature;
   form: StudioCreatureForm;
-  isShowFemale: boolean;
-  onResourceChoosen: (filePath: string, resource: CreatureFormResourcesPath) => void;
-  onResourceClean: (resource: CreatureFormResourcesPath, isFemale: boolean) => void;
-  onShowFemale: (female: boolean) => void;
+  canShowFemale: boolean;
 };
 
-export const BattlersResources = ({ form, isShowFemale, onResourceChoosen, onResourceClean, onShowFemale }: BattlersResourcesProps) => {
+export const BattlersResources = ({ creature, form, canShowFemale }: BattlersResourcesProps) => {
+  const { t } = useTranslation('database_pokemon');
+  const { onResourceChoosen, onResourceClean, onShowFemale } = useUpdateResources(creature, form);
+  const titleResource = useTitleResource();
+
   return (
     <ResourcesContainer>
       {form.femaleRate === -1 || form.femaleRate === 0 || form.femaleRate === 100 ? (
         <TitleResource title="Battlers" />
       ) : (
-        <TitleResourceWithToggle title="Battlers" onShowFemale={onShowFemale} isShowFemale={isShowFemale} />
+        <TitleResourceWithToggle title="Battlers" isShow={canShowFemale} onShow={onShowFemale} toggleText={t('show_female_sprites')} />
       )}
-      <DataBlockWrapper>
-        {form.femaleRate !== 100 && (
-          <>
+      <ResourceWrapper size="fourth">
+        {form.femaleRate !== 100 &&
+          (['front', 'back', 'frontShiny', 'backShiny'] as CreatureFormResourcesPath[]).map((resource) => (
             <SpriteResource
-              form={form}
-              resource="front"
-              isFemale={false}
-              canBeFemale={isShowFemale}
-              onResourceChoosen={onResourceChoosen}
-              onResourceClean={onResourceClean}
+              type="creature"
+              title={titleResource(resource, false, canShowFemale)}
+              resourcePath={formResourcesPath(form, resource)}
+              extensions={['png', 'gif']}
+              onResourceChoosen={(resourcePath) => onResourceChoosen(resourcePath, resource)}
+              onResourceClean={() => onResourceClean(resource)}
+              key={resource}
             />
+          ))}
+        {canShowFemale &&
+          (['frontF', 'backF', 'frontShinyF', 'backShinyF'] as CreatureFormResourcesFemalePath[]).map((resource) => (
             <SpriteResource
-              form={form}
-              resource="back"
-              isFemale={false}
-              canBeFemale={isShowFemale}
-              onResourceChoosen={onResourceChoosen}
-              onResourceClean={onResourceClean}
+              type="creature"
+              title={titleResource(resource, true, true)}
+              resourcePath={formResourcesPath(form, resource)}
+              extensions={['png', 'gif']}
+              onResourceChoosen={(resourcePath) => onResourceChoosen(resourcePath, resource)}
+              onResourceClean={() => onResourceClean(resource)}
+              key={resource}
             />
-            <SpriteResource
-              form={form}
-              resource="frontShiny"
-              isFemale={false}
-              canBeFemale={isShowFemale}
-              onResourceChoosen={onResourceChoosen}
-              onResourceClean={onResourceClean}
-            />
-            <SpriteResource
-              form={form}
-              resource="backShiny"
-              isFemale={false}
-              canBeFemale={isShowFemale}
-              onResourceChoosen={onResourceChoosen}
-              onResourceClean={onResourceClean}
-            />
-          </>
-        )}
-        {isShowFemale && (
-          <>
-            <SpriteResource
-              form={form}
-              resource="frontF"
-              isFemale={true}
-              canBeFemale={true}
-              onResourceChoosen={onResourceChoosen}
-              onResourceClean={onResourceClean}
-            />
-            <SpriteResource
-              form={form}
-              resource="backF"
-              isFemale={true}
-              canBeFemale={true}
-              onResourceChoosen={onResourceChoosen}
-              onResourceClean={onResourceClean}
-            />
-            <SpriteResource
-              form={form}
-              resource="frontShinyF"
-              isFemale={true}
-              canBeFemale={true}
-              onResourceChoosen={onResourceChoosen}
-              onResourceClean={onResourceClean}
-            />
-            <SpriteResource
-              form={form}
-              resource="backShinyF"
-              isFemale={true}
-              canBeFemale={true}
-              onResourceChoosen={onResourceChoosen}
-              onResourceClean={onResourceClean}
-            />
-          </>
-        )}
-      </DataBlockWrapper>
+          ))}
+      </ResourceWrapper>
     </ResourcesContainer>
   );
 };

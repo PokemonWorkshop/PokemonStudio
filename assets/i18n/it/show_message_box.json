@@ -1,4 +1,4 @@
 {
   "copy_title": "Copia del file",
-  "copy_message": "Il file «\u00a0${{filename}}\u00a0» esiste già.\nSi desidera sostituirlo?"
+  "copy_message": "Il file «\u00a0{{filename}}\u00a0» esiste già nella cartella «\u00a0{{target}}\u00a0».\nSi desidera sostituirlo?"
 }

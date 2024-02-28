@@ -1,12 +1,12 @@
 import type { IpcMainEvent } from 'electron';
 import log from 'electron-log';
 import { mkdirSync } from 'fs';
-import { getAppRootPath } from './getAppRootPath';
 import path from 'path';
 import extract from 'extract-zip';
 import { ZipFile } from 'yauzl';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import { ChannelNames, sendProgress } from '@utils/BackendTask';
+import { getStudioResourcesPath } from './getStudioResourcesPath';
 
 const PSDK_PROJECT_PATH = 'new-project.zip';
 
@@ -19,7 +19,7 @@ const extractNewProject = async (payload: ExtractNewProjectInput, event: IpcMain
   log.info('extract-new-project/creating directory');
   mkdirSync(payload.projectDirName);
   log.info('extract-new-project/extract');
-  await extract(path.join(getAppRootPath(), PSDK_PROJECT_PATH), {
+  await extract(path.join(getStudioResourcesPath(), PSDK_PROJECT_PATH), {
     dir: payload.projectDirName,
     onEntry: (_, zipFile: ZipFile) => {
       const progress = Number(((countEntry.value / zipFile.entryCount) * 100).toFixed(1));

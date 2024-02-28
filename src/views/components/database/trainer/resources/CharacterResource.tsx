@@ -1,12 +1,12 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useUpdateTrainer } from '../editors/useUpdateTrainer';
 import { ResourceWrapper, ResourcesContainer, SpriteResource, TitleResource } from '@components/resources';
-import { basename, trainerResourcePath } from '@utils/path';
+import { trainerResourcePath } from '@utils/path';
 import styled from 'styled-components';
 import { ReactComponent as HelpIcon } from '@assets/icons/navigation/help-icon.svg';
 import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { StudioTrainer } from '@modelEntities/trainer';
+import { useUpdateResources } from './useUpdateResources';
 
 const HelpContainer = styled.div`
   display: flex;
@@ -36,25 +36,7 @@ type CharacterResourceProps = {
 
 export const CharacterResource = ({ trainer }: CharacterResourceProps) => {
   const { t } = useTranslation('database_trainers');
-  const updateTrainer = useUpdateTrainer(trainer);
-
-  const handleResourceChoosen = (resourcePath: string) => {
-    updateTrainer({
-      resources: {
-        ...trainer.resources,
-        character: basename(resourcePath, '.png'),
-      },
-    });
-  };
-
-  const handleResourceClean = () => {
-    updateTrainer({
-      resources: {
-        ...trainer.resources,
-        character: '',
-      },
-    });
-  };
+  const { onResourceGraphicsChoosen, onResourceGraphicsClean } = useUpdateResources(trainer);
 
   return (
     <ResourcesContainer>
@@ -71,8 +53,8 @@ export const CharacterResource = ({ trainer }: CharacterResourceProps) => {
           title={t('character')}
           resourcePath={trainerResourcePath(trainer, 'character')}
           extensions={['png']}
-          onResourceChoosen={handleResourceChoosen}
-          onResourceClean={handleResourceClean}
+          onResourceChoosen={(resourcePath) => onResourceGraphicsChoosen(resourcePath, 'character')}
+          onResourceClean={() => onResourceGraphicsClean('character')}
         />
       </ResourceWrapper>
     </ResourcesContainer>

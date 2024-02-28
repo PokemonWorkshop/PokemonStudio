@@ -1,18 +1,22 @@
 import styled from 'styled-components';
 import { ResourceContainer } from './ResourcesStyle';
 
-export const MusicResourceContainer = styled(ResourceContainer)`
+export const OtherResourceContainer = styled(ResourceContainer)`
   flex-direction: row;
   padding: 16px 16px 16px 24px;
   height: 80px;
 
-  .svg-container {
+  .svg-music-container,
+  .svg-icon-container {
     display: flex;
     align-items: center;
     justify-content: center;
     height: 40px;
     width: 40px;
     border-radius: 8px;
+  }
+
+  .svg-music-container {
     color: ${({ theme }) => theme.colors.text400};
     background-color: ${({ theme }) => theme.colors.dark18};
   }
@@ -44,19 +48,19 @@ export const MusicResourceContainer = styled(ResourceContainer)`
     align-items: center;
   }
 
-  & div.music-name {
+  & div.resource-name {
     display: flex;
     flex-direction: column;
     gap: 4px;
   }
 `;
 
-export const MusicNoResourceContainer = styled(MusicResourceContainer)`
+export const OtherNoResourceContainer = styled(OtherResourceContainer)`
   display: flex;
   border: 1px dashed ${({ theme }) => theme.colors.dark20};
   background-color: inherit;
 
-  .no-music-svg-container {
+  .no-resource-svg-container {
     display: flex;
     align-items: center;
     justify-content: center;
