@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Editor } from '@components/editor';
 import { useTranslation } from 'react-i18next';
@@ -9,9 +9,6 @@ import { useProjectSavingLanguage } from '@utils/useProjectSavingLanguage';
 import { cloneEntity } from '@utils/cloneEntity';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { useDashboardLanguage } from '../useDashboardLanguage';
-import { useUpdateLanguage } from './useUpdateLanguage';
-import { useUpdateGameOptions } from '@components/dashboard/gameOptions';
-import { useUpdateProjectStudio } from '@utils/useUpdateProjectStudio';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -48,13 +45,12 @@ type DashboardLanguageNewEditorProps = {
 };
 
 export const DashboardLanguageNewEditor = forwardRef<EditorHandlingClose, DashboardLanguageNewEditorProps>(({ newLanguage, closeDialog }, ref) => {
-  const { languageConfig, gameOptions, projectStudio } = useDashboardLanguage();
-  const updateLanguageConfig = useUpdateLanguage(languageConfig);
-  const updateGameOptions = useUpdateGameOptions(gameOptions);
-  const updateProjectStudio = useUpdateProjectStudio(projectStudio);
+  const { languageConfig, gameOptions, projectStudio, updateLanguageConfig, updateGameOptions, updateProjectStudio } = useDashboardLanguage();
   const { addNewLanguageProjectText } = useProjectSavingLanguage();
   const { t } = useTranslation('dashboard_language');
   const [languageText, setLanguageText] = useState<LanguageDefaultValue>({ text: newLanguage.name, code: getCode(newLanguage.name) });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const codes = useMemo(() => projectStudio.languagesTranslation.map(({ code }) => code), []);
 
   useEditorHandlingClose(ref);
 
@@ -86,8 +82,7 @@ export const DashboardLanguageNewEditor = forwardRef<EditorHandlingClose, Dashbo
     setLanguageText({ ...languageText, code: prefix });
   };
 
-  // TODO: save old projectStudio.languagesTranslation pour empêcher de voir une fausse erreur
-  const isCodeUnique = () => projectStudio.languagesTranslation.find(({ code }) => code === languageText.code) === undefined;
+  const isCodeUnique = () => !codes.includes(languageText.code);
   const checkDisabled = () => languageText.text === '' || languageText.code === '' || !isCodeUnique();
 
   return (

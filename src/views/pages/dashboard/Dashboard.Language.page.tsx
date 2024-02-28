@@ -1,7 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { DashboardTemplate } from '@components/dashboard';
-import { DashboardLanguage } from '@components/dashboard/language/DashboardLanguage';
+import { DashboardLanguage, DashboardTemplate } from '@components/dashboard';
 
 export const DashboardLanguagePage = () => {
   const { t } = useTranslation('dashboard');

@@ -8,6 +8,7 @@ import { useUpdateGameOptions } from '../gameOptions';
 import { useUpdateProjectStudio } from '@utils/useUpdateProjectStudio';
 
 export type DashboardLanguageType = 'translation' | 'player';
+export type QuickAddLanguageConfigResult = 'success' | 'already_exist' | 'open_new';
 
 const updateDefaultLanguage = (language: StudioLanguageConfig) => {
   if (language.choosableLanguageCode.indexOf(language.defaultLanguage) === -1) {
@@ -47,6 +48,23 @@ export const useDashboardLanguage = () => {
     }
   };
 
+  const quickAddLanguageConfig = (from: DashboardLanguageType, value: string): QuickAddLanguageConfigResult => {
+    if (from === 'translation') return 'open_new';
+
+    const text = value.toLowerCase();
+    const languageTranslation = projectStudio.languagesTranslation.find(
+      ({ code, name }) => code.toLowerCase() === text || name.toLowerCase() === text
+    );
+    if (!languageTranslation) return 'open_new';
+    if (language.choosableLanguageCode.find((code) => languageTranslation.code === code)) return 'already_exist';
+
+    const currentEditedLanguage = cloneEntity(language);
+    currentEditedLanguage.choosableLanguageCode.push(languageTranslation.code);
+    currentEditedLanguage.choosableLanguageTexts.push(languageTranslation.name);
+    updateLanguage(currentEditedLanguage);
+    return 'success';
+  };
+
   const onChangeDefaultLanguage = (defaultLanguage: string) => updateLanguage({ defaultLanguage });
 
   return {
@@ -55,5 +73,9 @@ export const useDashboardLanguage = () => {
     projectStudio,
     onDeleteLanguage,
     onChangeDefaultLanguage,
+    quickAddLanguageConfig,
+    updateLanguageConfig: updateLanguage,
+    updateGameOptions,
+    updateProjectStudio,
   };
 };

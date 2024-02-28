@@ -11,5 +11,6 @@
   "code_error": "Le préfixe est déjà utilisé.",
   "code_info": "Le préfixe est utilisé dans les fichiers CSV pour identifier la colonne utilisée.",
   "placeholder_language": "Ex : Japonais",
-  "placeholder_prefix": "Ex : jp"
+  "placeholder_prefix": "Ex : jp",
+  "language_already_exists": "La langue ou le préfixe «\u00a0{{language}}\u00a0» existe déjà."
 }
