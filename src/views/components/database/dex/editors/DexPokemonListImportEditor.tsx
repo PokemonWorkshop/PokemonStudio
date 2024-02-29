@@ -11,6 +11,7 @@ import { SelectDex } from '@components/selects';
 import { cloneEntity } from '@utils/cloneEntity';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { useDexPage } from '@utils/usePage';
+import { useUpdateDex } from './useUpdateDex';
 
 const DexImportInfo = styled.div`
   ${({ theme }) => theme.fonts.normalRegular};
@@ -29,9 +30,10 @@ type DexPokemonListImportEditorProps = {
 };
 
 export const DexPokemonListImportEditor = forwardRef<EditorHandlingClose, DexPokemonListImportEditorProps>(({ closeDialog }, ref) => {
-  const { projectDataValues: allDex, setProjectDataValues: setDex, selectedDataIdentifier: currentDex } = useProjectDex();
+  const { projectDataValues: allDex, selectedDataIdentifier: currentDex } = useProjectDex();
   const { t } = useTranslation('database_dex');
   const { dex } = useDexPage();
+  const updateDex = useUpdateDex(dex);
   const firstDbSymbol = Object.entries(allDex)
     .map(([value, dexData]) => ({ value, index: dexData.id }))
     .filter((d) => d.value !== dex.dbSymbol)
@@ -41,8 +43,8 @@ export const DexPokemonListImportEditor = forwardRef<EditorHandlingClose, DexPok
   useEditorHandlingClose(ref);
 
   const onClickImport = () => {
-    dex.creatures = cloneEntity(allDex[selectedDexImport].creatures);
-    setDex({ [dex.dbSymbol]: dex });
+    const creatures = cloneEntity(allDex[selectedDexImport].creatures);
+    updateDex({ creatures });
     closeDialog();
   };
 
