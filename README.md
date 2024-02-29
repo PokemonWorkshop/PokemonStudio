@@ -48,7 +48,7 @@ To install them follow those steps:
 
 1. Download the binary archive from
 
-- https://download.psdk.pokemonworkshop.com/binaries/
+- https://download.psdk.pokemonworkshop.com/binaries/ (Windows, Linux & MacOS M1+)
 
 2. Extract the content of the archive to the psdk-binaries folder.
 
