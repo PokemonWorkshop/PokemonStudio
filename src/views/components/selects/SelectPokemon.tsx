@@ -4,6 +4,7 @@ import { useSelectOptions } from '@utils/useSelectOptions';
 import { StudioDropDown } from '@components/StudioDropDown';
 import { SelectContainerWithLabel } from './SelectContainerWithLabel';
 import styled from 'styled-components';
+import { Select } from '@ds/Select';
 
 export const BreakableSpan = styled.span<{ breakpoint?: string }>`
   @media ${({ theme, breakpoint }) => (breakpoint ? breakpoint : theme.breakpoints.dataBox422)} {
@@ -36,7 +37,8 @@ export const SelectPokemon = ({ dbSymbol, onChange, breakpoint, noLabel, undefVa
   return (
     <SelectContainerWithLabel>
       <BreakableSpan breakpoint={breakpoint}>{t('pokemon')}</BreakableSpan>
-      <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />
+      <Select options={options} value={dbSymbol} chooseValue="" onChange={onChange} notFoundLabel={t('pokemon_deleted')} />
+      {/*<StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />*/}
     </SelectContainerWithLabel>
   );
 };
