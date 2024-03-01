@@ -163,7 +163,11 @@ const getTextSource = (projectText: Parameters<typeof getText>[0], fileId: numbe
 
 // Build a text source
 const buildTextSourceFromScratch = (key: TextSourceKey, state: State) => {
-  const projectText = { texts: state.projectText, config: state.projectConfig.language_config };
+  const projectText = {
+    texts: state.projectText,
+    languages: state.projectStudio.languagesTranslation,
+    defaultLanguage: state.projectConfig.language_config.defaultLanguage,
+  };
   const fileIds = TextFileIds[key];
   const originalObjects = TextSources[key];
   if (fileIds.length === 0) {
@@ -203,7 +207,11 @@ export const updateSelectOptionsTextSource = (fileId: number, textId: number, st
   const key = TextFileIdsToSource[fileId];
   if (!key) return;
   const originalObjects = TextSources[key];
-  const projectText = { texts: state.projectText, config: state.projectConfig.language_config };
+  const projectText = {
+    texts: state.projectText,
+    languages: state.projectStudio.languagesTranslation,
+    defaultLanguage: state.projectConfig.language_config.defaultLanguage,
+  };
   const fileIds = TextFileIds[key];
   if (fileIds.length === 0) {
     throw new Error(`No file id defines for ${key} key`);

@@ -27,7 +27,7 @@ import { StudioMapLink } from '@modelEntities/mapLink';
 import { StudioZone } from '@modelEntities/zone';
 import { StudioType } from '@modelEntities/type';
 import { StudioQuest } from '@modelEntities/quest';
-import { StudioProject } from '@modelEntities/project';
+import { StudioProject, StudioProjectLanguageTranslation } from '@modelEntities/project';
 import { StudioTextInfo } from '@modelEntities/textInfo';
 import { StudioMap } from '@modelEntities/map';
 import { DbSymbol } from '@modelEntities/dbSymbol';
@@ -181,7 +181,8 @@ const initialState = {
 
 export type TextsWithLanguageConfig = {
   texts: ProjectText;
-  config: StudioLanguageConfig;
+  languages: StudioProjectLanguageTranslation[];
+  defaultLanguage: string;
 };
 
 const useMyState = () => useState(initialState as State);

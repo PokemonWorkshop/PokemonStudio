@@ -10,7 +10,11 @@ const getNatureOptions = (state: State): SelectOption[] =>
   Object.entries(state.projectConfig.natures.db_symbol_to_id).map(([value, natureId]) => ({
     value,
     label: getText(
-      { texts: state.projectText, config: state.projectConfig.language_config },
+      {
+        texts: state.projectText,
+        languages: state.projectStudio.languagesTranslation,
+        defaultLanguage: state.projectConfig.language_config.defaultLanguage,
+      },
       100008,
       (state.projectConfig.natures.data[natureId] || [0])[0]
     ),

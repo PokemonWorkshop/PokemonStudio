@@ -96,21 +96,22 @@ const TranslationEditor = ({ title, name, textId, fileId, onClose, isMultiline, 
   const { t } = useTranslation('editor');
   const { t: tq } = useTranslation('pokemon_battler_list');
   const [state] = useGlobalState();
-  const projectText = { texts: state.projectText, config: state.projectConfig.language_config };
+  const projectText = {
+    texts: state.projectText,
+    languages: state.projectStudio.languagesTranslation,
+    defaultLanguage: state.projectConfig.language_config.defaultLanguage,
+  };
   const defaultLanguageCode = state.projectConfig.language_config.defaultLanguage;
   const languageOrder = useMemo(
     () =>
-      state.projectConfig.language_config.choosableLanguageCode
-        .map<[string, number]>((code, index) => [code, index])
+      state.projectStudio.languagesTranslation
+        .map<[string, number]>(({ code }, index) => [code, index])
         .filter(([code]) => code !== defaultLanguageCode),
-    [state.projectConfig.language_config, defaultLanguageCode]
+    [state.projectStudio.languagesTranslation, defaultLanguageCode]
   );
   const defaultLanguageName = useMemo(
-    () =>
-      state.projectConfig.language_config.choosableLanguageTexts[
-        state.projectConfig.language_config.choosableLanguageCode.indexOf(defaultLanguageCode)
-      ],
-    [state.projectConfig.language_config, defaultLanguageCode]
+    () => state.projectStudio.languagesTranslation.find(({ code }) => code === defaultLanguageCode)?.name || '???',
+    [defaultLanguageCode, state.projectStudio.languagesTranslation]
   );
 
   return (
@@ -143,7 +144,7 @@ const TranslationEditor = ({ title, name, textId, fileId, onClose, isMultiline, 
         </InputWithTopLabelContainer>
         {languageOrder.map(([code, index]) => (
           <InputWithTopLabelContainer key={code}>
-            <Label htmlFor={code}>{state.projectConfig.language_config.choosableLanguageTexts[index]}</Label>
+            <Label htmlFor={code}>{state.projectStudio.languagesTranslation[index].name}</Label>
             <InputContainer>
               <TranslationInput
                 defaultValue={getText(projectText, fileId, textId, code)}
@@ -174,7 +175,7 @@ type TranslationEditorWithCloseHandlingProps = {
 /** Wrapper allowing the TranslationEditor to be used with EditorOverlayV2 */
 export const TranslationEditorWithCloseHandling = forwardRef<EditorHandlingClose, TranslationEditorWithCloseHandlingProps>(
   ({ title, closeDialog, onClose, fileId, nameTextId, textIndex, isMultiline }, ref) => {
-    const [{ projectText: texts, projectConfig }, setState] = useGlobalState();
+    const [{ projectText: texts, projectConfig, projectStudio }, setState] = useGlobalState();
     const getNameText = useGetProjectText();
     const inputRefs = useRef<InputRefsType>({});
     // Save the name in state to prevent the re-render to change the title when saving new name
@@ -184,7 +185,13 @@ export const TranslationEditorWithCloseHandling = forwardRef<EditorHandlingClose
       setState((currentState) => {
         const localeChanges = Object.entries(inputRefs.current).map(([key, value]) => [key, value?.value || ''] as const);
         const hasChanged = localeChanges.some(
-          ([language, textChanged]) => getText({ texts, config: projectConfig.language_config }, fileId, textIndex, language) !== textChanged
+          ([language, textChanged]) =>
+            getText(
+              { texts, languages: projectStudio.languagesTranslation, defaultLanguage: projectConfig.language_config.defaultLanguage },
+              fileId,
+              textIndex,
+              language
+            ) !== textChanged
         );
         if (!hasChanged) {
           return currentState;
