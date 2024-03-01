@@ -56,6 +56,7 @@ export const DashboardLanguage = () => {
       const target = event.target as HTMLInputElement;
       if (target.value.length === 0) return;
 
+      target.blur();
       setErrorMessage('');
       const result = quickAddLanguageConfig(from, target.value);
       if (result === 'open_new') {
@@ -64,7 +65,6 @@ export const DashboardLanguage = () => {
       } else if (result === 'already_exist') {
         setErrorMessage(t('language_already_exists', { language: target.value }));
       }
-      target.blur();
       target.value = '';
     }
   };
