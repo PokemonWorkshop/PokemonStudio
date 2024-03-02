@@ -47,8 +47,8 @@ export const SelectExamples = () => {
       <h2>Test dialogs</h2>
       <PrimaryButton onClick={() => dialogsRef.current?.openDialog('dialog')}>Open Dialog</PrimaryButton>
       <SelectEditorOverlay ref={dialogsRef} />
-      <h2 style={{ marginTop: '20vh' }}>Unconrolled selects</h2>
-      <UnconrolledSelects />
+      <h2 style={{ marginTop: '20vh' }}>Uncontrolled selects</h2>
+      <UncontrolledSelects />
     </div>
   );
 };
@@ -84,7 +84,7 @@ const ControlledSelects = () => {
   );
 };
 
-const UnconrolledSelects = () => {
+const UncontrolledSelects = () => {
   const ref1 = useRef<string | undefined>();
   const ref2 = useRef<string | undefined>();
   const bigOptions = Array.from({ length: 2000 }, (_, i) => ({ value: `value_${i}`, label: `Option ${i}` }));
