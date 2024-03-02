@@ -42,6 +42,7 @@ import type { RequestJsonInput, RequestJsonOutput } from './backendTasks/request
 import type { CheckDownloadNewProjectInput, CheckDownloadNewProjectOutput } from './backendTasks/checkDownloadNewProject';
 
 contextBridge.exposeInMainWorld('api', {
+  isDev: process.env.NODE_ENV === 'development',
   clearCache: () => webFrame.clearCache(),
   md5: (value) => ipcRenderer.sendSync('get-md5-hash', value),
   shortcut: {
@@ -148,6 +149,7 @@ type AnyObj = Record<string, never>;
 declare global {
   interface Window {
     api: {
+      isDev: boolean;
       clearCache: () => void;
       md5: (value: string) => string;
       shortcut: {

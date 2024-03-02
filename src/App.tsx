@@ -20,6 +20,7 @@ import WorldRouter from '@pages/world/World.Router.page';
 import SettingsRouter from '@pages/settings/Settings.Router.page';
 
 import './i18n';
+import DesignSystemRouterComponent from '@ds/DesignSystem.router';
 
 const App = () => {
   return (
@@ -41,6 +42,7 @@ const App = () => {
               <Route path="/help" />
               <Route path="/settings/*" element={<SettingsRouter />} />
               <Route path="/account" />
+              <Route path="/designSystem/*" element={<DesignSystemRouterComponent />} />
               <Route path="/" element={<Navigate to="/home" />} />
             </Routes>
           </MemoryRouter>

@@ -5,7 +5,7 @@ export type SelectOption<Value extends string> = {
 };
 
 export type RenderOptionRef<Value extends string, ChooseValue extends string> = {
-  show: (value: Value | ChooseValue, options: Readonly<SelectOption<Value>[]>) => void;
+  show: (value: Value | ChooseValue | undefined, options: Readonly<SelectOption<Value>[]>) => void;
   hide: () => void;
   refine: (options: Readonly<SelectOption<Value>[]>) => void;
   highlightNext: () => void;

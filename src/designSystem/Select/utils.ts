@@ -1,6 +1,6 @@
 import type { SelectOption } from './types';
 
-export const findOptionIndexOrZero = <Value extends string>(options: Readonly<SelectOption<Value>[]>, currentValue: Value) =>
+export const findOptionIndexOrZero = <Value extends string>(options: Readonly<SelectOption<Value>[]>, currentValue: Value | undefined) =>
   Math.max(
     0,
     options.findIndex(({ value }) => value === currentValue)
@@ -10,7 +10,7 @@ export const getSelectDefaultLabel = <Value extends string>(
   value: string | undefined,
   defaultValue: string | undefined,
   options: Readonly<SelectOption<Value>[]>,
-  currentValue: Value,
+  currentValue: Value | undefined,
   notFoundLabel: string | undefined
 ) => {
   if (!value && !defaultValue) return '';

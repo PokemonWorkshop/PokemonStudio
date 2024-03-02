@@ -1,16 +1,26 @@
-import { ChangeEventHandler, FocusEventHandler, InputHTMLAttributes, KeyboardEventHandler, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  ChangeEventHandler,
+  FocusEventHandler,
+  InputHTMLAttributes,
+  KeyboardEventHandler,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { RenderOptionRef, SelectOption } from './types';
 import { getNotFoundExclusionPattern, getSelectDefaultLabel, positionAndShowPopover } from './utils';
 import type { List } from 'react-virtualized/dist/es/List';
 
 export type SelectProps<Value extends string, ChooseValue extends string> = {
   options: Readonly<SelectOption<Value>[]>;
-  chooseValue: ChooseValue;
+  chooseValue?: ChooseValue;
   className?: string;
   notFoundLabel?: string;
   value?: Value | ChooseValue;
-  defaultValue?: Value | ChooseValue;
-  optionRef?: React.MutableRefObject<Value>;
+  defaultValue?: Value;
+  optionRef?: React.MutableRefObject<Value | undefined>;
   onChange?: (value: Value) => void;
   disabled?: boolean;
 } & Omit<InputHTMLAttributes<HTMLInputElement>, 'min' | 'max' | 'value' | 'onChange' | 'type' | 'multiple' | 'list' | 'checked'>;
@@ -38,12 +48,15 @@ export const useSelect = <Value extends string, ChooseValue extends string>({
   // Reset input value whenever defaultInputValue changes because defaultValue is definitive so value change can't be forwarded through defaultValue
   useEffect(() => {
     // If defaultInputValue did change, then current value must change
-    if (value && value != currentValue) {
-      setCurrentValue(value);
-      if (optionRef?.current) optionRef.current = value as Value;
-      if (inputRef.current) inputRef.current.value = getSelectDefaultLabel(value, defaultValue, options, value, notFoundLabel);
+    if (value != currentValue && !defaultValue) {
+      const newValue = value ?? chooseValue;
+      setCurrentValue(newValue);
+      if (optionRef) optionRef.current = value as Value;
+      if (inputRef.current) inputRef.current.value = getSelectDefaultLabel(value, defaultValue, options, newValue, notFoundLabel);
     }
   }, [value]);
+
+  useImperativeHandle(optionRef, () => defaultValue, []);
 
   // Apply selected value
   const onSelectValue = (value: Value) => {

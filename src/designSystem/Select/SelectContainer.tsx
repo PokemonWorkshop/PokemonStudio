@@ -4,7 +4,6 @@ export const SelectContainer = styled.div`
   display: flex;
   position: relative;
   height: 40px;
-  min-width: 240px;
   box-sizing: border-box;
   user-select: none;
   cursor: pointer;
@@ -36,6 +35,8 @@ export const SelectContainer = styled.div`
   & input {
     box-sizing: border-box;
     padding: 9.5px 15px;
+    padding-right: 36px;
+    text-overflow: ellipsis;
     margin: 0;
     background-color: ${({ theme }) => theme.colors.dark20};
     border: 1px solid transparent;
@@ -116,6 +117,7 @@ export const SelectContainer = styled.div`
       color: ${({ theme }) => theme.colors.text400};
       overflow: hidden;
       text-overflow: ellipsis;
+      text-wrap: nowrap;
       cursor: pointer;
     }
 

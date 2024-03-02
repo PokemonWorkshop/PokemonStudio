@@ -1,3 +1,4 @@
+import { SelectContainer } from '@ds/Select/SelectContainer';
 import styled from 'styled-components';
 
 export const SelectContainerWithLabel = styled.div`
@@ -10,5 +11,9 @@ export const SelectContainerWithLabel = styled.div`
   & span {
     ${({ theme }) => theme.fonts.normalRegular};
     user-select: none;
+  }
+
+  & > ${SelectContainer} {
+    min-width: 240px;
   }
 `;
