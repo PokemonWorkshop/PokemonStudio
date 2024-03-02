@@ -15,6 +15,22 @@ export const SelectContainer = styled.div`
     position: absolute;
     right: 16px;
     top: calc((100% - 6px) / 2);
+    transform: scaleY(1);
+    transition: 0.2s;
+  }
+
+  &:has(.visible) {
+    color: ${({ theme }) => theme.colors.text400};
+
+    svg {
+      transform: scaleY(-1);
+      color: ${({ theme }) => theme.colors.text100};
+    }
+
+    & input {
+      background-color: ${({ theme }) => theme.colors.dark12};
+      cursor: text;
+    }
   }
 
   & input {
@@ -55,17 +71,12 @@ export const SelectContainer = styled.div`
     }
   }
 
-  &:has(.visible) {
-    color: ${({ theme }) => theme.colors.text400};
-
-    svg {
-      transform: rotate(180deg);
-      color: ${({ theme }) => theme.colors.text100};
+  @keyframes selectPopoverOpen {
+    from {
+      opacity: 0;
     }
-
-    & input {
-      background-color: ${({ theme }) => theme.colors.dark12};
-      cursor: text;
+    to {
+      opacity: 1;
     }
   }
 
@@ -80,10 +91,14 @@ export const SelectContainer = styled.div`
     user-select: none;
     cursor: default;
     overflow: hidden;
+    opacity: 0;
   }
 
   & > .select-popover.visible {
     display: block;
+    animation-name: selectPopoverOpen;
+    animation-duration: 0.1s;
+    opacity: 1;
   }
 
   & .select-list {
@@ -104,9 +119,12 @@ export const SelectContainer = styled.div`
       cursor: pointer;
     }
 
-    & span.highlighted:not(.current),
     & span:hover:not(.current) {
       background-color: ${({ theme }) => theme.colors.dark22};
+    }
+
+    & span.highlighted:not(.current) {
+      background-color: ${({ theme }) => theme.colors.dark18};
     }
 
     & span.current {
