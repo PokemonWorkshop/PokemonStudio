@@ -139,7 +139,7 @@ export const useNewProjectText = () => {
         savingText: new SavingTextMap(currentState.savingText.set(fileId, 'UPDATE')),
         projectText: {
           ...currentState.projectText,
-          [fileId]: newTexts ?? [currentState.projectConfig.language_config.choosableLanguageCode],
+          [fileId]: newTexts ?? [currentState.projectStudio.languagesTranslation.map(({ code }) => code)],
         },
         textVersion: currentState.textVersion + 1,
       };

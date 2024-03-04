@@ -151,13 +151,6 @@ export const PSDK_CONFIG_VALIDATOR = z.object({
 });
 export type StudioPSDKConfig = z.infer<typeof PSDK_CONFIG_VALIDATOR>;
 
-export const PROJECT_STUDIO_VALIDATOR = z.object({
-  title: z.string(),
-  studioVersion: z.string(),
-  iconPath: z.string(),
-});
-export type StudioProjectStudio = z.infer<typeof PROJECT_STUDIO_VALIDATOR>;
-
 export const getProjectLanguagesTranslationFromLanguageConfig = (config: StudioLanguageConfig): StudioProjectLanguageTranslation[] => {
   return config.choosableLanguageCode.map((code, index) => ({ code, name: config.choosableLanguageTexts[index] }));
 };
