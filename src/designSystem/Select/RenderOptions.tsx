@@ -54,6 +54,7 @@ export const RenderOptions = <Value extends string, ChooseValue extends string>(
           rowRenderer={rowRenderer}
           width={(props.popover.current?.clientWidth || 0) - (options.length > 5 ? 12 : 8)}
           style={LIST_STYLE}
+          tabIndex={null}
         />
       ) : null}
     </div>
