@@ -20,7 +20,7 @@ export type SelectProps<Value extends string, ChooseValue extends string> = {
   notFoundLabel?: string;
   value?: Value | ChooseValue;
   defaultValue?: Value;
-  optionRef?: React.MutableRefObject<Value | undefined>;
+  optionRef?: React.MutableRefObject<Value | ChooseValue | undefined>;
   onChange?: (value: Value) => void;
   disabled?: boolean;
 } & Omit<InputHTMLAttributes<HTMLInputElement>, 'min' | 'max' | 'value' | 'onChange' | 'type' | 'multiple' | 'list' | 'checked'>;
@@ -35,9 +35,11 @@ export const useSelect = <Value extends string, ChooseValue extends string>({
   optionRef,
   onChange,
   disabled: disabledFromOutside,
+  name,
   ...props
 }: SelectProps<Value, ChooseValue>) => {
   const inputRef = useRef<HTMLInputElement>(null);
+  const outputRef = useRef<HTMLInputElement>(null);
   const optionsUtilsRef = useRef<RenderOptionRef<Value, ChooseValue>>(null);
   const [currentValue, setCurrentValue] = useState(value ?? defaultValue ?? chooseValue);
   const popoverRef = useRef<HTMLDivElement>(null);
@@ -45,25 +47,26 @@ export const useSelect = <Value extends string, ChooseValue extends string>({
   const defaultInputValue = useMemo(() => getSelectDefaultLabel(value, defaultValue, options, currentValue, notFoundLabel), [value]);
   const disabled = disabledFromOutside || options.length === 0;
 
+  useImperativeHandle(optionRef, () => currentValue, [currentValue]);
+  useEffect(() => {
+    if (outputRef.current && typeof currentValue === 'string') outputRef.current.value = currentValue;
+  }, [currentValue]);
+
   // Reset input value whenever defaultInputValue changes because defaultValue is definitive so value change can't be forwarded through defaultValue
   useEffect(() => {
     // If defaultInputValue did change, then current value must change
     if (value != currentValue && !defaultValue) {
       const newValue = value ?? chooseValue;
       setCurrentValue(newValue);
-      if (optionRef) optionRef.current = value as Value;
       if (inputRef.current) inputRef.current.value = getSelectDefaultLabel(value, defaultValue, options, newValue, notFoundLabel);
     }
   }, [value]);
-
-  useImperativeHandle(optionRef, () => defaultValue, []);
 
   // Apply selected value
   const onSelectValue = (value: Value) => {
     optionsUtilsRef.current?.hide();
     setCurrentValue(value);
     onChange?.(value);
-    if (optionRef) optionRef.current = value;
 
     // Timeout let react re-render
     setTimeout(() => {
@@ -124,6 +127,7 @@ export const useSelect = <Value extends string, ChooseValue extends string>({
     onSelectValue,
     optionsUtilsRef,
     inputRef,
+    outputRef,
     popoverRef,
     listRef,
     inputProps: {
@@ -135,6 +139,9 @@ export const useSelect = <Value extends string, ChooseValue extends string>({
       onChange: onInputChange,
       pattern: getNotFoundExclusionPattern(notFoundLabel),
       defaultValue: defaultInputValue,
+    },
+    outputProps: {
+      name,
     },
   };
 };

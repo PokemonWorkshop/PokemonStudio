@@ -5,7 +5,7 @@ import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/
 import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import { useDialogsRef } from '@utils/useDialogsRef';
-import React, { forwardRef, useRef, useState } from 'react';
+import React, { FormEventHandler, forwardRef, useRef, useState } from 'react';
 import { Select } from './Select';
 import { SelectContainerWithLabel } from '@components/selects/SelectContainerWithLabel';
 
@@ -113,20 +113,28 @@ const SelectDialog = forwardRef<EditorHandlingClose, { closeDialog: () => void }
   const dialogsRef = useDialogsRef<'dialog'>();
   useEditorHandlingClose(ref);
 
+  const onSubmit: FormEventHandler<HTMLFormElement> = (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const values = Object.fromEntries(formData);
+    alert(JSON.stringify(values));
+  };
+
   return (
     <Editor type="studio" title={'Dialog'}>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <form onSubmit={onSubmit}>
         <InputContainer size="s">
           <InputWithTopLabelContainer>
             <Label>Nothing selected</Label>
-            <Select options={genericOptions} chooseValue="choose" placeholder="Choose a value" />
+            <Select options={genericOptions} chooseValue="choose" placeholder="Choose a value" name="nothing" />
           </InputWithTopLabelContainer>
           <InputWithLeftLabelContainer>
             <Label>Normal</Label>
-            <Select options={genericOptions} chooseValue="choose" placeholder="Choose a value" defaultValue="value_e" />
+            <Select options={genericOptions} chooseValue="choose" placeholder="Choose a value" defaultValue="value_e" name="normal" />
           </InputWithLeftLabelContainer>
+          <button type="submit">Submit</button>
         </InputContainer>
-      </div>
+      </form>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '32px' }}>
         <SecondaryButton onClick={() => dialogsRef.current?.openDialog('dialog', true)}>Sub dialog centered</SecondaryButton>
         <SecondaryButton onClick={() => dialogsRef.current?.openDialog('dialog')}>Sub dialog on right</SecondaryButton>
