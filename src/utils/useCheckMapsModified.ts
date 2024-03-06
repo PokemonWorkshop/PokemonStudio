@@ -44,7 +44,7 @@ export const useCheckMapsModified = () => {
       }
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state]);
+  }, [state, globalState.mapsModified, globalState.projectPath, globalState.projectData.maps]);
 
   return {
     checkMaps: (payload: CheckMapsModifiedPayload) => setState({ state: 'checkMapsModified', payload }),
