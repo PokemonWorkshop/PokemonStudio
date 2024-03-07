@@ -12,6 +12,7 @@ const PlayMenuButtonContainer = styled.div`
   left: 60px;
   width: 256px;
   z-index: 100;
+  cursor: default;
 
   & .play-menu {
     width: 240px;
@@ -45,6 +46,7 @@ const PlayButtonContainer = styled.div`
   position: relative;
   display: flex;
   align-items: center;
+  cursor: pointer;
 
   & span.triangle {
     position: absolute;
@@ -68,7 +70,7 @@ const PlayButtonContainer = styled.div`
     ${NavigationBarItemContainer} {
       background-color: ${({ theme }) => theme.colors.dark18};
 
-      & :active {
+      &:active {
         background-color: ${({ theme }) => theme.colors.primarySoft};
       }
     }

@@ -21,11 +21,11 @@ export const TagWithAction = styled(Tag)`
   cursor: pointer;
   outline-offset: -2px;
 
-  :hover {
+  &:hover {
     outline: 2px solid ${({ theme }) => theme.colors.text600};
   }
 
-  :active {
+  &:active {
     outline: 2px solid ${({ theme }) => theme.colors.text400};
   }
 `;
@@ -44,11 +44,11 @@ export const TagWithDeletionContainer = styled(TagWithAction)<TagWithDeletionCon
   cursor: ${({ noAction }) => (noAction ? 'default' : 'pointer')};
   user-select: none;
 
-  & :hover {
+  &:hover {
     outline-style: ${({ noAction }) => (noAction ? 'none' : 'block')};
   }
 
-  & :active {
+  &:active {
     outline-style: ${({ noAction }) => (noAction ? 'none' : 'block')};
   }
 
