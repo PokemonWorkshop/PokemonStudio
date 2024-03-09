@@ -16,14 +16,19 @@ export const Input = styled.input<InputProps>`
   color: ${({ theme, error }) => (error ? theme.colors.dangerBase : theme.colors.text100)};
   text-align: ${(props) => (props.type === 'number' ? 'right' : 'left')};
 
-  &:hover {
+  &:hover:not(:disabled) {
     border-color: ${({ theme }) => theme.colors.dark24};
     outline: 1.5px solid ${({ theme }) => theme.colors.dark24};
   }
 
+  &:disabled {
+    cursor: not-allowed;
+    filter: opacity(60%);
+  }
+
   &.active,
-  &:active,
-  &:focus {
+  &:active:not(:disabled),
+  &:focus:not(:disabled) {
     border-color: ${({ theme }) => theme.colors.primaryBase};
     outline: 1.5px solid ${({ theme }) => theme.colors.primaryBase};
   }

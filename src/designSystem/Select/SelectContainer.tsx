@@ -48,13 +48,18 @@ export const SelectContainer = styled.div`
     height: 40px;
     cursor: pointer;
 
-    &:hover {
+    &:hover:not(:disabled) {
       border-color: ${({ theme }) => theme.colors.dark24};
       outline: 1.5px solid ${({ theme }) => theme.colors.dark24};
     }
 
-    &:active,
-    &:focus {
+    &:disabled {
+      cursor: not-allowed;
+      filter: opacity(60%);
+    }
+
+    &:active:not(:disabled),
+    &:focus:not(:disabled) {
       border-color: ${({ theme }) => theme.colors.primaryBase};
       outline: 1.5px solid ${({ theme }) => theme.colors.primaryBase};
     }

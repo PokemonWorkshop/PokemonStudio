@@ -5,7 +5,7 @@ import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/
 import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import { useDialogsRef } from '@utils/useDialogsRef';
-import React, { FormEventHandler, forwardRef, useRef, useState } from 'react';
+import React, { FormEventHandler, forwardRef, useMemo, useRef, useState } from 'react';
 import { Select } from './Select';
 import { SelectContainerWithLabel } from '@components/selects/SelectContainerWithLabel';
 
@@ -44,10 +44,13 @@ export const SelectExamples = () => {
         <Select options={genericOptions} defaultValue="value_c" notFoundLabel={'Not found'} />
       </SelectContainerWithLabel>
       <br />
+      <h2>With disabled effect</h2>
+      <PotentiallyDisabledComponent />
+      <br />
       <h2>Test dialogs</h2>
       <PrimaryButton onClick={() => dialogsRef.current?.openDialog('dialog')}>Open Dialog</PrimaryButton>
       <SelectEditorOverlay ref={dialogsRef} />
-      <h2 style={{ marginTop: '20vh' }}>Uncontrolled selects</h2>
+      <h2 style={{ marginTop: '10vh' }}>Uncontrolled selects</h2>
       <UncontrolledSelects />
     </div>
   );
@@ -104,6 +107,42 @@ const UncontrolledSelects = () => {
           <Select options={bigOptions} placeholder="Choose a value" defaultValue="value_1023" optionRef={ref2} />
           <button onClick={() => alert(`Value: ${ref2.current}`)}>Show Value</button>
         </InputWithLeftLabelContainer>
+      </InputContainer>
+    </div>
+  );
+};
+
+const PotentiallyDisabledComponent = () => {
+  const [value1, setValue1] = useState<GenericOptionValue | 'choose'>('choose');
+  const [value2, setValue2] = useState<GenericOptionValue | 'choose'>('choose');
+  const [value3, setValue3] = useState<GenericOptionValue | 'choose'>('choose');
+  const options = useMemo(() => genericOptions.slice(0, 2), []);
+  const options1 = options.filter(({ value }) => value !== value2 && value !== value3);
+  const options2 = options.filter(({ value }) => value !== value1 && value !== value3);
+  const options3 = options.filter(({ value }) => value !== value1 && value !== value2);
+
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <InputContainer size="s">
+        <InputWithTopLabelContainer>
+          <Label>Choice 1</Label>
+          <Select value={value1} options={options1} chooseValue="choose" placeholder="Choose a value" onChange={setValue1} />
+          <button onClick={() => setValue1('choose')}>Reset</button>
+        </InputWithTopLabelContainer>
+      </InputContainer>
+      <InputContainer size="s">
+        <InputWithTopLabelContainer>
+          <Label>Choice 2</Label>
+          <Select value={value2} options={options2} placeholder="Choose a value" onChange={setValue2} />
+          <button onClick={() => setValue2('choose')}>Reset</button>
+        </InputWithTopLabelContainer>
+      </InputContainer>
+      <InputContainer size="s">
+        <InputWithTopLabelContainer>
+          <Label>Choice 3</Label>
+          <Select value={value3} options={options3} placeholder="Choose a value" onChange={setValue3} />
+          <button onClick={() => setValue3('choose')}>Reset</button>
+        </InputWithTopLabelContainer>
       </InputContainer>
     </div>
   );
