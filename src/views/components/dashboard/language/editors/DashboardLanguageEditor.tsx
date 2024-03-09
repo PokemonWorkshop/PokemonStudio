@@ -7,6 +7,7 @@ import { PaginationWithTitleProps } from '@components/PaginationWithTitle';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { useDashboardLanguage } from '../useDashboardLanguage';
 import { cloneEntity } from '@utils/cloneEntity';
+import type { StudioProjectLanguageTranslation } from '@modelEntities/project';
 
 export type EditLanguage = {
   from: 'translation' | 'player';
@@ -15,6 +16,16 @@ export type EditLanguage = {
 
 type DashboardLanguageEditorProps = {
   editLanguage: EditLanguage;
+};
+
+const getCurrentCode = (
+  from: 'translation' | 'player',
+  index: number,
+  choosableLanguageCode: string[],
+  languagesTranslation: StudioProjectLanguageTranslation[]
+) => {
+  if (from === 'translation') return choosableLanguageCode[index];
+  return languagesTranslation[index].code;
 };
 
 export const DashboardLanguageEditor = forwardRef<EditorHandlingClose, DashboardLanguageEditorProps>(({ editLanguage }, ref) => {
@@ -27,35 +38,36 @@ export const DashboardLanguageEditor = forwardRef<EditorHandlingClose, Dashboard
     [languageConfig, projectStudio, editLanguage]
   );
   const languageTextRef = useRef<HTMLInputElement>(null);
+  const currentCode = getCurrentCode(editLanguage.from, languageIndex, languageConfig.choosableLanguageCode, projectStudio.languagesTranslation);
+
+  const updateNameOfLanguagesTranslation = (index: number, newLanguageText: string) => {
+    const languagesTranslation = cloneEntity(projectStudio.languagesTranslation);
+    languagesTranslation[index].name = newLanguageText;
+    updateProjectStudio({ languagesTranslation });
+  };
+
+  const updateNameOfChoosableLanguageTexts = (index: number, newLanguageText: string) => {
+    const languageConfigTexts = cloneEntity(languageConfig.choosableLanguageTexts);
+    languageConfigTexts[index] = newLanguageText;
+    updateLanguageConfig({ choosableLanguageTexts: languageConfigTexts });
+  };
+
+  const updateText = (newLanguageText: string) => {
+    const playerTextIndex = languageConfig.choosableLanguageCode.indexOf(currentCode);
+    if (playerTextIndex !== -1) {
+      updateNameOfChoosableLanguageTexts(playerTextIndex, newLanguageText);
+    }
+    const languageTextIndex = projectStudio.languagesTranslation.findIndex(({ code }) => currentCode === code);
+    if (languageTextIndex !== -1) {
+      updateNameOfLanguagesTranslation(languageTextIndex, newLanguageText);
+    }
+  };
 
   const canClose = () => !!languageTextRef.current?.value;
   const onClose = () => {
     if (!languageTextRef.current || !canClose()) return;
 
-    const newLanguageText = languageTextRef.current.value;
-    if (editLanguage.from === 'player') {
-      const code = projectStudio.languagesTranslation[languageIndex].code;
-      const index = languageConfig.choosableLanguageCode.findIndex((languageCode) => languageCode === code);
-      if (index !== -1) {
-        const languageConfigTexts = cloneEntity(languageConfig.choosableLanguageTexts);
-        languageConfigTexts[index] = newLanguageText;
-        updateLanguageConfig({ choosableLanguageTexts: languageConfigTexts });
-      }
-      const languagesTranslation = cloneEntity(projectStudio.languagesTranslation);
-      languagesTranslation[languageIndex].name = newLanguageText;
-      updateProjectStudio({ languagesTranslation });
-    } else if (editLanguage.from === 'translation') {
-      const codeConfig = languageConfig.choosableLanguageCode[languageIndex];
-      const index = projectStudio.languagesTranslation.findIndex(({ code }) => code === codeConfig);
-      if (index !== -1) {
-        const languagesTranslation = cloneEntity(projectStudio.languagesTranslation);
-        languagesTranslation[index].name = newLanguageText;
-        updateProjectStudio({ languagesTranslation });
-      }
-      const languageConfigTexts = cloneEntity(languageConfig.choosableLanguageTexts);
-      languageConfigTexts[languageIndex] = newLanguageText;
-      updateLanguageConfig({ choosableLanguageTexts: languageConfigTexts });
-    }
+    updateText(languageTextRef.current.value);
   };
 
   useEditorHandlingClose(ref, onClose, canClose);

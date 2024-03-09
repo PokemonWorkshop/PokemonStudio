@@ -35,20 +35,4 @@ export const useProjectStudio = () => {
   };
 };
 
-/**
- * Captain Hook of the Hooks. This hook allow you to read projectStudio data from a specific screen.
- * @example
- * const {
- *  projectStudioValues: projectStudio,
- * } = useProjectStudioReadonly();
- */
-export const useProjectStudioReadonly = () => {
-  const [state] = useGlobalState();
-
-  return {
-    projectStudioValues: state.projectStudio,
-    state,
-  };
-};
-
 export type UseProjectStudioReturnType = ReturnType<typeof useProjectStudio>;

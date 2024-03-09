@@ -53,7 +53,7 @@ export const DashboardLanguage = () => {
 
   const handleKeyDown = (from: 'translation' | 'player', event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      const target = event.target as HTMLInputElement;
+      const target = event.currentTarget;
       if (target.value.length === 0) return;
 
       target.blur();
