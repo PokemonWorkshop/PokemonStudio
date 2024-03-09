@@ -8,7 +8,7 @@ export const Select = <Value extends string, ChooseValue extends string>(props: 
   const { onSelectValue, optionsUtilsRef, popoverRef, inputRef, outputRef, listRef, inputProps, outputProps } = useSelect(props);
 
   return (
-    <SelectContainer>
+    <SelectContainer className={props.className}>
       <input type="text" ref={inputRef} {...inputProps} />
       <input type="hidden" ref={outputRef} {...outputProps} />
       <DownIcon />
