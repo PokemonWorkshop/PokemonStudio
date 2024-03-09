@@ -6,7 +6,7 @@ import { Input, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import { TagWithDeletion } from '@components/Tag';
 import { StudioLanguageConfig } from '@modelEntities/config';
-import { useDashboardLanguage } from './useDashboardLanguage';
+import { DashboardLanguageType, useDashboardLanguage } from './useDashboardLanguage';
 import { useDialogsRef } from '@utils/useDialogsRef';
 import { DashboardLanguageEditorAndDeletionKeys, DashboardLanguageEditorOverlay } from './editors/DashboardLanguageEditorOverlay';
 import type { NewLanguage } from './editors/DashboardLanguageNewEditor';
@@ -51,7 +51,7 @@ export const DashboardLanguage = () => {
   const [editLanguage, setEditLanguage] = useState<EditLanguage>({ from: 'player', index: 0 });
   const [errorMessage, setErrorMessage] = useState<string>('');
 
-  const handleKeyDown = (from: 'translation' | 'player', event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (from: DashboardLanguageType, event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       const target = event.currentTarget;
       if (target.value.length === 0) return;
@@ -69,7 +69,7 @@ export const DashboardLanguage = () => {
     }
   };
 
-  const onEditLanguage = (from: 'translation' | 'player', index: number) => {
+  const onEditLanguage = (from: DashboardLanguageType, index: number) => {
     setEditLanguage({ from, index });
     dialogsRef.current?.openDialog('edit');
   };

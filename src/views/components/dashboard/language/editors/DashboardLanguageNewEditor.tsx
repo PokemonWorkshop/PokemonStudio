@@ -8,7 +8,7 @@ import { DarkButton, PrimaryButton } from '@components/buttons';
 import { useProjectSavingLanguage } from '@utils/useProjectSavingLanguage';
 import { cloneEntity } from '@utils/cloneEntity';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useDashboardLanguage } from '../useDashboardLanguage';
+import { DashboardLanguageType, useDashboardLanguage } from '../useDashboardLanguage';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -30,7 +30,7 @@ const CodeErrorContainer = styled.span`
 const getCode = (languageText: string) => languageText.slice(0, languageText.length === 1 ? 1 : 2).toLocaleLowerCase();
 
 export type NewLanguage = {
-  from: 'translation' | 'player';
+  from: DashboardLanguageType;
   name: string;
 };
 

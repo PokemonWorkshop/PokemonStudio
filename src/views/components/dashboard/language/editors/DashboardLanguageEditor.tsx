@@ -5,12 +5,12 @@ import { EditorChildWithSubEditorContainer } from '@components/editor/EditorCont
 import { Input, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
 import { PaginationWithTitleProps } from '@components/PaginationWithTitle';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useDashboardLanguage } from '../useDashboardLanguage';
+import { DashboardLanguageType, useDashboardLanguage } from '../useDashboardLanguage';
 import { cloneEntity } from '@utils/cloneEntity';
 import type { StudioProjectLanguageTranslation } from '@modelEntities/project';
 
 export type EditLanguage = {
-  from: 'translation' | 'player';
+  from: DashboardLanguageType;
   index: number;
 };
 
@@ -19,7 +19,7 @@ type DashboardLanguageEditorProps = {
 };
 
 const getCurrentCode = (
-  from: 'translation' | 'player',
+  from: DashboardLanguageType,
   index: number,
   choosableLanguageCode: string[],
   languagesTranslation: StudioProjectLanguageTranslation[]
