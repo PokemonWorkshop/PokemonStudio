@@ -30,6 +30,7 @@ export const HomeProjectNewEditor = forwardRef<EditorHandlingClose, HomeProjectN
     icon: undefined,
     defaultLanguage: 'en',
     multiLanguage: false,
+    languagesTranslation: [{ code: 'en', name: 'English' }],
   });
   const languageOptions = useMemo(() => languageEntries(t), [t]);
 

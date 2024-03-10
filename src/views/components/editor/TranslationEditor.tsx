@@ -63,8 +63,12 @@ type TranslationInputProps = {
 };
 
 const TranslationInput = ({ textId, fileId, languageCode, isMultiline }: TranslationInputProps) => {
-  const [{ projectText: texts, projectConfig }, setState] = useGlobalState();
-  const projectText = { texts, config: projectConfig.language_config };
+  const [{ projectText: texts, projectConfig, projectStudio }, setState] = useGlobalState();
+  const projectText = {
+    texts,
+    languages: projectStudio.languagesTranslation,
+    defaultLanguage: projectConfig.language_config.defaultLanguage,
+  };
 
   const handleChange = (text: string) =>
     setState((currentState) => {
@@ -128,17 +132,14 @@ export const TranslationEditor = ({ title, name, textId, fileId, onClose, isMult
   const defaultLanguageCode = state.projectConfig.language_config.defaultLanguage;
   const languageOrder = useMemo(
     () =>
-      state.projectConfig.language_config.choosableLanguageCode
-        .map<[string, number]>((code, index) => [code, index])
+      state.projectStudio.languagesTranslation
+        .map<[string, number]>(({ code }, index) => [code, index])
         .filter(([code]) => code !== defaultLanguageCode),
-    [state.projectConfig.language_config, defaultLanguageCode]
+    [state.projectStudio.languagesTranslation, defaultLanguageCode]
   );
   const defaultLanguageName = useMemo(
-    () =>
-      state.projectConfig.language_config.choosableLanguageTexts[
-        state.projectConfig.language_config.choosableLanguageCode.indexOf(defaultLanguageCode)
-      ],
-    [state.projectConfig.language_config, defaultLanguageCode]
+    () => state.projectStudio.languagesTranslation.find(({ code }) => code === defaultLanguageCode)?.name || '???',
+    [defaultLanguageCode, state.projectStudio.languagesTranslation]
   );
 
   return (
@@ -164,7 +165,7 @@ export const TranslationEditor = ({ title, name, textId, fileId, onClose, isMult
         </InputWithTopLabelContainer>
         {languageOrder.map(([code, index]) => (
           <InputWithTopLabelContainer key={code}>
-            <Label htmlFor={code}>{state.projectConfig.language_config.choosableLanguageTexts[index]}</Label>
+            <Label htmlFor={code}>{state.projectStudio.languagesTranslation[index].name}</Label>
             <InputContainer>
               <TranslationInput textId={textId} fileId={fileId} languageCode={code} isMultiline={isMultiline} />
             </InputContainer>

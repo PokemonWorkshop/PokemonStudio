@@ -2,12 +2,12 @@ import { generatePSDKBatFileContent } from '@services/generatePSDKBatFileContent
 import log from 'electron-log';
 import path from 'path';
 import { copyFileSync, existsSync, readFileSync, writeFileSync } from 'fs';
-import { GAME_OPTION_CONFIG_VALIDATOR, INFO_CONFIG_VALIDATOR, StudioLanguageConfig } from '@modelEntities/config';
+import { GAME_OPTION_CONFIG_VALIDATOR, INFO_CONFIG_VALIDATOR } from '@modelEntities/config';
+import { StudioProject } from '@modelEntities/project';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import { addColumnCSV, getTextFileList, getTextPath, languageAvailable, loadCSV, saveCSV } from '@utils/textManagement';
 import { readProjectFolder } from './readProjectData';
 import { MAP_VALIDATOR } from '@modelEntities/map';
-import { getFileStats } from './checkMapsModified';
 import fsPromise from 'fs/promises';
 
 export type ConfigureNewProjectMetaData = {
@@ -43,8 +43,8 @@ const updateGameOptionsConfig = (gameOptionsConfigPath: string) => {
 /**
  * Update the csv files to add missing languages if necessary
  */
-const updateCSVFiles = async (projectPath: string, languageConfigData: string) => {
-  const languageConfig = JSON.parse(languageConfigData) as StudioLanguageConfig;
+const updateCSVFiles = async (projectPath: string, projectStudioData: string) => {
+  const projectStudio = JSON.parse(projectStudioData) as StudioProject;
   const textFileList = getTextFileList(projectPath, true);
   await textFileList.reduce(async (lastPromise, fileId) => {
     await lastPromise;
@@ -52,9 +52,9 @@ const updateCSVFiles = async (projectPath: string, languageConfigData: string) =
     const textPath = path.join(projectPath, getTextPath(fileId), `${fileId}.csv`);
     const csvData = await loadCSV(textPath);
     let shouldBeSaved = false;
-    languageConfig.choosableLanguageCode.forEach((languageCode) => {
-      if (!languageAvailable(languageCode, csvData)) {
-        addColumnCSV(languageCode, csvData);
+    projectStudio.languagesTranslation.forEach(({ code }) => {
+      if (!languageAvailable(code, csvData)) {
+        addColumnCSV(code, csvData);
         shouldBeSaved = true;
       }
     });
@@ -106,7 +106,7 @@ const configureNewProject = async (payload: ConfigureNewProjectInput) => {
     updateGameOptionsConfig(path.join(payload.projectDirName, 'Data/configs/game_options_config.json'));
   }
   log.info('configure-new-project/update', 'CSV Files');
-  await updateCSVFiles(payload.projectDirName, payload.metaData.languageConfig);
+  await updateCSVFiles(payload.projectDirName, payload.metaData.projectStudioData);
   log.info('configure-new-project/update', 'Maps mtime');
   await updateMapsMtime(payload.projectDirName);
   return {};

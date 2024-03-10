@@ -51,8 +51,8 @@ export const useTextPage = () => {
   const { currentTextInfo, state } = useTextInfosReadonly();
   return {
     textInfo: currentTextInfo,
-    cannotDelete: currentTextInfo.fileId >= 8997,
-    disabledTranslation: state.projectConfig.language_config.choosableLanguageCode.length <= 1,
+    cannotDelete: currentTextInfo.fileId >= 8997 && currentTextInfo.fileId < 300_000,
+    disabledTranslation: state.projectStudio.languagesTranslation.length <= 1,
   };
 };
 
@@ -66,7 +66,8 @@ export const useTranslationPage = (positionLanguage?: number) => {
         index,
         value: element,
       }))
-      .filter((element) => element.value.indexOf('index') === -1 && element.value.indexOf('Index') === -1);
+      .filter((element) => element.value.indexOf('index') === -1 && element.value.indexOf('Index') === -1)
+      .filter(({ value }) => state.projectStudio.languagesTranslation.find(({ code }) => code === value));
   const defaultLanguageIndexFromFile: Language = allLanguageByIndex.find(
     (li) => li.value === state.projectConfig.language_config.defaultLanguage
   ) ?? { value: 'en', index: 0 };

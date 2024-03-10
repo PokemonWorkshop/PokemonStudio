@@ -2,7 +2,7 @@ import { ProjectText, useGlobalState } from '@src/GlobalStateProvider';
 
 export const useProjectSavingLanguage = () => {
   const [state, setState] = useGlobalState();
-  const setProjectSavingLanguage = (savingLanguage: string[]) => setState({ ...state, savingLanguage: savingLanguage });
+  const setProjectSavingLanguage = (savingLanguage: string[]) => setState({ ...state, savingLanguage: savingLanguage }); // TODO: probably useless, so can be removed
   const addNewLanguageProjectText = (languageCode: string) => {
     const projectText: [string, string[][]][] = Object.entries(state.projectText);
     projectText.forEach(([, projectTextValue]) => {

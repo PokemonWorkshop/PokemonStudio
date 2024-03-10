@@ -1,7 +1,6 @@
 {
   "language": "Sprache",
   "settings": "Einstellungen",
-  "supported_languages": "Unterstützte Sprachen",
   "default_language": "Standardsprache",
   "prefix": "Präfix",
   "fields_asterisk_required": "Die mit einem Sternchen versehenen Felder sind erforderlich.",

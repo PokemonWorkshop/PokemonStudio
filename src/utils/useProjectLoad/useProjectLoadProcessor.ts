@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import type { ProjectLoadFunctionBinding, ProjectLoadStateObject } from './types';
 import { DEFAULT_PROCESS_STATE, PROCESS_DONE_STATE, SpecialStateProcessors } from '@utils/useProcess';
 import { fail, handleFailure, toAsyncProcess } from './helpers';
-import { PROJECT_VALIDATOR } from '@modelEntities/project';
+import { PROJECT_VALIDATOR, PROJECT_VERSION_VALIDATOR } from '@modelEntities/project';
 import { useDefaultTextInfoTranslation } from '@utils/useDefaultTextInfoTranslation';
 import i18n from '@src/i18n';
 import { SavingMap, SavingConfigMap, SavingTextMap } from '@utils/SavingUtils';
@@ -58,16 +58,20 @@ export const useProjectLoadProcessor = () => {
           { path: state.projectDirName },
           ({ metaData }) => {
             loaderRef.current.setProgress(3, STEPS_TOTAL, t('loading_project_meta_deserialization'));
-            const projectMetaData = PROJECT_VALIDATOR.safeParse(metaData);
-            if (!projectMetaData.success) {
+            const projectVersion = PROJECT_VERSION_VALIDATOR.safeParse(metaData);
+            if (!projectVersion.success) {
               return handleFailure(setState, binding)({ errorMessage: t('failed_deserialize') });
             }
-            if (projectMetaData.data.studioVersion === state.studioVersion) {
+            if (projectVersion.data.studioVersion === state.studioVersion) {
+              const projectMetaData = PROJECT_VALIDATOR.safeParse(metaData);
+              if (!projectMetaData.success) {
+                return handleFailure(setState, binding)({ errorMessage: t('failed_deserialize') });
+              }
               setState({ ...state, state: 'updateTextInfos', projectMetaData: projectMetaData.data });
-            } else if (projectMetaData.data.studioVersion.localeCompare(state.studioVersion) === 1) {
+            } else if (projectVersion.data.studioVersion.localeCompare(state.studioVersion) === 1) {
               handleFailure(setState, binding)({ errorMessage: t('error_project_version') });
             } else {
-              setState({ ...state, state: 'migrateProjectData', projectMetaData: projectMetaData.data });
+              setState({ ...state, state: 'migrateProjectData', projectVersion: projectVersion.data.studioVersion });
             }
           },
           handleFailure(setState, binding)
@@ -75,9 +79,10 @@ export const useProjectLoadProcessor = () => {
       },
       migrateProjectData: (state, setState) =>
         window.api.migrateData(
-          { projectPath: state.projectDirName, projectVersion: state.projectMetaData.studioVersion },
-          () =>
-            setState({ ...state, state: 'writeProjectMetadata', projectMetaData: { ...state.projectMetaData, studioVersion: state.studioVersion } }),
+          { projectPath: state.projectDirName, projectVersion: state.projectVersion },
+          ({ projectStudio }) => {
+            setState({ ...state, state: 'writeProjectMetadata', projectMetaData: { ...projectStudio, studioVersion: state.studioVersion } });
+          },
           handleFailure(setState, binding),
           (payload) => {
             loaderRef.current.open('migrating_data', payload.step, payload.total, payload.stepText);

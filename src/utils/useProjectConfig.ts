@@ -37,6 +37,24 @@ export const useProjectConfig = <Key extends keyof PSDKConfigs>(key: Key) => {
   };
 };
 
+/**
+ * Captain Hook of the Hooks. This hook allow you to read config from a specific screen by specifying the config key.
+ * @example
+ * const {
+ *  projectConfigValues: language,
+ * } = useProjectConfigReadonly('language_config');
+ * @param key Key of the config collection you want to access from state.projectConfig
+ */
+export const useProjectConfigReadonly = <Key extends keyof PSDKConfigs>(key: Key) => {
+  const [state] = useGlobalState();
+  const projectConfigValues = state.projectConfig[key];
+
+  return {
+    projectConfigValues,
+    state,
+  };
+};
+
 export const useConfigCredits = () => useProjectConfig('credits_config');
 export type UseConfigCreditsReturnType = ReturnType<typeof useConfigCredits>;
 export const useConfigDevices = () => useProjectConfig('devices_config');

@@ -36,7 +36,7 @@ export const getDialogMessage = (projectText: TextsWithLanguageConfig, fileId: n
   if (!fileText) return `Unable to find dialog file ${fileId}.`;
   const dialog = fileText[textId + 1];
   if (!dialog) return `Unable to find text ${textId} in dialog file ${fileId}.`;
-  return dialog[getLanguage(fileText, language ?? projectText.config.defaultLanguage)];
+  return dialog[getLanguage(fileText, language ?? projectText.defaultLanguage)];
 };
 
 /**
@@ -53,17 +53,26 @@ export const getText = (projectText: TextsWithLanguageConfig, fileId: number, te
 
 export const getNatureText = (state: State, natureDbSymbol: string) => {
   return getText(
-    { texts: state.projectText, config: state.projectConfig.language_config },
+    {
+      texts: state.projectText,
+      languages: state.projectStudio.languagesTranslation,
+      defaultLanguage: state.projectConfig.language_config.defaultLanguage,
+    },
     100008,
     (state.projectConfig.natures.data[state.projectConfig.natures.db_symbol_to_id[natureDbSymbol] || 0] || [0])[0]
   );
 };
 
 export const useGetProjectText = () => {
-  const [{ projectText: texts, projectConfig }] = useGlobalState();
+  const [{ projectText: texts, projectConfig, projectStudio }] = useGlobalState();
 
   return (fileId: number, textId: number): string =>
-    getText({ texts, config: projectConfig.language_config }, fileId, textId, projectConfig.language_config.defaultLanguage);
+    getText(
+      { texts, languages: projectStudio.languagesTranslation, defaultLanguage: projectConfig.language_config.defaultLanguage },
+      fileId,
+      textId,
+      projectConfig.language_config.defaultLanguage
+    );
 };
 
 export type UseGetTextListReturnType = {
@@ -90,11 +99,16 @@ export const useGetTextList = () => {
 };
 
 export const useSetProjectText = () => {
-  const [{ projectText: texts, projectConfig }, setState] = useGlobalState();
+  const [{ projectText: texts, projectConfig, projectStudio }, setState] = useGlobalState();
 
   return (fileId: number, textId: number, text: string) => {
     setState((currentState) => {
-      const currentText = getText({ texts, config: projectConfig.language_config }, fileId, textId, projectConfig.language_config.defaultLanguage);
+      const currentText = getText(
+        { texts, languages: projectStudio.languagesTranslation, defaultLanguage: projectConfig.language_config.defaultLanguage },
+        fileId,
+        textId,
+        projectConfig.language_config.defaultLanguage
+      );
       if (currentText === text) {
         return currentState;
       }
@@ -125,7 +139,7 @@ export const useNewProjectText = () => {
         savingText: new SavingTextMap(currentState.savingText.set(fileId, 'UPDATE')),
         projectText: {
           ...currentState.projectText,
-          [fileId]: newTexts ?? [currentState.projectConfig.language_config.choosableLanguageCode],
+          [fileId]: newTexts ?? [currentState.projectStudio.languagesTranslation.map(({ code }) => code)],
         },
         textVersion: currentState.textVersion + 1,
       };
@@ -226,7 +240,11 @@ export const useGetEntityNameTextUsingTextId = () => {
 export const pocketMapping = [0, 4, 1, 5, 3, 8, 0];
 export const getItemPocketText = (item: StudioItem, state: State): string => {
   return getText(
-    { texts: state.projectText, config: state.projectConfig.language_config },
+    {
+      texts: state.projectText,
+      languages: state.projectStudio.languagesTranslation,
+      defaultLanguage: state.projectConfig.language_config.defaultLanguage,
+    },
     ITEM_POCKET_NAME_TEXT_ID,
     pocketMapping[item.socket] || item.socket
   );
@@ -294,10 +312,10 @@ export const useGetEntityDescriptionTextUsingTextId = () => {
 
 export const getEntityNameText = (
   entity: { klass: keyof Omit<typeof ENTITY_TO_NAME_TEXT, 'Ability' | 'Type' | 'TextInfo' | 'MapInfoFolder'>; id: number },
-  { projectText: texts, projectConfig }: Pick<State, 'projectText' | 'projectConfig'>
+  { projectText: texts, projectConfig, projectStudio }: Pick<State, 'projectText' | 'projectConfig' | 'projectStudio'>
 ) => {
   return getText(
-    { texts, config: projectConfig.language_config },
+    { texts, languages: projectStudio.languagesTranslation, defaultLanguage: projectConfig.language_config.defaultLanguage },
     ENTITY_TO_NAME_TEXT[entity.klass],
     entity.id,
     projectConfig.language_config.defaultLanguage
@@ -306,10 +324,10 @@ export const getEntityNameText = (
 
 export const getEntityNameTextUsingTextId = (
   entity: { klass: 'Ability' | 'Type' | 'TextInfo' | 'MapInfoFolder'; textId: number },
-  { projectText: texts, projectConfig }: Pick<State, 'projectText' | 'projectConfig'>
+  { projectText: texts, projectConfig, projectStudio }: Pick<State, 'projectText' | 'projectConfig' | 'projectStudio'>
 ) => {
   return getText(
-    { texts, config: projectConfig.language_config },
+    { texts, languages: projectStudio.languagesTranslation, defaultLanguage: projectConfig.language_config.defaultLanguage },
     ENTITY_TO_NAME_TEXT[entity.klass],
     entity.textId,
     projectConfig.language_config.defaultLanguage

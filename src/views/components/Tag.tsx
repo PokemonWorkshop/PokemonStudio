@@ -25,7 +25,7 @@ export const TagWithAction = styled(Tag)`
     outline: 2px solid ${({ theme }) => theme.colors.text600};
   }
 
-  & :active {
+  &:active {
     outline: 2px solid ${({ theme }) => theme.colors.text400};
   }
 `;
@@ -48,7 +48,7 @@ export const TagWithDeletionContainer = styled(TagWithAction)<TagWithDeletionCon
     outline-style: ${({ noAction }) => (noAction ? 'none' : 'block')};
   }
 
-  & :active {
+  &:active {
     outline-style: ${({ noAction }) => (noAction ? 'none' : 'block')};
   }
 

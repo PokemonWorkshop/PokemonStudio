@@ -1,7 +1,8 @@
 {
   "language": "Langue",
   "settings": "Paramètres",
-  "supported_languages": "Langues supportées",
+  "available_languages_translation": "Langues disponibles à la traduction",
+  "available_languages_players": "Langues disponibles aux joueurs",
   "default_language": "Langue par défaut",
   "prefix": "Préfixe",
   "fields_asterisk_required": "Les champs avec un astérisque sont requis.",
@@ -10,5 +11,6 @@
   "code_error": "Le préfixe est déjà utilisé.",
   "code_info": "Le préfixe est utilisé dans les fichiers CSV pour identifier la colonne utilisée.",
   "placeholder_language": "Ex : Japonais",
-  "placeholder_prefix": "Ex : jp"
+  "placeholder_prefix": "Ex : jp",
+  "language_already_exists": "La langue ou le préfixe «\u00a0{{language}}\u00a0» existe déjà."
 }
