@@ -16,6 +16,7 @@ export const SelectContainer = styled.div`
     top: calc((100% - 6px) / 2);
     transform: scaleY(1);
     transition: 0.2s;
+    pointer-events: none;
   }
 
   &:has(.visible) {
