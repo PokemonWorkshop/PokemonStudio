@@ -33,9 +33,9 @@ export const getNotFoundExclusionPattern = (notFoundLabel: string | undefined) =
 // Constant defining how much space we need to display a select
 const SELECT_CLEARANCE = 195;
 // Constant defining how far we put the select display from its input
-const SELECT_SPACING = 4;
+const SELECT_SPACING = 7;
 // Popover padding to take into account
-const POPOVER_ADJUSTMENT = 10;
+const POPOVER_ADJUSTMENT = 12;
 
 export const positionAndShowPopover = (anchorElement: HTMLElement, popoverElement: HTMLDivElement) => {
   const clientPos = anchorElement.getBoundingClientRect();

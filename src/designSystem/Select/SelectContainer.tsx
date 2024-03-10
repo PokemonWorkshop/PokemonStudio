@@ -43,7 +43,7 @@ export const SelectContainer = styled.div`
     border: 1px solid transparent;
     border-radius: 8px;
     ${({ theme }) => theme.fonts.normalMedium}
-    color: ${({ theme }) => theme.colors.text100};
+    color: ${({ theme }) => theme.colors.text400};
     min-width: 180px;
     width: 100%;
     height: 40px;
@@ -132,7 +132,7 @@ export const SelectContainer = styled.div`
     }
 
     & span.highlighted:not(.current) {
-      background-color: ${({ theme }) => theme.colors.dark18};
+      background-color: ${({ theme }) => theme.colors.dark16};
     }
 
     & span.current {
@@ -146,7 +146,8 @@ export const SelectContainer = styled.div`
     }
 
     ::-webkit-scrollbar-track {
-      margin-bottom: 4px;
+      margin-bottom: 3px;
+      margin-top: 3px;
     }
 
     ::-webkit-scrollbar-thumb {
