@@ -28,13 +28,22 @@ export const PokedexEditor = forwardRef<EditorHandlingClose>((_, ref) => {
     setText(CREATURE_SPECIE_TEXT_ID, creature.id, specieRef.current.value);
   };
 
-  const canClose = () => !dialogsRef.current?.currentDialog;
+  const canClose = () =>
+    !dialogsRef.current?.currentDialog &&
+    !!weightRef.current &&
+    weightRef.current.validity.valid &&
+    !!heightRef.current &&
+    heightRef.current.validity.valid;
+
   const onClose = () => {
     if (!specieRef.current || !weightRef.current || !heightRef.current || !canClose()) return;
     if (dialogsRef.current?.currentDialog) dialogsRef.current.closeDialog();
 
+    const weight = isNaN(weightRef.current.valueAsNumber) ? form.weight : weightRef.current.valueAsNumber;
+    const height = isNaN(heightRef.current.valueAsNumber) ? form.height : heightRef.current.valueAsNumber;
+
     saveTexts();
-    updateForm({ weight: weightRef.current.valueAsNumber, height: heightRef.current.valueAsNumber });
+    updateForm({ weight, height });
   };
   useEditorHandlingClose(ref, onClose, canClose);
 
@@ -53,11 +62,31 @@ export const PokedexEditor = forwardRef<EditorHandlingClose>((_, ref) => {
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="height">{t('height')}</Label>
-          <EmbeddedUnitInput step="0.01" lang="en" unit="m" name="height" type="number" defaultValue={form.height ?? 0.0} ref={heightRef} />
+          <EmbeddedUnitInput
+            step="0.01"
+            lang="en"
+            unit="m"
+            name="height"
+            type="number"
+            defaultValue={form.height ?? 0.0}
+            min={0.01}
+            max={100}
+            ref={heightRef}
+          />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="weight">{t('weight')}</Label>
-          <EmbeddedUnitInput unit="kg" step="0.01" lang="en" name="weight" type="number" defaultValue={form.weight ?? 0.0} ref={weightRef} />
+          <EmbeddedUnitInput
+            unit="kg"
+            step="0.01"
+            lang="en"
+            name="weight"
+            type="number"
+            defaultValue={form.weight ?? 0.0}
+            min={0.01}
+            max={1000}
+            ref={weightRef}
+          />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="species">{t('species')}</Label>

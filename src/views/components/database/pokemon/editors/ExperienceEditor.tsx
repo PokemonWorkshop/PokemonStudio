@@ -20,14 +20,17 @@ export const ExperienceEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const xpCurveOptions = useMemo(() => xpCurveEntries([t('fast'), t('normal'), t('slow'), t('parabolic'), t('erratic'), t('fluctuating')]), []);
 
   const canClose = () =>
-    !!baseFriendshipRef.current && baseFriendshipRef.current.validity.valid && !!baseExpRef.current && baseExpRef.current.validity.valid;
+    !!baseExpRef.current && baseExpRef.current.validity.valid && !!baseFriendshipRef.current && baseFriendshipRef.current.validity.valid;
   const onClose = () => {
     if (!baseFriendshipRef.current || !baseExpRef.current || !canClose()) return;
 
+    const baseExp = isNaN(baseExpRef.current.valueAsNumber) ? form.baseExperience : baseExpRef.current.valueAsNumber;
+    const baseLoyalty = isNaN(baseFriendshipRef.current.valueAsNumber) ? form.baseLoyalty : baseFriendshipRef.current.valueAsNumber;
+
     updateForm({
       experienceType: Number(curveType) as typeof form.experienceType,
-      baseLoyalty: baseFriendshipRef.current.valueAsNumber,
-      baseExperience: baseExpRef.current.valueAsNumber,
+      baseExperience: baseExp,
+      baseLoyalty: baseLoyalty,
     });
   };
   useEditorHandlingClose(ref, onClose, canClose);
@@ -41,7 +44,7 @@ export const ExperienceEditor = forwardRef<EditorHandlingClose>((_, ref) => {
         </InputWithTopLabelContainer>
         <InputWithLeftLabelContainer>
           <Label htmlFor="baseExperience">{t('base_experience')}</Label>
-          <Input name="baseExperience" type="number" defaultValue={form.baseExperience} min={0} ref={baseExpRef} />
+          <Input name="baseExperience" type="number" defaultValue={form.baseExperience} min={0} max={1000} ref={baseExpRef} />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
           <Label htmlFor="baseLoyalty">{t('base_friendship')}</Label>

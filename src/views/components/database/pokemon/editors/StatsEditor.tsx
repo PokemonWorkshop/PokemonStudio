@@ -36,12 +36,12 @@ export const StatEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const dataRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   const [baseStats, setBaseStats] = useState({
-    baseHp : form.baseHp,
-    baseAtk : form.baseAtk,
-    baseDfe : form.baseDfe,
-    baseAts : form.baseAts,
-    baseDfs : form.baseDfs,
-    baseSpd : form.baseSpd,
+    baseHp: form.baseHp,
+    baseAtk: form.baseAtk,
+    baseDfe: form.baseDfe,
+    baseAts: form.baseAts,
+    baseDfs: form.baseDfs,
+    baseSpd: form.baseSpd,
   });
 
   const handleBaseStatChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,12 +53,12 @@ export const StatEditor = forwardRef<EditorHandlingClose>((_, ref) => {
 
   const canClose = () => {
     const evIsValid = Object.values(dataRefs.current).every((value) => value?.validity.valid);
-  
+
     const baseStatsAreValid = Object.values(baseStats).every((stat) => stat >= 0 && stat <= 255);
-  
+
     return evIsValid && baseStatsAreValid;
   };
-  
+
   const onClose = () => {
     if (!canClose()) return;
     updateForm({
@@ -104,11 +104,11 @@ export const StatEditor = forwardRef<EditorHandlingClose>((_, ref) => {
           </InputWithLeftLabelContainer>
           <InputWithLeftLabelContainer>
             <Label htmlFor="spd">{t('speed')}</Label>
-            <Input name="baseSpd" type="number" min={0} max={255} step={1} defaultValue={baseStats.baseSpd} onChange={handleBaseStatChange}/>
+            <Input name="baseSpd" type="number" min={0} max={255} step={1} defaultValue={baseStats.baseSpd} onChange={handleBaseStatChange} />
           </InputWithLeftLabelContainer>
           <TotalBaseContainer>
             <span className="title">{t('total')}</span>
-            <Tag>{`${calculateTotal()}`}</Tag>      
+            <Tag>{`${calculateTotal()}`}</Tag>
           </TotalBaseContainer>
         </InputGroupCollapse>
         <InputGroupCollapse title={t('effort_value_ev')} collapseByDefault>

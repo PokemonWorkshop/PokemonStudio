@@ -50,7 +50,9 @@ export const BreedingEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const onClose = () => {
     if (!hatchStepsRef.current || !canClose()) return;
 
-    updateForm({ breedGroups: [breedGroup1, breedGroup2], babyDbSymbol: baby, babyForm, hatchSteps: hatchStepsRef.current.valueAsNumber });
+    const hatchSteps = isNaN(hatchStepsRef.current.valueAsNumber) ? form.hatchSteps : hatchStepsRef.current.valueAsNumber;
+
+    updateForm({ breedGroups: [breedGroup1, breedGroup2], babyDbSymbol: baby, babyForm, hatchSteps });
   };
   useEditorHandlingClose(ref, onClose, canClose);
 
@@ -87,7 +89,7 @@ export const BreedingEditor = forwardRef<EditorHandlingClose>((_, ref) => {
         </InputWithTopLabelContainer>
         <InputWithLeftLabelContainer>
           <Label htmlFor="hatch_steps">{t('hatch_steps')}</Label>
-          <Input name="hatch_steps" type="number" min={0} defaultValue={form.hatchSteps} ref={hatchStepsRef} />
+          <Input name="hatch_steps" type="number" defaultValue={form.hatchSteps} min={0} max={99999} ref={hatchStepsRef} />
         </InputWithLeftLabelContainer>
       </InputContainer>
     </Editor>

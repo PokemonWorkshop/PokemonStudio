@@ -82,19 +82,22 @@ export const EncounterEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const divStyle = { display: genderLess ? 'none' : undefined };
 
   const canClose = () => {
-    if (!rarityRefs.current.every((v, i) => !v || itemDbSymbolRefs.current[i] === 'none' || v.validity.valid)) return false;
-    if (!genderLess && femaleRateRef.current && !femaleRateRef.current.validity.valid) return false;
     if (!catchRateRef.current || !catchRateRef.current.validity.valid) return false;
+    if (!genderLess && femaleRateRef.current && !femaleRateRef.current.validity.valid) return false;
+    if (!rarityRefs.current.every((v, i) => !v || itemDbSymbolRefs.current[i] === 'none' || v.validity.valid)) return false;
 
     return true;
   };
+
   const onClose = () => {
     if (!catchRateRef.current || !canClose()) return;
 
+    const catchRate = isNaN(catchRateRef.current.valueAsNumber) ? form.catchRate : catchRateRef.current.valueAsNumber;
     const femaleRate = genderLess ? -1 : femaleRateRef.current?.valueAsNumber || 0;
+
     updateForm({
       itemHeld: itemDbSymbolRefs.current.map((dbSymbol, i) => ({ dbSymbol, chance: rarityRefs.current[i]?.valueAsNumber || 0 })),
-      catchRate: catchRateRef.current.valueAsNumber,
+      catchRate: catchRate,
       femaleRate,
       resources: {
         ...form.resources,
@@ -110,7 +113,7 @@ export const EncounterEditor = forwardRef<EditorHandlingClose>((_, ref) => {
       <InputContainer>
         <InputWithLeftLabelContainer>
           <Label htmlFor="catch_rate">{t('database_pokemon:catch_rate')}</Label>
-          <Input name="catch_rate" type="number" defaultValue={form.catchRate} ref={catchRateRef} />
+          <Input name="catch_rate" type="number" defaultValue={form.catchRate} min={1} max={255} ref={catchRateRef} />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
           <Label htmlFor="genderless">{t('database_pokemon:genderless')}</Label>
@@ -118,7 +121,16 @@ export const EncounterEditor = forwardRef<EditorHandlingClose>((_, ref) => {
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer style={divStyle}>
           <Label htmlFor="female_rate">{t('database_pokemon:female_rate')}</Label>
-          <EmbeddedUnitInput unit="%" name="female_rate" type="number" step="0.1" defaultValue={form.femaleRate} ref={femaleRateRef} />
+          <EmbeddedUnitInput
+            unit="%"
+            name="female_rate"
+            type="number"
+            step="0.1"
+            min={0}
+            max={100}
+            defaultValue={form.femaleRate}
+            ref={femaleRateRef}
+          />
         </InputWithLeftLabelContainer>
         <ItemHeldEditor
           index={0}
