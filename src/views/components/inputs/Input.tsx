@@ -16,7 +16,7 @@ export const Input = styled.input<InputProps>`
   color: ${({ theme, error }) => (error ? theme.colors.dangerBase : theme.colors.text100)};
   text-align: ${(props) => (props.type === 'number' ? 'right' : 'left')};
 
-  &:hover:not(:disabled) {
+  &:hover {
     border-color: ${({ theme }) => theme.colors.dark24};
     outline: 1.5px solid ${({ theme }) => theme.colors.dark24};
   }
@@ -27,8 +27,8 @@ export const Input = styled.input<InputProps>`
   }
 
   &.active,
-  &:active:not(:disabled),
-  &:focus:not(:disabled) {
+  &:active,
+  &:focus {
     border-color: ${({ theme }) => theme.colors.primaryBase};
     outline: 1.5px solid ${({ theme }) => theme.colors.primaryBase};
   }
