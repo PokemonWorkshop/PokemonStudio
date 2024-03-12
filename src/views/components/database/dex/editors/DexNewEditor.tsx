@@ -8,7 +8,6 @@ import { useProjectDex } from '@utils/useProjectData';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import { checkDbSymbolExist, generateDefaultDbSymbol, wrongDbSymbol } from '@utils/dbSymbolUtils';
 import { TextInputError } from '@components/inputs/Input';
-import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { SelectDex } from '@components/selects';
 import { createDex } from '@utils/entityCreation';
@@ -16,6 +15,7 @@ import { DbSymbol } from '@modelEntities/dbSymbol';
 import { cloneEntity } from '@utils/cloneEntity';
 import { useSetProjectText } from '@utils/ReadingProjectText';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { TooltipWrapper } from '@ds/Tooltip';
 
 const DexImportInfo = styled.div`
   ${({ theme }) => theme.fonts.normalRegular};
@@ -143,12 +143,11 @@ export const DexNewEditor = forwardRef<EditorHandlingClose, DexNewEditorProps>((
           </PaddedInputContainer>
         </InputGroupCollapse>
         <ButtonContainer>
-          <ToolTipContainer>
-            {dexName.length === 0 && <ToolTip bottom="100%">{t('database_moves:fields_asterisk_required')}</ToolTip>}
+          <TooltipWrapper data-tooltip={checkDisabled() ? t('database_moves:fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickNew} disabled={checkDisabled()}>
               {t('database_dex:create_dex')}
             </PrimaryButton>
-          </ToolTipContainer>
+          </TooltipWrapper>
           <DarkButton onClick={onClose}>{t('database_dex:cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>

@@ -1,11 +1,6 @@
-import { ToolTip, ToolTipContainerForButton } from '@components/Tooltip';
 import React from 'react';
 import styled from 'styled-components';
 import { DataBlockWithTitleProps, DataBlockWithTitleStyle } from './DataBlockWithTitle';
-
-type DataBlockWithActionTooltipProps = {
-  tooltipMessage: string;
-} & DataBlockWithTitleProps;
 
 const DataBoxWithActionStyle = styled(DataBlockWithTitleStyle)`
   flex-direction: row;
@@ -21,15 +16,5 @@ export const DataBlockWithAction = ({ title, size, children, disabled }: DataBlo
   <DataBoxWithActionStyle size={size} data-noactive data-disabled={disabled}>
     <h2>{title}</h2>
     {children}
-  </DataBoxWithActionStyle>
-);
-
-export const DataBlockWithActionTooltip = ({ title, size, children, disabled, tooltipMessage }: DataBlockWithActionTooltipProps) => (
-  <DataBoxWithActionStyle size={size} data-noactive data-disabled={disabled}>
-    <h2>{title}</h2>
-    <ToolTipContainerForButton>
-      {tooltipMessage && <ToolTip top="100%">{tooltipMessage}</ToolTip>}
-      {children}
-    </ToolTipContainerForButton>
   </DataBoxWithActionStyle>
 );

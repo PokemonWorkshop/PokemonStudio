@@ -9,7 +9,6 @@ import styled from 'styled-components';
 import { useTextInfos } from '@utils/useTextInfos';
 import { useNavigate } from 'react-router-dom';
 
-const NEW_TOOLTIP = { left: '100%', top: '100%' };
 const NEW_BREAKPOINT = 'screen and (max-width: 1100px)';
 
 const ButtonContainer = styled.div`
@@ -52,7 +51,7 @@ export const TextControlBar = ({ dialogsRef }: TextControlBarProps) => {
     <ControlBar>
       <ButtonContainer>
         {onClickNew ? (
-          <SecondaryButtonWithPlusIconResponsive onClick={onClickNew} tooltip={NEW_TOOLTIP} breakpoint={NEW_BREAKPOINT}>
+          <SecondaryButtonWithPlusIconResponsive onClick={onClickNew} data-tooltip={t('new')} breakpoint={NEW_BREAKPOINT}>
             {t('new')}
           </SecondaryButtonWithPlusIconResponsive>
         ) : (

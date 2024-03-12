@@ -6,7 +6,7 @@ import { DarkButton, PrimaryButton } from '@components/buttons';
 import { useConfigTexts } from '@utils/useProjectConfig';
 import { cloneEntity } from '@utils/cloneEntity';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
-import { ToolTip, ToolTipContainer } from '@components/Tooltip';
+import { TooltipWrapper } from '@ds/Tooltip';
 
 type DashbordFontsNewEditorProps = {
   isAlternative: boolean;
@@ -113,12 +113,11 @@ export const DashboardFontsNewEditor = ({ isAlternative, onClose }: DashbordFont
           />
         </InputWithLeftLabelContainer>
         <ButtonContainer>
-          <ToolTipContainer>
-            {checkDisable() && <ToolTip bottom="100%">{t('fields_asterisk_required')}</ToolTip>}
+          <TooltipWrapper data-tooltip={checkDisable() ? t('fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickNew} disabled={checkDisable()}>
               {isAlternative ? t('add_the_alt_size') : t('add_the_font')}
             </PrimaryButton>
-          </ToolTipContainer>
+          </TooltipWrapper>
           <DarkButton onClick={onClose}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>

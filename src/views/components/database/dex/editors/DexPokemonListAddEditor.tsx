@@ -5,7 +5,6 @@ import { Editor } from '@components/editor';
 import { useTranslation } from 'react-i18next';
 import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
 import { useProjectDex, useProjectPokemon } from '@utils/useProjectData';
-import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { searchUnderAndEvolutions } from '@utils/dex';
 import { StudioDex, StudioDexCreature } from '@modelEntities/dex';
@@ -15,6 +14,7 @@ import { StudioDropDown } from '@components/StudioDropDown';
 import { SelectPokemonForm } from '@components/selects/SelectPokemonForm';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { useDexPage } from '@utils/usePage';
+import { TooltipWrapper } from '@ds/Tooltip';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -92,12 +92,11 @@ export const DexPokemonListAddEditor = forwardRef<EditorHandlingClose, DexPokemo
           <Toggle name="add_evolution" checked={isAddingEvolutions} onChange={(event) => setIsAddingEvolutions(event.target.checked)} />
         </InputWithLeftLabelContainer>
         <ButtonContainer>
-          <ToolTipContainer>
-            {creature.dbSymbol === '__undef__' && <ToolTip bottom="100%">{t('database_moves:fields_asterisk_required')}</ToolTip>}
+          <TooltipWrapper data-tooltip={creature.dbSymbol === '__undef__' ? t('database_moves:fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickAdd} disabled={creature.dbSymbol === '__undef__'}>
               {t('database_dex:add_the_pokemon')}
             </PrimaryButton>
-          </ToolTipContainer>
+          </TooltipWrapper>
           <DarkButton onClick={onClose}>{t('database_dex:cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>

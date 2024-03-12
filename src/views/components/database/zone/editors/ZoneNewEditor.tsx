@@ -5,13 +5,13 @@ import { Editor } from '@components/editor';
 import { useTranslation } from 'react-i18next';
 import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
 import { useProjectZones } from '@utils/useProjectData';
-import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { useSetProjectText } from '@utils/ReadingProjectText';
 import { ZONE_DESCRIPTION_TEXT_ID, ZONE_NAME_TEXT_ID } from '@modelEntities/zone';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { findFirstAvailableId } from '@utils/ModelUtils';
 import { createZone } from '@utils/entityCreation';
+import { TooltipWrapper } from '@ds/Tooltip';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -57,12 +57,11 @@ export const ZoneNewEditor = ({ onClose }: ZoneNewEditorProps) => {
           <MultiLineInput id="descr" ref={descriptionRef} placeholder={t('example_descr')} />
         </InputWithTopLabelContainer>
         <ButtonContainer>
-          <ToolTipContainer>
-            {!name && <ToolTip bottom="100%">{t('fields_asterisk_required')}</ToolTip>}
+          <TooltipWrapper data-tooltip={!name ? t('fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickNew} disabled={!name}>
               {t('create_zone')}
             </PrimaryButton>
-          </ToolTipContainer>
+          </TooltipWrapper>
           <DarkButton onClick={onClose}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>

@@ -39,7 +39,7 @@ export const BagEntryList = ({ title, bagEntries, disabledImport, from }: BagEnt
               {t('import')}
             </DarkButton>
           </div>
-          <SecondaryButtonWithPlusIconResponsive onClick={() => dialogsRef.current?.openDialog('new')} tooltip={{ right: '100%', top: '100%' }}>
+          <SecondaryButtonWithPlusIconResponsive onClick={() => dialogsRef.current?.openDialog('new')} data-tooltip={t('add_item')}>
             {t('add_item')}
           </SecondaryButtonWithPlusIconResponsive>
         </div>

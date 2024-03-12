@@ -13,7 +13,6 @@ import { useProjectTypes } from '@utils/useProjectData';
 import styled from 'styled-components';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { TextInputError } from '@components/inputs/Input';
-import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { checkDbSymbolExist, generateDefaultDbSymbol, wrongDbSymbol } from '@utils/dbSymbolUtils';
 import { TypeCategoryPreview } from '@components/categories';
 import { useNavigate } from 'react-router-dom';
@@ -23,6 +22,7 @@ import { createType } from '@utils/entityCreation';
 import { useSetProjectText } from '@utils/ReadingProjectText';
 import { TYPE_NAME_TEXT_ID } from '@modelEntities/type';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { TooltipWrapper } from '@ds/Tooltip';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -130,12 +130,11 @@ export const TypeNewEditor = forwardRef<EditorHandlingClose, TypeNewEditorProps>
           {dbSymbolErrorType == 'duplicate' && <TextInputError>{t('database_moves:db_symbol_already_used')}</TextInputError>}
         </InputWithTopLabelContainer>
         <ButtonContainer>
-          <ToolTipContainer>
-            {checkDisabled() && <ToolTip bottom="100%">{t('database_moves:fields_asterisk_required')}</ToolTip>}
+          <TooltipWrapper data-tooltip={checkDisabled() ? t('database_moves:fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickNew} disabled={checkDisabled()}>
               {t('database_types:create_type')}
             </PrimaryButton>
-          </ToolTipContainer>
+          </TooltipWrapper>
           <DarkButton onClick={closeDialog}>{t('database_moves:cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>

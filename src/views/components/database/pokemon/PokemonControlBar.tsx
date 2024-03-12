@@ -10,10 +10,8 @@ import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
 import { SelectPokemon } from '@components/selects/SelectPokemon';
 import { SelectPokemonForm } from '@components/selects/SelectPokemonForm';
 
-const NEW_TOOLTIP = { left: '100%', top: '100%' };
 const NEW_BREAKPOINT = 'screen and (max-width: 1050px)';
 const SELECT_BREAKPOINT = 'screen and (max-width: 1180px)';
-const FORM_TOOLTIP = { right: '100%', top: '100%' };
 const FORM_BREAKPOINT = 'screen and (max-width: 1280px)';
 
 type Props = {
@@ -58,7 +56,7 @@ export const PokemonControlBar = ({ dialogsRef, setEvolutionIndex }: Props) => {
   return (
     <ControlBar>
       {onClickNew ? (
-        <SecondaryButtonWithPlusIconResponsive tooltip={NEW_TOOLTIP} breakpoint={NEW_BREAKPOINT} onClick={onClickNew}>
+        <SecondaryButtonWithPlusIconResponsive data-tooltip={t('database_pokemon:newPokemon')} breakpoint={NEW_BREAKPOINT} onClick={onClickNew}>
           {t('database_pokemon:newPokemon')}
         </SecondaryButtonWithPlusIconResponsive>
       ) : (
@@ -71,7 +69,7 @@ export const PokemonControlBar = ({ dialogsRef, setEvolutionIndex }: Props) => {
         <ControlBarLabelContainer>
           <SelectPokemonForm dbSymbol={currentPokemon.specie} form={currentPokemon.form} onChange={onFormChange} breakpoint={SELECT_BREAKPOINT} />
           {onClickFormNew && (
-            <DarkButtonWithPlusIconResponsive tooltip={FORM_TOOLTIP} breakpoint={FORM_BREAKPOINT} onClick={onClickFormNew}>
+            <DarkButtonWithPlusIconResponsive data-tooltip={t('database_pokemon:newForm')} breakpoint={FORM_BREAKPOINT} onClick={onClickFormNew}>
               <span>{t('database_pokemon:newForm')}</span>
             </DarkButtonWithPlusIconResponsive>
           )}

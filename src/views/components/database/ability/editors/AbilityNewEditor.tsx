@@ -5,7 +5,6 @@ import { Editor } from '@components/editor';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { TextInputError } from '@components/inputs/Input';
 import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
-import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { checkDbSymbolExist, generateDefaultDbSymbol, wrongDbSymbol } from '@utils/dbSymbolUtils';
 import { useProjectAbilities } from '@utils/useProjectData';
 import { useSetProjectText } from '@utils/ReadingProjectText';
@@ -13,6 +12,7 @@ import { ABILITY_DESCRIPTION_TEXT_ID, ABILITY_NAME_TEXT_ID } from '@modelEntitie
 import { createAbility } from '@utils/entityCreation';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { TooltipWrapper } from '@ds/Tooltip';
 
 type Props = {
   closeDialog: () => void;
@@ -115,12 +115,11 @@ export const AbilityNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
           {dbSymbolErrorType == 'duplicate' && <TextInputError>{t('db_symbol_already_used')}</TextInputError>}
         </InputWithTopLabelContainer>
         <ButtonContainer>
-          <ToolTipContainer>
-            {checkDisabled() && <ToolTip bottom="100%">{t('fields_asterisk_required')}</ToolTip>}
+          <TooltipWrapper data-tooltip={checkDisabled() ? t('fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickNew} disabled={checkDisabled()}>
               {t('create_ability')}
             </PrimaryButton>
-          </ToolTipContainer>
+          </TooltipWrapper>
           <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>

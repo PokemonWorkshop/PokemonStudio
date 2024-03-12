@@ -4,7 +4,6 @@ import { Editor, EditorWithPagination } from '@components/editor';
 import { EditorChildWithSubEditorContainer, SubEditorContainer, SubEditorSeparator } from '@components/editor/EditorContainer';
 import { SecondaryButtonWithPlusIcon } from '@components/buttons';
 import { InputWithTopLabelContainer, Label, MultiLineInput, PaddedInputContainer } from '@components/inputs';
-import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 import { useGetProjectText, useSetProjectText } from '@utils/ReadingProjectText';
 import { TRAINER_DEFEAT_SENTENCE_TEXT_ID, TRAINER_VICTORY_SENTENCE_TEXT_ID } from '@modelEntities/trainer';
@@ -12,6 +11,7 @@ import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/
 import { useTrainerPage } from '@utils/usePage';
 import { useDialogsRef } from '@utils/useDialogsRef';
 import { TrainerTranslationEditorTitle, TrainerTranslationOverlay } from './TrainerTranslationOverlay';
+import { TooltipWrapper } from '@ds/Tooltip';
 
 export const TrainerDialogEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { t } = useTranslation('database_trainers');
@@ -78,12 +78,11 @@ export const TrainerDialogEditor = forwardRef<EditorHandlingClose>((_, ref) => {
         <SubEditorContainer>
           <SubEditorSeparator parentEditorHasScrollBar />
           <Editor type="creation" title={t('scripted_dialog')}>
-            <ToolTipContainer>
-              <ToolTip bottom="100%">{t('available_future_release')}</ToolTip>
+            <TooltipWrapper data-tooltip={t('available_future_release')}>
               <SecondaryButtonWithPlusIcon disabled onClick={() => {}}>
                 {t('new_dialog')}
               </SecondaryButtonWithPlusIcon>
-            </ToolTipContainer>
+            </TooltipWrapper>
           </Editor>
         </SubEditorContainer>
       </EditorChildWithSubEditorContainer>

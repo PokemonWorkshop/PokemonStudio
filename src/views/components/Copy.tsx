@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { ToolTip, ToolTipContainerForCopy } from './Tooltip';
 import { ReactComponent as CopyIcon } from '@assets/icons/global/copy.svg';
 
 export const CopyStyle = styled.button`
@@ -15,6 +14,7 @@ export const CopyStyle = styled.button`
 
   & svg {
     color: ${({ theme }) => theme.colors.text400};
+    pointer-events: none;
   }
 `;
 
@@ -34,13 +34,12 @@ const Copy = ({ dataToCopy, message, noColon }: CopyProps) => {
     setIsCopied(true);
   };
 
+  const onLeave = () => setIsCopied(false);
+
   return (
-    <ToolTipContainerForCopy>
-      <ToolTip bottom="100%">{isCopied ? t('copied') : message}</ToolTip>
-      <CopyStyle onClick={onClickCopy} onMouseLeave={() => setIsCopied(false)}>
-        <CopyIcon />
-      </CopyStyle>
-    </ToolTipContainerForCopy>
+    <CopyStyle onClick={onClickCopy} onMouseLeave={onLeave} data-tooltip={isCopied ? t('copied') : message} data-tooltip-remain-on-click>
+      <CopyIcon />
+    </CopyStyle>
   );
 };
 

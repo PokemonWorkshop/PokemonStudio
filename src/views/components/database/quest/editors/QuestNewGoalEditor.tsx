@@ -3,7 +3,6 @@ import { useRefreshUI } from '@components/editor';
 import { EditorWithCollapse } from '@components/editor/Editor';
 import { InputContainer, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
-import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { QUEST_OBJECTIVES, StudioQuest, StudioQuestObjectiveType, updateIndexSpeakToBeatNpc } from '@modelEntities/quest';
 import { createQuestObjective } from '@utils/entityCreation';
 import { useProjectQuests } from '@utils/useProjectData';
@@ -19,6 +18,7 @@ import {
   QuestGoalSeePokemon,
   QuestGoalSpeakTo,
 } from './goals';
+import { TooltipWrapper } from '@ds/Tooltip';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -83,12 +83,11 @@ export const QuestNewGoalEditor = ({ quest, onClose }: QuestNewGoalEditorProps) 
         {newObjective.objectiveMethodName === 'objective_obtain_egg' && <QuestGoalEgg objective={newObjective} />}
         {newObjective.objectiveMethodName === 'objective_hatch_egg' && <QuestGoalEgg objective={newObjective} />}
         <ButtonContainer>
-          <ToolTipContainer>
-            {checkIsEmptyText() && <ToolTip bottom="100%">{t('fields_asterisk_required')}</ToolTip>}
+          <TooltipWrapper data-tooltip={checkIsEmptyText() ? t('fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickNew} disabled={checkIsEmptyText()}>
               {t('add_goal')}
             </PrimaryButton>
-          </ToolTipContainer>
+          </TooltipWrapper>
           <DarkButton onClick={onClose}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>

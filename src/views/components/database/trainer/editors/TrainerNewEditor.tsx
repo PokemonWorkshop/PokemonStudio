@@ -7,7 +7,6 @@ import { SelectCustomSimple } from '@components/SelectCustom';
 import styled from 'styled-components';
 import { padStr } from '@utils/PadStr';
 import { useProjectTrainers } from '@utils/useProjectData';
-import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import {
   StudioTrainerVsType,
@@ -21,6 +20,7 @@ import {
 import { useSetProjectText } from '@utils/ReadingProjectText';
 import { createTrainer } from '@utils/entityCreation';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { TooltipWrapper } from '@ds/Tooltip';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -124,11 +124,8 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
           />
         </InputWithTopLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="battle-id">
-            <ToolTipContainer>
-              <ToolTip bottom="100%">{t('battle_id_tooltip')}</ToolTip>
-              {t('battle_id')}
-            </ToolTipContainer>
+          <Label htmlFor="battle-id" data-tooltip={t('battle_id_tooltip')}>
+            {t('battle_id')}
           </Label>
           <Input type="number" name="battle-id" min="0" max="9999" defaultValue={0} ref={battleIdRef} onChange={onBattleIdChange} />
         </InputWithLeftLabelContainer>
@@ -137,12 +134,11 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
           <Input type="number" name="base-money" min="0" max="99999" defaultValue={10} ref={baseMoneyRef} onChange={onBaseMoneyChange} />
         </InputWithLeftLabelContainer>
         <ButtonContainer>
-          <ToolTipContainer>
-            {checkDisabled() && <ToolTip bottom="100%">{t('fields_asterisk_required')}</ToolTip>}
+          <TooltipWrapper data-tooltip={checkDisabled() ? t('fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickNew} disabled={checkDisabled()}>
               {t('create_trainer')}
             </PrimaryButton>
-          </ToolTipContainer>
+          </TooltipWrapper>
           <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>

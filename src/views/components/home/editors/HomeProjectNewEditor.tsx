@@ -4,13 +4,13 @@ import { IconInput, Input, InputContainer, InputWithLeftLabelContainer, InputWit
 import { DropInput } from '@components/inputs/DropInput';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import { SelectCustomSimple } from '@components/SelectCustom';
-import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import React, { forwardRef, useMemo, useState } from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
 import { TextInputError } from '@components/inputs/Input';
 import { basename, dirname } from '@utils/path';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { DefaultLanguages, DefaultLanguageType, NewProjectData } from '@utils/useProjectNew/types';
+import { TooltipWrapper } from '@ds/Tooltip';
 
 const iconFileExtensions = ['png'];
 
@@ -97,10 +97,9 @@ export const HomeProjectNewEditor = forwardRef<EditorHandlingClose, HomeProjectN
             <Toggle onChange={(event) => setNewProjectData({ ...newProjectData, multiLanguage: event.target.checked })} />
           </InputWithLeftLabelContainer>
         </InputGroupCollapse>
-        <ToolTipContainer>
-          {isDisabled() && <ToolTip bottom="100%">{t('fields_asterisk_required')}</ToolTip>}
+        <TooltipWrapper data-tooltip={isDisabled() ? t('fields_asterisk_required') : undefined}>
           <NewProjectButton newProjectData={newProjectData} disabled={isDisabled()} closeDialog={closeDialog} />
-        </ToolTipContainer>
+        </TooltipWrapper>
       </InputContainer>
     </EditorWithCollapse>
   );

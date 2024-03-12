@@ -81,23 +81,37 @@ export const TooltipContext = ({ children }: TooltipContextProps) => {
     tooltipContainer.classList.add('visible');
   };
 
-  const onMouseOut = (e: MouseEvent) => {
-    if (!(e.target instanceof HTMLElement) || e.target !== popoverEntity) return;
-
+  const clearTooltip = () => {
     tooltipContainer.innerText = '';
     tooltipContainer.classList.remove('visible');
     tooltipContainer.hidePopover();
     popoverEntity = null;
   };
 
+  const onMouseOut = (e: MouseEvent) => {
+    if (!(e.target instanceof HTMLElement) || e.target !== popoverEntity) return;
+
+    clearTooltip();
+  };
+
+  const onMouseDown = (e: MouseEvent) => {
+    if (!(e.target instanceof HTMLElement) || e.target !== popoverEntity) return;
+    if ('tooltipRemainOnClick' in popoverEntity.dataset) {
+      // Refresh content in case of re-render
+      return setTimeout(() => popoverEntity && displayTooltipData(tooltipContainer, popoverEntity), 25);
+    }
+
+    clearTooltip();
+  };
+
   useEffect(() => {
     window.addEventListener('mouseover', onMouseOver, { capture: true, passive: true });
     window.addEventListener('mouseout', onMouseOut, { capture: true, passive: true });
-    window.addEventListener('mousedown', onMouseOut, { capture: true, passive: true });
+    window.addEventListener('mousedown', onMouseDown, { capture: true, passive: true });
     return () => {
       window.removeEventListener('mouseover', onMouseOver);
       window.removeEventListener('mouseout', onMouseOut);
-      window.removeEventListener('mousedown', onMouseOut);
+      window.removeEventListener('mousedown', onMouseDown);
     };
   }, []);
 

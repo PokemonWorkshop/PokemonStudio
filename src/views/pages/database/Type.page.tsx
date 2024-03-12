@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { DataBlockWithActionTooltip, DataBlockWrapper } from '@components/database/dataBlocks';
+import { DataBlockWithAction, DataBlockWrapper } from '@components/database/dataBlocks';
 import { TypeControlBar } from '@components/database/type/TypeControlBar';
 import { TypeFrame } from '@components/database/type/TypeFrame';
 import { useNavigate } from 'react-router-dom';
@@ -14,6 +14,7 @@ import { useDialogsRef } from '@utils/useDialogsRef';
 import { useTypePage } from '@utils/usePage';
 import { TypeEditorAndDeletionKeys, TypeEditorOverlay } from '@components/database/type/editors/TypeEditorOverlay';
 import { useProjectTypes } from '@utils/useProjectData';
+import { TooltipWrapper } from '@ds/Tooltip';
 
 export const TypePage = () => {
   const dialogsRef = useDialogsRef<TypeEditorAndDeletionKeys>();
@@ -45,16 +46,13 @@ export const TypePage = () => {
             <DataBlockWithTitleNoActive size="half" title={t('list_all_moves', { type: currentTypeName })} data-noactive>
               <DarkButton onClick={() => navigate(`/database/types/${currentType.dbSymbol}/moves`)}>{t('show_all_moves')}</DarkButton>
             </DataBlockWithTitleNoActive>
-            <DataBlockWithActionTooltip
-              title={t('deletion')}
-              size="full"
-              disabled={canBeDeleted}
-              tooltipMessage={canBeDeleted ? t('deletion_disabled') : ''}
-            >
-              <DeleteButtonWithIcon onClick={() => dialogsRef?.current?.openDialog('deletion', true)} disabled={canBeDeleted}>
-                {t('delete_this_type')}
-              </DeleteButtonWithIcon>
-            </DataBlockWithActionTooltip>
+            <DataBlockWithAction title={t('deletion')} size="full" disabled={canBeDeleted}>
+              <TooltipWrapper data-tooltip={canBeDeleted ? t('deletion_disabled') : undefined}>
+                <DeleteButtonWithIcon onClick={() => dialogsRef?.current?.openDialog('deletion', true)} disabled={canBeDeleted}>
+                  {t('delete_this_type')}
+                </DeleteButtonWithIcon>
+              </TooltipWrapper>
+            </DataBlockWithAction>
           </DataBlockWrapper>
           <TypeEditorOverlay ref={dialogsRef} />
         </PageDataConstrainerStyle>

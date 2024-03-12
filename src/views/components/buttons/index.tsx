@@ -1,6 +1,6 @@
 export * from './GenericButtons';
 export { LoadProjectButton } from './LoadProjectButton';
-export { DeleteButtonWithIcon, DeleteButtonWithIconResponsive } from './DeleteButtonWithIcon';
+export { DeleteButtonWithIcon } from './DeleteButtonWithIcon';
 export { SecondaryButtonWithPlusIcon, SecondaryButtonWithPlusIconResponsive } from './SecondaryButtonWithPlusIcon';
 export { DarkButtonWithPlusIcon, DarkButtonWithPlusIconResponsive, DarkButtonImportResponsive } from './DarkButtonWithPlusIcon';
 export { DeleteButtonOnlyIcon } from './DeleteButtonOnlyIcon';

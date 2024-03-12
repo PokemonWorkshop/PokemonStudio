@@ -77,7 +77,7 @@ export const DataBlockCollapseEditor = ({
             <DarkButton onClick={importation.onClick} disabled={disabledImport || false}>
               {importation.label}
             </DarkButton>
-            <SecondaryButtonWithPlusIconResponsive onClick={add.onClick} tooltip={{ right: '100%', top: '100%' }} disabled={disabledAdd || false}>
+            <SecondaryButtonWithPlusIconResponsive onClick={add.onClick} data-tooltip={add.label} disabled={disabledAdd || false}>
               {add.label}
             </SecondaryButtonWithPlusIconResponsive>
           </ButtonRightContainer>

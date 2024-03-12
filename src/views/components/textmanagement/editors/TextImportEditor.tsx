@@ -6,9 +6,9 @@ import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/
 import { useTextPage } from '@utils/usePage';
 import styled from 'styled-components';
 import { SelectText } from '@components/selects';
-import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { useImportProjectText } from '@utils/ReadingProjectText';
+import { TooltipWrapper } from '@ds/Tooltip';
 
 const ImportInfoContainer = styled.span`
   ${({ theme }) => theme.fonts.normalSmall}
@@ -57,12 +57,11 @@ export const TextImportEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
           <SelectText fileId={textSelected} onChange={(selected) => setTextSelected(selected)} undefValueOption={t('none')} noLabel />
         </InputWithTopLabelContainer>
         <ButtonContainer>
-          <ToolTipContainer>
-            {checkDisabled() && <ToolTip bottom="100%">{t('fields_asterisk_required')}</ToolTip>}
+          <TooltipWrapper data-tooltip={checkDisabled() ? t('fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickImport} disabled={checkDisabled()}>
               {t('import')}
             </PrimaryButton>
-          </ToolTipContainer>
+          </TooltipWrapper>
           <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
