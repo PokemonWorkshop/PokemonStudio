@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { Input } from './Input';
+import { SelectContainer } from '@ds/Select/SelectContainer';
 
 export const InputWithLeftLabelContainer = styled.div`
   display: flex;
@@ -8,7 +9,7 @@ export const InputWithLeftLabelContainer = styled.div`
   align-items: center;
   gap: 12px;
 
-  & > ${Input}, & > div > ${Input} {
+  & > ${Input}, & > div > ${Input}, & > div > input {
     width: 80px;
   }
 `;

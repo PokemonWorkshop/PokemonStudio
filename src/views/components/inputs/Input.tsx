@@ -21,6 +21,11 @@ export const Input = styled.input<InputProps>`
     outline: 1.5px solid ${({ theme }) => theme.colors.dark24};
   }
 
+  &:disabled {
+    cursor: not-allowed;
+    filter: opacity(60%);
+  }
+
   &.active,
   &:active,
   &:focus {

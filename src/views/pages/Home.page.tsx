@@ -17,12 +17,14 @@ import { RecentProjectContainer } from '@components/home/ActionContainer';
 import { HomeEditorAndDeletionKeys, HomeEditorOverlay } from '@components/home/editors/HomeEditorOverlay';
 import { deleteProjectToList, getProjectList } from '@utils/projectList';
 import { useDialogsRef } from '@utils/useDialogsRef';
+import { useNavigate } from 'react-router-dom';
 
 const HomePageComponent = () => {
   const dialogsRef = useDialogsRef<HomeEditorAndDeletionKeys>();
   const [appVersion, setAppVersion] = useState('');
   const [projectList, setProjectList] = useState(getProjectList());
   const { t } = useTranslation('homepage');
+  const navigate = useNavigate();
 
   const onDeleteProjectToList = (event: React.MouseEvent<HTMLSpanElement>, projectPath: string) => {
     event.stopPropagation();
@@ -45,7 +47,7 @@ const HomePageComponent = () => {
       </Header>
       <ActionContainer>
         <BrandingActionContainer>
-          <BrandingTitleContainer>
+          <BrandingTitleContainer onClick={() => window.api.isDev && navigate('/designSystem/home')}>
             <StudioIcon />
             <BrandingTitle>Pokémon Studio</BrandingTitle>
           </BrandingTitleContainer>

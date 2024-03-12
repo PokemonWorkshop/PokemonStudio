@@ -16,6 +16,7 @@
     "paths": {
       "*": ["node_modules/*"],
       "@components/*": ["src/views/components/*"],
+      "@ds/*": ["src/designSystem/*"],
       "@pages/*": ["src/views/pages/*"],
       "@modelEntities/*": ["src/models/entities/*"],
       "@services/*": ["src/services/*"],
