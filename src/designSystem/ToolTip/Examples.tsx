@@ -20,8 +20,8 @@ export const ToolTipExamples = () => {
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         {/* @ts-ignore */}
         <span style={{ textOverflow: 'ellipsis', overflow: 'hidden', 'text-wrap': 'nowrap', maxWidth: '60px' }}>Tooltip showing truncated text.</span>
-        <span data-tool-tip="Hidden detail text!">Tooltip showing details</span>
-        <span data-tool-tip-id="hiddenToolTip">Fancy tooltip</span>
+        <span data-tooltip="Hidden detail text!">Tooltip showing details</span>
+        <span data-tooltip-id="hiddenToolTip">Fancy tooltip</span>
       </div>
       <div id="hiddenToolTip" style={{ display: 'none' }}>
         <span>Some nicer </span>

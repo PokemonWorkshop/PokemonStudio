@@ -6,7 +6,7 @@ import { NavigationDatabaseGroup } from '@components/database/navigation/Navigat
 import { NavigationDatabaseItem } from '@components/database/navigation/NavigationDatabaseItem';
 import { DesignSystem } from './DesignSystem';
 import { SelectExamples } from './Select/Examples';
-import { ToolTipExamples } from './ToolTip/Examples';
+import { ToolTipExamples } from './Tooltip/Examples';
 
 const DesignSystemNavigation = () => {
   return (

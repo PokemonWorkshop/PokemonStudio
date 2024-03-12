@@ -1,16 +1,16 @@
 import React from 'react';
 import { ReactNode, useEffect } from 'react';
 
-type ToolTipContextProps = {
+type TooltipContextProps = {
   children: ReactNode;
 };
 
-const isTargetElementShowingToolTip = (target: EventTarget | null): target is HTMLElement => {
+const isTargetElementShowingTooltip = (target: EventTarget | null): target is HTMLElement => {
   if (!(target instanceof HTMLElement)) return false;
 
   const dataset = target.dataset;
-  if ('toolTipHidden' in dataset) return false;
-  if (('toolTip' in dataset && dataset.toolTip !== undefined) || ('toolTipId' in dataset && dataset.toolTipId !== undefined)) return true;
+  if ('tooltipHidden' in dataset) return false;
+  if (('tooltip' in dataset && dataset.tooltip !== undefined) || ('tooltipId' in dataset && dataset.tooltipId !== undefined)) return true;
   if (target.offsetWidth >= target.scrollWidth) return false;
 
   const styles = target.computedStyleMap();
@@ -21,7 +21,7 @@ const isTargetElementShowingToolTip = (target: EventTarget | null): target is HT
 
 const TOOLTIP_VERTICAL_SPACING = 2;
 
-const placeToolTip = (container: HTMLElement, target: HTMLElement) => {
+const placeTooltip = (container: HTMLElement, target: HTMLElement) => {
   // Reset container position so we can accurately compute width & height
   container.style.top = '0';
   container.style.left = '0';
@@ -30,7 +30,7 @@ const placeToolTip = (container: HTMLElement, target: HTMLElement) => {
   const containerWidth = container.clientWidth;
   const containerHeight = container.clientHeight;
 
-  // If target position < toolTip required space, show tooltip below
+  // If target position < tooltip required space, show tooltip below
   if (clientPos.top < containerHeight + TOOLTIP_VERTICAL_SPACING) {
     container.style.top = `${clientPos.top + clientPos.height + TOOLTIP_VERTICAL_SPACING}px`;
   } else {
@@ -45,17 +45,17 @@ const placeToolTip = (container: HTMLElement, target: HTMLElement) => {
   }
 };
 
-const displayToolTipData = (container: HTMLElement, target: HTMLElement) => {
+const displayTooltipData = (container: HTMLElement, target: HTMLElement) => {
   const dataset = target.dataset;
 
-  if ('toolTip' in dataset && dataset.toolTip) {
-    container.innerText = dataset.toolTip;
-  } else if ('toolTipId' in dataset && dataset.toolTipId) {
-    const toolTipContent = document.getElementById(dataset.toolTipId);
-    if (toolTipContent) {
-      container.innerHTML = toolTipContent.innerHTML;
+  if ('tooltip' in dataset && dataset.tooltip) {
+    container.innerText = dataset.tooltip;
+  } else if ('tooltipId' in dataset && dataset.tooltipId) {
+    const tooltipContent = document.getElementById(dataset.tooltipId);
+    if (tooltipContent) {
+      container.innerHTML = tooltipContent.innerHTML;
     } else {
-      container.innerText = `Failed to fetch content of #${dataset.toolTipId}`;
+      container.innerText = `Failed to fetch content of #${dataset.tooltipId}`;
     }
   } else if (target instanceof HTMLInputElement) {
     container.innerText = target.value;
@@ -64,29 +64,29 @@ const displayToolTipData = (container: HTMLElement, target: HTMLElement) => {
   }
 };
 
-export const ToolTipContext = ({ children }: ToolTipContextProps) => {
-  const toolTipContainer = document.getElementById('tooltipContainer');
-  if (!toolTipContainer) throw new Error('#tooltipContainer must exist in the DOM in order to show toolTips.');
+export const TooltipContext = ({ children }: TooltipContextProps) => {
+  const tooltipContainer = document.getElementById('tooltipContainer');
+  if (!tooltipContainer) throw new Error('#tooltipContainer must exist in the DOM in order to show tooltips.');
 
   let popoverEntity: HTMLElement | null = null;
 
   const onMouseOver = (e: MouseEvent) => {
     const target = e.target;
-    if (!isTargetElementShowingToolTip(target)) return;
+    if (!isTargetElementShowingTooltip(target)) return;
 
     popoverEntity = target;
-    displayToolTipData(toolTipContainer, target);
-    toolTipContainer.showPopover();
-    placeToolTip(toolTipContainer, target);
-    toolTipContainer.classList.add('visible');
+    displayTooltipData(tooltipContainer, target);
+    tooltipContainer.showPopover();
+    placeTooltip(tooltipContainer, target);
+    tooltipContainer.classList.add('visible');
   };
 
   const onMouseOut = (e: MouseEvent) => {
     if (!(e.target instanceof HTMLElement) || e.target !== popoverEntity) return;
 
-    toolTipContainer.innerText = '';
-    toolTipContainer.classList.remove('visible');
-    toolTipContainer.hidePopover();
+    tooltipContainer.innerText = '';
+    tooltipContainer.classList.remove('visible');
+    tooltipContainer.hidePopover();
     popoverEntity = null;
   };
 

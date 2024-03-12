@@ -21,11 +21,11 @@ import SettingsRouter from '@pages/settings/Settings.Router.page';
 
 import './i18n';
 import DesignSystemRouterComponent from '@ds/DesignSystem.router';
-import { ToolTipContext } from '@ds/ToolTip/ToolTipContext';
+import { TooltipContext } from '@ds/Tooltip/TooltipContext';
 
 const App = () => {
   return (
-    <ToolTipContext>
+    <TooltipContext>
       <GlobalStateProvider>
         <LoaderContextProvider>
           <ThemeProvider theme={theme}>
@@ -53,7 +53,7 @@ const App = () => {
           </ThemeProvider>
         </LoaderContextProvider>
       </GlobalStateProvider>
-    </ToolTipContext>
+    </TooltipContext>
   );
 };
 

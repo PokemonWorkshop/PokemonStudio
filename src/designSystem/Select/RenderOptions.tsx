@@ -34,7 +34,7 @@ export const RenderOptions = <Value extends string, ChooseValue extends string>(
           e.preventDefault();
           props.onSelectValue(option.value);
         }}
-        data-tool-tip={option.tooltip}
+        data-tooltip={option.tooltip}
         style={style}
       >
         {option.label}
