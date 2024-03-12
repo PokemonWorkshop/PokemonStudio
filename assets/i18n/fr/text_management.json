@@ -31,7 +31,12 @@
     "en": "Anglais",
     "fr": "Français",
     "es": "Espagnol",
-    "it": "Italien"
+    "it": "Italien",
+    "de": "Allemand",
+    "ko": "Coréen",
+    "kana": "Japonais",
+    "pt": "Portugais",
+    "zh": "Chinois"
   },
   "import_file": "Importer un fichier",
   "fields_asterisk_required": "Les champs avec un astérisque sont requis.",

@@ -35,8 +35,8 @@
     "de": "German",
     "ko": "Korean",
     "kana": "Japanese",
-    "pt": " Portuguese",
-    "zh": " Chinese"
+    "pt": "Portuguese",
+    "zh": "Chinese"
   },
   "import_file": "Import a file",
   "fields_asterisk_required": "Fields with an asterisk are required.",
