@@ -101,7 +101,7 @@ export const TranslateList = () => {
   const { state, languageByIndexFiltered, currentTextFromFile, allTextsFromFile } = useTranslationPage(languageContext.positionLanguage);
   const defaultLanguageCode = state.projectConfig.language_config.defaultLanguage;
   const textExistOrCanExist = currentTextFromFile && allTextsFromFile[0].length > languageContext.language.index;
-
+  
   const languageFilteredWithoutCurrentValue = languageByIndexFiltered.filter((language) => {
     if (language.value === defaultLanguageCode) return;
     if (languageContext.language.value === language.value) return;

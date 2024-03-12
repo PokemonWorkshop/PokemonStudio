@@ -62,14 +62,14 @@ const TitleBarApp = () => {
 
 const root = createRoot(document.getElementById('root') as HTMLElement);
 root.render(
-  <Suspense fallback={null}>
+  <Suspense fallback="loading...">
     <App />
   </Suspense>
 );
 
 const titlebar = createRoot(document.getElementById('titlebar') as HTMLElement);
 titlebar.render(
-  <Suspense fallback={null}>
+  <Suspense fallback="loading...">
     <TitleBarApp />
   </Suspense>
 );
