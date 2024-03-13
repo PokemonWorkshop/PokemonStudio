@@ -25,19 +25,16 @@ type CopyProps = {
 };
 
 const Copy = ({ dataToCopy, message, noColon }: CopyProps) => {
-  const [isCopied, setIsCopied] = useState<boolean>(false);
   const { t } = useTranslation('copy');
 
   const onClickCopy: React.MouseEventHandler<HTMLButtonElement> = (event) => {
     event.stopPropagation();
     navigator.clipboard.writeText(`${noColon ? '' : ':'}${dataToCopy}`);
-    setIsCopied(true);
+    window.dispatchEvent(new CustomEvent('tooltip:ChangeText', { detail: t('copied') }));
   };
 
-  const onLeave = () => setIsCopied(false);
-
   return (
-    <CopyStyle onClick={onClickCopy} onMouseLeave={onLeave} data-tooltip={isCopied ? t('copied') : message} data-tooltip-remain-on-click>
+    <CopyStyle onClick={onClickCopy} data-tooltip={message} data-tooltip-remain-on-click>
       <CopyIcon />
     </CopyStyle>
   );

@@ -288,7 +288,7 @@ export const RenderPokemon = forwardRef<HTMLInputElement, RenderPokemonProps>(
           {pokemonForm && (
             <DarkButtonImportResponsive
               onClick={() => onAddEvolution(index)}
-              data-tooltip={t('database_dex:evolutions')}
+              data-tooltip-responsive={t('database_dex:evolutions')}
               breakpoint="screen and (max-width: 1393px)"
             >
               {t('database_dex:evolutions')}

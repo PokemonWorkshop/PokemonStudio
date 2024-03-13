@@ -11,6 +11,7 @@ const isTargetElementShowingTooltip = (target: EventTarget | null): target is HT
   const dataset = target.dataset;
   if ('tooltipHidden' in dataset) return false;
   if (('tooltip' in dataset && dataset.tooltip !== undefined) || ('tooltipId' in dataset && dataset.tooltipId !== undefined)) return true;
+  if ('tooltipResponsive' in dataset && dataset.tooltipResponsive !== undefined) return target.innerText !== dataset.tooltipResponsive;
   if (target.offsetWidth >= target.scrollWidth) return false;
 
   const styles = target.computedStyleMap();
@@ -50,6 +51,8 @@ const displayTooltipData = (container: HTMLElement, target: HTMLElement) => {
 
   if ('tooltip' in dataset && dataset.tooltip) {
     container.innerText = dataset.tooltip;
+  } else if ('tooltipResponsive' in dataset && dataset.tooltipResponsive) {
+    container.innerText = dataset.tooltipResponsive;
   } else if ('tooltipId' in dataset && dataset.tooltipId) {
     const tooltipContent = document.getElementById(dataset.tooltipId);
     if (tooltipContent) {
@@ -96,22 +99,33 @@ export const TooltipContext = ({ children }: TooltipContextProps) => {
 
   const onMouseDown = (e: MouseEvent) => {
     if (!(e.target instanceof HTMLElement) || e.target !== popoverEntity) return;
-    if ('tooltipRemainOnClick' in popoverEntity.dataset) {
-      // Refresh content in case of re-render
-      return setTimeout(() => popoverEntity && displayTooltipData(tooltipContainer, popoverEntity), 25);
-    }
+    if ('tooltipRemainOnClick' in popoverEntity.dataset) return;
 
     clearTooltip();
+  };
+
+  const onKeyDown = (e: KeyboardEvent) => {
+    if (popoverEntity && e.key === 'Escape') clearTooltip();
+  };
+
+  const onTooltipChangeText = (e: Event) => {
+    if (!tooltipContainer || !(e instanceof CustomEvent) || typeof e.detail !== 'string') return;
+
+    tooltipContainer.innerText = e.detail;
   };
 
   useEffect(() => {
     window.addEventListener('mouseover', onMouseOver, { capture: true, passive: true });
     window.addEventListener('mouseout', onMouseOut, { capture: true, passive: true });
     window.addEventListener('mousedown', onMouseDown, { capture: true, passive: true });
+    window.addEventListener('keydown', onKeyDown, { capture: true, passive: true });
+    window.addEventListener('tooltip:ChangeText', onTooltipChangeText);
     return () => {
       window.removeEventListener('mouseover', onMouseOver);
       window.removeEventListener('mouseout', onMouseOut);
       window.removeEventListener('mousedown', onMouseDown);
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('tooltip:ChangeText', onTooltipChangeText);
     };
   }, []);
 
