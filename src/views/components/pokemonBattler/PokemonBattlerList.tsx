@@ -116,7 +116,7 @@ export const PokemonBattlerList = ({ title, encounters, disabledImport, from }: 
           </div>
           <SecondaryButtonWithPlusIconResponsive
             onClick={() => dialogsRef.current?.openDialog('new')}
-            data-tooltip={t('add_pokemon')}
+            data-tooltip-responsive={t('add_pokemon')}
             disabled={from === 'trainer' && trainer.party.length >= 6}
           >
             {t('add_pokemon')}

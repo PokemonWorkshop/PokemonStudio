@@ -51,7 +51,7 @@ export const TextControlBar = ({ dialogsRef }: TextControlBarProps) => {
     <ControlBar>
       <ButtonContainer>
         {onClickNew ? (
-          <SecondaryButtonWithPlusIconResponsive onClick={onClickNew} data-tooltip={t('new')} breakpoint={NEW_BREAKPOINT}>
+          <SecondaryButtonWithPlusIconResponsive onClick={onClickNew} data-tooltip-responsive={t('new')} breakpoint={NEW_BREAKPOINT}>
             {t('new')}
           </SecondaryButtonWithPlusIconResponsive>
         ) : (

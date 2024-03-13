@@ -77,7 +77,7 @@ export const PageEditor = ({
               </DarkButton>
             )}
             {add && (
-              <SecondaryButtonWithPlusIconResponsive onClick={add.onClick} data-tooltip={add.label}>
+              <SecondaryButtonWithPlusIconResponsive onClick={add.onClick} data-tooltip-responsive={add.label}>
                 {add.label}
               </SecondaryButtonWithPlusIconResponsive>
             )}

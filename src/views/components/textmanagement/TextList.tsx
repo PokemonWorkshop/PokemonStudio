@@ -134,7 +134,7 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
         </ClearButtonWithIcon>
         <ButtonRightContainer>
           <DarkButton onClick={() => dialogsRef.current?.openDialog('import')}>{t('import_texts')}</DarkButton>
-          <SecondaryButtonWithPlusIconResponsive onClick={onAdd} data-tooltip={t('add_a_text')}>
+          <SecondaryButtonWithPlusIconResponsive onClick={onAdd} data-tooltip-responsive={t('add_a_text')}>
             {t('add_a_text')}
           </SecondaryButtonWithPlusIconResponsive>
         </ButtonRightContainer>
