@@ -31,12 +31,7 @@
     "en": "Inglés",
     "fr": "Francés",
     "es": "Español",
-    "it": "Italiano",
-    "de": "Alemán",
-    "ko": "Coreano",
-    "kana": "Japonés",
-    "pt": "Portugués",
-    "zh": "Chino"
+    "it": "Italiano"
   },
   "no_langues": "Ningún idioma disponible",
   "import_file": "Importar un archivo",
