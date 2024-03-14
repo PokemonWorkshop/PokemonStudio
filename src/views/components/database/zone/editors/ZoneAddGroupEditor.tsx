@@ -8,11 +8,11 @@ import { ProjectData } from '@src/GlobalStateProvider';
 import { DarkButton, PrimaryButton, SecondaryButton } from '@components/buttons';
 import { TagWithSelection } from '@components/Tag';
 import { padStr } from '@utils/PadStr';
-import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { cloneEntity } from '@utils/cloneEntity';
 import { StudioGroup } from '@modelEntities/group';
 import { StudioZone } from '@modelEntities/zone';
 import { DbSymbol } from '@modelEntities/dbSymbol';
+import { TooltipWrapper } from '@ds/Tooltip';
 
 const GroupContainer = styled.div`
   display: flex;
@@ -81,10 +81,9 @@ export const ZoneAddGroupEditor = ({ zone, groups, onAddGroup, onClose }: ZoneAd
               filter={(dbSymbol) => !zone.wildGroups.includes(dbSymbol as DbSymbol)}
               noLabel
             />
-            <ToolTipContainer>
-              <ToolTip bottom="100%">{t('database_trainers:available_future_release')}</ToolTip>
+            <TooltipWrapper data-tooltip={t('database_trainers:available_future_release')}>
               <SecondaryButton disabled>{t('database_zones:create_new_group')}</SecondaryButton>
-            </ToolTipContainer>
+            </TooltipWrapper>
           </GroupContainer>
         </InputWithTopLabelContainer>
         {zone.maps.length !== 0 && (

@@ -6,7 +6,6 @@ import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelCo
 import { SelectCustomSimple } from '@components/SelectCustom';
 import styled from 'styled-components';
 import { useProjectGroups } from '@utils/useProjectData';
-import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import {
   defineRelationCustomCondition,
@@ -23,6 +22,7 @@ import { createGroup } from '@utils/entityCreation';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { findFirstAvailableId } from '@utils/ModelUtils';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { TooltipWrapper } from '@ds/Tooltip';
 
 const groupActivationEntries = (t: TFunction<'database_groups'>) =>
   GroupActivationsMap.map((activation) => ({ value: activation.value, label: t(activation.label) }));
@@ -181,12 +181,11 @@ export const GroupNewEditor = forwardRef<EditorHandlingClose, GroupNewEditorProp
           />
         </InputWithLeftLabelContainer>
         <ButtonContainer>
-          <ToolTipContainer>
-            {!canNew() && <ToolTip bottom="100%">{t('fields_asterisk_required')}</ToolTip>}
+          <TooltipWrapper data-tooltip={!canNew() ? t('fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickNew} disabled={!canNew()}>
               {t('create_group')}
             </PrimaryButton>
-          </ToolTipContainer>
+          </TooltipWrapper>
           <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>

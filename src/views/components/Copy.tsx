@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { ToolTip, ToolTipContainerForCopy } from './Tooltip';
 import { ReactComponent as CopyIcon } from '@assets/icons/global/copy.svg';
 
 export const CopyStyle = styled.button`
@@ -15,6 +14,7 @@ export const CopyStyle = styled.button`
 
   & svg {
     color: ${({ theme }) => theme.colors.text400};
+    pointer-events: none;
   }
 `;
 
@@ -25,22 +25,18 @@ type CopyProps = {
 };
 
 const Copy = ({ dataToCopy, message, noColon }: CopyProps) => {
-  const [isCopied, setIsCopied] = useState<boolean>(false);
   const { t } = useTranslation('copy');
 
   const onClickCopy: React.MouseEventHandler<HTMLButtonElement> = (event) => {
     event.stopPropagation();
     navigator.clipboard.writeText(`${noColon ? '' : ':'}${dataToCopy}`);
-    setIsCopied(true);
+    window.dispatchEvent(new CustomEvent('tooltip:ChangeText', { detail: t('copied') }));
   };
 
   return (
-    <ToolTipContainerForCopy>
-      <ToolTip bottom="100%">{isCopied ? t('copied') : message}</ToolTip>
-      <CopyStyle onClick={onClickCopy} onMouseLeave={() => setIsCopied(false)}>
-        <CopyIcon />
-      </CopyStyle>
-    </ToolTipContainerForCopy>
+    <CopyStyle onClick={onClickCopy} data-tooltip={message} data-tooltip-remain-on-click>
+      <CopyIcon />
+    </CopyStyle>
   );
 };
 

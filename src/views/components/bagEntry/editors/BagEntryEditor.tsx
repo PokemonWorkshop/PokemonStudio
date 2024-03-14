@@ -5,7 +5,6 @@ import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelCo
 import { SelectItem } from '@components/selects';
 import { useTranslation } from 'react-i18next';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
-import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { StudioTrainer, StudioTrainerBagEntry, reduceBagEntries } from '@modelEntities/trainer';
@@ -15,6 +14,7 @@ import { useUpdateTrainer } from '@components/database/trainer/editors/useUpdate
 import { useTrainerPage } from '@utils/usePage';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import { cloneEntity } from '@utils/cloneEntity';
+import { TooltipWrapper } from '@ds/Tooltip';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -128,12 +128,11 @@ export const BagEntryEditor = forwardRef<EditorHandlingClose, BagEntryEditorProp
         </InputWithLeftLabelContainer>
         {action === 'creation' && (
           <ButtonContainer>
-            <ToolTipContainer>
-              {!canNew() && <ToolTip bottom="100%">{t('fields_asterisk_required')}</ToolTip>}
+            <TooltipWrapper data-tooltip={canNew() ? undefined : t('fields_asterisk_required')}>
               <PrimaryButton onClick={handleNew} disabled={!canNew()}>
                 {t('add_the_item')}
               </PrimaryButton>
-            </ToolTipContainer>
+            </TooltipWrapper>
             <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
           </ButtonContainer>
         )}

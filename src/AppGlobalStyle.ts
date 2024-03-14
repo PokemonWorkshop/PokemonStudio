@@ -95,6 +95,22 @@ const GlobalStyle = createGlobalStyle`
       fill: ${({ theme }) => theme.colors.text400};
     }
   }
+
+  #tooltipContainer {
+    margin: 0;
+    padding: 8px;
+    border-radius: 4px;
+    background-color: ${({ theme }) => theme.colors.dark8};
+    color: ${({ theme }) => theme.colors.text100};
+    ${({ theme }) => theme.fonts.normalMedium}
+    max-width: 640px;
+    border: none;
+    opacity: 0;
+
+    &.visible {
+      opacity: 1;
+    }
+  }
 `;
 
 export default GlobalStyle;

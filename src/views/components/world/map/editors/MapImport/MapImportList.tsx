@@ -7,7 +7,6 @@ import { AutoSizer, List } from 'react-virtualized';
 import { Input } from '@components/inputs';
 import { cloneEntity } from '@utils/cloneEntity';
 import { ReactComponent as ErrorIcon } from '@assets/icons/global/error2.svg';
-import { useToolTip } from '@utils/useToolTip';
 import { DropDownOption, StudioDropDown } from '@components/StudioDropDown';
 
 const MapImportListContainer = styled.div`
@@ -131,7 +130,6 @@ type MapImportListType = {
 
 export const MapImportList = ({ files, mapInfoOptions, mapIdsUsed, setFiles }: MapImportListType) => {
   const { t } = useTranslation('database_maps');
-  const { buildOnMouseEnter, onMouseLeave, renderToolTip } = useToolTip('map-import-tooltip');
 
   const allFilesChecked = (checked: boolean) => {
     setFiles(files.map((file) => ({ ...file, shouldBeImport: (file.shouldBeImport = checked) })));
@@ -185,8 +183,8 @@ export const MapImportList = ({ files, mapInfoOptions, mapIdsUsed, setFiles }: M
                         <div className="filename-icon">
                           <span className={`filename${hasError ? '-with-error' : ''}`}>{file.filename}</span>
                           {hasError && (
-                            <span className="icon" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(file.error!, 'top-begin')}>
-                              <ErrorIcon />
+                            <span className="icon" data-tooltip={file.error}>
+                              <ErrorIcon style={{ pointerEvents: 'none' }} />
                             </span>
                           )}
                         </div>
@@ -207,7 +205,6 @@ export const MapImportList = ({ files, mapInfoOptions, mapIdsUsed, setFiles }: M
           }}
         </AutoSizer>
       </div>
-      {renderToolTip()}
     </MapImportListContainer>
   );
 };

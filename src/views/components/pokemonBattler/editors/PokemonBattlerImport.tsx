@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import { Editor } from '@components/editor';
 import { StudioDropDown } from '@components/StudioDropDown';
 import { DarkButton, PrimaryButton } from '@components/buttons';
-import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { MultiLineInput, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
 import { SelectGroup, SelectTrainer } from '@components/selects';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
@@ -24,6 +23,7 @@ import { StudioGroupEncounter } from '@modelEntities/groupEncounter';
 
 import type { PokemonBattlerFrom } from './PokemonBattlerEditorOverlay';
 import { DbSymbol } from '@modelEntities/dbSymbol';
+import { TooltipWrapper } from '@ds/Tooltip';
 
 const ImportInfo = styled.div`
   ${({ theme }) => theme.fonts.normalRegular};
@@ -217,12 +217,11 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
           <Toggle name="override" checked={override} onChange={(event) => handleSetOverride(event.target.checked)} />
         </InputWithLeftLabelContainer>
         <ButtonContainer>
-          <ToolTipContainer>
-            {dropDownSelection === 'default' && !canImport(override) && <ToolTip bottom="100%">{tTrainer('party_length_limit')}</ToolTip>}
+          <TooltipWrapper data-tooltip={dropDownSelection === 'default' && !canImport(override) ? tTrainer('party_length_limit') : undefined}>
             <PrimaryButton onClick={onClickImport} disabled={!canImport(override)}>
               {t('to_import')}
             </PrimaryButton>
-          </ToolTipContainer>
+          </TooltipWrapper>
           <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>

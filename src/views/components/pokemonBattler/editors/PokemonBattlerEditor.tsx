@@ -12,7 +12,6 @@ import {
   PaddedInputContainer,
 } from '@components/inputs';
 import styled from 'styled-components';
-import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { usePokemonBattler } from './usePokemonBattler';
 import { SelectPokemon } from '@components/selects/SelectPokemon';
@@ -24,6 +23,7 @@ import { SelectNature } from '@components/selects/SelectNature';
 import { PokemonBattlerMoreInfoEditor, PokemonBattlerMoveEditor, PokemonBattlerStatsEditor } from '.';
 import { EmbeddedUnitInputNumber, InputNumber } from './InputNumber';
 import { TextInputError } from '@components/inputs/Input';
+import { TooltipWrapper } from '@ds/Tooltip';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -240,12 +240,11 @@ export const PokemonBattlerEditor = forwardRef<EditorHandlingClose, PokemonBattl
           )}
           {action === 'creation' && (
             <ButtonContainer>
-              <ToolTipContainer>
-                {!canNew && <ToolTip bottom="100%">{t('pokemon_battler_list:fields_asterisk_required')}</ToolTip>}
+              <TooltipWrapper data-tooltip={!canNew ? t('pokemon_battler_list:fields_asterisk_required') : undefined}>
                 <PrimaryButton onClick={handleNew} disabled={!canNew}>
                   {t('database_pokemon:create_pokemon')}
                 </PrimaryButton>
-              </ToolTipContainer>
+              </TooltipWrapper>
               <DarkButton onClick={closeDialog}>{t('database_pokemon:cancel')}</DarkButton>
             </ButtonContainer>
           )}

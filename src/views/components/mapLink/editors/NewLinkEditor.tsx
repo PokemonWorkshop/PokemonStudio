@@ -4,11 +4,11 @@ import { Editor } from '@components/editor';
 
 import { TFunction, useTranslation } from 'react-i18next';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
-import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { SelectMaplink } from '@components/selects';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { getLinksFromMapLink, MAP_LINK_CARDINAL_LIST, StudioMapLink, StudioMapLinkCardinal } from '@modelEntities/mapLink';
+import { TooltipWrapper } from '@ds/Tooltip';
 
 const OffsetInfo = styled.div`
   ${({ theme }) => theme.fonts.normalSmall};
@@ -81,12 +81,11 @@ export const NewLinkEditor = ({ mapLink, cardinal, onClose, onAddLink }: NewLink
           </InputWithTopLabelContainer>
         </InputContainer>
         <ButtonContainer>
-          <ToolTipContainer>
-            {selectedMap === '__undef__' && <ToolTip bottom="100%">{t('database_moves:fields_asterisk_required')}</ToolTip>}
+          <TooltipWrapper data-tooltip={selectedMap === '__undef__' ? t('database_moves:fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={() => onAddLink(cardinal, selectedMap, offset)} disabled={selectedMap === '__undef__'}>
               {t('database_maplinks:add_link')}
             </PrimaryButton>
-          </ToolTipContainer>
+          </TooltipWrapper>
           <DarkButton onClick={onClose}>{t('database_moves:cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>

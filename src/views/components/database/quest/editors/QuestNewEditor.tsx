@@ -6,13 +6,13 @@ import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInpu
 import { SelectCustomSimple } from '@components/SelectCustom';
 import styled from 'styled-components';
 import { useProjectQuests } from '@utils/useProjectData';
-import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { QUEST_CATEGORIES, QUEST_DESCRIPTION_TEXT_ID, QUEST_NAME_TEXT_ID, QUEST_RESOLUTIONS, StudioQuestCategory } from '@modelEntities/quest';
 import { useSetProjectText } from '@utils/ReadingProjectText';
 import { findFirstAvailableId } from '@utils/ModelUtils';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { createQuest } from '@utils/entityCreation';
+import { TooltipWrapper } from '@ds/Tooltip';
 
 const questCategoryEntries = (t: TFunction<'database_quests'>) => QUEST_CATEGORIES.map((category) => ({ value: category, label: t(category) }));
 
@@ -86,12 +86,11 @@ export const QuestNewEditor = ({ onClose }: QuestNewEditorProps) => {
           <MultiLineInput id="descr" ref={descriptionRef} placeholder={t('example_descr')} />
         </InputWithTopLabelContainer>
         <ButtonContainer>
-          <ToolTipContainer>
-            {!name && <ToolTip bottom="100%">{t('fields_asterisk_required')}</ToolTip>}
+          <TooltipWrapper data-tooltip={!name ? t('fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickNew} disabled={!name}>
               {t('create_quest')}
             </PrimaryButton>
-          </ToolTipContainer>
+          </TooltipWrapper>
           <DarkButton onClick={onClose}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>

@@ -4,29 +4,29 @@ import { ResourceWrapper, ResourcesContainer, SpriteResource, TitleResource } fr
 import { trainerResourcePath } from '@utils/path';
 import styled from 'styled-components';
 import { ReactComponent as HelpIcon } from '@assets/icons/navigation/help-icon.svg';
-import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { StudioTrainer } from '@modelEntities/trainer';
 import { useUpdateResources } from './useUpdateResources';
+import { TooltipWrapper } from '@ds/Tooltip';
 
 const HelpContainer = styled.div`
   display: flex;
   gap: 8px;
   align-items: center;
 
-  .tooltip {
+  div:hover svg {
+    color: ${({ theme }) => theme.colors.text400};
+  }
+
+  div:last-child {
     display: flex;
-    align-items: center;
-    min-width: 250px;
+    align-self: center;
   }
 
   svg {
     color: ${({ theme }) => theme.colors.text500};
     width: 18px;
     height: 18px;
-
-    :hover {
-      color: ${({ theme }) => theme.colors.text400};
-    }
+    pointer-events: none;
   }
 `;
 
@@ -42,10 +42,9 @@ export const CharacterResource = ({ trainer }: CharacterResourceProps) => {
     <ResourcesContainer>
       <HelpContainer>
         <TitleResource title={t('character')} />
-        <ToolTipContainer className="tooltip">
-          <ToolTip bottom="100%">{t('character_v3_message')}</ToolTip>
+        <TooltipWrapper data-tooltip={t('character_v3_message')}>
           <HelpIcon />
-        </ToolTipContainer>
+        </TooltipWrapper>
       </HelpContainer>
       <ResourceWrapper size="fourth">
         <SpriteResource

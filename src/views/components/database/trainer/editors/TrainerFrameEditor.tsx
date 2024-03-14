@@ -8,7 +8,6 @@ import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import styled from 'styled-components';
 import { Tag } from '@components/Tag';
 import { padStr } from '@utils/PadStr';
-import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 import {
   getTrainerMoney,
@@ -162,11 +161,8 @@ export const TrainerFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
             />
           </InputWithTopLabelContainer>
           <InputWithLeftLabelContainer>
-            <Label htmlFor="battle-id">
-              <ToolTipContainer>
-                <ToolTip bottom="100%">{t('battle_id_tooltip')}</ToolTip>
-                {t('battle_id')}
-              </ToolTipContainer>
+            <Label htmlFor="battle-id" data-tooltip={t('battle_id_tooltip')}>
+              {t('battle_id')}
             </Label>
             <Input type="number" name="battle-id" min="0" max="9999" defaultValue={trainer.battleId} ref={battleIdRef} />
           </InputWithLeftLabelContainer>

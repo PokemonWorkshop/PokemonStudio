@@ -6,12 +6,16 @@ import { NavigationDatabaseGroup } from '@components/database/navigation/Navigat
 import { NavigationDatabaseItem } from '@components/database/navigation/NavigationDatabaseItem';
 import { DesignSystem } from './DesignSystem';
 import { SelectExamples } from './Select/Examples';
+import { ToolTipExamples } from './Tooltip/Examples';
 
 const DesignSystemNavigation = () => {
   return (
     <NavigationDatabaseStyle>
       <NavigationDatabaseGroup title="Inputs">
         <NavigationDatabaseItem path="/designSystem/select" label="Select" />
+      </NavigationDatabaseGroup>
+      <NavigationDatabaseGroup title="Helpers">
+        <NavigationDatabaseItem path="/designSystem/tooltip" label="Tooltip" />
       </NavigationDatabaseGroup>
       <NavigationDatabaseGroup title="Navigation">
         <NavigationDatabaseItem path="/designSystem/home" label="Design System Home" />
@@ -42,6 +46,14 @@ const DesignSystemRouterComponent = () => {
         element={
           <DesignSystemPageWithMenu>
             <SelectExamples />
+          </DesignSystemPageWithMenu>
+        }
+      />
+      <Route
+        path="tooltip"
+        element={
+          <DesignSystemPageWithMenu>
+            <ToolTipExamples />
           </DesignSystemPageWithMenu>
         }
       />

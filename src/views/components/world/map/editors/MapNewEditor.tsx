@@ -14,7 +14,6 @@ import {
 import { useProjectMaps } from '@utils/useProjectData';
 import styled from 'styled-components';
 import { DarkButton, PrimaryButton, SecondaryButton } from '@components/buttons';
-import { ToolTip, ToolTipContainer } from '@components/Tooltip';
 import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID } from '@modelEntities/map';
 import { createMap, createMapInfo } from '@utils/entityCreation';
 import { useSetProjectText } from '@utils/ReadingProjectText';
@@ -35,6 +34,7 @@ import { useUpdateMapModified } from './useUpdateMapModified';
 import { useMapCopy } from '@utils/useMapCopy';
 import { useLoaderRef } from '@utils/loaderContext';
 import { TextInputError } from '@components/inputs/Input';
+import { TooltipWrapper } from '@ds/Tooltip';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -218,12 +218,11 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
             </InputWithTopLabelContainer>
           </InputGroupCollapse>
           <ButtonContainer>
-            <ToolTipContainer>
-              {checkDisabled() && <ToolTip bottom="100%">{t('database_moves:fields_asterisk_required')}</ToolTip>}
+            <TooltipWrapper data-tooltip={checkDisabled() ? t('database_moves:fields_asterisk_required') : undefined}>
               <PrimaryButton onClick={onClickNew} disabled={checkDisabled()}>
                 {t('database_maps:create_map')}
               </PrimaryButton>
-            </ToolTipContainer>
+            </TooltipWrapper>
             <DarkButton onClick={closeDialog}>{t('database_moves:cancel')}</DarkButton>
           </ButtonContainer>
         </InputContainer>

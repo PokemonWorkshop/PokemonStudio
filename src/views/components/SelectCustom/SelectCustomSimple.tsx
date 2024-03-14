@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import ReactTooltip from 'react-tooltip';
 import styled from 'styled-components';
 import { ReactComponent as DownIcon } from '@assets/icons/global/down-icon.svg';
 
@@ -135,19 +134,6 @@ const DropDownContainer = styled.div`
   }
 `;
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore TODO: Fix this for real ???
-const ReactTooltipStyled = styled(ReactTooltip)`
-  padding: 8px !important;
-  border-radius: 4px !important;
-  background-color: ${({ theme }) => theme.colors.dark8} !important;
-  color: ${({ theme }) => theme.colors.text100} !important;
-  /* normalRegular */
-  font-family: Avenir Next !important;
-  font-weight: 400 !important;
-  font-size: 14px !important;
-`;
-
 type DropDownOption = {
   value: string;
   label: string;
@@ -207,7 +193,6 @@ export const SelectCustomSimple = ({ id, value, options, noTooltip, onChange }: 
           )}
         </DropDownOptionsScrollableView>
       </DropDownOptions>
-      {!noTooltip && <ReactTooltipStyled delayShow={200} arrowColor="transparent" />}
     </DropDownContainer>
   );
 };

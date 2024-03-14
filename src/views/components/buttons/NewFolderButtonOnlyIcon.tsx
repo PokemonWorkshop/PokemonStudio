@@ -18,6 +18,7 @@ const NewFolderButtonOnlyIconContainer = styled(SecondaryButton)<NewFolderButton
     display: flex;
     align-items: center;
     justify-content: center;
+    pointer-events: none;
 
     svg {
       width: 18px;

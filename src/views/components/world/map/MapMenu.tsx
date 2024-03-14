@@ -14,7 +14,6 @@ import { useSetProjectText } from '@utils/ReadingProjectText';
 import { SeparatorGreyLine } from '@components/separators/SeparatorGreyLine';
 import { MapTree } from './tree/MapTree';
 import { addNewMapInfo } from '@utils/MapInfoUtils';
-import { useToolTip } from '@utils/useToolTip';
 
 const MapMenuContainer = styled(NavigationDatabaseStyle)`
   ${NavigationDatabaseGroupStyle} {
@@ -42,7 +41,6 @@ export const MapMenu = () => {
   const dialogsRef = useDialogsRef<MapEditorAndDeletionKeys>();
   const { mapInfo, isRMXPMode, setMapInfo } = useMapInfo();
   const setText = useSetProjectText();
-  const { buildOnMouseEnter, onMouseLeave, renderToolTip } = useToolTip();
   const { t } = useTranslation(['world', 'database_maps']);
 
   const handleNewFolder = () => {
@@ -61,19 +59,13 @@ export const MapMenu = () => {
             <SecondaryButtonWithPlusIcon className="new" onClick={() => dialogsRef.current?.openDialog('new')} disabled={isRMXPMode}>
               {t('database_maps:new')}
             </SecondaryButtonWithPlusIcon>
-            <NewFolderButtonOnlyIcon
-              onClick={handleNewFolder}
-              onMouseLeave={onMouseLeave}
-              onMouseEnter={buildOnMouseEnter(t('database_maps:new_folder'), 'top-begin')}
-              disabled={isRMXPMode}
-            />
+            <NewFolderButtonOnlyIcon onClick={handleNewFolder} data-tooltip={t('database_maps:new_folder')} disabled={isRMXPMode} />
           </div>
           <SeparatorGreyLine />
           <MapTree />
         </MapSubMenuContainer>
       </NavigationDatabaseGroup>
       <MapEditorOverlay ref={dialogsRef} />
-      {renderToolTip()}
     </MapMenuContainer>
   );
 };

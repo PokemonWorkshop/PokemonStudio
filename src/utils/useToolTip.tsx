@@ -167,6 +167,7 @@ const ARROW_MAP: Record<ToolTipPosition, 'left-arrow' | 'right-arrow' | 'top-arr
 };
 
 /**
+ * @deprecated Please avoid using this
  * Hook helping to show tooltip properly
  * @example
  * const { buildOnMouseEnter, onMouseLeave, renderToolTip } = useToolTip();

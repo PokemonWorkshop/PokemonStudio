@@ -21,36 +21,39 @@ import SettingsRouter from '@pages/settings/Settings.Router.page';
 
 import './i18n';
 import DesignSystemRouterComponent from '@ds/DesignSystem.router';
+import { TooltipContext } from '@ds/Tooltip/TooltipContext';
 
 const App = () => {
   return (
-    <GlobalStateProvider>
-      <LoaderContextProvider>
-        <ThemeProvider theme={theme}>
-          <GlobalStyle />
-          <UnsavedWarningModal />
-          <MemoryRouter>
-            <NavigationBarComponent />
-            <Routes>
-              <Route path="/home" element={<HomePage />} />
-              <Route path="/dashboard/*" element={<DashboardRouter />} />
-              <Route path="/psdkupdate" element={<PSDKUpdatePage />} />
-              <Route path="/database/*" element={<DatabasePage />} />
-              <Route path="/world/*" element={<WorldRouter />} />
-              <Route path="/texts/*" element={<TextsRouter />} />
-              <Route path="/code" />
-              <Route path="/help" />
-              <Route path="/settings/*" element={<SettingsRouter />} />
-              <Route path="/account" />
-              <Route path="/designSystem/*" element={<DesignSystemRouterComponent />} />
-              <Route path="/" element={<Navigate to="/home" />} />
-            </Routes>
-          </MemoryRouter>
-          <Loader />
-          <ReactNotifications />
-        </ThemeProvider>
-      </LoaderContextProvider>
-    </GlobalStateProvider>
+    <TooltipContext>
+      <GlobalStateProvider>
+        <LoaderContextProvider>
+          <ThemeProvider theme={theme}>
+            <GlobalStyle />
+            <UnsavedWarningModal />
+            <MemoryRouter>
+              <NavigationBarComponent />
+              <Routes>
+                <Route path="/home" element={<HomePage />} />
+                <Route path="/dashboard/*" element={<DashboardRouter />} />
+                <Route path="/psdkupdate" element={<PSDKUpdatePage />} />
+                <Route path="/database/*" element={<DatabasePage />} />
+                <Route path="/world/*" element={<WorldRouter />} />
+                <Route path="/texts/*" element={<TextsRouter />} />
+                <Route path="/code" />
+                <Route path="/help" />
+                <Route path="/settings/*" element={<SettingsRouter />} />
+                <Route path="/account" />
+                <Route path="/designSystem/*" element={<DesignSystemRouterComponent />} />
+                <Route path="/" element={<Navigate to="/home" />} />
+              </Routes>
+            </MemoryRouter>
+            <Loader />
+            <ReactNotifications />
+          </ThemeProvider>
+        </LoaderContextProvider>
+      </GlobalStateProvider>
+    </TooltipContext>
   );
 };
 
