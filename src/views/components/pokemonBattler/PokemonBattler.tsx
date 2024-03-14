@@ -272,6 +272,22 @@ export const PokemonBattler = ({ pokemon, index, from, dialogsRef, setCurrentBat
   const shortcutAbilityNavigation = useShortcutNavigation('abilities', 'ability', '/database/abilities/');
   const shortcutItemNavigation = useShortcutNavigation('items', 'item', '/database/items/');
 
+  const iconSelector = (pokemon : StudioGroupEncounter) => {
+    if(pokemon.shinySetup.kind === 'rate' && pokemon.shinySetup.rate === 1) {
+      if(pokemon.expandPokemonSetup.find((setup) => setup.type === 'gender')?.value as number === 2){
+        return 'iconShinyF'
+      }else{
+        return 'iconShiny'
+      }
+    }else{
+      if(pokemon.expandPokemonSetup.find((setup) => setup.type === 'gender')?.value as number === 2){
+        return 'iconF'
+      }else{
+        return 'icon'
+      }
+    }
+  }
+
   const onDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
     setCurrentBattler({ index, kind: undefined });
@@ -303,7 +319,7 @@ export const PokemonBattler = ({ pokemon, index, from, dialogsRef, setCurrentBat
         <PokemonBattlerHeader>
           {specie ? (
             <ResourceImage
-              imagePathInProject={pokemonIconPath(specie, pokemon.form)}
+              imagePathInProject={pokemonIconPath(specie, pokemon.form,iconSelector(pokemon))}
               fallback={pokemon.form === 0 ? undefined : pokemonIconPath(specie)}
             />
           ) : (
