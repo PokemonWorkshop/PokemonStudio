@@ -21,13 +21,12 @@ i18n
   // init i18next
   // for all options read: https://www.i18next.com/overview/configuration-options
   .init({
-    debug:true,
-    lng:"en",
+    debug: true,
     interpolation: {
       escapeValue: false, // not needed for react as it escapes by default
     },
     fallbackLng: 'en',
-    returnObjects:true,
+    returnObjects: true,
     resources: {
       en: translationEN,
       es: translationES,

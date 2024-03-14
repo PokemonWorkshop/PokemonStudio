@@ -61,9 +61,9 @@ const RenderText = ({ text, language }: RenderTextProps) => {
   const { t, i18n } = useTranslation('text_management');
   const languageContext = useContext(LanguageContext);
 
-  const languageToDisplay = i18n.exists(`text_management:language.${language.value.toLowerCase()}`)
-    ? t(`language.${language.value.toLowerCase()}` as never)
-    : t(`language.default`, { prefix: language.value });
+  const languageToDisplay = i18n.exists(`text_management:language_${language.value.toLowerCase()}`)
+    ? t(`language_${language.value.toLowerCase()}` as never)
+    : t(`language_default`, { prefix: language.value });
 
   return (
     <RenderTranslateContainer gap="16px" onMouseOver={() => setHovered(true)} onMouseOut={() => setHovered(false)}>

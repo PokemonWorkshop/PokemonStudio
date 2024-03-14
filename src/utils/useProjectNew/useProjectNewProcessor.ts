@@ -18,12 +18,8 @@ const languageTexts: Record<DefaultLanguageType, string> = {
   en: 'English',
   fr: 'French',
   es: 'Spanish',
-  it: 'Italian',
-  de: 'German',
-  ko: 'Korean',
-  kana: 'Japanese',
   pt: 'Portuguese',
-  zh: 'Chinese'
+  de: 'German',
 };
 
 const getLanguageConfig = (projectData: { defaultLanguage: DefaultLanguageType; multiLanguage: boolean }): string => {

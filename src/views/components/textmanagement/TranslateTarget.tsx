@@ -158,13 +158,13 @@ export const TranslateTarget = () => {
     languageContext.positionLanguage
   );
 
-  const defaultLanguageToDisplay = i18n.exists(`text_management:language.${defaultLanguage.toLowerCase()}`)
-    ? t(`language.${defaultLanguage.toLowerCase()}` as never)
-    : t(`language.default`, { prefix: defaultLanguage });
+  const defaultLanguageToDisplay = i18n.exists(`text_management:language_${defaultLanguage.toLowerCase()}`)
+    ? t(`language_${defaultLanguage.toLowerCase()}` as never)
+    : t(`language_default`, { prefix: defaultLanguage });
 
-  const languageToDisplay = i18n.exists(`text_management:language.${languageContext.language.value.toLowerCase()}`)
-    ? t(`language.${languageContext.language.value.toLowerCase()}` as never)
-    : t(`language.default`, { prefix: languageContext.language.value });
+  const languageToDisplay = i18n.exists(`text_management:language_${languageContext.language.value.toLowerCase()}`)
+    ? t(`language_${languageContext.language.value.toLowerCase()}` as never)
+    : t(`language_default`, { prefix: languageContext.language.value });
 
   const textExistOrCanExist = currentTextFromFile && allTextsFromFile[0].length > languageContext.language.index;
 
