@@ -5,6 +5,7 @@ import { DataGrid } from '@components/database/dataBlocks';
 import styled from 'styled-components';
 import { Language, LanguageContext } from '@pages/texts/Translation.page';
 import { SecondaryButton } from '@components/buttons';
+import { getLanguageDisplayText } from '@utils/getLanguageDisplayText';
 
 type RenderTextProps = {
   language: Language;
@@ -61,9 +62,7 @@ const RenderText = ({ text, language }: RenderTextProps) => {
   const { t, i18n } = useTranslation('text_management');
   const languageContext = useContext(LanguageContext);
 
-  const languageToDisplay = i18n.exists(`text_management:language_${language.value.toLowerCase()}`)
-    ? t(`language_${language.value.toLowerCase()}` as never)
-    : t(`language_default`, { prefix: language.value });
+  const languageToDisplay = getLanguageDisplayText(language.value, t, i18n);
 
   return (
     <RenderTranslateContainer gap="16px" onMouseOver={() => setHovered(true)} onMouseOut={() => setHovered(false)}>
@@ -101,7 +100,7 @@ export const TranslateList = () => {
   const { state, languageByIndexFiltered, currentTextFromFile, allTextsFromFile } = useTranslationPage(languageContext.positionLanguage);
   const defaultLanguageCode = state.projectConfig.language_config.defaultLanguage;
   const textExistOrCanExist = currentTextFromFile && allTextsFromFile[0].length > languageContext.language.index;
-  
+
   const languageFilteredWithoutCurrentValue = languageByIndexFiltered.filter((language) => {
     if (language.value === defaultLanguageCode) return;
     if (languageContext.language.value === language.value) return;
