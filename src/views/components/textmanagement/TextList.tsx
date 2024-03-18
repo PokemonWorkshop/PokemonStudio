@@ -11,6 +11,7 @@ import { padStr } from '@utils/PadStr';
 import { ReactComponent as TranslationIcon } from '@assets/icons/global/translate.svg';
 import { useGetTextList, useSetProjectText } from '@utils/ReadingProjectText';
 import { useTextPage } from '@utils/usePage';
+import { CopyIdentifier } from '@components/Copy';
 
 const getHeight = (length: number) => (length > 8 ? 408 : length * 48);
 
@@ -37,6 +38,10 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
   const onAdd = () => {
     setText(textInfo.fileId, texts.length === 0 ? 0 : texts[texts.length - 1].textId + 1, '');
     setScrollToEnd(true);
+  };
+  const onClickCopy = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, row: number) => {
+    event.stopPropagation();
+    navigator.clipboard.writeText(`text_get(${textInfo.fileId >= 100000 ? textInfo.fileId - 100000 : textInfo.fileId}, ${row - 2})`);
   };
 
   // reset the research and the scroll when we change texts file
@@ -91,7 +96,13 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
                           key={`${textInfo.fileId}-${textsFiltered[index].textId}-${key}`}
                           style={{ ...style, width: 'calc(100% - 4px)' }}
                         >
-                          <span className="line-number">#{padStr(textsFiltered[index].textId, 4)}</span>
+                          <span
+                            onClick={(event: React.MouseEvent<HTMLButtonElement>) => onClickCopy(event, textsFiltered[index].textId)}
+                            style={{ cursor: 'pointer' }}
+                            className="text-id"
+                          >
+                            #{padStr(textsFiltered[index].textId, 4)}
+                          </span>
                           <ClearInput
                             key={`${textsFiltered[index].textId}-${textsFiltered[index].dialog}`}
                             defaultValue={textsFiltered[index].dialog}
