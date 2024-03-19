@@ -46,7 +46,12 @@ export const BreedingEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const [babyForm, setBabyForm] = useState(form.babyForm);
   const hatchStepsRef = useRef<HTMLInputElement>(null);
 
-  const canClose = () => !!hatchStepsRef.current && hatchStepsRef.current.validity.valid;
+  const canClose = () => {
+    if (!hatchStepsRef.current || !hatchStepsRef.current.validity.valid) return false;
+
+    return true;
+  };
+
   const onClose = () => {
     if (!hatchStepsRef.current || !canClose()) return;
 

@@ -19,8 +19,13 @@ export const ExperienceEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const [curveType, setCurveType] = useState(`${form.experienceType}`);
   const xpCurveOptions = useMemo(() => xpCurveEntries([t('fast'), t('normal'), t('slow'), t('parabolic'), t('erratic'), t('fluctuating')]), []);
 
-  const canClose = () =>
-    !!baseExpRef.current && baseExpRef.current.validity.valid && !!baseFriendshipRef.current && baseFriendshipRef.current.validity.valid;
+  const canClose = () => {
+    if (!baseExpRef.current || !baseExpRef.current.validity.valid) return false;
+    if (!baseFriendshipRef.current || !baseFriendshipRef.current.validity.valid) return false;
+
+    return true;
+  };
+
   const onClose = () => {
     if (!baseFriendshipRef.current || !baseExpRef.current || !canClose()) return;
 

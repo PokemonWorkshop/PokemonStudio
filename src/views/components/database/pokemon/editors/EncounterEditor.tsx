@@ -90,14 +90,20 @@ export const EncounterEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   };
 
   const onClose = () => {
-    if (!catchRateRef.current || !canClose()) return;
+    if (!catchRateRef.current || !femaleRateRef.current || !canClose()) return;
 
     const catchRate = isNaN(catchRateRef.current.valueAsNumber) ? form.catchRate : catchRateRef.current.valueAsNumber;
-    const femaleRate = genderLess ? -1 : femaleRateRef.current?.valueAsNumber || 0;
+    const femaleRate = genderLess ? -1 : isNaN(femaleRateRef.current.valueAsNumber) ? form.femaleRate : femaleRateRef.current.valueAsNumber;
+
+    const itemHeld = itemDbSymbolRefs.current.map((dbSymbol, i) => {
+      const chanceInput = rarityRefs.current[i];
+      const chance = chanceInput && !isNaN(chanceInput.valueAsNumber) ? chanceInput.valueAsNumber : form.itemHeld[i].chance;
+      return { dbSymbol, chance };
+    });
 
     updateForm({
-      itemHeld: itemDbSymbolRefs.current.map((dbSymbol, i) => ({ dbSymbol, chance: rarityRefs.current[i]?.valueAsNumber || 0 })),
-      catchRate: catchRate,
+      itemHeld,
+      catchRate,
       femaleRate,
       resources: {
         ...form.resources,
@@ -117,7 +123,16 @@ export const EncounterEditor = forwardRef<EditorHandlingClose>((_, ref) => {
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
           <Label htmlFor="genderless">{t('database_pokemon:genderless')}</Label>
-          <Toggle checked={genderLess} name="genderless" onChange={(event) => setGenderLess(event.target.checked)} />
+          <Toggle
+            checked={genderLess}
+            name="genderless"
+            onChange={(event) => {
+              setGenderLess(event.target.checked);
+              if (!event.target.checked && femaleRateRef.current && femaleRateRef.current.valueAsNumber === -1) {
+                femaleRateRef.current.value = '0';
+              }
+            }}
+          />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer style={divStyle}>
           <Label htmlFor="female_rate">{t('database_pokemon:female_rate')}</Label>
@@ -136,7 +151,7 @@ export const EncounterEditor = forwardRef<EditorHandlingClose>((_, ref) => {
           index={0}
           title={t('database_pokemon:common_item_held')}
           options={itemOptionsWithNone}
-          originalChance={form.itemHeld[0]?.chance || 0}
+          originalChance={form.itemHeld[0]?.chance}
           rarityRefs={rarityRefs}
           itemDbSymbolRefs={itemDbSymbolRefs}
         />
@@ -144,7 +159,7 @@ export const EncounterEditor = forwardRef<EditorHandlingClose>((_, ref) => {
           index={1}
           title={t('database_pokemon:rare_item_held')}
           options={itemOptionsWithNone}
-          originalChance={form.itemHeld[1]?.chance || 0}
+          originalChance={form.itemHeld[1]?.chance}
           rarityRefs={rarityRefs}
           itemDbSymbolRefs={itemDbSymbolRefs}
         />

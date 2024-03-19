@@ -28,12 +28,13 @@ export const PokedexEditor = forwardRef<EditorHandlingClose>((_, ref) => {
     setText(CREATURE_SPECIE_TEXT_ID, creature.id, specieRef.current.value);
   };
 
-  const canClose = () =>
-    !dialogsRef.current?.currentDialog &&
-    !!weightRef.current &&
-    weightRef.current.validity.valid &&
-    !!heightRef.current &&
-    heightRef.current.validity.valid;
+  const canClose = () => {
+    if (!dialogsRef.current?.currentDialog) return false;
+    if (!weightRef.current || !weightRef.current.validity.valid) return false;
+    if (!heightRef.current || !heightRef.current.validity.valid) return false;
+
+    return true;
+  };
 
   const onClose = () => {
     if (!specieRef.current || !weightRef.current || !heightRef.current || !canClose()) return;
