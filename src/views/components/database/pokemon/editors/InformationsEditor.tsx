@@ -41,7 +41,7 @@ export const InformationsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   };
 
   const canClose = () => {
-    // if (!dialogsRef.current?.currentDialog) return false;
+    if (dialogsRef.current?.currentDialog) return false;
     if (!nameRef.current) return false;
     if (!offsetRef.current || !offsetRef.current.validity.valid) return false;
 
