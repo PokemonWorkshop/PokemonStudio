@@ -5,6 +5,7 @@ import { DataGrid } from '@components/database/dataBlocks';
 import styled from 'styled-components';
 import { Language, LanguageContext } from '@pages/texts/Translation.page';
 import { SecondaryButton } from '@components/buttons';
+import { getLanguageDisplayText } from '@utils/getLanguageDisplayText';
 
 type RenderTextProps = {
   language: Language;
@@ -61,9 +62,7 @@ const RenderText = ({ text, language }: RenderTextProps) => {
   const { t, i18n } = useTranslation('text_management');
   const languageContext = useContext(LanguageContext);
 
-  const languageToDisplay = i18n.exists(`text_management:language.${language.value.toLowerCase()}`)
-    ? t(`language.${language.value.toLowerCase()}` as never)
-    : t(`language.default`, { prefix: language.value });
+  const languageToDisplay = getLanguageDisplayText(language.value, t, i18n);
 
   return (
     <RenderTranslateContainer gap="16px" onMouseOver={() => setHovered(true)} onMouseOut={() => setHovered(false)}>
