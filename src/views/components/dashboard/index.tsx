@@ -8,3 +8,4 @@ export { DashboardDevices } from './DashboardDevices';
 export { DashboardGraphics } from './DashboardGraphics';
 export { DashboardDisplay } from './DashboardDisplay';
 export { DashboardSave } from './DashboardSave';
+export { DashboardCredits } from './DashboardCredits';
