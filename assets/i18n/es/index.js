@@ -5,6 +5,7 @@ import dashboard_graphics from './dashboard_graphics.json';
 import dashboard_infos from './dashboard_infos.json';
 import dashboard_language from './dashboard_language.json';
 import dashboard_save from './dashboard_save.json';
+import dashboard_credits from './dashboard_credits.json';
 import dashboard_settings from './dashboard_settings.json';
 import dashboard_game_start from './dashboard_game_start.json';
 import dashboard_texts from './dashboard_texts.json';
@@ -50,6 +51,7 @@ export default {
   dashboard_infos,
   dashboard_language,
   dashboard_save,
+  dashboard_credits,
   dashboard_settings,
   dashboard_game_start,
   dashboard_texts,
