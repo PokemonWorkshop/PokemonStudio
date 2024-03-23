@@ -159,7 +159,16 @@ export const useEvolutionEditorState = ({ evolutionIndex, creature, form }: Evol
       }
       if (type === 'trade') return { type, value: true };
       if (type === 'func') return { type, value: inputRefs.current.func?.value || '' };
-      if (type === 'maps') return { type, value: inputRefs.current.maps?.value.split(',').map(Number) || [] };
+      if (type === 'maps') {
+        const value = inputRefs.current.maps?.value
+          .split(',')
+          .map(Number)
+          .filter((id) => !isNaN(id));
+        return {
+          type,
+          value: value || [],
+        };
+      }
       if (type === 'none') return { type, value: undefined };
       // We have to do that because valueAsNumber of hidden = NaN for some reason
       if (type === 'dayNight') return { type, value: Number(inputRefs.current[type]?.value || 0) as 0 };
