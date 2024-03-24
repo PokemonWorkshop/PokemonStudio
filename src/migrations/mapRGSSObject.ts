@@ -117,7 +117,6 @@ const convertTableObject = (object: MarshalUserObject | TableObject): TableObjec
     __data: object.__load.slice(20, object.__load.length),
     get __load() {
       const buffer = Buffer.allocUnsafe(20 + this.__data.length);
-      console.log('called', this.dim);
       buffer.writeInt32LE(this.dim, 0);
       buffer.writeInt32LE(this.xSize, 4);
       buffer.writeInt32LE(this.ySize, 8);

@@ -14,6 +14,7 @@ import { addNewMapInfo } from '@utils/MapInfoUtils';
 import { readRMXPMapInfo } from './readRMXPMapInfo';
 import { RMXPMap, readRMXPMap } from './readRMXPMap';
 import { DbSymbol } from '@modelEntities/dbSymbol';
+import { parseJSON } from '@utils/json/parse';
 
 export type RMXP2StudioMapsSyncInput = { projectPath: string };
 
@@ -109,7 +110,7 @@ const createNewMap = (payload: { rmxpMap: { id: number; name: string }; rmxpMapD
 const readMaps = async (projectPath: string) => {
   const maps = await readProjectFolder(projectPath, 'maps');
   return maps.reduce((data, map) => {
-    const mapParsed = MAP_VALIDATOR.safeParse(JSON.parse(map));
+    const mapParsed = MAP_VALIDATOR.safeParse(parseJSON<StudioMap>(map.data, map.filename));
     if (mapParsed.success) {
       data.push(mapParsed.data);
     }
