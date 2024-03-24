@@ -17,6 +17,7 @@ import { getProjectTextChange } from '@utils/updateProjectText';
 import { ProgressBar } from '@components/progress-bar/ProgressBar';
 import { CONTROL } from '@utils/useKeyPress';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
+import { getLanguageDisplayText } from '@utils/getLanguageDisplayText';
 
 const UNTRANSLATED_TEXT_REG = /^$|^NewText$|^\[~[^\]]+\]$/;
 
@@ -158,13 +159,9 @@ export const TranslateTarget = () => {
     languageContext.positionLanguage
   );
 
-  const defaultLanguageToDisplay = i18n.exists(`text_management:language.${defaultLanguage.toLowerCase()}`)
-    ? t(`language.${defaultLanguage.toLowerCase()}` as never)
-    : t(`language.default`, { prefix: defaultLanguage });
+  const defaultLanguageToDisplay = getLanguageDisplayText(defaultLanguage, t, i18n);
 
-  const languageToDisplay = i18n.exists(`text_management:language.${languageContext.language.value.toLowerCase()}`)
-    ? t(`language.${languageContext.language.value.toLowerCase()}` as never)
-    : t(`language.default`, { prefix: languageContext.language.value });
+  const languageToDisplay = getLanguageDisplayText(languageContext.language.value, t, i18n);
 
   const textExistOrCanExist = currentTextFromFile && allTextsFromFile[0].length > languageContext.language.index;
 
