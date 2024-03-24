@@ -6,6 +6,7 @@ import { z } from 'zod';
 import path from 'path';
 import fs from 'fs';
 import fsPromise from 'fs/promises';
+import { parseJSON } from '@utils/json/parse';
 
 const PRE_MIGRATION_TRAINER_VALIDATOR = TRAINER_VALIDATOR.omit({ resources: true }).extend({ battlers: z.array(z.string()).nonempty() });
 type StudioTrainerDataBeforeMigration = z.infer<typeof PRE_MIGRATION_TRAINER_VALIDATOR>;
@@ -45,7 +46,7 @@ export const trainersResources = async (_: IpcMainEvent, projectPath: string) =>
   const trainers = await readProjectFolder(projectPath, 'trainers');
   await trainers.reduce(async (lastPromise, trainer) => {
     await lastPromise;
-    const trainerParsed = PRE_MIGRATION_TRAINER_VALIDATOR.safeParse(JSON.parse(trainer));
+    const trainerParsed = PRE_MIGRATION_TRAINER_VALIDATOR.safeParse(parseJSON<StudioTrainer>(trainer.data, trainer.filename));
     if (trainerParsed.success) {
       const trainerMigrated = migrateResource(trainerParsed.data, projectPath);
       return fsPromise.writeFile(

@@ -5,8 +5,9 @@ import fs from 'fs';
 import { PSDKConfigs, psdkConfigKeys } from '@src/GlobalStateProvider';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import { ChannelNames, sendProgress } from '@utils/BackendTask';
+import { FilenameWithData } from './readProjectData';
 
-export type ProjectConfigsFromBackEnd = Record<keyof PSDKConfigs, string>;
+export type ProjectConfigsFromBackEnd = Record<keyof PSDKConfigs, FilenameWithData>;
 export type ReadProjectConfigsInput = { path: string };
 
 const readProjectConfigs = async (payload: ReadProjectConfigsInput, event: IpcMainEvent, channels: ChannelNames) => {
@@ -15,7 +16,7 @@ const readProjectConfigs = async (payload: ReadProjectConfigsInput, event: IpcMa
   const projectConfigs = psdkConfigKeys.reduce((prev, curr, index) => {
     sendProgress(event, channels, { step: index + 1, total: psdkConfigKeys.length, stepText: curr });
     const fileData = fs.readFileSync(path.join(payload.path, 'Data/configs', `${curr}.json`), { encoding: 'utf-8' });
-    return { ...prev, [curr]: fileData };
+    return { ...prev, [curr]: { filename: `${curr}.json`, data: fileData } };
   }, {} as ProjectConfigsFromBackEnd);
   log.info('read-project-configs/success');
   return projectConfigs;
