@@ -169,8 +169,7 @@ const FORM_SCHEMA = z.object({
 const SelectDialog = forwardRef<EditorHandlingClose, { closeDialog: () => void }>(({ closeDialog }, ref) => {
   const dialogsRef = useDialogsRef<'dialog'>();
   useEditorHandlingClose(ref);
-  const formRef = useRef<HTMLFormElement>(null);
-  const v = useZodForm(formRef, FORM_SCHEMA, { normal: 'value_e', test: 6, array: ['string1', 'string2', { a: 'obj_a', b: 'obj_b', c: [-5, 7] }] });
+  const v = useZodForm(FORM_SCHEMA, { normal: 'value_e', test: 6, array: ['string1', 'string2', { a: 'obj_a', b: 'obj_b', c: [-5, 7] }] });
   const defaults = v.defaults;
   const onSubmit: FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
@@ -183,7 +182,7 @@ const SelectDialog = forwardRef<EditorHandlingClose, { closeDialog: () => void }
 
   return (
     <Editor type="studio" title={'Dialog'}>
-      <form onSubmit={onSubmit} ref={formRef}>
+      <form onSubmit={onSubmit} ref={v.formRef}>
         <InputContainer size="s">
           <InputWithTopLabelContainer>
             <Label>Nothing selected</Label>
@@ -192,7 +191,7 @@ const SelectDialog = forwardRef<EditorHandlingClose, { closeDialog: () => void }
               chooseValue="choose"
               placeholder="Choose a value"
               name="nothing"
-              onChange={() => v.onTouched('nothing', true)}
+              onChange={(value) => v.onTouched('nothing', true, value)}
             />
           </InputWithTopLabelContainer>
           <InputWithLeftLabelContainer>

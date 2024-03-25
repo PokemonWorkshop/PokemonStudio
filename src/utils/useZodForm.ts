@@ -21,8 +21,14 @@ const getNextObject = (object: OpaqueObject, key: string, restName: string[]): O
   return newObject;
 };
 
+const getValue = (element: PossibleInput) => {
+  if (element.type === 'number' || element.dataset.inputType === 'number') return Number(element.value);
+
+  return element.value;
+};
+
 const insertElementDataIntoObjectFromKey = (element: PossibleInput, object: OpaqueObject, key: string) => {
-  const value = element.type === 'number' ? Number(element.value) : element.value;
+  const value = getValue(element);
 
   if (Array.isArray(object)) {
     object[Number(key)] = value;
@@ -78,12 +84,9 @@ export const flattenZodObject = (object: Record<string, unknown>): Record<string
   return root;
 };
 
-export const useZodForm = <T extends z.ZodRawShape>(
-  formRef: RefObject<HTMLFormElement>,
-  schema: z.ZodObject<T>,
-  defaults?: Partial<z.infer<typeof schema>>
-) => {
-  const touchedInputValidity = useRef<Record<string, boolean>>({});
+export const useZodForm = <T extends z.ZodRawShape>(schema: z.ZodObject<T>, defaults?: Partial<z.infer<typeof schema>>) => {
+  const formRef = useRef<HTMLFormElement>(null);
+  const touchedInputValidity = useRef<Record<string, { value: string; validity: boolean }>>({});
   const d = useMemo(
     () => ({
       defaults: flattenZodObject(defaults || {}),
@@ -93,15 +96,16 @@ export const useZodForm = <T extends z.ZodRawShape>(
     []
   );
   const [isValid, setIsValid] = useState(d.defaultValid);
-  const onTouched = (inputName: string, isValid: boolean) => {
-    if (touchedInputValidity.current[inputName] !== isValid) {
-      touchedInputValidity.current[inputName] = isValid;
+  const onTouched = (inputName: string, isValid: boolean, value: string) => {
+    const ref = touchedInputValidity.current[inputName];
+    if (!ref || ref.validity !== isValid || ref.value !== value) {
+      touchedInputValidity.current[inputName] = { validity: isValid, value };
       setIsValid(isValid && schema.safeParse(getFormData(formRef)).success);
     }
   };
   const onInputTouched: FormEventHandler<HTMLInputElement | HTMLTextAreaElement> = ({ currentTarget }) => {
-    onTouched(currentTarget.name, currentTarget.validity.valid);
+    onTouched(currentTarget.name, currentTarget.validity.valid, currentTarget.value);
   };
 
-  return { ...d, isValid, onTouched, onInputTouched };
+  return { ...d, isValid, onTouched, onInputTouched, formRef };
 };

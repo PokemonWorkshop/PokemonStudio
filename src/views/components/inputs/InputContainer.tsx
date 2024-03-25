@@ -16,6 +16,12 @@ export const InputContainer = styled.div<InputContainerProps>`
   gap: ${({ size }) => (size ? sizes[size] : '24px')};
 `;
 
+export const InputFormContainer = styled.form<InputContainerProps>`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ size }) => (size ? sizes[size] : '24px')};
+`;
+
 export const PaddedInputContainer = styled(InputContainer)`
   padding: 0 10px;
 `;
