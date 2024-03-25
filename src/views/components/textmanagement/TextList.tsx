@@ -38,7 +38,7 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
     setText(textInfo.fileId, texts.length === 0 ? 0 : texts[texts.length - 1].textId + 1, '');
     setScrollToEnd(true);
   };
-  const onClickCopy = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, row: number) => {
+  const onClickCopy = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>, row: number) => {
     event.stopPropagation();
     navigator.clipboard.writeText(
       textInfo.fileId >= 100000 ? `text_get(${textInfo.fileId - 100000}, ${row})` : `ext_text(${textInfo.fileId}, ${row})`
@@ -101,7 +101,7 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
                           <span
                             data-tooltip={t('copy:copy_code')}
                             data-tooltip-remain-on-click
-                            onClick={(event: React.MouseEvent<HTMLButtonElement>) => onClickCopy(event, textsFiltered[index].textId)}
+                            onClick={(event) => onClickCopy(event, textsFiltered[index].textId)}
                             style={{ cursor: 'pointer' }}
                             className="text-id"
                           >
