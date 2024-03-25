@@ -170,7 +170,10 @@ export const defineEditorOverlay = <Keys extends string, Props extends Record<st
     // Handle user pressing the escape key
     useEffect(() => {
       const handleKey = (event: KeyboardEvent) => {
-        if (event.key === 'Escape' && currentDialog) onEscape();
+        if (event.key === 'Escape' && currentDialog) {
+          event.preventDefault();
+          onEscape();
+        }
       };
       window.addEventListener('keydown', handleKey);
 

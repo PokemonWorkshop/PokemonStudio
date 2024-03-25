@@ -49,18 +49,15 @@ export const BreedingEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { t } = useTranslation('database_pokemon');
   const { creature, form } = useCreaturePage();
   const updateForm = useUpdateForm(creature, form);
-  const { isValid, getFormData, onInputTouched, defaults, formRef } = useZodForm(BREEDING_EDITOR_SCHEMA, form);
+  const { canClose, getFormData, onInputTouched, defaults, formRef } = useZodForm(BREEDING_EDITOR_SCHEMA, form);
   const breedingGroupOptions = useMemo(() => getBreedingGroupOptions(t), [t]);
   const [baby, setBaby] = useState(form.babyDbSymbol);
 
-  const canClose = () => isValid;
   const onClose = () => {
     const result = canClose() && getFormData();
     if (result && result.success) updateForm(result.data);
   };
   useEditorHandlingClose(ref, onClose, canClose);
-
-  console.log(getFormData(), isValid); // TODO: Remove once you've validated that refresh are properly handled :)
 
   return (
     <Editor type="edit" title={t('breeding')}>
@@ -83,7 +80,7 @@ export const BreedingEditor = forwardRef<EditorHandlingClose>((_, ref) => {
         </InputWithTopLabelContainer>
         <InputWithLeftLabelContainer>
           <Label>{t('hatch_steps')}</Label>
-          <Input name="hatchSteps" type="number" min={1} defaultValue={defaults.hatchSteps} onInput={onInputTouched} />
+          <Input name="hatchSteps" type="number" min={1} defaultValue={defaults.hatchSteps} onInput={onInputTouched} required />
         </InputWithLeftLabelContainer>
       </InputFormContainer>
     </Editor>
