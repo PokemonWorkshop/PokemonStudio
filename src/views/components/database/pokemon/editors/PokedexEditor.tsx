@@ -29,7 +29,7 @@ export const PokedexEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   };
 
   const canClose = () => {
-    if (!dialogsRef.current?.currentDialog) return false;
+    if (dialogsRef.current?.currentDialog) return false;
     if (!weightRef.current || !weightRef.current.validity.valid) return false;
     if (!heightRef.current || !heightRef.current.validity.valid) return false;
 
@@ -69,7 +69,7 @@ export const PokedexEditor = forwardRef<EditorHandlingClose>((_, ref) => {
             unit="m"
             name="height"
             type="number"
-            defaultValue={form.height ?? 0.0}
+            defaultValue={form.height}
             min={0.01}
             max={100}
             ref={heightRef}
@@ -83,7 +83,7 @@ export const PokedexEditor = forwardRef<EditorHandlingClose>((_, ref) => {
             lang="en"
             name="weight"
             type="number"
-            defaultValue={form.weight ?? 0.0}
+            defaultValue={form.weight}
             min={0.01}
             max={1000}
             ref={weightRef}
