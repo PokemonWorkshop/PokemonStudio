@@ -10,6 +10,7 @@ import { DashboardPageStyle } from './DashboardPageStyle';
 import { useDialogsRef } from '@utils/useDialogsRef';
 import { DashboardEditorAndDeletionKeys, DashboardEditorOverlay } from '@components/dashboard/editors/DashboardEditorOverlay';
 import { useProjectStudio } from '@utils/useProjectStudio';
+import { Onboarding } from '@components/onboarding/Onboarding';
 
 const DashboardContainerStyle = styled(PageContainerStyle)`
   @media ${({ theme }) => theme.breakpoints.dataBox422} {
@@ -36,6 +37,7 @@ export const DashboardPage = () => {
           <DataBlockWrapper>
             <DashboardFrame />
           </DataBlockWrapper>
+          <Onboarding />
           <DataBlockWrapper>
             <DataBlockWithAction size="full" title={t('project_settings')}>
               <SecondaryButton onClick={() => navigate('/dashboard/infos')}>{t('change_project_settings')}</SecondaryButton>

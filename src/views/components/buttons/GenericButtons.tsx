@@ -117,3 +117,17 @@ export const WarningButton = styled(BaseButtonStyle)`
     background-color: ${({ theme }) => theme.colors.warningBase};
   }
 `;
+
+export const InfoButton = styled(BaseButtonStyle)`
+  ${({ theme }) => theme.fonts.normalMedium}
+  color: ${({ theme }) => theme.colors.dark8};
+  background-color: ${({ theme }) => theme.colors.infoBase};
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.infoHover};
+  }
+
+  &:active {
+    background-color: ${({ theme }) => theme.colors.infoBase};
+  }
+`;
