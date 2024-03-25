@@ -106,6 +106,12 @@ export const useZodForm = <T extends z.ZodRawShape>(schema: z.ZodObject<T>, defa
   const onInputTouched: FormEventHandler<HTMLInputElement | HTMLTextAreaElement> = ({ currentTarget }) => {
     onTouched(currentTarget.name, currentTarget.validity.valid, currentTarget.value);
   };
+  const canClose = () => {
+    if (isValid) return true;
+    formRef.current?.reportValidity();
 
-  return { ...d, isValid, onTouched, onInputTouched, formRef };
+    return false;
+  };
+
+  return { ...d, isValid, onTouched, onInputTouched, canClose, formRef };
 };

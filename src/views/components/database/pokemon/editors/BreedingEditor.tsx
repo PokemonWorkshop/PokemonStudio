@@ -49,11 +49,10 @@ export const BreedingEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { t } = useTranslation('database_pokemon');
   const { creature, form } = useCreaturePage();
   const updateForm = useUpdateForm(creature, form);
-  const { isValid, getFormData, onInputTouched, defaults, formRef } = useZodForm(BREEDING_EDITOR_SCHEMA, form);
+  const { canClose, getFormData, onInputTouched, defaults, formRef } = useZodForm(BREEDING_EDITOR_SCHEMA, form);
   const breedingGroupOptions = useMemo(() => getBreedingGroupOptions(t), [t]);
   const [baby, setBaby] = useState(form.babyDbSymbol);
 
-  const canClose = () => isValid;
   const onClose = () => {
     const result = canClose() && getFormData();
     if (result && result.success) updateForm(result.data);
