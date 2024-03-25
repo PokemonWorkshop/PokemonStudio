@@ -4,6 +4,7 @@ import { OnboardingBlock } from './OnboardingBlock';
 import styled from 'styled-components';
 import { OnboardingLocalStorage, getOnboarding, updateOnboarding } from '@utils/onboarding';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const OnboardingTitleContainer = styled.div`
   display: flex;
@@ -15,6 +16,7 @@ const OnboardingTitleContainer = styled.div`
 
 export const Onboarding = () => {
   const [state, setState] = useState(getOnboarding());
+  const { t } = useTranslation('onboarding');
   const navigate = useNavigate();
 
   const updateStep = (updated: OnboardingLocalStorage) => {
@@ -24,44 +26,40 @@ export const Onboarding = () => {
 
   return (
     <ResourcesContainer>
-      <OnboardingTitleContainer>{'Premiers pas'}</OnboardingTitleContainer>
+      <OnboardingTitleContainer>{t('first_steps')}</OnboardingTitleContainer>
       <ResourceWrapper size="third">
         <OnboardingBlock
           type={state.tiled}
-          title={'Télécharger Tiled'}
-          message={
-            "Pour commencer, Tiled est nécessaire pour créer et modifier les cartes de ton jeu.\n\n Ce logiciel gratuit offre une multitude d'outils qui vont te faciliter la vie"
-          }
-          textButton={'Télécharger Tiled'}
+          title={t('tiled_title')}
+          message={t('tiled_message')}
+          textButton={t('tiled_title')}
           index={1}
           max={3}
           onClick={() => {
-            updateStep({ tiled: 'validate', maps: 'current', createGame: 'noValidate' });
+            if (state.tiled === 'current') updateStep({ tiled: 'validate', maps: 'current', createGame: 'noValidate' });
             window.api.externalWindow('https://www.mapeditor.org');
           }}
         />
         <OnboardingBlock
           type={state.maps}
-          title={'Ajouter des cartes'}
-          message={
-            'Pokémon Studio permet de faire le lien entre Tiled et RPG Maker XP.\n\n Les cartes Tiled importées dans Pokémon Studio peuvent ensuite être ouvertes avec RPG Maker XP.'
-          }
-          textButton={'Ajouter des cartes'}
+          title={t('maps_title')}
+          message={t('maps_message')}
+          textButton={t('maps_title')}
           index={2}
           max={3}
           onClick={() => {
-            updateStep({ tiled: 'validate', maps: 'validate', createGame: 'current' });
+            if (state.maps === 'current') updateStep({ tiled: 'validate', maps: 'validate', createGame: 'current' });
             navigate('/world/map');
           }}
         />
         <OnboardingBlock
           type={state.createGame}
-          title={'Créer mon jeu'}
-          message={"Tu retrouves enfin tes cartes sur RPG Maker XP afin d'ajouter les commandes qui donneront vie à celles-ci."}
-          textButton={"J'ai compris"}
+          title={t('rmxp_title')}
+          message={t('rmxp_message')}
+          textButton={t('rmxp_button')}
           index={3}
           max={3}
-          onClick={() => updateStep({ tiled: 'validate', maps: 'validate', createGame: 'validate' })}
+          onClick={() => state.createGame === 'current' && updateStep({ tiled: 'validate', maps: 'validate', createGame: 'validate' })}
         />
       </ResourceWrapper>
     </ResourcesContainer>
