@@ -20,7 +20,7 @@ type TextListProps = {
 };
 
 export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => {
-  const { t } = useTranslation('text_management');
+  const { t } = useTranslation(['text_management', 'copy']);
   const [research, setResearch] = useState<string>('');
   const [scrollToEnd, setScrollToEnd] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -37,6 +37,13 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
   const onAdd = () => {
     setText(textInfo.fileId, texts.length === 0 ? 0 : texts[texts.length - 1].textId + 1, '');
     setScrollToEnd(true);
+  };
+  const onClickCopy = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>, row: number) => {
+    event.stopPropagation();
+    navigator.clipboard.writeText(
+      textInfo.fileId >= 100000 ? `text_get(${textInfo.fileId - 100000}, ${row})` : `ext_text(${textInfo.fileId}, ${row})`
+    );
+    window.dispatchEvent(new CustomEvent('tooltip:ChangeText', { detail: t('copy:copied') }));
   };
 
   // reset the research and the scroll when we change texts file
@@ -57,12 +64,12 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
   return (
     <DataBlockEditorContainer size="full" color="light" data-noactive>
       <TitleContainer>
-        <h3>{t('texts')}</h3>
+        <h3>{t('text_management:texts')}</h3>
         <ClearInput
           name="research"
           value={research}
           onChange={(event) => setResearch(event.target.value.toLowerCase())}
-          placeholder={t('search_text')}
+          placeholder={t('text_management:search_text')}
           onClear={() => setResearch('')}
         />
       </TitleContainer>
@@ -70,7 +77,7 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
         <DataTextListTable>
           <DataTextGrid gap="8px" className="header">
             <span>ID</span>
-            <span>{t('text')}</span>
+            <span>{t('text_management:text')}</span>
             <span />
           </DataTextGrid>
           <DataTextList height={getHeight(textsFiltered.length)}>
@@ -91,7 +98,15 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
                           key={`${textInfo.fileId}-${textsFiltered[index].textId}-${key}`}
                           style={{ ...style, width: 'calc(100% - 4px)' }}
                         >
-                          <span className="line-number">#{padStr(textsFiltered[index].textId, 4)}</span>
+                          <span
+                            data-tooltip={t('copy:copy_code')}
+                            data-tooltip-remain-on-click
+                            onClick={(event) => onClickCopy(event, textsFiltered[index].textId)}
+                            style={{ cursor: 'pointer' }}
+                            className="text-id"
+                          >
+                            #{padStr(textsFiltered[index].textId, 4)}
+                          </span>
                           <ClearInput
                             key={`${textsFiltered[index].textId}-${textsFiltered[index].dialog}`}
                             defaultValue={textsFiltered[index].dialog}
@@ -126,16 +141,16 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
           </DataTextList>
         </DataTextListTable>
       ) : (
-        <TableEmpty>{t('no_text')}</TableEmpty>
+        <TableEmpty>{t('text_management:no_text')}</TableEmpty>
       )}
       <ButtonContainer color="light">
         <ClearButtonWithIcon onClick={onClearAll} disabled={textsFiltered.length === 0}>
-          {t('clear_all')}
+          {t('text_management:clear_all')}
         </ClearButtonWithIcon>
         <ButtonRightContainer>
-          <DarkButton onClick={() => dialogsRef.current?.openDialog('import')}>{t('import_texts')}</DarkButton>
-          <SecondaryButtonWithPlusIconResponsive onClick={onAdd} data-tooltip-responsive={t('add_a_text')}>
-            {t('add_a_text')}
+          <DarkButton onClick={() => dialogsRef.current?.openDialog('import')}>{t('text_management:import_texts')}</DarkButton>
+          <SecondaryButtonWithPlusIconResponsive onClick={onAdd} data-tooltip-responsive={t('text_management:add_a_text')}>
+            {t('text_management:add_a_text')}
           </SecondaryButtonWithPlusIconResponsive>
         </ButtonRightContainer>
       </ButtonContainer>
