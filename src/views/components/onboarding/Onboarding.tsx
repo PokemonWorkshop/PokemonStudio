@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { OnboardingLocalStorage, getOnboarding, updateOnboarding } from '@utils/onboarding';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { assertUnreachable } from '@utils/assertUnreachable';
 
 const OnboardingTitleContainer = styled.div`
   display: flex;
@@ -24,43 +25,44 @@ export const Onboarding = () => {
     updateOnboarding(updated);
   };
 
+  const onClick = (step: keyof OnboardingLocalStorage) => {
+    switch (step) {
+      case 'tiled':
+        if (state.tiled === 'current') updateStep({ tiled: 'validate', maps: 'current', createGame: 'noValidate' });
+        return window.api.externalWindow('https://www.mapeditor.org');
+      case 'maps':
+        if (state.maps === 'current') updateStep({ tiled: 'validate', maps: 'validate', createGame: 'current' });
+        return navigate('/world/map');
+      case 'createGame':
+        return state.createGame === 'current' && updateStep({ tiled: 'validate', maps: 'validate', createGame: 'validate' });
+      default:
+        assertUnreachable(step);
+    }
+  };
+
+  /** The onboarding flow reset is only available in dev mode. Click on 'First steps' to reset */
+  const resetOnboarding = () => {
+    if (!window.api.isDev) return;
+
+    updateStep({ tiled: 'current', maps: 'noValidate', createGame: 'noValidate' });
+  };
+
   return (
     <ResourcesContainer>
-      <OnboardingTitleContainer>{t('first_steps')}</OnboardingTitleContainer>
+      <OnboardingTitleContainer onClick={resetOnboarding}>{t('first_steps')}</OnboardingTitleContainer>
       <ResourceWrapper size="third">
-        <OnboardingBlock
-          type={state.tiled}
-          title={t('tiled_title')}
-          message={t('tiled_message')}
-          textButton={t('tiled_title')}
-          index={1}
-          max={3}
-          onClick={() => {
-            if (state.tiled === 'current') updateStep({ tiled: 'validate', maps: 'current', createGame: 'noValidate' });
-            window.api.externalWindow('https://www.mapeditor.org');
-          }}
-        />
-        <OnboardingBlock
-          type={state.maps}
-          title={t('maps_title')}
-          message={t('maps_message')}
-          textButton={t('maps_title')}
-          index={2}
-          max={3}
-          onClick={() => {
-            if (state.maps === 'current') updateStep({ tiled: 'validate', maps: 'validate', createGame: 'current' });
-            navigate('/world/map');
-          }}
-        />
-        <OnboardingBlock
-          type={state.createGame}
-          title={t('rmxp_title')}
-          message={t('rmxp_message')}
-          textButton={t('rmxp_button')}
-          index={3}
-          max={3}
-          onClick={() => state.createGame === 'current' && updateStep({ tiled: 'validate', maps: 'validate', createGame: 'validate' })}
-        />
+        {(['tiled', 'maps', 'createGame'] as (keyof OnboardingLocalStorage)[]).map((step, index) => (
+          <OnboardingBlock
+            key={step}
+            type={state[step]}
+            title={t(`${step}_title`)}
+            message={t(`${step}_message`)}
+            textButton={step === 'createGame' ? t('createGame_button') : t(`${step}_title`)}
+            index={index + 1}
+            max={3}
+            onClick={() => onClick(step)}
+          />
+        ))}
       </ResourceWrapper>
     </ResourcesContainer>
   );
