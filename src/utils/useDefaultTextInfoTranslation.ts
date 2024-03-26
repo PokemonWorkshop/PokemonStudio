@@ -1,3 +1,4 @@
+import i18n from '@src/i18n';
 import { TFunction, useTranslation } from 'react-i18next';
 
 /**
@@ -18,9 +19,10 @@ export const KeyDefaultTextInfo = [
 export type KeyDefaultTextInfoType = (typeof KeyDefaultTextInfo)[number];
 
 const getDescription = (id: KeyDefaultTextInfoType, lang: string, t: TFunction<'text_management'>) => {
+  const hasDescr = i18n.exists(`text_management:text_info_description_${id}`, { lng: lang });
+  if (!hasDescr) return '';
   // The description is optional, that is why we use 'never'
-  const description = t(`text_info_description_${id}` as never, { lng: lang });
-  return description === `text_info_description_${id}` ? '' : description;
+  return t(`text_info_description_${id}` as never, { lng: lang });
 };
 
 export const useDefaultTextInfoTranslation = () => {

@@ -104,6 +104,7 @@ contextBridge.exposeInMainWorld('api', {
     ipcRenderer.send('start-psdk-worldmap', projectPath);
   },
   platform: process.platform,
+  externalWindow: (link) => ipcRenderer.send('external-window', link),
   getStudioVersion: defineBackendTask(ipcRenderer, 'get-studio-version'),
   chooseProjectFileToOpen: defineBackendTask(ipcRenderer, 'choose-project-file-to-open'),
   writeProjectMetadata: defineBackendTask(ipcRenderer, 'write-project-metadata'),
@@ -189,6 +190,7 @@ declare global {
       startPSDKTags: (projectPath: string) => void;
       startPSDKWorldmap: (projectPath: string) => void;
       platform: string;
+      externalWindow: (link: string) => void;
       getStudioVersion: BackendTaskWithGenericErrorAndNoProgress<AnyObj, GetStudioVersionOutput>;
       chooseProjectFileToOpen: BackendTaskWithGenericErrorAndNoProgress<ChooseProjectFileToOpenInput, ChooseProjectFileToOpenOutput>;
       writeProjectMetadata: BackendTaskWithGenericErrorAndNoProgress<WriteProjectMetadataInput, AnyObj>;

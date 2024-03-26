@@ -202,6 +202,7 @@ ipcMain.on('start-psdk', (_, projectPath: string) => startPSDK(projectPath));
 ipcMain.on('start-psdk-debug', (_, projectPath: string) => startPSDKDebug(projectPath));
 ipcMain.on('start-psdk-tags', (_, projectPath: string) => startPSDKTags(projectPath));
 ipcMain.on('start-psdk-worldmap', (_, projectPath: string) => startPSDKWorldmap(projectPath));
+ipcMain.on('external-window', (_, arg) => shell.openExternal(arg));
 registerGetStudioVersion(ipcMain);
 registerChooseProjectFileToOpen(ipcMain);
 registerWriteProjectMetadata(ipcMain);
