@@ -108,6 +108,7 @@ export const useSelect = <Value extends string, ChooseValue extends string>({
     if (event.key !== 'Enter' && event.key !== 'ArrowUp' && event.key !== 'ArrowDown' && event.key !== 'Escape') return;
 
     event.preventDefault();
+    event.stopPropagation();
     switch (event.key) {
       case 'Enter':
         optionsUtilsRef.current?.pickHighlighted();
