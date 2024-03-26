@@ -84,12 +84,14 @@ const OnboardingBlockContainer = styled.div`
     justify-content: center;
     width: 100%;
 
-    .validate-link {
+    .validate-link,
+    .validate-link-disabled {
       display: flex;
       align-items: center;
       justify-content: center;
       height: 40px;
-
+    }
+    .validate-link {
       :hover {
         cursor: pointer;
       }
@@ -108,10 +110,11 @@ type OnboardingBlockProps = {
   textButton: string;
   index: number;
   max: number;
+  disabledActionWhenValidate?: boolean;
   onClick: () => void;
 };
 
-export const OnboardingBlock = ({ type, title, message, textButton, index, max, onClick }: OnboardingBlockProps) => {
+export const OnboardingBlock = ({ type, title, message, textButton, index, max, disabledActionWhenValidate, onClick }: OnboardingBlockProps) => {
   return (
     <OnboardingBlockContainer className={type}>
       <div className="header">
@@ -131,7 +134,10 @@ export const OnboardingBlock = ({ type, title, message, textButton, index, max, 
       <div className="message">{message}</div>
       <div className="footer">
         {type === 'validate' && (
-          <div className="validate-link" onClick={onClick}>
+          <div
+            className={disabledActionWhenValidate ? 'validate-link-disabled' : 'validate-link'}
+            onClick={() => !disabledActionWhenValidate && onClick()}
+          >
             {textButton}
           </div>
         )}

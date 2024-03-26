@@ -60,6 +60,7 @@ export const Onboarding = () => {
             textButton={step === 'createGame' ? t('createGame_button') : t(`${step}_title`)}
             index={index + 1}
             max={3}
+            disabledActionWhenValidate={step === 'createGame'}
             onClick={() => onClick(step)}
           />
         ))}
