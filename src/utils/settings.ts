@@ -1,3 +1,5 @@
+import { parseJSON } from "./json/parse";
+
 type Settings = {
   tiledPath: string;
 };
@@ -14,7 +16,7 @@ export const getSettings = (): Settings => {
   const settingsJson = localStorage.getItem('settings');
   if (!settingsJson) return defaultSettings;
 
-  return JSON.parse(settingsJson);
+  return parseJSON(settingsJson, 'settings.json');
 };
 
 /**

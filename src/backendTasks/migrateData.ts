@@ -9,6 +9,7 @@ import { addAvailableLanguagesForTranslation } from '@src/migrations/addAvailabl
 import fsPromises from 'fs/promises';
 import path from 'path';
 import { PROJECT_VALIDATOR, StudioProject } from '@modelEntities/project';
+import { parseJSON } from '@utils/json/parse';
 
 export type MigrationTask = (event: IpcMainEvent, projectPath: string) => Promise<void>;
 
@@ -116,7 +117,7 @@ const migrateData = async (payload: MigrateDataInput, event: IpcMainEvent, chann
     log.info('migrate-data', 'No data to migrate found!');
   }
   const projectStudioFile = await fsPromises.readFile(path.join(payload.projectPath, 'project.studio'), { encoding: 'utf-8' });
-  const projectStudioParsed = PROJECT_VALIDATOR.safeParse(JSON.parse(projectStudioFile));
+  const projectStudioParsed = PROJECT_VALIDATOR.safeParse(parseJSON(projectStudioFile, 'project.studio'));
   if (!projectStudioParsed.success) throw new Error('Fail to parse project.studio file');
 
   log.info('migrate-data/success');

@@ -13,6 +13,7 @@ import {
 } from '@modelEntities/creature';
 import { z } from 'zod';
 import { deletePSDKDatFile } from './migrateUtils';
+import { parseJSON } from '@utils/json/parse';
 
 const PRE_MIGRATION_CREATURE_VALIDATOR = CREATURE_VALIDATOR.extend({
   forms: z.array(CREATURE_FORM_VALIDATOR.omit({ resources: true })).nonempty(),
@@ -145,7 +146,7 @@ export const linkResourcesToCreatures = async (_: IpcMainEvent, projectPath: str
   const creatureData = await readProjectFolder(projectPath, 'pokemon');
   await creatureData.reduce(async (lastPromise, creature) => {
     await lastPromise;
-    const creatureParsed = PRE_MIGRATION_CREATURE_VALIDATOR.safeParse(JSON.parse(creature));
+    const creatureParsed = PRE_MIGRATION_CREATURE_VALIDATOR.safeParse(parseJSON(creature.data, creature.filename));
     if (creatureParsed.success) {
       linkResources(creatureParsed.data, projectPath);
       return fsPromise.writeFile(
