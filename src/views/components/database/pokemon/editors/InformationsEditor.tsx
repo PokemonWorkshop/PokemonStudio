@@ -40,18 +40,22 @@ export const InformationsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
     setText(CREATURE_DESCRIPTION_TEXT_ID, creature.id, descriptionRef.current.value);
   };
 
-  const canClose = () =>
-    !!nameRef.current?.value &&
-    !dialogsRef.current?.currentDialog &&
-    !!offsetRef.current &&
-    offsetRef.current.valueAsNumber >= -999 &&
-    offsetRef.current.valueAsNumber <= 999;
+  const canClose = () => {
+    if (dialogsRef.current?.currentDialog) return false;
+    if (!nameRef.current) return false;
+    if (!offsetRef.current || !offsetRef.current.validity.valid) return false;
+
+    return true;
+  };
+
   const onClose = () => {
-    if (!nameRef.current || !descriptionRef.current || !offsetRef.current || !canClose()) return;
+    if (!nameRef.current || !offsetRef.current || !canClose()) return;
     if (dialogsRef.current?.currentDialog) dialogsRef.current.closeDialog();
 
+    const frontOffsetY = isNaN(offsetRef.current.valueAsNumber) ? form.frontOffsetY : offsetRef.current.valueAsNumber;
+
     saveTexts();
-    updateForm({ type1, type2, frontOffsetY: offsetRef.current.valueAsNumber });
+    updateForm({ type1, type2, frontOffsetY });
   };
   useEditorHandlingClose(ref, onClose, canClose);
 
