@@ -4,7 +4,7 @@ import React, { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { ReactComponent as DeleteIcon } from '@assets/icons/global/delete-icon.svg';
-import { Input, InputWithTopLabelContainer, Label } from '@components/inputs';
+import { InputWithTopLabelContainer, Label } from '@components/inputs';
 import { DayNightInput } from './DayNightInput';
 import { ItemInput } from './ItemInput';
 import { GenderInput } from './GenderInput';
@@ -12,6 +12,7 @@ import { MoveInput } from './MoveInput';
 import { PokemonInput } from './PokemonInput';
 import { WeatherInput } from './WeatherInput';
 import { NumberInput } from './NumberInput';
+import { TextInput } from './TextInput';
 import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { StudioEvolutionConditionKey } from '@modelEntities/creature';
 import { EvolutionConditionEditorInput } from './InputProps';
@@ -110,13 +111,6 @@ const ConditionContainerWithSelect = ({ currentType, keysToExclude, onChange, ch
   );
 };
 
-const EvolutionInfo = styled.p`
-  ${({ theme }) => theme.fonts.normalSmall};
-  color: ${({ theme }) => theme.colors.text400};
-  user-select: none;
-  margin: 0;
-`;
-
 const ConditionFields = ({ type, state, dispatch, inputRefs }: EvolutionConditionEditorInput) => {
   const { t } = useTranslation('database_pokemon');
   const keysToExclude = state.conditionInUse.filter((otherCondition) => otherCondition !== type);
@@ -132,11 +126,7 @@ const ConditionFields = ({ type, state, dispatch, inputRefs }: EvolutionConditio
     case 'func': // string
       return (
         <ConditionContainerWithSelect currentType={type} keysToExclude={keysToExclude} onChange={onKeyChange}>
-          <InputWithTopLabelContainer>
-            <Label>{t('evolutionValue_func')}</Label>
-            <Input type="text" defaultValue={state.defaults.func?.toString()} ref={(ref) => (inputRefs.current.func = ref)} />
-            <EvolutionInfo>{t('evolution_func_info')}</EvolutionInfo>
-          </InputWithTopLabelContainer>
+          <TextInput type={type} state={state} dispatch={dispatch} inputRefs={inputRefs} evolutionInfo={t('evolution_func_info')} />
         </ConditionContainerWithSelect>
       );
     case 'gemme': // item string
@@ -156,11 +146,7 @@ const ConditionFields = ({ type, state, dispatch, inputRefs }: EvolutionConditio
     case 'maps': // number[]
       return (
         <ConditionContainerWithSelect currentType={type} keysToExclude={keysToExclude} onChange={onKeyChange}>
-          <InputWithTopLabelContainer>
-            <Label>{t('evolutionValue_maps')}</Label>
-            <Input type="text" defaultValue={state.defaults.maps?.toString()} ref={(ref) => (inputRefs.current.maps = ref)} />
-            <EvolutionInfo>{t('evolution_maps_info')}</EvolutionInfo>
-          </InputWithTopLabelContainer>
+          <TextInput type={type} state={state} dispatch={dispatch} inputRefs={inputRefs} evolutionInfo={t('evolution_maps_info')} />
         </ConditionContainerWithSelect>
       );
     case 'maxLevel': // number

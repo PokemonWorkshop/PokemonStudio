@@ -1,6 +1,6 @@
 import { InputWithTopLabelContainer, Label } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EvolutionConditionEditorInput } from './InputProps';
 
@@ -14,8 +14,13 @@ export const DayNightInput = ({ state, inputRefs }: EvolutionConditionEditorInpu
       { value: '0', label: t('evolutionValue_dayNight_night') } as const,
       { value: '2', label: t('evolutionValue_dayNight_morning') } as const,
     ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
+
+  useEffect(() => {
+    setValue(state.defaults.dayNight?.toString());
+  }, [state]);
 
   return (
     <InputWithTopLabelContainer>

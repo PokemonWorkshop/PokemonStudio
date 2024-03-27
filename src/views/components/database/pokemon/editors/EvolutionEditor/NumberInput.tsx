@@ -1,6 +1,6 @@
 import { InputWithLeftLabelContainer, Input, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { TextInputError } from '@components/inputs/Input';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EvolutionConditionEditorInput } from './InputProps';
 
@@ -17,6 +17,17 @@ const isTypeValidInput = (type: unknown): type is NumberType => validInputs.incl
 export const NumberInput = ({ state, inputRefs, type, min, max, label }: NumberInputProps) => {
   const { t } = useTranslation('database_pokemon');
   const [error, setError] = useState(false);
+
+  useEffect(() => {
+    if (!isTypeValidInput(type)) return;
+
+    const ref = inputRefs.current[type];
+    if (!ref) return;
+
+    ref.value = state.defaults[type]?.toString() || '';
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state]);
+
   if (!isTypeValidInput(type)) return null;
 
   const value = state.defaults[type];

@@ -45,6 +45,8 @@ export const EvolutionEditor = forwardRef<EditorHandlingClose, Props>(({ evoluti
     creature,
     form,
   });
+  /* Force evolution editor to refresh the evolutions (otherwise commitChanges function doesn't work when changing evolution) */
+  form.evolutions.forEach((e) => e);
 
   const inputValidityEnsured = () => {
     if (state.evolveTo === '__undef__' && !state.isMega && evolutionIndex !== 0) return false;
@@ -60,6 +62,7 @@ export const EvolutionEditor = forwardRef<EditorHandlingClose, Props>(({ evoluti
   const onChangeIndex = (arrow: 'left' | 'right') => {
     if (!inputValidityEnsured()) return;
 
+    commitChanges();
     if (arrow === 'left') {
       if (evolutionIndex > 0) setEvolutionIndex(evolutionIndex - 1);
     } else {
