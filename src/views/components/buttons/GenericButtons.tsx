@@ -124,7 +124,7 @@ export const InfoButton = styled(BaseButtonStyle)`
   background-color: ${({ theme }) => theme.colors.infoBase};
 
   &:hover {
-    background-color: ${({ theme }) => theme.colors.infoHover};
+    background-color: rgba(72, 183, 244, 1);
   }
 
   &:active {

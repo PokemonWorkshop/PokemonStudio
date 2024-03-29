@@ -1,4 +1,4 @@
-export type OnboardingType = 'validate' | 'current' | 'noValidate';
+export type OnboardingType = 'done' | 'active' | 'inactive';
 
 export type OnboardingLocalStorage = {
   tiled: OnboardingType;
@@ -7,9 +7,9 @@ export type OnboardingLocalStorage = {
 };
 
 const defaultOnboarding: OnboardingLocalStorage = {
-  tiled: 'current',
-  maps: 'noValidate',
-  createGame: 'noValidate',
+  tiled: 'active',
+  maps: 'inactive',
+  createGame: 'inactive',
 };
 
 export const getOnboarding = (): OnboardingLocalStorage => {

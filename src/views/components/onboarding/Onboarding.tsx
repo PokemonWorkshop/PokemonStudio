@@ -28,13 +28,13 @@ export const Onboarding = () => {
   const onClick = (step: keyof OnboardingLocalStorage) => {
     switch (step) {
       case 'tiled':
-        if (state.tiled === 'current') updateStep({ tiled: 'validate', maps: 'current', createGame: 'noValidate' });
+        if (state.tiled === 'active') updateStep({ tiled: 'done', maps: 'active', createGame: 'inactive' });
         return window.api.externalWindow('https://www.mapeditor.org');
       case 'maps':
-        if (state.maps === 'current') updateStep({ tiled: 'validate', maps: 'validate', createGame: 'current' });
+        if (state.maps === 'active') updateStep({ tiled: 'done', maps: 'done', createGame: 'active' });
         return navigate('/world/map');
       case 'createGame':
-        return state.createGame === 'current' && updateStep({ tiled: 'validate', maps: 'validate', createGame: 'validate' });
+        return state.createGame === 'active' && updateStep({ tiled: 'done', maps: 'done', createGame: 'done' });
       default:
         assertUnreachable(step);
     }
@@ -44,7 +44,7 @@ export const Onboarding = () => {
   const resetOnboarding = () => {
     if (!window.api.isDev) return;
 
-    updateStep({ tiled: 'current', maps: 'noValidate', createGame: 'noValidate' });
+    updateStep({ tiled: 'active', maps: 'inactive', createGame: 'inactive' });
   };
 
   return (
@@ -60,7 +60,7 @@ export const Onboarding = () => {
             textButton={step === 'createGame' ? t('createGame_button') : t(`${step}_title`)}
             index={index + 1}
             max={3}
-            disabledActionWhenValidate={step === 'createGame'}
+            disabledActionWhenDone={step === 'createGame'}
             onClick={() => onClick(step)}
           />
         ))}

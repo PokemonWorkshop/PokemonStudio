@@ -15,19 +15,19 @@ const OnboardingBlockContainer = styled.div`
   ${({ theme }) => theme.fonts.normalRegular}
   user-select: none;
 
-  &.validate {
+  &.done {
     color: ${({ theme }) => theme.colors.successBase};
     background-color: ${({ theme }) => theme.colors.successSoft};
     border: 1px solid ${({ theme }) => theme.colors.successBase};
   }
 
-  &.current {
+  &.active {
     color: ${({ theme }) => theme.colors.infoBase};
     background-color: ${({ theme }) => theme.colors.infoSoft};
     border: 1px solid ${({ theme }) => theme.colors.infoBase};
   }
 
-  &.noValidate {
+  &.inactive {
     color: ${({ theme }) => theme.colors.text400};
     border: 1px solid ${({ theme }) => theme.colors.dark20};
   }
@@ -42,7 +42,7 @@ const OnboardingBlockContainer = styled.div`
     height: 24px;
     ${({ theme }) => theme.fonts.titlesHeadline6}
 
-    .title-validate {
+    .title-done {
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -54,11 +54,11 @@ const OnboardingBlockContainer = styled.div`
       }
     }
 
-    .title-current {
+    .title-active {
       color: ${({ theme }) => theme.colors.infoBase};
     }
 
-    .title-noValidate {
+    .title-inactive {
       color: ${({ theme }) => theme.colors.text400};
     }
 
@@ -84,14 +84,14 @@ const OnboardingBlockContainer = styled.div`
     justify-content: center;
     width: 100%;
 
-    .validate-link,
-    .validate-link-disabled {
+    .done-link,
+    .done-link-disabled {
       display: flex;
       align-items: center;
       justify-content: center;
       height: 40px;
     }
-    .validate-link {
+    .done-link {
       :hover {
         cursor: pointer;
       }
@@ -110,16 +110,16 @@ type OnboardingBlockProps = {
   textButton: string;
   index: number;
   max: number;
-  disabledActionWhenValidate?: boolean;
+  disabledActionWhenDone?: boolean;
   onClick: () => void;
 };
 
-export const OnboardingBlock = ({ type, title, message, textButton, index, max, disabledActionWhenValidate, onClick }: OnboardingBlockProps) => {
+export const OnboardingBlock = ({ type, title, message, textButton, index, max, disabledActionWhenDone, onClick }: OnboardingBlockProps) => {
   return (
     <OnboardingBlockContainer className={type}>
       <div className="header">
-        {type === 'validate' ? (
-          <div className="title-validate">
+        {type === 'done' ? (
+          <div className="title-done">
             <SuccessIcon />
             <span>{title}</span>
           </div>
@@ -133,16 +133,13 @@ export const OnboardingBlock = ({ type, title, message, textButton, index, max, 
       </div>
       <div className="message">{message}</div>
       <div className="footer">
-        {type === 'validate' && (
-          <div
-            className={disabledActionWhenValidate ? 'validate-link-disabled' : 'validate-link'}
-            onClick={() => !disabledActionWhenValidate && onClick()}
-          >
+        {type === 'done' && (
+          <div className={disabledActionWhenDone ? 'done-link-disabled' : 'done-link'} onClick={() => !disabledActionWhenDone && onClick()}>
             {textButton}
           </div>
         )}
-        {type === 'current' && <InfoButton onClick={onClick}>{textButton}</InfoButton>}
-        {type === 'noValidate' && <DarkButton disabled={true}>{textButton}</DarkButton>}
+        {type === 'active' && <InfoButton onClick={onClick}>{textButton}</InfoButton>}
+        {type === 'inactive' && <DarkButton disabled={true}>{textButton}</DarkButton>}
       </div>
     </OnboardingBlockContainer>
   );
