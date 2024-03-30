@@ -151,7 +151,7 @@ export const EncounterEditor = forwardRef<EditorHandlingClose>((_, ref) => {
           index={0}
           title={t('database_pokemon:common_item_held')}
           options={itemOptionsWithNone}
-          originalChance={form.itemHeld[0]?.chance}
+          originalChance={form.itemHeld[0]?.chance ?? 0}
           rarityRefs={rarityRefs}
           itemDbSymbolRefs={itemDbSymbolRefs}
         />
@@ -159,7 +159,7 @@ export const EncounterEditor = forwardRef<EditorHandlingClose>((_, ref) => {
           index={1}
           title={t('database_pokemon:rare_item_held')}
           options={itemOptionsWithNone}
-          originalChance={form.itemHeld[1]?.chance}
+          originalChance={form.itemHeld[1]?.chance ?? 0}
           rarityRefs={rarityRefs}
           itemDbSymbolRefs={itemDbSymbolRefs}
         />
