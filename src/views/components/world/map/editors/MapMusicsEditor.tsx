@@ -13,11 +13,20 @@ export const MapMusicsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { t } = useTranslation('database_maps');
   const { map } = useMapPage();
   const updateMap = useUpdateMap(map);
-  const [bgm, setBgm] = useState<string>(map.bgm);
-  const [bgs, setBgs] = useState<string>(map.bgs);
+  const [bgmName, setBgmName] = useState<string>(map.bgm.name);
+  const [bgsName, setBgsName] = useState<string>(map.bgs.name);
 
   const onClose = () => {
-    updateMap({ bgm, bgs });
+    updateMap({
+      bgm: {
+        ...map.bgm,
+        name: bgmName,
+      },
+      bgs: {
+        ...map.bgs,
+        name: bgsName,
+      },
+    });
   };
   useEditorHandlingClose(ref, onClose);
 
@@ -26,40 +35,40 @@ export const MapMusicsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="bgm">{t('background_music')}</Label>
-          {!bgm ? (
+          {!bgmName ? (
             <DropInput
               name={t('background_music_file')}
               extensions={AUDIO_EXT}
               destFolderToCopy="audio/bgm"
-              onFileChoosen={(filePath) => setBgm(basename(filePath))}
+              onFileChoosen={(filePath) => setBgmName(basename(filePath))}
             />
           ) : (
             <FileInput
-              filePath={`audio/bgm/${bgm}`}
+              filePath={`audio/bgm/${bgmName}`}
               name={t('background_music_file')}
               extensions={AUDIO_EXT}
-              onFileChoosen={(filePath) => setBgm(basename(filePath))}
-              onFileClear={() => setBgm('')}
+              onFileChoosen={(filePath) => setBgmName(basename(filePath))}
+              onFileClear={() => setBgmName('')}
               noIcon
             />
           )}
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="bgs">{t('background_sound')}</Label>
-          {!bgs ? (
+          {!bgsName ? (
             <DropInput
               name={t('background_sound_file')}
               extensions={AUDIO_EXT}
               destFolderToCopy="audio/bgs"
-              onFileChoosen={(filePath) => setBgs(basename(filePath))}
+              onFileChoosen={(filePath) => setBgsName(basename(filePath))}
             />
           ) : (
             <FileInput
-              filePath={`audio/bgs/${bgs}`}
+              filePath={`audio/bgs/${bgsName}`}
               name={t('background_sound_file')}
               extensions={AUDIO_EXT}
-              onFileChoosen={(filePath) => setBgs(basename(filePath))}
-              onFileClear={() => setBgs('')}
+              onFileChoosen={(filePath) => setBgsName(basename(filePath))}
+              onFileClear={() => setBgsName('')}
               noIcon
             />
           )}

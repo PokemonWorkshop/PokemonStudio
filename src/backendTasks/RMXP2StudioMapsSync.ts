@@ -29,10 +29,11 @@ const updatedCSVNeeded = (projectPath: string, mapInfoRMXPFilePath: string) => {
 };
 
 const getAudio = (rmxpMapData?: RMXPMap) => {
+  const defaultAudio = { name: '', volume: 100, pitch: 100 };
   if (!rmxpMapData) return { bgm: undefined, bgs: undefined };
 
-  const bgm = rmxpMapData.autoplayBgm ? rmxpMapData.bgm.name : '';
-  const bgs = rmxpMapData.autoplayBgs ? rmxpMapData.bgs.name : '';
+  const bgm = rmxpMapData.autoplayBgm ? rmxpMapData.bgm : defaultAudio;
+  const bgs = rmxpMapData.autoplayBgs ? rmxpMapData.bgs : defaultAudio;
   return { bgm, bgs };
 };
 
@@ -96,8 +97,8 @@ const createNewMap = (payload: { rmxpMap: { id: number; name: string }; rmxpMapD
     id: payload.rmxpMap.id,
     dbSymbol: `map${padStr(payload.rmxpMap.id, 3)}`,
     stepsAverage: payload.rmxpMapData?.encounterStep || 1,
-    bgm: bgm || '',
-    bgs: bgs || '',
+    bgm: bgm ?? { name: '', volume: 100, pitch: 100 },
+    bgs: bgs ?? { name: '', volume: 100, pitch: 100 },
     mtime: 1,
     sha1: '',
     tiledFilename: '',
