@@ -97,7 +97,7 @@ export const EncounterEditor = forwardRef<EditorHandlingClose>((_, ref) => {
 
     const itemHeld = itemDbSymbolRefs.current.map((dbSymbol, i) => {
       const chanceInput = rarityRefs.current[i];
-      const chance = chanceInput && !isNaN(chanceInput.valueAsNumber) ? chanceInput.valueAsNumber : form.itemHeld[i].chance;
+      const chance = chanceInput && !isNaN(chanceInput.valueAsNumber) ? chanceInput.valueAsNumber : form.itemHeld[i]?.chance ?? 0;
       return { dbSymbol, chance };
     });
 
