@@ -71,7 +71,9 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
   const onClickNew = () => {
     if (!name || !descriptionRef.current) return;
 
-    const newMap = createMap(maps, stepsAverage, basename(tiledFilename, '.tmx'), bgm, bgs);
+    const audioBgm = { name: bgm, volume: 100, pitch: 100 };
+    const audioBgs = { name: bgs, volume: 100, pitch: 100 };
+    const newMap = createMap(maps, stepsAverage, basename(tiledFilename, '.tmx'), audioBgm, audioBgs);
     const dbSymbol = newMap.dbSymbol;
     if (mapInfoParent) {
       const newMapInfoMap = createMapInfo(mapInfo, { klass: 'MapInfoMap', mapDbSymbol: dbSymbol, parentId: mapInfoParent.id }) as StudioMapInfoMap;

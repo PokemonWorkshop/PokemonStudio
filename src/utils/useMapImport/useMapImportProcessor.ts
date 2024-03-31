@@ -157,7 +157,14 @@ export const useMapImportProcessor = () => {
 
           const mapToImport = mapsToImport[0];
           const rmxpMap = mapToImport.mapId !== undefined ? rmxpMaps[mapToImport.mapId] : undefined;
-          const newMap = createMap(maps, 30, mapToImport.path, '', '', rmxpMapIds);
+          const newMap = createMap(
+            maps,
+            30,
+            mapToImport.path,
+            { name: '', volume: 100, pitch: 100 },
+            { name: '', volume: 100, pitch: 100 },
+            rmxpMapIds
+          );
           if (mapToImport.mapId !== undefined) {
             newMap.id = mapToImport.mapId;
             newMap.dbSymbol = `map${padStr(newMap.id, 3)}` as DbSymbol;
@@ -166,8 +173,8 @@ export const useMapImportProcessor = () => {
           newMap.sha1 = mapToImport.sha1 as Sha1;
           newMap.tileMetadata = mapToImport.tileMetadata;
           if (rmxpMap) {
-            newMap.bgm = rmxpMap.bgm.name;
-            newMap.bgs = rmxpMap.bgs.name;
+            newMap.bgm = rmxpMap.bgm;
+            newMap.bgs = rmxpMap.bgs;
             newMap.stepsAverage = rmxpMap.encounterStep;
           }
           const dbSymbol = newMap.dbSymbol;

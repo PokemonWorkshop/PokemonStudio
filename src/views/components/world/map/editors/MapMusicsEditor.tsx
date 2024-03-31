@@ -9,15 +9,15 @@ import { DropInput } from '@components/inputs/DropInput';
 import { basename } from '@utils/path';
 import { AUDIO_EXT } from '@components/inputs/AudioInput';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
-import { StudioMapMusic } from '@modelEntities/map';
+import { StudioMapAudio } from '@modelEntities/map';
 import { EmbeddedUnitInput } from '@components/inputs/EmbeddedUnitInput';
 
 export const MapMusicsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { t } = useTranslation('database_maps');
   const { map } = useMapPage();
   const updateMap = useUpdateMap(map);
-  const [bgm, setBgm] = useState<StudioMapMusic>(map.bgm);
-  const [bgs, setBgs] = useState<StudioMapMusic>(map.bgs);
+  const [bgm, setBgm] = useState<StudioMapAudio>(map.bgm);
+  const [bgs, setBgs] = useState<StudioMapAudio>(map.bgs);
 
   const onChangeValue = (type: 'bgm' | 'bgs', key: 'volume' | 'pitch', value: string) => {
     const newValue = value === '' ? NaN : Number(value);
