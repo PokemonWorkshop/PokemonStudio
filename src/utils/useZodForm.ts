@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 type OpaqueObject = Record<string, unknown> | unknown[];
 type PossibleInput = HTMLInputElement | HTMLTextAreaElement;
+type TouchedInputValidity = Record<string, { value: string; validity: boolean }>;
 
 const IS_NUMBER_REG = /^\d$/;
 const isNumber = (value: string) => IS_NUMBER_REG.test(value);
@@ -46,7 +47,7 @@ const insertElementDataIntoObjectFromSubName = (element: PossibleInput, object: 
 };
 
 const getFormData = (formRef: RefObject<HTMLFormElement>) => {
-  if (!formRef.current) return;
+  if (!formRef.current) return {} as Record<string, unknown>;
 
   const rootObject = {};
   const elements = [...formRef.current.elements];
@@ -78,40 +79,75 @@ const flattenObject = (root: Record<string, unknown>, key: string, object: Opaqu
   Object.entries(object).forEach(([k, v]) => insertObjectInFlatteObject(root, key, k, v));
 };
 
-export const flattenZodObject = (object: Record<string, unknown>): Record<string, string | undefined> => {
+const flattenZodObject = <T extends z.ZodRawShape>(
+  schema: z.ZodObject<T>,
+  object: Partial<z.infer<typeof schema>>
+): Record<string, string | undefined> => {
   const root = {};
-  flattenObject(root, '', object);
+  const shape = schema.shape;
+  flattenObject(root, '', Object.fromEntries(Object.entries(object).filter(([key]) => key in shape)));
   return root;
+};
+
+const buildCanClose =
+  <T extends z.ZodRawShape>(
+    formRef: RefObject<HTMLFormElement>,
+    schema: z.ZodObject<T>,
+    getRawFormData: () => Record<string, unknown>,
+    defaults: Record<string, string | undefined>
+  ) =>
+  () => {
+    if (schema.safeParse(getRawFormData()).success) return true;
+    if (!formRef.current) return false;
+
+    for (const element of [...formRef.current.elements]) {
+      if (!(element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement)) continue;
+      if (!element.name) continue;
+
+      const defaultValue = defaults[element.name];
+      if (defaultValue !== undefined) element.value = defaultValue;
+    }
+
+    if (schema.safeParse(getRawFormData()).success) return true;
+
+    formRef.current?.reportValidity();
+    return false;
+  };
+
+const formData = <T extends z.ZodRawShape>(
+  formRef: RefObject<HTMLFormElement>,
+  schema: z.ZodObject<T>,
+  inputDefaults?: Partial<z.infer<typeof schema>>
+) => {
+  const defaults = flattenZodObject(schema, inputDefaults ?? {});
+  const getRawFormData = () => getFormData(formRef);
+
+  return {
+    formRef,
+    defaults,
+    defaultValid: schema.safeParse(inputDefaults).success,
+    getFormData: () => schema.safeParse(getRawFormData()),
+    getRawFormData,
+    canClose: buildCanClose(formRef, schema, getRawFormData, defaults),
+  };
 };
 
 export const useZodForm = <T extends z.ZodRawShape>(schema: z.ZodObject<T>, defaults?: Partial<z.infer<typeof schema>>) => {
   const formRef = useRef<HTMLFormElement>(null);
-  const touchedInputValidity = useRef<Record<string, { value: string; validity: boolean }>>({});
-  const d = useMemo(
-    () => ({
-      defaults: flattenZodObject(defaults || {}),
-      defaultValid: schema.safeParse(defaults).success,
-      getFormData: () => schema.safeParse(getFormData(formRef)),
-    }),
-    []
-  );
+  const touchedInputValidity = useRef<TouchedInputValidity>({});
+  const d = useMemo(() => formData(formRef, schema, defaults), [schema]);
   const [isValid, setIsValid] = useState(d.defaultValid);
+
   const onTouched = (inputName: string, isValid: boolean, value: string) => {
     const ref = touchedInputValidity.current[inputName];
-    if (!ref || ref.validity !== isValid || ref.value !== value) {
-      touchedInputValidity.current[inputName] = { validity: isValid, value };
-      setIsValid(isValid && schema.safeParse(getFormData(formRef)).success);
-    }
+    if (ref && ref.validity === isValid && ref.value === value) return;
+
+    touchedInputValidity.current[inputName] = { validity: isValid, value };
+    setIsValid(isValid && schema.safeParse(getFormData(formRef)).success);
   };
   const onInputTouched: FormEventHandler<HTMLInputElement | HTMLTextAreaElement> = ({ currentTarget }) => {
     onTouched(currentTarget.name, currentTarget.validity.valid, currentTarget.value);
   };
-  const canClose = () => {
-    if (isValid) return true;
-    formRef.current?.reportValidity();
 
-    return false;
-  };
-
-  return { ...d, isValid, onTouched, onInputTouched, canClose, formRef };
+  return { ...d, isValid, onTouched, onInputTouched };
 };
