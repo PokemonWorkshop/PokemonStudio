@@ -13,6 +13,7 @@ import { CREATURE_FORM_VALIDATOR } from '@modelEntities/creature';
 import { useZodForm } from '@utils/useZodForm';
 import { Select } from '@ds/Select';
 import { InputFormContainer } from '@components/inputs/InputContainer';
+import { inputAttrs } from '@utils/inputAttrs';
 
 const breedingGroupEntries = [
   'undefined',
@@ -80,7 +81,13 @@ export const BreedingEditor = forwardRef<EditorHandlingClose>((_, ref) => {
         </InputWithTopLabelContainer>
         <InputWithLeftLabelContainer>
           <Label>{t('hatch_steps')}</Label>
-          <Input name="hatchSteps" type="number" min={1} max={99999} defaultValue={defaults.hatchSteps} onInput={onInputTouched} />
+          <Input
+            name="hatchSteps"
+            {...inputAttrs(BREEDING_EDITOR_SCHEMA.shape.hatchSteps)}
+            max={99999}
+            defaultValue={defaults.hatchSteps}
+            onInput={onInputTouched}
+          />
         </InputWithLeftLabelContainer>
       </InputFormContainer>
     </Editor>

@@ -1,4 +1,4 @@
-import { useMemo, type RefObject, useState, useRef, FormEventHandler } from 'react';
+import { useMemo, type RefObject, useState, useRef, FormEventHandler, InputHTMLAttributes } from 'react';
 import { z } from 'zod';
 
 type OpaqueObject = Record<string, unknown> | unknown[];
@@ -24,6 +24,11 @@ const getNextObject = (object: OpaqueObject, key: string, restName: string[]): O
 
 const getValue = (element: PossibleInput) => {
   if (element.type === 'number' || element.dataset.inputType === 'number') return Number(element.value);
+  if (element instanceof HTMLInputElement && element.type === 'checkbox') return element.checked;
+  if (element.value === '') {
+    if (element.dataset.inputEmptyType === 'null') return null;
+    if (element.dataset.inputEmptyDefaultValue) return element.dataset.inputEmptyDefaultValue;
+  }
 
   return element.value;
 };
@@ -46,7 +51,9 @@ const insertElementDataIntoObjectFromSubName = (element: PossibleInput, object: 
   insertElementDataIntoObjectFromSubName(element, nextObject, restName);
 };
 
-const getFormData = (formRef: RefObject<HTMLFormElement>) => {
+type FixtureBeforeValidationFunction = (object: Record<string, unknown>) => Record<string, unknown>;
+
+const getFormData = (formRef: RefObject<HTMLFormElement>, fixturesBeforeValidation?: FixtureBeforeValidationFunction) => {
   if (!formRef.current) return {} as Record<string, unknown>;
 
   const rootObject = {};
@@ -58,6 +65,8 @@ const getFormData = (formRef: RefObject<HTMLFormElement>) => {
 
     insertElementDataIntoObjectFromSubName(element, rootObject, element.name.split('.'));
   }
+
+  if (fixturesBeforeValidation) return fixturesBeforeValidation(rootObject);
 
   return rootObject as Record<string, unknown>;
 };
@@ -117,10 +126,11 @@ const buildCanClose =
 const formData = <T extends z.ZodRawShape>(
   formRef: RefObject<HTMLFormElement>,
   schema: z.ZodObject<T>,
-  inputDefaults?: Partial<z.infer<typeof schema>>
+  inputDefaults?: Partial<z.infer<typeof schema>>,
+  fixturesBeforeValidation?: (objectToValidate: z.infer<typeof schema>) => z.infer<typeof schema>
 ) => {
   const defaults = flattenZodObject(schema, inputDefaults ?? {});
-  const getRawFormData = () => getFormData(formRef);
+  const getRawFormData = () => getFormData(formRef, fixturesBeforeValidation as unknown as FixtureBeforeValidationFunction);
 
   return {
     formRef,
@@ -132,10 +142,14 @@ const formData = <T extends z.ZodRawShape>(
   };
 };
 
-export const useZodForm = <T extends z.ZodRawShape>(schema: z.ZodObject<T>, defaults?: Partial<z.infer<typeof schema>>) => {
+export const useZodForm = <T extends z.ZodRawShape>(
+  schema: z.ZodObject<T>,
+  defaults?: Partial<z.infer<typeof schema>>,
+  fixturesBeforeValidation?: (objectToValidate: z.infer<typeof schema>) => z.infer<typeof schema>
+) => {
   const formRef = useRef<HTMLFormElement>(null);
   const touchedInputValidity = useRef<TouchedInputValidity>({});
-  const d = useMemo(() => formData(formRef, schema, defaults), [schema]);
+  const d = useMemo(() => formData(formRef, schema, defaults, fixturesBeforeValidation), [schema]);
   const [isValid, setIsValid] = useState(d.defaultValid);
 
   const onTouched = (inputName: string, isValid: boolean, value: string) => {
@@ -143,7 +157,7 @@ export const useZodForm = <T extends z.ZodRawShape>(schema: z.ZodObject<T>, defa
     if (ref && ref.validity === isValid && ref.value === value) return;
 
     touchedInputValidity.current[inputName] = { validity: isValid, value };
-    setIsValid(isValid && schema.safeParse(getFormData(formRef)).success);
+    setIsValid(isValid && schema.safeParse(d.getRawFormData()).success);
   };
   const onInputTouched: FormEventHandler<HTMLInputElement | HTMLTextAreaElement> = ({ currentTarget }) => {
     onTouched(currentTarget.name, currentTarget.validity.valid, currentTarget.value);

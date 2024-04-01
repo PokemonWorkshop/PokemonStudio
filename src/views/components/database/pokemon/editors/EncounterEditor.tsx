@@ -33,7 +33,7 @@ const ItemHeldEditor = ({ title, index, originalChance, options, rarityRefs, ite
   const { t } = useTranslation(['database_pokemon', 'database_items']);
   const [itemDbSymbol, setItemDbSymbol] = useState(itemDbSymbolRefs.current[index]);
   const name = `creature-item-held-editor-${index}`;
-  const divStyle = { display: itemDbSymbol === '__undef__' ? 'none' : undefined };
+  const divStyle = { display: itemDbSymbol === 'none' ? 'none' : undefined };
 
   return (
     <ItemHeldContainer>
