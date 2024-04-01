@@ -36,12 +36,12 @@ export const StatEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const dataRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   const [baseStats, setBaseStats] = useState({
-    baseHp : form.baseHp,
-    baseAtk : form.baseAtk,
-    baseDfe : form.baseDfe,
-    baseAts : form.baseAts,
-    baseDfs : form.baseDfs,
-    baseSpd : form.baseSpd,
+    baseHp: form.baseHp,
+    baseAtk: form.baseAtk,
+    baseDfe: form.baseDfe,
+    baseAts: form.baseAts,
+    baseDfs: form.baseDfs,
+    baseSpd: form.baseSpd,
   });
 
   const handleBaseStatChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,22 +53,57 @@ export const StatEditor = forwardRef<EditorHandlingClose>((_, ref) => {
 
   const canClose = () => {
     const evIsValid = Object.values(dataRefs.current).every((value) => value?.validity.valid);
-  
     const baseStatsAreValid = Object.values(baseStats).every((stat) => stat >= 0 && stat <= 255);
-  
+
     return evIsValid && baseStatsAreValid;
   };
-  
+
   const onClose = () => {
-    if (!canClose()) return;
+    if (
+      !dataRefs.current.evHp ||
+      !dataRefs.current.evAtk ||
+      !dataRefs.current.evDfe ||
+      !dataRefs.current.evAts ||
+      !dataRefs.current.evDfs ||
+      !dataRefs.current.evSpd ||
+      !dataRefs.current.baseHp ||
+      !dataRefs.current.baseAtk ||
+      !dataRefs.current.baseDfe ||
+      !dataRefs.current.baseAts ||
+      !dataRefs.current.baseDfs ||
+      !dataRefs.current.baseSpd ||
+      !canClose()
+    )
+      return;
+
+    const evHp = isNaN(dataRefs.current.evHp.valueAsNumber) ? form.evHp : dataRefs.current.evHp.valueAsNumber;
+    const evAtk = isNaN(dataRefs.current.evAtk.valueAsNumber) ? form.evAtk : dataRefs.current.evAtk.valueAsNumber;
+    const evDfe = isNaN(dataRefs.current.evDfe.valueAsNumber) ? form.evDfe : dataRefs.current.evDfe.valueAsNumber;
+    const evAts = isNaN(dataRefs.current.evAts.valueAsNumber) ? form.evAts : dataRefs.current.evAts.valueAsNumber;
+    const evDfs = isNaN(dataRefs.current.evDfs.valueAsNumber) ? form.evDfs : dataRefs.current.evDfs.valueAsNumber;
+    const evSpd = isNaN(dataRefs.current.evSpd.valueAsNumber) ? form.evSpd : dataRefs.current.evSpd.valueAsNumber;
+
+    const baseHp = isNaN(dataRefs.current.baseHp.valueAsNumber) ? form.baseHp : dataRefs.current.baseHp.valueAsNumber;
+    const baseAtk = isNaN(dataRefs.current.baseAtk.valueAsNumber) ? form.baseAtk : dataRefs.current.baseAtk.valueAsNumber;
+    const baseDfe = isNaN(dataRefs.current.baseDfe.valueAsNumber) ? form.baseDfe : dataRefs.current.baseDfe.valueAsNumber;
+    const baseAts = isNaN(dataRefs.current.baseAts.valueAsNumber) ? form.baseAts : dataRefs.current.baseAts.valueAsNumber;
+    const baseDfs = isNaN(dataRefs.current.baseDfs.valueAsNumber) ? form.baseDfs : dataRefs.current.baseDfs.valueAsNumber;
+    const baseSpd = isNaN(dataRefs.current.baseSpd.valueAsNumber) ? form.baseSpd : dataRefs.current.baseSpd.valueAsNumber;
+
     updateForm({
       ...baseStats,
-      evHp: dataRefs.current.evHp?.valueAsNumber || 0,
-      evAtk: dataRefs.current.evAtk?.valueAsNumber || 0,
-      evDfe: dataRefs.current.evDfe?.valueAsNumber || 0,
-      evAts: dataRefs.current.evAts?.valueAsNumber || 0,
-      evDfs: dataRefs.current.evDfs?.valueAsNumber || 0,
-      evSpd: dataRefs.current.evSpd?.valueAsNumber || 0,
+      evHp,
+      evAtk,
+      evDfe,
+      evAts,
+      evDfs,
+      evSpd,
+      baseHp,
+      baseAtk,
+      baseDfe,
+      baseAts,
+      baseDfs,
+      baseSpd,
     });
   };
 
@@ -84,31 +119,85 @@ export const StatEditor = forwardRef<EditorHandlingClose>((_, ref) => {
         <InputGroupCollapse title={t('base_stats')} collapseByDefault>
           <InputWithLeftLabelContainer>
             <Label htmlFor="hp">{t('hp')}</Label>
-            <Input name="baseHp" type="number" min={0} max={255} step={1} defaultValue={baseStats.baseHp} onChange={handleBaseStatChange} />
+            <Input
+              name="baseHp"
+              type="number"
+              min={0}
+              max={255}
+              step={1}
+              defaultValue={form.baseHp}
+              onChange={handleBaseStatChange}
+              ref={(i) => (dataRefs.current.baseHp = i)}
+            />
           </InputWithLeftLabelContainer>
           <InputWithLeftLabelContainer>
             <Label htmlFor="atk">{t('attack')}</Label>
-            <Input name="baseAtk" type="number" min={0} max={255} step={1} defaultValue={baseStats.baseAtk} onChange={handleBaseStatChange} />
+            <Input
+              name="baseAtk"
+              type="number"
+              min={0}
+              max={255}
+              step={1}
+              defaultValue={form.baseAtk}
+              onChange={handleBaseStatChange}
+              ref={(i) => (dataRefs.current.baseAtk = i)}
+            />
           </InputWithLeftLabelContainer>
           <InputWithLeftLabelContainer>
             <Label htmlFor="dfe">{t('defense')}</Label>
-            <Input name="baseDfe" type="number" min={0} max={255} step={1} defaultValue={baseStats.baseDfe} onChange={handleBaseStatChange} />
+            <Input
+              name="baseDfe"
+              type="number"
+              min={0}
+              max={255}
+              step={1}
+              defaultValue={form.baseDfe}
+              onChange={handleBaseStatChange}
+              ref={(i) => (dataRefs.current.baseDfe = i)}
+            />
           </InputWithLeftLabelContainer>
           <InputWithLeftLabelContainer>
             <Label htmlFor="ats">{t('special_attack')}</Label>
-            <Input name="baseAts" type="number" min={0} max={255} step={1} defaultValue={baseStats.baseAts} onChange={handleBaseStatChange} />
+            <Input
+              name="baseAts"
+              type="number"
+              min={0}
+              max={255}
+              step={1}
+              defaultValue={form.baseAts}
+              onChange={handleBaseStatChange}
+              ref={(i) => (dataRefs.current.baseAts = i)}
+            />
           </InputWithLeftLabelContainer>
           <InputWithLeftLabelContainer>
             <Label htmlFor="dfs">{t('special_defense')}</Label>
-            <Input name="baseDfs" type="number" min={0} max={255} step={1} defaultValue={baseStats.baseDfs} onChange={handleBaseStatChange} />
+            <Input
+              name="baseDfs"
+              type="number"
+              min={0}
+              max={255}
+              step={1}
+              defaultValue={form.baseDfs}
+              onChange={handleBaseStatChange}
+              ref={(i) => (dataRefs.current.baseDfs = i)}
+            />
           </InputWithLeftLabelContainer>
           <InputWithLeftLabelContainer>
             <Label htmlFor="spd">{t('speed')}</Label>
-            <Input name="baseSpd" type="number" min={0} max={255} step={1} defaultValue={baseStats.baseSpd} onChange={handleBaseStatChange}/>
+            <Input
+              name="baseSpd"
+              type="number"
+              min={0}
+              max={255}
+              step={1}
+              defaultValue={form.baseSpd}
+              onChange={handleBaseStatChange}
+              ref={(i) => (dataRefs.current.baseSpd = i)}
+            />
           </InputWithLeftLabelContainer>
           <TotalBaseContainer>
             <span className="title">{t('total')}</span>
-            <Tag>{`${calculateTotal()}`}</Tag>      
+            <Tag>{`${calculateTotal()}`}</Tag>
           </TotalBaseContainer>
         </InputGroupCollapse>
         <InputGroupCollapse title={t('effort_value_ev')} collapseByDefault>

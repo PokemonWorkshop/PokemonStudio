@@ -82,19 +82,28 @@ export const EncounterEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const divStyle = { display: genderLess ? 'none' : undefined };
 
   const canClose = () => {
-    if (!rarityRefs.current.every((v, i) => !v || itemDbSymbolRefs.current[i] === 'none' || v.validity.valid)) return false;
-    if (!genderLess && femaleRateRef.current && !femaleRateRef.current.validity.valid) return false;
     if (!catchRateRef.current || !catchRateRef.current.validity.valid) return false;
+    if (!genderLess && femaleRateRef.current && !femaleRateRef.current.validity.valid) return false;
+    if (!rarityRefs.current.every((v, i) => !v || itemDbSymbolRefs.current[i] === 'none' || v.validity.valid)) return false;
 
     return true;
   };
-  const onClose = () => {
-    if (!catchRateRef.current || !canClose()) return;
 
-    const femaleRate = genderLess ? -1 : femaleRateRef.current?.valueAsNumber || 0;
+  const onClose = () => {
+    if (!catchRateRef.current || !femaleRateRef.current || !canClose()) return;
+
+    const catchRate = isNaN(catchRateRef.current.valueAsNumber) ? form.catchRate : catchRateRef.current.valueAsNumber;
+    const femaleRate = genderLess ? -1 : isNaN(femaleRateRef.current.valueAsNumber) ? form.femaleRate : femaleRateRef.current.valueAsNumber;
+
+    const itemHeld = itemDbSymbolRefs.current.map((dbSymbol, i) => {
+      const chanceInput = rarityRefs.current[i];
+      const chance = chanceInput && !isNaN(chanceInput.valueAsNumber) ? chanceInput.valueAsNumber : form.itemHeld[i]?.chance ?? 0;
+      return { dbSymbol, chance };
+    });
+
     updateForm({
-      itemHeld: itemDbSymbolRefs.current.map((dbSymbol, i) => ({ dbSymbol, chance: rarityRefs.current[i]?.valueAsNumber || 0 })),
-      catchRate: catchRateRef.current.valueAsNumber,
+      itemHeld,
+      catchRate,
       femaleRate,
       resources: {
         ...form.resources,
@@ -110,21 +119,39 @@ export const EncounterEditor = forwardRef<EditorHandlingClose>((_, ref) => {
       <InputContainer>
         <InputWithLeftLabelContainer>
           <Label htmlFor="catch_rate">{t('database_pokemon:catch_rate')}</Label>
-          <Input name="catch_rate" type="number" defaultValue={form.catchRate} ref={catchRateRef} />
+          <Input name="catch_rate" type="number" defaultValue={form.catchRate} min={1} max={255} ref={catchRateRef} />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
           <Label htmlFor="genderless">{t('database_pokemon:genderless')}</Label>
-          <Toggle checked={genderLess} name="genderless" onChange={(event) => setGenderLess(event.target.checked)} />
+          <Toggle
+            checked={genderLess}
+            name="genderless"
+            onChange={(event) => {
+              setGenderLess(event.target.checked);
+              if (!event.target.checked && femaleRateRef.current && femaleRateRef.current.valueAsNumber === -1) {
+                femaleRateRef.current.value = '0';
+              }
+            }}
+          />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer style={divStyle}>
           <Label htmlFor="female_rate">{t('database_pokemon:female_rate')}</Label>
-          <EmbeddedUnitInput unit="%" name="female_rate" type="number" step="0.1" defaultValue={form.femaleRate} ref={femaleRateRef} />
+          <EmbeddedUnitInput
+            unit="%"
+            name="female_rate"
+            type="number"
+            step="0.1"
+            min={0}
+            max={100}
+            defaultValue={form.femaleRate}
+            ref={femaleRateRef}
+          />
         </InputWithLeftLabelContainer>
         <ItemHeldEditor
           index={0}
           title={t('database_pokemon:common_item_held')}
           options={itemOptionsWithNone}
-          originalChance={form.itemHeld[0]?.chance || 0}
+          originalChance={form.itemHeld[0]?.chance ?? 0}
           rarityRefs={rarityRefs}
           itemDbSymbolRefs={itemDbSymbolRefs}
         />
@@ -132,7 +159,7 @@ export const EncounterEditor = forwardRef<EditorHandlingClose>((_, ref) => {
           index={1}
           title={t('database_pokemon:rare_item_held')}
           options={itemOptionsWithNone}
-          originalChance={form.itemHeld[1]?.chance || 0}
+          originalChance={form.itemHeld[1]?.chance ?? 0}
           rarityRefs={rarityRefs}
           itemDbSymbolRefs={itemDbSymbolRefs}
         />
