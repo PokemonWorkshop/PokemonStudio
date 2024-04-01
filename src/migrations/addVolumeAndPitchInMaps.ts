@@ -11,7 +11,7 @@ import log from 'electron-log';
 const PRE_MIGRATION_MAP_VALIDATOR = MAP_VALIDATOR.omit({ bgm: true, bgs: true }).extend({ bgm: z.string(), bgs: z.string() });
 type StudioMapDataBeforeMigration = z.infer<typeof PRE_MIGRATION_MAP_VALIDATOR>;
 
-const updateMusic = (name: string, volume: number, pitch: number) => {
+const updateAudio = (name: string, volume: number, pitch: number) => {
   return {
     name,
     volume,
@@ -25,8 +25,8 @@ const addVolumeAndPitch = async (map: StudioMapDataBeforeMigration, projectPath:
     if (rmxpMap) {
       return {
         ...map,
-        bgm: updateMusic(map.bgm, rmxpMap.bgm.volume, rmxpMap.bgm.pitch),
-        bgs: updateMusic(map.bgs, rmxpMap.bgs.volume, rmxpMap.bgs.pitch),
+        bgm: updateAudio(map.bgm, rmxpMap.bgm.volume, rmxpMap.bgm.pitch),
+        bgs: updateAudio(map.bgs, rmxpMap.bgs.volume, rmxpMap.bgs.pitch),
       };
     }
   } catch (error) {
@@ -35,8 +35,8 @@ const addVolumeAndPitch = async (map: StudioMapDataBeforeMigration, projectPath:
   }
   return {
     ...map,
-    bgm: updateMusic(map.bgm, 100, 100),
-    bgs: updateMusic(map.bgs, 100, 100),
+    bgm: updateAudio(map.bgm, 100, 100),
+    bgs: updateAudio(map.bgs, 100, 100),
   };
 };
 
