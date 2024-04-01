@@ -1,0 +1,10 @@
+{
+  "first_steps": "First steps",
+  "tiled_title": "Download Tiled",
+  "tiled_message": "To get you started, you'll need Tiled to create and modify the maps in your game.\n\nThis free software offers a host of tools to make your life easier.",
+  "maps_title": "Add maps",
+  "maps_message": "Pokémon Studio provides a link between Tiled and RPG Maker XP.\n\nTiled maps imported into Pokémon Studio can then be opened with RPG Maker XP.",
+  "createGame_title": "Create my game",
+  "createGame_message": "At last, you're back in RPG Maker XP to add the commands that will bring your maps to life.",
+  "createGame_button": "I understand"
+}

@@ -42,6 +42,7 @@ import text_management from './text_management.json';
 import world from './world.json';
 import settings from './settings.json';
 import settings_maps from './settings_maps.json';
+import onboarding from './onboarding.json';
 
 export default {
   dashboard,
@@ -88,4 +89,5 @@ export default {
   world,
   settings,
   settings_maps,
+  onboarding,
 };
