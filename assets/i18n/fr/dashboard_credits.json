@@ -1,3 +1,18 @@
 {
-  "credits": "Crédits"
+  "credits": "Crédits",
+  "resources": "Ressources",
+  "intro_image": "Image d'introduction",
+  "credit_image": "Image du crédit",
+  "background_music": "Musique de fond",
+  "settings": "Réglages",
+  "scroll_speed": "Vitesse de défilements du texte",
+  "line_Height": "Hauteur d'une ligne",
+  "leader_spacing": "Espacement entre les rubriques",
+  "section": "rubrique",
+  "project_leader": "Chef de projet",
+  "project_leader_role": "Rôle du chef de projet",
+  "project_leader_name": "Nom du chef de projet",
+  "leader_name": "Pokémon Workshop",
+  "development_team": "Équipement de développement",
+  "game_credits": "Crédits du jeu"
 }

@@ -1,3 +1,18 @@
 {
-  "credits": "Créditos"
+  "credits": "Créditos",
+  "resources": "Recursos",
+  "intro_image": "",
+  "credit_image": "",
+  "background_music": "",
+  "settings": "",
+  "scroll_speed": "",
+  "line_Height": "",
+  "leader_spacing": "",
+  "section": "",
+  "project_leader": "",
+  "project_leader_role": "",
+  "project_leader_name": "",
+  "leader_name": "",
+  "development_team": "",
+  "game_credits": ""
 }
