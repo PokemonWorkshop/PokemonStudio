@@ -12,6 +12,7 @@ const OnboardingBlockContainer = styled.div`
   gap: 12px;
   box-sizing: border-box;
   border-radius: 8px;
+  min-height: 296px;
   ${({ theme }) => theme.fonts.normalRegular}
   user-select: none;
 
@@ -84,14 +85,12 @@ const OnboardingBlockContainer = styled.div`
     justify-content: center;
     width: 100%;
 
-    .done-link,
-    .done-link-disabled {
+    .done-link {
       display: flex;
       align-items: center;
       justify-content: center;
       height: 40px;
-    }
-    .done-link {
+
       :hover {
         cursor: pointer;
       }
@@ -133,8 +132,8 @@ export const OnboardingBlock = ({ type, title, message, textButton, index, max, 
       </div>
       <div className="message">{message}</div>
       <div className="footer">
-        {type === 'done' && (
-          <div className={disabledActionWhenDone ? 'done-link-disabled' : 'done-link'} onClick={() => !disabledActionWhenDone && onClick()}>
+        {type === 'done' && !disabledActionWhenDone && (
+          <div className="done-link" onClick={onClick}>
             {textButton}
           </div>
         )}
