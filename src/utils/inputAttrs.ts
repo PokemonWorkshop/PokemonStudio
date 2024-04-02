@@ -1,27 +1,32 @@
 import { InputHTMLAttributes } from 'react';
 import { z } from 'zod';
+import { isStringPositiveInteger } from './isStringPositiveInteger';
 
-export const inputAttrs = (singleAttributeValidator: z.ZodFirstPartySchemaTypes): InputHTMLAttributes<HTMLInputElement> => {
+export const inputAttrsSingle = (
+  singleAttributeValidator: z.ZodFirstPartySchemaTypes,
+  name: string,
+  defaults?: Record<string, unknown>
+): InputHTMLAttributes<HTMLInputElement> => {
   if (singleAttributeValidator instanceof z.ZodBranded) {
-    return inputAttrs(singleAttributeValidator.unwrap());
+    return inputAttrsSingle(singleAttributeValidator.unwrap(), name);
   } else if (singleAttributeValidator instanceof z.ZodOptional) {
-    const { required, ...attrs } = inputAttrs(singleAttributeValidator.unwrap());
+    const { required, ...attrs } = inputAttrsSingle(singleAttributeValidator.unwrap(), name);
     return attrs;
   } else if (singleAttributeValidator instanceof z.ZodNullable) {
-    const { required, ...attrs } = inputAttrs(singleAttributeValidator.unwrap());
+    const { required, ...attrs } = inputAttrsSingle(singleAttributeValidator.unwrap(), name);
     return {
       ['data-input-empty-type' as 'type']: 'null',
       ...attrs,
     };
   } else if (singleAttributeValidator instanceof z.ZodDefault) {
-    const { required, ...attrs } = inputAttrs(singleAttributeValidator.removeDefault());
+    const { required, ...attrs } = inputAttrsSingle(singleAttributeValidator.removeDefault(), name);
     return {
       ['data-input-empty-default-value' as 'type']: singleAttributeValidator._def.defaultValue(),
       ...attrs,
     };
   }
 
-  const attributes: InputHTMLAttributes<HTMLInputElement> = { required: true, type: 'text' };
+  const attributes: InputHTMLAttributes<HTMLInputElement> = { name, required: true, type: 'text', defaultValue: defaults?.[name] as string };
   if (singleAttributeValidator instanceof z.ZodString) {
     for (const check of singleAttributeValidator._def.checks) {
       switch (check.kind) {
@@ -71,4 +76,38 @@ export const inputAttrs = (singleAttributeValidator: z.ZodFirstPartySchemaTypes)
   }
 
   return attributes;
+};
+
+const getValidatorFromSchema = <T extends z.ZodRawShape>(schema: z.ZodObject<T>, schemaKey: string) => {
+  const keys = schemaKey.split('.');
+  let validator: z.ZodFirstPartySchemaTypes = schema;
+  for (const key of keys) {
+    if (isStringPositiveInteger(key)) {
+      if (validator instanceof z.ZodArray) {
+        const newValidator = validator._def.type as z.ZodFirstPartySchemaTypes;
+        validator = newValidator;
+      } else {
+        throw new Error('Cannot have extract type from non array object with numeric key');
+      }
+    } else {
+      if (validator instanceof z.ZodObject) {
+        validator = validator.shape[key];
+        if (!validator) throw new Error(`Failed to extract ${key} from schema (${schemaKey})`);
+      } else {
+        throw new Error('Expect simple Zod object with string key, consider giving a non-opaque schema with a schemaKey instead.');
+      }
+    }
+  }
+
+  return validator;
+};
+
+/**
+ * Get the input attributes for a specific name & schema key
+ * @param name name of the input (also of the schema key if key not given)
+ * @param schemaKey key of the validator to use in schema
+ */
+export const inputAttrs = <T extends z.ZodRawShape>(schema: z.ZodObject<T>, name: string, defaults?: Record<string, unknown>, schemaKey?: string) => {
+  const validator = getValidatorFromSchema(schema, schemaKey ?? name);
+  return inputAttrsSingle(validator, name, defaults);
 };

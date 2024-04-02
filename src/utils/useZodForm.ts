@@ -1,18 +1,16 @@
 import { useMemo, type RefObject, useState, useRef, FormEventHandler, InputHTMLAttributes } from 'react';
 import { z } from 'zod';
+import { isStringPositiveInteger } from './isStringPositiveInteger';
 
 type OpaqueObject = Record<string, unknown> | unknown[];
 type PossibleInput = HTMLInputElement | HTMLTextAreaElement;
 type TouchedInputValidity = Record<string, { value: string; validity: boolean }>;
 
-const IS_NUMBER_REG = /^\d$/;
-const isNumber = (value: string) => IS_NUMBER_REG.test(value);
-
 const getNextObject = (object: OpaqueObject, key: string, restName: string[]): OpaqueObject => {
   const nextObject = Array.isArray(object) ? object[Number(key)] : object[key];
   if (nextObject !== undefined && nextObject !== null) return nextObject as OpaqueObject;
 
-  const newObject = isNumber(restName[0]) ? [] : {};
+  const newObject = isStringPositiveInteger(restName[0]) ? [] : {};
   if (Array.isArray(object)) {
     object[Number(key)] = newObject;
   } else {

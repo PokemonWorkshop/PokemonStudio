@@ -81,13 +81,7 @@ export const BreedingEditor = forwardRef<EditorHandlingClose>((_, ref) => {
         </InputWithTopLabelContainer>
         <InputWithLeftLabelContainer>
           <Label>{t('hatch_steps')}</Label>
-          <Input
-            name="hatchSteps"
-            {...inputAttrs(BREEDING_EDITOR_SCHEMA.shape.hatchSteps)}
-            max={99999}
-            defaultValue={defaults.hatchSteps}
-            onInput={onInputTouched}
-          />
+          <Input {...inputAttrs(BREEDING_EDITOR_SCHEMA, 'hatchSteps', defaults)} onInput={onInputTouched} />
         </InputWithLeftLabelContainer>
       </InputFormContainer>
     </Editor>
