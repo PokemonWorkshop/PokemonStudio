@@ -36,8 +36,6 @@ export const useCheckMapsModified = () => {
         if (state.payload.forceToast || (dbSymbols.length !== 0 && globalState.mapsModified.length === 0)) {
           showNotification('info', t('checking_maps'), t('checking_maps_message'));
         }
-        // Clear the cache
-        sessionStorage.clear();
         setGlobalState((currentState) => ({ ...currentState, mapsModified: dbSymbols }));
         setState({ state: 'done' });
       },
