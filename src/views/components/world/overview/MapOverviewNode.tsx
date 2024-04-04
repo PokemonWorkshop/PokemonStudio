@@ -4,6 +4,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { MapDialogsRef } from '../map/editors/MapEditorOverlay';
 import { useOpenTiled } from '@utils/useOpenTiled';
+import { StudioMap } from '@modelEntities/map';
 
 const getOverviewPath = (tiledFilename: string) => {
   return join('Data/Tiled/Overviews', `${tiledFilename}.png`);
@@ -16,16 +17,18 @@ const MapOverviewNodeContainer = styled.div`
 
 type MapOverviewNodeProps = {
   data: {
-    tiledFilename: string;
+    map: StudioMap;
     dialogsRef: MapDialogsRef;
   };
 };
 
 export const MapOverviewNode = ({ data }: MapOverviewNodeProps) => {
   const openTiled = useOpenTiled();
+  const map = data.map;
+
   return (
-    <MapOverviewNodeContainer onDoubleClick={() => openTiled(data.tiledFilename, data.dialogsRef)}>
-      <ResourceImage imagePathInProject={getOverviewPath(data.tiledFilename)} />
+    <MapOverviewNodeContainer onDoubleClick={() => openTiled(map.tiledFilename, data.dialogsRef)}>
+      <ResourceImage imagePathInProject={getOverviewPath(map.tiledFilename)} versionId={map.mtime} />
     </MapOverviewNodeContainer>
   );
 };

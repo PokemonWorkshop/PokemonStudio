@@ -19,13 +19,13 @@ export const ReactFlowOverview = ({ map }: ReactFlowOverviewProps) => {
       id: 'map-overview',
       position: { x: 0, y: 0 },
       type: 'mapOverview',
-      data: { tiledFilename: map.tiledFilename, dialogsRef },
+      data: { map, dialogsRef },
     },
   ]);
 
   useEffect(() => {
     setNodes((nodes) => {
-      nodes[0].data.tiledFilename = map.tiledFilename;
+      nodes[0].data.map = map;
       return cloneEntity(nodes);
     });
     // there is not properties to hide the viewport, but it can be moved outside the window ; it's necessary to prevent a blink

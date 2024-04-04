@@ -31,8 +31,6 @@ export const useMapUpdateProcessor = () => {
           .filter((map) => globalState.mapsModified.includes(map.dbSymbol))
           .map(({ dbSymbol, tiledFilename }) => ({ dbSymbol, filename: tiledFilename }));
         const tiledMetadata: ConvertTMXOutput[] = [];
-        // Clear the cache
-        sessionStorage.clear();
 
         const convertTmxFiles = (files: MapUpdateFiles[], tiledMetadata: ConvertTMXOutput[], index = 0) => {
           if (index >= files.length) {
