@@ -199,7 +199,7 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
             if (isDeleted) return;
 
             setCurrentMap({ map: item.data.mapDbSymbol });
-            if (location.pathname !== '/world/map') navigate('/world/map');
+            if (location.pathname !== '/world/map' && location.pathname !== '/world/overview') navigate('/world/map');
           }}
           onContextMenu={openMenu}
           {...provided.dragHandleProps}

@@ -15,8 +15,9 @@ import { BaseIcon } from '@components/icons/BaseIcon';
 import theme from '@src/AppTheme';
 import { useOpenTiled } from '@utils/useOpenTiled';
 import { MapImportEditorTitle, MapImportOverlay } from '@components/world/map/editors/MapImport/MapImportOverlay';
+import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';
 
-const MapPageStyle = styled.div`
+export const MapPageStyle = styled.div`
   display: flex;
   justify-content: center;
   width: 100%;
@@ -41,14 +42,13 @@ export const MapPage = () => {
           <PageDataConstrainerStyle>
             <DataBlockWrapper>
               <MapBreadcrumb />
-              {/** The component is commented on because it's currently useless */}
-              {/*<DatabaseTabsBar
-          currentTabIndex={0}
-          tabs={[
-            { label: t('data'), path: '/world/map' },
-            { label: t('map'), path: '/world/map/view', disabled: true },
-          ]}
-        />*/}
+              <DatabaseTabsBar
+                currentTabIndex={0}
+                tabs={[
+                  { label: t('data'), path: '/world/map' },
+                  { label: t('map'), path: '/world/overview', disabled: disabledOpenTiled },
+                ]}
+              />
               {hasMapModified && <MapUpdate />}
               {isRMXPMode && <MapRMXP2StudioUpdate />}
             </DataBlockWrapper>

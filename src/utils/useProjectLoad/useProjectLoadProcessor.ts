@@ -14,6 +14,7 @@ import { addProjectToList, updateProjectStudio } from '@utils/projectList';
 import { buildSelectOptionsTextSourcesFromScratch, buildSelectOptionsFromScratch } from '@utils/useSelectOptions';
 import { deserializeProjectData } from './deserializeProjectData';
 import { deserializeProjectConfig } from './deserializeProjectConfig';
+import { getSetting, getSettings } from '@utils/settings';
 
 const DEFAULT_BINDING: ProjectLoadFunctionBinding = {
   onFailure: () => {},
@@ -79,7 +80,7 @@ export const useProjectLoadProcessor = () => {
       },
       migrateProjectData: (state, setState) =>
         window.api.migrateData(
-          { projectPath: state.projectDirName, projectVersion: state.projectVersion },
+          { projectPath: state.projectDirName, projectVersion: state.projectVersion, studioSettings: getSettings() },
           ({ projectStudio }) => {
             setState({ ...state, state: 'writeProjectMetadata', projectMetaData: { ...projectStudio, studioVersion: state.studioVersion } });
           },
@@ -186,6 +187,7 @@ export const useProjectLoadProcessor = () => {
             projectPath: state.preState.projectPath,
             maps: Object.values(state.preState.projectData.maps).map((map) => JSON.stringify(map)),
             method: 'sha1',
+            tiledExecPath: getSetting('tiledPath'),
           },
           ({ dbSymbols }) => setState({ ...state, state: 'readCurrentPSDKVersion', mapsModified: dbSymbols }),
           handleFailure(setState, binding)

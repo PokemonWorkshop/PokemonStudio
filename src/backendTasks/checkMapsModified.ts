@@ -5,6 +5,7 @@ import type { DbSymbol } from '@modelEntities/dbSymbol';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import { Sha1 } from '@modelEntities/sha1';
 import { calculateFileSha1 } from './calculateFileSha1';
+import { createOverviewsFolder, generatingMapOverview } from './generatingMapOverview';
 
 export type CheckMapsModifiedMethod = 'mtime' | 'sha1';
 type StudioMapBackend = {
@@ -26,7 +27,7 @@ export const getFileStats = (filePath: string): Promise<fs.Stats> => {
   });
 };
 
-export type CheckMapModifiedInput = { projectPath: string; maps: string[]; method: CheckMapsModifiedMethod };
+export type CheckMapModifiedInput = { projectPath: string; maps: string[]; method: CheckMapsModifiedMethod; tiledExecPath: string };
 export type CheckMapModifiedOutput = Awaited<ReturnType<typeof checkMapsModified>>;
 
 export const checkMapsModified = async (payload: CheckMapModifiedInput) => {
@@ -34,6 +35,7 @@ export const checkMapsModified = async (payload: CheckMapModifiedInput) => {
   const studioMaps: StudioMapBackend[] = payload.maps.map((map) => JSON.parse(map));
 
   const tiledMapPath = path.join(payload.projectPath, 'Data/Tiled/Maps');
+  const tiledOverviewPath = await createOverviewsFolder(payload.projectPath);
 
   const mapsModified = await studioMaps.reduce(async (accPromise, map) => {
     const acc = await accPromise;
@@ -44,6 +46,7 @@ export const checkMapsModified = async (payload: CheckMapModifiedInput) => {
       try {
         const sha1 = await calculateFileSha1(filePath);
         if (sha1 !== map.sha1) {
+          await generatingMapOverview(filePath, tiledOverviewPath, payload.tiledExecPath);
           return [...acc, map.dbSymbol];
         } else {
           return acc;
@@ -55,6 +58,7 @@ export const checkMapsModified = async (payload: CheckMapModifiedInput) => {
     } else {
       const stat = await getFileStats(filePath);
       if (stat.mtime.getTime() > map.mtime) {
+        await generatingMapOverview(filePath, tiledOverviewPath, payload.tiledExecPath);
         return [...acc, map.dbSymbol];
       } else {
         return acc;
