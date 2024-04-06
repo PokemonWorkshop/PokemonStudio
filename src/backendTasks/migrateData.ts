@@ -13,7 +13,7 @@ import { PROJECT_VALIDATOR, StudioProject } from '@modelEntities/project';
 import { generatingMapOverviews } from '@src/migrations/generatingMapOverviews';
 import type { StudioSettings } from '@utils/settings';
 
-export type MigrationTask = (event: IpcMainEvent, projectPath: string, ...args: string[]) => Promise<void>;
+export type MigrationTask = (event: IpcMainEvent, projectPath: string, studioSettings?: StudioSettings) => Promise<void>;
 
 // Don't forget to extend those array with the new tasks that gets added by the time!
 const MIGRATIONS: Record<string, MigrationTask[]> = {
@@ -152,11 +152,7 @@ const migrateData = async (payload: MigrateDataInput, event: IpcMainEvent, chann
     await dataToMigrate.reduce(async (prev, curr, index) => {
       await prev;
       sendProgress(event, channels, { step: index + 1, total: dataToMigrate.length, stepText: stepTexts[index] });
-      if (curr.name === 'generatingMapOverviews') {
-        await curr(event, payload.projectPath, payload.studioSettings.tiledPath);
-      } else {
-        await curr(event, payload.projectPath);
-      }
+      await curr(event, payload.projectPath, payload.studioSettings);
     }, Promise.resolve());
   } else {
     log.info('migrate-data', 'No data to migrate found!');

@@ -3,12 +3,19 @@ import fsPromises from 'fs/promises';
 import path from 'path';
 import { spawn } from 'child_process';
 import log from 'electron-log';
+import { defineBackendServiceFunction } from './defineBackendServiceFunction';
+
+export type GeneratingMapOverviewInput = {
+  tiledFilename: string;
+  projectPath: string;
+  tiledExecPath: string;
+};
 
 const HIDE_LAYERS = ['passages', 'systemtags', 'systemtags_bridge1', 'systemtags_bridge2', 'terrain_tag'] as const;
 
-const getSpawnArgs = (mapPath: string, tiledOverviewPath: string): [string, string[]] => {
-  const outputPath = `${path.join(tiledOverviewPath, path.basename(mapPath, '.tmx'))}.png`;
-  const args = `${[`"${mapPath}"`, `"${outputPath}"`, ...HIDE_LAYERS.map((layer) => `--hide-layer ${layer}`)].join(' ')}`;
+const getSpawnArgs = (tmxPath: string, tiledOverviewPath: string): [string, string[]] => {
+  const outputPath = `${path.join(tiledOverviewPath, path.basename(tmxPath, '.tmx'))}.png`;
+  const args = `${[`"${tmxPath}"`, `"${outputPath}"`, ...HIDE_LAYERS.map((layer) => `--hide-layer ${layer}`)].join(' ')}`;
   if (process.platform === 'win32') {
     return ['cmd.exe', ['/c', `tmxrasterizer.exe ${args}`]];
   } else if (process.platform === 'linux') {
@@ -23,10 +30,10 @@ export const createOverviewsFolder = async (projectPath: string) => {
   return tiledOverviewPath;
 };
 
-export const generatingMapOverview = (mapPath: string, tiledOverviewPath: string, tiledExecPath: string) => {
-  log.info('generating-map-overview', { mapPath });
+export const generatingMapOverview = (tmxPath: string, tiledOverviewPath: string, tiledExecPath: string) => {
+  log.info('generating-map-overview', { tmxPath });
   return new Promise<void>((resolve, reject) => {
-    const child = spawn(...getSpawnArgs(mapPath, tiledOverviewPath), { cwd: path.dirname(tiledExecPath), shell: true });
+    const child = spawn(...getSpawnArgs(tmxPath, tiledOverviewPath), { cwd: path.dirname(tiledExecPath), shell: true });
     child.on('exit', (code) => {
       if (code === 0) {
         resolve();
@@ -38,3 +45,13 @@ export const generatingMapOverview = (mapPath: string, tiledOverviewPath: string
     });
   });
 };
+
+export const generatingMapOverviewService = async (payload: GeneratingMapOverviewInput) => {
+  log.info('generating-map-overview-service', payload);
+  const tmxPath = path.join(payload.projectPath, 'Data/Tiled/Maps', `${path.basename(payload.tiledFilename, '.tmx')}.tmx`);
+  const tiledOverviewPath = path.join(payload.projectPath, 'Data/Tiled/Overviews');
+  await generatingMapOverview(tmxPath, tiledOverviewPath, payload.tiledExecPath);
+  return {};
+};
+
+export const registerGeneratingMapOverview = defineBackendServiceFunction('generating-map-overview', generatingMapOverviewService);
