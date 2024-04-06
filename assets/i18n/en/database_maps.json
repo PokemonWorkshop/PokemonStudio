@@ -81,5 +81,6 @@
   "map_overview": "Map overview",
   "map_overview_not_found": "The map overview could not be found.",
   "map_overview_generate": "Generate map overview",
-  "map_overview_generating": "Generating map overview"
+  "map_overview_generating": "Generating map overview",
+  "map_process_disabled": "Tiled installation path must be specified in the application settings."
 }

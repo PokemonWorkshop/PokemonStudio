@@ -14,6 +14,7 @@ import { showNotification } from './showNotification';
 import { join } from './path';
 import { useGeneratingMapOverview } from './useGeneratingMapOverview';
 import { useLoaderRef } from './loaderContext';
+import { getSetting } from './settings';
 
 export const useAbilityPage = () => {
   const { projectDataValues: abilities, selectedDataIdentifier: dbSymbol, state } = useProjectDataReadonly('abilities', 'ability');
@@ -211,6 +212,7 @@ export const useOverviewPage = () => {
   return {
     map,
     disabledOverview: disabledOpenTiled,
+    disabledGenerating: !getSetting('tiledPath'),
     state,
     checkMapOverview,
     onClickGenerating,

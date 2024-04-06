@@ -6,6 +6,8 @@ import { DataBlockContainer } from '@components/database/dataBlocks';
 import { useMapUpdate } from '@utils/useMapUpdate';
 import { showNotification } from '@utils/showNotification';
 import { useLoaderRef } from '@utils/loaderContext';
+import { getSetting } from '@utils/settings';
+import { TooltipWrapper } from '@ds/Tooltip';
 
 export const MapUpdateContainer = styled.div`
   display: flex;
@@ -38,6 +40,7 @@ export const MapUpdate = () => {
   const { t } = useTranslation('database_maps');
   const mapUpdate = useMapUpdate();
   const loaderRef = useLoaderRef();
+  const disabledUpdate = !getSetting('tiledPath');
 
   const handleUpdate = async () => {
     mapUpdate(
@@ -63,7 +66,11 @@ export const MapUpdate = () => {
           <h2>{t('update_maps')}</h2>
           <span className="message">{t('update_maps_message')}</span>
         </div>
-        <WarningButton onClick={handleUpdate}>{t('update_maps_button')}</WarningButton>
+        <TooltipWrapper data-tooltip={disabledUpdate ? t('map_process_disabled') : undefined}>
+          <WarningButton onClick={handleUpdate} disabled={disabledUpdate}>
+            {t('update_maps_button')}
+          </WarningButton>
+        </TooltipWrapper>
       </MapUpdateContainer>
     </DataBlockContainer>
   );

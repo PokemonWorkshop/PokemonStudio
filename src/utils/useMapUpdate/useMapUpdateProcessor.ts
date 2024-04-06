@@ -9,6 +9,7 @@ import { useGlobalState } from '@src/GlobalStateProvider';
 import { Sha1 } from '@modelEntities/sha1';
 import { join } from '@utils/path';
 import type { ConvertTMXOutput } from '@src/backendTasks/convertTiledMapToTileMetadata';
+import { getSetting } from '@utils/settings';
 
 const DEFAULT_BINDING: MapUpdateFunctionBinding = {
   onFailure: () => {},
@@ -42,7 +43,7 @@ export const useMapUpdateProcessor = () => {
               );
             } else {
               const mapsToUpdate = files.map((file, index) => ({ dbSymbol: file.dbSymbol, ...tiledMetadata[index] }));
-              setState({ state: 'updateMap', mapsToUpdate });
+              setState({ state: 'generatingOverview', mapsToUpdate });
             }
             return () => {};
           }
@@ -63,6 +64,24 @@ export const useMapUpdateProcessor = () => {
         };
 
         return convertTmxFiles(tmxFiles, tiledMetadata);
+      },
+      generatingOverview: ({ mapsToUpdate }, setState) => {
+        const generatingMapOverview = (index = 0): (() => void) => {
+          if (index >= mapsToUpdate.length) {
+            setState({ state: 'updateMap', mapsToUpdate });
+            return () => {};
+          }
+          const map = maps[mapsToUpdate[index].dbSymbol];
+          return window.api.generatingMapOverview(
+            { projectPath: globalState.projectPath!, tiledFilename: map.tiledFilename, tiledExecPath: getSetting('tiledPath') },
+            () => generatingMapOverview(++index),
+            ({ errorMessage }) => {
+              setState(DEFAULT_PROCESS_STATE);
+              fail(binding, [{ filename: map.tiledFilename, errorMessage }]);
+            }
+          );
+        };
+        return generatingMapOverview();
       },
       updateMap: ({ mapsToUpdate }, setState) => {
         return toAsyncProcess(() => {

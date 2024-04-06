@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { MapBreadcrumb } from '@components/world/map';
 import { ReactFlowOverview } from '@components/world/overview';
 import { SecondaryButton } from '@components/buttons';
+import { TooltipWrapper } from '@ds/Tooltip';
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 
@@ -34,7 +35,7 @@ const OverviewPageStyle = styled.div`
 `;
 
 export const OverviewPage = () => {
-  const { map, disabledOverview, state, checkMapOverview, onClickGenerating } = useOverviewPage();
+  const { map, disabledOverview, disabledGenerating, state, checkMapOverview, onClickGenerating } = useOverviewPage();
   const { t } = useTranslation('database_maps');
 
   useEffect(() => {
@@ -62,7 +63,11 @@ export const OverviewPage = () => {
       {state === 'unavailable' && (
         <div className="overview-unavailable">
           <span>{t('map_overview_not_found')}</span>
-          <SecondaryButton onClick={onClickGenerating}>{t('map_overview_generating')}</SecondaryButton>
+          <TooltipWrapper data-tooltip={disabledGenerating ? t('map_process_disabled') : undefined}>
+            <SecondaryButton onClick={onClickGenerating} disabled={disabledGenerating}>
+              {t('map_overview_generating')}
+            </SecondaryButton>
+          </TooltipWrapper>
         </div>
       )}
     </OverviewPageStyle>
