@@ -18,12 +18,10 @@ const getSpawnArgs = (tiledExecPath: string, tmxPath: string, tiledOverviewPath:
   const args = `${[`"${tmxPath}"`, `"${outputPath}"`, ...HIDE_LAYERS.map((layer) => `--hide-layer ${layer}`)].join(' ')}`;
   if (process.platform === 'win32') {
     return ['cmd.exe', ['/c', `tmxrasterizer.exe ${args}`]];
-  } else if (process.platform === 'linux') {
-    if (tiledExecPath.toLowerCase().endsWith('appimage')) {
-      return [`./${path.basename(tiledExecPath)}`, ['tmxrasterizer', args]];
-    } else {
-      return ['./tmxrasterizer', [args]];
-    }
+  } else if (process.platform === 'linux' && !tiledExecPath.toLowerCase().endsWith('appimage')) {
+    return ['./tmxrasterizer', [args]];
+  } else if (process.platform === 'darwin') {
+    return [`./${path.basename(tiledExecPath)}/Contents/MacOS/tmxrasterizer`, [args]];
   }
   return [`./${path.basename(tiledExecPath)}`, ['tmxrasterizer', args]];
 };
