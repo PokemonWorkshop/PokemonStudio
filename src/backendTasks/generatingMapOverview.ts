@@ -50,6 +50,7 @@ export const generatingMapOverviewService = async (payload: GeneratingMapOvervie
   log.info('generating-map-overview-service', payload);
   const tmxPath = path.join(payload.projectPath, 'Data/Tiled/Maps', `${path.basename(payload.tiledFilename, '.tmx')}.tmx`);
   const tiledOverviewPath = path.join(payload.projectPath, 'Data/Tiled/Overviews');
+  await createOverviewsFolder(payload.projectPath);
   await generatingMapOverview(tmxPath, tiledOverviewPath, payload.tiledExecPath);
   return {};
 };

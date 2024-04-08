@@ -65,7 +65,7 @@ export const OverviewPage = () => {
           <span>{t('map_overview_not_found')}</span>
           <TooltipWrapper data-tooltip={disabledGenerating ? t('map_process_disabled') : undefined}>
             <SecondaryButton onClick={onClickGenerating} disabled={disabledGenerating}>
-              {t('map_overview_generating')}
+              {t('map_overview_generate')}
             </SecondaryButton>
           </TooltipWrapper>
         </div>
