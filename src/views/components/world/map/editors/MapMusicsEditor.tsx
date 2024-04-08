@@ -79,6 +79,7 @@ export const MapMusicsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
                 <InputWithLeftLabelContainer>
                   <Label htmlFor="volume-bgm">{t('volume')}</Label>
                   <EmbeddedUnitInput
+                    type="number"
                     name="volume-bgm"
                     min="0"
                     max="100"
