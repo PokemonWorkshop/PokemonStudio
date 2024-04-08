@@ -13,15 +13,19 @@ export type GeneratingMapOverviewInput = {
 
 const HIDE_LAYERS = ['passages', 'systemtags', 'systemtags_bridge1', 'systemtags_bridge2', 'terrain_tag'] as const;
 
-const getSpawnArgs = (tmxPath: string, tiledOverviewPath: string): [string, string[]] => {
+const getSpawnArgs = (tiledExecPath: string, tmxPath: string, tiledOverviewPath: string): [string, string[]] => {
   const outputPath = `${path.join(tiledOverviewPath, path.basename(tmxPath, '.tmx'))}.png`;
   const args = `${[`"${tmxPath}"`, `"${outputPath}"`, ...HIDE_LAYERS.map((layer) => `--hide-layer ${layer}`)].join(' ')}`;
   if (process.platform === 'win32') {
     return ['cmd.exe', ['/c', `tmxrasterizer.exe ${args}`]];
   } else if (process.platform === 'linux') {
-    return ['./tmxrasterizer', [args]];
+    if (tiledExecPath.toLowerCase().endsWith('appimage')) {
+      return [`./${path.basename(tiledExecPath)}`, ['tmxrasterizer', args]];
+    } else {
+      return ['./tmxrasterizer', [args]];
+    }
   }
-  return ['./tmxrasterizer', [args]];
+  return [`./${path.basename(tiledExecPath)}`, ['tmxrasterizer', args]];
 };
 
 export const createOverviewsFolder = async (projectPath: string) => {
@@ -33,7 +37,7 @@ export const createOverviewsFolder = async (projectPath: string) => {
 export const generatingMapOverview = (tmxPath: string, tiledOverviewPath: string, tiledExecPath: string) => {
   log.info('generating-map-overview', { tmxPath });
   return new Promise<void>((resolve, reject) => {
-    const child = spawn(...getSpawnArgs(tmxPath, tiledOverviewPath), { cwd: path.dirname(tiledExecPath), shell: true });
+    const child = spawn(...getSpawnArgs(tiledExecPath, tmxPath, tiledOverviewPath), { cwd: path.dirname(tiledExecPath), shell: true });
     child.on('exit', (code) => {
       if (code === 0) {
         resolve();
