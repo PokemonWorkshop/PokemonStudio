@@ -10,7 +10,7 @@ export type MapUpdateSuccessCallback = (payload: Record<string, never>) => void;
 export type MapUpdateStateObject =
   | { state: 'done' }
   | { state: 'convert' }
-  | { state: 'generatingOverview'; mapsToUpdate: MapToUpdate[] }
+  | { state: 'generatingOverviews'; mapsToUpdate: MapToUpdate[] }
   | { state: 'updateMap'; mapsToUpdate: MapToUpdate[] };
 export type MapUpdateFunctionBinding = {
   onSuccess: MapUpdateSuccessCallback;

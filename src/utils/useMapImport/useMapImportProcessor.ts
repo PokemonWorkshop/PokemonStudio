@@ -19,6 +19,7 @@ import { padStr } from '@utils/PadStr';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { RMXPMap } from '@src/backendTasks/readRMXPMap';
 import { getValidMaps } from '@utils/MapLinkUtils';
+import { getSetting } from '@utils/settings';
 
 const DEFAULT_BINDING: MapImportFunctionBinding = {
   onFailure: () => {},
@@ -39,7 +40,7 @@ export const useMapImportProcessor = () => {
     () => ({
       ...PROCESS_DONE_STATE,
       import: ({ filesToImport, tiledFilesSrcPath, rmxpMapInfo, copyMode }, setState) => {
-        loaderRef.current.open('importing_tiled_maps', 1, 5, t('reading_data_tiled_files'));
+        loaderRef.current.open('importing_tiled_maps', 1, 6, t('reading_data_tiled_files'));
         const tiledMetadata: PartialStudioMap[] = [];
 
         const importTmxFiles = (files: MapImportFiles[], tiledMetadata: PartialStudioMap[], index = 0) => {
@@ -80,7 +81,7 @@ export const useMapImportProcessor = () => {
         return importTmxFiles(filesToImport, tiledMetadata);
       },
       copyTmxFiles: ({ mapsToImport, tiledFilesSrcPath, rmxpMapInfo, copyMode }, setState) => {
-        loaderRef.current.setProgress(2, 5, t('copy_tiled_files'));
+        loaderRef.current.setProgress(2, 6, t('copy_tiled_files'));
         return window.api.copyTiledFiles(
           { projectPath: globalState.projectPath!, tiledMaps: JSON.stringify(mapsToImport), tiledSrcPath: tiledFilesSrcPath },
           ({ tiledMaps }) => {
@@ -99,7 +100,7 @@ export const useMapImportProcessor = () => {
         );
       },
       addMissingRMXPMaps: ({ mapsToImport, rmxpMapInfo }, setState) => {
-        loaderRef.current.setProgress(3, 5, t('add_missing_rmxp_maps'));
+        loaderRef.current.setProgress(3, 6, t('add_missing_rmxp_maps'));
         const studioMaps = Object.values(maps);
         return toAsyncProcess(() => {
           rmxpMapInfo.forEach(({ id: rmxpMapId, name }) => {
@@ -115,12 +116,12 @@ export const useMapImportProcessor = () => {
         });
       },
       getRMXPMapsData: ({ mapsToImport, rmxpMapIds }, setState) => {
-        loaderRef.current.setProgress(4, 5, t('read_data_rmxp_maps'));
+        loaderRef.current.setProgress(4, 6, t('read_data_rmxp_maps'));
         const rmxpMaps: Record<number, RMXPMap> = {};
 
         const readRMXPMap = (index = 0) => {
           if (index >= rmxpMapIds.length) {
-            setState({ state: 'createNewMaps', mapsToImport, rmxpMaps, rmxpMapIds });
+            setState({ state: 'generatingOverviews', mapsToImport, rmxpMaps, rmxpMapIds });
             return () => {};
           }
 
@@ -140,9 +141,28 @@ export const useMapImportProcessor = () => {
 
         return readRMXPMap();
       },
+      generatingOverviews: ({ mapsToImport, rmxpMaps, rmxpMapIds }, setState) => {
+        loaderRef.current.setProgress(5, 6, t('map_overviews_generating'));
+        const generatingMapOverview = (index = 0): (() => void) => {
+          if (index >= mapsToImport.length) {
+            setState({ state: 'createNewMaps', mapsToImport, rmxpMaps, rmxpMapIds });
+            return () => {};
+          }
+          const tiledFilename = mapsToImport[index].path;
+          return window.api.generatingMapOverview(
+            { projectPath: globalState.projectPath!, tiledFilename, tiledExecPath: getSetting('tiledPath') },
+            () => generatingMapOverview(++index),
+            ({ errorMessage }) => {
+              setState(DEFAULT_PROCESS_STATE);
+              fail(binding, mapsToImport, errorMessage);
+            }
+          );
+        };
+        return generatingMapOverview();
+      },
       createNewMaps: ({ mapsToImport, rmxpMaps, rmxpMapIds }, setState) => {
         return toAsyncProcess(() => {
-          loaderRef.current.setProgress(5, 5, t('create_new_maps'));
+          loaderRef.current.setProgress(6, 6, t('create_new_maps'));
           if (mapsToImport.length === 0) {
             // update the selected maplink by default
             const mapLinkValues = Object.values(mapLinks);

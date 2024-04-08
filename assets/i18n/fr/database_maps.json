@@ -82,5 +82,6 @@
   "map_overview_not_found": "L'aperçu de la carte n'a pas pu être trouvé.",
   "map_overview_generate": "Générer l'aperçu de la carte",
   "map_overview_generating": "Génération de l'aperçu de la carte",
+  "map_overviews_generating": "Génération de l'aperçu des cartes",
   "map_process_disabled": "Le chemin d'installation de Tiled doit être renseigné dans les paramètres de l'application."
 }

@@ -27,7 +27,7 @@ export const useMapUpdateProcessor = () => {
     () => ({
       ...PROCESS_DONE_STATE,
       convert: (_, setState) => {
-        loaderRef.current.open('updating_maps', 1, 2, t('reading_data_tiled_files'));
+        loaderRef.current.open('updating_maps', 1, 3, t('reading_data_tiled_files'));
         const tmxFiles: MapUpdateFiles[] = Object.values(maps)
           .filter((map) => globalState.mapsModified.includes(map.dbSymbol))
           .map(({ dbSymbol, tiledFilename }) => ({ dbSymbol, filename: tiledFilename }));
@@ -43,7 +43,7 @@ export const useMapUpdateProcessor = () => {
               );
             } else {
               const mapsToUpdate = files.map((file, index) => ({ dbSymbol: file.dbSymbol, ...tiledMetadata[index] }));
-              setState({ state: 'generatingOverview', mapsToUpdate });
+              setState({ state: 'generatingOverviews', mapsToUpdate });
             }
             return () => {};
           }
@@ -65,7 +65,8 @@ export const useMapUpdateProcessor = () => {
 
         return convertTmxFiles(tmxFiles, tiledMetadata);
       },
-      generatingOverview: ({ mapsToUpdate }, setState) => {
+      generatingOverviews: ({ mapsToUpdate }, setState) => {
+        loaderRef.current.setProgress(2, 3, t('map_overviews_generating'));
         const generatingMapOverview = (index = 0): (() => void) => {
           if (index >= mapsToUpdate.length) {
             setState({ state: 'updateMap', mapsToUpdate });
@@ -85,7 +86,7 @@ export const useMapUpdateProcessor = () => {
       },
       updateMap: ({ mapsToUpdate }, setState) => {
         return toAsyncProcess(() => {
-          loaderRef.current.setProgress(2, 2, t('update_maps'));
+          loaderRef.current.setProgress(3, 3, t('update_maps'));
           const selectedMap = globalState.selectedDataIdentifier.map;
           mapsToUpdate.forEach((mapToUpdate) => {
             const mapUpdate = { ...maps[mapToUpdate.dbSymbol], ...mapToUpdate, sha1: mapToUpdate.sha1 as Sha1 };
