@@ -33,7 +33,7 @@ export const ReactFlowOverview = ({ map }: ReactFlowOverviewProps) => {
     // it's necessary to wait that reactFlowInstance has the new node to do a correct fitView
     setTimeout(() => reactFlowInstance.fitView(), 50);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [map.dbSymbol]);
+  }, [map]);
 
   return (
     <ReactFlow
