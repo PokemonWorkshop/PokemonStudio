@@ -8,9 +8,10 @@ import { MapEditorAndDeletionKeys } from '../map/editors/MapEditorOverlay';
 
 type ReactFlowOverviewProps = {
   map: StudioMap;
+  version: number;
 };
 
-export const ReactFlowOverview = ({ map }: ReactFlowOverviewProps) => {
+export const ReactFlowOverview = ({ map, version }: ReactFlowOverviewProps) => {
   const reactFlowInstance = useReactFlow();
   const dialogsRef = useDialogsRef<MapEditorAndDeletionKeys>();
   const nodeTypes = useMemo(() => ({ mapOverview: MapOverviewNode }), []);
@@ -19,13 +20,13 @@ export const ReactFlowOverview = ({ map }: ReactFlowOverviewProps) => {
       id: 'map-overview',
       position: { x: 0, y: 0 },
       type: 'mapOverview',
-      data: { map, dialogsRef },
+      data: { map, version, dialogsRef },
     },
   ]);
 
   useEffect(() => {
     setNodes((nodes) => {
-      nodes[0].data.map = map;
+      nodes[0].data = { ...nodes[0].data, map, version };
       return cloneEntity(nodes);
     });
     // there is not properties to hide the viewport, but it can be moved outside the window ; it's necessary to prevent a blink
@@ -33,7 +34,7 @@ export const ReactFlowOverview = ({ map }: ReactFlowOverviewProps) => {
     // it's necessary to wait that reactFlowInstance has the new node to do a correct fitView
     setTimeout(() => reactFlowInstance.fitView(), 50);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [map]);
+  }, [map, version]);
 
   return (
     <ReactFlow

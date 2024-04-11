@@ -15,6 +15,7 @@ const MapOverviewNodeContainer = styled.div`
 type MapOverviewNodeProps = {
   data: {
     map: StudioMap;
+    version: number;
     dialogsRef: MapDialogsRef;
   };
 };
@@ -25,7 +26,7 @@ export const MapOverviewNode = ({ data }: MapOverviewNodeProps) => {
 
   return (
     <MapOverviewNodeContainer onDoubleClick={() => getSetting('tiledPath') && openTiled(map.tiledFilename, data.dialogsRef)}>
-      <ResourceImage imagePathInProject={getMapOverviewPath(map.tiledFilename)} versionId={map.mtime} />
+      <ResourceImage imagePathInProject={getMapOverviewPath(map.tiledFilename)} versionId={map.mtime + data.version} />
     </MapOverviewNodeContainer>
   );
 };

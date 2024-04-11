@@ -15,7 +15,6 @@ import { join } from './path';
 import { useGeneratingMapOverview } from './useGeneratingMapOverview';
 import { useLoaderRef } from './loaderContext';
 import { getSetting } from './settings';
-import { useUpdateMap } from '@components/world/map/editors';
 
 export const useAbilityPage = () => {
   const { projectDataValues: abilities, selectedDataIdentifier: dbSymbol, state } = useProjectDataReadonly('abilities', 'ability');
@@ -185,7 +184,7 @@ export const useOverviewPage = () => {
   const { t } = useTranslation('database_maps');
   const [globalState] = useGlobalState();
   const [state, setState] = useState<OverviewCheck>('checking');
-  const updateMap = useUpdateMap(map);
+  const [version, setVersion] = useState<number>(0);
 
   const checkMapOverview = () => {
     if (!globalState.projectPath) return;
@@ -205,7 +204,7 @@ export const useOverviewPage = () => {
       { tiledFilename: map.tiledFilename },
       () => {
         loaderRef.current.close();
-        updateMap({ mtime: new Date().getTime() });
+        setVersion((v) => v + 1);
         setState('available');
       },
       ({ errorMessage }) => loaderRef.current.setError('updating_maps_error', errorMessage, true)
@@ -216,6 +215,7 @@ export const useOverviewPage = () => {
     map,
     disabledOverview: disabledOpenTiled,
     disabledGenerating: !getSetting('tiledPath'),
+    version,
     state,
     checkMapOverview,
     onClickGenerating,
