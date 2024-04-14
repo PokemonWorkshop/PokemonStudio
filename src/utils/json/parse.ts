@@ -4,7 +4,7 @@ export class InvalidJSONError extends Error {
   public filename: string;
   public cause: unknown;
   constructor(filename: string, cause: unknown) {
-    super(`Invalid JSON Data \n\n File: ${filename} \n\n ${cause}`);
+    super(`Invalid JSON Data \n File: ${filename} \n\n ${cause}`);
     this.filename = filename;
     this.cause = cause;
   }

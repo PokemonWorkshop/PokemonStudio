@@ -6,6 +6,7 @@ import path from 'path';
 import { getTilesetImageAndAnimatedTiles } from 'ts-tiled-converter';
 import { BrowserWindow, dialog } from 'electron';
 import log from 'electron-log';
+import { parseJSON } from '@utils/json/parse';
 
 let loadedMaps: string[] = [];
 const MAP_PATH = '../Tiled/Maps';
@@ -36,7 +37,7 @@ const createJobDirIfNotExist = async (tiledFolder: string) => {
 const saveMapsToProcess = async (tiledFolder: string, maps: StudioMap[]) => {
   const filename = path.join(tiledFolder, '.jobs/map_jobs.json');
   const previousMapToConvert = existsSync(filename) ? await readFile(filename) : Buffer.from('[]', 'utf8');
-  const newData = uniq(maps.map(({ dbSymbol }) => dbSymbol).concat(JSON.parse(previousMapToConvert.toString('utf8'))));
+  const newData = uniq(maps.map(({ dbSymbol }) => dbSymbol).concat(parseJSON(previousMapToConvert.toString('utf8'), filename)));
   return writeFile(filename, JSON.stringify(newData));
 };
 

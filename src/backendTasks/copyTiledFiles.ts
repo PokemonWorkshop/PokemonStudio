@@ -6,9 +6,10 @@ import { MapToImport } from '@utils/useMapImport/types';
 import path from 'path';
 import { listResources } from 'ts-tiled-converter';
 import { calculateFileSha1 } from './calculateFileSha1';
+import { parseJSON } from '@utils/json/parse';
 
 export type CopyTiledFilesInput = { projectPath: string; tiledSrcPath: string; tiledMaps: string };
-export type CopyTiledFilesOutput = { tiledMaps: string };
+export type CopyTiledFilesOutput = { tiledMaps: string; tiledMapsName: string };
 
 const MAPS_FOLDER = 'Data/Tiled/Maps';
 const TILESETS_FOLDER = 'Data/Tiled/Tilesets';
@@ -164,7 +165,7 @@ const copyTiledFiles = async (payload: CopyTiledFilesInput) => {
 
   await createTargetFolders(mapsFolderPath, tilesetsFolderPath, assetsFolderPath);
 
-  const tiledMaps: MapToImport[] = JSON.parse(payload.tiledMaps);
+  const tiledMaps: MapToImport[] = parseJSON(payload.tiledMaps, payload.tiledSrcPath);
   const originalTiledMapPaths = tiledMaps.map(({ path }) => path);
 
   await tiledMaps.reduce(async (lastPromise, tiledMap, currentIndex) => {
@@ -182,7 +183,7 @@ const copyTiledFiles = async (payload: CopyTiledFilesInput) => {
   await copyRulesFile(payload.tiledSrcPath, mapsFolderPath);
 
   log.info('copy-tiled-files/success', { projectPath: payload.projectPath, tiledSrcPath: payload.tiledSrcPath });
-  return { tiledMaps: JSON.stringify(tiledMaps) };
+  return { tiledMaps: JSON.stringify(tiledMaps), tiledMapsName: payload.tiledSrcPath };
 };
 
 export const registerCopyTiledFiles = defineBackendServiceFunction('copy-tiled-files', copyTiledFiles);

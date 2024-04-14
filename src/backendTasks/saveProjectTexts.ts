@@ -5,6 +5,7 @@ import { stringify } from 'csv-stringify/sync';
 import { SavingText } from '@utils/SavingUtils';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import { getTextPath } from '@utils/textManagement';
+import { parseJSON } from '@utils/json/parse';
 
 export type SaveProjectTextsInput = { path: string; texts: SavingText };
 
@@ -17,7 +18,7 @@ const saveProjectTexts = async (payload: SaveProjectTextsInput) => {
       if (sd.savingAction === 'DELETE' && fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
       } else if (sd.data !== undefined) {
-        fs.writeFileSync(filePath, stringify(JSON.parse(sd.data) as string[][]));
+        fs.writeFileSync(filePath, stringify(parseJSON(sd.data, sd.savingFilename) as string[][]));
       }
     })
   ).then(() => {

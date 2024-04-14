@@ -6,6 +6,7 @@ import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import type { StudioMapInfo, StudioMapInfoValue } from '@modelEntities/mapInfo';
 import { Marshal, MarshalObject } from 'ts-marshal';
 import { DbSymbol } from '@modelEntities/dbSymbol';
+import { parseJSON } from '@utils/json/parse';
 
 export type SaveRMXPMapInfoInput = { projectPath: string; mapInfo: string; mapData: string };
 
@@ -87,8 +88,8 @@ const saveRMXPMapInfo = async (payload: SaveRMXPMapInfoInput) => {
   log.info('save-rmxp-map-info');
   const mapInfoRMXPFilePath = path.join(payload.projectPath, 'Data', 'MapInfos.rxdata');
   await backupMapInfo(payload.projectPath, mapInfoRMXPFilePath);
-  const mapData: MapData[] = JSON.parse(payload.mapData);
-  const rmxpMapInfo = getRMXPMapInfo(JSON.parse(payload.mapInfo), mapData);
+  const mapData: MapData[] = parseJSON(payload.mapData, mapInfoRMXPFilePath);
+  const rmxpMapInfo = getRMXPMapInfo(parseJSON(payload.mapInfo, mapInfoRMXPFilePath), mapData);
   fs.writeFileSync(mapInfoRMXPFilePath, Marshal.dump(rmxpMapInfo, { omitStringEncoding: true }));
   log.info('save-rmxp-map-info/success');
   return {};

@@ -20,6 +20,7 @@ import { DbSymbol } from '@modelEntities/dbSymbol';
 import { RMXPMap } from '@src/backendTasks/readRMXPMap';
 import { getValidMaps } from '@utils/MapLinkUtils';
 import { getSetting } from '@utils/settings';
+import { parseJSON } from '@utils/json/parse';
 
 const DEFAULT_BINDING: MapImportFunctionBinding = {
   onFailure: () => {},
@@ -84,12 +85,12 @@ export const useMapImportProcessor = () => {
         loaderRef.current.setProgress(2, 6, t('copy_tiled_files'));
         return window.api.copyTiledFiles(
           { projectPath: globalState.projectPath!, tiledMaps: JSON.stringify(mapsToImport), tiledSrcPath: tiledFilesSrcPath },
-          ({ tiledMaps }) => {
+          ({ tiledMaps, tiledMapsName }) => {
             if (copyMode) {
               binding.current.onSuccess({});
               setState(DEFAULT_PROCESS_STATE);
             } else {
-              const mapsToImport: MapToImport[] = JSON.parse(tiledMaps);
+              const mapsToImport: MapToImport[] = parseJSON<MapToImport[]>(tiledMaps, tiledMapsName);
               setState({ state: 'addMissingRMXPMaps', mapsToImport, rmxpMapInfo });
             }
           },
