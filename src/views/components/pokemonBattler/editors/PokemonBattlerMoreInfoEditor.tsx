@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useMemo, useRef, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from 'react';
 import { Input, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import { TFunction, useTranslation } from 'react-i18next';
@@ -83,6 +83,11 @@ export const PokemonBattlerMoreInfoEditor = ({
     }
     return { kind: 'automatic', rate: -1 };
   };
+
+  useEffect(() => {
+    if (!rarenessRef.current) return;
+    rarenessRef.current.value = expandPokemonSetup.rareness.toString();
+  }, [encounter.specie]);
 
   return (
     <InputGroupCollapse title={t(`pokemon_battler_list:more_info_title`)} gap="24px" collapseByDefault={collapseByDefault || undefined}>
