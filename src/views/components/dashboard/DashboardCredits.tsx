@@ -9,6 +9,12 @@ import styled from 'styled-components';
 import { EmbeddedUnitInput } from '@components/inputs/EmbeddedUnitInput';
 import { cloneEntity } from '@utils/cloneEntity';
 import { useConfigCredits } from '@utils/useProjectConfig';
+import { DeleteButtonWithIcon, SecondaryButtonWithPlusIcon } from '@components/buttons';
+import { CreditMembersTable } from '@components/database/credits/tables/CreditMembersTable';
+import { ButtonContainer, ButtonRightContainer } from '@components/editor/DataBlockEditorStyle';
+import { MemberNewEditor } from '@components/database/credits/editors/MemberNewEditor';
+import { EditorOverlay } from '@components/editor';
+import { Deletion, DeletionOverlay } from '@components/deletion';
 
 const InputContainer = styled.div`
   display: flex;
@@ -39,6 +45,8 @@ export const DashboardCredits = () => {
   const [leaderSpacing, setLeaderSpacing] = useState<number>(currentEditedCredits.leaderSpacing);
   const [chiefProjectTitle, setChiefProjectTitle] = useState<string>(currentEditedCredits.chiefProjectTitle);
   const [chiefProjectName, setChiefProjectName] = useState<string>(currentEditedCredits.chiefProjectName);
+  const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
+  const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
   const [gameCredits, setGameCredits] = useState<string>(currentEditedCredits.gameCredits);
 
   const handleInputChange = (key: string, value: string | number): void => {
@@ -111,6 +119,42 @@ export const DashboardCredits = () => {
     );
   };
 
+  const onCloseEditor = () => {
+    setCredits(currentEditedCredits);
+    setCurrentEditor(undefined);
+  };
+
+  //TODO
+  const onEditMember = () => {};
+
+  const editors = {
+    newMember: <MemberNewEditor credits={currentEditedCredits} onClose={() => setCurrentEditor(undefined)} />,
+  };
+
+  const onClickDelete = () => {
+    setCredits({ ...currentEditedCredits, leaders: [] });
+    setCurrentDeletion(undefined);
+  };
+
+  const onDeleteAll = () => {
+    setCurrentDeletion('members');
+  };
+
+  const deletions = {
+    members: (
+      <Deletion
+        title={t('deletion_of_members')}
+        message={t('deletion_message_all_members')}
+        onClickDelete={() => onClickDelete()}
+        onClose={() => setCurrentDeletion(undefined)}
+      />
+    ),
+  };
+
+  const onNew = () => {
+    setCurrentEditor('newMember');
+  };
+
   return (
     <>
       <PageEditor title={t('resources')} editorTitle={t('credits')}>
@@ -158,8 +202,16 @@ export const DashboardCredits = () => {
         </InputWithTopLabelContainer>
       </PageEditor>
       <PageEditor title={t('development_team')} editorTitle={t('section')}>
-        <InputWithTopLabelContainer>{/*TODO:*/}</InputWithTopLabelContainer>
+        <CreditMembersTable credits={currentEditedCredits} onEdit={onEditMember} />
+        <ButtonContainer>
+          <DeleteButtonWithIcon onClick={onDeleteAll}>{t('delete_all')}</DeleteButtonWithIcon>
+          <ButtonRightContainer>
+            <SecondaryButtonWithPlusIcon onClick={onNew}>{t('add_members')}</SecondaryButtonWithPlusIcon>
+          </ButtonRightContainer>
+        </ButtonContainer>
       </PageEditor>
+      <EditorOverlay currentEditor={currentEditor} editors={editors} onClose={onCloseEditor} />
+      <DeletionOverlay currentDeletion={currentDeletion} deletions={deletions} onClose={() => setCurrentDeletion(undefined)} />
       <PageEditor title={t('game_credits')} editorTitle={t('section')}>
         <InputWithTopLabelContainer>
           <MultiLineInput id="credit" value={gameCredits} placeholder={t('game_credits')} onChange={(event) => setGameCredits(event.target.value)} />

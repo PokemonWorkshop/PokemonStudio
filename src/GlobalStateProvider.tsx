@@ -70,6 +70,9 @@ export interface ProjectData {
   maps: {
     [map: string]: StudioMap;
   };
+  credits: {
+    [credit: string]: StudioCreditConfig;
+  };
 }
 
 export interface ProjectText {
@@ -123,6 +126,7 @@ export type SelectedDataIdentifier = {
   mapLink: string;
   map: string;
   textInfo: number;
+  credit: string;
 };
 
 export interface State {
@@ -165,6 +169,7 @@ const initialState = {
     mapLink: '__undef__',
     map: 'map001',
     textInfo: 0,
+    credit: 'credit_0',
   },
   savingData: new SavingMap(),
   savingConfig: new SavingConfigMap(),

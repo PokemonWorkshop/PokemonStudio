@@ -13,6 +13,10 @@
   "project_leader_role": "Rôle du chef de projet",
   "project_leader_name": "Nom du chef de projet",
   "leader_name": "Pokémon Workshop",
-  "development_team": "Équipement de développement",
-  "game_credits": "Crédits du jeu"
+  "development_team": "Équipe de développement",
+  "game_credits": "Crédits du jeu",
+  "add_members": "Ajouter des membres",
+  "delete_all": "Tout supprimer",
+  "deletion_of_members": "Suppression des membres",
+  "deletion_message_all_members": "Vous êtes sur le point de supprimer définitivement les membres."
 }

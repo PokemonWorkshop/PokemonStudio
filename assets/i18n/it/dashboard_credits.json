@@ -14,5 +14,9 @@
   "project_leader_name": "",
   "leader_name": "",
   "development_team": "",
-  "game_credits": ""
+  "game_credits": "",
+  "add_members": "",
+  "delete_all": "",
+  "deletion_of_members": "",
+  "deletion_message_all_members": ""
 }
