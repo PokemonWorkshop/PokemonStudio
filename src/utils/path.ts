@@ -123,7 +123,7 @@ export const pokemonSpritePath = (form: StudioCreatureForm) => {
 
 export const pokemonIconPath = (specie: StudioCreature, formId?: number, icon?: 'icon' | 'iconF' | 'iconShiny' | 'iconShinyF') => {
   const form = specie.forms.find((f) => f.form === formId) ?? specie.forms[0];
-  if (form?.resources[icon ?? 'icon'] === '') return formResourcesPath(form, 'icon');
+  if (!form?.resources[icon ?? 'icon']) return formResourcesPath(form, 'icon');
   return formResourcesPath(form, icon ?? 'icon');
 };
 

@@ -35,8 +35,9 @@ const createRecordExpandPokemonSetup = (
     return acc;
   }, {} as RecordExpandPokemonSetup);
   // Update rareness and given name
-  record.rareness = creatures[encounter.specie]?.forms.find((form) => form.form === encounter.form)?.catchRate || 0;
-  record.givenName = creatures[encounter.specie] ? getEntityName(creatures[encounter.specie]) : '???';
+  const specie = creatures[encounter.specie];
+  record.rareness = record.rareness === -1 ? specie?.forms.find((form) => form.form === encounter.form)?.catchRate || 0 : record.rareness;
+  record.givenName ||= specie ? getEntityName(specie) : '???';
   return record;
 };
 
