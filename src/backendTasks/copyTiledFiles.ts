@@ -22,6 +22,11 @@ const getResources = (path: string) => {
   return resources;
 };
 
+const getTilesetPath = (mapPath: string, tilesetBasename: string) => {
+  const count = mapPath.replaceAll('\\', '/').split('/').length || 1;
+  return `${'../'.repeat(count)}Tilesets/${tilesetBasename}`;
+};
+
 const copyTmxFile = async (tiledMap: { path: string }, mapsFolderPath: string, tiledSrcPath: string) => {
   const tiledFilePath = tiledMap.path;
   const relativePath = path.dirname(path.relative(tiledSrcPath, tiledFilePath));
@@ -80,19 +85,20 @@ const copyAssetFile = async (tiledMap: MapToImport, assetsFolderPath: string, ti
 };
 
 const updateTmxFile = async (tiledMap: { path: string }, mapsFolderPath: string, originalTiledMapPath: string) => {
-  const tmxFilePath = `${path.join(mapsFolderPath, path.basename(tiledMap.path))}.tmx`;
+  const tmxFilePath = `${path.join(mapsFolderPath, tiledMap.path)}.tmx`;
   const resources = getResources(originalTiledMapPath);
 
   let data = (await fsPromises.readFile(tmxFilePath)).toString();
   resources.tilesetSources.forEach((tileset) => {
     const basename = path.basename(tileset);
-    data = data.replaceAll(`"${tileset}"`, `"../Tilesets/${basename}"`);
+    const newTilesetPath = `"${getTilesetPath(tiledMap.path, basename)}"`;
+    data = data.replaceAll(`"${tileset}"`, newTilesetPath);
   });
   await fsPromises.writeFile(tmxFilePath, data);
 };
 
 const updateTsxFile = async (tiledMap: MapToImport, mapsFolderPath: string, tilesetsFolderPath: string) => {
-  const tmxFilePath = `${path.join(mapsFolderPath, path.basename(tiledMap.path))}.tmx`;
+  const tmxFilePath = `${path.join(mapsFolderPath, tiledMap.path)}.tmx`;
   const resources = getResources(tmxFilePath);
 
   return resources.tilesetSources.reduce(async (lastPromise, tileset) => {
@@ -109,7 +115,7 @@ const updateTsxFile = async (tiledMap: MapToImport, mapsFolderPath: string, tile
 };
 
 const updateMetadata = async (tiledMap: MapToImport, mapsFolderPath: string) => {
-  const tmxPath = `${path.join(mapsFolderPath, path.basename(tiledMap.path))}.tmx`;
+  const tmxPath = `${path.join(mapsFolderPath, tiledMap.path)}.tmx`;
   const stat = await fsPromises.stat(tmxPath);
   const sha1 = await calculateFileSha1(tmxPath);
 
