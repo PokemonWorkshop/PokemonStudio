@@ -217,5 +217,3 @@ export const useProjectMapLinks = () => useProjectData('mapLinks', 'mapLink');
 export type UseProjectMapLinksReturnType = ReturnType<typeof useProjectMapLinks>;
 export const useProjectMaps = () => useProjectData('maps', 'map');
 export type UseProjectMapsReturnType = ReturnType<typeof useProjectMaps>;
-export const useProjectCredits = () => useProjectData('credits', 'credit');
-export type UseProjectCreditsType = ReturnType<typeof useProjectCredits>;
