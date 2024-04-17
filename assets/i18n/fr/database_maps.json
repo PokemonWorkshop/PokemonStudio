@@ -75,5 +75,7 @@
   "configure_tiled_path": "Configurer le chemin d'installation",
   "title_empty_state": "Commencez à créer une carte !",
   "description_empty_state": "Vous n'avez pas encore de carte. Vous pouvez créer une nouvelle carte ou importer des cartes existantes.",
-  "helper_empty_state": "Si vous avez un projet Tiled existant, vous devez d'abord importer toutes vos cartes."
+  "helper_empty_state": "Si vous avez un projet Tiled existant, vous devez d'abord importer toutes vos cartes.",
+  "volume": "Volume",
+  "pitch": "Tempo"
 }

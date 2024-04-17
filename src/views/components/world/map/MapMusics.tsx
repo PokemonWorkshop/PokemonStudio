@@ -15,9 +15,13 @@ export const MapMusics = ({ map, dialogsRef, disabled }: Props) => {
 
   return (
     <DataBlockWithTitle size="full" title={t('musics')} disabled={disabled} onClick={() => dialogsRef.current?.openDialog('musics')}>
-      <DataGrid columns="1fr" rows="1fr 1fr">
-        <DataFieldsetField label={t('background_music')} data={map.bgm || t('no_background_music')} disabled={!map.bgm} />
-        <DataFieldsetField label={t('background_sound')} data={map.bgs || t('no_background_sound')} disabled={!map.bgs} />
+      <DataGrid columns="1fr 1fr 1fr" rows="1fr 1fr">
+        <DataFieldsetField label={t('background_music')} data={map.bgm.name || t('no_background_music')} disabled={!map.bgm.name} />
+        <DataFieldsetField label={t('background_sound')} data={map.bgs.name || t('no_background_sound')} disabled={!map.bgs.name} />
+        {map.bgm.name ? <DataFieldsetField label={t('volume')} data={`${map.bgm.volume} %`} disabled={!map.bgm.name} /> : <span />}
+        {map.bgs.name ? <DataFieldsetField label={t('volume')} data={`${map.bgs.volume} %`} disabled={!map.bgs.name} /> : <span />}
+        {map.bgm.name ? <DataFieldsetField label={t('pitch')} data={`${map.bgm.pitch} %`} disabled={!map.bgm.name} /> : <span />}
+        {map.bgs.name ? <DataFieldsetField label={t('pitch')} data={`${map.bgs.pitch} %`} disabled={!map.bgs.name} /> : <span />}
       </DataGrid>
     </DataBlockWithTitle>
   );

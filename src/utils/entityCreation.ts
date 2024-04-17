@@ -25,7 +25,7 @@ import { assertUnreachable } from './assertUnreachable';
 import { findFirstAvailableId, findFirstAvailableTextId } from './ModelUtils';
 import { padStr } from './PadStr';
 import { StudioTextInfo } from '@modelEntities/textInfo';
-import { StudioMap } from '@modelEntities/map';
+import { StudioMap, StudioMapAudio } from '@modelEntities/map';
 import { StudioMapInfo, StudioMapInfoMap } from '@modelEntities/mapInfo';
 import { mapInfoFindFirstAvailableId, mapInfoFindFirstAvailableTextId } from './MapInfoUtils';
 
@@ -481,8 +481,8 @@ export const createMap = (
   allMaps: ProjectData['maps'],
   stepsAverage: number,
   tiledFilename: string,
-  bgm: string,
-  bgs: string,
+  bgm: StudioMapAudio,
+  bgs: StudioMapAudio,
   excludeIds?: number[]
 ): StudioMap => {
   const id = findFirstAvailableId(allMaps, 1, excludeIds);
