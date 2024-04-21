@@ -12,7 +12,6 @@ type CreditsMembersTableProps = {
   onEdit: (index: number) => void;
 };
 
-//TODO fix edit and delete a member
 export const CreditMembersTable = ({ credits, onEdit }: CreditsMembersTableProps) => {
   const { setProjectConfigValues: setCredits } = useConfigCredits();
   const currentEditedCredits = useMemo(() => cloneEntity(credits), [credits]);
@@ -20,13 +19,13 @@ export const CreditMembersTable = ({ credits, onEdit }: CreditsMembersTableProps
   const [dragOn, setDragOn] = useState(false);
 
   return credits.leaders.length === 0 ? (
-    <TableEmpty>{t('no_member')}</TableEmpty>
+    <TableEmpty>{t('database_credits:no_member')}</TableEmpty>
   ) : (
     <DataMemberTable>
       <DataMemberGrid gap="16px" className="header" dragOn={true}>
         <span></span>
-        <span>{t('role')}</span>
-        <span>{t('names')}</span>
+        <span>{t('database_credits:role')}</span>
+        <span>{t('database_credits:names')}</span>
       </DataMemberGrid>
       <DragDropContext
         onDragStart={() => setDragOn(true)}

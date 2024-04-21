@@ -17,14 +17,15 @@ const ButtonContainer = styled.div`
 
 type CreditsNewMemberEditorProps = {
   credits: StudioCreditConfig;
+  index: number;
   onClose: () => void;
 };
 
-export const MemberNewEditor = ({ credits, onClose }: CreditsNewMemberEditorProps) => {
+export const MemberEditEditor = ({ credits, index, onClose }: CreditsNewMemberEditorProps) => {
   const { setProjectConfigValues: setCredits } = useConfigCredits();
   const { t } = useTranslation('database_credits');
-  const [title, setTitle] = useState(credits.leaders[1].title);
-  const [name, setName] = useState(credits.leaders[1].name);
+  const [title, setTitle] = useState(credits.leaders[index].title);
+  const [name, setName] = useState(credits.leaders[index].name);
 
   const handleInputChange = (key: string, value: string) => {
     key === 'title' ? setTitle(value) : setName(value);
@@ -40,8 +41,9 @@ export const MemberNewEditor = ({ credits, onClose }: CreditsNewMemberEditorProp
   };
 
   const onClickSave = () => {
-    credits.leaders.push({ title, name });
-    setCredits({ ...credits });
+    const updatedLeaders = [...credits.leaders];
+    updatedLeaders[index] = { title, name };
+    setCredits({ ...credits, leaders: updatedLeaders });
     onClose();
   };
 

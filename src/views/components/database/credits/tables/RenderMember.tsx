@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
 import { DataMemberGrid } from './CreditMemberTableStyle';
 import { ReactComponent as DragIcon } from '@assets/icons/global/drag.svg';
 import { DeleteButtonOnlyIcon, EditButtonOnlyIcon } from '@components/buttons';
@@ -113,11 +112,8 @@ type RenderMemberProps = {
   onClickDelete: () => void;
 };
 
-// TODO
-export const RenderMember = React.forwardRef<HTMLInputElement, RenderMemberProps>(
+export const RenderMember = forwardRef<HTMLInputElement, RenderMemberProps>(
   ({ member, provided, isDragging, dragOn, onClickEdit, onClickDelete }, ref) => {
-    const { t } = useTranslation('database_credits');
-
     return (
       <RenderMemberContainer
         gap="16px"

@@ -12,6 +12,7 @@ import { useConfigCredits } from '@utils/useProjectConfig';
 import { DeleteButtonWithIcon, SecondaryButtonWithPlusIcon } from '@components/buttons';
 import { CreditMembersTable } from '@components/database/credits/tables/CreditMembersTable';
 import { ButtonContainer, ButtonRightContainer } from '@components/editor/DataBlockEditorStyle';
+import { MemberEditEditor } from '@components/database/credits/editors/MemberEditEditor';
 import { MemberNewEditor } from '@components/database/credits/editors/MemberNewEditor';
 import { EditorOverlay } from '@components/editor';
 import { Deletion, DeletionOverlay } from '@components/deletion';
@@ -47,6 +48,7 @@ export const DashboardCredits = () => {
   const [chiefProjectName, setChiefProjectName] = useState<string>(currentEditedCredits.chiefProjectName);
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);
+  const [currentMemberIndex, setCurrentMemberIndex] = useState(0);
   const [gameCredits, setGameCredits] = useState<string>(currentEditedCredits.gameCredits);
 
   const handleInputChange = (key: string, value: string | number): void => {
@@ -113,10 +115,15 @@ export const DashboardCredits = () => {
           name={name}
           value={value}
           onChange={(event) => handleInputChange(key, event.target.value)}
-          placeholder={key === 'chiefProjectTitle' ? t('project_leader_role') : t('leader_name')}
+          placeholder={key === 'chiefProjectTitle' ? t('dashboard_credits:project_leader_role') : t('dashboard_credits:leader_name')}
         />
       </>
     );
+  };
+
+  const editors = {
+    newMember: <MemberNewEditor credits={currentEditedCredits} onClose={() => setCurrentEditor(undefined)} />,
+    onEditMember: <MemberEditEditor credits={currentEditedCredits} index={currentMemberIndex} onClose={() => setCurrentEditor(undefined)} />,
   };
 
   const onCloseEditor = () => {
@@ -124,14 +131,12 @@ export const DashboardCredits = () => {
     setCurrentEditor(undefined);
   };
 
-  //TODO
-  const onEditMember = () => {};
-
-  const editors = {
-    newMember: <MemberNewEditor credits={currentEditedCredits} onClose={() => setCurrentEditor(undefined)} />,
+  const onEditMember = (index: number) => {
+    setCurrentMemberIndex(index);
+    setCurrentEditor('onEditMember');
   };
 
-  const onClickDelete = () => {
+  const onClickDeleteAll = () => {
     setCredits({ ...currentEditedCredits, leaders: [] });
     setCurrentDeletion(undefined);
   };
@@ -143,9 +148,9 @@ export const DashboardCredits = () => {
   const deletions = {
     members: (
       <Deletion
-        title={t('deletion_of_members')}
-        message={t('deletion_message_all_members')}
-        onClickDelete={() => onClickDelete()}
+        title={t('dashboard_credits:deletion_of_members')}
+        message={t('dashboard_credits:deletion_message_all_members')}
+        onClickDelete={() => onClickDeleteAll()}
         onClose={() => setCurrentDeletion(undefined)}
       />
     ),
@@ -157,64 +162,74 @@ export const DashboardCredits = () => {
 
   return (
     <>
-      <PageEditor title={t('resources')} editorTitle={t('credits')}>
+      <PageEditor title={t('dashboard_credits:resources')} editorTitle={t('dashboard_credits:credits')}>
         <InputWithTopLabelContainer>
-          <Label htmlFor="intro_image">{t('intro_image')}</Label>
+          <Label htmlFor="intro_image">{t('dashboard_credits:intro_image')}</Label>
           <DropInput
             destFolderToCopy="graphics/pictures"
-            name={t('credit_image')}
+            name={t('dashboard_credits:credit_image')}
             extensions={['png']}
             onFileChoosen={onImageCreditChoosen}
             multipleFiles={true}
           />
-          <Label htmlFor="background_music">{t('background_music')}</Label>
-          <DropInput destFolderToCopy="audio/bgm" name={t('background_music')} extensions={AUDIO_EXT} onFileChoosen={onMusicCreditChoosen} />
+          <Label htmlFor="background_music">{t('dashboard_credits:background_music')}</Label>
+          <DropInput
+            destFolderToCopy="audio/bgm"
+            name={t('dashboard_credits:background_music')}
+            extensions={AUDIO_EXT}
+            onFileChoosen={onMusicCreditChoosen}
+          />
         </InputWithTopLabelContainer>
       </PageEditor>
-      <PageEditor title={t('settings')} editorTitle={t('credits')}>
+      <PageEditor title={t('dashboard_credits:settings')} editorTitle={t('dashboard_credits:credits')}>
         <InputWithInfoContainer>
           <InputWithLeftLabelContainer>
-            <Label htmlFor="scroll_speed">{t('scroll_speed')}</Label>
+            <Label htmlFor="scroll_speed">{t('dashboard_credits:scroll_speed')}</Label>
             {inputSizesRender('scroll_speed', scrollSpeed, 'scrollSpeed', handleInputChange)}
           </InputWithLeftLabelContainer>
         </InputWithInfoContainer>
         <InputWithInfoContainer>
           <InputWithLeftLabelContainer>
-            <Label htmlFor="line_Height">{t('line_Height')}</Label>
+            <Label htmlFor="line_Height">{t('dashboard_credits:line_Height')}</Label>
             {inputSizesRender('line_Height', lineHeight, 'lineHeight', handleInputChange)}
           </InputWithLeftLabelContainer>
         </InputWithInfoContainer>
         <InputWithInfoContainer>
           <InputWithLeftLabelContainer>
-            <Label htmlFor="leader_spacing">{t('leader_spacing')}</Label>
+            <Label htmlFor="leader_spacing">{t('dashboard_credits:leader_spacing')}</Label>
             {inputSizesRender('leader_spacing', leaderSpacing, 'leaderSpacing', handleInputChange)}
           </InputWithLeftLabelContainer>
         </InputWithInfoContainer>
       </PageEditor>
-      <PageEditor title={t('project_leader')} editorTitle={t('section')}>
+      <PageEditor title={t('dashboard_credits:project_leader')} editorTitle={t('dashboard_credits:section')}>
         <InputWithTopLabelContainer>
-          <Label htmlFor="project_leader_role">{t('project_leader_role')}</Label>
+          <Label htmlFor="project_leader_role">{t('dashboard_credits:project_leader_role')}</Label>
           {inputRender('leader-role', chiefProjectTitle, 'chiefProjectTitle', handleInputChange)}
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
-          <Label htmlFor="project_leader_name">{t('project_leader_name')}</Label>
+          <Label htmlFor="project_leader_name">{t('dashboard_credits:project_leader_name')}</Label>
           {inputRender('leader-name', chiefProjectName, 'chiefProjectName', handleInputChange)}
         </InputWithTopLabelContainer>
       </PageEditor>
-      <PageEditor title={t('development_team')} editorTitle={t('section')}>
+      <PageEditor title={t('dashboard_credits:development_team')} editorTitle={t('dashboard_credits:section')}>
         <CreditMembersTable credits={currentEditedCredits} onEdit={onEditMember} />
         <ButtonContainer>
-          <DeleteButtonWithIcon onClick={onDeleteAll}>{t('delete_all')}</DeleteButtonWithIcon>
+          <DeleteButtonWithIcon onClick={onDeleteAll}>{t('dashboard_credits:delete_all')}</DeleteButtonWithIcon>
           <ButtonRightContainer>
-            <SecondaryButtonWithPlusIcon onClick={onNew}>{t('add_members')}</SecondaryButtonWithPlusIcon>
+            <SecondaryButtonWithPlusIcon onClick={onNew}>{t('dashboard_credits:add_members')}</SecondaryButtonWithPlusIcon>
           </ButtonRightContainer>
         </ButtonContainer>
       </PageEditor>
       <EditorOverlay currentEditor={currentEditor} editors={editors} onClose={onCloseEditor} />
       <DeletionOverlay currentDeletion={currentDeletion} deletions={deletions} onClose={() => setCurrentDeletion(undefined)} />
-      <PageEditor title={t('game_credits')} editorTitle={t('section')}>
+      <PageEditor title={t('dashboard_credits:game_credits')} editorTitle={t('dashboard_credits:section')}>
         <InputWithTopLabelContainer>
-          <MultiLineInput id="credit" value={gameCredits} placeholder={t('game_credits')} onChange={(event) => setGameCredits(event.target.value)} />
+          <MultiLineInput
+            id="credit"
+            value={gameCredits}
+            placeholder={t('dashboard_credits:game_credits')}
+            onChange={(event) => setGameCredits(event.target.value)}
+          />
         </InputWithTopLabelContainer>
       </PageEditor>
     </>
