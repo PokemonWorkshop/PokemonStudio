@@ -40,6 +40,8 @@ import type { OpenTiledPayload } from './backendTasks/openTiled';
 import type { DownloadFileInput } from './backendTasks/downloadFile';
 import type { RequestJsonInput, RequestJsonOutput } from './backendTasks/requestJson';
 import type { CheckDownloadNewProjectInput, CheckDownloadNewProjectOutput } from './backendTasks/checkDownloadNewProject';
+import type { FileExistsInput, FileExistsOutput } from './backendTasks/fileExists';
+import type { GeneratingMapOverviewInput } from './backendTasks/generatingMapOverview';
 
 contextBridge.exposeInMainWorld('api', {
   isDev: process.env.NODE_ENV === 'development',
@@ -143,6 +145,7 @@ contextBridge.exposeInMainWorld('api', {
   downloadFile: defineBackendTask(ipcRenderer, 'download-file'),
   requestJson: defineBackendTask(ipcRenderer, 'request-json'),
   checkDownloadNewProject: defineBackendTask(ipcRenderer, 'check-download-new-project'),
+  generatingMapOverview: defineBackendTask(ipcRenderer, 'generating-map-overview'),
 });
 
 type AnyObj = Record<string, never>;
@@ -229,6 +232,7 @@ declare global {
       downloadFile: BackendTaskWithGenericError<DownloadFileInput, AnyObj, GenericBackendProgress>;
       requestJson: BackendTaskWithGenericErrorAndNoProgress<RequestJsonInput, RequestJsonOutput>;
       checkDownloadNewProject: BackendTaskWithGenericErrorAndNoProgress<CheckDownloadNewProjectInput, CheckDownloadNewProjectOutput>;
+      generatingMapOverview: BackendTaskWithGenericErrorAndNoProgress<GeneratingMapOverviewInput, AnyObj>;
     };
   }
 }

@@ -26,13 +26,12 @@ export const getFileStats = (filePath: string): Promise<fs.Stats> => {
   });
 };
 
-export type CheckMapModifiedInput = { projectPath: string; maps: string[]; method: CheckMapsModifiedMethod };
+export type CheckMapModifiedInput = { projectPath: string; maps: string[]; method: CheckMapsModifiedMethod; tiledExecPath: string };
 export type CheckMapModifiedOutput = Awaited<ReturnType<typeof checkMapsModified>>;
 
 export const checkMapsModified = async (payload: CheckMapModifiedInput) => {
   log.info('check-maps-modified', { method: payload.method });
   const studioMaps: StudioMapBackend[] = payload.maps.map((map) => JSON.parse(map));
-
   const tiledMapPath = path.join(payload.projectPath, 'Data/Tiled/Maps');
 
   const mapsModified = await studioMaps.reduce(async (accPromise, map) => {

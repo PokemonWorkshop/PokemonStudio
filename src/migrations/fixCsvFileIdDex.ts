@@ -8,10 +8,10 @@ import { DEX_VALIDATOR } from '@modelEntities/dex';
 export const fixCsvFileIdDex = async (_: IpcMainEvent, projectPath: string) => {
   deletePSDKDatFile(projectPath);
 
-  const dex = await readProjectFolder(projectPath, 'dex');
-  await dex.reduce(async (lastPromise, group) => {
+  const dexes = await readProjectFolder(projectPath, 'dex');
+  await dexes.reduce(async (lastPromise, dex) => {
     await lastPromise;
-    const dexParsed = DEX_VALIDATOR.safeParse(JSON.parse(group));
+    const dexParsed = DEX_VALIDATOR.safeParse(JSON.parse(dex));
     if (dexParsed.success) {
       const csvFileId = dexParsed.data.csv.csvFileId;
       if (csvFileId < 100_000) dexParsed.data.csv.csvFileId = csvFileId + 100_000;

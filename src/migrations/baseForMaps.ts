@@ -29,6 +29,7 @@ export const baseForMaps = async (_: IpcMainEvent, projectPath: string) => {
   createFolder(path.join(projectPath, 'Data/Tiled/Assets'));
   createFolder(path.join(projectPath, 'Data/Tiled/Maps'));
   createFolder(path.join(projectPath, 'Data/Tiled/Tilesets'));
+  createFolder(path.join(projectPath, 'Data/Tiled/Overviews'));
 
   if (fs.existsSync(path.join(projectPath, 'Data/Studio/rmxp_maps.json'))) {
     fs.unlinkSync(path.join(projectPath, 'Data/Studio/rmxp_maps.json'));

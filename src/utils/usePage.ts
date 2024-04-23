@@ -6,6 +6,15 @@ import { StudioDex } from '@modelEntities/dex';
 import { StudioType } from '@modelEntities/type';
 import { StudioItem } from '@modelEntities/item';
 import { Language } from '@pages/texts/Translation.page';
+import { useGlobalState } from '@src/GlobalStateProvider';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { getMapOverviewPath } from './resourcePath';
+import { showNotification } from './showNotification';
+import { join } from './path';
+import { useGeneratingMapOverview } from './useGeneratingMapOverview';
+import { useLoaderRef } from './loaderContext';
+import { getSetting } from './settings';
 
 export const useAbilityPage = () => {
   const { projectDataValues: abilities, selectedDataIdentifier: dbSymbol, state } = useProjectDataReadonly('abilities', 'ability');
@@ -163,5 +172,52 @@ export const useGroupPage = () => {
     group,
     groupName,
     cannotDelete: Object.keys(groups).length <= 1,
+  };
+};
+
+type OverviewCheck = 'checking' | 'available' | 'unavailable';
+
+export const useOverviewPage = () => {
+  const { map, disabledOpenTiled } = useMapPage();
+  const generatingMapOverview = useGeneratingMapOverview();
+  const loaderRef = useLoaderRef();
+  const { t } = useTranslation('database_maps');
+  const [globalState] = useGlobalState();
+  const [state, setState] = useState<OverviewCheck>('checking');
+  const [version, setVersion] = useState<number>(0);
+
+  const checkMapOverview = () => {
+    if (!globalState.projectPath) return;
+
+    window.api.fileExists(
+      { filePath: join(globalState.projectPath, getMapOverviewPath(map.tiledFilename)) },
+      ({ result }) => (result ? setState('available') : setState('unavailable')),
+      ({ errorMessage }) => {
+        showNotification('danger', t('map_overview'), errorMessage);
+        setState('unavailable');
+      }
+    );
+  };
+
+  const onClickGenerating = async () => {
+    generatingMapOverview(
+      { tiledFilename: map.tiledFilename },
+      () => {
+        loaderRef.current.close();
+        setVersion((v) => v + 1);
+        setState('available');
+      },
+      ({ errorMessage }) => loaderRef.current.setError('updating_maps_error', errorMessage, true)
+    );
+  };
+
+  return {
+    map,
+    disabledOverview: disabledOpenTiled,
+    disabledGenerating: !getSetting('tiledPath'),
+    version,
+    state,
+    checkMapOverview,
+    onClickGenerating,
   };
 };

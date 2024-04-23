@@ -77,5 +77,11 @@
   "description_empty_state": "You don't have any map yet. You can create a new map or import existing ones.",
   "helper_empty_state": "If you have an existing Tiled project, you need to import all your maps first.",
   "volume": "Volume",
-  "pitch": "Pitch"
+  "pitch": "Pitch",
+  "map_overview": "Map overview",
+  "map_overview_not_found": "The map overview could not be found.",
+  "map_overview_generate": "Generate map overview",
+  "map_overview_generating": "Generating map overview",
+  "map_overviews_generating": "Generating map overviews",
+  "map_process_disabled": "Tiled installation path must be specified in the application settings."
 }

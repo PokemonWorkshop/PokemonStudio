@@ -18,6 +18,7 @@ export type MapImportStateObject =
   | { state: 'copyTmxFiles'; mapsToImport: MapToImport[]; tiledFilesSrcPath: string; rmxpMapInfo: RMXPMapInfo[]; copyMode: boolean }
   | { state: 'addMissingRMXPMaps'; mapsToImport: MapToImport[]; rmxpMapInfo: RMXPMapInfo[] }
   | { state: 'getRMXPMapsData'; mapsToImport: MapToImport[]; rmxpMapIds: number[] }
+  | { state: 'generatingOverviews'; mapsToImport: MapToImport[]; rmxpMaps: Record<number, RMXPMap>; rmxpMapIds: number[] }
   | { state: 'createNewMaps'; mapsToImport: MapToImport[]; rmxpMaps: Record<number, RMXPMap>; rmxpMapIds: number[] };
 export type MapImportFunctionBinding = {
   onSuccess: MapImportSuccessCallback;

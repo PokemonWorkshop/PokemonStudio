@@ -12,3 +12,5 @@ export const pokemonIconPath = (species: StudioCreature, form?: number) => {
 
   return `graphics/pokedex/pokeicon/${padStr(species.id, 3)}.png`;
 };
+
+export const getMapOverviewPath = (tiledFilename: string) => `Data/Tiled/Overviews/${tiledFilename}.png`;

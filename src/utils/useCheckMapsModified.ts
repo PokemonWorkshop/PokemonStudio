@@ -3,6 +3,7 @@ import { useGlobalState } from '@src/GlobalStateProvider';
 import type { CheckMapsModifiedMethod } from '@src/backendTasks/checkMapsModified';
 import { showNotification } from './showNotification';
 import { useTranslation } from 'react-i18next';
+import { getSetting } from './settings';
 
 type CheckMapsModifiedPayload = {
   method: CheckMapsModifiedMethod;
@@ -30,7 +31,7 @@ export const useCheckMapsModified = () => {
       .map((map) => ({ dbSymbol: map.dbSymbol, tiledFilename: map.tiledFilename, sha1: map.sha1, mtime: map.mtime }))
       .map((data) => JSON.stringify(data));
     return window.api.checkMapsModified(
-      { projectPath: globalState.projectPath, maps, method: state.payload.method },
+      { projectPath: globalState.projectPath, maps, method: state.payload.method, tiledExecPath: getSetting('tiledPath') },
       ({ dbSymbols }) => {
         if (state.payload.forceToast || (dbSymbols.length !== 0 && globalState.mapsModified.length === 0)) {
           showNotification('info', t('checking_maps'), t('checking_maps_message'));
