@@ -6,7 +6,7 @@ import { DeleteButtonOnlyIcon, EditButtonOnlyIcon } from '@components/buttons';
 import { EditButtonOnlyIconContainer } from '@components/buttons/EditButtonOnlyIcon';
 import theme from '@src/AppTheme';
 import { DraggableProvided } from 'react-beautiful-dnd';
-import { Code } from '@components/Code';
+import { TFunction, useTranslation } from 'react-i18next';
 
 type RenderMemberContainerProps = {
   isDragging: boolean;
@@ -32,17 +32,13 @@ const RenderMemberContainer = styled(DataMemberGrid).attrs<RenderMemberContainer
     }
   }
 
-  & .present-on-map:nth-child(4) {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-
-    ${Code} {
-      color: ${theme.colors.text100};
-    }
+  & .role {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  & .buttons:nth-child(5) {
+  & .buttons {
     display: flex;
     gap: 4px;
     justify-content: flex-end;
@@ -59,7 +55,7 @@ const RenderMemberContainer = styled(DataMemberGrid).attrs<RenderMemberContainer
   }
 
   &:hover {
-    .buttons:nth-child(5) {
+    .buttons {
       visibility: ${({ dragOn }) => (dragOn ? `hidden` : 'visible')};
     }
   }
@@ -84,11 +80,7 @@ const RenderMemberContainer = styled(DataMemberGrid).attrs<RenderMemberContainer
   }
 
   @media ${theme.breakpoints.dataBox422} {
-    grid-template-columns: 18px 160px auto;
-
-    & .environment {
-      display: none;
-    }
+    grid-template-columns: 18px 160px 144px auto;
   }
 
   & .clickable {
@@ -112,8 +104,20 @@ type RenderMemberProps = {
   onClickDelete: () => void;
 };
 
+const showMemberName = (name: string, t: TFunction<'dashboard_credits'>) => {
+  const splits = name.split(/,\s*/);
+  const countMembers = splits.length;
+  if (countMembers <= 3) return name;
+
+  const names = splits.slice(0, 3);
+  const others = countMembers - 3 > 1 ? t('others', { count: countMembers - 3 }) : t('other', { count: 1 });
+  return names.map((member) => ' ' + member) + `, ${others}`;
+};
+
 export const RenderMember = forwardRef<HTMLInputElement, RenderMemberProps>(
   ({ member, provided, isDragging, dragOn, onClickEdit, onClickDelete }, ref) => {
+    const { t } = useTranslation('dashboard_credits');
+
     return (
       <RenderMemberContainer
         gap="16px"
@@ -129,8 +133,8 @@ export const RenderMember = forwardRef<HTMLInputElement, RenderMemberProps>(
         <span className="drag-icon" {...provided.dragHandleProps}>
           <DragIcon />
         </span>
-        <span>{member.title}</span>
-        <span>{member.name}</span>
+        <span className="role">{member.title}</span>
+        <span>{showMemberName(member.name, t)}</span>
         <div className="buttons" style={{ display: 'flex', gap: '4px' }}>
           <EditButtonOnlyIcon size="s" color={theme.colors.primaryBase} onClick={onClickEdit} />
           <DeleteButtonOnlyIcon size="s" onClick={onClickDelete} />

@@ -26,7 +26,7 @@ export const DataMemberGrid = styled(DataGrid).attrs<DataMemberGridProps>((props
 }))<DataMemberGridProps>`
   ${({ theme }) => theme.fonts.normalRegular};
   color: ${({ theme }) => theme.colors.text400};
-  grid-template-columns: 18px 192px 144px 450px auto;
+  grid-template-columns: 18px 237px 257px auto;
   align-items: center;
 
   &[data-drag-off] {
@@ -38,11 +38,6 @@ export const DataMemberGrid = styled(DataGrid).attrs<DataMemberGridProps>((props
   }
 
   @media ${({ theme }) => theme.breakpoints.dataBox422} {
-    grid-template-columns: 18px 160px 144px 100px auto;
-
-    & .environment {
-      display: none;
-    }
+    grid-template-columns: 18px 160px 144px auto;
   }
 `;
-

@@ -18,5 +18,7 @@
   "add_members": "Ajouter des membres",
   "delete_all": "Tout supprimer",
   "deletion_of_members": "Suppression des membres",
-  "deletion_message_all_members": "Vous êtes sur le point de supprimer définitivement les membres."
+  "deletion_message_all_members": "Vous êtes sur le point de supprimer définitivement les membres.",
+  "other": "{{count}}\u00a0autre",
+  "others": "{{count}}\u00a0autres"
 }
