@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { readProjectFolder } from '@src/backendTasks/readProjectData';
 import { readRMXPMap } from '@src/backendTasks/readRMXPMap';
 import log from 'electron-log';
+import { parseJSON } from '@utils/json/parse';
 
 const PRE_MIGRATION_MAP_VALIDATOR = MAP_VALIDATOR.omit({ bgm: true, bgs: true }).extend({ bgm: z.string(), bgs: z.string() });
 type StudioMapDataBeforeMigration = z.infer<typeof PRE_MIGRATION_MAP_VALIDATOR>;
@@ -46,7 +47,7 @@ export const addVolumeAndPitchInMaps = async (_: IpcMainEvent, projectPath: stri
   const maps = await readProjectFolder(projectPath, 'maps');
   await maps.reduce(async (lastPromise, map) => {
     await lastPromise;
-    const mapParsed = PRE_MIGRATION_MAP_VALIDATOR.safeParse(JSON.parse(map));
+    const mapParsed = PRE_MIGRATION_MAP_VALIDATOR.safeParse(parseJSON(map.data, map.filename));
     if (mapParsed.success) {
       const newMap = await addVolumeAndPitch(mapParsed.data, projectPath);
       return fsPromise.writeFile(path.join(projectPath, 'Data/Studio/maps', `${newMap.dbSymbol}.json`), JSON.stringify(newMap, null, 2));

@@ -1,4 +1,4 @@
-type StudioSettings = {
+export type StudioSettings = {
   tiledPath: string;
 };
 
