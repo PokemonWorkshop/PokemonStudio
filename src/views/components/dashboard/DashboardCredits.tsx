@@ -85,8 +85,8 @@ export const DashboardCredits = () => {
     handleInputChange('bgm', bgm);
   };
 
-  const inputSizesRender = (name: string, value: string | number, key: string, handleInputChange: (key: string, value: string) => void) => {
-    //TODO set limits and negative numbers
+  const inputSizesRender = (name: string, value: number, key: string) => {
+    //TODO set limits and negative numbers;
     return (
       <>
         <InputContainer>
@@ -96,7 +96,7 @@ export const DashboardCredits = () => {
             name={name}
             min="1"
             max="9999"
-            value={isNaN(value as number) ? '' : value}
+            value={isNaN(value) ? '' : value}
             onChange={(event) => {
               handleInputChange(key, event.target.value);
             }}
@@ -107,7 +107,7 @@ export const DashboardCredits = () => {
     );
   };
 
-  const inputRender = (name: string, value: string | number, key: string, handleInputChange: (key: string, value: string) => void) => {
+  const inputRender = (name: string, value: string, key: string) => {
     return (
       <>
         <Input
@@ -185,30 +185,30 @@ export const DashboardCredits = () => {
         <InputWithInfoContainer>
           <InputWithLeftLabelContainer>
             <Label htmlFor="scroll_speed">{t('dashboard_credits:scroll_speed')}</Label>
-            {inputSizesRender('scroll_speed', scrollSpeed, 'scrollSpeed', handleInputChange)}
+            {inputSizesRender('scroll_speed', scrollSpeed, 'scrollSpeed')}
           </InputWithLeftLabelContainer>
         </InputWithInfoContainer>
         <InputWithInfoContainer>
           <InputWithLeftLabelContainer>
             <Label htmlFor="line_Height">{t('dashboard_credits:line_Height')}</Label>
-            {inputSizesRender('line_Height', lineHeight, 'lineHeight', handleInputChange)}
+            {inputSizesRender('line_Height', lineHeight, 'lineHeight')}
           </InputWithLeftLabelContainer>
         </InputWithInfoContainer>
         <InputWithInfoContainer>
           <InputWithLeftLabelContainer>
             <Label htmlFor="leader_spacing">{t('dashboard_credits:leader_spacing')}</Label>
-            {inputSizesRender('leader_spacing', leaderSpacing, 'leaderSpacing', handleInputChange)}
+            {inputSizesRender('leader_spacing', leaderSpacing, 'leaderSpacing')}
           </InputWithLeftLabelContainer>
         </InputWithInfoContainer>
       </PageEditor>
       <PageEditor title={t('dashboard_credits:project_leader')} editorTitle={t('dashboard_credits:section')}>
         <InputWithTopLabelContainer>
           <Label htmlFor="project_leader_role">{t('dashboard_credits:project_leader_role')}</Label>
-          {inputRender('leader-role', chiefProjectTitle, 'chiefProjectTitle', handleInputChange)}
+          {inputRender('leader-role', chiefProjectTitle, 'chiefProjectTitle')}
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="project_leader_name">{t('dashboard_credits:project_leader_name')}</Label>
-          {inputRender('leader-name', chiefProjectName, 'chiefProjectName', handleInputChange)}
+          {inputRender('leader-name', chiefProjectName, 'chiefProjectName')}
         </InputWithTopLabelContainer>
       </PageEditor>
       <PageEditor title={t('dashboard_credits:development_team')} editorTitle={t('dashboard_credits:section')}>
