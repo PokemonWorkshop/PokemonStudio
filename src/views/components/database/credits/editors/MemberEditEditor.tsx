@@ -23,7 +23,7 @@ type CreditsNewMemberEditorProps = {
 
 export const MemberEditEditor = ({ credits, index, onClose }: CreditsNewMemberEditorProps) => {
   const { setProjectConfigValues: setCredits } = useConfigCredits();
-  const { t } = useTranslation('database_credits');
+  const { t } = useTranslation('dashboard_credits');
   const [title, setTitle] = useState(credits.leaders[index].title);
   const [name, setName] = useState(credits.leaders[index].name);
 
@@ -31,10 +31,10 @@ export const MemberEditEditor = ({ credits, index, onClose }: CreditsNewMemberEd
     key === 'title' ? setTitle(value) : setName(value);
   };
 
-  const inputRender = (key: string, value: string) => {
+  const inputRender = (key: string, label: string, value: string) => {
     return (
       <InputWithTopLabelContainer>
-        <Label htmlFor={key}>{t(key)}</Label>
+        <Label htmlFor={label}>{label}</Label>
         <Input type="text" value={value} onChange={(event) => handleInputChange(key, event.target.value)} placeholder={value} />
       </InputWithTopLabelContainer>
     );
@@ -48,14 +48,14 @@ export const MemberEditEditor = ({ credits, index, onClose }: CreditsNewMemberEd
   };
 
   return (
-    <EditorWithCollapse type="creation" title={t('database_credits:developers')}>
+    <EditorWithCollapse type="creation" title={t('dashboard_credits:developers')}>
       <InputContainer>
-        {inputRender('title', title)}
-        {inputRender('name', name)}
+        {inputRender('title', t('dashboard_credits:role'), title)}
+        {inputRender('name', t('dashboard_credits:names'), name)}
         <ButtonContainer>
-          <PrimaryButton onClick={onClickSave}>{t('database_credits:save')}</PrimaryButton>
+          <PrimaryButton onClick={onClickSave}>{t('dashboard_credits:save')}</PrimaryButton>
           <TooltipWrapper data-tooltip={undefined}></TooltipWrapper>
-          <DarkButton onClick={onClose}>{t('database_credits:cancel')}</DarkButton>
+          <DarkButton onClick={onClose}>{t('dashboard_credits:cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
     </EditorWithCollapse>

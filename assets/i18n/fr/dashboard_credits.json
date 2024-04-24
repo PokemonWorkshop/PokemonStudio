@@ -1,5 +1,6 @@
 {
   "credits": "Crédits",
+  "credit": "credit",
   "resources": "Ressources",
   "intro_image": "Image d'introduction",
   "credit_image": "Image du crédit",
@@ -20,5 +21,11 @@
   "deletion_of_members": "Suppression des membres",
   "deletion_message_all_members": "Vous êtes sur le point de supprimer définitivement les membres.",
   "other": "{{count}}\u00a0autre",
-  "others": "{{count}}\u00a0autres"
+  "others": "{{count}}\u00a0autres",
+  "role": "Rôle",
+  "names": "Noms",
+  "no_member": "Aucun membre",
+  "developers": "Développeurs",
+  "save": "Enregistrer",
+  "cancel": "Annuler"
 }

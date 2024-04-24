@@ -1,5 +1,6 @@
 {
   "credits": "Credits",
+  "credit": "",
   "resources": "Resources",
   "intro_image": "",
   "credit_image": "",
@@ -20,5 +21,11 @@
   "deletion_of_members": "",
   "deletion_message_all_members": "",
   "other": "{{count}} other",
-  "others": "{{count}} others"
+  "others": "{{count}} others",
+  "role": "",
+  "names": "",
+  "no_member": "",
+  "developers": "",
+  "save": "",
+  "cancel": ""
 }

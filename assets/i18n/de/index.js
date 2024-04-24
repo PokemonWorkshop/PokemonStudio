@@ -20,7 +20,6 @@ import database_trainers from './database_trainers.json';
 import database_zones from './database_zones.json';
 import database_dex from './database_dex.json';
 import database_maplinks from './database_maplinks.json';
-import database_credits from './database_credits.json';
 import homepage from './homepage.json';
 import main_menu from './main_menu.json';
 import select from './select.json';
@@ -65,7 +64,6 @@ export default {
   database_zones,
   database_dex,
   database_maplinks,
-  database_credits,
   editor,
   error,
   loader,
