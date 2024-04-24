@@ -5,7 +5,6 @@ import type { DbSymbol } from '@modelEntities/dbSymbol';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import { Sha1 } from '@modelEntities/sha1';
 import { calculateFileSha1 } from './calculateFileSha1';
-import { parseJSON } from '@utils/json/parse';
 
 export type CheckMapsModifiedMethod = 'mtime' | 'sha1';
 type StudioMapBackend = {
@@ -32,7 +31,7 @@ export type CheckMapModifiedOutput = Awaited<ReturnType<typeof checkMapsModified
 
 export const checkMapsModified = async (payload: CheckMapModifiedInput) => {
   log.info('check-maps-modified', { method: payload.method });
-  const studioMaps: StudioMapBackend[] = payload.maps.map((map) => parseJSON(map, map));
+  const studioMaps: StudioMapBackend[] = payload.maps.map((map) => JSON.parse(map));
   const tiledMapPath = path.join(payload.projectPath, 'Data/Tiled/Maps');
 
   const mapsModified = await studioMaps.reduce(async (accPromise, map) => {
