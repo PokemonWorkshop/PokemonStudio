@@ -5,6 +5,7 @@ import fsPromise from 'fs/promises';
 import { z } from 'zod';
 import { deletePSDKDatFile } from './migrateUtils';
 import { GROUP_TOOL_VALIDATOR, GROUP_VALIDATOR } from '@modelEntities/group';
+import { parseJSON } from '@utils/json/parse';
 
 const PRE_MIGRATION_GROUP_VALIDATOR = GROUP_VALIDATOR.extend({
   tool: GROUP_TOOL_VALIDATOR.or(z.literal('HeadButt')),
@@ -24,7 +25,7 @@ export const migrateHeadbutt = async (_: IpcMainEvent, projectPath: string) => {
   const groups = await readProjectFolder(projectPath, 'groups');
   await groups.reduce(async (lastPromise, group) => {
     await lastPromise;
-    const groupParsed = PRE_MIGRATION_GROUP_VALIDATOR.safeParse(JSON.parse(group));
+    const groupParsed = PRE_MIGRATION_GROUP_VALIDATOR.safeParse(parseJSON(group.data, group.filename));
     if (groupParsed.success) {
       moveHeadButt(groupParsed.data);
       return fsPromise.writeFile(

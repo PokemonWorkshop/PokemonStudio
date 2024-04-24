@@ -9,6 +9,7 @@ import { deserializeZodData, zodDataToEntries } from '@utils/SerializationUtils'
 import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID, MAP_VALIDATOR } from '@modelEntities/map';
 import { MAP_INFO_VALIDATOR } from '@modelEntities/mapInfo';
 import { DbSymbol } from '@modelEntities/dbSymbol';
+import { parseJSON } from '@utils/json/parse';
 
 const DEFAULT_BINDING: RMXP2StudioMapsUpdateFunctionBinding = {
   onFailure: () => {},
@@ -38,7 +39,7 @@ export const useRMXP2StudioMapsUpdateProcessor = () => {
           { projectPath: globalState.projectPath! },
           ({ maps, mapInfo, mapNames, mapDescriptions }) => {
             const mapsResult = deserializeZodData(maps, MAP_VALIDATOR);
-            const mapInfoResult = MAP_INFO_VALIDATOR.safeParse(JSON.parse(mapInfo));
+            const mapInfoResult = MAP_INFO_VALIDATOR.safeParse(parseJSON(mapInfo, 'Data/Studio/map_info.json'));
             if (mapsResult.integrityFailureCount.count === 0 && mapInfoResult.success) {
               setState({ state: 'updateMap', maps: mapsResult.input, mapInfo: mapInfoResult.data, mapNames, mapDescriptions });
             } else {

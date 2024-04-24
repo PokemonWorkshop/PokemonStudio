@@ -1,4 +1,5 @@
 import { StudioProject } from '@modelEntities/project';
+import { parseJSON } from './json/parse';
 
 export type Project = {
   projectStudio: StudioProject;
@@ -10,7 +11,7 @@ export const getProjectList = (): Project[] => {
   const projectJson = localStorage.getItem('projectList');
   if (!projectJson) return [];
 
-  return JSON.parse(projectJson).map((project: Project) => ({ ...project, lastEdit: new Date(project.lastEdit) }));
+  return parseJSON<Project[]>(projectJson, 'projectList from local storage').map((project: Project) => ({ ...project, lastEdit: new Date(project.lastEdit) }));
 };
 
 export const addProjectToList = (project: Project) => {

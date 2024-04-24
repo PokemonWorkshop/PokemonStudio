@@ -3,6 +3,7 @@ import { SelectedDataIdentifier } from '@src/GlobalStateProvider';
 import log from 'electron-log';
 import { getEntityNameTextUsingTextId } from './ReadingProjectText';
 import type { PreGlobalState } from './useProjectLoad/types';
+import { parseJSON } from './json/parse';
 
 const firstByNameUsingTextId = (
   data: Record<string, Parameters<typeof getEntityNameTextUsingTextId>[0] & { dbSymbol: DbSymbol }>,
@@ -18,7 +19,7 @@ const firstById = <T extends { id: number; dbSymbol: string }>(data: Record<stri
 const getSelectedIdentifierFromStorage = (preState: PreGlobalState) => {
   try {
     const identifiers = localStorage.getItem(`selectedDataIdentifier:${window.api.md5(preState.projectStudio.title)}`);
-    if (identifiers) return JSON.parse(identifiers) as unknown as SelectedDataIdentifier;
+    if (identifiers) return parseJSON<SelectedDataIdentifier>(identifiers, 'identifier from local storage');
   } catch (error) {
     log.error('Failed to get data identifier from local storage');
   }

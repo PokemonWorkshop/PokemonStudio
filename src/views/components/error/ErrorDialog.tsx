@@ -40,6 +40,8 @@ const TextWarningContainer = styled.div`
   ${theme.fonts.normalMedium};
   color: ${theme.colors.text400};
 
+  white-space: pre-line;
+
   & > p {
     margin: 0;
     text-align: center;

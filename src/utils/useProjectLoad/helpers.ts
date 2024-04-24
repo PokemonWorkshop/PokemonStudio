@@ -2,6 +2,7 @@ import { deserializeZodData, deserializeZodDiscriminatedData } from '@utils/Seri
 import type { z } from 'zod';
 import type { ProjectLoadFunctionBinding, ProjectLoadStateObject } from './types';
 import type { Dispatch, MutableRefObject, SetStateAction } from 'react';
+import { FilenameWithData } from '@src/backendTasks/readProjectData';
 
 export const fail = (binding: MutableRefObject<ProjectLoadFunctionBinding>, error: unknown) => {
   window.api.log.error('Failed to load project', error);
@@ -16,7 +17,7 @@ export const handleFailure =
   };
 
 export const countZodDataIntegrityFailure = <I extends z.ZodRawShape>(
-  inputObjects: string[],
+  inputObjects: FilenameWithData[],
   validator: z.ZodObject<I>,
   count: { count: number }
 ) => {
@@ -26,7 +27,7 @@ export const countZodDataIntegrityFailure = <I extends z.ZodRawShape>(
 };
 
 export const countZodDiscriminatedDataIntegrityFailure = <K extends string, Options extends z.ZodDiscriminatedUnionOption<K>[]>(
-  inputObjects: string[],
+  inputObjects: FilenameWithData[],
   validator: z.ZodDiscriminatedUnion<K, Options>,
   count: { count: number }
 ) => {

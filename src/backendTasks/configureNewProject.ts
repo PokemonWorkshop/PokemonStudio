@@ -9,6 +9,7 @@ import { addColumnCSV, getTextFileList, getTextPath, languageAvailable, loadCSV,
 import { readProjectFolder } from './readProjectData';
 import { MAP_VALIDATOR } from '@modelEntities/map';
 import fsPromise from 'fs/promises';
+import { parseJSON } from '@utils/json/parse';
 
 export type ConfigureNewProjectMetaData = {
   projectStudioData: string;
@@ -22,7 +23,7 @@ const updateInfosConfig = (infosConfigPath: string, projectTitle: string) => {
   if (!existsSync(infosConfigPath)) throw new Error('infos_config.json file not found');
 
   const infosConfigContent = readFileSync(infosConfigPath).toString('utf-8');
-  const infosConfig = INFO_CONFIG_VALIDATOR.safeParse(JSON.parse(infosConfigContent));
+  const infosConfig = INFO_CONFIG_VALIDATOR.safeParse(parseJSON(infosConfigContent, 'infos_config.json'));
   if (!infosConfig.success) throw new Error('Fail to parse infos_config.json');
 
   infosConfig.data.gameTitle = projectTitle;
@@ -33,7 +34,7 @@ const updateGameOptionsConfig = (gameOptionsConfigPath: string) => {
   if (!existsSync(gameOptionsConfigPath)) throw new Error('game_options_config.json file not found');
 
   const gameOptionsConfigContent = readFileSync(gameOptionsConfigPath).toString('utf-8');
-  const gameOptionConfigValidation = GAME_OPTION_CONFIG_VALIDATOR.safeParse(JSON.parse(gameOptionsConfigContent));
+  const gameOptionConfigValidation = GAME_OPTION_CONFIG_VALIDATOR.safeParse(parseJSON(gameOptionsConfigContent, 'game_options_config.json'));
   if (!gameOptionConfigValidation.success) throw new Error('Fail to parse game_options_config.json');
 
   gameOptionConfigValidation.data.order = gameOptionConfigValidation.data.order.filter((k) => k !== 'language');
@@ -44,7 +45,7 @@ const updateGameOptionsConfig = (gameOptionsConfigPath: string) => {
  * Update the csv files to add missing languages if necessary
  */
 const updateCSVFiles = async (projectPath: string, projectStudioData: string) => {
-  const projectStudio = JSON.parse(projectStudioData) as StudioProject;
+  const projectStudio = parseJSON(projectStudioData, projectPath) as StudioProject;
   const textFileList = getTextFileList(projectPath, true);
   await textFileList.reduce(async (lastPromise, fileId) => {
     await lastPromise;
@@ -73,7 +74,7 @@ const updateMapsMtime = async (projectPath: string) => {
   const mtime = new Date().getTime();
   await maps.reduce(async (lastPromise, map) => {
     await lastPromise;
-    const mapParsed = MAP_VALIDATOR.safeParse(JSON.parse(map));
+    const mapParsed = MAP_VALIDATOR.safeParse(parseJSON(map.data, map.filename));
     if (mapParsed.success) {
       mapParsed.data.mtime = mtime;
       await fsPromise.writeFile(

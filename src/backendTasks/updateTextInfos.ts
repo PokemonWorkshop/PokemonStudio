@@ -7,6 +7,7 @@ import { findFirstAvailableTextId } from '@utils/ModelUtils';
 import { getTextFileList, loadCSV } from '@utils/textManagement';
 import { UseDefaultTextInfoTranslationReturnType } from '@utils/useDefaultTextInfoTranslation';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
+import { parseJSON } from '@utils/json/parse';
 
 type DefaultTextInfo = {
   names: string[];
@@ -42,8 +43,9 @@ const getTextInfosWithText = (
 
 const mustTextInfosBeUpdated = (projectPath: string) => {
   const textFileList = getTextFileList(projectPath);
-  const textInfosFile: StudioTextInfo[] = JSON.parse(
-    fs.readFileSync(path.join(projectPath, 'Data', 'Studio', 'text_info.json'), { encoding: 'utf-8' })
+  const textInfosFile: StudioTextInfo[] = parseJSON(
+    fs.readFileSync(path.join(projectPath, 'Data', 'Studio', 'text_info.json'), { encoding: 'utf-8' }),
+    'text_info.json'
   );
   if (textFileList.length !== textInfosFile.length) return true;
   textFileList.sort((a, b) => a - b);
@@ -76,7 +78,7 @@ export const updateTextInfos = async (payload: UpdateTextInfosInput) => {
     }
     const textFileList = getTextFileList(payload.projectPath);
     // load text infos data and csv data
-    const textInfos: StudioTextInfo[] = JSON.parse(fs.readFileSync(path.join(payload.projectPath, TEXT_INFOS_PATH), { encoding: 'utf-8' }));
+    const textInfos: StudioTextInfo[] = parseJSON(fs.readFileSync(path.join(payload.projectPath, TEXT_INFOS_PATH), { encoding: 'utf-8' }), 'text_file.json');
     const names = await loadCSV(path.join(payload.projectPath, STUDIO_CSV_PATH, TEXT_INFO_NAME_TEXT_ID.toString()));
     const descriptions = await loadCSV(path.join(payload.projectPath, STUDIO_CSV_PATH, TEXT_INFO_DESCRIPTION_TEXT_ID.toString()));
     // clean the text infos data to free unused textId

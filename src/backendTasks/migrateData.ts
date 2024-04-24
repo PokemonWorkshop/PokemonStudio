@@ -12,6 +12,7 @@ import path from 'path';
 import { PROJECT_VALIDATOR, StudioProject } from '@modelEntities/project';
 import { generatingMapOverviews } from '@src/migrations/generatingMapOverviews';
 import type { StudioSettings } from '@utils/settings';
+import { parseJSON } from '@utils/json/parse';
 
 export type MigrationTask = (event: IpcMainEvent, projectPath: string, studioSettings?: StudioSettings) => Promise<void>;
 
@@ -158,7 +159,7 @@ const migrateData = async (payload: MigrateDataInput, event: IpcMainEvent, chann
     log.info('migrate-data', 'No data to migrate found!');
   }
   const projectStudioFile = await fsPromises.readFile(path.join(payload.projectPath, 'project.studio'), { encoding: 'utf-8' });
-  const projectStudioParsed = PROJECT_VALIDATOR.safeParse(JSON.parse(projectStudioFile));
+  const projectStudioParsed = PROJECT_VALIDATOR.safeParse(parseJSON(projectStudioFile, 'project.studio'));
   if (!projectStudioParsed.success) throw new Error('Fail to parse project.studio file');
 
   log.info('migrate-data/success');

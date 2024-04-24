@@ -4,6 +4,7 @@ import { readProjectFolder } from '@src/backendTasks/readProjectData';
 import fsPromise from 'fs/promises';
 import { deletePSDKDatFile } from './migrateUtils';
 import { MOVE_VALIDATOR, StudioMove } from '@modelEntities/move';
+import { parseJSON } from '@utils/json/parse';
 
 const fixSelfStatus = (move: StudioMove) => {
   if (move.battleEngineMethod === 's_self_statut') {
@@ -19,7 +20,7 @@ export const fixBeMethodMoveSelfStatus = async (_: IpcMainEvent, projectPath: st
   const moves = await readProjectFolder(projectPath, 'moves');
   await moves.reduce(async (lastPromise, move) => {
     await lastPromise;
-    const moveParsed = MOVE_VALIDATOR.safeParse(JSON.parse(move));
+    const moveParsed = MOVE_VALIDATOR.safeParse(parseJSON<StudioMove>(move.data, move.filename));
     if (moveParsed.success) {
       if (fixSelfStatus(moveParsed.data)) {
         return fsPromise.writeFile(
