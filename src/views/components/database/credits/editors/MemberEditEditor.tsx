@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
 import { DarkButton, PrimaryButton } from '@components/buttons';
-import { EditorWithCollapse } from '@components/editor/Editor';
+import { Editor } from '@components/editor/Editor';
 import { Input, InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { useConfigCredits } from '@utils/useProjectConfig';
 import { StudioCreditConfig } from '@modelEntities/config';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { TooltipWrapper } from '@ds/Tooltip';
+
+const InfoContainer = styled.span`
+  ${({ theme }) => theme.fonts.normalSmall}
+  color: ${({ theme }) => theme.colors.text400};
+  user-select: none;
+`;
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -35,7 +41,13 @@ export const MemberEditEditor = ({ credits, index, onClose }: CreditsNewMemberEd
     return (
       <InputWithTopLabelContainer>
         <Label htmlFor={label}>{label}</Label>
-        <Input type="text" value={value} onChange={(event) => handleInputChange(key, event.target.value)} placeholder={value} />
+        <Input
+          type="text"
+          value={value}
+          onChange={(event) => handleInputChange(key, event.target.value)}
+          placeholder={key === 'title' ? t('project_leader') : t('leader_name')}
+        />
+        {key === 'name' && <InfoContainer>{t('names_info_edition')}</InfoContainer>}
       </InputWithTopLabelContainer>
     );
   };
@@ -48,7 +60,7 @@ export const MemberEditEditor = ({ credits, index, onClose }: CreditsNewMemberEd
   };
 
   return (
-    <EditorWithCollapse type="creation" title={t('dashboard_credits:developers')}>
+    <Editor type="creation" title={t('dashboard_credits:developers')}>
       <InputContainer>
         {inputRender('title', t('dashboard_credits:role'), title)}
         {inputRender('name', t('dashboard_credits:names'), name)}
@@ -58,6 +70,6 @@ export const MemberEditEditor = ({ credits, index, onClose }: CreditsNewMemberEd
           <DarkButton onClick={onClose}>{t('dashboard_credits:cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
-    </EditorWithCollapse>
+    </Editor>
   );
 };

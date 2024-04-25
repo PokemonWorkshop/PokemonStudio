@@ -27,5 +27,6 @@
   "no_member": "Aucun membre",
   "developers": "Développeurs",
   "save": "Enregistrer",
-  "cancel": "Annuler"
+  "cancel": "Annuler",
+  "names_info_edition": "Utilisez une virgule pour séparer les différents noms."
 }

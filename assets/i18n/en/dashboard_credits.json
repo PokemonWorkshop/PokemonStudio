@@ -1,6 +1,6 @@
 {
   "credits": "Credits",
-  "credit": "",
+  "credit": "Credit",
   "resources": "Resources",
   "intro_image": "",
   "credit_image": "",
@@ -27,5 +27,6 @@
   "no_member": "",
   "developers": "",
   "save": "",
-  "cancel": ""
+  "cancel": "",
+  "names_info_edition": "Use a comma to separate the different names."
 }
