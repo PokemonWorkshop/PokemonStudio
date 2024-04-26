@@ -126,16 +126,14 @@ export const DashboardCredits = () => {
 
   const inputRender = (name: string, key: InputKeys) => {
     return (
-      <>
-        <Input
-          type="text"
-          name={name}
-          defaultValue={credits[key]}
-          placeholder={key === 'chiefProjectTitle' ? t('dashboard_credits:project_leader_role') : t('dashboard_credits:leader_name')}
-          onBlur={() => handleInputBlur(key)}
-          ref={inputsRef[key]}
-        />
-      </>
+      <Input
+        type="text"
+        name={name}
+        defaultValue={credits[key]}
+        placeholder={key === 'chiefProjectTitle' ? t('dashboard_credits:project_leader_role') : t('dashboard_credits:leader_name')}
+        onBlur={() => handleInputBlur(key)}
+        ref={inputsRef[key]}
+      />
     );
   };
 
