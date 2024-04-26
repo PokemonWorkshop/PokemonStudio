@@ -186,13 +186,13 @@ export const DashboardCredits = () => {
           {credits.projectSplash === '' ? (
             <DropInput
               destFolderToCopy="graphics/titles"
-              name={t('dashboard_credits:credit_image')}
+              name={t('dashboard_credits:intro_image')}
               extensions={['png']}
               onFileChoosen={onImageCreditChoosen}
             />
           ) : (
             <PictureInput
-              name={t('dashboard_credits:credit_image')}
+              name={t('dashboard_credits:intro_image')}
               extensions={['png']}
               picturePathInProject={`graphics/titles/${credits.projectSplash}.png`}
               destFolderToCopy="graphics/titles"
@@ -228,8 +228,8 @@ export const DashboardCredits = () => {
           {inputSizesRender('scroll_speed', 'scrollSpeed')}
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="line_Height">{t('dashboard_credits:line_Height')}</Label>
-          {inputSizesRender('line_Height', 'lineHeight')}
+          <Label htmlFor="line_height">{t('dashboard_credits:line_height')}</Label>
+          {inputSizesRender('line_height', 'lineHeight')}
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
           <Label htmlFor="leader_spacing">{t('dashboard_credits:leader_spacing')}</Label>
