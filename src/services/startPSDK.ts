@@ -1,7 +1,7 @@
 import { spawn } from 'child_process';
 import path from 'path';
 import { generateGameLinuxFileContent, generateGameMacFileContent, generatePSDKBatFileContent } from '@services/generatePSDKBatFileContent';
-import { writeFileSync, existsSync, readFileSync, renameSync, chmodSync } from 'fs';
+import { writeFileSync, existsSync, readFileSync, chmodSync } from 'fs';
 import { getPSDKBinariesPath } from '@services/getPSDKVersion';
 import log from 'electron-log';
 
@@ -49,11 +49,6 @@ export const RMXP2StudioSafetyNet = (projectPath: string) => {
   const gameRbContent = readFileSync(path.join(getPSDKBinariesPath(), 'Game.rb')).toString('utf-8');
   const realgameRbContent = existsSync(gameRbPath) && readFileSync(gameRbPath).toString('utf-8');
   if (realgameRbContent !== gameRbContent) writeFileSync(gameRbPath, gameRbContent);
-
-  const pokemonSDKFolder = path.join(projectPath, 'pokemonsdk');
-  if (!existsSync(path.join(projectPath, '.git')) && existsSync(pokemonSDKFolder)) {
-    renameSync(pokemonSDKFolder, path.join(projectPath, 'pokemonsdk.old'));
-  }
 };
 
 // To prevent multiple launches of PSDK (delay 250 ms)
