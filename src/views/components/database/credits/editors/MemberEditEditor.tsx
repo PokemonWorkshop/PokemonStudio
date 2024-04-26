@@ -29,7 +29,7 @@ type CreditsNewMemberEditorProps = {
 
 export const MemberEditEditor = ({ credits, index, onClose }: CreditsNewMemberEditorProps) => {
   const { setProjectConfigValues: setCredits } = useConfigCredits();
-  const { t } = useTranslation('dashboard_credits');
+  const { t } = useTranslation(['dashboard_credits', 'database_moves']);
   const [title, setTitle] = useState(credits.leaders[index].title);
   const [name, setName] = useState(credits.leaders[index].name);
 
@@ -37,22 +37,28 @@ export const MemberEditEditor = ({ credits, index, onClose }: CreditsNewMemberEd
     key === 'title' ? setTitle(value) : setName(value);
   };
 
+  const checkDisabled = () => !title || !name;
+
   const inputRender = (key: string, label: string, value: string) => {
     return (
       <InputWithTopLabelContainer>
-        <Label htmlFor={label}>{label}</Label>
+        <Label htmlFor={label} required>
+          {label}
+        </Label>
         <Input
           type="text"
           value={value}
           onChange={(event) => handleInputChange(key, event.target.value)}
-          placeholder={key === 'title' ? t('project_leader') : t('leader_name')}
+          placeholder={key === 'title' ? t('dashboard_credits:project_leader') : t('dashboard_credits:leader_name')}
         />
-        {key === 'name' && <InfoContainer>{t('names_info_edition')}</InfoContainer>}
+        {key === 'name' && <InfoContainer>{t('dashboard_credits:names_info_edition')}</InfoContainer>}
       </InputWithTopLabelContainer>
     );
   };
 
   const onClickSave = () => {
+    if (checkDisabled()) return;
+
     const updatedLeaders = [...credits.leaders];
     updatedLeaders[index] = { title, name };
     setCredits({ ...credits, leaders: updatedLeaders });
@@ -65,8 +71,11 @@ export const MemberEditEditor = ({ credits, index, onClose }: CreditsNewMemberEd
         {inputRender('title', t('dashboard_credits:role'), title)}
         {inputRender('name', t('dashboard_credits:names'), name)}
         <ButtonContainer>
-          <PrimaryButton onClick={onClickSave}>{t('dashboard_credits:save')}</PrimaryButton>
-          <TooltipWrapper data-tooltip={undefined}></TooltipWrapper>
+          <TooltipWrapper data-tooltip={checkDisabled() ? t('database_moves:fields_asterisk_required') : undefined}>
+            <PrimaryButton onClick={onClickSave} disabled={checkDisabled()}>
+              {t('dashboard_credits:save')}
+            </PrimaryButton>
+          </TooltipWrapper>
           <DarkButton onClick={onClose}>{t('dashboard_credits:cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
