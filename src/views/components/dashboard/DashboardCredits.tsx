@@ -15,11 +15,16 @@ import { MemberEditEditor } from '@components/database/credits/editors/MemberEdi
 import { MemberNewEditor } from '@components/database/credits/editors/MemberNewEditor';
 import { EditorOverlay } from '@components/editor';
 import { Deletion, DeletionOverlay } from '@components/deletion';
+import { assertUnreachable } from '@utils/assertUnreachable';
 import styled from 'styled-components';
 
 const InputSizes = styled(EmbeddedUnitInput)`
   text-align: right;
   min-width: 0px;
+`;
+
+const ScrollSpeedInput = styled(InputSizes)`
+  width: 92px !important;
 `;
 
 type InputKeys = 'scrollSpeed' | 'lineHeight' | 'leaderSpacing' | 'chiefProjectTitle' | 'chiefProjectName';
@@ -44,13 +49,30 @@ export const DashboardCredits = () => {
     const inputRef = inputsRef[key];
     if (!inputRef.current) return;
 
-    const value = inputRef.current.value;
-    if (!inputRef.current.validity.valid || value === '') {
-      inputRef.current.value = currentEditedCredits[key].toString();
-      return;
-    }
+    switch (key) {
+      case 'chiefProjectName':
+      case 'chiefProjectTitle':
+        if (inputRef.current.value === '') {
+          inputRef.current.value = currentEditedCredits[key];
+          return;
+        }
+        setCredits({ ...currentEditedCredits, [key]: inputRef.current.value });
+        break;
+      case 'leaderSpacing':
+      case 'lineHeight':
+      case 'scrollSpeed': {
+        const value = inputRef.current.valueAsNumber;
+        if (!inputRef.current.validity.valid || isNaN(value)) {
+          inputRef.current.value = currentEditedCredits[key].toString();
+          return;
+        }
 
-    setCredits({ ...currentEditedCredits, [key]: value });
+        setCredits({ ...currentEditedCredits, [key]: value });
+        break;
+      }
+      default:
+        assertUnreachable(key);
+    }
   };
 
   const handleGameCreditsBlur = () => {
@@ -74,20 +96,31 @@ export const DashboardCredits = () => {
   const onMusicCreditClear = () => setCredits({ ...currentEditedCredits, bgm: '' });
 
   const inputSizesRender = (name: string, key: InputKeys) => {
-    return (
-      <>
-        <InputSizes
-          unit="px"
-          type="number"
-          name={name}
-          min="1"
-          max="9999"
-          defaultValue={credits[key]}
-          placeholder={credits[key].toString()}
-          onBlur={() => handleInputBlur(key)}
-          ref={inputsRef[key]}
-        />
-      </>
+    return key === 'scrollSpeed' ? (
+      <ScrollSpeedInput
+        unit="px/s"
+        offsetUnit="49px"
+        type="number"
+        name={name}
+        min="1"
+        max="9999"
+        defaultValue={credits[key]}
+        placeholder={credits[key].toString()}
+        onBlur={() => handleInputBlur(key)}
+        ref={inputsRef[key]}
+      />
+    ) : (
+      <InputSizes
+        unit="px"
+        type="number"
+        name={name}
+        min="1"
+        max="9999"
+        defaultValue={credits[key]}
+        placeholder={credits[key].toString()}
+        onBlur={() => handleInputBlur(key)}
+        ref={inputsRef[key]}
+      />
     );
   };
 
