@@ -114,7 +114,7 @@ const showMemberName = (name: string, t: TFunction<'dashboard_credits'>) => {
   return names.map((member) => ' ' + member) + `, ${others}`;
 };
 
-export const RenderMember = forwardRef<HTMLInputElement, RenderMemberProps>(
+export const RenderMember = forwardRef<HTMLDivElement, RenderMemberProps>(
   ({ member, provided, isDragging, dragOn, onClickEdit, onClickDelete }, ref) => {
     const { t } = useTranslation('dashboard_credits');
 
