@@ -110,6 +110,7 @@ const buildCanClose =
     for (const element of [...formRef.current.elements]) {
       if (!(element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement)) continue;
       if (!element.name) continue;
+      if (element.validity.valid) continue;
 
       const defaultValue = defaults[element.name];
       if (defaultValue !== undefined) element.value = defaultValue;

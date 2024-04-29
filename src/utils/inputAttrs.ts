@@ -2,11 +2,16 @@ import { InputHTMLAttributes } from 'react';
 import { z } from 'zod';
 import { isStringPositiveInteger } from './isStringPositiveInteger';
 
+type InputProps = Pick<
+  InputHTMLAttributes<HTMLInputElement>,
+  'required' | 'name' | 'type' | 'minLength' | 'maxLength' | 'pattern' | 'min' | 'max' | 'step'
+> & { defaultValue?: string; [key: `data-${string}`]: string };
+
 export const inputAttrsSingle = (
   singleAttributeValidator: z.ZodFirstPartySchemaTypes,
   name: string,
   defaults?: Record<string, unknown>
-): InputHTMLAttributes<HTMLInputElement> => {
+): InputProps => {
   if (singleAttributeValidator instanceof z.ZodBranded) {
     return inputAttrsSingle(singleAttributeValidator.unwrap(), name);
   } else if (singleAttributeValidator instanceof z.ZodOptional) {
@@ -15,18 +20,18 @@ export const inputAttrsSingle = (
   } else if (singleAttributeValidator instanceof z.ZodNullable) {
     const { required, ...attrs } = inputAttrsSingle(singleAttributeValidator.unwrap(), name);
     return {
-      ['data-input-empty-type' as 'type']: 'null',
+      ['data-input-empty-type']: 'null',
       ...attrs,
     };
   } else if (singleAttributeValidator instanceof z.ZodDefault) {
     const { required, ...attrs } = inputAttrsSingle(singleAttributeValidator.removeDefault(), name);
     return {
-      ['data-input-empty-default-value' as 'type']: singleAttributeValidator._def.defaultValue(),
+      ['data-input-empty-default-value']: singleAttributeValidator._def.defaultValue(),
       ...attrs,
     };
   }
 
-  const attributes: InputHTMLAttributes<HTMLInputElement> = { name, required: true, type: 'text', defaultValue: defaults?.[name] as string };
+  const attributes: InputProps = { name, required: true, type: 'text', defaultValue: defaults?.[name] as string };
   if (singleAttributeValidator instanceof z.ZodString) {
     for (const check of singleAttributeValidator._def.checks) {
       switch (check.kind) {

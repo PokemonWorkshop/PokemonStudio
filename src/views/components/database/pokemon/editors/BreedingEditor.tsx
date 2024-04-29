@@ -1,6 +1,6 @@
 import { Editor } from '@components/editor';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { Input, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
+import { InputWithTopLabelContainer, Label } from '@components/inputs';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { useCreaturePage } from '@utils/usePage';
 import { TFunction } from 'i18next';
@@ -11,9 +11,8 @@ import { SelectPokemon2 } from '@components/selects/SelectPokemon';
 import { SelectCreatureForm } from '@components/selects/SelectPokemonForm';
 import { CREATURE_FORM_VALIDATOR } from '@modelEntities/creature';
 import { useZodForm } from '@utils/useZodForm';
-import { Select } from '@ds/Select';
 import { InputFormContainer } from '@components/inputs/InputContainer';
-import { inputAttrs } from '@utils/inputAttrs';
+import { useInputAttrsWithLabel } from '@utils/useInputAttrs';
 
 const breedingGroupEntries = [
   'undefined',
@@ -51,6 +50,7 @@ export const BreedingEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { creature, form } = useCreaturePage();
   const updateForm = useUpdateForm(creature, form);
   const { canClose, getFormData, onInputTouched, defaults, formRef } = useZodForm(BREEDING_EDITOR_SCHEMA, form);
+  const { Input, Select } = useInputAttrsWithLabel(BREEDING_EDITOR_SCHEMA, defaults);
   const breedingGroupOptions = useMemo(() => getBreedingGroupOptions(t), [t]);
   const [baby, setBaby] = useState(form.babyDbSymbol);
 
@@ -71,18 +71,9 @@ export const BreedingEditor = forwardRef<EditorHandlingClose>((_, ref) => {
           <Label htmlFor="form">{t('form')}</Label>
           <SelectCreatureForm dbSymbol={baby} name="babyForm" defaultValue={defaults.babyForm} />
         </InputWithTopLabelContainer>
-        <InputWithTopLabelContainer>
-          <Label htmlFor="breed_group_1">{t('egg_group_1')}</Label>
-          <Select name="breedGroups.0" options={breedingGroupOptions} defaultValue={defaults['breedGroups.0']} data-input-type="number" />
-        </InputWithTopLabelContainer>
-        <InputWithTopLabelContainer>
-          <Label htmlFor="breed_group_2">{t('egg_group_2')}</Label>
-          <Select name="breedGroups.1" options={breedingGroupOptions} defaultValue={defaults['breedGroups.1']} data-input-type="number" />
-        </InputWithTopLabelContainer>
-        <InputWithLeftLabelContainer>
-          <Label>{t('hatch_steps')}</Label>
-          <Input {...inputAttrs(BREEDING_EDITOR_SCHEMA, 'hatchSteps', defaults)} onInput={onInputTouched} />
-        </InputWithLeftLabelContainer>
+        <Select name="breedGroups.0" label={t('egg_group_1')} options={breedingGroupOptions} data-input-type="number" />
+        <Select name="breedGroups.1" label={t('egg_group_2')} options={breedingGroupOptions} data-input-type="number" />
+        <Input name="hatchSteps" label={t('hatch_steps')} labelLeft onInput={onInputTouched} />
       </InputFormContainer>
     </Editor>
   );
