@@ -13,18 +13,18 @@ export const inputAttrsSingle = (
   defaults?: Record<string, unknown>
 ): InputProps => {
   if (singleAttributeValidator instanceof z.ZodBranded) {
-    return inputAttrsSingle(singleAttributeValidator.unwrap(), name);
+    return inputAttrsSingle(singleAttributeValidator.unwrap(), name, defaults);
   } else if (singleAttributeValidator instanceof z.ZodOptional) {
-    const { required, ...attrs } = inputAttrsSingle(singleAttributeValidator.unwrap(), name);
+    const { required, ...attrs } = inputAttrsSingle(singleAttributeValidator.unwrap(), name, defaults);
     return attrs;
   } else if (singleAttributeValidator instanceof z.ZodNullable) {
-    const { required, ...attrs } = inputAttrsSingle(singleAttributeValidator.unwrap(), name);
+    const { required, ...attrs } = inputAttrsSingle(singleAttributeValidator.unwrap(), name, defaults);
     return {
       ['data-input-empty-type']: 'null',
       ...attrs,
     };
   } else if (singleAttributeValidator instanceof z.ZodDefault) {
-    const { required, ...attrs } = inputAttrsSingle(singleAttributeValidator.removeDefault(), name);
+    const { required, ...attrs } = inputAttrsSingle(singleAttributeValidator.removeDefault(), name, defaults);
     return {
       ['data-input-empty-default-value']: singleAttributeValidator._def.defaultValue(),
       ...attrs,
