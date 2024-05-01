@@ -29,6 +29,11 @@ export const inputAttrsSingle = (
       ['data-input-empty-default-value']: singleAttributeValidator._def.defaultValue(),
       ...attrs,
     };
+  } else if (singleAttributeValidator instanceof z.ZodUnion) {
+    const options = singleAttributeValidator.options;
+    if (Array.isArray(options) && options.length > 0 && options[0] instanceof z.ZodType) {
+      return inputAttrsSingle(options[0], name, defaults);
+    }
   }
 
   const attributes: InputProps = { name, required: true, type: 'text', defaultValue: defaults?.[name] as string };

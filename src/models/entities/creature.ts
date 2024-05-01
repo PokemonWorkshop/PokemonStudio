@@ -4,7 +4,7 @@ import { DB_SYMBOL_VALIDATOR } from './dbSymbol';
 
 export const ITEM_HELD_VALIDATOR = z.object({
   dbSymbol: DB_SYMBOL_VALIDATOR,
-  chance: POSITIVE_OR_ZERO_INT,
+  chance: POSITIVE_OR_ZERO_INT.max(100).step(1),
 });
 export type StudioItemHeld = z.infer<typeof ITEM_HELD_VALIDATOR>;
 
@@ -121,8 +121,8 @@ export const CREATURE_FORM_VALIDATOR = z.object({
   experienceType: z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5)]),
   baseExperience: POSITIVE_OR_ZERO_INT,
   baseLoyalty: POSITIVE_OR_ZERO_INT,
-  catchRate: POSITIVE_OR_ZERO_INT,
-  femaleRate: z.union([POSITIVE_OR_ZERO_FLOAT, z.literal(-1)]),
+  catchRate: POSITIVE_OR_ZERO_INT.max(255),
+  femaleRate: z.union([POSITIVE_OR_ZERO_FLOAT.step(0.1).max(100), z.literal(-1)]),
   breedGroups: z.array(POSITIVE_OR_ZERO_INT),
   hatchSteps: POSITIVE_INT.max(99999),
   babyDbSymbol: DB_SYMBOL_VALIDATOR,
