@@ -5,6 +5,7 @@ import { parseJSON } from '@utils/json/parse';
 import { StudioSettings } from '@utils/settings';
 import { IpcMainEvent } from 'electron';
 import path from 'path';
+import fs from 'fs';
 
 export const generatingMapOverviews = async (_: IpcMainEvent, projectPath: string, studioSettings?: StudioSettings) => {
   const maps = await readProjectFolder(projectPath, 'maps');
@@ -17,7 +18,9 @@ export const generatingMapOverviews = async (_: IpcMainEvent, projectPath: strin
     const mapParsed = MAP_VALIDATOR.safeParse(parseJSON(map.data, map.filename));
     if (mapParsed.success && mapParsed.data.tiledFilename) {
       const mapPath = path.join(projectPath, 'Data/Tiled/Maps', `${mapParsed.data.tiledFilename}.tmx`);
-      await generatingMapOverview(mapPath, tiledOverviewPath, studioSettings.tiledPath);
+      if (fs.existsSync(mapPath)) {
+        await generatingMapOverview(mapPath, tiledOverviewPath, studioSettings.tiledPath);
+      }
     }
   }, Promise.resolve());
 };
