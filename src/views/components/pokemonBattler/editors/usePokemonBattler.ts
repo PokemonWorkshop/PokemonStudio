@@ -265,10 +265,10 @@ export const usePokemonBattler = ({ action, currentBattler, from }: Props) => {
 
     const levelSetup = encounter.levelSetup;
     const defaultLevelSetup = defaultEncounter.levelSetup;
-    if (levelSetup.kind === 'fixed' && defaultLevelSetup.kind === 'fixed' && notBetween(levelSetup.level, 1, 100)) {
+    const pokemonMaxLevel = state.projectConfig.settings_config.pokemonMaxLevel;
+    if (levelSetup.kind === 'fixed' && defaultLevelSetup.kind === 'fixed' && notBetween(levelSetup.level, 1, pokemonMaxLevel)) {
       return false;
     } else if (levelSetup.kind === 'minmax' && defaultLevelSetup.kind === 'minmax') {
-      const pokemonMaxLevel = state.projectConfig.settings_config.pokemonMaxLevel;
       const minLevel = levelSetup.level.minimumLevel;
       const maxLevel = levelSetup.level.maximumLevel;
       if (notBetween(minLevel, 1, pokemonMaxLevel) || notBetween(maxLevel, 1, pokemonMaxLevel) || maxLevel < minLevel) return false;
