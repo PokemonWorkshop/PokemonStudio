@@ -26,7 +26,7 @@ export const DashboardLanguage = () => {
 
   return (
     <>
-      <PageEditor editorTitle={t('language')} title={t('available_in_game')}>
+      <PageEditor editorTitle={t('language')} title={t('available_in_game')} canCollapse>
         <DashboardLanguageAvailableInGame setEditLanguage={setEditLanguage} dialogsRef={dialogsRef} />
         <LanguageDefaultContainer>
           <Label htmlFor="select-default-language">{t('default_language')}</Label>
@@ -43,6 +43,7 @@ export const DashboardLanguage = () => {
         editorTitle={t('language')}
         title={t('other_languages')}
         add={{ label: t('add_a_language'), onClick: () => dialogsRef.current?.openDialog('new') }}
+        canCollapse
       >
         <DashboardLanguageOtherLanguages setEditLanguage={setEditLanguage} dialogsRef={dialogsRef} />
       </PageEditor>
