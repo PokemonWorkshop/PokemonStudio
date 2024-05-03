@@ -151,6 +151,10 @@ export const PSDK_CONFIG_VALIDATOR = z.object({
 });
 export type StudioPSDKConfig = z.infer<typeof PSDK_CONFIG_VALIDATOR>;
 
+export const getProjectLanguagesTranslationFromLanguageConfig = (config: StudioLanguageConfig): StudioProjectLanguageTranslation[] => {
+  return config.choosableLanguageCode.map((code, index) => ({ code, name: config.choosableLanguageTexts[index] }));
+};
+
 export const DEFAULT_OTHER_LANGUAGES: readonly StudioProjectLanguageTranslation[] = [
   { code: 'en', name: 'English' },
   { code: 'fr', name: 'French' },
