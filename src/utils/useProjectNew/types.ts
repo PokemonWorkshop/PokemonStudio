@@ -1,7 +1,7 @@
 import type { StudioProject } from '@modelEntities/project';
 import type { LatestNewProject } from '@src/backendTasks/checkDownloadNewProject';
 
-export const DefaultLanguages = ['en', 'fr', 'es', 'pt', 'de'] as const;
+export const DefaultLanguages = ['en', 'fr', 'it', 'de', 'es', 'ko', 'kana'] as const;
 export type DefaultLanguageType = (typeof DefaultLanguages)[number];
 export type NewProjectData = Omit<StudioProject, 'studioVersion' | 'iconPath' | 'isTiledMode'> & {
   icon?: string;
