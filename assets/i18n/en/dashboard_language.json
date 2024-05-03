@@ -1,16 +1,20 @@
 {
   "language": "Language",
   "settings": "Settings",
-  "available_languages_translation": "Available languages for translation",
-  "available_languages_players": "Available languages for the players",
+  "other_languages": "Other languages",
+  "available_in_game": "Available in game",
   "default_language": "Default language",
   "prefix": "Prefix",
   "fields_asterisk_required": "Fields with an asterisk are required.",
   "add_language": "Add the language",
+  "add_a_language": "Add a language",
   "cancel": "Cancel",
   "code_error": "The prefix is already used.",
   "code_info": "The prefix is used in CSV files to identify the column used.",
   "placeholder_language": "Ex: Japanese",
   "placeholder_prefix": "Ex: jp",
-  "language_already_exists": "The language or the prefix «\u00a0{{language}}\u00a0» already exists."
+  "language_already_exists": "The language or the prefix «\u00a0{{language}}\u00a0» already exists.",
+  "disable": "Disable",
+  "enable_in_game": "Enable in game",
+  "no_other_language": "No other language"
 }

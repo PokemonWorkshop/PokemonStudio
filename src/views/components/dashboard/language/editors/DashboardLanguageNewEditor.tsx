@@ -27,8 +27,6 @@ const CodeErrorContainer = styled.span`
   color: ${({ theme }) => theme.colors.dangerBase};
 `;
 
-const getCode = (languageText: string) => languageText.slice(0, languageText.length === 1 ? 1 : 2).toLocaleLowerCase();
-
 export type NewLanguage = {
   from: DashboardLanguageType;
   name: string;
@@ -40,15 +38,14 @@ type LanguageDefaultValue = {
 };
 
 type DashboardLanguageNewEditorProps = {
-  newLanguage: NewLanguage;
   closeDialog: () => void;
 };
 
-export const DashboardLanguageNewEditor = forwardRef<EditorHandlingClose, DashboardLanguageNewEditorProps>(({ newLanguage, closeDialog }, ref) => {
-  const { languageConfig, gameOptions, projectStudio, updateLanguageConfig, updateGameOptions, updateProjectStudio } = useDashboardLanguage();
+export const DashboardLanguageNewEditor = forwardRef<EditorHandlingClose, DashboardLanguageNewEditorProps>(({ closeDialog }, ref) => {
+  const { projectStudio, updateProjectStudio } = useDashboardLanguage();
   const { addNewLanguageProjectText } = useProjectSavingLanguage();
   const { t } = useTranslation('dashboard_language');
-  const [languageText, setLanguageText] = useState<LanguageDefaultValue>({ text: newLanguage.name, code: getCode(newLanguage.name) });
+  const [languageText, setLanguageText] = useState<LanguageDefaultValue>({ text: '', code: '' });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const codes = useMemo(() => projectStudio.languagesTranslation.map(({ code }) => code), []);
 
@@ -59,17 +56,6 @@ export const DashboardLanguageNewEditor = forwardRef<EditorHandlingClose, Dashbo
 
     const languagesTranslation = cloneEntity(projectStudio.languagesTranslation);
     languagesTranslation.push({ code: languageText.code, name: languageText.text });
-    if (newLanguage.from === 'player') {
-      const currentEditedLanguage = cloneEntity(languageConfig);
-      currentEditedLanguage.choosableLanguageTexts.push(languageText.text);
-      currentEditedLanguage.choosableLanguageCode.push(languageText.code);
-      if (currentEditedLanguage.choosableLanguageCode.length > 1 && !gameOptions.order.includes('language')) {
-        const order = cloneEntity(gameOptions.order);
-        order.push('language');
-        updateGameOptions({ order });
-      }
-      updateLanguageConfig(currentEditedLanguage);
-    }
     addNewLanguageProjectText(languageText.code);
     updateProjectStudio({ languagesTranslation });
     closeDialog();
@@ -86,7 +72,7 @@ export const DashboardLanguageNewEditor = forwardRef<EditorHandlingClose, Dashbo
   const checkDisabled = () => languageText.text === '' || languageText.code === '' || !isCodeUnique();
 
   return (
-    <Editor type="creation" title={newLanguage.from === 'player' ? t('available_languages_players') : t('available_languages_translation')}>
+    <Editor type="creation" title={t('other_languages')}>
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="language-text" required>

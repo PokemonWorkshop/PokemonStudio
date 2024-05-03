@@ -1,14 +1,12 @@
-import { StudioLanguageConfig } from '@modelEntities/config';
-import { assertUnreachable } from '@utils/assertUnreachable';
-import { cloneEntity } from '@utils/cloneEntity';
 import { useProjectConfigReadonly } from '@utils/useProjectConfig';
 import { useProjectStudio } from '@utils/useProjectStudio';
 import { useUpdateLanguage } from './editors/useUpdateLanguage';
 import { useUpdateGameOptions } from '../gameOptions';
 import { useUpdateProjectStudio } from '@utils/useUpdateProjectStudio';
+import { cloneEntity } from '@utils/cloneEntity';
+import { StudioLanguageConfig } from '@modelEntities/config';
 
 export type DashboardLanguageType = 'translation' | 'player';
-export type QuickAddLanguageConfigResult = 'success' | 'already_exist' | 'open_new';
 
 const updateDefaultLanguage = (language: StudioLanguageConfig) => {
   if (language.choosableLanguageCode.indexOf(language.defaultLanguage) === -1) {
@@ -24,56 +22,47 @@ export const useDashboardLanguage = () => {
   const { projectStudioValues: projectStudio } = useProjectStudio();
   const updateProjectStudio = useUpdateProjectStudio(projectStudio);
 
-  const onDeleteLanguage = (index: number, type: DashboardLanguageType) => {
-    switch (type) {
-      case 'player': {
-        const currentEditedLanguage = cloneEntity(language);
-        currentEditedLanguage.choosableLanguageCode.splice(index, 1);
-        currentEditedLanguage.choosableLanguageTexts.splice(index, 1);
-        if (currentEditedLanguage.choosableLanguageCode.length <= 1) {
-          updateGameOptions({ order: gameOptions.order.filter((k) => k !== 'language') });
-        }
-        updateDefaultLanguage(currentEditedLanguage);
-        updateLanguage(currentEditedLanguage);
-        return;
-      }
-      case 'translation': {
-        const languagesTranslation = cloneEntity(projectStudio.languagesTranslation);
-        languagesTranslation.splice(index, 1);
-        updateProjectStudio({ languagesTranslation });
-        return;
-      }
-      default:
-        assertUnreachable(type);
+  const disabledLanguage = (code: string) => {
+    if (language.choosableLanguageCode.length <= 1) return;
+
+    const index = language.choosableLanguageCode.indexOf(code);
+    if (index === -1) return;
+
+    const languageEdited = cloneEntity(language);
+    languageEdited.choosableLanguageCode.splice(index, 1);
+    languageEdited.choosableLanguageTexts.splice(index, 1);
+    if (languageEdited.choosableLanguageCode.length <= 1) {
+      updateGameOptions({ order: gameOptions.order.filter((k) => k !== 'language') });
     }
+    updateDefaultLanguage(languageEdited);
+    updateLanguage(languageEdited);
   };
 
-  const quickAddLanguageConfig = (from: DashboardLanguageType, value: string): QuickAddLanguageConfigResult => {
-    if (from === 'translation') return 'open_new';
+  const enableLanguageInGame = (code: string) => {
+    const index = projectStudio.languagesTranslation.findIndex(({ code: c }) => c === code);
+    if (index === -1) return;
 
-    const text = value.toLowerCase();
-    const languageTranslation = projectStudio.languagesTranslation.find(
-      ({ code, name }) => code.toLowerCase() === text || name.toLowerCase() === text
-    );
-    if (!languageTranslation) return 'open_new';
-    if (language.choosableLanguageCode.find((code) => languageTranslation.code === code)) return 'already_exist';
-
-    const currentEditedLanguage = cloneEntity(language);
-    currentEditedLanguage.choosableLanguageCode.push(languageTranslation.code);
-    currentEditedLanguage.choosableLanguageTexts.push(languageTranslation.name);
-    updateLanguage(currentEditedLanguage);
-    return 'success';
+    const otherLanguage = projectStudio.languagesTranslation[index];
+    const languageEdited = cloneEntity(language);
+    languageEdited.choosableLanguageCode.push(otherLanguage.code);
+    languageEdited.choosableLanguageTexts.push(otherLanguage.name);
+    if (!gameOptions.order.includes('language')) {
+      const order = cloneEntity(gameOptions.order);
+      order.unshift('language');
+      updateGameOptions({ order });
+    }
+    updateLanguage(languageEdited);
   };
 
   const onChangeDefaultLanguage = (defaultLanguage: string) => updateLanguage({ defaultLanguage });
 
   return {
     languageConfig: language,
-    gameOptions,
     projectStudio,
-    onDeleteLanguage,
+    gameOptions,
+    disabledLanguage,
+    enableLanguageInGame,
     onChangeDefaultLanguage,
-    quickAddLanguageConfig,
     updateLanguageConfig: updateLanguage,
     updateGameOptions,
     updateProjectStudio,

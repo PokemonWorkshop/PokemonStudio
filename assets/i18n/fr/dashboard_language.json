@@ -1,16 +1,20 @@
 {
   "language": "Langue",
   "settings": "Paramètres",
-  "available_languages_translation": "Langues disponibles à la traduction",
-  "available_languages_players": "Langues disponibles aux joueurs",
+  "other_languages": "Autres langues",
+  "available_in_game": "Disponibles en jeu",
   "default_language": "Langue par défaut",
   "prefix": "Préfixe",
   "fields_asterisk_required": "Les champs avec un astérisque sont requis.",
   "add_language": "Ajouter la langue",
+  "add_a_language": "Ajouter une langue",
   "cancel": "Annuler",
   "code_error": "Le préfixe est déjà utilisé.",
   "code_info": "Le préfixe est utilisé dans les fichiers CSV pour identifier la colonne utilisée.",
   "placeholder_language": "Ex : Japonais",
   "placeholder_prefix": "Ex : jp",
-  "language_already_exists": "La langue ou le préfixe «\u00a0{{language}}\u00a0» existe déjà."
+  "language_already_exists": "La langue ou le préfixe «\u00a0{{language}}\u00a0» existe déjà.",
+  "disable": "Désactiver",
+  "enable_in_game": "Activer en jeu",
+  "no_other_language": "Aucune autre langue"
 }

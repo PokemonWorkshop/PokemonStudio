@@ -24,7 +24,7 @@ const getCurrentCode = (
   choosableLanguageCode: string[],
   languagesTranslation: StudioProjectLanguageTranslation[]
 ) => {
-  if (from === 'translation') return choosableLanguageCode[index];
+  if (from === 'player') return choosableLanguageCode[index];
   return languagesTranslation[index].code;
 };
 
@@ -32,13 +32,17 @@ export const DashboardLanguageEditor = forwardRef<EditorHandlingClose, Dashboard
   const { languageConfig, projectStudio, updateLanguageConfig, updateProjectStudio } = useDashboardLanguage();
   const { t } = useTranslation('dashboard_language');
   const [languageIndex, setLanguageIndex] = useState(editLanguage.index);
-  const languageLength = editLanguage.from === 'player' ? languageConfig.choosableLanguageTexts.length : projectStudio.languagesTranslation.length;
-  const languageTexts = useMemo(
-    () => (editLanguage.from === 'player' ? languageConfig.choosableLanguageTexts : projectStudio.languagesTranslation.map(({ name }) => name)),
-    [languageConfig, projectStudio, editLanguage]
+  const otherLanguages = useMemo(
+    () => projectStudio.languagesTranslation.filter(({ code }) => !languageConfig.choosableLanguageCode.includes(code)),
+    [projectStudio, languageConfig]
   );
+  const languageTexts = useMemo(
+    () => (editLanguage.from === 'player' ? languageConfig.choosableLanguageTexts : otherLanguages.map(({ name }) => name)),
+    [languageConfig, otherLanguages, editLanguage]
+  );
+  const languageLength = editLanguage.from === 'player' ? languageConfig.choosableLanguageTexts.length : otherLanguages.length;
   const languageTextRef = useRef<HTMLInputElement>(null);
-  const currentCode = getCurrentCode(editLanguage.from, languageIndex, languageConfig.choosableLanguageCode, projectStudio.languagesTranslation);
+  const currentCode = getCurrentCode(editLanguage.from, languageIndex, languageConfig.choosableLanguageCode, otherLanguages);
 
   const updateNameOfLanguagesTranslation = (index: number, newLanguageText: string) => {
     const languagesTranslation = cloneEntity(projectStudio.languagesTranslation);
@@ -92,7 +96,7 @@ export const DashboardLanguageEditor = forwardRef<EditorHandlingClose, Dashboard
   return (
     <EditorWithPagination
       type="edit"
-      title={editLanguage.from === 'player' ? t('available_languages_players') : t('available_languages_translation')}
+      title={editLanguage.from === 'player' ? t('available_in_game') : t('other_languages')}
       paginationProps={paginationProps}
     >
       <EditorChildWithSubEditorContainer>
