@@ -16,5 +16,6 @@
   "language_already_exists": "The language or the prefix «\u00a0{{language}}\u00a0» already exists.",
   "disable": "Disable",
   "enable_in_game": "Enable in game",
-  "no_other_language": "No other language"
+  "no_other_language": "No other language",
+  "disable_delete": "Basic languages cannot be deleted."
 }

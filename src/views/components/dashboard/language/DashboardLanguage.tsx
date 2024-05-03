@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { TFunction, useTranslation } from 'react-i18next';
 import { PageEditor } from '@components/pages';
 import { StudioLanguageConfig } from '@modelEntities/config';
 import { useDashboardLanguage } from './useDashboardLanguage';
@@ -11,17 +11,20 @@ import { Label } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import { DashboardLanguageOtherLanguages } from './DashboardLanguageOtherLanguages';
 import { LanguageDefaultContainer } from './DashboardLanguageStyle';
+import { getLanguageName } from '@utils/getLanguageDisplayText';
+import i18n from '@src/i18n';
 
-const languageDefaultEntries = (language: StudioLanguageConfig) =>
+const languageDefaultEntries = (language: StudioLanguageConfig, t: TFunction<'text_management'>) =>
   language.choosableLanguageCode
-    .map((code, index) => ({ value: code, label: language.choosableLanguageTexts[index] }))
+    .map((code, index) => ({ value: code, label: getLanguageName(code, language.choosableLanguageTexts[index], t, i18n) }))
     .sort((a, b) => a.label.localeCompare(b.label));
 
 export const DashboardLanguage = () => {
   const { languageConfig, onChangeDefaultLanguage } = useDashboardLanguage();
   const dialogsRef = useDialogsRef<DashboardLanguageEditorAndDeletionKeys>();
   const { t } = useTranslation('dashboard_language');
-  const languageDefaultOptions = useMemo(() => languageDefaultEntries(languageConfig), [languageConfig]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const languageDefaultOptions = useMemo(() => languageDefaultEntries(languageConfig, t), [languageConfig, languageConfig.choosableLanguageTexts]);
   const [editLanguage, setEditLanguage] = useState<EditLanguage>({ from: 'player', index: 0 });
 
   return (

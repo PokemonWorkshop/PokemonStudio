@@ -8,3 +8,12 @@ export const getLanguageDisplayText = (languageKey: string, t: TFunction<'text_m
     return t('language_default', { prefix: prefix ? prefix : languageKey });
   }
 };
+
+export const getLanguageName = (code: string, defaultName: string, t: TFunction<'text_management'>, i18n: i18n) => {
+  const languageTextKey = `text_management:language_${code.toLowerCase()}`;
+  if (i18n.exists(languageTextKey)) {
+    return t(languageTextKey);
+  } else {
+    return defaultName;
+  }
+};
