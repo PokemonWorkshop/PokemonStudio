@@ -1,20 +1,23 @@
 import React, { forwardRef, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Editor } from '@components/editor';
-import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
+import { Input, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
 import styled from 'styled-components';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { TextInputError } from '@components/inputs/Input';
 import { checkDbSymbolExist, generateDefaultDbSymbol, wrongDbSymbol } from '@utils/dbSymbolUtils';
-import { SelectType } from '@components/selects';
 import { useProjectPokemon, useProjectDex } from '@utils/useProjectData';
 import { createCreature } from '@utils/entityCreation';
 import { useSetProjectText } from '@utils/ReadingProjectText';
-import { CREATURE_DESCRIPTION_TEXT_ID, CREATURE_NAME_TEXT_ID, CREATURE_SPECIE_TEXT_ID } from '@modelEntities/creature';
+import { CREATURE_DESCRIPTION_TEXT_ID, CREATURE_FORM_VALIDATOR, CREATURE_NAME_TEXT_ID, CREATURE_SPECIE_TEXT_ID } from '@modelEntities/creature';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { cloneEntity } from '@utils/cloneEntity';
 import { TooltipWrapper } from '@ds/Tooltip';
+import { useZodForm } from '@utils/useZodForm';
+import { InputFormContainer } from '@components/inputs/InputContainer';
+import { TypeFields } from './InformationEditor/TypeFields';
+import { useSelectOptions } from '@utils/useSelectOptions';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -28,23 +31,29 @@ type Props = {
   setEvolutionIndex: (index: number) => void;
 };
 
+const CREATURE_NEW_EDITOR_SCHEMA = CREATURE_FORM_VALIDATOR.pick({ type1: true, type2: true });
+
 export const PokemonNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeDialog, setEvolutionIndex }, ref) => {
   const { projectDataValues: creatures, setProjectDataValues: setCreature } = useProjectPokemon();
   const { projectDataValues: dex, setProjectDataValues: setDex } = useProjectDex();
-  const { t } = useTranslation(['database_pokemon', 'database_moves']);
+  const { t } = useTranslation('database_pokemon');
+  const { t: tMove } = useTranslation('database_moves');
   const setText = useSetProjectText();
   const [name, setName] = useState(''); // We use a state because synchronizing dbSymbol is easier with a state
-  const [type1, setType1] = useState<DbSymbol>('__undef__' as DbSymbol);
-  const [type2, setType2] = useState<DbSymbol>('__undef__' as DbSymbol);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const dbSymbolRef = useRef<HTMLInputElement>(null);
   const [dbSymbolErrorType, setDbSymbolErrorType] = useState<'value' | 'duplicate' | undefined>(undefined);
+  const typeOptions = useSelectOptions('types');
+  const form = { type1: (typeOptions[0]?.value || '__undef__') as DbSymbol, type2: '__undef__' as DbSymbol };
+  const { getFormData, defaults, formRef } = useZodForm(CREATURE_NEW_EDITOR_SCHEMA, form);
   useEditorHandlingClose(ref);
 
   const onClickNew = () => {
-    if (!dbSymbolRef.current || !name || !descriptionRef.current) return;
+    const result = getFormData();
+    if (!dbSymbolRef.current || !name || !descriptionRef.current || !result.success) return;
 
     const dbSymbol = dbSymbolRef.current.value as DbSymbol;
+    const { type1, type2 } = result.data;
     const newCreature = createCreature(creatures, dbSymbol, type1, type2);
     setText(CREATURE_NAME_TEXT_ID, newCreature.id, name);
     setText(CREATURE_DESCRIPTION_TEXT_ID, newCreature.id, descriptionRef.current.value);
@@ -88,34 +97,23 @@ export const PokemonNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
   /**
    * Check if the entity cannot be created because of any validation error
    */
-  const checkDisabled = () => !name || !!dbSymbolErrorType || type1 === '__undef__';
+  const isDisabled = !name || !!dbSymbolErrorType;
 
   return (
-    <Editor type="creation" title={t('database_pokemon:new')}>
-      <InputContainer>
+    <Editor type="creation" title={t('new')}>
+      <InputFormContainer ref={formRef}>
         <InputWithTopLabelContainer>
-          <Label htmlFor="name" required>
-            {t('database_pokemon:name')}
-          </Label>
-          <Input type="text" name="name" value={name} onChange={onChangeName} placeholder={t('database_pokemon:example_name')} />
+          <Label required>{t('name')}</Label>
+          <Input value={name} onChange={onChangeName} placeholder={t('example_name')} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
-          <Label htmlFor="descr">{t('database_pokemon:description')}</Label>
-          <MultiLineInput id="descr" ref={descriptionRef} placeholder={t('database_pokemon:example_description')} />
+          <Label>{t('description')}</Label>
+          <MultiLineInput ref={descriptionRef} placeholder={t('example_description')} />
         </InputWithTopLabelContainer>
-        <InputWithTopLabelContainer>
-          <Label htmlFor="type1" required>
-            {t('database_pokemon:type1')}
-          </Label>
-          <SelectType dbSymbol={type1} onChange={(value) => setType1(value as DbSymbol)} filter={(value) => value !== type2} noneValue noLabel />
-        </InputWithTopLabelContainer>
-        <InputWithTopLabelContainer>
-          <Label htmlFor="type2">{t('database_pokemon:type2')}</Label>
-          <SelectType dbSymbol={type2} onChange={(value) => setType2(value as DbSymbol)} filter={(value) => value !== type1} noneValue noLabel />
-        </InputWithTopLabelContainer>
+        <TypeFields form={form} defaults={defaults} />
         <InputWithTopLabelContainer>
           <Label htmlFor="dbSymbol" required>
-            {t('database_moves:symbol')}
+            {tMove('symbol')}
           </Label>
           <Input
             type="text"
@@ -123,20 +121,20 @@ export const PokemonNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
             ref={dbSymbolRef}
             onChange={(e) => onChangeDbSymbol(e.currentTarget.value)}
             error={!!dbSymbolErrorType}
-            placeholder={t('database_pokemon:example_db_symbol')}
+            placeholder={tMove('example_db_symbol')}
           />
-          {dbSymbolErrorType == 'value' && <TextInputError>{t('database_moves:incorrect_format')}</TextInputError>}
-          {dbSymbolErrorType == 'duplicate' && <TextInputError>{t('database_moves:db_symbol_already_used')}</TextInputError>}
+          {dbSymbolErrorType == 'value' && <TextInputError>{tMove('incorrect_format')}</TextInputError>}
+          {dbSymbolErrorType == 'duplicate' && <TextInputError>{tMove('db_symbol_already_used')}</TextInputError>}
         </InputWithTopLabelContainer>
         <ButtonContainer>
-          <TooltipWrapper data-tooltip={checkDisabled() ? t('database_moves:fields_asterisk_required') : undefined}>
-            <PrimaryButton onClick={onClickNew} disabled={checkDisabled()}>
-              {t('database_pokemon:create_pokemon')}
+          <TooltipWrapper data-tooltip={isDisabled ? tMove('fields_asterisk_required') : undefined}>
+            <PrimaryButton onClick={onClickNew} disabled={isDisabled}>
+              {t('create_pokemon')}
             </PrimaryButton>
           </TooltipWrapper>
-          <DarkButton onClick={closeDialog}>{t('database_moves:cancel')}</DarkButton>
+          <DarkButton onClick={closeDialog}>{tMove('cancel')}</DarkButton>
         </ButtonContainer>
-      </InputContainer>
+      </InputFormContainer>
     </Editor>
   );
 });
