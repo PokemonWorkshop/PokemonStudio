@@ -17,7 +17,7 @@ export const useInputAttrs = <T extends z.ZodRawShape>(schema: z.ZodObject<T>, d
     () => ({
       Input: ({ name, schemaKey, ...props }: ReactProps<typeof Input>) => <Input {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />,
       EmbeddedUnitInput: ({ name, schemaKey, ...props }: ReactProps<typeof EmbeddedUnitInput>) => (
-        <EmbeddedUnitInput {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />
+        <EmbeddedUnitInput lang="en" {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />
       ),
       Select: ({ name, schemaKey, ...props }: ReactProps<typeof Select>) => {
         const { type, ...attrs } = inputAttrs(schema, name, defaults, schemaKey);
@@ -53,20 +53,20 @@ export const useInputAttrsWithLabel = <T extends z.ZodRawShape>(schema: z.ZodObj
         );
       },
       EmbeddedUnitInput: ({ name, schemaKey, label, labelLeft, ...props }: ReactPropsWithLabel<typeof EmbeddedUnitInput>) => {
-        if (!label) return <EmbeddedUnitInput {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />;
+        if (!label) return <EmbeddedUnitInput lang="en" {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />;
 
         if (labelLeft)
           return (
             <InputWithLeftLabelContainer>
               <Label>{label}</Label>
-              <EmbeddedUnitInput {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />
+              <EmbeddedUnitInput lang="en" {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />
             </InputWithLeftLabelContainer>
           );
 
         return (
           <InputWithTopLabelContainer>
             <Label>{label}</Label>
-            <EmbeddedUnitInput {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />
+            <EmbeddedUnitInput lang="en" {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />
           </InputWithTopLabelContainer>
         );
       },

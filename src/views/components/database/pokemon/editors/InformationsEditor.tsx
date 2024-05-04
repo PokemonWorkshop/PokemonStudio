@@ -37,7 +37,6 @@ export const InformationsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const onClose = () => {
     const result = canClose() && getFormData();
     if (!result || !result.success) return;
-    if (dialogsRef.current?.currentDialog) dialogsRef.current.closeDialog();
 
     tTFR.current?.saveTexts();
     updateForm(result.data);
