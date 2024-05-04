@@ -129,7 +129,7 @@ export const CREATURE_FORM_VALIDATOR = z.object({
   babyForm: POSITIVE_OR_ZERO_INT,
   itemHeld: z.array(ITEM_HELD_VALIDATOR),
   abilities: z.array(DB_SYMBOL_VALIDATOR).min(3).max(3),
-  frontOffsetY: z.number(),
+  frontOffsetY: z.number().min(-999).max(999),
   resources: CREATURE_RESOURCES_VALIDATOR,
   moveSet: z.array(LEARNABLE_MOVE_VALIDATOR),
 });
