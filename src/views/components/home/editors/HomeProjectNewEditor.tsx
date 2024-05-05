@@ -1,6 +1,6 @@
 import { NewProjectButton } from '@components/buttons';
 import { EditorWithCollapse } from '@components/editor/Editor';
-import { IconInput, Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
+import { IconInput, Input, InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { DropInput } from '@components/inputs/DropInput';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import { SelectCustomSimple } from '@components/SelectCustom';
@@ -92,10 +92,6 @@ export const HomeProjectNewEditor = forwardRef<EditorHandlingClose, HomeProjectN
               noTooltip
             />
           </InputWithTopLabelContainer>
-          <InputWithLeftLabelContainer>
-            <Label htmlFor="multi_language">{t('multi_language')}</Label>
-            <Toggle onChange={(event) => setNewProjectData({ ...newProjectData, multiLanguage: event.target.checked })} />
-          </InputWithLeftLabelContainer>
         </InputGroupCollapse>
         <TooltipWrapper data-tooltip={isDisabled() ? t('fields_asterisk_required') : undefined}>
           <NewProjectButton newProjectData={newProjectData} disabled={isDisabled()} closeDialog={closeDialog} />
