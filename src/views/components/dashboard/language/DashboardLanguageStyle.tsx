@@ -6,8 +6,6 @@ import styled from 'styled-components';
 export const DashboardLanguageTableContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin-left: -8px;
-  margin-right: -8px;
 
   .language {
     display: flex;
@@ -18,6 +16,8 @@ export const DashboardLanguageTableContainer = styled.div`
     justify-content: space-between;
     height: 40px;
     border-radius: 8px;
+    margin-left: -8px;
+    margin-right: -8px;
 
     :hover {
       background-color: ${({ theme }) => theme.colors.dark18};
