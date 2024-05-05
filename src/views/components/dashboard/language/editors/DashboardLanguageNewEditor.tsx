@@ -63,7 +63,7 @@ export const DashboardLanguageNewEditor = forwardRef<EditorHandlingClose, Dashbo
 
   const onChangePrefix = (event: React.ChangeEvent<HTMLInputElement>) => {
     const prefix = event.target.value.toLocaleLowerCase();
-    if (prefix.length >= 5) return event.preventDefault();
+    if (prefix.length > 5) return event.preventDefault();
 
     setLanguageText({ ...languageText, code: prefix });
   };

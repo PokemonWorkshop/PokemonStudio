@@ -52,6 +52,7 @@ export const DashboardLanguageOtherLanguages = ({ dialogsRef, setEditLanguage }:
             <div key={`other-language-${index}`} className="language">
               <span data-tooltip={name} className="langage-name">
                 {getLanguageName(code, name, t, i18n)}
+                <span className="language-code"> - {code}</span>
               </span>
               <div className="buttons">
                 <div className="actions">

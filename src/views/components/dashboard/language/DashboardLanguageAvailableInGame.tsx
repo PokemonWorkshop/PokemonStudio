@@ -29,6 +29,7 @@ export const DashboardLanguageAvailableInGame = ({ dialogsRef, setEditLanguage }
         <div key={`language-available-in-game-${index}`} className="language">
           <span data-tooltip={getLanguageName(code, languageConfig.choosableLanguageTexts[index], t, i18n)} className="langage-name">
             {languageConfig.choosableLanguageTexts[index]}
+            <span className="language-code"> - {code}</span>
           </span>
           <div className="buttons">
             <EditButtonOnlyIcon onClick={() => handleEdit(index)} color={theme.colors.primaryBase} />

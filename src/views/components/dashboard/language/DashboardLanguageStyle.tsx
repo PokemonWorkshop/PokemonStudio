@@ -6,6 +6,8 @@ import styled from 'styled-components';
 export const DashboardLanguageTableContainer = styled.div`
   display: flex;
   flex-direction: column;
+  margin-left: -8px;
+  margin-right: -8px;
 
   .language {
     display: flex;
@@ -28,6 +30,11 @@ export const DashboardLanguageTableContainer = styled.div`
     .langage-name {
       color: ${({ theme }) => theme.colors.text100};
       ${({ theme }) => theme.fonts.normalMedium}
+
+      .language-code {
+        color: ${({ theme }) => theme.colors.text400};
+        ${({ theme }) => theme.fonts.normalMedium}
+      }
     }
 
     .buttons {
