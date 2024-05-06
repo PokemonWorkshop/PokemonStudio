@@ -34,5 +34,6 @@
   "kana": "Japanese",
   "pt": "Portuguese",
   "zh": "Chinese",
-  "incorrect_title": "Wrong character(s)"
+  "incorrect_title": "Wrong character(s)",
+  "cancel": "Cancel"
 }
