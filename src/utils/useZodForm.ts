@@ -21,7 +21,7 @@ const getNextObject = (object: OpaqueObject, key: string, restName: string[]): O
 };
 
 const getValue = (element: PossibleInput) => {
-  if (element.type === 'number' || element.dataset.inputType === 'number') return Number(element.value);
+  if ((element.type === 'number' && element.value !== '') || element.dataset.inputType === 'number') return Number(element.value);
   if (element instanceof HTMLInputElement && element.type === 'checkbox') return element.checked;
   if (element.value === '') {
     if (element.dataset.inputEmptyType === 'null') return null;
