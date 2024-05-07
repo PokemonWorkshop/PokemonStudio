@@ -17,7 +17,6 @@ export const DashboardLanguageTableContainer = styled.div`
     height: 40px;
     border-radius: 8px;
     margin-left: -8px;
-    margin-right: -8px;
 
     :hover {
       background-color: ${({ theme }) => theme.colors.dark18};
