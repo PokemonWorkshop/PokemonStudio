@@ -5,7 +5,7 @@ import { useLoaderRef } from '@utils/loaderContext';
 import type { DefaultLanguageType, ProjectNewFunctionBinding, ProjectNewStateObject } from './types';
 import { DEFAULT_PROCESS_STATE, PROCESS_DONE_STATE, SpecialStateProcessors } from '@utils/useProcess';
 import { handleFailure } from './helpers';
-import { StudioLanguageConfig, getProjectLanguagesTranslationFromLanguageConfig } from '@modelEntities/config';
+import { DEFAULT_OTHER_LANGUAGES, StudioLanguageConfig } from '@modelEntities/config';
 import { downloadSpeed } from '@utils/downloadSpeed';
 
 const DEFAULT_BINDING: ProjectNewFunctionBinding = {
@@ -17,9 +17,11 @@ const REPOSITORY_URL = 'https://github.com/PokemonWorkshop/PSDKTechnicalDemo/rel
 const languageTexts: Record<DefaultLanguageType, string> = {
   en: 'English',
   fr: 'French',
-  es: 'Spanish',
-  pt: 'Portuguese',
+  it: 'Italian',
   de: 'German',
+  es: 'Spanish',
+  ko: 'Korean',
+  kana: 'Japanese',
 };
 
 const getLanguageConfig = (projectData: { defaultLanguage: DefaultLanguageType; multiLanguage: boolean }): StudioLanguageConfig => {
@@ -123,7 +125,7 @@ export const useProjectNewProcessor = () => {
                   studioVersion: state.studioVersion,
                   iconPath: 'project_icon.png',
                   isTiledMode: true,
-                  languagesTranslation: getProjectLanguagesTranslationFromLanguageConfig(config),
+                  languagesTranslation: DEFAULT_OTHER_LANGUAGES,
                 },
                 null,
                 2

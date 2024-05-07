@@ -154,3 +154,13 @@ export type StudioPSDKConfig = z.infer<typeof PSDK_CONFIG_VALIDATOR>;
 export const getProjectLanguagesTranslationFromLanguageConfig = (config: StudioLanguageConfig): StudioProjectLanguageTranslation[] => {
   return config.choosableLanguageCode.map((code, index) => ({ code, name: config.choosableLanguageTexts[index] }));
 };
+
+export const DEFAULT_OTHER_LANGUAGES: readonly StudioProjectLanguageTranslation[] = [
+  { code: 'en', name: 'English' },
+  { code: 'fr', name: 'French' },
+  { code: 'it', name: 'Italian' },
+  { code: 'de', name: 'German' },
+  { code: 'es', name: 'Spanish' },
+  { code: 'ko', name: 'Korean' },
+  { code: 'kana', name: 'Japanese' },
+];

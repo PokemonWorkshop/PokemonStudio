@@ -3,14 +3,12 @@ import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import { DialogRefData } from '@utils/useDialogsRef';
 import { DashboardLanguageEditor, DashboardLanguageNewEditor } from '.';
-import type { NewLanguage } from './DashboardLanguageNewEditor';
 import type { EditLanguage } from './DashboardLanguageEditor';
 
 export type DashboardLanguageEditorAndDeletionKeys = 'new' | 'edit';
 export type DashboardLanguageDialogsRef = React.RefObject<DialogRefData<DashboardLanguageEditorAndDeletionKeys>>;
 
 type Props = {
-  newLanguage: NewLanguage;
   editLanguage: EditLanguage;
 };
 
@@ -20,10 +18,10 @@ type Props = {
  */
 export const DashboardLanguageEditorOverlay = defineEditorOverlay<DashboardLanguageEditorAndDeletionKeys, Props>(
   'DashboardLanguageEditorOverlay',
-  (dialogToShow, handleCloseRef, closeDialog, { newLanguage, editLanguage }) => {
+  (dialogToShow, handleCloseRef, closeDialog, { editLanguage }) => {
     switch (dialogToShow) {
       case 'new':
-        return <DashboardLanguageNewEditor closeDialog={closeDialog} newLanguage={newLanguage} ref={handleCloseRef} />;
+        return <DashboardLanguageNewEditor closeDialog={closeDialog} ref={handleCloseRef} />;
       case 'edit':
         return <DashboardLanguageEditor ref={handleCloseRef} editLanguage={editLanguage} />;
       default:

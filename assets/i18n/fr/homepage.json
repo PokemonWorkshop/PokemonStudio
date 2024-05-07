@@ -27,8 +27,13 @@
   "fields_asterisk_required": "Les champs avec un astérisque sont requis.",
   "en": "Anglais",
   "fr": "Français",
+  "it": "Italien",
   "es": "Espagnol",
   "pt": "Portugais",
   "de": "Allemand",
-  "incorrect_title": "Caractère(s) incorrect(s)"
+  "ko": "Coréen",
+  "kana": "Japonais",
+  "zh": "Chinois",
+  "incorrect_title": "Caractère(s) incorrect(s)",
+  "cancel": "Annuler"
 }
