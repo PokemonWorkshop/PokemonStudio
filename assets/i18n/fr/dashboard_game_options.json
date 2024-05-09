@@ -5,15 +5,15 @@
   "disable": "Désactiver",
   "enable": "Activer",
   "language": "Langue",
-  "message_speed": "Vitesse du texte",
-  "message_frame": "Fenêtres",
+  "message_speed": "Vitesse de défilement du texte",
+  "message_frame": "Fenêtres de la boîte de message",
   "volume": "Volume",
   "battle_animation": "Animations de combat",
   "battle_style": "Style de combat",
   "screen_scale": "Résolution",
   "language_message": "Cette option est gérée automatiquement.",
   "no_inactive_option": "Aucune option inactive",
-  "no_active_option": "Aucun option active",
+  "no_active_option": "Aucune option active",
   "option_unknown": "Option «\u00a0{{option}}\u00a0»",
   "can_not_disable_option": "Cette option ne peut pas être désactivée."
 }
