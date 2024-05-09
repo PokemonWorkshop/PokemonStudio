@@ -164,3 +164,15 @@ export const DEFAULT_OTHER_LANGUAGES: readonly StudioProjectLanguageTranslation[
   { code: 'ko', name: 'Korean' },
   { code: 'kana', name: 'Japanese' },
 ];
+
+export const DEFAULT_GAME_OPTIONS = [
+  'language',
+  'message_speed',
+  'message_frame',
+  'volume',
+  'battle_animation',
+  'battle_style',
+  'screen_scale',
+] as const;
+
+export type DefaultGameOptions = (typeof DEFAULT_GAME_OPTIONS)[number];

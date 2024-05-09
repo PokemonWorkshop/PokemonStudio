@@ -1,0 +1,19 @@
+{
+  "game_options": "Game options",
+  "active_options": "Active options",
+  "inactive_options": "Inactive options",
+  "disable": "Disable",
+  "enable": "Enable",
+  "language": "Language",
+  "message_speed": "Text speed",
+  "message_frame": "Message frame",
+  "volume": "Volume",
+  "battle_animation": "Battle effects",
+  "battle_style": "Battle style",
+  "screen_scale": "Resolution",
+  "language_message": "This option is managed automatically.",
+  "no_inactive_option": "No inactive option",
+  "no_active_option": "No active option",
+  "option_unknown": "Option «\u00a0{{option}}\u00a0»",
+  "can_not_disable_option": "This option cannot be disabled."
+}

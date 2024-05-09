@@ -8,6 +8,7 @@ import { DashboardGraphicsPage } from './Dashboard.Graphics.page';
 import { DashboardDisplayPage } from './Dashboard.Display.page';
 import { DashboardSavePage } from './Dashboard.Save.page';
 import { DashboardCreditsPage } from './Dashboard.Credits.page';
+import { DashboardGameOptionsPage } from './Dashboard.GameOptions.page';
 import { DashboardPage } from './Dashboard.page';
 import { DashboardGameStartPage } from './Dashboard.GameStart.page';
 import { Route, Routes } from 'react-router-dom';
@@ -107,6 +108,14 @@ const DashboardRouterComponent = () => {
         element={
           <DashboardPageWithMenu>
             <DashboardGameStartPage />
+          </DashboardPageWithMenu>
+        }
+      />
+      <Route
+        path="gameOptions"
+        element={
+          <DashboardPageWithMenu>
+            <DashboardGameOptionsPage />
           </DashboardPageWithMenu>
         }
       />

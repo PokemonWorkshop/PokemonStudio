@@ -9,6 +9,7 @@ import dashboard_credits from './dashboard_credits.json';
 import dashboard_settings from './dashboard_settings.json';
 import dashboard_game_start from './dashboard_game_start.json';
 import dashboard_texts from './dashboard_texts.json';
+import dashboard_game_options from './dashboard_game_options.json';
 import database_abilities from './database_abilities.json';
 import database_items from './database_items.json';
 import database_moves from './database_moves.json';
@@ -57,6 +58,7 @@ export default {
   dashboard_settings,
   dashboard_game_start,
   dashboard_texts,
+  dashboard_game_options,
   database_abilities,
   database_items,
   database_moves,
