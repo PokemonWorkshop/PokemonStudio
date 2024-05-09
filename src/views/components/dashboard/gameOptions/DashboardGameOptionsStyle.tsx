@@ -1,39 +1,9 @@
 import { DarkButton, SecondaryButton } from '@components/buttons';
 import styled from 'styled-components';
 
-export const DashboardGameOptionsInactiveTableContainer = styled.div`
+export const DashboardGameOptionsTableContainer = styled.div`
   display: flex;
   flex-direction: column;
-
-  .game-option {
-    display: flex;
-    box-sizing: border-box;
-    padding: 4px 4px 4px 8px;
-    gap: 48px;
-    align-items: center;
-    justify-content: space-between;
-    height: 40px;
-    border-radius: 8px;
-    margin-left: -8px;
-
-    &:hover {
-      background-color: ${({ theme }) => theme.colors.dark18};
-
-      ${SecondaryButton} {
-        visibility: visible;
-      }
-    }
-
-    .name {
-      color: ${({ theme }) => theme.colors.text100};
-      ${({ theme }) => theme.fonts.normalMedium}
-    }
-
-    ${SecondaryButton} {
-      visibility: hidden;
-      height: 32px;
-    }
-  }
 
   .empty-list {
     ${({ theme }) => theme.fonts.normalRegular}
@@ -41,16 +11,14 @@ export const DashboardGameOptionsInactiveTableContainer = styled.div`
   }
 `;
 
-export const DashboardGameOptionsActiveTableContainer = styled(DashboardGameOptionsInactiveTableContainer)``;
-
-type RenderOptionActiveContainerProps = {
-  isDragging: boolean;
-  dragOn: boolean;
+type RenderOptionContainerProps = {
+  isDragging?: boolean;
+  dragOn?: boolean;
 };
 
-export const RenderOptionActiveContainer = styled.div.attrs<RenderOptionActiveContainerProps>((props) => ({
+export const RenderOptionContainer = styled.div.attrs<RenderOptionContainerProps>((props) => ({
   'data-dragged': props.dragOn && props.isDragging ? true : undefined,
-}))<RenderOptionActiveContainerProps>`
+}))<RenderOptionContainerProps>`
   display: flex;
   box-sizing: border-box;
   padding: 4px 4px 4px 8px;
@@ -64,6 +32,7 @@ export const RenderOptionActiveContainer = styled.div.attrs<RenderOptionActiveCo
   &:hover {
     background-color: ${({ theme }) => theme.colors.dark18};
 
+    ${SecondaryButton},
     ${DarkButton} {
       visibility: ${({ dragOn }) => (dragOn ? `hidden` : 'visible')};
     }
@@ -90,6 +59,7 @@ export const RenderOptionActiveContainer = styled.div.attrs<RenderOptionActiveCo
     ${({ theme }) => theme.fonts.normalMedium}
   }
 
+  ${SecondaryButton},
   ${DarkButton} {
     visibility: hidden;
     height: 32px;

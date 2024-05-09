@@ -1,7 +1,7 @@
 import React, { forwardRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDashboardGameOptions } from './useDashboardGameOptions';
-import { DashboardGameOptionsActiveTableContainer, RenderOptionActiveContainer } from './DashboardGameOptionsStyle';
+import { DashboardGameOptionsTableContainer, RenderOptionContainer } from './DashboardGameOptionsStyle';
 import { DarkButton } from '@components/buttons';
 import { TooltipWrapper } from '@ds/Tooltip';
 import { DEFAULT_GAME_OPTIONS, DefaultGameOptions } from '@modelEntities/config';
@@ -38,7 +38,7 @@ const RenderOptionActive = forwardRef<HTMLDivElement, RenderOptionActiveProps>(
     };
 
     return (
-      <RenderOptionActiveContainer
+      <RenderOptionContainer
         key={`active-option-${index}`}
         className="game-option"
         ref={ref}
@@ -60,7 +60,7 @@ const RenderOptionActive = forwardRef<HTMLDivElement, RenderOptionActiveProps>(
             {t('disable')}
           </DarkButton>
         </TooltipWrapper>
-      </RenderOptionActiveContainer>
+      </RenderOptionContainer>
     );
   }
 );
@@ -72,7 +72,7 @@ export const DashboardGameOptionsActive = () => {
   const [dragOn, setDragOn] = useState(false);
 
   return (
-    <DashboardGameOptionsActiveTableContainer>
+    <DashboardGameOptionsTableContainer>
       {gameOptions.length === 0 ? (
         <span className="empty-list">{t('no_active_option')}</span>
       ) : (
@@ -112,6 +112,6 @@ export const DashboardGameOptionsActive = () => {
           </Droppable>
         </DragDropContext>
       )}
-    </DashboardGameOptionsActiveTableContainer>
+    </DashboardGameOptionsTableContainer>
   );
 };
