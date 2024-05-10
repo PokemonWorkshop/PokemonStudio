@@ -16,6 +16,7 @@ import {
   onSwitchUpdateActivation,
   updateActivation,
   GroupToolMap,
+  isCustomEnvironment as isCustomEnvironmentFunc,
 } from '@utils/GroupUtils';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 import { useGetEntityNameText, useSetProjectText } from '@utils/ReadingProjectText';
@@ -55,7 +56,7 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const [variation, setVariation] = useState(group.terrainTag.toString());
   const [tool, setTool] = useState(group.tool || 'none');
   const [switchValue, setSwitchValue] = useState<number>(getSwitchDefaultValue(group));
-  const isCustomEnvironment = useMemo(() => !(GROUP_SYSTEM_TAGS as readonly string[]).includes(systemTag), [systemTag]);
+  const isCustomEnvironment = useMemo(() => isCustomEnvironmentFunc(systemTag), [systemTag]);
   const customEnvironmentRef = useRef<HTMLInputElement>(null);
 
   const saveTexts = () => {

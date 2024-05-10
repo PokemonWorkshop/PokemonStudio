@@ -32,6 +32,7 @@ export const GROUP_SYSTEM_TAGS = [
   'Ice',
   'HeadButt',
 ] as const;
+export type StudioGroupDefaultSystemTag = (typeof GROUP_SYSTEM_TAGS)[number];
 
 export const GROUP_TOOL_VALIDATOR = z.union([z.null(), z.literal('OldRod'), z.literal('GoodRod'), z.literal('SuperRod'), z.literal('RockSmash')]);
 export type StudioGroupTool = z.infer<typeof GROUP_TOOL_VALIDATOR>;

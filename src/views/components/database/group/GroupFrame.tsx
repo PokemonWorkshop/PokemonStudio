@@ -1,12 +1,12 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataBlockContainer, DataFieldsetField, DataGrid, DataInfoContainer, DataInfoContainerHeaderTitle } from '../dataBlocks';
-import { getActivationLabel, GroupToolMap, GroupVariationsMap } from '@utils/GroupUtils';
+import { getActivationLabel, GroupToolMap, GroupVariationsMap, isCustomEnvironment } from '@utils/GroupUtils';
 import styled from 'styled-components';
 import { padStr } from '@utils/PadStr';
 import { DataFieldsetFieldWithChild } from '../dataBlocks/DataFieldsetField';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
-import { StudioGroup } from '@modelEntities/group';
+import type { StudioGroup, StudioGroupDefaultSystemTag } from '@modelEntities/group';
 import { GroupDialogsRef } from './editors/GroupEditorOverlay';
 
 type GroupFrameProps = {
@@ -63,7 +63,7 @@ export const GroupFrame = ({ group, dialogsRef }: GroupFrameProps) => {
             <DataFieldsetField label={t('battle_type')} data={group.isDoubleBattle ? t('double') : t('simple')} disabled={false} />
             <DataFieldsetFieldWithChild label={t('environment')}>
               <EnvironmentContainer>
-                <span>{t(group.systemTag)}</span>
+                <span>{isCustomEnvironment(group.systemTag) ? t('custom') : t(group.systemTag as StudioGroupDefaultSystemTag)}</span>
                 <span>{`(${variationText ? t(variationText) : '???'})`}</span>
               </EnvironmentContainer>
             </DataFieldsetFieldWithChild>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { DataGroupGrid } from './ZoneTableStyle';
@@ -10,10 +10,11 @@ import { DraggableProvided } from 'react-beautiful-dnd';
 import { Code } from '@components/Code';
 import { padStr } from '@utils/PadStr';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
-import { StudioGroup } from '@modelEntities/group';
-import { StudioZone } from '@modelEntities/zone';
+import type { StudioGroup, StudioGroupDefaultSystemTag } from '@modelEntities/group';
+import type { StudioZone } from '@modelEntities/zone';
 import { CONTROL, useKeyPress } from '@utils/useKeyPress';
 import { useShortcutNavigation } from '@utils/useShortcutNavigation';
+import { isCustomEnvironment } from '@utils/GroupUtils';
 
 type RenderGroupContainerProps = {
   isDragging: boolean;
@@ -116,7 +117,7 @@ type RenderGroupProps = {
   onClickDelete: () => void;
 };
 
-export const RenderGroup = React.forwardRef<HTMLInputElement, RenderGroupProps>(
+export const RenderGroup = forwardRef<HTMLInputElement, RenderGroupProps>(
   ({ group, zone, provided, isDragging, dragOn, onClickEdit, onClickDelete }, ref) => {
     const { t } = useTranslation('database_groups');
     const getGroupName = useGetEntityNameText();
@@ -145,7 +146,13 @@ export const RenderGroup = React.forwardRef<HTMLInputElement, RenderGroupProps>(
         ) : (
           <span className="error">{t('group_deleted')}</span>
         )}
-        {group ? <span className="environment">{t(group.systemTag)}</span> : <span className="environment" />}
+        {group ? (
+          <span className="environment">
+            {isCustomEnvironment(group.systemTag) ? t('custom') : t(group.systemTag as StudioGroupDefaultSystemTag)}
+          </span>
+        ) : (
+          <span className="environment" />
+        )}
         {group ? (
           <div className="present-on-map">
             {group.customConditions

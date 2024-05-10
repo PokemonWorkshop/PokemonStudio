@@ -1,4 +1,4 @@
-import { StudioCustomGroupCondition, StudioGroup, StudioGroupTool } from '@modelEntities/group';
+import { GROUP_SYSTEM_TAGS, StudioCustomGroupCondition, StudioGroup } from '@modelEntities/group';
 import { assertUnreachable } from './assertUnreachable';
 
 export const CustomConditionTypes = ['enabledSwitch', 'mapId'] as const;
@@ -117,3 +117,5 @@ export const defineRelationCustomCondition = (customConditions: StudioCustomGrou
   const otherConditions = customConditions.filter((conditions) => conditions.type !== 'mapId');
   return mapIdConditions.concat(otherConditions);
 };
+
+export const isCustomEnvironment = (systemTag: string) => !(GROUP_SYSTEM_TAGS as readonly string[]).includes(systemTag);
