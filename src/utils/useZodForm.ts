@@ -113,7 +113,7 @@ const buildCanClose =
       if (element.validity.valid) continue;
 
       const defaultValue = defaults[element.name];
-      if (defaultValue !== undefined) element.value = defaultValue;
+      if (defaultValue !== undefined && element.value === '') element.value = defaultValue;
     }
 
     if (schema.safeParse(getRawFormData()).success) return true;
