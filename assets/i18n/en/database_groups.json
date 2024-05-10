@@ -56,6 +56,7 @@
   "UnderWater": "Underwater",
   "Snow": "Snow",
   "Ice": "Ice",
+  "custom": "Custom",
   "variation_0": "Tag 0",
   "variation_1": "Tag 1",
   "variation_2": "Tag 2",
@@ -70,5 +71,6 @@
   "RockSmash": "Rock Smash",
   "HeadButt": "Headbutt",
   "title_data_modification": "Data modification",
-  "warning_headbutt_data_change": "Headbutt should now be set in the Environment list."
+  "warning_headbutt_data_change": "Headbutt should now be set in the Environment list.",
+  "custom_environment": "Custom environment"
 }

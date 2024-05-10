@@ -29,7 +29,8 @@ import { GroupTranslationEditorTitle, GroupTranslationOverlay } from './GroupTra
 const groupActivationEntries = (t: TFunction<'database_groups'>) =>
   GroupActivationsMap.map((option) => ({ value: option.value, label: t(option.label as never) }));
 const groupBattleTypeEntries = (t: TFunction<'database_groups'>) => GroupBattleTypes.map((type) => ({ value: type, label: t(type) }));
-const systemTagsEntries = (t: TFunction<'database_groups'>) => GROUP_SYSTEM_TAGS.map((tag) => ({ value: tag, label: t(tag) }));
+const systemTagsEntries = (t: TFunction<'database_groups'>) =>
+  [...GROUP_SYSTEM_TAGS, 'custom' as const].map((tag) => ({ value: tag, label: t(tag) }));
 const groupVariationEntries = (t: TFunction<'database_groups'>) =>
   GroupVariationsMap.map((variation) => ({ value: variation.value, label: t(variation.label) }));
 const groupToolEntries = (t: TFunction<'database_groups'>) => GroupToolMap.map((option) => ({ value: option.value, label: t(option.label) }));
@@ -54,6 +55,8 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const [variation, setVariation] = useState(group.terrainTag.toString());
   const [tool, setTool] = useState(group.tool || 'none');
   const [switchValue, setSwitchValue] = useState<number>(getSwitchDefaultValue(group));
+  const isCustomEnvironment = useMemo(() => !(GROUP_SYSTEM_TAGS as readonly string[]).includes(systemTag), [systemTag]);
+  const customEnvironmentRef = useRef<HTMLInputElement>(null);
 
   const saveTexts = () => {
     if (!nameRef.current) return;
@@ -64,6 +67,7 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const canClose = () => {
     if (!stepsAverageRef.current || !stepsAverageRef.current.validity.valid) return false;
     if (switchValue < 1 || switchValue > 99999) return false;
+    if (systemTag === '') return false;
 
     return !!nameRef.current?.value && !dialogsRef.current?.currentDialog;
   };
@@ -151,11 +155,25 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
           <SelectCustomSimple
             id="select-environment"
             options={systemTagsOptions}
-            onChange={(value) => setSystemTag(value as StudioGroupSystemTag)}
-            value={systemTag}
+            onChange={(value) => (value === 'custom' ? setSystemTag('') : setSystemTag(value))}
+            value={isCustomEnvironment ? 'custom' : systemTag}
             noTooltip
           />
         </InputWithTopLabelContainer>
+        {isCustomEnvironment && (
+          <InputWithTopLabelContainer>
+            <Label htmlFor="custom-environment" required>
+              {t('custom_environment')}
+            </Label>
+            <Input
+              id="custom-environment"
+              ref={customEnvironmentRef}
+              defaultValue={systemTag}
+              onBlur={(event) => setSystemTag(event.target.value)}
+              placeholder="RegularGround"
+            />
+          </InputWithTopLabelContainer>
+        )}
         <InputWithTopLabelContainer>
           <Label htmlFor="select-variation">{t('variation')}</Label>
           <SelectCustomSimple

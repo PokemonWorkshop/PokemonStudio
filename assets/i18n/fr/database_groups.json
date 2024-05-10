@@ -56,6 +56,7 @@
   "UnderWater": "Sous-marin",
   "Snow": "Neige",
   "Ice": "Glace",
+  "custom": "Personnalisé",
   "variation_0": "Tag 0",
   "variation_1": "Tag 1",
   "variation_2": "Tag 2",
@@ -70,5 +71,6 @@
   "RockSmash": "Éclate-Roc",
   "HeadButt": "Coup d'Boule",
   "title_data_modification": "Modification de données",
-  "warning_headbutt_data_change": "Coup d'Boule doit désormais être paramétrée dans la liste Environnement."
+  "warning_headbutt_data_change": "Coup d'Boule doit désormais être paramétrée dans la liste Environnement.",
+  "custom_environment": "Environnement personnalisé"
 }

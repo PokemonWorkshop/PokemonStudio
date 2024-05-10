@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { POSITIVE_INT, POSITIVE_OR_ZERO_INT } from './common';
+import { POSITIVE_OR_ZERO_INT } from './common';
 import { DB_SYMBOL_VALIDATOR } from './dbSymbol';
 import { ENCOUNTER_VALIDATOR } from './groupEncounter';
 
@@ -16,22 +16,9 @@ const CUSTOM_GROUP_CONDITION_VALIDATOR = z.object({
 });
 export type StudioCustomGroupCondition = z.infer<typeof CUSTOM_GROUP_CONDITION_VALIDATOR>;
 
-export const GROUP_SYSTEM_TAG_VALIDATOR = z.union([
-  z.literal('RegularGround'),
-  z.literal('Grass'),
-  z.literal('TallGrass'),
-  z.literal('Cave'),
-  z.literal('Mountain'),
-  z.literal('Sand'),
-  z.literal('Pond'),
-  z.literal('Ocean'),
-  z.literal('UnderWater'),
-  z.literal('Snow'),
-  z.literal('Ice'),
-  z.literal('HeadButt'),
-]);
+export const GROUP_SYSTEM_TAG_VALIDATOR = z.string();
 export type StudioGroupSystemTag = z.infer<typeof GROUP_SYSTEM_TAG_VALIDATOR>;
-export const GROUP_SYSTEM_TAGS: Readonly<StudioGroupSystemTag[]> = [
+export const GROUP_SYSTEM_TAGS = [
   'RegularGround',
   'Grass',
   'TallGrass',
