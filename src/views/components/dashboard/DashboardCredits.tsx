@@ -30,7 +30,7 @@ const ScrollSpeedInput = styled(InputSizes)`
 type InputKeys = 'scrollSpeed' | 'lineHeight' | 'leaderSpacing' | 'chiefProjectTitle' | 'chiefProjectName';
 
 export const DashboardCredits = () => {
-  const { t } = useTranslation('dashboard_credits');
+  const { t } = useTranslation(['dashboard_credits']);
   const { projectConfigValues: credits, setProjectConfigValues: setCredits } = useConfigCredits();
   const currentEditedCredits = useMemo(() => cloneEntity(credits), [credits]);
   const inputsRef = {

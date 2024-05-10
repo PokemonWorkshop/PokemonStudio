@@ -19,13 +19,13 @@ export const CreditMembersTable = ({ credits, onEdit }: CreditsMembersTableProps
   const [dragOn, setDragOn] = useState(false);
 
   return credits.leaders.length === 0 ? (
-    <TableEmpty>{t('dashboard_credits:no_member')}</TableEmpty>
+    <TableEmpty>{t('no_member')}</TableEmpty>
   ) : (
     <DataMemberTable>
       <DataMemberGrid gap="16px" className="header" dragOn={true}>
         <span></span>
-        <span>{t('dashboard_credits:role')}</span>
-        <span>{t('dashboard_credits:names')}</span>
+        <span>{t('role')}</span>
+        <span>{t('names')}</span>
       </DataMemberGrid>
       <DragDropContext
         onDragStart={() => setDragOn(true)}
