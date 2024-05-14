@@ -45,7 +45,7 @@ export const TranslatableTextFields = forwardRef<TranslatableTextFieldsRef, Tran
         <InputWithTopLabelContainer>
           <Label required>{t('name')}</Label>
           <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_name')}>
-            <Input type="text" defaultValue={creatureName} ref={nameRef} placeholder={t('example_name')} />
+            <Input type="text" name="name" defaultValue={creatureName} ref={nameRef} placeholder={t('example_name')} required />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>

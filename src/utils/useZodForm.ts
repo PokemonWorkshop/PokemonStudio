@@ -104,8 +104,8 @@ const buildCanClose =
     defaults: Record<string, string | undefined>
   ) =>
   () => {
-    if (schema.safeParse(getRawFormData()).success) return true;
     if (!formRef.current) return false;
+    if (schema.safeParse(getRawFormData()).success) return formRef.current.reportValidity();
 
     for (const element of [...formRef.current.elements]) {
       if (!(element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement)) continue;
@@ -116,9 +116,9 @@ const buildCanClose =
       if (defaultValue !== undefined && element.value === '') element.value = defaultValue;
     }
 
-    if (schema.safeParse(getRawFormData()).success) return true;
+    if (schema.safeParse(getRawFormData()).success && formRef.current.checkValidity()) return true;
 
-    formRef.current?.reportValidity();
+    formRef.current.reportValidity();
     return false;
   };
 
