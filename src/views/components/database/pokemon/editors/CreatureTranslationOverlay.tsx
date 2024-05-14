@@ -1,6 +1,5 @@
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
 import { TranslationEditorWithCloseHandling } from '@components/editor/TranslationEditorWithCloseHandling';
-import { ABILITY_DESCRIPTION_TEXT_ID, ABILITY_NAME_TEXT_ID, StudioAbility } from '@modelEntities/ability';
 import { CREATURE_DESCRIPTION_TEXT_ID, CREATURE_NAME_TEXT_ID, CREATURE_SPECIE_TEXT_ID, StudioCreature } from '@modelEntities/creature';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import React from 'react';
