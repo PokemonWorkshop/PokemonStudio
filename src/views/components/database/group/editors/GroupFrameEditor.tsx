@@ -57,7 +57,6 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const [tool, setTool] = useState(group.tool || 'none');
   const [switchValue, setSwitchValue] = useState<number>(getSwitchDefaultValue(group));
   const isCustomEnvironment = useMemo(() => isCustomEnvironmentFunc(systemTag), [systemTag]);
-  const customEnvironmentRef = useRef<HTMLInputElement>(null);
 
   const saveTexts = () => {
     if (!nameRef.current) return;
@@ -168,7 +167,6 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
             </Label>
             <Input
               id="custom-environment"
-              ref={customEnvironmentRef}
               defaultValue={systemTag}
               onBlur={(event) => setSystemTag(event.target.value)}
               placeholder="RegularGround"

@@ -15,6 +15,7 @@ import {
   GroupVariationsMap,
   getSwitchValue,
   onSwitchUpdateActivation,
+  isCustomEnvironment as isCustomEnvironmentFunc,
 } from '@utils/GroupUtils';
 import { GROUP_NAME_TEXT_ID, GROUP_SYSTEM_TAGS, StudioGroupSystemTag, StudioGroupTool } from '@modelEntities/group';
 import { useSetProjectText } from '@utils/ReadingProjectText';
@@ -27,7 +28,8 @@ import { TooltipWrapper } from '@ds/Tooltip';
 const groupActivationEntries = (t: TFunction<'database_groups'>) =>
   GroupActivationsMap.map((activation) => ({ value: activation.value, label: t(activation.label) }));
 const groupBattleTypeEntries = (t: TFunction<'database_groups'>) => GroupBattleTypes.map((type) => ({ value: type, label: t(type) }));
-const systemTagsEntries = (t: TFunction<'database_groups'>) => GROUP_SYSTEM_TAGS.map((tag) => ({ value: tag, label: t(tag) }));
+const systemTagsEntries = (t: TFunction<'database_groups'>) =>
+  [...GROUP_SYSTEM_TAGS, 'custom' as const].map((tag) => ({ value: tag, label: t(tag) }));
 const groupVariationEntries = (t: TFunction<'database_groups'>) =>
   GroupVariationsMap.map((variation) => ({ value: variation.value, label: t(variation.label) }));
 const isTool = (variation: unknown): variation is StudioGroupTool => ['OldRod', 'GoodRod', 'SuperRod', 'RockSmash'].includes(variation as string);
@@ -59,6 +61,7 @@ export const GroupNewEditor = forwardRef<EditorHandlingClose, GroupNewEditorProp
   const [variation, setVariation] = useState<(typeof variationOptions)[number]['value']>('0');
   const [switchId, setSwitchId] = useState(1);
   const [stepsAverage, setStepsAverage] = useState<number>(30);
+  const isCustomEnvironment = useMemo(() => isCustomEnvironmentFunc(systemTag), [systemTag]);
 
   useEditorHandlingClose(ref);
 
@@ -89,6 +92,7 @@ export const GroupNewEditor = forwardRef<EditorHandlingClose, GroupNewEditorProp
     if (!name) return false;
     if (isNaN(stepsAverage) || stepsAverage < 0 || stepsAverage > 999) return false;
     if (isNaN(switchId) || switchId < 1 || switchId > 99999) return false;
+    if (systemTag === '') return false;
 
     return true;
   };
@@ -151,11 +155,24 @@ export const GroupNewEditor = forwardRef<EditorHandlingClose, GroupNewEditorProp
           <SelectCustomSimple
             id="select-environment"
             options={systemTagsOptions}
-            onChange={(value) => setSystemTag(value as StudioGroupSystemTag)}
-            value={systemTag}
+            onChange={(value) => (value === 'custom' ? setSystemTag('') : setSystemTag(value))}
+            value={isCustomEnvironment ? 'custom' : systemTag}
             noTooltip
           />
         </InputWithTopLabelContainer>
+        {isCustomEnvironment && (
+          <InputWithTopLabelContainer>
+            <Label htmlFor="custom-environment" required>
+              {t('custom_environment')}
+            </Label>
+            <Input
+              id="custom-environment"
+              defaultValue={systemTag}
+              onBlur={(event) => setSystemTag(event.target.value)}
+              placeholder="RegularGround"
+            />
+          </InputWithTopLabelContainer>
+        )}
         <InputWithTopLabelContainer>
           <Label htmlFor="select-variation">{t('variation')}</Label>
           <SelectCustomSimple
