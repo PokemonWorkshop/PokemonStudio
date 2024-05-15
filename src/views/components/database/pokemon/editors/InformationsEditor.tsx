@@ -27,7 +27,7 @@ export const InformationsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { creature, form, creatureName } = useCreaturePage();
   const updateForm = useUpdateForm(creature, form);
   const tTFR = useRef<TranslatableTextFieldsRef>(null);
-  const { canClose, getFormData, onInputTouched, defaults, formRef } = useZodForm(INFORMATION_EDITOR_SCHEMA, { ...form, name: creatureName });
+  const { canClose, getFormData, onInputTouched, defaults, formRef } = useZodForm(INFORMATION_EDITOR_SCHEMA, form);
   const { Input } = useInputAttrsWithLabel(INFORMATION_EDITOR_SCHEMA, defaults);
 
   const canCloseEditor = () => {
