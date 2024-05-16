@@ -16,7 +16,23 @@ const CUSTOM_GROUP_CONDITION_VALIDATOR = z.object({
 });
 export type StudioCustomGroupCondition = z.infer<typeof CUSTOM_GROUP_CONDITION_VALIDATOR>;
 
-export const GROUP_SYSTEM_TAG_VALIDATOR = z.string();
+export const SYSTEM_TAG_CUSTOM = 'Custom_';
+
+export const GROUP_SYSTEM_TAG_VALIDATOR = z.union([
+  z.literal('RegularGround'),
+  z.literal('Grass'),
+  z.literal('TallGrass'),
+  z.literal('Cave'),
+  z.literal('Mountain'),
+  z.literal('Sand'),
+  z.literal('Pond'),
+  z.literal('Ocean'),
+  z.literal('UnderWater'),
+  z.literal('Snow'),
+  z.literal('Ice'),
+  z.literal('HeadButt'),
+  z.string().startsWith(SYSTEM_TAG_CUSTOM),
+]);
 export type StudioGroupSystemTag = z.infer<typeof GROUP_SYSTEM_TAG_VALIDATOR>;
 export const GROUP_SYSTEM_TAGS = [
   'RegularGround',

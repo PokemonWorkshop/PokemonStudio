@@ -17,6 +17,8 @@ import {
   updateActivation,
   GroupToolMap,
   isCustomEnvironment as isCustomEnvironmentFunc,
+  getCustomEnvironment,
+  setCustomEnvironment,
 } from '@utils/GroupUtils';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 import { useGetEntityNameText, useSetProjectText } from '@utils/ReadingProjectText';
@@ -167,8 +169,8 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
             </Label>
             <Input
               id="custom-environment"
-              defaultValue={systemTag}
-              onBlur={(event) => setSystemTag(event.target.value)}
+              defaultValue={getCustomEnvironment(systemTag)}
+              onBlur={(event) => setSystemTag(setCustomEnvironment(event.target.value))}
               placeholder="RegularGround"
             />
           </InputWithTopLabelContainer>
