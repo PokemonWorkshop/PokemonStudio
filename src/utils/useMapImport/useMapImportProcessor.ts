@@ -150,14 +150,18 @@ export const useMapImportProcessor = () => {
             return () => {};
           }
           const tiledFilename = mapsToImport[index].path;
-          return window.api.generatingMapOverview(
-            { projectPath: globalState.projectPath!, tiledFilename, tiledExecPath: getSetting('tiledPath') },
-            () => generatingMapOverview(++index),
-            ({ errorMessage }) => {
-              setState(DEFAULT_PROCESS_STATE);
-              fail(binding, mapsToImport, errorMessage);
-            }
-          );
+          if (tiledFilename) {
+            return window.api.generatingMapOverview(
+              { projectPath: globalState.projectPath!, tiledFilename, tiledExecPath: getSetting('tiledPath') },
+              () => generatingMapOverview(++index),
+              ({ errorMessage }) => {
+                setState(DEFAULT_PROCESS_STATE);
+                fail(binding, mapsToImport, errorMessage);
+              }
+            );
+          } else {
+            return toAsyncProcess(() => generatingMapOverview(++index));
+          }
         };
         return generatingMapOverview();
       },
