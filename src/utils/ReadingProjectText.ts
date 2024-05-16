@@ -15,6 +15,7 @@ import { TEXT_INFO_DESCRIPTION_TEXT_ID, TEXT_INFO_NAME_TEXT_ID } from '@modelEnt
 import { SavingTextMap } from './SavingUtils';
 import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID } from '@modelEntities/map';
 import { MAP_INFO_FOLDER_NAME_TEXT_ID } from '@modelEntities/mapInfo';
+import { cloneEntity } from './cloneEntity';
 
 type KeyProjectText = keyof ProjectText;
 
@@ -332,4 +333,45 @@ export const getEntityNameTextUsingTextId = (
     entity.textId,
     projectConfig.language_config.defaultLanguage
   );
+};
+
+export const useCopyProjectText = () => {
+  const [, setState] = useGlobalState();
+
+  return (src: { fileId: number; textId: number }, dest: { fileId: number; textId: number }) => {
+    setState((currentState) => {
+      const projectText = currentState.projectText;
+      const headerTextSrc = projectText[src.fileId][0];
+      const textSrc = projectText[src.fileId][src.textId];
+      const headerTextDest = projectText[dest.fileId][0];
+
+      const change = cloneEntity(projectText[dest.fileId]);
+      let needToChange = false;
+      textSrc.forEach((text, index) => {
+        const srcCode = headerTextSrc[index];
+        const destIndex = headerTextDest.findIndex((destCode) => destCode === srcCode);
+        if (destIndex !== -1 && change[dest.textId][destIndex] !== text) {
+          change[dest.textId][destIndex] = text;
+          needToChange = true;
+        }
+      });
+
+      if (!needToChange) {
+        return currentState;
+      }
+
+      const newState = {
+        ...currentState,
+        savingText: new SavingTextMap(currentState.savingText.set(dest.fileId, 'UPDATE')),
+        projectText: {
+          ...projectText,
+          [dest.fileId]: change,
+        },
+        textVersion: currentState.textVersion + 1,
+      };
+      // Ensure the selects have the right version of the text
+      updateSelectOptionsTextSource(dest.fileId, dest.textId, newState);
+      return newState;
+    });
+  };
 };

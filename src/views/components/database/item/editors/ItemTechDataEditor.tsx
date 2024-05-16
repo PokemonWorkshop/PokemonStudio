@@ -4,16 +4,21 @@ import { Editor } from '@components/editor';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import { SelectMove } from '@components/selects';
-import { LOCKED_ITEM_EDITOR } from '@modelEntities/item';
+import { ITEM_DESCRIPTION_TEXT_ID, LOCKED_ITEM_EDITOR } from '@modelEntities/item';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { useItemPage } from '@utils/usePage';
 import { useUpdateItem } from './useUpdateItem';
+import { useProjectDataReadonly } from '@utils/useProjectData';
+import { useCopyProjectText } from '@utils/ReadingProjectText';
+import { MOVE_DESCRIPTION_TEXT_ID } from '@modelEntities/move';
 
 export const ItemTechDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { currentItem: item } = useItemPage();
+  const { projectDataValues: moves } = useProjectDataReadonly('moves', 'move');
   const { t } = useTranslation(['database_items', 'database_moves']);
   const setItems = useUpdateItem(item);
+  const copyText = useCopyProjectText();
 
   const flingPowerRef = useRef<HTMLInputElement>(null);
 
@@ -37,6 +42,10 @@ export const ItemTechDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
     const flingPower = flingPowerRef.current && !isNaN(flingPowerRef.current.valueAsNumber) ? flingPowerRef.current.valueAsNumber : item.flingPower;
 
     if (isTechItem) {
+      const move = moves[techForm.move];
+      if (!move) return;
+
+      copyText({ fileId: MOVE_DESCRIPTION_TEXT_ID, textId: move.id + 1 }, { fileId: ITEM_DESCRIPTION_TEXT_ID, textId: item.id + 1 });
       setItems({ ...techForm, flingPower: flingPower });
     } else {
       setItems({ flingPower: flingPower });

@@ -1,6 +1,6 @@
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
 import { TranslationEditorWithCloseHandling } from '@components/editor/TranslationEditorWithCloseHandling';
-import { ITEM_NAME_TEXT_ID, StudioItem } from '@modelEntities/item';
+import { ITEM_DESCRIPTION_TEXT_ID, ITEM_NAME_TEXT_ID, ITEM_PLURAL_NAME_TEXT_ID, StudioItem } from '@modelEntities/item';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import React from 'react';
 
@@ -13,8 +13,8 @@ type Props = {
 
 const fileIdByTitle: Array<{ dialog: TranslationEditorTitle } & { id: number }> = [
   { dialog: 'translation_name', id: ITEM_NAME_TEXT_ID },
-  { dialog: 'translation_name_plural', id: ITEM_NAME_TEXT_ID },
-  { dialog: 'translation_description', id: ITEM_NAME_TEXT_ID },
+  { dialog: 'translation_name_plural', id: ITEM_PLURAL_NAME_TEXT_ID },
+  { dialog: 'translation_description', id: ITEM_DESCRIPTION_TEXT_ID },
 ];
 
 /**
@@ -31,7 +31,7 @@ export const ItemTranslationOverlay = defineEditorOverlay<TranslationEditorTitle
         return (
           <TranslationEditorWithCloseHandling
             title={dialogToShow}
-            nameTextId={textId}
+            nameTextId={ITEM_NAME_TEXT_ID}
             fileId={textId}
             textIndex={item.id}
             isMultiline={dialogToShow === 'translation_description'}
