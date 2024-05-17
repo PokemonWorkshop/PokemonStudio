@@ -72,5 +72,6 @@
   "HeadButt": "Coup d'Boule",
   "title_data_modification": "Modification de données",
   "warning_headbutt_data_change": "Coup d'Boule doit désormais être paramétrée dans la liste Environnement.",
-  "custom_environment": "Environnement personnalisé"
+  "custom_environment": "Environnement personnalisé",
+  "invalid_format": "Format non valide"
 }

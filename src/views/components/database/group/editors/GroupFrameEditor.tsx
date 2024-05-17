@@ -19,6 +19,7 @@ import {
   isCustomEnvironment as isCustomEnvironmentFunc,
   getCustomEnvironment,
   setCustomEnvironment,
+  wrongEnvironment,
 } from '@utils/GroupUtils';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 import { useGetEntityNameText, useSetProjectText } from '@utils/ReadingProjectText';
@@ -28,6 +29,7 @@ import { useGroupPage } from '@utils/usePage';
 import { useUpdateGroup } from './useUpdateGroup';
 import { useDialogsRef } from '@utils/useDialogsRef';
 import { GroupTranslationEditorTitle, GroupTranslationOverlay } from './GroupTranslationOverlay';
+import { TextInputError } from '@components/inputs/Input';
 
 const groupActivationEntries = (t: TFunction<'database_groups'>) =>
   GroupActivationsMap.map((option) => ({ value: option.value, label: t(option.label as never) }));
@@ -54,11 +56,12 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const stepsAverageRef = useRef<HTMLInputElement>(null);
   const [activation, setActivation] = useState<StudioGroupActivationType>(getActivationValue(group));
   const [battleType, setBattleType] = useState<(typeof battleTypeOptions)[number]['value']>(group.isDoubleBattle ? 'double' : 'simple');
-  const [systemTag, setSystemTag] = useState<StudioGroupSystemTag>(group.systemTag ?? 'RegularGround');
+  const [systemTag, setSystemTag] = useState<StudioGroupSystemTag>(getCustomEnvironment(group.systemTag) ?? 'RegularGround');
   const [variation, setVariation] = useState(group.terrainTag.toString());
   const [tool, setTool] = useState(group.tool || 'none');
   const [switchValue, setSwitchValue] = useState<number>(getSwitchDefaultValue(group));
   const isCustomEnvironment = useMemo(() => isCustomEnvironmentFunc(systemTag), [systemTag]);
+  const customEnvironmentError = systemTag !== '' && wrongEnvironment(systemTag);
 
   const saveTexts = () => {
     if (!nameRef.current) return;
@@ -69,7 +72,7 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const canClose = () => {
     if (!stepsAverageRef.current || !stepsAverageRef.current.validity.valid) return false;
     if (switchValue < 1 || switchValue > 99999) return false;
-    if (systemTag === '') return false;
+    if (systemTag === '' || wrongEnvironment(systemTag)) return false;
 
     return !!nameRef.current?.value && !dialogsRef.current?.currentDialog;
   };
@@ -82,8 +85,9 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
     const newTool = tool === 'none' ? null : (tool as StudioGroupTool);
     const isDoubleBattle = battleType === 'double';
     const stepsAverage = isNaN(stepsAverageRef.current.valueAsNumber) ? group.stepsAverage : stepsAverageRef.current.valueAsNumber;
+    const newSystemTag = isCustomEnvironment ? setCustomEnvironment(systemTag) : systemTag;
 
-    updateGroup({ customConditions, systemTag, tool: newTool, terrainTag: Number(variation), isDoubleBattle, stepsAverage });
+    updateGroup({ customConditions, systemTag: newSystemTag, tool: newTool, terrainTag: Number(variation), isDoubleBattle, stepsAverage });
     saveTexts();
   };
   useEditorHandlingClose(ref, onClose, canClose);
@@ -169,10 +173,12 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
             </Label>
             <Input
               id="custom-environment"
-              defaultValue={getCustomEnvironment(systemTag)}
-              onBlur={(event) => setSystemTag(setCustomEnvironment(event.target.value))}
+              value={systemTag}
+              onChange={(event) => setSystemTag(event.target.value)}
               placeholder="RegularGround"
+              error={customEnvironmentError}
             />
+            {customEnvironmentError && <TextInputError>{t('invalid_format')}</TextInputError>}
           </InputWithTopLabelContainer>
         )}
         <InputWithTopLabelContainer>

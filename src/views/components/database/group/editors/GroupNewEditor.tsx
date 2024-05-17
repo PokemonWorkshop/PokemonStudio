@@ -16,6 +16,8 @@ import {
   getSwitchValue,
   onSwitchUpdateActivation,
   isCustomEnvironment as isCustomEnvironmentFunc,
+  setCustomEnvironment,
+  wrongEnvironment,
 } from '@utils/GroupUtils';
 import { GROUP_NAME_TEXT_ID, GROUP_SYSTEM_TAGS, StudioGroupSystemTag, StudioGroupTool } from '@modelEntities/group';
 import { useSetProjectText } from '@utils/ReadingProjectText';
@@ -24,6 +26,7 @@ import { DbSymbol } from '@modelEntities/dbSymbol';
 import { findFirstAvailableId } from '@utils/ModelUtils';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { TooltipWrapper } from '@ds/Tooltip';
+import { TextInputError } from '@components/inputs/Input';
 
 const groupActivationEntries = (t: TFunction<'database_groups'>) =>
   GroupActivationsMap.map((activation) => ({ value: activation.value, label: t(activation.label) }));
@@ -62,6 +65,7 @@ export const GroupNewEditor = forwardRef<EditorHandlingClose, GroupNewEditorProp
   const [switchId, setSwitchId] = useState(1);
   const [stepsAverage, setStepsAverage] = useState<number>(30);
   const isCustomEnvironment = useMemo(() => isCustomEnvironmentFunc(systemTag), [systemTag]);
+  const customEnvironmentError = systemTag !== '' && wrongEnvironment(systemTag);
 
   useEditorHandlingClose(ref);
 
@@ -71,11 +75,12 @@ export const GroupNewEditor = forwardRef<EditorHandlingClose, GroupNewEditorProp
     const tool = isTool(variation) ? variation : null;
     const terrainTag = tool ? 0 : Number(variation);
     const activationSwitchId = activation === 'custom' ? switchId : Number(activation);
+    const newSystemTag = isCustomEnvironment ? setCustomEnvironment(systemTag) : systemTag;
 
     const group = createGroup(
       dbSymbol,
       id,
-      systemTag,
+      newSystemTag,
       terrainTag,
       tool,
       battleType === 'double',
@@ -92,7 +97,7 @@ export const GroupNewEditor = forwardRef<EditorHandlingClose, GroupNewEditorProp
     if (!name) return false;
     if (isNaN(stepsAverage) || stepsAverage < 0 || stepsAverage > 999) return false;
     if (isNaN(switchId) || switchId < 1 || switchId > 99999) return false;
-    if (systemTag === '') return false;
+    if (systemTag === '' || wrongEnvironment(systemTag)) return false;
 
     return true;
   };
@@ -167,10 +172,12 @@ export const GroupNewEditor = forwardRef<EditorHandlingClose, GroupNewEditorProp
             </Label>
             <Input
               id="custom-environment"
-              defaultValue={systemTag}
-              onBlur={(event) => setSystemTag(event.target.value)}
+              value={systemTag}
+              onChange={(event) => setSystemTag(event.target.value)}
               placeholder="RegularGround"
+              error={customEnvironmentError}
             />
+            {customEnvironmentError && <TextInputError>{t('invalid_format')}</TextInputError>}
           </InputWithTopLabelContainer>
         )}
         <InputWithTopLabelContainer>

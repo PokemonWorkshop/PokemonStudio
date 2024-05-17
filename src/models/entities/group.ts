@@ -16,6 +16,8 @@ const CUSTOM_GROUP_CONDITION_VALIDATOR = z.object({
 });
 export type StudioCustomGroupCondition = z.infer<typeof CUSTOM_GROUP_CONDITION_VALIDATOR>;
 
+export const SYSTEM_TAG_CUSTOM_VALIDATOR = z.string().regex(/^[A-Za-z0-9_]+$/, 'Invalid custom system tag format');
+
 export const SYSTEM_TAG_CUSTOM = 'Custom_';
 
 export const GROUP_SYSTEM_TAG_VALIDATOR = z.union([
@@ -31,7 +33,7 @@ export const GROUP_SYSTEM_TAG_VALIDATOR = z.union([
   z.literal('Snow'),
   z.literal('Ice'),
   z.literal('HeadButt'),
-  z.string().startsWith(SYSTEM_TAG_CUSTOM),
+  SYSTEM_TAG_CUSTOM_VALIDATOR.startsWith(SYSTEM_TAG_CUSTOM),
 ]);
 export type StudioGroupSystemTag = z.infer<typeof GROUP_SYSTEM_TAG_VALIDATOR>;
 export const GROUP_SYSTEM_TAGS = [
