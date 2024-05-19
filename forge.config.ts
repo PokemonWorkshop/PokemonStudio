@@ -1,7 +1,6 @@
 import type { ForgeConfig } from '@electron-forge/shared-types';
 import { MakerZIP } from '@electron-forge/maker-zip';
 import { MakerDeb } from '@electron-forge/maker-deb';
-import { MakerRpm } from '@electron-forge/maker-rpm';
 import { WebpackPlugin } from '@electron-forge/plugin-webpack';
 import { MakerNSIS } from './src/MakerNSIS';
 
@@ -16,12 +15,7 @@ const config: ForgeConfig = {
     name: process.platform === 'darwin' ? 'Pokemon Studio' : undefined,
   },
   rebuildConfig: {},
-  makers: [
-    new MakerNSIS({}),
-    new MakerZIP({}, ['darwin']),
-    new MakerRpm({ options: { icon: './assets/icon.png' } }),
-    new MakerDeb({ options: { icon: './assets/icon.png' } }),
-  ],
+  makers: [new MakerNSIS({}), new MakerZIP({}, ['darwin']), new MakerDeb({ options: { icon: './assets/icon.png' } })],
   publishers: [
     {
       name: '@electron-forge/publisher-github',
