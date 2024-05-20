@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { POSITIVE_INT, POSITIVE_OR_ZERO_INT } from './common';
+import { POSITIVE_OR_ZERO_INT } from './common';
 import { DB_SYMBOL_VALIDATOR } from './dbSymbol';
 import { ENCOUNTER_VALIDATOR } from './groupEncounter';
 
@@ -16,6 +16,10 @@ const CUSTOM_GROUP_CONDITION_VALIDATOR = z.object({
 });
 export type StudioCustomGroupCondition = z.infer<typeof CUSTOM_GROUP_CONDITION_VALIDATOR>;
 
+export const SYSTEM_TAG_CUSTOM_VALIDATOR = z.string().regex(/^[A-Za-z0-9_]+$/, 'Invalid custom system tag format');
+
+export const SYSTEM_TAG_CUSTOM = 'Custom_';
+
 export const GROUP_SYSTEM_TAG_VALIDATOR = z.union([
   z.literal('RegularGround'),
   z.literal('Grass'),
@@ -29,9 +33,10 @@ export const GROUP_SYSTEM_TAG_VALIDATOR = z.union([
   z.literal('Snow'),
   z.literal('Ice'),
   z.literal('HeadButt'),
+  SYSTEM_TAG_CUSTOM_VALIDATOR.startsWith(SYSTEM_TAG_CUSTOM),
 ]);
 export type StudioGroupSystemTag = z.infer<typeof GROUP_SYSTEM_TAG_VALIDATOR>;
-export const GROUP_SYSTEM_TAGS: Readonly<StudioGroupSystemTag[]> = [
+export const GROUP_SYSTEM_TAGS = [
   'RegularGround',
   'Grass',
   'TallGrass',
@@ -45,6 +50,7 @@ export const GROUP_SYSTEM_TAGS: Readonly<StudioGroupSystemTag[]> = [
   'Ice',
   'HeadButt',
 ] as const;
+export type StudioGroupDefaultSystemTag = (typeof GROUP_SYSTEM_TAGS)[number];
 
 export const GROUP_TOOL_VALIDATOR = z.union([z.null(), z.literal('OldRod'), z.literal('GoodRod'), z.literal('SuperRod'), z.literal('RockSmash')]);
 export type StudioGroupTool = z.infer<typeof GROUP_TOOL_VALIDATOR>;

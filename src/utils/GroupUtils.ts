@@ -1,4 +1,4 @@
-import { StudioCustomGroupCondition, StudioGroup, StudioGroupTool } from '@modelEntities/group';
+import { GROUP_SYSTEM_TAGS, SYSTEM_TAG_CUSTOM, SYSTEM_TAG_CUSTOM_VALIDATOR, StudioCustomGroupCondition, StudioGroup } from '@modelEntities/group';
 import { assertUnreachable } from './assertUnreachable';
 
 export const CustomConditionTypes = ['enabledSwitch', 'mapId'] as const;
@@ -116,4 +116,20 @@ export const defineRelationCustomCondition = (customConditions: StudioCustomGrou
   if (mapIdConditions.length >= 1) mapIdConditions[0].relationWithPreviousCondition = 'AND';
   const otherConditions = customConditions.filter((conditions) => conditions.type !== 'mapId');
   return mapIdConditions.concat(otherConditions);
+};
+
+export const isCustomEnvironment = (systemTag: string) => !(GROUP_SYSTEM_TAGS as readonly string[]).includes(systemTag);
+
+export const getCustomEnvironment = (systemTag: string) => {
+  if (!systemTag.startsWith(SYSTEM_TAG_CUSTOM)) return systemTag;
+
+  return systemTag.substring(7);
+};
+
+export const setCustomEnvironment = (systemTag: string) => {
+  return SYSTEM_TAG_CUSTOM + systemTag;
+};
+
+export const wrongEnvironment = (systemTag: string) => {
+  return !SYSTEM_TAG_CUSTOM_VALIDATOR.safeParse(systemTag).success;
 };
