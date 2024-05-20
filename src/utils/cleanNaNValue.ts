@@ -167,7 +167,6 @@ export const cleanExpandPokemonSetup = (encounter: StudioGroupEncounter, species
     removeExpandPokemonSetup(encounter, 'originalTrainerName');
     removeExpandPokemonSetup(encounter, 'originalTrainerId');
     removeExpandPokemonSetup(encounter, 'givenName');
-    removeExpandPokemonSetup(encounter, 'itemHeld');
   } else {
     removeExpandPokemonSetup(encounter, 'rareness');
   }

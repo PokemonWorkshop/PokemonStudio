@@ -59,11 +59,11 @@ const buildExpandPokemonSetup = (set: PokemonSet, from: string) => {
     { type: 'moves', value: convertMoves(set.moves) },
     { type: 'nature', value: convertToDbSymbol(set.nature) },
     { type: 'rareness', value: -1 },
+    { type: 'itemHeld', value: convertToDbSymbol(set.item) },
   ];
 
   if (from === 'trainer') {
     setupFields.push({ type: 'caughtWith', value: convertToDbSymbol(set.pokeball) || ('poke_ball' as DbSymbol) });
-    setupFields.push({ type: 'itemHeld', value: convertToDbSymbol(set.item) });
     setupFields.push({ type: 'givenName', value: set.name || set.species });
     setupFields.push({ type: 'ivs', value: formatStats(set.ivs, 31) });
     setupFields.push({ type: 'loyalty', value: set.happiness ?? 70 });
