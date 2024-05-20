@@ -142,17 +142,15 @@ export const PokemonBattlerMoreInfoEditor = ({
           noTooltip
         />
       </InputWithTopLabelContainer>
-      {from !== 'group' && (
-        <InputWithTopLabelContainer>
-          <Label htmlFor="select-item-held">{t('pokemon_battler_list:item_held')}</Label>
-          <SelectItemHeld
-            dbSymbol={expandPokemonSetup.itemHeld as string}
-            onChange={(itemHeld) => updateExpandPokemonSetup({ itemHeld })}
-            undefValueOption={t('pokemon_battler_list:none_item')}
-            noLabel
-          />
-        </InputWithTopLabelContainer>
-      )}
+      <InputWithTopLabelContainer>
+        <Label htmlFor="select-item-held">{t('pokemon_battler_list:item_held')}</Label>
+        <SelectItemHeld
+          dbSymbol={expandPokemonSetup.itemHeld as string}
+          onChange={(itemHeld) => updateExpandPokemonSetup({ itemHeld })}
+          undefValueOption={t('pokemon_battler_list:none_item')}
+          noLabel
+        />
+      </InputWithTopLabelContainer>
       {from !== 'group' && (
         <InputWithTopLabelContainer>
           <Label htmlFor="select-caught-with">{t('pokemon_battler_list:caught_with')}</Label>
