@@ -62,6 +62,16 @@ export const useSelect = <Value extends string, ChooseValue extends string>({
     }
   }, [value]);
 
+  // Select value again when options changes and main input visually change
+  useEffect(() => {
+    const newInputLabel = getSelectDefaultLabel(currentValue, defaultValue, options, currentValue, notFoundLabel);
+    const currentInputLabel = inputRef.current?.value;
+    if (newInputLabel !== currentInputLabel) {
+      if (inputRef.current) inputRef.current.value = newInputLabel;
+      if (currentValue !== chooseValue) onChange?.(currentValue as Value);
+    }
+  }, [options]);
+
   // Apply selected value
   const onSelectValue = (value: Value) => {
     optionsUtilsRef.current?.hide();
@@ -98,6 +108,7 @@ export const useSelect = <Value extends string, ChooseValue extends string>({
     if (event.key !== 'Enter' && event.key !== 'ArrowUp' && event.key !== 'ArrowDown' && event.key !== 'Escape') return;
 
     event.preventDefault();
+    event.stopPropagation();
     switch (event.key) {
       case 'Enter':
         optionsUtilsRef.current?.pickHighlighted();
@@ -142,6 +153,7 @@ export const useSelect = <Value extends string, ChooseValue extends string>({
     },
     outputProps: {
       name,
+      'data-input-type': 'data-input-type' in props ? props['data-input-type'] : undefined,
     },
   };
 };

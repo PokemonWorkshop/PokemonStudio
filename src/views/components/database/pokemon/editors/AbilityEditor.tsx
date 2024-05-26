@@ -1,52 +1,39 @@
 import { Editor } from '@components/editor';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
-import { SelectAbility } from '@components/selects';
-import { DbSymbol } from '@modelEntities/dbSymbol';
 import { useCreaturePage } from '@utils/usePage';
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUpdateForm } from './useUpdateForm';
+import { CREATURE_FORM_VALIDATOR } from '@modelEntities/creature';
+import { useSelectOptions } from '@utils/useSelectOptions';
+import { useZodForm } from '@utils/useZodForm';
+import { useInputAttrsWithLabel } from '@utils/useInputAttrs';
+import { InputFormContainer } from '@components/inputs/InputContainer';
 
 const ABILITY_TEXT_KEYS = ['ability_1', 'ability_2', 'hidden_ability'] as const;
+const ABILITY_EDITOR_SCHEMA = CREATURE_FORM_VALIDATOR.pick({ abilities: true });
 
 export const AbilityEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { t } = useTranslation('database_pokemon');
   const { creature, form } = useCreaturePage();
   const updateForm = useUpdateForm(creature, form);
-  const [abilities, setAbilities] = useState([
-    form.abilities[0] || ('__undef__' as DbSymbol),
-    form.abilities[1] || ('__undef__' as DbSymbol),
-    form.abilities[2] || ('__undef__' as DbSymbol),
-  ]);
+  const options = useSelectOptions('abilities');
+  const { canClose, getFormData, defaults, formRef } = useZodForm(ABILITY_EDITOR_SCHEMA, form);
+  const { Select } = useInputAttrsWithLabel(ABILITY_EDITOR_SCHEMA, defaults);
 
   const onClose = () => {
-    updateForm({
-      abilities: [...abilities],
-    });
+    const result = canClose() && getFormData();
+    if (result && result.success) updateForm(result.data);
   };
-  useEditorHandlingClose(ref, onClose);
+  useEditorHandlingClose(ref, onClose, canClose);
 
   return (
     <Editor type="edit" title={t('abilities')}>
-      <InputContainer>
-        {abilities.map((ability, index: number) => {
-          const label = ABILITY_TEXT_KEYS[index];
-          return (
-            <InputWithTopLabelContainer key={index}>
-              <Label htmlFor={label}>{t(label)}</Label>
-              <SelectAbility
-                dbSymbol={ability}
-                onChange={(newDbSymbol) => {
-                  abilities.splice(index, 1, newDbSymbol as DbSymbol);
-                  setAbilities([...abilities]);
-                }}
-                noLabel
-              />
-            </InputWithTopLabelContainer>
-          );
-        })}
-      </InputContainer>
+      <InputFormContainer ref={formRef}>
+        {ABILITY_TEXT_KEYS.map((label, index) => (
+          <Select name={`abilities.${index}`} label={t(label)} options={options} key={label} />
+        ))}
+      </InputFormContainer>
     </Editor>
   );
 });
