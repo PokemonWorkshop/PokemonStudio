@@ -6,10 +6,38 @@ import { SelectDataProps } from './SelectDataProps';
 import { getText } from '@utils/ReadingProjectText';
 import { SelectCustom } from '@components/SelectCustom';
 
+const statsByNature: Record<string, string> = {
+  adamant: '+Atk/-SpAtk',
+  bashful: '',
+  bold: '+Def/-Atk',
+  brave: '+Atk/-Vit',
+  calm: '+SpDef/-Def',
+  careful: '+SpDef/-SpAtk',
+  docile: '',
+  gentle: '+SpDef/-Def',
+  hardy: '',
+  hasty: '+Vit/-Def',
+  impish: '+Def/-SpAtk',
+  jolly: '+Vit/-SpAtk',
+  lax: '+Def/-SpDef',
+  lonely: '+Atk/-Def',
+  mild: '+SpAtk/-Def',
+  modest: '+SpAtk/-Atk',
+  naughty: '+Atk/-SpDef',
+  naive: '+Vit/-SpDef',
+  quiet: '+SpAtk/-Vit',
+  quirky: '',
+  rash: '+SpAtk/-SpDef',
+  relaxed: '+Def/-Vit',
+  sassy: '+SpDef/-Vit',
+  serious: '',
+  timid: '+Vit/-Atk',
+};
+
 const getNatureOptions = (state: State): SelectOption[] =>
-  Object.entries(state.projectConfig.natures.db_symbol_to_id).map(([value, natureId]) => ({
-    value,
-    label: getText(
+  Object.entries(state.projectConfig.natures.db_symbol_to_id).map(([value, natureId]) => {
+    const statByNature = statsByNature[value];
+    let label = getText(
       {
         texts: state.projectText,
         languages: state.projectStudio.languagesTranslation,
@@ -17,8 +45,15 @@ const getNatureOptions = (state: State): SelectOption[] =>
       },
       100008,
       (state.projectConfig.natures.data[natureId] || [0])[0]
-    ),
-  }));
+    );
+    if (statByNature && statByNature !== '') {
+      label += ` (${statByNature})`;
+    }
+    return {
+      value,
+      label,
+    };
+  });
 
 export const SelectNature = ({ dbSymbol, onChange, noneValue, overwriteNoneValue }: SelectDataProps) => {
   const { t } = useTranslation(['database_abilities', 'pokemon_battler_list']);
