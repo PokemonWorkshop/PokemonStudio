@@ -1,0 +1,7 @@
+{
+  "attack": "Atk",
+  "defense": "Def",
+  "special_attack": "Ats",
+  "special_defense": "Dfs",
+  "speed": "Vit"
+}
