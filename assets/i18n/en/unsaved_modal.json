@@ -3,5 +3,9 @@
   "description": "Save changes made to the project before quitting?",
   "cancel": "Cancel",
   "quit": "Quit without saving",
-  "save": "Save"
+  "save": "Save",
+  "never_remember_again": "Don't remind me again",
+  "map_modal_warning_modal_title": "Maps modified",
+  "map_modal_warning_modal_text1": "You must close RPG Maker XP before saving any changes made to your maps. This is to prevent any data corruption.",
+  "map_modal_warning_modal_text2": "Then,you must start your game for the changes to be applied and accessible in RPG Maker XP."
 }

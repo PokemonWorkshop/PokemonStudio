@@ -17,15 +17,13 @@ const MapModificationWarningDialogContainer = styled(MessageBoxIconContainer)`
   color: ${({ theme }) => theme.colors.successBase};
 `;
 
-type SuccessDialogProps = {
-  title: string;
-  message: string;
+type MapModificationWarningDialogProps = {
   onClose: () => void;
 };
 
-export const MapModificationWarningDialog = ({ title, message, onClose }: SuccessDialogProps) => {
+export const MapModificationWarningDialog = ({ onClose }: MapModificationWarningDialogProps) => {
   const [, setChecked] = useState(false);
-  const { t } = useTranslation('loader');
+  const { t } = useTranslation('unsaved_modal');
 
   const neverRemindMe = (checked: boolean) => {
     setChecked(checked);
@@ -37,15 +35,19 @@ export const MapModificationWarningDialog = ({ title, message, onClose }: Succes
         <MapModificationWarningDialogContainer>
           <BaseIcon icon="save" size="s" color={theme.colors.primaryBase} />
         </MapModificationWarningDialogContainer>
-        <h3>{title}</h3>
+        <h3>{t('map_modal_warning_modal_title')}</h3>
       </MessageBoxTitleIconContainer>
       <MessageBoxTextContainer>
-        <p>{message}</p>
+        <p>{t('map_modal_warning_modal_text1')}</p>
+        &nbsp;
+        <p>{t('map_modal_warning_modal_text2')}</p>
       </MessageBoxTextContainer>
       <MessageBoxActionContainer>
-        <Checkbox onChange={(event) => neverRemindMe(event.target.checked)} />
-        <span>Ne plus me le rappeler</span>
-        <PrimaryButton onClick={onClose}>{t('close')}</PrimaryButton>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <Checkbox onChange={(event) => neverRemindMe(event.target.checked)} />
+          <span>{t('never_remember_again')}</span>
+        </div>
+        <PrimaryButton onClick={onClose}>{t('save')}</PrimaryButton>
       </MessageBoxActionContainer>
     </MessageBoxContainer>
   );

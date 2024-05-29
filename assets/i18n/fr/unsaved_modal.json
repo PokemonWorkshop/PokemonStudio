@@ -3,5 +3,9 @@
   "description": "Enregistrer les modifications apportées au projet avant de quitter ?",
   "cancel": "Annuler",
   "quit": "Quitter sans enregistrer",
-  "save": "Enregistrer"
+  "save": "Enregistrer",
+  "map_modal_warning_modal_title": "Modifications apportées aux cartes",
+  "map_modal_warning_modal_text1": "Vous devez fermer RPG Maker XP avant de sauvegarder les modifications apportées à vos cartes. Cela afin de prévenir toute corruption de données.",
+  "map_modal_warning_modal_text2": "Vous devez ensuite démarrer votre jeu pour que les modifications soient prises en compte et accessibles sur RPG Maker XP.",
+  "never_remember_again": "Ne plus me le rappeler"
 }
