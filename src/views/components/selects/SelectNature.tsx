@@ -72,9 +72,9 @@ const getNatureExtraStatsComparedToDependingStats = (state: State, t: TFunction<
  * @param t useTranslation
  * @returns SelectOption[]
  */
-const getNatureOptions = (state: State, t: TFunction<['database_natures']>): SelectOption[] =>
-  Object.entries(state.projectConfig.natures.db_symbol_to_id).map(([value, natureId]) => {
-    const test = getNatureExtraStatsComparedToDependingStats(state, t);
+const getNatureOptions = (state: State, t: TFunction<['database_natures']>): SelectOption[] => {
+  const test = getNatureExtraStatsComparedToDependingStats(state, t);
+  return Object.entries(state.projectConfig.natures.db_symbol_to_id).map(([value, natureId]) => {
     const statByNature = test[value];
 
     let label = getText(
@@ -94,6 +94,7 @@ const getNatureOptions = (state: State, t: TFunction<['database_natures']>): Sel
       label,
     };
   });
+};
 
 export const SelectNature = ({ dbSymbol, onChange, noneValue, overwriteNoneValue }: SelectDataProps) => {
   const { t } = useTranslation(['database_abilities', 'pokemon_battler_list', 'database_natures']);
