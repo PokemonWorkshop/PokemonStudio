@@ -8,7 +8,7 @@ import { useUpdateMove } from './useUpdateMove';
 import { useZodForm } from '@utils/useZodForm';
 import { InputFormContainer } from '@components/inputs/InputContainer';
 import { useInputAttrsWithLabel } from '@utils/useInputAttrs';
-import { BattleEngineMethodEditor } from './MoveParamatersEditor/BattleEngineMethodEditor';
+import { BattleEngineMethodEditor } from './MoveParametersEditor/BattleEngineMethodEditor';
 
 const targetEntries = (t: TFunction<'database_moves'>) => MOVE_TARGETS.map((target) => ({ value: target, label: t(`${target}`) }));
 
