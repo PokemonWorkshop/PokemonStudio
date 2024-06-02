@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { Deletion, DeletionOverlay } from '@components/deletion';
 import { EditorOverlay } from '@components/editor';
-import { ZoneControlBar, ZoneFrame, ZoneGroups, ZoneSettings, ZoneTravel } from '@components/database/zone';
+import { ZoneControlBar, ZoneFrame, ZoneGroups, ZoneSettings, ZoneTravel, ZonePokemon } from '@components/database/zone';
 import {
   ZoneAddGroupEditor,
   ZoneEditGroupEditor,
@@ -161,6 +161,9 @@ export const ZonePage = () => {
               onNew={() => setCurrentEditor('addGroup')}
               onEdit={onEditGroup}
             />
+          </DataBlockWrapper>
+          <DataBlockWrapper>
+            <ZonePokemon zone={zone} groups={groups} />
           </DataBlockWrapper>
           <DataBlockWrapper>
             <DataBlockWithAction size="full" title={t('deletion')}>

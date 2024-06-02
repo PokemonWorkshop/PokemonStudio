@@ -57,5 +57,7 @@
   "zone_group_import_info": "Puoi importare i gruppi da un'altra zona.",
   "import_group_from": "Importa gruppi da",
   "replace_group": "Sostituisci il gruppo",
-  "to_import": "Importa"
+  "to_import": "Importa",
+  "no_pokemon": "Nessun Pokémon",
+  "zone_pokemon": "Pokémon della zona"
 }
