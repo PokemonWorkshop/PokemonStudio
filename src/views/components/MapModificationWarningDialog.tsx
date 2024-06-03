@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  MessageBoxActionContainer,
+  MessageBoxActionContainerSpaceBetween,
   MessageBoxContainer,
   MessageBoxIconContainer,
   MessageBoxTextContainer,
@@ -16,17 +16,21 @@ const MapModificationWarningDialogContainer = styled(MessageBoxIconContainer)`
   background-color: ${({ theme }) => theme.colors.primarySoft};
   color: ${({ theme }) => theme.colors.successBase};
 `;
-
 type MapModificationWarningDialogProps = {
   onClose: () => void;
 };
-
 export const MapModificationWarningDialog = ({ onClose }: MapModificationWarningDialogProps) => {
-  const [, setChecked] = useState(false);
+  const checkedRef = useRef(false);
   const { t } = useTranslation('unsaved_modal');
 
   const neverRemindMe = (checked: boolean) => {
-    setChecked(checked);
+    checkedRef.current = checked;
+  };
+
+  const onClickClose = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    e.preventDefault();
+    sessionStorage.setItem('neverRemindMeMapModification', checkedRef.current.toString());
+    onClose();
   };
 
   return (
@@ -42,13 +46,13 @@ export const MapModificationWarningDialog = ({ onClose }: MapModificationWarning
         &nbsp;
         <p>{t('map_modal_warning_modal_text2')}</p>
       </MessageBoxTextContainer>
-      <MessageBoxActionContainer>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+      <MessageBoxActionContainerSpaceBetween>
+        <div>
           <Checkbox onChange={(event) => neverRemindMe(event.target.checked)} />
           <span>{t('never_remember_again')}</span>
         </div>
-        <PrimaryButton onClick={onClose}>{t('save')}</PrimaryButton>
-      </MessageBoxActionContainer>
+        <PrimaryButton onClick={(e) => onClickClose(e)}>{t('save')}</PrimaryButton>
+      </MessageBoxActionContainerSpaceBetween>
     </MessageBoxContainer>
   );
 };
