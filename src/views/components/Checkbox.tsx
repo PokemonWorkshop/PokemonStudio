@@ -54,7 +54,7 @@ const CheckboxContainer = styled.div`
   }
 `;
 
-export type CheckboxType = Omit<InputHTMLAttributes<HTMLInputElement>, 'type'>;
+type CheckboxType = Omit<InputHTMLAttributes<HTMLInputElement>, 'type'>;
 
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxType>(({ className, ...props }: CheckboxType, ref) => (
   <CheckboxContainer className={className}>
