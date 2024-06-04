@@ -1,4 +1,4 @@
-import React, { InputHTMLAttributes } from 'react';
+import React, { InputHTMLAttributes, forwardRef } from 'react';
 import styled from 'styled-components';
 import { ReactComponent as DoneIcon } from '@assets/icons/global/done.svg';
 
@@ -56,11 +56,12 @@ const CheckboxContainer = styled.div`
 
 type CheckboxType = Omit<InputHTMLAttributes<HTMLInputElement>, 'type'>;
 
-export const Checkbox = ({ className, ...props }: CheckboxType) => (
+export const Checkbox = forwardRef<HTMLInputElement, CheckboxType>(({ className, ...props }: CheckboxType, ref) => (
   <CheckboxContainer className={className}>
-    <CheckboxInput {...props} />
+    <CheckboxInput {...props} ref={ref} />
     <div className="icon">
       <DoneIcon />
     </div>
   </CheckboxContainer>
-);
+));
+Checkbox.displayName = 'Checkbox';

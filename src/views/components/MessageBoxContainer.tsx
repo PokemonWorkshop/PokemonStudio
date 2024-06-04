@@ -76,6 +76,15 @@ export const MessageBoxActionContainer = styled.div`
   padding-top: 8px;
 `;
 
+export const MessageBoxActionContainerSpaceBetween = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 8px;
+`;
+
 export const MessageBoxCancelLink = styled.span`
   ${({ theme }) => theme.fonts.normalMedium};
   color: ${({ theme }) => theme.colors.text400};
