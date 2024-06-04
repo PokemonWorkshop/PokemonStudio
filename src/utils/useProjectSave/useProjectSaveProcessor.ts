@@ -8,7 +8,7 @@ import { useLoaderRef } from '@utils/loaderContext';
 import { useTranslation } from 'react-i18next';
 import { ProjectSaveFunctionBinding, ProjectSaveStateObject } from './types';
 import { DEFAULT_PROCESS_STATE, PROCESS_DONE_STATE, SpecialStateProcessors } from '@utils/useProcess';
-import { handleFailure, toAsyncProcess } from './helpers';
+import { handleFailure, toAsyncProcess, isMapsToSaveFunc } from './helpers';
 
 const DEFAULT_BINDING: ProjectSaveFunctionBinding = {
   onFailure: () => {},
@@ -22,6 +22,10 @@ export const useProjectSaveProcessor = () => {
   const loaderRef = useLoaderRef();
   const { t: tl } = useTranslation('loader');
   const mapOptions = useSelectOptions('maps');
+  const isMapsToSave = useMemo(
+    () => isMapsToSaveFunc(globalState),
+    [globalState.savingData.map, globalState.savingMapInfo, globalState.savingText.map]
+  );
   const isDataToSave =
     globalState.savingData.map.size > 0 ||
     globalState.savingConfig.map.size > 0 ||
@@ -151,5 +155,5 @@ export const useProjectSaveProcessor = () => {
     [globalState, globalState.textVersion, globalState.textInfos, globalState.mapInfo, globalState.projectStudio, globalState.mapsModified]
   );
 
-  return { isDataToSave, processors, binding, state: globalState };
+  return { isDataToSave, isMapsToSave, processors, binding, state: globalState };
 };
