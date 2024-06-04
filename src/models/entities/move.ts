@@ -40,7 +40,7 @@ export type StudioMoveBattleStage = z.infer<typeof MOVE_BATTLE_STAGE_VALIDATOR>;
 
 export const MOVE_BATTLE_STAGE_MOD_VALIDATOR = z.object({
   battleStage: MOVE_BATTLE_STAGE_VALIDATOR,
-  modificator: z.number().finite(),
+  modificator: z.number().min(-99).max(99),
 });
 export type StudioBattleStageMod = z.infer<typeof MOVE_BATTLE_STAGE_MOD_VALIDATOR>;
 
@@ -152,6 +152,7 @@ export const MOVE_BATTLE_ENGINE_METHODS: Readonly<MoveBattleEngineMethodsType[]>
 ] as const;
 export const MOVE_STATUS_LIST = ['POISONED', 'PARALYZED', 'BURN', 'ASLEEP', 'FROZEN', 'TOXIC', 'CONFUSED', 'DEATH', 'FLINCH'] as const;
 export const TEXT_CRITICAL_RATES = ['no_critical_hit', 'normal', 'high', 'very_high', 'guaranteed'] as const;
+export const MOVE_BATTLE_STAGE_MOD_LIST = ['ATK_STAGE', 'DFE_STAGE', 'ATS_STAGE', 'DFS_STAGE', 'SPD_STAGE', 'EVA_STAGE', 'ACC_STAGE'] as const;
 
 /**
  * Get the battle stage mod modificator
