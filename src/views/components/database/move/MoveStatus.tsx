@@ -60,7 +60,7 @@ export const MoveStatus = ({ move, dialogsRef }: MoveStatusProps) => {
             <React.Fragment key={index}>
               <DataFieldsetFieldWithChild label={t(move.moveStatus.length > 1 ? STATUS_KEY[index] : 'status')}>
                 <StatusContainer>
-                  <span>{getStatus(move.moveStatus, 0)}</span>
+                  <span>{getStatus(move.moveStatus, index)}</span>
                   {shouldDisplayLuckRate(move.moveStatus) && <span>{`(${getLuckRate(move.moveStatus, index)})`}</span>}
                 </StatusContainer>
               </DataFieldsetFieldWithChild>

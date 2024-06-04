@@ -60,7 +60,7 @@ export type StudioMoveStatusList = z.infer<typeof MOVE_STATUS_LIST_VALIDATOR>;
 
 export const MOVE_STATUS_VALIDATOR = z.object({
   status: MOVE_STATUS_LIST_VALIDATOR,
-  luckRate: POSITIVE_OR_ZERO_INT,
+  luckRate: POSITIVE_OR_ZERO_INT.max(100),
 });
 export type StudioMoveStatus = z.infer<typeof MOVE_STATUS_VALIDATOR>;
 
