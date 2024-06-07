@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { POSITIVE_OR_ZERO_INT } from './common';
+import { POSITIVE_INT, POSITIVE_OR_ZERO_INT } from './common';
 import { DB_SYMBOL_VALIDATOR } from './dbSymbol';
 
 export const MOVE_BATTLE_ENGINE_METHOD_VALIDATOR = z.string().regex(/^[a-z_][a-z0-9_]+$/, 'Invalid battleEngineMethod format');
@@ -54,13 +54,14 @@ export const MOVE_STATUS_LIST_VALIDATOR = z.union([
   z.literal('CONFUSED'),
   z.literal('DEATH'),
   z.literal('FLINCH'),
+  z.literal('__undef__'),
   z.literal(null),
 ]);
 export type StudioMoveStatusList = z.infer<typeof MOVE_STATUS_LIST_VALIDATOR>;
 
 export const MOVE_STATUS_VALIDATOR = z.object({
   status: MOVE_STATUS_LIST_VALIDATOR,
-  luckRate: POSITIVE_OR_ZERO_INT.max(100),
+  luckRate: POSITIVE_INT.max(100),
 });
 export type StudioMoveStatus = z.infer<typeof MOVE_STATUS_VALIDATOR>;
 

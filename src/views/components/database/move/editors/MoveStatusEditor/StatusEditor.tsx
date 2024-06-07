@@ -4,10 +4,10 @@ import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterfac
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { InputContainer } from '@components/inputs';
-import { StudioMoveStatus, StudioMoveStatusList } from '@modelEntities/move';
+import { StudioMoveStatus } from '@modelEntities/move';
 
 type StatusEditorProps = {
-  index: 0 | 1 | 2;
+  index: number;
   options: SelectOption[];
   getRawFormData: () => Record<string, unknown>;
   onTouched: React.FormEventHandler<HTMLInputElement | HTMLTextAreaElement>;
@@ -20,29 +20,33 @@ export const StatusEditor = ({ index, options, getRawFormData, onTouched, defaul
   const { t } = useTranslation('database_moves');
   const { EmbeddedUnitInput, Select } = useInputAttrsWithLabel(STATUS_EDITOR_SCHEMA, defaults);
   const divRef = useRef<HTMLDivElement>(null);
-  //const moveStatus = getRawFormData().moveStatus as StudioMoveStatus[];
+  const divInputRef = useRef<HTMLDivElement>(null);
 
   const onChange = () => {
     setUpdateStatus((b) => !b);
   };
 
   useEffect(() => {
-    if (!divRef.current) return;
-    if (index === 0) {
+    if (!divRef.current || !divInputRef.current) return;
+
+    const moveStatus = getRawFormData().moveStatus as StudioMoveStatus[];
+    divInputRef.current.style.display = moveStatus[index].status === '__undef__' ? 'none' : 'block';
+
+    if (moveStatus[0].status === '__undef__' && index !== 0) {
+      divRef.current.style.display = 'none';
+    } else if (moveStatus[1].status === '__undef__' && index === 2) {
+      divRef.current.style.display = 'none';
+    } else {
       divRef.current.style.display = 'flex';
-      return;
     }
-
-    console.log('here');
-
-    const isVisible = (getRawFormData().moveStatus as StudioMoveStatus[])[index - 1].status !== '__undef__';
-    divRef.current.style.display = isVisible ? 'flex' : 'none';
-  }, [getRawFormData, index, updateStatus]);
+  }, [updateStatus]);
 
   return (
     <InputContainer size="s" ref={divRef}>
       <Select name={`moveStatus.${index}.status`} label={t(`status_${(index + 1) as 1 | 2 | 3}`)} options={options} onChange={onChange} />
-      <EmbeddedUnitInput name={`moveStatus.${index}.luckRate`} unit="%" label={t('chance')} labelLeft onInput={onTouched} />
+      <div ref={divInputRef}>
+        <EmbeddedUnitInput name={`moveStatus.${index}.luckRate`} unit="%" label={t('chance')} labelLeft onInput={onTouched} />
+      </div>
     </InputContainer>
   );
 };

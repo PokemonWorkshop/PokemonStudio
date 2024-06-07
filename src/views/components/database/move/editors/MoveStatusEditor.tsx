@@ -1,7 +1,7 @@
 import React, { forwardRef, useMemo, useState } from 'react';
 import { Editor } from '@components/editor';
-import { TFunction, useTranslation } from 'react-i18next';
-import { MOVE_STATUS_LIST, StudioMove, StudioMoveStatusList } from '@modelEntities/move';
+import { useTranslation } from 'react-i18next';
+import { StudioMove, StudioMoveStatus } from '@modelEntities/move';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { useMovePage } from '@utils/usePage';
 import { useUpdateMove } from './useUpdateMove';
@@ -9,26 +9,25 @@ import { useZodForm } from '@utils/useZodForm';
 import { InputFormContainer } from '@components/inputs/InputContainer';
 import { cloneEntity } from '@utils/cloneEntity';
 import { STATUS_EDITOR_SCHEMA } from './MoveStatusEditor/StatusEditorSchema';
-import { StatusEditor } from './MoveStatusEditor/StatusEditor';
-
-type StudioMoveStatusListEditor = Exclude<StudioMoveStatusList, null> | '__undef__';
-
-const moveStatusEntries = (t: TFunction<'database_moves'>) => [
-  { value: '__undef__', label: t('none') },
-  ...MOVE_STATUS_LIST.map((status) => ({
-    value: status,
-    label: t(status),
-  })).sort((a, b) => a.label.localeCompare(b.label)),
-];
+import { StatusesEditor } from './MoveStatusEditor/StatusesEditor';
+import { Label } from '@components/inputs';
 
 const initMoveStatus = (move: StudioMove) => {
   const moveWithStatus = cloneEntity(move);
   const count = 3 - moveWithStatus.moveStatus.length;
 
   for (let i = 0; i < count; i++) {
-    moveWithStatus.moveStatus.push({ status: '__undef__', luckRate: 0 });
+    moveWithStatus.moveStatus.push({ status: '__undef__', luckRate: 100 });
   }
   return moveWithStatus;
+};
+
+const cleanMoveStatus = (moveStatus: StudioMoveStatus[]) => {
+  const index = moveStatus.findIndex(({ status }) => status === '__undef__');
+  if (index !== -1) {
+    moveStatus.splice(index, moveStatus.length - index);
+  }
+  return moveStatus;
 };
 
 export const MoveStatusEditor = forwardRef<EditorHandlingClose>((_, ref) => {
@@ -36,14 +35,43 @@ export const MoveStatusEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { move } = useMovePage();
   const updateMove = useUpdateMove(move);
   const moveWithStatus = useMemo(() => initMoveStatus(move), [move]);
-  const { canClose, getFormData, getRawFormData, onInputTouched: onTouched, defaults, formRef } = useZodForm(STATUS_EDITOR_SCHEMA, moveWithStatus);
-  const statusOptions = useMemo(() => moveStatusEntries(t), [t]);
-  const [updateStatus, setUpdateStatus] = useState<boolean>(false);
+  const {
+    canClose: canZodClose,
+    getFormData,
+    getRawFormData,
+    onInputTouched: onTouched,
+    defaults,
+    formRef,
+  } = useZodForm(STATUS_EDITOR_SCHEMA, moveWithStatus);
+  const [error, setError] = useState<string>('');
+
+  const canClose = () => {
+    if (!canZodClose()) return false;
+
+    const formData = getFormData();
+    if (!formData.success) return false;
+
+    const moveStatus = cleanMoveStatus(cloneEntity(formData.data.moveStatus));
+    const luckRate = moveStatus.reduce((prev, { luckRate }) => prev + luckRate, 0);
+    if (luckRate > 100) {
+      setError(t('error_overflow'));
+      return false;
+    }
+
+    const status = moveStatus.map(({ status }) => status);
+    if (new Set(status).size !== status.length) {
+      setError(t('error_status'));
+      return false;
+    }
+
+    return true;
+  };
 
   const onClose = () => {
     const result = canClose() && getFormData();
     if (result && result.success) {
-      const moveStatus = result.data.moveStatus.filter(({ status }) => status !== '__undef__');
+      const moveStatus = result.data.moveStatus;
+      cleanMoveStatus(moveStatus);
       updateMove({ moveStatus });
     }
   };
@@ -53,33 +81,12 @@ export const MoveStatusEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   return (
     <Editor type="edit" title={t('statuses')}>
       <InputFormContainer ref={formRef}>
-        <StatusEditor
-          index={0}
-          options={statusOptions}
-          getRawFormData={getRawFormData}
-          onTouched={onTouched}
-          defaults={defaults}
-          updateStatus={updateStatus}
-          setUpdateStatus={setUpdateStatus}
-        />
-        <StatusEditor
-          index={1}
-          options={statusOptions}
-          getRawFormData={getRawFormData}
-          onTouched={onTouched}
-          defaults={defaults}
-          updateStatus={updateStatus}
-          setUpdateStatus={setUpdateStatus}
-        />
-        <StatusEditor
-          index={2}
-          options={statusOptions}
-          getRawFormData={getRawFormData}
-          onTouched={onTouched}
-          defaults={defaults}
-          updateStatus={updateStatus}
-          setUpdateStatus={setUpdateStatus}
-        />
+        <StatusesEditor getRawFormData={getRawFormData} onTouched={onTouched} defaults={defaults} />
+        {error && (
+          <Label>
+            <span>{error}</span>
+          </Label>
+        )}
       </InputFormContainer>
     </Editor>
   );
