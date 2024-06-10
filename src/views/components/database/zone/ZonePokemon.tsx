@@ -39,7 +39,7 @@ export const ZonePokemon = ({ zone, groups }: ZonePokemonProps) => {
 
   const groupedPokemon = new Map<string, StudioGroupEncounter[]>();
   allPokemonInZone.forEach((encounter) => {
-    const key = `${encounter.specie}-${encounter.form}`;
+    const key = `${encounter.specie}-${encounter.form}-${encounter.shinySetup.kind}-${encounter.shinySetup.rate}`;
     const group = groupedPokemon.get(key) || [];
     group.push(encounter);
     groupedPokemon.set(key, group);
