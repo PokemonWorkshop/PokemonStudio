@@ -59,5 +59,8 @@
   "replace_group": "Sostituisci il gruppo",
   "to_import": "Importa",
   "no_pokemon": "Nessun Pokémon",
-  "zone_pokemon": "Pokémon della zona"
+  "zone_pokemon": "Pokémon della zona",
+  "form": "Forma",
+  "default_form": "Forma predefinita",
+  "mega_evolution": "Megaevoluzione"
 }

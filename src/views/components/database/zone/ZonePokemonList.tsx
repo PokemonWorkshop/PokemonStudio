@@ -5,6 +5,7 @@ import { useGetEntityNameText } from '@utils/ReadingProjectText';
 import styled from 'styled-components';
 import { ResourceImage } from '@components/ResourceImage';
 import { pokemonIconPath } from '@utils/path';
+import { useTranslation } from 'react-i18next';
 
 type PokemonZoneProps = {
   pokemon: StudioGroupEncounter;
@@ -46,6 +47,7 @@ export const ZonePokemonList = ({ pokemon }: PokemonZoneProps) => {
   const { projectDataValues: species } = useProjectPokemon();
   const getEntityName = useGetEntityNameText();
   const specie = species[pokemon.specie];
+  const { t } = useTranslation('database_zones');
 
   const iconSelector = (pokemon: StudioGroupEncounter) => {
     const isFemale = pokemon.expandPokemonSetup.find((setup) => setup.type === 'gender')?.value === 2;
@@ -54,6 +56,17 @@ export const ZonePokemonList = ({ pokemon }: PokemonZoneProps) => {
     }
     return isFemale ? 'iconF' : 'icon';
   };
+
+  const getForm = (pokemon: StudioGroupEncounter) => {
+    if (pokemon.form === 0) {
+      return t('default_form');
+    } else if (pokemon.form >= 30) {
+      return `${t('mega_evolution')}${pokemon.form}`;
+    } else {
+      return `${t('form')} ${pokemon.form}`;
+    }
+  };
+
   return (
     <PokemonZoneListContainer>
       {specie ? (
@@ -66,8 +79,7 @@ export const ZonePokemonList = ({ pokemon }: PokemonZoneProps) => {
       )}
       <div className="name-level">
         <span>{specie ? getEntityName(specie) : 'Unknown'}</span>
-        {/* //TODO: Que faut-il recuperer ici ? */}
-        <span className="level">toto</span>
+        <span className="level">{getForm(pokemon)}</span>
       </div>
     </PokemonZoneListContainer>
   );

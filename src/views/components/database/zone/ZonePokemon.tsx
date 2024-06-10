@@ -1,14 +1,18 @@
 import React from 'react';
-import { DataBlockWithTitleNoActive, DataGrid } from '../dataBlocks';
+import { DataBlockWithTitleNoActive } from '../dataBlocks';
 import { useTranslation } from 'react-i18next';
 import { ProjectData } from '@src/GlobalStateProvider';
 import { StudioZone } from '@modelEntities/zone';
 import { ZonePokemonList } from './ZonePokemonList';
 import styled from 'styled-components';
+import { StudioGroupEncounter } from '@modelEntities/groupEncounter';
+import { TableEmpty } from './table/ZoneTableStyle';
 
 export const PokemonZoneListGrid = styled.div`
-  display: grid;
+  display: flex;
   grid-template-columns: 1fr 1fr 1fr;
+  flex-wrap: wrap;
+  justify-content: space-between;
   column-gap: 17px;
   row-gap: 16px;
 
@@ -24,31 +28,28 @@ type ZonePokemonProps = {
   groups: ProjectData['groups'];
 };
 
-
 export const ZonePokemon = ({ zone, groups }: ZonePokemonProps) => {
   const { t } = useTranslation('database_zones');
-
-  const pokemonList = zone.wildGroups.map((wildGroup) => {
-    if (wildGroup.length === 0 || groups[wildGroup] === undefined) {
-      return (
-        <span key={wildGroup} className="no-data">
-          {t('no_pokemon')}
-        </span>
-      );
+  const allPokemonInZone: StudioGroupEncounter[] = [];
+  zone.wildGroups.forEach((wildGroup) => {
+    if (groups[wildGroup]) {
+      allPokemonInZone.push(...groups[wildGroup].encounters);
     }
-    const groupEncounters = groups[wildGroup].encounters;
-    return (
-      <PokemonZoneListGrid key={wildGroup}>
-        {groupEncounters.map((encounter, index) => (
-          <ZonePokemonList key={`pokemon-zone-${index}`} pokemon={encounter} />
-        ))}
-      </PokemonZoneListGrid>
-    );
   });
+
+  if (allPokemonInZone.length === 0) {
+    return (
+      <DataBlockWithTitleNoActive size="full" title={t('zone_pokemon')}>
+        <TableEmpty>{t('no_pokemon')}</TableEmpty>
+      </DataBlockWithTitleNoActive>
+    );
+  }
+
+  const pokemonList = allPokemonInZone.map((encounter, index) => <ZonePokemonList key={`pokemon-zone-${index}`} pokemon={encounter} />);
 
   return (
     <DataBlockWithTitleNoActive size="full" title={t('zone_pokemon')}>
-      <DataGrid flow="row">{pokemonList}</DataGrid>
+      <PokemonZoneListGrid>{pokemonList}</PokemonZoneListGrid>
     </DataBlockWithTitleNoActive>
   );
 };
