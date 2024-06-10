@@ -37,7 +37,15 @@ export const ZonePokemon = ({ zone, groups }: ZonePokemonProps) => {
     }
   });
 
-  if (allPokemonInZone.length === 0) {
+  const groupedPokemon = new Map<string, StudioGroupEncounter[]>();
+  allPokemonInZone.forEach((encounter) => {
+    const key = `${encounter.specie}-${encounter.form}`;
+    const group = groupedPokemon.get(key) || [];
+    group.push(encounter);
+    groupedPokemon.set(key, group);
+  });
+
+  if (groupedPokemon.size === 0) {
     return (
       <DataBlockWithTitleNoActive size="full" title={t('zone_pokemon')}>
         <TableEmpty>{t('no_pokemon')}</TableEmpty>
@@ -45,7 +53,7 @@ export const ZonePokemon = ({ zone, groups }: ZonePokemonProps) => {
     );
   }
 
-  const pokemonList = allPokemonInZone.map((encounter, index) => <ZonePokemonList key={`pokemon-zone-${index}`} pokemon={encounter} />);
+  const pokemonList = Array.from(groupedPokemon.entries()).map(([key, group]) => <ZonePokemonList key={`pokemon-zone-${key}`} pokemon={group[0]} />);
 
   return (
     <DataBlockWithTitleNoActive size="full" title={t('zone_pokemon')}>
