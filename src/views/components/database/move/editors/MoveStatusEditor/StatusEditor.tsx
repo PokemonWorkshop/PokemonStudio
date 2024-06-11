@@ -38,7 +38,7 @@ export const StatusEditor = ({
     if (!divRef.current || !divInputRef.current) return;
 
     divInputRef.current.style.display = isStatusInvalid(statuses[index]) ? 'none' : 'block';
-    if (index === 0 && isStatusInvalid(statuses[index])) {
+    if (index === 0 && isStatusInvalid(statuses[1])) {
       divInputRef.current.style.display = 'none';
     }
 
