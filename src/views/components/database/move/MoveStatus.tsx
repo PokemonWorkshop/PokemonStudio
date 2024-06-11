@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { StudioMove, StudioMoveStatus, StudioMoveStatusList } from '@modelEntities/move';
+import { StudioMove, StudioMoveStatus } from '@modelEntities/move';
 import { DataBlockWithTitle, DataFieldsetField, DataFieldsetFieldWithChild, DataGrid } from '../dataBlocks';
 import { MoveDialogsRef } from './editors/MoveEditorOverlay';
 
@@ -39,7 +39,7 @@ export const MoveStatus = ({ move, dialogsRef }: MoveStatusProps) => {
   const getStatus = (statuses: StudioMoveStatus[] | null, index: number) => {
     const status = statuses === null ? null : statuses[index]?.status ?? null;
     if (statuses === null || statuses.length <= index || status === null || status === '__undef__') return t('none');
-    return t(`${statuses[index].status}` as Exclude<StudioMoveStatusList, null | '__undef__'>);
+    return t(status);
   };
 
   const getLuckRate = (status: StudioMoveStatus[] | null, index: number) => {

@@ -12,11 +12,11 @@ import { BattleStageModEditor } from './MoveStatisticsEditor/BattleStageModEdito
 import { InputFormContainer } from '@components/inputs/InputContainer';
 
 const initBattleStageMods = (move: StudioMove): StudioMove => {
-  const battleStagsMods: StudioBattleStageMod[] = [];
-  MOVE_BATTLE_STAGE_MOD_LIST.forEach((stageMod) => {
+  const battleStagsMods = MOVE_BATTLE_STAGE_MOD_LIST.reduce<StudioBattleStageMod[]>((prev, stageMod) => {
     const modificator = move.battleStageMod.find(({ battleStage }) => battleStage === stageMod)?.modificator;
-    battleStagsMods.push({ battleStage: stageMod, modificator: modificator ?? 0 });
-  });
+    prev.push({ battleStage: stageMod, modificator: modificator ?? 0 });
+    return prev;
+  }, []);
   const moveWithBattleStageMods = cloneEntity(move);
   moveWithBattleStageMods.battleStageMod = battleStagsMods;
   return moveWithBattleStageMods;

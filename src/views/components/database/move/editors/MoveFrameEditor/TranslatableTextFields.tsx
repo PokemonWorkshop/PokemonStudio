@@ -23,7 +23,7 @@ export const TranslatableTextFields = forwardRef<TranslatableTextFieldsRef, Tran
     const { t } = useTranslation('database_moves');
     const nameRef = useRef<HTMLInputElement>(null);
     const descriptionRef = useRef<HTMLTextAreaElement>(null);
-    const getCreatureDescription = useGetEntityDescriptionText();
+    const getMoveDescription = useGetEntityDescriptionText();
     const setText = useSetProjectText();
 
     const saveTexts = () => {
@@ -51,7 +51,7 @@ export const TranslatableTextFields = forwardRef<TranslatableTextFieldsRef, Tran
         <InputWithTopLabelContainer>
           <Label>{t('description')}</Label>
           <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_description')}>
-            <MultiLineInput defaultValue={getCreatureDescription(move)} ref={descriptionRef} />
+            <MultiLineInput defaultValue={getMoveDescription(move)} ref={descriptionRef} />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>
       </>

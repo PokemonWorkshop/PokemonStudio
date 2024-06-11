@@ -6,6 +6,8 @@ import { useTranslation } from 'react-i18next';
 import { InputContainer } from '@components/inputs';
 import { StudioMoveStatusList } from '@modelEntities/move';
 
+const isStatusInvalid = (status: StudioMoveStatusList) => status === '__undef__';
+
 type StatusEditorProps = {
   index: number;
   options: SelectOption[];
@@ -35,14 +37,14 @@ export const StatusEditor = ({
   useEffect(() => {
     if (!divRef.current || !divInputRef.current) return;
 
-    divInputRef.current.style.display = statuses[index] === '__undef__' ? 'none' : 'block';
-    if (index === 0 && statuses[1] === '__undef__') {
+    divInputRef.current.style.display = isStatusInvalid(statuses[index]) ? 'none' : 'block';
+    if (index === 0 && isStatusInvalid(statuses[index])) {
       divInputRef.current.style.display = 'none';
     }
 
-    if (statuses[0] === '__undef__' && index !== 0) {
+    if (isStatusInvalid(statuses[0]) && index !== 0) {
       divRef.current.style.display = 'none';
-    } else if (statuses[1] === '__undef__' && index === 2) {
+    } else if (isStatusInvalid(statuses[1]) && index === 2) {
       divRef.current.style.display = 'none';
     } else {
       divRef.current.style.display = 'flex';
