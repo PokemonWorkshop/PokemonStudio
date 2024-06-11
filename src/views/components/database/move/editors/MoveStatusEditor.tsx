@@ -1,4 +1,4 @@
-import React, { forwardRef, useMemo, useState } from 'react';
+import React, { forwardRef, useMemo } from 'react';
 import { Editor } from '@components/editor';
 import { useTranslation } from 'react-i18next';
 import { StudioMove, StudioMoveStatus } from '@modelEntities/move';
@@ -11,13 +11,20 @@ import { cloneEntity } from '@utils/cloneEntity';
 import { STATUS_EDITOR_SCHEMA } from './MoveStatusEditor/StatusEditorSchema';
 import { StatusesEditor } from './MoveStatusEditor/StatusesEditor';
 import { Label } from '@components/inputs';
+import { useMoveStatus } from './MoveStatusEditor/useMoveStatus';
 
 const initMoveStatus = (move: StudioMove) => {
   const moveWithStatus = cloneEntity(move);
-  const count = 3 - moveWithStatus.moveStatus.length;
 
+  moveWithStatus.moveStatus.forEach((moveStatus) => {
+    if (moveStatus.status === null) {
+      moveStatus.status = '__undef__';
+    }
+  });
+
+  const count = 3 - moveWithStatus.moveStatus.length;
   for (let i = 0; i < count; i++) {
-    moveWithStatus.moveStatus.push({ status: '__undef__', luckRate: 100 });
+    moveWithStatus.moveStatus.push({ status: '__undef__', luckRate: 1 });
   }
   return moveWithStatus;
 };
@@ -35,15 +42,8 @@ export const MoveStatusEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { move } = useMovePage();
   const updateMove = useUpdateMove(move);
   const moveWithStatus = useMemo(() => initMoveStatus(move), [move]);
-  const {
-    canClose: canZodClose,
-    getFormData,
-    getRawFormData,
-    onInputTouched: onTouched,
-    defaults,
-    formRef,
-  } = useZodForm(STATUS_EDITOR_SCHEMA, moveWithStatus);
-  const [error, setError] = useState<string>('');
+  const { canClose: canZodClose, getFormData, onInputTouched: onTouched, defaults, formRef } = useZodForm(STATUS_EDITOR_SCHEMA, moveWithStatus);
+  const { statuses, chances, error, handleStatusChange, handleChancesChange, setError } = useMoveStatus(moveWithStatus);
 
   const canClose = () => {
     if (!canZodClose()) return false;
@@ -81,7 +81,14 @@ export const MoveStatusEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   return (
     <Editor type="edit" title={t('statuses')}>
       <InputFormContainer ref={formRef}>
-        <StatusesEditor getRawFormData={getRawFormData} onTouched={onTouched} defaults={defaults} />
+        <StatusesEditor
+          onTouched={onTouched}
+          defaults={defaults}
+          statuses={statuses}
+          chances={chances}
+          handleStatusChange={handleStatusChange}
+          handleChancesChange={handleChancesChange}
+        />
         {error && (
           <Label>
             <span>{error}</span>

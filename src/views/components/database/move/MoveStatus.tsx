@@ -36,14 +36,15 @@ const STATUS_KEY = ['status_1', 'status_2', 'status_3'] as const;
 export const MoveStatus = ({ move, dialogsRef }: MoveStatusProps) => {
   const { t } = useTranslation('database_moves');
 
-  const getStatus = (status: StudioMoveStatus[] | null, index: number) => {
-    if (status === null || status.length <= index || status[index].status === null) return t('none');
-    return t(`${status[index].status}` as Exclude<StudioMoveStatusList, null>);
+  const getStatus = (statuses: StudioMoveStatus[] | null, index: number) => {
+    const status = statuses === null ? null : statuses[index]?.status ?? null;
+    if (statuses === null || statuses.length <= index || status === null || status === '__undef__') return t('none');
+    return t(`${statuses[index].status}` as Exclude<StudioMoveStatusList, null | '__undef__'>);
   };
 
   const getLuckRate = (status: StudioMoveStatus[] | null, index: number) => {
     if (status === null || status.length <= index || status[index].luckRate === 0) return t('none');
-    return `${status[index].luckRate} %`;
+    return `${status[index].luckRate}\u00a0%`;
   };
 
   const shouldDisplayLuckRate = (status: StudioMoveStatus[] | null) => {

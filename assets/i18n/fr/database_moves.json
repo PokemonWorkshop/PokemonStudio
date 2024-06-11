@@ -156,5 +156,5 @@
   "always": "Toujours",
   "error_status": "Vous ne pouvez pas avoir plusieurs fois le même statut.",
   "error_chances": "Les chances d'infliger un statut doivent être comprises entre 1 et 100.",
-  "error_overflow": "La somme de vos chances d'infliger un statut ne doit pas excéder 100%."
+  "error_overflow": "La somme de vos chances d'infliger un statut ne doit pas excéder 100\u00a0%."
 }

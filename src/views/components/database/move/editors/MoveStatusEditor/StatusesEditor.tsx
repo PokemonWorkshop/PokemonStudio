@@ -1,13 +1,16 @@
-import { MOVE_STATUS_LIST } from '@modelEntities/move';
+import { MOVE_STATUS_LIST, StudioMoveStatusList } from '@modelEntities/move';
 import { TFunction } from 'i18next';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StatusEditor } from './StatusEditor';
 
 type StatusesEditorProps = {
-  getRawFormData: () => Record<string, unknown>;
   onTouched: React.FormEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   defaults: Record<string, unknown>;
+  statuses: StudioMoveStatusList[];
+  chances: number[];
+  handleStatusChange: (index: number, value: string) => void;
+  handleChancesChange: (index: number, chance: number) => void;
 };
 
 const moveStatusEntries = (t: TFunction<'database_moves'>) => [
@@ -18,10 +21,9 @@ const moveStatusEntries = (t: TFunction<'database_moves'>) => [
   })).sort((a, b) => a.label.localeCompare(b.label)),
 ];
 
-export const StatusesEditor = ({ getRawFormData, onTouched, defaults }: StatusesEditorProps) => {
+export const StatusesEditor = ({ onTouched, defaults, statuses, chances, handleStatusChange, handleChancesChange }: StatusesEditorProps) => {
   const { t } = useTranslation('database_moves');
   const statusOptions = useMemo(() => moveStatusEntries(t), [t]);
-  const [updateStatus, setUpdateStatus] = useState<boolean>(false);
 
   return (
     <>
@@ -29,11 +31,12 @@ export const StatusesEditor = ({ getRawFormData, onTouched, defaults }: Statuses
         <StatusEditor
           index={index}
           options={statusOptions}
-          getRawFormData={getRawFormData}
           onTouched={onTouched}
           defaults={defaults}
-          updateStatus={updateStatus}
-          setUpdateStatus={setUpdateStatus}
+          statuses={statuses}
+          chances={chances}
+          handleStatusChange={handleStatusChange}
+          handleChancesChange={handleChancesChange}
           key={`status-editor-${index}`}
         />
       ))}
