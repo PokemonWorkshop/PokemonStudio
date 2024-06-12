@@ -42,7 +42,7 @@ export const BattleEngineMethodEditor = ({ move, options, getRawFormData, defaul
           options={options}
           onChange={onChange}
           value={isCustom ? '__custom__' : battleEngineMethod}
-          defaultValue={String(defaults.battleEngineMethod)}
+          defaultValue={defaults.battleEngineMethod as string}
         />
       </InputWithTopLabelContainer>
       {isCustom && (

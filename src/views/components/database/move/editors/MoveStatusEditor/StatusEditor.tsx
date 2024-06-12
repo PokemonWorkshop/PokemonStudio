@@ -6,7 +6,23 @@ import { useTranslation } from 'react-i18next';
 import { InputContainer } from '@components/inputs';
 import { StudioMoveStatusList } from '@modelEntities/move';
 
-const isStatusInvalid = (status: StudioMoveStatusList) => status === '__undef__';
+const shouldInputShow = (statuses: StudioMoveStatusList[], index: number) => {
+  // Must have selected a status for current index
+  if (statuses[index] === '__undef__') return false;
+  // We don't have a reason to input chances
+  if (index === 0 && statuses[1] === '__undef__') return false;
+
+  return true;
+};
+
+const shouldShowStatusSelection = (statuses: StudioMoveStatusList[], index: number) => {
+  // Always can select the first status
+  if (index === 0) return true;
+  // If any of the previous status is not selected, we cannot select the current one
+  if (index > 0 && statuses.some((v, i) => i < index && v === '__undef__')) return false;
+
+  return true;
+};
 
 type StatusEditorProps = {
   index: number;
@@ -37,18 +53,8 @@ export const StatusEditor = ({
   useEffect(() => {
     if (!divRef.current || !divInputRef.current) return;
 
-    divInputRef.current.style.display = isStatusInvalid(statuses[index]) ? 'none' : 'block';
-    if (index === 0 && isStatusInvalid(statuses[1])) {
-      divInputRef.current.style.display = 'none';
-    }
-
-    if (isStatusInvalid(statuses[0]) && index !== 0) {
-      divRef.current.style.display = 'none';
-    } else if (isStatusInvalid(statuses[1]) && index === 2) {
-      divRef.current.style.display = 'none';
-    } else {
-      divRef.current.style.display = 'flex';
-    }
+    divInputRef.current.style.display = shouldInputShow(statuses, index) ? 'block' : 'none';
+    divRef.current.style.display = shouldShowStatusSelection(statuses, index) ? 'flex' : 'none';
   }, [index, statuses]);
 
   return (
@@ -58,6 +64,8 @@ export const StatusEditor = ({
         label={t(`status_${(index + 1) as 1 | 2 | 3}`)}
         options={options}
         onChange={(value) => handleStatusChange(index, value)}
+        value={statuses[index] as Exclude<StudioMoveStatusList, null>}
+        defaultValue={undefined}
       />
       <div ref={divInputRef}>
         <EmbeddedUnitInput
