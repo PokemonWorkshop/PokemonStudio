@@ -1,8 +1,10 @@
 import { cloneEntity } from '@utils/cloneEntity';
 import { StudioMove, StudioMoveStatusList } from '@modelEntities/move';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export const useMoveStatus = (moveWithStatus: StudioMove) => {
+  const { t } = useTranslation('database_moves');
   // We use states here because we need a lot of control over the values to satisfy the UX
   const [status, setStatus] = useState<StudioMoveStatusList[]>(cloneEntity(moveWithStatus.moveStatus.map((s) => s.status)));
   const [chances, setChances] = useState<number[]>(cloneEntity(moveWithStatus.moveStatus.map(({ luckRate }) => luckRate)));
@@ -53,6 +55,14 @@ export const useMoveStatus = (moveWithStatus: StudioMove) => {
           break;
       }
     }
+
+    // Check duplicate status
+    const duplicateStatusIndex = status.findIndex((s) => s === value);
+    if (duplicateStatusIndex !== -1 && duplicateStatusIndex !== index && value !== '__undef__') {
+      setError(t('error_status'));
+    } else {
+      setError('');
+    }
   };
 
   const handleChancesChange = (index: number, chance: number) => {
@@ -62,10 +72,6 @@ export const useMoveStatus = (moveWithStatus: StudioMove) => {
       return newChances;
     });
   };
-
-  useEffect(() => {
-    setError('');
-  }, [status, chances]);
 
   return { statuses: status, chances, error, handleStatusChange, handleChancesChange, setError };
 };

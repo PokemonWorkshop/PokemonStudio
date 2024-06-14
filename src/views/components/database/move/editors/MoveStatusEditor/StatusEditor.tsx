@@ -27,7 +27,7 @@ const shouldShowStatusSelection = (statuses: StudioMoveStatusList[], index: numb
 type StatusEditorProps = {
   index: number;
   options: SelectOption[];
-  onTouched: React.FormEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+  onTouched: (event: React.FormEvent<HTMLInputElement>, index: number) => void;
   defaults: Record<string, unknown>;
   statuses: StudioMoveStatusList[];
   chances: number[];
@@ -73,7 +73,7 @@ export const StatusEditor = ({
           unit="%"
           label={t('chance')}
           labelLeft
-          onInput={onTouched}
+          onInput={(event) => onTouched(event, index)}
           onChange={(event) => handleChancesChange(index, event.target.valueAsNumber)}
           value={isNaN(chances[index]) ? '' : chances[index]}
           defaultValue={undefined}

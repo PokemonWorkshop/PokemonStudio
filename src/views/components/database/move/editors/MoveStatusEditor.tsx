@@ -37,12 +37,17 @@ const cleanMoveStatus = (moveStatus: StudioMoveStatus[]) => {
   return moveStatus;
 };
 
+const isLuckRateOverflow = (moveStatus: StudioMoveStatus[]) => {
+  const luckRate = moveStatus.reduce((prev, { luckRate }) => prev + luckRate, 0);
+  return luckRate > 100;
+};
+
 export const MoveStatusEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { t } = useTranslation('database_moves');
   const { move } = useMovePage();
   const updateMove = useUpdateMove(move);
   const moveWithStatus = useMemo(() => initMoveStatus(move), [move]);
-  const { canClose: canZodClose, getFormData, onInputTouched: onTouched, defaults, formRef } = useZodForm(STATUS_EDITOR_SCHEMA, moveWithStatus);
+  const { canClose: canZodClose, getFormData, getRawFormData, onInputTouched, defaults, formRef } = useZodForm(STATUS_EDITOR_SCHEMA, moveWithStatus);
   const { statuses, chances, error, handleStatusChange, handleChancesChange, setError } = useMoveStatus(moveWithStatus);
 
   const canClose = () => {
@@ -52,10 +57,8 @@ export const MoveStatusEditor = forwardRef<EditorHandlingClose>((_, ref) => {
     if (!formData.success) return false;
 
     const moveStatus = cleanMoveStatus(cloneEntity(formData.data.moveStatus));
-    const luckRate = moveStatus.reduce((prev, { luckRate }) => prev + luckRate, 0);
-    if (luckRate > 100) {
+    if (isLuckRateOverflow(moveStatus)) {
       setError(t('error_overflow'));
-      return false;
     }
 
     const status = moveStatus.map(({ status }) => status);
@@ -77,6 +80,18 @@ export const MoveStatusEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   };
 
   useEditorHandlingClose(ref, onClose, canClose);
+
+  const onTouched = (event: React.FormEvent<HTMLInputElement>, index: number) => {
+    const value = Number(event.currentTarget.value);
+    const moveStatus = cleanMoveStatus(cloneEntity(getRawFormData().moveStatus as StudioMoveStatus[]));
+    moveStatus[index].luckRate = isNaN(value) ? 0 : value;
+    if (isLuckRateOverflow(moveStatus)) {
+      setError(t('error_overflow'));
+    } else {
+      setError('');
+    }
+    onInputTouched(event);
+  };
 
   return (
     <Editor type="edit" title={t('statuses')}>
