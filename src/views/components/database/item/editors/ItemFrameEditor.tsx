@@ -22,6 +22,7 @@ import { createItem } from '@utils/entityCreation';
 import { useDialogsRef } from '@utils/useDialogsRef';
 import { useItemPage } from '@utils/usePage';
 import { ItemTranslationOverlay, TranslationEditorTitle } from './ItemTranslationOverlay';
+import { cloneEntity } from '@utils/cloneEntity';
 
 const itemCategoryEntries = (t: TFunction<('database_items' | 'database_types')[]>) =>
   StudioItemCategories.map((category) => ({ value: category, label: t(`database_types:${category}`) })).sort((a, b) =>
@@ -49,11 +50,12 @@ export const ItemFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
     setText(ITEM_NAME_TEXT_ID, item.id, nameRef.current.value);
     setText(ITEM_PLURAL_NAME_TEXT_ID, item.id, namePluralRef.current.value);
     setText(ITEM_DESCRIPTION_TEXT_ID, item.id, descriptionRef.current.value);
-    item.icon = icon;
-    if (itemCategory != ITEM_CATEGORY[item.klass]) {
-      setItems({ [item.dbSymbol]: mutateItemInto(item, createItem(ITEM_CATEGORY_INITIAL_CLASSES[itemCategory], item.dbSymbol, item.id)) });
+    const itemEdited = cloneEntity(item);
+    itemEdited.icon = icon;
+    if (itemCategory !== ITEM_CATEGORY[item.klass]) {
+      setItems({ [item.dbSymbol]: mutateItemInto(itemEdited, createItem(ITEM_CATEGORY_INITIAL_CLASSES[itemCategory], item.dbSymbol, item.id)) });
     } else {
-      setItems({ [item.dbSymbol]: item });
+      setItems({ [item.dbSymbol]: itemEdited });
     }
   };
   useEditorHandlingClose(ref, onClose, canClose);
