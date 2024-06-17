@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { POSITIVE_OR_ZERO_INT } from './common';
+import { POSITIVE_INT, POSITIVE_OR_ZERO_INT } from './common';
 import { DB_SYMBOL_VALIDATOR } from './dbSymbol';
 
 export const MOVE_BATTLE_ENGINE_METHOD_VALIDATOR = z.string().regex(/^[a-z_][a-z0-9_]+$/, 'Invalid battleEngineMethod format');
@@ -40,7 +40,7 @@ export type StudioMoveBattleStage = z.infer<typeof MOVE_BATTLE_STAGE_VALIDATOR>;
 
 export const MOVE_BATTLE_STAGE_MOD_VALIDATOR = z.object({
   battleStage: MOVE_BATTLE_STAGE_VALIDATOR,
-  modificator: z.number().finite(),
+  modificator: z.number().min(-99).max(99),
 });
 export type StudioBattleStageMod = z.infer<typeof MOVE_BATTLE_STAGE_MOD_VALIDATOR>;
 
@@ -54,13 +54,14 @@ export const MOVE_STATUS_LIST_VALIDATOR = z.union([
   z.literal('CONFUSED'),
   z.literal('DEATH'),
   z.literal('FLINCH'),
+  z.literal('__undef__'),
   z.literal(null),
 ]);
 export type StudioMoveStatusList = z.infer<typeof MOVE_STATUS_LIST_VALIDATOR>;
 
 export const MOVE_STATUS_VALIDATOR = z.object({
   status: MOVE_STATUS_LIST_VALIDATOR,
-  luckRate: POSITIVE_OR_ZERO_INT,
+  luckRate: POSITIVE_INT.max(100),
 });
 export type StudioMoveStatus = z.infer<typeof MOVE_STATUS_VALIDATOR>;
 
@@ -68,15 +69,15 @@ export const MOVE_VALIDATOR = z.object({
   klass: z.literal('Move'),
   id: POSITIVE_OR_ZERO_INT,
   dbSymbol: DB_SYMBOL_VALIDATOR,
-  mapUse: POSITIVE_OR_ZERO_INT,
+  mapUse: POSITIVE_OR_ZERO_INT.max(999),
   battleEngineMethod: MOVE_BATTLE_ENGINE_METHOD_VALIDATOR,
   type: DB_SYMBOL_VALIDATOR,
-  power: POSITIVE_OR_ZERO_INT,
-  accuracy: POSITIVE_OR_ZERO_INT,
-  pp: POSITIVE_OR_ZERO_INT,
+  power: POSITIVE_OR_ZERO_INT.max(999),
+  accuracy: POSITIVE_OR_ZERO_INT.max(100),
+  pp: POSITIVE_OR_ZERO_INT.max(99),
   category: MOVE_CATEGORY_VALIDATOR,
   movecriticalRate: MOVE_CRITICAL_RATE_VALIDATOR,
-  priority: z.number().finite(),
+  priority: z.number().min(-7).max(7),
   isAuthentic: z.boolean(),
   isBallistics: z.boolean(),
   isBite: z.boolean(),
@@ -105,7 +106,7 @@ export const MOVE_VALIDATOR = z.object({
   battleEngineAimedTarget: MOVE_BATTLE_ENGINE_AIMED_TARGET_VALIDATOR,
   battleStageMod: z.array(MOVE_BATTLE_STAGE_MOD_VALIDATOR),
   moveStatus: z.array(MOVE_STATUS_VALIDATOR),
-  effectChance: POSITIVE_OR_ZERO_INT.default(100),
+  effectChance: POSITIVE_OR_ZERO_INT.max(100).default(100),
 });
 
 export type StudioMove = z.infer<typeof MOVE_VALIDATOR>;
@@ -152,6 +153,7 @@ export const MOVE_BATTLE_ENGINE_METHODS: Readonly<MoveBattleEngineMethodsType[]>
 ] as const;
 export const MOVE_STATUS_LIST = ['POISONED', 'PARALYZED', 'BURN', 'ASLEEP', 'FROZEN', 'TOXIC', 'CONFUSED', 'DEATH', 'FLINCH'] as const;
 export const TEXT_CRITICAL_RATES = ['no_critical_hit', 'normal', 'high', 'very_high', 'guaranteed'] as const;
+export const MOVE_BATTLE_STAGE_MOD_LIST = ['ATK_STAGE', 'DFE_STAGE', 'ATS_STAGE', 'DFS_STAGE', 'SPD_STAGE', 'EVA_STAGE', 'ACC_STAGE'] as const;
 
 /**
  * Get the battle stage mod modificator

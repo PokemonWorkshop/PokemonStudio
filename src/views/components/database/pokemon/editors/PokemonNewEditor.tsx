@@ -123,8 +123,8 @@ export const PokemonNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
             error={!!dbSymbolErrorType}
             placeholder={tMove('example_db_symbol')}
           />
-          {dbSymbolErrorType == 'value' && <TextInputError>{tMove('incorrect_format')}</TextInputError>}
-          {dbSymbolErrorType == 'duplicate' && <TextInputError>{tMove('db_symbol_already_used')}</TextInputError>}
+          {dbSymbolErrorType === 'value' && <TextInputError>{tMove('incorrect_format')}</TextInputError>}
+          {dbSymbolErrorType === 'duplicate' && <TextInputError>{tMove('db_symbol_already_used')}</TextInputError>}
         </InputWithTopLabelContainer>
         <ButtonContainer>
           <TooltipWrapper data-tooltip={isDisabled ? tMove('fields_asterisk_required') : undefined}>

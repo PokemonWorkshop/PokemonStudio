@@ -1,4 +1,4 @@
-import { Input, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
+import { Input, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
 import { z } from 'zod';
 import { inputAttrs } from './inputAttrs';
 import React, { useMemo } from 'react';
@@ -87,6 +87,18 @@ export const useInputAttrsWithLabel = <T extends z.ZodRawShape>(schema: z.ZodObj
             <Label>{label}</Label>
             <Select {...attrs} {...props} />
           </InputWithTopLabelContainer>
+        );
+      },
+      Toggle: ({ name, schemaKey, label, ...props }: ReactProps<typeof Toggle>) => {
+        const { type, required, ...attrs } = inputAttrs(schema, name, defaults, schemaKey);
+        const defaultChecked = attrs.defaultValue === 'true';
+        if (!label) return <Toggle {...attrs} {...props} defaultChecked={defaultChecked} />;
+
+        return (
+          <InputWithLeftLabelContainer>
+            <Label>{label}</Label>
+            <Toggle {...attrs} {...props} defaultChecked={defaultChecked} />
+          </InputWithLeftLabelContainer>
         );
       },
     }),

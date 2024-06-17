@@ -1,102 +1,60 @@
-import React, { forwardRef, useMemo, useRef, useState } from 'react';
+import React, { forwardRef, useMemo, useRef } from 'react';
 import { Editor } from '@components/editor';
 import { TFunction, useTranslation } from 'react-i18next';
-import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
-import { SelectType } from '@components/selects';
-import { SelectCustomSimple } from '@components/SelectCustom';
-import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
-import { useGetEntityDescriptionText, useGetEntityNameText, useSetProjectText } from '@utils/ReadingProjectText';
-import { MOVE_CATEGORIES, MOVE_DESCRIPTION_TEXT_ID, MOVE_NAME_TEXT_ID, StudioMoveCategory } from '@modelEntities/move';
+import { MOVE_CATEGORIES, MOVE_VALIDATOR } from '@modelEntities/move';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { DbSymbol } from '@modelEntities/dbSymbol';
 import { useMovePage } from '@utils/usePage';
 import { useDialogsRef } from '@utils/useDialogsRef';
 import { MoveTranslationOverlay, TranslationEditorTitle } from './MoveTranslationOverlay';
 import { useUpdateMove } from './useUpdateMove';
+import { TranslatableTextFields, TranslatableTextFieldsRef } from './MoveFrameEditor/TranslatableTextFields';
+import { useZodForm } from '@utils/useZodForm';
+import { useInputAttrsWithLabel } from '@utils/useInputAttrs';
+import { InputFormContainer } from '@components/inputs/InputContainer';
+import { useSelectOptions } from '@utils/useSelectOptions';
 
 const moveCategoryEntries = (t: TFunction<('database_moves' | 'database_types')[]>) =>
   MOVE_CATEGORIES.map((category) => ({ value: category, label: t(`database_types:${category}`) })).sort((a, b) => a.label.localeCompare(b.label));
 
+const FRAME_EDITOR_SCHEMA = MOVE_VALIDATOR.pick({ type: true, category: true });
+
 export const MoveFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { t } = useTranslation(['database_moves', 'database_types']);
-  const { move } = useMovePage();
+  const { move, moveName } = useMovePage();
   const updateMove = useUpdateMove(move);
   const dialogsRef = useDialogsRef<TranslationEditorTitle>();
+  const tTFR = useRef<TranslatableTextFieldsRef>(null);
+  const { canClose, getFormData, defaults, formRef } = useZodForm(FRAME_EDITOR_SCHEMA, move);
+  const { Select } = useInputAttrsWithLabel(FRAME_EDITOR_SCHEMA, defaults);
+  const typeOptions = useSelectOptions('types');
   const categoryOptions = useMemo(() => moveCategoryEntries(t), [t]);
-  const getMoveName = useGetEntityNameText();
-  const getMoveDescription = useGetEntityDescriptionText();
-  const setText = useSetProjectText();
-  const nameRef = useRef<HTMLInputElement>(null);
-  const descriptionRef = useRef<HTMLTextAreaElement>(null);
-  const [type, setType] = useState(move.type);
-  const [category, setCategory] = useState(move.category);
 
-  const saveTexts = () => {
-    if (!nameRef.current || !descriptionRef.current) return;
-
-    setText(MOVE_NAME_TEXT_ID, move.id, nameRef.current.value);
-    setText(MOVE_DESCRIPTION_TEXT_ID, move.id, descriptionRef.current.value);
+  const canCloseEditor = () => {
+    if (dialogsRef.current?.currentDialog) return false;
+    return canClose();
   };
-
-  const canClose = () => !!nameRef.current?.value && !dialogsRef.current?.currentDialog;
   const onClose = () => {
-    if (!nameRef.current || !descriptionRef.current || !canClose()) return;
-    setText(MOVE_NAME_TEXT_ID, move.id, nameRef.current.value);
-    setText(MOVE_DESCRIPTION_TEXT_ID, move.id, descriptionRef.current.value);
-    updateMove({ type, category });
-    saveTexts();
+    const result = canClose() && getFormData();
+    if (!result || !result.success) return;
+
+    tTFR.current?.saveTexts();
+    updateMove(result.data);
   };
-  useEditorHandlingClose(ref, onClose, canClose);
+  useEditorHandlingClose(ref, onClose, canCloseEditor);
 
   const handleTranslateClick = (editorTitle: TranslationEditorTitle) => () => {
-    saveTexts();
+    tTFR.current?.saveTexts();
     setTimeout(() => dialogsRef.current?.openDialog(editorTitle), 0);
   };
-
-  const onTranslationOverlayClose = () => {
-    if (!nameRef.current || !descriptionRef.current) return;
-
-    nameRef.current.value = nameRef.current.defaultValue;
-    descriptionRef.current.value = descriptionRef.current.defaultValue;
-  };
+  const onTranslationOverlayClose = () => tTFR.current?.onTranslationOverlayClose();
 
   return (
     <Editor type="edit" title={t('database_moves:information')}>
-      <InputContainer>
-        <InputWithTopLabelContainer>
-          <Label htmlFor="name" required>
-            {t('database_moves:name')}
-          </Label>
-          <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_name')}>
-            <Input type="text" name="name" defaultValue={getMoveName(move)} ref={nameRef} placeholder={t('database_moves:example_name')} />
-          </TranslateInputContainer>
-        </InputWithTopLabelContainer>
-        <InputWithTopLabelContainer>
-          <Label htmlFor="descr">{t('database_moves:description')}</Label>
-          <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_description')}>
-            <MultiLineInput
-              id="descr"
-              defaultValue={getMoveDescription(move)}
-              ref={descriptionRef}
-              placeholder={t('database_moves:example_description')}
-            />
-          </TranslateInputContainer>
-        </InputWithTopLabelContainer>
-        <InputWithTopLabelContainer>
-          <Label htmlFor="type">{t('database_moves:type')}</Label>
-          <SelectType dbSymbol={type} onChange={(value) => setType(value as DbSymbol)} noLabel />
-        </InputWithTopLabelContainer>
-        <InputWithTopLabelContainer>
-          <Label htmlFor="type">{t('database_moves:category')}</Label>
-          <SelectCustomSimple
-            id="select-type"
-            options={categoryOptions}
-            onChange={(value) => setCategory(value as StudioMoveCategory)}
-            value={category}
-            noTooltip
-          />
-        </InputWithTopLabelContainer>
-      </InputContainer>
+      <InputFormContainer ref={formRef}>
+        <TranslatableTextFields ref={tTFR} handleTranslateClick={handleTranslateClick} move={move} moveName={moveName} />
+        <Select name="type" label={t('database_moves:type')} options={typeOptions} />
+        <Select name="category" label={t('database_moves:category')} options={categoryOptions} />
+      </InputFormContainer>
       <MoveTranslationOverlay move={move} onClose={onTranslationOverlayClose} ref={dialogsRef} />
     </Editor>
   );
