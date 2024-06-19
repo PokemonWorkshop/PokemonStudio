@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { InputWithLeftLabelContainer, Label, Toggle } from '@components/inputs';
 import { useTranslation } from 'react-i18next';
 import { PageEditor } from '@components/pages';
-import { useConfigGraphic } from '@utils/useProjectConfig';
+import { useConfigGraphic } from '@hooks/useProjectConfig';
 import { cloneEntity } from '@utils/cloneEntity';
 
 export const DashboardGraphics = () => {

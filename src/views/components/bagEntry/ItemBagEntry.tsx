@@ -1,7 +1,7 @@
 import React, { Dispatch } from 'react';
 import styled from 'styled-components';
 import { PokemonBattlerContainer } from '@components/pokemonBattler/PokemonBattler';
-import { useProjectItems } from '@utils/useProjectData';
+import { useProjectItems } from '@hooks/useProjectData';
 import { Tag } from '@components/Tag';
 import { ClearButtonOnlyIcon } from '@components/buttons';
 import { useTranslation } from 'react-i18next';
@@ -9,11 +9,11 @@ import { useGetEntityNameText } from '@utils/ReadingProjectText';
 import { itemIconPath } from '@utils/path';
 import { StudioTrainerBagEntry } from '@modelEntities/trainer';
 import { ResourceImage } from '@components/ResourceImage';
-import { useShortcutNavigation } from '@utils/useShortcutNavigation';
-import { CONTROL, useKeyPress } from '@utils/useKeyPress';
+import { useShortcutNavigation } from '@hooks/useShortcutNavigation';
+import { CONTROL, useKeyPress } from '@hooks/useKeyPress';
 import type { BagEntryDialogsRef, BagEntryFrom } from './editors/BagEntryEditorOverlay';
 import { assertUnreachable } from '@utils/assertUnreachable';
-import { useTrainerPage } from '@utils/usePage';
+import { useTrainerPage } from '@hooks/usePage';
 import { useUpdateTrainer } from '@components/database/trainer/editors/useUpdateTrainer';
 import { cloneEntity } from '@utils/cloneEntity';
 

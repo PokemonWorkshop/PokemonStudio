@@ -15,17 +15,17 @@ import { ReactComponent as LeftIcon } from '@assets/icons/global/left-icon.svg';
 import { ReactComponent as PlusIcon } from '@assets/icons/global/plus-icon.svg';
 import { ReactComponent as DotIcon } from '@assets/icons/global/dot.svg';
 import { MAP_INFO_FOLDER_NAME_TEXT_ID, StudioMapInfoValue } from '@modelEntities/mapInfo';
-import { useProjectMaps } from '@utils/useProjectData';
+import { useProjectMaps } from '@hooks/useProjectData';
 import { useGetEntityNameText, useGetEntityNameTextUsingTextId, useSetProjectText } from '@utils/ReadingProjectText';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { useTranslation } from 'react-i18next';
 import { Input } from '@components/inputs';
 import { MAP_NAME_TEXT_ID } from '@modelEntities/map';
-import { useContextMenu } from '@utils/useContextMenu';
+import { useContextMenu } from '@hooks/useContextMenu';
 import { MapEditorAndDeletionKeys, MapEditorOverlay } from '../editors/MapEditorOverlay';
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import { MapTreeContextMenu } from './MapTreeContextMenu';
-import { useMapInfo } from '@utils/useMapInfo';
+import { useMapInfo } from '@hooks/useMapInfo';
 import { convertMapInfoToTree } from '@utils/MapInfoUtils';
 import {
   getMapTreeCountChildren,

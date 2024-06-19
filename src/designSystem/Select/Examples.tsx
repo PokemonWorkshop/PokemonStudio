@@ -4,11 +4,11 @@ import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { assertUnreachable } from '@utils/assertUnreachable';
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import React, { FormEventHandler, forwardRef, useMemo, useRef, useState } from 'react';
 import { Select } from './Select';
 import { SelectContainerWithLabel } from '@components/selects/SelectContainerWithLabel';
-import { useZodForm } from '@utils/useZodForm';
+import { useZodForm } from '@hooks/useZodForm';
 import { z } from 'zod';
 
 export const SelectEditorOverlay = defineEditorOverlay<'dialog', {}>('SelectExampleOverlay', (dialogToShow, handleCloseRef, closeDialog, props) => {

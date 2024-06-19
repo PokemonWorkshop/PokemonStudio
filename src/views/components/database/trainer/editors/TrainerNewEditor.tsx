@@ -6,7 +6,7 @@ import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelCo
 import { SelectCustomSimple } from '@components/SelectCustom';
 import styled from 'styled-components';
 import { padStr } from '@utils/PadStr';
-import { useProjectTrainers } from '@utils/useProjectData';
+import { useProjectTrainers } from '@hooks/useProjectData';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import {
   StudioTrainerVsType,

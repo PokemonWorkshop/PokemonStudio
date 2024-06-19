@@ -10,7 +10,7 @@ import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerSty
 import { EditorOverlay } from '@components/editor';
 import { DeletionOverlay } from '@components/deletion';
 
-import { useProjectQuests } from '@utils/useProjectData';
+import { useProjectQuests } from '@hooks/useProjectData';
 import { QuestControlBar, QuestDeletion, QuestEarnings, QuestFrame, QuestGoals } from '@components/database/quest';
 import {
   QuestEarningEditor,
@@ -22,8 +22,8 @@ import {
   QuestNewEditor,
   QuestNewGoalEditor,
 } from '@components/database/quest/editors';
-import { useTranslationEditor } from '@utils/useTranslationEditor';
-import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
+import { useTranslationEditor } from '@hooks/useTranslationEditor';
+import { StudioShortcutActions, useShortcut } from '@hooks/useShortcuts';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
 import { QUEST_DESCRIPTION_TEXT_ID, QUEST_NAME_TEXT_ID, updateIndexSpeakToBeatNpc } from '@modelEntities/quest';
 import { cleaningQuestNaNValues } from '@utils/cleanNaNValue';

@@ -6,9 +6,9 @@ import { TranslateInputContainer } from '@components/inputs/TranslateInputContai
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { useGetEntityDescriptionTextUsingTextId, useGetEntityNameTextUsingTextId, useSetProjectText } from '@utils/ReadingProjectText';
 import { ABILITY_DESCRIPTION_TEXT_ID, ABILITY_NAME_TEXT_ID } from '@modelEntities/ability';
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import { AbilityTranslationOverlay, TranslationEditorTitle } from './AbilityTranslationOverlay';
-import { useAbilityPage } from '@utils/usePage';
+import { useAbilityPage } from '@hooks/usePage';
 
 /**
  * Ability Frame Editor.

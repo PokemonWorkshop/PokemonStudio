@@ -1,9 +1,9 @@
 import { ClearButtonOnlyIcon, EditButtonOnlyIcon } from '@components/buttons';
 import React, { DragEventHandler, useState } from 'react';
 import styled from 'styled-components';
-import { useChoosefile } from '@utils/useChooseFile';
+import { useChoosefile } from '@hooks/useChooseFile';
 import { ResourceImage } from '@components/ResourceImage';
-import { useCopyFile } from '@utils/useCopyFile';
+import { useCopyFile } from '@hooks/useCopyFile';
 
 type IconInputContainerProps = {
   borderless: boolean;

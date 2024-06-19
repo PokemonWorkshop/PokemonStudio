@@ -3,11 +3,11 @@ import { Editor } from '@components/editor';
 import { TFunction, useTranslation } from 'react-i18next';
 import { MOVE_BATTLE_ENGINE_METHODS, MOVE_TARGETS, MOVE_VALIDATOR } from '@modelEntities/move';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useMovePage } from '@utils/usePage';
+import { useMovePage } from '@hooks/usePage';
 import { useUpdateMove } from './useUpdateMove';
-import { useZodForm } from '@utils/useZodForm';
+import { useZodForm } from '@hooks/useZodForm';
 import { InputFormContainer } from '@components/inputs/InputContainer';
-import { useInputAttrsWithLabel } from '@utils/useInputAttrs';
+import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 import { BattleEngineMethodEditor } from './MoveParametersEditor/BattleEngineMethodEditor';
 
 const targetEntries = (t: TFunction<'database_moves'>) => MOVE_TARGETS.map((target) => ({ value: target, label: t(`${target}`) }));

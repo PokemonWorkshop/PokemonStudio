@@ -14,9 +14,9 @@ import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { useTranslation } from 'react-i18next';
 import { EncounterDataBlock } from '@components/database/pokemon/pokemonDataBlock/EncounterDataBlock';
 import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import { PokemonEditorAndDeletionKeys, PokemonEditorOverlay } from '@components/database/pokemon/editors/PokemonEditorOverlay';
-import { useCreaturePage } from '@utils/usePage';
+import { useCreaturePage } from '@hooks/usePage';
 
 export const PokemonPage = () => {
   const [evolutionIndex, setEvolutionIndex] = useState(0);

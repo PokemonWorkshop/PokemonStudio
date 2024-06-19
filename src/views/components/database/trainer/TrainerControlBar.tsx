@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { SecondaryButtonWithPlusIcon } from '@components/buttons';
 import { ControlBar } from '@components/ControlBar';
 import { SelectTrainer } from '@components/selects';
-import { useSetCurrentDatabasePath } from '@utils/useSetCurrentDatabasePage';
-import { useProjectTrainers } from '@utils/useProjectData';
-import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
+import { useSetCurrentDatabasePath } from '@hooks/useSetCurrentDatabasePage';
+import { useProjectTrainers } from '@hooks/useProjectData';
+import { StudioShortcutActions, useShortcut } from '@hooks/useShortcuts';
 import { TrainerDialogsRef } from './editors/TrainerEditorOverlay';
 
 type TrainerControlBarProps = {

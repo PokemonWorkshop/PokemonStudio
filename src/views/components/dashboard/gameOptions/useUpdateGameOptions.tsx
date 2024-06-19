@@ -1,6 +1,6 @@
 import { StudioGameOptionConfig } from '@modelEntities/config';
 import { cloneEntity } from '@utils/cloneEntity';
-import { useConfigGameOptions } from '@utils/useProjectConfig';
+import { useConfigGameOptions } from '@hooks/useProjectConfig';
 import { useCallback } from 'react';
 
 export const useUpdateGameOptions = (gameOptions: StudioGameOptionConfig) => {

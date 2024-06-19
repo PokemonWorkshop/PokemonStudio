@@ -4,7 +4,7 @@ import { Editor } from '@components/editor';
 
 import { useTranslation } from 'react-i18next';
 import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
-import { useProjectZones } from '@utils/useProjectData';
+import { useProjectZones } from '@hooks/useProjectData';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { useSetProjectText } from '@utils/ReadingProjectText';
 import { ZONE_DESCRIPTION_TEXT_ID, ZONE_NAME_TEXT_ID } from '@modelEntities/zone';

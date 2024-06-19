@@ -5,15 +5,15 @@ import { useTranslation } from 'react-i18next';
 import { PageContainerStyle, PageDataConstrainerStyle } from '@pages/database/PageContainerStyle';
 import { DataBlockWithAction, DataBlockWrapper } from '@components/database/dataBlocks';
 
-import { useDialogsRef } from '@utils/useDialogsRef';
-import { useMapPage } from '@utils/usePage';
+import { useDialogsRef } from '@hooks/useDialogsRef';
+import { useMapPage } from '@hooks/usePage';
 import { MapEditorOverlay } from '@components/world/map/editors';
 import { MapEditorAndDeletionKeys } from '@components/world/map/editors/MapEditorOverlay';
 import { MapBreadcrumb, MapEmptyState, MapFrame, MapMusics, MapRMXP2StudioUpdate, MapUpdate } from '@components/world/map';
 import { DeleteButtonWithIcon, SecondaryButton } from '@components/buttons';
 import { BaseIcon } from '@components/icons/BaseIcon';
 import theme from '@src/AppTheme';
-import { useOpenTiled } from '@utils/useOpenTiled';
+import { useOpenTiled } from '@hooks/useOpenTiled';
 import { MapImportEditorTitle, MapImportOverlay } from '@components/world/map/editors/MapImport/MapImportOverlay';
 import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';
 

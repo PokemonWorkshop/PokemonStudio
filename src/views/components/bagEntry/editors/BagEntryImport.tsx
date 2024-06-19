@@ -8,11 +8,11 @@ import { cloneEntity } from '@utils/cloneEntity';
 import { Editor } from '@components/editor';
 import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
 
-import { useTrainerPage } from '@utils/usePage';
+import { useTrainerPage } from '@hooks/usePage';
 import { useUpdateTrainer } from '@components/database/trainer/editors/useUpdateTrainer';
 import type { BagEntryFrom } from './BagEntryEditorOverlay';
 import { assertUnreachable } from '@utils/assertUnreachable';
-import { useProjectTrainers } from '@utils/useProjectData';
+import { useProjectTrainers } from '@hooks/useProjectData';
 import { StudioTrainer, reduceBagEntries } from '@modelEntities/trainer';
 import { ProjectData } from '@src/GlobalStateProvider';
 

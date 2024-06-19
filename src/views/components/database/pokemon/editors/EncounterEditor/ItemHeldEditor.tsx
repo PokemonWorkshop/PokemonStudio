@@ -1,5 +1,5 @@
 import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
-import { useInputAttrsWithLabel } from '@utils/useInputAttrs';
+import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';

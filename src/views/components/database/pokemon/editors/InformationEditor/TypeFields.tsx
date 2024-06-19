@@ -1,7 +1,7 @@
 import { StudioCreatureForm } from '@modelEntities/creature';
-import { useSelectOptions } from '@utils/useSelectOptions';
+import { useSelectOptions } from '@hooks/useSelectOptions';
 import React, { useState } from 'react';
-import { useInputAttrsWithLabel } from '@utils/useInputAttrs';
+import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 import { INFORMATION_EDITOR_SCHEMA } from './InformationEditorSchema';
 import { useTranslation } from 'react-i18next';
 

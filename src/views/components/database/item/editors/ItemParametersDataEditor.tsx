@@ -4,7 +4,7 @@ import { Editor } from '@components/editor';
 import { InputContainer, InputWithLeftLabelContainer, Label, Toggle } from '@components/inputs';
 import { LOCKED_ITEM_EDITOR } from '@modelEntities/item';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useItemPage } from '@utils/usePage';
+import { useItemPage } from '@hooks/usePage';
 import { useUpdateItem } from './useUpdateItem';
 
 export const ItemParametersDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {

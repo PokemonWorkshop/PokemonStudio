@@ -7,7 +7,7 @@ import { DeleteButtonWithIcon } from '@components/buttons';
 
 import { TextFrame, TextList } from '@components/textmanagement';
 import { TextDialogsRef } from '@components/textmanagement/editors/TextEditorOverlay';
-import { useTextPage } from '@utils/usePage';
+import { useTextPage } from '@hooks/usePage';
 
 export const TextsPage = () => {
   const dialogsRef: TextDialogsRef = useOutletContext();

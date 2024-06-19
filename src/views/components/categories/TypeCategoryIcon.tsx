@@ -1,6 +1,6 @@
 import React from 'react';
 import { hexToRgba } from '@utils/ColorUtils';
-import { useTypePage } from '@utils/usePage';
+import { useTypePage } from '@hooks/usePage';
 import styled from 'styled-components';
 import { CategoryIcon } from './CategoryIcon';
 

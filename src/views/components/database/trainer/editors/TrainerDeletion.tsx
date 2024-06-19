@@ -1,7 +1,7 @@
 import React, { forwardRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Deletion } from '@components/deletion';
-import { useProjectTrainers } from '@utils/useProjectData';
+import { useProjectTrainers } from '@hooks/useProjectData';
 import { getEntityNameText } from '@utils/ReadingProjectText';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 

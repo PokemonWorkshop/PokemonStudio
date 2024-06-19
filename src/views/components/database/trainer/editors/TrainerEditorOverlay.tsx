@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
 import { assertUnreachable } from '@utils/assertUnreachable';
-import type { DialogRefData } from '@utils/useDialogsRef';
+import type { DialogRefData } from '@hooks/useDialogsRef';
 import { TrainerDialogEditor, TrainerFrameEditor, TrainerNewEditor, TrainerDeletion } from '.';
 
 export type TrainerEditorAndDeletionKeys = 'new' | 'frame' | 'dialog' | 'deletion';

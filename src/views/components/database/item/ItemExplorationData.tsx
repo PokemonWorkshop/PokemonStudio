@@ -2,7 +2,7 @@ import { LOCKED_ITEM_EDITOR } from '@modelEntities/item';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataBlockWithTitle, DataFieldsetField, DataGrid } from '../dataBlocks';
-import { useItemPage } from '@utils/usePage';
+import { useItemPage } from '@hooks/usePage';
 import { ItemDialogsRef } from './editors/ItemEditorOverlay';
 
 type ItemExplorationDataProps = { dialogsRef: ItemDialogsRef };

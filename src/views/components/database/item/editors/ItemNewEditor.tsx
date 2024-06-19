@@ -3,7 +3,7 @@ import { Editor } from '@components/editor';
 import { TFunction, useTranslation } from 'react-i18next';
 import { IconInput, Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
-import { useProjectItems } from '@utils/useProjectData';
+import { useProjectItems } from '@hooks/useProjectData';
 import styled from 'styled-components';
 import { checkDbSymbolExist, generateDefaultDbSymbol, wrongDbSymbol } from '@utils/dbSymbolUtils';
 import { DarkButton, PrimaryButton } from '@components/buttons';
@@ -23,7 +23,7 @@ import { createItem } from '@utils/entityCreation';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { useSetProjectText } from '@utils/ReadingProjectText';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useItemPage } from '@utils/usePage';
+import { useItemPage } from '@hooks/usePage';
 import { TooltipWrapper } from '@ds/Tooltip';
 
 const itemCategoryEntries = (t: TFunction<('database_items' | 'database_types' | 'database_moves')[]>) =>

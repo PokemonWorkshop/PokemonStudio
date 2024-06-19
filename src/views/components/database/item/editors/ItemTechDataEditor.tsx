@@ -7,9 +7,9 @@ import { SelectMove } from '@components/selects';
 import { ITEM_DESCRIPTION_TEXT_ID, LOCKED_ITEM_EDITOR } from '@modelEntities/item';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useItemPage } from '@utils/usePage';
+import { useItemPage } from '@hooks/usePage';
 import { useUpdateItem } from './useUpdateItem';
-import { useProjectDataReadonly } from '@utils/useProjectData';
+import { useProjectDataReadonly } from '@hooks/useProjectData';
 import { useCopyProjectText } from '@utils/ReadingProjectText';
 import { MOVE_DESCRIPTION_TEXT_ID } from '@modelEntities/move';
 

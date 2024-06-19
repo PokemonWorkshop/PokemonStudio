@@ -3,10 +3,10 @@ import React from 'react';
 import { PrimaryButton } from './GenericButtons';
 import { useNavigate } from 'react-router-dom';
 import { useLoaderRef } from '@utils/loaderContext';
-import { useProjectLoad } from '@utils/useProjectLoad';
-import { useProjectNew } from '@utils/useProjectNew';
+import { useProjectLoad } from '@hooks/useProjectLoad';
+import { useProjectNew } from '@hooks/useProjectNew';
 import { useTranslation } from 'react-i18next';
-import type { NewProjectData } from '@utils/useProjectNew/types';
+import type { NewProjectData } from '@hooks/useProjectNew/types';
 
 type NewProjectButtonProps = {
   newProjectData: Omit<NewProjectData, 'clone'>;

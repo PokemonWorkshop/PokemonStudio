@@ -1,4 +1,4 @@
-import { useProjectConfigReadonly } from '@utils/useProjectConfig';
+import { useProjectConfigReadonly } from '@hooks/useProjectConfig';
 import { DEFAULT_GAME_OPTIONS, DefaultGameOptions } from '@modelEntities/config';
 import { useUpdateGameOptions } from './useUpdateGameOptions';
 import { cloneEntity } from '@utils/cloneEntity';

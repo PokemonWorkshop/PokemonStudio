@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { useConfigLanguage, useConfigSceneTitle } from '@utils/useProjectConfig';
+import { useConfigLanguage, useConfigSceneTitle } from '@hooks/useProjectConfig';
 import { useTranslation } from 'react-i18next';
 import { PageEditor } from '@components/pages';
 import { Input, InputWithTopLabelContainer, InputWithLeftLabelContainer, Label, Toggle, InputContainer, AudioInput } from '@components/inputs';

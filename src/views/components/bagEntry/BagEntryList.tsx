@@ -6,7 +6,7 @@ import { DarkButton, SecondaryButtonWithPlusIconResponsive } from '@components/b
 import { ItemBagEntry } from './ItemBagEntry';
 import { StudioTrainerBagEntry } from '@modelEntities/trainer';
 import { BagEntryEditorOverlay, type BagEntryEditorAndDeletionKeys, type BagEntryFrom } from './editors/BagEntryEditorOverlay';
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 
 type BagEntryListProps = {
   title: string;

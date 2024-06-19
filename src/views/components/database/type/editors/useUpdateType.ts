@@ -1,6 +1,6 @@
 import { StudioType } from '@modelEntities/type';
 import { cloneEntity } from '@utils/cloneEntity';
-import { useProjectTypes } from '@utils/useProjectData';
+import { useProjectTypes } from '@hooks/useProjectData';
 import { useCallback } from 'react';
 
 export const useUpdateType = (type: StudioType) => {

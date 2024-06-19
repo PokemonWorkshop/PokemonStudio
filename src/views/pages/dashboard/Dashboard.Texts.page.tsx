@@ -5,7 +5,7 @@ import { DashboardFonts, DashboardMessages } from '@components/dashboard/texts';
 import { DashboardFontsEditor, DashboardFontsNewEditor } from '@components/dashboard/texts/editors';
 import { EditorOverlay } from '@components/editor';
 import { Deletion, DeletionOverlay } from '@components/deletion';
-import { useConfigTexts } from '@utils/useProjectConfig';
+import { useConfigTexts } from '@hooks/useProjectConfig';
 import { cloneEntity } from '@utils/cloneEntity';
 import { cleaningTextNaNValues } from '@utils/cleanNaNValue';
 

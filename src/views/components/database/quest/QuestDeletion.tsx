@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Deletion } from '@components/deletion';
-import { useProjectQuests } from '@utils/useProjectData';
+import { useProjectQuests } from '@hooks/useProjectData';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
 import { cloneEntity } from '@utils/cloneEntity';
 

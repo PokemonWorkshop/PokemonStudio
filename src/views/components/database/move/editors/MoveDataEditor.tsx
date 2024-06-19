@@ -2,11 +2,11 @@ import React, { forwardRef, useMemo } from 'react';
 import { Editor } from '@components/editor';
 import { TFunction, useTranslation } from 'react-i18next';
 import { MOVE_CRITICAL_RATES, MOVE_VALIDATOR, TEXT_CRITICAL_RATES } from '@modelEntities/move';
-import { useMovePage } from '@utils/usePage';
+import { useMovePage } from '@hooks/usePage';
 import { useUpdateMove } from './useUpdateMove';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useZodForm } from '@utils/useZodForm';
-import { useInputAttrsWithLabel } from '@utils/useInputAttrs';
+import { useZodForm } from '@hooks/useZodForm';
+import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 import { InputFormContainer } from '@components/inputs/InputContainer';
 
 const moveCrititalRateEntries = (t: TFunction<'database_moves'>) =>

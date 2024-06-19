@@ -1,12 +1,12 @@
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
-import { useProjectPokemon } from '@utils/useProjectData';
+import { useProjectPokemon } from '@hooks/useProjectData';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataBlockWithTitlePagination, DataFieldsetField, DataGrid } from '../../dataBlocks';
 import { PokemonDataProps } from '../PokemonDataPropsInterface';
-import { CONTROL } from '@utils/useKeyPress';
+import { CONTROL } from '@hooks/useKeyPress';
 import { useKeyPress } from 'react-flow-renderer';
-import { usePokemonShortcutNavigation } from '@utils/useShortcutNavigation';
+import { usePokemonShortcutNavigation } from '@hooks/useShortcutNavigation';
 
 type EvolutionDataBlockProps = {
   evolutionIndex: number;

@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { SubPageTitle } from '@components/pages';
 import { MovePokemonTable, FilterType } from '@components/database/move/moveTable/MovePokemonTable';
-import { useMovePage } from '@utils/usePage';
+import { useMovePage } from '@hooks/usePage';
 
 type ParametersTitleType =
   | 'level_learnable_move'

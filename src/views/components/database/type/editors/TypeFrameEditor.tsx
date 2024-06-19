@@ -14,9 +14,9 @@ import { TranslateInputContainer } from '@components/inputs/TranslateInputContai
 import { useSetProjectText } from '@utils/ReadingProjectText';
 import { TYPE_NAME_TEXT_ID } from '@modelEntities/type';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useTypePage } from '@utils/usePage';
+import { useTypePage } from '@hooks/usePage';
 import { useUpdateType } from './useUpdateType';
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import { TranslationEditorTitle, TypeTranslationOverlay } from './TypeTranslationOverlay';
 
 export const TypeFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {

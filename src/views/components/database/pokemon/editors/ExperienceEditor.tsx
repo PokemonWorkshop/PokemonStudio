@@ -1,11 +1,11 @@
 import { Editor } from '@components/editor';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useCreaturePage } from '@utils/usePage';
+import { useCreaturePage } from '@hooks/usePage';
 import React, { forwardRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUpdateForm } from './useUpdateForm';
-import { useZodForm } from '@utils/useZodForm';
-import { useInputAttrsWithLabel } from '@utils/useInputAttrs';
+import { useZodForm } from '@hooks/useZodForm';
+import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 import { CREATURE_FORM_VALIDATOR } from '@modelEntities/creature';
 import { InputFormContainer } from '@components/inputs/InputContainer';
 

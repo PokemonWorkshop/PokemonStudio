@@ -1,6 +1,6 @@
 import { StudioCreature, StudioCreatureForm } from '@modelEntities/creature';
 import { PokemonDialogRef } from './editors/PokemonEditorOverlay';
-import { IClickable } from '@utils/useShortcutNavigation';
+import { IClickable } from '@hooks/useShortcutNavigation';
 
 export type PokemonDataProps = {
   pokemonWithForm: PokemonWithForm;

@@ -1,13 +1,13 @@
 import { Editor } from '@components/editor';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useCreaturePage } from '@utils/usePage';
+import { useCreaturePage } from '@hooks/usePage';
 import React, { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUpdateForm } from './useUpdateForm';
 import { CREATURE_FORM_VALIDATOR } from '@modelEntities/creature';
-import { useSelectOptions } from '@utils/useSelectOptions';
-import { useZodForm } from '@utils/useZodForm';
-import { useInputAttrsWithLabel } from '@utils/useInputAttrs';
+import { useSelectOptions } from '@hooks/useSelectOptions';
+import { useZodForm } from '@hooks/useZodForm';
+import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 import { InputFormContainer } from '@components/inputs/InputContainer';
 
 const ABILITY_TEXT_KEYS = ['ability_1', 'ability_2', 'hidden_ability'] as const;

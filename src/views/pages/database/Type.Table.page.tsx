@@ -8,8 +8,8 @@ import { SubPageTitle } from '@components/pages';
 import { TypeTable } from '@components/database/type/TypeTable';
 import { DataBlockWrapperWithNoBreakpoint } from '@components/database/dataBlocks/DataBlockWrapper';
 import { TypeEditorAndDeletionKeys, TypeEditorOverlay } from '@components/database/type/editors/TypeEditorOverlay';
-import { useDialogsRef } from '@utils/useDialogsRef';
-import { useTypePage } from '@utils/usePage';
+import { useDialogsRef } from '@hooks/useDialogsRef';
+import { useTypePage } from '@hooks/usePage';
 
 export const TypeTablePage = () => {
   const { types, typeDbSymbol } = useTypePage();

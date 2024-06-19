@@ -1,8 +1,8 @@
-import { useProjectConfigReadonly } from '@utils/useProjectConfig';
-import { useProjectStudio } from '@utils/useProjectStudio';
+import { useProjectConfigReadonly } from '@hooks/useProjectConfig';
+import { useProjectStudio } from '@hooks/useProjectStudio';
 import { useUpdateLanguage } from './editors/useUpdateLanguage';
 import { useUpdateGameOptions } from '../gameOptions';
-import { useUpdateProjectStudio } from '@utils/useUpdateProjectStudio';
+import { useUpdateProjectStudio } from '@hooks/useUpdateProjectStudio';
 import { cloneEntity } from '@utils/cloneEntity';
 import { StudioLanguageConfig } from '@modelEntities/config';
 

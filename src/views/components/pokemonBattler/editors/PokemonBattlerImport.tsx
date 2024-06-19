@@ -13,8 +13,8 @@ import { useUpdateGroup } from '@components/database/group/editors/useUpdateGrou
 
 import { cloneEntity } from '@utils/cloneEntity';
 import { convertShowdownToStudio } from '@utils/showdownUtils';
-import { useProjectGroups, useProjectTrainers } from '@utils/useProjectData';
-import { useGroupPage, useTrainerPage } from '@utils/usePage';
+import { useProjectGroups, useProjectTrainers } from '@hooks/useProjectData';
+import { useGroupPage, useTrainerPage } from '@hooks/usePage';
 
 import { ProjectData } from '@src/GlobalStateProvider';
 import { StudioGroup } from '@modelEntities/group';

@@ -6,9 +6,9 @@ import { DarkButton, DeleteButtonWithIcon } from '@components/buttons';
 import { useTranslation } from 'react-i18next';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { useNavigate } from 'react-router-dom';
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import { MoveEditorAndDeletionKeys, MoveEditorOverlay } from '@components/database/move/editors/MoveEditorOverlay';
-import { useMovePage } from '@utils/usePage';
+import { useMovePage } from '@hooks/usePage';
 
 export const MovePage = () => {
   const dialogsRef = useDialogsRef<MoveEditorAndDeletionKeys>();

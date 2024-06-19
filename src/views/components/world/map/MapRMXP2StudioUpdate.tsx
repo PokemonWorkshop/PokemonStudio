@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { SecondaryButton } from '@components/buttons';
 import { DataBlockContainer } from '@components/database/dataBlocks';
-import { useRMXP2StudioMapsUpdate } from '@utils/useRMXP2StudioMapsUpdate';
+import { useRMXP2StudioMapsUpdate } from '@hooks/useRMXP2StudioMapsUpdate';
 import { showNotification } from '@utils/showNotification';
 import { useLoaderRef } from '@utils/loaderContext';
 import { MapUpdateContainer } from './MapUpdate';

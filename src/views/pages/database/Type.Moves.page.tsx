@@ -7,8 +7,8 @@ import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { SubPageTitle } from '@components/pages';
 import { TypeMovesTable } from '@components/database/type/TypeMovesTable';
-import { useTypePage } from '@utils/usePage';
-import { useProjectTypes } from '@utils/useProjectData';
+import { useTypePage } from '@hooks/usePage';
+import { useProjectTypes } from '@hooks/useProjectData';
 
 export const TypeMovesPage = () => {
   const navigate = useNavigate();

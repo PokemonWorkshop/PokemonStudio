@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { Editor } from '@components/editor';
 import { DarkButton, PrimaryButton } from '@components/buttons';
-import { useConfigTexts } from '@utils/useProjectConfig';
+import { useConfigTexts } from '@hooks/useProjectConfig';
 import { cloneEntity } from '@utils/cloneEntity';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { TooltipWrapper } from '@ds/Tooltip';

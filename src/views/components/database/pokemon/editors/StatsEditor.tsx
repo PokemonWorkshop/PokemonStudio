@@ -2,14 +2,14 @@ import { EditorWithCollapse } from '@components/editor/Editor';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import { Tag } from '@components/Tag';
-import { useCreaturePage } from '@utils/usePage';
+import { useCreaturePage } from '@hooks/usePage';
 import styled from 'styled-components';
 import React, { forwardRef, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUpdateForm } from './useUpdateForm';
 import { CREATURE_FORM_VALIDATOR } from '@modelEntities/creature';
-import { useInputAttrsWithLabel } from '@utils/useInputAttrs';
-import { useZodForm } from '@utils/useZodForm';
+import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
+import { useZodForm } from '@hooks/useZodForm';
 import { InputFormContainer } from '@components/inputs/InputContainer';
 
 const TotalBaseContainer = styled.div`

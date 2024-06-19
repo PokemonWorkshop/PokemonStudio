@@ -1,10 +1,10 @@
 import React, { forwardRef, useRef, useState } from 'react';
 import { Editor } from '@components/editor';
 import { useTranslation } from 'react-i18next';
-import { useMapPage } from '@utils/usePage';
+import { useMapPage } from '@hooks/usePage';
 import { useUpdateMap } from './useUpdateMap';
 import { useGetEntityDescriptionText, useGetEntityNameText, useSetProjectText } from '@utils/ReadingProjectText';
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID } from '@modelEntities/map';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import {
@@ -24,7 +24,7 @@ import { basename } from '@utils/path';
 import { useUpdateMapModified } from './useUpdateMapModified';
 import { cloneEntity } from '@utils/cloneEntity';
 import { TextInputError } from '@components/inputs/Input';
-import { useMapCopy } from '@utils/useMapCopy';
+import { useMapCopy } from '@hooks/useMapCopy';
 import { useLoaderRef } from '@utils/loaderContext';
 
 type MapFrameEditorProps = {

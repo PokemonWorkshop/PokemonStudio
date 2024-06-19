@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
 import { PrimaryButton } from '@components/buttons';
-import { useProjectStudio } from '@utils/useProjectStudio';
+import { useProjectStudio } from '@hooks/useProjectStudio';
 import { useTranslation } from 'react-i18next';
 import {
   MessageBoxActionContainer,

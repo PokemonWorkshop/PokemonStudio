@@ -1,4 +1,4 @@
-import { useInputAttrsWithLabel } from '@utils/useInputAttrs';
+import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 import { STATUS_EDITOR_SCHEMA } from './StatusEditorSchema';
 import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
 import React, { useEffect, useRef } from 'react';

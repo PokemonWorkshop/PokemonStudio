@@ -4,14 +4,14 @@ import { Input, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 import { CREATURE_FORM_VALIDATOR, CREATURE_SPECIE_TEXT_ID } from '@modelEntities/creature';
 import { useGetProjectText, useSetProjectText } from '@utils/ReadingProjectText';
-import { useDialogsRef } from '@utils/useDialogsRef';
-import { useCreaturePage } from '@utils/usePage';
+import { useDialogsRef } from '@hooks/useDialogsRef';
+import { useCreaturePage } from '@hooks/usePage';
 import React, { forwardRef, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CreatureTranslationOverlay, TranslationEditorTitle } from './CreatureTranslationOverlay';
 import { useUpdateForm } from './useUpdateForm';
-import { useZodForm } from '@utils/useZodForm';
-import { useInputAttrsWithLabel } from '@utils/useInputAttrs';
+import { useZodForm } from '@hooks/useZodForm';
+import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 import { InputFormContainer } from '@components/inputs/InputContainer';
 
 const POKEDEX_EDITOR_SCHEMA = CREATURE_FORM_VALIDATOR.pick({ weight: true, height: true });

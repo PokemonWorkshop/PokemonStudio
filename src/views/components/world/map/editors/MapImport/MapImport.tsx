@@ -8,11 +8,11 @@ import type { MapImportFiles } from './MapImportType';
 import { MapImportList } from './MapImportList';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import styled from 'styled-components';
-import { useMapImport } from '@utils/useMapImport';
+import { useMapImport } from '@hooks/useMapImport';
 import { useLoaderRef } from '@utils/loaderContext';
 import { DropDownOption } from '@components/StudioDropDown';
-import { useProjectDataReadonly } from '@utils/useProjectData';
-import type { RMXPMapInfo } from '@utils/useMapImport/types';
+import { useProjectDataReadonly } from '@hooks/useProjectData';
+import type { RMXPMapInfo } from '@hooks/useMapImport/types';
 
 const MapImportContainer = styled.div`
   display: flex;

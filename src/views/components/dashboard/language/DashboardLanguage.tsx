@@ -3,7 +3,7 @@ import { TFunction, useTranslation } from 'react-i18next';
 import { PageEditor } from '@components/pages';
 import { StudioLanguageConfig } from '@modelEntities/config';
 import { useDashboardLanguage } from './useDashboardLanguage';
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import { DashboardLanguageEditorAndDeletionKeys, DashboardLanguageEditorOverlay } from './editors/DashboardLanguageEditorOverlay';
 import type { EditLanguage } from './editors/DashboardLanguageEditor';
 import { DashboardLanguageAvailableInGame } from './DashboardLanguageAvailableInGame';

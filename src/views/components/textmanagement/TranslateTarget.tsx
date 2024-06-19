@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useTranslationPage } from '@utils/usePage';
+import { useTranslationPage } from '@hooks/usePage';
 import { DataBlockWrapper, DataInfoContainerHeaderTitle } from '@components/database/dataBlocks';
 import styled from 'styled-components';
 import { LanguageContext } from '@pages/texts/Translation.page';
@@ -12,10 +12,10 @@ import { ReactComponent as TranslateIcon } from '@assets/icons/global/translate.
 import { ReactComponent as CopyIcon } from '@assets/icons/global/copy.svg';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { SavingTextMap } from '@utils/SavingUtils';
-import { useTextInfosReadonly } from '@utils/useTextInfos';
-import { getProjectTextChange } from '@utils/updateProjectText';
+import { useTextInfosReadonly } from '@hooks/useTextInfos';
+import { getProjectTextChange } from '@hooks/updateProjectText';
 import { ProgressBar } from '@components/progress-bar/ProgressBar';
-import { CONTROL } from '@utils/useKeyPress';
+import { CONTROL } from '@hooks/useKeyPress';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { getLanguageDisplayText } from '@utils/getLanguageDisplayText';
 

@@ -1,6 +1,6 @@
 import { StudioMap } from '@modelEntities/map';
 import { cloneEntity } from '@utils/cloneEntity';
-import { useProjectMaps } from '@utils/useProjectData';
+import { useProjectMaps } from '@hooks/useProjectData';
 import { useCallback } from 'react';
 
 export const useUpdateMap = (map: StudioMap) => {

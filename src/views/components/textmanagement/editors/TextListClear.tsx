@@ -1,7 +1,7 @@
 import { Deletion } from '@components/deletion';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { getEntityNameTextUsingTextId, useGetTextList, useSetProjectText } from '@utils/ReadingProjectText';
-import { useTextInfos } from '@utils/useTextInfos';
+import { useTextInfos } from '@hooks/useTextInfos';
 import React, { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
 

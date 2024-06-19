@@ -9,7 +9,7 @@ import {
   InputWithTopLabelContainer,
   Label,
 } from '@components/inputs';
-import { useProjectTypes } from '@utils/useProjectData';
+import { useProjectTypes } from '@hooks/useProjectData';
 import styled from 'styled-components';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { TextInputError } from '@components/inputs/Input';

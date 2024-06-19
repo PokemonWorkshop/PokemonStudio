@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { ControlBar } from '@components/ControlBar';
 import { SelectText } from '@components/selects';
 import { TextDialogsRef } from './editors/TextEditorOverlay';
-import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
+import { StudioShortcutActions, useShortcut } from '@hooks/useShortcuts';
 import styled from 'styled-components';
-import { useTextInfos } from '@utils/useTextInfos';
+import { useTextInfos } from '@hooks/useTextInfos';
 import { useNavigate } from 'react-router-dom';
 
 const NEW_BREAKPOINT = 'screen and (max-width: 1100px)';

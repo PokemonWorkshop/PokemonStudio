@@ -3,7 +3,7 @@ import { IconInput, InputWithLeftLabelContainer, InputWithTopLabelContainer, Lab
 import { DropInput } from '@components/inputs/DropInput';
 import { useTranslation } from 'react-i18next';
 import { PageEditor } from '@components/pages';
-import { useConfigDevices } from '@utils/useProjectConfig';
+import { useConfigDevices } from '@hooks/useProjectConfig';
 import { cloneEntity } from '@utils/cloneEntity';
 
 export const DashboardDevices = () => {

@@ -5,7 +5,7 @@ import { TFunction, useTranslation } from 'react-i18next';
 import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import styled from 'styled-components';
-import { useProjectQuests } from '@utils/useProjectData';
+import { useProjectQuests } from '@hooks/useProjectData';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { QUEST_CATEGORIES, QUEST_DESCRIPTION_TEXT_ID, QUEST_NAME_TEXT_ID, QUEST_RESOLUTIONS, StudioQuestCategory } from '@modelEntities/quest';
 import { useSetProjectText } from '@utils/ReadingProjectText';

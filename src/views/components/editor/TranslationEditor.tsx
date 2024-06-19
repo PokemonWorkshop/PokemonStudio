@@ -9,7 +9,7 @@ import { useGlobalState } from '@src/GlobalStateProvider';
 import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
 import { SecondaryTag } from '@components/Tag';
 import { getText } from '@utils/ReadingProjectText';
-import { getProjectTextChange } from '@utils/updateProjectText';
+import { getProjectTextChange } from '@hooks/updateProjectText';
 import { SavingTextMap } from '@utils/SavingUtils';
 
 const TranslationEditorContainer = styled(EditorContainer)`

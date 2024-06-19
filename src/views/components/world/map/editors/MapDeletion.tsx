@@ -4,8 +4,8 @@ import { DbSymbol } from '@modelEntities/dbSymbol';
 import { mapInfoGetMapsFromMapDbSymbol, mapInfoRemoveMap } from '@utils/MapInfoUtils';
 import { getSelectedMapDbSymbol } from '@utils/MapUtils';
 import { getEntityNameText } from '@utils/ReadingProjectText';
-import { useMapInfo } from '@utils/useMapInfo';
-import { useProjectMaps } from '@utils/useProjectData';
+import { useMapInfo } from '@hooks/useMapInfo';
+import { useProjectMaps } from '@hooks/useProjectData';
 import React, { forwardRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 

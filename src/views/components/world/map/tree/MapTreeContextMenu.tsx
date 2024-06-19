@@ -5,14 +5,14 @@ import { ReactComponent as DeleteIcon } from '@assets/icons/global/delete-icon.s
 import { ReactComponent as EditIcon } from '@assets/icons/global/edit-icon.svg';
 import { ReactComponent as MapPaddedIcon } from '@assets/icons/global/map-padded.svg';
 import { MapDialogsRef } from '../editors/MapEditorOverlay';
-import { useMapInfo } from '@utils/useMapInfo';
+import { useMapInfo } from '@hooks/useMapInfo';
 import { mapInfoDuplicateMap, mapInfoRemoveFolder } from '@utils/MapInfoUtils';
 import { StudioMapInfoFolder, StudioMapInfoMap, StudioMapInfoValue } from '@modelEntities/mapInfo';
-import { useProjectMaps } from '@utils/useProjectData';
+import { useProjectMaps } from '@hooks/useProjectData';
 import { createMapInfo, duplicateMap } from '@utils/entityCreation';
 import { useGetEntityDescriptionText, useGetEntityNameText, useSetProjectText } from '@utils/ReadingProjectText';
 import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID } from '@modelEntities/map';
-import { useOpenTiled } from '@utils/useOpenTiled';
+import { useOpenTiled } from '@hooks/useOpenTiled';
 
 type MapTreeContextMenuProps = {
   mapInfoValue: StudioMapInfoValue;

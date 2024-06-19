@@ -6,11 +6,11 @@ import { PokemonBattler } from './PokemonBattler';
 import { useTranslation } from 'react-i18next';
 import { StudioGroupEncounter } from '@modelEntities/groupEncounter';
 
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import { PokemonBattlerEditorOverlay } from './editors';
 import type { CurrentBattlerType, PokemonBattlerEditorAndDeletionKeys, PokemonBattlerFrom } from './editors/PokemonBattlerEditorOverlay';
 import { assertUnreachable } from '@utils/assertUnreachable';
-import { useTrainerPage } from '@utils/usePage';
+import { useTrainerPage } from '@hooks/usePage';
 
 type PokemonBattlerListProps = {
   title: string;

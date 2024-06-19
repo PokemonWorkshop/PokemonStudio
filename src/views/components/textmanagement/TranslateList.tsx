@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useTranslationPage } from '@utils/usePage';
+import { useTranslationPage } from '@hooks/usePage';
 import { DataGrid } from '@components/database/dataBlocks';
 import styled from 'styled-components';
 import { Language, LanguageContext } from '@pages/texts/Translation.page';

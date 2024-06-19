@@ -1,11 +1,11 @@
 import { useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
-import { useProjectAbilities } from '@utils/useProjectData';
+import { useProjectAbilities } from '@hooks/useProjectData';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataBlockWithTitle, DataFieldsetField, DataGrid } from '../../dataBlocks';
 import { PokemonDataProps } from '../PokemonDataPropsInterface';
-import { useKeyPress, CONTROL } from '@utils/useKeyPress';
-import { useShortcutNavigation } from '@utils/useShortcutNavigation';
+import { useKeyPress, CONTROL } from '@hooks/useKeyPress';
+import { useShortcutNavigation } from '@hooks/useShortcutNavigation';
 
 export const AbilitiesDataBlock = ({ pokemonWithForm, dialogsRef }: PokemonDataProps) => {
   const { form } = pokemonWithForm;

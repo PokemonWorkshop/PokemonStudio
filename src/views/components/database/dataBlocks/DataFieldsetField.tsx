@@ -1,4 +1,4 @@
-import { IClickable } from '@utils/useShortcutNavigation';
+import { IClickable } from '@hooks/useShortcutNavigation';
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 

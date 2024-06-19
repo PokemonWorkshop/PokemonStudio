@@ -1,6 +1,6 @@
 import React from 'react';
 import { Deletion } from '@components/deletion';
-import { useProjectMoves, useProjectPokemon } from '@utils/useProjectData';
+import { useProjectMoves, useProjectPokemon } from '@hooks/useProjectData';
 import { ProjectData } from '@src/GlobalStateProvider';
 import { useTranslation } from 'react-i18next';
 import { MovepoolType } from './MovepoolEditor';
