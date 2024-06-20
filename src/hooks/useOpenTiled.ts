@@ -1,5 +1,5 @@
 import { useGlobalState } from '@src/GlobalStateProvider';
-import { getSetting } from '../utils/settings';
+import { getSetting } from '@utils/settings';
 import { MapDialogsRef } from '@components/world/map/editors/MapEditorOverlay';
 
 export const useOpenTiled = () => {

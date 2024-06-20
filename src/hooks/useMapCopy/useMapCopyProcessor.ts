@@ -1,6 +1,6 @@
 import { MapImportFiles } from '@components/world/map/editors/MapImport/MapImportType';
 import { useMapImport } from '../useMapImport';
-import { basename, dirname, join } from '../../utils/path';
+import { basename, dirname, join } from '@utils/path';
 import { useMemo, useRef } from 'react';
 import { MapCopyFunctionBinding, MapCopyStateObject } from './types';
 import { DEFAULT_PROCESS_STATE, PROCESS_DONE_STATE, SpecialStateProcessors } from '@hooks/useProcess';

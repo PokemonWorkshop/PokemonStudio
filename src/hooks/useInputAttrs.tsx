@@ -1,6 +1,6 @@
 import { Input, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
 import { z } from 'zod';
-import { inputAttrs } from '../utils/inputAttrs';
+import { inputAttrs } from '@utils/inputAttrs';
 import React, { useMemo } from 'react';
 import { Select } from '@ds/Select';
 import { EmbeddedUnitInput } from '@components/inputs/EmbeddedUnitInput';

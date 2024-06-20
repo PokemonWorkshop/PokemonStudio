@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ProjectText } from '@src/GlobalStateProvider';
-import { useNewProjectText } from '../utils/ReadingProjectText';
+import { useNewProjectText } from '@utils/ReadingProjectText';
 
 type ImportCsvFileStateObject =
   | { state: 'done' }

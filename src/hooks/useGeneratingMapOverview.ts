@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { getSetting } from '../utils/settings';
+import { getSetting } from '@utils/settings';
 import { useGlobalState } from '@src/GlobalStateProvider';
-import { useLoaderRef } from '../utils/loaderContext';
+import { useLoaderRef } from '@utils/loaderContext';
 import { useTranslation } from 'react-i18next';
 
 type GeneratingMapOverviewFailureCallback = (error: { errorMessage: string }) => void;

@@ -1,7 +1,7 @@
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { ProjectData, SelectedDataIdentifier, State, useGlobalState } from '@src/GlobalStateProvider';
-import { getEntityNameText, getEntityNameTextUsingTextId } from '../utils/ReadingProjectText';
-import { SavingMap, SavingTextMap } from '../utils/SavingUtils';
+import { getEntityNameText, getEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
+import { SavingMap, SavingTextMap } from '@utils/SavingUtils';
 import { buildTextUpdate, TextUpdate } from './updateProjectText';
 import { addSelectOption, removeSelectOption } from './useSelectOptions';
 

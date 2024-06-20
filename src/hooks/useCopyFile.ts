@@ -1,8 +1,8 @@
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { basename, dirname, join } from '../utils/path';
-import { showNotification } from '../utils/showNotification';
+import { basename, dirname, join } from '@utils/path';
+import { showNotification } from '@utils/showNotification';
 
 type CopyFileFailureCallback = (error: { errorMessage: string }) => void;
 type CopyFileSuccessCallback = (payload: { destFile: string }) => void;

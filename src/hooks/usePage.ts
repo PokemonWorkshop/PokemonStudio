@@ -1,5 +1,5 @@
 import { StudioMove } from '@modelEntities/move';
-import { getEntityNameTextUsingTextId, getEntityNameText, useGetEntityNameTextUsingTextId, useGetEntityNameText } from '../utils/ReadingProjectText';
+import { getEntityNameTextUsingTextId, getEntityNameText, useGetEntityNameTextUsingTextId, useGetEntityNameText } from '@utils/ReadingProjectText';
 import { useProjectDataReadonly } from './useProjectData';
 import { useTextInfosReadonly } from './useTextInfos';
 import { StudioDex } from '@modelEntities/dex';
@@ -9,12 +9,12 @@ import { Language } from '@pages/texts/Translation.page';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getMapOverviewPath } from '../utils/resourcePath';
-import { showNotification } from '../utils/showNotification';
-import { join } from '../utils/path';
+import { getMapOverviewPath } from '@utils/resourcePath';
+import { showNotification } from '@utils/showNotification';
+import { join } from '@utils/path';
 import { useGeneratingMapOverview } from './useGeneratingMapOverview';
-import { useLoaderRef } from '../utils/loaderContext';
-import { getSetting } from '../utils/settings';
+import { useLoaderRef } from '@utils/loaderContext';
+import { getSetting } from '@utils/settings';
 
 export const useAbilityPage = () => {
   const { projectDataValues: abilities, selectedDataIdentifier: dbSymbol, state } = useProjectDataReadonly('abilities', 'ability');

@@ -1,5 +1,5 @@
 import { PSDKConfigs, useGlobalState } from '@src/GlobalStateProvider';
-import { SavingConfigMap } from '../utils/SavingUtils';
+import { SavingConfigMap } from '@utils/SavingUtils';
 
 /**
  * Captain Hook of the Hooks. This hook allow you to manipulate config from a specific screen by specifying the config key.

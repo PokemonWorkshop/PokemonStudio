@@ -4,8 +4,8 @@ import { useProjectDataReadonly } from '@hooks/useProjectData';
 import { useMapInfo } from '@hooks/useMapInfo';
 import { StudioMapInfo, StudioMapInfoMap, StudioMapInfoValue } from '@modelEntities/mapInfo';
 import type { DbSymbol } from '@modelEntities/dbSymbol';
-import { findMapInfoMap, getMapInfoParentId } from '../utils/MapInfoUtils';
-import { assertUnreachable } from '../utils/assertUnreachable';
+import { findMapInfoMap, getMapInfoParentId } from '@utils/MapInfoUtils';
+import { assertUnreachable } from '@utils/assertUnreachable';
 
 const getIds = (mapInfo: StudioMapInfo, mapInfoMap: StudioMapInfoMap) => {
   const parentIds = getMapInfoParentId(mapInfo, mapInfoMap);

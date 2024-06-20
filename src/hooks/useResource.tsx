@@ -3,7 +3,7 @@ import { DragEventHandler, useState } from 'react';
 import { useChoosefile } from './useChooseFile';
 import { useCopyFile } from './useCopyFile';
 import { useShowItemInFolder } from './useShowItemInFolder';
-import { dirname, join } from '../utils/path';
+import { dirname, join } from '@utils/path';
 
 type Props = {
   name: string;

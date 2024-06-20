@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import type { CheckMapsModifiedMethod } from '@src/backendTasks/checkMapsModified';
-import { showNotification } from '../utils/showNotification';
+import { showNotification } from '@utils/showNotification';
 import { useTranslation } from 'react-i18next';
-import { getSetting } from '../utils/settings';
+import { getSetting } from '@utils/settings';
 
 type CheckMapsModifiedPayload = {
   method: CheckMapsModifiedMethod;
