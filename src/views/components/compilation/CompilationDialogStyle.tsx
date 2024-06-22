@@ -1,11 +1,11 @@
 import { MessageBoxContainer } from '@components/MessageBoxContainer';
-import { DarkButton, PrimaryButton } from '@components/buttons';
+import { PrimaryButton } from '@components/buttons';
 import { Input } from '@components/inputs';
 import styled from 'styled-components';
 
 export const CompilationDialogContainer = styled(MessageBoxContainer)`
   width: 700px;
-  height: 692px;
+  height: auto;
   background-color: ${({ theme }) => theme.colors.dark16};
 
   .header {
@@ -34,7 +34,7 @@ export const CompilationDialogContainer = styled(MessageBoxContainer)`
     border-top: 1px solid ${({ theme }) => theme.colors.dark20};
     padding-top: 16px;
     align-items: center;
-    height: 100%;
+    margin-top: auto;
 
     .executable-info {
       ${({ theme }) => theme.fonts.normalRegular}
@@ -42,7 +42,7 @@ export const CompilationDialogContainer = styled(MessageBoxContainer)`
     }
 
     ${PrimaryButton} {
-      width: 178px; // TODO: should be not hard coded
+      min-width: max-content;
     }
   }
 `;
@@ -52,6 +52,7 @@ export const CompilationFormContainer = styled.form`
   flex-direction: column;
   gap: 24px;
   width: 100%;
+  height: 100%;
 
   .game-info {
     display: flex;
@@ -65,42 +66,24 @@ export const CompilationFormContainer = styled.form`
   }
 `;
 
-type CompilationOptionsContainerProps = {
-  isExpand: boolean;
-};
-
-export const CompilationOptionsContainer = styled.div<CompilationOptionsContainerProps>`
+export const CompilationOptionsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: ${({ isExpand }) => (isExpand ? '16px' : '8px 16px 8px 16px')};
-  border-radius: 8px;
-  background-color: ${({ theme }) => theme.colors.dark18};
-  box-sizing: border-box;
-  height: ${({ isExpand }) => (isExpand ? 'auto' : '48px')};
+  gap: 12px;
+  padding-top: 8px;
+  border-top: 1px solid ${({ theme }) => theme.colors.dark20};
 
   .header {
     ${({ theme }) => theme.fonts.titlesOverline}
+    color: ${({ theme }) => theme.colors.text400};
     letter-spacing: 1.5px;
     text-transform: uppercase;
-    color: ${({ theme }) => theme.colors.text400};
-    height: 32px;
-
-    ${DarkButton} {
-      width: 32px;
-      height: 32px;
-      padding: 0;
-    }
   }
 
   .options {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-gap: 16px;
-  }
-
-  .options-collapsed {
-    display: none;
   }
 
   .option {
@@ -127,6 +110,11 @@ export const CompilationOptionsContainer = styled.div<CompilationOptionsContaine
         ${({ theme }) => theme.fonts.normalRegular}
         color: ${({ theme }) => theme.colors.text400};
       }
+    }
+
+    .toggle {
+      display: flex;
+      align-items: center;
     }
   }
 `;

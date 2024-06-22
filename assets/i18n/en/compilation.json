@@ -1,0 +1,20 @@
+{
+  "compilation_dialog_title": "Creating a playable version",
+  "game_name": "Game name",
+  "version_number": "Version number",
+  "compilation_options": "Compilation options",
+  "option_title_updateVisual": "Update visuals",
+  "option_desc_updateVisual": "The changes made to the visuals will be compiled",
+  "option_title_updateData": "Update data",
+  "option_desc_updateData": "The changes made to the data will be compiled",
+  "option_title_updateLibraries": "Update libraries",
+  "option_desc_updateLibraries": "The changes applied to the libraries will be compiled",
+  "option_title_updateAudio": "Update audio",
+  "option_desc_updateAudio": "The changes applied to the audio will be compiled",
+  "option_title_updateBinaries": "Update the game binaries",
+  "option_desc_updateBinaries": "The changes applied to binary files will be compiled",
+  "executable_info_windows": "The executable created will only be playable on Windows\u00a010 and Windows\u00a011 systems",
+  "executable_info_linux": "The executable created will only be playable on Linux systems",
+  "executable_info_darwin": "The executable created will be playable only on MacOS systems",
+  "compile_project": "Compile the project"
+}
