@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { DataBlockWithTitleNoActive } from '../dataBlocks';
 import { useTranslation } from 'react-i18next';
 import { ProjectData } from '@src/GlobalStateProvider';
@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import { StudioGroupEncounter } from '@modelEntities/groupEncounter';
 import { TableEmpty } from './table/ZoneTableStyle';
 
-export const PokemonZoneListGrid = styled.div`
+const PokemonZoneListGrid = styled.div`
   display: flex;
   grid-template-columns: 1fr 1fr 1fr;
   flex-wrap: wrap;
@@ -28,22 +28,26 @@ type ZonePokemonProps = {
   groups: ProjectData['groups'];
 };
 
-export const ZonePokemon = ({ zone, groups }: ZonePokemonProps) => {
-  const { t } = useTranslation('database_zones');
-  const allPokemonInZone: StudioGroupEncounter[] = [];
-  zone.wildGroups.forEach((wildGroup) => {
-    if (groups[wildGroup]) {
-      allPokemonInZone.push(...groups[wildGroup].encounters);
-    }
-  });
-
-  const groupedPokemon = new Map<string, StudioGroupEncounter[]>();
-  allPokemonInZone.forEach((encounter) => {
+const groupPokemon = (allPokemonInZone: StudioGroupEncounter[]): Map<string, StudioGroupEncounter[]> => {
+  return allPokemonInZone.reduce((groupedPokemon, encounter) => {
     const key = `${encounter.specie}-${encounter.form}-${encounter.shinySetup.kind}-${encounter.shinySetup.rate}`;
     const group = groupedPokemon.get(key) || [];
     group.push(encounter);
     groupedPokemon.set(key, group);
-  });
+    return groupedPokemon;
+  }, new Map<string, StudioGroupEncounter[]>());
+};
+
+export const ZonePokemon = ({ zone, groups }: ZonePokemonProps) => {
+  const { t } = useTranslation('database_zones');
+
+  const allPokemonInZone: StudioGroupEncounter[] = useMemo(() => {
+    return zone.wildGroups.flatMap((wildGroup) => groups[wildGroup]?.encounters || []);
+  }, [zone.wildGroups, groups]);
+
+  const groupedPokemon = useMemo(() => {
+    return groupPokemon(allPokemonInZone);
+  }, [allPokemonInZone]);
 
   if (groupedPokemon.size === 0) {
     return (
