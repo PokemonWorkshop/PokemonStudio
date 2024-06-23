@@ -5,7 +5,6 @@ import styled from 'styled-components';
 
 export const CompilationDialogContainer = styled(MessageBoxContainer)`
   width: 700px;
-  height: auto;
   background-color: ${({ theme }) => theme.colors.dark16};
 
   .header {
@@ -34,7 +33,6 @@ export const CompilationDialogContainer = styled(MessageBoxContainer)`
     border-top: 1px solid ${({ theme }) => theme.colors.dark20};
     padding-top: 16px;
     align-items: center;
-    margin-top: auto;
 
     .executable-info {
       ${({ theme }) => theme.fonts.normalRegular}
@@ -69,11 +67,11 @@ export const CompilationFormContainer = styled.form`
 export const CompilationOptionsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding-top: 8px;
+  gap: 16px;
+  padding-top: 16px;
   border-top: 1px solid ${({ theme }) => theme.colors.dark20};
 
-  .header {
+  .options-title {
     ${({ theme }) => theme.fonts.titlesOverline}
     color: ${({ theme }) => theme.colors.text400};
     letter-spacing: 1.5px;

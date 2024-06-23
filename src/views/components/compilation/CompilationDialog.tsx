@@ -6,7 +6,7 @@ import { useInputAttrsWithLabel } from '@utils/useInputAttrs';
 import { ClearButtonOnlyIcon, PrimaryButton } from '@components/buttons';
 import { CompilationDialogContainer, CompilationFormContainer } from './CompilationDialogStyle';
 import { CompilationOptions } from './CompilationOptions';
-import { useTranslation } from 'react-i18next';
+import { TFunction, useTranslation } from 'react-i18next';
 import React from 'react';
 
 const initForm = (gameInfo: StudioInfoConfig): StudioCompilation => {
@@ -19,6 +19,14 @@ const initForm = (gameInfo: StudioInfoConfig): StudioCompilation => {
     updateAudio: true,
     updateBinaries: false,
   };
+};
+
+const getExecutableInfoText = (t: TFunction<'compilation'>) => {
+  const platform = window.api.platform;
+  if (platform === 'darwin') return t('executable_info_darwin');
+  if (platform === 'linux') return t('executable_info_linux');
+
+  return t('executable_info_windows');
 };
 
 type CompilationDialogProps = {
@@ -39,14 +47,6 @@ export const CompilationDialog = ({ closeDialog }: CompilationDialogProps) => {
     }
   };
 
-  const getExecutableInfoText = () => {
-    const platform = window.api.platform;
-    if (platform === 'darwin') return t('executable_info_darwin');
-    if (platform === 'linux') return t('executable_info_linux');
-
-    return t('executable_info_windows');
-  };
-
   return (
     <CompilationDialogContainer>
       <div className="header">
@@ -60,7 +60,7 @@ export const CompilationDialog = ({ closeDialog }: CompilationDialogProps) => {
         </div>
         <CompilationOptions defaults={defaults} />
         <div className="actions">
-          <span className="executable-info">{getExecutableInfoText()}</span>
+          <span className="executable-info">{getExecutableInfoText(t)}</span>
           <PrimaryButton onClick={onClickCompile}>{t('compile_project')}</PrimaryButton>
         </div>
       </CompilationFormContainer>
