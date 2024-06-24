@@ -1,7 +1,7 @@
 import { cloneEntity } from '@utils/cloneEntity';
 import { useCallback } from 'react';
 import { StudioSceneTitleConfig } from '@modelEntities/config';
-import { useConfigSceneTitle } from '@utils/useProjectConfig';
+import { useConfigSceneTitle } from '@hooks/useProjectConfig';
 
 export const useUpdateGameStart = (gameStart: StudioSceneTitleConfig) => {
   const { setProjectConfigValues: setGameStart } = useConfigSceneTitle();
