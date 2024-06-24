@@ -5,7 +5,7 @@ import { NavigationBarItemContainer } from '@components/navigation/NavigationBar
 import { ReactComponent as PlayIcon } from '@assets/icons/global/play.svg';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useTranslation } from 'react-i18next';
-import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
+import { StudioShortcutActions, useShortcut } from '@hooks/useShortcuts';
 
 const PlayMenuButtonContainer = styled.div`
   position: fixed;

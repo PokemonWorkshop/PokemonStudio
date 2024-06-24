@@ -23,6 +23,7 @@
       "@utils/*": ["src/utils/*"],
       "@assets/*": ["assets/*"],
       "@src/*": ["src/*"],
+      "@hooks/*": ["src/hooks/*"],
       "react": ["./node_modules/@types/react"]
     }
   },

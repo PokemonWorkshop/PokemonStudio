@@ -6,7 +6,7 @@ import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer
 
 import styled from 'styled-components';
 import { SelectQuest } from '@components/selects';
-import { useProjectQuests } from '@utils/useProjectData';
+import { useProjectQuests } from '@hooks/useProjectData';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { cloneEntity } from '@utils/cloneEntity';
 import { StudioQuest } from '@modelEntities/quest';

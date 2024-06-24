@@ -13,7 +13,7 @@ import { BaseIcon } from '@components/icons/BaseIcon';
 import styled from 'styled-components';
 import theme from '@src/AppTheme';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useProjectSave } from '@utils/useProjectSave';
+import { useProjectSave } from '@hooks/useProjectSave';
 import { useLoaderRef } from '@utils/loaderContext';
 
 const MapModificationWarningDialogContainer = styled(MessageBoxIconContainer)`

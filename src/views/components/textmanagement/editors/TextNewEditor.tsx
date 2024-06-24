@@ -7,12 +7,12 @@ import { FileInput, Input, InputContainer, InputWithTopLabelContainer, Label, Mu
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import { DropInput } from '@components/inputs/DropInput';
-import { useTextInfos } from '@utils/useTextInfos';
+import { useTextInfos } from '@hooks/useTextInfos';
 import { TEXT_INFO_DESCRIPTION_TEXT_ID, TEXT_INFO_NAME_TEXT_ID } from '@modelEntities/textInfo';
 import { createTextInfo } from '@utils/entityCreation';
 import { cloneEntity } from '@utils/cloneEntity';
 import { useNewProjectText, useSetProjectText } from '@utils/ReadingProjectText';
-import { useImportCsvFile } from '@utils/useImportCsvFile';
+import { useImportCsvFile } from '@hooks/useImportCsvFile';
 import { showNotification } from '@utils/showNotification';
 import { TooltipWrapper } from '@ds/Tooltip';
 

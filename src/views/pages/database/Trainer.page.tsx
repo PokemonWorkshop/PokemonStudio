@@ -8,9 +8,9 @@ import { TrainerControlBar, TrainerDialog, TrainerFrame } from '@components/data
 import { PokemonBattlerList } from '@components/pokemonBattler';
 import { BagEntryList } from '@components/bagEntry';
 
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import { TrainerEditorAndDeletionKeys, TrainerEditorOverlay } from '@components/database/trainer/editors/TrainerEditorOverlay';
-import { useTrainerPage } from '@utils/usePage';
+import { useTrainerPage } from '@hooks/usePage';
 import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';
 
 export const TrainerPage = () => {

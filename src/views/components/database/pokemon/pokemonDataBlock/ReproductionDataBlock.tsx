@@ -1,11 +1,11 @@
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
-import { useProjectPokemon } from '@utils/useProjectData';
+import { useProjectPokemon } from '@hooks/useProjectData';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataBlockWithTitle, DataGrid, DataFieldsetField } from '../../dataBlocks';
 import { PokemonDataProps } from '../PokemonDataPropsInterface';
-import { CONTROL } from '@utils/useKeyPress';
-import { usePokemonShortcutNavigation } from '@utils/useShortcutNavigation';
+import { CONTROL } from '@hooks/useKeyPress';
+import { usePokemonShortcutNavigation } from '@hooks/useShortcutNavigation';
 import { useKeyPress } from 'react-flow-renderer';
 
 const BREEDING_GROUPS = [

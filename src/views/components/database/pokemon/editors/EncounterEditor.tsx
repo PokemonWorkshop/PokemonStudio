@@ -1,13 +1,13 @@
 import { Editor } from '@components/editor/Editor';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { InputWithLeftLabelContainer, Label, Toggle } from '@components/inputs';
-import { useCreaturePage } from '@utils/usePage';
-import { useSelectOptions } from '@utils/useSelectOptions';
+import { useCreaturePage } from '@hooks/usePage';
+import { useSelectOptions } from '@hooks/useSelectOptions';
 import React, { forwardRef, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUpdateForm } from './useUpdateForm';
-import { useZodForm } from '@utils/useZodForm';
-import { useInputAttrsWithLabel } from '@utils/useInputAttrs';
+import { useZodForm } from '@hooks/useZodForm';
+import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 import { InputFormContainer } from '@components/inputs/InputContainer';
 import { ENCOUNTER_EDITOR_SCHEMA } from './EncounterEditor/EncounterEditorSchema';
 import { ItemHeldEditor } from './EncounterEditor/ItemHeldEditor';

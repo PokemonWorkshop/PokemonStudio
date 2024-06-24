@@ -5,7 +5,7 @@ import { ControlBar } from '@components/ControlBar';
 import { SelectZone } from '@components/selects';
 import { SecondaryButtonWithPlusIcon } from '@components/buttons';
 import { StudioZone } from '@modelEntities/zone';
-import { useSetCurrentDatabasePath } from '@utils/useSetCurrentDatabasePage';
+import { useSetCurrentDatabasePath } from '@hooks/useSetCurrentDatabasePage';
 
 type ZoneControlBarProps = {
   onChange: SelectChangeEvent;

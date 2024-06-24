@@ -3,7 +3,7 @@ import { Editor } from '@components/editor';
 
 import { useTranslation } from 'react-i18next';
 import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
-import type { OpenTranslationEditorFunction } from '@utils/useTranslationEditor';
+import type { OpenTranslationEditorFunction } from '@hooks/useTranslationEditor';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 import { useGetEntityDescriptionText, useGetEntityNameText, useSetProjectText } from '@utils/ReadingProjectText';
 import { StudioZone, ZONE_DESCRIPTION_TEXT_ID, ZONE_NAME_TEXT_ID } from '@modelEntities/zone';

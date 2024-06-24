@@ -2,9 +2,9 @@ import React, { forwardRef } from 'react';
 import { Deletion } from '@components/deletion';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { useTranslation } from 'react-i18next';
-import { useTypePage } from '@utils/usePage';
+import { useTypePage } from '@hooks/usePage';
 import { useNavigate } from 'react-router-dom';
-import { useProjectTypes } from '@utils/useProjectData';
+import { useProjectTypes } from '@hooks/useProjectData';
 
 type TypeDeletionEditorProps = {
   onClose: () => void;

@@ -4,7 +4,7 @@ import theme from '@src/AppTheme';
 import { BaseIcon } from '@components/icons/BaseIcon';
 import { NavigationBarItemContainer } from '@components/navigation/NavigationBarItem/NavigationBarItemContainer';
 import { StyledNavLink } from '@components/navigation/NavigationBarItem/StyledNavLink';
-import { useCheckMapsModified } from '@utils/useCheckMapsModified';
+import { useCheckMapsModified } from '@hooks/useCheckMapsModified';
 
 const WorldButtonContainer = styled(StyledNavLink)`
   ${NavigationBarItemContainer} {

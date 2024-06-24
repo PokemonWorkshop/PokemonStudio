@@ -3,10 +3,10 @@ import { SecondaryButtonWithPlusIconResponsive } from '@components/buttons';
 import { DarkButtonWithPlusIconResponsive } from '@components/buttons/DarkButtonWithPlusIcon';
 import { ControlBar, ControlBarButtonContainer, ControlBarLabelContainer } from '@components/ControlBar';
 import { useTranslation } from 'react-i18next';
-import { useSetCurrentDatabasePath } from '@utils/useSetCurrentDatabasePage';
+import { useSetCurrentDatabasePath } from '@hooks/useSetCurrentDatabasePage';
 import { PokemonDialogRef } from './editors/PokemonEditorOverlay';
-import { useProjectPokemon } from '@utils/useProjectData';
-import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
+import { useProjectPokemon } from '@hooks/useProjectData';
+import { StudioShortcutActions, useShortcut } from '@hooks/useShortcuts';
 import { SelectPokemon } from '@components/selects/SelectPokemon';
 import { SelectPokemonForm } from '@components/selects/SelectPokemonForm';
 

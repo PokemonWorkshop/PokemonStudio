@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Editor } from '@components/editor';
 import { useTranslation } from 'react-i18next';
 import { InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
-import { useProjectData } from '@utils/useProjectData';
+import { useProjectData } from '@hooks/useProjectData';
 import styled from 'styled-components';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { SelectPokemon } from '@components/selects/SelectPokemon';

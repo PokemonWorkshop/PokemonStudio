@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { TextInputError } from '@components/inputs/Input';
 import { checkDbSymbolExist, generateDefaultDbSymbol, wrongDbSymbol } from '@utils/dbSymbolUtils';
-import { useProjectPokemon, useProjectDex } from '@utils/useProjectData';
+import { useProjectPokemon, useProjectDex } from '@hooks/useProjectData';
 import { createCreature } from '@utils/entityCreation';
 import { useSetProjectText } from '@utils/ReadingProjectText';
 import { CREATURE_DESCRIPTION_TEXT_ID, CREATURE_FORM_VALIDATOR, CREATURE_NAME_TEXT_ID, CREATURE_SPECIE_TEXT_ID } from '@modelEntities/creature';
@@ -14,10 +14,10 @@ import { DbSymbol } from '@modelEntities/dbSymbol';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { cloneEntity } from '@utils/cloneEntity';
 import { TooltipWrapper } from '@ds/Tooltip';
-import { useZodForm } from '@utils/useZodForm';
+import { useZodForm } from '@hooks/useZodForm';
 import { InputFormContainer } from '@components/inputs/InputContainer';
 import { TypeFields } from './InformationEditor/TypeFields';
-import { useSelectOptions } from '@utils/useSelectOptions';
+import { useSelectOptions } from '@hooks/useSelectOptions';
 
 const ButtonContainer = styled.div`
   display: flex;

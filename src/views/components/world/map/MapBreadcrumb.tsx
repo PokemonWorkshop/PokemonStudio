@@ -2,8 +2,8 @@ import React from 'react';
 import theme from '@src/AppTheme';
 import styled from 'styled-components';
 
-import { useProjectMaps } from '@utils/useProjectData';
-import { useMapBreadcrumb } from '@utils/useMapBreadcrumb';
+import { useProjectMaps } from '@hooks/useProjectData';
+import { useMapBreadcrumb } from '@hooks/useMapBreadcrumb';
 
 const MapBreadcrumbStyle = styled.div`
   user-select: none;

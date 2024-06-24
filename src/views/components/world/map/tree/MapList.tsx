@@ -1,8 +1,8 @@
-import { useSelectOptions } from '@utils/useSelectOptions';
+import { useSelectOptions } from '@hooks/useSelectOptions';
 import { AutoSizer, List } from 'react-virtualized';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
-import { useProjectMaps } from '@utils/useProjectData';
+import { useProjectMaps } from '@hooks/useProjectData';
 import { useTranslation } from 'react-i18next';
 import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
 

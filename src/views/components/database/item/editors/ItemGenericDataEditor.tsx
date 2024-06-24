@@ -5,7 +5,7 @@ import { pocketMapping, useGetProjectText } from '@utils/ReadingProjectText';
 import { useTranslation } from 'react-i18next';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import { ITEM_POCKET_NAME_TEXT_ID, LOCKED_ITEM_EDITOR } from '@modelEntities/item';
-import { useItemPage } from '@utils/usePage';
+import { useItemPage } from '@hooks/usePage';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { useUpdateItem } from './useUpdateItem';
 import { cloneEntity } from '@utils/cloneEntity';

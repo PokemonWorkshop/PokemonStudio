@@ -1,6 +1,6 @@
 import { StudioDex } from '@modelEntities/dex';
 import { cloneEntity } from '@utils/cloneEntity';
-import { useProjectDex } from '@utils/useProjectData';
+import { useProjectDex } from '@hooks/useProjectData';
 import { useCallback } from 'react';
 
 export const useUpdateDex = (dex: StudioDex) => {

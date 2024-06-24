@@ -2,7 +2,7 @@ import React, { ReactNode, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SecondaryButton } from '../GenericButtons';
 import { useLoaderRef } from '@utils/loaderContext';
-import { useProjectLoad } from '@utils/useProjectLoad';
+import { useProjectLoad } from '@hooks/useProjectLoad';
 import { useTranslation } from 'react-i18next';
 
 type LoadProjectButtonProps = { children: ReactNode };

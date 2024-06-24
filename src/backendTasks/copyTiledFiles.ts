@@ -2,7 +2,7 @@ import log from 'electron-log';
 import fs from 'fs';
 import fsPromises from 'fs/promises';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
-import { MapToImport } from '@utils/useMapImport/types';
+import { MapToImport } from '@hooks/useMapImport/types';
 import path from 'path';
 import { listResources } from 'ts-tiled-converter';
 import { calculateFileSha1 } from './calculateFileSha1';

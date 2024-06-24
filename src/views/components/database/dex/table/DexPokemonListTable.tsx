@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { DataPokemonGrid, DataPokemonListTable, DataPokemonVirtualizedListContainer, PokemonList, TableEmpty } from './DexPokemonListTableStyle';
 import { useTranslation } from 'react-i18next';
-import { useProjectDex, useProjectPokemon } from '@utils/useProjectData';
+import { useProjectDex, useProjectPokemon } from '@hooks/useProjectData';
 import {
   DragDropContext,
   Droppable,

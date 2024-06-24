@@ -1,7 +1,7 @@
 import { Deletion } from '@components/deletion';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useItemPage } from '@utils/usePage';
-import { useProjectItems } from '@utils/useProjectData';
+import { useItemPage } from '@hooks/usePage';
+import { useProjectItems } from '@hooks/useProjectData';
 import React, { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
 

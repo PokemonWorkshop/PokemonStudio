@@ -1,8 +1,8 @@
 import { ClearButtonOnlyIcon, EditButtonOnlyIcon } from '@components/buttons';
 import React, { DragEventHandler, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useChoosefile } from '@utils/useChooseFile';
-import { useCopyFile } from '@utils/useCopyFile';
+import { useChoosefile } from '@hooks/useChooseFile';
+import { useCopyFile } from '@hooks/useCopyFile';
 import { ReactComponent as ImageIcon } from '@assets/icons/global/image.svg';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { basename, join } from '@utils/path';

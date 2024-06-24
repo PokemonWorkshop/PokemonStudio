@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { useConfigCredits } from '@utils/useProjectConfig';
+import { useConfigCredits } from '@hooks/useProjectConfig';
 import { StudioCreditConfig } from '@modelEntities/config';
 import { cloneEntity } from '@utils/cloneEntity';
 import { useTranslation } from 'react-i18next';

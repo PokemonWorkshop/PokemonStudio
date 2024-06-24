@@ -1,7 +1,7 @@
 import { Deletion } from '@components/deletion';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useCreaturePage } from '@utils/usePage';
-import { useProjectPokemon } from '@utils/useProjectData';
+import { useCreaturePage } from '@hooks/usePage';
+import { useProjectPokemon } from '@hooks/useProjectData';
 import React, { forwardRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 

@@ -5,9 +5,9 @@ import { NavigationDatabaseStyle } from '@components/database/navigation/Navigat
 import { NavigationDatabaseGroup } from '@components/database/navigation/NavigationDatabaseGroup';
 import { NewFolderButtonOnlyIcon, SecondaryButtonWithPlusIcon } from '@components/buttons';
 import { NavigationDatabaseGroupStyle } from '@components/database/navigation/NavigationDatabaseGroup/NavigationDatabaseGroupStyle';
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import { MapEditorAndDeletionKeys, MapEditorOverlay } from './editors/MapEditorOverlay';
-import { useMapInfo } from '@utils/useMapInfo';
+import { useMapInfo } from '@hooks/useMapInfo';
 import { createMapInfo } from '@utils/entityCreation';
 import { MAP_INFO_FOLDER_NAME_TEXT_ID, StudioMapInfoFolder } from '@modelEntities/mapInfo';
 import { useSetProjectText } from '@utils/ReadingProjectText';

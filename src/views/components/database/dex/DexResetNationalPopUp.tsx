@@ -5,9 +5,9 @@ import { useTranslation } from 'react-i18next';
 
 import { DeleteButton } from '@components/buttons';
 import { DeletionContainer } from '@components/deletion/DeletionContainer';
-import { useProjectPokemon } from '@utils/useProjectData';
+import { useProjectPokemon } from '@hooks/useProjectData';
 import { DbSymbol } from '@modelEntities/dbSymbol';
-import { useDexPage } from '@utils/usePage';
+import { useDexPage } from '@hooks/usePage';
 import { useUpdateDex } from './editors/useUpdateDex';
 
 const TitleContainer = styled.div`

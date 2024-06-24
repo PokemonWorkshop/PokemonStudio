@@ -3,7 +3,7 @@ import { Editor } from '@components/editor';
 import { TFunction, useTranslation } from 'react-i18next';
 import { IconInput, Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
-import { useProjectItems } from '@utils/useProjectData';
+import { useProjectItems } from '@hooks/useProjectData';
 import { DropInput } from '@components/inputs/DropInput';
 import { basename, itemIconPath } from '@utils/path';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
@@ -19,8 +19,8 @@ import {
   StudioItemCategories,
 } from '@modelEntities/item';
 import { createItem } from '@utils/entityCreation';
-import { useDialogsRef } from '@utils/useDialogsRef';
-import { useItemPage } from '@utils/usePage';
+import { useDialogsRef } from '@hooks/useDialogsRef';
+import { useItemPage } from '@hooks/usePage';
 import { ItemTranslationOverlay, TranslationEditorTitle } from './ItemTranslationOverlay';
 import { cloneEntity } from '@utils/cloneEntity';
 

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useLoaderRef } from '@utils/loaderContext';
 import { PrimaryButton, SecondaryButton } from '@components/buttons';
-import { useProjectStudio } from '@utils/useProjectStudio';
+import { useProjectStudio } from '@hooks/useProjectStudio';
 import { useTranslation } from 'react-i18next';
-import { useProjectLoad } from '@utils/useProjectLoad';
+import { useProjectLoad } from '@hooks/useProjectLoad';
 import { showNotification } from '@utils/showNotification';
 import {
   MessageBoxActionContainer,

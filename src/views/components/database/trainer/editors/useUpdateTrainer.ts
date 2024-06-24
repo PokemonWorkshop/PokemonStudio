@@ -1,6 +1,6 @@
 import { StudioTrainer } from '@modelEntities/trainer';
 import { cloneEntity } from '@utils/cloneEntity';
-import { useProjectTrainers } from '@utils/useProjectData';
+import { useProjectTrainers } from '@hooks/useProjectData';
 import { useCallback } from 'react';
 
 export const useUpdateTrainer = (trainer: StudioTrainer) => {

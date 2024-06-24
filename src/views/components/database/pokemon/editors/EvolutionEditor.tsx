@@ -10,8 +10,8 @@ import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/
 import { PaddedInputContainer, InputWithTopLabelContainer, Label, Input } from '@components/inputs';
 import { PaginationWithTitleProps } from '@components/PaginationWithTitle';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
-import { useCreaturePage } from '@utils/usePage';
-import { useProjectPokemon } from '@utils/useProjectData';
+import { useCreaturePage } from '@hooks/usePage';
+import { useProjectPokemon } from '@hooks/useProjectData';
 import React, { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';

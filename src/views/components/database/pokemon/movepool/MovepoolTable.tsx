@@ -5,7 +5,7 @@ import { TFunction, useTranslation } from 'react-i18next';
 import { DeleteButtonOnlyIcon } from '@components/buttons';
 import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { SelectCustom } from '@components/SelectCustom';
-import { useProjectData } from '@utils/useProjectData';
+import { useProjectData } from '@hooks/useProjectData';
 import { DataMoveGrid, DataMoveTable, NoMoveFound, RenderMoveContainer } from './MovepoolTableStyle';
 import { getNameType } from '@utils/getNameType';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';

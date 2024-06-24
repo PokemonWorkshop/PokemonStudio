@@ -1,4 +1,4 @@
-import { useInputAttrsWithLabel } from '@utils/useInputAttrs';
+import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 import React from 'react';
 import { STATISTIC_EDITOR_SCHEMA } from './StatisticEditorSchema';
 

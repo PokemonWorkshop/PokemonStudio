@@ -3,12 +3,12 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ControlBar, ControlBarLabelContainer } from '@components/ControlBar';
 import { SelectType } from '@components/selects';
-import { useSetCurrentDatabasePath } from '@utils/useSetCurrentDatabasePage';
-import { useProjectTypes } from '@utils/useProjectData';
+import { useSetCurrentDatabasePath } from '@hooks/useSetCurrentDatabasePage';
+import { useProjectTypes } from '@hooks/useProjectData';
 import { useNavigate } from 'react-router-dom';
 import { TypeDialogsRef } from './editors/TypeEditorOverlay';
-import { useTypePage } from '@utils/usePage';
-import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
+import { useTypePage } from '@hooks/usePage';
+import { StudioShortcutActions, useShortcut } from '@hooks/useShortcuts';
 
 type TypeControlBarProps = {
   dialogsRef?: TypeDialogsRef;

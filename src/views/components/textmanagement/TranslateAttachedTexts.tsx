@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useTranslationPage } from '@utils/usePage';
+import { useTranslationPage } from '@hooks/usePage';
 import { DataBlockWrapper } from '@components/database/dataBlocks';
 import { Input } from '@components/inputs';
 import styled from 'styled-components';

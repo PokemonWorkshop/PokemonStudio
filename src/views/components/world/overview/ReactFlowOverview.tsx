@@ -3,7 +3,7 @@ import ReactFlow, { Background, BackgroundVariant, Controls, useNodesState, useR
 import { MapOverviewNode } from './MapOverviewNode';
 import { StudioMap } from '@modelEntities/map';
 import { cloneEntity } from '@utils/cloneEntity';
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import { MapEditorAndDeletionKeys } from '../map/editors/MapEditorOverlay';
 
 type ReactFlowOverviewProps = {

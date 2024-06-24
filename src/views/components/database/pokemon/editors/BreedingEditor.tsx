@@ -2,7 +2,7 @@ import { Editor } from '@components/editor';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { InputWithTopLabelContainer, Label } from '@components/inputs';
 import { DbSymbol } from '@modelEntities/dbSymbol';
-import { useCreaturePage } from '@utils/usePage';
+import { useCreaturePage } from '@hooks/usePage';
 import { TFunction } from 'i18next';
 import React, { forwardRef, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -10,9 +10,9 @@ import { useUpdateForm } from './useUpdateForm';
 import { SelectPokemon2 } from '@components/selects/SelectPokemon';
 import { SelectCreatureForm } from '@components/selects/SelectPokemonForm';
 import { CREATURE_FORM_VALIDATOR } from '@modelEntities/creature';
-import { useZodForm } from '@utils/useZodForm';
+import { useZodForm } from '@hooks/useZodForm';
 import { InputFormContainer } from '@components/inputs/InputContainer';
-import { useInputAttrsWithLabel } from '@utils/useInputAttrs';
+import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 
 const breedingGroupEntries = [
   'undefined',

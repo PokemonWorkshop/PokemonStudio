@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StudioDropDown, StudioDropDownFilter } from '@components/StudioDropDown';
 import { SelectContainerWithLabel } from './SelectContainerWithLabel';
-import { useSelectOptions } from '@utils/useSelectOptions';
+import { useSelectOptions } from '@hooks/useSelectOptions';
 
 type SelectTypeProps = {
   dbSymbol: string;

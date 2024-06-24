@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import { DataBlockWithTitleNoActive, DataBlockWrapper } from '@components/database/dataBlocks';
 
-import { useTranslationPage } from '@utils/usePage';
+import { useTranslationPage } from '@hooks/usePage';
 import { TranslateList } from '@components/textmanagement/TranslateList';
 import { TranslateTarget } from '@components/textmanagement/TranslateTarget';
 import { TranslateAttachedTexts } from '@components/textmanagement/TranslateAttachedTexts';

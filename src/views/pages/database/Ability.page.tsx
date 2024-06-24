@@ -8,9 +8,9 @@ import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 
 import { useNavigate } from 'react-router-dom';
-import { useAbilityPage } from '@utils/usePage';
+import { useAbilityPage } from '@hooks/usePage';
 import { AbilityEditorAndDeletionKeys, AbilityEditorOverlay } from '@components/database/ability/editors/AbilityEditorOverlay';
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 
 export const AbilityPage = () => {
   const dialogsRef = useDialogsRef<AbilityEditorAndDeletionKeys>();

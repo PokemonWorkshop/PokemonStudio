@@ -18,8 +18,8 @@ import {
   StudioQuestCategoryClickable,
   StudioCreatureQuestCondition,
 } from '@modelEntities/quest';
-import { CONTROL, useKeyPress } from '@utils/useKeyPress';
-import { usePokemonShortcutNavigation, useShortcutNavigation } from '@utils/useShortcutNavigation';
+import { CONTROL, useKeyPress } from '@hooks/useKeyPress';
+import { usePokemonShortcutNavigation, useShortcutNavigation } from '@hooks/useShortcutNavigation';
 
 type RenderGoalContainerProps = {
   isDragging: boolean;

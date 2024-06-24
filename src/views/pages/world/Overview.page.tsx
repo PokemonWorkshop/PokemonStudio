@@ -1,4 +1,4 @@
-import { useOverviewPage } from '@utils/usePage';
+import { useOverviewPage } from '@hooks/usePage';
 import { ReactFlowProvider } from 'react-flow-renderer';
 import { DataBlockWrapper } from '@components/database/dataBlocks';
 import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';

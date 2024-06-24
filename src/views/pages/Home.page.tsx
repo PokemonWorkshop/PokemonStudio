@@ -16,7 +16,7 @@ import { ReactComponent as StudioIcon } from '@assets/icons/global/StudioIcon.sv
 import { RecentProjectContainer } from '@components/home/ActionContainer';
 import { HomeEditorAndDeletionKeys, HomeEditorOverlay } from '@components/home/editors/HomeEditorOverlay';
 import { deleteProjectToList, getProjectList } from '@utils/projectList';
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import { useNavigate } from 'react-router-dom';
 
 const HomePageComponent = () => {

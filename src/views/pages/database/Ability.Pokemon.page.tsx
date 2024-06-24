@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { SubPageTitle } from '@components/pages';
-import { useAbilityPage } from '@utils/usePage';
+import { useAbilityPage } from '@hooks/usePage';
 
 export const AbilityPokemonPage = () => {
   const { ability, abilityName } = useAbilityPage();

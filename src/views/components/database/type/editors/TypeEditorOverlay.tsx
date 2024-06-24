@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
 import { assertUnreachable } from '@utils/assertUnreachable';
-import { DialogRefData } from '@utils/useDialogsRef';
+import { DialogRefData } from '@hooks/useDialogsRef';
 import { TypeDeletionEditor, TypeFrameEditor, TypeNewEditor } from '.';
 
 export type TypeEditorAndDeletionKeys = 'newType' | 'newTable' | 'frame' | 'deletion';

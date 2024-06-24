@@ -3,7 +3,7 @@ import React from 'react';
 import { ReactComponent as FileDrop } from '@assets/icons/global/drop.svg';
 import { ReactComponent as PlayIcon } from '@assets/icons/global/play.svg';
 import { basename } from '@utils/path';
-import { useResource } from '@utils/useResource';
+import { useResource } from '@hooks/useResource';
 import { OtherNoResourceContainer, OtherResourceContainer } from './OtherResourceStyle';
 import { ResourceImage } from '@components/ResourceImage';
 

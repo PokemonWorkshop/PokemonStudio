@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { ReactFlowProvider } from 'react-flow-renderer';
 
-import { useProjectMapLinks } from '@utils/useProjectData';
+import { useProjectMapLinks } from '@hooks/useProjectData';
 import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { MapLinkControlBar, MapLinkNoMap, ReactFlowMapLink } from '@components/mapLink';

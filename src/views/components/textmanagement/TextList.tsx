@@ -10,7 +10,7 @@ import { DataTextGrid, DataTextList, DataTextListTable, TableEmpty, TitleContain
 import { padStr } from '@utils/PadStr';
 import { ReactComponent as TranslationIcon } from '@assets/icons/global/translate.svg';
 import { useGetTextList, useSetProjectText } from '@utils/ReadingProjectText';
-import { useTextPage } from '@utils/usePage';
+import { useTextPage } from '@hooks/usePage';
 
 const getHeight = (length: number) => (length > 8 ? 408 : length * 48);
 

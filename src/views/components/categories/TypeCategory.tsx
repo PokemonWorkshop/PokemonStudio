@@ -1,10 +1,10 @@
 import { determineTextColor, hexToColor, hexToRgba } from '@utils/ColorUtils';
-import { useProjectTypes } from '@utils/useProjectData';
+import { useProjectTypes } from '@hooks/useProjectData';
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 import { Category, CategoryLarge } from './Category';
-import { CONTROL, useKeyPress } from '@utils/useKeyPress';
-import { useShortcutNavigation } from '@utils/useShortcutNavigation';
+import { CONTROL, useKeyPress } from '@hooks/useKeyPress';
+import { useShortcutNavigation } from '@hooks/useShortcutNavigation';
 
 type TypeCategoryProps = {
   type: string;

@@ -2,7 +2,7 @@ import React, { forwardRef, useMemo, useRef, useState } from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
 import { Editor } from '@components/editor';
 import { Input, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
-import { useProjectMoves } from '@utils/useProjectData';
+import { useProjectMoves } from '@hooks/useProjectData';
 import styled from 'styled-components';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { TextInputError } from '@components/inputs/Input';
@@ -13,10 +13,10 @@ import { DbSymbol } from '@modelEntities/dbSymbol';
 import { useSetProjectText } from '@utils/ReadingProjectText';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { TooltipWrapper } from '@ds/Tooltip';
-import { useZodForm } from '@utils/useZodForm';
-import { useSelectOptions } from '@utils/useSelectOptions';
+import { useZodForm } from '@hooks/useZodForm';
+import { useSelectOptions } from '@hooks/useSelectOptions';
 import { InputFormContainer } from '@components/inputs/InputContainer';
-import { useInputAttrsWithLabel } from '@utils/useInputAttrs';
+import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 
 const moveCategoryEntries = (t: TFunction<'database_types'>) =>
   MOVE_CATEGORIES.map((category) => ({ value: category, label: t(category) })).sort((a, b) => a.label.localeCompare(b.label));

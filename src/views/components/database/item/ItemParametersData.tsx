@@ -4,7 +4,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { DataBlockWithTitle } from '../dataBlocks';
-import { useItemPage } from '@utils/usePage';
+import { useItemPage } from '@hooks/usePage';
 import { ItemDialogsRef } from './editors/ItemEditorOverlay';
 
 const ParameterContainer = styled.div`

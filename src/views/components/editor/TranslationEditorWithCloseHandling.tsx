@@ -10,7 +10,7 @@ import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInpu
 import { SecondaryTag } from '@components/Tag';
 import { getText, useGetProjectText } from '@utils/ReadingProjectText';
 import { EditorHandlingClose, useEditorHandlingClose } from './useHandleCloseEditor';
-import { getProjectMultiLanguageTextChange } from '@utils/updateProjectText';
+import { getProjectMultiLanguageTextChange } from '@hooks/updateProjectText';
 import { SavingTextMap } from '@utils/SavingUtils';
 
 const TranslationEditorContainer = styled(EditorContainer)`

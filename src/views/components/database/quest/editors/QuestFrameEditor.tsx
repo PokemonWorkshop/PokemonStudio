@@ -4,7 +4,7 @@ import { Editor, useRefreshUI } from '@components/editor';
 import { TFunction, useTranslation } from 'react-i18next';
 import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
-import type { OpenTranslationEditorFunction } from '@utils/useTranslationEditor';
+import type { OpenTranslationEditorFunction } from '@hooks/useTranslationEditor';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 import { useGetEntityDescriptionText, useGetEntityNameText, useSetProjectText } from '@utils/ReadingProjectText';
 import { QUEST_CATEGORIES, QUEST_DESCRIPTION_TEXT_ID, QUEST_NAME_TEXT_ID, QUEST_RESOLUTIONS, StudioQuest } from '@modelEntities/quest';

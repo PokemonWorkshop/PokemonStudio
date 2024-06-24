@@ -2,11 +2,11 @@ import { InputWithTopLabelContainer, Label } from '@components/inputs';
 import { SelectDataGeneric, SelectItem } from '@components/selects';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
-import { useProjectItems } from '@utils/useProjectData';
+import { useProjectItems } from '@hooks/useProjectData';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { EvolutionConditionEditorInput } from './InputProps';
-import { useSelectOptions } from '@utils/useSelectOptions';
+import { useSelectOptions } from '@hooks/useSelectOptions';
 
 export const ItemInput = ({ type, state, dispatch }: EvolutionConditionEditorInput) => {
   const { projectDataValues: items } = useProjectItems();

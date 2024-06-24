@@ -9,8 +9,8 @@ import theme from '@src/AppTheme';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { buildEarningText } from '@utils/QuestUtils';
 import { StudioQuestCategoryClickable, StudioQuestEarning, StudioQuestEarningCategoryType, StudioQuestEarningType } from '@modelEntities/quest';
-import { CONTROL, useKeyPress } from '@utils/useKeyPress';
-import { usePokemonShortcutNavigation, useShortcutNavigation } from '@utils/useShortcutNavigation';
+import { CONTROL, useKeyPress } from '@hooks/useKeyPress';
+import { usePokemonShortcutNavigation, useShortcutNavigation } from '@hooks/useShortcutNavigation';
 
 const RenderEarningContainer = styled(DataEarningGrid)`
   box-sizing: border-box;

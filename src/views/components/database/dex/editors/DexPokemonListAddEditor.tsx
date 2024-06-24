@@ -4,16 +4,16 @@ import { Editor } from '@components/editor';
 
 import { useTranslation } from 'react-i18next';
 import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
-import { useProjectDex, useProjectPokemon } from '@utils/useProjectData';
+import { useProjectDex, useProjectPokemon } from '@hooks/useProjectData';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { searchUnderAndEvolutions } from '@utils/dex';
 import { StudioDex, StudioDexCreature } from '@modelEntities/dex';
 import { DbSymbol } from '@modelEntities/dbSymbol';
-import { useSelectOptions } from '@utils/useSelectOptions';
+import { useSelectOptions } from '@hooks/useSelectOptions';
 import { StudioDropDown } from '@components/StudioDropDown';
 import { SelectPokemonForm } from '@components/selects/SelectPokemonForm';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useDexPage } from '@utils/usePage';
+import { useDexPage } from '@hooks/usePage';
 import { TooltipWrapper } from '@ds/Tooltip';
 
 const ButtonContainer = styled.div`

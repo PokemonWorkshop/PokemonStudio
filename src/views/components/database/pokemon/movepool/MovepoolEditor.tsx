@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataBlockCollapseEditor } from '@components/editor/DataBlockCollapseEditor';
-import { useProjectPokemon, useProjectItems, useProjectMoves } from '@utils/useProjectData';
+import { useProjectPokemon, useProjectItems, useProjectMoves } from '@hooks/useProjectData';
 import { getMoveKlass, MovepoolTable } from './MovepoolTable';
 import { MovepoolLevelLearnableTable } from './MovepoolLevelLearnableTable';
 import { ProjectData } from '@src/GlobalStateProvider';

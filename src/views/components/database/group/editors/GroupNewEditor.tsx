@@ -5,7 +5,7 @@ import { TFunction, useTranslation } from 'react-i18next';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import styled from 'styled-components';
-import { useProjectGroups } from '@utils/useProjectData';
+import { useProjectGroups } from '@hooks/useProjectData';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import {
   defineRelationCustomCondition,

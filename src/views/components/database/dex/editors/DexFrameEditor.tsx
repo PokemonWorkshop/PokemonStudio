@@ -6,9 +6,9 @@ import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelCo
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 import { useGetEntityNameUsingCSV, useSetProjectText } from '@utils/ReadingProjectText';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useDexPage } from '@utils/usePage';
+import { useDexPage } from '@hooks/usePage';
 import { DexTranslationOverlay, TranslationEditorTitle } from './DexTranslationOverlay';
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import { useUpdateDex } from './useUpdateDex';
 
 export const DexFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {

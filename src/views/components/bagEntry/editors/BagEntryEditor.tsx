@@ -11,7 +11,7 @@ import { StudioTrainer, StudioTrainerBagEntry, reduceBagEntries } from '@modelEn
 import type { BagEntryAction, BagEntryFrom } from './BagEntryEditorOverlay';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { useUpdateTrainer } from '@components/database/trainer/editors/useUpdateTrainer';
-import { useTrainerPage } from '@utils/usePage';
+import { useTrainerPage } from '@hooks/usePage';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import { cloneEntity } from '@utils/cloneEntity';
 import { TooltipWrapper } from '@ds/Tooltip';

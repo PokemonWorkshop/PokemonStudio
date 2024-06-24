@@ -9,8 +9,8 @@ import { useGetEntityNameText } from '@utils/ReadingProjectText';
 import { pokemonIconPath } from '@utils/path';
 import { StudioCreature, StudioLevelLearnableMove } from '@modelEntities/creature';
 import { StudioMove } from '@modelEntities/move';
-import { CONTROL, useKeyPress } from '@utils/useKeyPress';
-import { usePokemonShortcutNavigation } from '@utils/useShortcutNavigation';
+import { CONTROL, useKeyPress } from '@hooks/useKeyPress';
+import { usePokemonShortcutNavigation } from '@hooks/useShortcutNavigation';
 
 export type FilterType = 'LevelLearnableMove' | 'TutorLearnableMove' | 'TechLearnableMove' | 'BreedLearnableMove' | 'EvolutionLearnableMove';
 

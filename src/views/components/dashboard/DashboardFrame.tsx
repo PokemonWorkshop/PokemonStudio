@@ -7,8 +7,8 @@ import {
   DataSpriteContainer,
 } from '@components/database/dataBlocks';
 import { useGlobalState } from '@src/GlobalStateProvider';
-import { useConfigInfos } from '@utils/useProjectConfig';
-import { useProjectStudio } from '@utils/useProjectStudio';
+import { useConfigInfos } from '@hooks/useProjectConfig';
+import { useProjectStudio } from '@hooks/useProjectStudio';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';

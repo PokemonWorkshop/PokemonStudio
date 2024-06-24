@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle, Input } from '@components/inputs';
 import { useTranslation } from 'react-i18next';
 import { PageEditor } from '@components/pages';
-import { useConfigDisplay } from '@utils/useProjectConfig';
+import { useConfigDisplay } from '@hooks/useProjectConfig';
 import { EmbeddedUnitInput } from '@components/inputs/EmbeddedUnitInput';
 import { cleaningDisplayNaNValues } from '@utils/cleanNaNValue';
 import { cloneEntity } from '@utils/cloneEntity';

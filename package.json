@@ -54,7 +54,7 @@
     "app-builder-lib": "^24.13.3",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.3",
-    "electron": "^28.0.0",
+    "electron": "^28.3.3",
     "eslint": "^8.36.0",
     "eslint-import-resolver-typescript": "^3.5.3",
     "eslint-plugin-import": "^2.27.5",

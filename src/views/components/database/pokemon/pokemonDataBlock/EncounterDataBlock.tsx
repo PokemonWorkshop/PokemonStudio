@@ -2,14 +2,14 @@ import { DataFieldsetFieldWithChild, FieldData } from '@components/database/data
 import { StudioItemHeld } from '@modelEntities/creature';
 import { ProjectData } from '@src/GlobalStateProvider';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
-import { useProjectItems } from '@utils/useProjectData';
+import { useProjectItems } from '@hooks/useProjectData';
 import React from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { DataBlockWithTitle, DataFieldsetField, DataGrid } from '../../dataBlocks';
 import { PokemonDataProps } from '../PokemonDataPropsInterface';
-import { IClickable, useShortcutNavigation } from '@utils/useShortcutNavigation';
-import { CONTROL } from '@utils/useKeyPress';
+import { IClickable, useShortcutNavigation } from '@hooks/useShortcutNavigation';
+import { CONTROL } from '@hooks/useKeyPress';
 import { useKeyPress } from 'react-flow-renderer';
 
 const ItemHeldStyle = styled.div`

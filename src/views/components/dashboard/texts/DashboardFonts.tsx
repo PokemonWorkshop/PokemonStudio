@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { cloneEntity } from '@utils/cloneEntity';
-import { useConfigTexts } from '@utils/useProjectConfig';
+import { useConfigTexts } from '@hooks/useProjectConfig';
 import { useTranslation } from 'react-i18next';
 import { PageEditor } from '@components/pages';
 import { InputWithLeftLabelContainer, Label, Toggle } from '@components/inputs';

@@ -1,6 +1,6 @@
 import { StudioLanguageConfig } from '@modelEntities/config';
 import { cloneEntity } from '@utils/cloneEntity';
-import { useConfigLanguage } from '@utils/useProjectConfig';
+import { useConfigLanguage } from '@hooks/useProjectConfig';
 import { useCallback } from 'react';
 
 export const useUpdateLanguage = (language: StudioLanguageConfig) => {

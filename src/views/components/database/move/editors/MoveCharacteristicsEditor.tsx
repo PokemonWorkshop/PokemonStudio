@@ -3,11 +3,11 @@ import { Editor } from '@components/editor';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useMovePage } from '@utils/usePage';
+import { useMovePage } from '@hooks/usePage';
 import { useUpdateMove } from './useUpdateMove';
 import { MOVE_VALIDATOR } from '@modelEntities/move';
-import { useZodForm } from '@utils/useZodForm';
-import { useInputAttrsWithLabel } from '@utils/useInputAttrs';
+import { useZodForm } from '@hooks/useZodForm';
+import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 import { InputFormContainer } from '@components/inputs/InputContainer';
 
 const CharactericticsInfoContainer = styled.div`

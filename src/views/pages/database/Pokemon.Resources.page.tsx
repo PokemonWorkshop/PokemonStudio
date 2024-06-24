@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { PageDataConstrainerStyle, PageResourceContainerStyle } from './PageContainerStyle';
 import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';
 import { BattlersResources, CharactersResources, IconsResources, CryResource } from '@components/database/pokemon/resources';
-import { useCreaturePage } from '@utils/usePage';
+import { useCreaturePage } from '@hooks/usePage';
 
 export const PokemonResourcesPage = () => {
   const { t } = useTranslation('database_pokemon');

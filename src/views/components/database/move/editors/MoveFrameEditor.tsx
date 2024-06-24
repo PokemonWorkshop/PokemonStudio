@@ -3,15 +3,15 @@ import { Editor } from '@components/editor';
 import { TFunction, useTranslation } from 'react-i18next';
 import { MOVE_CATEGORIES, MOVE_VALIDATOR } from '@modelEntities/move';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useMovePage } from '@utils/usePage';
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { useMovePage } from '@hooks/usePage';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import { MoveTranslationOverlay, TranslationEditorTitle } from './MoveTranslationOverlay';
 import { useUpdateMove } from './useUpdateMove';
 import { TranslatableTextFields, TranslatableTextFieldsRef } from './MoveFrameEditor/TranslatableTextFields';
-import { useZodForm } from '@utils/useZodForm';
-import { useInputAttrsWithLabel } from '@utils/useInputAttrs';
+import { useZodForm } from '@hooks/useZodForm';
+import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 import { InputFormContainer } from '@components/inputs/InputContainer';
-import { useSelectOptions } from '@utils/useSelectOptions';
+import { useSelectOptions } from '@hooks/useSelectOptions';
 
 const moveCategoryEntries = (t: TFunction<('database_moves' | 'database_types')[]>) =>
   MOVE_CATEGORIES.map((category) => ({ value: category, label: t(`database_types:${category}`) })).sort((a, b) => a.label.localeCompare(b.label));

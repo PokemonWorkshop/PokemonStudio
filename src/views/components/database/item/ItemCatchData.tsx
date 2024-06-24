@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { DataBlockWithTitle, DataFieldsetField, DataGrid } from '../dataBlocks';
 import { DataFieldsetFieldCode } from '../dataBlocks/DataFieldsetField';
 import { ItemDialogsRef } from './editors/ItemEditorOverlay';
-import { useItemPage } from '@utils/usePage';
+import { useItemPage } from '@hooks/usePage';
 
 type ItemCatchDataProps = { dialogsRef: ItemDialogsRef };
 

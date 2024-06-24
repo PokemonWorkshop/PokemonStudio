@@ -5,10 +5,10 @@ import { BaseIcon } from '@components/icons/BaseIcon';
 import SvgContainer from '@components/icons/BaseIcon/SvgContainer';
 
 import { BaseButtonStyle } from './GenericButtons';
-import { useProjectSave } from '@utils/useProjectSave';
+import { useProjectSave } from '@hooks/useProjectSave';
 import { useLoaderRef } from '@utils/loaderContext';
-import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { StudioShortcutActions, useShortcut } from '@hooks/useShortcuts';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import { SaveEditorAndDeletionKeys, SaveEditorOverlay } from '@components/save/SaveEditorOverlay';
 
 const SaveProjectButtonContainer = styled(BaseButtonStyle)`

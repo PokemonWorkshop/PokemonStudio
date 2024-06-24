@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
 import { assertUnreachable } from '@utils/assertUnreachable';
-import { DialogRefData } from '@utils/useDialogsRef';
+import { DialogRefData } from '@hooks/useDialogsRef';
 import { MapFrameEditor } from './MapFrameEditor';
 import { MapDeletion } from './MapDeletion';
 import { MapMusicsEditor } from './MapMusicsEditor';

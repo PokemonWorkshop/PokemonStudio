@@ -1,6 +1,6 @@
 import { StudioCreature, StudioCreatureForm } from '@modelEntities/creature';
 import { cloneEntity } from '@utils/cloneEntity';
-import { useProjectPokemon } from '@utils/useProjectData';
+import { useProjectPokemon } from '@hooks/useProjectData';
 import { useCallback } from 'react';
 
 export const useUpdateForm = (creature: StudioCreature, form: StudioCreatureForm) => {

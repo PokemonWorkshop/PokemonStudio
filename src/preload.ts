@@ -3,7 +3,7 @@
 import { ipcRenderer, contextBridge, webFrame, IpcRendererEvent } from 'electron';
 import { BackendTaskWithGenericError, BackendTaskWithGenericErrorAndNoProgress, GenericBackendProgress, defineBackendTask } from '@utils/BackendTask';
 import type { PSDKVersion } from '@services/getPSDKVersion';
-import type { StudioShortcut } from '@utils/useShortcuts';
+import type { StudioShortcut } from '@hooks/useShortcuts';
 import type { ChooseProjectFileToOpenInput } from './backendTasks/chooseProjectFileToOpen';
 import type { ConfigureNewProjectInput } from './backendTasks/configureNewProject';
 import type { CopyFileInput } from './backendTasks/copyFile';

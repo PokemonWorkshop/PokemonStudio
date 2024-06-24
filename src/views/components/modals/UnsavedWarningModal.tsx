@@ -6,7 +6,7 @@ import theme from '@src/AppTheme';
 import { EditorOverlayContainer } from '@components/editor';
 import { PrimaryButton } from '@components/buttons';
 import { BaseIcon } from '@components/icons/BaseIcon';
-import { useProjectSave } from '@utils/useProjectSave';
+import { useProjectSave } from '@hooks/useProjectSave';
 import { useLoaderRef } from '@utils/loaderContext';
 import {
   MessageBoxActionContainer,

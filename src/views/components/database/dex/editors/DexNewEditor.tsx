@@ -4,7 +4,7 @@ import { EditorWithCollapse } from '@components/editor';
 
 import { useTranslation } from 'react-i18next';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
-import { useProjectDex } from '@utils/useProjectData';
+import { useProjectDex } from '@hooks/useProjectData';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import { checkDbSymbolExist, generateDefaultDbSymbol, wrongDbSymbol } from '@utils/dbSymbolUtils';
 import { TextInputError } from '@components/inputs/Input';

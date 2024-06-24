@@ -5,7 +5,7 @@ import { InputContainer, InputWithTopLabelContainer, Label, PaddedInputContainer
 import { SelectCustomSimple } from '@components/SelectCustom';
 import { QUEST_OBJECTIVES, StudioQuest, StudioQuestObjectiveType, updateIndexSpeakToBeatNpc } from '@modelEntities/quest';
 import { createQuestObjective } from '@utils/entityCreation';
-import { useProjectQuests } from '@utils/useProjectData';
+import { useProjectQuests } from '@hooks/useProjectData';
 import React, { useMemo, useState } from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
 import styled from 'styled-components';

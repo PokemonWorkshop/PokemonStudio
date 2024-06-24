@@ -5,7 +5,7 @@ import { StudioTextInfo, TEXT_INFO_DESCRIPTION_TEXT_ID, TEXT_INFO_NAME_TEXT_ID }
 import { stringify } from 'csv-stringify/sync';
 import { findFirstAvailableTextId } from '@utils/ModelUtils';
 import { getTextFileList, loadCSV } from '@utils/textManagement';
-import { UseDefaultTextInfoTranslationReturnType } from '@utils/useDefaultTextInfoTranslation';
+import { UseDefaultTextInfoTranslationReturnType } from '@hooks/useDefaultTextInfoTranslation';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import { parseJSON } from '@utils/json/parse';
 
@@ -78,7 +78,10 @@ export const updateTextInfos = async (payload: UpdateTextInfosInput) => {
     }
     const textFileList = getTextFileList(payload.projectPath);
     // load text infos data and csv data
-    const textInfos: StudioTextInfo[] = parseJSON(fs.readFileSync(path.join(payload.projectPath, TEXT_INFOS_PATH), { encoding: 'utf-8' }), 'text_file.json');
+    const textInfos: StudioTextInfo[] = parseJSON(
+      fs.readFileSync(path.join(payload.projectPath, TEXT_INFOS_PATH), { encoding: 'utf-8' }),
+      'text_file.json'
+    );
     const names = await loadCSV(path.join(payload.projectPath, STUDIO_CSV_PATH, TEXT_INFO_NAME_TEXT_ID.toString()));
     const descriptions = await loadCSV(path.join(payload.projectPath, STUDIO_CSV_PATH, TEXT_INFO_DESCRIPTION_TEXT_ID.toString()));
     // clean the text infos data to free unused textId

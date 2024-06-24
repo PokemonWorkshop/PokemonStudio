@@ -6,9 +6,9 @@ import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { PokemonBattlerList } from '@components/pokemonBattler';
 import { GroupControlBar, GroupFrame } from '@components/database/group';
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import { GroupEditorAndDeletionKeys, GroupEditorOverlay } from '@components/database/group/editors/GroupEditorOverlay';
-import { useGroupPage } from '@utils/usePage';
+import { useGroupPage } from '@hooks/usePage';
 
 export const GroupPage = () => {
   const dialogsRef = useDialogsRef<GroupEditorAndDeletionKeys>();

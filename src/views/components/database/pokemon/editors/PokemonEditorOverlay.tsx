@@ -1,6 +1,6 @@
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
 import { assertUnreachable } from '@utils/assertUnreachable';
-import { DialogRefData } from '@utils/useDialogsRef';
+import { DialogRefData } from '@hooks/useDialogsRef';
 import React from 'react';
 import { AbilityEditor } from './AbilityEditor';
 import { BreedingEditor } from './BreedingEditor';

@@ -19,9 +19,9 @@ import {
 } from '@modelEntities/trainer';
 import { useGetProjectText, useSetProjectText } from '@utils/ReadingProjectText';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useTrainerPage } from '@utils/usePage';
+import { useTrainerPage } from '@hooks/usePage';
 import { useUpdateTrainer } from './useUpdateTrainer';
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import { TrainerTranslationOverlay, TrainerTranslationEditorTitle } from './TrainerTranslationOverlay';
 
 const BaseMoneyInfoContainer = styled.span`
