@@ -1,21 +1,30 @@
 import { BrowserWindow, BrowserWindowConstructorOptions, app, ipcMain } from 'electron';
 
+type IPCEventType = 'on' | 'once' | 'handle' | 'removeListener' | 'removeAllListeners';
+
 /**
  * Manages creation, manipulation, and event handling of BrowserWindow instances.
  * This class provides methods to create, access, and control windows within an Electron application.
  *
  * @author Ota
  */
-export class WindowManager {
-  private windows: Map<number, BrowserWindow>; // Map to store BrowserWindow instances
+class WindowManager {
+  static instance: WindowManager;
+  private windows: Map<number, BrowserWindow> = new Map(); // Map to store BrowserWindow instances
   private mainWindowId: number | null; // ID of the main window, if set
+
+  public static getInstance(): WindowManager {
+    if (!WindowManager.instance) {
+      WindowManager.instance = new WindowManager();
+    }
+    return WindowManager.instance;
+  }
 
   /**
    * Creates an instance of WindowManager.
    * Initializes an empty map for windows and sets the main window ID to null.
    */
   constructor() {
-    this.windows = new Map();
     this.mainWindowId = null;
     this.setupIPCEventHandlers(); // Setup IPC event handlers for window management
   }
@@ -157,8 +166,13 @@ export class WindowManager {
    */
   createWindow(options: BrowserWindowConstructorOptions & { url?: string; file?: string }): BrowserWindow {
     const defaultOptions: BrowserWindowConstructorOptions = {
-      width: 800,
-      height: 600,
+      show: false,
+      width: 1280,
+      height: 720,
+      minWidth: 960,
+      minHeight: 640,
+      titleBarStyle: process.platform === 'win32' ? 'hidden' : 'default',
+      autoHideMenuBar: process.platform === 'linux',
       webPreferences: {
         contextIsolation: true,
       },
@@ -221,6 +235,10 @@ export class WindowManager {
   getWindowById(id: number): BrowserWindow | null {
     return this.windows.get(id) || null;
   }
+
+  setEvent(type: IPCEventType, eventName: string, handle: (...args: unknown[]) => void) {
+    ipcMain[type](eventName, handle);
+  }
 }
 
-export default WindowManager;
+export default WindowManager.getInstance();
