@@ -1,10 +1,11 @@
-import { useProjectConfigReadonly } from '@hooks/useProjectConfig';
+import { useConfigSceneTitle, useProjectConfigReadonly } from '@hooks/useProjectConfig';
 import { useProjectStudio } from '@hooks/useProjectStudio';
 import { useUpdateLanguage } from './editors/useUpdateLanguage';
 import { useUpdateGameOptions } from '../gameOptions';
 import { useUpdateProjectStudio } from '@hooks/useUpdateProjectStudio';
 import { cloneEntity } from '@utils/cloneEntity';
 import { StudioLanguageConfig } from '@modelEntities/config';
+import { useUpdateGameStart } from '../gameStart/useUpdateGameStart';
 
 export type DashboardLanguageType = 'translation' | 'player';
 
@@ -21,6 +22,8 @@ export const useDashboardLanguage = () => {
   const updateGameOptions = useUpdateGameOptions(gameOptions);
   const { projectStudioValues: projectStudio } = useProjectStudio();
   const updateProjectStudio = useUpdateProjectStudio(projectStudio);
+  const { projectConfigValues: gameStart } = useConfigSceneTitle();
+  const updateGameStart = useUpdateGameStart(gameStart);
 
   const disabledLanguage = (code: string) => {
     if (language.choosableLanguageCode.length <= 1) return;
@@ -33,6 +36,7 @@ export const useDashboardLanguage = () => {
     languageEdited.choosableLanguageTexts.splice(index, 1);
     if (languageEdited.choosableLanguageCode.length <= 1) {
       updateGameOptions({ order: gameOptions.order.filter((k) => k !== 'language') });
+      updateGameStart({ isLanguageSelectionEnabled: false });
     }
     updateDefaultLanguage(languageEdited);
     updateLanguage(languageEdited);

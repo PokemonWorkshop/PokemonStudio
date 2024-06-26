@@ -2,7 +2,7 @@ import { generatePSDKBatFileContent } from '@services/generatePSDKBatFileContent
 import log from 'electron-log';
 import path from 'path';
 import { copyFileSync, existsSync, readFileSync, writeFileSync } from 'fs';
-import { GAME_OPTION_CONFIG_VALIDATOR, INFO_CONFIG_VALIDATOR } from '@modelEntities/config';
+import { GAME_OPTION_CONFIG_VALIDATOR, INFO_CONFIG_VALIDATOR, SCENE_TITLE_CONFIG_VALIDATOR } from '@modelEntities/config';
 import { StudioProject } from '@modelEntities/project';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import { addColumnCSV, getTextFileList, getTextPath, languageAvailable, loadCSV, saveCSV } from '@utils/textManagement';
@@ -39,6 +39,17 @@ const updateGameOptionsConfig = (gameOptionsConfigPath: string) => {
 
   gameOptionConfigValidation.data.order = gameOptionConfigValidation.data.order.filter((k) => k !== 'language');
   writeFileSync(gameOptionsConfigPath, JSON.stringify(gameOptionConfigValidation.data, null, 2));
+};
+
+const updateSceneTitleConfig = (sceneTitleConfigPath: string, multiLanguage: boolean) => {
+  if (!existsSync(sceneTitleConfigPath)) throw new Error('scene_title_config.json file not found');
+
+  const sceneTitleConfigContent = readFileSync(sceneTitleConfigPath).toString('utf-8');
+  const sceneTitleConfigValidation = SCENE_TITLE_CONFIG_VALIDATOR.safeParse(parseJSON(sceneTitleConfigContent, 'scene_title_config.json'));
+  if (!sceneTitleConfigValidation.success) throw new Error('Fail to parse scene_title_config.json');
+
+  sceneTitleConfigValidation.data.isLanguageSelectionEnabled = multiLanguage;
+  writeFileSync(sceneTitleConfigPath, JSON.stringify(sceneTitleConfigValidation.data, null, 2));
 };
 
 /**
@@ -106,6 +117,8 @@ const configureNewProject = async (payload: ConfigureNewProjectInput) => {
     log.info('configure-new-project/update game options config');
     updateGameOptionsConfig(path.join(payload.projectDirName, 'Data/configs/game_options_config.json'));
   }
+  log.info('configure-new-project/update scene title config');
+  updateSceneTitleConfig(path.join(payload.projectDirName, 'Data/configs/scene_title_config.json'), payload.metaData.multiLanguage);
   log.info('configure-new-project/update', 'CSV Files');
   await updateCSVFiles(payload.projectDirName, payload.metaData.projectStudioData);
   log.info('configure-new-project/update', 'Maps mtime');
