@@ -236,9 +236,9 @@ class WindowManager {
     return this.windows.get(id) || null;
   }
 
-  setEvent(type: IPCEventType, eventName: string, handle: (...args: unknown[]) => void) {
+  /*setEvent(type: IPCEventType, eventName: string, handle: (...args: unknown[]) => void) {
     ipcMain[type](eventName, handle);
-  }
+  }*/
 }
 
 export default WindowManager.getInstance();
