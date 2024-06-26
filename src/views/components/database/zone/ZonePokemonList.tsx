@@ -18,9 +18,6 @@ const PokemonZoneListContainer = styled.div`
   gap: 16px;
   align-items: center;
   height: 70px;
-  border: 2px solid ${({ theme }) => theme.colors.dark20};
-  padding: 16px, 0px, 16px, 0px;
-  border-radius: 8px;
 
   & img {
     width: 32px;
