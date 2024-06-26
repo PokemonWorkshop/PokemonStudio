@@ -235,10 +235,6 @@ class WindowManager {
   getWindowById(id: number): BrowserWindow | null {
     return this.windows.get(id) || null;
   }
-
-  /*setEvent(type: IPCEventType, eventName: string, handle: (...args: unknown[]) => void) {
-    ipcMain[type](eventName, handle);
-  }*/
 }
 
 export default WindowManager.getInstance();
