@@ -36,12 +36,14 @@ export const MovepoolImport = ({ type, onClose }: MovepoolImportProps) => {
   } = useProjectData('pokemon', 'pokemon');
   const [selectedPokemon, setSelectedPokemon] = useState('__undef__');
   const [selectedForm, setSelectedForm] = useState(0);
-  const { t } = useTranslation(['database_pokemon']);
+  const { t } = useTranslation(['database_pokemon', 'select']);
   const currentEditedPokemon = useMemo(() => cloneEntity(pokemon[currentPokemon.specie]), [pokemon, currentPokemon.specie]);
 
   const onClickValidate = () => {
     const klass = type === 'level' ? 'LevelLearnableMove' : getMoveKlass(type);
-    const form = currentEditedPokemon.forms[currentPokemon.form];
+    const form = currentEditedPokemon.forms.find((f) => f.form === currentPokemon.form);
+    if (!form) return;
+
     const currentSelectedForm = pokemon[selectedPokemon].forms.find((f) => f.form === selectedForm);
     if (!currentSelectedForm) return;
 
@@ -63,6 +65,7 @@ export const MovepoolImport = ({ type, onClose }: MovepoolImportProps) => {
               setSelectedForm(0);
             }}
             noLabel
+            undefValueOption={t('select:none')}
           />
           {selectedPokemon !== '__undef__' && pokemon[selectedPokemon].forms.length > 1 && (
             <SelectPokemonForm dbSymbol={selectedPokemon} form={selectedForm} onChange={(event) => setSelectedForm(Number(event))} noLabel />
