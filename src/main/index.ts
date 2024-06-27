@@ -5,6 +5,7 @@ import path from 'path';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import log, { FileTransport, PathVariables } from 'electron-log';
 import MenuBuilder from './menu';
+import windowManager from '@src/backendTasks/windowManager';
 import { autoUpdater } from 'electron-updater';
 import { getPSDKBinariesPath, getPSDKVersion } from '../services/getPSDKVersion';
 import { getLastPSDKVersion } from '../services/getLastPSDKVersion';
@@ -68,8 +69,6 @@ const rendererLog = log.create({ logId: 'renderer' });
 const fileTransport: FileTransport = <FileTransport>rendererLog.transports.file;
 fileTransport.resolvePathFn = resolvePathFn;
 
-let mainWindow: BrowserWindow | null = null;
-
 const createWindow = async () => {
   const RESOURCES_PATH = app.isPackaged ? path.join(process.resourcesPath, 'assets') : path.join(__dirname, '../../assets');
 
@@ -79,22 +78,15 @@ const createWindow = async () => {
 
   registerElectronProtocolWhenAppRead();
 
-  mainWindow = new BrowserWindow({
-    show: false,
-    width: 1280,
-    height: 720,
-    minWidth: 960,
-    minHeight: 640,
-    useContentSize: true,
+  const mainWindow = windowManager.createWindow({
+    name: 'main',
+    isMain: true,
     icon: getAssetPath('icon.png'),
-    titleBarStyle: process.platform === 'win32' ? 'hidden' : 'default',
-    autoHideMenuBar: process.platform === 'linux',
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
+    url: MAIN_WINDOW_WEBPACK_ENTRY,
   });
-
-  mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
@@ -118,10 +110,6 @@ const createWindow = async () => {
   mainWindow.on('close', (event) => {
     mainWindow?.webContents.send('request-window-close');
     event.preventDefault();
-  });
-
-  mainWindow.on('closed', () => {
-    mainWindow = null;
   });
 
   const menuBuilder = new MenuBuilder(mainWindow);
@@ -168,30 +156,6 @@ app.on('will-quit', (event) => {
     wins.forEach((win) => win.webContents.send('request-window-close'));
     event.preventDefault();
   }
-});
-
-ipcMain.on('window-minimize', (event) => {
-  BrowserWindow.fromWebContents(event.sender)?.minimize();
-});
-
-ipcMain.on('window-maximize', (event) => {
-  const window = BrowserWindow.fromWebContents(event.sender);
-  if (!window) return;
-  if (window.isMaximized()) window.unmaximize();
-  else window.maximize();
-});
-
-ipcMain.on('window-close', (event) => {
-  event.sender.send('request-window-close');
-});
-
-ipcMain.on('window-safe-close', (event, forceQuit) => {
-  BrowserWindow.fromWebContents(event.sender)?.destroy();
-  if (forceQuit) app?.quit();
-});
-
-ipcMain.on('window-is-maximized', (event) => {
-  event.returnValue = BrowserWindow.fromWebContents(event.sender)?.isMaximized();
 });
 
 ipcMain.handle('get-psdk-binaries-path', () => getPSDKBinariesPath());

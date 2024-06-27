@@ -200,7 +200,7 @@ class WindowManager {
    * @returns The newly created BrowserWindow instance.
    */
   createWindow(
-    options: Omit<BrowserWindowConstructorOptions, 'name'> & { name: string; main?: boolean; url?: string; file?: string }
+    options: Omit<BrowserWindowConstructorOptions, 'name'> & { name: string; isMain?: boolean; url?: string; file?: string }
   ): BrowserWindow {
     if (!options.name) {
       throw new Error("The 'name' property is required.");
@@ -234,7 +234,7 @@ class WindowManager {
       newWindow.loadFile(windowOptions.file);
     }
 
-    if (options.main) {
+    if (options.isMain) {
       if (this.mainWindowId !== null) {
         newWindow.destroy();
         throw new Error('A main window already exists.');
@@ -248,7 +248,7 @@ class WindowManager {
     newWindow.on('closed', () => {
       this.windows.delete(newWindow.id);
 
-      if (windowOptions.main) {
+      if (windowOptions.isMain) {
         this.closeAllWindows();
       }
     });
@@ -277,13 +277,13 @@ class WindowManager {
   /**
    * Retrieves the main BrowserWindow instance, if set.
    *
-   * @returns The main BrowserWindow instance if set and exists, otherwise null.
+   * @returns The main BrowserWindow instance if set and exists, otherwise undefined.
    */
-  getMainWindow(): BrowserWindow | null {
+  getMainWindow(): BrowserWindow | undefined {
     if (this.mainWindowId && this.windows.has(this.mainWindowId)) {
-      return this.windows.get(this.mainWindowId)?.window || null;
+      return this.windows.get(this.mainWindowId)?.window || undefined;
     }
-    return null;
+    return undefined;
   }
 
   /**
