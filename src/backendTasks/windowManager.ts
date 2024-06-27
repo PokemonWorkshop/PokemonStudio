@@ -1,14 +1,31 @@
+/**
+ * @file WindowManager.ts
+ * @description Manages creation, handling, and retrieval of Electron BrowserWindows.
+ * @author Ota
+ */
+
 import { BrowserWindow, BrowserWindowConstructorOptions, app, ipcMain } from 'electron';
 
+interface WindowInfo {
+  id: number;
+  name: string;
+  window: BrowserWindow;
+}
+
+/**
+ * WindowManager class manages the lifecycle and interactions of Electron BrowserWindows.
+ * It provides methods for window creation, retrieval, and event handling.
+ */
 class WindowManager {
   static instance: WindowManager;
-  private windows: Map<number, BrowserWindow> = new Map();
-  private windowNames: Map<string, number> = new Map();
+  private windows: Map<number, WindowInfo> = new Map();
   private mainWindowId: number | null;
 
   /**
    * Singleton instance method.
    * Ensures only one instance of WindowManager exists.
+   *
+   * @returns The singleton instance of WindowManager.
    */
   public static getInstance(): WindowManager {
     if (!WindowManager.instance) {
@@ -21,7 +38,7 @@ class WindowManager {
    * Constructor for WindowManager.
    * Initializes the main window ID and sets up IPC event handlers.
    */
-  constructor() {
+  private constructor() {
     this.mainWindowId = null;
     this.setupIPCEventHandlers();
   }
@@ -31,61 +48,93 @@ class WindowManager {
    * Handles minimize, maximize, close, safe-close, and restore events.
    */
   private setupIPCEventHandlers(): void {
+    // Handle window-minimize event
     ipcMain.on('window-minimize', (event) => {
       this.minimizeWindow(event.sender);
     });
 
+    // Handle window-is-maximized event
     ipcMain.handle('window-is-maximized', (event) => {
       return this.isWindowMaximized(event.sender);
     });
 
+    // Handle window-close event
     ipcMain.on('window-close', (event) => {
       this.requestWindowClose(event.sender);
     });
 
+    // Handle window-safe-close event
     ipcMain.on('window-safe-close', (event, forceQuit: boolean) => {
       this.safeCloseWindow(event.sender, forceQuit);
     });
 
+    // Handle window-maximize event
     ipcMain.on('window-maximize', (event) => {
       this.toggleMaximizeWindow(event.sender);
     });
 
+    // Handle window-restore event
     ipcMain.on('window-restore', (event) => {
       this.restoreWindow(event.sender);
     });
   }
 
   /**
-   * Minimizes the BrowserWindow associated with the given WebContents.
-   * If the window does not exist, logs an error message.
+   * Centralizes the logic for managing window actions like minimize, maximize, restore.
    *
-   * @param sender - The WebContents sending the minimize request.
+   * @param sender - The WebContents sending the action request.
+   * @param action - The action to perform ('minimize', 'maximize', 'restore').
    */
-  private minimizeWindow(sender: Electron.WebContents): void {
+  private manageWindowAction(sender: Electron.WebContents, action: 'minimize' | 'maximize' | 'restore'): void {
     const window = this.getWindowFromSender(sender);
     if (window) {
-      window.minimize();
+      switch (action) {
+        case 'minimize':
+          window.minimize();
+          break;
+        case 'maximize':
+          if (window.isMaximized()) {
+            window.unmaximize();
+          } else {
+            window.maximize();
+          }
+          break;
+        case 'restore':
+          window.restore();
+          break;
+        default:
+          break;
+      }
     } else {
-      console.error('Attempted to minimize a window that does not exist.');
+      console.error(`Attempted to ${action} a window that does not exist.`);
     }
   }
 
   /**
+   * Minimizes the BrowserWindow associated with the given WebContents.
+   *
+   * @param sender - The WebContents sending the minimize request.
+   */
+  private minimizeWindow(sender: Electron.WebContents): void {
+    this.manageWindowAction(sender, 'minimize');
+  }
+
+  /**
    * Toggles the maximize/restore state of the BrowserWindow associated with the given WebContents.
-   * If the window does not exist, no action is taken.
    *
    * @param sender - The WebContents sending the maximize/restore request.
    */
   private toggleMaximizeWindow(sender: Electron.WebContents): void {
-    const window = this.getWindowFromSender(sender);
-    if (window) {
-      if (window.isMaximized()) {
-        window.unmaximize();
-      } else {
-        window.maximize();
-      }
-    }
+    this.manageWindowAction(sender, 'maximize');
+  }
+
+  /**
+   * Restores the BrowserWindow associated with the given WebContents to its normal state.
+   *
+   * @param sender - The WebContents sending the restore request.
+   */
+  private restoreWindow(sender: Electron.WebContents): void {
+    this.manageWindowAction(sender, 'restore');
   }
 
   /**
@@ -108,11 +157,6 @@ class WindowManager {
     const window = this.getWindowFromSender(sender);
     if (window) {
       this.windows.delete(window.id);
-      this.windowNames.forEach((id, name) => {
-        if (id === window.id) {
-          this.windowNames.delete(name);
-        }
-      });
       window.destroy();
       if (forceQuit) {
         app?.quit();
@@ -148,18 +192,6 @@ class WindowManager {
   }
 
   /**
-   * Restores the BrowserWindow associated with the given WebContents to its normal state.
-   *
-   * @param sender - The WebContents sending the restore request.
-   */
-  private restoreWindow(sender: Electron.WebContents): void {
-    const window = this.getWindowFromSender(sender);
-    if (window) {
-      window.restore();
-    }
-  }
-
-  /**
    * Creates a new BrowserWindow instance with the specified options.
    * Loads a URL or local file into the window if provided in the options.
    * If the window is named 'main', registers a handler to close all windows when it is closed.
@@ -167,7 +199,17 @@ class WindowManager {
    * @param options - Options to configure the new BrowserWindow instance.
    * @returns The newly created BrowserWindow instance.
    */
-  createWindow(options: BrowserWindowConstructorOptions & { url?: string; file?: string; name?: string }): BrowserWindow {
+  createWindow(
+    options: Omit<BrowserWindowConstructorOptions, 'name'> & { name: string; main?: boolean; url?: string; file?: string }
+  ): BrowserWindow {
+    if (!options.name) {
+      throw new Error("The 'name' property is required.");
+    }
+
+    if (this.getWindowByName(options.name)) {
+      throw new Error(`Window with name '${options.name}' already exists.`);
+    }
+
     const defaultOptions: BrowserWindowConstructorOptions = {
       show: false,
       width: 1280,
@@ -184,6 +226,7 @@ class WindowManager {
 
     const windowOptions = { ...defaultOptions, ...options };
     const newWindow = new BrowserWindow(windowOptions);
+    const windowInfo: WindowInfo = { id: newWindow.id, name: windowOptions.name, window: newWindow };
 
     if (windowOptions.url) {
       newWindow.loadURL(windowOptions.url);
@@ -191,25 +234,23 @@ class WindowManager {
       newWindow.loadFile(windowOptions.file);
     }
 
-    this.windows.set(newWindow.id, newWindow);
-
-    if (windowOptions.name) {
-      this.windowNames.set(windowOptions.name, newWindow.id);
-
-      if (windowOptions.name === 'main') {
-        newWindow.on('closed', () => {
-          this.closeAllWindows();
-        });
+    if (options.main) {
+      if (this.mainWindowId !== null) {
+        newWindow.destroy();
+        throw new Error('A main window already exists.');
+      } else {
+        this.mainWindowId = newWindow.id;
       }
     }
 
+    this.windows.set(newWindow.id, windowInfo);
+
     newWindow.on('closed', () => {
       this.windows.delete(newWindow.id);
-      this.windowNames.forEach((id, name) => {
-        if (id === newWindow.id) {
-          this.windowNames.delete(name);
-        }
-      });
+
+      if (windowOptions.main) {
+        this.closeAllWindows();
+      }
     });
 
     return newWindow;
@@ -219,8 +260,8 @@ class WindowManager {
    * Closes all open BrowserWindow instances managed by the WindowManager.
    */
   closeAllWindows(): void {
-    this.windows.forEach((window) => {
-      window.close();
+    this.windows.forEach((windowInfo) => {
+      windowInfo.window.close();
     });
   }
 
@@ -229,14 +270,8 @@ class WindowManager {
    *
    * @returns An array of objects containing BrowserWindow instances and their names.
    */
-  getAllWindows(): { window: BrowserWindow; name: string | null }[] {
-    const result: { window: BrowserWindow; name: string | null }[] = [];
-    this.windows.forEach((window, id) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const name = Array.from(this.windowNames.entries()).find(([key, value]) => value === id)?.[0] || null;
-      result.push({ window, name });
-    });
-    return result;
+  getAllWindows(): { window: BrowserWindow; name: string }[] {
+    return Array.from(this.windows.values()).map(({ window, name }) => ({ window, name }));
   }
 
   /**
@@ -246,7 +281,7 @@ class WindowManager {
    */
   getMainWindow(): BrowserWindow | null {
     if (this.mainWindowId && this.windows.has(this.mainWindowId)) {
-      return this.windows.get(this.mainWindowId) || null;
+      return this.windows.get(this.mainWindowId)?.window || null;
     }
     return null;
   }
@@ -267,17 +302,7 @@ class WindowManager {
    * @returns The BrowserWindow instance if found, otherwise null.
    */
   getWindowById(id: number): BrowserWindow | null {
-    return this.windows.get(id) || null;
-  }
-
-  /**
-   * Sets a name for a BrowserWindow instance by its ID.
-   *
-   * @param id - The ID of the BrowserWindow instance.
-   * @param name - The name to associate with the BrowserWindow instance.
-   */
-  setWindowName(id: number, name: string): void {
-    this.windowNames.set(name, id);
+    return this.windows.get(id)?.window || null;
   }
 
   /**
@@ -287,9 +312,10 @@ class WindowManager {
    * @returns The BrowserWindow instance if found, otherwise null.
    */
   getWindowByName(name: string): BrowserWindow | null {
-    const id = this.windowNames.get(name);
-    return id ? this.getWindowById(id) : null;
+    const windowInfo = Array.from(this.windows.values()).find((info) => info.name === name);
+    return windowInfo ? windowInfo.window : null;
   }
 }
 
+// Export the singleton instance of WindowManager
 export default WindowManager.getInstance();
