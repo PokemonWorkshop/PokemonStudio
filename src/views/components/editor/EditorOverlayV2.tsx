@@ -182,7 +182,7 @@ export const defineEditorOverlay = <Keys extends string, Props extends Record<st
     }, [currentDialog]);
 
     return ReactDOM.createPortal(
-      <DialogContainer ref={dialogRef} onClick={onClickOutside} className={isCenter ? 'center' : 'right'}>
+      <DialogContainer ref={dialogRef} onMouseDown={onClickOutside} className={isCenter ? 'center' : 'right'}>
         {currentlyRenderedDialog}
       </DialogContainer>,
       document.querySelector('#dialogs') || document.createElement('div')
