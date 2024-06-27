@@ -9,7 +9,7 @@ export const useUpdateResources = (trainer: StudioTrainer) => {
     updateTrainer({
       resources: {
         ...trainer.resources,
-        [resource]: basename(resourcePath, '.png').replace(/\.gif$/, ''),
+        [resource]: basename(resourcePath, '.png').replace(/\.gif$/i, ''),
       },
     });
   };
