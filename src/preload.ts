@@ -146,6 +146,7 @@ contextBridge.exposeInMainWorld('api', {
   requestJson: defineBackendTask(ipcRenderer, 'request-json'),
   checkDownloadNewProject: defineBackendTask(ipcRenderer, 'check-download-new-project'),
   generatingMapOverview: defineBackendTask(ipcRenderer, 'generating-map-overview'),
+  openCompilationWindow: defineBackendTask(ipcRenderer, 'open-compilation-window'),
 });
 
 type AnyObj = Record<string, never>;
@@ -233,6 +234,7 @@ declare global {
       requestJson: BackendTaskWithGenericErrorAndNoProgress<RequestJsonInput, RequestJsonOutput>;
       checkDownloadNewProject: BackendTaskWithGenericErrorAndNoProgress<CheckDownloadNewProjectInput, CheckDownloadNewProjectOutput>;
       generatingMapOverview: BackendTaskWithGenericErrorAndNoProgress<GeneratingMapOverviewInput, AnyObj>;
+      openCompilationWindow: BackendTaskWithGenericErrorAndNoProgress<AnyObj, AnyObj>;
     };
   }
 }

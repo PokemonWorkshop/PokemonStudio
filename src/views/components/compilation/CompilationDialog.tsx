@@ -7,6 +7,7 @@ import { ClearButtonOnlyIcon, PrimaryButton } from '@components/buttons';
 import { CompilationDialogContainer, CompilationFormContainer } from './CompilationDialogStyle';
 import { CompilationOptions } from './CompilationOptions';
 import { TFunction, useTranslation } from 'react-i18next';
+import { useLoaderRef } from '@utils/loaderContext';
 import React from 'react';
 
 const initForm = (gameInfo: StudioInfoConfig): StudioCompilation => {
@@ -38,12 +39,23 @@ export const CompilationDialog = ({ closeDialog }: CompilationDialogProps) => {
   const { canClose, getFormData, onInputTouched, defaults, formRef } = useZodForm(COMPILATION_DIALOG_SCHEMA, initForm(gameInfo));
   const { Input } = useInputAttrsWithLabel(COMPILATION_DIALOG_SCHEMA, defaults);
   const { t } = useTranslation('compilation');
+  const loaderRef = useLoaderRef();
 
   const onClickCompile = () => {
     const result = canClose() && getFormData();
     if (result && result.success) {
       console.log(result.data);
-      // TODO: open new window
+      window.api.openCompilationWindow(
+        {},
+        () => {
+          closeDialog();
+        },
+        ({ errorMessage }) => {
+          // we wait the end of the close dialog animation to show the result
+          setTimeout(() => loaderRef.current.setError('compilation_project_error', errorMessage, true), 200);
+          closeDialog();
+        }
+      );
     }
   };
 
