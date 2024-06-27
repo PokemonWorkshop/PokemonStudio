@@ -1,8 +1,8 @@
-import { useZodForm } from '@utils/useZodForm';
+import { useZodForm } from '@hooks/useZodForm';
 import { COMPILATION_DIALOG_SCHEMA, StudioCompilation } from './CompilationDialogSchema';
-import { useConfigInfos } from '@utils/useProjectConfig';
+import { useConfigInfos } from '@hooks/useProjectConfig';
 import { StudioInfoConfig } from '@modelEntities/config';
-import { useInputAttrsWithLabel } from '@utils/useInputAttrs';
+import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 import { ClearButtonOnlyIcon, PrimaryButton } from '@components/buttons';
 import { CompilationDialogContainer, CompilationFormContainer } from './CompilationDialogStyle';
 import { CompilationOptions } from './CompilationOptions';

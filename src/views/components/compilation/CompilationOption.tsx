@@ -1,4 +1,4 @@
-import { useInputAttrsWithLabel } from '@utils/useInputAttrs';
+import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 import React from 'react';
 import { COMPILATION_DIALOG_SCHEMA, StudioOptionCompilation } from './CompilationDialogSchema';
 import { useTranslation } from 'react-i18next';
