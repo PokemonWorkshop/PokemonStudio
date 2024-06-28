@@ -10,11 +10,14 @@ import { TableEmpty } from './table/ZoneTableStyle';
 
 const PokemonZoneListGrid = styled.div`
   display: flex;
-  grid-template-columns: 1fr 1fr 1fr;
   flex-wrap: wrap;
   justify-content: space-between;
   column-gap: 17px;
   row-gap: 16px;
+
+  & > * {
+    flex-basis: calc(25% - 17px);
+  }
 
   @media ${({ theme }) => theme.breakpoints.dataBox422} {
     display: flex;

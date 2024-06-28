@@ -12,7 +12,7 @@ type PokemonZoneProps = {
 };
 
 const PokemonZoneListContainer = styled.div`
-  width: 270px;
+  width: 220px;
   display: grid;
   grid-template-columns: 32px 1fr 62px;
   gap: 16px;
@@ -36,6 +36,7 @@ const PokemonZoneListContainer = styled.div`
 
     & span.level {
       color: ${({ theme }) => theme.colors.text400};
+      white-space: nowrap;
     }
   }
 `;
