@@ -128,9 +128,12 @@ const deleteMove = (
   pokemonIdentifier: PokemonIdentifierType,
   currentEditedPokemon: StudioCreature
 ) => {
-  const currentEditedForm = currentEditedPokemon.forms[pokemonIdentifier.form];
-  movePool.splice(index, 1);
-  currentEditedForm.moveSet = [...movePool, ...currentEditedForm.moveSet.filter((m) => m.klass !== 'LevelLearnableMove')];
+  const currentEditedForm = currentEditedPokemon.forms.find((f) => f.form === pokemonIdentifier.form);
+  if (!currentEditedForm) return;
+
+  const movePoolEdited = cloneEntity(movePool);
+  movePoolEdited.splice(index, 1);
+  currentEditedForm.moveSet = [...movePoolEdited, ...currentEditedForm.moveSet.filter((m) => m.klass !== 'LevelLearnableMove')];
   return currentEditedPokemon;
 };
 
