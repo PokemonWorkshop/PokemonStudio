@@ -41,7 +41,7 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
   const onClickCopy = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>, row: number) => {
     event.stopPropagation();
     navigator.clipboard.writeText(
-      textInfo.fileId >= 100000 && textInfo.fileId < 200000 ? `text_get(${textInfo.fileId}, ${row})` : `ext_text(${textInfo.fileId}, ${row})`
+      textInfo.fileId >= 100000 && textInfo.fileId < 200000 ? `text_get(${textInfo.fileId - 100000}, ${row})` : `ext_text(${textInfo.fileId}, ${row})`
     );
     window.dispatchEvent(new CustomEvent('tooltip:ChangeText', { detail: t('copy:copied') }));
   };
