@@ -59,8 +59,7 @@ export const PokemonFormNewEditor = forwardRef<EditorHandlingClose, Props>(({ cl
     if (data.success == false) return;
 
     const newForm = cloneEntity({ ...form, ...data.data, form: newFormId });
-    // TODO: Make a better implementation of that, it's overwriting the original value!
-    if (newFormId <= 29 && creatures[form.babyDbSymbol]?.forms.find((f) => f.form === newFormId)) form.babyForm = newFormId;
+    if (newFormId <= 29 && creatures[form.babyDbSymbol]?.forms.find((f) => f.form === newFormId)) newForm.babyForm = newFormId;
 
     const updatedCreature = cloneEntity(creature);
     updatedCreature.forms = [...updatedCreature.forms, newForm];
