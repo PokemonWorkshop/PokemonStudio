@@ -126,10 +126,13 @@ const deleteMove = (
   currentEditedPokemon: StudioCreature,
   type: MovepoolTableType
 ) => {
-  moveSet.splice(index, 1);
-  const form = currentEditedPokemon.forms[pokemonIdentifier.form];
+  const currentEditedForm = currentEditedPokemon.forms.find((f) => f.form === pokemonIdentifier.form);
+  if (!currentEditedForm) return;
+
+  const moveSetEdited = cloneEntity(moveSet);
   const klass = getMoveKlass(type);
-  form.moveSet = [...form.moveSet.filter((m) => m.klass !== klass), ...moveSet];
+  moveSetEdited.splice(index, 1);
+  currentEditedForm.moveSet = [...currentEditedForm.moveSet.filter((m) => m.klass !== klass), ...moveSetEdited];
   return currentEditedPokemon;
 };
 
