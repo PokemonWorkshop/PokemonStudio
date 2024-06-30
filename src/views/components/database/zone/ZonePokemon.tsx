@@ -9,20 +9,12 @@ import { StudioGroupEncounter } from '@modelEntities/groupEncounter';
 import { TableEmpty } from './table/ZoneTableStyle';
 
 const PokemonZoneListGrid = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  column-gap: 17px;
-  row-gap: 16px;
-
-  & > * {
-    flex-basis: calc(25% - 17px);
-  }
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  column-gap: 16px;
 
   @media ${({ theme }) => theme.breakpoints.dataBox422} {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    grid-template-columns: 1fr 1fr;
   }
 `;
 
