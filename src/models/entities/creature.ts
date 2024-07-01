@@ -122,7 +122,7 @@ export const CREATURE_FORM_VALIDATOR = z.object({
   baseExperience: POSITIVE_OR_ZERO_INT.max(1000),
   baseLoyalty: POSITIVE_OR_ZERO_INT.max(255),
   catchRate: POSITIVE_OR_ZERO_INT.max(255),
-  femaleRate: z.union([POSITIVE_OR_ZERO_FLOAT.step(0.1).max(100), z.literal(-1)]),
+  femaleRate: z.union([POSITIVE_OR_ZERO_FLOAT.step(0.01).max(100), z.literal(-1)]),
   breedGroups: z.array(POSITIVE_OR_ZERO_INT),
   hatchSteps: POSITIVE_INT.max(99999),
   babyDbSymbol: DB_SYMBOL_VALIDATOR,
