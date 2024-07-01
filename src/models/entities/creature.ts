@@ -101,8 +101,8 @@ export type StudioCreatureResources = z.infer<typeof CREATURE_RESOURCES_VALIDATO
 
 export const CREATURE_FORM_VALIDATOR = z.object({
   form: POSITIVE_OR_ZERO_INT,
-  height: POSITIVE_OR_ZERO_FLOAT.min(0.01).max(100).step(0.01),
-  weight: POSITIVE_OR_ZERO_FLOAT.min(0.01).max(1000).step(0.01),
+  height: POSITIVE_OR_ZERO_FLOAT.min(0.01).max(999).step(0.01),
+  weight: POSITIVE_OR_ZERO_FLOAT.min(0.01).max(9999).step(0.01),
   type1: DB_SYMBOL_VALIDATOR,
   type2: DB_SYMBOL_VALIDATOR,
   baseHp: POSITIVE_INT.max(255),
@@ -122,7 +122,7 @@ export const CREATURE_FORM_VALIDATOR = z.object({
   baseExperience: POSITIVE_OR_ZERO_INT.max(1000),
   baseLoyalty: POSITIVE_OR_ZERO_INT.max(255),
   catchRate: POSITIVE_OR_ZERO_INT.max(255),
-  femaleRate: z.union([POSITIVE_OR_ZERO_FLOAT.step(0.1).max(100), z.literal(-1)]),
+  femaleRate: z.union([POSITIVE_OR_ZERO_FLOAT.step(0.01).max(100), z.literal(-1)]),
   breedGroups: z.array(POSITIVE_OR_ZERO_INT),
   hatchSteps: POSITIVE_INT.max(99999),
   babyDbSymbol: DB_SYMBOL_VALIDATOR,

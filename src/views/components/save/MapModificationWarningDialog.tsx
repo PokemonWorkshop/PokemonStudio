@@ -48,10 +48,15 @@ export const MapModificationWarningDialog = forwardRef<EditorHandlingClose, MapM
       // Hide the message box so that it is not visible when the loader is closed
       if (messageBoxRef.current) messageBoxRef.current.style.display = 'none';
       save(
-        () => loaderRef.current.close(),
-        ({ errorMessage }) => loaderRef.current.setError('saving_project_error', errorMessage)
+        () => {
+          loaderRef.current.close();
+          closeDialog();
+        },
+        ({ errorMessage }) => {
+          loaderRef.current.setError('saving_project_error', errorMessage);
+          closeDialog();
+        }
       );
-      closeDialog();
     };
 
     useEditorHandlingClose(ref, undefined, () => {
