@@ -9,7 +9,7 @@
   "trainer_deletion_of": "Deletion of the trainer",
   "trainer_deletion_message": "You are about to permanently delete the trainer «\u00a0{{trainer}}\u00a0».",
   "battler_deletion_of": "Deletion of Pokémon",
-  "battler_deletion_message": "You are about to permanently delete «\u00a0{{battler}}\u00a0» from the «\u00a0{{trainer}}\u00a0» trainer.",
+  "battler_deletion_message": "You are about to permanently delete «\u00a0{{battler}}\u00a0» from the trainer «\u00a0{{trainer}}\u00a0».",
   "create_trainer": "Add the trainer",
   "cancel": "Cancel",
   "fields_asterisk_required": "Fields with an asterisk are required.",

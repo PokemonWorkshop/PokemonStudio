@@ -25,7 +25,7 @@
   "pokemon_group": "Pokémon of the group",
   "fields_asterisk_required": "Fields with an asterisk are required.",
   "battler_deletion_of": "Deletion of Pokémon",
-  "battler_deletion_message": "You are about to permanently delete «\u00a0{{battler}}\u00a0» from the «\u00a0{{group}}\u00a0» group.",
+  "battler_deletion_message": "You are about to permanently delete «\u00a0{{battler}}\u00a0» from the group «\u00a0{{group}}\u00a0».",
   "import": "Importation",
   "default_option_label": "From another group",
   "showdown_option_label": "In Showdown format",
