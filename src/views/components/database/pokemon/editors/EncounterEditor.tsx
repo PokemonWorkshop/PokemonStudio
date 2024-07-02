@@ -45,6 +45,10 @@ export const EncounterEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const isGenderless = Boolean(getRawFormData().isGenderLess ?? defaults.isGenderLess === 'true');
 
   const onStateChange: React.ChangeEventHandler<HTMLInputElement> = ({ currentTarget }) => {
+    const femaleRateElement = formRef.current?.elements.namedItem('femaleRate');
+    if (!(femaleRateElement instanceof HTMLInputElement)) return;
+
+    femaleRateElement.value = '0';
     const isGenderless = currentTarget.checked;
     if (divRef.current) divRef.current.style.display = isGenderless ? 'none' : 'block';
   };
