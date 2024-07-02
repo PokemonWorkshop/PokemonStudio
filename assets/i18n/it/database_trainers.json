@@ -8,7 +8,7 @@
   "delete_this_trainer": "Rimuovi questo allenatore",
   "trainer_deletion_of": "Rimozione dell'allenatore",
   "trainer_deletion_message": "Stai per rimuovere per sempre l'allenatore «\u00a0{{trainer}}\u00a0».",
-  "battler_deletion_of": "Rimozione di {{pokemon}}",
+  "battler_deletion_of": "Rimozione di un Pokémon",
   "battler_deletion_message": "Stai per rimuovere per sempre «\u00a0{{battler}}\u00a0» dall'allenatore «\u00a0{{trainer}}\u00a0».",
   "create_trainer": "Aggiungi allenatore",
   "cancel": "Annulla",

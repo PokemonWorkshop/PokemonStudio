@@ -23,7 +23,7 @@
   "example_name": "Pallet Town - Relva 1",
   "pokemon_group": "Pokémon do grupo",
   "fields_asterisk_required": "Os campos com asterisco são obrigatórios.",
-  "battler_deletion_of": "Eliminação do {{Pokemon}}",
+  "battler_deletion_of": "Eliminação do Pokémon",
   "battler_deletion_message": "Você está no ponto de eliminar definitivamente «\u00a0{{battler}}\u00a0» do grupo «\u00a0{{group}}\u00a0»",
   "import": "Importação",
   "battler_import_info": "Você pode importar Pokémon de um outro grupo.",

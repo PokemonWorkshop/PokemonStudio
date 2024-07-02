@@ -8,7 +8,7 @@
   "delete_this_trainer": "Delete this trainer",
   "trainer_deletion_of": "Deletion of the trainer",
   "trainer_deletion_message": "You are about to permanently delete the trainer «\u00a0{{trainer}}\u00a0».",
-  "battler_deletion_of": "Deletion of {{pokemon}}",
+  "battler_deletion_of": "Deletion of Pokémon",
   "battler_deletion_message": "You are about to permanently delete «\u00a0{{battler}}\u00a0» from the «\u00a0{{trainer}}\u00a0» trainer.",
   "create_trainer": "Add the trainer",
   "cancel": "Cancel",

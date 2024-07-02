@@ -17,9 +17,10 @@ type ItemHeldEditorProps = {
   getRawFormData: () => Record<string, unknown>;
   onTouched: React.FormEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   defaults: Record<string, unknown>;
+  formRef: React.RefObject<HTMLFormElement>;
 };
 
-export const ItemHeldEditor = ({ index, options, getRawFormData, onTouched, defaults }: ItemHeldEditorProps) => {
+export const ItemHeldEditor = ({ index, options, getRawFormData, onTouched, defaults, formRef }: ItemHeldEditorProps) => {
   const { t } = useTranslation('database_pokemon');
   const divRef = useRef<HTMLDivElement>(null);
   const { Select, EmbeddedUnitInput } = useInputAttrsWithLabel(ENCOUNTER_EDITOR_SCHEMA, defaults);
@@ -29,6 +30,11 @@ export const ItemHeldEditor = ({ index, options, getRawFormData, onTouched, defa
   const label = t(index === 0 ? 'common_item_held' : 'rare_item_held');
   const onChange = (value: string) => {
     if (divRef.current) divRef.current.style.display = value === 'none' ? 'none' : 'block';
+
+    const chanceElement = formRef.current?.elements.namedItem(`itemHeld.${index}.chance`);
+    if (!(chanceElement instanceof HTMLInputElement) || value !== 'none') return;
+
+    chanceElement.value = '0';
   };
 
   return (
