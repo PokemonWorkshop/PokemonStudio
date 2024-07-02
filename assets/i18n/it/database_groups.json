@@ -23,7 +23,7 @@
   "example_name": "Biancavilla - Erba 1",
   "pokemon_group": "Pokémon del gruppo",
   "fields_asterisk_required": "I campi con l'asterisco sono obbligatori.",
-  "battler_deletion_of": "Rimozione di {{pokemon}}",
+  "battler_deletion_of": "Rimozione di un Pokémon",
   "battler_deletion_message": "Stai per rimuovere per sempre «\u00a0{{battler}}\u00a0» dal gruppo «\u00a0{{group}}\u00a0».",
   "import": "Importazione",
   "battler_import_info": "Puoi importare Pokémon da un altro gruppo.",

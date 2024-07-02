@@ -47,8 +47,8 @@ export const EncounterEditor = forwardRef<EditorHandlingClose>((_, ref) => {
       <InputFormContainer ref={formRef}>
         <Input name="catchRate" label={t('catch_rate')} labelLeft onInput={onTouched} />
         <GenderEditor getRawFormData={getRawFormData} defaults={defaults} onTouched={onTouched} formRef={formRef} />
-        <ItemHeldEditor index={0} options={options} getRawFormData={getRawFormData} defaults={defaults} onTouched={onTouched} />
-        <ItemHeldEditor index={1} options={options} getRawFormData={getRawFormData} defaults={defaults} onTouched={onTouched} />
+        <ItemHeldEditor index={0} options={options} getRawFormData={getRawFormData} defaults={defaults} onTouched={onTouched} formRef={formRef} />
+        <ItemHeldEditor index={1} options={options} getRawFormData={getRawFormData} defaults={defaults} onTouched={onTouched} formRef={formRef} />
       </InputFormContainer>
     </Editor>
   );
