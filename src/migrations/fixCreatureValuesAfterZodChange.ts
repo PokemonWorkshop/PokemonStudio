@@ -8,6 +8,7 @@ import { deletePSDKDatFile } from './migrateUtils';
 import { parseJSON } from '@utils/json/parse';
 import { POSITIVE_OR_ZERO_FLOAT } from '@modelEntities/common';
 import { DbSymbol } from '@modelEntities/dbSymbol';
+import { cloneEntity } from '@utils/cloneEntity';
 
 const PRE_MIGRATION_CREATURE_VALIDATOR = CREATURE_VALIDATOR.extend({
   forms: z.array(CREATURE_FORM_VALIDATOR.extend({ height: POSITIVE_OR_ZERO_FLOAT, weight: POSITIVE_OR_ZERO_FLOAT })).nonempty(),
@@ -46,8 +47,12 @@ export const fixCreatureValuesAfterZodChange = async (_: IpcMainEvent, projectPa
     await lastPromise;
     const creatureParsed = PRE_MIGRATION_CREATURE_VALIDATOR.safeParse(parseJSON(creature.data, creature.filename));
     if (creatureParsed.success) {
+      const oldCreatureData = cloneEntity(creatureParsed.data);
       fixHeightAndWeightValues(creatureParsed.data);
       fixItemHeld(creatureParsed.data);
+      // Optimisation: don't save if there are no changes
+      if (JSON.stringify(oldCreatureData) === JSON.stringify(creatureParsed.data)) return;
+
       return fsPromise.writeFile(
         path.join(projectPath, 'Data/Studio/pokemon', `${creatureParsed.data.dbSymbol}.json`),
         JSON.stringify(creatureParsed.data, null, 2)
