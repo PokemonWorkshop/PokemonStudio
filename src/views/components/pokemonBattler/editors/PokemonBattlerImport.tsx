@@ -218,7 +218,7 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
           <Toggle name="override" checked={override} onChange={(event) => handleSetOverride(event.target.checked)} />
         </InputWithLeftLabelContainer>
         <ButtonContainer>
-          <TooltipWrapper data-tooltip={dropDownSelection === 'default' && !canImport ? tTrainer('party_length_limit') : undefined}>
+          <TooltipWrapper data-tooltip={dropDownSelection === 'default' && !canImport(override) ? tTrainer('party_length_limit') : undefined}>
             <PrimaryButton onClick={onClickImport} disabled={!canImport(override)}>
               {t('to_import')}
             </PrimaryButton>
