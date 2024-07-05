@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -77,9 +77,10 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
   const { group } = useGroupPage();
 
   const updateTrainer = useUpdateTrainer(trainer);
+  const currentTrainer = useMemo(() => cloneEntity(trainer), []);
   const updateGroup = useUpdateGroup(group);
 
-  const [selectedEntity, setSelectedEntity] = useState(getFirstDbSymbol(from, groups, trainers, group, trainer));
+  const [selectedEntity, setSelectedEntity] = useState(getFirstDbSymbol(from, groups, trainers, group, currentTrainer));
   const [showdownEncounter, setShowdownEncounter] = useState<StudioGroupEncounter[]>([]);
   const [dropDownSelection, setDropDownSelection] = useState<string>('default');
   const [override, setOverride] = useState<boolean>(false);
@@ -100,7 +101,7 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
     if (convertedTeam.length === 0) {
       setShowdownEncounter([]);
       return setError(t('error_message'));
-    } else if (!isGroup && !override && convertedTeam.length + trainer.party.length > 6) {
+    } else if (!isGroup && !override && convertedTeam.length + currentTrainer.party.length > 6) {
       setError(tTrainer('party_length_limit'));
     } else {
       setError('');
@@ -113,7 +114,7 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
     setDropDownSelection(type);
     if (type === 'default') {
       const lengthPartyToImport = trainers[selectedEntity].party.length;
-      setError(override || trainer.party.length + lengthPartyToImport <= 6 ? '' : tTrainer('party_length_limit'));
+      setError(override || currentTrainer.party.length + lengthPartyToImport <= 6 ? '' : tTrainer('party_length_limit'));
     } else {
       setError('');
       setShowdownEncounter([]);
@@ -125,13 +126,13 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
 
     if (dropDownSelection === 'showdown') {
       const isInputValid = showdownEncounter.length > 0;
-      const exceedsPartyLimit = showdownEncounter.length + trainer.party.length > 6;
+      const exceedsPartyLimit = showdownEncounter.length + currentTrainer.party.length > 6;
 
       return isInputValid && (!exceedsPartyLimit || override);
     }
 
     const lengthPartyToImport = trainers[selectedEntity].party.length;
-    return trainer.party.length + lengthPartyToImport <= 6;
+    return currentTrainer.party.length + lengthPartyToImport <= 6;
   };
 
   const handleSetOverride = (newValue: boolean) => {
@@ -149,7 +150,7 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
     const handleImport = (entityType: string, newEntities: StudioGroupEncounter[]) => {
       const updateFunction = entityType === 'group' ? updateGroup : updateTrainer;
       const entityKey = entityType === 'group' ? 'encounters' : 'party';
-      const currentEntities = entityType === 'group' ? group.encounters : trainer.party;
+      const currentEntities = entityType === 'group' ? group.encounters : currentTrainer.party;
 
       if (override) {
         updateFunction({ [entityKey]: newEntities });
@@ -190,7 +191,7 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
             <SelectComponent
               dbSymbol={selectedEntity}
               onChange={(dbSymbol) => setSelectedEntity(dbSymbol)}
-              filter={(dbSymbol) => dbSymbol !== (isGroup ? group.dbSymbol : trainer.dbSymbol)}
+              filter={(dbSymbol) => dbSymbol !== (isGroup ? group.dbSymbol : currentTrainer.dbSymbol)}
               noLabel
             />
           </InputWithTopLabelContainer>
