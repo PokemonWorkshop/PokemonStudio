@@ -37,12 +37,7 @@ export const TrainerPage = () => {
             <TrainerDialog trainer={trainer} dialogsRef={dialogsRef} />
           </DataBlockWrapper>
           <DataBlockWrapper>
-            <PokemonBattlerList
-              title={t('trainer_party', { name: trainerName })}
-              encounters={trainer.party}
-              disabledImport={cannotDelete}
-              from="trainer"
-            />
+            <PokemonBattlerList title={t('trainer_party', { name: trainerName })} encounters={trainer.party} disabledImport={false} from="trainer" />
             <BagEntryList
               title={t('trainer_bag', { name: trainerName })}
               bagEntries={trainer.bagEntries}

@@ -74,5 +74,6 @@
   "victory_music": "Victory music of the trainer",
   "defeat_music": "Defeat music of the trainer",
   "bgm_music": "Battle music",
-  "character_v3_message": "The character will be used from version 3.0 of the application."
+  "character_v3_message": "The character will be used from version 3.0 of the application.",
+  "no_trainers_available": "No trainers available for import !"
 }
