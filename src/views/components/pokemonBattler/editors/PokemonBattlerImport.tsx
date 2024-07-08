@@ -122,7 +122,7 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
   };
 
   const handleImportTypeChange = (type: string) => {
-    if (type === 'default' && currentTrainer) return setError(t('no_trainers_available'));
+    if (type === 'default' && selectedEntity === '__undef__') return setError(t('no_trainers_available'));
 
     setDropDownSelection(type);
     if (type === 'default') {
