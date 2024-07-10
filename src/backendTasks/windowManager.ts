@@ -224,7 +224,7 @@ class WindowManager {
       },
     };
 
-    const windowOptions = { ...defaultOptions, ...options };
+    const windowOptions = { ...defaultOptions, ...options, webPreferences: { ...defaultOptions.webPreferences, ...options.webPreferences } };
     const newWindow = new BrowserWindow(windowOptions);
     const windowInfo: WindowInfo = { id: newWindow.id, name: windowOptions.name, window: newWindow };
 
