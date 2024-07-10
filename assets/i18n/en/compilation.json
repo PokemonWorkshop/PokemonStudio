@@ -16,5 +16,11 @@
   "executable_info_windows": "The executable created will only be playable on Windows\u00a010 and Windows\u00a011 systems",
   "executable_info_linux": "The executable created will only be playable on Linux systems",
   "executable_info_darwin": "The executable created will be playable only on MacOS systems",
-  "compile_project": "Compile the project"
+  "compile_project": "Compile the project",
+  "copy_to_clipboard": "Copy to clipboard",
+  "save_logs": "Save logs",
+  "creating_executable_for": "Creating an executable for",
+  "executable_create_successfully": "The game executable has been successfully created!",
+  "error_occurred": "An error has occurred",
+  "show_in_folder": "Show in folder"
 }

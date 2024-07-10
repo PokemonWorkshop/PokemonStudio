@@ -16,5 +16,11 @@
   "executable_info_windows": "L'exécutable créée sera jouable uniquement sur les systèmes Windows\u00a010 et Windows\u00a011",
   "executable_info_linux": "L'exécutable créée sera jouable uniquement sur les systèmes Linux",
   "executable_info_darwin": "L'exécutable créée sera jouable uniquement sur les systèmes MacOS",
-  "compile_project": "Compiler le projet"
+  "compile_project": "Compiler le projet",
+  "copy_to_clipboard": "Copier dans le presse-papiers",
+  "save_logs": "Enregistrer les logs",
+  "creating_executable_for": "Création d'un exécutable pour",
+  "executable_create_successfully": "L'exécutable du jeu a été créée avec succès !",
+  "error_occurred": "Une erreur est survenue",
+  "show_in_folder": "Afficher dans le dossier"
 }
