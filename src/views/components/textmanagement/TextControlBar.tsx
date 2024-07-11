@@ -31,7 +31,14 @@ export const TextControlBar = ({ dialogsRef }: TextControlBarProps) => {
   // Definition of the control bar shortcuts
   const shortcutMap = useMemo<StudioShortcutActions>(() => {
     // No shortcut if an editor is opened
-    const isShortcutEnabled = () => dialogsRef?.current?.currentDialog === undefined;
+    const isShortcutEnabled = () => {
+      const activeElement = document.activeElement;
+      if (activeElement && activeElement.tagName === 'INPUT') return false;
+      if (dialogsRef?.current?.currentDialog !== undefined) return false;
+
+      return true;
+    };
+
     return {
       db_previous: () => isShortcutEnabled() && setSelectedDataIdentifier({ textInfo: getPreviousFileId() }),
       db_next: () => isShortcutEnabled() && setSelectedDataIdentifier({ textInfo: getNextFileId() }),
