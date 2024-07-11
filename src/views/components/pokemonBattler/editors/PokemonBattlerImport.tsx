@@ -122,8 +122,6 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
   };
 
   const handleImportTypeChange = (type: string) => {
-    if (type === 'default' && selectedEntity === '__undef__') return setError(t('no_trainers_available'));
-
     setDropDownSelection(type);
     if (type === 'default') {
       const lengthPartyToImport = trainers[selectedEntity].party.length;
@@ -194,10 +192,12 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
           <ImportInfo>{t('battler_import_info')}</ImportInfo>
           {dropDownSelection === 'showdown' && <ImportInfo>{t('battler_import_details')}</ImportInfo>}
         </ImportInfoContainer>
-        <InputWithTopLabelContainer>
-          <Label htmlFor={from}>{t('import_battler')}</Label>
-          <StudioDropDown value={dropDownSelection} options={dropDownOptions} onChange={handleImportTypeChange} />
-        </InputWithTopLabelContainer>
+        {selectedEntity !== '__undef__' && (
+          <InputWithTopLabelContainer>
+            <Label htmlFor={from}>{t('import_battler')}</Label>
+            <StudioDropDown value={dropDownSelection} options={dropDownOptions} onChange={handleImportTypeChange} />
+          </InputWithTopLabelContainer>
+        )}
 
         {dropDownSelection === 'default' && (
           <InputWithTopLabelContainer>
