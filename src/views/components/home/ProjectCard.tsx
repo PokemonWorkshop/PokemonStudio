@@ -29,7 +29,12 @@ const ProjectCardContainer = styled(ActiveContainer)`
     display: inline-block;
     ${({ theme }) => theme.fonts.titlesHeadline6}
     color: ${({ theme }) => theme.colors.text400};
-    margin: 0;
+    height: 44px;
+    overflow-y: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow-x: hidden;
+    margin: 0 0 4px 0;
     padding: 0;
   }
 
@@ -81,7 +86,7 @@ const ProjectCardContainer = styled(ActiveContainer)`
   ${Code} {
     text-overflow: ellipsis;
     white-space: nowrap;
-    overflow-x: hidden;
+    overflow: hidden;
     max-width: 171px;
   }
 `;
