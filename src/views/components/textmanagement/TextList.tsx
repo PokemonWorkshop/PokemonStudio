@@ -23,6 +23,8 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
   const { t } = useTranslation(['text_management', 'copy']);
   const [research, setResearch] = useState<string>('');
   const [scrollToEnd, setScrollToEnd] = useState<boolean>(false);
+  const [focusedInput, setFocusedInput] = useState<HTMLInputElement | null>(null);
+  const [focusedInputValue, setFocusedInputValue] = useState<string>('');
   const navigate = useNavigate();
   const { textInfo } = useTextPage();
   const getTextList = useGetTextList();
@@ -33,6 +35,7 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
     [texts, research]
   );
   const listRef = useRef<List>(null);
+
   const onClearAll = () => dialogsRef.current?.openDialog('clear', true);
   const onAdd = () => {
     setText(textInfo.fileId, texts.length === 0 ? 0 : texts[texts.length - 1].textId + 1, '');
@@ -44,6 +47,18 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
       textInfo.fileId >= 100000 && textInfo.fileId < 200000 ? `text_get(${textInfo.fileId - 100000}, ${row})` : `ext_text(${textInfo.fileId}, ${row})`
     );
     window.dispatchEvent(new CustomEvent('tooltip:ChangeText', { detail: t('copy:copied') }));
+  };
+
+  const handleScroll = () => {
+    if (!focusedInput) return;
+
+    const newText = focusedInputValue;
+    if (newText === focusedInput.defaultValue) return;
+
+    const textId = parseInt(focusedInput.getAttribute('data-text-id') || '-1', 10);
+    if (textId >= 0) setText(textInfo.fileId, textId, newText);
+
+    focusedInput.blur();
   };
 
   // reset the research and the scroll when we change texts file
@@ -111,12 +126,18 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
                             key={`${textsFiltered[index].textId}-${textsFiltered[index].dialog}`}
                             defaultValue={textsFiltered[index].dialog}
                             placeholder={`[~ ${index}]`}
+                            data-text-id={textsFiltered[index].textId}
                             onBlur={(event) => {
                               const newText = event.target.value;
                               if (newText === event.target.defaultValue) return;
                               setText(textInfo.fileId, textsFiltered[index].textId, newText);
                             }}
                             onClear={() => setText(textInfo.fileId, textsFiltered[index].textId, '')}
+                            onFocus={(event) => {
+                              setFocusedInput(event.target);
+                              setFocusedInputValue(event.target.value);
+                            }}
+                            onChange={(event) => setFocusedInputValue(event.target.value)}
                           />
                           <DarkButton
                             onClick={() => {
@@ -133,6 +154,7 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
                         </div>
                       );
                     }}
+                    onScroll={handleScroll}
                     tabIndex={null}
                   />
                 );
