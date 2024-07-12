@@ -30,8 +30,9 @@ const ProjectCardContainer = styled(ActiveContainer)`
     ${({ theme }) => theme.fonts.titlesHeadline6}
     color: ${({ theme }) => theme.colors.text400};
     height: 44px;
-    overflow-y: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
     margin: 0 0 4px 0;
     padding: 0;
   }
