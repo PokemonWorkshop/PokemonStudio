@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MultiLineInput } from '@components/inputs';
 import { DarkButton } from '@components/buttons';
+import type { StudioCompilation } from './CompilationDialogSchema';
 
 const CompilationLogsContainer = styled.div`
   display: flex;
@@ -35,7 +36,11 @@ const CompilationLogsContainer = styled.div`
   }
 `;
 
-export const CompilationLogs = () => {
+type CompilationLogsProps = {
+  configuration: StudioCompilation;
+};
+
+export const CompilationLogs = ({ configuration }: CompilationLogsProps) => {
   const { t } = useTranslation('compilation');
   const logsRef = useRef<HTMLTextAreaElement>(null);
 
@@ -61,7 +66,7 @@ export const CompilationLogs = () => {
       <span className="title">{t('compilation_dialog_title')}</span>
       {/* TODO: progress bar */}
       <div className="logs">
-        <MultiLineInput ref={logsRef} readOnly defaultValue={'Compilation logs...'} />
+        <MultiLineInput ref={logsRef} readOnly defaultValue={JSON.stringify(configuration)} />
         <div className="actions">
           <DarkButton onClick={onClickClipboard}>{t('copy_to_clipboard')}</DarkButton>
           <DarkButton onClick={onClickSaveLogs}>{t('save_logs')}</DarkButton>

@@ -42,6 +42,8 @@ import type { RequestJsonInput, RequestJsonOutput } from './backendTasks/request
 import type { CheckDownloadNewProjectInput, CheckDownloadNewProjectOutput } from './backendTasks/checkDownloadNewProject';
 import type { FileExistsInput, FileExistsOutput } from './backendTasks/fileExists';
 import type { GeneratingMapOverviewInput } from './backendTasks/generatingMapOverview';
+import type { OpenCompilationWindowInput } from './backendTasks/openCompilationWindow';
+import type { GetCompilationConfigOutput } from './backendTasks/getCompilationConfig';
 
 contextBridge.exposeInMainWorld('api', {
   isDev: process.env.NODE_ENV === 'development',
@@ -147,6 +149,7 @@ contextBridge.exposeInMainWorld('api', {
   checkDownloadNewProject: defineBackendTask(ipcRenderer, 'check-download-new-project'),
   generatingMapOverview: defineBackendTask(ipcRenderer, 'generating-map-overview'),
   openCompilationWindow: defineBackendTask(ipcRenderer, 'open-compilation-window'),
+  getCompilationConfig: defineBackendTask(ipcRenderer, 'get-compilation-config'),
 });
 
 type AnyObj = Record<string, never>;
@@ -234,7 +237,8 @@ declare global {
       requestJson: BackendTaskWithGenericErrorAndNoProgress<RequestJsonInput, RequestJsonOutput>;
       checkDownloadNewProject: BackendTaskWithGenericErrorAndNoProgress<CheckDownloadNewProjectInput, CheckDownloadNewProjectOutput>;
       generatingMapOverview: BackendTaskWithGenericErrorAndNoProgress<GeneratingMapOverviewInput, AnyObj>;
-      openCompilationWindow: BackendTaskWithGenericErrorAndNoProgress<AnyObj, AnyObj>;
+      openCompilationWindow: BackendTaskWithGenericErrorAndNoProgress<OpenCompilationWindowInput, AnyObj>;
+      getCompilationConfig: BackendTaskWithGenericErrorAndNoProgress<AnyObj, GetCompilationConfigOutput>;
     };
   }
 }

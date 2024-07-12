@@ -8,10 +8,12 @@ import { CompilationDialogContainer, CompilationFormContainer } from './Compilat
 import { CompilationOptions } from './CompilationOptions';
 import { TFunction, useTranslation } from 'react-i18next';
 import { useLoaderRef } from '@utils/loaderContext';
+import { State } from '@src/GlobalStateProvider';
 import React from 'react';
 
-const initForm = (gameInfo: StudioInfoConfig): StudioCompilation => {
+const initForm = (gameInfo: StudioInfoConfig, state: State): StudioCompilation => {
   return {
+    projectPath: state.projectPath || '',
     gameName: gameInfo.gameTitle,
     gameVersion: gameInfo.gameVersion + 1,
     updateVisual: true,
@@ -35,8 +37,8 @@ type CompilationDialogProps = {
 };
 
 export const CompilationDialog = ({ closeDialog }: CompilationDialogProps) => {
-  const { projectConfigValues: gameInfo } = useConfigInfos();
-  const { canClose, getFormData, onInputTouched, defaults, formRef } = useZodForm(COMPILATION_DIALOG_SCHEMA, initForm(gameInfo));
+  const { projectConfigValues: gameInfo, state } = useConfigInfos();
+  const { canClose, getFormData, onInputTouched, defaults, formRef } = useZodForm(COMPILATION_DIALOG_SCHEMA, initForm(gameInfo, state));
   const { Input } = useInputAttrsWithLabel(COMPILATION_DIALOG_SCHEMA, defaults);
   const { t } = useTranslation('compilation');
   const loaderRef = useLoaderRef();
@@ -44,9 +46,8 @@ export const CompilationDialog = ({ closeDialog }: CompilationDialogProps) => {
   const onClickCompile = () => {
     const result = canClose() && getFormData();
     if (result && result.success) {
-      console.log(result.data);
       window.api.openCompilationWindow(
-        {},
+        { configuration: result.data },
         () => {
           closeDialog();
         },
@@ -66,6 +67,7 @@ export const CompilationDialog = ({ closeDialog }: CompilationDialogProps) => {
         <ClearButtonOnlyIcon onClick={closeDialog} className="icon" />
       </div>
       <CompilationFormContainer ref={formRef}>
+        <Input name="projectPath" style={{ display: 'none' }} />
         <div className="game-info">
           <Input name="gameName" placeholder={gameInfo.gameTitle} label={t('game_name')} labelLeft onInput={onInputTouched} />
           <Input name="gameVersion" placeholder={gameInfo.gameVersion + 1} label={t('version_number')} labelLeft onInput={onInputTouched} />

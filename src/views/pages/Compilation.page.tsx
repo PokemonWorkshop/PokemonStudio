@@ -1,6 +1,7 @@
 import { CompilationLogs } from '@components/compilation/CompilationLogs';
-import React from 'react';
+import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
+import React from 'react';
 
 const CompilationPageContainer = styled.div`
   padding: 24px 20px 24px 20px;
@@ -8,9 +9,11 @@ const CompilationPageContainer = styled.div`
 `;
 
 export const CompilationPage = () => {
+  const { state } = useLocation();
+
   return (
     <CompilationPageContainer>
-      <CompilationLogs />
+      <CompilationLogs configuration={state.configuration} />
     </CompilationPageContainer>
   );
 };
