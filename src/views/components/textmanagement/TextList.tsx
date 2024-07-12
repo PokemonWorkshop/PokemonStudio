@@ -24,7 +24,6 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
   const [research, setResearch] = useState<string>('');
   const [scrollToEnd, setScrollToEnd] = useState<boolean>(false);
   const [focusedInput, setFocusedInput] = useState<HTMLInputElement | null>(null);
-  const [focusedInputValue, setFocusedInputValue] = useState<string>('');
   const navigate = useNavigate();
   const { textInfo } = useTextPage();
   const getTextList = useGetTextList();
@@ -51,12 +50,6 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
 
   const handleScroll = () => {
     if (!focusedInput) return;
-
-    const newText = focusedInputValue;
-    if (newText === focusedInput.defaultValue) return;
-
-    const textId = parseInt(focusedInput.getAttribute('data-text-id') || '-1', 10);
-    if (textId >= 0) setText(textInfo.fileId, textId, newText);
 
     focusedInput.blur();
   };
@@ -126,18 +119,13 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
                             key={`${textsFiltered[index].textId}-${textsFiltered[index].dialog}`}
                             defaultValue={textsFiltered[index].dialog}
                             placeholder={`[~ ${index}]`}
-                            data-text-id={textsFiltered[index].textId}
                             onBlur={(event) => {
                               const newText = event.target.value;
                               if (newText === event.target.defaultValue) return;
                               setText(textInfo.fileId, textsFiltered[index].textId, newText);
                             }}
                             onClear={() => setText(textInfo.fileId, textsFiltered[index].textId, '')}
-                            onFocus={(event) => {
-                              setFocusedInput(event.target);
-                              setFocusedInputValue(event.target.value);
-                            }}
-                            onChange={(event) => setFocusedInputValue(event.target.value)}
+                            onFocus={(event) => setFocusedInput(event.target)}
                           />
                           <DarkButton
                             onClick={() => {
