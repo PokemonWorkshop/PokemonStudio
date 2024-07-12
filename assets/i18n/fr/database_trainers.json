@@ -74,5 +74,6 @@
   "victory_music": "Musique de victoire du dresseur",
   "defeat_music": "Musique de défaite du dresseur",
   "bgm_music": "Musique de combat",
-  "character_v3_message": "Le character sera utilisé à partir de la version 3.0 de l'application."
+  "character_v3_message": "Le character sera utilisé à partir de la version 3.0 de l'application.",
+  "no_trainers_available": "Aucun dresseur n'est disponible à l'import !"
 }
