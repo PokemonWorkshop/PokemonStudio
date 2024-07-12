@@ -33,7 +33,7 @@ export const TextControlBar = ({ dialogsRef }: TextControlBarProps) => {
     // No shortcut if an editor is opened
     const isShortcutEnabled = () => {
       const activeElement = document.activeElement;
-      if (activeElement && activeElement.tagName === 'INPUT') return false;
+      if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA')) return false;
       if (dialogsRef?.current?.currentDialog !== undefined) return false;
 
       return true;
