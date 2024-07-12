@@ -23,7 +23,6 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
   const { t } = useTranslation(['text_management', 'copy']);
   const [research, setResearch] = useState<string>('');
   const [scrollToEnd, setScrollToEnd] = useState<boolean>(false);
-  const [focusedInput, setFocusedInput] = useState<HTMLInputElement | null>(null);
   const navigate = useNavigate();
   const { textInfo } = useTextPage();
   const getTextList = useGetTextList();
@@ -34,6 +33,7 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
     [texts, research]
   );
   const listRef = useRef<List>(null);
+  const focusedInputRef = useRef<HTMLInputElement | null>(null);
 
   const onClearAll = () => dialogsRef.current?.openDialog('clear', true);
   const onAdd = () => {
@@ -49,9 +49,9 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
   };
 
   const handleScroll = () => {
-    if (!focusedInput) return;
+    if (!focusedInputRef.current) return;
 
-    focusedInput.blur();
+    focusedInputRef.current.blur();
   };
 
   // reset the research and the scroll when we change texts file
@@ -125,7 +125,7 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
                               setText(textInfo.fileId, textsFiltered[index].textId, newText);
                             }}
                             onClear={() => setText(textInfo.fileId, textsFiltered[index].textId, '')}
-                            onFocus={(event) => setFocusedInput(event.target)}
+                            onFocus={(event) => (focusedInputRef.current = event.target)}
                           />
                           <DarkButton
                             onClick={() => {
