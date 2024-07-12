@@ -107,7 +107,7 @@ export const PokemonBattlerList = ({ title, encounters, disabledImport, from }: 
       <PokemonBattlerListHeader>
         <div className="header">
           <div className="title">{title}</div>
-          {!!totalEncounterChance && <Tag className="chance">{`${totalEncounterChance}%`}</Tag>}
+          {totalEncounterChance > 0 && <Tag className="chance">{`${totalEncounterChance}%`}</Tag>}
         </div>
         <div className="header">
           <div className="button-import-full">
