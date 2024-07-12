@@ -165,9 +165,9 @@ const applyFilter = (options: DropDownOption[], filter?: StudioDropDownFilter) =
 const research = (options: DropDownOption[], entry: string) => {
   if (!entry) return options;
 
-  const entryLowerCase = entry.toLowerCase();
+  const entryLowerCase = normalize(entry.toLowerCase());
   return options.filter(
-    (option) => normalize(option.value).indexOf(entry) !== -1 || normalize(option.label).toLowerCase().indexOf(entryLowerCase) !== -1
+    (option) => normalize(option.value).indexOf(normalize(entry)) !== -1 || normalize(option.label).toLowerCase().indexOf(entryLowerCase) !== -1
   );
 };
 
