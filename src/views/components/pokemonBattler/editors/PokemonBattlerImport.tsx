@@ -123,7 +123,7 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
 
   const handleImportTypeChange = (type: string) => {
     setDropDownSelection(type);
-    if (type === 'default') {
+    if (type === 'default' && !isGroup) {
       const lengthPartyToImport = trainers[selectedEntity].party.length;
       setError(override || (currentTrainer && currentTrainer.party.length + lengthPartyToImport <= 6) ? '' : tTrainer('party_length_limit'));
     } else {
