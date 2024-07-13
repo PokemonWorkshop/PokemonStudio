@@ -86,6 +86,7 @@ export const MultiLineInput = styled(TextareaAutosize)<MultiLineInputProps>`
   ${({ theme }) => theme.fonts.normalMedium}
   color: ${({ theme, error }) => (error ? theme.colors.dangerBase : theme.colors.text100)};
   overflow: hidden;
+  resize: none;
 
   &:hover {
     border-color: ${({ theme }) => theme.colors.dark24};
@@ -103,7 +104,28 @@ export const MultiLineInput = styled(TextareaAutosize)<MultiLineInputProps>`
     color: ${({ theme }) => theme.colors.text500};
   }
 
-  resize: none;
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    margin-bottom: 3px;
+    margin-top: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: ${({ theme }) => theme.colors.dark12};
+    opacity: 0.8;
+    box-sizing: border-box;
+    border: 1px solid ${({ theme }) => theme.colors.text500};
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: ${({ theme }) => theme.colors.dark15};
+    border-color: ${({ theme }) => theme.colors.text400};
+  }
 `;
 
 export const TextInputError = styled.span`
