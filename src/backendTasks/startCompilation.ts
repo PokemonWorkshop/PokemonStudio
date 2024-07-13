@@ -16,6 +16,8 @@ export type StartCompilationOutput = {
 
 let childProcess: ChildProcessWithoutNullStreams | undefined = undefined;
 let stdOutRemaining = '';
+let loggerBuffer: string[] = [];
+const BUFFER_LIMIT = 5; // The data is send to the front-end when the loggerBuffer reaches or exceeds the limit
 
 const getSpawnArgs = (rubyPath: string, projectPath: string, ...args: string[]): [string, string[]] => {
   if (process.platform === 'win32') {
@@ -38,6 +40,12 @@ const getCompilationArgs = (configuration: StudioCompilation) => {
   return args;
 };
 
+const getLoggerBuffer = () => {
+  const logs = loggerBuffer.join('');
+  loggerBuffer = [];
+  return logs;
+};
+
 const clearChildProcess = () => {
   childProcess?.stdout.removeAllListeners();
   childProcess?.unref();
@@ -57,10 +65,11 @@ const compilationProcess = async (event: IpcMainEvent, channels: ChannelNames, c
     const projectPath = configuration.projectPath;
     childProcess = spawn(...getSpawnArgs(psdkBinaries, projectPath, ...getCompilationArgs(configuration)), {
       cwd: projectPath,
-      env: { ...process.env, GAMEDEPS: psdkBinaries },
+      env: { ...process.env, PSDK_BINARY_PATH: psdkBinaries },
     });
 
     childProcess.stderr.on('data', (chunk) => {
+      sendProgress(event, channels, { step: 0, total: 0, stepText: getLoggerBuffer() });
       sendProgress(event, channels, { step: 0, total: 0, stepText: chunk.toString() });
       clearChildProcess();
       resolve(1);
@@ -72,10 +81,16 @@ const compilationProcess = async (event: IpcMainEvent, channels: ChannelNames, c
       arrData.forEach((line) => {
         // eslint-disable-next-line no-control-regex
         const lineWithoutColor = line.replaceAll(/\x1b\[\d{1,2}m/g, '');
-        if (lineWithoutColor !== '\n') sendProgress(event, channels, { step: 0, total: 0, stepText: lineWithoutColor });
+        if (lineWithoutColor !== '\n') {
+          loggerBuffer.push(lineWithoutColor);
+          if (loggerBuffer.length >= BUFFER_LIMIT) {
+            sendProgress(event, channels, { step: 0, total: 0, stepText: getLoggerBuffer() });
+          }
+        }
       });
       // Handle process disconnection
       if (arrData.some((line) => line.startsWith('Compilation done!'))) {
+        sendProgress(event, channels, { step: 0, total: 0, stepText: getLoggerBuffer() });
         clearChildProcess();
         resolve(0);
       }

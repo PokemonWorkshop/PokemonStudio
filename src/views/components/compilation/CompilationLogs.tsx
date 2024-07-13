@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MultiLineInput } from '@components/inputs';
+import { LoggerInput } from '@components/inputs';
 import { DarkButton } from '@components/buttons';
 import type { StudioCompilation } from './CompilationDialogSchema';
 import { ReactComponent as SuccessIcon } from '@assets/icons/global/success-onboarding.svg';
@@ -26,10 +26,9 @@ const CompilationLogsContainer = styled.div`
     gap: 12px;
     height: 100%;
 
-    ${MultiLineInput} {
-      min-height: calc(100% - 52px);
+    ${LoggerInput} {
+      height: 100%;
       overflow-y: scroll;
-      ${({ theme }) => theme.fonts.codeRegular}
     }
 
     .actions {
@@ -114,9 +113,7 @@ export const CompilationLogs = ({ configuration }: CompilationLogsProps) => {
   useEffect(() => {
     window.api.startCompilation(
       { configuration },
-      ({ exitCode }) => {
-        setExitCode(exitCode);
-      },
+      ({ exitCode }) => setExitCode(exitCode),
       () => {},
       ({ stepText }) => {
         if (logsRef.current) {
@@ -126,6 +123,10 @@ export const CompilationLogs = ({ configuration }: CompilationLogsProps) => {
       }
     );
   }, []);
+
+  useEffect(() => {
+    if (logsRef.current) logsRef.current.scrollTop = logsRef.current.scrollHeight;
+  }, [exitCode]);
 
   return (
     <CompilationLogsContainer>
@@ -143,7 +144,7 @@ export const CompilationLogs = ({ configuration }: CompilationLogsProps) => {
       )}
       {exitCode !== 0 && exitCode !== undefined && <div className="error">{t('error_occurred')}</div>}
       <div className="logs">
-        <MultiLineInput ref={logsRef} readOnly />
+        <LoggerInput ref={logsRef} readOnly />
         <div className="actions">
           <DarkButton onClick={onClickClipboard}>{t('copy_to_clipboard')}</DarkButton>
           <DarkButton onClick={onClickSaveLogs}>{t('save_logs')}</DarkButton>

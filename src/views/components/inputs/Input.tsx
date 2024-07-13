@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import TextareaAutosize from 'react-textarea-autosize';
 
 type InputProps = {
@@ -72,11 +72,11 @@ export const Input = styled.input<InputProps>`
   }
 `;
 
-type MultiLineInputProps = {
-  error?: 'true';
+type SharedInputStylesProps = {
+  error?: boolean;
 };
 
-export const MultiLineInput = styled(TextareaAutosize)<MultiLineInputProps>`
+const sharedInputStyles = css<SharedInputStylesProps>`
   box-sizing: border-box;
   padding: 9.5px 15px;
   margin: 0;
@@ -126,6 +126,19 @@ export const MultiLineInput = styled(TextareaAutosize)<MultiLineInputProps>`
     background-color: ${({ theme }) => theme.colors.dark15};
     border-color: ${({ theme }) => theme.colors.text400};
   }
+`;
+
+type MultiLineInputProps = SharedInputStylesProps;
+
+export const MultiLineInput = styled(TextareaAutosize)<MultiLineInputProps>`
+  ${sharedInputStyles}
+`;
+
+type LoggerInputProps = SharedInputStylesProps;
+
+export const LoggerInput = styled.textarea<LoggerInputProps>`
+  ${sharedInputStyles}
+  ${({ theme }) => theme.fonts.codeRegular}
 `;
 
 export const TextInputError = styled.span`
