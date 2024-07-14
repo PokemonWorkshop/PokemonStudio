@@ -62,5 +62,5 @@
   "zone_pokemon": "Pokémon de la zone",
   "form": "Forme",
   "default_form": "Forme de base",
-  "mega-evolution": "Méga Evolution"
+  "mega_evolution": "Méga-Évolution"
 }

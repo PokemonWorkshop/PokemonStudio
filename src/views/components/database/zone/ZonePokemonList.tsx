@@ -12,30 +12,24 @@ type PokemonZoneProps = {
 };
 
 const PokemonZoneListContainer = styled.div`
-  width: 220px;
-  display: grid;
-  grid-template-columns: 32px 1fr 62px;
-  gap: 16px;
+  display: flex;
+  gap: 12px;
   align-items: center;
   height: 70px;
 
   & img {
     width: 32px;
     height: 32px;
-    object-fit: cover;
-    object-position: 0 100%;
-    gap: 10px;
-    padding: 8px;
-    radius: 8px;
   }
 
-  & div.name-level {
+  & div.name-form {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    ${({ theme }) => theme.fonts.normalMedium}
 
-    & span.level {
+    & span.form {
       color: ${({ theme }) => theme.colors.text400};
+      ${({ theme }) => theme.fonts.normalRegular}
       white-space: nowrap;
     }
   }
@@ -59,7 +53,7 @@ export const ZonePokemonList = ({ pokemon }: PokemonZoneProps) => {
     if (pokemon.form === 0) {
       return t('default_form');
     } else if (pokemon.form >= 30) {
-      return `${t('mega_evolution')}${pokemon.form}`;
+      return `${t('mega_evolution')} ${pokemon.form - 29}`;
     } else {
       return `${t('form')} ${pokemon.form}`;
     }
@@ -75,9 +69,9 @@ export const ZonePokemonList = ({ pokemon }: PokemonZoneProps) => {
       ) : (
         <ResourceImage imagePathInProject="graphics/pokedex/pokeicon/000.png" />
       )}
-      <div className="name-level">
+      <div className="name-form">
         <span>{specie ? getEntityName(specie) : 'Unknown'}</span>
-        <span className="level">{getForm(pokemon)}</span>
+        <span className="form">{getForm(pokemon)}</span>
       </div>
     </PokemonZoneListContainer>
   );
