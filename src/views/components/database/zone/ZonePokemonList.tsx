@@ -1,6 +1,6 @@
 import React from 'react';
 import { StudioGroupEncounter } from '@modelEntities/groupEncounter';
-import { useProjectPokemon } from '@utils/useProjectData';
+import { useProjectPokemon } from '@hooks/useProjectData';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
 import styled from 'styled-components';
 import { ResourceImage } from '@components/ResourceImage';
