@@ -4,8 +4,13 @@ import { IpcMainEvent } from 'electron';
 import { ChannelNames, sendProgress } from '@utils/BackendTask';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import { getPSDKBinariesPath } from '@services/getPSDKVersion';
+import { INFO_CONFIG_VALIDATOR } from '@modelEntities/config';
+import { parseJSON } from '@utils/json/parse';
+import { existsSync } from 'fs';
+import fsPromise from 'fs/promises';
 import path from 'path';
 import log from 'electron-log';
+import { PROJECT_VALIDATOR } from '@modelEntities/project';
 
 export type StartCompilationInput = {
   configuration: StudioCompilation;
@@ -55,16 +60,40 @@ const clearChildProcess = () => {
   progression = 0;
 };
 
+const updateInfosConfig = async (infosConfigPath: string, configuration: StudioCompilation) => {
+  if (!existsSync(infosConfigPath)) throw new Error('infos_config.json file not found');
+
+  const infosConfigContent = (await fsPromise.readFile(infosConfigPath)).toString('utf-8');
+  const infosConfig = INFO_CONFIG_VALIDATOR.safeParse(parseJSON(infosConfigContent, 'infos_config.json'));
+  if (!infosConfig.success) throw new Error('Fail to parse infos_config.json');
+
+  infosConfig.data.gameTitle = configuration.gameName;
+  infosConfig.data.gameVersion = configuration.gameVersion;
+  await fsPromise.writeFile(infosConfigPath, JSON.stringify(infosConfig.data, null, 2));
+};
+
+const updateProjectStudio = async (projectStudioFilePath: string, configuration: StudioCompilation) => {
+  if (!existsSync(projectStudioFilePath)) throw new Error('project.studio file not found');
+
+  const projectStudioContent = (await fsPromise.readFile(projectStudioFilePath)).toString('utf-8');
+  const projectStudio = PROJECT_VALIDATOR.safeParse(parseJSON(projectStudioContent, 'project.studio'));
+  if (!projectStudio.success) throw new Error('Fail to parse project.studio');
+
+  projectStudio.data.title = configuration.gameName;
+  await fsPromise.writeFile(projectStudioFilePath, JSON.stringify(projectStudio.data, null, 2));
+};
+
 const compilationProcess = async (event: IpcMainEvent, channels: ChannelNames, configuration: StudioCompilation): Promise<number> => {
   clearChildProcess();
 
   return new Promise((resolve, reject) => {
+    const psdkBinaries = `${getPSDKBinariesPath()}/`;
+    const projectPath = configuration.projectPath;
+
     if (childProcess && childProcess.exitCode === null) {
       reject();
     }
 
-    const psdkBinaries = `${getPSDKBinariesPath()}/`;
-    const projectPath = configuration.projectPath;
     childProcess = spawn(...getSpawnArgs(psdkBinaries, projectPath, ...getCompilationArgs(configuration)), {
       cwd: projectPath,
       env: { ...process.env, PSDK_BINARY_PATH: psdkBinaries },
@@ -100,7 +129,6 @@ const compilationProcess = async (event: IpcMainEvent, channels: ChannelNames, c
     });
 
     childProcess.on('exit', () => clearChildProcess());
-
     childProcess.on('error', (error) => {
       reject(error);
     });
@@ -109,8 +137,12 @@ const compilationProcess = async (event: IpcMainEvent, channels: ChannelNames, c
 
 const startCompilation = async (payload: StartCompilationInput, event: IpcMainEvent, channels: ChannelNames): Promise<StartCompilationOutput> => {
   log.info('start-compilation', payload);
-  let exitCode = 0;
 
+  const configuration = payload.configuration;
+  updateInfosConfig(path.join(configuration.projectPath, 'Data/configs/infos_config.json'), configuration);
+  updateProjectStudio(path.join(configuration.projectPath, 'project.studio'), configuration);
+
+  let exitCode = 0;
   await compilationProcess(event, channels, payload.configuration)
     .then((code) => {
       log.info('start-compilation/exit-code', code);

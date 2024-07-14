@@ -8,7 +8,8 @@ import { CompilationDialogContainer, CompilationFormContainer } from './Compilat
 import { CompilationOptions } from './CompilationOptions';
 import { TFunction, useTranslation } from 'react-i18next';
 import { useLoaderRef } from '@utils/loaderContext';
-import { State } from '@src/GlobalStateProvider';
+import { State, useGlobalState } from '@src/GlobalStateProvider';
+import { updateProjectStudio } from '@utils/projectList';
 import React from 'react';
 
 const initForm = (gameInfo: StudioInfoConfig, state: State): StudioCompilation => {
@@ -38,6 +39,7 @@ type CompilationDialogProps = {
 
 export const CompilationDialog = ({ closeDialog }: CompilationDialogProps) => {
   const { projectConfigValues: gameInfo, state } = useConfigInfos();
+  const [, setGlobalState] = useGlobalState();
   const { canClose, getFormData, onInputTouched, defaults, formRef } = useZodForm(COMPILATION_DIALOG_SCHEMA, initForm(gameInfo, state));
   const { Input } = useInputAttrsWithLabel(COMPILATION_DIALOG_SCHEMA, defaults);
   const { t } = useTranslation('compilation');
@@ -46,9 +48,27 @@ export const CompilationDialog = ({ closeDialog }: CompilationDialogProps) => {
   const onClickCompile = () => {
     const result = canClose() && getFormData();
     if (result && result.success) {
+      const configuration = result.data;
       window.api.openCompilationWindow(
-        { configuration: result.data },
+        { configuration },
         () => {
+          // Silent update of the game name and game version
+          setGlobalState((state) => {
+            const newState = {
+              ...state,
+              projectConfig: {
+                ...state.projectConfig,
+                infos_config: { ...state.projectConfig.infos_config, gameTitle: configuration.gameName, gameVersion: configuration.gameVersion },
+              },
+              projectStudio: {
+                ...state.projectStudio,
+                title: configuration.gameName,
+              },
+            };
+            // Update project list in the local storage
+            if (newState.projectPath) updateProjectStudio(newState.projectPath, newState.projectStudio);
+            return newState;
+          });
           closeDialog();
         },
         ({ errorMessage }) => {
