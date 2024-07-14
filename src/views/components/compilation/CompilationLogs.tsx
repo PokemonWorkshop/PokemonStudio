@@ -189,7 +189,7 @@ export const CompilationLogs = ({ configuration }: CompilationLogsProps) => {
             {isError ? t('error_occurred') : t('creating_executable_for')}
             {!isError && <span className="platform">{getPlatform()}</span>}
           </span>
-          <progress max={6} className="progress" ref={progressBarRef} />
+          <progress max={7} className="progress" ref={progressBarRef} />
         </ProgressBarCompilationContainer>
       )}
       <div className="logs">

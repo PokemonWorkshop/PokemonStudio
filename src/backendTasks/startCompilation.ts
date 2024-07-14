@@ -81,9 +81,8 @@ const compilationProcess = async (event: IpcMainEvent, channels: ChannelNames, c
       stdOutRemaining = arrData.pop() || '';
       // Handle progress
       arrData.forEach((line) => {
-        if (line.startsWith('[Studio] Progress:')) {
-          const str = line.split(' ')[2];
-          if (str) progression = Number(str);
+        if (line.startsWith('Progress:')) {
+          progression += 1;
         } else {
           // eslint-disable-next-line no-control-regex
           const lineWithoutColor = line.replaceAll(/\x1b\[\d{1,2}m/g, '').replaceAll(/^\r/g, '');
@@ -95,7 +94,7 @@ const compilationProcess = async (event: IpcMainEvent, channels: ChannelNames, c
       });
       // Handle process disconnection
       if (arrData.some((line) => line.startsWith('Compilation done!'))) {
-        sendProgress(event, channels, { step: progression, total: 0, stepText: getLoggerBuffer() });
+        sendProgress(event, channels, { step: ++progression, total: 0, stepText: getLoggerBuffer() });
         resolve(0);
       }
     });
