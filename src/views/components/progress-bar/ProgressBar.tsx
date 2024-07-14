@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const BlockProgressBar = styled.div`
+export const BlockProgressBar = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -15,7 +15,7 @@ const BlockProgressBar = styled.div`
     height: 4px;
   }
   .progress::-webkit-progress-bar {
-    background-color: #302e38;
+    background-color: ${({ theme }) => theme.colors.dark20};
   }
 
   .progress::-webkit-progress-bar,
@@ -28,7 +28,7 @@ const BlockProgressBar = styled.div`
   }
 
   .progress::-webkit-progress-value {
-    background: #6562f8;
+    background: ${({ theme }) => theme.colors.primaryBase};
   }
 
   label {

@@ -7,6 +7,36 @@ import type { StudioCompilation } from './CompilationDialogSchema';
 import { ReactComponent as SuccessIcon } from '@assets/icons/global/success-onboarding.svg';
 import { useShowItemInFolder } from '@src/hooks/useShowItemInFolder';
 import { join } from '@utils/path';
+import { BlockProgressBar } from '@components/progress-bar/ProgressBar';
+
+type ProgressBarCompilationContainerProps = {
+  isError: boolean;
+};
+
+const ProgressBarCompilationContainer = styled(BlockProgressBar)<ProgressBarCompilationContainerProps>`
+  justify-content: initial;
+  gap: 12px;
+  width: 100%;
+
+  .progress {
+    width: 100%;
+    height: 12px;
+  }
+
+  .progress::-webkit-progress-value {
+    background: ${({ theme, isError }) => (isError ? theme.colors.dangerBase : theme.colors.successBase)};
+  }
+
+  .progress-message {
+    ${({ theme, isError }) => (isError ? theme.fonts.normalMedium : theme.fonts.normalRegular)}
+    color: ${({ theme, isError }) => (isError ? theme.colors.dangerBase : theme.colors.text100)};
+  }
+
+  .platform {
+    ${({ theme }) => theme.fonts.normalMedium}
+    color: ${({ theme }) => theme.colors.text100};
+  }
+`;
 
 const CompilationLogsContainer = styled.div`
   display: flex;
@@ -14,6 +44,7 @@ const CompilationLogsContainer = styled.div`
   gap: 24px;
   user-select: none;
   height: 100%;
+  width: 100%;
 
   .title {
     ${({ theme }) => theme.fonts.titlesHeadline6};
@@ -79,6 +110,13 @@ const CompilationLogsContainer = styled.div`
   }
 `;
 
+const getPlatform = () => {
+  const platform = window.api.platform;
+  if (platform === 'linux') return 'Linux';
+  if (platform === 'darwin') return 'macOS';
+  return 'Windows';
+};
+
 type CompilationLogsProps = {
   configuration: StudioCompilation;
 };
@@ -86,8 +124,10 @@ type CompilationLogsProps = {
 export const CompilationLogs = ({ configuration }: CompilationLogsProps) => {
   const { t } = useTranslation('compilation');
   const logsRef = useRef<HTMLTextAreaElement>(null);
+  const progressBarRef = useRef<HTMLProgressElement>(null);
   const [exitCode, setExitCode] = useState<number | undefined>(undefined);
   const showItemInFolder = useShowItemInFolder();
+  const isError = exitCode !== undefined && exitCode > 0;
 
   const onClickClipboard = () => {
     if (!logsRef.current) return;
@@ -115,11 +155,12 @@ export const CompilationLogs = ({ configuration }: CompilationLogsProps) => {
       { configuration },
       ({ exitCode }) => setExitCode(exitCode),
       () => {},
-      ({ stepText }) => {
+      ({ stepText, step }) => {
         if (logsRef.current) {
-          logsRef.current.scrollTop = logsRef.current.scrollHeight;
           logsRef.current.textContent = logsRef.current.textContent + stepText;
+          logsRef.current.scrollTop = logsRef.current.scrollHeight;
         }
+        if (progressBarRef.current) progressBarRef.current.value = step;
       }
     );
   }, []);
@@ -142,7 +183,15 @@ export const CompilationLogs = ({ configuration }: CompilationLogsProps) => {
           </span>
         </div>
       )}
-      {exitCode !== 0 && exitCode !== undefined && <div className="error">{t('error_occurred')}</div>}
+      {(exitCode === undefined || exitCode > 0) && (
+        <ProgressBarCompilationContainer isError={isError}>
+          <span className="progress-message">
+            {isError ? t('error_occurred') : t('creating_executable_for')}
+            {!isError && <span className="platform">{getPlatform()}</span>}
+          </span>
+          <progress max={6} className="progress" ref={progressBarRef} />
+        </ProgressBarCompilationContainer>
+      )}
       <div className="logs">
         <LoggerInput ref={logsRef} readOnly />
         <div className="actions">

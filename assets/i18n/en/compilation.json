@@ -19,7 +19,7 @@
   "compile_project": "Compile the project",
   "copy_to_clipboard": "Copy to clipboard",
   "save_logs": "Save logs",
-  "creating_executable_for": "Creating an executable for",
+  "creating_executable_for": "Creating an executable for\u00a0",
   "executable_create_successfully": "The game executable has been successfully created!",
   "error_occurred": "An error has occurred",
   "show_in_folder": "Show in folder"

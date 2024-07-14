@@ -17,7 +17,8 @@ export type StartCompilationOutput = {
 let childProcess: ChildProcessWithoutNullStreams | undefined = undefined;
 let stdOutRemaining = '';
 let loggerBuffer: string[] = [];
-const BUFFER_LIMIT = 5; // The data is send to the front-end when the loggerBuffer reaches or exceeds the limit
+const BUFFER_LIMIT = 10; // The data is send to the front-end when the loggerBuffer reaches or exceeds the limit
+let progression = 0;
 
 const getSpawnArgs = (rubyPath: string, projectPath: string, ...args: string[]): [string, string[]] => {
   if (process.platform === 'win32') {
@@ -51,6 +52,7 @@ const clearChildProcess = () => {
   childProcess?.unref();
   childProcess = undefined;
   stdOutRemaining = '';
+  progression = 0;
 };
 
 const compilationProcess = async (event: IpcMainEvent, channels: ChannelNames, configuration: StudioCompilation): Promise<number> => {
@@ -69,32 +71,36 @@ const compilationProcess = async (event: IpcMainEvent, channels: ChannelNames, c
     });
 
     childProcess.stderr.on('data', (chunk) => {
-      sendProgress(event, channels, { step: 0, total: 0, stepText: getLoggerBuffer() });
-      sendProgress(event, channels, { step: 0, total: 0, stepText: chunk.toString() });
-      clearChildProcess();
+      sendProgress(event, channels, { step: progression, total: 0, stepText: getLoggerBuffer() });
+      sendProgress(event, channels, { step: progression, total: 0, stepText: chunk.toString() });
       resolve(1);
     });
+
     childProcess.stdout.on('data', (chunk) => {
       const arrData = (stdOutRemaining + chunk.toString()).split('\n');
       stdOutRemaining = arrData.pop() || '';
       // Handle progress
       arrData.forEach((line) => {
-        // eslint-disable-next-line no-control-regex
-        const lineWithoutColor = line.replaceAll(/\x1b\[\d{1,2}m/g, '');
-        if (lineWithoutColor !== '\n') {
+        if (line.startsWith('[Studio] Progress:')) {
+          const str = line.split(' ')[2];
+          if (str) progression = Number(str);
+        } else {
+          // eslint-disable-next-line no-control-regex
+          const lineWithoutColor = line.replaceAll(/\x1b\[\d{1,2}m/g, '').replaceAll(/^\r/g, '');
           loggerBuffer.push(lineWithoutColor);
           if (loggerBuffer.length >= BUFFER_LIMIT) {
-            sendProgress(event, channels, { step: 0, total: 0, stepText: getLoggerBuffer() });
+            sendProgress(event, channels, { step: progression, total: 0, stepText: getLoggerBuffer() });
           }
         }
       });
       // Handle process disconnection
       if (arrData.some((line) => line.startsWith('Compilation done!'))) {
-        sendProgress(event, channels, { step: 0, total: 0, stepText: getLoggerBuffer() });
-        clearChildProcess();
+        sendProgress(event, channels, { step: progression, total: 0, stepText: getLoggerBuffer() });
         resolve(0);
       }
     });
+
+    childProcess.on('exit', () => clearChildProcess());
 
     childProcess.on('error', (error) => {
       reject(error);
