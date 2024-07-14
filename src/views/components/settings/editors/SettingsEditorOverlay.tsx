@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
 import { assertUnreachable } from '@utils/assertUnreachable';
-import { DialogRefData } from '@utils/useDialogsRef';
+import { DialogRefData } from '@hooks/useDialogsRef';
 import { SettingsMapsUseTiledMessageBox } from './SettingsMapsUseTiledMessageBox';
 
 export type SettingsEditorAndDeletionKeys = 'use_tiled_message_box';

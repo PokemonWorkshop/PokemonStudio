@@ -5,7 +5,7 @@ import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInt
 import { ControlBar } from '@components/ControlBar';
 import { SelectQuest } from '@components/selects';
 import { StudioQuest } from '@modelEntities/quest';
-import { useSetCurrentDatabasePath } from '@utils/useSetCurrentDatabasePage';
+import { useSetCurrentDatabasePath } from '@hooks/useSetCurrentDatabasePage';
 
 type QuestControlBarProps = {
   onChange: SelectChangeEvent;

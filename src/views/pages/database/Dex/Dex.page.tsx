@@ -10,9 +10,9 @@ import { PageContainerStyle, PageDataConstrainerStyle } from '../PageContainerSt
 import { DexControlBar, DexFrame, DexPokemonList, DexResetNational } from '@components/database/dex';
 import { DexEditorOverlay } from '@components/database/dex/editors';
 import { isResetAvailable } from '@utils/dex';
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import { DexEditorAndDeletionKeys } from '@components/database/dex/editors/DexEditorOverlay';
-import { useDexPage } from '@utils/usePage';
+import { useDexPage } from '@hooks/usePage';
 import { TooltipWrapper } from '@ds/Tooltip';
 
 export const DexPage = () => {

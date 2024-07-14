@@ -3,10 +3,10 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ControlBar } from '@components/ControlBar';
 import { SelectDex } from '@components/selects';
-import { useSetCurrentDatabasePath } from '@utils/useSetCurrentDatabasePage';
+import { useSetCurrentDatabasePath } from '@hooks/useSetCurrentDatabasePage';
 import { DexDialogsRef } from './editors/DexEditorOverlay';
-import { useProjectDex } from '@utils/useProjectData';
-import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
+import { useProjectDex } from '@hooks/useProjectData';
+import { StudioShortcutActions, useShortcut } from '@hooks/useShortcuts';
 
 type DexControlBarProps = {
   dialogsRef: DexDialogsRef;

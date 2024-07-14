@@ -6,7 +6,7 @@ import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer
 
 import styled from 'styled-components';
 import { SelectZone } from '@components/selects';
-import { useProjectZones } from '@utils/useProjectData';
+import { useProjectZones } from '@hooks/useProjectData';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { cloneEntity } from '@utils/cloneEntity';
 import { StudioZone } from '@modelEntities/zone';

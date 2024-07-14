@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Tag } from '@components/Tag';
-import { useProjectAbilities, useProjectItems, useProjectMoves, useProjectPokemon } from '@utils/useProjectData';
+import { useProjectAbilities, useProjectItems, useProjectMoves, useProjectPokemon } from '@hooks/useProjectData';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { ClearButtonOnlyIcon } from '@components/buttons';
 import { TypeCategoryPokemonBattler } from '@components/categories';
@@ -12,8 +12,8 @@ import { getNatureText, useGetEntityNameText, useGetEntityNameTextUsingTextId } 
 import { ResourceImage } from '@components/ResourceImage';
 import { itemIconPath, pokemonIconPath } from '@utils/path';
 import { StudioGroupEncounter, StudioIvEv } from '@modelEntities/groupEncounter';
-import { CONTROL, useKeyPress } from '@utils/useKeyPress';
-import { usePokemonShortcutNavigation, useShortcutNavigation } from '@utils/useShortcutNavigation';
+import { CONTROL, useKeyPress } from '@hooks/useKeyPress';
+import { usePokemonShortcutNavigation, useShortcutNavigation } from '@hooks/useShortcutNavigation';
 import type { CurrentBattlerType, PokemonBattlerDialogsRef, PokemonBattlerFrom, PokemonPropertyType } from './editors/PokemonBattlerEditorOverlay';
 import { assertUnreachable } from '@utils/assertUnreachable';
 

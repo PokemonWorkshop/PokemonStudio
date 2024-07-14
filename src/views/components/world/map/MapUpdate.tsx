@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { BaseButtonStyle, WarningButton } from '@components/buttons';
 import { DataBlockContainer } from '@components/database/dataBlocks';
-import { useMapUpdate } from '@utils/useMapUpdate';
+import { useMapUpdate } from '@hooks/useMapUpdate';
 import { showNotification } from '@utils/showNotification';
 import { useLoaderRef } from '@utils/loaderContext';
 import { getSetting } from '@utils/settings';

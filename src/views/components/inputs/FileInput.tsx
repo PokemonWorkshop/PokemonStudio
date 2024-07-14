@@ -4,10 +4,10 @@ import { ClearButtonOnlyIcon, EditButtonOnlyIcon } from '@components/buttons';
 import { basename, join } from '@utils/path';
 import { showNotification } from '@utils/showNotification';
 import { useTranslation } from 'react-i18next';
-import { useChoosefile } from '@utils/useChooseFile';
+import { useChoosefile } from '@hooks/useChooseFile';
 import { ReactComponent as ImageIcon } from '@assets/icons/global/image.svg';
 import { useGlobalState } from '@src/GlobalStateProvider';
-import { useCopyFile } from '@utils/useCopyFile';
+import { useCopyFile } from '@hooks/useCopyFile';
 
 const FileInputContainer = styled.div`
   display: flex;

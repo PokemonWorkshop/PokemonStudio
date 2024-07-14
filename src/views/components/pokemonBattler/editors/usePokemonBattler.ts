@@ -1,6 +1,6 @@
-import { useGroupPage, useTrainerPage } from '@utils/usePage';
+import { useGroupPage, useTrainerPage } from '@hooks/usePage';
 import { CurrentBattlerType, PokemonBattlerFrom } from './PokemonBattlerEditorOverlay';
-import { useProjectPokemon } from '@utils/useProjectData';
+import { useProjectPokemon } from '@hooks/useProjectData';
 import { useEffect, useMemo, useState } from 'react';
 import { StudioExpandPokemonSetup, StudioGroupEncounter, StudioIvEv, createExpandPokemonSetup } from '@modelEntities/groupEncounter';
 import { cloneEntity } from '@utils/cloneEntity';

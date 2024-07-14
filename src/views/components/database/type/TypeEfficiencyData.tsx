@@ -5,7 +5,7 @@ import { DataFieldsetField, DataFieldsetFieldWithChild } from '../dataBlocks/Dat
 import { TypeCategory } from '@components/categories';
 import { TypeList } from './TypeList';
 import { getEfficiencies, StudioType } from '@modelEntities/type';
-import { useTypePage } from '@utils/usePage';
+import { useTypePage } from '@hooks/usePage';
 import { useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
 
 type RenderEfficienceProps = {

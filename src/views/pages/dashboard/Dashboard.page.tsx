@@ -7,9 +7,9 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { DashboardFrame } from '../../components/dashboard';
 import { DashboardPageStyle } from './DashboardPageStyle';
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import { DashboardEditorAndDeletionKeys, DashboardEditorOverlay } from '@components/dashboard/editors/DashboardEditorOverlay';
-import { useProjectStudio } from '@utils/useProjectStudio';
+import { useProjectStudio } from '@hooks/useProjectStudio';
 import { Onboarding } from '@components/onboarding/Onboarding';
 
 const DashboardContainerStyle = styled(PageContainerStyle)`

@@ -70,6 +70,7 @@ declare module 'react-i18next' {
       database_abilities: typeof database_abilities;
       database_items: typeof database_items;
       database_moves: typeof database_moves;
+      database_natures: typeof database_natures;
       database_pokemon: typeof database_pokemon;
       database_types: typeof database_types;
       database_groups: typeof database_groups;

@@ -3,7 +3,7 @@ import { ClearInput } from '@components/inputs';
 import { useTranslation } from 'react-i18next';
 import { MapList } from './MapList';
 import { MapTreeComponent } from './MapTreeComponent';
-import { emitScrollContextMenu } from '@utils/useContextMenu';
+import { emitScrollContextMenu } from '@hooks/useContextMenu';
 import { MapTreeContainer } from './style';
 
 export const MapTree = () => {

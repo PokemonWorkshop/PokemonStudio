@@ -8,8 +8,8 @@ import { TranslateInputContainer } from '@components/inputs/TranslateInputContai
 import { useGetProjectText, useSetProjectText } from '@utils/ReadingProjectText';
 import { TRAINER_DEFEAT_SENTENCE_TEXT_ID, TRAINER_VICTORY_SENTENCE_TEXT_ID } from '@modelEntities/trainer';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useTrainerPage } from '@utils/usePage';
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { useTrainerPage } from '@hooks/usePage';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import { TrainerTranslationEditorTitle, TrainerTranslationOverlay } from './TrainerTranslationOverlay';
 import { TooltipWrapper } from '@ds/Tooltip';
 

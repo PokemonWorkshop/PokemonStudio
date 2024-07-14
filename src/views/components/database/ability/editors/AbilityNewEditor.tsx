@@ -6,7 +6,7 @@ import { DarkButton, PrimaryButton } from '@components/buttons';
 import { TextInputError } from '@components/inputs/Input';
 import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
 import { checkDbSymbolExist, generateDefaultDbSymbol, wrongDbSymbol } from '@utils/dbSymbolUtils';
-import { useProjectAbilities } from '@utils/useProjectData';
+import { useProjectAbilities } from '@hooks/useProjectData';
 import { useSetProjectText } from '@utils/ReadingProjectText';
 import { ABILITY_DESCRIPTION_TEXT_ID, ABILITY_NAME_TEXT_ID } from '@modelEntities/ability';
 import { createAbility } from '@utils/entityCreation';

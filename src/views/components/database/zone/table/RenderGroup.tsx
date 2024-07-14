@@ -12,8 +12,8 @@ import { padStr } from '@utils/PadStr';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
 import type { StudioGroup, StudioGroupDefaultSystemTag } from '@modelEntities/group';
 import type { StudioZone } from '@modelEntities/zone';
-import { CONTROL, useKeyPress } from '@utils/useKeyPress';
-import { useShortcutNavigation } from '@utils/useShortcutNavigation';
+import { CONTROL, useKeyPress } from '@hooks/useKeyPress';
+import { useShortcutNavigation } from '@hooks/useShortcutNavigation';
 import { isCustomEnvironment } from '@utils/GroupUtils';
 
 type RenderGroupContainerProps = {

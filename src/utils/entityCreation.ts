@@ -88,8 +88,8 @@ export const createCreature = (allPokemon: ProjectData['pokemon'], dbSymbol: DbS
     forms: [
       {
         form: 0,
-        height: 0,
-        weight: 0,
+        height: 0.01,
+        weight: 0.01,
         type1,
         type2,
         baseHp: 100,

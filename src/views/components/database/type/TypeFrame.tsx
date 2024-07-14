@@ -10,7 +10,7 @@ import {
   DataInfoContainerHeaderTitle,
 } from '../dataBlocks';
 import { CopyIdentifier } from '@components/Copy';
-import { useTypePage } from '@utils/usePage';
+import { useTypePage } from '@hooks/usePage';
 import { TypeDialogsRef } from './editors/TypeEditorOverlay';
 
 export const TypeFrame = ({ dialogsRef }: { dialogsRef: TypeDialogsRef }) => {

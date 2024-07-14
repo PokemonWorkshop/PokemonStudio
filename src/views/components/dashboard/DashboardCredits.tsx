@@ -7,7 +7,7 @@ import { DropInput } from '@components/inputs/DropInput';
 import { AUDIO_EXT, AudioInput } from '@components/inputs/AudioInput';
 import { EmbeddedUnitInput } from '@components/inputs/EmbeddedUnitInput';
 import { cloneEntity } from '@utils/cloneEntity';
-import { useConfigCredits } from '@utils/useProjectConfig';
+import { useConfigCredits } from '@hooks/useProjectConfig';
 import { DeleteButtonWithIcon, SecondaryButtonWithPlusIcon } from '@components/buttons';
 import { CreditMembersTable } from '@components/database/credits/tables/CreditMembersTable';
 import { ButtonContainer, ButtonRightContainer } from '@components/editor/DataBlockEditorStyle';

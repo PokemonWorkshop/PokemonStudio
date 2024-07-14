@@ -14,7 +14,7 @@ import { BaseIcon } from '@components/icons/BaseIcon';
 import { PrimaryButton, SecondaryButton } from '@components/buttons';
 import theme from '@src/AppTheme';
 import { getSetting } from '@utils/settings';
-import { useOpenStudioLogsFolder } from '@utils/useOpenStudioLogsFolder';
+import { useOpenStudioLogsFolder } from '@hooks/useOpenStudioLogsFolder';
 
 type MapOpenTiledErrorProps = {
   closeDialog: () => void;

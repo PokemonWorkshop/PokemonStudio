@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Editor } from '@components/editor';
 import { InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useTextPage } from '@utils/usePage';
+import { useTextPage } from '@hooks/usePage';
 import styled from 'styled-components';
 import { SelectText } from '@components/selects';
 import { DarkButton, PrimaryButton } from '@components/buttons';

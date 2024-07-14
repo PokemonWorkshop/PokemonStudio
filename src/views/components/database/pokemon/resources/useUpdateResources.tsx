@@ -9,7 +9,7 @@ export const useUpdateResources = (creature: StudioCreature, form: StudioCreatur
     updateForm({
       resources: {
         ...form.resources,
-        [resource]: basename(resourcePath, '.png').replace(/\.gif$/, ''),
+        [resource]: basename(resourcePath, '.png').replace(/\.gif$/i, ''),
       },
     });
   };

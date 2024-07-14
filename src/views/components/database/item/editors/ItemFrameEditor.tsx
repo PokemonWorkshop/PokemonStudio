@@ -3,7 +3,7 @@ import { Editor } from '@components/editor';
 import { TFunction, useTranslation } from 'react-i18next';
 import { IconInput, Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
-import { useProjectItems } from '@utils/useProjectData';
+import { useProjectItems } from '@hooks/useProjectData';
 import { DropInput } from '@components/inputs/DropInput';
 import { basename, itemIconPath } from '@utils/path';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
@@ -19,9 +19,10 @@ import {
   StudioItemCategories,
 } from '@modelEntities/item';
 import { createItem } from '@utils/entityCreation';
-import { useDialogsRef } from '@utils/useDialogsRef';
-import { useItemPage } from '@utils/usePage';
+import { useDialogsRef } from '@hooks/useDialogsRef';
+import { useItemPage } from '@hooks/usePage';
 import { ItemTranslationOverlay, TranslationEditorTitle } from './ItemTranslationOverlay';
+import { cloneEntity } from '@utils/cloneEntity';
 
 const itemCategoryEntries = (t: TFunction<('database_items' | 'database_types')[]>) =>
   StudioItemCategories.map((category) => ({ value: category, label: t(`database_types:${category}`) })).sort((a, b) =>
@@ -49,11 +50,12 @@ export const ItemFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
     setText(ITEM_NAME_TEXT_ID, item.id, nameRef.current.value);
     setText(ITEM_PLURAL_NAME_TEXT_ID, item.id, namePluralRef.current.value);
     setText(ITEM_DESCRIPTION_TEXT_ID, item.id, descriptionRef.current.value);
-    item.icon = icon;
-    if (itemCategory != ITEM_CATEGORY[item.klass]) {
-      setItems({ [item.dbSymbol]: mutateItemInto(item, createItem(ITEM_CATEGORY_INITIAL_CLASSES[itemCategory], item.dbSymbol, item.id)) });
+    const itemEdited = cloneEntity(item);
+    itemEdited.icon = icon;
+    if (itemCategory !== ITEM_CATEGORY[item.klass]) {
+      setItems({ [item.dbSymbol]: mutateItemInto(itemEdited, createItem(ITEM_CATEGORY_INITIAL_CLASSES[itemCategory], item.dbSymbol, item.id)) });
     } else {
-      setItems({ [item.dbSymbol]: item });
+      setItems({ [item.dbSymbol]: itemEdited });
     }
   };
   useEditorHandlingClose(ref, onClose, canClose);

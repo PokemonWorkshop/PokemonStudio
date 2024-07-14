@@ -15,7 +15,7 @@ import {
   DataInfoContainerHeaderTitle,
   DataSpriteContainer,
 } from '../dataBlocks';
-import { useItemPage } from '@utils/usePage';
+import { useItemPage } from '@hooks/usePage';
 import { ItemDialogsRef } from './editors/ItemEditorOverlay';
 
 type ItemFrameProps = { dialogsRef: ItemDialogsRef };

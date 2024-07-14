@@ -17,8 +17,8 @@ import {
   ItemCatchData,
 } from '@components/database/item';
 import { ItemEditorAndDeletionKeys, ItemEditorOverlay } from '@components/database/item/editors/ItemEditorOverlay';
-import { useDialogsRef } from '@utils/useDialogsRef';
-import { useItemPage } from '@utils/usePage';
+import { useDialogsRef } from '@hooks/useDialogsRef';
+import { useItemPage } from '@hooks/usePage';
 
 export const ItemPage = () => {
   const dialogsRef = useDialogsRef<ItemEditorAndDeletionKeys>();

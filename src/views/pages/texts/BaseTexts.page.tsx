@@ -7,11 +7,11 @@ import { DataBlockWrapper } from '@components/database/dataBlocks';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { PageContainerStyle, PageDataConstrainerStyle } from '@pages/database/PageContainerStyle';
 import { TextControlBar } from '@components/textmanagement';
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import { TextEditorAndDeletionKeys, TextEditorOverlay } from '@components/textmanagement/editors/TextEditorOverlay';
 import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';
 import styled from 'styled-components';
-import { useTextPage } from '@utils/usePage';
+import { useTextPage } from '@hooks/usePage';
 
 const TextsPageContainerStyle = styled(PageContainerStyle)`
   @media ${(props) => props.theme.breakpoints.smallScreen} {

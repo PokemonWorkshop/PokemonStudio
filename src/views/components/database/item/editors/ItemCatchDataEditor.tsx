@@ -12,7 +12,7 @@ import {
 import { colorToHex, hexToColor } from '@utils/ColorUtils';
 import { LOCKED_ITEM_EDITOR, StudioBallItem } from '@modelEntities/item';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useItemPage } from '@utils/usePage';
+import { useItemPage } from '@hooks/usePage';
 import { useUpdateItem } from './useUpdateItem';
 
 export const ItemCatchDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {

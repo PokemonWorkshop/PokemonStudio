@@ -1,6 +1,6 @@
 import { StudioMove } from '@modelEntities/move';
 import { cloneEntity } from '@utils/cloneEntity';
-import { useProjectMoves } from '@utils/useProjectData';
+import { useProjectMoves } from '@hooks/useProjectData';
 import { useCallback } from 'react';
 
 export const useUpdateMove = (move: StudioMove) => {

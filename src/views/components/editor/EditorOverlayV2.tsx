@@ -1,5 +1,5 @@
 import { useEditorHandlingCloseRef } from '@components/editor/useHandleCloseEditor';
-import { DialogRefData } from '@utils/useDialogsRef';
+import { DialogRefData } from '@hooks/useDialogsRef';
 import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
@@ -170,7 +170,10 @@ export const defineEditorOverlay = <Keys extends string, Props extends Record<st
     // Handle user pressing the escape key
     useEffect(() => {
       const handleKey = (event: KeyboardEvent) => {
-        if (event.key === 'Escape' && currentDialog) onEscape();
+        if (event.key === 'Escape' && currentDialog) {
+          event.preventDefault();
+          onEscape();
+        }
       };
       window.addEventListener('keydown', handleKey);
 
@@ -179,7 +182,7 @@ export const defineEditorOverlay = <Keys extends string, Props extends Record<st
     }, [currentDialog]);
 
     return ReactDOM.createPortal(
-      <DialogContainer ref={dialogRef} onClick={onClickOutside} className={isCenter ? 'center' : 'right'}>
+      <DialogContainer ref={dialogRef} onMouseDown={onClickOutside} className={isCenter ? 'center' : 'right'}>
         {currentlyRenderedDialog}
       </DialogContainer>,
       document.querySelector('#dialogs') || document.createElement('div')

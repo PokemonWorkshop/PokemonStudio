@@ -1,6 +1,6 @@
 import { StudioGroup } from '@modelEntities/group';
 import { cloneEntity } from '@utils/cloneEntity';
-import { useProjectGroups } from '@utils/useProjectData';
+import { useProjectGroups } from '@hooks/useProjectData';
 import { useCallback } from 'react';
 
 export const useUpdateGroup = (group: StudioGroup) => {

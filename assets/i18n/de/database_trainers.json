@@ -8,7 +8,7 @@
   "delete_this_trainer": "Diesen Trainer löschen",
   "trainer_deletion_of": "Löschen des Trainers",
   "trainer_deletion_message": "Du bist dabei, den Trainer « {{trainer}} » endgültig zu löschen.",
-  "battler_deletion_of": "Löschen von {{pokemon}}",
+  "battler_deletion_of": "Löschen eines Pokémon",
   "battler_deletion_message": "Du bist dabei, « {{battler}} » dauerhaft aus « {{trainer}} » Trainer zu löschen.",
   "create_trainer": "Trainer hinzufügen",
   "cancel": "Abbrechen",

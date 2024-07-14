@@ -8,7 +8,7 @@ import { PageResourceContainerStyle, PageDataConstrainerStyle } from './PageCont
 import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';
 import { MusicResources } from '@components/database/trainer/resources/MusicResources';
 import { BattlersResources, CharacterResource } from '@components/database/trainer/resources';
-import { useTrainerPage } from '@utils/usePage';
+import { useTrainerPage } from '@hooks/usePage';
 
 export const TrainerResourcesPage = () => {
   const { t } = useTranslation('database_trainers');

@@ -2,7 +2,7 @@ import { ResourceImage } from '@components/ResourceImage';
 import React from 'react';
 import styled from 'styled-components';
 import { MapDialogsRef } from '../map/editors/MapEditorOverlay';
-import { useOpenTiled } from '@utils/useOpenTiled';
+import { useOpenTiled } from '@hooks/useOpenTiled';
 import { StudioMap } from '@modelEntities/map';
 import { getMapOverviewPath } from '@utils/resourcePath';
 import { getSetting } from '@utils/settings';

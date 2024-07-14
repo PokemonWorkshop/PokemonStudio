@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { DataEarningGrid, DataQuestTable, TableEmpty } from './QuestTableStyle';
 import { useTranslation } from 'react-i18next';
-import { useProjectQuests } from '@utils/useProjectData';
+import { useProjectQuests } from '@hooks/useProjectData';
 import { RenderEarning } from './RenderEarning';
 import { cloneEntity } from '@utils/cloneEntity';
 import { StudioQuest } from '@modelEntities/quest';

@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { ControlBar } from '@components/ControlBar';
 import { SelectAbility } from '@components/selects';
 import type { AbilityDialogsRef } from './editors/AbilityEditorOverlay';
-import { useProjectAbilities } from '@utils/useProjectData';
-import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
-import { useSetCurrentDatabasePath } from '@utils/useSetCurrentDatabasePage';
+import { useProjectAbilities } from '@hooks/useProjectData';
+import { StudioShortcutActions, useShortcut } from '@hooks/useShortcuts';
+import { useSetCurrentDatabasePath } from '@hooks/useSetCurrentDatabasePage';
 
 type AbilityControlBarProps = {
   dialogsRef?: AbilityDialogsRef;

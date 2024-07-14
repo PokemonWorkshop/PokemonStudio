@@ -2,7 +2,7 @@ import log from 'electron-log';
 import fs from 'fs';
 import fsPromises from 'fs/promises';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
-import { MapToImport } from '@utils/useMapImport/types';
+import { MapToImport } from '@hooks/useMapImport/types';
 import path from 'path';
 import { listResources } from 'ts-tiled-converter';
 import { calculateFileSha1 } from './calculateFileSha1';
@@ -130,7 +130,7 @@ const copyRulesFile = async (tiledSrcPath: string, mapsFolderPath: string) => {
   if (!fs.existsSync(rulesSrcPath)) return;
   if (fs.existsSync(rulesDestPath)) return;
 
-  log.info('copy-tiled-files/process', rulesSrcPath);
+  log.info('copy-tiled-files/rules', rulesSrcPath);
   await fsPromises.copyFile(rulesSrcPath, rulesDestPath);
   const rules = (await fsPromises.readFile(rulesDestPath)).toString();
   const lines = rules.split(/\r\n|\r|\n/);
@@ -138,7 +138,12 @@ const copyRulesFile = async (tiledSrcPath: string, mapsFolderPath: string) => {
     await lastPromise;
     if (line.startsWith('#')) return;
 
-    const tiledMap = { path: path.join(tiledSrcPath, line) };
+    const mapPath = path.join(tiledSrcPath, line);
+    if (!fs.existsSync(mapPath)) {
+      log.warn('copy-tiled-files/rules: map not found', mapPath);
+      return;
+    }
+    const tiledMap = { path: mapPath };
     await copyTmxFile(tiledMap, mapsFolderPath, tiledSrcPath);
     await updateTmxFile(tiledMap, mapsFolderPath, path.join(tiledSrcPath, line));
   }, Promise.resolve());

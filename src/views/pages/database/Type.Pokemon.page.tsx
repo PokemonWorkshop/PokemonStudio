@@ -7,10 +7,10 @@ import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { SubPageTitle } from '@components/pages';
 import { TypePokemonTable } from '@components/database/type/TypePokemonTable';
-import { useTypePage } from '@utils/usePage';
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { useTypePage } from '@hooks/usePage';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import { TypeEditorAndDeletionKeys } from '@components/database/type/editors/TypeEditorOverlay';
-import { useProjectTypes } from '@utils/useProjectData';
+import { useProjectTypes } from '@hooks/useProjectData';
 
 export const TypePokemonPage = () => {
   const dialogsRef = useDialogsRef<TypeEditorAndDeletionKeys>();

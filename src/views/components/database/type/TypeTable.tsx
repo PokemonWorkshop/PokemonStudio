@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { TypeTableContainer, TypeTableHead, TypeTableRow, TypeTableBodyContainer, TableTypeContainer, TypeTableMainContainer } from './table';
 import { TitleContainer } from '@components/editor/DataBlockEditorStyle';
-import { useProjectTypes } from '@utils/useProjectData';
+import { useProjectTypes } from '@hooks/useProjectData';
 import { HelperSelectedType, TypeHelper } from './TypeHelper';
 import { StudioType } from '@modelEntities/type';
 

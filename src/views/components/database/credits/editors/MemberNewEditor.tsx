@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { Editor } from '@components/editor/Editor';
 import { Input, InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
-import { useConfigCredits } from '@utils/useProjectConfig';
+import { useConfigCredits } from '@hooks/useProjectConfig';
 import { StudioCreditConfig } from '@modelEntities/config';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';

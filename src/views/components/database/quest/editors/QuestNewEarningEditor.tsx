@@ -5,7 +5,7 @@ import { InputContainer, InputWithTopLabelContainer, Label } from '@components/i
 import { SelectCustomSimple } from '@components/SelectCustom';
 import { QUEST_EARNINGS, StudioQuest, StudioQuestEarningType } from '@modelEntities/quest';
 import { createQuestEarning } from '@utils/entityCreation';
-import { useProjectQuests } from '@utils/useProjectData';
+import { useProjectQuests } from '@hooks/useProjectData';
 import React, { useMemo, useState } from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
 import styled from 'styled-components';

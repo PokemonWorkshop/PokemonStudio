@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
 import { assertUnreachable } from '@utils/assertUnreachable';
-import { DialogRefData } from '@utils/useDialogsRef';
+import { DialogRefData } from '@hooks/useDialogsRef';
 import { DexNewEditor, DexDeletion, DexFrameEditor, DexPokemonListAddEditor, DexPokemonListEditEditor, DexPokemonListImportEditor } from '.';
 import { DexResetNationalPopUp } from '../DexResetNationalPopUp';
 

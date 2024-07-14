@@ -4,7 +4,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ReactComponent as FileDrop } from '@assets/icons/global/drop.svg';
 import { LinkContainer, SpriteNoResourceContainer, SpriteResourceContainer, SpriteResourceType } from '@components/resources';
-import { useResource } from '@utils/useResource';
+import { useResource } from '@hooks/useResource';
 
 const isNoResource = (resourcePath: string) => resourcePath.endsWith('/');
 

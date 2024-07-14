@@ -7,7 +7,7 @@ import { mutateItemToProgressionCategory, progressCategories } from './mutateIte
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { LOCKED_ITEM_EDITOR, StudioEVBoostItem, StudioItem, StudioLevelIncreaseItem } from '@modelEntities/item';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useItemPage } from '@utils/usePage';
+import { useItemPage } from '@hooks/usePage';
 import { useUpdateItem } from './useUpdateItem';
 import { cloneEntity } from '@utils/cloneEntity';
 

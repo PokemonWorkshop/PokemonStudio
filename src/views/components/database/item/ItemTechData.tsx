@@ -4,9 +4,9 @@ import { getEntityNameText, useGetEntityNameText } from '@utils/ReadingProjectTe
 import React from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
 import { DataBlockWithTitle, DataFieldsetField, DataGrid } from '../dataBlocks';
-import { useShortcutNavigation } from '@utils/useShortcutNavigation';
-import { useKeyPress, CONTROL } from '@utils/useKeyPress';
-import { useItemPage } from '@utils/usePage';
+import { useShortcutNavigation } from '@hooks/useShortcutNavigation';
+import { useKeyPress, CONTROL } from '@hooks/useKeyPress';
+import { useItemPage } from '@hooks/usePage';
 import { ItemDialogsRef } from './editors/ItemEditorOverlay';
 
 type ItemTechDataProps = { dialogsRef: ItemDialogsRef };

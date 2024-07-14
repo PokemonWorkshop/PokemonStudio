@@ -3,11 +3,11 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ControlBar } from '@components/ControlBar';
 import { SelectItem } from '@components/selects';
-import { useSetCurrentDatabasePath } from '@utils/useSetCurrentDatabasePage';
+import { useSetCurrentDatabasePath } from '@hooks/useSetCurrentDatabasePage';
 import { ItemDialogsRef } from './editors/ItemEditorOverlay';
-import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
-import { useProjectItems } from '@utils/useProjectData';
-import { useItemPage } from '@utils/usePage';
+import { StudioShortcutActions, useShortcut } from '@hooks/useShortcuts';
+import { useProjectItems } from '@hooks/useProjectData';
+import { useItemPage } from '@hooks/usePage';
 
 type ItemControlBarProps = {
   dialogsRef: ItemDialogsRef;

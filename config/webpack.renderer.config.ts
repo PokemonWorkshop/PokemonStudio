@@ -25,6 +25,7 @@ export const rendererConfig: Configuration = {
       '@utils': path.resolve(__dirname, '..', 'src/utils'),
       '@assets': path.resolve(__dirname, '..', 'assets'),
       '@src': path.resolve(__dirname, '..', 'src'),
+      '@hooks': path.resolve(__dirname, '..', 'src/hooks'),
     },
   },
 };

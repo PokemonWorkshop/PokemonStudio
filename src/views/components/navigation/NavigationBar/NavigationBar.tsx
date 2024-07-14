@@ -8,7 +8,7 @@ import { useGlobalState } from '../../../../GlobalStateProvider';
 import { SaveProjectButton } from '@components/buttons/SaveProjectButton';
 import { PlayButton, WorldButton } from '@components/buttons';
 import { useTranslation } from 'react-i18next';
-import { useToolTip } from '@utils/useToolTip';
+import { useToolTip } from '@hooks/useToolTip';
 
 export const NavigationBarComponent = () => {
   const theme = useTheme();

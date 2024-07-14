@@ -10,10 +10,10 @@ import { TypeResistanceData } from '@components/database/type/TypeResistanceData
 import { DarkButton, DeleteButtonWithIcon } from '@components/buttons';
 import { useTranslation } from 'react-i18next';
 import { DataBlockWithTitleNoActive } from '@components/database/dataBlocks/DataBlockWithTitle';
-import { useDialogsRef } from '@utils/useDialogsRef';
-import { useTypePage } from '@utils/usePage';
+import { useDialogsRef } from '@hooks/useDialogsRef';
+import { useTypePage } from '@hooks/usePage';
 import { TypeEditorAndDeletionKeys, TypeEditorOverlay } from '@components/database/type/editors/TypeEditorOverlay';
-import { useProjectTypes } from '@utils/useProjectData';
+import { useProjectTypes } from '@hooks/useProjectData';
 import { TooltipWrapper } from '@ds/Tooltip';
 
 export const TypePage = () => {

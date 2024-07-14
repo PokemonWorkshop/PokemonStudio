@@ -11,7 +11,7 @@ import {
   MultiLineInput,
   PaddedInputContainer,
 } from '@components/inputs';
-import { useProjectMaps } from '@utils/useProjectData';
+import { useProjectMaps } from '@hooks/useProjectData';
 import styled from 'styled-components';
 import { DarkButton, PrimaryButton, SecondaryButton } from '@components/buttons';
 import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID } from '@modelEntities/map';
@@ -24,14 +24,14 @@ import { basename } from '@utils/path';
 import { useNavigate } from 'react-router-dom';
 import { AUDIO_EXT } from '@components/inputs/AudioInput';
 import { cloneEntity } from '@utils/cloneEntity';
-import { useMapInfo } from '@utils/useMapInfo';
+import { useMapInfo } from '@hooks/useMapInfo';
 import { StudioMapInfoMap, StudioMapInfoValue } from '@modelEntities/mapInfo';
 import { addNewMapInfo, mapInfoNewMapWithParent } from '@utils/MapInfoUtils';
 import { EditorChildWithSubEditorContainer, SubEditorContainer, SubEditorSeparator } from '@components/editor/EditorContainer';
 import { MapImportEditorTitle, MapImportOverlay } from './MapImport/MapImportOverlay';
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import { useUpdateMapModified } from './useUpdateMapModified';
-import { useMapCopy } from '@utils/useMapCopy';
+import { useMapCopy } from '@hooks/useMapCopy';
 import { useLoaderRef } from '@utils/loaderContext';
 import { TextInputError } from '@components/inputs/Input';
 import { TooltipWrapper } from '@ds/Tooltip';

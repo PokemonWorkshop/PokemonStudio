@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { InputWithLeftLabelContainer, Input, Label, Toggle, InputContainer } from '@components/inputs';
 import { PageEditor } from '@components/pages';
-import { useConfigSettings } from '@utils/useProjectConfig';
+import { useConfigSettings } from '@hooks/useProjectConfig';
 import styled from 'styled-components';
 import { cleaningSettingsNaNValues } from '@utils/cleanNaNValue';
 import { cloneEntity } from '@utils/cloneEntity';

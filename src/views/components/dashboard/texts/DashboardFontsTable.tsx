@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { StudioTextConfig, StudioTextTtfFileConfig } from '@modelEntities/config';
 import { useTranslation } from 'react-i18next';
-import { useConfigTexts } from '@utils/useProjectConfig';
+import { useConfigTexts } from '@hooks/useProjectConfig';
 import { cloneEntity } from '@utils/cloneEntity';
 import { DataDashboardFontsTable, DataDashboardFontGrid, TableEmpty } from './DashboardFontsTableStyle';
 import { RenderDashboardFont } from './RenderDashboardFont';

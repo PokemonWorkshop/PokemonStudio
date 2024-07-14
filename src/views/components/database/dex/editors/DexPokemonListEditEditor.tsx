@@ -5,11 +5,11 @@ import { useTranslation } from 'react-i18next';
 import { InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { StudioDex, StudioDexCreature } from '@modelEntities/dex';
 import { DbSymbol } from '@modelEntities/dbSymbol';
-import { useSelectOptions } from '@utils/useSelectOptions';
+import { useSelectOptions } from '@hooks/useSelectOptions';
 import { StudioDropDown } from '@components/StudioDropDown';
 import { SelectPokemonForm } from '@components/selects/SelectPokemonForm';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useDexPage } from '@utils/usePage';
+import { useDexPage } from '@hooks/usePage';
 import { cloneEntity } from '@utils/cloneEntity';
 import { useUpdateDex } from './useUpdateDex';
 

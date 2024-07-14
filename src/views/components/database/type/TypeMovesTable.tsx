@@ -7,8 +7,8 @@ import React from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { DataGrid } from '../dataBlocks';
-import { CONTROL, useKeyPress } from '@utils/useKeyPress';
-import { useShortcutNavigation } from '@utils/useShortcutNavigation';
+import { CONTROL, useKeyPress } from '@hooks/useKeyPress';
+import { useShortcutNavigation } from '@hooks/useShortcutNavigation';
 
 type TypeMovesTableProps = {
   type: StudioType;

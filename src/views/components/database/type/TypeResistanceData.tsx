@@ -6,7 +6,7 @@ import { TypeCategory } from '@components/categories';
 import { TypeList } from './TypeList';
 import { useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
 import { StudioType } from '@modelEntities/type';
-import { useTypePage } from '@utils/usePage';
+import { useTypePage } from '@hooks/usePage';
 
 type RenderResistanceProps = {
   t: TFunction<'database_types'>;

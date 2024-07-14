@@ -4,10 +4,12 @@ import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { assertUnreachable } from '@utils/assertUnreachable';
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import React, { FormEventHandler, forwardRef, useMemo, useRef, useState } from 'react';
 import { Select } from './Select';
 import { SelectContainerWithLabel } from '@components/selects/SelectContainerWithLabel';
+import { useZodForm } from '@hooks/useZodForm';
+import { z } from 'zod';
 
 export const SelectEditorOverlay = defineEditorOverlay<'dialog', {}>('SelectExampleOverlay', (dialogToShow, handleCloseRef, closeDialog, props) => {
   switch (dialogToShow) {
@@ -148,31 +150,63 @@ const PotentiallyDisabledComponent = () => {
   );
 };
 
+const FORM_SCHEMA = z.object({
+  nothing: z.string(),
+  normal: z.string(),
+  test: z.number().int(),
+  array: z.array(
+    z.union([
+      z.string().min(1),
+      z.object({
+        a: z.string(),
+        b: z.string(),
+        c: z.array(z.number().int()),
+      }),
+    ])
+  ),
+});
+
 const SelectDialog = forwardRef<EditorHandlingClose, { closeDialog: () => void }>(({ closeDialog }, ref) => {
   const dialogsRef = useDialogsRef<'dialog'>();
   useEditorHandlingClose(ref);
-
+  const v = useZodForm(FORM_SCHEMA, { normal: 'value_e', test: 6, array: ['string1', 'string2', { a: 'obj_a', b: 'obj_b', c: [-5, 7] }] });
+  const defaults = v.defaults;
   const onSubmit: FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const values = Object.fromEntries(formData);
+    alert(JSON.stringify(v.getFormData()));
     alert(JSON.stringify(values));
   };
+  console.log(v);
 
   return (
     <Editor type="studio" title={'Dialog'}>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={onSubmit} ref={v.formRef}>
         <InputContainer size="s">
           <InputWithTopLabelContainer>
             <Label>Nothing selected</Label>
-            <Select options={genericOptions} chooseValue="choose" placeholder="Choose a value" name="nothing" />
+            <Select
+              options={genericOptions}
+              chooseValue="choose"
+              placeholder="Choose a value"
+              name="nothing"
+              onChange={(value) => v.onTouched('nothing', true, value)}
+            />
           </InputWithTopLabelContainer>
           <InputWithLeftLabelContainer>
             <Label>Normal</Label>
-            <Select options={genericOptions} chooseValue="choose" placeholder="Choose a value" defaultValue="value_e" name="normal" />
+            <Select options={genericOptions} chooseValue="choose" placeholder="Choose a value" defaultValue={defaults.normal} name="normal" />
           </InputWithLeftLabelContainer>
           <button type="submit">Submit</button>
         </InputContainer>
+        <input name="test" type="number" defaultValue={defaults.test} onInput={v.onInputTouched} />
+        <input name="array.0" type="text" defaultValue={defaults['array.0']} onInput={v.onInputTouched} pattern="^string\d$" />
+        <input name="array.1" type="text" defaultValue={defaults['array.1']} onInput={v.onInputTouched} />
+        <input name="array.2.a" type="text" defaultValue={defaults['array.2.a']} onInput={v.onInputTouched} />
+        <input name="array.2.b" type="text" defaultValue={defaults['array.2.b']} onInput={v.onInputTouched} />
+        <input name="array.2.c.0" type="number" defaultValue={defaults['array.2.c.0']} onInput={v.onInputTouched} />
+        <input name="array.2.c.1" type="number" defaultValue={defaults['array.2.c.1']} onInput={v.onInputTouched} />
       </form>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '32px' }}>
         <SecondaryButton onClick={() => dialogsRef.current?.openDialog('dialog', true)}>Sub dialog centered</SecondaryButton>

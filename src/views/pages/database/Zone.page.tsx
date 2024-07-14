@@ -19,9 +19,9 @@ import {
   ZoneTravelEditor,
 } from '@components/database/zone/editors';
 
-import { useTranslationEditor } from '@utils/useTranslationEditor';
-import { useProjectGroups, useProjectZones } from '@utils/useProjectData';
-import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
+import { useTranslationEditor } from '@hooks/useTranslationEditor';
+import { useProjectGroups, useProjectZones } from '@hooks/useProjectData';
+import { StudioShortcutActions, useShortcut } from '@hooks/useShortcuts';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
 import { defineRelationCustomCondition } from '@utils/GroupUtils';
 import { cloneEntity } from '@utils/cloneEntity';

@@ -8,7 +8,7 @@ import { TFunction, useTranslation } from 'react-i18next';
 import { TextInputError } from '@components/inputs/Input';
 import { basename, dirname } from '@utils/path';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { DefaultLanguages, DefaultLanguageType, NewProjectData } from '@utils/useProjectNew/types';
+import { DefaultLanguages, DefaultLanguageType, NewProjectData } from '@hooks/useProjectNew/types';
 import { TooltipWrapper } from '@ds/Tooltip';
 import styled from 'styled-components';
 

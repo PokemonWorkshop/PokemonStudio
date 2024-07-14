@@ -7,10 +7,10 @@ import { useNavigate } from 'react-router-dom';
 import { useLoaderRef } from '@utils/loaderContext';
 import { ClearButtonOnlyIcon, FolderButtonOnlyIcon } from '@components/buttons';
 import { Code } from '@components/Code';
-import { useProjectLoad } from '@utils/useProjectLoad';
+import { useProjectLoad } from '@hooks/useProjectLoad';
 import { Project } from '@utils/projectList';
 import { ResourceImage } from '@components/ResourceImage';
-import { useShowItemInFolder } from '@utils/useShowItemInFolder';
+import { useShowItemInFolder } from '@hooks/useShowItemInFolder';
 import { join } from '@utils/path';
 
 const ProjectCardContainer = styled(ActiveContainer)`
@@ -30,8 +30,9 @@ const ProjectCardContainer = styled(ActiveContainer)`
     ${({ theme }) => theme.fonts.titlesHeadline6}
     color: ${({ theme }) => theme.colors.text400};
     height: 44px;
-    overflow-y: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
     margin: 0 0 4px 0;
     padding: 0;
   }

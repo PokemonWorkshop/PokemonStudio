@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { StudioMove, StudioMoveStatus, StudioMoveStatusList } from '@modelEntities/move';
+import { StudioMove, StudioMoveStatus } from '@modelEntities/move';
 import { DataBlockWithTitle, DataFieldsetField, DataFieldsetFieldWithChild, DataGrid } from '../dataBlocks';
 import { MoveDialogsRef } from './editors/MoveEditorOverlay';
 
@@ -36,14 +36,15 @@ const STATUS_KEY = ['status_1', 'status_2', 'status_3'] as const;
 export const MoveStatus = ({ move, dialogsRef }: MoveStatusProps) => {
   const { t } = useTranslation('database_moves');
 
-  const getStatus = (status: StudioMoveStatus[] | null, index: number) => {
-    if (status === null || status.length <= index || status[index].status === null) return t('none');
-    return t(`${status[index].status}` as Exclude<StudioMoveStatusList, null>);
+  const getStatus = (statuses: StudioMoveStatus[] | null, index: number) => {
+    const status = statuses === null ? null : statuses[index]?.status ?? null;
+    if (statuses === null || statuses.length <= index || status === null || status === '__undef__') return t('none');
+    return t(status);
   };
 
   const getLuckRate = (status: StudioMoveStatus[] | null, index: number) => {
     if (status === null || status.length <= index || status[index].luckRate === 0) return t('none');
-    return `${status[index].luckRate} %`;
+    return `${status[index].luckRate}\u00a0%`;
   };
 
   const shouldDisplayLuckRate = (status: StudioMoveStatus[] | null) => {
@@ -60,7 +61,7 @@ export const MoveStatus = ({ move, dialogsRef }: MoveStatusProps) => {
             <React.Fragment key={index}>
               <DataFieldsetFieldWithChild label={t(move.moveStatus.length > 1 ? STATUS_KEY[index] : 'status')}>
                 <StatusContainer>
-                  <span>{getStatus(move.moveStatus, 0)}</span>
+                  <span>{getStatus(move.moveStatus, index)}</span>
                   {shouldDisplayLuckRate(move.moveStatus) && <span>{`(${getLuckRate(move.moveStatus, index)})`}</span>}
                 </StatusContainer>
               </DataFieldsetFieldWithChild>

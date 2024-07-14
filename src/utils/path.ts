@@ -22,7 +22,9 @@ export const basename = (str: string | undefined, stripExtension?: string): stri
   let finalStr: string | undefined = str;
 
   if (stripExtension) {
-    finalStr = finalStr.replaceAll(stripExtension, '');
+    // result example: /\.png$/i
+    const regex = new RegExp(`\\${stripExtension}$`, 'i');
+    finalStr = str.replace(regex, '');
   }
 
   finalStr = finalStr.replaceAll('\\', '/').split('/').pop();

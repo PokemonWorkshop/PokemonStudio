@@ -8,7 +8,7 @@ import { Input } from '@components/inputs';
 import { DeleteButtonOnlyIcon } from '@components/buttons';
 import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { SelectCustom } from '@components/SelectCustom';
-import { useProjectData } from '@utils/useProjectData';
+import { useProjectData } from '@hooks/useProjectData';
 import { DataMoveTable, NoMoveFound } from './MovepoolTableStyle';
 import { getNameType } from '@utils/getNameType';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
@@ -128,9 +128,12 @@ const deleteMove = (
   pokemonIdentifier: PokemonIdentifierType,
   currentEditedPokemon: StudioCreature
 ) => {
-  const currentEditedForm = currentEditedPokemon.forms[pokemonIdentifier.form];
-  movePool.splice(index, 1);
-  currentEditedForm.moveSet = [...movePool, ...currentEditedForm.moveSet.filter((m) => m.klass !== 'LevelLearnableMove')];
+  const currentEditedForm = currentEditedPokemon.forms.find((f) => f.form === pokemonIdentifier.form);
+  if (!currentEditedForm) return;
+
+  const movePoolEdited = cloneEntity(movePool);
+  movePoolEdited.splice(index, 1);
+  currentEditedForm.moveSet = [...movePoolEdited, ...currentEditedForm.moveSet.filter((m) => m.klass !== 'LevelLearnableMove')];
   return currentEditedPokemon;
 };
 

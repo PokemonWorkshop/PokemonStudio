@@ -4,7 +4,7 @@ import { Editor } from '@components/editor';
 import { useTranslation } from 'react-i18next';
 import { Input, InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { DarkButton, PrimaryButton } from '@components/buttons';
-import { useProjectSavingLanguage } from '@utils/useProjectSavingLanguage';
+import { useProjectSavingLanguage } from '@hooks/useProjectSavingLanguage';
 import { cloneEntity } from '@utils/cloneEntity';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { DashboardLanguageType, useDashboardLanguage } from '../useDashboardLanguage';

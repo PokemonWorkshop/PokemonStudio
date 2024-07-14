@@ -5,9 +5,9 @@ import { ControlBar } from '@components/ControlBar';
 import { SecondaryButtonWithPlusIcon } from '@components/buttons';
 import { SelectGroup } from '@components/selects';
 
-import { useProjectGroups } from '@utils/useProjectData';
-import { useSetCurrentDatabasePath } from '@utils/useSetCurrentDatabasePage';
-import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
+import { useProjectGroups } from '@hooks/useProjectData';
+import { useSetCurrentDatabasePath } from '@hooks/useSetCurrentDatabasePage';
+import { StudioShortcutActions, useShortcut } from '@hooks/useShortcuts';
 
 import { GroupDialogsRef } from './editors/GroupEditorOverlay';
 

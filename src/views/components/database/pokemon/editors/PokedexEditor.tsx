@@ -1,16 +1,20 @@
 import { Editor } from '@components/editor';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { Input, InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
-import { EmbeddedUnitInput } from '@components/inputs/EmbeddedUnitInput';
+import { Input, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
-import { CREATURE_SPECIE_TEXT_ID } from '@modelEntities/creature';
+import { CREATURE_FORM_VALIDATOR, CREATURE_SPECIE_TEXT_ID } from '@modelEntities/creature';
 import { useGetProjectText, useSetProjectText } from '@utils/ReadingProjectText';
-import { useDialogsRef } from '@utils/useDialogsRef';
-import { useCreaturePage } from '@utils/usePage';
+import { useDialogsRef } from '@hooks/useDialogsRef';
+import { useCreaturePage } from '@hooks/usePage';
 import React, { forwardRef, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CreatureTranslationOverlay, TranslationEditorTitle } from './CreatureTranslationOverlay';
 import { useUpdateForm } from './useUpdateForm';
+import { useZodForm } from '@hooks/useZodForm';
+import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
+import { InputFormContainer } from '@components/inputs/InputContainer';
+
+const POKEDEX_EDITOR_SCHEMA = CREATURE_FORM_VALIDATOR.pick({ weight: true, height: true });
 
 export const PokedexEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { t } = useTranslation('database_pokemon');
@@ -20,82 +24,46 @@ export const PokedexEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const setText = useSetProjectText();
   const getText = useGetProjectText();
   const specieRef = useRef<HTMLInputElement>(null);
-  const weightRef = useRef<HTMLInputElement>(null);
-  const heightRef = useRef<HTMLInputElement>(null);
+  const { canClose, getFormData, onInputTouched, defaults, formRef } = useZodForm(POKEDEX_EDITOR_SCHEMA, form);
+  const { EmbeddedUnitInput } = useInputAttrsWithLabel(POKEDEX_EDITOR_SCHEMA, defaults);
+
   const saveTexts = () => {
-    if (!specieRef.current) return;
-
-    setText(CREATURE_SPECIE_TEXT_ID, creature.id, specieRef.current.value);
+    if (specieRef.current) setText(CREATURE_SPECIE_TEXT_ID, creature.id, specieRef.current.value);
   };
 
-  const canClose = () => {
+  const canCloseEditor = () => {
     if (dialogsRef.current?.currentDialog) return false;
-    if (!weightRef.current || !weightRef.current.validity.valid) return false;
-    if (!heightRef.current || !heightRef.current.validity.valid) return false;
-
-    return true;
+    return canClose();
   };
-
   const onClose = () => {
-    if (!specieRef.current || !weightRef.current || !heightRef.current || !canClose()) return;
-    if (dialogsRef.current?.currentDialog) dialogsRef.current.closeDialog();
-
-    const weight = isNaN(weightRef.current.valueAsNumber) ? form.weight : weightRef.current.valueAsNumber;
-    const height = isNaN(heightRef.current.valueAsNumber) ? form.height : heightRef.current.valueAsNumber;
+    const result = canClose() && getFormData();
+    if (!result || !result.success) return;
 
     saveTexts();
-    updateForm({ weight, height });
+    updateForm(result.data);
   };
-  useEditorHandlingClose(ref, onClose, canClose);
+  useEditorHandlingClose(ref, onClose, canCloseEditor);
 
   const handleTranslateClick = (editorTitle: TranslationEditorTitle) => () => {
     saveTexts();
     setTimeout(() => dialogsRef.current?.openDialog(editorTitle), 0);
   };
   const onTranslationOverlayClose = () => {
-    if (!specieRef.current) return;
-    // Since translation Editor sets the texts we can rely on default value that is recomputed on state changes
-    specieRef.current.value = specieRef.current.defaultValue;
+    if (specieRef.current) specieRef.current.value = specieRef.current.defaultValue;
   };
 
   return (
     <Editor type="edit" title={t('pokedex')}>
-      <InputContainer>
-        <InputWithTopLabelContainer>
-          <Label htmlFor="height">{t('height')}</Label>
-          <EmbeddedUnitInput
-            step="0.01"
-            lang="en"
-            unit="m"
-            name="height"
-            type="number"
-            defaultValue={form.height}
-            min={0.01}
-            max={100}
-            ref={heightRef}
-          />
-        </InputWithTopLabelContainer>
-        <InputWithTopLabelContainer>
-          <Label htmlFor="weight">{t('weight')}</Label>
-          <EmbeddedUnitInput
-            unit="kg"
-            step="0.01"
-            lang="en"
-            name="weight"
-            type="number"
-            defaultValue={form.weight}
-            min={0.01}
-            max={1000}
-            ref={weightRef}
-          />
-        </InputWithTopLabelContainer>
+      <InputFormContainer ref={formRef}>
+        <EmbeddedUnitInput name="height" unit="m" label={t('height')} labelLeft onInput={onInputTouched} />
+        <EmbeddedUnitInput name="weight" unit="kg" label={t('weight')} labelLeft onInput={onInputTouched} />
         <InputWithTopLabelContainer>
           <Label htmlFor="species">{t('species')}</Label>
           <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_species')}>
             <Input name="species" type="text" defaultValue={getText(CREATURE_SPECIE_TEXT_ID, creature.id)} ref={specieRef} />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>
-      </InputContainer>
+      </InputFormContainer>
       <CreatureTranslationOverlay creature={creature} onClose={onTranslationOverlayClose} ref={dialogsRef} />
     </Editor>
   );

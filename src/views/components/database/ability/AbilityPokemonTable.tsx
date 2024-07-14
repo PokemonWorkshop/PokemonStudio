@@ -4,15 +4,15 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { DataGrid } from '../dataBlocks';
-import { useProjectAbilities } from '@utils/useProjectData';
+import { useProjectAbilities } from '@hooks/useProjectData';
 import { getNameType } from '@utils/getNameType';
 import { ResourceImage } from '@components/ResourceImage';
 import { StudioAbility } from '@modelEntities/ability';
 import { StudioCreature, StudioCreatureForm } from '@modelEntities/creature';
 import { pokemonIconPath } from '@utils/resourcePath';
 import { useGetEntityNameText, useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
-import { CONTROL, useKeyPress } from '@utils/useKeyPress';
-import { usePokemonShortcutNavigation, useShortcutNavigation } from '@utils/useShortcutNavigation';
+import { CONTROL, useKeyPress } from '@hooks/useKeyPress';
+import { usePokemonShortcutNavigation, useShortcutNavigation } from '@hooks/useShortcutNavigation';
 
 type AbilityPokemonTableProps = {
   ability: StudioAbility;

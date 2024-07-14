@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { useConfigLanguage, useConfigSceneTitle } from '@utils/useProjectConfig';
+import { useConfigSceneTitle } from '@hooks/useProjectConfig';
 import { useTranslation } from 'react-i18next';
 import { PageEditor } from '@components/pages';
 import { Input, InputWithTopLabelContainer, InputWithLeftLabelContainer, Label, Toggle, InputContainer, AudioInput } from '@components/inputs';
@@ -25,7 +25,6 @@ const DurationContainer = styled(InputWithLeftLabelContainer)`
 export const DashboardGameStartTitleScreen = () => {
   const { t } = useTranslation('dashboard_game_start');
   const { projectConfigValues: gameStart, setProjectConfigValues: setGameStart } = useConfigSceneTitle();
-  const { projectConfigValues: language } = useConfigLanguage();
   const currentEditedGameStart = useMemo(() => cloneEntity(gameStart), [gameStart]);
   const [titleScreenData, setTitleScreenData] = useState({ duration: gameStart.bgmDuration, controlWaitTime: gameStart.controlWaitTime });
 
@@ -68,19 +67,17 @@ export const DashboardGameStartTitleScreen = () => {
 
   return (
     <PageEditor editorTitle={t('game_start')} title={t('title_screen')}>
-      {language.choosableLanguageCode.length > 1 && (
-        <InputWithLeftLabelContainer>
-          <Label htmlFor="show-language-selection">{t('show_language_selection')}</Label>
-          <Toggle
-            name="show-language-selection"
-            checked={gameStart.isLanguageSelectionEnabled}
-            onChange={(event) => {
-              currentEditedGameStart.isLanguageSelectionEnabled = event.target.checked;
-              setGameStart(currentEditedGameStart);
-            }}
-          />
-        </InputWithLeftLabelContainer>
-      )}
+      <InputWithLeftLabelContainer>
+        <Label htmlFor="show-language-selection">{t('show_language_selection')}</Label>
+        <Toggle
+          name="show-language-selection"
+          checked={gameStart.isLanguageSelectionEnabled}
+          onChange={(event) => {
+            currentEditedGameStart.isLanguageSelectionEnabled = event.target.checked;
+            setGameStart(currentEditedGameStart);
+          }}
+        />
+      </InputWithLeftLabelContainer>
       <InputWithTopLabelContainer>
         <Label htmlFor="music">{t('music')}</Label>
         {gameStart.bgmName.length === 0 ? (

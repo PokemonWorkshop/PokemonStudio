@@ -1,14 +1,16 @@
 import { EditorWithCollapse } from '@components/editor/Editor';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { Input, InputContainer, InputWithLeftLabelContainer, Label } from '@components/inputs';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import { Tag } from '@components/Tag';
-import { useCreaturePage } from '@utils/usePage';
+import { useCreaturePage } from '@hooks/usePage';
 import styled from 'styled-components';
-
-import React, { forwardRef, useRef, useState } from 'react';
+import React, { forwardRef, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUpdateForm } from './useUpdateForm';
+import { CREATURE_FORM_VALIDATOR } from '@modelEntities/creature';
+import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
+import { useZodForm } from '@hooks/useZodForm';
+import { InputFormContainer } from '@components/inputs/InputContainer';
 
 const TotalBaseContainer = styled.div`
   display: flex;
@@ -29,204 +31,61 @@ const TotalBaseContainer = styled.div`
   }
 `;
 
+const getStat = (stat: string, defaults: Record<string, unknown>, formData: Record<string, unknown>) => {
+  return Number(formData[stat] ? formData[stat] : defaults[stat] ?? 0);
+};
+const calculateTotal = (defaults: Record<string, unknown>, getRawFormData: () => Record<string, unknown>) => {
+  const formData = getRawFormData();
+  return ['baseHp', 'baseAtk', 'baseDfe', 'baseAts', 'baseDfs', 'baseSpd'].reduce((prev, stat) => prev + getStat(stat, defaults, formData), 0);
+};
+
+const STATS_EDITOR_SCHEMA = CREATURE_FORM_VALIDATOR.pick({
+  ...{ baseHp: true, baseAtk: true, baseDfe: true, baseAts: true, baseDfs: true, baseSpd: true },
+  ...{ evHp: true, evAtk: true, evDfe: true, evAts: true, evDfs: true, evSpd: true },
+});
+
 export const StatEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { t } = useTranslation('database_pokemon');
   const { creature, form } = useCreaturePage();
   const updateForm = useUpdateForm(creature, form);
-  const dataRefs = useRef<Record<string, HTMLInputElement | null>>({});
+  const totalRef = useRef<HTMLSpanElement>(null);
+  const { canClose, getFormData, onInputTouched, defaults, getRawFormData, formRef } = useZodForm(STATS_EDITOR_SCHEMA, form);
+  const { Input } = useInputAttrsWithLabel(STATS_EDITOR_SCHEMA, defaults);
 
-  const [baseStats, setBaseStats] = useState({
-    baseHp: form.baseHp,
-    baseAtk: form.baseAtk,
-    baseDfe: form.baseDfe,
-    baseAts: form.baseAts,
-    baseDfs: form.baseDfs,
-    baseSpd: form.baseSpd,
-  });
-
-  const handleBaseStatChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setBaseStats({
-      ...baseStats,
-      [event.target.name]: Number(event.target.value),
-    });
-  };
-
-  const canClose = () => {
-    const evIsValid = Object.values(dataRefs.current).every((value) => value?.validity.valid);
-    const baseStatsAreValid = Object.values(baseStats).every((stat) => stat >= 0 && stat <= 255);
-
-    return evIsValid && baseStatsAreValid;
+  const handleBaseStatChange = () => {
+    if (totalRef.current) totalRef.current.innerText = `${calculateTotal(defaults, getRawFormData)}`;
   };
 
   const onClose = () => {
-    if (
-      !dataRefs.current.evHp ||
-      !dataRefs.current.evAtk ||
-      !dataRefs.current.evDfe ||
-      !dataRefs.current.evAts ||
-      !dataRefs.current.evDfs ||
-      !dataRefs.current.evSpd ||
-      !dataRefs.current.baseHp ||
-      !dataRefs.current.baseAtk ||
-      !dataRefs.current.baseDfe ||
-      !dataRefs.current.baseAts ||
-      !dataRefs.current.baseDfs ||
-      !dataRefs.current.baseSpd ||
-      !canClose()
-    )
-      return;
-
-    const evHp = isNaN(dataRefs.current.evHp.valueAsNumber) ? form.evHp : dataRefs.current.evHp.valueAsNumber;
-    const evAtk = isNaN(dataRefs.current.evAtk.valueAsNumber) ? form.evAtk : dataRefs.current.evAtk.valueAsNumber;
-    const evDfe = isNaN(dataRefs.current.evDfe.valueAsNumber) ? form.evDfe : dataRefs.current.evDfe.valueAsNumber;
-    const evAts = isNaN(dataRefs.current.evAts.valueAsNumber) ? form.evAts : dataRefs.current.evAts.valueAsNumber;
-    const evDfs = isNaN(dataRefs.current.evDfs.valueAsNumber) ? form.evDfs : dataRefs.current.evDfs.valueAsNumber;
-    const evSpd = isNaN(dataRefs.current.evSpd.valueAsNumber) ? form.evSpd : dataRefs.current.evSpd.valueAsNumber;
-
-    const baseHp = isNaN(dataRefs.current.baseHp.valueAsNumber) ? form.baseHp : dataRefs.current.baseHp.valueAsNumber;
-    const baseAtk = isNaN(dataRefs.current.baseAtk.valueAsNumber) ? form.baseAtk : dataRefs.current.baseAtk.valueAsNumber;
-    const baseDfe = isNaN(dataRefs.current.baseDfe.valueAsNumber) ? form.baseDfe : dataRefs.current.baseDfe.valueAsNumber;
-    const baseAts = isNaN(dataRefs.current.baseAts.valueAsNumber) ? form.baseAts : dataRefs.current.baseAts.valueAsNumber;
-    const baseDfs = isNaN(dataRefs.current.baseDfs.valueAsNumber) ? form.baseDfs : dataRefs.current.baseDfs.valueAsNumber;
-    const baseSpd = isNaN(dataRefs.current.baseSpd.valueAsNumber) ? form.baseSpd : dataRefs.current.baseSpd.valueAsNumber;
-
-    updateForm({
-      ...baseStats,
-      evHp,
-      evAtk,
-      evDfe,
-      evAts,
-      evDfs,
-      evSpd,
-      baseHp,
-      baseAtk,
-      baseDfe,
-      baseAts,
-      baseDfs,
-      baseSpd,
-    });
+    const result = canClose() && getFormData();
+    if (result && result.success) updateForm(result.data);
   };
-
-  const calculateTotal = () => {
-    return Object.values(baseStats).reduce((total, stat) => total + stat, 0);
-  };
-
   useEditorHandlingClose(ref, onClose, canClose);
 
   return (
     <EditorWithCollapse type="edit" title={t('stats')}>
-      <InputContainer size="s">
+      <InputFormContainer ref={formRef} size="s">
         <InputGroupCollapse title={t('base_stats')} collapseByDefault>
-          <InputWithLeftLabelContainer>
-            <Label htmlFor="hp">{t('hp')}</Label>
-            <Input
-              name="baseHp"
-              type="number"
-              min={0}
-              max={255}
-              step={1}
-              defaultValue={form.baseHp}
-              onChange={handleBaseStatChange}
-              ref={(i) => (dataRefs.current.baseHp = i)}
-            />
-          </InputWithLeftLabelContainer>
-          <InputWithLeftLabelContainer>
-            <Label htmlFor="atk">{t('attack')}</Label>
-            <Input
-              name="baseAtk"
-              type="number"
-              min={0}
-              max={255}
-              step={1}
-              defaultValue={form.baseAtk}
-              onChange={handleBaseStatChange}
-              ref={(i) => (dataRefs.current.baseAtk = i)}
-            />
-          </InputWithLeftLabelContainer>
-          <InputWithLeftLabelContainer>
-            <Label htmlFor="dfe">{t('defense')}</Label>
-            <Input
-              name="baseDfe"
-              type="number"
-              min={0}
-              max={255}
-              step={1}
-              defaultValue={form.baseDfe}
-              onChange={handleBaseStatChange}
-              ref={(i) => (dataRefs.current.baseDfe = i)}
-            />
-          </InputWithLeftLabelContainer>
-          <InputWithLeftLabelContainer>
-            <Label htmlFor="ats">{t('special_attack')}</Label>
-            <Input
-              name="baseAts"
-              type="number"
-              min={0}
-              max={255}
-              step={1}
-              defaultValue={form.baseAts}
-              onChange={handleBaseStatChange}
-              ref={(i) => (dataRefs.current.baseAts = i)}
-            />
-          </InputWithLeftLabelContainer>
-          <InputWithLeftLabelContainer>
-            <Label htmlFor="dfs">{t('special_defense')}</Label>
-            <Input
-              name="baseDfs"
-              type="number"
-              min={0}
-              max={255}
-              step={1}
-              defaultValue={form.baseDfs}
-              onChange={handleBaseStatChange}
-              ref={(i) => (dataRefs.current.baseDfs = i)}
-            />
-          </InputWithLeftLabelContainer>
-          <InputWithLeftLabelContainer>
-            <Label htmlFor="spd">{t('speed')}</Label>
-            <Input
-              name="baseSpd"
-              type="number"
-              min={0}
-              max={255}
-              step={1}
-              defaultValue={form.baseSpd}
-              onChange={handleBaseStatChange}
-              ref={(i) => (dataRefs.current.baseSpd = i)}
-            />
-          </InputWithLeftLabelContainer>
+          <Input name="baseHp" label={t('hp')} labelLeft onInput={onInputTouched} onChange={handleBaseStatChange} />
+          <Input name="baseAtk" label={t('attack')} labelLeft onInput={onInputTouched} onChange={handleBaseStatChange} />
+          <Input name="baseDfe" label={t('defense')} labelLeft onInput={onInputTouched} onChange={handleBaseStatChange} />
+          <Input name="baseAts" label={t('special_attack')} labelLeft onInput={onInputTouched} onChange={handleBaseStatChange} />
+          <Input name="baseDfs" label={t('special_defense')} labelLeft onInput={onInputTouched} onChange={handleBaseStatChange} />
+          <Input name="baseSpd" label={t('speed')} labelLeft onInput={onInputTouched} onChange={handleBaseStatChange} />
           <TotalBaseContainer>
             <span className="title">{t('total')}</span>
-            <Tag>{`${calculateTotal()}`}</Tag>
+            <Tag ref={totalRef}>{`${calculateTotal(defaults, getRawFormData)}`}</Tag>
           </TotalBaseContainer>
         </InputGroupCollapse>
         <InputGroupCollapse title={t('effort_value_ev')} collapseByDefault>
-          <InputWithLeftLabelContainer>
-            <Label htmlFor="ev_hp">{t('hp')}</Label>
-            <Input name="ev_hp" type="number" min={0} max={255} step={1} defaultValue={form.evHp} ref={(i) => (dataRefs.current.evHp = i)} />
-          </InputWithLeftLabelContainer>
-          <InputWithLeftLabelContainer>
-            <Label htmlFor="ev_atk">{t('attack')}</Label>
-            <Input name="ev_atk" type="number" min={0} max={255} step={1} defaultValue={form.evAtk} ref={(i) => (dataRefs.current.evAtk = i)} />
-          </InputWithLeftLabelContainer>
-          <InputWithLeftLabelContainer>
-            <Label htmlFor="ev_dfe">{t('defense')}</Label>
-            <Input name="ev_dfe" type="number" min={0} max={255} step={1} defaultValue={form.evDfe} ref={(i) => (dataRefs.current.evDfe = i)} />
-          </InputWithLeftLabelContainer>
-          <InputWithLeftLabelContainer>
-            <Label htmlFor="ev_ats">{t('special_attack')}</Label>
-            <Input name="ev_ats" type="number" min={0} max={255} step={1} defaultValue={form.evAts} ref={(i) => (dataRefs.current.evAts = i)} />
-          </InputWithLeftLabelContainer>
-          <InputWithLeftLabelContainer>
-            <Label htmlFor="ev_dfs">{t('special_defense')}</Label>
-            <Input name="ev_dfs" type="number" min={0} max={255} step={1} defaultValue={form.evDfs} ref={(i) => (dataRefs.current.evDfs = i)} />
-          </InputWithLeftLabelContainer>
-          <InputWithLeftLabelContainer>
-            <Label htmlFor="ev_spd">{t('speed')}</Label>
-            <Input name="ev_spd" type="number" min={0} max={255} step={1} defaultValue={form.evSpd} ref={(i) => (dataRefs.current.evSpd = i)} />
-          </InputWithLeftLabelContainer>
+          <Input name="evHp" label={t('hp')} labelLeft onInput={onInputTouched} />
+          <Input name="evAtk" label={t('attack')} labelLeft onInput={onInputTouched} />
+          <Input name="evDfe" label={t('defense')} labelLeft onInput={onInputTouched} />
+          <Input name="evAts" label={t('special_attack')} labelLeft onInput={onInputTouched} />
+          <Input name="evDfs" label={t('special_defense')} labelLeft onInput={onInputTouched} />
+          <Input name="evSpd" label={t('speed')} labelLeft onInput={onInputTouched} />
         </InputGroupCollapse>
-      </InputContainer>
+      </InputFormContainer>
     </EditorWithCollapse>
   );
 });

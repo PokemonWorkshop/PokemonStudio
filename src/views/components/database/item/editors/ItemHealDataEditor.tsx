@@ -7,9 +7,9 @@ import { HealingItemCategories, mutateItemToProgressionCategory } from './mutate
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { LOCKED_ITEM_EDITOR, StudioItem, StudioItemStatusCondition } from '@modelEntities/item';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useItemPage } from '@utils/usePage';
+import { useItemPage } from '@hooks/usePage';
 import { cloneEntity } from '@utils/cloneEntity';
-import { useProjectItems } from '@utils/useProjectData';
+import { useProjectItems } from '@hooks/useProjectData';
 
 type ItemType = {
   hpCount?: number;
@@ -77,6 +77,11 @@ export const ItemHealDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
       ...item,
       ...filteredFormData,
     };
+
+    if (newItem.statusList && newItem.statusList.includes('ALL')) {
+      newItem.statusList = Statuses.slice(0, -2);
+    }
+
     setProjectItem({ [item.dbSymbol]: newItem as StudioItem });
   };
 
@@ -181,7 +186,7 @@ export const ItemHealDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
               options={statusesOptions}
               value={healChanges.statusList[0] || '???'}
               onChange={(value) => {
-                const newValue = (item.statusList = (value === 'ALL' ? Statuses.slice(0, -3) : [value]) as [
+                const newValue = (item.statusList = (value === 'ALL' ? Statuses.slice(0, -2) : [value]) as [
                   StudioItemStatusCondition,
                   ...StudioItemStatusCondition[]
                 ]);

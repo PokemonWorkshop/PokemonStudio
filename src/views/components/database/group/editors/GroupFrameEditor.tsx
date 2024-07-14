@@ -25,9 +25,9 @@ import { TranslateInputContainer } from '@components/inputs/TranslateInputContai
 import { useGetEntityNameText, useSetProjectText } from '@utils/ReadingProjectText';
 import { GROUP_NAME_TEXT_ID, GROUP_SYSTEM_TAGS, StudioGroupSystemTag, StudioGroupTool } from '@modelEntities/group';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useGroupPage } from '@utils/usePage';
+import { useGroupPage } from '@hooks/usePage';
 import { useUpdateGroup } from './useUpdateGroup';
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import { GroupTranslationEditorTitle, GroupTranslationOverlay } from './GroupTranslationOverlay';
 import { TextInputError } from '@components/inputs/Input';
 

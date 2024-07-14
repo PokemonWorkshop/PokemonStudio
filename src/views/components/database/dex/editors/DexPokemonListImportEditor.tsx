@@ -5,12 +5,12 @@ import { Editor } from '@components/editor';
 import { useTranslation } from 'react-i18next';
 import { InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 
-import { useProjectDex } from '@utils/useProjectData';
+import { useProjectDex } from '@hooks/useProjectData';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { SelectDex } from '@components/selects';
 import { cloneEntity } from '@utils/cloneEntity';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useDexPage } from '@utils/usePage';
+import { useDexPage } from '@hooks/usePage';
 import { useUpdateDex } from './useUpdateDex';
 
 const DexImportInfo = styled.div`

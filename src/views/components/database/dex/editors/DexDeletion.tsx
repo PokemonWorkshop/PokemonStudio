@@ -2,7 +2,7 @@ import { Deletion } from '@components/deletion';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { useGetEntityNameUsingCSV } from '@utils/ReadingProjectText';
 import { cloneEntity } from '@utils/cloneEntity';
-import { useProjectDex } from '@utils/useProjectData';
+import { useProjectDex } from '@hooks/useProjectData';
 import React, { forwardRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUpdateDex } from './useUpdateDex';

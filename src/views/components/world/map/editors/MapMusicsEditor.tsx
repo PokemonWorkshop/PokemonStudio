@@ -1,7 +1,7 @@
 import React, { forwardRef, useState } from 'react';
 import { EditorWithCollapse } from '@components/editor';
 import { useTranslation } from 'react-i18next';
-import { useMapPage } from '@utils/usePage';
+import { useMapPage } from '@hooks/usePage';
 import { useUpdateMap } from './useUpdateMap';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { FileInput, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';

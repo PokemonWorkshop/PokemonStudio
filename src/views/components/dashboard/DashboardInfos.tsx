@@ -5,8 +5,8 @@ import { DropInput } from '@components/inputs/DropInput';
 import { useTranslation } from 'react-i18next';
 import { PageEditor } from '@components/pages';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
-import { useProjectStudio } from '@utils/useProjectStudio';
-import { useConfigInfos } from '@utils/useProjectConfig';
+import { useProjectStudio } from '@hooks/useProjectStudio';
+import { useConfigInfos } from '@hooks/useProjectConfig';
 import { cloneEntity } from '@utils/cloneEntity';
 import { basename } from '@utils/path';
 

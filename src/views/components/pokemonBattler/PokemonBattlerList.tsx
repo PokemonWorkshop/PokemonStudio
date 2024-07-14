@@ -6,11 +6,12 @@ import { PokemonBattler } from './PokemonBattler';
 import { useTranslation } from 'react-i18next';
 import { StudioGroupEncounter } from '@modelEntities/groupEncounter';
 
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import { PokemonBattlerEditorOverlay } from './editors';
 import type { CurrentBattlerType, PokemonBattlerEditorAndDeletionKeys, PokemonBattlerFrom } from './editors/PokemonBattlerEditorOverlay';
 import { assertUnreachable } from '@utils/assertUnreachable';
-import { useTrainerPage } from '@utils/usePage';
+import { useTrainerPage } from '@hooks/usePage';
+import { Tag } from '@components/Tag';
 
 type PokemonBattlerListProps = {
   title: string;
@@ -42,7 +43,7 @@ export const PokemonBattlerListHeader = styled.div`
     ${({ theme }) => theme.fonts.titlesHeadline6}
   }
 
-  .buttons {
+  .header {
     display: flex;
     gap: 12px;
 
@@ -56,7 +57,7 @@ export const PokemonBattlerListHeader = styled.div`
   }
 
   @media ${({ theme }) => theme.breakpoints.dataBox422} {
-    .buttons {
+    .header {
       .button-import-full {
         display: none;
       }
@@ -99,11 +100,16 @@ export const PokemonBattlerList = ({ title, encounters, disabledImport, from }: 
     return '';
   };
 
+  const totalEncounterChance = encounters.map((encounter) => encounter.randomEncounterChance).reduce((a, b) => a + b, 0);
+
   return (
     <PokemonBattlerListComponent size="full" data-noactive>
       <PokemonBattlerListHeader>
-        <div className="title">{title}</div>
-        <div className="buttons">
+        <div className="header">
+          <div className="title">{title}</div>
+          {totalEncounterChance > 0 && from === 'group' && <Tag className="chance">{`${totalEncounterChance}%`}</Tag>}
+        </div>
+        <div className="header">
           <div className="button-import-full">
             <DarkButton onClick={() => dialogsRef.current?.openDialog('import')} disabled={disabledImport}>
               {importText()}

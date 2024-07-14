@@ -5,9 +5,11 @@ import { BaseIcon } from '@components/icons/BaseIcon';
 import SvgContainer from '@components/icons/BaseIcon/SvgContainer';
 
 import { BaseButtonStyle } from './GenericButtons';
-import { useProjectSave } from '@utils/useProjectSave';
+import { useProjectSave } from '@hooks/useProjectSave';
 import { useLoaderRef } from '@utils/loaderContext';
-import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
+import { StudioShortcutActions, useShortcut } from '@hooks/useShortcuts';
+import { useDialogsRef } from '@hooks/useDialogsRef';
+import { SaveEditorAndDeletionKeys, SaveEditorOverlay } from '@components/save/SaveEditorOverlay';
 
 const SaveProjectButtonContainer = styled(BaseButtonStyle)`
   display: inline-block;
@@ -52,37 +54,41 @@ const Badge = styled.div<BadgeProps>`
 `;
 
 export const SaveProjectButton = () => {
-  const { isDataToSave, save } = useProjectSave();
+  const { isDataToSave, isMapsToSave, save } = useProjectSave();
   const loaderRef = useLoaderRef();
+  const dialogsRef = useDialogsRef<SaveEditorAndDeletionKeys>();
+
+  const handleSave = async () => {
+    const skipMapWarning = localStorage.getItem('neverRemindMeMapModification') === 'true';
+    if (skipMapWarning || !isMapsToSave) {
+      save(
+        () => loaderRef.current.close(),
+        ({ errorMessage }) => loaderRef.current.setError('saving_project_error', errorMessage)
+      );
+      return;
+    }
+    dialogsRef.current?.openDialog('map_warning', true);
+  };
 
   const shortcutMap = useMemo<StudioShortcutActions>(() => {
     // No shortcut if an editor is opened and no data to save
     const isShortcutEnabled = () => !document.querySelector('#dialogs')?.textContent && isDataToSave;
     return {
-      save: () =>
-        isShortcutEnabled() &&
-        save(
-          () => loaderRef.current.close(),
-          ({ errorMessage }) => loaderRef.current.setError('saving_project_error', errorMessage)
-        ),
+      save: () => isShortcutEnabled() && handleSave(),
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [save, isDataToSave]);
   useShortcut(shortcutMap);
 
-  const handleSave = async () => {
-    save(
-      () => loaderRef.current.close(),
-      ({ errorMessage }) => loaderRef.current.setError('saving_project_error', errorMessage)
-    );
-  };
-
   return (
-    <SaveProjectButtonContainer onClick={handleSave} disabled={!isDataToSave}>
-      <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="save" disabled={!isDataToSave} />
-      <BadgeContainer>
-        <Badge visible={isDataToSave} />
-      </BadgeContainer>
-    </SaveProjectButtonContainer>
+    <>
+      <SaveProjectButtonContainer onClick={handleSave} disabled={!isDataToSave}>
+        <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="save" disabled={!isDataToSave} />
+        <BadgeContainer>
+          <Badge visible={isDataToSave} />
+        </BadgeContainer>
+      </SaveProjectButtonContainer>
+      <SaveEditorOverlay ref={dialogsRef} />
+    </>
   );
 };

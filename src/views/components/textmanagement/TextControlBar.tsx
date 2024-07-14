@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { ControlBar } from '@components/ControlBar';
 import { SelectText } from '@components/selects';
 import { TextDialogsRef } from './editors/TextEditorOverlay';
-import { StudioShortcutActions, useShortcut } from '@utils/useShortcuts';
+import { StudioShortcutActions, useShortcut } from '@hooks/useShortcuts';
 import styled from 'styled-components';
-import { useTextInfos } from '@utils/useTextInfos';
+import { useTextInfos } from '@hooks/useTextInfos';
 import { useNavigate } from 'react-router-dom';
 
 const NEW_BREAKPOINT = 'screen and (max-width: 1100px)';
@@ -31,7 +31,14 @@ export const TextControlBar = ({ dialogsRef }: TextControlBarProps) => {
   // Definition of the control bar shortcuts
   const shortcutMap = useMemo<StudioShortcutActions>(() => {
     // No shortcut if an editor is opened
-    const isShortcutEnabled = () => dialogsRef?.current?.currentDialog === undefined;
+    const isShortcutEnabled = () => {
+      const activeElement = document.activeElement;
+      if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA')) return false;
+      if (dialogsRef?.current?.currentDialog !== undefined) return false;
+
+      return true;
+    };
+
     return {
       db_previous: () => isShortcutEnabled() && setSelectedDataIdentifier({ textInfo: getPreviousFileId() }),
       db_next: () => isShortcutEnabled() && setSelectedDataIdentifier({ textInfo: getNextFileId() }),

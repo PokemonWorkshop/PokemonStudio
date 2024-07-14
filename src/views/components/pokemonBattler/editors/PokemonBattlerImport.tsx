@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -13,8 +13,8 @@ import { useUpdateGroup } from '@components/database/group/editors/useUpdateGrou
 
 import { cloneEntity } from '@utils/cloneEntity';
 import { convertShowdownToStudio } from '@utils/showdownUtils';
-import { useProjectGroups, useProjectTrainers } from '@utils/useProjectData';
-import { useGroupPage, useTrainerPage } from '@utils/usePage';
+import { useProjectGroups, useProjectTrainers } from '@hooks/useProjectData';
+import { useGroupPage, useTrainerPage } from '@hooks/usePage';
 
 import { ProjectData } from '@src/GlobalStateProvider';
 import { StudioGroup } from '@modelEntities/group';
@@ -54,15 +54,26 @@ const getFirstDbSymbol = (
   groups: ProjectData['groups'],
   trainers: ProjectData['trainers'],
   group: StudioGroup,
-  trainer: StudioTrainer
+  trainer: StudioTrainer | null
 ) => {
-  const getFirstSymbol = (entities: ProjectData['groups'] | ProjectData['trainers'], currentSymbol: DbSymbol) =>
-    Object.entries(entities)
-      .map(([value, data]) => ({ value, index: data.id }))
-      .filter(({ value }) => value !== currentSymbol)
-      .sort((a, b) => a.index - b.index)[0].value;
+  const getFirstSymbol = (entities: ProjectData['groups'] | ProjectData['trainers'], currentSymbol: DbSymbol) => {
+    if (!entities) return '__undef__';
 
-  return from === 'group' ? getFirstSymbol(groups, group.dbSymbol) : from === 'trainer' ? getFirstSymbol(trainers, trainer.dbSymbol) : '__undef__';
+    const entries = Object.entries(entities)
+      .map(([value, data]) => ({ value, index: data.id }))
+      .filter(({ value }) => value !== currentSymbol);
+    if (entries.length === 0) return '__undef__';
+
+    return entries.sort((a, b) => a.index - b.index)[0].value;
+  };
+
+  if (from === 'group') {
+    return getFirstSymbol(groups, group.dbSymbol);
+  } else if (from === 'trainer' && trainer) {
+    return getFirstSymbol(trainers, trainer.dbSymbol);
+  } else {
+    return '__undef__';
+  }
 };
 
 export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattlerImportProps>(({ closeDialog, from }, ref) => {
@@ -77,11 +88,12 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
   const { group } = useGroupPage();
 
   const updateTrainer = useUpdateTrainer(trainer);
+  const currentTrainer = useMemo(() => (trainer ? cloneEntity(trainer) : null), [trainer]);
   const updateGroup = useUpdateGroup(group);
 
-  const [selectedEntity, setSelectedEntity] = useState(getFirstDbSymbol(from, groups, trainers, group, trainer));
+  const [selectedEntity, setSelectedEntity] = useState(getFirstDbSymbol(from, groups, trainers, group, currentTrainer));
   const [showdownEncounter, setShowdownEncounter] = useState<StudioGroupEncounter[]>([]);
-  const [dropDownSelection, setDropDownSelection] = useState<string>('default');
+  const [dropDownSelection, setDropDownSelection] = useState<string>(selectedEntity !== '__undef__' ? 'default' : 'showdown');
   const [override, setOverride] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
 
@@ -100,7 +112,7 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
     if (convertedTeam.length === 0) {
       setShowdownEncounter([]);
       return setError(t('error_message'));
-    } else if (!isGroup && !override && convertedTeam.length + trainer.party.length > 6) {
+    } else if (!isGroup && !override && currentTrainer && convertedTeam.length + currentTrainer.party.length > 6) {
       setError(tTrainer('party_length_limit'));
     } else {
       setError('');
@@ -111,9 +123,9 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
 
   const handleImportTypeChange = (type: string) => {
     setDropDownSelection(type);
-    if (type === 'default') {
+    if (type === 'default' && !isGroup) {
       const lengthPartyToImport = trainers[selectedEntity].party.length;
-      setError(override || trainer.party.length + lengthPartyToImport <= 6 ? '' : tTrainer('party_length_limit'));
+      setError(override || (currentTrainer && currentTrainer.party.length + lengthPartyToImport <= 6) ? '' : tTrainer('party_length_limit'));
     } else {
       setError('');
       setShowdownEncounter([]);
@@ -122,16 +134,17 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
 
   const canImport = (override: boolean) => {
     if (isGroup || (override && dropDownSelection === 'default')) return true;
+    if (!currentTrainer) return false;
 
     if (dropDownSelection === 'showdown') {
       const isInputValid = showdownEncounter.length > 0;
-      const exceedsPartyLimit = showdownEncounter.length + trainer.party.length > 6;
+      const exceedsPartyLimit = showdownEncounter.length + currentTrainer.party.length > 6;
 
       return isInputValid && (!exceedsPartyLimit || override);
     }
 
     const lengthPartyToImport = trainers[selectedEntity].party.length;
-    return trainer.party.length + lengthPartyToImport <= 6;
+    return currentTrainer.party.length + lengthPartyToImport <= 6;
   };
 
   const handleSetOverride = (newValue: boolean) => {
@@ -149,11 +162,11 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
     const handleImport = (entityType: string, newEntities: StudioGroupEncounter[]) => {
       const updateFunction = entityType === 'group' ? updateGroup : updateTrainer;
       const entityKey = entityType === 'group' ? 'encounters' : 'party';
-      const currentEntities = entityType === 'group' ? group.encounters : trainer.party;
+      const currentEntities = entityType === 'group' ? group.encounters : currentTrainer?.party;
 
       if (override) {
         updateFunction({ [entityKey]: newEntities });
-      } else {
+      } else if (currentEntities) {
         const clonedEntities = cloneEntity(currentEntities);
         clonedEntities.push(...newEntities);
         updateFunction({ [entityKey]: clonedEntities });
@@ -179,10 +192,12 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
           <ImportInfo>{t('battler_import_info')}</ImportInfo>
           {dropDownSelection === 'showdown' && <ImportInfo>{t('battler_import_details')}</ImportInfo>}
         </ImportInfoContainer>
-        <InputWithTopLabelContainer>
-          <Label htmlFor={from}>{t('import_battler')}</Label>
-          <StudioDropDown value={dropDownSelection} options={dropDownOptions} onChange={handleImportTypeChange} />
-        </InputWithTopLabelContainer>
+        {selectedEntity !== '__undef__' && (
+          <InputWithTopLabelContainer>
+            <Label htmlFor={from}>{t('import_battler')}</Label>
+            <StudioDropDown value={dropDownSelection} options={dropDownOptions} onChange={handleImportTypeChange} />
+          </InputWithTopLabelContainer>
+        )}
 
         {dropDownSelection === 'default' && (
           <InputWithTopLabelContainer>
@@ -190,7 +205,7 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
             <SelectComponent
               dbSymbol={selectedEntity}
               onChange={(dbSymbol) => setSelectedEntity(dbSymbol)}
-              filter={(dbSymbol) => dbSymbol !== (isGroup ? group.dbSymbol : trainer.dbSymbol)}
+              filter={(dbSymbol) => dbSymbol !== (isGroup ? group.dbSymbol : currentTrainer?.dbSymbol)}
               noLabel
             />
           </InputWithTopLabelContainer>

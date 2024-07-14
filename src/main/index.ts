@@ -10,7 +10,7 @@ import { getPSDKBinariesPath, getPSDKVersion } from '../services/getPSDKVersion'
 import { getLastPSDKVersion } from '../services/getLastPSDKVersion';
 import { updatePSDK } from '../services/updatePSDK';
 import { startPSDK, startPSDKDebug, startPSDKTags, startPSDKWorldmap } from '../services/startPSDK';
-import { registerElectronProtocolWhenAppRead } from '../utils/electronProtocol';
+import { registerElectronProtocolWhenAppRead } from '@utils/electronProtocol';
 import { registerGetStudioVersion } from '../backendTasks/getStudioVersion';
 import { registerChooseProjectFileToOpen } from '../backendTasks/chooseProjectFileToOpen';
 import { registerWriteProjectMetadata } from '../backendTasks/writeProjectMetadata';

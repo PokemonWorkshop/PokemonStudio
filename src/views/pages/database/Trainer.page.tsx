@@ -8,9 +8,9 @@ import { TrainerControlBar, TrainerDialog, TrainerFrame } from '@components/data
 import { PokemonBattlerList } from '@components/pokemonBattler';
 import { BagEntryList } from '@components/bagEntry';
 
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import { TrainerEditorAndDeletionKeys, TrainerEditorOverlay } from '@components/database/trainer/editors/TrainerEditorOverlay';
-import { useTrainerPage } from '@utils/usePage';
+import { useTrainerPage } from '@hooks/usePage';
 import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';
 
 export const TrainerPage = () => {
@@ -37,12 +37,7 @@ export const TrainerPage = () => {
             <TrainerDialog trainer={trainer} dialogsRef={dialogsRef} />
           </DataBlockWrapper>
           <DataBlockWrapper>
-            <PokemonBattlerList
-              title={t('trainer_party', { name: trainerName })}
-              encounters={trainer.party}
-              disabledImport={cannotDelete}
-              from="trainer"
-            />
+            <PokemonBattlerList title={t('trainer_party', { name: trainerName })} encounters={trainer.party} disabledImport={false} from="trainer" />
             <BagEntryList
               title={t('trainer_bag', { name: trainerName })}
               bagEntries={trainer.bagEntries}

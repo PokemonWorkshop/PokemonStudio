@@ -1,6 +1,6 @@
 import { StudioItem } from '@modelEntities/item';
 import { cloneEntity } from '@utils/cloneEntity';
-import { useProjectItems } from '@utils/useProjectData';
+import { useProjectItems } from '@hooks/useProjectData';
 import { useCallback } from 'react';
 
 export const useUpdateItem = (item: StudioItem) => {

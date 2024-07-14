@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useConfigSceneTitle } from '@utils/useProjectConfig';
+import { useConfigSceneTitle } from '@hooks/useProjectConfig';
 import { PageEditor } from '@components/pages';
 import { Input, InputWithLeftLabelContainer, Label, Toggle } from '@components/inputs';
 import { cleanNaNValue } from '@utils/cleanNaNValue';

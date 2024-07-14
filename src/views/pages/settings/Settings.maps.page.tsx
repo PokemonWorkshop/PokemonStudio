@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageEditor, PageTemplate } from '@components/pages';
 import { InputWithLeftLabelContainer, Label, Toggle, InputWithTopLabelContainer, DropInput, FileInput } from '@components/inputs';
-import { useProjectStudio } from '@utils/useProjectStudio';
+import { useProjectStudio } from '@hooks/useProjectStudio';
 import styled from 'styled-components';
 import { Link } from '@components/Link';
 import LinkStyle from '@components/Link/LinkStyle';
 import { getSetting, updateSettings } from '@utils/settings';
 import { SettingsEditorAndDeletionKeys, SettingsEditorOverlay } from '@components/settings/editors/SettingsEditorOverlay';
-import { useDialogsRef } from '@utils/useDialogsRef';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import { basename } from '@utils/path';
 import { showNotification } from '@utils/showNotification';
 
