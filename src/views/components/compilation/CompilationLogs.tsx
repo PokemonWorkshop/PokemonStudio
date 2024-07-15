@@ -143,8 +143,8 @@ export const CompilationLogs = ({ configuration }: CompilationLogsProps) => {
 
     window.api.saveCompilationLogs(
       { projectPath: configuration.projectPath, logs: logsRef.current.textContent || '' },
-      () => showNotification('success', t('save_logs'), t('save_logs_success')),
-      () => showNotification('danger', t('save_logs'), t('save_logs_failure'))
+      () => showNotification('success', t('save_logs_title_success'), t('save_logs_success')),
+      () => showNotification('danger', t('save_logs_title_failure'), t('save_logs_failure'))
     );
   };
 
