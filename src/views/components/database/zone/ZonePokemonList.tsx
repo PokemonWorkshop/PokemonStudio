@@ -6,6 +6,8 @@ import styled from 'styled-components';
 import { ResourceImage } from '@components/ResourceImage';
 import { pokemonIconPath } from '@utils/path';
 import { useTranslation } from 'react-i18next';
+import { CONTROL, useKeyPress } from '@hooks/useKeyPress';
+import { usePokemonShortcutNavigation } from '@hooks/useShortcutNavigation';
 
 type PokemonZoneProps = {
   pokemon: StudioGroupEncounter;
@@ -20,6 +22,8 @@ const PokemonZoneListContainer = styled.div`
   & img {
     width: 32px;
     height: 32px;
+    object-fit: cover;
+    object-position: 0 100%;
   }
 
   & div.name-form {
@@ -32,6 +36,17 @@ const PokemonZoneListContainer = styled.div`
       ${({ theme }) => theme.fonts.normalRegular}
       white-space: nowrap;
     }
+
+    & span.error {
+      ${({ theme }) => theme.fonts.normalMedium};
+      color: ${({ theme }) => theme.colors.dangerBase};
+    }
+
+    & .clickable {
+    :hover {
+      cursor: pointer;
+      text-decoration: underline;
+    }
   }
 `;
 
@@ -39,7 +54,9 @@ export const ZonePokemonList = ({ pokemon }: PokemonZoneProps) => {
   const { projectDataValues: species } = useProjectPokemon();
   const getEntityName = useGetEntityNameText();
   const specie = species[pokemon.specie];
-  const { t } = useTranslation('database_zones');
+  const { t } = useTranslation(['database_zones', 'database_pokemon']);
+  const isClickable: boolean = useKeyPress(CONTROL);
+  const shortcutPokemonNavigation = usePokemonShortcutNavigation();
 
   const iconSelector = (pokemon: StudioGroupEncounter) => {
     const isFemale = pokemon.expandPokemonSetup.find((setup) => setup.type === 'gender')?.value === 2;
@@ -51,11 +68,11 @@ export const ZonePokemonList = ({ pokemon }: PokemonZoneProps) => {
 
   const getForm = (pokemon: StudioGroupEncounter) => {
     if (pokemon.form === 0) {
-      return t('default_form');
+      return t('database_zones:default_form');
     } else if (pokemon.form >= 30) {
-      return `${t('mega_evolution')} ${pokemon.form - 29}`;
+      return `${t('database_zones:mega_evolution')} ${pokemon.form - 29}`;
     } else {
-      return `${t('form')} ${pokemon.form}`;
+      return `${t('database_zones:form')} ${pokemon.form}`;
     }
   };
 
@@ -70,7 +87,16 @@ export const ZonePokemonList = ({ pokemon }: PokemonZoneProps) => {
         <ResourceImage imagePathInProject="graphics/pokedex/pokeicon/000.png" />
       )}
       <div className="name-form">
-        <span>{specie ? getEntityName(specie) : 'Unknown'}</span>
+        {specie ? (
+          <span
+            onClick={isClickable ? () => shortcutPokemonNavigation(specie.dbSymbol, pokemon.form) : undefined}
+            className={isClickable ? 'clickable' : undefined}
+          >
+            {getEntityName(specie)}
+          </span>
+        ) : (
+          <span className="error">{t('database_pokemon:pokemon_deleted')}</span>
+        )}
         <span className="form">{getForm(pokemon)}</span>
       </div>
     </PokemonZoneListContainer>
