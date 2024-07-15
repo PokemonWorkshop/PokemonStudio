@@ -45,6 +45,7 @@ import type { GeneratingMapOverviewInput } from './backendTasks/generatingMapOve
 import type { OpenCompilationWindowInput } from './backendTasks/openCompilationWindow';
 import type { GetCompilationConfigOutput } from './backendTasks/getCompilationConfig';
 import type { StartCompilationInput, StartCompilationOutput } from './backendTasks/startCompilation';
+import type { SaveCompilationLogsInput } from './backendTasks/saveCompilationLogs';
 
 contextBridge.exposeInMainWorld('api', {
   isDev: process.env.NODE_ENV === 'development',
@@ -152,6 +153,7 @@ contextBridge.exposeInMainWorld('api', {
   openCompilationWindow: defineBackendTask(ipcRenderer, 'open-compilation-window'),
   getCompilationConfig: defineBackendTask(ipcRenderer, 'get-compilation-config'),
   startCompilation: defineBackendTask(ipcRenderer, 'start-compilation'),
+  saveCompilationLogs: defineBackendTask(ipcRenderer, 'save-compilation-logs'),
 });
 
 type AnyObj = Record<string, never>;
@@ -242,6 +244,7 @@ declare global {
       openCompilationWindow: BackendTaskWithGenericErrorAndNoProgress<OpenCompilationWindowInput, AnyObj>;
       getCompilationConfig: BackendTaskWithGenericErrorAndNoProgress<AnyObj, GetCompilationConfigOutput>;
       startCompilation: BackendTaskWithGenericError<StartCompilationInput, StartCompilationOutput, GenericBackendProgress>;
+      saveCompilationLogs: BackendTaskWithGenericErrorAndNoProgress<SaveCompilationLogsInput, AnyObj>;
     };
   }
 }

@@ -8,6 +8,8 @@ import { ReactComponent as SuccessIcon } from '@assets/icons/global/success-onbo
 import { useShowItemInFolder } from '@src/hooks/useShowItemInFolder';
 import { join } from '@utils/path';
 import { BlockProgressBar } from '@components/progress-bar/ProgressBar';
+import { showNotification } from '@utils/showNotification';
+import { useLoaderRef } from '@utils/loaderContext';
 
 type ProgressBarCompilationContainerProps = {
   isError: boolean;
@@ -125,6 +127,7 @@ export const CompilationLogs = ({ configuration }: CompilationLogsProps) => {
   const { t } = useTranslation('compilation');
   const logsRef = useRef<HTMLTextAreaElement>(null);
   const progressBarRef = useRef<HTMLProgressElement>(null);
+  const loaderRef = useLoaderRef();
   const [exitCode, setExitCode] = useState<number | undefined>(undefined);
   const showItemInFolder = useShowItemInFolder();
   const isError = exitCode !== undefined && exitCode > 0;
@@ -138,8 +141,11 @@ export const CompilationLogs = ({ configuration }: CompilationLogsProps) => {
   const onClickSaveLogs = () => {
     if (!logsRef.current) return;
 
-    // TODO: send the logs to the backend
-    //logsRef.current.textContent
+    window.api.saveCompilationLogs(
+      { projectPath: configuration.projectPath, logs: logsRef.current.textContent || '' },
+      () => showNotification('success', t('save_logs'), t('save_logs_success')),
+      () => showNotification('danger', t('save_logs'), t('save_logs_failure'))
+    );
   };
 
   const onClickShowFolder = () => {
@@ -154,7 +160,9 @@ export const CompilationLogs = ({ configuration }: CompilationLogsProps) => {
     window.api.startCompilation(
       { configuration },
       ({ exitCode }) => setExitCode(exitCode),
-      () => {},
+      ({ errorMessage }) => {
+        loaderRef.current.setError('compilation_project_error', errorMessage);
+      },
       ({ stepText, step }) => {
         if (logsRef.current) {
           logsRef.current.textContent = logsRef.current.textContent + stepText;
