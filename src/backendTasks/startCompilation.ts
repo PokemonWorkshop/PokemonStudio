@@ -94,6 +94,7 @@ const compilationProcess = async (event: IpcMainEvent, channels: ChannelNames, c
     if (!childProcess) return;
 
     log.warn('Compilation process was interrupted because the window has been closed');
+    childProcess?.removeAllListeners('exit');
     childProcess?.kill();
     clearChildProcess();
   });
