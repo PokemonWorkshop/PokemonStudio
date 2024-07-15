@@ -6,11 +6,12 @@ import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import { getPSDKBinariesPath } from '@services/getPSDKVersion';
 import { INFO_CONFIG_VALIDATOR } from '@modelEntities/config';
 import { parseJSON } from '@utils/json/parse';
+import { PROJECT_VALIDATOR } from '@modelEntities/project';
+import windowManager from './windowManager';
 import { existsSync } from 'fs';
 import fsPromise from 'fs/promises';
 import path from 'path';
 import log from 'electron-log';
-import { PROJECT_VALIDATOR } from '@modelEntities/project';
 
 export type StartCompilationInput = {
   configuration: StudioCompilation;
@@ -24,6 +25,7 @@ let stdOutRemaining = '';
 let loggerBuffer: string[] = [];
 const BUFFER_LIMIT = 10; // The data is send to the front-end when the loggerBuffer reaches or exceeds the limit
 let progression = 0;
+let isError = false;
 
 const getSpawnArgs = (rubyPath: string, projectPath: string, ...args: string[]): [string, string[]] => {
   if (process.platform === 'win32') {
@@ -58,6 +60,7 @@ const clearChildProcess = () => {
   childProcess = undefined;
   stdOutRemaining = '';
   progression = 0;
+  isError = false;
 };
 
 const updateInfosConfig = async (infosConfigPath: string, configuration: StudioCompilation) => {
@@ -84,7 +87,16 @@ const updateProjectStudio = async (projectStudioFilePath: string, configuration:
 };
 
 const compilationProcess = async (event: IpcMainEvent, channels: ChannelNames, configuration: StudioCompilation): Promise<number> => {
-  clearChildProcess();
+  const windowCompilation = windowManager.getWindowByName('compilation');
+  if (!windowCompilation) throw new Error('The compilation window does not exist');
+
+  windowCompilation.on('closed', () => {
+    if (!childProcess) return;
+
+    log.warn('Compilation process was interrupted because the window has been closed');
+    childProcess?.kill();
+    clearChildProcess();
+  });
 
   return new Promise((resolve, reject) => {
     const psdkBinaries = `${getPSDKBinariesPath()}/`;
@@ -100,9 +112,8 @@ const compilationProcess = async (event: IpcMainEvent, channels: ChannelNames, c
     });
 
     childProcess.stderr.on('data', (chunk) => {
-      sendProgress(event, channels, { step: progression, total: 0, stepText: getLoggerBuffer() });
-      sendProgress(event, channels, { step: progression, total: 0, stepText: chunk.toString() });
-      resolve(1);
+      loggerBuffer.push(chunk);
+      isError = true;
     });
 
     childProcess.stdout.on('data', (chunk) => {
@@ -124,11 +135,14 @@ const compilationProcess = async (event: IpcMainEvent, channels: ChannelNames, c
       // Handle process disconnection
       if (arrData.some((line) => line.startsWith('Compilation done!'))) {
         sendProgress(event, channels, { step: ++progression, total: 0, stepText: getLoggerBuffer() });
-        resolve(0);
       }
     });
 
-    childProcess.on('exit', () => clearChildProcess());
+    childProcess.on('exit', () => {
+      sendProgress(event, channels, { step: progression, total: 0, stepText: getLoggerBuffer() });
+      resolve(isError ? 1 : 0);
+      clearChildProcess();
+    });
     childProcess.on('error', (error) => {
       reject(error);
     });
