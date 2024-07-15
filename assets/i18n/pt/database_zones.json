@@ -57,5 +57,10 @@
   "zone_group_import_info": "Você pode importar os grupos de uma outra zona.",
   "import_group_from": "Importar os grupos de",
   "replace_group": "Remplaçar os grupos",
-  "to_import": "Importar"
+  "to_import": "Importar",
+  "no_pokemon": "Nenhum Pokémon",
+  "zone_pokemon": "Pokémons da zona",
+  "form": "Forma",
+  "default_form": "Forma padrão",
+  "mega_evolutions": "Mega Evoluções"
 }
