@@ -46,9 +46,7 @@ The PSDK binaries are important, they let Studio start PSDK projects and perform
 
 To install them follow those steps:
 
-1. Download the binary archive from
-
-- https://download.psdk.pokemonworkshop.com/binaries/ (Windows, Linux & MacOS M1+)
+1. Download the [Pokémon SDK binary archive](https://github.com/PokemonWorkshop/PokemonSDKBinaries/releases) (Windows, Linux & MacOS M1+).
 
 2. Extract the content of the archive to the psdk-binaries folder.
 
