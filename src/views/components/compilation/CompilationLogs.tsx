@@ -1,4 +1,3 @@
-import styled from 'styled-components';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LoggerInput } from '@components/inputs';
@@ -7,110 +6,9 @@ import type { StudioCompilation } from './CompilationDialogSchema';
 import { ReactComponent as SuccessIcon } from '@assets/icons/global/success-onboarding.svg';
 import { useShowItemInFolder } from '@src/hooks/useShowItemInFolder';
 import { join } from '@utils/path';
-import { BlockProgressBar } from '@components/progress-bar/ProgressBar';
 import { showNotification } from '@utils/showNotification';
 import { useLoaderRef } from '@utils/loaderContext';
-
-type ProgressBarCompilationContainerProps = {
-  isError: boolean;
-};
-
-const ProgressBarCompilationContainer = styled(BlockProgressBar)<ProgressBarCompilationContainerProps>`
-  justify-content: initial;
-  gap: 12px;
-  width: 100%;
-
-  .progress {
-    width: 100%;
-    height: 12px;
-  }
-
-  .progress::-webkit-progress-value {
-    background: ${({ theme, isError }) => (isError ? theme.colors.dangerBase : theme.colors.successBase)};
-  }
-
-  .progress-message {
-    ${({ theme, isError }) => (isError ? theme.fonts.normalMedium : theme.fonts.normalRegular)}
-    color: ${({ theme, isError }) => (isError ? theme.colors.dangerBase : theme.colors.text100)};
-  }
-
-  .platform {
-    ${({ theme }) => theme.fonts.normalMedium}
-    color: ${({ theme }) => theme.colors.text100};
-  }
-`;
-
-const CompilationLogsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  user-select: none;
-  height: 100%;
-  width: 100%;
-
-  .title {
-    ${({ theme }) => theme.fonts.titlesHeadline6};
-    ${({ theme }) => theme.colors.text100};
-  }
-
-  .logs {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    height: 100%;
-
-    ${LoggerInput} {
-      height: 100%;
-      overflow-y: scroll;
-    }
-
-    .actions {
-      display: flex;
-      flex-direction: row;
-      gap: 8px;
-      justify-content: flex-end;
-    }
-  }
-
-  .success {
-    display: flex;
-    gap: 16px;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 16px 8px 16px;
-    border-radius: 8px;
-    border: 1px solid ${({ theme }) => theme.colors.successBase};
-    background-color: ${({ theme }) => theme.colors.successSoft};
-    min-height: 56px;
-    box-sizing: border-box;
-
-    .icon-message {
-      display: flex;
-      gap: 16px;
-      color: ${({ theme }) => theme.colors.successBase};
-      align-items: center;
-
-      .message {
-        ${({ theme }) => theme.fonts.normalRegular}
-        color: ${({ theme }) => theme.colors.text100};
-      }
-    }
-
-    .show-folder {
-      ${({ theme }) => theme.fonts.normalMedium}
-      color: ${({ theme }) => theme.colors.successBase};
-
-      :hover {
-        cursor: pointer;
-      }
-    }
-  }
-
-  .error {
-    ${({ theme }) => theme.fonts.normalRegular}
-    color: ${({ theme }) => theme.colors.dangerBase};
-  }
-`;
+import { CompilationLogsContainer, ProgressBarCompilationContainer } from './CompilationStyle';
 
 const getPlatform = () => {
   const platform = window.api.platform;

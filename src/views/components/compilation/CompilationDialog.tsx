@@ -4,7 +4,7 @@ import { useConfigInfos } from '@hooks/useProjectConfig';
 import { StudioInfoConfig } from '@modelEntities/config';
 import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 import { ClearButtonOnlyIcon, PrimaryButton } from '@components/buttons';
-import { CompilationDialogContainer, CompilationFormContainer } from './CompilationDialogStyle';
+import { CompilationDialogContainer, CompilationFormContainer } from './CompilationStyle';
 import { CompilationOptions } from './CompilationOptions';
 import { TFunction, useTranslation } from 'react-i18next';
 import { useLoaderRef } from '@utils/loaderContext';

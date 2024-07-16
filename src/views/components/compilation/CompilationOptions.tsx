@@ -1,4 +1,4 @@
-import { CompilationOptionsContainer } from './CompilationDialogStyle';
+import { CompilationOptionsContainer } from './CompilationStyle';
 import { CompilationOption } from './CompilationOption';
 import type { StudioOptionCompilation } from './CompilationDialogSchema';
 import { useTranslation } from 'react-i18next';
