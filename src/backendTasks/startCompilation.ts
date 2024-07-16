@@ -28,13 +28,13 @@ let progression = 0;
 let isError = false;
 
 const getSpawnArgs = (rubyPath: string, projectPath: string, ...args: string[]): [string, string[]] => {
+  const gamePath = path.join(projectPath, 'Game.rb');
   if (process.platform === 'win32') {
-    const gamePath = path.join(projectPath, 'Game.rb');
     return [path.join(rubyPath, 'rubyw.exe'), ['--disable=gems,rubyopt,did_you_mean', gamePath, ...args]];
   } else if (process.platform === 'linux') {
-    return [path.join(rubyPath, 'game-linux.sh'), [`${args.join(' ')}`]];
+    return [path.join(rubyPath, 'game-linux.sh'), ['--disable=gems,rubyopt,did_you_mean', gamePath, ...args]];
   } else {
-    return [path.join(rubyPath, 'game.rb'), [`${args.join(' ')}`]];
+    return [path.join(rubyPath, 'game.rb'), [gamePath, ...args]];
   }
 };
 
@@ -121,22 +121,19 @@ const compilationProcess = async (event: IpcMainEvent, channels: ChannelNames, c
       const arrData = (stdOutRemaining + chunk.toString()).split('\n');
       stdOutRemaining = arrData.pop() || '';
       // Handle progress
-      arrData.forEach((line) => {
+      arrData.forEach((rawLine) => {
+        // Remove colors
+        // eslint-disable-next-line no-control-regex
+        const line = rawLine.replaceAll(/\x1b\[\d{1,2}m/g, '').replaceAll(/^\r/g, '');
         if (line.startsWith('Progress:')) {
           progression += 1;
         } else {
-          // eslint-disable-next-line no-control-regex
-          const lineWithoutColor = line.replaceAll(/\x1b\[\d{1,2}m/g, '').replaceAll(/^\r/g, '');
-          loggerBuffer.push(lineWithoutColor);
+          loggerBuffer.push(line);
           if (loggerBuffer.length >= BUFFER_LIMIT) {
             sendProgress(event, channels, { step: progression, total: 0, stepText: getLoggerBuffer() });
           }
         }
       });
-      // Handle process disconnection
-      if (arrData.some((line) => line.startsWith('Compilation done!'))) {
-        sendProgress(event, channels, { step: ++progression, total: 0, stepText: getLoggerBuffer() });
-      }
     });
 
     childProcess.on('exit', () => {
@@ -144,7 +141,9 @@ const compilationProcess = async (event: IpcMainEvent, channels: ChannelNames, c
       resolve(isError ? 1 : 0);
       clearChildProcess();
     });
+
     childProcess.on('error', (error) => {
+      clearChildProcess();
       reject(error);
     });
   });
