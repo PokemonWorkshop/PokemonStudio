@@ -7,6 +7,7 @@ import { getPSDKBinariesPath } from '@services/getPSDKVersion';
 import { INFO_CONFIG_VALIDATOR } from '@modelEntities/config';
 import { parseJSON } from '@utils/json/parse';
 import { PROJECT_VALIDATOR } from '@modelEntities/project';
+import { RMXP2StudioSafetyNet } from '@services/startPSDK';
 import windowManager from './windowManager';
 import { existsSync } from 'fs';
 import fsPromise from 'fs/promises';
@@ -28,13 +29,14 @@ let progression = 0;
 let isError = false;
 
 const getSpawnArgs = (rubyPath: string, projectPath: string, ...args: string[]): [string, string[]] => {
-  const gamePath = path.join(projectPath, 'Game.rb');
+  RMXP2StudioSafetyNet(projectPath);
   if (process.platform === 'win32') {
+    const gamePath = path.join(projectPath, 'Game.rb');
     return [path.join(rubyPath, 'rubyw.exe'), ['--disable=gems,rubyopt,did_you_mean', gamePath, ...args]];
   } else if (process.platform === 'linux') {
-    return [path.join(rubyPath, 'game-linux.sh'), ['--disable=gems,rubyopt,did_you_mean', gamePath, ...args]];
+    return ['./game-linux.sh', ['--disable=gems,rubyopt,did_you_mean', ...args]];
   } else {
-    return [path.join(rubyPath, 'game.rb'), [gamePath, ...args]];
+    return ['./game-mac.sh', args];
   }
 };
 
@@ -128,7 +130,7 @@ const compilationProcess = async (event: IpcMainEvent, channels: ChannelNames, c
         if (line.startsWith('Progress:')) {
           progression += 1;
         } else {
-          loggerBuffer.push(line);
+          loggerBuffer.push(process.platform === 'win32' ? line : `${line}\n`);
           if (loggerBuffer.length >= BUFFER_LIMIT) {
             sendProgress(event, channels, { step: progression, total: 0, stepText: getLoggerBuffer() });
           }
