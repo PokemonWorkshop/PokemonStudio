@@ -249,8 +249,6 @@ class WindowManager {
       }
     });
 
-    console.log(this.getAllWindows());
-
     return newWindow;
   }
 
