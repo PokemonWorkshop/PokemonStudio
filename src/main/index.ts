@@ -71,18 +71,11 @@ const fileTransport: FileTransport = <FileTransport>rendererLog.transports.file;
 fileTransport.resolvePathFn = resolvePathFn;
 
 const createWindow = async () => {
-  const RESOURCES_PATH = app.isPackaged ? path.join(process.resourcesPath, 'assets') : path.join(__dirname, '../../assets');
-
-  const getAssetPath = (...paths: string[]): string => {
-    return path.join(RESOURCES_PATH, ...paths);
-  };
-
   registerElectronProtocolWhenAppRead();
 
   const mainWindow = windowManager.createWindow({
     name: 'main',
     isMain: true,
-    icon: getAssetPath('icon.png'),
   });
 
   // @TODO: Use 'ready-to-show' event

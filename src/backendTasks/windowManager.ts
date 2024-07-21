@@ -6,12 +6,20 @@
  */
 
 import { BrowserWindow, BrowserWindowConstructorOptions, IpcMainEvent, IpcMainInvokeEvent, app, ipcMain } from 'electron';
+import { join } from 'path';
+
+/**
+ * Declared constants for Webpack entries and resource paths
+ */
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 const mainWindowWebpackEntry = MAIN_WINDOW_WEBPACK_ENTRY;
 const mainWindowPreloadWebpackEntry = MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY;
+
+const RESOURCES_PATH = app.isPackaged ? join(process.resourcesPath, 'assets') : join(__dirname, '../../assets');
+const getAssetPath = (...paths: string[]): string => join(RESOURCES_PATH, ...paths);
 
 /**
  * TypeScript union type to allow both number and string
@@ -219,7 +227,18 @@ class WindowManager {
       },
     };
 
-    const windowOptions = { ...defaultOptions, ...options, webPreferences: { ...defaultOptions.webPreferences, ...options.webPreferences } };
+    const icon = getAssetPath(typeof options.icon === 'string' ? options.icon : 'icon.png');
+
+    const windowOptions = {
+      ...defaultOptions,
+      ...options,
+      icon,
+      webPreferences: {
+        ...defaultOptions.webPreferences,
+        ...options.webPreferences,
+      },
+    };
+
     const newWindow = new BrowserWindow(windowOptions);
     const windowInfo: WindowInfo = { id: newWindow.id, name: windowOptions.name, window: newWindow, events };
 
