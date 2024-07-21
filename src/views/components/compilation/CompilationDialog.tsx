@@ -21,7 +21,7 @@ const initForm = (gameInfo: StudioInfoConfig, state: State): StudioCompilation =
     updateData: true,
     updateLibraries: true,
     updateAudio: true,
-    updateBinaries: false,
+    updateBinaries: true,
   };
 };
 

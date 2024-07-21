@@ -89,7 +89,7 @@ const updateProjectStudio = async (projectStudioFilePath: string, configuration:
 };
 
 const compilationProcess = async (event: IpcMainEvent, channels: ChannelNames, configuration: StudioCompilation): Promise<number> => {
-  const windowCompilation = windowManager.getWindowByName('compilation');
+  const windowCompilation = windowManager.getWindow('compilation');
   if (!windowCompilation) throw new Error('The compilation window does not exist');
 
   windowCompilation.on('closed', () => {
