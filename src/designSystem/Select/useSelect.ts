@@ -12,6 +12,7 @@ import {
 import { RenderOptionRef, SelectOption } from './types';
 import { getNotFoundExclusionPattern, getSelectDefaultLabel, positionAndShowPopover } from './utils';
 import type { List } from 'react-virtualized/dist/es/List';
+import { normalize } from '@utils/normalize';
 
 export type SelectProps<Value extends string, ChooseValue extends string> = {
   options: Readonly<SelectOption<Value>[]>;
@@ -129,8 +130,8 @@ export const useSelect = <Value extends string, ChooseValue extends string>({
   const onInputChange: ChangeEventHandler<HTMLInputElement> = (event) => {
     if (disabled) return;
 
-    const value = event.currentTarget.value.toLowerCase();
-    const newOptions = options.filter((o) => o.value.toLowerCase().includes(value) || o.label.toLowerCase().includes(value));
+    const value = normalize(event.currentTarget.value);
+    const newOptions = options.filter((o) => normalize(o.value).includes(value) || normalize(o.label).includes(value));
     optionsUtilsRef.current?.refine(newOptions);
   };
 
