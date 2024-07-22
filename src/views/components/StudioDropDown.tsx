@@ -4,6 +4,7 @@ import { AutoSizer, List } from 'react-virtualized';
 import { ReactComponent as DownIcon } from '@assets/icons/global/down-icon.svg';
 import { Input } from './inputs';
 import { useTranslation } from 'react-i18next';
+import { normalize } from '@utils/normalize';
 
 export type StudioDropDownFilter = (value: string) => boolean;
 type DropDownOptionsProps = {
@@ -163,9 +164,9 @@ const applyFilter = (options: DropDownOption[], filter?: StudioDropDownFilter) =
 
 const research = (options: DropDownOption[], entry: string) => {
   if (!entry) return options;
-
-  const entryLowerCase = entry.toLowerCase();
-  return options.filter((option) => option.value.indexOf(entry) !== -1 || option.label.toLowerCase().indexOf(entryLowerCase) !== -1);
+  return options.filter(
+    (option) => normalize(option.value).indexOf(normalize(entry)) !== -1 || normalize(option.label).toLowerCase().indexOf(normalize(entry)) !== -1
+  );
 };
 
 const getHeight = (options: DropDownOption[], isOpen: boolean) => {
