@@ -43,7 +43,8 @@ export const PokemonBattlerListHeader = styled.div`
     ${({ theme }) => theme.fonts.titlesHeadline6}
   }
 
-  .header {
+  .header,
+  .buttons {
     display: flex;
     gap: 12px;
 
@@ -57,7 +58,8 @@ export const PokemonBattlerListHeader = styled.div`
   }
 
   @media ${({ theme }) => theme.breakpoints.dataBox422} {
-    .header {
+    .header,
+    .buttons {
       .button-import-full {
         display: none;
       }
@@ -109,7 +111,7 @@ export const PokemonBattlerList = ({ title, encounters, disabledImport, from }: 
           <div className="title">{title}</div>
           {totalEncounterChance > 0 && from === 'group' && <Tag className="chance">{`${totalEncounterChance}%`}</Tag>}
         </div>
-        <div className="header">
+        <div className="buttons">
           <div className="button-import-full">
             <DarkButton onClick={() => dialogsRef.current?.openDialog('import')} disabled={disabledImport}>
               {importText()}
