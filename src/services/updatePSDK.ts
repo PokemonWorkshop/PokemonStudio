@@ -32,12 +32,13 @@ const getNextVersions = async (currentVersion: number): Promise<number[]> => {
   return [nextVersion, ...(await getNextVersions(nextVersion))];
 };
 
-const downloadScripts = async (version: number): Promise<Buffer> =>
+const downloadScripts = async (version: number, type: 'megaDeflate' | 'scriptLoad'): Promise<Buffer> =>
   new Promise((resolve, reject) => {
-    const request = net.request(`${PSDK_DOWNLOADS_URL}/${version}/mega_script.deflate?v=${(Date.now() / 3600_000).toFixed()}`);
+    const resource = type === 'megaDeflate' ? 'mega_script.deflate' : 'ScriptLoad.rb';
+    const request = net.request(`${PSDK_DOWNLOADS_URL}/${version}/${resource}?v=${(Date.now() / 3600_000).toFixed()}`);
     let data = Buffer.alloc(0);
     request.on('response', (response) => {
-      if (response.statusCode !== 200) return reject(`Invalid status code for mega deflate script ${response.statusCode}`);
+      if (response.statusCode !== 200) return reject(`Invalid status code for ${resource} ${response.statusCode}`);
 
       response.on('end', () => resolve(data));
       response.on('data', (chunk) => {
@@ -49,8 +50,8 @@ const downloadScripts = async (version: number): Promise<Buffer> =>
     request.end();
   });
 
-const downloadAndInstall = async (version: number): Promise<void> => {
-  const megaDeflate = await downloadScripts(version);
+const downloadAndInstallMegaDeflate = async (version: number): Promise<void> => {
+  const megaDeflate = await downloadScripts(version, 'megaDeflate');
   const data = zlib.inflateSync(megaDeflate);
   const marshalData = Marshal.load(data);
   if (!isMarshalHash(marshalData)) throw new Error('Downloaded data is not Hash object');
@@ -68,6 +69,16 @@ const downloadAndInstall = async (version: number): Promise<void> => {
   });
 };
 
+const downloadAndInstallScriptLoad = async (version: number): Promise<void> => {
+  const scriptLoader = await downloadScripts(version, 'scriptLoad');
+  const fileData = scriptLoader.toString('utf-8');
+  const filename = path.join(getPSDKBinariesPath(), 'pokemonsdk/scripts/ScriptLoad.rb');
+  const dirname = path.dirname(filename);
+  if (!fs.existsSync(dirname)) fs.mkdirSync(dirname, { recursive: true });
+
+  fs.writeFileSync(filename, fileData);
+};
+
 export const updatePSDK = async (event: IpcMainEvent, currentVersion: number) => {
   try {
     const versions = await getNextVersions(currentVersion);
@@ -77,7 +88,9 @@ export const updatePSDK = async (event: IpcMainEvent, currentVersion: number) =>
     await versions.reduce(async (prev, curr, index) => {
       await prev;
       event.sender.send('update-psdk/status', index + 1, versions.length, { int: curr, string: versionIntToString(curr) });
-      return downloadAndInstall(sourceVersion[index]);
+      const version = sourceVersion[index];
+      await downloadAndInstallMegaDeflate(version);
+      return downloadAndInstallScriptLoad(version);
     }, Promise.resolve());
 
     fs.writeFileSync(path.join(getPSDKBinariesPath(), 'pokemonsdk/version.txt'), versions[versions.length - 1].toString());
