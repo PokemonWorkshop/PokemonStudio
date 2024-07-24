@@ -32,9 +32,36 @@ const getNextVersions = async (currentVersion: number): Promise<number[]> => {
   return [nextVersion, ...(await getNextVersions(nextVersion))];
 };
 
-const downloadScripts = async (version: number, type: 'megaDeflate' | 'scriptLoad'): Promise<Buffer> =>
+const getFileIndex = (version: number): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const request = net.request(`${PSDK_DOWNLOADS_URL}/${version}/file_index.txt?v=${(Date.now() / 3600_000).toFixed()}`);
+    let data = '';
+    request.on('response', (response) => {
+      if (response.statusCode !== 200) return resolve(`Invalid status code for file_index.txt file ${response.statusCode}`);
+
+      response.on('end', () => resolve(data));
+      response.on('data', (chunk) => {
+        data = data + chunk.toString('utf-8');
+      });
+      response.on('error', reject);
+    });
+    request.on('error', reject);
+    request.end();
+  });
+};
+
+const filesToDownload = (fileIndexData: string) => {
+  const filesToDownload = { scriptLoad: false, megaScript: false };
+  fileIndexData.split('\n').forEach((line) => {
+    filesToDownload.scriptLoad ||= line.startsWith('ScriptLoad.rb:');
+    filesToDownload.megaScript ||= line.startsWith('mega_script.deflate:');
+  });
+  return filesToDownload;
+};
+
+const downloadScripts = async (version: number, type: 'megaScript' | 'scriptLoad'): Promise<Buffer> =>
   new Promise((resolve, reject) => {
-    const resource = type === 'megaDeflate' ? 'mega_script.deflate' : 'ScriptLoad.rb';
+    const resource = type === 'megaScript' ? 'mega_script.deflate' : 'ScriptLoad.rb';
     const request = net.request(`${PSDK_DOWNLOADS_URL}/${version}/${resource}?v=${(Date.now() / 3600_000).toFixed()}`);
     let data = Buffer.alloc(0);
     request.on('response', (response) => {
@@ -50,8 +77,8 @@ const downloadScripts = async (version: number, type: 'megaDeflate' | 'scriptLoa
     request.end();
   });
 
-const downloadAndInstallMegaDeflate = async (version: number): Promise<void> => {
-  const megaDeflate = await downloadScripts(version, 'megaDeflate');
+const downloadAndInstallMegaScript = async (version: number): Promise<void> => {
+  const megaDeflate = await downloadScripts(version, 'megaScript');
   const data = zlib.inflateSync(megaDeflate);
   const marshalData = Marshal.load(data);
   if (!isMarshalHash(marshalData)) throw new Error('Downloaded data is not Hash object');
@@ -89,8 +116,10 @@ export const updatePSDK = async (event: IpcMainEvent, currentVersion: number) =>
       await prev;
       event.sender.send('update-psdk/status', index + 1, versions.length, { int: curr, string: versionIntToString(curr) });
       const version = sourceVersion[index];
-      await downloadAndInstallMegaDeflate(version);
-      return downloadAndInstallScriptLoad(version);
+      const fileIndexData = await getFileIndex(version);
+      const { scriptLoad, megaScript } = filesToDownload(fileIndexData);
+      if (megaScript) await downloadAndInstallMegaScript(version);
+      if (scriptLoad) await downloadAndInstallScriptLoad(version);
     }, Promise.resolve());
 
     fs.writeFileSync(path.join(getPSDKBinariesPath(), 'pokemonsdk/version.txt'), versions[versions.length - 1].toString());
