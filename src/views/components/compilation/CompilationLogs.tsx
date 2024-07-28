@@ -99,7 +99,7 @@ export const CompilationLogs = ({ configuration }: CompilationLogsProps) => {
         </ProgressBarCompilationContainer>
       )}
       <div className="logs">
-        <LoggerInput ref={logsRef} readOnly />
+        <LoggerInput ref={logsRef} disabled />
         <div className="actions">
           <DarkButton onClick={onClickClipboard}>{t('copy_to_clipboard')}</DarkButton>
           <DarkButton onClick={onClickSaveLogs}>{t('save_logs')}</DarkButton>

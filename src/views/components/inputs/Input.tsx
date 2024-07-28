@@ -88,14 +88,14 @@ const sharedInputStyles = css<SharedInputStylesProps>`
   overflow: hidden;
   resize: none;
 
-  &:hover {
+  &:hover:not(:disabled) {
     border-color: ${({ theme }) => theme.colors.dark24};
     outline: 1.5px solid ${({ theme }) => theme.colors.dark24};
   }
 
-  &.active,
-  &:active,
-  &:focus {
+  &.active:not(:disabled),
+  &:active:not(:disabled),
+  &:focus:not(:disabled) {
     border-color: ${({ theme }) => theme.colors.primaryBase};
     outline: 1.5px solid ${({ theme }) => theme.colors.primaryBase};
   }
