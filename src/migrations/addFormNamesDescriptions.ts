@@ -1,0 +1,82 @@
+import { IpcMainEvent } from 'electron';
+import path from 'path';
+import { readProjectFolder } from '@src/backendTasks/readProjectData';
+import fs from 'fs';
+import fsPromise from 'fs/promises';
+import { z } from 'zod';
+import { deletePSDKDatFile } from './migrateUtils';
+import { parseJSON } from '@utils/json/parse';
+import {
+  CREATURE_DESCRIPTION_TEXT_ID,
+  CREATURE_FORM_DESCRIPTION_TEXT_ID,
+  CREATURE_FORM_NAME_TEXT_ID,
+  CREATURE_FORM_VALIDATOR,
+  CREATURE_NAME_TEXT_ID,
+  CREATURE_VALIDATOR,
+  StudioCreature,
+  StudioCreatureForm,
+} from '@modelEntities/creature';
+import { loadCSV, saveCSV } from '@utils/textManagement';
+
+const PRE_MIGRATION_CREATURE_VALIDATOR = CREATURE_VALIDATOR.extend({
+  forms: z.array(CREATURE_FORM_VALIDATOR.omit({ textId: true })).nonempty(),
+});
+type StudioCreatureDataBeforeMigration = z.infer<typeof PRE_MIGRATION_CREATURE_VALIDATOR>;
+
+let currentTextId = 1;
+
+const addTextId = (creature: StudioCreatureDataBeforeMigration): StudioCreature => {
+  creature.forms.forEach((form, index) => {
+    if ('textId' in form) return; // Avoid add textId if it was already there
+
+    const newForm = { ...form, textId: index === 0 ? 0 : currentTextId++ };
+    creature.forms[index] = newForm as StudioCreatureForm;
+  });
+  return creature as StudioCreature;
+};
+
+const initCSVForm = (creatureTexts: string[][], csvPath: string, csvTextId: number) => {
+  if (fs.existsSync(path.join(csvPath, `${csvTextId}.csv`))) {
+    throw new Error(`The file ${csvTextId}.csv already exists. Please rename your file.`);
+  }
+
+  const header = creatureTexts[0];
+  const formTexts = [header];
+  const line = new Array(header.length).fill(`[~0]`);
+  formTexts.push(line);
+  return formTexts;
+};
+
+const updateCSVFormTexts = (creatureTexts: string[][], formTexts: string[][], creature: StudioCreature) => {
+  const id = creature.id;
+  const texts = creatureTexts[id + 1];
+  for (let i = 0; i < creature.forms.length - 1; i++) {
+    formTexts.push(texts);
+  }
+};
+
+export const addFormNamesDescriptions = async (_: IpcMainEvent, projectPath: string) => {
+  deletePSDKDatFile(projectPath);
+
+  const csvPath = path.join(projectPath, 'Data/Text/Dialogs');
+  const creatureNames = await loadCSV(path.join(csvPath, `${CREATURE_NAME_TEXT_ID}.csv`));
+  const creatureDescriptions = await loadCSV(path.join(csvPath, `${CREATURE_DESCRIPTION_TEXT_ID}.csv`));
+  const formNames = initCSVForm(creatureNames, csvPath, CREATURE_FORM_NAME_TEXT_ID);
+  const formDescriptions = initCSVForm(creatureDescriptions, csvPath, CREATURE_FORM_DESCRIPTION_TEXT_ID);
+
+  const creatures = await readProjectFolder(projectPath, 'pokemon');
+  await creatures.reduce(async (lastPromise, creature) => {
+    await lastPromise;
+    const creatureParsed = PRE_MIGRATION_CREATURE_VALIDATOR.safeParse(parseJSON<StudioCreature>(creature.data, creature.filename));
+    if (creatureParsed.success) {
+      const newCreature = addTextId(creatureParsed.data);
+      updateCSVFormTexts(creatureNames, formNames, newCreature);
+      updateCSVFormTexts(creatureDescriptions, formDescriptions, newCreature);
+
+      return fsPromise.writeFile(path.join(projectPath, 'Data/Studio/pokemon', `${newCreature.dbSymbol}.json`), JSON.stringify(newCreature, null, 2));
+    }
+  }, Promise.resolve());
+
+  saveCSV(path.join(csvPath, `${CREATURE_FORM_NAME_TEXT_ID}.csv`), formNames);
+  saveCSV(path.join(csvPath, `${CREATURE_FORM_DESCRIPTION_TEXT_ID}.csv`), formDescriptions);
+};
