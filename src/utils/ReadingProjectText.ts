@@ -1,5 +1,11 @@
 import { ABILITY_DESCRIPTION_TEXT_ID, ABILITY_NAME_TEXT_ID } from '@modelEntities/ability';
-import { CREATURE_DESCRIPTION_TEXT_ID, CREATURE_NAME_TEXT_ID } from '@modelEntities/creature';
+import {
+  CREATURE_DESCRIPTION_TEXT_ID,
+  CREATURE_FORM_DESCRIPTION_TEXT_ID,
+  CREATURE_FORM_NAME_TEXT_ID,
+  CREATURE_NAME_TEXT_ID,
+  StudioCreatureForm,
+} from '@modelEntities/creature';
 import { StudioDex } from '@modelEntities/dex';
 import { GROUP_NAME_TEXT_ID } from '@modelEntities/group';
 import { ITEM_DESCRIPTION_TEXT_ID, ITEM_NAME_TEXT_ID, ITEM_PLURAL_NAME_TEXT_ID, ITEM_POCKET_NAME_TEXT_ID, StudioItem } from '@modelEntities/item';
@@ -376,4 +382,16 @@ export const useCopyProjectText = () => {
       return newState;
     });
   };
+};
+
+export const useGetCreatureFormNameText = () => {
+  const getEntityText = useGetProjectText();
+
+  return (form: StudioCreatureForm) => getEntityText(CREATURE_FORM_NAME_TEXT_ID, form.textId);
+};
+
+export const useGetCreatureFormDescriptionText = () => {
+  const getEntityText = useGetProjectText();
+
+  return (form: StudioCreatureForm) => getEntityText(CREATURE_FORM_DESCRIPTION_TEXT_ID, form.textId);
 };
