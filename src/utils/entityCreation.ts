@@ -183,6 +183,8 @@ export const createItem = <K extends StudioItem['klass']>(klass: K, dbSymbol: Db
       return itemDefaultValues as Output;
     case 'LevelIncreaseItem':
       return { levelCount: 1, loyaltyMalus: 0, ...itemDefaultValues } as Output;
+    case 'ExpGiveItem':
+      return { expCount: 1, loyaltyMalus: 0, ...itemDefaultValues } as Output;
     case 'PPHealItem':
       return { ppCount: 10, loyaltyMalus: 0, ...itemDefaultValues } as Output;
     case 'PPIncreaseItem':
