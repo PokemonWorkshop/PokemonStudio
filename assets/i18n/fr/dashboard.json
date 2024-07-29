@@ -20,5 +20,6 @@
   "message_studio_mode_message_box": "Lors de la création de votre jeu, souhaitez-vous utiliser Tiled ou RPG Maker XP pour la création de vos cartes ?",
   "warning_message": "Le passage à Tiled est possible plus tard. Pensez à créer un backup de votre projet avant de choisir une option.",
   "button_use_rmxp": "Utiliser RPG Maker XP",
-  "button_use_tiled": "Utiliser Tiled"
+  "button_use_tiled": "Utiliser Tiled",
+  "create_playable_version": "Créer une version jouable"
 }

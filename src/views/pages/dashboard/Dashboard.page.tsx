@@ -5,17 +5,18 @@ import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { DashboardFrame } from '../../components/dashboard';
 import { DashboardPageStyle } from './DashboardPageStyle';
 import { useDialogsRef } from '@hooks/useDialogsRef';
 import { DashboardEditorAndDeletionKeys, DashboardEditorOverlay } from '@components/dashboard/editors/DashboardEditorOverlay';
 import { useProjectStudio } from '@hooks/useProjectStudio';
 import { Onboarding } from '@components/onboarding/Onboarding';
+import { DashboardControlBar, DashboardFrame } from '@components/dashboard';
 
 const DashboardContainerStyle = styled(PageContainerStyle)`
   @media ${({ theme }) => theme.breakpoints.dataBox422} {
     display: flex;
   }
+  width: calc(100% - 72px);
 `;
 
 export const DashboardPage = () => {
@@ -32,6 +33,7 @@ export const DashboardPage = () => {
 
   return (
     <DashboardPageStyle>
+      <DashboardControlBar dialogsRef={dialogsRef} />
       <DashboardContainerStyle>
         <PageDataConstrainerStyle>
           <DataBlockWrapper>

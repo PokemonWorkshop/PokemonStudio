@@ -48,6 +48,7 @@ import world from '../../assets/i18n/en/world.json';
 import settings from '../../assets/i18n/en/settings.json';
 import settings_maps from '../../assets/i18n/en/settings_maps.json';
 import onboarding from '../../assets/i18n/en/onboarding.json';
+import compilation from '../../assets/i18n/en/compilation.json';
 
 // react-i18next versions higher than 11.11.0
 declare module 'react-i18next' {
@@ -103,6 +104,7 @@ declare module 'react-i18next' {
       settings: typeof settings;
       settings_maps: typeof settings_maps;
       onboarding: typeof onboarding;
+      compilation: typeof compilation;
     };
   }
 }

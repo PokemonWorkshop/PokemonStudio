@@ -42,6 +42,10 @@ import type { RequestJsonInput, RequestJsonOutput } from './backendTasks/request
 import type { CheckDownloadNewProjectInput, CheckDownloadNewProjectOutput } from './backendTasks/checkDownloadNewProject';
 import type { FileExistsInput, FileExistsOutput } from './backendTasks/fileExists';
 import type { GeneratingMapOverviewInput } from './backendTasks/generatingMapOverview';
+import type { OpenCompilationWindowInput } from './backendTasks/openCompilationWindow';
+import type { GetCompilationConfigOutput } from './backendTasks/getCompilationConfig';
+import type { StartCompilationInput, StartCompilationOutput } from './backendTasks/startCompilation';
+import type { SaveCompilationLogsInput } from './backendTasks/saveCompilationLogs';
 
 contextBridge.exposeInMainWorld('api', {
   isDev: process.env.NODE_ENV === 'development',
@@ -146,6 +150,10 @@ contextBridge.exposeInMainWorld('api', {
   requestJson: defineBackendTask(ipcRenderer, 'request-json'),
   checkDownloadNewProject: defineBackendTask(ipcRenderer, 'check-download-new-project'),
   generatingMapOverview: defineBackendTask(ipcRenderer, 'generating-map-overview'),
+  openCompilationWindow: defineBackendTask(ipcRenderer, 'open-compilation-window'),
+  getCompilationConfig: defineBackendTask(ipcRenderer, 'get-compilation-config'),
+  startCompilation: defineBackendTask(ipcRenderer, 'start-compilation'),
+  saveCompilationLogs: defineBackendTask(ipcRenderer, 'save-compilation-logs'),
 });
 
 type AnyObj = Record<string, never>;
@@ -233,6 +241,10 @@ declare global {
       requestJson: BackendTaskWithGenericErrorAndNoProgress<RequestJsonInput, RequestJsonOutput>;
       checkDownloadNewProject: BackendTaskWithGenericErrorAndNoProgress<CheckDownloadNewProjectInput, CheckDownloadNewProjectOutput>;
       generatingMapOverview: BackendTaskWithGenericErrorAndNoProgress<GeneratingMapOverviewInput, AnyObj>;
+      openCompilationWindow: BackendTaskWithGenericErrorAndNoProgress<OpenCompilationWindowInput, AnyObj>;
+      getCompilationConfig: BackendTaskWithGenericErrorAndNoProgress<AnyObj, GetCompilationConfigOutput>;
+      startCompilation: BackendTaskWithGenericError<StartCompilationInput, StartCompilationOutput, GenericBackendProgress>;
+      saveCompilationLogs: BackendTaskWithGenericErrorAndNoProgress<SaveCompilationLogsInput, AnyObj>;
     };
   }
 }
