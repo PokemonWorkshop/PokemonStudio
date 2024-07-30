@@ -22,6 +22,7 @@ import { SavingTextMap } from './SavingUtils';
 import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID } from '@modelEntities/map';
 import { MAP_INFO_FOLDER_NAME_TEXT_ID } from '@modelEntities/mapInfo';
 import { cloneEntity } from './cloneEntity';
+import { useTranslation } from 'react-i18next';
 
 type KeyProjectText = keyof ProjectText;
 
@@ -385,9 +386,14 @@ export const useCopyProjectText = () => {
 };
 
 export const useGetCreatureFormNameText = () => {
+  const { t } = useTranslation('database_pokemon');
   const getEntityText = useGetProjectText();
 
-  return (form: StudioCreatureForm) => getEntityText(CREATURE_FORM_NAME_TEXT_ID, form.textId);
+  return (form: StudioCreatureForm) => {
+    if (form.form === 0) return t('basic_form');
+
+    return getEntityText(CREATURE_FORM_NAME_TEXT_ID, form.textId);
+  };
 };
 
 export const useGetCreatureFormDescriptionText = () => {

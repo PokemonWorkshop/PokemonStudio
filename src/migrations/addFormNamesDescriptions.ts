@@ -47,12 +47,15 @@ const initCSVForm = (creatureTexts: string[][], csvPath: string, csvTextId: numb
   return formTexts;
 };
 
-const updateCSVFormTexts = (creatureTexts: string[][], formTexts: string[][], creature: StudioCreature) => {
+const updateCSVFormTexts = (creatureTexts: string[][], formTexts: string[][], creature: StudioCreature, type: 'name' | 'description') => {
   const id = creature.id;
   const texts = creatureTexts[id + 1];
-  for (let i = 0; i < creature.forms.length - 1; i++) {
-    formTexts.push(texts);
-  }
+  creature.forms.forEach((form) => {
+    if (form.form === 0) return;
+
+    if (type === 'name') return formTexts.push(texts.map((text) => `${text} (${form.form})`));
+    return formTexts.push(texts);
+  });
 };
 
 export const addFormNamesDescriptions = async (_: IpcMainEvent, projectPath: string) => {
@@ -70,8 +73,8 @@ export const addFormNamesDescriptions = async (_: IpcMainEvent, projectPath: str
     const creatureParsed = PRE_MIGRATION_CREATURE_VALIDATOR.safeParse(parseJSON<StudioCreature>(creature.data, creature.filename));
     if (creatureParsed.success) {
       const newCreature = addTextId(creatureParsed.data);
-      updateCSVFormTexts(creatureNames, formNames, newCreature);
-      updateCSVFormTexts(creatureDescriptions, formDescriptions, newCreature);
+      updateCSVFormTexts(creatureNames, formNames, newCreature, 'name');
+      updateCSVFormTexts(creatureDescriptions, formDescriptions, newCreature, 'description');
 
       return fsPromise.writeFile(path.join(projectPath, 'Data/Studio/pokemon', `${newCreature.dbSymbol}.json`), JSON.stringify(newCreature, null, 2));
     }
