@@ -12,10 +12,7 @@ export const ItemProgressData = ({ dialogsRef }: ItemProgressDataProps) => {
   const { t } = useTranslation('database_items');
   const isItemEvBoost = item.klass === 'EVBoostItem';
   const isItemLevelBoost = item.klass === 'LevelIncreaseItem';
-  const isItemExpBoost = item.klass === 'ExpGiveItem';
   const isDisabled = LOCKED_ITEM_EDITOR[item.klass].includes('progress');
-
-  console.log(isItemEvBoost, isItemExpBoost, isItemLevelBoost);
 
   return (
     <DataBlockWithTitle
