@@ -40,12 +40,9 @@ const openTiled = async (payload: OpenTiledPayload) => {
     const linuxMapFilename = path.basename(mapFilename);
     const defaultDir = process.cwd();
     process.chdir(path.dirname(mapFilename));
-    if (payload.tiledPath.endsWith('AppImage') && linuxMapFilename.indexOf(' ') !== -1) {
-      throw new Error("Tiled's AppImage doesn't support spaces in map names.");
-    }
     try {
       await executeCommand(payload.tiledPath, [linuxMapFilename]);
-    } catch (error: unknown) {
+    } catch (error) {
       log.error(error);
     }
     process.chdir(defaultDir);
