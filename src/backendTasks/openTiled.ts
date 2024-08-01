@@ -18,11 +18,11 @@ const openTiled = async (payload: OpenTiledPayload) => {
       const child = spawn(command, args || [], { detached: true });
 
       child.stdout.on('data', (data) => {
-        log.info(`stdout: ${data}`);
+        log.info(`[Tiled] ${data}`);
       });
 
       child.stderr.on('data', (data) => {
-        log.error(`stderr: ${data}`);
+        log.error(`[Tiled] ${data}`);
       });
 
       child.on('error', (error) => {
