@@ -386,18 +386,13 @@ export const useCopyProjectText = () => {
 };
 
 export const useGetCreatureFormNameText = () => {
-  const { t } = useTranslation('database_pokemon');
   const getEntityText = useGetProjectText();
 
-  return (form: StudioCreatureForm) => {
-    if (form.form === 0) return t('basic_form');
-
-    return getEntityText(CREATURE_FORM_NAME_TEXT_ID, form.textId);
-  };
+  return (form: StudioCreatureForm) => getEntityText(CREATURE_FORM_NAME_TEXT_ID, form.formTextId.name);
 };
 
 export const useGetCreatureFormDescriptionText = () => {
   const getEntityText = useGetProjectText();
 
-  return (form: StudioCreatureForm) => getEntityText(CREATURE_FORM_DESCRIPTION_TEXT_ID, form.textId);
+  return (form: StudioCreatureForm) => getEntityText(CREATURE_FORM_DESCRIPTION_TEXT_ID, form.formTextId.description);
 };

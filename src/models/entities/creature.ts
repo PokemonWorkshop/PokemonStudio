@@ -101,7 +101,10 @@ export type StudioCreatureResources = z.infer<typeof CREATURE_RESOURCES_VALIDATO
 
 export const CREATURE_FORM_VALIDATOR = z.object({
   form: POSITIVE_OR_ZERO_INT,
-  textId: POSITIVE_OR_ZERO_INT,
+  formTextId: z.object({
+    name: POSITIVE_OR_ZERO_INT,
+    description: POSITIVE_OR_ZERO_INT,
+  }),
   height: POSITIVE_OR_ZERO_FLOAT.min(0.01).max(999.99).step(0.01),
   weight: POSITIVE_OR_ZERO_FLOAT.min(0.01).max(9999.99).step(0.01),
   type1: DB_SYMBOL_VALIDATOR,

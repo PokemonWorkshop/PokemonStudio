@@ -22,7 +22,7 @@ import { StudioType } from '@modelEntities/type';
 import { StudioZone } from '@modelEntities/zone';
 import { ProjectData } from '@src/GlobalStateProvider';
 import { assertUnreachable } from './assertUnreachable';
-import { findFirstAvailableId, findFirstAvailableTextId } from './ModelUtils';
+import { findFirstAvailableFormTextId, findFirstAvailableId, findFirstAvailableTextId } from './ModelUtils';
 import { padStr } from './PadStr';
 import { StudioTextInfo } from '@modelEntities/textInfo';
 import { StudioMap, StudioMapAudio } from '@modelEntities/map';
@@ -81,6 +81,8 @@ export const createDex = (allDex: ProjectData['dex'], dbSymbol: DbSymbol, startI
  */
 export const createCreature = (allPokemon: ProjectData['pokemon'], dbSymbol: DbSymbol, type1: DbSymbol, type2: DbSymbol): StudioCreature => {
   const id = findFirstAvailableId(allPokemon, 1);
+  const formTextIdName = findFirstAvailableFormTextId(allPokemon, 0, 'name');
+  const formTextIdDescription = findFirstAvailableFormTextId(allPokemon, 0, 'description');
   return {
     klass: 'Specie',
     id,
@@ -88,6 +90,10 @@ export const createCreature = (allPokemon: ProjectData['pokemon'], dbSymbol: DbS
     forms: [
       {
         form: 0,
+        formTextId: {
+          name: formTextIdName,
+          description: formTextIdDescription,
+        },
         height: 0.01,
         weight: 0.01,
         type1,

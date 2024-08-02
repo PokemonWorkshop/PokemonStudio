@@ -78,7 +78,9 @@ export type TranslationEditorTitle =
   | 'translation_species'
   | 'translation_class'
   | 'translation_victory'
-  | 'translation_defeat';
+  | 'translation_defeat'
+  | 'translation_form_name'
+  | 'translation_form_description';
 
 type InputRefsType = Record<string, HTMLInputElement | HTMLTextAreaElement | null>;
 

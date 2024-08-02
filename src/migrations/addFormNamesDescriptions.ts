@@ -19,31 +19,35 @@ import {
 import { loadCSV, saveCSV } from '@utils/textManagement';
 
 const PRE_MIGRATION_CREATURE_VALIDATOR = CREATURE_VALIDATOR.extend({
-  forms: z.array(CREATURE_FORM_VALIDATOR.omit({ textId: true })).nonempty(),
+  forms: z.array(CREATURE_FORM_VALIDATOR.omit({ formTextId: true })).nonempty(),
 });
 type StudioCreatureDataBeforeMigration = z.infer<typeof PRE_MIGRATION_CREATURE_VALIDATOR>;
 
-let currentTextId = 1;
+let currentNameTextId = 0;
+let currentDescriptionTextId = 1;
 
 const addTextId = (creature: StudioCreatureDataBeforeMigration): StudioCreature => {
   creature.forms.forEach((form, index) => {
-    if ('textId' in form) return; // Avoid add textId if it was already there
+    if ('formTextId' in form) return; // Avoid add formTextId if it was already there
 
-    const newForm = { ...form, textId: index === 0 ? 0 : currentTextId++ };
+    const description = index === 0 ? 0 : currentDescriptionTextId++;
+    const newForm = { ...form, formTextId: { name: currentNameTextId++, description } };
     creature.forms[index] = newForm as StudioCreatureForm;
   });
   return creature as StudioCreature;
 };
 
-const initCSVForm = (creatureTexts: string[][], csvPath: string, csvTextId: number) => {
+const initCSVForm = (creatureTexts: string[][], csvPath: string, csvTextId: number, type: 'name' | 'description') => {
   if (fs.existsSync(path.join(csvPath, `${csvTextId}.csv`))) {
     throw new Error(`The file ${csvTextId}.csv already exists. Please rename your file.`);
   }
 
   const header = creatureTexts[0];
   const formTexts = [header];
-  const line = new Array(header.length).fill(`[~0]`);
-  formTexts.push(line);
+  if (type === 'description') {
+    const line = new Array(header.length).fill(`[~0]`);
+    formTexts.push(line);
+  }
   return formTexts;
 };
 
@@ -51,7 +55,7 @@ const updateCSVFormTexts = (creatureTexts: string[][], formTexts: string[][], cr
   const id = creature.id;
   const texts = creatureTexts[id + 1];
   creature.forms.forEach((form) => {
-    if (form.form === 0) return;
+    if (form.form === 0 && type === 'description') return;
 
     if (type === 'name') return formTexts.push(texts.map((text) => `${text} (${form.form})`));
     return formTexts.push(texts);
@@ -64,8 +68,8 @@ export const addFormNamesDescriptions = async (_: IpcMainEvent, projectPath: str
   const csvPath = path.join(projectPath, 'Data/Text/Dialogs');
   const creatureNames = await loadCSV(path.join(csvPath, `${CREATURE_NAME_TEXT_ID}.csv`));
   const creatureDescriptions = await loadCSV(path.join(csvPath, `${CREATURE_DESCRIPTION_TEXT_ID}.csv`));
-  const formNames = initCSVForm(creatureNames, csvPath, CREATURE_FORM_NAME_TEXT_ID);
-  const formDescriptions = initCSVForm(creatureDescriptions, csvPath, CREATURE_FORM_DESCRIPTION_TEXT_ID);
+  const formNames = initCSVForm(creatureNames, csvPath, CREATURE_FORM_NAME_TEXT_ID, 'name');
+  const formDescriptions = initCSVForm(creatureDescriptions, csvPath, CREATURE_FORM_DESCRIPTION_TEXT_ID, 'description');
 
   const creatures = await readProjectFolder(projectPath, 'pokemon');
   await creatures.reduce(async (lastPromise, creature) => {
