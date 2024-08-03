@@ -1,5 +1,5 @@
 import type { ZodObject, ZodRawShape } from 'zod';
-import type { Entity, EntityError, EntityRecord } from './state';
+import { setEntities, type Entity, type EntityError, type EntityRecord } from './state';
 import path from 'path';
 import fs from 'fs/promises';
 import { safeParseJSON } from '@utils/json/parse';
@@ -25,11 +25,21 @@ export const registerEntityText = (entityType: string, description: EntityTextDe
   entityTextRegistry[entityType].push(description);
 };
 
-export const getAllEntityTypeToLoad = () => Object.keys(entityRegistry);
+const getAllEntityTypeToLoad = () => Object.keys(entityRegistry);
 
-type LoadedEntityRecord = { entities: EntityRecord; errors: EntityError[] };
+export const loadAllEntities = async (projectPath: string, progress: (entityType: string, step: number, total: number) => void) => {
+  const entityTypes = getAllEntityTypeToLoad();
+  for (const entityType of entityTypes) {
+    progress(entityType, entityTypes.indexOf(entityType), entityTypes.length);
+    const data = await loadAllEntityOfType(entityType, projectPath);
+    setEntities(entityType, data.entities, data.errors);
+    const texts = await loadAllEntityTexts(entityType, projectPath, data.entityList); // Should load the CSV files (texts) and build the initial entityLists
+  }
+};
 
-export const loadAllEntityOfType = async (entityType: string, projectPath: string): Promise<LoadedEntityRecord> => {
+type LoadedEntityRecord = { entities: EntityRecord; entityList: (readonly [dbSymbol: string, data: Entity])[]; errors: EntityError[] };
+
+const loadAllEntityOfType = async (entityType: string, projectPath: string): Promise<LoadedEntityRecord> => {
   const registry = entityRegistry[entityType];
   if (!registry) throw new Error(`No entity of type ${entityType} was ever registered through registerEntity`);
 
@@ -57,12 +67,12 @@ export const loadAllEntityOfType = async (entityType: string, projectPath: strin
     return prevData.concat(loadedData);
   }, Promise.resolve([] as ({ dbSymbol: string; data: Entity } | EntityError)[]));
 
-  const entities = loaded.filter((e): e is Exclude<typeof e, EntityError> => 'data' in e).map(({ dbSymbol, data }) => [dbSymbol, data]);
+  const entities = loaded.filter((e): e is Exclude<typeof e, EntityError> => 'data' in e).map(({ dbSymbol, data }) => [dbSymbol, data] as const);
   const errors = loaded.filter((e): e is Extract<typeof e, EntityError> => 'data' in e);
-  return { entities: Object.fromEntries(entities), errors };
+  return { entities: Object.fromEntries(entities), entityList: entities, errors };
 };
 
-export const getFilenames = async (glob: string, projectPath: string) => {
+const getFilenames = async (glob: string, projectPath: string) => {
   if (glob.includes('*')) {
     const [dirName, endFile] = glob.split('*', 2);
     const pathToRead = path.join(projectPath, dirName);
