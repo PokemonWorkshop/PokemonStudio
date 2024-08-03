@@ -30,6 +30,7 @@ export const setProjectAndResetData = (newProjectPath: string, newMainLanguage: 
 };
 
 export const getProjectPath = () => projectPath;
+export const getProjectMainLanguage = () => mainLanguage;
 
 export const setEntities = (entityType: string, entitiesToSet: EntityRecord, errorsToSet: EntityError[]) => {
   entities[entityType] = entitiesToSet;
