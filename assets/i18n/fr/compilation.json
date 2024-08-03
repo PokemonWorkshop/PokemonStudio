@@ -5,8 +5,6 @@
   "compilation_options": "Options de compilation",
   "option_title_updateVisual": "Mettre à jour les visuels",
   "option_desc_updateVisual": "Les modifications appliquées aux visuels seront compilées",
-  "option_title_updateData": "Mettre à jour les données",
-  "option_desc_updateData": "Les modifications appliquées aux données seront compilées",
   "option_title_updateLibraries": "Mettre à jour les bibliothèques",
   "option_desc_updateLibraries": "Les modifications appliquées aux bibliothèques seront compilées",
   "option_title_updateAudio": "Mettre à jour l'audio",

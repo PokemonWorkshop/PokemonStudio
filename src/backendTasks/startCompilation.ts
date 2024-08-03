@@ -44,7 +44,6 @@ const getCompilationArgs = (configuration: StudioCompilation) => {
   const args = ['--util=project_compilation'];
   if (!configuration.updateAudio) args.push('skip_audio');
   if (!configuration.updateBinaries) args.push('skip_binary');
-  if (!configuration.updateData) args.push('skip_data');
   if (!configuration.updateLibraries) args.push('skip_lib');
   if (!configuration.updateVisual) args.push('skip_graphics');
   return args;

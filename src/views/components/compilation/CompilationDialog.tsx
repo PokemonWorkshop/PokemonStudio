@@ -18,7 +18,6 @@ const initForm = (gameInfo: StudioInfoConfig, state: State): StudioCompilation =
     gameName: gameInfo.gameTitle,
     gameVersion: gameInfo.gameVersion + 1,
     updateVisual: true,
-    updateData: true,
     updateLibraries: true,
     updateAudio: true,
     updateBinaries: true,
