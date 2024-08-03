@@ -15,7 +15,7 @@ export const CompilationOptions = ({ defaults }: CompilationOptionsProps) => {
     <CompilationOptionsContainer>
       <div className="options-title">{t('compilation_options')}</div>
       <div className="options">
-        {(['updateVisual', 'updateData', 'updateLibraries', 'updateAudio', 'updateBinaries'] as StudioOptionCompilation[]).map((option) => (
+        {(['updateVisual', 'updateLibraries', 'updateAudio', 'updateBinaries'] as StudioOptionCompilation[]).map((option) => (
           <CompilationOption option={option} defaults={defaults} key={`option-${option}`} />
         ))}
       </div>

@@ -5,8 +5,6 @@
   "compilation_options": "Compilation options",
   "option_title_updateVisual": "Update visuals",
   "option_desc_updateVisual": "The changes made to the visuals will be compiled",
-  "option_title_updateData": "Update data",
-  "option_desc_updateData": "The changes made to the data will be compiled",
   "option_title_updateLibraries": "Update libraries",
   "option_desc_updateLibraries": "The changes applied to the libraries will be compiled",
   "option_title_updateAudio": "Update audio",
