@@ -12,7 +12,7 @@ import { cloneEntity } from '@utils/cloneEntity';
 
 const PRE_MIGRATION_CREATURE_VALIDATOR = CREATURE_VALIDATOR.extend({
   forms: z
-    .array(CREATURE_FORM_VALIDATOR.extend({ height: POSITIVE_OR_ZERO_FLOAT, weight: POSITIVE_OR_ZERO_FLOAT }).omit({ textId: true }))
+    .array(CREATURE_FORM_VALIDATOR.extend({ height: POSITIVE_OR_ZERO_FLOAT, weight: POSITIVE_OR_ZERO_FLOAT }).omit({ formTextId: true }))
     .nonempty(),
 });
 type StudioCreatureDataBeforeMigration = z.infer<typeof PRE_MIGRATION_CREATURE_VALIDATOR>;

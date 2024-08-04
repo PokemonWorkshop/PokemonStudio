@@ -1,5 +1,5 @@
 import { StudioAbility } from '@modelEntities/ability';
-import { StudioCreature } from '@modelEntities/creature';
+import { StudioCreature, StudioCreatureForm } from '@modelEntities/creature';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { DEX_DEFAULT_NAME_TEXT_ID, StudioDex, StudioDexCreature } from '@modelEntities/dex';
 import { StudioCustomGroupCondition, StudioGroup, StudioGroupSystemTag, StudioGroupTool } from '@modelEntities/group';
@@ -28,6 +28,7 @@ import { StudioTextInfo } from '@modelEntities/textInfo';
 import { StudioMap, StudioMapAudio } from '@modelEntities/map';
 import { StudioMapInfo, StudioMapInfoMap } from '@modelEntities/mapInfo';
 import { mapInfoFindFirstAvailableId, mapInfoFindFirstAvailableTextId } from './MapInfoUtils';
+import { cloneEntity } from './cloneEntity';
 
 /**
  * Create a new ability with default values
@@ -149,6 +150,20 @@ export const createCreature = (allPokemon: ProjectData['pokemon'], dbSymbol: DbS
       },
     ],
   };
+};
+
+/**
+ * Create a creature form
+ */
+export const createCreatureForm = (
+  allPokemon: ProjectData['pokemon'],
+  form: StudioCreatureForm,
+  types: { type1: DbSymbol; type2: DbSymbol },
+  newFormId: number
+) => {
+  const formTextIdName = findFirstAvailableFormTextId(allPokemon, 0, 'name');
+  const formTextIdDescription = findFirstAvailableFormTextId(allPokemon, 0, 'description');
+  return cloneEntity({ ...form, ...types, form: newFormId, formTextId: { name: formTextIdName, description: formTextIdDescription } });
 };
 
 /**

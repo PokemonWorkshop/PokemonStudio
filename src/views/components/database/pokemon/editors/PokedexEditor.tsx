@@ -64,7 +64,7 @@ export const PokedexEditor = forwardRef<EditorHandlingClose>((_, ref) => {
           </TranslateInputContainer>
         </InputWithTopLabelContainer>
       </InputFormContainer>
-      <CreatureTranslationOverlay creature={creature} onClose={onTranslationOverlayClose} ref={dialogsRef} />
+      <CreatureTranslationOverlay creature={creature} form={form} onClose={onTranslationOverlayClose} ref={dialogsRef} />
     </Editor>
   );
 });

@@ -12,6 +12,7 @@ import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 import { useZodForm } from '@hooks/useZodForm';
 import { InputFormContainer } from '@components/inputs/InputContainer';
 import { TranslatableTextFields, TranslatableTextFieldsRef } from './InformationEditor/TranslatableTextFields';
+import { TranslatableFormTextFields } from './InformationEditor/TranslatableFormTextFields';
 import { INFORMATION_EDITOR_SCHEMA } from './InformationEditor/InformationEditorSchema';
 import { TypeFields } from './InformationEditor/TypeFields';
 
@@ -58,27 +59,15 @@ export const InformationsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   return (
     <Editor type="edit" title={t('information')}>
       <InputFormContainer ref={formRef}>
-        <TranslatableTextFields
-          ref={tTFR}
-          handleTranslateClick={handleTranslateClick}
-          creature={creature}
-          form={form}
-          creatureName={creatureName}
-          type="base"
-        />
+        {form.form === 0 && (
+          <TranslatableTextFields ref={tTFR} handleTranslateClick={handleTranslateClick} creature={creature} creatureName={creatureName} />
+        )}
+        <TranslatableFormTextFields ref={formTTFR} handleTranslateClick={handleTranslateClick} creature={creature} form={form} />
         <TypeFields form={form} defaults={defaults} />
         <InputWithTopLabelContainer>
           <Input name="frontOffsetY" label={t('offset')} labelLeft onInput={onInputTouched} />
           <OffsetInfo>{t('offset_info')}</OffsetInfo>
         </InputWithTopLabelContainer>
-        <TranslatableTextFields
-          ref={formTTFR}
-          handleTranslateClick={handleTranslateClick}
-          creature={creature}
-          form={form}
-          creatureName={creatureName}
-          type="form"
-        />
       </InputFormContainer>
       <CreatureTranslationOverlay creature={creature} form={form} onClose={onTranslationOverlayClose} ref={dialogsRef} />
     </Editor>
