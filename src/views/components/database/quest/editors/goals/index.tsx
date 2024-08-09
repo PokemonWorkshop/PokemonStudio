@@ -5,4 +5,5 @@ export { QuestGoalSeePokemon } from './QuestGoalSeePokemon';
 export { QuestGoalBeatPokemon } from './QuestGoalBeatPokemon';
 export { QuestGoalCatchPokemon } from './QuestGoalCatchPokemon';
 export { QuestGoalEgg } from './QuestGoalEgg';
+export { QuestGoalCustom } from './QuestGoalCustom';
 export { QuestGoalConditions } from './QuestGoalConditions';

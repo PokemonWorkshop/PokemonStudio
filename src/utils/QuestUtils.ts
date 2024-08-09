@@ -7,10 +7,16 @@ import {
 } from '@modelEntities/quest';
 import { State } from '@src/GlobalStateProvider';
 import { TFunction } from 'react-i18next';
-import { getEntityNameText, getEntityNameTextUsingTextId, getNatureText } from './ReadingProjectText';
-
+import { useGetTextList as getTextList, getEntityNameText, getEntityNameTextUsingTextId, getNatureText } from './ReadingProjectText';
+import log from 'electron-log';
 const buildSpeakToText = (objective: StudioQuestObjective) => {
   return objective.objectiveMethodArgs[1] as string;
+};
+
+const buildCustomText = (objective: StudioQuestObjective) => {
+  const fileId = objective.objectiveMethodArgs[0] as number;
+  const textId = objective.objectiveMethodArgs[1] as number;
+  return getTextList()(fileId)[textId].dialog;
 };
 
 const getEntityNameSafe = (state: State, entity?: Parameters<typeof getEntityNameText>[0]) => {
@@ -97,6 +103,7 @@ const goalTexts: Record<
   objective_beat_npc: buildBeatNpcText,
   objective_hatch_egg: buildHatchEggText,
   objective_obtain_egg: buildObtainEgg,
+  objective_custom: buildCustomText,
 };
 
 export const buildGoalText = (objective: StudioQuestObjective, state: State, t: TFunction<'database_quests'>) => {
