@@ -10,12 +10,13 @@ export const HealingItemCategories = [
   'StatBoostItem',
   'EVBoostItem',
   'LevelIncreaseItem',
+  'ExpGiveItem',
   'PPIncreaseItem',
   'PPHealItem',
   'AllPPHealItem',
   'StatusHealItem',
 ] as const;
-export type HealingCategories = typeof HealingItemCategories[number];
+export type HealingCategories = (typeof HealingItemCategories)[number];
 
 export const mutateItemToProgressionCategory = (item: StudioItem, healingCategory: HealingCategories) => {
   if (item.klass === healingCategory) return item;

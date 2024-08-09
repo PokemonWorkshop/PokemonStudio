@@ -95,6 +95,12 @@ export const LEVEL_INCREASE_ITEM_VALIDATOR = HEALING_ITEM_VALIDATOR.extend({
 });
 export type StudioLevelIncreaseItem = z.infer<typeof LEVEL_INCREASE_ITEM_VALIDATOR>;
 
+export const EXP_INCREASE_ITEM_VALIDATOR = HEALING_ITEM_VALIDATOR.extend({
+  klass: z.literal('ExpGiveItem'),
+  expCount: POSITIVE_INT,
+});
+export type StudioExpIncreaseItem = z.infer<typeof EXP_INCREASE_ITEM_VALIDATOR>;
+
 export const PP_INCREASE_ITEM_VALIDATOR = HEALING_ITEM_VALIDATOR.extend({
   klass: z.literal('PPIncreaseItem'),
   isMax: z.boolean(),
@@ -167,6 +173,7 @@ export const ITEM_VALIDATOR = z.discriminatedUnion('klass', [
   EVENT_ITEM_VALIDATOR,
   FLEEING_ITEM_VALIDATOR,
   LEVEL_INCREASE_ITEM_VALIDATOR,
+  EXP_INCREASE_ITEM_VALIDATOR,
   PP_INCREASE_ITEM_VALIDATOR,
   RATE_HEALING_ITEM_VALIDATOR,
   REPEL_ITEM_VALIDATOR,
@@ -197,6 +204,7 @@ export const LOCKED_ITEM_EDITOR: Readonly<Record<StudioItem['klass'], Readonly<S
   HealingItem: ['exploration', 'progress', 'catch', 'battle'] as const,
   Item: ['exploration', 'battle', 'progress', 'heal', 'catch', 'berries', 'cooking'] as const,
   LevelIncreaseItem: ['exploration', 'battle', 'catch'] as const,
+  ExpGiveItem: ['exploration', 'battle', 'catch'] as const,
   PPHealItem: ['exploration', 'battle', 'progress', 'catch'] as const,
   PPIncreaseItem: ['exploration', 'battle', 'progress', 'catch'] as const,
   RateHealItem: ['exploration', 'battle', 'progress', 'catch'] as const,
@@ -219,6 +227,7 @@ export const ITEM_CATEGORY: Readonly<Record<StudioItem['klass'], StudioItemCateg
   HealingItem: 'heal',
   Item: 'generic',
   LevelIncreaseItem: 'heal',
+  ExpGiveItem: 'heal',
   PPHealItem: 'heal',
   PPIncreaseItem: 'heal',
   RateHealItem: 'heal',
