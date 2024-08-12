@@ -62,7 +62,7 @@
   "example_beat_npc": "Satoshi",
   "example_speak_to": "Professor Oak",
   "amount": "Amount",
-  "custom_text_id": "Description ID (e.g 8)",
+  "custom_text": "Description ID (e.g 8)",
   "event_name": "Name of the event",
   "trainer_name": "Name of the trainer",
   "condition": "Condition #{{number}}",

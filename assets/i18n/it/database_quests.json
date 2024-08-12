@@ -62,7 +62,7 @@
   "example_beat_npc": "Rosso",
   "example_speak_to": "Professor Oak",
   "amount": "Quantità",
-  "custom_text_id": " ",
+  "custom_text": "Seleziona il testo dell'obiettivo: ",
   "event_name": "Nome dell'evento",
   "trainer_name": "Name dell'allenatore",
   "condition": "Condizione #{{number}}",

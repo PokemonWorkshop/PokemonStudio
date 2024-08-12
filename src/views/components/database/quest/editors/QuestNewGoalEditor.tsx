@@ -57,7 +57,12 @@ export const QuestNewGoalEditor = ({ quest, onClose }: QuestNewGoalEditorProps) 
   };
 
   const checkIsEmptyText = () => {
-    return (newObjective.objectiveMethodName === 'objective_speak_to' || newObjective.objectiveMethodName === 'objective_beat_npc') && isEmptyText;
+    return (
+      (newObjective.objectiveMethodName === 'objective_speak_to' ||
+        newObjective.objectiveMethodName === 'objective_beat_npc' ||
+        newObjective.objectiveMethodName === 'objective_custom') &&
+      isEmptyText
+    );
   };
 
   return (

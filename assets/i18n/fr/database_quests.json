@@ -62,7 +62,7 @@
   "example_beat_npc": "Satoshi",
   "example_speak_to": "Professeur Chen",
   "amount": "Quantité",
-  "custom_text_id": " ",
+  "custom_text": "Sélectionnez le texte de l'objectif:",
   "event_name": "Nom de l'événement",
   "trainer_name": "Nom du dresseur",
   "condition": "Condition #{{number}}",
