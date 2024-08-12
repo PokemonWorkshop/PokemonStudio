@@ -398,7 +398,7 @@ export const createQuestObjective = (type: StudioQuestObjectiveType): StudioQues
     case 'objective_hatch_egg':
       return { objectiveMethodName: type, objectiveMethodArgs: [undefined, 1], textFormatMethodName, hiddenByDefault };
     case 'objective_custom':
-      return { objectiveMethodName: type, objectiveMethodArgs: [0, ''], textFormatMethodName, hiddenByDefault };
+      return { objectiveMethodName: type, objectiveMethodArgs: [0, 0], textFormatMethodName, hiddenByDefault };
     default:
       assertUnreachable(type);
   }
