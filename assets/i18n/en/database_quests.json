@@ -5,7 +5,7 @@
   "no_option": "No quest found",
   "new": "New quest",
   "quest_deletion_of": "Deletion of the quest",
-  "quest_deletion_message": "You are about to permanently delete the quest «\u00a0{{quest}}\u00a0».",
+  "quest_deletion_message": "You are about to permanently delete the quest « {{quest}} ».",
   "deleting": "Deleting",
   "delete": "Delete this quest",
   "create_quest": "Add the quest",
@@ -26,9 +26,9 @@
   "import_goals": "Import goals",
   "add_goal": "Add a goal",
   "goals_deletion_of": "Deletion of goals",
-  "goals_deletion_message": "You are about to permanently delete the goals of the quest «\u00a0{{quest}}\u00a0».",
+  "goals_deletion_message": "You are about to permanently delete the goals of the quest « {{quest}} ».",
   "earnings_deletion_of": "Deletion of earnings",
-  "earnings_deletion_message": "You are about to permanently delete the earnings of the quest «\u00a0{{quest}}\u00a0».",
+  "earnings_deletion_message": "You are about to permanently delete the earnings of the quest « {{quest}} ».",
   "no_goal": "No goal",
   "goal_type": "Goal type",
   "details": "Details",
@@ -62,7 +62,7 @@
   "example_beat_npc": "Satoshi",
   "example_speak_to": "Professor Oak",
   "amount": "Amount",
-  "custom_text": "Description ID (e.g 8)",
+  "custom_text": "Select Goal Text:",
   "event_name": "Name of the event",
   "trainer_name": "Name of the trainer",
   "condition": "Condition #{{number}}",
@@ -94,5 +94,6 @@
   "earning_item": "Item",
   "earning_pokemon": "Pokémon",
   "earning_egg": "Egg",
-  "earning": "Earning"
+  "earning": "Earning",
+  "select": "Select #{{str}}"
 }

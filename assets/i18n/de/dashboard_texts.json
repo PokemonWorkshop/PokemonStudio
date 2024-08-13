@@ -40,5 +40,7 @@
   "font_text_default": "Standardschriftart",
   "color_text_default": "Standardtextfarbe",
   "scene_messages": "Nachrichten aus der Szene {{className}}",
-  "scene_choices": "Auswahlen aus der Szene {{className}}"
+  "scene_choices": "Auswahlen aus der Szene {{className}}",
+  "quests": "Quests",
+  "default_value": "Standard FileId:"
 }

@@ -40,5 +40,7 @@
   "font_text_default": "Fuente tipográfica predeterminada",
   "color_text_default": "Color del texto predeterminado",
   "scene_messages": "Mensajes de la escena {{className}}",
-  "scene_choices": "Elecciones de la escena {{className}}"
+  "scene_choices": "Elecciones de la escena {{className}}",
+  "quests": "Misiones",
+  "default_value": "Predeterminada FileId:"
 }

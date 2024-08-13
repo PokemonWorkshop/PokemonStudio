@@ -5,7 +5,7 @@
   "no_option": "Nenhuma missão encontrada",
   "new": "Nova missão",
   "quest_deletion_of": "Eliminação da missão",
-  "quest_deletion_message": "Você está no ponto de eliminar definitivamente a missão «\u00a0{{quest}}\u00a0».",
+  "quest_deletion_message": "Você está no ponto de eliminar definitivamente a missão « {{quest}} ».",
   "deleting": "Eliminação",
   "delete": "Eliminar esta missão",
   "create_quest": "Adicionar a missão",
@@ -26,9 +26,9 @@
   "import_goals": "Importas objetivos",
   "add_goal": "Adicionar um objetivo",
   "goals_deletion_of": "Eliminação dos objetivos",
-  "goals_deletion_message": "Você está no ponto de eliminar definitivamente os objetivos da missão «\u00a0{{quest}}\u00a0».",
+  "goals_deletion_message": "Você está no ponto de eliminar definitivamente os objetivos da missão « {{quest}} ».",
   "earnings_deletion_of": "Eliminação das recompensas",
-  "earnings_deletion_message": "Você está no ponto de eliminar definitivamente as recompensas da missão «\u00a0{{quest}}\u00a0».",
+  "earnings_deletion_message": "Você está no ponto de eliminar definitivamente as recompensas da missão « {{quest}} ».",
   "no_goal": "Nenhum objetivo",
   "goal_type": "Tipo de objetivo",
   "details": "Detalhes",
@@ -62,7 +62,7 @@
   "example_beat_npc": "Satoshi",
   "example_speak_to": "Professor Oak",
   "amount": "Quantidade",
-  "custom_text": "Selecione o texto da meta: ",
+  "custom_text": "Selecione o texto da meta:",
   "event_name": "Nome do Evento",
   "trainer_name": "Nome do trainer",
   "condition": "Condição #{{number}}",
@@ -94,5 +94,6 @@
   "earning_item": "Item",
   "earning_pokemon": "Pokémon",
   "earning_egg": "Ovo",
-  "earning": "Recompensa"
+  "earning": "Recompensa",
+  "select": "Selecione #{{str}}"
 }

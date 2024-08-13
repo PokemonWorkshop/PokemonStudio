@@ -5,6 +5,7 @@ import { QuestGoalProps } from './QuestGoalProps';
 import log from 'electron-log';
 import { SelectText, SelectDialog } from '@components/selects';
 import { useRefreshUI } from '@components/editor';
+import { useProjectStudio } from '@hooks/useProjectStudio';
 
 type QuestGoalCustomProps = {
   setIsEmptyText?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -12,10 +13,12 @@ type QuestGoalCustomProps = {
 
 export const QuestGoalCustom = ({ objective, setIsEmptyText }: QuestGoalCustomProps) => {
   const { t } = useTranslation('database_quests');
-  const { t: n } = useTranslation('text_management');
-  const [textSelected, setTextSelected] = useState('300');
+  const { defaultFileId } = useProjectStudio().projectStudioValues;
+  const [textSelected, setTextSelected] = useState(defaultFileId?.toString() ?? '__undef__');
   const [dialogSelected, setDialogSelected] = useState('__undef__');
   const refreshUI = useRefreshUI();
+
+  log.info('QuestGoalCustom', defaultFileId?.toString() ?? '__undef__');
 
   const useText = useMemo(() => {
     if (objective.objectiveMethodArgs[0]) return objective.objectiveMethodArgs[0].toString();
@@ -42,7 +45,7 @@ export const QuestGoalCustom = ({ objective, setIsEmptyText }: QuestGoalCustomPr
             refreshUI((objective.objectiveMethodArgs[0] = Number(selected)));
             log.info('QuestGoalCustom', { textSelected: selected });
           }}
-          undefValueOption={n('none')}
+          undefValueOption={t('select', { str: 'FileId' })}
           noLabel
         />
         <SelectDialog
@@ -52,9 +55,8 @@ export const QuestGoalCustom = ({ objective, setIsEmptyText }: QuestGoalCustomPr
             setDialogSelected(selected);
             refreshUI((objective.objectiveMethodArgs[1] = Number(selected)));
             if (setIsEmptyText) setIsEmptyText(objective.objectiveMethodArgs[1] === undefined);
-            log.info('QuestGoalCustom', { dialogSelected: selected });
           }}
-          undefValueOption={''}
+          undefValueOption={t('select', { str: 'TextId' })}
           noLabel
           disabled={textSelected === '__undef__'}
         />

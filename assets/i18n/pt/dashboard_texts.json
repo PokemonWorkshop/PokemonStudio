@@ -40,5 +40,7 @@
   "font_text_default": "Font do texto das mensagens",
   "color_text_default": "Cor do texto das mensagens",
   "scene_messages": "Mensagem da cena {{className}}",
-  "scene_choices": "Escolha da cena {{className}}"
+  "scene_choices": "Escolha da cena {{className}}",
+  "quests": "Missões",
+  "default_value": "Padrão FileId:"
 }
