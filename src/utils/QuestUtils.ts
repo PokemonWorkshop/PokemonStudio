@@ -7,16 +7,23 @@ import {
 } from '@modelEntities/quest';
 import { State } from '@src/GlobalStateProvider';
 import { TFunction } from 'react-i18next';
-import { useGetTextList as getTextList, getEntityNameText, getEntityNameTextUsingTextId, getNatureText } from './ReadingProjectText';
+import { getText, getEntityNameText, getEntityNameTextUsingTextId, getNatureText } from './ReadingProjectText';
 import log from 'electron-log';
 const buildSpeakToText = (objective: StudioQuestObjective) => {
   return objective.objectiveMethodArgs[1] as string;
 };
 
-const buildCustomText = (objective: StudioQuestObjective) => {
-  const fileId = objective.objectiveMethodArgs[0] as number;
-  const textId = objective.objectiveMethodArgs[1] as number;
-  return getTextList()(fileId)[textId].dialog;
+const buildCustomText = (objective: StudioQuestObjective, state: State) => {
+  const projectText = {
+    texts: state.projectText,
+    languages: state.projectStudio.languagesTranslation,
+    defaultLanguage: state.projectConfig.language_config.defaultLanguage,
+  };
+  const lang = state.projectConfig.language_config.defaultLanguage;
+  const texts =objective.objectiveMethodArgs[0] as [number, number];
+
+  log.debug(getText(projectText, texts[0], texts[1], lang));
+  return getText(projectText, texts[0], texts[1], lang);
 };
 
 const getEntityNameSafe = (state: State, entity?: Parameters<typeof getEntityNameText>[0]) => {
