@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+/* eslint-disable @typescript-eslint/no-empty-function */
+import React, { useMemo } from 'react';
 import { InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
 import { useTranslation } from 'react-i18next';
 import { QuestGoalProps } from './QuestGoalProps';
@@ -14,24 +15,24 @@ type QuestGoalCustomProps = {
 export const QuestGoalCustom = ({ objective, setIsEmptyText }: QuestGoalCustomProps) => {
   const { t } = useTranslation('database_quests');
   const { defaultFileId } = useProjectStudio().projectStudioValues;
-  const [textSelected, setTextSelected] = useState(defaultFileId?.toString() ?? '__undef__');
-  const [dialogSelected, setDialogSelected] = useState('__undef__');
   const refreshUI = useRefreshUI();
-
-  log.info('QuestGoalCustom', defaultFileId?.toString() ?? '__undef__');
-
-  const useText = useMemo(() => {
-    const idArray = objective.objectiveMethodArgs[0] as [number, number];
-    if (idArray[0]) return idArray[0].toString();
-    idArray[0] = Number(textSelected);
-    return textSelected;
-  }, [objective, textSelected]);
-
-  const useDialog = useMemo(() => {
-    const idArray = objective.objectiveMethodArgs[0] as [number, number];
-    if (idArray[1]) return idArray[1].toString();
-    return dialogSelected;
-  }, [objective, dialogSelected]);
+  const objectiveArray = objective.objectiveMethodArgs[0];
+  const setTextPtrs = (fileID?: number | undefined, textID?: number | undefined) => {
+    if (fileID != undefined || textID != undefined) {
+      if (objectiveArray instanceof Array) {
+        objective.objectiveMethodArgs[0] = [fileID ?? (objectiveArray[0] as number), textID ?? (objectiveArray[1] as number)];
+      } else {
+        objective.objectiveMethodArgs[0] = [fileID ?? defaultFileId, textID];
+      }
+    } else log.error('QuestGoalCustom', 'FileID and TextID are both undefined');
+  };
+  const textPtr = useMemo((): { fileID: string; textID: string } => {
+    const idArray = objectiveArray instanceof Array ? (objectiveArray as Array<number | undefined>) : [defaultFileId ?? undefined, undefined];
+    return {
+      fileID: idArray[0]?.toString() ?? '__undef__',
+      textID: idArray[1]?.toString() ?? '__undef__',
+    };
+  }, [objectiveArray, defaultFileId]);
 
   return (
     <PaddedInputContainer>
@@ -39,27 +40,29 @@ export const QuestGoalCustom = ({ objective, setIsEmptyText }: QuestGoalCustomPr
         <Label htmlFor="custom" required>
           {t('custom_text')}
         </Label>
+
         <SelectText
-          fileId={useText}
+          fileId={textPtr.fileID}
           onChange={(selected) => {
-            setTextSelected(selected);
-            refreshUI((objective.objectiveMethodArgs[0][0] = Number(selected)));
-            log.info('QuestGoalCustom', { textSelected: selected });
+            log.debug('QuestGoalCustom', 'Selected FileID: ' + selected);
+            log.debug('QuestGoalCustom', 'FileID(before): ' + textPtr.fileID);
+            if (isFinite(Number(selected))) refreshUI(setTextPtrs(Number(selected)));
+            log.debug('QuestGoalCustom', 'FileID(after): ' + textPtr.fileID);
           }}
           undefValueOption={t('select', { str: 'FileId' })}
           noLabel
         />
+
         <SelectDialog
-          fileId={useText}
-          textId={useDialog}
+          fileId={textPtr.fileID}
+          textId={textPtr.textID}
           onChange={(selected) => {
-            setDialogSelected(selected);
-            refreshUI((objective.objectiveMethodArgs[0][1] = Number(selected)));
-            if (setIsEmptyText) setIsEmptyText(objective.objectiveMethodArgs[1] === undefined);
+            if (isFinite(Number(selected))) refreshUI(setTextPtrs(undefined, Number(selected)));
+            if (setIsEmptyText) setIsEmptyText(selected === '__undef__');
           }}
           undefValueOption={t('select', { str: 'TextId' })}
           noLabel
-          disabled={textSelected === '__undef__'}
+          disabled={textPtr.fileID === '__undef__'}
         />
       </InputWithTopLabelContainer>
     </PaddedInputContainer>

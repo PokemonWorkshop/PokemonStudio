@@ -27,7 +27,14 @@ export const QUEST_OBJECTIVE_VALIDATOR = z.object({
     z.literal('objective_custom'),
   ]),
   objectiveMethodArgs: z.array(
-    z.union([z.string(), z.number(), z.array(CREATURE_QUEST_CONDITION_VALIDATOR), z.array(z.number()), z.undefined(), z.null()])
+    z.union([
+      z.string(),
+      z.number(),
+      z.array(CREATURE_QUEST_CONDITION_VALIDATOR),
+      z.array(z.union([z.number(), z.undefined()])),
+      z.undefined(),
+      z.null(),
+    ])
   ),
   textFormatMethodName: z.string(),
   hiddenByDefault: z.boolean(),
@@ -91,7 +98,7 @@ export const updateIndexSpeakToBeatNpc = (quest: StudioQuest) => {
         objective.objectiveMethodArgs[0] = index.beatNpc++;
         break;
       case 'objective_custom':
-        objective.objectiveMethodArgs[2] = index.custom++;
+        objective.objectiveMethodArgs[1] = index.custom++;
         break;
     }
   });

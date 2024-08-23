@@ -75,6 +75,13 @@ export const QuestPage = () => {
       currentObjective.objectiveMethodArgs[1] === ''
     )
       return;
+    if (
+      currentEditor === 'editGoal' &&
+      currentObjective.objectiveMethodName === 'objective_custom' &&
+      (!(currentObjective.objectiveMethodArgs[0] instanceof Array) ||
+        (currentObjective.objectiveMethodArgs[0] as Array<number | undefined>).includes(undefined))
+    )
+      return;
     if (currentEditor === 'editGoal' || currentEditor === 'editEarning') cleaningQuestNaNValues(currentEditedQuest);
     updateIndexSpeakToBeatNpc(currentEditedQuest);
     setQuest({ [quest.dbSymbol]: currentEditedQuest });
