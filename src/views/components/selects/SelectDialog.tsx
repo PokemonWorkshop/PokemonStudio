@@ -2,10 +2,7 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StudioDropDown } from '@components/StudioDropDown';
 import { SelectContainerWithLabel } from './SelectContainerWithLabel';
-import { useSelectOptions } from '@hooks/useSelectOptions';
 import { useGetTextList } from '@utils/ReadingProjectText';
-import { useTextPage } from '@hooks/usePage';
-import log from 'electron-log';
 
 type SelectTextProps = {
   fileId: string;
