@@ -28,7 +28,7 @@ export const SelectPokemonForm = ({ dbSymbol, form, onChange, noLabel, breakpoin
     const formOptions = getFormOptions(getCreatureFormName, state.projectData.pokemon[dbSymbol]?.forms || []);
     if (undefValueOption) return [{ value: '__undef__', label: undefValueOption }, ...formOptions];
     return formOptions;
-  }, [dbSymbol, undefValueOption, form, state]);
+  }, [dbSymbol, undefValueOption, getCreatureFormName, state]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const optionals = useMemo(() => ({ deletedOption: t('form_deleted') }), []);
 
