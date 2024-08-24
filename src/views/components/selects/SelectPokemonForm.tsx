@@ -9,7 +9,7 @@ import { Select } from '@ds/Select';
 import { useGetCreatureFormNameText } from '@utils/ReadingProjectText';
 
 const getFormOptions = (getCreatureFormName: (form: StudioCreatureForm) => string, forms: StudioCreatureForm[]) =>
-  forms.map((formData) => ({ value: formData.form.toString(), label: getCreatureFormName(formData) }));
+  forms.map((formData) => ({ value: formData.form.toString(), label: `${getCreatureFormName(formData)} (n°${formData.form})` }));
 
 type SelectPokemonFormProps = {
   dbSymbol: string;

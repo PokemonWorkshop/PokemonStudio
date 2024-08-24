@@ -22,7 +22,6 @@ import { SavingTextMap } from './SavingUtils';
 import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID } from '@modelEntities/map';
 import { MAP_INFO_FOLDER_NAME_TEXT_ID } from '@modelEntities/mapInfo';
 import { cloneEntity } from './cloneEntity';
-import { useTranslation } from 'react-i18next';
 
 type KeyProjectText = keyof ProjectText;
 

@@ -18,7 +18,7 @@ import React, { forwardRef, useImperativeHandle, useRef } from 'react';
 import { TranslationEditorTitle } from '../CreatureTranslationOverlay';
 import { useTranslation } from 'react-i18next';
 import { TranslatableTextFieldsRef } from './TranslatableTextFields';
-import { SecondaryNoBackground } from '@components/buttons';
+import { SecondaryButton } from '@components/buttons';
 
 type TranslatableFormTextFieldsProps = {
   creature: StudioCreature;
@@ -84,9 +84,7 @@ export const TranslatableFormTextFields = forwardRef<TranslatableTextFieldsRef, 
           <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_form_description')}>
             <MultiLineInput defaultValue={getCreatureFormDescription(form)} ref={descriptionRef} />
           </TranslateInputContainer>
-          <SecondaryNoBackground style={{ justifyContent: 'left' }} onClick={onClickUseBaseDescription}>
-            {t('use_default_description')}
-          </SecondaryNoBackground>
+          <SecondaryButton onClick={onClickUseBaseDescription}>{t('use_default_description')}</SecondaryButton>
         </InputWithTopLabelContainer>
       </>
     );

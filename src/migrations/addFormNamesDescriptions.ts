@@ -57,8 +57,7 @@ const updateCSVFormTexts = (creatureTexts: string[][], formTexts: string[][], cr
   creature.forms.forEach((form) => {
     if (form.form === 0 && type === 'description') return;
 
-    if (type === 'name') return formTexts.push(texts.map((text) => `${text} (${form.form})`));
-    return formTexts.push(texts);
+    formTexts.push(texts);
   });
 };
 
