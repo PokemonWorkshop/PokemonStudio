@@ -56,7 +56,7 @@ export const PokemonFormNewEditor = forwardRef<EditorHandlingClose, Props>(({ cl
   const { getFormData, defaults, formRef } = useZodForm(CREATURE_FORM_NEW_EDITOR_SCHEMA, form);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const newFormId = findFirstFormNotUsed(creature, formCategory);
-  const [formName, setFormName] = useState(`${creatureName} (${newFormId})`);
+  const [formName, setFormName] = useState(creatureName);
 
   useEditorHandlingClose(ref);
 
