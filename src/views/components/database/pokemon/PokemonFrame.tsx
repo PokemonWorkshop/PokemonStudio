@@ -5,7 +5,7 @@ import { useGlobalState } from '@src/GlobalStateProvider';
 import { getNameType } from '@utils/getNameType';
 import { padStr } from '@utils/PadStr';
 import { pokemonSpritePath } from '@utils/path';
-import { useGetEntityDescriptionText, useGetEntityNameText } from '@utils/ReadingProjectText';
+import { useGetEntityDescriptionText, useGetEntityNameText, useGetCreatureFormDescriptionText } from '@utils/ReadingProjectText';
 import React from 'react';
 import {
   DataBlockContainer,
@@ -23,6 +23,7 @@ export const PokemonFrame = ({ pokemonWithForm, dialogsRef }: PokemonDataProps) 
   const [state] = useGlobalState();
   const getCreatureName = useGetEntityNameText();
   const getCreatureDescription = useGetEntityDescriptionText();
+  const getCreatureFormDescription = useGetCreatureFormDescriptionText();
   const types = state.projectData.types;
 
   return (
@@ -45,7 +46,7 @@ export const PokemonFrame = ({ pokemonWithForm, dialogsRef }: PokemonDataProps) 
               {form.type2 !== '__undef__' && <TypeCategory type={form.type2}>{getNameType(types, form.type2, state)}</TypeCategory>}
             </DataInfoContainerHeaderBadges>
           </DataInfoContainerHeader>
-          <p>{getCreatureDescription(species)}</p>
+          <p>{form.form === 0 ? getCreatureDescription(species) : getCreatureFormDescription(form)}</p>
         </DataInfoContainer>
       </DataGrid>
     </DataBlockContainer>

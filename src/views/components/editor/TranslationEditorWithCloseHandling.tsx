@@ -170,18 +170,19 @@ type TranslationEditorWithCloseHandlingProps = {
   fileId: number;
   textIndex: number;
   isMultiline: boolean;
+  nameTextIndex?: number;
   closeDialog: () => void;
   onClose: () => void;
 };
 
 /** Wrapper allowing the TranslationEditor to be used with EditorOverlayV2 */
 export const TranslationEditorWithCloseHandling = forwardRef<EditorHandlingClose, TranslationEditorWithCloseHandlingProps>(
-  ({ title, closeDialog, onClose, fileId, nameTextId, textIndex, isMultiline }, ref) => {
+  ({ title, closeDialog, onClose, fileId, nameTextId, textIndex, isMultiline, nameTextIndex }, ref) => {
     const [{ projectText: texts, projectConfig, projectStudio }, setState] = useGlobalState();
     const getNameText = useGetProjectText();
     const inputRefs = useRef<InputRefsType>({});
     // Save the name in state to prevent the re-render to change the title when saving new name
-    const [name] = useState(getNameText(nameTextId, textIndex));
+    const [name] = useState(getNameText(nameTextId, nameTextIndex ?? textIndex));
 
     const onDialogClose = () => {
       setState((currentState) => {

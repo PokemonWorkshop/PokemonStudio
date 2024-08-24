@@ -58,6 +58,7 @@ export const CreatureTranslationOverlay = defineEditorOverlay<TranslationEditorT
           <TranslationEditorWithCloseHandling
             title={dialogToShow}
             nameTextId={CREATURE_FORM_NAME_TEXT_ID}
+            nameTextIndex={form.formTextId.name}
             fileId={fileIds[dialogToShow]}
             textIndex={dialogToShow === 'translation_form_name' ? form.formTextId.name : form.formTextId.description}
             isMultiline={dialogToShow === 'translation_form_description'}
