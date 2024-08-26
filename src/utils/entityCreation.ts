@@ -83,7 +83,6 @@ export const createDex = (allDex: ProjectData['dex'], dbSymbol: DbSymbol, startI
 export const createCreature = (allPokemon: ProjectData['pokemon'], dbSymbol: DbSymbol, type1: DbSymbol, type2: DbSymbol): StudioCreature => {
   const id = findFirstAvailableId(allPokemon, 1);
   const formTextIdName = findFirstAvailableFormTextId(allPokemon, 0, 'name');
-  const formTextIdDescription = findFirstAvailableFormTextId(allPokemon, 0, 'description');
   return {
     klass: 'Specie',
     id,
@@ -93,7 +92,7 @@ export const createCreature = (allPokemon: ProjectData['pokemon'], dbSymbol: DbS
         form: 0,
         formTextId: {
           name: formTextIdName,
-          description: formTextIdDescription,
+          description: 0,
         },
         height: 0.01,
         weight: 0.01,

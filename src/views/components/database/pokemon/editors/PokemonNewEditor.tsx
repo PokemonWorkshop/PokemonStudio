@@ -46,7 +46,7 @@ export const PokemonNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
   const { t: tMove } = useTranslation('database_moves');
   const setText = useSetProjectText();
   const [name, setName] = useState(''); // We use a state because synchronizing dbSymbol is easier with a state
-  const [formName, setFormName] = useState('');
+  const formNameRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const dbSymbolRef = useRef<HTMLInputElement>(null);
   const [dbSymbolErrorType, setDbSymbolErrorType] = useState<'value' | 'duplicate' | undefined>(undefined);
@@ -57,7 +57,7 @@ export const PokemonNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
 
   const onClickNew = () => {
     const result = getFormData();
-    if (!dbSymbolRef.current || !name || !descriptionRef.current || !result.success) return;
+    if (!dbSymbolRef.current || !name || !descriptionRef.current || !formNameRef.current || !result.success) return;
 
     const dbSymbol = dbSymbolRef.current.value as DbSymbol;
     const { type1, type2 } = result.data;
@@ -65,7 +65,7 @@ export const PokemonNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
     setText(CREATURE_NAME_TEXT_ID, newCreature.id, name);
     setText(CREATURE_DESCRIPTION_TEXT_ID, newCreature.id, descriptionRef.current.value);
     setText(CREATURE_SPECIE_TEXT_ID, newCreature.id, '-');
-    setText(CREATURE_FORM_NAME_TEXT_ID, newCreature.forms[0].formTextId.name, formName);
+    setText(CREATURE_FORM_NAME_TEXT_ID, newCreature.forms[0].formTextId.name, formNameRef.current.value || name);
 
     setCreature({ [dbSymbol]: newCreature }, { pokemon: { specie: dbSymbol, form: 0 } });
     const editedDex = cloneEntity(dex.national);
@@ -105,7 +105,7 @@ export const PokemonNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
   /**
    * Check if the entity cannot be created because of any validation error
    */
-  const isDisabled = !name || !formName || !!dbSymbolErrorType;
+  const isDisabled = !name || !!dbSymbolErrorType;
 
   return (
     <Editor type="creation" title={t('new')}>
@@ -119,8 +119,8 @@ export const PokemonNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
           <MultiLineInput ref={descriptionRef} placeholder={t('example_description')} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
-          <Label required>{t('form_name')}</Label>
-          <Input value={formName} onChange={(event) => setFormName(event.currentTarget.value)} placeholder={t('example_form_name')} />
+          <Label>{t('form_name')}</Label>
+          <Input ref={formNameRef} placeholder={t('example_form_name')} />
         </InputWithTopLabelContainer>
         <TypeFields form={form} defaults={defaults} />
         <InputWithTopLabelContainer>
