@@ -11,33 +11,36 @@ import { migrateMapLinks } from '@src/migrations/migrateMapLinks';
 import { migrationV2 } from '@src/migrations/migrationV2';
 import { migrationPreV2 } from '@src/migrations/migrationPreV2';
 import { migrationPreV2_1 } from '@src/migrations/migrationPreV2_1';
-import { addOtherLanguages } from '@src/migrations/addOtherLanguages';
 import { fixCreatureValuesAfterZodChange } from '@src/migrations/fixCreatureValuesAfterZodChange';
+import { addFormNamesDescriptions } from '@src/migrations/addFormNamesDescriptions';
+import { migrationPreV2_3 } from '@src/migrations/migrationPreV2_3';
 
 export type MigrationTask = (event: IpcMainEvent, projectPath: string, studioSettings?: StudioSettings) => Promise<void>;
 
 // Don't forget to extend those array with the new tasks that gets added by the time!
 const MIGRATIONS: Record<string, MigrationTask[]> = {
-  '1.0.0': [migrateMapLinks, migrationPreV2, migrationV2, migrationPreV2_1, addOtherLanguages, fixCreatureValuesAfterZodChange],
-  '1.0.1': [migrateMapLinks, migrationPreV2, migrationV2, migrationPreV2_1, addOtherLanguages, fixCreatureValuesAfterZodChange],
-  '1.0.2': [migrateMapLinks, migrationPreV2, migrationV2, migrationPreV2_1, addOtherLanguages, fixCreatureValuesAfterZodChange],
-  '1.1.0': [migrationPreV2, migrationV2, migrationPreV2_1, addOtherLanguages, fixCreatureValuesAfterZodChange],
-  '1.1.1': [migrationPreV2, migrationV2, migrationPreV2_1, addOtherLanguages, fixCreatureValuesAfterZodChange],
-  '1.2.0': [migrationPreV2, migrationV2, migrationPreV2_1, addOtherLanguages, fixCreatureValuesAfterZodChange],
-  '1.3.0': [migrationPreV2, migrationV2, migrationPreV2_1, addOtherLanguages, fixCreatureValuesAfterZodChange],
-  '1.4.0': [migrationV2, migrationPreV2_1, addOtherLanguages, fixCreatureValuesAfterZodChange],
-  '1.4.1': [migrationV2, migrationPreV2_1, addOtherLanguages, fixCreatureValuesAfterZodChange],
-  '1.4.2': [migrationV2, migrationPreV2_1, addOtherLanguages, fixCreatureValuesAfterZodChange],
-  '1.4.3': [migrationV2, migrationPreV2_1, addOtherLanguages, fixCreatureValuesAfterZodChange],
-  '1.4.4': [migrationV2, migrationPreV2_1, addOtherLanguages, fixCreatureValuesAfterZodChange],
-  '2.0.0': [migrationPreV2_1, addOtherLanguages, fixCreatureValuesAfterZodChange],
-  '2.0.1': [migrationPreV2_1, addOtherLanguages, fixCreatureValuesAfterZodChange],
-  '2.0.2': [migrationPreV2_1, addOtherLanguages, fixCreatureValuesAfterZodChange],
-  '2.0.3': [migrationPreV2_1, addOtherLanguages, fixCreatureValuesAfterZodChange],
-  '2.1.0': [addOtherLanguages, fixCreatureValuesAfterZodChange],
-  '2.2.0': [fixCreatureValuesAfterZodChange],
-  '2.2.1': [fixCreatureValuesAfterZodChange],
-  '2.2.2': [fixCreatureValuesAfterZodChange], // Don't forget to add the official version coming up
+  '1.0.0': [migrateMapLinks, migrationPreV2, migrationV2, migrationPreV2_1, migrationPreV2_3, addFormNamesDescriptions],
+  '1.0.1': [migrateMapLinks, migrationPreV2, migrationV2, migrationPreV2_1, migrationPreV2_3, addFormNamesDescriptions],
+  '1.0.2': [migrateMapLinks, migrationPreV2, migrationV2, migrationPreV2_1, migrationPreV2_3, addFormNamesDescriptions],
+  '1.1.0': [migrationPreV2, migrationV2, migrationPreV2_1, migrationPreV2_3, addFormNamesDescriptions],
+  '1.1.1': [migrationPreV2, migrationV2, migrationPreV2_1, migrationPreV2_3, addFormNamesDescriptions],
+  '1.2.0': [migrationPreV2, migrationV2, migrationPreV2_1, migrationPreV2_3, addFormNamesDescriptions],
+  '1.3.0': [migrationPreV2, migrationV2, migrationPreV2_1, migrationPreV2_3, addFormNamesDescriptions],
+  '1.4.0': [migrationV2, migrationPreV2_1, migrationPreV2_3, addFormNamesDescriptions],
+  '1.4.1': [migrationV2, migrationPreV2_1, migrationPreV2_3, addFormNamesDescriptions],
+  '1.4.2': [migrationV2, migrationPreV2_1, migrationPreV2_3, addFormNamesDescriptions],
+  '1.4.3': [migrationV2, migrationPreV2_1, migrationPreV2_3, addFormNamesDescriptions],
+  '1.4.4': [migrationV2, migrationPreV2_1, migrationPreV2_3, addFormNamesDescriptions],
+  '2.0.0': [migrationPreV2_1, migrationPreV2_3, addFormNamesDescriptions],
+  '2.0.1': [migrationPreV2_1, migrationPreV2_3, addFormNamesDescriptions],
+  '2.0.2': [migrationPreV2_1, migrationPreV2_3, addFormNamesDescriptions],
+  '2.0.3': [migrationPreV2_1, migrationPreV2_3, addFormNamesDescriptions],
+  '2.1.0': [migrationPreV2_3, addFormNamesDescriptions],
+  '2.2.0': [fixCreatureValuesAfterZodChange, addFormNamesDescriptions],
+  '2.2.1': [fixCreatureValuesAfterZodChange, addFormNamesDescriptions],
+  '2.2.2': [fixCreatureValuesAfterZodChange, addFormNamesDescriptions],
+  '2.2.3': [addFormNamesDescriptions],
+  '2.2.4': [addFormNamesDescriptions], // Don't forget to add the official version coming up
 };
 
 // Don't forget to extend those array with the new tasks that gets added by the time!
@@ -53,6 +56,7 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
     'Generating map overviews',
     'Add basic languages',
     'Update creatures values after change in the values authorized',
+    'Update creatures and create CSV files to manage form names and descriptions',
   ],
   '1.0.1': [
     'Migrate MapLinks',
@@ -65,6 +69,7 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
     'Generating map overviews',
     'Add basic languages',
     'Update creatures values after change in the values authorized',
+    'Update creatures and create CSV files to manage form names and descriptions',
   ],
   '1.0.2': [
     'Migrate MapLinks',
@@ -77,6 +82,7 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
     'Generating map overviews',
     'Add basic languages',
     'Update creatures values after change in the values authorized',
+    'Update creatures and create CSV files to manage form names and descriptions',
   ],
   '1.1.0': [
     'Link the resources to the Pokémon',
@@ -88,6 +94,7 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
     'Generating map overviews',
     'Add basic languages',
     'Update creatures values after change in the values authorized',
+    'Update creatures and create CSV files to manage form names and descriptions',
   ],
   '1.1.1': [
     'Link the resources to the Pokémon',
@@ -99,6 +106,7 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
     'Generating map overviews',
     'Add basic languages',
     'Update creatures values after change in the values authorized',
+    'Update creatures and create CSV files to manage form names and descriptions',
   ],
   '1.2.0': [
     'Link the resources to the Pokémon',
@@ -110,6 +118,7 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
     'Generating map overviews',
     'Add basic languages',
     'Update creatures values after change in the values authorized',
+    'Update creatures and create CSV files to manage form names and descriptions',
   ],
   '1.3.0': [
     'Link the resources to the Pokémon',
@@ -121,6 +130,7 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
     'Generating map overviews',
     'Add basic languages',
     'Update creatures values after change in the values authorized',
+    'Update creatures and create CSV files to manage form names and descriptions',
   ],
   '1.4.0': [
     'Migration to version 2.0',
@@ -129,6 +139,7 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
     'Generating map overviews',
     'Add basic languages',
     'Update creatures values after change in the values authorized',
+    'Update creatures and create CSV files to manage form names and descriptions',
   ],
   '1.4.1': [
     'Migration to version 2.0',
@@ -137,6 +148,7 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
     'Generating map overviews',
     'Add basic languages',
     'Update creatures values after change in the values authorized',
+    'Update creatures and create CSV files to manage form names and descriptions',
   ],
   '1.4.2': [
     'Migration to version 2.0',
@@ -145,6 +157,7 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
     'Generating map overviews',
     'Add basic languages',
     'Update creatures values after change in the values authorized',
+    'Update creatures and create CSV files to manage form names and descriptions',
   ],
   '1.4.3': [
     'Migration to version 2.0',
@@ -153,6 +166,7 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
     'Generating map overviews',
     'Add basic languages',
     'Update creatures values after change in the values authorized',
+    'Update creatures and create CSV files to manage form names and descriptions',
   ],
   '1.4.4': [
     'Migration to version 2.0',
@@ -161,6 +175,7 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
     'Generating map overviews',
     'Add basic languages',
     'Update creatures values after change in the values authorized',
+    'Update creatures and create CSV files to manage form names and descriptions',
   ],
   '2.0.0': [
     'Add available languages for translation',
@@ -168,6 +183,7 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
     'Generating map overviews',
     'Add basic languages',
     'Update creatures values after change in the values authorized',
+    'Update creatures and create CSV files to manage form names and descriptions',
   ],
   '2.0.1': [
     'Add available languages for translation',
@@ -175,6 +191,7 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
     'Generating map overviews',
     'Add basic languages',
     'Update creatures values after change in the values authorized',
+    'Update creatures and create CSV files to manage form names and descriptions',
   ],
   '2.0.2': [
     'Add available languages for translation',
@@ -182,6 +199,7 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
     'Generating map overviews',
     'Add basic languages',
     'Update creatures values after change in the values authorized',
+    'Update creatures and create CSV files to manage form names and descriptions',
   ],
   '2.0.3': [
     'Add available languages for translation',
@@ -189,11 +207,27 @@ const MIGRATION_STEP_TEXTS: Record<string, string[]> = {
     'Generating map overviews',
     'Add basic languages',
     'Update creatures values after change in the values authorized',
+    'Update creatures and create CSV files to manage form names and descriptions',
   ],
-  '2.1.0': ['Add basic languages', 'Update creatures values after change in the values authorized'],
-  '2.2.0': ['Update creatures values after change in the values authorized'],
-  '2.2.1': ['Update creatures values after change in the values authorized'],
-  '2.2.2': ['Update creatures values after change in the values authorized'], // Don't forget to add the official version coming up
+  '2.1.0': [
+    'Add basic languages',
+    'Update creatures values after change in the values authorized',
+    'Update creatures and create CSV files to manage form names and descriptions',
+  ],
+  '2.2.0': [
+    'Update creatures values after change in the values authorized',
+    'Update creatures and create CSV files to manage form names and descriptions',
+  ],
+  '2.2.1': [
+    'Update creatures values after change in the values authorized',
+    'Update creatures and create CSV files to manage form names and descriptions',
+  ],
+  '2.2.2': [
+    'Update creatures values after change in the values authorized',
+    'Update creatures and create CSV files to manage form names and descriptions',
+  ],
+  '2.2.3': ['Update creatures and create CSV files to manage form names and descriptions'],
+  '2.2.4': ['Update creatures and create CSV files to manage form names and descriptions'], // Don't forget to add the official version coming up
 };
 
 export type MigrateDataInput = { projectPath: string; projectVersion: string; studioSettings: StudioSettings };
