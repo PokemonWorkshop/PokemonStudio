@@ -23,6 +23,7 @@ import SettingsRouter from '@pages/settings/Settings.Router.page';
 import './i18n';
 import DesignSystemRouterComponent from '@ds/DesignSystem.router';
 import { TooltipContext } from '@ds/Tooltip/TooltipContext';
+import ScriptRouterComponent from '@pages/scripts/Scripts.Router.page';
 
 const App = () => {
   return (
@@ -41,6 +42,7 @@ const App = () => {
                 <Route path="/database/*" element={<DatabasePage />} />
                 <Route path="/world/*" element={<WorldRouter />} />
                 <Route path="/texts/*" element={<TextsRouter />} />
+                <Route path="/scripts/*" element={<ScriptRouterComponent />} />
                 <Route path="/code" />
                 <Route path="/help" />
                 <Route path="/settings/*" element={<SettingsRouter />} />
