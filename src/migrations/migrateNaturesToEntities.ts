@@ -1,6 +1,6 @@
 import { POSITIVE_OR_ZERO_INT } from '@modelEntities/common';
 import { DbSymbol } from '@modelEntities/dbSymbol';
-import { StudioNature } from '@modelEntities/natures';
+import { DEFAULT_NATURES, StudioDefaultNature, StudioNature, StudioNatureFlavors } from '@modelEntities/natures';
 import { parseJSON } from '@utils/json/parse';
 import { IpcMainEvent } from 'electron';
 import fs from 'fs';
@@ -18,6 +18,109 @@ const NATURE_CONFIG_VALIDATOR = z.object({
 });
 type StudioNatureConfig = z.infer<typeof NATURE_CONFIG_VALIDATOR>;
 
+const defaultFlavors: Record<StudioDefaultNature, StudioNatureFlavors> = {
+  adamant: {
+    favourite: 'spicy',
+    detested: 'dry',
+  },
+  bashful: {
+    favourite: 'dry',
+    detested: 'dry',
+  },
+  bold: {
+    favourite: 'sour',
+    detested: 'spicy',
+  },
+  brave: {
+    favourite: 'spicy',
+    detested: 'sweet',
+  },
+  calm: {
+    favourite: 'bitter',
+    detested: 'spicy',
+  },
+  careful: {
+    favourite: 'bitter',
+    detested: 'dry',
+  },
+  docile: {
+    favourite: 'sour',
+    detested: 'sour',
+  },
+  gentle: {
+    favourite: 'bitter',
+    detested: 'sour',
+  },
+  hardy: {
+    favourite: 'spicy',
+    detested: 'spicy',
+  },
+  hasty: {
+    favourite: 'sweet',
+    detested: 'sour',
+  },
+  impish: {
+    favourite: 'sour',
+    detested: 'dry',
+  },
+  jolly: {
+    favourite: 'sweet',
+    detested: 'dry',
+  },
+  lax: {
+    favourite: 'sour',
+    detested: 'bitter',
+  },
+  lonely: {
+    favourite: 'spicy',
+    detested: 'sour',
+  },
+  mild: {
+    favourite: 'dry',
+    detested: 'sour',
+  },
+  modest: {
+    favourite: 'dry',
+    detested: 'spicy',
+  },
+  naive: {
+    favourite: 'sweet',
+    detested: 'bitter',
+  },
+  naughty: {
+    favourite: 'spicy',
+    detested: 'bitter',
+  },
+  quiet: {
+    favourite: 'dry',
+    detested: 'sweet',
+  },
+  quirky: {
+    favourite: 'bitter',
+    detested: 'bitter',
+  },
+  rash: {
+    favourite: 'dry',
+    detested: 'bitter',
+  },
+  relaxed: {
+    favourite: 'sour',
+    detested: 'sweet',
+  },
+  sassy: {
+    favourite: 'bitter',
+    detested: 'sweet',
+  },
+  serious: {
+    favourite: 'sweet',
+    detested: 'sweet',
+  },
+  timid: {
+    favourite: 'sweet',
+    detested: 'spicy',
+  },
+};
+
 const searchNatureDbSymbolById = (dbSymbolToId: [string, number][], idSearched: number) => {
   const result = dbSymbolToId.find(([, id]) => id === idSearched);
   if (!result) throw new Error(`Impossible to find the nature "${idSearched}" in the natures config. Fail to migrate natures.`);
@@ -25,13 +128,24 @@ const searchNatureDbSymbolById = (dbSymbolToId: [string, number][], idSearched: 
   return result[0] as DbSymbol;
 };
 
+const getDefaultFlavors = (dbSymbol: DbSymbol): StudioNatureFlavors => {
+  if ((DEFAULT_NATURES as readonly string[]).includes(dbSymbol)) {
+    return defaultFlavors[dbSymbol as StudioDefaultNature];
+  }
+  return {
+    favourite: 'bitter',
+    detested: 'dry',
+  };
+};
+
 const buildNatureEntities = (naturesConfig: StudioNatureConfig) => {
   const dbSymbolToId = Object.entries(naturesConfig.db_symbol_to_id);
   return naturesConfig.data.reduce<StudioNature[]>((natures, data) => {
+    const dbSymbol = searchNatureDbSymbolById(dbSymbolToId, data[0]);
     const nature: StudioNature = {
       klass: 'Nature',
       id: data[0],
-      dbSymbol: searchNatureDbSymbolById(dbSymbolToId, data[0]),
+      dbSymbol,
       stats: {
         atk: data[1],
         dfe: data[2],
@@ -39,10 +153,7 @@ const buildNatureEntities = (naturesConfig: StudioNatureConfig) => {
         ats: data[4],
         dfs: data[5],
       },
-      flavors: {
-        favourite: 'bitter',
-        detested: 'dry',
-      },
+      flavors: getDefaultFlavors(dbSymbol),
     };
     return [...natures, nature];
   }, []);

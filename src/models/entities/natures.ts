@@ -2,6 +2,35 @@ import { z } from 'zod';
 import { POSITIVE_INT, POSITIVE_OR_ZERO_INT } from './common';
 import { DB_SYMBOL_VALIDATOR } from './dbSymbol';
 
+export const DEFAULT_NATURES = [
+  'adamant',
+  'bashful',
+  'bold',
+  'brave',
+  'calm',
+  'careful',
+  'docile',
+  'gentle',
+  'hardy',
+  'hasty',
+  'impish',
+  'jolly',
+  'lax',
+  'lonely',
+  'mild',
+  'modest',
+  'naive',
+  'naughty',
+  'quiet',
+  'quirky',
+  'rash',
+  'relaxed',
+  'sassy',
+  'serious',
+  'timid',
+] as const;
+export type StudioDefaultNature = (typeof DEFAULT_NATURES)[number];
+
 export const NATURE_STATS_VALIDATOR = z.object({
   atk: POSITIVE_INT.max(999),
   dfe: POSITIVE_INT.max(999),
