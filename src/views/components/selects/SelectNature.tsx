@@ -3,66 +3,51 @@ import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterfac
 import { State, useGlobalState } from '@src/GlobalStateProvider';
 import { TFunction, useTranslation } from 'react-i18next';
 import { SelectDataProps } from './SelectDataProps';
-import { getText } from '@utils/ReadingProjectText';
+import { getEntityNameText } from '@utils/ReadingProjectText';
 import { SelectCustom } from '@components/SelectCustom';
+import type { StudioNature, StudioNatureStats, StudioNatureStatsList } from '@modelEntities/natures';
 
-/**
- * Get the traduction by index
- * @param index
- * @param t
- * @returns string
- */
-const getTraductionByIndex = (index: number, t: TFunction<['database_natures']>) => {
-  switch (index) {
-    case 1:
-      return t('database_natures:attack');
-    case 2:
-      return t('database_natures:defense');
-    case 3:
-      return t('database_natures:speed');
-    case 4:
-      return t('database_natures:special_attack');
-    case 5:
-      return t('database_natures:special_defense');
-    default:
-      return '';
-  }
+const findUpStats = (stats: StudioNatureStats): StudioNatureStatsList[] => {
+  const upStats: StudioNatureStatsList[] = [];
+  if (stats.atk > 100) upStats.push('atk');
+  if (stats.ats > 100) upStats.push('ats');
+  if (stats.dfe > 100) upStats.push('dfe');
+  if (stats.dfs > 100) upStats.push('dfs');
+  if (stats.spd > 100) upStats.push('spd');
+
+  return upStats;
+};
+
+const findDownStats = (stats: StudioNatureStats): StudioNatureStatsList[] => {
+  const downStats: StudioNatureStatsList[] = [];
+  if (stats.atk < 100) downStats.push('atk');
+  if (stats.ats < 100) downStats.push('ats');
+  if (stats.dfe < 100) downStats.push('dfe');
+  if (stats.dfs < 100) downStats.push('dfs');
+  if (stats.spd < 100) downStats.push('spd');
+
+  return downStats;
+};
+
+const buildStatTexts = (upStats: StudioNatureStatsList[], downStats: StudioNatureStatsList[], t: TFunction<['database_natures']>) => {
+  const upStatTexts = upStats.reduce<string[]>((prev, stat) => [...prev, `+${t(`database_natures:${stat}`)}`], []);
+  const statTexts = downStats.reduce<string[]>((prev, stat) => [...prev, `-${t(`database_natures:${stat}`)}`], upStatTexts);
+  return statTexts.join(' / ');
 };
 
 /**
  * Get the nature extra stats compared to depending stats
- * @param state
+ * @param natures Studio natures
  * @param t useTranslation
  * @returns Record<string, string>
  */
-const getNatureExtraStatsComparedToDependingStats = (state: State, t: TFunction<['database_natures']>): Record<string, string> => {
-  const natures = state.projectConfig.natures.db_symbol_to_id;
-  const stats = state.projectConfig.natures.data;
-
+const getNatureExtraStatsComparedToDependingStats = (natures: StudioNature[], t: TFunction<['database_natures']>): Record<string, string> => {
   const natureExtraStatsComparedToDependingStats: Record<string, string> = {};
-
-  for (const [natureSymbol, natureId] of Object.entries(natures)) {
-    const natureStats = stats[natureId];
-    if (natureStats) {
-      // Get the index of the stats
-      const upStatIndex = natureStats.findIndex((ns, index) => index > 0 && ns > 100);
-      const downStatIndex = natureStats.findIndex((ns, index) => index > 0 && ns < 100);
-      // Get the traduction of the stats
-      const upStatTraduction = getTraductionByIndex(upStatIndex, t);
-      const downStatTraduction = getTraductionByIndex(downStatIndex, t);
-
-      // Constrution of the string
-      if (upStatTraduction) {
-        natureExtraStatsComparedToDependingStats[natureSymbol] = `+${upStatTraduction || ''}`;
-      }
-
-      if (downStatTraduction) {
-        natureExtraStatsComparedToDependingStats[natureSymbol] = `${upStatTraduction ? '+' + upStatTraduction : ''}
-        ${upStatTraduction ? ' / ' : ''}
-        ${downStatTraduction ? '-' + downStatTraduction : ''}`;
-      }
-    }
-  }
+  natures.forEach((nature) => {
+    const upStats = findUpStats(nature.stats);
+    const downStats = findDownStats(nature.stats);
+    natureExtraStatsComparedToDependingStats[nature.dbSymbol] = buildStatTexts(upStats, downStats, t);
+  });
   return natureExtraStatsComparedToDependingStats;
 };
 
@@ -73,24 +58,17 @@ const getNatureExtraStatsComparedToDependingStats = (state: State, t: TFunction<
  * @returns SelectOption[]
  */
 const getNatureOptions = (state: State, t: TFunction<['database_natures']>): SelectOption[] => {
-  const test = getNatureExtraStatsComparedToDependingStats(state, t);
-  return Object.entries(state.projectConfig.natures.db_symbol_to_id).map(([value, natureId]) => {
-    const statByNature = test[value];
+  const natures = Object.values(state.projectData.natures);
+  const natureExtraStats = getNatureExtraStatsComparedToDependingStats(natures, t);
+  return natures.map((nature) => {
+    const statByNature = natureExtraStats[nature.dbSymbol];
 
-    let label = getText(
-      {
-        texts: state.projectText,
-        languages: state.projectStudio.languagesTranslation,
-        defaultLanguage: state.projectConfig.language_config.defaultLanguage,
-      },
-      100008,
-      (state.projectConfig.natures.data[natureId] || [0])[0]
-    );
+    let label = getEntityNameText(nature, state);
     if (statByNature && statByNature !== '') {
       label += ` (${statByNature})`;
     }
     return {
-      value,
+      value: nature.dbSymbol,
       label,
     };
   });

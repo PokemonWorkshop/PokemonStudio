@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { createContainer } from 'react-tracked';
 import { SavingConfigMap, SavingMap, SavingTextMap } from '@utils/SavingUtils';
 import type { PSDKVersion } from '@services/getPSDKVersion';
-import { StudioAbility } from '@modelEntities/ability';
-import {
+import type {
   StudioCreditConfig,
   StudioDevicesConfig,
   StudioDisplayConfig,
@@ -11,27 +10,28 @@ import {
   StudioGraphicConfig,
   StudioInfoConfig,
   StudioLanguageConfig,
-  StudioNatureConfig,
   StudioSaveConfig,
   StudioSceneTitleConfig,
   StudioSettingConfig,
   StudioTextConfig,
 } from '@modelEntities/config';
-import { StudioDex } from '@modelEntities/dex';
-import { StudioCreature } from '@modelEntities/creature';
-import { StudioItem } from '@modelEntities/item';
-import { StudioMove } from '@modelEntities/move';
-import { StudioGroup } from '@modelEntities/group';
-import { StudioTrainer } from '@modelEntities/trainer';
-import { StudioMapLink } from '@modelEntities/mapLink';
-import { StudioZone } from '@modelEntities/zone';
-import { StudioType } from '@modelEntities/type';
-import { StudioQuest } from '@modelEntities/quest';
-import { StudioProject, StudioProjectLanguageTranslation } from '@modelEntities/project';
-import { StudioTextInfo } from '@modelEntities/textInfo';
-import { StudioMap } from '@modelEntities/map';
-import { DbSymbol } from '@modelEntities/dbSymbol';
-import { StudioMapInfo } from '@modelEntities/mapInfo';
+import type { StudioAbility } from '@modelEntities/ability';
+import type { StudioDex } from '@modelEntities/dex';
+import type { StudioCreature } from '@modelEntities/creature';
+import type { StudioItem } from '@modelEntities/item';
+import type { StudioMove } from '@modelEntities/move';
+import type { StudioGroup } from '@modelEntities/group';
+import type { StudioTrainer } from '@modelEntities/trainer';
+import type { StudioMapLink } from '@modelEntities/mapLink';
+import type { StudioZone } from '@modelEntities/zone';
+import type { StudioType } from '@modelEntities/type';
+import type { StudioQuest } from '@modelEntities/quest';
+import type { StudioProject, StudioProjectLanguageTranslation } from '@modelEntities/project';
+import type { StudioTextInfo } from '@modelEntities/textInfo';
+import type { StudioMap } from '@modelEntities/map';
+import type { DbSymbol } from '@modelEntities/dbSymbol';
+import type { StudioMapInfo } from '@modelEntities/mapInfo';
+import type { StudioNature } from '@modelEntities/natures';
 
 export interface ProjectData {
   items: {
@@ -70,6 +70,9 @@ export interface ProjectData {
   maps: {
     [map: string]: StudioMap;
   };
+  natures: {
+    [nature: string]: StudioNature;
+  };
 }
 
 export interface ProjectText {
@@ -88,7 +91,6 @@ export const psdkConfigKeys: (keyof PSDKConfigs)[] = [
   'settings_config',
   'texts_config',
   'game_options_config',
-  'natures',
 ];
 
 export interface PSDKConfigs {
@@ -103,7 +105,6 @@ export interface PSDKConfigs {
   settings_config: StudioSettingConfig;
   texts_config: StudioTextConfig;
   game_options_config: StudioGameOptionConfig;
-  natures: StudioNatureConfig;
 }
 
 export type SelectedDataIdentifier = {
@@ -123,6 +124,7 @@ export type SelectedDataIdentifier = {
   mapLink: string;
   map: string;
   textInfo: number;
+  nature: string;
 };
 
 export interface State {
@@ -165,6 +167,7 @@ const initialState = {
     mapLink: '__undef__',
     map: 'map001',
     textInfo: 0,
+    nature: 'adamant',
   },
   savingData: new SavingMap(),
   savingConfig: new SavingConfigMap(),

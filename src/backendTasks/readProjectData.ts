@@ -25,6 +25,7 @@ const projectDataKeys = [
   'maplinks',
   'zones',
   'maps',
+  'natures',
 ] as const;
 type ProjectDataFromBackEndKey = (typeof projectDataKeys)[number];
 export type FilenameWithData = { filename: string; data: string };
@@ -51,9 +52,7 @@ export const readProjectFolder = async (projectPath: string, key: ProjectDataFro
       curr.map(async (filename) => ({ filename, data: await fsPromises.readFile(path.join(folderName, filename), { encoding: 'utf-8' }) }))
     );
     // Checking result
-    const successfulData = batchData
-      .map((v) => v.status === 'fulfilled' && v.value)
-      .filter((v): v is FilenameWithData => v !== false);
+    const successfulData = batchData.map((v) => v.status === 'fulfilled' && v.value).filter((v): v is FilenameWithData => v !== false);
     const errorData = batchData.map((v) => v.status === 'rejected' && (v.reason as Error)).filter((v): v is Error => v !== false);
     // Throw in case of error
     if (errorData.length !== 0) {
@@ -83,7 +82,7 @@ const readProjectData = async (payload: ReadProjectDataInput, event: IpcMainEven
   }, Promise.resolve({ textInfos, mapInfo } as ProjectDataFromBackEnd));
 
   // Store the loaded maps so the converter will know which maps changed
-  setLoadedMaps(projectData.maps.map(m => m.data));
+  setLoadedMaps(projectData.maps.map((m) => m.data));
   log.info('read-project-data/success');
   return projectData;
 };

@@ -167,7 +167,7 @@ export const migrateNaturesToEntities = async (_: IpcMainEvent, projectPath: str
 
   const configNaturesPath = path.join(projectPath, CONFIG_NATURES_PATH);
   if (!fs.existsSync(configNaturesPath)) {
-    throw new Error(`The file ${CONFIG_NATURES_PATH} doesn't exist. Impossible to migrate natures.`);
+    throw new Error(`The file ${CONFIG_NATURES_PATH} doesn't exist. Fail to migrate natures.`);
   }
 
   const configNaturesFile = await fsPromises.readFile(configNaturesPath, { encoding: 'utf-8' });
@@ -180,6 +180,6 @@ export const migrateNaturesToEntities = async (_: IpcMainEvent, projectPath: str
     await fsPromises.writeFile(path.join(naturesPath, `${nature.dbSymbol}.json`), JSON.stringify(nature, null, 2));
   }, Promise.resolve());
 
-  //await fsPromises.unlink(path.join(projectPath, CONFIG_NATURES_PATH));
-  //await fsPromises.unlink(path.join(projectPath, 'Data/configs/natures.rxdata'));
+  await fsPromises.unlink(path.join(projectPath, CONFIG_NATURES_PATH));
+  await fsPromises.unlink(path.join(projectPath, 'Data/configs/natures.rxdata'));
 };

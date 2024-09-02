@@ -102,5 +102,6 @@ export const generateSelectedIdentifier = (preState: PreGlobalState): SelectedDa
     mapLink: getMapLinkIdentifier(selectedFromStorage, preState, validMaps),
     textInfo: getTextInfoIdentifier(selectedFromStorage, preState.textInfos),
     map: getSelectedIdentifier(preState, selectedFromStorage, 'map', 'maps') || firstById(projectData.maps),
+    nature: getSelectedIdentifier(preState, selectedFromStorage, 'nature', 'natures') || firstById(projectData.natures),
   };
 };

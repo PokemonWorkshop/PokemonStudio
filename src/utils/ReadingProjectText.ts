@@ -22,6 +22,7 @@ import { SavingTextMap } from './SavingUtils';
 import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID } from '@modelEntities/map';
 import { MAP_INFO_FOLDER_NAME_TEXT_ID } from '@modelEntities/mapInfo';
 import { cloneEntity } from './cloneEntity';
+import { NATURE_NAME_TEXT_ID } from '@modelEntities/natures';
 
 type KeyProjectText = keyof ProjectText;
 
@@ -56,18 +57,6 @@ export const getDialogMessage = (projectText: TextsWithLanguageConfig, fileId: n
  */
 export const getText = (projectText: TextsWithLanguageConfig, fileId: number, textId: number, language?: string) => {
   return getDialogMessage(projectText, fileId, textId, language);
-};
-
-export const getNatureText = (state: State, natureDbSymbol: string) => {
-  return getText(
-    {
-      texts: state.projectText,
-      languages: state.projectStudio.languagesTranslation,
-      defaultLanguage: state.projectConfig.language_config.defaultLanguage,
-    },
-    100008,
-    (state.projectConfig.natures.data[state.projectConfig.natures.db_symbol_to_id[natureDbSymbol] || 0] || [0])[0]
-  );
 };
 
 export const useGetProjectText = () => {
@@ -226,6 +215,7 @@ const ENTITY_TO_NAME_TEXT = {
   TextInfo: TEXT_INFO_NAME_TEXT_ID,
   Map: MAP_NAME_TEXT_ID,
   MapInfoFolder: MAP_INFO_FOLDER_NAME_TEXT_ID,
+  Nature: NATURE_NAME_TEXT_ID,
 };
 
 // TODO: All entities must accept undefined! (due to getting entity from state unsafely) => returns empty string and let UI manage it

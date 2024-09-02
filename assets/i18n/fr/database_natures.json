@@ -1,7 +1,7 @@
 {
-  "attack": "Atk",
-  "defense": "Def",
-  "special_attack": "Ats",
-  "special_defense": "Dfs",
-  "speed": "Vit"
+  "atk": "Atk",
+  "dfe": "Def",
+  "ats": "Ats",
+  "dfs": "Dfs",
+  "spd": "Vit"
 }
