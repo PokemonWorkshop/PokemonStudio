@@ -24,8 +24,8 @@ const defaultFlavors: Record<StudioDefaultNature, StudioNatureFlavors> = {
     detested: 'dry',
   },
   bashful: {
-    favourite: 'dry',
-    detested: 'dry',
+    favourite: 'none',
+    detested: 'none',
   },
   bold: {
     favourite: 'sour',
@@ -44,16 +44,16 @@ const defaultFlavors: Record<StudioDefaultNature, StudioNatureFlavors> = {
     detested: 'dry',
   },
   docile: {
-    favourite: 'sour',
-    detested: 'sour',
+    favourite: 'none',
+    detested: 'none',
   },
   gentle: {
     favourite: 'bitter',
     detested: 'sour',
   },
   hardy: {
-    favourite: 'spicy',
-    detested: 'spicy',
+    favourite: 'none',
+    detested: 'none',
   },
   hasty: {
     favourite: 'sweet',
@@ -96,8 +96,8 @@ const defaultFlavors: Record<StudioDefaultNature, StudioNatureFlavors> = {
     detested: 'sweet',
   },
   quirky: {
-    favourite: 'bitter',
-    detested: 'bitter',
+    favourite: 'none',
+    detested: 'none',
   },
   rash: {
     favourite: 'dry',
@@ -112,8 +112,8 @@ const defaultFlavors: Record<StudioDefaultNature, StudioNatureFlavors> = {
     detested: 'sweet',
   },
   serious: {
-    favourite: 'sweet',
-    detested: 'sweet',
+    favourite: 'none',
+    detested: 'none',
   },
   timid: {
     favourite: 'sweet',

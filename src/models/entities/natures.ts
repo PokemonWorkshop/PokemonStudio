@@ -41,7 +41,14 @@ export const NATURE_STATS_VALIDATOR = z.object({
 export type StudioNatureStats = z.infer<typeof NATURE_STATS_VALIDATOR>;
 export type StudioNatureStatsList = 'atk' | 'dfe' | 'ats' | 'dfs' | 'spd';
 
-export const FLAVOR_VALIDATOR = z.union([z.literal('spicy'), z.literal('dry'), z.literal('sweet'), z.literal('bitter'), z.literal('sour')]);
+export const FLAVOR_VALIDATOR = z.union([
+  z.literal('spicy'),
+  z.literal('dry'),
+  z.literal('sweet'),
+  z.literal('bitter'),
+  z.literal('sour'),
+  z.literal('none'),
+]);
 export type StudioFlavor = z.infer<typeof FLAVOR_VALIDATOR>;
 
 export const NATURE_FLAVORS_VALIDATOR = z.object({
