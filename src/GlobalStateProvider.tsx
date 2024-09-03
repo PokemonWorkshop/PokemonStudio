@@ -31,7 +31,7 @@ import type { StudioTextInfo } from '@modelEntities/textInfo';
 import type { StudioMap } from '@modelEntities/map';
 import type { DbSymbol } from '@modelEntities/dbSymbol';
 import type { StudioMapInfo } from '@modelEntities/mapInfo';
-import type { StudioNature } from '@modelEntities/natures';
+import type { StudioNature } from '@modelEntities/nature';
 
 export interface ProjectData {
   items: {

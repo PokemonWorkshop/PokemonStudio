@@ -1,35 +1,31 @@
 import React, { useMemo } from 'react';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { SelectOption } from '@ds/Select/types';
 import { State, useGlobalState } from '@src/GlobalStateProvider';
 import { TFunction, useTranslation } from 'react-i18next';
 import { SelectDataProps } from './SelectDataProps';
 import { getEntityNameText } from '@utils/ReadingProjectText';
+import { Select } from '@ds/Select';
 import { SelectCustom } from '@components/SelectCustom';
-import type { StudioNature, StudioNatureStats, StudioNatureStatsList } from '@modelEntities/natures';
+import { StudioNatureStatsList, StudioNature, StudioNatureStats, StudioNatureStatsListType } from '@modelEntities/nature';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 
-const findUpStats = (stats: StudioNatureStats): StudioNatureStatsList[] => {
-  const upStats: StudioNatureStatsList[] = [];
-  if (stats.atk > 100) upStats.push('atk');
-  if (stats.ats > 100) upStats.push('ats');
-  if (stats.dfe > 100) upStats.push('dfe');
-  if (stats.dfs > 100) upStats.push('dfs');
-  if (stats.spd > 100) upStats.push('spd');
+const findUpStats = (stats: StudioNatureStats): StudioNatureStatsListType[] => {
+  return StudioNatureStatsList.reduce<StudioNatureStatsListType[]>((prev, stat) => {
+    if (stats[stat] > 100) return [...prev, stat];
 
-  return upStats;
+    return prev;
+  }, []);
 };
 
-const findDownStats = (stats: StudioNatureStats): StudioNatureStatsList[] => {
-  const downStats: StudioNatureStatsList[] = [];
-  if (stats.atk < 100) downStats.push('atk');
-  if (stats.ats < 100) downStats.push('ats');
-  if (stats.dfe < 100) downStats.push('dfe');
-  if (stats.dfs < 100) downStats.push('dfs');
-  if (stats.spd < 100) downStats.push('spd');
+const findDownStats = (stats: StudioNatureStats): StudioNatureStatsListType[] => {
+  return StudioNatureStatsList.reduce<StudioNatureStatsListType[]>((prev, stat) => {
+    if (stats[stat] < 100) return [...prev, stat];
 
-  return downStats;
+    return prev;
+  }, []);
 };
 
-const buildStatTexts = (upStats: StudioNatureStatsList[], downStats: StudioNatureStatsList[], t: TFunction<['database_natures']>) => {
+const buildStatTexts = (upStats: StudioNatureStatsListType[], downStats: StudioNatureStatsListType[], t: TFunction<['database_natures']>) => {
   const upStatTexts = upStats.reduce<string[]>((prev, stat) => [...prev, `+${t(`database_natures:${stat}`)}`], []);
   const statTexts = downStats.reduce<string[]>((prev, stat) => [...prev, `-${t(`database_natures:${stat}`)}`], upStatTexts);
   return statTexts.join(' / ');
@@ -57,28 +53,29 @@ const getNatureExtraStatsComparedToDependingStats = (natures: StudioNature[], t:
  * @param t useTranslation
  * @returns SelectOption[]
  */
-const getNatureOptions = (state: State, t: TFunction<['database_natures']>): SelectOption[] => {
+const getNatureOptions = (state: State, t: TFunction<['database_natures']>): SelectOption<DbSymbol>[] => {
   const natures = Object.values(state.projectData.natures);
   const natureExtraStats = getNatureExtraStatsComparedToDependingStats(natures, t);
-  return natures.map((nature) => {
-    const statByNature = natureExtraStats[nature.dbSymbol];
-
-    let label = getEntityNameText(nature, state);
-    if (statByNature && statByNature !== '') {
-      label += ` (${statByNature})`;
-    }
-    return {
-      value: nature.dbSymbol,
-      label,
-    };
-  });
+  return natures
+    .map((nature) => {
+      const statByNature = natureExtraStats[nature.dbSymbol];
+      let label = getEntityNameText(nature, state);
+      if (statByNature && statByNature !== '') {
+        label += ` (${statByNature})`;
+      }
+      return {
+        value: nature.dbSymbol,
+        label,
+      };
+    })
+    .sort((a, b) => a.label.localeCompare(b.label));
 };
 
 export const SelectNature = ({ dbSymbol, onChange, noneValue, overwriteNoneValue }: SelectDataProps) => {
   const { t } = useTranslation(['database_abilities', 'pokemon_battler_list', 'database_natures']);
   const [state] = useGlobalState();
   const options = useMemo(() => {
-    const natureOptions = getNatureOptions(state, t).sort((a, b) => a.label.localeCompare(b.label));
+    const natureOptions = getNatureOptions(state, t);
     return noneValue ? [{ value: '__undef__', label: overwriteNoneValue || t('database_abilities:no_option') }, ...natureOptions] : natureOptions;
   }, [state, noneValue, overwriteNoneValue, t]);
 
@@ -91,4 +88,18 @@ export const SelectNature = ({ dbSymbol, onChange, noneValue, overwriteNoneValue
       }
     />
   );
+};
+
+type SelectNature2Props = {
+  name: string;
+  defaultValue?: DbSymbol;
+  onChange?: (v: DbSymbol) => void;
+};
+
+export const SelectNature2 = (props: SelectNature2Props) => {
+  const { t } = useTranslation(['database_natures']);
+  const [state] = useGlobalState();
+  const options = useMemo(() => getNatureOptions(state, t), [state, t]);
+
+  return <Select options={options} notFoundLabel={t('database_natures:nature_deleted')} chooseValue="__undef__" spellCheck={false} {...props} />;
 };

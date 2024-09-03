@@ -22,7 +22,7 @@ import { SavingTextMap } from './SavingUtils';
 import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID } from '@modelEntities/map';
 import { MAP_INFO_FOLDER_NAME_TEXT_ID } from '@modelEntities/mapInfo';
 import { cloneEntity } from './cloneEntity';
-import { NATURE_NAME_TEXT_ID } from '@modelEntities/natures';
+import { NATURE_NAME_TEXT_ID } from '@modelEntities/nature';
 
 type KeyProjectText = keyof ProjectText;
 

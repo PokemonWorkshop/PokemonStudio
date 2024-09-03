@@ -1,6 +1,6 @@
 import { POSITIVE_OR_ZERO_INT } from '@modelEntities/common';
 import { DbSymbol } from '@modelEntities/dbSymbol';
-import { DEFAULT_NATURES, StudioDefaultNature, StudioNature, StudioNatureFlavors } from '@modelEntities/natures';
+import { DEFAULT_NATURES, StudioDefaultNature, StudioNature, StudioNatureFlavors } from '@modelEntities/nature';
 import { parseJSON } from '@utils/json/parse';
 import { IpcMainEvent } from 'electron';
 import fs from 'fs';

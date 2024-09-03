@@ -9,7 +9,7 @@ import { useRefreshUI } from '@components/editor';
 import { InputNumber } from './InputNumber';
 import { SelectType } from '@components/selects';
 import { ReactComponent as PlusIcon } from '@assets/icons/global/plus-icon2.svg';
-import { SelectNature } from '@components/selects/SelectNature';
+import { SelectNature2 } from '@components/selects/SelectNature';
 import { CREATURE_QUEST_CONDITIONS, StudioCreatureQuestCondition, StudioCreatureQuestConditionType } from '@modelEntities/quest';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { createCreatureQuestCondition } from '@utils/entityCreation';
@@ -93,8 +93,8 @@ const ValueCondition = ({ condition }: ValueConditionProps) => {
   } else if (type === 'nature') {
     return (
       <InputWithTopLabelContainer>
-        <Label htmlFor="type">{t('nature')}</Label>
-        <SelectNature dbSymbol={value as string} onChange={(selected) => refreshUI((condition.value = selected.value as DbSymbol))} />
+        <Label htmlFor="nature">{t('nature')}</Label>
+        <SelectNature2 name="natureDbSymbol" defaultValue={value} onChange={(dbSymbol) => refreshUI((condition.value = dbSymbol))} />
       </InputWithTopLabelContainer>
     );
   } else if (type === 'type') {

@@ -39,7 +39,9 @@ export const NATURE_STATS_VALIDATOR = z.object({
   spd: POSITIVE_INT.max(999),
 });
 export type StudioNatureStats = z.infer<typeof NATURE_STATS_VALIDATOR>;
-export type StudioNatureStatsList = 'atk' | 'dfe' | 'ats' | 'dfs' | 'spd';
+
+export const StudioNatureStatsList = ['atk', 'dfe', 'ats', 'dfs', 'spd'] as const;
+export type StudioNatureStatsListType = (typeof StudioNatureStatsList)[number];
 
 export const FLAVOR_VALIDATOR = z.union([
   z.literal('spicy'),
