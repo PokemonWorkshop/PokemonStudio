@@ -34,6 +34,7 @@ export const loadAllEntities = async (projectPath: string, progress: (entityType
     const data = await loadAllEntityOfType(entityType, projectPath);
     setEntities(entityType, data.entities, data.errors);
     const texts = await loadAllEntityTexts(entityType, projectPath, data.entityList); // Should load the CSV files (texts) and build the initial entityLists
+    // Push the text to state
   }
 };
 
