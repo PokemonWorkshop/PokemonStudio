@@ -37,7 +37,11 @@ export const NatureControlBar = ({ dialogsRef }: NatureControlBarProps) => {
       {onClickNew ? <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new')}</SecondaryButtonWithPlusIcon> : <div />}
       <SelectContainerWithLabel>
         <span>{t('nature')}</span>
-        <SelectNature dbSymbol={natureDbSymbol as DbSymbol} onChange={(option) => setSelectedDataIdentifier({ nature: option.value })} />
+        <SelectNature
+          dbSymbol={natureDbSymbol as DbSymbol}
+          onChange={(option) => setSelectedDataIdentifier({ nature: option.value })}
+          hideStats={true}
+        />
       </SelectContainerWithLabel>
     </ControlBar>
   );

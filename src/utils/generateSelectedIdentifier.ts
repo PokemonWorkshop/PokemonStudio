@@ -1,7 +1,7 @@
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { SelectedDataIdentifier } from '@src/GlobalStateProvider';
 import log from 'electron-log';
-import { getEntityNameTextUsingTextId } from './ReadingProjectText';
+import { getEntityNameText, getEntityNameTextUsingTextId } from './ReadingProjectText';
 import type { PreGlobalState } from '../hooks/useProjectLoad/types';
 import { parseJSON } from './json/parse';
 
@@ -14,6 +14,10 @@ const firstByNameUsingTextId = (
 
 const firstById = <T extends { id: number; dbSymbol: string }>(data: Record<string, T>): string => {
   return Object.values(data).sort((a, b) => a.id - b.id)[0]?.dbSymbol || '__undef__';
+};
+
+const firstByName = (data: Record<string, Parameters<typeof getEntityNameText>[0] & { dbSymbol: DbSymbol }>, state: PreGlobalState): string => {
+  return Object.values(data).sort((a, b) => getEntityNameText(a, state).localeCompare(getEntityNameText(b, state)))[0].dbSymbol;
 };
 
 const getSelectedIdentifierFromStorage = (preState: PreGlobalState) => {
@@ -102,6 +106,6 @@ export const generateSelectedIdentifier = (preState: PreGlobalState): SelectedDa
     mapLink: getMapLinkIdentifier(selectedFromStorage, preState, validMaps),
     textInfo: getTextInfoIdentifier(selectedFromStorage, preState.textInfos),
     map: getSelectedIdentifier(preState, selectedFromStorage, 'map', 'maps') || firstById(projectData.maps),
-    nature: getSelectedIdentifier(preState, selectedFromStorage, 'nature', 'natures') || firstById(projectData.natures),
+    nature: getSelectedIdentifier(preState, selectedFromStorage, 'nature', 'natures') || firstByName(projectData.natures, preState),
   };
 };

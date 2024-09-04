@@ -133,8 +133,8 @@ const getDefaultFlavors = (dbSymbol: DbSymbol): StudioNatureFlavors => {
     return defaultFlavors[dbSymbol as StudioDefaultNature];
   }
   return {
-    favourite: 'bitter',
-    detested: 'dry',
+    favourite: 'none',
+    detested: 'none',
   };
 };
 

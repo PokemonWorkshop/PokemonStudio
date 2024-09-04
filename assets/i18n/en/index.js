@@ -13,6 +13,7 @@ import dashboard_game_options from './dashboard_game_options.json';
 import database_abilities from './database_abilities.json';
 import database_items from './database_items.json';
 import database_moves from './database_moves.json';
+import database_natures from './database_natures.json';
 import database_pokemon from './database_pokemon.json';
 import database_types from './database_types.json';
 import database_groups from './database_groups.json';
@@ -63,6 +64,7 @@ export default {
   database_abilities,
   database_items,
   database_moves,
+  database_natures,
   database_pokemon,
   database_types,
   database_groups,

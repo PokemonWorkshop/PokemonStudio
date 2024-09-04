@@ -53,14 +53,14 @@ const getNatureExtraStatsComparedToDependingStats = (natures: StudioNature[], t:
  * @param t useTranslation
  * @returns SelectOption[]
  */
-const getNatureOptions = (state: State, t: TFunction<['database_natures']>): SelectOption<DbSymbol>[] => {
+const getNatureOptions = (state: State, t: TFunction<['database_natures']>, hideStats: boolean): SelectOption<DbSymbol>[] => {
   const natures = Object.values(state.projectData.natures);
   const natureExtraStats = getNatureExtraStatsComparedToDependingStats(natures, t);
   return natures
     .map((nature) => {
       const statByNature = natureExtraStats[nature.dbSymbol];
       let label = getEntityNameText(nature, state);
-      if (statByNature && statByNature !== '') {
+      if (!hideStats && statByNature && statByNature !== '') {
         label += ` (${statByNature})`;
       }
       return {
@@ -71,13 +71,17 @@ const getNatureOptions = (state: State, t: TFunction<['database_natures']>): Sel
     .sort((a, b) => a.label.localeCompare(b.label));
 };
 
-export const SelectNature = ({ dbSymbol, onChange, noneValue, overwriteNoneValue }: SelectDataProps) => {
+type SelectNatureProps = {
+  hideStats?: boolean;
+} & SelectDataProps;
+
+export const SelectNature = ({ dbSymbol, onChange, noneValue, overwriteNoneValue, hideStats }: SelectNatureProps) => {
   const { t } = useTranslation(['database_abilities', 'pokemon_battler_list', 'database_natures']);
   const [state] = useGlobalState();
   const options = useMemo(() => {
-    const natureOptions = getNatureOptions(state, t);
+    const natureOptions = getNatureOptions(state, t, hideStats || false);
     return noneValue ? [{ value: '__undef__', label: overwriteNoneValue || t('database_abilities:no_option') }, ...natureOptions] : natureOptions;
-  }, [state, noneValue, overwriteNoneValue, t]);
+  }, [state, noneValue, overwriteNoneValue, hideStats, t]);
 
   return (
     <SelectCustom
@@ -93,13 +97,14 @@ export const SelectNature = ({ dbSymbol, onChange, noneValue, overwriteNoneValue
 type SelectNature2Props = {
   name: string;
   defaultValue?: DbSymbol;
+  hideStats?: boolean;
   onChange?: (v: DbSymbol) => void;
 };
 
-export const SelectNature2 = (props: SelectNature2Props) => {
+export const SelectNature2 = ({ hideStats, ...props }: SelectNature2Props) => {
   const { t } = useTranslation(['database_natures']);
   const [state] = useGlobalState();
-  const options = useMemo(() => getNatureOptions(state, t), [state, t]);
+  const options = useMemo(() => getNatureOptions(state, t, hideStats || false), [state, t, hideStats]);
 
   return <Select options={options} notFoundLabel={t('database_natures:nature_deleted')} chooseValue="__undef__" spellCheck={false} {...props} />;
 };
