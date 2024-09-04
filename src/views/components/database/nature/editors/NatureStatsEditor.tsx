@@ -6,12 +6,12 @@ import { useUpdateNature } from './useUpdateNature';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { useZodForm } from '@hooks/useZodForm';
 import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
-import { InputContainer, InputFormContainer } from '@components/inputs/InputContainer';
+import { InputFormContainer } from '@components/inputs/InputContainer';
 import { z } from 'zod';
 import { NATURE_VALIDATOR, STUDIO_NATURE_STATS_LIST, StudioNature, StudioNatureStats } from '@modelEntities/nature';
 import { cloneEntity } from '@utils/cloneEntity';
 
-const CHANGING_STATS_EDITOR_SCHEMA = NATURE_VALIDATOR.extend({
+const STATS_EDITOR_SCHEMA = NATURE_VALIDATOR.extend({
   stats: z.object({
     atk: z.number().min(-99).max(899),
     dfe: z.number().min(-99).max(899),
@@ -33,12 +33,12 @@ const updateStatsForNatureEntity = (stats: StudioNatureStats) => {
   return clonedStats;
 };
 
-export const NatureChangingStatsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
+export const NatureStatsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { t } = useTranslation('database_natures');
   const { nature } = useNaturePage();
   const updateNature = useUpdateNature(nature);
-  const { canClose, getFormData, onInputTouched, defaults, formRef } = useZodForm(CHANGING_STATS_EDITOR_SCHEMA, updateStatsForEditor(nature));
-  const { EmbeddedUnitInput } = useInputAttrsWithLabel(CHANGING_STATS_EDITOR_SCHEMA, defaults);
+  const { canClose, getFormData, onInputTouched, defaults, formRef } = useZodForm(STATS_EDITOR_SCHEMA, updateStatsForEditor(nature));
+  const { EmbeddedUnitInput } = useInputAttrsWithLabel(STATS_EDITOR_SCHEMA, defaults);
 
   const onClose = () => {
     const result = canClose() && getFormData();
@@ -50,7 +50,7 @@ export const NatureChangingStatsEditor = forwardRef<EditorHandlingClose>((_, ref
   useEditorHandlingClose(ref, onClose, canClose);
 
   return (
-    <Editor type="edit" title={t('changing_stats')}>
+    <Editor type="edit" title={t('stats')}>
       <InputFormContainer ref={formRef} size="xs">
         {STUDIO_NATURE_STATS_LIST.map((stat) => (
           <EmbeddedUnitInput
@@ -65,4 +65,4 @@ export const NatureChangingStatsEditor = forwardRef<EditorHandlingClose>((_, ref
     </Editor>
   );
 });
-NatureChangingStatsEditor.displayName = 'NatureChangingStatsEditor';
+NatureStatsEditor.displayName = 'NatureStatsEditor';
