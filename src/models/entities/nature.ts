@@ -40,8 +40,8 @@ export const NATURE_STATS_VALIDATOR = z.object({
 });
 export type StudioNatureStats = z.infer<typeof NATURE_STATS_VALIDATOR>;
 
-export const StudioNatureStatsList = ['atk', 'dfe', 'ats', 'dfs', 'spd'] as const;
-export type StudioNatureStatsListType = (typeof StudioNatureStatsList)[number];
+export const STUDIO_NATURE_STATS_LIST = ['atk', 'dfe', 'ats', 'dfs', 'spd'] as const;
+export type StudioNatureStatsListType = (typeof STUDIO_NATURE_STATS_LIST)[number];
 
 export const FLAVOR_VALIDATOR = z.union([
   z.literal('spicy'),
@@ -52,6 +52,7 @@ export const FLAVOR_VALIDATOR = z.union([
   z.literal('none'),
 ]);
 export type StudioFlavor = z.infer<typeof FLAVOR_VALIDATOR>;
+export const FLAVOR_LIST = ['none', 'spicy', 'dry', 'sweet', 'bitter', 'sour'] as const;
 
 export const NATURE_FLAVORS_VALIDATOR = z.object({
   favourite: FLAVOR_VALIDATOR,

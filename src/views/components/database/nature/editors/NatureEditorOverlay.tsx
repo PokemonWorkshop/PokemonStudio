@@ -2,7 +2,7 @@ import React from 'react';
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import { DialogRefData } from '@hooks/useDialogsRef';
-import { /*NatureChangingStatsEditor,*/ NatureDeletion /*, NatureFlavorsEditor*/, NatureFrameEditor, NatureNewEditor } from '.';
+import { NatureChangingStatsEditor, NatureDeletion, NatureFlavorsEditor, NatureFrameEditor, NatureNewEditor } from '.';
 
 export type NatureEditorAndDeletionKeys = 'new' | 'frame' | 'stats' | 'flavors' | 'deletion';
 export type NatureDialogsRef = React.RefObject<DialogRefData<NatureEditorAndDeletionKeys>>;
@@ -20,7 +20,9 @@ export const NatureEditorOverlay = defineEditorOverlay<NatureEditorAndDeletionKe
       case 'frame':
         return <NatureFrameEditor ref={handleCloseRef} />;
       case 'stats':
+        return <NatureChangingStatsEditor ref={handleCloseRef} />;
       case 'flavors':
+        return <NatureFlavorsEditor ref={handleCloseRef} />;
       case 'deletion':
         return <NatureDeletion closeDialog={closeDialog} ref={handleCloseRef} />;
       default:

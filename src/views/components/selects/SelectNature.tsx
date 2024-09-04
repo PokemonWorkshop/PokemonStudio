@@ -6,11 +6,11 @@ import { SelectDataProps } from './SelectDataProps';
 import { getEntityNameText } from '@utils/ReadingProjectText';
 import { Select } from '@ds/Select';
 import { SelectCustom } from '@components/SelectCustom';
-import { StudioNatureStatsList, StudioNature, StudioNatureStats, StudioNatureStatsListType } from '@modelEntities/nature';
+import { STUDIO_NATURE_STATS_LIST, StudioNature, StudioNatureStats, StudioNatureStatsListType } from '@modelEntities/nature';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 
 const findUpStats = (stats: StudioNatureStats): StudioNatureStatsListType[] => {
-  return StudioNatureStatsList.reduce<StudioNatureStatsListType[]>((prev, stat) => {
+  return STUDIO_NATURE_STATS_LIST.reduce<StudioNatureStatsListType[]>((prev, stat) => {
     if (stats[stat] > 100) return [...prev, stat];
 
     return prev;
@@ -18,7 +18,7 @@ const findUpStats = (stats: StudioNatureStats): StudioNatureStatsListType[] => {
 };
 
 const findDownStats = (stats: StudioNatureStats): StudioNatureStatsListType[] => {
-  return StudioNatureStatsList.reduce<StudioNatureStatsListType[]>((prev, stat) => {
+  return STUDIO_NATURE_STATS_LIST.reduce<StudioNatureStatsListType[]>((prev, stat) => {
     if (stats[stat] < 100) return [...prev, stat];
 
     return prev;
