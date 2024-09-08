@@ -29,13 +29,13 @@ import {
 const csv = (id: number) => `Data/Text/Dialogs/${id}.csv`;
 
 registerEntity('ability', 'Data/Studio/abilities/*.json', ABILITY_VALIDATOR);
-registerEntityText('ability', { propertyInEntity: 'name', discriminator: 'textId', textFilename: csv(ABILITY_NAME_TEXT_ID) });
-registerEntityText('ability', { propertyInEntity: 'description', discriminator: 'textId', textFilename: csv(ABILITY_DESCRIPTION_TEXT_ID) });
+registerEntityText('ability', { propertyInEntity: 'name', discriminator: 'textId', textFileId: ABILITY_NAME_TEXT_ID });
+registerEntityText('ability', { propertyInEntity: 'description', discriminator: 'textId', textFileId: ABILITY_DESCRIPTION_TEXT_ID });
 
 registerEntity('config', 'Data/configs/credits_config.json', CREDIT_CONFIG_VALIDATOR);
 // Ackchyually we shouldn't translate credits at all.
-// registerEntityText('config', { dbSymbol: 'credits_config', propertyInEntity: 'chiefProjectTitle', discriminator: () => 0, textFilename: csv(???) });
-// registerEntityText('config', { dbSymbol: 'credits_config', propertyInEntity: 'title', discriminator: 'textId', textFilename: csv(???), pathToProperties: ['leaders', Number] });
+// registerEntityText('config', { dbSymbol: 'credits_config', propertyInEntity: 'chiefProjectTitle', discriminator: () => 0, textFileId: ??? });
+// registerEntityText('config', { dbSymbol: 'credits_config', propertyInEntity: 'title', discriminator: 'textId', textFileId: ???, pathToProperties: ['leaders', Number] });
 
 registerEntity('config', 'Data/configs/devices_config.json', DEVICES_CONFIG_VALIDATOR);
 registerEntity('config', 'Data/configs/display_config.json', DISPLAY_CONFIG_VALIDATOR);
@@ -50,45 +50,45 @@ registerEntity('config', 'Data/configs/settings_config.json', SETTINGS_CONFIG_VA
 registerEntity('config', 'Data/configs/texts_config.json', TEXT_CONFIG_VALIDATOR);
 
 registerEntity('creature', 'Data/Studio/pokemon/*.json', CREATURE_VALIDATOR);
-registerEntityText('creature', { propertyInEntity: 'name', discriminator: 'id', textFilename: csv(CREATURE_NAME_TEXT_ID) });
-registerEntityText('creature', { propertyInEntity: 'description', discriminator: 'id', textFilename: csv(CREATURE_DESCRIPTION_TEXT_ID) });
-registerEntityText('creature', { propertyInEntity: 'specie', discriminator: 'id', textFilename: csv(CREATURE_SPECIE_TEXT_ID) });
+registerEntityText('creature', { propertyInEntity: 'name', discriminator: 'id', textFileId: CREATURE_NAME_TEXT_ID });
+registerEntityText('creature', { propertyInEntity: 'description', discriminator: 'id', textFileId: CREATURE_DESCRIPTION_TEXT_ID });
+registerEntityText('creature', { propertyInEntity: 'specie', discriminator: 'id', textFileId: CREATURE_SPECIE_TEXT_ID });
 // TODO: Add form related text + fix name to use functional discriminator
 
 registerEntity('dex', 'Data/Studio/dex/*.json', DEX_VALIDATOR);
 registerEntityText('dex', { propertyInEntity: 'name', discriminator: 'csv' });
 
 registerEntity('group', 'Data/Studio/groups/*.json', GROUP_VALIDATOR);
-registerEntityText('group', { propertyInEntity: 'name', discriminator: 'id', textFilename: csv(GROUP_NAME_TEXT_ID) });
+registerEntityText('group', { propertyInEntity: 'name', discriminator: 'id', textFileId: GROUP_NAME_TEXT_ID });
 
 // TODO: fix discriminated validator type in registerEntity
 registerEntity('item', 'Data/Studio/items/*.json', ITEM_VALIDATOR);
-registerEntityText('item', { propertyInEntity: 'name', discriminator: 'id', textFilename: csv(ITEM_NAME_TEXT_ID) });
-registerEntityText('item', { propertyInEntity: 'pluralName', discriminator: 'id', textFilename: csv(ITEM_PLURAL_NAME_TEXT_ID) });
-registerEntityText('item', { propertyInEntity: 'description', discriminator: 'id', textFilename: csv(ITEM_DESCRIPTION_TEXT_ID) });
+registerEntityText('item', { propertyInEntity: 'name', discriminator: 'id', textFileId: ITEM_NAME_TEXT_ID });
+registerEntityText('item', { propertyInEntity: 'pluralName', discriminator: 'id', textFileId: ITEM_PLURAL_NAME_TEXT_ID });
+registerEntityText('item', { propertyInEntity: 'description', discriminator: 'id', textFileId: ITEM_DESCRIPTION_TEXT_ID });
 
 registerEntity('map', 'Data/Studio/maps/*.json', MAP_VALIDATOR);
-registerEntityText('map', { propertyInEntity: 'name', discriminator: 'mapId', textFilename: csv(MAP_NAME_TEXT_ID) });
+registerEntityText('map', { propertyInEntity: 'name', discriminator: 'mapId', textFileId: MAP_NAME_TEXT_ID });
 
 registerEntity('mapLink', 'Data/Studio/maplinks/*.json', MAP_LINK_VALIDATOR);
-registerEntityText('mapLink', { propertyInEntity: 'name', discriminator: 'mapId', textFilename: csv(MAP_NAME_TEXT_ID) });
+registerEntityText('mapLink', { propertyInEntity: 'name', discriminator: 'mapId', textFileId: MAP_NAME_TEXT_ID });
 
 registerEntity('move', 'Data/Studio/moves/*.json', MOVE_VALIDATOR);
-registerEntityText('move', { propertyInEntity: 'name', discriminator: 'id', textFilename: csv(MOVE_NAME_TEXT_ID) });
-registerEntityText('move', { propertyInEntity: 'description', discriminator: 'id', textFilename: csv(MOVE_DESCRIPTION_TEXT_ID) });
+registerEntityText('move', { propertyInEntity: 'name', discriminator: 'id', textFileId: MOVE_NAME_TEXT_ID });
+registerEntityText('move', { propertyInEntity: 'description', discriminator: 'id', textFileId: MOVE_DESCRIPTION_TEXT_ID });
 
 registerEntity('quest', 'Data/Studio/quests/*.json', QUEST_VALIDATOR);
-registerEntityText('quest', { propertyInEntity: 'name', discriminator: 'id', textFilename: csv(QUEST_NAME_TEXT_ID) });
-registerEntityText('quest', { propertyInEntity: 'description', discriminator: 'id', textFilename: csv(QUEST_DESCRIPTION_TEXT_ID) });
+registerEntityText('quest', { propertyInEntity: 'name', discriminator: 'id', textFileId: QUEST_NAME_TEXT_ID });
+registerEntityText('quest', { propertyInEntity: 'description', discriminator: 'id', textFileId: QUEST_DESCRIPTION_TEXT_ID });
 
 registerEntity('trainer', 'Data/Studio/trainers/*.json', TRAINER_VALIDATOR);
-registerEntityText('trainer', { propertyInEntity: 'name', discriminator: 'id', textFilename: csv(TRAINER_NAME_TEXT_ID) });
-registerEntityText('trainer', { propertyInEntity: 'victorySentence', discriminator: 'id', textFilename: csv(TRAINER_VICTORY_SENTENCE_TEXT_ID) });
-registerEntityText('trainer', { propertyInEntity: 'defeateSentence', discriminator: 'id', textFilename: csv(TRAINER_DEFEAT_SENTENCE_TEXT_ID) });
+registerEntityText('trainer', { propertyInEntity: 'name', discriminator: 'id', textFileId: TRAINER_NAME_TEXT_ID });
+registerEntityText('trainer', { propertyInEntity: 'victorySentence', discriminator: 'id', textFileId: TRAINER_VICTORY_SENTENCE_TEXT_ID });
+registerEntityText('trainer', { propertyInEntity: 'defeateSentence', discriminator: 'id', textFileId: TRAINER_DEFEAT_SENTENCE_TEXT_ID });
 
 registerEntity('type', 'Data/Studio/types/*.json', TYPE_VALIDATOR);
-registerEntityText('type', { propertyInEntity: 'name', discriminator: 'textId', textFilename: csv(TYPE_NAME_TEXT_ID) });
+registerEntityText('type', { propertyInEntity: 'name', discriminator: 'textId', textFileId: TYPE_NAME_TEXT_ID });
 
 registerEntity('zone', 'Data/Studio/zones/*.json', ZONE_VALIDATOR);
-registerEntityText('zone', { propertyInEntity: 'name', discriminator: 'id', textFilename: csv(ZONE_NAME_TEXT_ID) });
-registerEntityText('zone', { propertyInEntity: 'description', discriminator: 'id', textFilename: csv(ZONE_DESCRIPTION_TEXT_ID) });
+registerEntityText('zone', { propertyInEntity: 'name', discriminator: 'id', textFileId: ZONE_NAME_TEXT_ID });
+registerEntityText('zone', { propertyInEntity: 'description', discriminator: 'id', textFileId: ZONE_DESCRIPTION_TEXT_ID });

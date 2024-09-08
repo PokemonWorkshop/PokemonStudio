@@ -22,6 +22,12 @@ describe('text', () => {
       expect(handler.getColumn('fr')).toEqual(['Text0', 'Text,"1']);
     });
 
+    it('loads the system csv properly', () => {
+      const handler = loadCSV(0, 'path', true);
+      expect(mockedReadFileSync).toHaveBeenCalledWith('path/Data/Text/Studio/0.csv', { encoding: 'utf-8' });
+      expect(handler.getColumn('fr')).toEqual(['Text0', 'Text,"1']);
+    });
+
     it('does not save if not modified', () => {
       const handler = loadCSV(0, 'path', false);
       expect(handler.isTainted()).toBeFalsy();
