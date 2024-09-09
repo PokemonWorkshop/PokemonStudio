@@ -266,3 +266,5 @@ export const mutateItemInto = <K extends StudioItem['klass']>(
 
   return newItem;
 };
+
+export const ITEM_SOCKET_LIST = [1, 2, 3, 4, 5, 6] as const;
