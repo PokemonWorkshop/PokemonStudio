@@ -12,6 +12,7 @@ import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 import { useZodForm } from '@hooks/useZodForm';
 import { InputFormContainer } from '@components/inputs/InputContainer';
 import { TranslatableTextFields, TranslatableTextFieldsRef } from './InformationEditor/TranslatableTextFields';
+import { TranslatableFormTextFields } from './InformationEditor/TranslatableFormTextFields';
 import { INFORMATION_EDITOR_SCHEMA } from './InformationEditor/InformationEditorSchema';
 import { TypeFields } from './InformationEditor/TypeFields';
 
@@ -27,6 +28,7 @@ export const InformationsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { creature, form, creatureName } = useCreaturePage();
   const updateForm = useUpdateForm(creature, form);
   const tTFR = useRef<TranslatableTextFieldsRef>(null);
+  const formTTFR = useRef<TranslatableTextFieldsRef>(null);
   const { canClose, getFormData, onInputTouched, defaults, formRef } = useZodForm(INFORMATION_EDITOR_SCHEMA, form);
   const { Input } = useInputAttrsWithLabel(INFORMATION_EDITOR_SCHEMA, defaults);
 
@@ -39,27 +41,35 @@ export const InformationsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
     if (!result || !result.success) return;
 
     tTFR.current?.saveTexts();
+    formTTFR.current?.saveTexts();
     updateForm(result.data);
   };
   useEditorHandlingClose(ref, onClose, canCloseEditor);
 
   const handleTranslateClick = (editorTitle: TranslationEditorTitle) => () => {
     tTFR.current?.saveTexts();
+    formTTFR.current?.saveTexts();
     setTimeout(() => dialogsRef.current?.openDialog(editorTitle), 0);
   };
-  const onTranslationOverlayClose = () => tTFR.current?.onTranslationOverlayClose();
+  const onTranslationOverlayClose = () => {
+    tTFR.current?.onTranslationOverlayClose();
+    formTTFR.current?.onTranslationOverlayClose();
+  };
 
   return (
     <Editor type="edit" title={t('information')}>
       <InputFormContainer ref={formRef}>
-        <TranslatableTextFields ref={tTFR} handleTranslateClick={handleTranslateClick} creature={creature} creatureName={creatureName} />
+        {form.form === 0 && (
+          <TranslatableTextFields ref={tTFR} handleTranslateClick={handleTranslateClick} creature={creature} creatureName={creatureName} />
+        )}
+        <TranslatableFormTextFields ref={formTTFR} handleTranslateClick={handleTranslateClick} creature={creature} form={form} />
         <TypeFields form={form} defaults={defaults} />
         <InputWithTopLabelContainer>
           <Input name="frontOffsetY" label={t('offset')} labelLeft onInput={onInputTouched} />
           <OffsetInfo>{t('offset_info')}</OffsetInfo>
         </InputWithTopLabelContainer>
       </InputFormContainer>
-      <CreatureTranslationOverlay creature={creature} onClose={onTranslationOverlayClose} ref={dialogsRef} />
+      <CreatureTranslationOverlay creature={creature} form={form} onClose={onTranslationOverlayClose} ref={dialogsRef} />
     </Editor>
   );
 });

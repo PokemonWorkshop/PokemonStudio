@@ -1,14 +1,15 @@
 import React, { useCallback, useMemo } from 'react';
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { StudioCreatureForm } from '@modelEntities/creature';
 import { StudioDropDown } from '@components/StudioDropDown';
 import { SelectContainerWithLabel } from './SelectContainerWithLabel';
 import { BreakableSpan } from './SelectPokemon';
 import { Select } from '@ds/Select';
+import { useGetCreatureFormNameText } from '@utils/ReadingProjectText';
 
-const getFormOptions = (t: TFunction<'database_pokemon'>, forms: StudioCreatureForm[]) =>
-  forms.map((formData) => ({ value: formData.form.toString(), label: t('form#') + formData.form }));
+const getFormOptions = (getCreatureFormName: (form: StudioCreatureForm) => string, forms: StudioCreatureForm[]) =>
+  forms.map((formData) => ({ value: formData.form.toString(), label: `${getCreatureFormName(formData)} (n°${formData.form})` }));
 
 type SelectPokemonFormProps = {
   dbSymbol: string;
@@ -22,11 +23,12 @@ type SelectPokemonFormProps = {
 export const SelectPokemonForm = ({ dbSymbol, form, onChange, noLabel, breakpoint, undefValueOption }: SelectPokemonFormProps) => {
   const { t } = useTranslation('database_pokemon');
   const [state] = useGlobalState();
+  const getCreatureFormName = useGetCreatureFormNameText();
   const options = useMemo(() => {
-    const formOptions = getFormOptions(t, state.projectData.pokemon[dbSymbol]?.forms || []);
+    const formOptions = getFormOptions(getCreatureFormName, state.projectData.pokemon[dbSymbol]?.forms || []);
     if (undefValueOption) return [{ value: '__undef__', label: undefValueOption }, ...formOptions];
     return formOptions;
-  }, [dbSymbol, undefValueOption, form, state]);
+  }, [dbSymbol, undefValueOption, getCreatureFormName, state]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const optionals = useMemo(() => ({ deletedOption: t('form_deleted') }), []);
 
@@ -50,7 +52,8 @@ type SelectCreatureFormProps = {
 export const SelectCreatureForm = ({ dbSymbol, onChange, ...props }: SelectCreatureFormProps) => {
   const { t } = useTranslation('database_pokemon');
   const [state] = useGlobalState();
-  const options = useMemo(() => getFormOptions(t, state.projectData.pokemon[dbSymbol]?.forms || []), [dbSymbol, state]);
+  const getCreatureFormName = useGetCreatureFormNameText();
+  const options = useMemo(() => getFormOptions(getCreatureFormName, state.projectData.pokemon[dbSymbol]?.forms || []), [dbSymbol, state]);
   const onValidatedChange = useCallback(
     (v: string) => {
       if (!onChange) return;
