@@ -26,9 +26,9 @@ export const CompilationLogs = ({ configuration }: CompilationLogsProps) => {
   const logsRef = useRef<HTMLTextAreaElement>(null);
   const progressBarRef = useRef<HTMLProgressElement>(null);
   const loaderRef = useLoaderRef();
-  const [exitCode, setExitCode] = useState<number | undefined>(undefined);
+  const [exitCode, setExitCode] = useState<number | undefined | null>(undefined);
   const showItemInFolder = useShowItemInFolder();
-  const isError = exitCode !== undefined && exitCode > 0;
+  const isError = exitCode !== undefined && (exitCode === null || exitCode > 0);
 
   const onClickClipboard = () => {
     if (!logsRef.current) return;
@@ -89,7 +89,7 @@ export const CompilationLogs = ({ configuration }: CompilationLogsProps) => {
           </span>
         </div>
       )}
-      {(exitCode === undefined || exitCode > 0) && (
+      {(exitCode === undefined || exitCode === null || exitCode > 0) && (
         <ProgressBarCompilationContainer isError={isError}>
           <span className="progress-message">
             {isError ? t('error_occurred') : t('creating_executable_for')}
