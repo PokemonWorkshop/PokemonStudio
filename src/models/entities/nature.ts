@@ -55,8 +55,8 @@ export type StudioFlavor = z.infer<typeof FLAVOR_VALIDATOR>;
 export const FLAVOR_LIST = ['none', 'spicy', 'dry', 'sweet', 'bitter', 'sour'] as const;
 
 export const NATURE_FLAVORS_VALIDATOR = z.object({
-  favourite: FLAVOR_VALIDATOR,
-  detested: FLAVOR_VALIDATOR,
+  liked: FLAVOR_VALIDATOR,
+  disliked: FLAVOR_VALIDATOR,
 });
 export type StudioNatureFlavors = z.infer<typeof NATURE_FLAVORS_VALIDATOR>;
 

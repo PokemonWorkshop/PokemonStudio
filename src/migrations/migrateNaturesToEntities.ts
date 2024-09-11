@@ -20,104 +20,104 @@ type StudioNatureConfig = z.infer<typeof NATURE_CONFIG_VALIDATOR>;
 
 const defaultFlavors: Record<StudioDefaultNature, StudioNatureFlavors> = {
   adamant: {
-    favourite: 'spicy',
-    detested: 'dry',
+    liked: 'spicy',
+    disliked: 'dry',
   },
   bashful: {
-    favourite: 'none',
-    detested: 'none',
+    liked: 'none',
+    disliked: 'none',
   },
   bold: {
-    favourite: 'sour',
-    detested: 'spicy',
+    liked: 'sour',
+    disliked: 'spicy',
   },
   brave: {
-    favourite: 'spicy',
-    detested: 'sweet',
+    liked: 'spicy',
+    disliked: 'sweet',
   },
   calm: {
-    favourite: 'bitter',
-    detested: 'spicy',
+    liked: 'bitter',
+    disliked: 'spicy',
   },
   careful: {
-    favourite: 'bitter',
-    detested: 'dry',
+    liked: 'bitter',
+    disliked: 'dry',
   },
   docile: {
-    favourite: 'none',
-    detested: 'none',
+    liked: 'none',
+    disliked: 'none',
   },
   gentle: {
-    favourite: 'bitter',
-    detested: 'sour',
+    liked: 'bitter',
+    disliked: 'sour',
   },
   hardy: {
-    favourite: 'none',
-    detested: 'none',
+    liked: 'none',
+    disliked: 'none',
   },
   hasty: {
-    favourite: 'sweet',
-    detested: 'sour',
+    liked: 'sweet',
+    disliked: 'sour',
   },
   impish: {
-    favourite: 'sour',
-    detested: 'dry',
+    liked: 'sour',
+    disliked: 'dry',
   },
   jolly: {
-    favourite: 'sweet',
-    detested: 'dry',
+    liked: 'sweet',
+    disliked: 'dry',
   },
   lax: {
-    favourite: 'sour',
-    detested: 'bitter',
+    liked: 'sour',
+    disliked: 'bitter',
   },
   lonely: {
-    favourite: 'spicy',
-    detested: 'sour',
+    liked: 'spicy',
+    disliked: 'sour',
   },
   mild: {
-    favourite: 'dry',
-    detested: 'sour',
+    liked: 'dry',
+    disliked: 'sour',
   },
   modest: {
-    favourite: 'dry',
-    detested: 'spicy',
+    liked: 'dry',
+    disliked: 'spicy',
   },
   naive: {
-    favourite: 'sweet',
-    detested: 'bitter',
+    liked: 'sweet',
+    disliked: 'bitter',
   },
   naughty: {
-    favourite: 'spicy',
-    detested: 'bitter',
+    liked: 'spicy',
+    disliked: 'bitter',
   },
   quiet: {
-    favourite: 'dry',
-    detested: 'sweet',
+    liked: 'dry',
+    disliked: 'sweet',
   },
   quirky: {
-    favourite: 'none',
-    detested: 'none',
+    liked: 'none',
+    disliked: 'none',
   },
   rash: {
-    favourite: 'dry',
-    detested: 'bitter',
+    liked: 'dry',
+    disliked: 'bitter',
   },
   relaxed: {
-    favourite: 'sour',
-    detested: 'sweet',
+    liked: 'sour',
+    disliked: 'sweet',
   },
   sassy: {
-    favourite: 'bitter',
-    detested: 'sweet',
+    liked: 'bitter',
+    disliked: 'sweet',
   },
   serious: {
-    favourite: 'none',
-    detested: 'none',
+    liked: 'none',
+    disliked: 'none',
   },
   timid: {
-    favourite: 'sweet',
-    detested: 'spicy',
+    liked: 'sweet',
+    disliked: 'spicy',
   },
 };
 
@@ -133,8 +133,8 @@ const getDefaultFlavors = (dbSymbol: DbSymbol): StudioNatureFlavors => {
     return defaultFlavors[dbSymbol as StudioDefaultNature];
   }
   return {
-    favourite: 'none',
-    detested: 'none',
+    liked: 'none',
+    disliked: 'none',
   };
 };
 

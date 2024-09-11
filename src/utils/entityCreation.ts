@@ -571,8 +571,8 @@ export const createNature = (allNatures: ProjectData['natures'], dbSymbol: DbSym
       spd: 100,
     },
     flavors: {
-      favourite: 'none',
-      detested: 'none',
+      liked: 'none',
+      disliked: 'none',
     },
   };
 };

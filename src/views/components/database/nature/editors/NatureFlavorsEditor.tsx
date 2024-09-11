@@ -33,8 +33,8 @@ export const NatureFlavorsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   return (
     <Editor type="edit" title={t('flavors')}>
       <InputFormContainer ref={formRef}>
-        <Select name="flavors.favourite" label={t('favourite_flavor')} options={flavorOptions} data-input-type="string" />
-        <Select name="flavors.detested" label={t('detested_flavor')} options={flavorOptions} data-input-type="string" />
+        <Select name="flavors.liked" label={t('liked_flavor')} options={flavorOptions} data-input-type="string" />
+        <Select name="flavors.disliked" label={t('disliked_flavor')} options={flavorOptions} data-input-type="string" />
       </InputFormContainer>
     </Editor>
   );

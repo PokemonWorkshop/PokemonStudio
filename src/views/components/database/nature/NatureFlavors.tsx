@@ -15,8 +15,8 @@ export const NatureFlavors = ({ nature, dialogsRef }: NatureDataProps) => {
   return (
     <DataBlockWithTitle size="half" title={t('flavors')} onClick={() => dialogsRef?.current?.openDialog('flavors')}>
       <DataGrid columns="1fr" rows="1fr 1fr">
-        <DataFieldsetField label={t('favourite_flavor')} data={t(nature.flavors.favourite)} />
-        <DataFieldsetField label={t('detested_flavor')} data={t(nature.flavors.detested)} />
+        <DataFieldsetField label={t('liked_flavor')} data={t(nature.flavors.liked)} />
+        <DataFieldsetField label={t('disliked_flavor')} data={t(nature.flavors.disliked)} />
       </DataGrid>
     </DataBlockWithTitle>
   );
