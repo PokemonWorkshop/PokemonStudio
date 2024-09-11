@@ -97,8 +97,15 @@ export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier
           savingData: new SavingMap(currentState.savingData.set({ key, id }, 'UPDATE')),
           savingText: new SavingTextMap(currentState.savingText.setMultiple(fileIdUpdatedTexts, 'UPDATE')),
         };
+        if (key === 'mapLinks') return newState;
+
         // Add the new text
-        if (key !== 'mapLinks') addSelectOption(key === 'pokemon' ? 'creatures' : key, newState);
+        if (key === 'dex') {
+          addSelectOption('dex', newState);
+          addSelectOption('creatures', newState);
+        } else {
+          addSelectOption(key === 'pokemon' ? 'creatures' : key, newState);
+        }
         return newState;
       } else {
         return {
