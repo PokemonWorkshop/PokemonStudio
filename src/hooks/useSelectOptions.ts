@@ -12,9 +12,10 @@ import { State } from '@src/GlobalStateProvider';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import { cloneEntity } from '@utils/cloneEntity';
 import { getText, pocketMapping } from '@utils/ReadingProjectText';
-import { DEX_DEFAULT_NAME_TEXT_ID, StudioDexCreature } from '@modelEntities/dex';
+import { DEX_DEFAULT_NAME_TEXT_ID } from '@modelEntities/dex';
 import { MAP_NAME_TEXT_ID } from '@modelEntities/map';
 import { TRAINER_CLASS_TEXT_ID, TRAINER_NAME_TEXT_ID } from '@modelEntities/trainer';
+import { buildCreaturesListByDexOrder } from '@utils/buildCreaturesListByDexOrder';
 
 // Note: Regexp to search all options in the code: (\{ value:|\{ label:)
 
@@ -280,20 +281,10 @@ const buildSelectOptionsFromKey = (key: OptionSourceKey, state: State) => {
       return Object.values(state.projectData.groups)
         .sort((a, b) => a.id - b.id)
         .map((data) => adjustSelectOptionValue(originalObjects[data.id] || cloneEntity(originalObjects[0]), data.dbSymbol));
-    case 'creatures': {
-      const allPokemon = state.projectData.pokemon;
-      const creaturesFromDex = cloneEntity(state.projectData.dex['national'].creatures)
-        .filter(({ dbSymbol }) => allPokemon[dbSymbol] !== undefined)
-        .map((creature) => ({ ...creature, id: allPokemon[creature.dbSymbol].id }));
-      const creatures = Object.values(allPokemon)
-        .sort((a, b) => a.id - b.id)
-        .reduce<({ id: number } & StudioDexCreature)[]>((prev, creature) => {
-          if (prev.find(({ dbSymbol }) => dbSymbol === creature.dbSymbol)) return prev;
-
-          return [...prev, { dbSymbol: creature.dbSymbol, form: 0, id: allPokemon[creature.dbSymbol].id }];
-        }, creaturesFromDex);
-      return creatures.map((data) => adjustSelectOptionValue(originalObjects[data.id] || cloneEntity(originalObjects[0]), data.dbSymbol));
-    }
+    case 'creatures':
+      return buildCreaturesListByDexOrder(state).map((data) =>
+        adjustSelectOptionValue(originalObjects[data.id] || cloneEntity(originalObjects[0]), data.dbSymbol)
+      );
     case 'quests':
       return Object.values(state.projectData.quests)
         .sort((a, b) => a.id - b.id)
