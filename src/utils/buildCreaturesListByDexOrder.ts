@@ -3,7 +3,12 @@ import { cloneEntity } from './cloneEntity';
 
 export const buildCreaturesListByDexOrder = (state: State) => {
   const allPokemon = state.projectData.pokemon;
-  const creaturesFromDex = cloneEntity(state.projectData.dex['national'].creatures)
+  const nationalDex = state.projectData.dex['national'];
+  if (!nationalDex) {
+    return Object.values(allPokemon).sort((a, b) => a.id - b.id);
+  }
+
+  const creaturesFromDex = cloneEntity(nationalDex.creatures)
     .filter(({ dbSymbol }) => allPokemon[dbSymbol] !== undefined)
     .map((creature) => ({ dbSymbol: creature.dbSymbol, id: allPokemon[creature.dbSymbol].id }));
   return Object.values(allPokemon)
