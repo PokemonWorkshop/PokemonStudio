@@ -26,8 +26,6 @@ const HomePageComponent = () => {
   const { t } = useTranslation('homepage');
   const navigate = useNavigate();
 
-  useEffect(() => window.api.log.info('test'), []);
-
   const onDeleteProjectToList = (event: React.MouseEvent<HTMLSpanElement>, projectPath: string) => {
     event.stopPropagation();
     deleteProjectToList(projectPath);
