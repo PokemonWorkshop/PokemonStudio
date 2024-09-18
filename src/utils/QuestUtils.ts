@@ -6,8 +6,8 @@ import {
   StudioQuestObjectiveType,
 } from '@modelEntities/quest';
 import { State } from '@src/GlobalStateProvider';
-import { TFunction } from 'react-i18next';
-import { getEntityNameText, getEntityNameTextUsingTextId } from './ReadingProjectText';
+import { TFunction } from 'i18next';
+import { getEntityNameText, getEntityNameTextUsingTextId, getNatureText } from './ReadingProjectText';
 
 const buildSpeakToText = (objective: StudioQuestObjective) => {
   return objective.objectiveMethodArgs[1] as string;

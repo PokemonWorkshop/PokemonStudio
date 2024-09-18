@@ -1,6 +1,7 @@
 import { LOCKED_ITEM_EDITOR, StudioItem } from '@modelEntities/item';
 import React from 'react';
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { DataBlockWithTitle, DataFieldsetField, DataGrid } from '../dataBlocks';
 import { getHealedStatus } from './editors/ItemHealDataEditor';
 import { useItemPage } from '@hooks/usePage';

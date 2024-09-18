@@ -6,7 +6,8 @@ import { DeleteButtonOnlyIcon, EditButtonOnlyIcon } from '@components/buttons';
 import { EditButtonOnlyIconContainer } from '@components/buttons/EditButtonOnlyIcon';
 import theme from '@src/AppTheme';
 import { DraggableProvided } from 'react-beautiful-dnd';
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 
 type RenderMemberContainerProps = {
   isDragging: boolean;
