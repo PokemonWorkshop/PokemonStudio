@@ -15,6 +15,7 @@ import { getText, pocketMapping } from '@utils/ReadingProjectText';
 import { DEX_DEFAULT_NAME_TEXT_ID } from '@modelEntities/dex';
 import { MAP_NAME_TEXT_ID } from '@modelEntities/map';
 import { TRAINER_CLASS_TEXT_ID, TRAINER_NAME_TEXT_ID } from '@modelEntities/trainer';
+import { buildCreaturesListByDexOrder } from '@utils/buildCreaturesListByDexOrder';
 
 // Note: Regexp to search all options in the code: (\{ value:|\{ label:)
 
@@ -281,9 +282,9 @@ const buildSelectOptionsFromKey = (key: OptionSourceKey, state: State) => {
         .sort((a, b) => a.id - b.id)
         .map((data) => adjustSelectOptionValue(originalObjects[data.id] || cloneEntity(originalObjects[0]), data.dbSymbol));
     case 'creatures':
-      return Object.values(state.projectData.pokemon)
-        .sort((a, b) => a.id - b.id)
-        .map((data) => adjustSelectOptionValue(originalObjects[data.id] || cloneEntity(originalObjects[0]), data.dbSymbol));
+      return buildCreaturesListByDexOrder(state).map((data) =>
+        adjustSelectOptionValue(originalObjects[data.id] || cloneEntity(originalObjects[0]), data.dbSymbol)
+      );
     case 'quests':
       return Object.values(state.projectData.quests)
         .sort((a, b) => a.id - b.id)
