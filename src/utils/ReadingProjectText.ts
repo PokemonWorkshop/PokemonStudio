@@ -254,14 +254,14 @@ export const getItemPocketText = (item: StudioItem, state: State): string => {
       defaultLanguage: state.projectConfig.language_config.defaultLanguage,
     },
     ITEM_POCKET_NAME_TEXT_ID,
-    pocketMapping[item.socket] || item.socket
+    pocketMapping[item.socket] ?? item.socket
   );
 };
 export const useGetItemPocketText = () => {
   const getEntityText = useGetProjectText();
 
   return (entity: { klass: StudioItem['klass']; socket: number }) =>
-    getEntityText(ITEM_POCKET_NAME_TEXT_ID, pocketMapping[entity.socket] || entity.socket);
+    getEntityText(ITEM_POCKET_NAME_TEXT_ID, pocketMapping[entity.socket] ?? entity.socket);
 };
 
 export const useGetItemPluralNameText = () => {

@@ -18,7 +18,7 @@ export type StartCompilationInput = {
   configuration: StudioCompilation;
 };
 export type StartCompilationOutput = {
-  exitCode: number;
+  exitCode: number | null;
 };
 
 let childProcess: ChildProcessWithoutNullStreams | undefined = undefined;
@@ -26,7 +26,6 @@ let stdOutRemaining = '';
 let loggerBuffer: string[] = [];
 const BUFFER_LIMIT = 10; // The data is send to the front-end when the loggerBuffer reaches or exceeds the limit
 let progression = 0;
-let isError = false;
 
 const getSpawnArgs = (rubyPath: string, projectPath: string, ...args: string[]): [string, string[]] => {
   RMXP2StudioSafetyNet(projectPath);
@@ -61,7 +60,6 @@ const clearChildProcess = () => {
   childProcess = undefined;
   stdOutRemaining = '';
   progression = 0;
-  isError = false;
 };
 
 const updateInfosConfig = async (infosConfigPath: string, configuration: StudioCompilation) => {
@@ -87,7 +85,7 @@ const updateProjectStudio = async (projectStudioFilePath: string, configuration:
   await fsPromise.writeFile(projectStudioFilePath, JSON.stringify(projectStudio.data, null, 2));
 };
 
-const compilationProcess = async (event: IpcMainEvent, channels: ChannelNames, configuration: StudioCompilation): Promise<number> => {
+const compilationProcess = async (event: IpcMainEvent, channels: ChannelNames, configuration: StudioCompilation): Promise<number | null> => {
   const windowCompilation = windowManager.getWindow('compilation');
   if (!windowCompilation) throw new Error('The compilation window does not exist');
 
@@ -115,7 +113,6 @@ const compilationProcess = async (event: IpcMainEvent, channels: ChannelNames, c
 
     childProcess.stderr.on('data', (chunk) => {
       loggerBuffer.push(chunk);
-      isError = true;
     });
 
     childProcess.stdout.on('data', (chunk) => {
@@ -137,9 +134,9 @@ const compilationProcess = async (event: IpcMainEvent, channels: ChannelNames, c
       });
     });
 
-    childProcess.on('exit', () => {
+    childProcess.on('exit', (exitCode) => {
       sendProgress(event, channels, { step: progression, total: 0, stepText: getLoggerBuffer() });
-      resolve(isError ? 1 : 0);
+      resolve(exitCode);
       clearChildProcess();
     });
 
@@ -157,7 +154,7 @@ const startCompilation = async (payload: StartCompilationInput, event: IpcMainEv
   updateInfosConfig(path.join(configuration.projectPath, 'Data/configs/infos_config.json'), configuration);
   updateProjectStudio(path.join(configuration.projectPath, 'project.studio'), configuration);
 
-  let exitCode = 0;
+  let exitCode: number | null = 0;
   await compilationProcess(event, channels, payload.configuration)
     .then((code) => {
       log.info('start-compilation/exit-code', code);
@@ -165,7 +162,7 @@ const startCompilation = async (payload: StartCompilationInput, event: IpcMainEv
     })
     .catch((error) => {
       log.error('start-compilation/exit-error', error);
-      exitCode = 1;
+      exitCode = null;
     });
 
   return { exitCode };
