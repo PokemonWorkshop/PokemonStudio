@@ -44,6 +44,11 @@ export const MOVE_BATTLE_STAGE_MOD_VALIDATOR = z.object({
 });
 export type StudioBattleStageMod = z.infer<typeof MOVE_BATTLE_STAGE_MOD_VALIDATOR>;
 
+
+export const MOVE_STATUS_CUSTOM_VALIDATOR = z.string().regex(/^[A-Za-z0-9_]+$/, 'Invalid custom status format');
+
+export const MOVE_STATUS_CUSTOM = 'Custom_';
+
 export const MOVE_STATUS_LIST_VALIDATOR = z.union([
   z.literal('POISONED'),
   z.literal('PARALYZED'),
@@ -55,6 +60,7 @@ export const MOVE_STATUS_LIST_VALIDATOR = z.union([
   z.literal('DEATH'),
   z.literal('FLINCH'),
   z.literal('__undef__'),
+  MOVE_STATUS_CUSTOM_VALIDATOR.startsWith(MOVE_STATUS_CUSTOM),
   z.literal(null),
 ]);
 export type StudioMoveStatusList = z.infer<typeof MOVE_STATUS_LIST_VALIDATOR>;

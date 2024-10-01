@@ -51,6 +51,7 @@
   "physical": "Physique",
   "special": "Spéciale",
   "custom": "Attaque personnalisée",
+  "status_custom": "Status personnalisée",
   "characteristics": "Caractéristiques",
   "characteristics_move": "Caractéristiques de l'attaque",
   "status": "Statut",
@@ -155,6 +156,7 @@
   "common_event": "Événement commun",
   "always": "Toujours",
   "error_status": "Vous ne pouvez pas avoir plusieurs fois le même statut.",
+  "error_status_format": "Le format du status n'est pas correct.",
   "error_chances": "Les chances d'infliger un statut doivent être comprises entre 1 et 100.",
   "error_overflow": "La somme de vos chances d'infliger un statut ne doit pas excéder 100\u00a0%."
 }
