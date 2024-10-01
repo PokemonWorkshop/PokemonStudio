@@ -15,10 +15,12 @@ type StatusesEditorProps = {
 
 const moveStatusEntries = (t: TFunction<'database_moves'>) => [
   { value: '__undef__', label: t('none') },
+  { value: 'status_custom', label: t('status_custom') },
   ...MOVE_STATUS_LIST.map((status) => ({
     value: status,
     label: t(status),
-  })).sort((a, b) => a.label.localeCompare(b.label)),
+  })),
+  // .sort((a, b) => a.label.localeCompare(b.label)),
 ];
 
 export const StatusesEditor = ({ onTouched, defaults, statuses, chances, handleStatusChange, handleChancesChange }: StatusesEditorProps) => {

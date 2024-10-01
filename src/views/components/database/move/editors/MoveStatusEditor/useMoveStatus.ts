@@ -30,8 +30,12 @@ export const useMoveStatus = (moveWithStatus: StudioMove) => {
     setStatus((status) => {
       const newStatus = cloneEntity(status);
       newStatus[index] = newValue;
+      console.log('newStatus', newStatus, newValue);
+
       return newStatus;
     });
+
+    console.log('status', status, newValue);
 
     if (newValue === '__undef__') {
       resetStatusesFrom(index);
