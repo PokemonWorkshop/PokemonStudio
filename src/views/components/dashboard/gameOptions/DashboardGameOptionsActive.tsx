@@ -34,7 +34,7 @@ const RenderOptionActive = ({ index, option, disabledDisableOption, disableOptio
   };
 
   return (
-    <RenderOptionContainer key={`active-option-${index}`} className="game-option" data-swapy-slot={index}>
+    <RenderOptionContainer key={`active-option-${index}`} className="game-option" data-swapy-item={index}>
       <div className="icon-name">
         <span className="icon" data-swapy-handle>
           <DragIcon />
@@ -59,10 +59,15 @@ export const DashboardGameOptionsActive = () => {
     if (!gameOptionsActiveRef.current) return;
 
     //console.log(createSwapy);
-    const swapy = createSwapy(gameOptionsActiveRef.current); // crash here
-    swapy.onSwap(({ data }) => {
-      console.log(data);
-      // TODO: changeOrder
+    const swapy = createSwapy(gameOptionsActiveRef.current);
+    swapy.onSwapEnd(({ data }) => {
+      //console.log(data);
+      const index = data.array.find(({ slotId, itemId }) => slotId !== itemId);
+      console.log(index);
+      if (!index || index.itemId === null) return;
+
+      //console.log('here');
+      changeOrder(Number(index.itemId), Number(index.slotId));
     });
 
     return () => {
@@ -76,13 +81,9 @@ export const DashboardGameOptionsActive = () => {
         <span className="empty-list">{t('no_active_option')}</span>
       ) : (
         gameOptions.map((option, index) => (
-          <RenderOptionActive
-            option={option}
-            index={index}
-            disableOption={disableOption}
-            disabledDisableOption={disabledDisableOption()}
-            key={`active-option-${index}`}
-          />
+          <div key={`active-option-${index}`} data-swapy-slot={index}>
+            <RenderOptionActive option={option} index={index} disableOption={disableOption} disabledDisableOption={disabledDisableOption()} />
+          </div>
         ))
       )}
     </DashboardGameOptionsTableContainer>
