@@ -10,7 +10,7 @@ import { useGlobalState } from '@src/GlobalStateProvider';
 import { DeleteButtonOnlyIcon, EditButtonOnlyIcon } from '@components/buttons';
 import { EditButtonOnlyIconContainer } from '@components/buttons/EditButtonOnlyIcon';
 import theme from '@src/AppTheme';
-import { DraggableProvided } from 'react-beautiful-dnd';
+import { DraggableProvided } from '@hello-pangea/dnd';
 import {
   StudioQuestObjective,
   StudioQuestObjectiveCategoryType,

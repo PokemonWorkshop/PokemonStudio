@@ -1,6 +1,6 @@
 import { Component } from 'react';
 // Allowing existing usage of non Pragmatic drag and drop solution
-import { DraggableProvidedDraggableProps, DraggableStateSnapshot, DraggingStyle } from 'react-beautiful-dnd';
+import { DraggableProvidedDraggableProps, DraggableStateSnapshot, DraggingStyle } from '@hello-pangea/dnd';
 import { isSamePath } from '../utils/path';
 import { sameProps } from '../utils/react';
 import { Props, TreeDraggableProvided } from './TreeItem-types';

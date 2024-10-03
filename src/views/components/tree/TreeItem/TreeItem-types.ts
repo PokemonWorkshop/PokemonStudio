@@ -5,7 +5,7 @@ import {
   DraggableProvidedDragHandleProps,
   DraggableProvidedDraggableProps,
   DraggingStyle,
-} from 'react-beautiful-dnd';
+} from '@hello-pangea/dnd';
 import { ItemId, Path, TreeItem } from '../types';
 
 export type TreeDraggingStyle = DraggingStyle & {

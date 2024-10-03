@@ -6,7 +6,7 @@ import { DataPokemonGrid } from './DexPokemonListTableStyle';
 import { ReactComponent as DragIcon } from '@assets/icons/global/drag.svg';
 import { DarkButton, DarkButtonImportResponsive, DeleteButtonOnlyIcon, EditButtonOnlyIcon } from '@components/buttons';
 import { EditButtonOnlyIconContainer } from '@components/buttons/EditButtonOnlyIcon';
-import { DraggableProvided } from 'react-beautiful-dnd';
+import { DraggableProvided } from '@hello-pangea/dnd';
 import { useProjectPokemon, useProjectTypes } from '@hooks/useProjectData';
 import { TypeCategory } from '@components/categories';
 import { getNameType } from '@utils/getNameType';

@@ -11,7 +11,7 @@ import {
   DraggableStateSnapshot,
   DropResult,
   DraggableRubric,
-} from 'react-beautiful-dnd';
+} from '@hello-pangea/dnd';
 import { RenderPokemon } from './RenderPokemon';
 import { AutoSizer, List } from 'react-virtualized';
 import { StudioDex } from '@modelEntities/dex';
