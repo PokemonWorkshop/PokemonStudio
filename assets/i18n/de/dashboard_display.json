@@ -9,7 +9,7 @@
   "tilemap": "Kachelkarte | Tilemap",
   "class": "Klasse",
   "tilemap_size": "Größe der Kachelkarte | Tilemap",
-  "tilemap_center": "Zentrum Position",
+  "tilemap_center": "Zentrum position",
   "tile_zoom": "Kachelzoom | Tilezoom",
   "scale_characters": "Größe des Charakters auf der Karte",
   "images_per_animation": "Anzahl der Bilder pro Animation",
