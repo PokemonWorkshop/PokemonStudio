@@ -116,7 +116,7 @@ export const createCreature = (allPokemon: ProjectData['pokemon'], dbSymbol: DbS
         baseLoyalty: 70,
         catchRate: 45,
         femaleRate: 50,
-        breedGroups: [0, 0],
+        breedGroups: [15, 15],
         hatchSteps: 1024,
         babyDbSymbol: dbSymbol,
         babyForm: 0,
