@@ -9,6 +9,7 @@
   "tilemap": "Tilemap",
   "class": "Class",
   "tilemap_size": "Tilemap size",
+  "tilemap_center": "Center position",
   "tile_zoom": "Tile zoom",
   "scale_characters": "Characters' scale on map",
   "images_per_animation": "Number of frames per animation",
