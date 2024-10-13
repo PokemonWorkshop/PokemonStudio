@@ -1,7 +1,5 @@
 import React, { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import { StudioDropDown } from '@components/StudioDropDown';
-import { SelectContainerWithLabel } from './SelectContainerWithLabel';
 import { useGetTextList } from '@utils/ReadingProjectText';
 
 type SelectTextProps = {
@@ -9,20 +7,24 @@ type SelectTextProps = {
   textId: string;
   onChange: (fileId: string) => void;
   undefValueOption?: string;
-  noLabel?: boolean;
+  name?: string;
   disabled?: boolean;
 };
 
-export const SelectDialog = ({ textId, fileId, onChange, noLabel, undefValueOption, disabled }: SelectTextProps) => {
-  const { t } = useTranslation('text_management');
+export const SelectDialog = ({ textId, fileId, onChange, name, undefValueOption, disabled }: SelectTextProps) => {
   const disabledResearch = useMemo(() => (disabled ? true : undefined), [disabled]);
   const getTextList = useGetTextList();
   const texts = useMemo(
     () =>
-      getTextList(Number(fileId)).map((dialog) => ({
-        label: dialog.dialog,
-        value: dialog.textId.toString(),
-      })),
+      getTextList(Number(fileId)).reduce((acc, text) => {
+        if (text.dialog) {
+          acc.push({
+            label: text.dialog,
+            value: text.textId.toString(),
+          });
+        }
+        return acc;
+      }, [] as { label: string; value: string }[]),
     [getTextList, fileId]
   );
   //   log.info('texts', texts);
@@ -33,12 +35,5 @@ export const SelectDialog = ({ textId, fileId, onChange, noLabel, undefValueOpti
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const optionals = useMemo(() => ({ disabledResearch: disabledResearch as true | undefined }), [disabledResearch]);
 
-  if (noLabel) return <StudioDropDown value={textId} options={options} onChange={onChange} optionals={optionals} />;
-
-  return (
-    <SelectContainerWithLabel>
-      <span>{t('texts_file')}</span>
-      <StudioDropDown value={textId} options={options} onChange={onChange} optionals={optionals} />
-    </SelectContainerWithLabel>
-  );
+  return <StudioDropDown name={name} value={textId} options={options} onChange={onChange} optionals={optionals} />;
 };

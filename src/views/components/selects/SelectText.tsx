@@ -8,10 +8,11 @@ type SelectTextProps = {
   fileId: string;
   onChange: (fileId: string) => void;
   undefValueOption?: string;
+  name?: string;
   noLabel?: boolean;
 };
 
-export const SelectText = ({ fileId, onChange, noLabel, undefValueOption }: SelectTextProps) => {
+export const SelectText = ({ fileId, onChange, noLabel, undefValueOption, name }: SelectTextProps) => {
   const { t } = useTranslation('text_management');
   const textInfosOption = useSelectOptions('textInfos');
   const options = useMemo(() => {
@@ -21,6 +22,7 @@ export const SelectText = ({ fileId, onChange, noLabel, undefValueOption }: Sele
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const optionals = useMemo(() => ({ deletedOption: t('texts_deleted') }), []);
 
+  if (name) return <StudioDropDown name={name} value={fileId} options={options} onChange={onChange} optionals={optionals} />;
   if (noLabel) return <StudioDropDown value={fileId} options={options} onChange={onChange} optionals={optionals} />;
 
   return (
