@@ -24,8 +24,18 @@ export const QUEST_OBJECTIVE_VALIDATOR = z.object({
     z.literal('objective_catch_pokemon'),
     z.literal('objective_obtain_egg'),
     z.literal('objective_hatch_egg'),
+    z.literal('objective_custom'),
   ]),
-  objectiveMethodArgs: z.array(z.union([z.string(), z.number(), z.array(CREATURE_QUEST_CONDITION_VALIDATOR), z.undefined(), z.null()])),
+  objectiveMethodArgs: z.array(
+    z.union([
+      z.string(),
+      z.number(),
+      z.array(CREATURE_QUEST_CONDITION_VALIDATOR),
+      z.array(z.union([z.number(), z.undefined()])),
+      z.undefined(),
+      z.null(),
+    ])
+  ),
   textFormatMethodName: z.string(),
   hiddenByDefault: z.boolean(),
 });
@@ -67,6 +77,7 @@ export const QUEST_OBJECTIVES = [
   'objective_catch_pokemon',
   'objective_obtain_egg',
   'objective_hatch_egg',
+  'objective_custom',
 ] as const;
 export type StudioQuestObjectiveType = (typeof QUEST_OBJECTIVES)[number];
 export type StudioQuestObjectiveCategoryType = 'interaction' | 'battle' | 'discovery' | 'exploration';
@@ -77,11 +88,18 @@ export type StudioQuestEarningType = (typeof QUEST_EARNINGS)[number];
 export type StudioQuestEarningCategoryType = 'money' | 'item' | 'pokemon' | 'egg';
 
 export const updateIndexSpeakToBeatNpc = (quest: StudioQuest) => {
-  const index = { speakTo: 0, beatNpc: 0 };
+  const index = { speakTo: 0, beatNpc: 0, custom: 0 };
   quest.objectives.forEach((objective) => {
-    if (objective.objectiveMethodName === 'objective_speak_to' || objective.objectiveMethodName === 'objective_beat_npc') {
-      if (objective.objectiveMethodName === 'objective_speak_to') objective.objectiveMethodArgs[0] = index.speakTo++;
-      else objective.objectiveMethodArgs[0] = index.beatNpc++;
+    switch (objective.objectiveMethodName) {
+      case 'objective_speak_to':
+        objective.objectiveMethodArgs[0] = index.speakTo++;
+        break;
+      case 'objective_beat_npc':
+        objective.objectiveMethodArgs[0] = index.beatNpc++;
+        break;
+      case 'objective_custom':
+        objective.objectiveMethodArgs[1] = index.custom++;
+        break;
     }
   });
 };

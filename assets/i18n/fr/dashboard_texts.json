@@ -40,5 +40,7 @@
   "font_text_default": "Police du texte par défaut",
   "color_text_default": "Couleur du texte par défaut",
   "scene_messages": "Messages de la scène {{className}}",
-  "scene_choices": "Choix de la scène {{className}}"
+  "scene_choices": "Choix de la scène {{className}}",
+  "quests": "Quêtes",
+  "default_value": "Défaut FileId:"
 }

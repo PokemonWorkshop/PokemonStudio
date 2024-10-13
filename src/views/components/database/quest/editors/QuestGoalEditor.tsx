@@ -12,6 +12,7 @@ import {
   QuestGoalBeatNpc,
   QuestGoalBeatPokemon,
   QuestGoalCatchPokemon,
+  QuestGoalCustom,
   QuestGoalEgg,
   QuestGoalObtainItem,
   QuestGoalSeePokemon,
@@ -61,6 +62,7 @@ export const QuestGoalEditor = ({ quest, objectiveIndex }: QuestGoalEditorProps)
           {objective.objectiveMethodName === 'objective_catch_pokemon' && <QuestGoalCatchPokemon objective={objective} />}
           {objective.objectiveMethodName === 'objective_obtain_egg' && <QuestGoalEgg objective={objective} />}
           {objective.objectiveMethodName === 'objective_hatch_egg' && <QuestGoalEgg objective={objective} />}
+          {objective.objectiveMethodName === 'objective_custom' && <QuestGoalCustom objective={objective} />}
         </InputContainer>
       </EditorChildWithSubEditorContainer>
     </EditorWithCollapse>

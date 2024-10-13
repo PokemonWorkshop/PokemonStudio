@@ -17,6 +17,7 @@ import {
   QuestGoalObtainItem,
   QuestGoalSeePokemon,
   QuestGoalSpeakTo,
+  QuestGoalCustom,
 } from './goals';
 import { TooltipWrapper } from '@ds/Tooltip';
 
@@ -56,7 +57,12 @@ export const QuestNewGoalEditor = ({ quest, onClose }: QuestNewGoalEditorProps) 
   };
 
   const checkIsEmptyText = () => {
-    return (newObjective.objectiveMethodName === 'objective_speak_to' || newObjective.objectiveMethodName === 'objective_beat_npc') && isEmptyText;
+    return (
+      (newObjective.objectiveMethodName === 'objective_speak_to' ||
+        newObjective.objectiveMethodName === 'objective_beat_npc' ||
+        newObjective.objectiveMethodName === 'objective_custom') &&
+      isEmptyText
+    );
   };
 
   return (
@@ -82,6 +88,7 @@ export const QuestNewGoalEditor = ({ quest, onClose }: QuestNewGoalEditorProps) 
         {newObjective.objectiveMethodName === 'objective_catch_pokemon' && <QuestGoalCatchPokemon objective={newObjective} />}
         {newObjective.objectiveMethodName === 'objective_obtain_egg' && <QuestGoalEgg objective={newObjective} />}
         {newObjective.objectiveMethodName === 'objective_hatch_egg' && <QuestGoalEgg objective={newObjective} />}
+        {newObjective.objectiveMethodName === 'objective_custom' && <QuestGoalCustom objective={newObjective} setIsEmptyText={setIsEmptyText} />}
         <ButtonContainer>
           <TooltipWrapper data-tooltip={checkIsEmptyText() ? t('fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickNew} disabled={checkIsEmptyText()}>
