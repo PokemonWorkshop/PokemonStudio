@@ -94,6 +94,5 @@
   "earning_item": "Strumento",
   "earning_pokemon": "Pokémon",
   "earning_egg": "Uovo",
-  "earning": "Ricompensa",
-  "select": "Seleziona #{{str}}"
+  "earning": "Ricompensa"
 }

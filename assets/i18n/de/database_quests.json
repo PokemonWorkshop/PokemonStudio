@@ -94,6 +94,5 @@
   "earning_item": "Item",
   "earning_pokemon": "Pokémon",
   "earning_egg": "Ei",
-  "earning": "Verdienst",
-  "select": "Wählen Sie #{{str}}"
+  "earning": "Verdienst"
 }
