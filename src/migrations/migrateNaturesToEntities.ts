@@ -180,6 +180,9 @@ export const migrateNaturesToEntities = async (_: IpcMainEvent, projectPath: str
     await fsPromises.writeFile(path.join(naturesPath, `${nature.dbSymbol}.json`), JSON.stringify(nature, null, 2));
   }, Promise.resolve());
 
-  await fsPromises.unlink(path.join(projectPath, CONFIG_NATURES_PATH));
-  await fsPromises.unlink(path.join(projectPath, 'Data/configs/natures.rxdata'));
+  const naturesRxdataPath = path.join(projectPath, 'Data/configs/natures.rxdata');
+  const configFlavorsPath = path.join(projectPath, 'Data/configs/flavors.json');
+  if (fs.existsSync(configNaturesPath)) await fsPromises.unlink(configNaturesPath);
+  if (fs.existsSync(naturesRxdataPath)) await fsPromises.unlink(naturesRxdataPath);
+  if (fs.existsSync(configFlavorsPath)) await fsPromises.unlink(configFlavorsPath);
 };
