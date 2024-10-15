@@ -18,8 +18,16 @@
     "npm": ">=9.5.0"
   },
   "devEngines": {
-    "node": ">=20.9.0",
-    "npm": ">=9.5.0"
+    "runtime": {
+      "name": "node",
+      "onFail": "error",
+      "version": ">=20.9.0"
+    },
+    "packageManager": {
+      "name": "npm",
+      "onFail": "error",
+      "version": ">=9.5.0"
+    }
   },
   "scripts": {
     "start": "electron-forge start",
