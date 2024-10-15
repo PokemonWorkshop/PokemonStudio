@@ -2,7 +2,8 @@ import React, { useMemo } from 'react';
 import { SelectOption, SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { SelectCustom, SelectCustomWithLabel, SelectCustomWithLabelResponsive } from '@components/SelectCustom';
 import { ProjectData } from '@src/GlobalStateProvider';
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 
 type Entity = { dbSymbol: DbSymbol };
@@ -22,7 +23,7 @@ type SelectDataGenericProps = {
 export const getSelectDataOptionsOrderedById = <K extends keyof ProjectData>(
   projectData: ProjectData,
   key: K,
-  getText: (entity: typeof projectData[K][string]) => string
+  getText: (entity: (typeof projectData)[K][string]) => string
 ): SelectOption[] =>
   Object.values(projectData[key])
     .sort((a, b) => a.id - b.id)
@@ -31,7 +32,7 @@ export const getSelectDataOptionsOrderedById = <K extends keyof ProjectData>(
 export const getSelectDataOptionsOrderedByLabel = <K extends keyof ProjectData>(
   projectData: ProjectData,
   key: K,
-  getText: (entity: typeof projectData[K][string]) => string
+  getText: (entity: (typeof projectData)[K][string]) => string
 ): SelectOption[] =>
   Object.values(projectData[key])
     .map((data) => ({ value: data.dbSymbol, label: getText(data) }))

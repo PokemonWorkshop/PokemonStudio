@@ -3,7 +3,7 @@ import { DataGoalGrid, DataQuestTable, TableEmpty } from './QuestTableStyle';
 import { useTranslation } from 'react-i18next';
 import { useProjectQuests } from '@hooks/useProjectData';
 import { RenderGoal } from './RenderGoal';
-import { DragDropContext, Droppable, Draggable, DroppableProvided, DraggableProvided, DraggableStateSnapshot, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, DroppableProvided, DraggableProvided, DraggableStateSnapshot, DropResult } from '@hello-pangea/dnd';
 import { StudioQuest, updateIndexSpeakToBeatNpc } from '@modelEntities/quest';
 import { cloneEntity } from '@utils/cloneEntity';
 

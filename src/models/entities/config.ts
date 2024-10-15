@@ -126,7 +126,7 @@ const MESSAGE_CONFIG_VALIDATOR = z.object({
   defaultColor: POSITIVE_OR_ZERO_INT,
   colorMapping: z.record(POSITIVE_OR_ZERO_INT, POSITIVE_OR_ZERO_INT),
 });
-const CHOICE_CONFIG_VALIDATOR = MESSAGE_CONFIG_VALIDATOR.omit({ nameWindowskin: true, lineCount: true });
+const CHOICE_CONFIG_VALIDATOR = MESSAGE_CONFIG_VALIDATOR.omit({ nameWindowSkin: true, lineCount: true });
 export const TEXT_CONFIG_VALIDATOR = z.object({
   klass: z.literal('Configs::Project::Texts'),
   fonts: FONT_CONFIG_VALIDATOR,

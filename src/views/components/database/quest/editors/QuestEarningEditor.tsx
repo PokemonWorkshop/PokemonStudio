@@ -6,7 +6,8 @@ import { QUEST_EARNINGS, StudioQuest, StudioQuestEarningType } from '@modelEntit
 import { createQuestEarning } from '@utils/entityCreation';
 import { padStr } from '@utils/PadStr';
 import React, { useMemo } from 'react';
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { QuestEarningItem, QuestEarningMoney, QuestEarningPokemon } from './earnings';
 
 const earningCategoryEntries = (t: TFunction<'database_quests'>) => QUEST_EARNINGS.map((earning) => ({ value: earning, label: t(earning) }));

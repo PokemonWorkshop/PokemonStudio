@@ -7,7 +7,8 @@ import { QUEST_EARNINGS, StudioQuest, StudioQuestEarningType } from '@modelEntit
 import { createQuestEarning } from '@utils/entityCreation';
 import { useProjectQuests } from '@hooks/useProjectData';
 import React, { useMemo, useState } from 'react';
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import styled from 'styled-components';
 import { QuestEarningItem, QuestEarningMoney, QuestEarningPokemon } from './earnings';
 

@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
 import { Editor, useRefreshUI } from '@components/editor';
 
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import type { OpenTranslationEditorFunction } from '@hooks/useTranslationEditor';

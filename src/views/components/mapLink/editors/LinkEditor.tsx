@@ -2,7 +2,8 @@ import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { Editor, useRefreshUI } from '@components/editor';
 
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { getLinksFromMapLink, MAP_LINK_CARDINAL_LIST, StudioMapLink, StudioMapLinkCardinal } from '@modelEntities/mapLink';

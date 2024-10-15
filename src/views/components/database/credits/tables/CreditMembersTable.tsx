@@ -5,7 +5,7 @@ import { cloneEntity } from '@utils/cloneEntity';
 import { useTranslation } from 'react-i18next';
 import { TableEmpty, DataMemberTable, DataMemberGrid } from './CreditMemberTableStyle';
 import { RenderMember } from './RenderMember';
-import { DragDropContext, Droppable, Draggable, DroppableProvided, DraggableProvided, DraggableStateSnapshot, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, DroppableProvided, DraggableProvided, DraggableStateSnapshot, DropResult } from '@hello-pangea/dnd';
 
 type CreditsMembersTableProps = {
   credits: StudioCreditConfig;

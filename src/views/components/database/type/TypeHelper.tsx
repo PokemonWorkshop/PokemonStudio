@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import { useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
 import { getEfficiency, StudioType } from '@modelEntities/type';

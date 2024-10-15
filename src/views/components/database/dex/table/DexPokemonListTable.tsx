@@ -11,10 +11,9 @@ import {
   DraggableStateSnapshot,
   DropResult,
   DraggableRubric,
-} from 'react-beautiful-dnd';
+} from '@hello-pangea/dnd';
 import { RenderPokemon } from './RenderPokemon';
 import { AutoSizer, List } from 'react-virtualized';
-import ReactDOM from 'react-dom';
 import { StudioDex } from '@modelEntities/dex';
 import { DexDialogsRef } from '../editors/DexEditorOverlay';
 import { cloneEntity } from '@utils/cloneEntity';
@@ -95,19 +94,21 @@ export const DexPokemonListTable = ({ dex, dialogsRef, setCreatureIndex }: DexPo
               >
                 {(droppableProvided: DroppableProvided) => (
                   <PokemonList
+                    id="dex-pokemon-list"
                     width={width}
                     height={dex.creatures.length <= 10 ? 40 * dex.creatures.length : 420}
                     rowCount={dex.creatures.length}
                     rowHeight={40}
                     ref={(ref: List | null) => {
-                      // react-virtualized has no way to get the list's ref that I can so
-                      // So we use the `ReactDOM.findDOMNode(ref)` escape hatch to get the ref
+                      // react-virtualized has no way to get the list's HTML element
+                      // So we use the `document.getElementById` escape hatch to get the HTML element (ReactDOM.findDOMNode is deprecated)
+                      // The HTML element is required for the drag & drop
                       if (ref) {
-                        // eslint-disable-next-line react/no-find-dom-node
-                        const whatHasMyLifeComeTo = ReactDOM.findDOMNode(ref);
-                        if (whatHasMyLifeComeTo instanceof HTMLElement) {
-                          droppableProvided.innerRef(whatHasMyLifeComeTo);
+                        const element = document.getElementById('dex-pokemon-list');
+                        if (element) {
+                          droppableProvided.innerRef(element);
                         }
+
                         if (scrollToRow !== undefined) {
                           ref.scrollToRow(scrollToRow);
                           setScrollToRow(undefined);

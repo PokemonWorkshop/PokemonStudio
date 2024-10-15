@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { DataGroupGrid, DataZoneGroupsTable, TableEmpty } from './ZoneTableStyle';
 import { useTranslation } from 'react-i18next';
 import { useProjectZones } from '@hooks/useProjectData';
-import { DragDropContext, Droppable, Draggable, DroppableProvided, DraggableProvided, DraggableStateSnapshot, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, DroppableProvided, DraggableProvided, DraggableStateSnapshot, DropResult } from '@hello-pangea/dnd';
 import { ProjectData } from '@src/GlobalStateProvider';
 import { RenderGroup } from './RenderGroup';
 import { cloneEntity } from '@utils/cloneEntity';

@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { SecondaryNoBackground } from '@components/buttons';
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import styled from 'styled-components';
 import { ReactComponent as DeleteIcon } from '@assets/icons/global/delete-icon.svg';
 import { SelectCustomSimple } from '@components/SelectCustom';

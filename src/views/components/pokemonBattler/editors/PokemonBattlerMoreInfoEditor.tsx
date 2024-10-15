@@ -1,7 +1,8 @@
 import React, { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from 'react';
 import { Input, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import { SelectItemBall, SelectItemHeld } from '@components/selects';
 import { assertUnreachable } from '@utils/assertUnreachable';

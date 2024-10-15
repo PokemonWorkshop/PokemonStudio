@@ -6,7 +6,7 @@ import { ReactComponent as DragIcon } from '@assets/icons/global/drag.svg';
 import { DeleteButtonOnlyIcon, EditButtonOnlyIcon } from '@components/buttons';
 import { EditButtonOnlyIconContainer } from '@components/buttons/EditButtonOnlyIcon';
 import theme from '@src/AppTheme';
-import { DraggableProvided } from 'react-beautiful-dnd';
+import { DraggableProvided } from '@hello-pangea/dnd';
 import { Code } from '@components/Code';
 import { padStr } from '@utils/PadStr';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';

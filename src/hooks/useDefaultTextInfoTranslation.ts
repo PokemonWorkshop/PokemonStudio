@@ -1,5 +1,6 @@
 import i18n from '@src/i18n';
-import { TFunction, useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
+import { useTranslation } from 'react-i18next';
 
 /**
  * How to add a new translation?

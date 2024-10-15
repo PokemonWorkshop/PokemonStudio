@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { PageEditor } from '@components/pages';
 import { StudioLanguageConfig } from '@modelEntities/config';
 import { useDashboardLanguage } from './useDashboardLanguage';
