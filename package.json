@@ -15,7 +15,7 @@
   },
   "engines": {
     "node": ">=20.9.0",
-    "npm": ">=9.5.0"
+    "npm": ">=10.9.0"
   },
   "devEngines": {
     "runtime": {
@@ -26,7 +26,7 @@
     "packageManager": {
       "name": "npm",
       "onFail": "error",
-      "version": ">=9.5.0"
+      "version": ">=10.9.0"
     }
   },
   "scripts": {
