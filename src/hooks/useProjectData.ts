@@ -110,7 +110,7 @@ export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier
           savingData: new SavingMap(currentState.savingData.set({ key, id }, 'UPDATE')),
           savingText: new SavingTextMap(currentState.savingText.setMultiple(fileIdUpdatedTexts, 'UPDATE')),
         };
-        if (key === 'mapLinks') return newState;
+        if (key === 'mapLinks' || key === 'natures') return newState;
 
         // Add the new text
         if (key === 'dex') {
@@ -145,7 +145,7 @@ export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier
         savingData: new SavingMap(currentState.savingData.set({ key, id: String(identifier) }, 'DELETE')),
       };
       // Remove the text
-      if (key !== 'mapLinks') removeSelectOption(key === 'pokemon' ? 'creatures' : key, String(identifier));
+      if (key !== 'mapLinks' && key !== 'natures') removeSelectOption(key === 'pokemon' ? 'creatures' : key, String(identifier));
       return newState;
     });
   };
@@ -237,3 +237,5 @@ export const useProjectMapLinks = () => useProjectData('mapLinks', 'mapLink');
 export type UseProjectMapLinksReturnType = ReturnType<typeof useProjectMapLinks>;
 export const useProjectMaps = () => useProjectData('maps', 'map');
 export type UseProjectMapsReturnType = ReturnType<typeof useProjectMaps>;
+export const useProjectNatures = () => useProjectData('natures', 'nature');
+export type UseProjectNaturesReturnType = ReturnType<typeof useProjectNatures>;

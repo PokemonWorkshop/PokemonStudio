@@ -25,6 +25,7 @@ import database_zones from '../../assets/i18n/en/database_zones.json';
 import database_dex from '../../assets/i18n/en/database_dex.json';
 import database_maplinks from '../../assets/i18n/en/database_maplinks.json';
 import database_maps from '../../assets/i18n/en/database_maps.json';
+import database_natures from '../../assets/i18n/en/database_natures.json';
 import homepage from '../../assets/i18n/en/homepage.json';
 import main_menu from '../../assets/i18n/en/main_menu.json';
 import select from '../../assets/i18n/en/select.json';

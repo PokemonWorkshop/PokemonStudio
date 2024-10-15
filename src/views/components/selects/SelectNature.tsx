@@ -1,68 +1,49 @@
 import React, { useMemo } from 'react';
-import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { SelectOption } from '@ds/Select/types';
 import { State, useGlobalState } from '@src/GlobalStateProvider';
 import { TFunction, useTranslation } from 'react-i18next';
 import { SelectDataProps } from './SelectDataProps';
-import { getText } from '@utils/ReadingProjectText';
+import { getEntityNameText } from '@utils/ReadingProjectText';
+import { Select } from '@ds/Select';
 import { SelectCustom } from '@components/SelectCustom';
+import { STUDIO_NATURE_STATS_LIST, StudioNature, StudioNatureStats, StudioNatureStatsListType } from '@modelEntities/nature';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 
-/**
- * Get the traduction by index
- * @param index
- * @param t
- * @returns string
- */
-const getTraductionByIndex = (index: number, t: TFunction<['database_natures']>) => {
-  switch (index) {
-    case 1:
-      return t('database_natures:attack');
-    case 2:
-      return t('database_natures:defense');
-    case 3:
-      return t('database_natures:speed');
-    case 4:
-      return t('database_natures:special_attack');
-    case 5:
-      return t('database_natures:special_defense');
-    default:
-      return '';
-  }
+const findUpStats = (stats: StudioNatureStats): StudioNatureStatsListType[] => {
+  return STUDIO_NATURE_STATS_LIST.reduce<StudioNatureStatsListType[]>((prev, stat) => {
+    if (stats[stat] > 100) return [...prev, stat];
+
+    return prev;
+  }, []);
+};
+
+const findDownStats = (stats: StudioNatureStats): StudioNatureStatsListType[] => {
+  return STUDIO_NATURE_STATS_LIST.reduce<StudioNatureStatsListType[]>((prev, stat) => {
+    if (stats[stat] < 100) return [...prev, stat];
+
+    return prev;
+  }, []);
+};
+
+const buildStatTexts = (upStats: StudioNatureStatsListType[], downStats: StudioNatureStatsListType[], t: TFunction<['database_natures']>) => {
+  const upStatTexts = upStats.reduce<string[]>((prev, stat) => [...prev, `+${t(`database_natures:${stat}`)}`], []);
+  const statTexts = downStats.reduce<string[]>((prev, stat) => [...prev, `-${t(`database_natures:${stat}`)}`], upStatTexts);
+  return statTexts.join(' / ');
 };
 
 /**
  * Get the nature extra stats compared to depending stats
- * @param state
+ * @param natures Studio natures
  * @param t useTranslation
  * @returns Record<string, string>
  */
-const getNatureExtraStatsComparedToDependingStats = (state: State, t: TFunction<['database_natures']>): Record<string, string> => {
-  const natures = state.projectConfig.natures.db_symbol_to_id;
-  const stats = state.projectConfig.natures.data;
-
+const getNatureExtraStatsComparedToDependingStats = (natures: StudioNature[], t: TFunction<['database_natures']>): Record<string, string> => {
   const natureExtraStatsComparedToDependingStats: Record<string, string> = {};
-
-  for (const [natureSymbol, natureId] of Object.entries(natures)) {
-    const natureStats = stats[natureId];
-    if (natureStats) {
-      // Get the index of the stats
-      const upStatIndex = natureStats.findIndex((ns, index) => index > 0 && ns > 100);
-      const downStatIndex = natureStats.findIndex((ns, index) => index > 0 && ns < 100);
-      // Get the traduction of the stats
-      const upStatTraduction = getTraductionByIndex(upStatIndex, t);
-      const downStatTraduction = getTraductionByIndex(downStatIndex, t);
-
-      // Constrution of the string
-      if (upStatTraduction) {
-        natureExtraStatsComparedToDependingStats[natureSymbol] = `+${upStatTraduction || ''}`;
-      }
-
-      if (downStatTraduction) {
-        natureExtraStatsComparedToDependingStats[natureSymbol] = `${upStatTraduction ? '+' + upStatTraduction : ''}
-        ${upStatTraduction ? ' / ' : ''}
-        ${downStatTraduction ? '-' + downStatTraduction : ''}`;
-      }
-    }
-  }
+  natures.forEach((nature) => {
+    const upStats = findUpStats(nature.stats);
+    const downStats = findDownStats(nature.stats);
+    natureExtraStatsComparedToDependingStats[nature.dbSymbol] = buildStatTexts(upStats, downStats, t);
+  });
   return natureExtraStatsComparedToDependingStats;
 };
 
@@ -72,37 +53,35 @@ const getNatureExtraStatsComparedToDependingStats = (state: State, t: TFunction<
  * @param t useTranslation
  * @returns SelectOption[]
  */
-const getNatureOptions = (state: State, t: TFunction<['database_natures']>): SelectOption[] => {
-  const test = getNatureExtraStatsComparedToDependingStats(state, t);
-  return Object.entries(state.projectConfig.natures.db_symbol_to_id).map(([value, natureId]) => {
-    const statByNature = test[value];
-
-    let label = getText(
-      {
-        texts: state.projectText,
-        languages: state.projectStudio.languagesTranslation,
-        defaultLanguage: state.projectConfig.language_config.defaultLanguage,
-      },
-      100008,
-      (state.projectConfig.natures.data[natureId] || [0])[0]
-    );
-    if (statByNature && statByNature !== '') {
-      label += ` (${statByNature})`;
-    }
-    return {
-      value,
-      label,
-    };
-  });
+const getNatureOptions = (state: State, t: TFunction<['database_natures']>, hideStats: boolean): SelectOption<DbSymbol>[] => {
+  const natures = Object.values(state.projectData.natures);
+  const natureExtraStats = getNatureExtraStatsComparedToDependingStats(natures, t);
+  return natures
+    .map((nature) => {
+      const statByNature = natureExtraStats[nature.dbSymbol];
+      let label = getEntityNameText(nature, state);
+      if (!hideStats && statByNature && statByNature !== '') {
+        label += ` (${statByNature})`;
+      }
+      return {
+        value: nature.dbSymbol,
+        label,
+      };
+    })
+    .sort((a, b) => a.label.localeCompare(b.label));
 };
 
-export const SelectNature = ({ dbSymbol, onChange, noneValue, overwriteNoneValue }: SelectDataProps) => {
+type SelectNatureProps = {
+  hideStats?: boolean;
+} & SelectDataProps;
+
+export const SelectNature = ({ dbSymbol, onChange, noneValue, overwriteNoneValue, hideStats }: SelectNatureProps) => {
   const { t } = useTranslation(['database_abilities', 'pokemon_battler_list', 'database_natures']);
   const [state] = useGlobalState();
   const options = useMemo(() => {
-    const natureOptions = getNatureOptions(state, t).sort((a, b) => a.label.localeCompare(b.label));
+    const natureOptions = getNatureOptions(state, t, hideStats || false);
     return noneValue ? [{ value: '__undef__', label: overwriteNoneValue || t('database_abilities:no_option') }, ...natureOptions] : natureOptions;
-  }, [state, noneValue, overwriteNoneValue, t]);
+  }, [state, noneValue, overwriteNoneValue, hideStats, t]);
 
   return (
     <SelectCustom
@@ -113,4 +92,19 @@ export const SelectNature = ({ dbSymbol, onChange, noneValue, overwriteNoneValue
       }
     />
   );
+};
+
+type SelectNature2Props = {
+  name: string;
+  defaultValue?: DbSymbol;
+  hideStats?: boolean;
+  onChange?: (v: DbSymbol) => void;
+};
+
+export const SelectNature2 = ({ hideStats, ...props }: SelectNature2Props) => {
+  const { t } = useTranslation(['database_natures']);
+  const [state] = useGlobalState();
+  const options = useMemo(() => getNatureOptions(state, t, hideStats || false), [state, t, hideStats]);
+
+  return <Select options={options} notFoundLabel={t('database_natures:nature_deleted')} chooseValue="__undef__" spellCheck={false} {...props} />;
 };

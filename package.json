@@ -2,7 +2,7 @@
   "name": "pokemon-studio",
   "productName": "Pokémon Studio",
   "description": "Pokémon Studio is a monster taming game editor which helps you to bring your ideas to life, in just a few clicks.",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "main": "./.webpack/main",
   "license": "SEE LICENSE IN LICENSE.md",
   "author": {

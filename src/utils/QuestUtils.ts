@@ -7,7 +7,7 @@ import {
 } from '@modelEntities/quest';
 import { State } from '@src/GlobalStateProvider';
 import { TFunction } from 'react-i18next';
-import { getEntityNameText, getEntityNameTextUsingTextId, getNatureText } from './ReadingProjectText';
+import { getEntityNameText, getEntityNameTextUsingTextId } from './ReadingProjectText';
 
 const buildSpeakToText = (objective: StudioQuestObjective) => {
   return objective.objectiveMethodArgs[1] as string;
@@ -45,7 +45,7 @@ const buildConditionsText = (conditions: StudioCreatureQuestCondition[], state: 
       case 'type':
         return t('of_type', { type: getEntityNameSafeUsingTextId(state, state.projectData.types[value]) });
       case 'nature':
-        return t('of_nature', { nature: getNatureText(state, value as string) });
+        return t('of_nature', { nature: getEntityNameSafe(state, state.projectData.natures[value]) });
       case 'minLevel':
         return t('of_min_level', { level: value });
       case 'maxLevel':

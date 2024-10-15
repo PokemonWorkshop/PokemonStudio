@@ -1,19 +1,23 @@
 import React from 'react';
 import styled from 'styled-components';
 
-/* eslint-disable react/require-default-props */
 type DataFieldgroupFieldProps = {
   label: string;
   data: string | number;
+  width?: string;
 };
 
-const Fieldgroup = styled.div`
+type FieldgroupProps = {
+  width?: string;
+};
+
+const Fieldgroup = styled.div<FieldgroupProps>`
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  width: 167px;
+  width: ${({ width }) => width ?? '167px'};
 `;
 
 const FieldLabel = styled.span`
@@ -30,8 +34,8 @@ const FieldData = styled.span`
   user-select: text;
 `;
 
-export const DataFieldgroupField = ({ label, data }: DataFieldgroupFieldProps) => (
-  <Fieldgroup>
+export const DataFieldgroupField = ({ label, data, width }: DataFieldgroupFieldProps) => (
+  <Fieldgroup width={width}>
     <FieldLabel>{label}</FieldLabel>
     <FieldData>{data}</FieldData>
   </Fieldgroup>
