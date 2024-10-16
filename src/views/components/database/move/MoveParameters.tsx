@@ -14,7 +14,7 @@ export const MoveParameters = ({ move, dialogsRef }: MoveParametersProps) => {
   const { t } = useTranslation('database_moves');
 
   const getCategory = () => {
-    if (!(MOVE_BATTLE_ENGINE_METHODS as ReadonlyArray<string>).includes(move.battleEngineMethod)) return t('custom');
+    if (!(MOVE_BATTLE_ENGINE_METHODS as ReadonlyArray<string>).includes(move.battleEngineMethod)) return t('move_custom');
     return t(`${move.battleEngineMethod}` as MoveBattleEngineMethodsType);
   };
 

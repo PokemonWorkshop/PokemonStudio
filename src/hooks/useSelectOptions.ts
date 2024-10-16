@@ -228,9 +228,6 @@ export const updateSelectOptionsTextSource = (fileId: number, textId: number, st
 };
 
 const adjustSelectOptionValue = (option: SelectOption, value: string) => {
-  if (!option) {
-    return { value, label: value };
-  }
   option.value = value;
   return option;
 };

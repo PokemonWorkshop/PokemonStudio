@@ -51,8 +51,6 @@ export const MoveStatusEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { statuses, chances, error, handleStatusChange, handleChancesChange, setError } = useMoveStatus(moveWithStatus);
 
   const canClose = () => {
-    console.log('canClose', !canZodClose(), getFormData(), getRawFormData());
-
     if (!canZodClose()) return false;
 
     const formData = getFormData();
@@ -74,7 +72,6 @@ export const MoveStatusEditor = forwardRef<EditorHandlingClose>((_, ref) => {
 
   const onClose = () => {
     const result = canClose() && getFormData();
-    console.log(result, canClose());
 
     if (result && result.success) {
       const moveStatus = result.data.moveStatus;
