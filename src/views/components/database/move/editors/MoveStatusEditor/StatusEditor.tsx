@@ -13,13 +13,20 @@ export const isCustomStatusFunc = (status: string | null) => {
   return !([...MOVE_STATUS_LIST, '__undef__'] as readonly string[]).includes(status);
 };
 
-const shouldShowStatusSelection = (status: StudioMoveStatusList, index: number) => {
-  // Always can select the first status
-  console.log(status, status === '__undef__', index);
+const shouldInputShow = (statuses: StudioMoveStatusList[], index: number) => {
+  // Must have selected a status for current index
+  if (statuses[index] === '__undef__') return false;
+  // We don't have a reason to input chances
+  if (index === 0 && statuses[1] === '__undef__') return false;
 
+  return true;
+};
+
+const shouldShowStatusSelection = (statuses: StudioMoveStatusList[], index: number) => {
+  // Always can select the first status
   if (index === 0) return true;
   // If any of the previous status is not selected, we cannot select the current one
-  if (index > 0 && status?.includes('__undef__')) return false;
+  if (index > 0 && statuses.some((v, i) => i < index && v === '__undef__')) return false;
 
   return true;
 };
@@ -62,39 +69,33 @@ export const StatusEditor = ({
     !([...MOVE_STATUS_LIST, '__undef__'] as ReadonlyArray<string>).includes(String(defaults[`moveStatus.${index}.status`]))
   );
   const [defaultCustomInputValue, setDefaultCustomInputValue] = useState<string | undefined>(
-    String(defaults[`moveStatus.${index}.status`]) || undefined
+    String(defaults[`moveStatus.${index}.status`]).replace(/^Custom_/, '') || undefined
   );
 
-  //const status = getRawFormData()[`moveStatus.${index}.status`] ?? defaults[`moveStatus.${index}.status`];
   const status: string = getStatus(getRawFormData()[`moveStatus.${index}.status`], defaults[`moveStatus.${index}.status`]);
 
-  //const [customStatus, setCustomStatus] = useState<StudioMoveStatusList>(getCustomStatus(statuses[index]));
-  //const isCustomStatus = isCustomStatusFunc(statuses[index]);
   // const customStatusError = isCustomStatus && customStatus !== '' && !MOVE_STATUS_CUSTOM_VALIDATOR.safeParse(customStatus).success;
   //const customStatusError = false;
 
   const onChange = (index: number, value: string) => {
     const isCustom = value === MOVE_STATUS_CUSTOM;
     if (isCustom) setDefaultCustomInputValue('');
-    console.log(`onChange: ${isCustom}`);
 
     setIsCustom(isCustom);
-    // handleStatusChange(index, value);
+    handleStatusChange(index, value);
   };
 
   useEffect(() => {
     if (!divRef.current || !divInputRef.current) return;
 
-    divInputRef.current.style.display = statuses[index] !== '__undef__' ? 'block' : 'none';
-    divRef.current.style.display = shouldShowStatusSelection(statuses[index], index) ? 'flex' : 'none';
-  }, [statuses[index], index]);
+    divInputRef.current.style.display = shouldInputShow(statuses, index) ? 'block' : 'none';
+    divRef.current.style.display = shouldShowStatusSelection(statuses, index) ? 'flex' : 'none';
+  }, [index, statuses]);
 
   return (
     <InputContainer size="s" ref={divRef}>
       <InputWithTopLabelContainer>
         <Label>{t(`status_${(index + 1) as 1 | 2 | 3}`)}</Label>
-        {String(defaults[`moveStatus.${index}.status`])}
-        {status.toString()}
         <Select
           name={isCustom ? '__ignore__' : `moveStatus.${index}.status`}
           options={options}
@@ -103,27 +104,22 @@ export const StatusEditor = ({
           defaultValue={String(defaults[`moveStatus.${index}.status`]) ?? '__undef__'}
         />
       </InputWithTopLabelContainer>
-      {/*<InputWithTopLabelContainer></InputWithTopLabelContainer>
-        <Label htmlFor="select-environment">{t(`status_${(index + 1) as 1 | 2 | 3}`)}</Label>
-        <SelectCustomSimple
-          id="select-environment"
-          options={options}
-          onChange={(value) => (value === 'status_custom' ? setCustomStatus('') : setCustomStatus(value))}
-          value={isCustomStatus ? 'status_custom' : customStatus ?? ''}
-          noTooltip
-        />
-      </InputWithTopLabelContainer>*/}
       {isCustom && (
-        <InputWithTopLabelContainer>
-          <Label required>{t('status_custom')}</Label>
-          <Input
-            name={isCustom ? `moveStatus.${index}.status` : '__ignore__'}
-            onChange={(event) => handleStatusChange(index, `Custom_${event.target.value}`)}
-            placeholder="Frozen"
-            defaultValue={defaultCustomInputValue}
-            //pattern="^[a-z_][a-z0-9_]+$"
-          />
-        </InputWithTopLabelContainer>
+        <>
+          <InputWithTopLabelContainer>
+            <Label required>{t('status_custom')}</Label>
+            <Input
+              onChange={(event) => handleStatusChange(index, `Custom_${event.target.value}`)}
+              placeholder="Frozen"
+              defaultValue={defaultCustomInputValue}
+              required
+              //pattern="^[a-z_][a-z0-9_]+$"
+            />
+          </InputWithTopLabelContainer>
+          <div style={{ display: 'none' }}>
+            <Input name={isCustom ? `moveStatus.${index}.status` : '__ignore__'} value={statuses[index] || 'Custom_'} onChange={() => {}} />
+          </div>
+        </>
       )}
       <div ref={divInputRef}>
         <EmbeddedUnitInput
