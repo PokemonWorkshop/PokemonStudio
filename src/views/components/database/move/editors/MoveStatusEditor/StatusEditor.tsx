@@ -69,12 +69,12 @@ export const StatusEditor = ({
   const status = getStatus(getRawFormData()[`moveStatus.${index}.status`], defaults[`moveStatus.${index}.status`]);
   const customStatusError = statuses[index] !== '' && !MOVE_STATUS_CUSTOM_VALIDATOR.safeParse(statuses[index]).success;
 
-  const onChange = (index: number, value: string) => {
-    const isCustom = value === MOVE_STATUS_CUSTOM;
+  const onChange = (index: number, status: string) => {
+    const isCustom = isCustomStatus(status);
     if (isCustom) setDefaultCustomInputValue('');
 
     setIsCustom(isCustom);
-    handleStatusChange(index, value);
+    handleStatusChange(index, status);
   };
 
   useEffect(() => {
@@ -91,7 +91,7 @@ export const StatusEditor = ({
         <Select
           name={isCustom ? '__ignore__' : `moveStatus.${index}.status`}
           options={options}
-          onChange={(value) => onChange(index, value)}
+          onChange={(status) => onChange(index, status)}
           value={isCustom ? MOVE_STATUS_CUSTOM : status}
           defaultValue={String(defaults[`moveStatus.${index}.status`]) ?? '__undef__'}
         />
