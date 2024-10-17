@@ -38,7 +38,7 @@ export const useMoveStatus = (moveWithStatus: StudioMove) => {
       if (index === 0) setChances([1, 1, 1]);
       if (index === 1) setChances([100, 1, 1]);
       if (index === 2) setChances([50, 50, 1]);
-    } else {
+    } else if (status[index] === '__undef__') {
       switch (index) {
         case 0:
           setChances([100, 1, 1]);

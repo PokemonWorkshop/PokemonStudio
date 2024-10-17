@@ -44,6 +44,10 @@ export const MOVE_BATTLE_STAGE_MOD_VALIDATOR = z.object({
 });
 export type StudioBattleStageMod = z.infer<typeof MOVE_BATTLE_STAGE_MOD_VALIDATOR>;
 
+export const MOVE_STATUS_CUSTOM_VALIDATOR = z.string().regex(/^[A-Za-z0-9_]+$/, 'Invalid custom status format');
+
+export const MOVE_STATUS_CUSTOM = 'Custom_';
+
 export const MOVE_STATUS_LIST_VALIDATOR = z.union([
   z.literal('POISONED'),
   z.literal('PARALYZED'),
@@ -55,6 +59,7 @@ export const MOVE_STATUS_LIST_VALIDATOR = z.union([
   z.literal('DEATH'),
   z.literal('FLINCH'),
   z.literal('__undef__'),
+  MOVE_STATUS_CUSTOM_VALIDATOR.startsWith(MOVE_STATUS_CUSTOM).min(8),
   z.literal(null),
 ]);
 export type StudioMoveStatusList = z.infer<typeof MOVE_STATUS_LIST_VALIDATOR>;
@@ -154,6 +159,8 @@ export const MOVE_BATTLE_ENGINE_METHODS: Readonly<MoveBattleEngineMethodsType[]>
 export const MOVE_STATUS_LIST = ['POISONED', 'PARALYZED', 'BURN', 'ASLEEP', 'FROZEN', 'TOXIC', 'CONFUSED', 'DEATH', 'FLINCH'] as const;
 export const TEXT_CRITICAL_RATES = ['no_critical_hit', 'normal', 'high', 'very_high', 'guaranteed'] as const;
 export const MOVE_BATTLE_STAGE_MOD_LIST = ['ATK_STAGE', 'DFE_STAGE', 'ATS_STAGE', 'DFS_STAGE', 'SPD_STAGE', 'EVA_STAGE', 'ACC_STAGE'] as const;
+
+export type StudioMoveDefaultStatus = (typeof MOVE_STATUS_LIST)[number];
 
 /**
  * Get the battle stage mod modificator
