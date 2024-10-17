@@ -1,9 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { StudioMove, StudioMoveStatus } from '@modelEntities/move';
+import { StudioMove, StudioMoveDefaultStatus, StudioMoveStatus } from '@modelEntities/move';
 import { DataBlockWithTitle, DataFieldsetField, DataFieldsetFieldWithChild, DataGrid } from '../dataBlocks';
 import { MoveDialogsRef } from './editors/MoveEditorOverlay';
+import { isCustomStatus } from '@utils/MoveUtils';
 
 const StatusContainer = styled.div`
   display: flex;
@@ -39,7 +40,9 @@ export const MoveStatus = ({ move, dialogsRef }: MoveStatusProps) => {
   const getStatus = (statuses: StudioMoveStatus[] | null, index: number) => {
     const status = statuses === null ? null : statuses[index]?.status ?? null;
     if (statuses === null || statuses.length <= index || status === null || status === '__undef__') return t('none');
-    return t(status);
+    if (isCustomStatus(status)) return t('custom');
+
+    return t(status as StudioMoveDefaultStatus);
   };
 
   const getLuckRate = (status: StudioMoveStatus[] | null, index: number) => {
