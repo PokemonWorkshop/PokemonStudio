@@ -159,5 +159,6 @@
   "error_status": "You cannot have the same status multiple times.",
   "error_status_format": "The status format is not correct.",
   "error_chances": "The chances of inflicting a status must be between 1 and 100.",
-  "error_overflow": "The sum of your chances to inflict a status must not exceed 100%."
+  "error_overflow": "The sum of your chances to inflict a status must not exceed 100%.",
+  "invalid_format": "Invalid format"
 }
