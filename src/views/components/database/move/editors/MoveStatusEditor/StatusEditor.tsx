@@ -4,8 +4,9 @@ import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterfac
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Input, InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
-import { MOVE_STATUS_CUSTOM, MOVE_STATUS_LIST, StudioMoveStatusList } from '@modelEntities/move';
+import { MOVE_STATUS_CUSTOM, MOVE_STATUS_CUSTOM_VALIDATOR, MOVE_STATUS_LIST, StudioMoveStatusList } from '@modelEntities/move';
 import { Select } from '@ds/Select';
+import { TextInputError } from '@components/inputs/Input';
 
 export const isCustomStatusFunc = (status: string | null) => {
   if (status === null) return;
@@ -74,8 +75,7 @@ export const StatusEditor = ({
 
   const status: string = getStatus(getRawFormData()[`moveStatus.${index}.status`], defaults[`moveStatus.${index}.status`]);
 
-  // const customStatusError = isCustomStatus && customStatus !== '' && !MOVE_STATUS_CUSTOM_VALIDATOR.safeParse(customStatus).success;
-  //const customStatusError = false;
+  const customStatusError = statuses[index] !== '' && !MOVE_STATUS_CUSTOM_VALIDATOR.safeParse(statuses[index]).success;
 
   const onChange = (index: number, value: string) => {
     const isCustom = value === MOVE_STATUS_CUSTOM;
@@ -109,16 +109,17 @@ export const StatusEditor = ({
           <InputWithTopLabelContainer>
             <Label required>{t('status_custom')}</Label>
             <Input
-              onChange={(event) => handleStatusChange(index, `Custom_${event.target.value}`)}
+              onChange={(event) => handleStatusChange(index, `${MOVE_STATUS_CUSTOM}${event.target.value}`)}
               placeholder="Frozen"
               defaultValue={defaultCustomInputValue}
               required
-              //pattern="^[a-z_][a-z0-9_]+$"
+              pattern="^[A-Za-z0-9_]+$"
             />
           </InputWithTopLabelContainer>
           <div style={{ display: 'none' }}>
-            <Input name={isCustom ? `moveStatus.${index}.status` : '__ignore__'} value={statuses[index] || 'Custom_'} onChange={() => {}} />
+            <Input name={isCustom ? `moveStatus.${index}.status` : '__ignore__'} value={statuses[index] || MOVE_STATUS_CUSTOM} onChange={() => {}} />
           </div>
+          {customStatusError && <TextInputError>{t('invalid_format')}</TextInputError>}
         </>
       )}
       <div ref={divInputRef}>
