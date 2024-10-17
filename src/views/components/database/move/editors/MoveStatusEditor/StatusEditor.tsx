@@ -4,15 +4,10 @@ import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterfac
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Input, InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
-import { MOVE_STATUS_CUSTOM, MOVE_STATUS_CUSTOM_VALIDATOR, MOVE_STATUS_LIST, StudioMoveStatusList } from '@modelEntities/move';
+import { MOVE_STATUS_CUSTOM, MOVE_STATUS_CUSTOM_VALIDATOR, StudioMoveStatusList } from '@modelEntities/move';
 import { Select } from '@ds/Select';
 import { TextInputError } from '@components/inputs/Input';
-
-export const isCustomStatusFunc = (status: string | null) => {
-  if (status === null) return;
-
-  return !([...MOVE_STATUS_LIST, '__undef__'] as readonly string[]).includes(status);
-};
+import { isCustomStatus } from '@utils/MoveUtils';
 
 const shouldInputShow = (statuses: StudioMoveStatusList[], index: number) => {
   // Must have selected a status for current index
@@ -66,15 +61,12 @@ export const StatusEditor = ({
   const { EmbeddedUnitInput } = useInputAttrsWithLabel(STATUS_EDITOR_SCHEMA, defaults);
   const divRef = useRef<HTMLDivElement>(null);
   const divInputRef = useRef<HTMLDivElement>(null);
-  const [isCustom, setIsCustom] = useState(
-    !([...MOVE_STATUS_LIST, '__undef__'] as ReadonlyArray<string>).includes(String(defaults[`moveStatus.${index}.status`]))
-  );
+  const [isCustom, setIsCustom] = useState(isCustomStatus(String(defaults[`moveStatus.${index}.status`])));
   const [defaultCustomInputValue, setDefaultCustomInputValue] = useState<string | undefined>(
     String(defaults[`moveStatus.${index}.status`]).replace(/^Custom_/, '') || undefined
   );
 
-  const status: string = getStatus(getRawFormData()[`moveStatus.${index}.status`], defaults[`moveStatus.${index}.status`]);
-
+  const status = getStatus(getRawFormData()[`moveStatus.${index}.status`], defaults[`moveStatus.${index}.status`]);
   const customStatusError = statuses[index] !== '' && !MOVE_STATUS_CUSTOM_VALIDATOR.safeParse(statuses[index]).success;
 
   const onChange = (index: number, value: string) => {
@@ -112,7 +104,6 @@ export const StatusEditor = ({
               onChange={(event) => handleStatusChange(index, `${MOVE_STATUS_CUSTOM}${event.target.value}`)}
               placeholder="Frozen"
               defaultValue={defaultCustomInputValue}
-              required
               pattern="^[A-Za-z0-9_]+$"
             />
           </InputWithTopLabelContainer>
