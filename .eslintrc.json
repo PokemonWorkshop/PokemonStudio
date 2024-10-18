@@ -16,7 +16,8 @@
   ],
   "rules": {
     "react/jsx-uses-react": "warn",
-    "@typescript-eslint/no-empty-function": "warn"
+    "@typescript-eslint/no-empty-function": "warn",
+    "@typescript-eslint/no-unused-vars": "warn"
   },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -26,7 +27,7 @@
   "settings": {
     "react": {
       "pragma": "React",
-      "version": "17.0.1"
+      "version": "18.3.1"
     },
     "import/resolver": {
       "typescript": {}

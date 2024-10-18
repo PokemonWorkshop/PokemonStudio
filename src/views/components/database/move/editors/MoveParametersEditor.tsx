@@ -1,6 +1,7 @@
 import React, { forwardRef, useMemo } from 'react';
 import { Editor } from '@components/editor';
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { MOVE_BATTLE_ENGINE_METHODS, MOVE_TARGETS, MOVE_VALIDATOR } from '@modelEntities/move';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { useMovePage } from '@hooks/usePage';

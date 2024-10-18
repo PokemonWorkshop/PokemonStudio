@@ -1,7 +1,8 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { Editor, useRefreshUI } from '@components/editor';
 
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import styled from 'styled-components';
 import { TagWithDeletion, TagWithDeletionContainer } from '@components/Tag';

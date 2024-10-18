@@ -2,7 +2,8 @@ import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { cloneEntity } from '@utils/cloneEntity';
 import { useConfigTexts } from '@hooks/useProjectConfig';
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { PageEditor } from '@components/pages';
 import { PictureInput, Input, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
@@ -270,7 +271,7 @@ export const DashboardMessages = ({ isChoice }: DashboardMessagesProps) => {
               }}
             />
           </InputWithLeftLabelContainer>
-          {!isChoice && (
+          {!isChoice && 'nameWindowSkin' in messageOrChoice && (
             <>
               <Divider />
               <InputWithTopLabelContainer>

@@ -16,7 +16,7 @@ import { deletePSDKDatFile } from './migrateUtils';
 import { parseJSON } from '@utils/json/parse';
 
 const PRE_MIGRATION_CREATURE_VALIDATOR = CREATURE_VALIDATOR.extend({
-  forms: z.array(CREATURE_FORM_VALIDATOR.omit({ resources: true, textId: true })).nonempty(),
+  forms: z.array(CREATURE_FORM_VALIDATOR.omit({ resources: true, formTextId: true })).nonempty(),
 });
 type StudioCreatureDataBeforeMigration = z.infer<typeof PRE_MIGRATION_CREATURE_VALIDATOR>;
 type ComputedCreatureResources = Partial<Omit<Exclude<StudioCreatureResources, { hasFemale: false }>, 'hasFemale'>>;

@@ -1,6 +1,7 @@
 import React, { forwardRef, useMemo } from 'react';
 import { Editor } from '@components/editor';
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { NATURE_VALIDATOR, FLAVOR_LIST } from '@modelEntities/nature';
 import { useNaturePage } from '@hooks/usePage';
 import { useUpdateNature } from './useUpdateNature';

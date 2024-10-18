@@ -1,5 +1,5 @@
 import React from 'react';
-import { TFunction } from 'react-i18next';
+import { TFunction } from 'i18next';
 
 import { TypeTableHeadContainer, TypeIconListContainer, TypeTableHeadTitleContainer } from './TypeTableContainers';
 import { DataFieldsetFieldCenteredWithChild } from '../../dataBlocks/DataFieldsetField';

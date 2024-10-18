@@ -69,7 +69,7 @@ In order to build Pokémon Studio we use several libraries, here's the list of t
 |                [react-router-dom](https://reactrouter.com/en/main/start/tutorial) | Library allowing us to defined the routes for all the the app screens & navigate between the screens.                     |
 |                                        [react-i18next](https://react.i18next.com) | Library allowing us to dynamically render the app in all the available languages.                                         |
 |                                [styled-components](https://styled-components.com) | Library allowing us to define the components styles in the same file as the definition of the component.                  |
-|           [react-beautiful-dnd](https://github.com/atlassian/react-beautiful-dnd) | Library allowing us to nicely drag & drop stuff                                                                           |
+|                          [@hello-pangea/dnd](https://github.com/hello-pangea/dnd) | Library allowing us to nicely drag & drop stuff                                                                           |
 |                                     [react-tracked](https://react-tracked.js.org) | Library we use to define & interact with the global state of the app                                                      |
 | [react-virtualized](http://bvaughn.github.io/react-virtualized/#/components/List) | Library we use to create very big lists with scroll-ability                                                               |
 |                                      [react-flow-renderer](https://reactflow.dev) | Library allowing us to create visually linked nodes (see MapLink screen).                                                 |

@@ -61,7 +61,7 @@ import { registerSaveCompilationLogs } from '@src/backendTasks/saveCompilationLo
 // whether you're running in development or production).
 
 // Setup the log renderer
-log.initialize({ preload: true });
+log.initialize({ preload: false });
 
 const resolvePathFn = (vars: PathVariables) => {
   return path.join(vars.libraryDefaultDir, `renderer.log`);

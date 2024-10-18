@@ -1,5 +1,6 @@
 import React from 'react';
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { DataBlockWithTitleNoActive, DataGrid } from '../dataBlocks';
 import { DataFieldsetField, DataFieldsetFieldWithChild } from '../dataBlocks/DataFieldsetField';
 import { TypeCategory } from '@components/categories';
