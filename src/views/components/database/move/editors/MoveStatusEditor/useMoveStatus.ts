@@ -38,7 +38,7 @@ export const useMoveStatus = (moveWithStatus: StudioMove) => {
       if (index === 0) setChances([1, 1, 1]);
       if (index === 1) setChances([100, 1, 1]);
       if (index === 2) setChances([50, 50, 1]);
-    } else {
+    } else if (status[index] === '__undef__') {
       switch (index) {
         case 0:
           setChances([100, 1, 1]);
@@ -57,8 +57,9 @@ export const useMoveStatus = (moveWithStatus: StudioMove) => {
     }
 
     // Check duplicate status
-    const duplicateStatusIndex = status.findIndex((s) => s === value);
-    if (duplicateStatusIndex !== -1 && duplicateStatusIndex !== index && value !== '__undef__') {
+    const statusWithoutUndef = status.filter((s) => s !== '__undef__');
+    const statusSet = new Set(statusWithoutUndef);
+    if (statusWithoutUndef.length !== statusSet.size) {
       setError(t('error_status'));
     } else {
       setError('');

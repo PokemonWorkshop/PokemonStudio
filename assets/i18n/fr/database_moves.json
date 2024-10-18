@@ -6,7 +6,7 @@
   "deleting": "Suppression",
   "pokemon_with_move": "Pokémon possédant l'attaque {{move}}",
   "button_list_pokemon": "Afficher la liste des Pokémon",
-  "no_option": "Aucune attaque trouvée",
+  "no_option": "Aucune attaque trouvé",
   "data": "Données",
   "power": "Puissance",
   "accuracy": "Précision",
@@ -50,7 +50,9 @@
   "symbol": "Identifiant",
   "physical": "Physique",
   "special": "Spéciale",
-  "custom": "Attaque personnalisée",
+  "move_custom": "Attaque personnalisée",
+  "status_custom": "Statut personnalisé",
+  "custom": "Personnalisé",
   "characteristics": "Caractéristiques",
   "characteristics_move": "Caractéristiques de l'attaque",
   "status": "Statut",
@@ -155,6 +157,8 @@
   "common_event": "Événement commun",
   "always": "Toujours",
   "error_status": "Vous ne pouvez pas avoir plusieurs fois le même statut.",
+  "error_status_format": "Le format du status n'est pas correct.",
   "error_chances": "Les chances d'infliger un statut doivent être comprises entre 1 et 100.",
-  "error_overflow": "La somme de vos chances d'infliger un statut ne doit pas excéder 100\u00a0%."
+  "error_overflow": "La somme de vos chances d'infliger un statut ne doit pas excéder 100\u00a0%.",
+  "invalid_format": "Format non valide"
 }
