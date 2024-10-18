@@ -11,7 +11,7 @@ import { DataBlockWithTitle, DataFieldsetField, DataGrid } from '../../dataBlock
 import { PokemonDataProps } from '../PokemonDataPropsInterface';
 import { IClickable, useShortcutNavigation } from '@hooks/useShortcutNavigation';
 import { CONTROL } from '@hooks/useKeyPress';
-import { useKeyPress } from 'react-flow-renderer';
+import { useKeyPress } from '@xyflow/react';
 
 const ItemHeldStyle = styled.div`
   display: flex;

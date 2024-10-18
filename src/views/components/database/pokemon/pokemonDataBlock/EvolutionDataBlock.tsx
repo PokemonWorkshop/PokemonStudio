@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { DataBlockWithTitlePagination, DataFieldsetField, DataGrid } from '../../dataBlocks';
 import { PokemonDataProps } from '../PokemonDataPropsInterface';
 import { CONTROL } from '@hooks/useKeyPress';
-import { useKeyPress } from 'react-flow-renderer';
+import { useKeyPress } from '@xyflow/react';
 import { usePokemonShortcutNavigation } from '@hooks/useShortcutNavigation';
 
 type EvolutionDataBlockProps = {

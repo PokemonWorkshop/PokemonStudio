@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import ReactFlow, { Background, BackgroundVariant, Controls, useNodesState, useReactFlow } from 'react-flow-renderer';
+import { Background, BackgroundVariant, Controls, ReactFlow, useNodesState, useReactFlow } from '@xyflow/react';
 import { MapOverviewNode } from './MapOverviewNode';
 import { StudioMap } from '@modelEntities/map';
 import { cloneEntity } from '@utils/cloneEntity';

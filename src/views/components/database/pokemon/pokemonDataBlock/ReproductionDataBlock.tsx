@@ -6,7 +6,7 @@ import { DataBlockWithTitle, DataGrid, DataFieldsetField } from '../../dataBlock
 import { PokemonDataProps } from '../PokemonDataPropsInterface';
 import { CONTROL } from '@hooks/useKeyPress';
 import { usePokemonShortcutNavigation } from '@hooks/useShortcutNavigation';
-import { useKeyPress } from 'react-flow-renderer';
+import { useKeyPress } from '@xyflow/react';
 
 const BREEDING_GROUPS = [
   'undefined',

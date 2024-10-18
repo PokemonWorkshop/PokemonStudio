@@ -1,17 +1,32 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import theme from '@src/AppTheme';
-import ReactFlow, { addEdge, Connection, Controls, Edge, useEdgesState, useNodesState, useReactFlow } from 'react-flow-renderer';
+import { addEdge, Connection, Controls, Edge, Node, ReactFlow, useEdgesState, useNodesState, useReactFlow } from '@xyflow/react';
 import { CurrentMapLinkCardNode, MapLinkCardNode } from './mapLinkCard';
 import { NewLinkNode } from './NewLinkNode';
 import { PointNode } from './PointNode';
 import { assertUnreachable } from '@utils/assertUnreachable';
-import { getLinksFromMapLink, MAP_LINK_CARDINAL_LIST, StudioMapLink, StudioMapLinkCardinal } from '@modelEntities/mapLink';
+import { getLinksFromMapLink, MAP_LINK_CARDINAL_LIST, StudioMapLink, StudioMapLinkCardinal, StudioMapLinkLink } from '@modelEntities/mapLink';
+
+type MapLinkNodeData = {
+  index?: number;
+  mapLinkLink?: StudioMapLinkLink;
+  mapLink?: StudioMapLink;
+  mapData?: Map<number, string>;
+  cardinal?: string;
+  onClick?: () => void;
+  onDeleteLink?: (index: number, cardinal: StudioMapLinkCardinal) => void;
+  onEditOffset?: (index: number, cardinal: StudioMapLinkCardinal, offset: number) => void;
+  onEditLink?: (index: number, cardinal: StudioMapLinkCardinal) => void;
+};
+
+type MapLinkNodeType = Node<MapLinkNodeData, 'currentMapLinkCard' | 'mapLinkCard' | 'newLink' | 'point'>;
+type MapLinkEdgeType = Edge;
 
 const createInitialNodes = (
   currentMapLink: StudioMapLink,
   mapData: Map<number, string>,
   onClickCreateNewLink: (cardinal: StudioMapLinkCardinal) => void
-) => [
+): MapLinkNodeType[] => [
   {
     id: 'main-maplink-card',
     position: { x: 0, y: 0 },
@@ -48,13 +63,13 @@ const createInitialNodes = (
   },
 ];
 
-const createInitialsEdges = (currentMapLink: StudioMapLink) => [
+const createInitialsEdges = (currentMapLink: StudioMapLink): MapLinkEdgeType[] => [
   {
     id: 'edges-north',
     source: 'main-maplink-card',
+    sourceHandle: 'Stop',
     target: 'create-link-north',
     targetHandle: 'Tbottom',
-    type: 'smoothstep',
     animated: true,
     style: { stroke: theme.colors.primaryBase },
     hidden: getLinksFromMapLink(currentMapLink, 'north').length === 3,
@@ -62,9 +77,9 @@ const createInitialsEdges = (currentMapLink: StudioMapLink) => [
   {
     id: 'edges-east',
     source: 'main-maplink-card',
+    sourceHandle: 'Sright',
     target: 'create-link-east',
     targetHandle: 'Tleft',
-    type: 'smoothstep',
     animated: true,
     style: { stroke: theme.colors.primaryBase },
     hidden: getLinksFromMapLink(currentMapLink, 'east').length === 3,
@@ -72,9 +87,9 @@ const createInitialsEdges = (currentMapLink: StudioMapLink) => [
   {
     id: 'edges-south',
     source: 'main-maplink-card',
+    sourceHandle: 'Sbottom',
     target: 'create-link-south',
     targetHandle: 'Ttop',
-    type: 'smoothstep',
     animated: true,
     style: { stroke: theme.colors.primaryBase },
     hidden: getLinksFromMapLink(currentMapLink, 'south').length === 3,
@@ -82,9 +97,9 @@ const createInitialsEdges = (currentMapLink: StudioMapLink) => [
   {
     id: 'edges-west',
     source: 'main-maplink-card',
+    sourceHandle: 'Sleft',
     target: 'create-link-west',
     targetHandle: 'Tright',
-    type: 'smoothstep',
     animated: true,
     style: { stroke: theme.colors.primaryBase },
     hidden: getLinksFromMapLink(currentMapLink, 'west').length === 3,
@@ -213,7 +228,6 @@ const createEdge = (id: string, source: string, sourceHandle: string, target: st
   sourceHandle,
   target,
   targetHandle,
-  type: 'smoothstep',
   animated: true,
   style: { stroke: theme.colors.primaryBase },
 });
@@ -244,9 +258,9 @@ export const ReactFlowMapLink = ({
     []
   );
   const initialEdges = useMemo(() => createInitialsEdges(mapLink), [mapLink]);
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const onConnect = useCallback((params: Edge<never> | Connection) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
+  const [nodes, setNodes, onNodesChange] = useNodesState<MapLinkNodeType>([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<MapLinkEdgeType>([]);
+  const onConnect = useCallback((params: MapLinkEdgeType | Connection) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
   const [currentMapId, setCurrentMapId] = useState<number>(mapLink.mapId);
 
   useEffect(() => {
@@ -258,7 +272,7 @@ export const ReactFlowMapLink = ({
       const edgeHandle = getEdgeHandle(cardinal);
       // create point nodes and the edges associated
       if (mapLinkLinks.length >= 2) {
-        const newPointNode = {
+        const newPointNode: MapLinkNodeType = {
           id: `point-${cardinal}`,
           position: pointPositions[cardinal][mapLinkLinks.length - 2],
           type: 'point',
@@ -283,7 +297,7 @@ export const ReactFlowMapLink = ({
       }
       // create mapLinkLink nodes and the edges associated
       mapLinkLinks.forEach((mapLinkLink, index) => {
-        const newLinkNode = {
+        const newLinkNode: MapLinkNodeType = {
           id: `${cardinal}-${index}`,
           position: getPosition(index, cardinal, mapLinkLinks.length),
           type: 'mapLinkCard',
@@ -346,7 +360,7 @@ export const ReactFlowMapLink = ({
       maxZoom={1}
       deleteKeyCode={null}
     >
-      <Controls showInteractive={false} />
+      <Controls showInteractive={false} position="bottom-right" />
     </ReactFlow>
   );
 };
