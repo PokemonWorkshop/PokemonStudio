@@ -57,8 +57,9 @@ export const useMoveStatus = (moveWithStatus: StudioMove) => {
     }
 
     // Check duplicate status
-    const duplicateStatusIndex = status.findIndex((s) => s === value);
-    if (duplicateStatusIndex !== -1 && duplicateStatusIndex !== index && value !== '__undef__') {
+    const statusWithoutUndef = status.filter((s) => s !== '__undef__');
+    const statusSet = new Set(statusWithoutUndef);
+    if (statusWithoutUndef.length !== statusSet.size) {
       setError(t('error_status'));
     } else {
       setError('');
