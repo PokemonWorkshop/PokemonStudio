@@ -222,12 +222,13 @@ const getPointHandle = (cardinal: StudioMapLinkCardinal, length: number) => {
   }
 };
 
-const createEdge = (id: string, source: string, sourceHandle: string, target: string, targetHandle: string) => ({
+const createEdge = (id: string, source: string, sourceHandle: string, target: string, targetHandle: string, type?: 'smoothstep') => ({
   id,
   source,
   sourceHandle,
   target,
   targetHandle,
+  type,
   animated: true,
   style: { stroke: theme.colors.primaryBase },
 });
@@ -320,7 +321,8 @@ export const ReactFlowMapLink = ({
             `point-${cardinal}`,
             pointHandle[index].source,
             `${cardinal}-${index}`,
-            pointHandle[index].target
+            pointHandle[index].target,
+            'smoothstep'
           );
           setEdges((eds) => eds.concat(newEdge));
         }
