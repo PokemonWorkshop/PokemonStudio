@@ -1,5 +1,5 @@
 import React from 'react';
-import { Handle, Position } from 'react-flow-renderer';
+import { Handle, Position } from '@xyflow/react';
 import { CurrentMapLinkCard } from './CurrentMapLinkCard';
 import { MaplinkHandleStyle } from '../MapLinkHandleStyle';
 import { StudioMapLink } from '@modelEntities/mapLink';

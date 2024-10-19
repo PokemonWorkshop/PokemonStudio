@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
+import '@xyflow/react/dist/style.css';
 
 const GlobalStyle = createGlobalStyle`
   body {

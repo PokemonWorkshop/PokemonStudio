@@ -10,8 +10,7 @@ import styled from 'styled-components';
 import { DataBlockWithTitle, DataFieldsetField, DataGrid } from '../../dataBlocks';
 import { PokemonDataProps } from '../PokemonDataPropsInterface';
 import { IClickable, useShortcutNavigation } from '@hooks/useShortcutNavigation';
-import { CONTROL } from '@hooks/useKeyPress';
-import { useKeyPress } from 'react-flow-renderer';
+import { CONTROL, useKeyPress } from '@hooks/useKeyPress';
 
 const ItemHeldStyle = styled.div`
   display: flex;

@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Handle, Position } from 'react-flow-renderer';
+import { Handle, Position } from '@xyflow/react';
 import { MaplinkHandleStyle } from './MapLinkHandleStyle';
 import { StudioMapLinkCardinal } from '@modelEntities/mapLink';
 

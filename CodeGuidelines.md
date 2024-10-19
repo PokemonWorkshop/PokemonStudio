@@ -72,7 +72,7 @@ In order to build Pokémon Studio we use several libraries, here's the list of t
 |                          [@hello-pangea/dnd](https://github.com/hello-pangea/dnd) | Library allowing us to nicely drag & drop stuff                                                                           |
 |                                     [react-tracked](https://react-tracked.js.org) | Library we use to define & interact with the global state of the app                                                      |
 | [react-virtualized](http://bvaughn.github.io/react-virtualized/#/components/List) | Library we use to create very big lists with scroll-ability                                                               |
-|                                      [react-flow-renderer](https://reactflow.dev) | Library allowing us to create visually linked nodes (see MapLink screen).                                                 |
+|                                               [@xyflow/react](https://xyflow.com) | Library allowing us to create visually linked nodes (see MapLink screen).                                                 |
 |                                                            [zod](https://zod.dev) | Library allowing us to define the validation schema of each of the entity and their type thanks to schema type inference. |
 
 You might see more libraries in package.json. If they're not listed here that's probably because they are anecdotic or will be deprecated (eg. `react-select`).

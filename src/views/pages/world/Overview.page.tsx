@@ -1,5 +1,5 @@
 import { useOverviewPage } from '@hooks/usePage';
-import { ReactFlowProvider } from 'react-flow-renderer';
+import { ReactFlowProvider } from '@xyflow/react';
 import { DataBlockWrapper } from '@components/database/dataBlocks';
 import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';
 import { useTranslation } from 'react-i18next';

@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { ReactFlowProvider } from 'react-flow-renderer';
+import { ReactFlowProvider } from '@xyflow/react';
 
 import { useProjectMapLinks } from '@hooks/useProjectData';
 import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
