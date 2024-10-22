@@ -69,6 +69,7 @@ const GlobalStyle = createGlobalStyle`
     color: ${(props) => props.theme.colors.text600};
     font-size: 12px;
     font-weight: 600;
+    user-select: none;
   }
 
   .react-flow__controls {

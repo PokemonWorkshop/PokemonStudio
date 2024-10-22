@@ -32,6 +32,7 @@ const createInitialNodes = (
     position: { x: 0, y: 0 },
     type: 'currentMapLinkCard',
     data: { mapLink: currentMapLink, mapData },
+    className: 'nopan',
   },
   {
     id: 'create-link-north',
@@ -39,6 +40,7 @@ const createInitialNodes = (
     type: 'newLink',
     data: { onClick: () => onClickCreateNewLink('north') },
     hidden: getLinksFromMapLink(currentMapLink, 'north').length === 3,
+    className: 'nopan',
   },
   {
     id: 'create-link-east',
@@ -46,6 +48,7 @@ const createInitialNodes = (
     type: 'newLink',
     data: { onClick: () => onClickCreateNewLink('east') },
     hidden: getLinksFromMapLink(currentMapLink, 'east').length === 3,
+    className: 'nopan',
   },
   {
     id: 'create-link-south',
@@ -53,6 +56,7 @@ const createInitialNodes = (
     type: 'newLink',
     data: { onClick: () => onClickCreateNewLink('south') },
     hidden: getLinksFromMapLink(currentMapLink, 'south').length === 3,
+    className: 'nopan',
   },
   {
     id: 'create-link-west',
@@ -60,6 +64,7 @@ const createInitialNodes = (
     type: 'newLink',
     data: { onClick: () => onClickCreateNewLink('west') },
     hidden: getLinksFromMapLink(currentMapLink, 'west').length === 3,
+    className: 'nopan',
   },
 ];
 
@@ -280,6 +285,7 @@ export const ReactFlowMapLink = ({
           data: {
             cardinal,
           },
+          className: 'nopan',
         };
         setNodes((nds) => nds.concat(newPointNode));
         if (mapLinkLinks.length === 2) {
@@ -303,6 +309,7 @@ export const ReactFlowMapLink = ({
           position: getPosition(index, cardinal, mapLinkLinks.length),
           type: 'mapLinkCard',
           data: { mapLinkLink, index, cardinal, mapData, onDeleteLink, onEditOffset, onEditLink },
+          className: 'nopan',
         };
         setNodes((nds) => nds.concat(newLinkNode));
         if (mapLinkLinks.length === 1) {
