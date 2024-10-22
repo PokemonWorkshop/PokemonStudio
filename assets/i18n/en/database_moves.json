@@ -50,7 +50,9 @@
   "symbol": "Identifier",
   "physical": "Physical",
   "special": "Special",
-  "custom": "Customised move",
+  "move_custom": "Customised move",
+  "status_custom": "Customised status",
+  "custom": "Custom",
   "characteristics": "Characteristics",
   "characteristics_move": "Characteristics of the move",
   "status": "Status",
@@ -155,6 +157,8 @@
   "common_event": "Common event",
   "always": "Always",
   "error_status": "You cannot have the same status multiple times.",
+  "error_status_format": "The status format is not correct.",
   "error_chances": "The chances of inflicting a status must be between 1 and 100.",
-  "error_overflow": "The sum of your chances to inflict a status must not exceed 100%."
+  "error_overflow": "The sum of your chances to inflict a status must not exceed 100%.",
+  "invalid_format": "Invalid format"
 }

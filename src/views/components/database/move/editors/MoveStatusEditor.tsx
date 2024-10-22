@@ -72,6 +72,7 @@ export const MoveStatusEditor = forwardRef<EditorHandlingClose>((_, ref) => {
 
   const onClose = () => {
     const result = canClose() && getFormData();
+
     if (result && result.success) {
       const moveStatus = result.data.moveStatus;
       cleanMoveStatus(moveStatus);
@@ -103,6 +104,7 @@ export const MoveStatusEditor = forwardRef<EditorHandlingClose>((_, ref) => {
           chances={chances}
           handleStatusChange={handleStatusChange}
           handleChancesChange={handleChancesChange}
+          getRawFormData={getRawFormData}
         />
         {error && (
           <Label>
