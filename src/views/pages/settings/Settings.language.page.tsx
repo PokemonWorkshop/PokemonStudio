@@ -1,20 +1,47 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageEditor, PageTemplate } from '@components/pages';
-import { Label } from '@components/inputs';
+import { Label, RadioInput } from '@components/inputs';
 import i18n from '@src/i18n';
 import styled from 'styled-components';
 
-const STUDIO_LANGUAGES = ['en', 'fr', 'es', 'it', 'de', 'pt'] as const;
+const STUDIO_LANGUAGES = ['de', 'es', 'en', 'fr', 'it', 'pt'] as const;
+const STUDIO_LANGUAGE_NAMES = {
+  en: 'English, US',
+  fr: 'Français, FR',
+  es: 'Español',
+  it: 'Italiano',
+  de: 'Deutsch',
+  pt: 'Português',
+};
 
-const InputRadioWithLabelContainer = styled.div`
+const LanguageListContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  user-select: none;
+`;
+
+const LanguageContainer = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 12px;
+  gap: 16px;
+  align-items: center;
+  padding: 4px 4px 4px 8px;
+  border-radius: 8px;
+  height: 40px;
 
-  input {
-    margin: 0;
-    padding: 0;
+  &[data-checked='true'] {
+    background-color: ${({ theme }) => theme.colors.dark19};
+
+    .language-label {
+      color: ${({ theme }) => theme.colors.text100};
+    }
+  }
+
+  .language-label,
+  .language-details {
+    color: ${({ theme }) => theme.colors.text400};
   }
 `;
 
@@ -36,12 +63,17 @@ export const SettingsLanguagePage = () => {
   return (
     <PageTemplate title={t('settings:language')} size="default">
       <PageEditor title={t('settings_language:choice_language')} editorTitle={t('settings:language')}>
-        {STUDIO_LANGUAGES.map((language) => (
-          <InputRadioWithLabelContainer key={language}>
-            <input type="radio" checked={isChecked(language)} onChange={() => onChangeUserLanguage(language)} />
-            <Label>{t(`settings_language:${language}`)}</Label>
-          </InputRadioWithLabelContainer>
-        ))}
+        <LanguageListContainer>
+          {STUDIO_LANGUAGES.map((language) => (
+            <LanguageContainer key={language} data-checked={isChecked(language)}>
+              <RadioInput checked={isChecked(language)} onChange={() => onChangeUserLanguage(language)} />
+              <Label className="language-label">
+                {STUDIO_LANGUAGE_NAMES[language]}
+                <span className="language-details">- {t(`settings_language:${language}`)}</span>
+              </Label>
+            </LanguageContainer>
+          ))}
+        </LanguageListContainer>
       </PageEditor>
     </PageTemplate>
   );
