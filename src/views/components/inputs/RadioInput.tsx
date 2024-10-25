@@ -9,9 +9,12 @@ export const RadioInput = styled.input.attrs(() => ({ type: 'radio' }))`
   border-radius: 100px;
   border: 2px solid ${({ theme }) => theme.colors.dark24};
 
+  :hover {
+    cursor: pointer;
+  }
+
   &:checked {
     border: 2px solid ${({ theme }) => theme.colors.primaryBase};
-    //background-color: ${({ theme }) => theme.colors.text100};
   }
 
   &:disabled {

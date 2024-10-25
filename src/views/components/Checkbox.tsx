@@ -10,6 +10,10 @@ const CheckboxInput = styled.input.attrs({ type: 'checkbox' })`
   border: 2px solid ${({ theme }) => theme.colors.dark24};
   margin: 0;
 
+  :hover {
+    cursor: pointer;
+  }
+
   &:checked {
     background-color: ${({ theme }) => theme.colors.primaryBase};
     border: none;

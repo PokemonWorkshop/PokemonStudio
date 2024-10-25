@@ -62,7 +62,7 @@ export const SettingsLanguagePage = () => {
 
   return (
     <PageTemplate title={t('settings:language')} size="default">
-      <PageEditor title={t('settings_language:choice_language')} editorTitle={t('settings:language')}>
+      <PageEditor title={t('settings_language:language_choice')} editorTitle={t('settings:language')}>
         <LanguageListContainer>
           {STUDIO_LANGUAGES.map((language) => (
             <LanguageContainer key={language} data-checked={isChecked(language)}>
