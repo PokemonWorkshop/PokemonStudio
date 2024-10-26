@@ -1,15 +1,18 @@
 import type { ZodObject, ZodRawShape } from 'zod';
-import { setEntities, type Entity, type EntityError, type EntityRecord } from './state';
+import { setEntities, setEntityList, setTexts, type Entity, type EntityError, type EntityRecord } from './state';
 import path from 'path';
 import fs from 'fs/promises';
 import { safeParseJSON } from '@utils/json/parse';
+import { CSVHandler, loadCSV } from './text';
+import type { SelectOption } from '@ds/Select/types';
 
 type EntityTextDescription = {
   propertyInEntity: string;
-  textFilename?: string;
+  textFileId?: number;
+  textIsSystemFile?: boolean;
   discriminator: string | ((entity: Entity) => number);
-  dbSymbol?: string;
-  pathToProperties?: (string | NumberConstructor)[];
+  // dbSymbol?: string; // Removed to simplify the problem
+  // pathToProperties?: (string | NumberConstructor)[]; // Removed to simplify the problem
 };
 
 const entityRegistry: Record<string, { pathGlob: string; validator: ZodObject<ZodRawShape> }[]> = {};
@@ -27,15 +30,115 @@ export const registerEntityText = (entityType: string, description: EntityTextDe
 
 const getAllEntityTypeToLoad = () => Object.keys(entityRegistry);
 
-export const loadAllEntities = async (projectPath: string, progress: (entityType: string, step: number, total: number) => void) => {
+export const loadAllEntities = async (
+  projectPath: string,
+  mainLanguage: string,
+  progress: (entityType: string, step: number, total: number) => void
+) => {
   const entityTypes = getAllEntityTypeToLoad();
   for (const entityType of entityTypes) {
     progress(entityType, entityTypes.indexOf(entityType), entityTypes.length);
     const data = await loadAllEntityOfType(entityType, projectPath);
     setEntities(entityType, data.entities, data.errors);
-    const texts = await loadAllEntityTexts(entityType, projectPath, data.entityList); // Should load the CSV files (texts) and build the initial entityLists
-    // Push the text to state
+    const texts = await loadAllEntityTexts(entityType, projectPath, mainLanguage, data.entityList); // Should load the CSV files (texts) and build the initial entityLists
+    texts.forEach((result) => {
+      if (result.status === 'rejected') {
+        // TODO: handle error
+        console.error(result.reason);
+        return;
+      }
+      result.value.handlers.forEach(([key, handler]) => setTexts(key, handler));
+      setEntityList(result.value.entityListKey, result.value.entityList);
+    });
   }
+};
+
+type LoadedTextResult = {
+  handlers: (readonly [name: string, handler: CSVHandler])[];
+  entityListKey: string;
+  entityList: SelectOption<string>[];
+};
+const loadAllEntityTexts = async (
+  entityType: string,
+  projectPath: string,
+  mainLanguage: string,
+  entityList: (readonly [dbSymbol: string, data: Entity])[]
+): Promise<PromiseSettledResult<LoadedTextResult>[]> => {
+  const textDescriptions = entityTextRegistry[entityType];
+  if (!textDescriptions || textDescriptions.length === 0) return [];
+
+  const promises = textDescriptions.map(
+    (description) =>
+      new Promise<LoadedTextResult>((resolve, reject) => {
+        try {
+          const textFileId = description.textFileId;
+          if (typeof textFileId === 'number') {
+            resolve(loadWithFileId(entityType, projectPath, mainLanguage, textFileId, description, entityList));
+          }
+
+          resolve(loadWithoutFileId(entityType, projectPath, mainLanguage, description, entityList));
+        } catch (e) {
+          reject(e);
+        }
+      })
+  );
+  return Promise.allSettled(promises);
+};
+
+type CSVAccess = { csvFileId: number; csvTextIndex: number };
+const loadWithoutFileId = (
+  entityType: string,
+  projectPath: string,
+  mainLanguage: string,
+  description: EntityTextDescription,
+  entityList: (readonly [dbSymbol: string, data: Entity])[]
+): LoadedTextResult => {
+  const entityListKey = `${entityType}:${description.propertyInEntity}`;
+  const discriminator = description.discriminator;
+  if (typeof discriminator !== 'string') throw new Error('Invalid discriminator, cannot accept function when fileId is not known');
+
+  const fileIds = new Set(
+    entityList.map(([_, entity]) => {
+      const csv = entity[discriminator] as CSVAccess;
+      return csv.csvFileId;
+    })
+  );
+  const fileHandlers = new Map([...fileIds].map((fileId) => [fileId, loadCSV(fileId, projectPath, false)] as const));
+
+  return {
+    handlers: [...fileHandlers.entries()].map(([fileId, handler]) => [`${fileId}`, handler] as const),
+    entityListKey,
+    entityList: entityList
+      .map(([dbSymbol, entity]) => {
+        const csv = entity[discriminator] as CSVAccess;
+        const column = fileHandlers.get(csv.csvFileId)?.getColumn(mainLanguage) as string[]; // Always exist as how it was loaded
+        return { value: dbSymbol, label: column[csv.csvTextIndex] ?? '---' };
+      })
+      .sort((a, b) => a.value.localeCompare(b.value)),
+  };
+};
+
+const loadWithFileId = (
+  entityType: string,
+  projectPath: string,
+  mainLanguage: string,
+  textFileId: number,
+  description: EntityTextDescription,
+  entityList: (readonly [dbSymbol: string, data: Entity])[]
+): LoadedTextResult => {
+  const handler = loadCSV(textFileId, projectPath, description.textIsSystemFile ?? false);
+  const entityListKey = `${entityType}:${description.propertyInEntity}`;
+  const column = handler.getColumn(mainLanguage);
+  const descriptionDiscriminator = description.discriminator;
+  const discriminator =
+    typeof descriptionDiscriminator === 'string' ? (entity: Entity) => entity[descriptionDiscriminator] as number : descriptionDiscriminator;
+  return {
+    handlers: [[entityListKey, handler]],
+    entityListKey,
+    entityList: entityList
+      .map(([dbSymbol, entity]) => ({ value: dbSymbol, label: column[discriminator(entity)] ?? '---' }))
+      .sort((a, b) => a.value.localeCompare(b.value)),
+  };
 };
 
 type LoadedEntityRecord = { entities: EntityRecord; entityList: (readonly [dbSymbol: string, data: Entity])[]; errors: EntityError[] };
