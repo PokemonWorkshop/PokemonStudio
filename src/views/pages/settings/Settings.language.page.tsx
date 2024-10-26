@@ -31,6 +31,12 @@ const LanguageContainer = styled.div`
   border-radius: 8px;
   height: 40px;
 
+  :hover,
+  *:hover {
+    background-color: ${({ theme }) => theme.colors.dark19};
+    cursor: pointer;
+  }
+
   &[data-checked='true'] {
     background-color: ${({ theme }) => theme.colors.dark19};
 
@@ -65,7 +71,7 @@ export const SettingsLanguagePage = () => {
       <PageEditor title={t('settings_language:language_choice')} editorTitle={t('settings:language')}>
         <LanguageListContainer>
           {STUDIO_LANGUAGES.map((language) => (
-            <LanguageContainer key={language} data-checked={isChecked(language)}>
+            <LanguageContainer key={language} data-checked={isChecked(language)} onClick={() => onChangeUserLanguage(language)}>
               <RadioInput checked={isChecked(language)} onChange={() => onChangeUserLanguage(language)} />
               <Label className="language-label">
                 {STUDIO_LANGUAGE_NAMES[language]}
