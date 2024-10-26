@@ -1,5 +1,5 @@
 import { CREATURE_DESCRIPTION_TEXT_ID, CREATURE_NAME_TEXT_ID, CREATURE_SPECIE_TEXT_ID, CREATURE_VALIDATOR } from '@modelEntities/creature';
-import { registerEntity, registerEntityText } from './load';
+import { registerEntity } from './load';
 import { ITEM_DESCRIPTION_TEXT_ID, ITEM_NAME_TEXT_ID, ITEM_PLURAL_NAME_TEXT_ID, ITEM_VALIDATOR } from '@modelEntities/item';
 import { MOVE_DESCRIPTION_TEXT_ID, MOVE_NAME_TEXT_ID, MOVE_VALIDATOR } from '@modelEntities/move';
 import { QUEST_DESCRIPTION_TEXT_ID, QUEST_NAME_TEXT_ID, QUEST_VALIDATOR } from '@modelEntities/quest';
@@ -19,12 +19,12 @@ import {
   GRAPHIC_CONFIG_VALIDATOR,
   INFO_CONFIG_VALIDATOR,
   LANGUAGE_CONFIG_VALIDATOR,
-  NATURE_CONFIG_VALIDATOR,
   SAVE_CONFIG_VALIDATOR,
   SCENE_TITLE_CONFIG_VALIDATOR,
   SETTINGS_CONFIG_VALIDATOR,
   TEXT_CONFIG_VALIDATOR,
 } from '@modelEntities/config';
+import { registerEntityText } from './loadTextOfEntities';
 
 const csv = (id: number) => `Data/Text/Dialogs/${id}.csv`;
 
@@ -43,7 +43,6 @@ registerEntity('config', 'Data/configs/game_options_config.json', GAME_OPTION_CO
 registerEntity('config', 'Data/configs/graphic_config.json', GRAPHIC_CONFIG_VALIDATOR);
 registerEntity('config', 'Data/configs/infos_config.json', INFO_CONFIG_VALIDATOR);
 registerEntity('config', 'Data/configs/language_config.json', LANGUAGE_CONFIG_VALIDATOR);
-registerEntity('config', 'Data/configs/natures.json', NATURE_CONFIG_VALIDATOR);
 registerEntity('config', 'Data/configs/save_config.json', SAVE_CONFIG_VALIDATOR);
 registerEntity('config', 'Data/configs/scene_title_config.json', SCENE_TITLE_CONFIG_VALIDATOR);
 registerEntity('config', 'Data/configs/settings_config.json', SETTINGS_CONFIG_VALIDATOR);
@@ -53,7 +52,6 @@ registerEntity('creature', 'Data/Studio/pokemon/*.json', CREATURE_VALIDATOR);
 registerEntityText('creature', { propertyInEntity: 'name', discriminator: 'id', textFileId: CREATURE_NAME_TEXT_ID });
 registerEntityText('creature', { propertyInEntity: 'description', discriminator: 'id', textFileId: CREATURE_DESCRIPTION_TEXT_ID });
 registerEntityText('creature', { propertyInEntity: 'specie', discriminator: 'id', textFileId: CREATURE_SPECIE_TEXT_ID });
-// TODO: Add form related text + fix name to use functional discriminator
 
 registerEntity('dex', 'Data/Studio/dex/*.json', DEX_VALIDATOR);
 registerEntityText('dex', { propertyInEntity: 'name', discriminator: 'csv' });
@@ -61,7 +59,7 @@ registerEntityText('dex', { propertyInEntity: 'name', discriminator: 'csv' });
 registerEntity('group', 'Data/Studio/groups/*.json', GROUP_VALIDATOR);
 registerEntityText('group', { propertyInEntity: 'name', discriminator: 'id', textFileId: GROUP_NAME_TEXT_ID });
 
-// TODO: fix discriminated validator type in registerEntity
+// @ts-ignore This will work anyway, It's quite complex to define the type of a polymorphic object
 registerEntity('item', 'Data/Studio/items/*.json', ITEM_VALIDATOR);
 registerEntityText('item', { propertyInEntity: 'name', discriminator: 'id', textFileId: ITEM_NAME_TEXT_ID });
 registerEntityText('item', { propertyInEntity: 'pluralName', discriminator: 'id', textFileId: ITEM_PLURAL_NAME_TEXT_ID });
