@@ -37,7 +37,8 @@
   "vs_type2": "Double",
   "battle_id": "Combat scénarisé",
   "battle_id_tooltip": "Cette donnée fait référence à l'identifiant d'un combat scripté",
-  "trainer_party": "Équipe de {{name}}",
+  "trainer_party": "Équipe",
+  "trainer_party_of": "Équipe de {{name}}",
   "trainer_bag": "Sac de {{name}}",
   "import": "Importation",
   "default_option_label": "D'un autre dresseur",
@@ -75,5 +76,6 @@
   "defeat_music": "Musique de défaite du dresseur",
   "bgm_music": "Musique de combat",
   "character_v3_message": "Le character sera utilisé à partir de la version 3.0 de l'application.",
-  "no_trainers_available": "Aucun dresseur n'est disponible à l'import !"
+  "no_trainers_available": "Aucun dresseur n'est disponible à l'import !",
+  "change_order_info": "Vous pouvez changer l'ordre des Pokémon de l'équipe de ce dresseur."
 }

@@ -37,5 +37,6 @@
   "evs_title": "Effort Values",
   "pokemon_first_position": "Pokémon in first position",
   "none": "None",
-  "min_max_level_error": "The maximum level must be higher than the minimum level."
+  "min_max_level_error": "The maximum level must be higher than the minimum level.",
+  "change_order": "Change the team order"
 }

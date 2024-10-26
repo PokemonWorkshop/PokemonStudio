@@ -112,6 +112,15 @@ export const PokemonBattlerList = ({ title, encounters, disabledImport, from }: 
           {totalEncounterChance > 0 && from === 'group' && <Tag className="chance">{`${totalEncounterChance}%`}</Tag>}
         </div>
         <div className="buttons">
+          {from === 'trainer' && (
+            <DarkButton
+              onClick={() => dialogsRef.current?.openDialog('change_order')}
+              data-tooltip-responsive={t('change_order')}
+              disabled={trainer.party.length === 0}
+            >
+              Icon
+            </DarkButton>
+          )}
           <div className="button-import-full">
             <DarkButton onClick={() => dialogsRef.current?.openDialog('import')} disabled={disabledImport}>
               {importText()}
