@@ -1,10 +1,13 @@
 import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 import { STATUS_EDITOR_SCHEMA } from './StatusEditorSchema';
 import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { InputContainer } from '@components/inputs';
-import { StudioMoveStatusList } from '@modelEntities/move';
+import { Input, InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
+import { MOVE_STATUS_CUSTOM, MOVE_STATUS_CUSTOM_VALIDATOR, StudioMoveStatusList } from '@modelEntities/move';
+import { Select } from '@ds/Select';
+import { TextInputError } from '@components/inputs/Input';
+import { isCustomStatus } from '@utils/MoveUtils';
 
 const shouldInputShow = (statuses: StudioMoveStatusList[], index: number) => {
   // Must have selected a status for current index
@@ -24,10 +27,18 @@ const shouldShowStatusSelection = (statuses: StudioMoveStatusList[], index: numb
   return true;
 };
 
+const getStatus = (rawData: unknown, defaults: unknown): string => {
+  if (rawData) return rawData as string;
+  if (defaults) return defaults as string;
+
+  return '__undef__';
+};
+
 type StatusEditorProps = {
   index: number;
   options: SelectOption[];
   onTouched: (event: React.FormEvent<HTMLInputElement>, index: number) => void;
+  getRawFormData: () => Record<string, unknown>;
   defaults: Record<string, unknown>;
   statuses: StudioMoveStatusList[];
   chances: number[];
@@ -39,6 +50,7 @@ export const StatusEditor = ({
   index,
   options,
   onTouched,
+  getRawFormData,
   defaults,
   statuses,
   chances,
@@ -46,9 +58,24 @@ export const StatusEditor = ({
   handleChancesChange,
 }: StatusEditorProps) => {
   const { t } = useTranslation('database_moves');
-  const { EmbeddedUnitInput, Select } = useInputAttrsWithLabel(STATUS_EDITOR_SCHEMA, defaults);
+  const { EmbeddedUnitInput } = useInputAttrsWithLabel(STATUS_EDITOR_SCHEMA, defaults);
   const divRef = useRef<HTMLDivElement>(null);
   const divInputRef = useRef<HTMLDivElement>(null);
+  const [isCustom, setIsCustom] = useState(isCustomStatus(String(defaults[`moveStatus.${index}.status`])));
+  const [defaultCustomInputValue, setDefaultCustomInputValue] = useState<string | undefined>(
+    String(defaults[`moveStatus.${index}.status`]).replace(/^Custom_/, '') || undefined
+  );
+
+  const status = getStatus(getRawFormData()[`moveStatus.${index}.status`], defaults[`moveStatus.${index}.status`]);
+  const customStatusError = statuses[index] !== '' && !MOVE_STATUS_CUSTOM_VALIDATOR.safeParse(statuses[index]).success;
+
+  const onChange = (index: number, status: string) => {
+    const isCustom = isCustomStatus(status);
+    if (isCustom) setDefaultCustomInputValue('');
+
+    setIsCustom(isCustom);
+    handleStatusChange(index, status);
+  };
 
   useEffect(() => {
     if (!divRef.current || !divInputRef.current) return;
@@ -59,14 +86,33 @@ export const StatusEditor = ({
 
   return (
     <InputContainer size="s" ref={divRef}>
-      <Select
-        name={`moveStatus.${index}.status`}
-        label={t(`status_${(index + 1) as 1 | 2 | 3}`)}
-        options={options}
-        onChange={(value) => handleStatusChange(index, value)}
-        value={statuses[index] as Exclude<StudioMoveStatusList, null>}
-        defaultValue={undefined}
-      />
+      <InputWithTopLabelContainer>
+        <Label>{t(`status_${(index + 1) as 1 | 2 | 3}`)}</Label>
+        <Select
+          name={isCustom ? '__ignore__' : `moveStatus.${index}.status`}
+          options={options}
+          onChange={(status) => onChange(index, status)}
+          value={isCustom ? MOVE_STATUS_CUSTOM : status}
+          defaultValue={String(defaults[`moveStatus.${index}.status`]) ?? '__undef__'}
+        />
+      </InputWithTopLabelContainer>
+      {isCustom && (
+        <>
+          <InputWithTopLabelContainer>
+            <Label required>{t('status_custom')}</Label>
+            <Input
+              onChange={(event) => handleStatusChange(index, `${MOVE_STATUS_CUSTOM}${event.target.value}`)}
+              placeholder="Frozen"
+              defaultValue={defaultCustomInputValue}
+              pattern="^[A-Za-z0-9_]+$"
+            />
+          </InputWithTopLabelContainer>
+          <div style={{ display: 'none' }}>
+            <Input name={isCustom ? `moveStatus.${index}.status` : '__ignore__'} value={statuses[index] || MOVE_STATUS_CUSTOM} onChange={() => {}} />
+          </div>
+          {customStatusError && <TextInputError>{t('invalid_format')}</TextInputError>}
+        </>
+      )}
       <div ref={divInputRef}>
         <EmbeddedUnitInput
           name={`moveStatus.${index}.luckRate`}
