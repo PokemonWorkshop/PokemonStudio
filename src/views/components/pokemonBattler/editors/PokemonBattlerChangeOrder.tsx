@@ -47,7 +47,7 @@ const ChangeOrderList = styled.div`
 
   .header:first-child {
     padding: 0 4px 12px 0;
-    border-bottom: solid 1px ${({ theme }) => theme.colors.dark14};
+    border-bottom: solid 1px ${({ theme }) => theme.colors.dark18};
   }
 `;
 
@@ -69,6 +69,13 @@ const DataChangeOrderGrid = styled(DataGrid).attrs<DataChangeOrderGridProps>((pr
       color: ${({ theme }) => theme.colors.text100};
       border-radius: 8px;
     }
+  }
+
+  & img {
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+    object-position: 0 100%;
   }
 
   & .level {
