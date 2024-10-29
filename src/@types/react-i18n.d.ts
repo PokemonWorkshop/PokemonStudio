@@ -50,6 +50,7 @@ import settings from '../../assets/i18n/en/settings.json';
 import settings_maps from '../../assets/i18n/en/settings_maps.json';
 import onboarding from '../../assets/i18n/en/onboarding.json';
 import compilation from '../../assets/i18n/en/compilation.json';
+import settings_language from '../../assets/i18n/en/settings_language.json';
 
 // react-i18next versions higher than 11.11.0
 declare module 'react-i18next' {
@@ -103,6 +104,7 @@ declare module 'react-i18next' {
       text_management: typeof text_management;
       world: typeof world;
       settings: typeof settings;
+      settings_language: typeof settings_language;
       settings_maps: typeof settings_maps;
       onboarding: typeof onboarding;
       compilation: typeof compilation;
