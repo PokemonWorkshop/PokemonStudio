@@ -36,6 +36,7 @@ const ButtonContainer = styled.div`
 const ChangeOrderInfoContainer = styled.div`
   ${({ theme }) => theme.fonts.normalSmall};
   color: ${({ theme }) => theme.colors.text400};
+  white-space: pre-line;
   user-select: none;
 `;
 

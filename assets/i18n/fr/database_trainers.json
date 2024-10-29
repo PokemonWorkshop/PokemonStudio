@@ -77,5 +77,5 @@
   "bgm_music": "Musique de combat",
   "character_v3_message": "Le character sera utilisé à partir de la version 3.0 de l'application.",
   "no_trainers_available": "Aucun dresseur n'est disponible à l'import !",
-  "change_order_info": "Vous pouvez changer l'ordre des Pokémon de l'équipe de ce dresseur."
+  "change_order_info": "Vous pouvez changer l’ordre des Pokémon de l‘équipe de ce dresseur.\n\nCette action a un impact sur l’argent donné au joueur par ce dresseur."
 }
