@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { DataBlockEditorContainer } from '@components/editor/DataBlockEditorStyle';
-import { DarkButton, SecondaryButtonWithPlusIconResponsive } from '@components/buttons';
+import { DarkButtonImportResponsive, SecondaryButtonWithPlusIconResponsive } from '@components/buttons';
 import { PokemonBattler } from './PokemonBattler';
 import { useTranslation } from 'react-i18next';
 import { StudioGroupEncounter } from '@modelEntities/groupEncounter';
@@ -12,6 +12,7 @@ import type { CurrentBattlerType, PokemonBattlerEditorAndDeletionKeys, PokemonBa
 import { assertUnreachable } from '@utils/assertUnreachable';
 import { useTrainerPage } from '@hooks/usePage';
 import { Tag } from '@components/Tag';
+import { DarkButtonReOrderResponsive } from '@components/buttons/DarkButtonWithPlusIcon';
 
 type PokemonBattlerListProps = {
   title: string;
@@ -47,27 +48,6 @@ export const PokemonBattlerListHeader = styled.div`
   .buttons {
     display: flex;
     gap: 12px;
-
-    .button-import-full {
-      display: block;
-    }
-
-    .button-import-reduce {
-      display: none;
-    }
-  }
-
-  @media ${({ theme }) => theme.breakpoints.dataBox422} {
-    .header,
-    .buttons {
-      .button-import-full {
-        display: none;
-      }
-
-      .button-import-reduce {
-        display: block;
-      }
-    }
   }
 `;
 
@@ -113,24 +93,21 @@ export const PokemonBattlerList = ({ title, encounters, disabledImport, from }: 
         </div>
         <div className="buttons">
           {from === 'trainer' && (
-            <DarkButton
+            <DarkButtonReOrderResponsive
               onClick={() => dialogsRef.current?.openDialog('change_order')}
               data-tooltip-responsive={t('change_order')}
-              disabled={trainer.party.length === 0}
+              disabled={trainer.party.length <= 1}
             >
-              Icon
-            </DarkButton>
+              {t('change_order')}
+            </DarkButtonReOrderResponsive>
           )}
-          <div className="button-import-full">
-            <DarkButton onClick={() => dialogsRef.current?.openDialog('import')} disabled={disabledImport}>
-              {importText()}
-            </DarkButton>
-          </div>
-          <div className="button-import-reduce">
-            <DarkButton onClick={() => dialogsRef.current?.openDialog('import')} disabled={disabledImport}>
-              {t('import')}
-            </DarkButton>
-          </div>
+          <DarkButtonImportResponsive
+            onClick={() => dialogsRef.current?.openDialog('import')}
+            data-tooltip-responsive={importText()}
+            disabled={disabledImport}
+          >
+            {importText()}
+          </DarkButtonImportResponsive>
           <SecondaryButtonWithPlusIconResponsive
             onClick={() => dialogsRef.current?.openDialog('new')}
             data-tooltip-responsive={t('add_pokemon')}

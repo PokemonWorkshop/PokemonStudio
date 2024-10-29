@@ -71,7 +71,6 @@ export const usePokemonBattler = ({ action, currentBattler, from }: Props) => {
   const updateGroup = useUpdateGroup(group);
   const getEntityName = useGetEntityNameText();
   const [canNew, setCanNew] = useState<boolean>(false);
-  const [isChangeOrder, setIsChangeOrder] = useState<boolean>(false);
 
   const encounterInit = (): PartialStudioGroupEncounter => {
     if (action === 'edit') {
@@ -199,12 +198,7 @@ export const usePokemonBattler = ({ action, currentBattler, from }: Props) => {
         if (action === 'creation') {
           newParty.push(newEncounter);
         } else {
-          if (isChangeOrder && currentBattler.index !== 0) {
-            newParty.splice(currentBattler.index, 1);
-            newParty.unshift(newEncounter);
-          } else {
-            newParty[currentBattler.index] = newEncounter;
-          }
+          newParty[currentBattler.index] = newEncounter;
         }
         return updateTrainer({ party: newParty });
       }
@@ -305,8 +299,6 @@ export const usePokemonBattler = ({ action, currentBattler, from }: Props) => {
     updateEncounter,
     expandPokemonSetup,
     updateExpandPokemonSetup,
-    isChangeOrder,
-    setIsChangeOrder,
     updateStudioEntity,
     canClose,
     canNew,
