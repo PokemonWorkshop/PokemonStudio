@@ -1,7 +1,6 @@
 import log from 'electron-log';
-import { execFile } from 'child_process';
+import { spawn } from 'child_process';
 import path from 'path';
-import util from 'util';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 
 export type OpenTiledPayload = {
@@ -13,20 +12,42 @@ export type OpenTiledPayload = {
 const openTiled = async (payload: OpenTiledPayload) => {
   log.info('open-tiled', payload);
   const mapFilename = path.join(payload.projectPath, 'Data', 'Tiled', 'Maps', payload.tiledMapFilename + '.tmx');
+
+  const executeCommand = (command: string, args?: readonly string[]) => {
+    return new Promise<void>((resolve, reject) => {
+      const child = spawn(command, args || [], { detached: true });
+
+      child.stdout.on('data', (data) => {
+        log.info(`[Tiled] ${data}`);
+      });
+
+      child.stderr.on('data', (data) => {
+        log.error(`[Tiled] ${data}`);
+      });
+
+      child.on('error', (error) => {
+        reject(error);
+      });
+
+      child.unref();
+      resolve();
+    });
+  };
+
   if (process.platform === 'darwin') {
-    await util.promisify(execFile)('open', [payload.tiledPath, mapFilename]);
+    await executeCommand('open', [payload.tiledPath, mapFilename]);
   } else if (process.platform === 'linux') {
     const linuxMapFilename = path.basename(mapFilename);
     const defaultDir = process.cwd();
     process.chdir(path.dirname(mapFilename));
-    if (payload.tiledPath.endsWith('AppImage') && linuxMapFilename.indexOf(' ') !== -1) {
-      throw new Error("Tiled's AppImage doesn't support spaces in map names.");
+    try {
+      await executeCommand(payload.tiledPath, [linuxMapFilename]);
+    } catch (error) {
+      log.error(error);
     }
-    const result = await util.promisify(execFile)(payload.tiledPath, [`"${linuxMapFilename}"`]);
-    if (result.stderr) log.error(result.stderr);
     process.chdir(defaultDir);
   } else {
-    await util.promisify(execFile)(payload.tiledPath, [mapFilename]);
+    await executeCommand(payload.tiledPath, [mapFilename]);
   }
   return {};
 };

@@ -1,5 +1,11 @@
 import { ABILITY_DESCRIPTION_TEXT_ID, ABILITY_NAME_TEXT_ID } from '@modelEntities/ability';
-import { CREATURE_DESCRIPTION_TEXT_ID, CREATURE_NAME_TEXT_ID } from '@modelEntities/creature';
+import {
+  CREATURE_DESCRIPTION_TEXT_ID,
+  CREATURE_FORM_DESCRIPTION_TEXT_ID,
+  CREATURE_FORM_NAME_TEXT_ID,
+  CREATURE_NAME_TEXT_ID,
+  StudioCreatureForm,
+} from '@modelEntities/creature';
 import { StudioDex } from '@modelEntities/dex';
 import { GROUP_NAME_TEXT_ID } from '@modelEntities/group';
 import { ITEM_DESCRIPTION_TEXT_ID, ITEM_NAME_TEXT_ID, ITEM_PLURAL_NAME_TEXT_ID, ITEM_POCKET_NAME_TEXT_ID, StudioItem } from '@modelEntities/item';
@@ -202,6 +208,7 @@ const ENTITY_TO_NAME_TEXT = {
   EventItem: ITEM_NAME_TEXT_ID,
   FleeingItem: ITEM_NAME_TEXT_ID,
   LevelIncreaseItem: ITEM_NAME_TEXT_ID,
+  ExpGiveItem: ITEM_NAME_TEXT_ID,
   PPIncreaseItem: ITEM_NAME_TEXT_ID,
   RateHealItem: ITEM_NAME_TEXT_ID,
   RepelItem: ITEM_NAME_TEXT_ID,
@@ -247,14 +254,14 @@ export const getItemPocketText = (item: StudioItem, state: State): string => {
       defaultLanguage: state.projectConfig.language_config.defaultLanguage,
     },
     ITEM_POCKET_NAME_TEXT_ID,
-    pocketMapping[item.socket] || item.socket
+    pocketMapping[item.socket] ?? item.socket
   );
 };
 export const useGetItemPocketText = () => {
   const getEntityText = useGetProjectText();
 
   return (entity: { klass: StudioItem['klass']; socket: number }) =>
-    getEntityText(ITEM_POCKET_NAME_TEXT_ID, pocketMapping[entity.socket] || entity.socket);
+    getEntityText(ITEM_POCKET_NAME_TEXT_ID, pocketMapping[entity.socket] ?? entity.socket);
 };
 
 export const useGetItemPluralNameText = () => {
@@ -283,6 +290,7 @@ const ENTITY_TO_DESCRIPTION_TEXT = {
   EventItem: ITEM_DESCRIPTION_TEXT_ID,
   FleeingItem: ITEM_DESCRIPTION_TEXT_ID,
   LevelIncreaseItem: ITEM_DESCRIPTION_TEXT_ID,
+  ExpGiveItem: ITEM_DESCRIPTION_TEXT_ID,
   PPIncreaseItem: ITEM_DESCRIPTION_TEXT_ID,
   RateHealItem: ITEM_DESCRIPTION_TEXT_ID,
   RepelItem: ITEM_DESCRIPTION_TEXT_ID,
@@ -374,4 +382,16 @@ export const useCopyProjectText = () => {
       return newState;
     });
   };
+};
+
+export const useGetCreatureFormNameText = () => {
+  const getEntityText = useGetProjectText();
+
+  return (form: StudioCreatureForm) => getEntityText(CREATURE_FORM_NAME_TEXT_ID, form.formTextId.name);
+};
+
+export const useGetCreatureFormDescriptionText = () => {
+  const getEntityText = useGetProjectText();
+
+  return (form: StudioCreatureForm) => getEntityText(CREATURE_FORM_DESCRIPTION_TEXT_ID, form.formTextId.description);
 };

@@ -5,7 +5,7 @@ import { ControlBar, ControlBarButtonContainer, ControlBarLabelContainer } from 
 import { useTranslation } from 'react-i18next';
 import { useSetCurrentDatabasePath } from '@hooks/useSetCurrentDatabasePage';
 import { PokemonDialogRef } from './editors/PokemonEditorOverlay';
-import { useProjectPokemon } from '@hooks/useProjectData';
+import { getNextDbSymbolByDexOrder, getPreviousDbSymbolByDexOrder, useProjectPokemon } from '@hooks/useProjectData';
 import { StudioShortcutActions, useShortcut } from '@hooks/useShortcuts';
 import { SelectPokemon } from '@components/selects/SelectPokemon';
 import { SelectPokemonForm } from '@components/selects/SelectPokemonForm';
@@ -22,7 +22,7 @@ type Props = {
 export const PokemonControlBar = ({ dialogsRef, setEvolutionIndex }: Props) => {
   useSetCurrentDatabasePath();
   const { t } = useTranslation(['database_pokemon']);
-  const { selectedDataIdentifier: currentPokemon, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol } = useProjectPokemon();
+  const { selectedDataIdentifier: currentPokemon, setSelectedDataIdentifier, state } = useProjectPokemon();
   const shortcutMap = useMemo<StudioShortcutActions>(() => {
     const isShortcutEnabled = () => dialogsRef?.current?.currentDialog === undefined;
 
@@ -30,12 +30,12 @@ export const PokemonControlBar = ({ dialogsRef, setEvolutionIndex }: Props) => {
       db_previous: () => {
         if (!isShortcutEnabled()) return;
         if (setEvolutionIndex) setEvolutionIndex(0);
-        setSelectedDataIdentifier({ pokemon: { specie: getPreviousDbSymbol('id'), form: 0 } });
+        setSelectedDataIdentifier({ pokemon: { specie: getPreviousDbSymbolByDexOrder(currentPokemon.specie, state), form: 0 } });
       },
       db_next: () => {
         if (!isShortcutEnabled()) return;
         if (setEvolutionIndex) setEvolutionIndex(0);
-        setSelectedDataIdentifier({ pokemon: { specie: getNextDbSymbol('id'), form: 0 } });
+        setSelectedDataIdentifier({ pokemon: { specie: getNextDbSymbolByDexOrder(currentPokemon.specie, state), form: 0 } });
       },
       db_new: () => isShortcutEnabled() && dialogsRef?.current?.openDialog('new'),
     };

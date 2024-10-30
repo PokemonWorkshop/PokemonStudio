@@ -4,6 +4,7 @@ import { getEntityNameText, getEntityNameTextUsingTextId } from '@utils/ReadingP
 import { SavingMap, SavingTextMap } from '@utils/SavingUtils';
 import { buildTextUpdate, TextUpdate } from './updateProjectText';
 import { addSelectOption, removeSelectOption } from './useSelectOptions';
+import { buildCreaturesListByDexOrder } from '@utils/buildCreaturesListByDexOrder';
 
 const getPreviousDbSymbolById = (values: { id: number; dbSymbol: DbSymbol }[], currentId: number) => {
   const sortedValues = values.sort((a, b) => b.id - a.id);
@@ -38,6 +39,18 @@ const getNextDbSymbolByName = (values: (EntityTextIdWithDbSymbol | EntityIdWithD
         )
       : (values as EntityIdWithDbSymbol[]).sort((a, b) => getEntityNameText(a, state).localeCompare(getEntityNameText(b, state)));
   const keys = sortedValues.map(({ dbSymbol }) => dbSymbol);
+  return keys[keys.indexOf(currentDbSymbol as DbSymbol) + 1] || keys[0];
+};
+
+export const getPreviousDbSymbolByDexOrder = (currentDbSymbol: string, state: State) => {
+  const creaturesList = buildCreaturesListByDexOrder(state);
+  const keys = creaturesList.map(({ dbSymbol }) => dbSymbol);
+  return keys[keys.indexOf(currentDbSymbol as DbSymbol) - 1] || keys[keys.length - 1];
+};
+
+export const getNextDbSymbolByDexOrder = (currentDbSymbol: string, state: State) => {
+  const creaturesList = buildCreaturesListByDexOrder(state);
+  const keys = creaturesList.map(({ dbSymbol }) => dbSymbol);
   return keys[keys.indexOf(currentDbSymbol as DbSymbol) + 1] || keys[0];
 };
 
@@ -97,8 +110,15 @@ export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier
           savingData: new SavingMap(currentState.savingData.set({ key, id }, 'UPDATE')),
           savingText: new SavingTextMap(currentState.savingText.setMultiple(fileIdUpdatedTexts, 'UPDATE')),
         };
+        if (key === 'mapLinks') return newState;
+
         // Add the new text
-        if (key !== 'mapLinks') addSelectOption(key === 'pokemon' ? 'creatures' : key, newState);
+        if (key === 'dex') {
+          addSelectOption('dex', newState);
+          addSelectOption('creatures', newState);
+        } else {
+          addSelectOption(key === 'pokemon' ? 'creatures' : key, newState);
+        }
         return newState;
       } else {
         return {

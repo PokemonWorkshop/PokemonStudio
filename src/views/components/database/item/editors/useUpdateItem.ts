@@ -3,18 +3,30 @@ import { cloneEntity } from '@utils/cloneEntity';
 import { useProjectItems } from '@hooks/useProjectData';
 import { useCallback } from 'react';
 
+export type RemoveKeys = (obj: Record<string, unknown>, keys: string[]) => Record<string, unknown>;
+
+const removeKeys: RemoveKeys = (obj, keys) => {
+  const result = { ...obj };
+  keys.forEach((key) => {
+    delete result[key];
+  });
+  return result;
+};
+
 export const useUpdateItem = (item: StudioItem) => {
   const { setProjectDataValues: setItem } = useProjectItems();
 
   return useCallback(
-    (updates: Partial<StudioItem>) => {
+    (updates: Partial<StudioItem>, removeKeysList: string[] = []) => {
       const updatedItem = {
         ...cloneEntity(item),
         ...updates,
       };
-      setItem({ [item.dbSymbol]: updatedItem as StudioItem });
+
+      const cleanedItem = removeKeys(updatedItem, removeKeysList);
+
+      setItem({ [item.dbSymbol]: cleanedItem as StudioItem });
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [item]
+    [item, setItem]
   );
 };

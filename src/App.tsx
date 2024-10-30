@@ -12,6 +12,7 @@ import DatabasePage from './views/pages/database/Database/Database.page';
 import PSDKUpdatePage from './views/pages/PSDKUpdate.page';
 import TextsRouter from '@pages/texts/Texts.Router.page';
 import DashboardRouter from '@pages/dashboard/Dashboard.Router.page';
+import { CompilationPage } from '@pages/Compilation.page';
 import { Loader } from '@components/Loader';
 import { LoaderContextProvider } from '@utils/loaderContext';
 import { UnsavedWarningModal } from '@components/modals/UnsavedWarningModal';
@@ -45,6 +46,7 @@ const App = () => {
                 <Route path="/settings/*" element={<SettingsRouter />} />
                 <Route path="/account" />
                 <Route path="/designSystem/*" element={<DesignSystemRouterComponent />} />
+                <Route path="/compilation" element={<CompilationPage />} />
                 <Route path="/" element={<Navigate to="/home" />} />
               </Routes>
             </MemoryRouter>

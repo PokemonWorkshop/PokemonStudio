@@ -3,7 +3,7 @@ import log from 'electron-log';
 import path from 'path';
 import { copyFileSync, existsSync, readFileSync, writeFileSync } from 'fs';
 import { GAME_OPTION_CONFIG_VALIDATOR, INFO_CONFIG_VALIDATOR, SCENE_TITLE_CONFIG_VALIDATOR } from '@modelEntities/config';
-import { StudioProject } from '@modelEntities/project';
+import { PROJECT_VALIDATOR, StudioProject } from '@modelEntities/project';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import { addColumnCSV, getTextFileList, getTextPath, languageAvailable, loadCSV, saveCSV } from '@utils/textManagement';
 import { readProjectFolder } from './readProjectData';
@@ -96,12 +96,31 @@ const updateMapsMtime = async (projectPath: string) => {
   }, Promise.resolve());
 };
 
+const updateProjectStudioFile = async (payload: ConfigureNewProjectInput) => {
+  const projectStudioPath = path.join(payload.projectDirName, 'project.studio');
+  if (existsSync(projectStudioPath)) {
+    const projectStudioTechnicalDemoFile = (await fsPromise.readFile(projectStudioPath)).toString('utf-8');
+    const projectStudioTechnicalDemoParsed = PROJECT_VALIDATOR.safeParse(parseJSON(projectStudioTechnicalDemoFile, 'project.studio'));
+    const newProjectStudioParsed = PROJECT_VALIDATOR.safeParse(JSON.parse(payload.metaData.projectStudioData));
+    if (projectStudioTechnicalDemoParsed.success && newProjectStudioParsed.success) {
+      const projectStudioUpdated: StudioProject = {
+        ...newProjectStudioParsed.data,
+        studioVersion: projectStudioTechnicalDemoParsed.data.studioVersion,
+      };
+      log.info('configure-new-project/update project.studio file');
+      await fsPromise.writeFile(projectStudioPath, JSON.stringify(projectStudioUpdated, null, 2));
+      return;
+    }
+  }
+  log.info('configure-new-project/create project.studio file');
+  await fsPromise.writeFile(projectStudioPath, payload.metaData.projectStudioData);
+};
+
 export type ConfigureNewProjectInput = { projectDirName: string; metaData: ConfigureNewProjectMetaData };
 
 const configureNewProject = async (payload: ConfigureNewProjectInput) => {
   log.info('configure-new-project', payload);
-  log.info('configure-new-project/create project.studio file');
-  writeFileSync(path.join(payload.projectDirName, 'project.studio'), payload.metaData.projectStudioData);
+  updateProjectStudioFile(payload);
   log.info('configure-new-project/create psdk.bat file');
   writeFileSync(path.join(payload.projectDirName, 'psdk.bat'), generatePSDKBatFileContent());
   log.info('configure-new-project/update icon');

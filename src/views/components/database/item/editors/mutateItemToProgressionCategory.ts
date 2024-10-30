@@ -2,8 +2,8 @@ import { mutateItemInto, StudioItem } from '@modelEntities/item';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import { createItem } from '@utils/entityCreation';
 
-export const progressCategories = ['EV_PROGRESS', 'LEVEL_PROGRESS'] as const;
-export type ProgressionCategory = typeof progressCategories[number];
+export const progressCategories = ['EV_PROGRESS', 'LEVEL_PROGRESS', 'EXP_PROGRESS'] as const;
+export type ProgressionCategory = (typeof progressCategories)[number];
 const itemKlassToProgressionCategory: Readonly<Record<StudioItem['klass'], ProgressionCategory | 'unknown'>> = {
   AllPPHealItem: 'unknown',
   BallItem: 'unknown',
@@ -14,6 +14,7 @@ const itemKlassToProgressionCategory: Readonly<Record<StudioItem['klass'], Progr
   HealingItem: 'unknown',
   Item: 'unknown',
   LevelIncreaseItem: 'LEVEL_PROGRESS',
+  ExpGiveItem: 'EXP_PROGRESS',
   PPHealItem: 'unknown',
   PPIncreaseItem: 'unknown',
   RateHealItem: 'unknown',
@@ -34,6 +35,8 @@ export const mutateItemToProgressionCategory = (item: StudioItem, progressionCat
       return mutateItemInto(item, createItem('EVBoostItem', item.dbSymbol, item.id));
     case 'LEVEL_PROGRESS':
       return mutateItemInto(item, createItem('LevelIncreaseItem', item.dbSymbol, item.id));
+    case 'EXP_PROGRESS':
+      return mutateItemInto(item, createItem('ExpGiveItem', item.dbSymbol, item.id));
     default:
       assertUnreachable(progressionCategory);
   }

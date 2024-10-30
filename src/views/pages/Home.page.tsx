@@ -34,9 +34,17 @@ const HomePageComponent = () => {
 
   useEffect(() => {
     window.api.getAppVersion().then((version) => setAppVersion(version));
+    window.api.getCompilationConfig(
+      {},
+      (result) => {
+        const configuration = result.configuration;
+        if (configuration) navigate('/compilation', { state: { configuration } });
+      },
+      () => {}
+    );
 
     return () => {};
-  });
+  }, []);
 
   return (
     <HomePageContainer>

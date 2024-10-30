@@ -221,5 +221,9 @@
   "icons": "Icons",
   "show_female_sprites": "Show different sprites for females",
   "offset": "Sprite offset",
-  "offset_info": "The offset is expressed in pixels. A positive value suggests a downward shift."
+  "offset_info": "The offset is expressed in pixels. A positive value suggests a downward shift.",
+  "form_name": "Form name",
+  "example_form_name": "Unown A",
+  "form_description": "Form description",
+  "use_default_description": "Use the default description"
 }

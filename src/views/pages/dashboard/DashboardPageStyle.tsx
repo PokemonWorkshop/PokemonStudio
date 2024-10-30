@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const DashboardPageStyle = styled.div`
-  display: grid;
-  grid-template-rows: auto;
+  display: flex;
+  flex-direction: column;
   width: 100%;
 `;

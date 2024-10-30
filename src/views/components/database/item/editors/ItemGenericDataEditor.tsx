@@ -1,33 +1,29 @@
 import React, { forwardRef, useMemo, useRef, useState } from 'react';
 import { Editor } from '@components/editor';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
-import { pocketMapping, useGetProjectText } from '@utils/ReadingProjectText';
+import { useGetItemPocketText } from '@utils/ReadingProjectText';
 import { useTranslation } from 'react-i18next';
 import { SelectCustomSimple } from '@components/SelectCustom';
-import { ITEM_POCKET_NAME_TEXT_ID, LOCKED_ITEM_EDITOR } from '@modelEntities/item';
+import { ITEM_SOCKET_LIST, LOCKED_ITEM_EDITOR } from '@modelEntities/item';
 import { useItemPage } from '@hooks/usePage';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { useUpdateItem } from './useUpdateItem';
 import { cloneEntity } from '@utils/cloneEntity';
 
-const pocketOptions = (getText: ReturnType<typeof useGetProjectText>) =>
-  pocketMapping
-    .slice(1)
-    .map((i) => ({ value: i.toString(), label: getText(ITEM_POCKET_NAME_TEXT_ID, i) }))
-    .sort((a, b) => a.label.localeCompare(b.label));
+const pocketOptions = (getItemPocketText: ReturnType<typeof useGetItemPocketText>) =>
+  ITEM_SOCKET_LIST.map((i) => ({ value: i.toString(), label: getItemPocketText({ klass: 'Item', socket: i }) })).sort((a, b) =>
+    a.label.localeCompare(b.label)
+  );
 
 export const ItemGenericDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { currentItem, items } = useItemPage();
   const { t } = useTranslation('database_items');
   const item = cloneEntity(currentItem);
   const updateItem = useUpdateItem(currentItem);
-  const getText = useGetProjectText();
+  const getItemPocketText = useGetItemPocketText();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const options = useMemo(() => pocketOptions(getText), [item]);
-
-  const [socketLabel, setSocketLabel] = useState((pocketMapping[item.socket] ?? item.socket).toString());
-  const [socket, setSocket] = useState(item.socket);
-
+  const options = useMemo(() => pocketOptions(getItemPocketText), [item]);
+  const [socket, setSocket] = useState<string>(item.socket.toString());
   const priceRef = useRef<HTMLInputElement>(null);
   const positionRef = useRef<HTMLInputElement>(null);
 
@@ -37,7 +33,7 @@ export const ItemGenericDataEditor = forwardRef<EditorHandlingClose>((_, ref) =>
     const changes = {
       price: priceRef.current && !isNaN(priceRef.current.valueAsNumber) ? priceRef.current.valueAsNumber : item.price,
       position: positionRef.current && !isNaN(positionRef.current.valueAsNumber) ? positionRef.current.valueAsNumber : item.position,
-      socket: socket,
+      socket: Number(socket),
     };
 
     updateItem(changes);
@@ -52,18 +48,7 @@ export const ItemGenericDataEditor = forwardRef<EditorHandlingClose>((_, ref) =>
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label>{t('item_socket')} </Label>
-          <SelectCustomSimple
-            id="select-item-socket"
-            options={options}
-            value={socketLabel.toString()}
-            onChange={(value) => {
-              // indexOf 0 if u want to select Medecine item
-              const newValue: number = pocketMapping.indexOf(Number(value), value === '0' ? 0 : 1);
-              setSocket(newValue);
-              setSocketLabel(value);
-            }}
-            noTooltip
-          />
+          <SelectCustomSimple id="select-item-socket" options={options} value={socket} onChange={setSocket} noTooltip />
         </InputWithTopLabelContainer>
         <InputWithLeftLabelContainer>
           <Label htmlFor="price">{t('price')}</Label>
@@ -71,7 +56,7 @@ export const ItemGenericDataEditor = forwardRef<EditorHandlingClose>((_, ref) =>
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
           <Label htmlFor="position">{t('order_sort')}</Label>
-          <Input type="number" name="position" min="0" max={Object.entries(items).length} defaultValue={item.position} ref={positionRef} />
+          <Input type="number" name="position" min="0" max={Object.keys(items).length} defaultValue={item.position} ref={positionRef} />
         </InputWithLeftLabelContainer>
       </InputContainer>
     </Editor>

@@ -16,6 +16,10 @@ const OnboardingBlockContainer = styled.div`
   ${({ theme }) => theme.fonts.normalRegular}
   user-select: none;
 
+  @media ${({ theme }) => theme.breakpoints.dataBox422} {
+    min-height: 196px;
+  }
+
   &.done {
     color: ${({ theme }) => theme.colors.successBase};
     background-color: ${({ theme }) => theme.colors.successSoft};

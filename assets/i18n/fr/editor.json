@@ -19,5 +19,7 @@
   "translation_class": "Classe de {{name}}",
   "translation_victory": "Victoire de {{name}}",
   "translation_defeat": "Défaite de {{name}}",
-  "translation_name_plural": "Nom au pluriel de {{name}}"
+  "translation_name_plural": "Nom au pluriel de {{name}}",
+  "translation_form_name": "Nom de la forme de {{name}}",
+  "translation_form_description": "Description de la forme de {{name}}"
 }

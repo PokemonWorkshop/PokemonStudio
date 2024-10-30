@@ -221,5 +221,9 @@
   "icons": "Icônes",
   "show_female_sprites": "Afficher des sprites différents pour les femelles",
   "offset": "Décalage du sprite",
-  "offset_info": "Le décalage est exprimé en pixels. Une valeur positive suggère un décalage vers le bas."
+  "offset_info": "Le décalage est exprimé en pixels. Une valeur positive suggère un décalage vers le bas.",
+  "form_name": "Nom de la forme",
+  "example_form_name": "Zarbi A",
+  "form_description": "Description de la forme",
+  "use_default_description": "Utiliser la description par défaut"
 }

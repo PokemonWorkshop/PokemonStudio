@@ -54,3 +54,25 @@ export const findFirstAndSecondAvailableId = (allData: Record<string, { id: numb
   const secondId = findFirstAvailableId(newAllData, startId, excludeIds);
   return { firstId, secondId };
 };
+
+export const findFirstAvailableFormTextId = (allPokemon: ProjectData['pokemon'], startId: number, type: 'name' | 'description') => {
+  const pokemon = Object.values(allPokemon);
+  if (pokemon.length === 0) return startId;
+
+  // Fetch all form text ids
+  const fetchValues = pokemon.reduce<number[]>((prev, current) => {
+    prev.push(...current.forms.map(({ formTextId }) => (type === 'name' ? formTextId.name : formTextId.description)));
+    return prev;
+  }, []);
+
+  const textIdSet = fetchValues
+    .filter((textId, index, array) => index === array.indexOf(textId)) // reject all duplicates
+    .sort((a, b) => a - b); // sort id by ascending order
+  // Since ids are ordered, if the first isn't the startId that means we need to fill the beginning of the list ;)
+  if (textIdSet[0] > startId) return startId;
+
+  const holeIndex = textIdSet.findIndex((textId, index) => textId !== index + startId);
+  if (holeIndex === -1) return textIdSet[textIdSet.length - 1] + 1;
+
+  return textIdSet[holeIndex - 1] + 1;
+};

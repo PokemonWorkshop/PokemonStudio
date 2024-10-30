@@ -3,8 +3,9 @@ import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import { DialogRefData } from '@hooks/useDialogsRef';
 import { DashboardStudioModeMessageBox } from './DashboardStudioModeMessageBox';
+import { CompilationDialog } from '@components/compilation/CompilationDialog';
 
-export type DashboardEditorAndDeletionKeys = 'studio_mode_message_box';
+export type DashboardEditorAndDeletionKeys = 'studio_mode_message_box' | 'create_playable_game';
 export type DashboardDialogsRef = React.RefObject<DialogRefData<DashboardEditorAndDeletionKeys>>;
 
 /**
@@ -17,6 +18,8 @@ export const DashboardEditorOverlay = defineEditorOverlay<DashboardEditorAndDele
     switch (dialogToShow) {
       case 'studio_mode_message_box':
         return <DashboardStudioModeMessageBox closeDialog={closeDialog} />;
+      case 'create_playable_game':
+        return <CompilationDialog closeDialog={closeDialog} />;
       default:
         return assertUnreachable(dialogToShow);
     }

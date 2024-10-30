@@ -1,6 +1,5 @@
 import React, { createContext, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { editorOverlayHidden } from '@components/editor/EditorOverlayV2';
-import { IconName } from '@components/icons/BaseIcon';
 
 type LoaderTitle =
   | 'creating_project'
@@ -18,7 +17,8 @@ type LoaderErrorTitle =
   | 'loading_project_error'
   | 'updating_psdk_error'
   | 'importing_tiled_maps_error'
-  | 'updating_maps_error';
+  | 'updating_maps_error'
+  | 'compilation_project_error';
 type LoaderSuccessTitle = 'importing_tiled_maps_success';
 
 type LoaderState = {
@@ -122,12 +122,14 @@ const useLoaderContextService = (): LoaderContext => {
         errorTitle,
         errorText,
         isLogsAvailable: isLogsAvailable || false,
+        isOpen: true,
       }),
     setSuccess: (successTitle: LoaderSuccessTitle, successText: string) => {
       setLoaderState({
         ...loaderState,
         successTitle,
         successText,
+        isOpen: true,
       });
     },
   };
