@@ -25,7 +25,7 @@ const OffsetInfo = styled.div`
 export const InformationsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { t } = useTranslation('database_pokemon');
   const dialogsRef = useDialogsRef<TranslationEditorTitle>();
-  const { creature, form, creatureName } = useCreaturePage();
+  const { creature, form, creatureName, formName } = useCreaturePage();
   const updateForm = useUpdateForm(creature, form);
   const tTFR = useRef<TranslatableTextFieldsRef>(null);
   const formTTFR = useRef<TranslatableTextFieldsRef>(null);
@@ -62,7 +62,7 @@ export const InformationsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
         {form.form === 0 && (
           <TranslatableTextFields ref={tTFR} handleTranslateClick={handleTranslateClick} creature={creature} creatureName={creatureName} />
         )}
-        <TranslatableFormTextFields ref={formTTFR} handleTranslateClick={handleTranslateClick} creature={creature} form={form} />
+        <TranslatableFormTextFields ref={formTTFR} handleTranslateClick={handleTranslateClick} creature={creature} form={form} formName={formName} />
         <TypeFields form={form} defaults={defaults} />
         <InputWithTopLabelContainer>
           <Input name="frontOffsetY" label={t('offset')} labelLeft onInput={onInputTouched} />
