@@ -10,7 +10,6 @@ import {
   SETTINGS_CONFIG_VALIDATOR,
   TEXT_CONFIG_VALIDATOR,
   GAME_OPTION_CONFIG_VALIDATOR,
-  NATURE_CONFIG_VALIDATOR,
 } from '@modelEntities/config';
 import type { PSDKConfigs } from '@src/GlobalStateProvider';
 import { deserializeZodConfig } from '@utils/SerializationUtils';
@@ -29,7 +28,6 @@ export const deserializeProjectConfig = (configs: ProjectConfigsFromBackEnd) => 
     settings_config: deserializeZodConfig(configs.settings_config, SETTINGS_CONFIG_VALIDATOR),
     texts_config: deserializeZodConfig(configs.texts_config, TEXT_CONFIG_VALIDATOR),
     game_options_config: deserializeZodConfig(configs.game_options_config, GAME_OPTION_CONFIG_VALIDATOR),
-    natures: deserializeZodConfig(configs.natures, NATURE_CONFIG_VALIDATOR),
   };
   return projectConfigs;
 };

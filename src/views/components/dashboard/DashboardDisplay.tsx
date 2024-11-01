@@ -47,6 +47,7 @@ export const DashboardDisplay = () => {
   const [windowScale, setWindowScale] = useState(currentEditedDisplay.windowScale);
   const [tilemapClass, setTilemapClass] = useState(currentEditedDisplay.tilemapSettings.tilemapClass);
   const [tilemapSize, setTilemapSize] = useState(currentEditedDisplay.tilemapSettings.tilemapSize);
+  const [tilemapCenter, setTilemapCenter] = useState(currentEditedDisplay.tilemapSettings.center);
   const [tileZoom, setTileZoom] = useState(currentEditedDisplay.tilemapSettings.characterTileZoom);
   const [characterZoom, setCharacterZoom] = useState(currentEditedDisplay.tilemapSettings.characterSpriteZoom);
   const [framePerAnimation, setFramePerAnimation] = useState(currentEditedDisplay.tilemapSettings.autotileIdleFrameCount);
@@ -56,6 +57,9 @@ export const DashboardDisplay = () => {
     setResolution({ ...currentEditedDisplay.gameResolution });
     setWindowScale(currentEditedDisplay.windowScale);
     setTilemapSize({ ...currentEditedDisplay.tilemapSettings.tilemapSize });
+
+    setTilemapCenter({ ...currentEditedDisplay.tilemapSettings.center });
+
     setTilemapClass(currentEditedDisplay.tilemapSettings.tilemapClass);
     setTileZoom(currentEditedDisplay.tilemapSettings.characterTileZoom);
     setCharacterZoom(currentEditedDisplay.tilemapSettings.characterSpriteZoom);
@@ -108,6 +112,18 @@ export const DashboardDisplay = () => {
     setTilemapSize({ ...currentEditedDisplay.tilemapSettings.tilemapSize, x: value });
   };
 
+  const onChangeTilemapCenterX = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(event.target.value);
+    if (value < 1 || value > 9999) return event.preventDefault();
+    setTilemapCenter({ ...currentEditedDisplay.tilemapSettings.center, x: value });
+  };
+
+  const onChangeTilemapCenterY = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(event.target.value);
+    if (value < 1 || value > 9999) return event.preventDefault();
+    setTilemapCenter({ ...currentEditedDisplay.tilemapSettings.center, y: value });
+  };
+
   const onBlurTilemapWidth = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(event.target.value);
     if (value < 1 || value > 99) return event.preventDefault();
@@ -134,6 +150,20 @@ export const DashboardDisplay = () => {
     const value = parseInt(event.target.value);
     if (value < 1 || value > 99) return event.preventDefault();
     currentEditedDisplay.tilemapSettings.tilemapSize = { ...currentEditedDisplay.tilemapSettings.tilemapSize, y: value };
+    updateDisplayConfig();
+  };
+
+  const onBlurTilemapCenterX = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(event.target.value);
+    if (value < 1 || value > 9999) return event.preventDefault();
+    currentEditedDisplay.tilemapSettings.center = { ...currentEditedDisplay.tilemapSettings.center, x: value };
+    updateDisplayConfig();
+  };
+
+  const onBlurTilemapCenterY = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(event.target.value);
+    if (value < 1 || value > 9999) return event.preventDefault();
+    currentEditedDisplay.tilemapSettings.center = { ...currentEditedDisplay.tilemapSettings.center, y: value };
     updateDisplayConfig();
   };
 
@@ -324,6 +354,34 @@ export const DashboardDisplay = () => {
             onBlur={onBlurFPA}
             placeholder="1"
           />
+        </InputWithLeftLabelContainer>
+        <InputWithLeftLabelContainer>
+          <Label htmlFor="center_size_x">{t('tilemap_center')}</Label>
+          <InputContainer>
+            <InputSizes
+              unit="px"
+              type="number"
+              name="center_size_x"
+              min="1"
+              max="9999"
+              value={isNaN(tilemapCenter.x) ? '' : tilemapCenter.x}
+              onChange={onChangeTilemapCenterX}
+              onBlur={onBlurTilemapCenterX}
+              placeholder="1"
+            />
+            x
+            <InputSizes
+              unit="px"
+              type="number"
+              name="center_size_y"
+              min="1"
+              max="9999"
+              value={isNaN(tilemapCenter.y) ? '' : tilemapCenter.y}
+              onChange={onChangeTilemapCenterY}
+              onBlur={onBlurTilemapCenterY}
+              placeholder="1"
+            />
+          </InputContainer>
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
           <Label htmlFor="old_map_linker">{t('old_map_linker')}</Label>

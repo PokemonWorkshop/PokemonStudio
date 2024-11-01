@@ -47,6 +47,7 @@ import settings from './settings.json';
 import settings_maps from './settings_maps.json';
 import onboarding from './onboarding.json';
 import compilation from './compilation.json';
+import settings_language from './settings_language.json';
 
 export default {
   dashboard,
@@ -95,6 +96,7 @@ export default {
   text_management,
   world,
   settings,
+  settings_language,
   settings_maps,
   onboarding,
   compilation,

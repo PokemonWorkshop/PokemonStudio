@@ -8,6 +8,9 @@ export const SettingsNavigation = () => {
   const { t } = useTranslation('settings');
   return (
     <NavigationDatabaseStyle>
+      <NavigationDatabaseGroup title={t('user_settings')}>
+        <NavigationDatabaseItem path="/settings/language" label={t('language')} />
+      </NavigationDatabaseGroup>
       <NavigationDatabaseGroup title={t('integrations')}>
         <NavigationDatabaseItem path="/settings/maps" label={t('map_management')} />
       </NavigationDatabaseGroup>

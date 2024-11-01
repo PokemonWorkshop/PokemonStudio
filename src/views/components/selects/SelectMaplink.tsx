@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
 import { SelectOption, SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { useGlobalState } from '@src/GlobalStateProvider';
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { SelectCustom, SelectCustomWithLabel } from '@components/SelectCustom';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
 

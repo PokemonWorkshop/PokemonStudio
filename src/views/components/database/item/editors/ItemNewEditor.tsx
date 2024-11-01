@@ -1,6 +1,7 @@
 import React, { forwardRef, useMemo, useRef, useState } from 'react';
 import { Editor } from '@components/editor';
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { IconInput, Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import { useProjectItems } from '@hooks/useProjectData';

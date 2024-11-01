@@ -1,10 +1,17 @@
-import { StudioMove } from '@modelEntities/move';
-import { getEntityNameTextUsingTextId, getEntityNameText, useGetEntityNameTextUsingTextId, useGetEntityNameText } from '@utils/ReadingProjectText';
+import type { StudioMove } from '@modelEntities/move';
+import {
+  getEntityNameTextUsingTextId,
+  getEntityNameText,
+  useGetEntityNameTextUsingTextId,
+  useGetEntityNameText,
+  useGetCreatureFormNameText,
+} from '@utils/ReadingProjectText';
 import { useProjectDataReadonly } from './useProjectData';
 import { useTextInfosReadonly } from './useTextInfos';
-import { StudioDex } from '@modelEntities/dex';
-import { StudioType } from '@modelEntities/type';
-import { StudioItem } from '@modelEntities/item';
+import type { StudioDex } from '@modelEntities/dex';
+import type { StudioType } from '@modelEntities/type';
+import type { StudioItem } from '@modelEntities/item';
+import type { StudioNature } from '@modelEntities/nature';
 import { Language } from '@pages/texts/Translation.page';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useState } from 'react';
@@ -45,12 +52,13 @@ export const useCreaturePage = () => {
   const creature = creatures[identifier.specie];
   const form = creature.forms.find((f) => f.form === identifier.form) || creature.forms[0];
   const creatureName = getEntityNameText(creature, state);
+  const formName = useGetCreatureFormNameText()(form);
 
   return {
     creature,
     form,
     creatureName,
-    formName: '',
+    formName,
     cannotDelete: Object.keys(creatures).length <= 1,
     canShowFemale: form.resources.hasFemale,
   };
@@ -219,5 +227,17 @@ export const useOverviewPage = () => {
     state,
     checkMapOverview,
     onClickGenerating,
+  };
+};
+
+export const useNaturePage = () => {
+  const { projectDataValues: natures, selectedDataIdentifier: dbSymbol, state } = useProjectDataReadonly('natures', 'nature');
+  const nature: StudioNature = natures[dbSymbol];
+  const natureName = getEntityNameText(nature, state);
+
+  return {
+    nature,
+    natureName,
+    cannotDelete: Object.keys(natures).length <= 1,
   };
 };

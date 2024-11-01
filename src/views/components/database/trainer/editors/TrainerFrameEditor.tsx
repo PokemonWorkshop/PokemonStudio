@@ -1,7 +1,8 @@
 import React, { forwardRef, useMemo, useRef, useState } from 'react';
 import { EditorWithCollapse } from '@components/editor';
 
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';

@@ -7,7 +7,8 @@ import { QUEST_OBJECTIVES, StudioQuest, StudioQuestObjectiveType } from '@modelE
 import { createQuestObjective } from '@utils/entityCreation';
 import { padStr } from '@utils/PadStr';
 import React, { useMemo } from 'react';
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import {
   QuestGoalBeatNpc,
   QuestGoalBeatPokemon,

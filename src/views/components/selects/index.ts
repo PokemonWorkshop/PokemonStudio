@@ -14,3 +14,4 @@ export { SelectText } from './SelectText';
 export { SelectMap } from './SelectMap';
 export { SelectItemBall } from './SelectItemBall';
 export { SelectItemHeld } from './SelectItemHeld';
+export { SelectNature, SelectNature2 } from './SelectNature';

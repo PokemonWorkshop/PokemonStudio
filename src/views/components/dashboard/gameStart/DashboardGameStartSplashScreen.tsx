@@ -6,7 +6,7 @@ import { useConfigSceneTitle } from '@hooks/useProjectConfig';
 import { PageEditor } from '@components/pages';
 import { ClearButtonOnlyIcon } from '@components/buttons';
 import { DropInput, DropInputContainer } from '@components/inputs/DropInput';
-import { DragDropContext, Draggable, DraggableProvided, Droppable, DroppableProvided, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, Draggable, DraggableProvided, Droppable, DroppableProvided, DropResult } from '@hello-pangea/dnd';
 import { cloneEntity } from '@utils/cloneEntity';
 import { ResourceImage } from '@components/ResourceImage';
 

@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
+import '@xyflow/react/dist/style.css';
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -68,6 +69,7 @@ const GlobalStyle = createGlobalStyle`
     color: ${(props) => props.theme.colors.text600};
     font-size: 12px;
     font-weight: 600;
+    user-select: none;
   }
 
   .react-flow__controls {

@@ -1,5 +1,6 @@
 import React, { forwardRef, useMemo, useRef, useState } from 'react';
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { Editor } from '@components/editor';
 import { Input, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
 import { useProjectMoves } from '@hooks/useProjectData';

@@ -1,7 +1,7 @@
 import { useEditorHandlingCloseRef } from '@components/editor/useHandleCloseEditor';
 import { DialogRefData } from '@hooks/useDialogsRef';
-import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import ReactDOM from 'react-dom';
+import React, { forwardRef, PropsWithoutRef, ReactNode, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 
 export const DialogContainer = styled.dialog`
@@ -123,15 +123,15 @@ const openDialogWithAnimation = (dialog: HTMLDialogElement, isCenter: boolean) =
  * // [...]
  *   <AbilityEditorOverlay onTranslationClose={doSomething} ref={dialogsRef} />
  */
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export const defineEditorOverlay = <Keys extends string, Props extends Record<string, unknown> = {}>(
   displayName: string,
   renderInnerDialog: (
     dialogToShow: Keys,
     handleCloseRef: ReturnType<typeof useEditorHandlingCloseRef>,
     closeDialog: () => void,
-    props: Props
-  ) => React.ReactChild
+    props: PropsWithoutRef<Props>
+  ) => ReactNode
 ) => {
   const reactComponent = forwardRef<DialogRefData<Keys>, Props>((props, ref) => {
     const dialogRef = useRef<HTMLDialogElement>(null);
@@ -181,7 +181,7 @@ export const defineEditorOverlay = <Keys extends string, Props extends Record<st
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentDialog]);
 
-    return ReactDOM.createPortal(
+    return createPortal(
       <DialogContainer ref={dialogRef} onMouseDown={onClickOutside} className={isCenter ? 'center' : 'right'}>
         {currentlyRenderedDialog}
       </DialogContainer>,

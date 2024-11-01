@@ -13,6 +13,7 @@ import dashboard_game_options from './dashboard_game_options.json';
 import database_abilities from './database_abilities.json';
 import database_items from './database_items.json';
 import database_moves from './database_moves.json';
+import database_natures from './database_natures.json';
 import database_pokemon from './database_pokemon.json';
 import database_types from './database_types.json';
 import database_groups from './database_groups.json';
@@ -46,6 +47,7 @@ import settings from './settings.json';
 import settings_maps from './settings_maps.json';
 import onboarding from './onboarding.json';
 import compilation from './compilation.json';
+import settings_language from './settings_language.json';
 
 export default {
   dashboard,
@@ -63,6 +65,7 @@ export default {
   database_abilities,
   database_items,
   database_moves,
+  database_natures,
   database_pokemon,
   database_types,
   database_groups,
@@ -93,6 +96,7 @@ export default {
   text_management,
   world,
   settings,
+  settings_language,
   settings_maps,
   onboarding,
   compilation,

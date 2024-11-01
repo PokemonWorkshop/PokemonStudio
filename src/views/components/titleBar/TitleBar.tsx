@@ -95,13 +95,13 @@ export const TitleBar = () => {
     <TitleBarContainer>
       <TitleBarHeader>Pokémon Studio</TitleBarHeader>
       <TitleBarActions>
-        <span className="minimize" onClick={window.api.minimize}>
+        <span className="minimize" onClick={() => window.api.minimize()}>
           &#xE921;
         </span>
         <span className="maximize" onClick={onClickToggleMaximizeMode}>
           &#xE922;
         </span>
-        <span className="close" onClick={window.api.close}>
+        <span className="close" onClick={() => window.api.close()}>
           &#xE8BB;
         </span>
       </TitleBarActions>
