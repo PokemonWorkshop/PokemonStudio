@@ -15,7 +15,7 @@ import { InputFormContainer } from '@components/inputs/InputContainer';
 import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 
 const breedingGroupEntries = [
-  'unknown',
+  'undefined',
   'monster',
   'water_1',
   'bug',
@@ -30,6 +30,7 @@ const breedingGroupEntries = [
   'water_2',
   'ditto',
   'dragon',
+  'unknown',
 ] as const;
 
 const getBreedingGroupOptions = (t: TFunction<'database_pokemon'>) =>

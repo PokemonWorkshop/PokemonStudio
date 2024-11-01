@@ -8,7 +8,7 @@ import { CONTROL, useKeyPress } from '@hooks/useKeyPress';
 import { usePokemonShortcutNavigation } from '@hooks/useShortcutNavigation';
 
 const BREEDING_GROUPS = [
-  'unknown',
+  'undefined',
   'monster',
   'water_1',
   'bug',
@@ -23,6 +23,7 @@ const BREEDING_GROUPS = [
   'water_2',
   'ditto',
   'dragon',
+  'unknown',
 ] as const;
 
 export const ReproductionDataBlock = ({ pokemonWithForm, dialogsRef }: PokemonDataProps) => {
