@@ -1,5 +1,5 @@
-import React, { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from 'react';
-import { Input, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Input, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
@@ -8,7 +8,7 @@ import { SelectItemBall, SelectItemHeld } from '@components/selects';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import { StudioEncounterShiny, StudioGroupEncounter } from '@modelEntities/groupEncounter';
 import { PartialStudioGroupEncounter, RecordExpandPokemonSetup } from './usePokemonBattler';
-import { CurrentBattlerType, PokemonBattlerFrom } from './PokemonBattlerEditorOverlay';
+import { PokemonBattlerFrom } from './PokemonBattlerEditorOverlay';
 import { EmbeddedUnitInputNumber, InputNumber } from './InputNumber';
 
 export const GenderCategories = [-1, 0, 1, 2] as const;
@@ -41,10 +41,6 @@ type PokemonBattlerModeInfoEditorProps = {
   expandPokemonSetup: RecordExpandPokemonSetup;
   updateExpandPokemonSetup: (updates: Partial<RecordExpandPokemonSetup>) => void;
   from: PokemonBattlerFrom;
-  action: 'edit' | 'creation';
-  currentBattler: CurrentBattlerType;
-  isChangeOrder: boolean;
-  setIsChangeOrder: Dispatch<SetStateAction<boolean>>;
   collapseByDefault: boolean;
 };
 
@@ -54,10 +50,6 @@ export const PokemonBattlerMoreInfoEditor = ({
   expandPokemonSetup,
   updateExpandPokemonSetup,
   from,
-  action,
-  currentBattler,
-  isChangeOrder,
-  setIsChangeOrder,
   collapseByDefault,
 }: PokemonBattlerModeInfoEditorProps) => {
   const { t } = useTranslation(['database_items', 'pokemon_battler_list']);
@@ -92,12 +84,6 @@ export const PokemonBattlerMoreInfoEditor = ({
 
   return (
     <InputGroupCollapse title={t(`pokemon_battler_list:more_info_title`)} gap="24px" collapseByDefault={collapseByDefault || undefined}>
-      {from !== 'group' && action === 'edit' && currentBattler.index !== 0 && (
-        <InputWithLeftLabelContainer>
-          <Label htmlFor="change-order">{t('pokemon_battler_list:pokemon_first_position')}</Label>
-          <Toggle name="change-order" checked={isChangeOrder} onChange={(event) => setIsChangeOrder(event.target.checked)} />
-        </InputWithLeftLabelContainer>
-      )}
       {from !== 'group' && (
         <InputWithTopLabelContainer>
           <Label htmlFor="given-name">{t('pokemon_battler_list:given_name')}</Label>

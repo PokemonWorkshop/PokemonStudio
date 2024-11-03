@@ -37,5 +37,6 @@
   "evs_title": "Points d’efforts (EV)",
   "pokemon_first_position": "Pokémon en première position",
   "none": "Aucune",
-  "min_max_level_error": "Le niveau maximum doit être supérieur au niveau minimum."
+  "min_max_level_error": "Le niveau maximum doit être supérieur au niveau minimum.",
+  "change_order": "Changer l'ordre de l'équipe"
 }

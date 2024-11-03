@@ -1,6 +1,7 @@
 import React from 'react';
 import { ReactComponent as PlusIcon } from '@assets/icons/global/plus-icon.svg';
 import { ReactComponent as ImportIcon } from '@assets/icons/global/import-icon.svg';
+import { ReactComponent as ReOrderIcon } from '@assets/icons/global/reorder.svg';
 import { SecondaryButton, DarkButton } from './GenericButtons';
 import styled from 'styled-components';
 
@@ -48,6 +49,13 @@ export const DarkButtonWithPlusIconResponsive = ({ children, disabled, breakpoin
 export const DarkButtonImportResponsive = ({ children, disabled, breakpoint, ...props }: DarkButtonWithPlusIconResponsiveProps) => (
   <DarkButtonIconResponsiveContainer disabled={disabled} breakpoint={breakpoint} {...props}>
     <ImportIcon />
+    <span>{children}</span>
+  </DarkButtonIconResponsiveContainer>
+);
+
+export const DarkButtonReOrderResponsive = ({ children, disabled, breakpoint, ...props }: DarkButtonWithPlusIconResponsiveProps) => (
+  <DarkButtonIconResponsiveContainer disabled={disabled} breakpoint={breakpoint} {...props}>
+    <ReOrderIcon />
     <span>{children}</span>
   </DarkButtonIconResponsiveContainer>
 );

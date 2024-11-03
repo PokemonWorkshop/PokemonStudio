@@ -12,6 +12,7 @@
   "infos": "Information",
   "all_delete": "Delete all",
   "importation": "Import",
+  "reorganization": "Reorganization",
   "translation": "Translation",
   "translation_name": "Name of {{name}}",
   "translation_description": "Description of {{name}}",
