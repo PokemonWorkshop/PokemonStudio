@@ -47,8 +47,6 @@ export const PokemonBattlerEditor = forwardRef<EditorHandlingClose, PokemonBattl
       updateEncounter,
       expandPokemonSetup,
       updateExpandPokemonSetup,
-      isChangeOrder,
-      setIsChangeOrder,
       updateStudioEntity,
       canClose,
       canNew,
@@ -210,10 +208,6 @@ export const PokemonBattlerEditor = forwardRef<EditorHandlingClose, PokemonBattl
                   expandPokemonSetup={expandPokemonSetup}
                   updateExpandPokemonSetup={updateExpandPokemonSetup}
                   from={from}
-                  action={action}
-                  currentBattler={currentBattler}
-                  isChangeOrder={isChangeOrder}
-                  setIsChangeOrder={setIsChangeOrder}
                   collapseByDefault={false}
                 />
                 <PokemonBattlerMoveEditor

@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { PokemonBattlerListComponent, PokemonBattlerListGrid, PokemonBattlerListHeader } from '@components/pokemonBattler/PokemonBattlerList';
 import { useTranslation } from 'react-i18next';
 import React, { useState } from 'react';
-import { DarkButton, SecondaryButtonWithPlusIconResponsive } from '@components/buttons';
+import { DarkButtonImportResponsive, SecondaryButtonWithPlusIconResponsive } from '@components/buttons';
 import { ItemBagEntry } from './ItemBagEntry';
 import { StudioTrainerBagEntry } from '@modelEntities/trainer';
 import { BagEntryEditorOverlay, type BagEntryEditorAndDeletionKeys, type BagEntryFrom } from './editors/BagEntryEditorOverlay';
@@ -29,16 +29,13 @@ export const BagEntryList = ({ title, bagEntries, disabledImport, from }: BagEnt
       <BagEntryListHeader>
         <div className="title">{title}</div>
         <div className="buttons">
-          <div className="button-import-full">
-            <DarkButton onClick={() => dialogsRef.current?.openDialog('import')} disabled={disabledImport}>
-              {t('import_item')}
-            </DarkButton>
-          </div>
-          <div className="button-import-reduce">
-            <DarkButton onClick={() => dialogsRef.current?.openDialog('import')} disabled={disabledImport}>
-              {t('import')}
-            </DarkButton>
-          </div>
+          <DarkButtonImportResponsive
+            onClick={() => dialogsRef.current?.openDialog('import')}
+            data-tooltip-responsive={t('import_item')}
+            disabled={disabledImport}
+          >
+            {t('import_item')}
+          </DarkButtonImportResponsive>
           <SecondaryButtonWithPlusIconResponsive onClick={() => dialogsRef.current?.openDialog('new')} data-tooltip-responsive={t('add_item')}>
             {t('add_item')}
           </SecondaryButtonWithPlusIconResponsive>
