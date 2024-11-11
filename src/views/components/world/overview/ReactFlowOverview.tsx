@@ -54,7 +54,7 @@ export const ReactFlowOverview = ({ map, version }: ReactFlowOverviewProps) => {
       maxZoom={2}
     >
       <Background gap={16} variant={BackgroundVariant.Dots} />
-      <Controls showInteractive={false} />
+      <Controls showInteractive={false} position="bottom-right" />
     </ReactFlow>
   );
 };
