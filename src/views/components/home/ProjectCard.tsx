@@ -92,10 +92,12 @@ const ProjectCardContainer = styled(ActiveContainer)`
 
 type ProjectCardProps = {
   project: Project | undefined;
+  index: number;
   onDeleteProjectToList: (event: React.MouseEvent<HTMLSpanElement>, projectPath: string) => void;
+  onUpdateProjectList: (projectPath: string, index: number) => void;
 };
 
-export const ProjectCard = ({ project, onDeleteProjectToList }: ProjectCardProps) => {
+export const ProjectCard = ({ project, onDeleteProjectToList, onUpdateProjectList, index }: ProjectCardProps) => {
   const { t } = useTranslation(['homepage', 'loader']);
   const loaderRef = useLoaderRef();
   const projectLoad = useProjectLoad();
@@ -111,7 +113,16 @@ export const ProjectCard = ({ project, onDeleteProjectToList }: ProjectCardProps
         loaderRef.current.close();
         navigate('/dashboard');
       },
-      ({ errorMessage }) => loaderRef.current.setError('loading_project_error', errorMessage),
+      ({ errorMessage }) => {
+        loaderRef.current.setError('loading_project_error', errorMessage);
+        return window.api.chooseProjectFileToOpen(
+          { fileType: 'studio' },
+          ({ dirName }) => onUpdateProjectList(dirName, index),
+          () => {
+            loaderRef.current.close();
+          }
+        );
+      },
       (count) => loaderRef.current.setError('loading_project_error', t('loader:integrity_message', { count }), true)
     );
   };
