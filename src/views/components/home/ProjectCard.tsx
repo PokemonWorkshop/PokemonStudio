@@ -144,10 +144,7 @@ export const ProjectCard = ({ project, onDeleteProjectToList, onUpdateProjectLis
     showItemInFolder(
       { filePath: join(path, 'project.studio') },
       () => {},
-      (error) => {
-        console.log(error);
-        handleClick()
-      }
+      () => {handleClick()}
     );
   };
 
