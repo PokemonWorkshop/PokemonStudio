@@ -8,7 +8,7 @@ import { PROJECT_VALIDATOR, StudioProject } from '@modelEntities/project';
 import type { StudioSettings } from '@utils/settings';
 import { parseJSON } from '@utils/json/parse';
 import { MIGRATION_CONFIG } from '@src/migrations/migrationConfig';
-import { backendTranslation } from '@utils/backendTranslation';
+import i18n from '@src/i18n';
 
 export type MigrationTask = (event: IpcMainEvent, projectPath: string, studioSettings?: StudioSettings) => Promise<void>;
 
@@ -23,7 +23,7 @@ const migrateData = async (payload: MigrateDataInput, event: IpcMainEvent, chann
     log.info('migrate-data', `Found ${migrationFound.length} migrations`);
     await migrationFound.reduce(async (prev, curr, index) => {
       await prev;
-      const message = await backendTranslation(curr.message, { ns: 'migration' });
+      const message = i18n.t(curr.message, { ns: 'migration' });
       log.info('migrate-data/progress', message);
       sendProgress(event, channels, { step: index + 1, total: migrationFound.length, stepText: message });
       await curr.migration(event, payload.projectPath, payload.studioSettings);

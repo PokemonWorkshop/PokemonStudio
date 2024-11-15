@@ -23,7 +23,7 @@ const HomePageComponent = () => {
   const dialogsRef = useDialogsRef<HomeEditorAndDeletionKeys>();
   const [appVersion, setAppVersion] = useState('');
   const [projectList, setProjectList] = useState(getProjectList());
-  const { t } = useTranslation('homepage');
+  const { t, i18n } = useTranslation('homepage');
   const navigate = useNavigate();
 
   const onDeleteProjectToList = (event: React.MouseEvent<HTMLSpanElement>, projectPath: string) => {
@@ -34,6 +34,11 @@ const HomePageComponent = () => {
 
   useEffect(() => {
     window.api.getAppVersion().then((version) => setAppVersion(version));
+    window.api.synchronizeLanguage(
+      { language: i18n.language },
+      () => {},
+      () => {}
+    );
     window.api.getCompilationConfig(
       {},
       (result) => {

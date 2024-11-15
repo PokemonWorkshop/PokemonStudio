@@ -46,6 +46,7 @@ import type { OpenCompilationWindowInput } from './backendTasks/openCompilationW
 import type { GetCompilationConfigOutput } from './backendTasks/getCompilationConfig';
 import type { StartCompilationInput, StartCompilationOutput } from './backendTasks/startCompilation';
 import type { SaveCompilationLogsInput } from './backendTasks/saveCompilationLogs';
+import type { SynchronizeLanguageInput } from './backendTasks/synchronizeLanguage';
 
 contextBridge.exposeInMainWorld('api', {
   isDev: process.env.NODE_ENV === 'development',
@@ -154,6 +155,7 @@ contextBridge.exposeInMainWorld('api', {
   getCompilationConfig: defineBackendTask(ipcRenderer, 'get-compilation-config'),
   startCompilation: defineBackendTask(ipcRenderer, 'start-compilation'),
   saveCompilationLogs: defineBackendTask(ipcRenderer, 'save-compilation-logs'),
+  synchronizeLanguage: defineBackendTask(ipcRenderer, 'synchronize-language'),
 });
 
 type AnyObj = Record<string, never>;
@@ -245,6 +247,7 @@ declare global {
       getCompilationConfig: BackendTaskWithGenericErrorAndNoProgress<AnyObj, GetCompilationConfigOutput>;
       startCompilation: BackendTaskWithGenericError<StartCompilationInput, StartCompilationOutput, GenericBackendProgress>;
       saveCompilationLogs: BackendTaskWithGenericErrorAndNoProgress<SaveCompilationLogsInput, AnyObj>;
+      synchronizeLanguage: BackendTaskWithGenericErrorAndNoProgress<SynchronizeLanguageInput, AnyObj>;
     };
   }
 }
