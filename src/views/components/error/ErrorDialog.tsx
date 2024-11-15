@@ -65,10 +65,11 @@ type DeletionProps = {
   title: string;
   message: string;
   isLogsAvailable: boolean;
+  dynamicAction?: React.ReactNode;
   onClose: () => void;
 };
 
-export const ErrorDialog = ({ title, message, isLogsAvailable, onClose }: DeletionProps) => {
+export const ErrorDialog = ({ title, message, isLogsAvailable, dynamicAction, onClose }: DeletionProps) => {
   const { t } = useTranslation(['error']);
   const openStudioLogsFolder = useOpenStudioLogsFolder();
 
@@ -91,6 +92,7 @@ export const ErrorDialog = ({ title, message, isLogsAvailable, onClose }: Deleti
         <p>{message}</p>
       </TextWarningContainer>
       <ActionContainer>
+        {dynamicAction}
         {isLogsAvailable && <SecondaryButton onClick={onClickLogs}>{t('error:logs')}</SecondaryButton>}
         <DarkButton onClick={onClose}>{t('error:dismiss')}</DarkButton>
       </ActionContainer>

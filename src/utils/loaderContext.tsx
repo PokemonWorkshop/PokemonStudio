@@ -32,13 +32,14 @@ type LoaderState = {
   successText: string;
   isOpen: boolean;
   isLogsAvailable: boolean;
+  dynamicAction?: React.ReactNode;
 };
 
 export type LoaderContext = LoaderState & {
   close: () => void;
   open: (thingInProgress: LoaderTitle, step: number, total: number, stepText: string) => void;
   setProgress: (step: number, total: number, stepText: string) => void;
-  setError: (errorTitle: LoaderErrorTitle, errorText: string, isLogsAvailable?: boolean) => void;
+  setError: (errorTitle: LoaderErrorTitle, errorText: string, isLogsAvailable?: boolean, dynamicAction?: React.ReactNode) => void;
   setSuccess: (successTitle: LoaderSuccessTitle, successText: string) => void;
 };
 
@@ -53,6 +54,7 @@ const LoaderContextHolder = createContext<LoaderContext>({
   successText: '',
   isOpen: false,
   isLogsAvailable: false,
+  dynamicAction: undefined,
   close: () => null,
   open: (_thingInProgress: LoaderTitle, _step: number, _total: number, _stepText: string) => null,
   setProgress: (_step: number, _total: number, _stepText: string) => null,
@@ -86,6 +88,7 @@ const useLoaderContextService = (): LoaderContext => {
     successText: '',
     isOpen: false,
     isLogsAvailable: false,
+    dynamicAction: undefined,
   });
 
   return {
@@ -116,11 +119,12 @@ const useLoaderContextService = (): LoaderContext => {
         total,
         stepText,
       }),
-    setError: (errorTitle: LoaderErrorTitle, errorText: string, isLogsAvailable?: boolean) =>
+    setError: (errorTitle: LoaderErrorTitle, errorText: string, isLogsAvailable?: boolean, dynamicAction?: React.ReactNode) =>
       setLoaderState({
         ...loaderState,
         errorTitle,
         errorText,
+        dynamicAction,
         isLogsAvailable: isLogsAvailable || false,
         isOpen: true,
       }),

@@ -12,6 +12,7 @@
   "saving_project_error": "Erreur lors de la sauvegarde du projet",
   "loading_project_error": "Erreur lors du chargement du projet",
   "updating_psdk_error": "Erreur lors de la mise à jour de PSDK",
+  "project_studio_not_found": "Le fichier 'project.studio' nécessaire au chargement du projet n'a pas été trouvé ou a été déplacé. Vous pouvez rechercher le fichier pour tenter de charger le projet à nouveau.",
   "importing_tiled_maps_error": "Erreur lors de l'importation des cartes Tiled",
   "updating_maps_error": "Erreur lors de la mise à jour des cartes",
   "compilation_project_error": "Erreur lors de la compilation du projet",

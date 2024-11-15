@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useLoaderRef } from '@utils/loaderContext';
-import { ClearButtonOnlyIcon, FolderButtonOnlyIcon } from '@components/buttons';
+import { ClearButtonOnlyIcon, FolderButtonOnlyIcon, SecondaryButton } from '@components/buttons';
 import { Code } from '@components/Code';
 import { useProjectLoad } from '@hooks/useProjectLoad';
 import { Project } from '@utils/projectList';
@@ -104,6 +104,17 @@ export const ProjectCard = ({ project, onDeleteProjectToList, onUpdateProjectLis
   const navigate = useNavigate();
   const showItemInFolder = useShowItemInFolder();
 
+  const handleChangeFileClick = () => {
+    return window.api.chooseProjectFileToOpen(
+      { fileType: 'studio' },
+      ({ dirName }) => {
+        onUpdateProjectList(dirName, index);
+        loaderRef.current.close();
+      },
+      () => {}
+    );
+  };
+
   const handleClick = async () => {
     if (!project) return;
 
@@ -113,16 +124,10 @@ export const ProjectCard = ({ project, onDeleteProjectToList, onUpdateProjectLis
         loaderRef.current.close();
         navigate('/dashboard');
       },
-      ({ errorMessage }) => {
-        loaderRef.current.setError('loading_project_error', errorMessage);
-        return window.api.chooseProjectFileToOpen(
-          { fileType: 'studio' },
-          ({ dirName }) => onUpdateProjectList(dirName, index),
-          () => {
-            loaderRef.current.close();
-          }
-        );
-      },
+        () => {
+          const errorNode = <SecondaryButton onClick={handleChangeFileClick}>{t('homepage:browse_my_files')}</SecondaryButton>;
+          loaderRef.current.setError('loading_project_error', t('loader:project_studio_not_found'), false, errorNode);
+        },
       (count) => loaderRef.current.setError('loading_project_error', t('loader:integrity_message', { count }), true)
     );
   };
