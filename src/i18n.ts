@@ -1,4 +1,5 @@
-import i18n from 'i18next';
+// eslint-disable-next-line import/no-named-as-default
+import i18n, { use } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import Backend from 'i18next-http-backend';
@@ -11,13 +12,12 @@ import translationPT from '../assets/i18n/pt';
 import translationDE from '../assets/i18n/de';
 // import translationXX from '../assets/i18n/xx';
 
-i18n
-  // detect user language
-  // learn more: https://github.com/i18next/i18next-browser-languageDetector
+// detect user language
+// learn more: https://github.com/i18next/i18next-browser-languageDetector
+use(Backend)
   .use(LanguageDetector)
   // pass the i18n instance to react-i18next.
   .use(initReactI18next)
-  .use(Backend)
   // init i18next
   // for all options read: https://www.i18next.com/overview/configuration-options
   .init({

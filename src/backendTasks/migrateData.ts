@@ -7,7 +7,8 @@ import { ChannelNames, sendProgress } from '@utils/BackendTask';
 import { PROJECT_VALIDATOR, StudioProject } from '@modelEntities/project';
 import type { StudioSettings } from '@utils/settings';
 import { parseJSON } from '@utils/json/parse';
-import { MIGRATE_CONFIG } from '@src/migrations/migrateConfig';
+import { MIGRATION_CONFIG } from '@src/migrations/migrationConfig';
+import { backendTranslation } from '@utils/backendTranslation';
 
 export type MigrationTask = (event: IpcMainEvent, projectPath: string, studioSettings?: StudioSettings) => Promise<void>;
 
@@ -17,13 +18,14 @@ export type MigrateDataOutput = { projectStudio: StudioProject };
 const migrateData = async (payload: MigrateDataInput, event: IpcMainEvent, channels: ChannelNames) => {
   log.info('migrate-data', `Current project version: ${payload.projectVersion}`);
 
-  const migrationFound = MIGRATE_CONFIG.filter((migration) => migration.version.localeCompare(payload.projectVersion) === 1);
+  const migrationFound = MIGRATION_CONFIG.filter((migration) => migration.version.localeCompare(payload.projectVersion) === 1);
   if (migrationFound.length > 0) {
     log.info('migrate-data', `Found ${migrationFound.length} migrations`);
     await migrationFound.reduce(async (prev, curr, index) => {
       await prev;
-      log.info('migrate-data/progress', curr.message);
-      sendProgress(event, channels, { step: index + 1, total: migrationFound.length, stepText: curr.message });
+      const message = await backendTranslation(curr.message, { ns: 'migration' });
+      log.info('migrate-data/progress', message);
+      sendProgress(event, channels, { step: index + 1, total: migrationFound.length, stepText: message });
       await curr.migration(event, payload.projectPath, payload.studioSettings);
     }, Promise.resolve());
   } else {
