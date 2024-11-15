@@ -124,9 +124,14 @@ export const ProjectCard = ({ project, onDeleteProjectToList, onUpdateProjectLis
         loaderRef.current.close();
         navigate('/dashboard');
       },
-        () => {
-          const errorNode = <SecondaryButton onClick={handleChangeFileClick}>{t('homepage:browse_my_files')}</SecondaryButton>;
-          loaderRef.current.setError('loading_project_error', t('loader:project_studio_not_found'), false, errorNode);
+        ({errorMessage}) => {
+          // TODO: Make an other way to find out if the project is not found
+          if (errorMessage.includes('no such file or directory')) {
+            const errorNode = <SecondaryButton onClick={handleChangeFileClick}>{t('homepage:browse_my_files')}</SecondaryButton>;
+            loaderRef.current.setError('loading_project_error', t('loader:project_studio_not_found'), false, errorNode);
+          } else {
+            loaderRef.current.setError('loading_project_error', errorMessage);
+          }
         },
       (count) => loaderRef.current.setError('loading_project_error', t('loader:integrity_message', { count }), true)
     );
@@ -139,7 +144,10 @@ export const ProjectCard = ({ project, onDeleteProjectToList, onUpdateProjectLis
     showItemInFolder(
       { filePath: join(path, 'project.studio') },
       () => {},
-      () => {}
+      (error) => {
+        console.log(error);
+        handleClick()
+      }
     );
   };
 
