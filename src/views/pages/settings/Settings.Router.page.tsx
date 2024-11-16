@@ -2,6 +2,7 @@ import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { SettingsNavigation } from '@components/settings';
 import { SettingsMapsPage } from './Settings.maps.page';
+import { SettingsLanguagePage } from './Settings.language.page';
 import { PageWithMenu, PageWithMenuProps } from '@components/pages';
 
 const SettingsPageWithMenu = ({ children }: Omit<PageWithMenuProps, 'navigation'>) => (
@@ -11,7 +12,15 @@ const SettingsPageWithMenu = ({ children }: Omit<PageWithMenuProps, 'navigation'
 const SettingsRouterComponent = () => {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="maps" />} />
+      <Route path="/" element={<Navigate to="language" />} />
+      <Route
+        path="language"
+        element={
+          <SettingsPageWithMenu>
+            <SettingsLanguagePage />
+          </SettingsPageWithMenu>
+        }
+      />
       <Route
         path="maps"
         element={

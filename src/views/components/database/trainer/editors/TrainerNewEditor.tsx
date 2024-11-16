@@ -1,7 +1,8 @@
 import React, { ChangeEvent, forwardRef, useMemo, useRef, useState } from 'react';
 import { Editor } from '@components/editor';
 
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import styled from 'styled-components';

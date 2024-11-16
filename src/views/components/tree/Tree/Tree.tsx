@@ -10,7 +10,7 @@ import {
   DraggableProvided,
   DraggableStateSnapshot,
   DroppableProvided,
-} from 'react-beautiful-dnd';
+} from '@hello-pangea/dnd';
 import { getBox } from 'css-box-model';
 import { calculateFinalDropPositions } from './Tree-utils';
 import { Props, State, DragState } from './Tree-types';
@@ -184,7 +184,7 @@ export default class Tree extends Component<Props, State> {
   patchDroppableProvided = (provided: DroppableProvided): DroppableProvided => {
     return {
       ...provided,
-      innerRef: (el: HTMLElement | null) => {
+      innerRef: (el: HTMLElement | null | undefined) => {
         if (el === null) return;
 
         this.containerElement = el;
@@ -214,8 +214,8 @@ export default class Tree extends Component<Props, State> {
         path: flatItem.path,
         provided: {
           draggableProps: {
-            'data-rbd-draggable-context-id': '',
-            'data-rbd-draggable-id': '',
+            'data-rfd-draggable-context-id': '',
+            'data-rfd-draggable-id': '',
           },
           innerRef: () => {},
           dragHandleProps: null,
@@ -224,11 +224,11 @@ export default class Tree extends Component<Props, State> {
           isDragging: false,
           isDropAnimating: false,
           isClone: false,
-          dropAnimation: undefined,
-          combineTargetFor: undefined,
-          combineWith: undefined,
-          draggingOver: undefined,
-          mode: undefined,
+          dropAnimation: null,
+          combineTargetFor: null,
+          combineWith: null,
+          draggingOver: null,
+          mode: null,
         },
       });
     }

@@ -1,6 +1,7 @@
 import React, { forwardRef, useMemo } from 'react';
 import { Editor } from '@components/editor';
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { MOVE_CRITICAL_RATES, MOVE_VALIDATOR, TEXT_CRITICAL_RATES } from '@modelEntities/move';
 import { useMovePage } from '@hooks/usePage';
 import { useUpdateMove } from './useUpdateMove';

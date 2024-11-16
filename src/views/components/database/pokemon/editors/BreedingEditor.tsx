@@ -15,7 +15,6 @@ import { InputFormContainer } from '@components/inputs/InputContainer';
 import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 
 const breedingGroupEntries = [
-  'undefined',
   'monster',
   'water_1',
   'bug',
@@ -35,7 +34,7 @@ const breedingGroupEntries = [
 
 const getBreedingGroupOptions = (t: TFunction<'database_pokemon'>) =>
   breedingGroupEntries
-    .map((breedingGroup, index) => ({ value: index.toString(), label: t(breedingGroup) }))
+    .map((breedingGroup, index) => ({ value: (index + 1).toString(), label: t(breedingGroup) }))
     .sort((a, b) => a.label.localeCompare(b.label));
 
 const BREEDING_EDITOR_SCHEMA = CREATURE_FORM_VALIDATOR.pick({

@@ -4,9 +4,8 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataBlockWithTitle, DataGrid, DataFieldsetField } from '../../dataBlocks';
 import { PokemonDataProps } from '../PokemonDataPropsInterface';
-import { CONTROL } from '@hooks/useKeyPress';
+import { CONTROL, useKeyPress } from '@hooks/useKeyPress';
 import { usePokemonShortcutNavigation } from '@hooks/useShortcutNavigation';
-import { useKeyPress } from 'react-flow-renderer';
 
 const BREEDING_GROUPS = [
   'undefined',

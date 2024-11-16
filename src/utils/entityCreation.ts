@@ -27,6 +27,7 @@ import { padStr } from './PadStr';
 import { StudioTextInfo } from '@modelEntities/textInfo';
 import { StudioMap, StudioMapAudio } from '@modelEntities/map';
 import { StudioMapInfo, StudioMapInfoMap } from '@modelEntities/mapInfo';
+import { StudioNature } from '@modelEntities/nature';
 import { mapInfoFindFirstAvailableId, mapInfoFindFirstAvailableTextId } from './MapInfoUtils';
 import { cloneEntity } from './cloneEntity';
 
@@ -116,7 +117,7 @@ export const createCreature = (allPokemon: ProjectData['pokemon'], dbSymbol: DbS
         baseLoyalty: 70,
         catchRate: 45,
         femaleRate: 50,
-        breedGroups: [0, 0],
+        breedGroups: [15, 15],
         hatchSteps: 1024,
         babyDbSymbol: dbSymbol,
         babyForm: 0,
@@ -556,4 +557,24 @@ export const createMapInfo = (mapInfo: StudioMapInfo, data: StudioMapInfoMap['da
       },
     };
   }
+};
+
+export const createNature = (allNatures: ProjectData['natures'], dbSymbol: DbSymbol): StudioNature => {
+  const id = findFirstAvailableId(allNatures, 0);
+  return {
+    klass: 'Nature',
+    dbSymbol,
+    id,
+    stats: {
+      atk: 100,
+      dfe: 100,
+      ats: 100,
+      dfs: 100,
+      spd: 100,
+    },
+    flavors: {
+      liked: 'none',
+      disliked: 'none',
+    },
+  };
 };

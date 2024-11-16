@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { DraggableLocation, DraggableId, DroppableId } from 'react-beautiful-dnd';
+import { DraggableLocation, DraggableId, DroppableId } from '@hello-pangea/dnd';
 import { TreeData, Path, ItemId, FlattenedTree, TreeSourcePosition, TreeDestinationPosition, TreeItem } from '../types';
 import { RenderItemParams } from '../TreeItem/TreeItem-types';
 

@@ -2,9 +2,9 @@ import React from 'react';
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import type { DialogRefData } from '@hooks/useDialogsRef';
-import { PokemonBattlerDeletion, PokemonBattlerEditor, PokemonBattlerImport } from '.';
+import { PokemonBattlerChangeOrder, PokemonBattlerDeletion, PokemonBattlerEditor, PokemonBattlerImport } from '.';
 
-export type PokemonBattlerEditorAndDeletionKeys = 'new' | 'edit' | 'import' | 'deletion';
+export type PokemonBattlerEditorAndDeletionKeys = 'new' | 'edit' | 'import' | 'change_order' | 'deletion';
 export type PokemonBattlerDialogsRef = React.RefObject<DialogRefData<PokemonBattlerEditorAndDeletionKeys>>;
 export type PokemonBattlerFrom = 'trainer' | 'group';
 export type PokemonPropertyType = 'default' | 'evs' | 'moves';
@@ -39,6 +39,9 @@ export const PokemonBattlerEditorOverlay = defineEditorOverlay<PokemonBattlerEdi
         return <PokemonBattlerEditor action="edit" closeDialog={closeDialog} ref={handleCloseRef} currentBattler={currentBattler} from={from} />;
       case 'import':
         return <PokemonBattlerImport closeDialog={closeDialog} ref={handleCloseRef} from={from} />;
+      case 'change_order':
+        if (window.api.isDev && from === 'group') console.warn('This feature is only available for the trainer');
+        return <PokemonBattlerChangeOrder closeDialog={closeDialog} ref={handleCloseRef} />;
       case 'deletion':
         return <PokemonBattlerDeletion closeDialog={closeDialog} ref={handleCloseRef} index={currentBattler.index} from={from} />;
       default:

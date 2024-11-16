@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
 import { MoveCategory, TypeCategory } from '@components/categories';
 import { ProjectData, SelectedDataIdentifier, useGlobalState } from '@src/GlobalStateProvider';
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { DeleteButtonOnlyIcon } from '@components/buttons';
 import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { SelectCustom } from '@components/SelectCustom';

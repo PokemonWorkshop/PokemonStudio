@@ -9,6 +9,7 @@
   "tilemap": "Tilemap",
   "class": "Clase",
   "tilemap_size": "Tamaño del tilemap",
+  "tilemap_center": "Posición del centro",
   "tile_zoom": "Zoom de los tiles",
   "scale_characters": "Escala de los personajes en el mapa",
   "images_per_animation": "Número de frames por animación",

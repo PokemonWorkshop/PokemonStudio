@@ -39,7 +39,7 @@ export const EditorTitle = styled.div`
 `;
 
 type EditorProps = {
-  type: 'edit' | 'movepool' | 'studio' | 'creation' | 'quest' | 'trainer' | 'importation' | 'group' | 'zone' | 'addition' | 'text';
+  type: 'edit' | 'movepool' | 'studio' | 'creation' | 'quest' | 'trainer' | 'importation' | 'group' | 'zone' | 'addition' | 'text' | 'reorganization';
   title: string;
   children: ReactNode;
 };

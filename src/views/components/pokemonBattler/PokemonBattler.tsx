@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Tag } from '@components/Tag';
-import { useProjectAbilities, useProjectItems, useProjectMoves, useProjectPokemon } from '@hooks/useProjectData';
-import { useGlobalState } from '@src/GlobalStateProvider';
+import { useProjectAbilities, useProjectItems, useProjectMoves, useProjectNatures, useProjectPokemon } from '@hooks/useProjectData';
 import { ClearButtonOnlyIcon } from '@components/buttons';
 import { TypeCategoryPokemonBattler } from '@components/categories';
 import { Category } from '@components/categories/Category';
 import { DataFieldsetFieldWithChild } from '@components/database/dataBlocks/DataFieldsetField';
 import { useTranslation } from 'react-i18next';
-import { getNatureText, useGetEntityNameText, useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
+import { useGetEntityNameText, useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
 import { ResourceImage } from '@components/ResourceImage';
 import { itemIconPath, pokemonIconPath } from '@utils/path';
 import { StudioGroupEncounter, StudioIvEv } from '@modelEntities/groupEncounter';
@@ -250,17 +249,18 @@ const showChance = (from: PokemonBattlerFrom) => {
 };
 
 export const PokemonBattler = ({ pokemon, index, from, dialogsRef, setCurrentBattler }: PokemonBattlerProps) => {
-  const [state] = useGlobalState();
   const { projectDataValues: species } = useProjectPokemon();
   const { projectDataValues: abilities } = useProjectAbilities();
   const { projectDataValues: items } = useProjectItems();
+  const { projectDataValues: natures } = useProjectNatures();
   const getAbilityName = useGetEntityNameTextUsingTextId();
   const specie = species[pokemon.specie];
   const itemSetup = pokemon.expandPokemonSetup.find((setup) => setup.type === 'itemHeld' && setup.value !== 'none')?.value as string;
   const item = items[itemSetup];
   const abilitySetup = pokemon.expandPokemonSetup.find((setup) => setup.type === 'ability')?.value as string;
   const ability = abilities[abilitySetup];
-  const nature = pokemon.expandPokemonSetup.find((setup) => setup.type === 'nature')?.value as string;
+  const natureSetup = pokemon.expandPokemonSetup.find((setup) => setup.type === 'nature')?.value as string;
+  const nature = natures[natureSetup];
   const evSetup = pokemon.expandPokemonSetup.find((setup) => setup.type === 'evs')?.value as StudioIvEv;
   const movesSetup = pokemon.expandPokemonSetup.find((setup) => setup.type === 'moves')?.value as string[];
   const { t } = useTranslation(['database_abilities', 'database_pokemon', 'database_items', 'pokemon_battler_list']);
@@ -365,9 +365,7 @@ export const PokemonBattler = ({ pokemon, index, from, dialogsRef, setCurrentBat
                 )}
               </DataFieldsetFieldWithChild>
             )}
-            {nature && (
-              <DataFieldsetFieldWithChild label={t('pokemon_battler_list:nature')}>{getNatureText(state, nature)}</DataFieldsetFieldWithChild>
-            )}
+            {nature && <DataFieldsetFieldWithChild label={t('pokemon_battler_list:nature')}>{getEntityName(nature)}</DataFieldsetFieldWithChild>}
           </PokemonBattlerAbilityNature>
         )}
 

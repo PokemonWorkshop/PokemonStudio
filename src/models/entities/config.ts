@@ -75,13 +75,6 @@ export const LANGUAGE_CONFIG_VALIDATOR = z.object({
 });
 export type StudioLanguageConfig = z.infer<typeof LANGUAGE_CONFIG_VALIDATOR>;
 
-export const NATURE_CONFIG_VALIDATOR = z.object({
-  klass: z.literal('Configs::Natures'),
-  data: z.array(z.array(POSITIVE_OR_ZERO_INT)),
-  db_symbol_to_id: z.record(POSITIVE_OR_ZERO_INT),
-});
-export type StudioNatureConfig = z.infer<typeof NATURE_CONFIG_VALIDATOR>;
-
 export const SAVE_CONFIG_VALIDATOR = z.object({
   klass: z.literal('Configs::Project::Save'),
   maximumSave: POSITIVE_OR_ZERO_INT,
@@ -133,7 +126,7 @@ const MESSAGE_CONFIG_VALIDATOR = z.object({
   defaultColor: POSITIVE_OR_ZERO_INT,
   colorMapping: z.record(POSITIVE_OR_ZERO_INT, POSITIVE_OR_ZERO_INT),
 });
-const CHOICE_CONFIG_VALIDATOR = MESSAGE_CONFIG_VALIDATOR.omit({ nameWindowskin: true, lineCount: true });
+const CHOICE_CONFIG_VALIDATOR = MESSAGE_CONFIG_VALIDATOR.omit({ nameWindowSkin: true, lineCount: true });
 export const TEXT_CONFIG_VALIDATOR = z.object({
   klass: z.literal('Configs::Project::Texts'),
   fonts: FONT_CONFIG_VALIDATOR,

@@ -7,13 +7,7 @@ import {
   StudioCreature,
   StudioCreatureForm,
 } from '@modelEntities/creature';
-import {
-  useCopyProjectText,
-  useGetCreatureFormDescriptionText,
-  useGetCreatureFormNameText,
-  useGetEntityDescriptionText,
-  useSetProjectText,
-} from '@utils/ReadingProjectText';
+import { useCopyProjectText, useGetCreatureFormDescriptionText, useGetEntityDescriptionText, useSetProjectText } from '@utils/ReadingProjectText';
 import React, { forwardRef, useImperativeHandle, useRef } from 'react';
 import { TranslationEditorTitle } from '../CreatureTranslationOverlay';
 import { useTranslation } from 'react-i18next';
@@ -23,16 +17,16 @@ import { SecondaryButton } from '@components/buttons';
 type TranslatableFormTextFieldsProps = {
   creature: StudioCreature;
   form: StudioCreatureForm;
+  formName: string;
   handleTranslateClick: (editorTitle: TranslationEditorTitle) => () => void;
 };
 
 export const TranslatableFormTextFields = forwardRef<TranslatableTextFieldsRef, TranslatableFormTextFieldsProps>(
-  ({ creature, form, handleTranslateClick }, ref) => {
+  ({ creature, form, formName, handleTranslateClick }, ref) => {
     const { t } = useTranslation('database_pokemon');
     const nameRef = useRef<HTMLInputElement>(null);
     const descriptionRef = useRef<HTMLTextAreaElement>(null);
     const getCreatureDescription = useGetEntityDescriptionText();
-    const getCreatureFormName = useGetCreatureFormNameText();
     const getCreatureFormDescription = useGetCreatureFormDescriptionText();
     const setText = useSetProjectText();
     const copyProjectText = useCopyProjectText();
@@ -49,7 +43,7 @@ export const TranslatableFormTextFields = forwardRef<TranslatableTextFieldsRef, 
       nameRef.current.value = nameRef.current.defaultValue;
       descriptionRef.current.value = descriptionRef.current.defaultValue;
     };
-    useImperativeHandle(ref, () => ({ saveTexts, onTranslationOverlayClose }), [form]);
+    useImperativeHandle(ref, () => ({ saveTexts, onTranslationOverlayClose }), [creature, form, formName]);
 
     const onClickUseBaseDescription = () => {
       const defaultForm = creature.forms.find((form) => form.form === 0);
@@ -69,14 +63,7 @@ export const TranslatableFormTextFields = forwardRef<TranslatableTextFieldsRef, 
         <InputWithTopLabelContainer>
           <Label required>{t('form_name')}</Label>
           <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_form_name')}>
-            <Input
-              type="text"
-              name="form_name"
-              defaultValue={getCreatureFormName(form)}
-              ref={nameRef}
-              placeholder={t('example_form_name')}
-              required
-            />
+            <Input type="text" name="form_name" defaultValue={formName} ref={nameRef} placeholder={t('example_form_name')} required />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer style={{ display: form.form !== 0 ? 'flex' : 'none' }}>

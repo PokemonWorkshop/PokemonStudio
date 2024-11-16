@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import ReactFlow, { Background, BackgroundVariant, Controls, useNodesState, useReactFlow } from 'react-flow-renderer';
+import { Background, BackgroundVariant, Controls, ReactFlow, useNodesState, useReactFlow } from '@xyflow/react';
 import { MapOverviewNode } from './MapOverviewNode';
 import { StudioMap } from '@modelEntities/map';
 import { cloneEntity } from '@utils/cloneEntity';
@@ -54,7 +54,7 @@ export const ReactFlowOverview = ({ map, version }: ReactFlowOverviewProps) => {
       maxZoom={2}
     >
       <Background gap={16} variant={BackgroundVariant.Dots} />
-      <Controls showInteractive={false} />
+      <Controls showInteractive={false} position="bottom-right" />
     </ReactFlow>
   );
 };

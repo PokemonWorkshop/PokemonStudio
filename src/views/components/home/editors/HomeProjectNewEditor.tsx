@@ -4,7 +4,8 @@ import { IconInput, Input, InputContainer, InputWithTopLabelContainer, Label } f
 import { DropInput } from '@components/inputs/DropInput';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import React, { forwardRef, useMemo, useState } from 'react';
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { TextInputError } from '@components/inputs/Input';
 import { basename, dirname } from '@utils/path';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';

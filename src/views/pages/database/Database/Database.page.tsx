@@ -20,6 +20,7 @@ import { ZonePage } from '../Zone.page';
 import { DexPage } from '../Dex/Dex.page';
 import { PokemonResourcesPage } from '../Pokemon.Resources.page';
 import { TrainerResourcesPage } from '../Trainer.Resources.page';
+import { NaturePage } from '../Nature.page';
 
 const DatabasePageStyle = styled.div`
   display: flex;
@@ -49,6 +50,7 @@ const DatabasePageComponent = () => {
         <Route path="groups" element={<GroupPage />} />
         <Route path="zones" element={<ZonePage />} />
         <Route path="dex" element={<DexPage />} />
+        <Route path="natures" element={<NaturePage />} />
         <Route path="/" element={<Navigate to={sessionStorage.getItem('lastDatabasePage') || 'pokemon'} />} />
       </Routes>
     </DatabasePageStyle>
