@@ -27,8 +27,5 @@
   },
   "cSpell.words": ["movepool", "Pokedex", "unmaximize"],
   "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-  }
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
 }
