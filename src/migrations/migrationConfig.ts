@@ -19,6 +19,22 @@ type MigrateConfigType = {
   message: string;
 };
 
+/*
+ * How add a migration
+ *
+ * Add the migration config in the array below with the following structure:
+ * {
+ *    migration: newMigration,
+ *    version: '2.4.0',
+ *    message: 'new_migration',
+ * }
+ *
+ * migration: The method that must be called to do the migration.
+ * version: The version of the project where the migration is to take place. The migration will also run if the project has a lower version.
+ * message: A message will be displayed for the user to understand what is happening.
+ *          You need to enter the translation key used by i18n. The translations must be in the migration.json files.
+ */
+
 export const MIGRATION_CONFIG: MigrateConfigType[] = [
   {
     migration: migrateMapLinks,
