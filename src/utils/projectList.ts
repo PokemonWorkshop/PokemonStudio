@@ -42,9 +42,9 @@ export const updateProjectStudio = (projectPath: string, projectStudio: StudioPr
 };
 
 export const updateProjectPath = (projectPath: string, index: number) => {
-  if (!projectPath || !!index) return;
   const projectList = getProjectList();
   const project = projectList[index];
+  if (!projectPath || !project) return;
   project.projectPath = projectPath;
 
   localStorage.setItem('projectList', JSON.stringify(projectList));
