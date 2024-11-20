@@ -61,7 +61,7 @@ const LoaderCurrentActionText = styled.span`
 `;
 
 export const Loader = () => {
-  const { thingInProgress, step, total, stepText, errorTitle, errorText, successTitle, successText, isOpen, isLogsAvailable, close } =
+  const { thingInProgress, step, total, stepText, errorTitle, errorText, successTitle, successText, isOpen, isLogsAvailable, dynamicAction, close } =
     useLoaderContext();
   const { t } = useTranslation('loader');
 
@@ -74,7 +74,9 @@ export const Loader = () => {
 
   const dialog = () => {
     if (errorTitle) {
-      return <ErrorDialog title={t(errorTitle)} message={errorText} isLogsAvailable={isLogsAvailable} onClose={close} />;
+      return (
+        <ErrorDialog title={t(errorTitle)} message={errorText} isLogsAvailable={isLogsAvailable} onClose={close} dynamicAction={dynamicAction} />
+      );
     }
     if (successTitle) {
       return <SuccessDialog title={t(successTitle)} message={successText} onClose={close} />;

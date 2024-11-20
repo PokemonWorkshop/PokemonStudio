@@ -41,6 +41,16 @@ export const updateProjectStudio = (projectPath: string, projectStudio: StudioPr
   localStorage.setItem('projectList', JSON.stringify(projectList));
 };
 
+export const updateProjectPath = (projectPath: string, index: number) => {
+  const projectList = getProjectList();
+  const project = projectList[index];
+  if (!projectPath || !project) return;
+  project.projectPath = projectPath;
+
+  localStorage.setItem('projectList', JSON.stringify(projectList));
+};
+
+
 export const deleteProjectToList = (projectPath: string) => {
   const projectList = getProjectList();
   const projectIndex = projectList.findIndex((project) => project.projectPath === projectPath);
