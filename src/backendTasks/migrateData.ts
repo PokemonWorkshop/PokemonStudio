@@ -18,7 +18,7 @@ export type MigrateDataOutput = { projectStudio: StudioProject };
 const migrateData = async (payload: MigrateDataInput, event: IpcMainEvent, channels: ChannelNames) => {
   log.info('migrate-data', `Current project version: ${payload.projectVersion}`);
 
-  const migrationFound = MIGRATION_CONFIG.filter((migration) => migration.version.localeCompare(payload.projectVersion) === 1);
+  const migrationFound = MIGRATION_CONFIG.filter((migration) => migration.version.localeCompare(payload.projectVersion) !== -1);
   if (migrationFound.length > 0) {
     log.info('migrate-data', `Found ${migrationFound.length} migrations`);
     await migrationFound.reduce(async (prev, curr, index) => {
