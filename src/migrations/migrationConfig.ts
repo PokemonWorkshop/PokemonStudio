@@ -12,6 +12,7 @@ import { fixCreatureValuesAfterZodChange } from './fixCreatureValuesAfterZodChan
 import { addFormNamesDescriptions } from './addFormNamesDescriptions';
 import { migrateNaturesToEntities } from './migrateNaturesToEntities';
 import { migrateUndefinedBreedingGroupToUnknown } from './migrateUndefinedBreedingGroupToUnknown';
+import { addTrainerAdditionalDialogs } from './addTrainerAdditionalDialogs';
 
 type MigrateConfigType = {
   migration: MigrationTask;
@@ -100,5 +101,10 @@ export const MIGRATION_CONFIG: MigrateConfigType[] = [
     migration: migrateUndefinedBreedingGroupToUnknown,
     version: '2.3.0',
     message: 'migrate_breeding_group',
+  },
+  {
+    migration: addTrainerAdditionalDialogs,
+    version: '2.4.0',
+    message: 'add_trainer_additional_dialogs',
   },
 ];

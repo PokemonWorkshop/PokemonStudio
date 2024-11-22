@@ -29,6 +29,19 @@ export const TRAINER_RESOURCES_VALIDATOR = z.object({
 });
 export type StudioTrainerResources = z.infer<typeof TRAINER_RESOURCES_VALIDATOR>;
 
+export const TRAINER_ADDITIONAL_DIALOGS_VALIDATOR = z.object({
+  condition: z.union([
+    z.literal('before_creature_send'),
+    z.literal('after_creature_send'),
+    z.literal('after_all_actions_choices'),
+    z.literal('after_attack_action'),
+    z.literal('after_all_turn_actions'),
+    z.literal('end_of_battle_turn'),
+  ]),
+  textId: POSITIVE_OR_ZERO_INT,
+});
+export type StudioTrainerAdditionalDialogs = z.infer<typeof TRAINER_ADDITIONAL_DIALOGS_VALIDATOR>;
+
 export const TRAINER_VALIDATOR = z.object({
   klass: z.literal('TrainerBattleSetup'),
   id: POSITIVE_OR_ZERO_INT,
@@ -41,6 +54,7 @@ export const TRAINER_VALIDATOR = z.object({
   ai: POSITIVE_OR_ZERO_INT.default(1),
   party: z.array(ENCOUNTER_VALIDATOR),
   resources: TRAINER_RESOURCES_VALIDATOR,
+  additionalDialogs: z.array(TRAINER_ADDITIONAL_DIALOGS_VALIDATOR),
 });
 export type StudioTrainer = z.infer<typeof TRAINER_VALIDATOR>;
 
@@ -48,6 +62,8 @@ export const TRAINER_CLASS_TEXT_ID = 100029;
 export const TRAINER_NAME_TEXT_ID = 100062;
 export const TRAINER_VICTORY_SENTENCE_TEXT_ID = 100047;
 export const TRAINER_DEFEAT_SENTENCE_TEXT_ID = 100048;
+export const TRAINER_ADDITIONAL_DIALOGS_TEXT_ID = 100069;
+
 export const getTrainerMoney = (trainer: StudioTrainer) => {
   if (trainer.party.length === 0 || isNaN(trainer.baseMoney)) return 0;
 
@@ -56,8 +72,10 @@ export const getTrainerMoney = (trainer: StudioTrainer) => {
   if (lastLevel.kind === 'fixed') return trainer.baseMoney * lastLevel.level;
   return trainer.baseMoney * lastLevel.level.maximumLevel;
 };
+
 export const TRAINER_AI_CATEGORIES = ['basic', 'regular', 'medium', 'hard', 'lieutenant', 'gym_leader', 'champion'] as const;
 export const TRAINER_VS_TYPE_CATEGORIES = [1, 2] as const;
+
 export const updatePartyTrainerName = (trainer: StudioTrainer, name: string) => {
   trainer.party.forEach((encounter) => {
     encounter.expandPokemonSetup.forEach((expandPokemonSetup) => {
@@ -65,6 +83,7 @@ export const updatePartyTrainerName = (trainer: StudioTrainer, name: string) => 
     });
   });
 };
+
 export const reduceBagEntries = (trainerBagEntries: StudioTrainerBagEntry[]) => {
   const bagEntries: StudioTrainerBagEntry[] = [];
   trainerBagEntries.forEach((bagEntry) => {
