@@ -3,7 +3,12 @@ import { DataBlockWithTitle, DataFieldsetField } from '../dataBlocks';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useGetProjectText } from '@utils/ReadingProjectText';
-import { StudioTrainer, TRAINER_DEFEAT_SENTENCE_TEXT_ID, TRAINER_VICTORY_SENTENCE_TEXT_ID } from '@modelEntities/trainer';
+import {
+  StudioTrainer,
+  TRAINER_ADDITIONAL_DIALOGS_TEXT_ID,
+  TRAINER_DEFEAT_SENTENCE_TEXT_ID,
+  TRAINER_VICTORY_SENTENCE_TEXT_ID,
+} from '@modelEntities/trainer';
 import { TrainerDialogsRef } from './editors/TrainerEditorOverlay';
 
 const TrainerDialogContainer = styled.div`
@@ -36,6 +41,17 @@ export const TrainerDialog = ({ trainer, dialogsRef }: TrainerDialogProps) => {
           data={defeatSentence !== '' ? `“${defeatSentence}”` : '---'}
           disabled={defeatSentence === ''}
         />
+        {trainer.additionalDialogs.map((additionalDialog, index) => {
+          const additionalDialogText = getText(TRAINER_ADDITIONAL_DIALOGS_TEXT_ID, additionalDialog.textId);
+          return (
+            <DataFieldsetField
+              label={`${t('condition')} ${t(`additional_dialog_${additionalDialog.condition}`)}`}
+              data={additionalDialogText !== '' ? `“${additionalDialogText}”` : '---'}
+              disabled={additionalDialogText === ''}
+              key={`additional-dialog-${index}`}
+            />
+          );
+        })}
       </TrainerDialogContainer>
     </DataBlockWithTitle>
   );

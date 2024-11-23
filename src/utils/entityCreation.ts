@@ -350,6 +350,7 @@ export const createTrainer = (
       },
       sprite: '',
     },
+    additionalDialogs: [],
   };
 };
 
