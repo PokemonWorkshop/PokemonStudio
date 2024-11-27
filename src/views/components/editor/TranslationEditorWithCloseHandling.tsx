@@ -79,6 +79,7 @@ export type TranslationEditorTitle =
   | 'translation_class'
   | 'translation_victory'
   | 'translation_defeat'
+  | 'translation_additional_dialog'
   | 'translation_form_name'
   | 'translation_form_description';
 

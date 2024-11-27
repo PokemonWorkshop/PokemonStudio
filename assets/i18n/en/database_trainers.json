@@ -84,5 +84,8 @@
   "additional_dialog_after_all_actions_choices": "After all actions choices",
   "additional_dialog_after_attack_action": "After Attack action",
   "additional_dialog_after_all_turn_actions": "After all turn actions",
-  "additional_dialog_end_of_battle_turn": "At the end of a battle turn"
+  "additional_dialog_end_of_battle_turn": "At the end of a battle turn",
+  "default_dialogs": "Default dialogs",
+  "condition_appearance": "Condition of appearance",
+  "sentence_spoken": "Sentence spoken"
 }

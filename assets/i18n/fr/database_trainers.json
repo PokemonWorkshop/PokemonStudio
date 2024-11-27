@@ -84,5 +84,8 @@
   "additional_dialog_after_all_actions_choices": "Après la sélection de toutes les actions",
   "additional_dialog_after_attack_action": "Après l’exécution d’une attaque",
   "additional_dialog_after_all_turn_actions": "À la fin de toutes les actions d’un tour",
-  "additional_dialog_end_of_battle_turn": "À la fin du tour"
+  "additional_dialog_end_of_battle_turn": "À la fin du tour",
+  "default_dialogs": "Dialogues par défaut",
+  "condition_appearance": "Condition d'apparition",
+  "sentence_spoken": "Phrase prononcée"
 }
