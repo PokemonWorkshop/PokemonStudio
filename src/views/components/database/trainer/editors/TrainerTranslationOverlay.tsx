@@ -22,7 +22,7 @@ export type TrainerTranslationEditorTitle =
 type Props = {
   onClose: () => void;
   trainer: StudioTrainer;
-  additionalDialog: TrainerDialogAdditionalDialogs;
+  additionalDialog?: TrainerDialogAdditionalDialogs;
 };
 
 /**
@@ -66,7 +66,7 @@ export const TrainerTranslationOverlay = defineEditorOverlay<TrainerTranslationE
             title={dialogToShow}
             nameTextId={TRAINER_NAME_TEXT_ID}
             fileId={TRAINER_ADDITIONAL_DIALOGS_TEXT_ID}
-            textIndex={additionalDialog.textId}
+            textIndex={additionalDialog?.textId ?? 0}
             isMultiline={true}
             closeDialog={closeDialog}
             onClose={onClose}

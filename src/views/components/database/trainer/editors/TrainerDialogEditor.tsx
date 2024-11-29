@@ -134,7 +134,7 @@ export const TrainerDialogEditor = forwardRef<EditorHandlingClose>((_, ref) => {
         <SubEditorContainer>
           <SubEditorSeparator parentEditorHasScrollBar />
           <Editor type="creation" title={t('scripted_dialog')}>
-            <TooltipWrapper data-tooltip={t('available_future_release')}>
+            <TooltipWrapper data-tooltip={!canAddDialog ? t('available_future_release') : undefined}>
               <SecondaryButtonWithPlusIcon disabled={!canAddDialog} onClick={addDialog}>
                 {t('new_dialog')}
               </SecondaryButtonWithPlusIcon>
