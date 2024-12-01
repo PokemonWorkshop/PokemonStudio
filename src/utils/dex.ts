@@ -55,7 +55,7 @@ export const searchUnderAndEvolutions = (
 
   // If the form is unavailable, the baby form take the last one form available
   const formIsAvailable = allPokemon[pokemonForm.babyDbSymbol]?.forms.length === pokemonForm.babyForm + 1;
-  const babyForm = formIsAvailable ? pokemonForm.babyForm : allPokemon[pokemonForm.babyDbSymbol]?.forms.length - 1;
+  const babyForm = formIsAvailable ? pokemonForm.babyForm : allPokemon[pokemonForm.babyDbSymbol]?.forms[0].form;
   // search the evolutions from the baby
   const babyDexCreature = { dbSymbol: babyDbSymbol, form: babyForm };
   const dexCreatures = searchEvolutionPokemon(babyDexCreature, allPokemon, []);
