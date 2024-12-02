@@ -17,6 +17,8 @@ const PaginationWithTitleContainer = styled.div`
     max-width: 196px;
     overflow: hidden;
     color: ${({ theme }) => theme.colors.text100};
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   & svg:hover {

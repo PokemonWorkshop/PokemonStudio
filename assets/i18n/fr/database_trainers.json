@@ -87,5 +87,7 @@
   "additional_dialog_end_of_battle_turn": "À la fin du tour",
   "default_dialogs": "Dialogues par défaut",
   "condition_appearance": "Condition d'apparition",
-  "sentence_spoken": "Phrase prononcée"
+  "sentence_spoken": "Phrase prononcée",
+  "delete_dialog": "Supprimer ce dialogue",
+  "max_dialog": "Vous ne pouvez pas créer de dialogues supplémentaires"
 }

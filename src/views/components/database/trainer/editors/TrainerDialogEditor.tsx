@@ -2,7 +2,7 @@ import React, { forwardRef, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Editor, EditorWithPagination } from '@components/editor';
 import { EditorChildWithSubEditorContainer, SubEditorContainer, SubEditorSeparator } from '@components/editor/EditorContainer';
-import { SecondaryButtonWithPlusIcon } from '@components/buttons';
+import { DeleteButton, SecondaryButtonWithPlusIcon } from '@components/buttons';
 import { InputWithTopLabelContainer, Label, MultiLineInput, PaddedInputContainer } from '@components/inputs';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 import { useGetProjectText, useSetProjectText } from '@utils/ReadingProjectText';
@@ -23,16 +23,35 @@ import { useTrainerDialog } from './useTrainerDialog';
 import { TFunction } from 'i18next';
 import { Select } from '@ds/Select';
 import { useUpdateTrainer } from './useUpdateTrainer';
+import styled from 'styled-components';
 
 const dialogConditionEntries = (t: TFunction<'database_trainers'>) =>
   TRAINER_ADDITIONAL_DIALOGS_CONDITION.map((condition) => ({ value: condition.toString(), label: t(`additional_dialog_${condition}`) }));
+
+const InputWithDeleteButton = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding-bottom: 24px;
+`;
 
 export const TrainerDialogEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { t } = useTranslation('database_trainers');
   const { trainer } = useTrainerPage();
   const updateTrainer = useUpdateTrainer(trainer);
-  const { dialogs, currentDialog, dialogCount, dialogIndex, canAddDialog, setDialogIndex, addDialog, deleteDialog, changeCondition } =
-    useTrainerDialog();
+  const {
+    dialogs,
+    currentDialog,
+    dialogCount,
+    dialogIndex,
+    canAddDialog,
+    defaultSentence,
+    updateDialogIndex,
+    addDialog,
+    deleteDialog,
+    changeCondition,
+  } = useTrainerDialog();
   const dialogsRef = useDialogsRef<TrainerTranslationEditorTitle>();
   const getText = useGetProjectText();
   const setText = useSetProjectText();
@@ -51,9 +70,9 @@ export const TrainerDialogEditor = forwardRef<EditorHandlingClose>((_, ref) => {
 
   const onChangeIndex = (arrow: 'left' | 'right') => {
     if (arrow === 'left') {
-      if (dialogIndex > 0) setDialogIndex(dialogIndex - 1);
+      if (dialogIndex > 0) updateDialogIndex(dialogIndex - 1);
     } else {
-      if (dialogIndex < dialogCount - 1) setDialogIndex(dialogIndex + 1);
+      if (dialogIndex < dialogCount - 1) updateDialogIndex(dialogIndex + 1);
     }
     saveTexts();
   };
@@ -113,28 +132,26 @@ export const TrainerDialogEditor = forwardRef<EditorHandlingClose>((_, ref) => {
             </InputWithTopLabelContainer>
           </PaddedInputContainer>
         ) : (
-          <PaddedInputContainer>
-            <InputWithTopLabelContainer>
-              <Label htmlFor="condition">{t('condition_appearance')}</Label>
-              <Select options={dialogConditionOptions} value={currentDialog.condition} onChange={changeCondition} />
-            </InputWithTopLabelContainer>
-            <InputWithTopLabelContainer>
-              <Label htmlFor="sentence">{t('sentence_spoken')}</Label>
-              <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_additional_dialog')}>
-                <MultiLineInput
-                  id="sentence"
-                  defaultValue={getText(TRAINER_ADDITIONAL_DIALOGS_TEXT_ID, currentDialog.textId)}
-                  ref={sentenceRef}
-                  key={`sentence-${dialogIndex}`}
-                />
-              </TranslateInputContainer>
-            </InputWithTopLabelContainer>
-          </PaddedInputContainer>
+          <InputWithDeleteButton>
+            <PaddedInputContainer>
+              <InputWithTopLabelContainer>
+                <Label htmlFor="condition">{t('condition_appearance')}</Label>
+                <Select options={dialogConditionOptions} value={currentDialog.condition} onChange={changeCondition} />
+              </InputWithTopLabelContainer>
+              <InputWithTopLabelContainer>
+                <Label htmlFor="sentence">{t('sentence_spoken')}</Label>
+                <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_additional_dialog')}>
+                  <MultiLineInput id="sentence" defaultValue={defaultSentence} ref={sentenceRef} key={`sentence-${dialogIndex}`} />
+                </TranslateInputContainer>
+              </InputWithTopLabelContainer>
+            </PaddedInputContainer>
+            <DeleteButton onClick={deleteDialog}>{t('delete_dialog')}</DeleteButton>
+          </InputWithDeleteButton>
         )}
         <SubEditorContainer>
           <SubEditorSeparator parentEditorHasScrollBar />
           <Editor type="creation" title={t('scripted_dialog')}>
-            <TooltipWrapper data-tooltip={!canAddDialog ? t('available_future_release') : undefined}>
+            <TooltipWrapper data-tooltip={!canAddDialog ? t('max_dialog') : undefined}>
               <SecondaryButtonWithPlusIcon disabled={!canAddDialog} onClick={addDialog}>
                 {t('new_dialog')}
               </SecondaryButtonWithPlusIcon>

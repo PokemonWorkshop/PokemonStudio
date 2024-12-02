@@ -9,7 +9,7 @@ import { ProjectData } from '@src/GlobalStateProvider';
 import { useTrainerPage } from '@src/hooks/usePage';
 import { cloneEntity } from '@utils/cloneEntity';
 import { findFirstAvailableTextId } from '@utils/ModelUtils';
-import { useSetProjectText } from '@utils/ReadingProjectText';
+import { useGetProjectText, useSetProjectText } from '@utils/ReadingProjectText';
 import { useMemo, useState } from 'react';
 
 const getNewCondition = (dialogs: TrainerDialogAdditionalDialogs[]) => {
@@ -37,6 +37,7 @@ export type TrainerDialogAdditionalDialogs = {
 export const useTrainerDialog = () => {
   const { trainer, trainers } = useTrainerPage();
   const setText = useSetProjectText();
+  const getText = useGetProjectText();
   const allAdditionalDialogs = useMemo(() => getAllAdditionalDialogs(trainers, trainer), [trainers, trainer]);
   const [dialogIndex, setDialogIndex] = useState<number>(0);
   const [dialogs, setDialogs] = useState<TrainerDialogAdditionalDialogs[]>([
@@ -46,6 +47,7 @@ export const useTrainerDialog = () => {
     },
     ...trainer.additionalDialogs,
   ]);
+  const [defaultSentence, setDefaultSentence] = useState(getText(TRAINER_ADDITIONAL_DIALOGS_TEXT_ID, dialogs[dialogIndex].textId));
   const currentDialog = dialogs[dialogIndex];
 
   const addDialog = () => {
@@ -53,15 +55,22 @@ export const useTrainerDialog = () => {
       condition: getNewCondition(dialogs),
       textId: getNewTextId(allAdditionalDialogs, dialogs),
     };
-    console.log(newDialog);
-    // TODO: fix Unable to find text x in dialog file 100069 due to bad refresh
     setText(TRAINER_ADDITIONAL_DIALOGS_TEXT_ID, newDialog.textId, '');
-    setDialogs((dialogs) => [...dialogs, newDialog]);
+    setDialogs((dialogs) => [...cloneEntity(dialogs), newDialog]);
     setDialogIndex(dialogs.length);
+    setDefaultSentence('');
   };
 
   const deleteDialog = () => {
-    console.log('deleteDialog');
+    if (currentDialog.condition === 'default') return;
+
+    const index = dialogs.findIndex(({ condition }) => condition === currentDialog.condition);
+    if (index === -1) return;
+
+    const dialogsUpdated = cloneEntity(dialogs);
+    dialogsUpdated.splice(index, 1);
+    setDialogs(dialogsUpdated);
+    updateDialogIndex(index - 1);
   };
 
   const changeCondition = (condition: string) => {
@@ -70,13 +79,19 @@ export const useTrainerDialog = () => {
     setDialogs(dialogsUpdated);
   };
 
+  const updateDialogIndex = (newIndex: number) => {
+    setDialogIndex(newIndex);
+    setDefaultSentence(getText(TRAINER_ADDITIONAL_DIALOGS_TEXT_ID, dialogs[newIndex].textId));
+  };
+
   return {
     dialogs,
     currentDialog,
     dialogCount: dialogs.length,
     dialogIndex,
     canAddDialog: dialogs.length < TRAINER_ADDITIONAL_DIALOGS_CONDITION.length + 1,
-    setDialogIndex,
+    defaultSentence,
+    updateDialogIndex,
     addDialog,
     deleteDialog,
     changeCondition,

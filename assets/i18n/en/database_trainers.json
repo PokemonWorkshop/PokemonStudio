@@ -87,5 +87,7 @@
   "additional_dialog_end_of_battle_turn": "At the end of a battle turn",
   "default_dialogs": "Default dialogs",
   "condition_appearance": "Condition of appearance",
-  "sentence_spoken": "Sentence spoken"
+  "sentence_spoken": "Sentence spoken",
+  "delete_dialog": "Delete this dialog",
+  "max_dialog": "You cannot create more dialogs"
 }
