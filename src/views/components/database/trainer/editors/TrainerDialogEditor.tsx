@@ -1,4 +1,4 @@
-import React, { forwardRef, useMemo, useRef } from 'react';
+import React, { forwardRef, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Editor, EditorWithPagination } from '@components/editor';
 import { EditorChildWithSubEditorContainer, SubEditorContainer, SubEditorSeparator } from '@components/editor/EditorContainer';
@@ -8,7 +8,6 @@ import { TranslateInputContainer } from '@components/inputs/TranslateInputContai
 import { useGetProjectText, useSetProjectText } from '@utils/ReadingProjectText';
 import {
   StudioTrainerAdditionalDialogs,
-  TRAINER_ADDITIONAL_DIALOGS_CONDITION,
   TRAINER_ADDITIONAL_DIALOGS_TEXT_ID,
   TRAINER_DEFEAT_SENTENCE_TEXT_ID,
   TRAINER_VICTORY_SENTENCE_TEXT_ID,
@@ -20,13 +19,9 @@ import { TrainerTranslationEditorTitle, TrainerTranslationOverlay } from './Trai
 import { TooltipWrapper } from '@ds/Tooltip';
 import { PaginationWithTitleProps } from '@components/PaginationWithTitle';
 import { useTrainerDialog } from './useTrainerDialog';
-import { TFunction } from 'i18next';
 import { Select } from '@ds/Select';
 import { useUpdateTrainer } from './useUpdateTrainer';
 import styled from 'styled-components';
-
-const dialogConditionEntries = (t: TFunction<'database_trainers'>) =>
-  TRAINER_ADDITIONAL_DIALOGS_CONDITION.map((condition) => ({ value: condition.toString(), label: t(`additional_dialog_${condition}`) }));
 
 const InputWithDeleteButton = styled.div`
   display: flex;
@@ -43,10 +38,10 @@ export const TrainerDialogEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const {
     dialogs,
     currentDialog,
-    dialogCount,
     dialogIndex,
     canAddDialog,
     defaultSentence,
+    conditionOptions,
     updateDialogIndex,
     addDialog,
     deleteDialog,
@@ -55,10 +50,10 @@ export const TrainerDialogEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const dialogsRef = useDialogsRef<TrainerTranslationEditorTitle>();
   const getText = useGetProjectText();
   const setText = useSetProjectText();
-  const dialogConditionOptions = useMemo(() => dialogConditionEntries(t), [t]);
   const victoryRef = useRef<HTMLTextAreaElement>(null);
   const defeatRef = useRef<HTMLTextAreaElement>(null);
   const sentenceRef = useRef<HTMLTextAreaElement>(null);
+  const dialogCount = dialogs.length;
 
   const saveTexts = () => {
     if (victoryRef.current && defeatRef.current) {
@@ -136,7 +131,7 @@ export const TrainerDialogEditor = forwardRef<EditorHandlingClose>((_, ref) => {
             <PaddedInputContainer>
               <InputWithTopLabelContainer>
                 <Label htmlFor="condition">{t('condition_appearance')}</Label>
-                <Select options={dialogConditionOptions} value={currentDialog.condition} onChange={changeCondition} />
+                <Select options={conditionOptions} value={currentDialog.condition} onChange={changeCondition} key={`condition-${dialogIndex}`} />
               </InputWithTopLabelContainer>
               <InputWithTopLabelContainer>
                 <Label htmlFor="sentence">{t('sentence_spoken')}</Label>

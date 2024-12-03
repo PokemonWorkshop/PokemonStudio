@@ -10,7 +10,9 @@ import { useTrainerPage } from '@src/hooks/usePage';
 import { cloneEntity } from '@utils/cloneEntity';
 import { findFirstAvailableTextId } from '@utils/ModelUtils';
 import { useGetProjectText, useSetProjectText } from '@utils/ReadingProjectText';
+import { TFunction } from 'i18next';
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const getNewCondition = (dialogs: TrainerDialogAdditionalDialogs[]) => {
   const currentConditions = dialogs.map(({ condition }) => condition);
@@ -29,6 +31,15 @@ const getNewTextId = (additionalDialogs: StudioTrainerAdditionalDialogs[], dialo
   return findFirstAvailableTextId(allAdditionalDialogs);
 };
 
+const dialogConditionEntries = (dialogs: TrainerDialogAdditionalDialogs[], dialogIndex: number, t: TFunction<'database_trainers'>) => {
+  const currentConditions = dialogs.map(({ condition }) => condition).filter((condition) => condition !== dialogs[dialogIndex].condition);
+  const conditions = TRAINER_ADDITIONAL_DIALOGS_CONDITION.filter((condition) => !currentConditions.includes(condition)).map((condition) => ({
+    value: condition.toString(),
+    label: t(`additional_dialog_${condition}`),
+  }));
+  return conditions;
+};
+
 export type TrainerDialogAdditionalDialogs = {
   condition: 'default' | StudioTrainerAdditionalDialogs['condition'];
   textId: number;
@@ -36,6 +47,7 @@ export type TrainerDialogAdditionalDialogs = {
 
 export const useTrainerDialog = () => {
   const { trainer, trainers } = useTrainerPage();
+  const { t } = useTranslation('database_trainers');
   const setText = useSetProjectText();
   const getText = useGetProjectText();
   const allAdditionalDialogs = useMemo(() => getAllAdditionalDialogs(trainers, trainer), [trainers, trainer]);
@@ -48,6 +60,7 @@ export const useTrainerDialog = () => {
     ...trainer.additionalDialogs,
   ]);
   const [defaultSentence, setDefaultSentence] = useState(getText(TRAINER_ADDITIONAL_DIALOGS_TEXT_ID, dialogs[dialogIndex].textId));
+  const [conditionOptions, setConditionOptions] = useState(dialogConditionEntries(dialogs, dialogIndex, t));
   const currentDialog = dialogs[dialogIndex];
 
   const addDialog = () => {
@@ -55,10 +68,13 @@ export const useTrainerDialog = () => {
       condition: getNewCondition(dialogs),
       textId: getNewTextId(allAdditionalDialogs, dialogs),
     };
+    const newIndex = dialogs.length;
+    const newDialogs = [...dialogs, newDialog];
     setText(TRAINER_ADDITIONAL_DIALOGS_TEXT_ID, newDialog.textId, '');
-    setDialogs((dialogs) => [...cloneEntity(dialogs), newDialog]);
-    setDialogIndex(dialogs.length);
+    setDialogs(newDialogs);
+    setDialogIndex(newIndex);
     setDefaultSentence('');
+    setConditionOptions(dialogConditionEntries(newDialogs, newIndex, t));
   };
 
   const deleteDialog = () => {
@@ -71,6 +87,7 @@ export const useTrainerDialog = () => {
     dialogsUpdated.splice(index, 1);
     setDialogs(dialogsUpdated);
     updateDialogIndex(index - 1);
+    setConditionOptions(dialogConditionEntries(dialogsUpdated, index - 1, t));
   };
 
   const changeCondition = (condition: string) => {
@@ -82,15 +99,16 @@ export const useTrainerDialog = () => {
   const updateDialogIndex = (newIndex: number) => {
     setDialogIndex(newIndex);
     setDefaultSentence(getText(TRAINER_ADDITIONAL_DIALOGS_TEXT_ID, dialogs[newIndex].textId));
+    setConditionOptions(dialogConditionEntries(dialogs, newIndex, t));
   };
 
   return {
     dialogs,
     currentDialog,
-    dialogCount: dialogs.length,
     dialogIndex,
     canAddDialog: dialogs.length < TRAINER_ADDITIONAL_DIALOGS_CONDITION.length + 1,
     defaultSentence,
+    conditionOptions,
     updateDialogIndex,
     addDialog,
     deleteDialog,
