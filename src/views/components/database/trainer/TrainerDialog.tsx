@@ -15,6 +15,11 @@ const TrainerDialogContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
+
+  & .separator {
+    height: 1px;
+    background-color: ${({ theme }) => theme.colors.dark18};
+  }
 `;
 
 type TrainerDialogProps = {
@@ -41,11 +46,12 @@ export const TrainerDialog = ({ trainer, dialogsRef }: TrainerDialogProps) => {
           data={defeatSentence !== '' ? `“${defeatSentence}”` : '---'}
           disabled={defeatSentence === ''}
         />
+        {trainer.additionalDialogs.length > 0 && <div className="separator" />}
         {trainer.additionalDialogs.map((additionalDialog, index) => {
           const additionalDialogText = getText(TRAINER_ADDITIONAL_DIALOGS_TEXT_ID, additionalDialog.textId);
           return (
             <DataFieldsetField
-              label={`${t('condition')} ${t(`additional_dialog_${additionalDialog.condition}`)}`}
+              label={t(`additional_dialog_${additionalDialog.condition}`)}
               data={additionalDialogText !== '' ? `“${additionalDialogText}”` : '---'}
               disabled={additionalDialogText === ''}
               key={`additional-dialog-${index}`}
