@@ -62,6 +62,11 @@ export const TrainerDialogEditor = forwardRef<EditorHandlingClose>((_, ref) => {
     saveTexts();
   };
 
+  const newDialog = () => {
+    saveTexts();
+    setTimeout(addDialog);
+  };
+
   const onClose = () => {
     saveTexts();
     updateTrainer({
@@ -142,7 +147,7 @@ export const TrainerDialogEditor = forwardRef<EditorHandlingClose>((_, ref) => {
           <SubEditorSeparator parentEditorHasScrollBar />
           <Editor type="creation" title={t('scripted_dialog')}>
             <TooltipWrapper data-tooltip={!canAddDialog ? t('max_dialog') : undefined}>
-              <SecondaryButtonWithPlusIcon disabled={!canAddDialog} onClick={addDialog}>
+              <SecondaryButtonWithPlusIcon disabled={!canAddDialog} onClick={newDialog}>
                 {t('new_dialog')}
               </SecondaryButtonWithPlusIcon>
             </TooltipWrapper>

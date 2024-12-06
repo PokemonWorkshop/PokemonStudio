@@ -23,6 +23,7 @@ import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID } from '@modelEntities/map';
 import { MAP_INFO_FOLDER_NAME_TEXT_ID } from '@modelEntities/mapInfo';
 import { cloneEntity } from './cloneEntity';
 import { NATURE_NAME_TEXT_ID } from '@modelEntities/nature';
+import { useEffect } from 'react';
 
 type KeyProjectText = keyof ProjectText;
 
@@ -60,7 +61,13 @@ export const getText = (projectText: TextsWithLanguageConfig, fileId: number, te
 };
 
 export const useGetProjectText = () => {
-  const [{ projectText: texts, projectConfig, projectStudio }] = useGlobalState();
+  const [{ projectText: texts, projectConfig, projectStudio, textVersion }] = useGlobalState();
+
+  useEffect(() => {
+    // Force the hook to refresh the texts when a text is updated (witchcraft)
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    texts;
+  }, [textVersion, texts]);
 
   return (fileId: number, textId: number): string =>
     getText(
