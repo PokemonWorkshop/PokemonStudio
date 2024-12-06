@@ -35,18 +35,8 @@ export const TrainerDialogEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { t } = useTranslation('database_trainers');
   const { trainer } = useTrainerPage();
   const updateTrainer = useUpdateTrainer(trainer);
-  const {
-    dialogs,
-    currentDialog,
-    dialogIndex,
-    canAddDialog,
-    defaultSentence,
-    conditionOptions,
-    updateDialogIndex,
-    addDialog,
-    deleteDialog,
-    changeCondition,
-  } = useTrainerDialog();
+  const { dialogs, currentDialog, dialogIndex, canAddDialog, conditionOptions, updateDialogIndex, addDialog, deleteDialog, changeCondition } =
+    useTrainerDialog();
   const dialogsRef = useDialogsRef<TrainerTranslationEditorTitle>();
   const getText = useGetProjectText();
   const setText = useSetProjectText();
@@ -136,7 +126,12 @@ export const TrainerDialogEditor = forwardRef<EditorHandlingClose>((_, ref) => {
               <InputWithTopLabelContainer>
                 <Label htmlFor="sentence">{t('sentence_spoken')}</Label>
                 <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_additional_dialog')}>
-                  <MultiLineInput id="sentence" defaultValue={defaultSentence} ref={sentenceRef} key={`sentence-${dialogIndex}`} />
+                  <MultiLineInput
+                    id="sentence"
+                    defaultValue={getText(TRAINER_ADDITIONAL_DIALOGS_TEXT_ID, currentDialog.textId)}
+                    ref={sentenceRef}
+                    key={`sentence-${dialogIndex}`}
+                  />
                 </TranslateInputContainer>
               </InputWithTopLabelContainer>
             </PaddedInputContainer>

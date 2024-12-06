@@ -9,7 +9,7 @@ import { ProjectData } from '@src/GlobalStateProvider';
 import { useTrainerPage } from '@src/hooks/usePage';
 import { cloneEntity } from '@utils/cloneEntity';
 import { findFirstAvailableTextId } from '@utils/ModelUtils';
-import { useGetProjectText, useSetProjectText } from '@utils/ReadingProjectText';
+import { useSetProjectText } from '@utils/ReadingProjectText';
 import { TFunction } from 'i18next';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -49,7 +49,6 @@ export const useTrainerDialog = () => {
   const { trainer, trainers } = useTrainerPage();
   const { t } = useTranslation('database_trainers');
   const setText = useSetProjectText();
-  const getText = useGetProjectText();
   const allAdditionalDialogs = useMemo(() => getAllAdditionalDialogs(trainers, trainer), [trainers, trainer]);
   const [dialogIndex, setDialogIndex] = useState<number>(0);
   const [dialogs, setDialogs] = useState<TrainerDialogAdditionalDialogs[]>([
@@ -59,7 +58,6 @@ export const useTrainerDialog = () => {
     },
     ...trainer.additionalDialogs,
   ]);
-  const [defaultSentence, setDefaultSentence] = useState(getText(TRAINER_ADDITIONAL_DIALOGS_TEXT_ID, dialogs[dialogIndex].textId));
   const [conditionOptions, setConditionOptions] = useState(dialogConditionEntries(dialogs, dialogIndex, t));
   const currentDialog = dialogs[dialogIndex];
 
@@ -71,10 +69,11 @@ export const useTrainerDialog = () => {
     const newIndex = dialogs.length;
     const newDialogs = [...dialogs, newDialog];
     setText(TRAINER_ADDITIONAL_DIALOGS_TEXT_ID, newDialog.textId, '');
-    setDialogs(newDialogs);
-    setDialogIndex(newIndex);
-    setDefaultSentence('');
-    setConditionOptions(dialogConditionEntries(newDialogs, newIndex, t));
+    setTimeout(() => {
+      setDialogs(newDialogs);
+      setDialogIndex(newIndex);
+      setConditionOptions(dialogConditionEntries(newDialogs, newIndex, t));
+    }, 0);
   };
 
   const deleteDialog = () => {
@@ -98,7 +97,6 @@ export const useTrainerDialog = () => {
 
   const updateDialogIndex = (newIndex: number) => {
     setDialogIndex(newIndex);
-    setDefaultSentence(getText(TRAINER_ADDITIONAL_DIALOGS_TEXT_ID, dialogs[newIndex].textId));
     setConditionOptions(dialogConditionEntries(dialogs, newIndex, t));
   };
 
@@ -107,7 +105,6 @@ export const useTrainerDialog = () => {
     currentDialog,
     dialogIndex,
     canAddDialog: dialogs.length < TRAINER_ADDITIONAL_DIALOGS_CONDITION.length + 1,
-    defaultSentence,
     conditionOptions,
     updateDialogIndex,
     addDialog,
