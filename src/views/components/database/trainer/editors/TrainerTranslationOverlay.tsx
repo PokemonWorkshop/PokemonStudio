@@ -9,9 +9,8 @@ import {
   TRAINER_VICTORY_SENTENCE_TEXT_ID,
 } from '@modelEntities/trainer';
 import { assertUnreachable } from '@utils/assertUnreachable';
+import type { TrainerDialogAdditionalDialogs } from './TrainerDialogEditor/useTrainerDialog';
 import React from 'react';
-import type { TrainerDialogAdditionalDialogs } from './useTrainerDialog';
-
 export type TrainerTranslationEditorTitle =
   | 'translation_name'
   | 'translation_class'

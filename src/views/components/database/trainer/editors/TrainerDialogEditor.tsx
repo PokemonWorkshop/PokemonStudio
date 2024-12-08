@@ -18,8 +18,8 @@ import { useDialogsRef } from '@hooks/useDialogsRef';
 import { TrainerTranslationEditorTitle, TrainerTranslationOverlay } from './TrainerTranslationOverlay';
 import { TooltipWrapper } from '@ds/Tooltip';
 import { PaginationWithTitleProps } from '@components/PaginationWithTitle';
-import { useTrainerDialog } from './useTrainerDialog';
-import { Select } from '@ds/Select';
+import { useTrainerDialog } from './TrainerDialogEditor/useTrainerDialog';
+import { AdditionalDialogEditor } from './TrainerDialogEditor/AdditionalDialogEditor';
 import { useUpdateTrainer } from './useUpdateTrainer';
 import styled from 'styled-components';
 
@@ -35,8 +35,7 @@ export const TrainerDialogEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { t } = useTranslation('database_trainers');
   const { trainer } = useTrainerPage();
   const updateTrainer = useUpdateTrainer(trainer);
-  const { dialogs, currentDialog, dialogIndex, canAddDialog, conditionOptions, updateDialogIndex, addDialog, deleteDialog, changeCondition } =
-    useTrainerDialog();
+  const { dialogs, currentDialog, dialogIndex, canAddDialog, updateDialogIndex, addDialog, deleteDialog, changeCondition } = useTrainerDialog();
   const dialogsRef = useDialogsRef<TrainerTranslationEditorTitle>();
   const getText = useGetProjectText();
   const setText = useSetProjectText();
@@ -123,23 +122,13 @@ export const TrainerDialogEditor = forwardRef<EditorHandlingClose>((_, ref) => {
           </PaddedInputContainer>
         ) : (
           <InputWithDeleteButton>
-            <PaddedInputContainer>
-              <InputWithTopLabelContainer>
-                <Label htmlFor="condition">{t('condition_appearance')}</Label>
-                <Select options={conditionOptions} value={currentDialog.condition} onChange={changeCondition} key={`condition-${dialogIndex}`} />
-              </InputWithTopLabelContainer>
-              <InputWithTopLabelContainer>
-                <Label htmlFor="sentence">{t('sentence_spoken')}</Label>
-                <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_additional_dialog')}>
-                  <MultiLineInput
-                    id="sentence"
-                    defaultValue={getText(TRAINER_ADDITIONAL_DIALOGS_TEXT_ID, currentDialog.textId)}
-                    ref={sentenceRef}
-                    key={`sentence-${dialogIndex}`}
-                  />
-                </TranslateInputContainer>
-              </InputWithTopLabelContainer>
-            </PaddedInputContainer>
+            <AdditionalDialogEditor
+              dialogs={dialogs}
+              dialogIndex={dialogIndex}
+              changeCondition={changeCondition}
+              sentenceRef={sentenceRef}
+              handleTranslateClick={handleTranslateClick}
+            />
             <DeleteButton onClick={deleteDialog}>{t('delete_dialog')}</DeleteButton>
           </InputWithDeleteButton>
         )}
