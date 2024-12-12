@@ -38,12 +38,12 @@ export const TrainerDialog = ({ trainer, dialogsRef }: TrainerDialogProps) => {
       <TrainerDialogContainer>
         <DataFieldsetField
           label={t('trainer_victory')}
-          data={victorySentence !== '' ? `“${victorySentence}”` : '---'}
+          data={victorySentence !== '' ? `“${victorySentence}”` : t('no_sentence')}
           disabled={victorySentence === ''}
         />
         <DataFieldsetField
           label={t('trainer_defeat')}
-          data={defeatSentence !== '' ? `“${defeatSentence}”` : '---'}
+          data={defeatSentence !== '' ? `“${defeatSentence}”` : t('no_sentence')}
           disabled={defeatSentence === ''}
         />
         {trainer.additionalDialogs.length > 0 && <div className="separator" />}
@@ -52,7 +52,7 @@ export const TrainerDialog = ({ trainer, dialogsRef }: TrainerDialogProps) => {
           return (
             <DataFieldsetField
               label={t(`additional_dialog_${additionalDialog.condition}`)}
-              data={additionalDialogText !== '' ? `“${additionalDialogText}”` : '---'}
+              data={additionalDialogText !== '' ? `“${additionalDialogText}”` : t('no_sentence')}
               disabled={additionalDialogText === ''}
               key={`additional-dialog-${index}`}
             />

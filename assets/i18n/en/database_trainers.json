@@ -89,5 +89,6 @@
   "condition_appearance": "Condition of appearance",
   "sentence_spoken": "Sentence spoken",
   "delete_dialog": "Delete this dialog",
-  "max_dialog": "You cannot create more dialogs"
+  "max_dialog": "You cannot create more dialogs",
+  "no_sentence": "No text provided"
 }

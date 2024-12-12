@@ -89,5 +89,6 @@
   "condition_appearance": "Condition d'apparition",
   "sentence_spoken": "Phrase prononcée",
   "delete_dialog": "Supprimer ce dialogue",
-  "max_dialog": "Vous ne pouvez pas créer de dialogues supplémentaires"
+  "max_dialog": "Vous ne pouvez pas créer de dialogues supplémentaires",
+  "no_sentence": "Aucun texte renseigné"
 }
