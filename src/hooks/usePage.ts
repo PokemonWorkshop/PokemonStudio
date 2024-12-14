@@ -167,6 +167,7 @@ export const useTrainerPage = () => {
   return {
     trainer,
     trainerName,
+    trainers,
     cannotDelete: Object.keys(trainers).length <= 1,
   };
 };

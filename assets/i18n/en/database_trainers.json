@@ -77,5 +77,18 @@
   "bgm_music": "Battle music",
   "character_v3_message": "The character will be used from version 3.0 of the application.",
   "no_trainers_available": "No trainers available for import !",
-  "change_order_info": "You can change the order of the Pokémon in this trainer's party.\n\nThis action has an impact on the money given to the player by this trainer."
+  "change_order_info": "You can change the order of the Pokémon in this trainer's party.\n\nThis action has an impact on the money given to the player by this trainer.",
+  "condition": "Condition:",
+  "additional_dialog_before_creature_send": "Before creature send",
+  "additional_dialog_after_creature_send": "After creature send",
+  "additional_dialog_after_all_actions_choices": "After all actions choices",
+  "additional_dialog_after_attack_action": "After Attack action",
+  "additional_dialog_after_all_turn_actions": "After all turn actions",
+  "additional_dialog_end_of_battle_turn": "At the end of a battle turn",
+  "default_dialogs": "Default dialogs",
+  "condition_appearance": "Condition of appearance",
+  "sentence_spoken": "Sentence spoken",
+  "delete_dialog": "Delete this dialog",
+  "max_dialog": "You cannot create more dialogs",
+  "no_sentence": "No text provided"
 }
