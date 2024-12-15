@@ -44,7 +44,7 @@ export const ClearInput = forwardRef<HTMLInputElement, ClearInputProps>((props, 
   return (
     <ClearInputContainer>
       <Input {...inputProps} ref={ref} />
-      <ClearIcon onClick={onClear} />
+      {props.value !== '' && <ClearIcon onClick={onClear} />}
     </ClearInputContainer>
   );
 });
