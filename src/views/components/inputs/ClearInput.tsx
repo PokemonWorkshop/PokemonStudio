@@ -50,10 +50,18 @@ export const ClearInput = forwardRef<HTMLInputElement, ClearInputProps>((props, 
     setIsIconShown(event.target.value !== '');
   };
 
+  const handleClear = () => {
+    onClear();
+    setIsIconShown(false);
+    if (ref && typeof ref === 'object' && ref.current) {
+      ref.current.value = '';
+    }
+  };
+
   return (
     <ClearInputContainer>
       <Input {...inputProps} ref={ref} onChange={onChange} />
-      {isIconShown && <ClearIcon onClick={onClear} />}
+      {isIconShown && <ClearIcon onClick={handleClear} />}
     </ClearInputContainer>
   );
 });
