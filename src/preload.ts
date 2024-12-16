@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
-import { ipcRenderer, contextBridge, webFrame, IpcRendererEvent } from 'electron';
+import { ipcRenderer, contextBridge, webFrame, IpcRendererEvent, webUtils } from 'electron';
 import { BackendTaskWithGenericError, BackendTaskWithGenericErrorAndNoProgress, GenericBackendProgress, defineBackendTask } from '@utils/BackendTask';
 import type { PSDKVersion } from '@services/getPSDKVersion';
 import type { StudioShortcut } from '@hooks/useShortcuts';
@@ -112,6 +112,7 @@ contextBridge.exposeInMainWorld('api', {
   },
   platform: process.platform,
   externalWindow: (link) => ipcRenderer.send('external-window', link),
+  getPathForFile: (file) => webUtils.getPathForFile(file),
   getStudioVersion: defineBackendTask(ipcRenderer, 'get-studio-version'),
   chooseProjectFileToOpen: defineBackendTask(ipcRenderer, 'choose-project-file-to-open'),
   writeProjectMetadata: defineBackendTask(ipcRenderer, 'write-project-metadata'),
@@ -204,6 +205,7 @@ declare global {
       startPSDKWorldmap: (projectPath: string) => void;
       platform: string;
       externalWindow: (link: string) => void;
+      getPathForFile: (file: File) => string;
       getStudioVersion: BackendTaskWithGenericErrorAndNoProgress<AnyObj, GetStudioVersionOutput>;
       chooseProjectFileToOpen: BackendTaskWithGenericErrorAndNoProgress<ChooseProjectFileToOpenInput, ChooseProjectFileToOpenOutput>;
       writeProjectMetadata: BackendTaskWithGenericErrorAndNoProgress<WriteProjectMetadataInput, AnyObj>;
