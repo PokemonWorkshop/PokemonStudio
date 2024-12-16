@@ -79,18 +79,19 @@ export const PictureInput = ({ picturePathInProject, name, extensions, destFolde
     event.preventDefault();
     event.stopPropagation();
     const acceptedFiles = Array.from(event.dataTransfer.files).filter((file) => !extensions || extensions.includes(file.name.split('.').pop() ?? ''));
-    if (acceptedFiles.length > 0) {
-      if (destFolderToCopy === undefined) {
-        onPictureChoosen(acceptedFiles[0].path);
-      } else {
-        copyFile(
-          { srcFile: acceptedFiles[0].path, destFolder: destFolderToCopy },
-          ({ destFile }) => {
-            setTimeout(() => onPictureChoosen(destFile));
-          },
-          ({ errorMessage }) => window.api.log.error(errorMessage)
-        );
-      }
+    if (acceptedFiles.length <= 0) return;
+
+    const acceptedFilesPath = window.api.getPathForFile(acceptedFiles[0]);
+    if (destFolderToCopy === undefined) {
+      onPictureChoosen(acceptedFilesPath);
+    } else {
+      copyFile(
+        { srcFile: acceptedFilesPath, destFolder: destFolderToCopy },
+        ({ destFile }) => {
+          setTimeout(() => onPictureChoosen(destFile));
+        },
+        ({ errorMessage }) => window.api.log.error(errorMessage)
+      );
     }
   };
 

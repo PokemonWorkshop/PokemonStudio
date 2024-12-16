@@ -78,21 +78,23 @@ export const IconInput = ({
     event.preventDefault();
     event.stopPropagation();
     const acceptedFiles = Array.from(event.dataTransfer.files).filter((file) => !extensions || extensions.includes(file.name.split('.').pop() ?? ''));
-    if (acceptedFiles.length > 0) {
-      if (destFolderToCopy === undefined) {
-        onIconChoosen(acceptedFiles[0].path);
-      } else {
-        copyFile(
-          { srcFile: acceptedFiles[0].path, destFolder: destFolderToCopy },
-          ({ destFile }) => {
-            setTimeout(() => {
-              onIconChoosen(destFile);
-              setFlipFlap((last) => !last);
-            });
-          },
-          ({ errorMessage }) => window.api.log.error(errorMessage)
-        );
-      }
+    if (acceptedFiles.length <= 0) return;
+
+    const acceptedFilesPath = window.api.getPathForFile(acceptedFiles[0]);
+
+    if (destFolderToCopy === undefined) {
+      onIconChoosen(acceptedFilesPath);
+    } else {
+      copyFile(
+        { srcFile: acceptedFilesPath, destFolder: destFolderToCopy },
+        ({ destFile }) => {
+          setTimeout(() => {
+            onIconChoosen(destFile);
+            setFlipFlap((last) => !last);
+          });
+        },
+        ({ errorMessage }) => window.api.log.error(errorMessage)
+      );
     }
   };
 

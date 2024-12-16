@@ -26,9 +26,9 @@ export const useResource = ({ name, path, extensions, onResourceChoosen }: Props
     const acceptedFiles = Array.from(event.dataTransfer.files).filter((file) => extensions.includes(file.name.split('.').pop() ?? ''));
     if (acceptedFiles.length <= 0) return;
 
-    const srcFilePath = window.api.getPathForFile(acceptedFiles[0]);
+    const acceptedFilesPath = window.api.getPathForFile(acceptedFiles[0]);
     copyFile(
-      { srcFile: srcFilePath, destFolder: dirname(path) },
+      { srcFile: acceptedFilesPath, destFolder: dirname(path) },
       ({ destFile }) =>
         setTimeout(() => {
           onResourceChoosen(destFile);
