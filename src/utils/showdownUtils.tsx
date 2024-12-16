@@ -64,7 +64,7 @@ const buildExpandPokemonSetup = (set: PokemonSet, from: string) => {
 
   if (from === 'trainer') {
     setupFields.push({ type: 'caughtWith', value: convertToDbSymbol(set.pokeball) || ('poke_ball' as DbSymbol) });
-    setupFields.push({ type: 'givenName', value: set.name || set.species });
+    if (set.name) setupFields.push({ type: 'givenName', value: set.name });
     setupFields.push({ type: 'ivs', value: formatStats(set.ivs, 31) });
     setupFields.push({ type: 'loyalty', value: set.happiness ?? 70 });
     setupFields.push({ type: 'originalTrainerId', value: 0 });
