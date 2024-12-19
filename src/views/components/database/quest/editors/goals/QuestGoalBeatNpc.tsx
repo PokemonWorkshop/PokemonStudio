@@ -1,17 +1,16 @@
-import { useRefreshUI } from '@components/editor';
 import { Input, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { InputNumber } from './InputNumber';
 import { QuestGoalProps } from './QuestGoalProps';
+import { cloneEntity } from '@utils/cloneEntity';
 
 type QuestGoalBeatNpcProps = {
   setIsEmptyText?: React.Dispatch<React.SetStateAction<boolean>>;
 } & QuestGoalProps;
 
-export const QuestGoalBeatNpc = ({ objective, setIsEmptyText }: QuestGoalBeatNpcProps) => {
+export const QuestGoalBeatNpc = ({ objective, setObjective, setIsEmptyText }: QuestGoalBeatNpcProps) => {
   const { t } = useTranslation('database_quests');
-  const refreshUI = useRefreshUI();
   return (
     <PaddedInputContainer>
       <InputWithTopLabelContainer>
@@ -23,8 +22,10 @@ export const QuestGoalBeatNpc = ({ objective, setIsEmptyText }: QuestGoalBeatNpc
           name="text-beat-npc"
           value={objective.objectiveMethodArgs[1] as string}
           onChange={(event) => {
-            refreshUI((objective.objectiveMethodArgs[1] = event.target.value));
-            if (setIsEmptyText) setIsEmptyText(objective.objectiveMethodArgs[1] === '');
+            const newObjective = cloneEntity(objective);
+            newObjective.objectiveMethodArgs[1] = event.target.value;
+            setObjective(newObjective);
+            if (setIsEmptyText) setIsEmptyText(newObjective.objectiveMethodArgs[1] === '');
           }}
           placeholder={t('example_beat_npc')}
         />
@@ -34,7 +35,11 @@ export const QuestGoalBeatNpc = ({ objective, setIsEmptyText }: QuestGoalBeatNpc
         <InputNumber
           name="amount-beat-npc"
           value={objective.objectiveMethodArgs[2] as number}
-          setValue={(value: number) => refreshUI((objective.objectiveMethodArgs[2] = value))}
+          setValue={(value: number) => {
+            const newObjective = cloneEntity(objective);
+            newObjective.objectiveMethodArgs[2] = value;
+            setObjective(newObjective);
+          }}
         />
       </InputWithLeftLabelContainer>
     </PaddedInputContainer>

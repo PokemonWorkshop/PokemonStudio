@@ -1,19 +1,17 @@
-import React, { useMemo, useRef, useState } from 'react';
 import { Editor } from '@components/editor';
-
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
-import { SelectCustomSimple } from '@components/SelectCustom';
-import styled from 'styled-components';
 import { useProjectQuests } from '@hooks/useProjectData';
 import { DarkButton, PrimaryButton } from '@components/buttons';
-import { QUEST_CATEGORIES, QUEST_DESCRIPTION_TEXT_ID, QUEST_NAME_TEXT_ID, QUEST_RESOLUTIONS, StudioQuestCategory } from '@modelEntities/quest';
+import { QUEST_CATEGORIES, QUEST_DESCRIPTION_TEXT_ID, QUEST_NAME_TEXT_ID, QUEST_RESOLUTIONS } from '@modelEntities/quest';
 import { useSetProjectText } from '@utils/ReadingProjectText';
-import { findFirstAvailableId } from '@utils/ModelUtils';
-import { DbSymbol } from '@modelEntities/dbSymbol';
 import { createQuest } from '@utils/entityCreation';
 import { TooltipWrapper } from '@ds/Tooltip';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import styled from 'styled-components';
+import React, { forwardRef, useMemo, useRef, useState } from 'react';
+import { Select } from '@ds/Select';
 
 const questCategoryEntries = (t: TFunction<'database_quests'>) => QUEST_CATEGORIES.map((category) => ({ value: category, label: t(category) }));
 
@@ -28,29 +26,30 @@ const ButtonContainer = styled.div`
 `;
 
 type QuestNewEditorProps = {
-  onClose: () => void;
+  closeDialog: () => void;
 };
 
-export const QuestNewEditor = ({ onClose }: QuestNewEditorProps) => {
+export const QuestNewEditor = forwardRef<EditorHandlingClose, QuestNewEditorProps>(({ closeDialog }, ref) => {
   const { projectDataValues: quests, setProjectDataValues: setQuest } = useProjectQuests();
   const { t } = useTranslation('database_quests');
   const setText = useSetProjectText();
   const categoryOptions = useMemo(() => questCategoryEntries(t), [t]);
   const resolutionOptions = useMemo(() => questResolutionEntries(t), [t]);
   const [name, setName] = useState(''); // We can't use a ref because of the button behavior
-  const [category, setCategory] = useState<StudioQuestCategory>('primary');
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
+  const categoryRef = useRef<string | undefined>();
+  //const resolutionRef = useRef<string | undefined>();
+
+  useEditorHandlingClose(ref);
 
   const onClickNew = () => {
-    if (!descriptionRef.current) return;
+    if (!descriptionRef.current || !categoryRef.current) return;
 
-    const id = findFirstAvailableId(quests, 0);
-    const dbSymbol = `quest_${id}` as DbSymbol;
-    const quest = createQuest(dbSymbol, id, category === 'primary', 'default');
-    setText(QUEST_NAME_TEXT_ID, id, name);
-    setText(QUEST_DESCRIPTION_TEXT_ID, id, descriptionRef.current.value);
-    setQuest({ [dbSymbol]: quest }, { quest: dbSymbol });
-    onClose();
+    const newQuest = createQuest(quests, categoryRef.current === 'primary', 'default');
+    setText(QUEST_NAME_TEXT_ID, newQuest.id, name);
+    setText(QUEST_DESCRIPTION_TEXT_ID, newQuest.id, descriptionRef.current.value);
+    setQuest({ [newQuest.dbSymbol]: newQuest }, { quest: newQuest.dbSymbol });
+    closeDialog();
   };
 
   return (
@@ -64,23 +63,11 @@ export const QuestNewEditor = ({ onClose }: QuestNewEditorProps) => {
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="select-category">{t('category')}</Label>
-          <SelectCustomSimple
-            id="select-category"
-            options={categoryOptions}
-            onChange={(value) => setCategory(value as StudioQuestCategory)}
-            value={category}
-            noTooltip
-          />
+          <Select id="select-category" options={categoryOptions} optionRef={categoryRef} defaultValue="primary" />
         </InputWithTopLabelContainer>
         {/* <InputWithTopLabelContainer>
           <Label htmlFor="select-resolution">{t('resolution')}</Label>
-          <SelectCustomSimple
-            id="select-resolution"
-            options={resolutionOptions}
-            onChange={(value) => refreshUI((newQuest.resolution = value as QuestResolution))}
-            value={newQuest.resolution}
-            noTooltip
-          />
+          <Select id="select-resolution" options={resolutionOptions} optionRef={resolutionRef} defaultValue="default" />
         </InputWithTopLabelContainer> */}
         <InputWithTopLabelContainer>
           <Label htmlFor="descr">{t('description')}</Label>
@@ -92,9 +79,10 @@ export const QuestNewEditor = ({ onClose }: QuestNewEditorProps) => {
               {t('create_quest')}
             </PrimaryButton>
           </TooltipWrapper>
-          <DarkButton onClick={onClose}>{t('cancel')}</DarkButton>
+          <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
     </Editor>
   );
-};
+});
+QuestNewEditor.displayName = 'QuestNewEditor';

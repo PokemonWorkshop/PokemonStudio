@@ -1,20 +1,19 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { DataGoalGrid, DataQuestTable, TableEmpty } from './QuestTableStyle';
 import { useTranslation } from 'react-i18next';
-import { useProjectQuests } from '@hooks/useProjectData';
 import { RenderGoal } from './RenderGoal';
 import { DragDropContext, Droppable, Draggable, DroppableProvided, DraggableProvided, DraggableStateSnapshot, DropResult } from '@hello-pangea/dnd';
 import { StudioQuest, updateIndexSpeakToBeatNpc } from '@modelEntities/quest';
 import { cloneEntity } from '@utils/cloneEntity';
+import { useUpdateQuest } from '../editors/useUpdateQuest';
 
 type QuestGoalsTableProps = {
   quest: StudioQuest;
-  onEdit: (index: number) => void;
+  setGoalIndex: (index: number) => void;
 };
 
-export const QuestGoalsTable = ({ quest, onEdit }: QuestGoalsTableProps) => {
-  const { setProjectDataValues: setQuest } = useProjectQuests();
-  const currentEditedQuest = useMemo(() => cloneEntity(quest), [quest]);
+export const QuestGoalsTable = ({ quest, setGoalIndex }: QuestGoalsTableProps) => {
+  const updateQuest = useUpdateQuest(quest);
   const { t } = useTranslation('database_quests');
   const [dragOn, setDragOn] = useState(false);
 
@@ -37,9 +36,10 @@ export const QuestGoalsTable = ({ quest, onEdit }: QuestGoalsTableProps) => {
           const desI = result.destination?.index;
           if (desI === undefined) return;
 
-          currentEditedQuest.objectives.splice(desI, 0, currentEditedQuest.objectives.splice(srcI, 1)[0]);
-          updateIndexSpeakToBeatNpc(currentEditedQuest);
-          setQuest({ [quest.dbSymbol]: currentEditedQuest });
+          const newObjectives = cloneEntity(quest.objectives);
+          newObjectives.splice(desI, 0, newObjectives.splice(srcI, 1)[0]);
+          updateIndexSpeakToBeatNpc(newObjectives);
+          updateQuest({ objectives: newObjectives });
         }}
       >
         <Droppable droppableId="droppable-goal">
@@ -55,13 +55,12 @@ export const QuestGoalsTable = ({ quest, onEdit }: QuestGoalsTableProps) => {
                       provided={provided}
                       isDragging={snapshot.isDragging}
                       dragOn={dragOn}
-                      onClickEdit={() => {
-                        onEdit(index);
-                      }}
+                      onClickEdit={() => setGoalIndex(index)}
                       onClickDelete={() => {
-                        currentEditedQuest.objectives.splice(index, 1);
-                        updateIndexSpeakToBeatNpc(currentEditedQuest);
-                        setQuest({ [quest.dbSymbol]: currentEditedQuest });
+                        const newObjectives = cloneEntity(quest.objectives);
+                        newObjectives.splice(index, 1);
+                        updateIndexSpeakToBeatNpc(newObjectives);
+                        updateQuest({ objectives: newObjectives });
                       }}
                     />
                   )}

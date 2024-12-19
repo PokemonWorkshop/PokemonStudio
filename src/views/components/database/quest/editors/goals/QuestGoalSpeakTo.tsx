@@ -1,16 +1,15 @@
-import { useRefreshUI } from '@components/editor';
 import { Input, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { QuestGoalProps } from './QuestGoalProps';
+import { cloneEntity } from '@utils/cloneEntity';
 
 type QuestGoalSpeakToProps = {
-  setIsEmptyText?: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsEmptyText?: (isEmptyText: boolean) => void;
 } & QuestGoalProps;
 
-export const QuestGoalSpeakTo = ({ objective, setIsEmptyText }: QuestGoalSpeakToProps) => {
+export const QuestGoalSpeakTo = ({ objective, setObjective, setIsEmptyText }: QuestGoalSpeakToProps) => {
   const { t } = useTranslation('database_quests');
-  const refreshUI = useRefreshUI();
   return (
     <PaddedInputContainer>
       <InputWithTopLabelContainer>
@@ -22,8 +21,10 @@ export const QuestGoalSpeakTo = ({ objective, setIsEmptyText }: QuestGoalSpeakTo
           name="speak-to"
           value={objective.objectiveMethodArgs[1] as string}
           onChange={(event) => {
-            refreshUI((objective.objectiveMethodArgs[1] = event.target.value));
-            if (setIsEmptyText) setIsEmptyText(objective.objectiveMethodArgs[1] === '');
+            const newObjective = cloneEntity(objective);
+            newObjective.objectiveMethodArgs[1] = event.target.value;
+            setObjective(newObjective);
+            if (setIsEmptyText) setIsEmptyText(newObjective.objectiveMethodArgs[1] === '');
           }}
           placeholder={t('example_speak_to')}
         />

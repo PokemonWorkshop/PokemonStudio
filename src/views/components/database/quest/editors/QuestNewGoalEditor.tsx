@@ -1,12 +1,9 @@
 import { DarkButton, PrimaryButton } from '@components/buttons';
-import { useRefreshUI } from '@components/editor';
 import { EditorWithCollapse } from '@components/editor/Editor';
 import { InputContainer, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
-import { SelectCustomSimple } from '@components/SelectCustom';
-import { QUEST_OBJECTIVES, StudioQuest, StudioQuestObjectiveType, updateIndexSpeakToBeatNpc } from '@modelEntities/quest';
+import { QUEST_OBJECTIVES, StudioQuestObjectiveType, updateIndexSpeakToBeatNpc } from '@modelEntities/quest';
 import { createQuestObjective } from '@utils/entityCreation';
-import { useProjectQuests } from '@hooks/useProjectData';
-import React, { useMemo, useState } from 'react';
+import React, { forwardRef, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import styled from 'styled-components';
@@ -20,6 +17,10 @@ import {
   QuestGoalSpeakTo,
 } from './goals';
 import { TooltipWrapper } from '@ds/Tooltip';
+import { useUpdateQuest } from './useUpdateQuest';
+import { useQuestPage } from '@src/hooks/usePage';
+import { Select } from '@ds/Select';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -32,28 +33,31 @@ const objectiveCategoryEntries = (t: TFunction<'database_quests'>) =>
   QUEST_OBJECTIVES.map((objective) => ({ value: objective, label: t(objective) }));
 
 type QuestNewGoalEditorProps = {
-  quest: StudioQuest;
-  onClose: () => void;
+  closeDialog: () => void;
 };
 
-export const QuestNewGoalEditor = ({ quest, onClose }: QuestNewGoalEditorProps) => {
+export const QuestNewGoalEditor = forwardRef<EditorHandlingClose, QuestNewGoalEditorProps>(({ closeDialog }, ref) => {
   const { t } = useTranslation('database_quests');
-  const refreshUI = useRefreshUI();
+  const { quest } = useQuestPage();
+  const updateQuest = useUpdateQuest(quest);
   const objectiveOptions = useMemo(() => objectiveCategoryEntries(t), [t]);
   const [newObjective, setNewObjective] = useState(createQuestObjective('objective_speak_to'));
   const [isEmptyText, setIsEmptyText] = useState(true);
-  const { setProjectDataValues: setQuest } = useProjectQuests();
+  const objectiveMethodName = newObjective.objectiveMethodName;
+
+  useEditorHandlingClose(ref);
 
   const changeObjective = (value: StudioQuestObjectiveType) => {
     if (value === newObjective.objectiveMethodName) return;
+
     setNewObjective(createQuestObjective(value));
   };
 
   const onClickNew = () => {
-    quest.objectives.push(newObjective);
-    updateIndexSpeakToBeatNpc(quest);
-    setQuest({ [quest.dbSymbol]: quest });
-    onClose();
+    const newObjectives = [...quest.objectives, newObjective];
+    updateIndexSpeakToBeatNpc(newObjectives);
+    updateQuest({ objectives: newObjectives });
+    closeDialog();
   };
 
   const checkIsEmptyText = () => {
@@ -66,32 +70,31 @@ export const QuestNewGoalEditor = ({ quest, onClose }: QuestNewGoalEditorProps) 
         <PaddedInputContainer>
           <InputWithTopLabelContainer>
             <Label htmlFor="goal-type">{t('goal_type')}</Label>
-            <SelectCustomSimple
-              id={'goal-type-select'}
-              value={newObjective.objectiveMethodName}
-              options={objectiveOptions}
-              onChange={(value) => refreshUI(changeObjective(value as StudioQuestObjectiveType))}
-              noTooltip
-            />
+            <Select id="goal-type" value={newObjective.objectiveMethodName} options={objectiveOptions} onChange={changeObjective} />
           </InputWithTopLabelContainer>
         </PaddedInputContainer>
-        {newObjective.objectiveMethodName === 'objective_speak_to' && <QuestGoalSpeakTo objective={newObjective} setIsEmptyText={setIsEmptyText} />}
-        {newObjective.objectiveMethodName === 'objective_beat_npc' && <QuestGoalBeatNpc objective={newObjective} setIsEmptyText={setIsEmptyText} />}
-        {newObjective.objectiveMethodName === 'objective_obtain_item' && <QuestGoalObtainItem objective={newObjective} />}
-        {newObjective.objectiveMethodName === 'objective_see_pokemon' && <QuestGoalSeePokemon objective={newObjective} />}
-        {newObjective.objectiveMethodName === 'objective_beat_pokemon' && <QuestGoalBeatPokemon objective={newObjective} />}
-        {newObjective.objectiveMethodName === 'objective_catch_pokemon' && <QuestGoalCatchPokemon objective={newObjective} />}
-        {newObjective.objectiveMethodName === 'objective_obtain_egg' && <QuestGoalEgg objective={newObjective} />}
-        {newObjective.objectiveMethodName === 'objective_hatch_egg' && <QuestGoalEgg objective={newObjective} />}
+        {objectiveMethodName === 'objective_speak_to' && (
+          <QuestGoalSpeakTo objective={newObjective} setObjective={setNewObjective} setIsEmptyText={setIsEmptyText} />
+        )}
+        {objectiveMethodName === 'objective_beat_npc' && (
+          <QuestGoalBeatNpc objective={newObjective} setObjective={setNewObjective} setIsEmptyText={setIsEmptyText} />
+        )}
+        {objectiveMethodName === 'objective_obtain_item' && <QuestGoalObtainItem setObjective={setNewObjective} objective={newObjective} />}
+        {objectiveMethodName === 'objective_see_pokemon' && <QuestGoalSeePokemon setObjective={setNewObjective} objective={newObjective} />}
+        {objectiveMethodName === 'objective_beat_pokemon' && <QuestGoalBeatPokemon setObjective={setNewObjective} objective={newObjective} />}
+        {objectiveMethodName === 'objective_catch_pokemon' && <QuestGoalCatchPokemon setObjective={setNewObjective} objective={newObjective} />}
+        {objectiveMethodName === 'objective_obtain_egg' && <QuestGoalEgg setObjective={setNewObjective} objective={newObjective} />}
+        {objectiveMethodName === 'objective_hatch_egg' && <QuestGoalEgg setObjective={setNewObjective} objective={newObjective} />}
         <ButtonContainer>
           <TooltipWrapper data-tooltip={checkIsEmptyText() ? t('fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickNew} disabled={checkIsEmptyText()}>
               {t('add_goal')}
             </PrimaryButton>
           </TooltipWrapper>
-          <DarkButton onClick={onClose}>{t('cancel')}</DarkButton>
+          <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
     </EditorWithCollapse>
   );
-};
+});
+QuestNewGoalEditor.displayName = 'QuestNewGoalEditor';
