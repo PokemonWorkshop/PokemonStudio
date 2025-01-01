@@ -24,17 +24,18 @@ export const useResource = ({ name, path, extensions, onResourceChoosen }: Props
     event.preventDefault();
     event.stopPropagation();
     const acceptedFiles = Array.from(event.dataTransfer.files).filter((file) => extensions.includes(file.name.split('.').pop() ?? ''));
-    if (acceptedFiles.length > 0) {
-      copyFile(
-        { srcFile: acceptedFiles[0].path, destFolder: dirname(path) },
-        ({ destFile }) =>
-          setTimeout(() => {
-            onResourceChoosen(destFile);
-            setFlipFlap((last) => !last);
-          }),
-        ({ errorMessage }) => window.api.log.error(errorMessage)
-      );
-    }
+    if (acceptedFiles.length <= 0) return;
+
+    const acceptedFilesPath = window.api.getPathForFile(acceptedFiles[0]);
+    copyFile(
+      { srcFile: acceptedFilesPath, destFolder: dirname(path) },
+      ({ destFile }) =>
+        setTimeout(() => {
+          onResourceChoosen(destFile);
+          setFlipFlap((last) => !last);
+        }),
+      ({ errorMessage }) => window.api.log.error(errorMessage)
+    );
   };
 
   const onClick = async () => {

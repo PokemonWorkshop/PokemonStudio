@@ -40,9 +40,10 @@ export const DropInputFolder = ({ onFolderChoosen }: DropInputFolderProps) => {
     event.preventDefault();
     event.stopPropagation();
     const acceptedFiles = Array.from(event.dataTransfer.files).filter((file) => !file.type);
-    if (acceptedFiles.length > 0) {
-      onFolderChoosen(acceptedFiles[0].path);
-    }
+    if (acceptedFiles.length <= 0) return;
+
+    const acceptedFilesPath = window.api.getPathForFile(acceptedFiles[0]);
+    onFolderChoosen(acceptedFilesPath);
   };
 
   const onClick = async () => {
