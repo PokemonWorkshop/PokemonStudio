@@ -41,7 +41,7 @@ type ClearInputProps = InputHTMLAttributes<HTMLInputElement> & {
 
 export const ClearInput = forwardRef<HTMLInputElement, ClearInputProps>((props, ref) => {
   const { onClear, ...inputProps } = props;
-  const [isIconShown, setIsIconShown] = useState(props.value !== '');
+  const [isIconShown, setIsIconShown] = useState(!!props.value);
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (props.onChange) {
