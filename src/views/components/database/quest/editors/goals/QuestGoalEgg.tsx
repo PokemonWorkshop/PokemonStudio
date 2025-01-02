@@ -1,15 +1,13 @@
-import { useRefreshUI } from '@components/editor';
 import { InputWithLeftLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { InputNumber } from './InputNumber';
-import { QuestGoalProps } from './QuestGoalProps';
+import { QuestUpdateGoalProps } from './QuestGoalProps';
+import React from 'react';
 
 type ObjectivesEgg = 'objective_obtain_egg' | 'objective_hatch_egg';
 
-export const QuestGoalEgg = ({ objective }: QuestGoalProps) => {
+export const QuestGoalEgg = ({ objective, updateObjective }: QuestUpdateGoalProps) => {
   const { t } = useTranslation('database_quests');
-  const refreshUI = useRefreshUI();
   const eggMethodName = objective.objectiveMethodName as ObjectivesEgg;
 
   const index: Record<ObjectivesEgg, number> = {
@@ -24,7 +22,7 @@ export const QuestGoalEgg = ({ objective }: QuestGoalProps) => {
         <InputNumber
           name="amount-egg"
           value={objective.objectiveMethodArgs[index[eggMethodName]] as number}
-          setValue={(value: number) => refreshUI((objective.objectiveMethodArgs[index[eggMethodName]] = value))}
+          setValue={(value) => updateObjective(index[eggMethodName], value)}
         />
       </InputWithLeftLabelContainer>
     </PaddedInputContainer>

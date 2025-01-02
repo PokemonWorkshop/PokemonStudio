@@ -21,6 +21,7 @@ import { useUpdateQuest } from './useUpdateQuest';
 import { useQuestPage } from '@src/hooks/usePage';
 import { Select } from '@ds/Select';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { useUpdateObjectiveQuest } from './useUpdateObjectiveQuest';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -41,27 +42,27 @@ export const QuestNewGoalEditor = forwardRef<EditorHandlingClose, QuestNewGoalEd
   const { quest } = useQuestPage();
   const updateQuest = useUpdateQuest(quest);
   const objectiveOptions = useMemo(() => objectiveCategoryEntries(t), [t]);
-  const [newObjective, setNewObjective] = useState(createQuestObjective('objective_speak_to'));
+  const { objective, setObjective, updateObjective } = useUpdateObjectiveQuest(createQuestObjective('objective_speak_to'));
   const [isEmptyText, setIsEmptyText] = useState(true);
-  const objectiveMethodName = newObjective.objectiveMethodName;
+  const objectiveMethodName = objective.objectiveMethodName;
 
   useEditorHandlingClose(ref);
 
   const changeObjective = (value: StudioQuestObjectiveType) => {
-    if (value === newObjective.objectiveMethodName) return;
+    if (value === objective.objectiveMethodName) return;
 
-    setNewObjective(createQuestObjective(value));
+    setObjective(createQuestObjective(value));
   };
 
   const onClickNew = () => {
-    const newObjectives = [...quest.objectives, newObjective];
+    const newObjectives = [...quest.objectives, objective];
     updateIndexSpeakToBeatNpc(newObjectives);
     updateQuest({ objectives: newObjectives });
     closeDialog();
   };
 
   const checkIsEmptyText = () => {
-    return (newObjective.objectiveMethodName === 'objective_speak_to' || newObjective.objectiveMethodName === 'objective_beat_npc') && isEmptyText;
+    return (objective.objectiveMethodName === 'objective_speak_to' || objective.objectiveMethodName === 'objective_beat_npc') && isEmptyText;
   };
 
   return (
@@ -70,21 +71,23 @@ export const QuestNewGoalEditor = forwardRef<EditorHandlingClose, QuestNewGoalEd
         <PaddedInputContainer>
           <InputWithTopLabelContainer>
             <Label htmlFor="goal-type">{t('goal_type')}</Label>
-            <Select id="goal-type" value={newObjective.objectiveMethodName} options={objectiveOptions} onChange={changeObjective} />
+            <Select id="goal-type" value={objective.objectiveMethodName} options={objectiveOptions} onChange={changeObjective} />
           </InputWithTopLabelContainer>
         </PaddedInputContainer>
         {objectiveMethodName === 'objective_speak_to' && (
-          <QuestGoalSpeakTo objective={newObjective} setObjective={setNewObjective} setIsEmptyText={setIsEmptyText} />
+          <QuestGoalSpeakTo objective={objective} setObjective={setObjective} setIsEmptyText={setIsEmptyText} />
         )}
         {objectiveMethodName === 'objective_beat_npc' && (
-          <QuestGoalBeatNpc objective={newObjective} setObjective={setNewObjective} setIsEmptyText={setIsEmptyText} />
+          <QuestGoalBeatNpc objective={objective} setObjective={setObjective} setIsEmptyText={setIsEmptyText} />
         )}
-        {objectiveMethodName === 'objective_obtain_item' && <QuestGoalObtainItem setObjective={setNewObjective} objective={newObjective} />}
-        {objectiveMethodName === 'objective_see_pokemon' && <QuestGoalSeePokemon setObjective={setNewObjective} objective={newObjective} />}
-        {objectiveMethodName === 'objective_beat_pokemon' && <QuestGoalBeatPokemon setObjective={setNewObjective} objective={newObjective} />}
-        {objectiveMethodName === 'objective_catch_pokemon' && <QuestGoalCatchPokemon setObjective={setNewObjective} objective={newObjective} />}
-        {objectiveMethodName === 'objective_obtain_egg' && <QuestGoalEgg setObjective={setNewObjective} objective={newObjective} />}
-        {objectiveMethodName === 'objective_hatch_egg' && <QuestGoalEgg setObjective={setNewObjective} objective={newObjective} />}
+        {objectiveMethodName === 'objective_obtain_item' && <QuestGoalObtainItem objective={objective} updateObjective={updateObjective} />}
+        {objectiveMethodName === 'objective_see_pokemon' && <QuestGoalSeePokemon objective={objective} updateObjective={updateObjective} />}
+        {objectiveMethodName === 'objective_beat_pokemon' && <QuestGoalBeatPokemon objective={objective} updateObjective={updateObjective} />}
+        {objectiveMethodName === 'objective_catch_pokemon' && (
+          <QuestGoalCatchPokemon objective={objective} setObjective={setObjective} updateObjective={updateObjective} />
+        )}
+        {objectiveMethodName === 'objective_obtain_egg' && <QuestGoalEgg objective={objective} updateObjective={updateObjective} />}
+        {objectiveMethodName === 'objective_hatch_egg' && <QuestGoalEgg objective={objective} updateObjective={updateObjective} />}
         <ButtonContainer>
           <TooltipWrapper data-tooltip={checkIsEmptyText() ? t('fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickNew} disabled={checkIsEmptyText()}>

@@ -1,15 +1,17 @@
-import React from 'react';
 import { InputContainer, InputWithLeftLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
 import { QuestGoalConditions } from './QuestGoalConditions';
-import { QuestGoalProps } from './QuestGoalProps';
-import { useRefreshUI } from '@components/editor';
+import { QuestUpdateGoalProps } from './QuestGoalProps';
 import { InputNumber } from './InputNumber';
 import { useTranslation } from 'react-i18next';
-import { StudioCreatureQuestCondition } from '@modelEntities/quest';
+import { StudioQuestObjective } from '@modelEntities/quest';
+import React from 'react';
 
-export const QuestGoalCatchPokemon = ({ objective }: QuestGoalProps) => {
+type QuestGoalCatchPokemonProps = {
+  setObjective: (objective: StudioQuestObjective) => void;
+} & QuestUpdateGoalProps;
+
+export const QuestGoalCatchPokemon = ({ objective, setObjective, updateObjective }: QuestGoalCatchPokemonProps) => {
   const { t } = useTranslation('database_quests');
-  const refreshUI = useRefreshUI();
   return (
     <InputContainer>
       <PaddedInputContainer>
@@ -18,11 +20,11 @@ export const QuestGoalCatchPokemon = ({ objective }: QuestGoalProps) => {
           <InputNumber
             name="amount-catch-pokemon"
             value={objective.objectiveMethodArgs[1] as number}
-            setValue={(value: number) => refreshUI((objective.objectiveMethodArgs[1] = value))}
+            setValue={(value) => updateObjective(1, value)}
           />
         </InputWithLeftLabelContainer>
       </PaddedInputContainer>
-      <QuestGoalConditions conditions={objective.objectiveMethodArgs[0] as StudioCreatureQuestCondition[]} />
+      <QuestGoalConditions objective={objective} setObjective={setObjective} />
     </InputContainer>
   );
 };

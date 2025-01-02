@@ -6,15 +6,20 @@ import styled from 'styled-components';
 import { ReactComponent as DeleteIcon } from '@assets/icons/global/delete-icon.svg';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
-import { useRefreshUI } from '@components/editor';
 import { InputNumber } from './InputNumber';
 import { SelectType } from '@components/selects';
 import { ReactComponent as PlusIcon } from '@assets/icons/global/plus-icon2.svg';
 import { SelectNature2 } from '@components/selects/SelectNature';
-import { CREATURE_QUEST_CONDITIONS, StudioCreatureQuestCondition, StudioCreatureQuestConditionType } from '@modelEntities/quest';
+import {
+  CREATURE_QUEST_CONDITIONS,
+  StudioCreatureQuestCondition,
+  StudioCreatureQuestConditionType,
+  StudioQuestObjective,
+} from '@modelEntities/quest';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { createCreatureQuestCondition } from '@utils/entityCreation';
 import { SelectPokemon } from '@components/selects/SelectPokemon';
+import { cloneEntity } from '@utils/cloneEntity';
 
 type SelectConditionProps = {
   condition: StudioCreatureQuestCondition;
@@ -76,45 +81,45 @@ const buildExcludeConditions = (conditions: StudioCreatureQuestCondition[], inde
 
 type ValueConditionProps = {
   condition: StudioCreatureQuestCondition;
+  updateCondition: () => void;
 };
 
-const ValueCondition = ({ condition }: ValueConditionProps) => {
+const ValueCondition = ({ condition, updateCondition }: ValueConditionProps) => {
   const { t } = useTranslation('database_quests');
   const { t: tSelect } = useTranslation('select');
-  const refreshUI = useRefreshUI();
   const { type, value } = condition;
+
+  const updateValue = (value: number | DbSymbol) => {
+    condition.value = value;
+    updateCondition();
+  };
 
   if (type === 'level' || type === 'minLevel' || type === 'maxLevel') {
     return (
       <InputWithLeftLabelContainer>
         <Label htmlFor="input-level">{t('level')}</Label>
-        <InputNumber name="input-level" value={value as number} setValue={(newValue) => refreshUI((condition.value = newValue))} />
+        <InputNumber name="input-level" value={value as number} setValue={updateValue} />
       </InputWithLeftLabelContainer>
     );
   } else if (type === 'nature') {
     return (
       <InputWithTopLabelContainer>
         <Label htmlFor="nature">{t('nature')}</Label>
-        <SelectNature2 name="natureDbSymbol" defaultValue={value} onChange={(dbSymbol) => refreshUI((condition.value = dbSymbol))} />
+        <SelectNature2 name="natureDbSymbol" defaultValue={value} onChange={updateValue} />
       </InputWithTopLabelContainer>
     );
   } else if (type === 'type') {
     return (
       <InputWithTopLabelContainer>
         <Label htmlFor="type">{t('type')}</Label>
-        <SelectType dbSymbol={value as string} onChange={(value) => refreshUI((condition.value = value as DbSymbol))} noLabel noneValue />
+        <SelectType dbSymbol={value as string} onChange={(value) => updateValue(value as DbSymbol)} noLabel noneValue />
       </InputWithTopLabelContainer>
     );
   } else {
     return (
       <InputWithTopLabelContainer>
         <Label htmlFor="pokemon">{t('condition_pokemon')}</Label>
-        <SelectPokemon
-          dbSymbol={value as string}
-          onChange={(value) => refreshUI((condition.value = value as DbSymbol))}
-          undefValueOption={tSelect('none')}
-          noLabel
-        />
+        <SelectPokemon dbSymbol={value as string} onChange={(value) => updateValue(value as DbSymbol)} undefValueOption={tSelect('none')} noLabel />
       </InputWithTopLabelContainer>
     );
   }
@@ -126,9 +131,10 @@ type GoalConditionProps = {
   excludeConditions: StudioCreatureQuestConditionType[];
   onChange: (value: string) => void;
   onDelete: () => void;
+  updateCondition: () => void;
 };
 
-const GoalCondition = ({ condition, index, excludeConditions, onChange, onDelete }: GoalConditionProps) => {
+const GoalCondition = ({ condition, index, excludeConditions, onChange, onDelete, updateCondition }: GoalConditionProps) => {
   const { t } = useTranslation('database_quests');
   return (
     <InputContainer>
@@ -141,7 +147,7 @@ const GoalCondition = ({ condition, index, excludeConditions, onChange, onDelete
           <Label htmlFor="condition">{t('label_condition')}</Label>
           <SelectCondition condition={condition} index={index} excludeConditions={excludeConditions} onChange={onChange} />
         </InputWithTopLabelContainer>
-        <ValueCondition condition={condition} />
+        <ValueCondition condition={condition} updateCondition={updateCondition} />
       </PaddedInputContainer>
     </InputContainer>
   );
@@ -155,23 +161,39 @@ const QuestGoalConditionsContainer = styled.div`
 `;
 
 type QuestGoalConditionsProps = {
-  conditions: StudioCreatureQuestCondition[];
+  objective: StudioQuestObjective;
+  setObjective: (objective: StudioQuestObjective) => void;
 };
 
-export const QuestGoalConditions = ({ conditions }: QuestGoalConditionsProps) => {
+export const QuestGoalConditions = ({ objective, setObjective }: QuestGoalConditionsProps) => {
   const { t } = useTranslation('database_quests');
-  const refreshUI = useRefreshUI();
+  const conditions = useMemo(() => cloneEntity(objective.objectiveMethodArgs[0] as StudioCreatureQuestCondition[]), [objective]);
   const excludeConditions = buildExcludeConditions(conditions, -1);
+
+  const updateCondition = () => {
+    const updatedObjective = cloneEntity(objective);
+    updatedObjective.objectiveMethodArgs[0] = conditions;
+    setObjective(updatedObjective);
+  };
 
   const addCondition = () => {
     const remainingConditions = CREATURE_QUEST_CONDITIONS.filter((type) => !excludeConditions.includes(type));
     if (remainingConditions.length === 0) return;
+
     conditions.push(createCreatureQuestCondition(remainingConditions[0]));
+    updateCondition();
   };
 
   const onChangeCondition = (type: string, index: number) => {
     if (conditions[index].type === type) return;
-    refreshUI((conditions[index] = createCreatureQuestCondition(type as StudioCreatureQuestConditionType)));
+
+    conditions[index] = createCreatureQuestCondition(type as StudioCreatureQuestConditionType);
+    updateCondition();
+  };
+
+  const deleteCondition = (index: number) => {
+    conditions.splice(index, 1);
+    updateCondition();
   };
 
   return (
@@ -185,13 +207,14 @@ export const QuestGoalConditions = ({ conditions }: QuestGoalConditionsProps) =>
               excludeConditions={buildExcludeConditions(conditions, index)}
               index={index}
               onChange={(value) => onChangeCondition(value, index)}
-              onDelete={() => refreshUI(conditions.splice(index, 1))}
+              onDelete={() => deleteCondition(index)}
+              updateCondition={updateCondition}
             />
           ))}
         </QuestGoalConditionsContainer>
       )}
       {excludeConditions.length !== CREATURE_QUEST_CONDITIONS.length && (
-        <SecondaryNoBackground onClick={() => refreshUI(addCondition())}>
+        <SecondaryNoBackground onClick={addCondition}>
           <PlusIcon />
           <span>{t('add_condition')}</span>
         </SecondaryNoBackground>
