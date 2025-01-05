@@ -42,7 +42,7 @@ type ZoneTravelEditorProps = {
 };
 
 export const ZoneTravelEditor = ({ zone }: ZoneTravelEditorProps) => {
-  const { t } = useTranslation('database_zones');
+  const { t } = useTranslation();
   const refreshUI = useRefreshUI();
 
   const onChangeWarp = (b: boolean) => {

@@ -20,7 +20,7 @@ type TextInputProps = EvolutionConditionEditorInput & {
 };
 
 export const TextInput = ({ type, state, inputRefs, evolutionInfo }: TextInputProps) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!isTypeValidInput(type)) return;

@@ -21,7 +21,7 @@ type QuestFrameEditorProps = {
 };
 
 export const QuestFrameEditor = ({ quest, openTranslationEditor }: QuestFrameEditorProps) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const getQuestName = useGetEntityNameText();
   const getQuestDescription = useGetEntityDescriptionText();
   const setText = useSetProjectText();

@@ -31,7 +31,7 @@ type PSDKUpdateState =
 const needUpdate = (state: PSDKUpdateState) => (state.loading ? false : state.currentVersion.int < state.lastVersion.int);
 
 const PSDKUpdatePageComponent = () => {
-  const { t } = useTranslation(['psdk_update']);
+  const { t } = useTranslation();
   const [globalState, setGlobalState] = useGlobalState();
   const [state, setState] = useState<PSDKUpdateState>({ loading: true, currentVersion: globalState.currentPSDKVersion });
   const loaderContextRef = useLoaderRef();
@@ -47,18 +47,18 @@ const PSDKUpdatePageComponent = () => {
 
   const updatePSDK = (): void => {
     if (state.loading) return;
-    loaderContextRef.current.open('updating_psdk', 0, 0, t('psdk_update:update_pending'));
+    loaderContextRef.current.open('updating_psdk', 0, 0, t('update_pending'));
     window.api.updatePSDK(
       state.currentVersion.int,
-      (current, total, version) => loaderContextRef.current.setProgress(current, total, t('psdk_update:update_status', { version: version.string })),
+      (current, total, version) => loaderContextRef.current.setProgress(current, total, t('update_status', { version: version.string })),
       (success) => {
         if (success) {
           loaderContextRef.current.close();
-          showNotification('success', t('psdk_update:notif_title'), t('psdk_update:update_success'));
+          showNotification('success', t('notif_title'), t('update_success'));
           setState({ ...state, currentVersion: state.lastVersion });
           setGlobalState({ ...globalState, currentPSDKVersion: state.lastVersion });
         } else {
-          loaderContextRef.current.setError('updating_psdk_error', t('psdk_update:update_error'));
+          loaderContextRef.current.setError('updating_psdk_error', t('update_error'));
         }
       }
     );

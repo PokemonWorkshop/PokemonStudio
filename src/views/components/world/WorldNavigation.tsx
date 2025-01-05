@@ -19,7 +19,7 @@ const WorldBuildingNavigationStyle = styled(NavigationDatabaseStyle)`
 `;
 
 export const WorldNavigation = () => {
-  const { t } = useTranslation('world');
+  const { t } = useTranslation();
   return (
     <WorldNavigationStyle>
       <WorldBuildingNavigationStyle>

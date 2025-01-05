@@ -22,7 +22,7 @@ type ItemFrameProps = { dialogsRef: ItemDialogsRef };
 
 export const ItemFrame = ({ dialogsRef }: ItemFrameProps) => {
   const { currentItem: item, currentItemName } = useItemPage();
-  const { t } = useTranslation(['database_types']);
+  const { t } = useTranslation();
   const getItemDescription = useGetEntityDescriptionText();
   const category = ITEM_CATEGORY[item.klass];
 

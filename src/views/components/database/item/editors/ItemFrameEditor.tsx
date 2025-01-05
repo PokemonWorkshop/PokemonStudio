@@ -34,7 +34,7 @@ export const ItemFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { currentItem: item, currentItemName } = useItemPage();
   const { setProjectDataValues: setItems } = useProjectItems();
   const dialogsRef = useDialogsRef<TranslationEditorTitle>();
-  const { t } = useTranslation(['database_items', 'database_types']);
+  const { t } = useTranslation();
   const options = useMemo(() => itemCategoryEntries(t), [t]);
   const getItemDescription = useGetEntityDescriptionText();
   const getItemNamePlural = useGetItemPluralNameText();

@@ -14,7 +14,7 @@ type QuestControlBarProps = {
 };
 
 export const QuestControlBar = ({ onChange, quest, onClickNewQuest }: QuestControlBarProps) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   useSetCurrentDatabasePath();
 
   return (

@@ -25,7 +25,7 @@ type SelectPokemonProps = {
 };
 
 export const SelectPokemon = ({ dbSymbol, onChange, breakpoint, noLabel, undefValueOption }: SelectPokemonProps) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const creatureOptions = useSelectOptions('creatures');
   const options = useMemo(() => {
     if (undefValueOption) return [{ value: '__undef__', label: undefValueOption }, ...creatureOptions];
@@ -51,7 +51,7 @@ type SelectPokemon2Props = {
 };
 
 export const SelectPokemon2 = (props: SelectPokemon2Props) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const creatureOptions = useSelectOptions('creatures') as SelectOption<DbSymbol>[];
 
   return <Select options={creatureOptions} notFoundLabel={t('pokemon_deleted')} chooseValue="__undef__" {...props} />;

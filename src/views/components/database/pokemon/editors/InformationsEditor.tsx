@@ -23,7 +23,7 @@ const OffsetInfo = styled.div`
 `;
 
 export const InformationsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const dialogsRef = useDialogsRef<TranslationEditorTitle>();
   const { creature, form, creatureName, formName } = useCreaturePage();
   const updateForm = useUpdateForm(creature, form);

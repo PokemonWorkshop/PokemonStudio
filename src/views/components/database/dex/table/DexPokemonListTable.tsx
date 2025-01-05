@@ -33,7 +33,7 @@ type DexPokemonListTableProps = {
 export const DexPokemonListTable = ({ dex, dialogsRef, setCreatureIndex }: DexPokemonListTableProps) => {
   const { selectedDataIdentifier: selectedDex, setProjectDataValues: setDex } = useProjectDex();
   const { projectDataValues: allPokemon } = useProjectPokemon();
-  const { t } = useTranslation(['database_dex', 'database_pokemon', 'database_types']);
+  const { t } = useTranslation();
   const [dragOn, setDragOn] = useState(false);
   const [scrollToRow, setScrollToRow] = useState<number | undefined>(undefined);
   // eslint-disable-next-line react-hooks/exhaustive-deps

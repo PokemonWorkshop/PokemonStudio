@@ -37,7 +37,7 @@ const MOVE_NEW_EDITOR_SCHEMA = MOVE_VALIDATOR.pick({ type: true, category: true 
 
 export const MoveNewEditor = forwardRef<EditorHandlingClose, MoveNewEditorProps>(({ closeDialog }, ref) => {
   const { projectDataValues: moves, setProjectDataValues: setMove } = useProjectMoves();
-  const { t } = useTranslation('database_moves');
+  const { t } = useTranslation();
   const { t: tType } = useTranslation('database_types');
   const setText = useSetProjectText();
   const [name, setName] = useState(''); // We use a state because synchronizing dbSymbol is easier with a state

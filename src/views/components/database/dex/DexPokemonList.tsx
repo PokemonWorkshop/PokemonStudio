@@ -29,7 +29,7 @@ type DexPokemonListProps = {
 
 export const DexPokemonList = ({ dex, cannotImport, allPokemon, dialogsRef, setCreatureIndex }: DexPokemonListProps) => {
   const isAddUnavailable = useMemo(() => checkAddUnavailable(dex, allPokemon), [dex, allPokemon]);
-  const { t } = useTranslation('database_dex');
+  const { t } = useTranslation();
   return (
     <DataBlockEditor
       size="full"

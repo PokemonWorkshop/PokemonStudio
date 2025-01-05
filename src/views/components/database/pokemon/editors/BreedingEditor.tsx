@@ -45,7 +45,7 @@ const BREEDING_EDITOR_SCHEMA = CREATURE_FORM_VALIDATOR.pick({
 });
 
 export const BreedingEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const { creature, form } = useCreaturePage();
   const updateForm = useUpdateForm(creature, form);
   const { canClose, getFormData, onInputTouched, defaults, formRef } = useZodForm(BREEDING_EDITOR_SCHEMA, form);

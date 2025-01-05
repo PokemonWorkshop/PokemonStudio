@@ -14,7 +14,7 @@ type EvolutionDataBlockProps = {
 
 export const EvolutionDataBlock = ({ pokemonWithForm, evolutionIndex, setEvolutionIndex, dialogsRef }: EvolutionDataBlockProps) => {
   const { projectDataValues: pokemon } = useProjectPokemon();
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const getEntityName = useGetEntityNameText();
   const { species, form } = pokemonWithForm;
 

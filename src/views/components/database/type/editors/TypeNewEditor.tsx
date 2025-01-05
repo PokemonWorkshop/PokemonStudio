@@ -37,7 +37,7 @@ type TypeNewEditorProps = {
 };
 export const TypeNewEditor = forwardRef<EditorHandlingClose, TypeNewEditorProps>(({ from, closeDialog }, ref) => {
   const { projectDataValues: types, setProjectDataValues: setType } = useProjectTypes();
-  const { t } = useTranslation(['database_types', 'database_moves']);
+  const { t } = useTranslation();
   const setText = useSetProjectText();
   const [name, setName] = useState('');
   const [previewColor, setPreviewColor] = useState('#C3B5B2');

@@ -41,7 +41,7 @@ type PokemonBattlerEditorProps = {
 
 export const PokemonBattlerEditor = forwardRef<EditorHandlingClose, PokemonBattlerEditorProps>(
   ({ action, currentBattler, from, closeDialog }, ref) => {
-    const { t } = useTranslation(['database_pokemon', 'database_abilities', 'pokemon_battler_list', 'select']);
+    const { t } = useTranslation();
     const {
       encounter,
       updateEncounter,

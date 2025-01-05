@@ -27,7 +27,7 @@ type AdditionalDialogEditorProps = {
 };
 
 export const AdditionalDialogEditor = ({ dialogs, dialogIndex, sentenceRef, changeCondition, handleTranslateClick }: AdditionalDialogEditorProps) => {
-  const { t } = useTranslation('database_trainers');
+  const { t } = useTranslation();
   const getText = useGetProjectText();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const options = useMemo(() => dialogConditionEntries(dialogs, dialogIndex, t), [dialogs, dialogIndex]);

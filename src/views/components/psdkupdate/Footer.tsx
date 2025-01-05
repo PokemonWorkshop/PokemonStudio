@@ -29,7 +29,7 @@ const LatestVersionContainer = styled.div`
 `;
 
 const Footer = ({ version }: { version: string }) => {
-  const { t } = useTranslation(['psdk_update']);
+  const { t } = useTranslation();
 
   return (
     <FooterContainer>

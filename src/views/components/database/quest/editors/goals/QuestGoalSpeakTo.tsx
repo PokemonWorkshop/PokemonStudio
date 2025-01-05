@@ -9,7 +9,7 @@ type QuestGoalSpeakToProps = {
 } & QuestGoalProps;
 
 export const QuestGoalSpeakTo = ({ objective, setIsEmptyText }: QuestGoalSpeakToProps) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const refreshUI = useRefreshUI();
   return (
     <PaddedInputContainer>

@@ -48,7 +48,7 @@ const getResistances = (allTypes: StudioType[], type: StudioType) => {
 export const TypeResistanceData = () => {
   const { types: allTypes, currentType: type } = useTypePage();
   const types: StudioType[] = Object.values(allTypes);
-  const { t } = useTranslation('database_types');
+  const { t } = useTranslation();
   const efficiencyData = getResistances(types, type);
 
   return (

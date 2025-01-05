@@ -21,7 +21,7 @@ const battleEngineMethodEntries = (t: TFunction<'database_moves'>) => [
 const PARAMETERS_EDITOR_SCHEMA = MOVE_VALIDATOR.pick({ battleEngineAimedTarget: true, battleEngineMethod: true });
 
 export const MoveParametersEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_moves');
+  const { t } = useTranslation();
   const { move } = useMovePage();
   const updateMove = useUpdateMove(move);
   const { canClose, getFormData, getRawFormData, defaults, formRef } = useZodForm(PARAMETERS_EDITOR_SCHEMA, move);

@@ -15,7 +15,7 @@ type QuestEarningsProps = {
 
 export const QuestEarnings = ({ quest, onDelete, onImport, onNew, onEdit }: QuestEarningsProps) => {
   const { projectDataValues: quests } = useProjectQuests();
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   return (
     <DataBlockEditor
       size="full"

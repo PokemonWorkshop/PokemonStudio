@@ -41,7 +41,7 @@ type NewLinkEditorProps = {
 };
 
 export const NewLinkEditor = ({ mapLink, cardinal, onClose, onAddLink }: NewLinkEditorProps) => {
-  const { t } = useTranslation(['database_maplinks', 'database_moves']);
+  const { t } = useTranslation();
   const [selectedMap, setSelectedMap] = useState<string>('__undef__');
   const [offset, setOffset] = useState<number>(0);
 

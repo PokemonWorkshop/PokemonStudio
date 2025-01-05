@@ -25,7 +25,7 @@ export const MovepoolDeletion = ({ type, onClose }: MovepoolDeletionProps) => {
   const { projectDataValues: pokemon, selectedDataIdentifier: currentPokemon, setProjectDataValues: setPokemon } = useProjectPokemon();
   const { projectDataValues: moves } = useProjectMoves();
   const getCreatureName = useGetEntityNameText();
-  const { t } = useTranslation(['database_pokemon']);
+  const { t } = useTranslation();
 
   const onClickDelete = () => {
     const currentEditedPokemon = cloneEntity(pokemon[currentPokemon.specie]);

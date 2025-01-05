@@ -37,7 +37,7 @@ export const PokemonBattlerDeletion = forwardRef<EditorHandlingClose, PokemonBat
   const { group, groupName } = useGroupPage();
   const updateTrainer = useUpdateTrainer(trainer);
   const updateGroup = useUpdateGroup(group);
-  const { t } = useTranslation(['database_trainers', 'database_groups']);
+  const { t } = useTranslation();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const creature = useMemo(() => creatures[getEncounters(from, index, trainer, group)], []);

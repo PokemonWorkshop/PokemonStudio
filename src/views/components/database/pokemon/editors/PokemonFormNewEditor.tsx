@@ -46,7 +46,7 @@ const formCategoryEntries = (t: TFunction<'database_pokemon'>) =>
 const CREATURE_FORM_NEW_EDITOR_SCHEMA = CREATURE_FORM_VALIDATOR.pick({ type1: true, type2: true });
 
 export const PokemonFormNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeDialog, setEvolutionIndex }, ref) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const { t: tMove } = useTranslation('database_moves');
   const { creature, form, creatureName } = useCreaturePage();
   const { projectDataValues: creatures, setProjectDataValues: setCreature } = useProjectPokemon();

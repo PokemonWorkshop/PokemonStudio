@@ -26,7 +26,7 @@ export const SelectZone = ({
   noneValueIsError,
   overwriteNoneValue,
 }: SelectDataProps) => {
-  const { t } = useTranslation('database_zones');
+  const { t } = useTranslation();
   const [state] = useGlobalState();
   const getZoneName = useGetEntityNameText();
   // eslint-disable-next-line react-hooks/exhaustive-deps

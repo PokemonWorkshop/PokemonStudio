@@ -15,7 +15,7 @@ const xpCurveEntries = (curves: string[]) =>
 const EXPERIENCE_EDITOR_SCHEMA = CREATURE_FORM_VALIDATOR.pick({ experienceType: true, baseExperience: true, baseLoyalty: true });
 
 export const ExperienceEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const { creature, form } = useCreaturePage();
   const updateForm = useUpdateForm(creature, form);
   const { canClose, getFormData, onInputTouched, defaults, formRef } = useZodForm(EXPERIENCE_EDITOR_SCHEMA, form);

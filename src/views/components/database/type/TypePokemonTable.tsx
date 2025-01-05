@@ -98,7 +98,7 @@ const getFormWithCurrentType = (pokemon: StudioCreature, type: StudioType) =>
 
 const RenderPokemon = ({ pokemon, type, state }: RenderMoveProps) => {
   const form = getFormWithCurrentType(pokemon, type);
-  const { t } = useTranslation('database_types');
+  const { t } = useTranslation();
   const getCreatureName = useGetEntityNameText();
   const getAbilityName = useGetEntityNameTextUsingTextId();
   const { projectDataValues: abilities } = useProjectAbilities();
@@ -158,7 +158,7 @@ const getAllPokemonWithCurrentType = (type: StudioType, state: State) => {
 
 export const TypePokemonTable = ({ type }: TypePokemonTableProps) => {
   const [state] = useGlobalState();
-  const { t } = useTranslation('database_types');
+  const { t } = useTranslation();
   const allPokemon = getAllPokemonWithCurrentType(type, state);
 
   return (

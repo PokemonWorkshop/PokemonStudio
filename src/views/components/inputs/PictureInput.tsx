@@ -71,7 +71,7 @@ export const PictureInput = ({ picturePathInProject, name, extensions, destFolde
   const [state] = useGlobalState();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [error, setError] = useState<boolean>(false);
-  const { t } = useTranslation('audio');
+  const { t } = useTranslation();
   const chooseFile = useChoosefile();
   const copyFile = useCopyFile();
 

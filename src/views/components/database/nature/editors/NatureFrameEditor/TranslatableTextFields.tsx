@@ -20,7 +20,7 @@ type TranslatableTextFieldsProps = {
 
 export const TranslatableTextFields = forwardRef<TranslatableTextFieldsRef, TranslatableTextFieldsProps>(
   ({ natureName, nature, handleTranslateClick }, ref) => {
-    const { t } = useTranslation('database_natures');
+    const { t } = useTranslation();
     const nameRef = useRef<HTMLInputElement>(null);
     const setText = useSetProjectText();
 

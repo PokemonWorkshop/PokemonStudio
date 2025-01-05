@@ -66,7 +66,7 @@ export const PokemonBattlerListGrid = styled.div`
 
 export const PokemonBattlerList = ({ title, encounters, disabledImport, from }: PokemonBattlerListProps) => {
   const dialogsRef = useDialogsRef<PokemonBattlerEditorAndDeletionKeys>();
-  const { t } = useTranslation('pokemon_battler_list');
+  const { t } = useTranslation();
   const { trainer } = useTrainerPage();
   const [currentBattler, setCurrentBattler] = useState<CurrentBattlerType>({ index: 0, kind: undefined });
 

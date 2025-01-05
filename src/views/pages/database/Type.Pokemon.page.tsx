@@ -18,7 +18,7 @@ export const TypePokemonPage = () => {
   const { currentTypeName, currentType: type, types } = useTypePage();
   const [currentType, setCurrentType] = useState(type);
   const navigate = useNavigate();
-  const { t } = useTranslation('database_types');
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!currentType) return;

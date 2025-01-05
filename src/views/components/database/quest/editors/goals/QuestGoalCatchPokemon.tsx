@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { StudioCreatureQuestCondition } from '@modelEntities/quest';
 
 export const QuestGoalCatchPokemon = ({ objective }: QuestGoalProps) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const refreshUI = useRefreshUI();
   return (
     <InputContainer>

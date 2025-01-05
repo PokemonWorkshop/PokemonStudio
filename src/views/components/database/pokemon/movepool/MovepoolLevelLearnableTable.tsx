@@ -149,7 +149,7 @@ const RenderEditMove = ({
   occurrences,
   movePool,
 }: RenderEditMoveProps) => {
-  const { t } = useTranslation(['database_moves']);
+  const { t } = useTranslation();
   const [state] = useGlobalState();
   const getMoveName = useGetEntityNameText();
   const move = moves[learnableMove.move];
@@ -219,7 +219,7 @@ export const MovepoolLevelLearnableTable = () => {
     selectedDataIdentifier: pokemonIdentifier,
     setProjectDataValues: setPokemon,
   } = useProjectData('pokemon', 'pokemon');
-  const { t } = useTranslation(['database_pokemon', 'database_moves']);
+  const { t } = useTranslation();
   const currentEditedPokemon = cloneEntity(pokemon[pokemonIdentifier.specie]);
   const getMoveName = useGetEntityNameText();
   const moveOptions = useMemo(() => getMoveOptions(moves, getMoveName), [moves, getMoveName]);

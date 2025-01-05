@@ -7,7 +7,7 @@ import { InputNumber } from './InputNumber';
 import { QuestGoalProps } from './QuestGoalProps';
 
 export const QuestGoalObtainItem = ({ objective }: QuestGoalProps) => {
-  const { t } = useTranslation(['database_items', 'database_quests']);
+  const { t } = useTranslation();
   const refreshUI = useRefreshUI();
   return (
     <PaddedInputContainer>

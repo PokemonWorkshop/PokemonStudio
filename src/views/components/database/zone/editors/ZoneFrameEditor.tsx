@@ -14,7 +14,7 @@ type ZoneFrameEditorProps = {
 };
 
 export const ZoneFrameEditor = ({ zone, openTranslationEditor }: ZoneFrameEditorProps) => {
-  const { t } = useTranslation('database_zones');
+  const { t } = useTranslation();
   const setText = useSetProjectText();
   const getZoneName = useGetEntityNameText();
   const getZoneDescription = useGetEntityDescriptionText();

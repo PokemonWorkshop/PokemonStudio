@@ -20,7 +20,7 @@ type ZoneSettingsProps = {
 };
 
 export const ZoneSettings = ({ zone, onClick }: ZoneSettingsProps) => {
-  const { t } = useTranslation('database_zones');
+  const { t } = useTranslation();
 
   return (
     <DataBlockWithTitle size="half" title={t('settings')} onClick={onClick}>

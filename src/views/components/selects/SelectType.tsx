@@ -14,22 +14,22 @@ type SelectTypeProps = {
 };
 
 export const SelectType = ({ dbSymbol, onChange, noLabel, noneValue, undefValueOption, filter }: SelectTypeProps) => {
-  const { t } = useTranslation(['database_types', 'select']);
+  const { t } = useTranslation();
   const typeOptions = useSelectOptions('types');
 
   const options = useMemo(() => {
     if (undefValueOption) return [{ value: '__undef__', label: undefValueOption }, ...typeOptions];
-    if (noneValue) return [{ value: '__undef__', label: t('select:none') }, ...typeOptions];
+    if (noneValue) return [{ value: '__undef__', label: t('none') }, ...typeOptions];
     return typeOptions;
   }, [undefValueOption, typeOptions, noneValue, t]);
 
-  const optionals = { deletedOption: t('database_types:type_deleted'), filter };
+  const optionals = { deletedOption: t('type_deleted'), filter };
 
   if (noLabel) return <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />;
 
   return (
     <SelectContainerWithLabel>
-      <span>{t('database_types:title')}</span>
+      <span>{t('title')}</span>
       <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />
     </SelectContainerWithLabel>
   );

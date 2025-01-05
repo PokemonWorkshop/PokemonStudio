@@ -14,7 +14,7 @@ type ItemDeletionProps = {
  */
 export const ItemDeletion = forwardRef<EditorHandlingClose, ItemDeletionProps>(({ closeDialog }, ref) => {
   const { items, itemDbSymbol, currentItemName } = useItemPage();
-  const { t } = useTranslation('database_items');
+  const { t } = useTranslation();
   const { removeProjectDataValue: deleteItem } = useProjectItems();
 
   const onClickDelete = () => {

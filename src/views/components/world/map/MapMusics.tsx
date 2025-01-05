@@ -11,7 +11,7 @@ type Props = {
 };
 
 export const MapMusics = ({ map, dialogsRef, disabled }: Props) => {
-  const { t } = useTranslation('database_maps');
+  const { t } = useTranslation();
 
   return (
     <DataBlockWithTitle size="full" title={t('musics')} disabled={disabled} onClick={() => dialogsRef.current?.openDialog('musics')}>

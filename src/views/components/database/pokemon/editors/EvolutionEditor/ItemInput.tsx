@@ -13,7 +13,7 @@ export const ItemInput = ({ type, state, dispatch }: EvolutionConditionEditorInp
   const getItemName = useGetEntityNameText();
   const stoneOptions = useSelectOptions('itemStone');
   const gemmeOptions = useSelectOptions('itemGem');
-  const { t } = useTranslation(['database_pokemon', 'database_items']);
+  const { t } = useTranslation();
   if (type !== 'gemme' && type !== 'stone' && type !== 'itemHold') return null;
 
   const dbSymbol = state[type];

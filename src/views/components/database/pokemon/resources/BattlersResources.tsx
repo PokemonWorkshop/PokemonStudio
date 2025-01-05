@@ -13,7 +13,7 @@ type BattlersResourcesProps = {
 };
 
 export const BattlersResources = ({ creature, form, canShowFemale }: BattlersResourcesProps) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const { onResourceChoosen, onResourceClean, onShowFemale } = useUpdateResources(creature, form);
   const titleResource = useTitleResource();
 

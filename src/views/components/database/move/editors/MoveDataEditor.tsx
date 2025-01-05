@@ -24,7 +24,7 @@ const DATA_EDITOR_SCHEMA = MOVE_VALIDATOR.pick({
 });
 
 export const MoveDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_moves');
+  const { t } = useTranslation();
   const { move } = useMovePage();
   const updateMove = useUpdateMove(move);
   const { canClose, getFormData, onInputTouched, defaults, formRef } = useZodForm(DATA_EDITOR_SCHEMA, move);

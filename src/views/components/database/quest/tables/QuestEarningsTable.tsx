@@ -14,7 +14,7 @@ type QuestEarningsTableProps = {
 export const QuestEarningsTable = ({ quest, onEdit }: QuestEarningsTableProps) => {
   const { setProjectDataValues: setQuest } = useProjectQuests();
   const currentEditedQuest = useMemo(() => cloneEntity(quest), [quest]);
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
 
   return quest.earnings.length === 0 ? (
     <TableEmpty>{t('no_earning')}</TableEmpty>

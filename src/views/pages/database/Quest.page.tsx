@@ -38,7 +38,7 @@ export const QuestPage = () => {
     getPreviousDbSymbol,
     getNextDbSymbol,
   } = useProjectQuests();
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const getQuestName = useGetEntityNameText();
   const onChange: SelectChangeEvent = (selected) => setSelectedDataIdentifier({ quest: selected.value });
   const quest = quests[questDbSymbol];

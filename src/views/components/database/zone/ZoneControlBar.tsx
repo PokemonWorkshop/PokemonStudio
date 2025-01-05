@@ -14,7 +14,7 @@ type ZoneControlBarProps = {
 };
 
 export const ZoneControlBar = ({ onChange, zone, onClickNewZone }: ZoneControlBarProps) => {
-  const { t } = useTranslation('database_zones');
+  const { t } = useTranslation();
   useSetCurrentDatabasePath();
 
   return (

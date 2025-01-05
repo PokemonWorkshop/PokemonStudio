@@ -68,7 +68,7 @@ RenderOptionActive.displayName = 'RenderOptionActive';
 
 export const DashboardGameOptionsActive = () => {
   const { gameOptions, disableOption, changeOrder, disabledDisableOption } = useDashboardGameOptions();
-  const { t } = useTranslation('dashboard_game_options');
+  const { t } = useTranslation();
   const [dragOn, setDragOn] = useState(false);
 
   return (

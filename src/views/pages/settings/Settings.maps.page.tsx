@@ -27,7 +27,7 @@ export const SettingsMapsPage = () => {
   const { projectStudioValues: projectStudio } = useProjectStudio();
   const [tiledPath, setTiledPath] = useState(getSetting('tiledPath'));
   const dialogsRef = useDialogsRef<SettingsEditorAndDeletionKeys>();
-  const { t } = useTranslation(['settings', 'settings_maps']);
+  const { t } = useTranslation();
   const isWin32 = window.api.platform === 'win32';
 
   const handleFileChoosen = (filePath: string) => {
@@ -46,10 +46,10 @@ export const SettingsMapsPage = () => {
   };
 
   return (
-    <PageTemplate title={t('settings:map_management')} size="default">
-      <PageEditor title="Tiled" editorTitle={t('settings:map_management')}>
+    <PageTemplate title={t('map_management')} size="default">
+      <PageEditor title="Tiled" editorTitle={t('map_management')}>
         <InputWithLeftLabelContainer>
-          <Label>{t('settings_maps:use_tiled')}</Label>
+          <Label>{t('use_tiled')}</Label>
           <Toggle
             name="use_tiled"
             checked={projectStudio.isTiledMode || false}
@@ -62,11 +62,11 @@ export const SettingsMapsPage = () => {
         </InputWithLeftLabelContainer>
         {projectStudio.isTiledMode && (
           <InputWithTopLabelContainer>
-            <Label>{t('settings_maps:tiled_path')}</Label>
+            <Label>{t('tiled_path')}</Label>
             {tiledPath ? (
               <FileInput
                 filePath={tiledPath}
-                name={isWin32 ? t('settings_maps:tiled_exe') : 'Tiled'}
+                name={isWin32 ? t('tiled_exe') : 'Tiled'}
                 extensions={isWin32 ? ['exe'] : ['*']}
                 onFileChoosen={handleFileChoosen}
                 onFileClear={handleFileClear}
@@ -75,15 +75,11 @@ export const SettingsMapsPage = () => {
                 noIcon
               />
             ) : (
-              <DropInput
-                name={isWin32 ? t('settings_maps:tiled_exe') : 'Tiled'}
-                extensions={isWin32 ? ['exe'] : ['*']}
-                onFileChoosen={handleFileChoosen}
-              />
+              <DropInput name={isWin32 ? t('tiled_exe') : 'Tiled'} extensions={isWin32 ? ['exe'] : ['*']} onFileChoosen={handleFileChoosen} />
             )}
             <DownloadMessageContainer>
-              {t('settings_maps:download_message')}
-              <Link external href="https://www.mapeditor.org" text={t('settings_maps:official_website')} />
+              {t('download_message')}
+              <Link external href="https://www.mapeditor.org" text={t('official_website')} />
             </DownloadMessageContainer>
           </InputWithTopLabelContainer>
         )}

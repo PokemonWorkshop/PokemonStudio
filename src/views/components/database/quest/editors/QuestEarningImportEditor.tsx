@@ -36,7 +36,7 @@ export const QuestEarningImportEditor = ({ quest, onClose }: QuestEarningImportE
     .filter((d) => d.value !== quest.dbSymbol)
     .sort((a, b) => a.index - b.index)[0].value;
   const [selectedQuest, setSelectedQuest] = useState(firstDbSymbol);
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const [override, setOverride] = useState(false);
   const refreshUI = useRefreshUI();
 

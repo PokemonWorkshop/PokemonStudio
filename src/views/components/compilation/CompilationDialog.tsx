@@ -42,7 +42,7 @@ export const CompilationDialog = ({ closeDialog }: CompilationDialogProps) => {
   const [, setGlobalState] = useGlobalState();
   const { canClose, getFormData, onInputTouched, defaults, formRef } = useZodForm(COMPILATION_DIALOG_SCHEMA, initForm(gameInfo, state));
   const { Input } = useInputAttrsWithLabel(COMPILATION_DIALOG_SCHEMA, defaults);
-  const { t } = useTranslation('compilation');
+  const { t } = useTranslation();
   const loaderRef = useLoaderRef();
 
   const onClickCompile = () => {

@@ -15,7 +15,7 @@ import { useAbilityPage } from '@hooks/usePage';
  * Component that is mainly responsive of editing the name and description of the ability when we click over the top frame in the ability page.
  */
 export const AbilityFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_abilities');
+  const { t } = useTranslation();
   const { ability } = useAbilityPage();
   // dialogsRef used to open the translation editor through AbilityTranslationOverlay
   const dialogsRef = useDialogsRef<TranslationEditorTitle>();

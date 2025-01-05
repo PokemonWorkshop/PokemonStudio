@@ -42,7 +42,7 @@ const CREATURE_NEW_EDITOR_SCHEMA = CREATURE_FORM_VALIDATOR.pick({ type1: true, t
 export const PokemonNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeDialog, setEvolutionIndex }, ref) => {
   const { projectDataValues: creatures, setProjectDataValues: setCreature } = useProjectPokemon();
   const { projectDataValues: dex, setProjectDataValues: setDex } = useProjectDex();
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const { t: tMove } = useTranslation('database_moves');
   const setText = useSetProjectText();
   const [name, setName] = useState(''); // We use a state because synchronizing dbSymbol is easier with a state

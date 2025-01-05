@@ -31,7 +31,7 @@ const ButtonContainer = styled.div`
  * Dialog shown when user wants to create a new texts file
  */
 export const TextNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeDialog }, ref) => {
-  const { t } = useTranslation('text_management');
+  const { t } = useTranslation();
   const { textInfosValues: textInfos, setTextInfosValues: setTextInfos } = useTextInfos();
   const setText = useSetProjectText();
   const setNewProjectText = useNewProjectText();

@@ -17,7 +17,7 @@ type ZoneGroupsTableProps = {
 export const ZoneGroupsTable = ({ zone, groups, onEdit }: ZoneGroupsTableProps) => {
   const { setProjectDataValues: setZone } = useProjectZones();
   const currentEditedZone = useMemo(() => cloneEntity(zone), [zone]);
-  const { t } = useTranslation('database_zones');
+  const { t } = useTranslation();
   const [dragOn, setDragOn] = useState(false);
 
   return zone.wildGroups.length === 0 ? (

@@ -22,7 +22,7 @@ type CompilationLogsProps = {
 };
 
 export const CompilationLogs = ({ configuration }: CompilationLogsProps) => {
-  const { t } = useTranslation('compilation');
+  const { t } = useTranslation();
   const logsRef = useRef<HTMLTextAreaElement>(null);
   const progressBarRef = useRef<HTMLProgressElement>(null);
   const loaderRef = useLoaderRef();

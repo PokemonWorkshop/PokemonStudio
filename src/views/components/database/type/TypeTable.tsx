@@ -12,7 +12,7 @@ export const TypeTable = () => {
   const allTypes = useMemo(() => Object.values(types).sort((a, b) => a.id - b.id), [types]);
   const [hoveredDefensiveType, setHoveredDefensiveType] = useState('__undef__');
   const [typeHelperSelected, setTypeHelperSelected] = useState<HelperSelectedType>({ offensiveType: undefined, defensiveType: undefined });
-  const { t } = useTranslation('database_types');
+  const { t } = useTranslation();
 
   const editType = (type: StudioType) => {
     setType({ [type.dbSymbol]: type });

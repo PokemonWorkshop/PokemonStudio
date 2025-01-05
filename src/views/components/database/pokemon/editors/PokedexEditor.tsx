@@ -17,7 +17,7 @@ import { InputFormContainer } from '@components/inputs/InputContainer';
 const POKEDEX_EDITOR_SCHEMA = CREATURE_FORM_VALIDATOR.pick({ weight: true, height: true });
 
 export const PokedexEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const dialogsRef = useDialogsRef<TranslationEditorTitle>();
   const { creature, form } = useCreaturePage();
   const updateForm = useUpdateForm(creature, form);

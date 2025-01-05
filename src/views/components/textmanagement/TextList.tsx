@@ -20,7 +20,7 @@ type TextListProps = {
 };
 
 export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => {
-  const { t } = useTranslation(['text_management', 'copy']);
+  const { t } = useTranslation();
   const [research, setResearch] = useState<string>('');
   const [scrollToEnd, setScrollToEnd] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -45,7 +45,7 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
     navigator.clipboard.writeText(
       textInfo.fileId >= 100000 && textInfo.fileId < 200000 ? `text_get(${textInfo.fileId - 100000}, ${row})` : `ext_text(${textInfo.fileId}, ${row})`
     );
-    window.dispatchEvent(new CustomEvent('tooltip:ChangeText', { detail: t('copy:copied') }));
+    window.dispatchEvent(new CustomEvent('ChangeText', { detail: t('copied') }));
   };
 
   const handleScroll = () => {
@@ -77,7 +77,7 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
           name="research"
           value={research}
           onChange={(event) => setResearch(event.target.value.toLowerCase())}
-          placeholder={t('text_management:search_text')}
+          placeholder={t('search_text')}
           onClear={() => setResearch('')}
         />
       </TitleContainer>
@@ -85,7 +85,7 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
         <DataTextListTable>
           <DataTextGrid gap="8px" className="header">
             <span>ID</span>
-            <span>{t('text_management:text')}</span>
+            <span>{t('text')}</span>
             <span />
           </DataTextGrid>
           <DataTextList height={getHeight(textsFiltered.length)}>
@@ -107,7 +107,7 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
                           style={{ ...style, width: 'calc(100% - 4px)' }}
                         >
                           <span
-                            data-tooltip={t('copy:copy_code')}
+                            data-tooltip={t('copy_code')}
                             data-tooltip-remain-on-click
                             onClick={(event) => onClickCopy(event, textsFiltered[index].textId)}
                             style={{ cursor: 'pointer' }}

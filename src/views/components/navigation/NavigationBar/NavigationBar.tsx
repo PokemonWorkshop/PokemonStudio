@@ -13,7 +13,7 @@ import { useToolTip } from '@hooks/useToolTip';
 export const NavigationBarComponent = () => {
   const theme = useTheme();
   const [state] = useGlobalState();
-  const { t } = useTranslation('main_menu');
+  const { t } = useTranslation();
   const { buildOnMouseEnter, onMouseLeave, renderToolTip } = useToolTip(); // TODO: Add position + Arrow support to automatic tooltip
   const needUpdate = state.projectData && state.currentPSDKVersion.int < state.lastPSDKVersion.int;
 

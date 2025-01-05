@@ -64,7 +64,7 @@ export const SelectDataGeneric = ({
   noneValue,
   overwriteNoneValue,
 }: SelectDataGenericProps) => {
-  const { t } = useTranslation('select');
+  const { t } = useTranslation();
   const genericOptions = useMemo(
     () => getOptions(options, t, rejected, noneValue, overwriteNoneValue),
     [noneValue, options, rejected, overwriteNoneValue, t]

@@ -36,7 +36,7 @@ export const ZoneGroupImportEditor = ({ zone, onClose }: ZoneGroupImportEditorPr
     .filter((d) => d.value !== zone.dbSymbol)
     .sort((a, b) => a.index - b.index)[0].value;
   const [selectedZone, setSelectedZone] = useState(firstDbSymbol);
-  const { t } = useTranslation('database_zones');
+  const { t } = useTranslation();
   const [override, setOverride] = useState(false);
   const refreshUI = useRefreshUI();
 

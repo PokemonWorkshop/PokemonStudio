@@ -7,7 +7,7 @@ import { InputNumber } from '../goals/InputNumber';
 import { QuestEarningProps } from './QuestEarningProps';
 
 export const QuestEarningItem = ({ earning }: QuestEarningProps) => {
-  const { t } = useTranslation(['database_items', 'database_quests']);
+  const { t } = useTranslation();
   const refreshUI = useRefreshUI();
   return (
     <InputContainer>

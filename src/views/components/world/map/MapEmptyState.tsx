@@ -33,7 +33,7 @@ type MapEmptyStateProps = {
 };
 
 export const MapEmptyState = ({ dialogsRef, dialogsMapImportRef }: MapEmptyStateProps) => {
-  const { t } = useTranslation('database_maps');
+  const { t } = useTranslation();
 
   return (
     <PageEmptyState title={t('title_empty_state')} icon={<MapIcon />} description={t('description_empty_state')}>

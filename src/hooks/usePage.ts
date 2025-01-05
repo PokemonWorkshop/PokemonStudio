@@ -190,7 +190,7 @@ export const useOverviewPage = () => {
   const { map, disabledOpenTiled } = useMapPage();
   const generatingMapOverview = useGeneratingMapOverview();
   const loaderRef = useLoaderRef();
-  const { t } = useTranslation('database_maps');
+  const { t } = useTranslation();
   const [globalState] = useGlobalState();
   const [state, setState] = useState<OverviewCheck>('checking');
   const [version, setVersion] = useState<number>(0);

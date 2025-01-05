@@ -32,7 +32,7 @@ type HomeProjectNewEditorProps = {
 };
 
 export const HomeProjectNewEditor = forwardRef<EditorHandlingClose, HomeProjectNewEditorProps>(({ closeDialog }, ref) => {
-  const { t } = useTranslation('homepage');
+  const { t } = useTranslation();
   const [newProjectData, setNewProjectData] = useState<Omit<NewProjectData, 'clone'>>({
     title: '',
     icon: undefined,

@@ -196,7 +196,7 @@ type PokemonBattlerMovesetProps = {
 
 const PokemonBattlerMoveset = ({ moveset, onClick }: PokemonBattlerMovesetProps) => {
   const { projectDataValues: moves } = useProjectMoves();
-  const { t } = useTranslation('database_moves');
+  const { t } = useTranslation();
   const getMoveName = useGetEntityNameText();
   const isClickable: boolean = useKeyPress(CONTROL);
   const shortcutNavigation = useShortcutNavigation('moves', 'move', '/database/moves/');
@@ -263,7 +263,7 @@ export const PokemonBattler = ({ pokemon, index, from, dialogsRef, setCurrentBat
   const nature = natures[natureSetup];
   const evSetup = pokemon.expandPokemonSetup.find((setup) => setup.type === 'evs')?.value as StudioIvEv;
   const movesSetup = pokemon.expandPokemonSetup.find((setup) => setup.type === 'moves')?.value as string[];
-  const { t } = useTranslation(['database_abilities', 'database_pokemon', 'database_items', 'pokemon_battler_list']);
+  const { t } = useTranslation();
   const [allowParentHover, setAllowParentHover] = useState(true);
   const getEntityName = useGetEntityNameText();
 

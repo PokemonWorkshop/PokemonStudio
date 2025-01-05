@@ -25,7 +25,7 @@ const OverlayContainer = styled(EditorOverlayContainer)`
 `;
 
 export const UnsavedWarningModal = () => {
-  const { t } = useTranslation(['unsaved_modal']);
+  const { t } = useTranslation();
   const { isDataToSave, save } = useProjectSave();
   const loaderRef = useLoaderRef();
   const [show, setShow] = useState<boolean>(false);

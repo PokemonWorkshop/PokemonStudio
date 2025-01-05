@@ -197,7 +197,7 @@ const RenderGoalChildren = ({ objective, texts, index }: { objective: StudioQues
 export const RenderGoal = React.forwardRef<HTMLInputElement, RenderGoalProps>(
   ({ objective, index, provided, isDragging, dragOn, onClickEdit, onClickDelete }, ref) => {
     const [state] = useGlobalState();
-    const { t } = useTranslation('database_quests');
+    const { t } = useTranslation();
     const objectiveText: string | Array<string> = buildGoalText(objective, state, t);
 
     return (

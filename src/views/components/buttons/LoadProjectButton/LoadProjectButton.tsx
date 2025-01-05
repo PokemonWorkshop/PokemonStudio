@@ -11,7 +11,7 @@ export const LoadProjectButton = ({ children }: LoadProjectButtonProps) => {
   const navigate = useNavigate();
   const loaderRef = useLoaderRef();
   const projectLoad = useProjectLoad();
-  const { t } = useTranslation(['loader']);
+  const { t } = useTranslation();
 
   const handleClick = async (projectDirName?: string) => {
     projectLoad(

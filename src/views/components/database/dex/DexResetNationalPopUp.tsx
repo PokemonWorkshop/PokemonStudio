@@ -61,7 +61,7 @@ type DexResetNationalPopUpProps = {
 };
 
 export const DexResetNationalPopUp = ({ onClose }: DexResetNationalPopUpProps) => {
-  const { t } = useTranslation(['deletion', 'database_dex']);
+  const { t } = useTranslation();
   const { projectDataValues: allPokemon } = useProjectPokemon();
   const { dex } = useDexPage();
   const updateDex = useUpdateDex(dex);

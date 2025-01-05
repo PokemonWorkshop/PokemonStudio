@@ -22,7 +22,7 @@ const initForm = (form: StudioCreatureForm) => {
 };
 
 export const EncounterEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const { t: tSelect } = useTranslation('select');
   const { creature, form } = useCreaturePage();
   const updateForm = useUpdateForm(creature, form);

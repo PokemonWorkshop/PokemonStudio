@@ -2,7 +2,7 @@ import { TrainerResourcesPath } from '@utils/path';
 import { useTranslation } from 'react-i18next';
 
 export const useTitleResource = () => {
-  const { t } = useTranslation('database_trainers');
+  const { t } = useTranslation();
 
   const titleResource = (resource: TrainerResourcesPath) => {
     switch (resource) {

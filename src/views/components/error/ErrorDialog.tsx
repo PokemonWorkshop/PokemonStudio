@@ -70,7 +70,7 @@ type DeletionProps = {
 };
 
 export const ErrorDialog = ({ title, message, isLogsAvailable, dynamicAction, onClose }: DeletionProps) => {
-  const { t } = useTranslation(['error']);
+  const { t } = useTranslation();
   const openStudioLogsFolder = useOpenStudioLogsFolder();
 
   const onClickLogs = async () => {

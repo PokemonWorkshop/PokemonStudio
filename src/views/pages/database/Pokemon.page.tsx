@@ -23,7 +23,7 @@ export const PokemonPage = () => {
   const dialogsRef = useDialogsRef<PokemonEditorAndDeletionKeys>();
   const { creature, form, cannotDelete } = useCreaturePage();
   const pokemonWithForm = { species: creature, form };
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
 
   return (
     <DatabasePageStyle>

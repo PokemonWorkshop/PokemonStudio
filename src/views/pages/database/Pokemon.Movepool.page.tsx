@@ -10,7 +10,7 @@ import { DeletionOverlay } from '@components/deletion';
 import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';
 
 export const PokemonMovepoolPage = () => {
-  const { t } = useTranslation(['database_pokemon']);
+  const { t } = useTranslation();
 
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const onCloseEditor = () => {
@@ -47,9 +47,9 @@ export const PokemonMovepoolPage = () => {
             <DatabaseTabsBar
               currentTabIndex={1}
               tabs={[
-                { label: t('database_pokemon:pokemon'), path: '/database/pokemon' },
-                { label: t('database_pokemon:movepool'), path: '/database/pokemon/movepool' },
-                { label: t('database_pokemon:resources'), path: '/database/pokemon/resources' },
+                { label: t('pokemon'), path: '/database/pokemon' },
+                { label: t('movepool'), path: '/database/pokemon/movepool' },
+                { label: t('resources'), path: '/database/pokemon/resources' },
               ]}
             />
           </DataBlockWrapper>

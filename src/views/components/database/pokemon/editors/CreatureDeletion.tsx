@@ -10,7 +10,7 @@ type CreatureDeletionProps = {
 };
 
 export const CreatureDeletion = forwardRef<EditorHandlingClose, CreatureDeletionProps>(({ closeDialog }, ref) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const { creatureName } = useCreaturePage();
   const { projectDataValues: creatures, selectedDataIdentifier: currentPokemon, removeProjectDataValue: deletePokemon } = useProjectPokemon();
   const pokemon = useMemo(() => creatureName, []);

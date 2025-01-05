@@ -18,7 +18,7 @@ import { TooltipWrapper } from '@ds/Tooltip';
 export const DexPage = () => {
   const [creatureIndex, setCreatureIndex] = useState(0);
   const { dex, allPokemon, cannotDelete, cannotImport } = useDexPage();
-  const { t } = useTranslation('database_dex');
+  const { t } = useTranslation();
   const dialogsRef = useDialogsRef<DexEditorAndDeletionKeys>();
 
   return (

@@ -5,7 +5,7 @@ import { NavigationDatabaseItem } from '../NavigationDatabaseItem';
 import { NavigationDatabaseStyle } from './NavigationDatabaseStyle';
 
 export const NavigationDatabase = () => {
-  const { t } = useTranslation('submenu_database');
+  const { t } = useTranslation();
   return (
     <NavigationDatabaseStyle>
       <NavigationDatabaseGroup title={t('data')}>

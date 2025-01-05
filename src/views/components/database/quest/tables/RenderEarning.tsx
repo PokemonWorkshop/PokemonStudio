@@ -74,7 +74,7 @@ type RenderEarningProps = {
 
 export const RenderEarning = ({ earning, onClickEdit, onClickDelete }: RenderEarningProps) => {
   const [state] = useGlobalState();
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const earningText: string = buildEarningText(earning, state);
   const earningClickable: boolean = categoryClickable[earning.earningMethodName] ? true : false;
   const isClickable: boolean = useKeyPress(CONTROL) && earningClickable && !earningText.includes('???');

@@ -13,7 +13,7 @@ type MoveDeletionProps = {
  * Component responsive of asking the user if they really want to delete the move before doing so.
  */
 export const MoveDeletion = forwardRef<EditorHandlingClose, MoveDeletionProps>(({ closeDialog }, ref) => {
-  const { t } = useTranslation('database_moves');
+  const { t } = useTranslation();
   const { projectDataValues: moves, selectedDataIdentifier: dbSymbol, removeProjectDataValue: deleteMove, state } = useProjectMoves();
   const move = moves[dbSymbol];
   // eslint-disable-next-line react-hooks/exhaustive-deps

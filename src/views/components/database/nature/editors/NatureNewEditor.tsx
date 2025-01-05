@@ -28,7 +28,7 @@ type NatureNewEditorProps = {
 
 export const NatureNewEditor = forwardRef<EditorHandlingClose, NatureNewEditorProps>(({ closeDialog }, ref) => {
   const { projectDataValues: natures, setProjectDataValues: setNature } = useProjectNatures();
-  const { t } = useTranslation('database_natures');
+  const { t } = useTranslation();
   const setText = useSetProjectText();
   const [name, setName] = useState(''); // We use a state because synchronizing dbSymbol is easier with a state
   const dbSymbolRef = useRef<HTMLInputElement>(null);

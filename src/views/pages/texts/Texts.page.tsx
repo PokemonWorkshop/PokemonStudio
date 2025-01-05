@@ -12,7 +12,7 @@ import { useTextPage } from '@hooks/usePage';
 export const TextsPage = () => {
   const dialogsRef: TextDialogsRef = useOutletContext();
   const { textInfo, cannotDelete, disabledTranslation } = useTextPage();
-  const { t } = useTranslation('text_management');
+  const { t } = useTranslation();
 
   return (
     <DataBlockWrapper>

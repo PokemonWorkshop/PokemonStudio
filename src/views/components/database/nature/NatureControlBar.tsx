@@ -15,7 +15,7 @@ type NatureControlBarProps = {
 };
 
 export const NatureControlBar = ({ dialogsRef }: NatureControlBarProps) => {
-  const { t } = useTranslation('database_natures');
+  const { t } = useTranslation();
   const { selectedDataIdentifier: natureDbSymbol, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol } = useProjectNatures();
   useSetCurrentDatabasePath();
 

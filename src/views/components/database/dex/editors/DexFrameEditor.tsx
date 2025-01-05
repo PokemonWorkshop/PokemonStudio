@@ -12,7 +12,7 @@ import { useDialogsRef } from '@hooks/useDialogsRef';
 import { useUpdateDex } from './useUpdateDex';
 
 export const DexFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_dex');
+  const { t } = useTranslation();
   const { dex } = useDexPage();
   const updateDex = useUpdateDex(dex);
   const getDexName = useGetEntityNameUsingCSV();

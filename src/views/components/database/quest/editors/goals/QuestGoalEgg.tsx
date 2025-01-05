@@ -8,7 +8,7 @@ import { QuestGoalProps } from './QuestGoalProps';
 type ObjectivesEgg = 'objective_obtain_egg' | 'objective_hatch_egg';
 
 export const QuestGoalEgg = ({ objective }: QuestGoalProps) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const refreshUI = useRefreshUI();
   const eggMethodName = objective.objectiveMethodName as ObjectivesEgg;
 

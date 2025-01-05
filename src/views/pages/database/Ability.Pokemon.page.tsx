@@ -10,7 +10,7 @@ import { useAbilityPage } from '@hooks/usePage';
 
 export const AbilityPokemonPage = () => {
   const { ability, abilityName } = useAbilityPage();
-  const { t } = useTranslation('database_abilities');
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const onClickedBack = () => navigate('/database/abilities');

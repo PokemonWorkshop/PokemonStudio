@@ -18,7 +18,7 @@ type ParametersTitleType =
 
 export const MovePokemonPage = () => {
   const { move, moveName } = useMovePage();
-  const { t } = useTranslation('database_moves');
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const onClickedBack = () => navigate('/database/moves');
   const parameters: Array<{ title: ParametersTitleType; filter: FilterType }> = [

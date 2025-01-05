@@ -23,7 +23,7 @@ export const TypeFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const dialogsRef = useDialogsRef<TranslationEditorTitle>();
   const { currentTypeName, currentType } = useTypePage();
   const updateType = useUpdateType(currentType);
-  const { t } = useTranslation(['database_types', 'database_moves']);
+  const { t } = useTranslation();
   const setText = useSetProjectText();
   const nameRef = useRef<HTMLInputElement>(null);
   const [color, setColor] = useState(currentType.color || '#C3B5B2');

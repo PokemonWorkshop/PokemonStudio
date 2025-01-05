@@ -34,7 +34,7 @@ const updateStatsForNatureEntity = (stats: StudioNatureStats) => {
 };
 
 export const NatureStatsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_natures');
+  const { t } = useTranslation();
   const { nature } = useNaturePage();
   const updateNature = useUpdateNature(nature);
   const { canClose, getFormData, onInputTouched, defaults, formRef } = useZodForm(STATS_EDITOR_SCHEMA, updateStatsForEditor(nature));

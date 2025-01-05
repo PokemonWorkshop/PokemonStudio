@@ -54,7 +54,7 @@ export const ZonePokemonList = ({ pokemon }: PokemonZoneProps) => {
   const { projectDataValues: species } = useProjectPokemon();
   const getEntityName = useGetEntityNameText();
   const specie = species[pokemon.specie];
-  const { t } = useTranslation(['database_zones', 'database_pokemon']);
+  const { t } = useTranslation();
   const isClickable: boolean = useKeyPress(CONTROL);
   const shortcutPokemonNavigation = usePokemonShortcutNavigation();
 

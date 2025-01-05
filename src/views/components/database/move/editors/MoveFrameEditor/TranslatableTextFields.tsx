@@ -20,7 +20,7 @@ type TranslatableTextFieldsProps = {
 
 export const TranslatableTextFields = forwardRef<TranslatableTextFieldsRef, TranslatableTextFieldsProps>(
   ({ moveName, move, handleTranslateClick }, ref) => {
-    const { t } = useTranslation('database_moves');
+    const { t } = useTranslation();
     const nameRef = useRef<HTMLInputElement>(null);
     const descriptionRef = useRef<HTMLTextAreaElement>(null);
     const getMoveDescription = useGetEntityDescriptionText();

@@ -14,7 +14,7 @@ type SelectDexProps = {
 };
 
 export const SelectDex = ({ dbSymbol, onChange, noLabel, noneValue, undefValueOption, filter }: SelectDexProps) => {
-  const { t } = useTranslation(['database_dex', 'select']);
+  const { t } = useTranslation();
   const dexOptions = useSelectOptions('dex');
   const options = useMemo(() => {
     if (undefValueOption) return [{ value: '__undef__', label: undefValueOption }, ...dexOptions];

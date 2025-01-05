@@ -13,7 +13,7 @@ import { useMovePage } from '@hooks/usePage';
 export const MovePage = () => {
   const dialogsRef = useDialogsRef<MoveEditorAndDeletionKeys>();
   const { move, moveName, cannotDelete } = useMovePage();
-  const { t } = useTranslation('database_moves');
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const onClickedPokemonList = () => navigate(`/database/moves/pokemon`);
 

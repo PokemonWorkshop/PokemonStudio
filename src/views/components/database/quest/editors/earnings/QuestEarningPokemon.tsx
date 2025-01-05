@@ -6,7 +6,7 @@ import { QuestEarningProps } from './QuestEarningProps';
 import { SelectPokemon } from '@components/selects/SelectPokemon';
 
 export const QuestEarningPokemon = ({ earning }: QuestEarningProps) => {
-  const { t } = useTranslation(['database_pokemon', 'select']);
+  const { t } = useTranslation();
   const refreshUI = useRefreshUI();
   return (
     <InputContainer>

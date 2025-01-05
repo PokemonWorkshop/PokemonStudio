@@ -13,7 +13,7 @@ type DexControlBarProps = {
 };
 
 export const DexControlBar = ({ dialogsRef }: DexControlBarProps) => {
-  const { t } = useTranslation('database_dex');
+  const { t } = useTranslation();
   const { selectedDataIdentifier: dexDbSymbol, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol } = useProjectDex();
   useSetCurrentDatabasePath();
 

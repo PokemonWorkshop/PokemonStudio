@@ -20,7 +20,7 @@ const moveCategoryEntries = (t: TFunction<('database_moves' | 'database_types')[
 const FRAME_EDITOR_SCHEMA = MOVE_VALIDATOR.pick({ type: true, category: true });
 
 export const MoveFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation(['database_moves', 'database_types']);
+  const { t } = useTranslation();
   const { move, moveName } = useMovePage();
   const updateMove = useUpdateMove(move);
   const dialogsRef = useDialogsRef<TranslationEditorTitle>();

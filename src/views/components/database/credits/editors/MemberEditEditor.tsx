@@ -29,7 +29,7 @@ type CreditsNewMemberEditorProps = {
 
 export const MemberEditEditor = ({ credits, index, onClose }: CreditsNewMemberEditorProps) => {
   const { setProjectConfigValues: setCredits } = useConfigCredits();
-  const { t } = useTranslation(['dashboard_credits', 'database_moves']);
+  const { t } = useTranslation();
   const [title, setTitle] = useState(credits.leaders[index].title);
   const [name, setName] = useState(credits.leaders[index].name);
 

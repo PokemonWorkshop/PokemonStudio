@@ -15,7 +15,7 @@ import { useDialogsRef } from '@hooks/useDialogsRef';
 export const AbilityPage = () => {
   const dialogsRef = useDialogsRef<AbilityEditorAndDeletionKeys>();
   const { ability, abilityName, cannotDelete } = useAbilityPage();
-  const { t } = useTranslation('database_abilities');
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const onClickedPokemonList = () => navigate(`/database/abilities/pokemon`);
 

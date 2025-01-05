@@ -10,7 +10,7 @@ type QuestGoalBeatNpcProps = {
 } & QuestGoalProps;
 
 export const QuestGoalBeatNpc = ({ objective, setIsEmptyText }: QuestGoalBeatNpcProps) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const refreshUI = useRefreshUI();
   return (
     <PaddedInputContainer>

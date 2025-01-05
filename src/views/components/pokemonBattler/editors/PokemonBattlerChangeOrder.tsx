@@ -134,7 +134,7 @@ type RenderBattlerProps = {
 
 const RenderBattler = forwardRef<HTMLDivElement, RenderBattlerProps>(({ battler, provided, isDragging, dragOn }, ref) => {
   const { projectDataValues: species, state } = useProjectPokemon();
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const specie = species[battler.specie];
   const creatureName = specie ? getEntityNameText(specie, state) : t('pokemon_deleted');
   const level = battler.levelSetup.kind === 'fixed' ? battler.levelSetup.level : 0;
@@ -175,7 +175,7 @@ type PokemonBattlerChangeOrderProps = {
 };
 
 export const PokemonBattlerChangeOrder = forwardRef<EditorHandlingClose, PokemonBattlerChangeOrderProps>(({ closeDialog }, ref) => {
-  const { t } = useTranslation(['database_trainers', 'pokemon_battler_list', 'unsaved_modal']);
+  const { t } = useTranslation();
   const { trainer } = useTrainerPage();
   const updateTrainer = useUpdateTrainer(trainer);
   const [party, setParty] = useState<StudioGroupEncounter[]>(cloneEntity(trainer.party));

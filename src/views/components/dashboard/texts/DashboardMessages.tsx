@@ -79,7 +79,7 @@ export const DashboardMessages = ({ isChoice }: DashboardMessagesProps) => {
   const [referenceScene, setReferenceScene] = useState<string | undefined>(undefined);
   const [errorReferenceScene, setErrorReferenceScene] = useState<number | undefined>(undefined);
   const currentEditedTexts = useMemo(() => cloneEntity(texts), [texts]);
-  const { t } = useTranslation('dashboard_texts');
+  const { t } = useTranslation();
   const refreshUI = useRefreshUI();
   const fontOptions = useMemo(() => fontEntries(texts.fonts.ttfFiles), [texts]);
   const messagesOrChoices = useMemo(

@@ -117,7 +117,7 @@ const showMemberName = (name: string, t: TFunction<'dashboard_credits'>) => {
 
 export const RenderMember = forwardRef<HTMLDivElement, RenderMemberProps>(
   ({ member, provided, isDragging, dragOn, onClickEdit, onClickDelete }, ref) => {
-    const { t } = useTranslation('dashboard_credits');
+    const { t } = useTranslation();
 
     return (
       <RenderMemberContainer

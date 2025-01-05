@@ -12,7 +12,7 @@ import { useNaturePage } from '@hooks/usePage';
 export const NaturePage = () => {
   const dialogsRef = useDialogsRef<NatureEditorAndDeletionKeys>();
   const { nature, natureName, cannotDelete } = useNaturePage();
-  const { t } = useTranslation('database_natures');
+  const { t } = useTranslation();
 
   return (
     <DatabasePageStyle>

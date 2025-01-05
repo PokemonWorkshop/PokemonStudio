@@ -17,7 +17,7 @@ type AbilityControlBarProps = {
  */
 export const AbilityControlBar = ({ dialogsRef }: AbilityControlBarProps) => {
   useSetCurrentDatabasePath();
-  const { t } = useTranslation('database_abilities');
+  const { t } = useTranslation();
   const { selectedDataIdentifier: abilityDbSymbol, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol } = useProjectAbilities();
 
   // Definition of the control bar shortcuts

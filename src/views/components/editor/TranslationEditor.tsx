@@ -126,7 +126,7 @@ type TranslateEditorProps = {
 };
 
 export const TranslationEditor = ({ title, name, textId, fileId, onClose, isMultiline }: TranslateEditorProps) => {
-  const { t } = useTranslation('editor');
+  const { t } = useTranslation();
   const { t: tq } = useTranslation('pokemon_battler_list');
   const [state] = useGlobalState();
   const defaultLanguageCode = state.projectConfig.language_config.defaultLanguage;

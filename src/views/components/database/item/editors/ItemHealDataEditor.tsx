@@ -49,7 +49,7 @@ export const ItemHealDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { currentItem } = useItemPage();
   const { setProjectDataValues: setProjectItem } = useProjectItems();
 
-  const { t } = useTranslation('database_items');
+  const { t } = useTranslation();
   const healingOptions = useMemo(
     () => HealingItemCategories.map((category) => ({ value: category, label: t(category) })).sort((a, b) => a.label.localeCompare(b.label)),
     [t]

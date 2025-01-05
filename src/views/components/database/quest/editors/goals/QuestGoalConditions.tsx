@@ -33,7 +33,7 @@ const conditionCategoryEntries = (
   );
 
 const SelectCondition = ({ condition, index, excludeConditions, onChange }: SelectConditionProps) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const conditionOptions = useMemo(() => conditionCategoryEntries(t, excludeConditions, condition.type), [t, excludeConditions, condition.type]);
   return (
     <SelectCustomSimple id={`select-condition-${index}`} value={condition.type} options={conditionOptions} onChange={(value) => onChange(value)} />
@@ -79,7 +79,7 @@ type ValueConditionProps = {
 };
 
 const ValueCondition = ({ condition }: ValueConditionProps) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const { t: tSelect } = useTranslation('select');
   const refreshUI = useRefreshUI();
   const { type, value } = condition;
@@ -129,7 +129,7 @@ type GoalConditionProps = {
 };
 
 const GoalCondition = ({ condition, index, excludeConditions, onChange, onDelete }: GoalConditionProps) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   return (
     <InputContainer>
       <TitleContainer>
@@ -159,7 +159,7 @@ type QuestGoalConditionsProps = {
 };
 
 export const QuestGoalConditions = ({ conditions }: QuestGoalConditionsProps) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const refreshUI = useRefreshUI();
   const excludeConditions = buildExcludeConditions(conditions, -1);
 

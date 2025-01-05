@@ -30,7 +30,7 @@ export const ReproductionDataBlock = ({ pokemonWithForm, dialogsRef }: PokemonDa
   const { projectDataValues: pokemons } = useProjectPokemon();
   const getCreatureName = useGetEntityNameText();
   const { form } = pokemonWithForm;
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const creatureBreedingGroups = useMemo(() => form.breedGroups.map((group) => BREEDING_GROUPS[group]), [form.breedGroups]);
   const isClickable: boolean = useKeyPress(CONTROL) && !!pokemons[form.babyDbSymbol];
   const shortcutNavigation = usePokemonShortcutNavigation();

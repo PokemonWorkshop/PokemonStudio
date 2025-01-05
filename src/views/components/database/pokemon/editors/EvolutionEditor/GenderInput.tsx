@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { EvolutionConditionEditorInput } from './InputProps';
 
 export const GenderInput = ({ state, inputRefs }: EvolutionConditionEditorInput) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const [value, setValue] = useState<string | undefined>(state.defaults.gender?.toString());
   const options = useMemo(
     () => [

@@ -25,7 +25,7 @@ type DexPokemonListEditEditorProps = {
 };
 
 export const DexPokemonListEditEditor = forwardRef<EditorHandlingClose, DexPokemonListEditEditorProps>(({ creatureIndex }, ref) => {
-  const { t } = useTranslation(['database_pokemon']);
+  const { t } = useTranslation();
   const { dex } = useDexPage();
   const updateDex = useUpdateDex(dex);
   const memoDex = useMemo(() => cloneEntity(dex), [dex]);

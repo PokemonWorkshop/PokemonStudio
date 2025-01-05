@@ -24,7 +24,7 @@ type TextControlBarProps = {
  * Control bar responsive of handling navigation through texts & opening the texts creation dialog.
  */
 export const TextControlBar = ({ dialogsRef }: TextControlBarProps) => {
-  const { t } = useTranslation('text_management');
+  const { t } = useTranslation();
   const { selectedDataIdentifier: fileId, setSelectedDataIdentifier, getPreviousFileId, getNextFileId, state } = useTextInfos();
   const navigate = useNavigate();
 

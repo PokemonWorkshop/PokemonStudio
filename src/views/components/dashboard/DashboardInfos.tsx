@@ -15,7 +15,7 @@ const InputVersion = styled(Input)`
 `;
 
 export const DashboardInfos = () => {
-  const { t } = useTranslation(['dashboard', 'dashboard_infos']);
+  const { t } = useTranslation();
   const { projectConfigValues: infos, setProjectConfigValues: setInfos } = useConfigInfos();
   const { projectStudioValues: projectStudio, setProjectStudioValues: setProjectStudio } = useProjectStudio();
   const currentEditedInfos = useMemo(() => cloneEntity(infos), [infos]);

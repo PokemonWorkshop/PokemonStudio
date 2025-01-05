@@ -19,7 +19,7 @@ export const DataBlockEditor = ({
   disabledAdd,
   color,
 }: DataBlockEditorProps) => {
-  const { t } = useTranslation('editor');
+  const { t } = useTranslation();
   return (
     <DataBlockEditorContainer size={size} color={color} data-disabled={disabled && 'true'} data-noactive>
       <TitleContainer>

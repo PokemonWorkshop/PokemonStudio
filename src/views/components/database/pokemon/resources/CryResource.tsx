@@ -12,7 +12,7 @@ type CryResourceProps = {
 };
 
 export const CryResource = ({ creature, form }: CryResourceProps) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const { onCryChoosen, onResourceClean } = useUpdateResources(creature, form);
 
   return (

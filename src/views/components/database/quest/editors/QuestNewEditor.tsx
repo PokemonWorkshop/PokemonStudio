@@ -33,7 +33,7 @@ type QuestNewEditorProps = {
 
 export const QuestNewEditor = ({ onClose }: QuestNewEditorProps) => {
   const { projectDataValues: quests, setProjectDataValues: setQuest } = useProjectQuests();
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const setText = useSetProjectText();
   const categoryOptions = useMemo(() => questCategoryEntries(t), [t]);
   const resolutionOptions = useMemo(() => questResolutionEntries(t), [t]);

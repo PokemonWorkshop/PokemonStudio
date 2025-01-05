@@ -15,7 +15,7 @@ import { TranslateInputContainer } from '@components/inputs/TranslateInputContai
  * Component that is mainly responsive of editing the name and description of the texts file when we click over the top frame in the texts page.
  */
 export const TextFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('text_management');
+  const { t } = useTranslation();
   const { textInfo } = useTextPage();
   const dialogsRef = useDialogsRef<TranslationEditorTitle>();
   const getName = useGetEntityNameTextUsingTextId();

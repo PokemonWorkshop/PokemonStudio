@@ -13,7 +13,7 @@ type TrainerControlBarProps = {
 };
 
 export const TrainerControlBar = ({ dialogsRef }: TrainerControlBarProps) => {
-  const { t } = useTranslation('database_trainers');
+  const { t } = useTranslation();
   const { selectedDataIdentifier: trainerDbSymbol, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol } = useProjectTrainers();
   useSetCurrentDatabasePath();
 

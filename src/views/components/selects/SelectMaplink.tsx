@@ -22,7 +22,7 @@ type SelectRMXPMapProps = {
 };
 
 export const SelectMaplink = ({ mapId, onChange, label, noneValue, noneValueIsError, overwriteNoneValue, excludeMaps }: SelectRMXPMapProps) => {
-  const { t } = useTranslation('database_maplinks');
+  const { t } = useTranslation();
   const [state] = useGlobalState();
   const getMapName = useGetEntityNameText();
   const allMaps = useMemo(() => Object.values(state.projectData.maps), [state.projectData.maps]);

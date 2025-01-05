@@ -35,7 +35,7 @@ export const DexPokemonListAddEditor = forwardRef<EditorHandlingClose, DexPokemo
   const { setProjectDataValues: setDex } = useProjectDex();
   const { projectDataValues: allPokemon } = useProjectPokemon();
   const { dex } = useDexPage();
-  const { t } = useTranslation(['database_dex', 'database_pokemon', 'database_moves', 'select']);
+  const { t } = useTranslation();
   const pokemonList = useSelectOptions('creatures');
   const pokemonAvailable = useMemo(() => {
     const unavailable = getPokemonUnavailable(dex);

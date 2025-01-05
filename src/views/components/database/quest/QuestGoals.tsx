@@ -15,7 +15,7 @@ type QuestGoalsProps = {
 
 export const QuestGoals = ({ quest, onDelete, onImport, onNew, onEdit }: QuestGoalsProps) => {
   const { projectDataValues: quests } = useProjectQuests();
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   return (
     <DataBlockEditor
       size="full"

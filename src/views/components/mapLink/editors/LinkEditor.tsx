@@ -41,7 +41,7 @@ type NewLinkEditorProps = {
 };
 
 export const LinkEditor = ({ mapLink, cardinal, index }: NewLinkEditorProps) => {
-  const { t } = useTranslation('database_maplinks');
+  const { t } = useTranslation();
   const link = useMemo(() => getLinksFromMapLink(mapLink, cardinal)[index], [cardinal, index, mapLink]);
   const refreshUI = useRefreshUI();
 

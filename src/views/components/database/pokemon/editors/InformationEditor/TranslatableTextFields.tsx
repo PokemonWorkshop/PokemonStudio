@@ -20,7 +20,7 @@ type TranslatableTextFieldsProps = {
 
 export const TranslatableTextFields = forwardRef<TranslatableTextFieldsRef, TranslatableTextFieldsProps>(
   ({ creatureName, creature, handleTranslateClick }, ref) => {
-    const { t } = useTranslation('database_pokemon');
+    const { t } = useTranslation();
     const nameRef = useRef<HTMLInputElement>(null);
     const descriptionRef = useRef<HTMLTextAreaElement>(null);
     const getCreatureDescription = useGetEntityDescriptionText();

@@ -17,7 +17,7 @@ export const QuestDeletion = ({ type, onClose }: QuestDeletionProps) => {
     setProjectDataValues: setQuest,
     removeProjectDataValue: removeQuest,
   } = useProjectQuests();
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const getQuestName = useGetEntityNameText();
   const quest = quests[questDbSymbol];
   const currentDeletedQuest = useMemo(() => cloneEntity(quest), [quest]);

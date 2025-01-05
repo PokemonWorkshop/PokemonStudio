@@ -20,7 +20,7 @@ const getMoveName = (state: State, techItem: StudioTechItem, t: TFunction<('data
 
 export const ItemTechData = ({ dialogsRef }: ItemTechDataProps) => {
   const { currentItem: item } = useItemPage();
-  const { t } = useTranslation(['database_items', 'database_moves']);
+  const { t } = useTranslation();
   const [state] = useGlobalState();
   const isItemTech = item.klass === 'TechItem';
   const isDisabled = LOCKED_ITEM_EDITOR[item.klass].includes('tech');

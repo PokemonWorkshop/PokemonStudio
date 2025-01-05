@@ -13,7 +13,7 @@ type NatureDeletionProps = {
  * Component responsive of asking the user if they really want to delete the nature before doing so.
  */
 export const NatureDeletion = forwardRef<EditorHandlingClose, NatureDeletionProps>(({ closeDialog }, ref) => {
-  const { t } = useTranslation('database_natures');
+  const { t } = useTranslation();
   const { projectDataValues: natures, selectedDataIdentifier: dbSymbol, removeProjectDataValue: deleteNature, state } = useProjectNatures();
   const nature = natures[dbSymbol];
   // eslint-disable-next-line react-hooks/exhaustive-deps

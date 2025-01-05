@@ -23,7 +23,7 @@ const HomePageComponent = () => {
   const dialogsRef = useDialogsRef<HomeEditorAndDeletionKeys>();
   const [appVersion, setAppVersion] = useState('');
   const [projectList, setProjectList] = useState(getProjectList());
-  const { t, i18n } = useTranslation('homepage');
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
 
   const onDeleteProjectToList = (event: React.MouseEvent<HTMLSpanElement>, projectPath: string) => {

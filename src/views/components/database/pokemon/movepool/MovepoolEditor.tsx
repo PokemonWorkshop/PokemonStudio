@@ -59,7 +59,7 @@ export const MovepoolEditor = ({ type, setCurrentEditor, setCurrentDeletion }: M
   const { projectDataValues: items } = useProjectItems();
   const { projectDataValues: moves } = useProjectMoves();
   const currentEditedPokemon = useMemo(() => cloneEntity(pokemon[currentPokemon.specie]), [pokemon, currentPokemon.specie]);
-  const { t } = useTranslation(['database_pokemon']);
+  const { t } = useTranslation();
 
   const onClickAdd = () => {
     const index = currentEditedPokemon.forms.findIndex((form) => form.form === currentPokemon.form);

@@ -27,7 +27,7 @@ const getAllPokemonFiltered = (state: State, move: StudioMove, filter: FilterTyp
 
 export const MovePokemonTable = ({ move, filter }: MovePokemonTableProps) => {
   const [state] = useGlobalState();
-  const { t } = useTranslation(['database_types', 'database_moves', 'database_pokemon']);
+  const { t } = useTranslation();
   const allPokemon = getAllPokemonFiltered(state, move, filter).sort((a, b) => a.id - b.id);
 
   return allPokemon.length === 0 ? (

@@ -17,7 +17,7 @@ type TypeControlBarProps = {
 
 export const TypeControlBar = ({ dialogsRef, onRedirect }: TypeControlBarProps) => {
   const { typeDbSymbol } = useTypePage();
-  const { t } = useTranslation('database_types');
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol } = useProjectTypes();
   useSetCurrentDatabasePath();

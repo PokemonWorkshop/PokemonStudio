@@ -21,7 +21,7 @@ type BattleEngineMethodEditorProps = {
 };
 
 export const BattleEngineMethodEditor = ({ move, options, getRawFormData, defaults }: BattleEngineMethodEditorProps) => {
-  const { t } = useTranslation('database_moves');
+  const { t } = useTranslation();
   const [isCustom, setIsCustom] = useState(!(MOVE_BATTLE_ENGINE_METHODS as ReadonlyArray<string>).includes(String(defaults.battleEngineMethod)));
   const [defaultInputValue, setDefaultInputValue] = useState(String(defaults.battleEngineMethod));
 

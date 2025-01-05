@@ -13,7 +13,7 @@ const UnlimitedItemsInfoContainer = styled.span`
 `;
 
 export const DashboardSettings = () => {
-  const { t } = useTranslation('dashboard_settings');
+  const { t } = useTranslation();
   const { projectConfigValues: settings, setProjectConfigValues: setSettings } = useConfigSettings();
   const [maxLevel, setMaxLevel] = useState(settings.pokemonMaxLevel);
   const [maxItemCount, setMaxBagItemCount] = useState(settings.maxBagItemCount);

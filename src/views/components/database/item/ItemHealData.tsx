@@ -33,7 +33,7 @@ const getHealValue = (t: TFunction<'database_items'>, item: Extract<StudioItem, 
 
 export const ItemHealData = ({ dialogsRef }: ItemHealDataProps) => {
   const { currentItem: item } = useItemPage();
-  const { t } = useTranslation('database_items');
+  const { t } = useTranslation();
   const isDisabled = LOCKED_ITEM_EDITOR[item.klass].includes('heal');
 
   return (

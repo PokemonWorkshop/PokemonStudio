@@ -24,7 +24,7 @@ export const DashboardFrame = () => {
   const [state] = useGlobalState();
   const { projectStudioValues: projectStudio } = useProjectStudio();
   const { projectConfigValues: infos } = useConfigInfos();
-  const { t } = useTranslation('dashboard');
+  const { t } = useTranslation();
 
   return (
     <DataBlockContainer size="full" data-disabled={true}>

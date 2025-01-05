@@ -119,7 +119,7 @@ type RenderGroupProps = {
 
 export const RenderGroup = forwardRef<HTMLInputElement, RenderGroupProps>(
   ({ group, zone, provided, isDragging, dragOn, onClickEdit, onClickDelete }, ref) => {
-    const { t } = useTranslation('database_groups');
+    const { t } = useTranslation();
     const getGroupName = useGetEntityNameText();
     const isClickable: boolean = useKeyPress(CONTROL);
     const shortcutNavigation = useShortcutNavigation('groups', 'group', '/database/groups/');

@@ -14,7 +14,7 @@ type TextDeletionProps = {
  * Component responsive of asking the user if they really want to delete the texts before doing so.
  */
 export const TextDeletion = forwardRef<EditorHandlingClose, TextDeletionProps>(({ closeDialog }, ref) => {
-  const { t } = useTranslation('text_management');
+  const { t } = useTranslation();
   const {
     textInfosValues: textInfos,
     currentTextInfo: currentTextInfo,

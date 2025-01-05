@@ -13,7 +13,7 @@ type ZoneTravelProps = {
 };
 
 export const ZoneTravel = ({ zone, onClick }: ZoneTravelProps) => {
-  const { t } = useTranslation('database_zones');
+  const { t } = useTranslation();
 
   return (
     <DataBlockWithTitle size="half" title={t('travel')} onClick={onClick}>

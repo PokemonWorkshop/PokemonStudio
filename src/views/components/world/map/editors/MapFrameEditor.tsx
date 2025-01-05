@@ -32,7 +32,7 @@ type MapFrameEditorProps = {
 };
 
 export const MapFrameEditor = forwardRef<EditorHandlingClose, MapFrameEditorProps>(({ closeDialog }, ref) => {
-  const { t } = useTranslation('database_maps');
+  const { t } = useTranslation();
   const { map, state } = useMapPage();
   const updateMap = useUpdateMap(map);
   const updateMapModified = useUpdateMapModified();

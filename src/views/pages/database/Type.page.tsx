@@ -20,7 +20,7 @@ export const TypePage = () => {
   const dialogsRef = useDialogsRef<TypeEditorAndDeletionKeys>();
   const { setProjectDataValues: setType } = useProjectTypes();
   const { currentTypeName, currentType } = useTypePage();
-  const { t } = useTranslation('database_types');
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const canBeDeleted: boolean = currentType.id <= 18;
 

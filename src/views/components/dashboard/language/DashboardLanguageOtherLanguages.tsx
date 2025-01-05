@@ -23,7 +23,7 @@ export const DashboardLanguageOtherLanguages = ({ dialogsRef, setEditLanguage }:
     () => projectStudio.languagesTranslation.filter(({ code }) => !languageConfig.choosableLanguageCode.includes(code)),
     [projectStudio, languageConfig]
   );
-  const { t } = useTranslation(['dashboard_language', 'text_management']);
+  const { t } = useTranslation();
 
   const findIndexByCode = (code: string) => projectStudio.languagesTranslation.findIndex(({ code: c }) => c === code);
 

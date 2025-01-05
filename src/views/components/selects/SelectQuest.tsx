@@ -26,7 +26,7 @@ export const SelectQuest = ({
   noneValueIsError,
   overwriteNoneValue,
 }: SelectDataProps) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const [state] = useGlobalState();
   const getQuestName = useGetEntityNameText();
   // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -46,7 +46,7 @@ const ButtonContainer = styled.div`
 export const ItemNewEditor = forwardRef<EditorHandlingClose, ItemNewEditorProps>(({ closeDialog }, ref) => {
   const { setProjectDataValues: setItem } = useProjectItems();
   const { items } = useItemPage();
-  const { t } = useTranslation(['database_items', 'database_types', 'database_moves']);
+  const { t } = useTranslation();
   const options = useMemo(() => itemCategoryEntries(t), [t]);
   const setText = useSetProjectText();
   const [name, setName] = useState(''); // We can't use a ref because of the button behavior

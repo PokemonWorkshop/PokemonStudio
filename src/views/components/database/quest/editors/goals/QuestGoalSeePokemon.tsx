@@ -6,7 +6,7 @@ import { QuestGoalProps } from './QuestGoalProps';
 import { SelectPokemon } from '@components/selects/SelectPokemon';
 
 export const QuestGoalSeePokemon = ({ objective }: QuestGoalProps) => {
-  const { t } = useTranslation(['database_pokemon', 'select']);
+  const { t } = useTranslation();
   const refreshUI = useRefreshUI();
   return (
     <PaddedInputContainer>

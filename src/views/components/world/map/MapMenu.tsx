@@ -41,13 +41,13 @@ export const MapMenu = () => {
   const dialogsRef = useDialogsRef<MapEditorAndDeletionKeys>();
   const { mapInfo, isRMXPMode, setMapInfo } = useMapInfo();
   const setText = useSetProjectText();
-  const { t } = useTranslation(['world', 'database_maps']);
+  const { t } = useTranslation();
 
   const handleNewFolder = () => {
     const newFolder = createMapInfo(mapInfo, { klass: 'MapInfoFolder' }) as StudioMapInfoFolder;
 
     const newMapInfo = addNewMapInfo(mapInfo, newFolder);
-    setText(MAP_INFO_FOLDER_NAME_TEXT_ID, newFolder.data.textId, t('database_maps:new_folder'));
+    setText(MAP_INFO_FOLDER_NAME_TEXT_ID, newFolder.data.textId, t('new_folder'));
     setMapInfo(newMapInfo);
   };
 
@@ -57,9 +57,9 @@ export const MapMenu = () => {
         <MapSubMenuContainer>
           <div className="buttons">
             <SecondaryButtonWithPlusIcon className="new" onClick={() => dialogsRef.current?.openDialog('new')} disabled={isRMXPMode}>
-              {t('database_maps:new')}
+              {t('new')}
             </SecondaryButtonWithPlusIcon>
-            <NewFolderButtonOnlyIcon onClick={handleNewFolder} data-tooltip={t('database_maps:new_folder')} disabled={isRMXPMode} />
+            <NewFolderButtonOnlyIcon onClick={handleNewFolder} data-tooltip={t('new_folder')} disabled={isRMXPMode} />
           </div>
           <SeparatorGreyLine />
           <MapTree />

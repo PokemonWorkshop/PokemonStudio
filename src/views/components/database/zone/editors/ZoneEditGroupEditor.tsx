@@ -39,7 +39,7 @@ type ZoneEditGroupEditorProps = {
 export const ZoneEditGroupEditor = ({ zone, groups, group, index }: ZoneEditGroupEditorProps) => {
   if (!group) throw new Error('group is undefined');
 
-  const { t } = useTranslation(['database_zones', 'database_groups']);
+  const { t } = useTranslation();
   const refreshUI = useRefreshUI();
 
   const onChangeGroup = (dbSymbol: string) => {

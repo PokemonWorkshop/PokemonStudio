@@ -15,7 +15,7 @@ type QuestGoalsTableProps = {
 export const QuestGoalsTable = ({ quest, onEdit }: QuestGoalsTableProps) => {
   const { setProjectDataValues: setQuest } = useProjectQuests();
   const currentEditedQuest = useMemo(() => cloneEntity(quest), [quest]);
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const [dragOn, setDragOn] = useState(false);
 
   return quest.objectives.length === 0 ? (

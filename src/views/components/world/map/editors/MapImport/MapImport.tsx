@@ -69,7 +69,7 @@ type MapImportProps = {
 };
 
 export const MapImport = ({ closeDialog, closeParentDialog }: MapImportProps) => {
-  const { t } = useTranslation('database_maps');
+  const { t } = useTranslation();
   const loaderRef = useLoaderRef();
   const mapImport = useMapImport();
   const { projectDataValues: maps, state: globalState } = useProjectDataReadonly('maps', 'map');

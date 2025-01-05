@@ -14,7 +14,7 @@ type PokemonBattlerMoveEditorProps = {
 };
 
 export const PokemonBattlerMoveEditor = ({ expandPokemonSetup, updateExpandPokemonSetup, collapseByDefault }: PokemonBattlerMoveEditorProps) => {
-  const { t } = useTranslation(['pokemon_battler_list', 'database_moves']);
+  const { t } = useTranslation();
   const moves = expandPokemonSetup.moves as DbSymbol[];
 
   return (

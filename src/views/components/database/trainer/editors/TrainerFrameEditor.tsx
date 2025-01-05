@@ -56,7 +56,7 @@ const vsTypeCategoryEntries = (t: TFunction<'database_trainers'>) =>
   TRAINER_VS_TYPE_CATEGORIES.map((category) => ({ value: category.toString(), label: t(`vs_type${category}`) }));
 
 export const TrainerFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_trainers');
+  const { t } = useTranslation();
   const { trainer } = useTrainerPage();
   const updateTrainer = useUpdateTrainer(trainer);
   const dialogsRef = useDialogsRef<TrainerTranslationEditorTitle>();

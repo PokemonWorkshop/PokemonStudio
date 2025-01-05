@@ -163,7 +163,7 @@ export const RenderPokemon = forwardRef<HTMLInputElement, RenderPokemonProps>(
     const { projectDataValues: allPokemon } = useProjectPokemon();
 
     const pokemonForm = useMemo(() => pokemon.data?.forms.find((form) => form.form === pokemon.form), [pokemon.data, pokemon.form]);
-    const { t } = useTranslation(['database_pokemon', 'database_dex']);
+    const { t } = useTranslation();
     const getCreatureName = useGetEntityNameText();
     const [state] = useGlobalState();
     const [pokemonId, setPokemonId] = useState<number>(pokemon.id);

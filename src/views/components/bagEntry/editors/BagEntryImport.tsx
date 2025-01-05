@@ -50,7 +50,7 @@ type BagEntryImportProps = {
 export const BagEntryImport = forwardRef<EditorHandlingClose, BagEntryImportProps>(({ closeDialog, from }, ref) => {
   const { projectDataValues: trainers } = useProjectTrainers();
   const { trainer } = useTrainerPage();
-  const { t } = useTranslation('database_trainers');
+  const { t } = useTranslation();
   const updateTrainer = useUpdateTrainer(trainer);
   const [selectedEntity, setSelectedEntity] = useState(getFirstDbSymbol(from, trainers, trainer));
   const overrideRef = useRef<HTMLInputElement>(null);

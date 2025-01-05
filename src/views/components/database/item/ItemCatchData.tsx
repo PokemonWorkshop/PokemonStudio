@@ -12,7 +12,7 @@ const colorToString = (color: StudioBallItem['color']) => `${color.red}, ${color
 
 export const ItemCatchData = ({ dialogsRef }: ItemCatchDataProps) => {
   const { currentItem: item } = useItemPage();
-  const { t } = useTranslation('database_items');
+  const { t } = useTranslation();
   const isDisabled = LOCKED_ITEM_EDITOR[item.klass].includes('catch');
   return (
     <DataBlockWithTitle

@@ -36,7 +36,7 @@ export const MovepoolImport = ({ type, onClose }: MovepoolImportProps) => {
   } = useProjectData('pokemon', 'pokemon');
   const [selectedPokemon, setSelectedPokemon] = useState('__undef__');
   const [selectedForm, setSelectedForm] = useState(0);
-  const { t } = useTranslation(['database_pokemon', 'select']);
+  const { t } = useTranslation();
   const currentEditedPokemon = useMemo(() => cloneEntity(pokemon[currentPokemon.specie]), [pokemon, currentPokemon.specie]);
 
   const onClickValidate = () => {

@@ -15,7 +15,7 @@ type ZoneGroupsProps = {
 };
 
 export const ZoneGroups = ({ zone, groups, onDelete, onImport, onNew, onEdit }: ZoneGroupsProps) => {
-  const { t } = useTranslation('database_zones');
+  const { t } = useTranslation();
   return (
     <DataBlockEditor
       size="full"

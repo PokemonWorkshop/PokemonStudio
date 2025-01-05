@@ -13,7 +13,7 @@ type SelectItemProps = {
 };
 
 export const SelectItem = ({ dbSymbol, onChange, noLabel, noneValue, undefValueOption }: SelectItemProps) => {
-  const { t } = useTranslation(['database_items', 'select']);
+  const { t } = useTranslation();
   const typeOptions = useSelectOptions('items');
 
   const options = useMemo(() => {

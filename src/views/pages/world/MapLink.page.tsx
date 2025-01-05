@@ -70,7 +70,7 @@ const MapLinkPage = () => {
 
   const currentEditedMaplink = useMemo(() => cloneEntity(mapLink), [mapLink]);
   const isValidMaplink = useMemo(() => checkValidMaplink(mapId, state), [mapId, state]);
-  const { t } = useTranslation('database_maplinks');
+  const { t } = useTranslation();
   const getMapName = useGetEntityNameText();
 
   const createMapData = (maps: ProjectData['maps']): Map<number, string> => {

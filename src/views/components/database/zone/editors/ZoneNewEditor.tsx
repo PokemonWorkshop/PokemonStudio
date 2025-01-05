@@ -26,7 +26,7 @@ type ZoneNewEditorProps = {
 
 export const ZoneNewEditor = ({ onClose }: ZoneNewEditorProps) => {
   const { projectDataValues: zones, setProjectDataValues: setZone } = useProjectZones();
-  const { t } = useTranslation('database_zones');
+  const { t } = useTranslation();
   const setText = useSetProjectText();
   const [name, setName] = useState(''); // We can't use a ref because of the button behavior
   const descriptionRef = useRef<HTMLTextAreaElement>(null);

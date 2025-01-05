@@ -52,7 +52,7 @@ type ZoneAddGroupEditorProps = {
 };
 
 export const ZoneAddGroupEditor = ({ zone, groups, onAddGroup, onClose }: ZoneAddGroupEditorProps) => {
-  const { t } = useTranslation(['database_zones', 'database_groups', 'database_trainers']);
+  const { t } = useTranslation();
   const firstDbSymbol = Object.entries(groups)
     .map(([value, groupData]) => ({ value, index: groupData.id }))
     .filter((d) => !zone.wildGroups.includes(d.value as DbSymbol))

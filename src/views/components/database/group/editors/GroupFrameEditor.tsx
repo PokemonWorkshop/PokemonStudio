@@ -42,7 +42,7 @@ const groupVariationEntries = (t: TFunction<'database_groups'>) =>
 const groupToolEntries = (t: TFunction<'database_groups'>) => GroupToolMap.map((option) => ({ value: option.value, label: t(option.label) }));
 
 export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_groups');
+  const { t } = useTranslation();
   const { group } = useGroupPage();
   const updateGroup = useUpdateGroup(group);
   const dialogsRef = useDialogsRef<GroupTranslationEditorTitle>();

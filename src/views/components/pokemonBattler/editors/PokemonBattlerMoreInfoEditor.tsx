@@ -52,7 +52,7 @@ export const PokemonBattlerMoreInfoEditor = ({
   from,
   collapseByDefault,
 }: PokemonBattlerModeInfoEditorProps) => {
-  const { t } = useTranslation(['database_items', 'pokemon_battler_list']);
+  const { t } = useTranslation();
   /* eslint-disable react-hooks/exhaustive-deps */
   const shinyOptions = useMemo(() => shinyCategoryEntries(t), []);
   const genderOptions = useMemo(() => genderCategoryEntries(t), []);

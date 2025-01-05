@@ -28,7 +28,7 @@ type QuestGoalEditorProps = {
 };
 
 export const QuestGoalEditor = ({ quest, objectiveIndex }: QuestGoalEditorProps) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const refreshUI = useRefreshUI();
   const objectiveOptions = useMemo(() => objectiveCategoryEntries(t), [t]);
   const objective = quest.objectives[objectiveIndex];

@@ -35,7 +35,7 @@ type DexNewEditorProps = {
 
 export const DexNewEditor = forwardRef<EditorHandlingClose, DexNewEditorProps>(({ onClose }, ref) => {
   const { projectDataValues: allDex, setProjectDataValues: setDex } = useProjectDex();
-  const { t } = useTranslation(['database_dex', 'database_moves']);
+  const { t } = useTranslation();
   const setText = useSetProjectText();
   const [dexName, setDexName] = useState<string>('');
   const startIdRef = useRef<HTMLInputElement>(null);

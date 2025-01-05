@@ -9,7 +9,7 @@ import { BattlersResources, CharactersResources, IconsResources, CryResource } f
 import { useCreaturePage } from '@hooks/usePage';
 
 export const PokemonResourcesPage = () => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const { creature, form, canShowFemale } = useCreaturePage();
 
   return (

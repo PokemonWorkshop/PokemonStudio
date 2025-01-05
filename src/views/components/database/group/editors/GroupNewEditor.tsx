@@ -51,7 +51,7 @@ type GroupNewEditorProps = {
 
 export const GroupNewEditor = forwardRef<EditorHandlingClose, GroupNewEditorProps>(({ closeDialog }, ref) => {
   const { projectDataValues: groups, setProjectDataValues: setGroup } = useProjectGroups();
-  const { t } = useTranslation('database_groups');
+  const { t } = useTranslation();
   const activationOptions = useMemo(() => groupActivationEntries(t), [t]);
   const battleTypeOptions = useMemo(() => groupBattleTypeEntries(t), [t]);
   const systemTagsOptions = useMemo(() => systemTagsEntries(t), [t]);

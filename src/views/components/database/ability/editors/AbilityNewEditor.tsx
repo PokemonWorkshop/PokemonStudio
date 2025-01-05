@@ -30,7 +30,7 @@ const ButtonContainer = styled.div`
  */
 export const AbilityNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeDialog }, ref) => {
   const { projectDataValues: abilities, setProjectDataValues: setAbility } = useProjectAbilities();
-  const { t } = useTranslation('database_abilities');
+  const { t } = useTranslation();
   const setText = useSetProjectText();
   const [name, setName] = useState(''); // We use a state because synchronizing dbSymbol is easier with a state
   const descriptionRef = useRef<HTMLTextAreaElement>(null);

@@ -35,7 +35,7 @@ type Props = {
 };
 
 export const EvolutionEditor = forwardRef<EditorHandlingClose, Props>(({ evolutionIndex, setEvolutionIndex, closeDialog }, ref) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const { t: tSelect } = useTranslation('select');
   const { creature, creatureName, form } = useCreaturePage();
   const { projectDataValues: creatures } = useProjectPokemon();

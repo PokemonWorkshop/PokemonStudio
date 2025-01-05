@@ -21,7 +21,7 @@ export const PokemonBattlerStatsEditor = ({
   updateExpandPokemonSetup,
   collapseByDefault,
 }: PokemonBattlerStatsEditorProps) => {
-  const { t } = useTranslation(['database_pokemon', 'pokemon_battler_list']);
+  const { t } = useTranslation();
   const stats = useMemo(() => (type === 'evs' ? expandPokemonSetup.evs : expandPokemonSetup.ivs) as StudioIvEv, [type, expandPokemonSetup]);
   const statsRef = useRef<(HTMLInputElement | null | undefined)[]>([]);
 

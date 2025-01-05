@@ -50,7 +50,7 @@ type TypeHelperProps = {
 };
 
 export const TypeHelper = ({ typeHelperSelected, allTypes }: TypeHelperProps) => {
-  const { t } = useTranslation('database_types');
+  const { t } = useTranslation();
   const getTypeName = useGetEntityNameTextUsingTextId();
 
   return !typeHelperSelected.offensiveType || !typeHelperSelected.defensiveType ? (

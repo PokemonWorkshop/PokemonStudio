@@ -23,7 +23,7 @@ const languageDefaultEntries = (language: StudioLanguageConfig, t: TFunction<'te
 export const DashboardLanguage = () => {
   const { languageConfig, onChangeDefaultLanguage } = useDashboardLanguage();
   const dialogsRef = useDialogsRef<DashboardLanguageEditorAndDeletionKeys>();
-  const { t } = useTranslation('dashboard_language');
+  const { t } = useTranslation();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const languageDefaultOptions = useMemo(() => languageDefaultEntries(languageConfig, t), [languageConfig, languageConfig.choosableLanguageTexts]);
   const [editLanguage, setEditLanguage] = useState<EditLanguage>({ from: 'player', index: 0 });

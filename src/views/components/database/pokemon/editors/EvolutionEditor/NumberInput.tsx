@@ -15,7 +15,7 @@ type NumberType = (typeof validInputs)[number];
 const isTypeValidInput = (type: unknown): type is NumberType => validInputs.includes(type as NumberType);
 
 export const NumberInput = ({ state, inputRefs, type, min, max, label }: NumberInputProps) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const [error, setError] = useState(false);
 
   useEffect(() => {

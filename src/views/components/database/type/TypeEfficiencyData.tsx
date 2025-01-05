@@ -37,7 +37,7 @@ const RenderEfficience = ({ t, efficience, types }: RenderEfficienceProps) => {
 export const TypeEfficiencyData = () => {
   const { types: allTypes, currentType: type } = useTypePage();
   const types: StudioType[] = Object.values(allTypes);
-  const { t } = useTranslation('database_types');
+  const { t } = useTranslation();
   const efficiencyData = getEfficiencies(types, type);
 
   return (

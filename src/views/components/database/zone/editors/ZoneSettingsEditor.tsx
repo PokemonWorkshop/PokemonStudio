@@ -54,7 +54,7 @@ type ZoneSettingsEditorProps = {
 export const ZoneSettingsEditor = ({ zone }: ZoneSettingsEditorProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [errorNewMap, setErrorNewMap] = useState<number | false>(false);
-  const { t } = useTranslation('database_zones');
+  const { t } = useTranslation();
   const weatherOptions = useMemo(() => weatherCategoryEntries(t), [t]);
   const refreshUI = useRefreshUI();
 

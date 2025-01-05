@@ -52,7 +52,7 @@ export const DataBlockCollapseEditor = ({
   disabledImport,
   disabledAdd,
 }: DataBlockCollapseEditorProps) => {
-  const { t } = useTranslation(['editor']);
+  const { t } = useTranslation();
   const [collapse, setCollapse] = useState(false);
   const onClickedCollapse = () => {
     if (!disabled) setCollapse(!collapse);

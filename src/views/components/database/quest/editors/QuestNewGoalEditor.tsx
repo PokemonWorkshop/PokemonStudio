@@ -37,7 +37,7 @@ type QuestNewGoalEditorProps = {
 };
 
 export const QuestNewGoalEditor = ({ quest, onClose }: QuestNewGoalEditorProps) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const refreshUI = useRefreshUI();
   const objectiveOptions = useMemo(() => objectiveCategoryEntries(t), [t]);
   const [newObjective, setNewObjective] = useState(createQuestObjective('objective_speak_to'));

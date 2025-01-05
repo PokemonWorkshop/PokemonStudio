@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { EvolutionConditionEditorInput } from './InputProps';
 
 export const MoveInput = ({ type, state, dispatch }: EvolutionConditionEditorInput) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   if (type !== 'skill1' && type !== 'skill2' && type !== 'skill3' && type !== 'skill4') return null;
 
   return (

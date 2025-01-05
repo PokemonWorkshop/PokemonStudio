@@ -16,7 +16,7 @@ type GroupContralBarProps = {
 };
 
 export const GroupControlBar = ({ dialogsRef }: GroupContralBarProps) => {
-  const { t } = useTranslation('database_groups');
+  const { t } = useTranslation();
   const { selectedDataIdentifier: groupDbSymbol, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol } = useProjectGroups();
 
   useSetCurrentDatabasePath();

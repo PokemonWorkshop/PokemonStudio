@@ -16,7 +16,7 @@ import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';
 export const TrainerPage = () => {
   const dialogsRef = useDialogsRef<TrainerEditorAndDeletionKeys>();
   const { trainer, trainerName, cannotDelete } = useTrainerPage();
-  const { t } = useTranslation('database_trainers');
+  const { t } = useTranslation();
 
   return (
     <DatabasePageStyle>

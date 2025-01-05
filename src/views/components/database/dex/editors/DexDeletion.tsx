@@ -16,7 +16,7 @@ type DexDeletionProps = {
  * Component responsive of asking the user if they really want to delete the move before doing so.
  */
 export const DexDeletion = forwardRef<EditorHandlingClose, DexDeletionProps>(({ type, onClose }, ref) => {
-  const { t } = useTranslation('database_dex');
+  const { t } = useTranslation();
   const { projectDataValues: allDex, selectedDataIdentifier: dexDbSymbol, removeProjectDataValue: removeDex } = useProjectDex();
   const getDexName = useGetEntityNameUsingCSV();
   const dex = allDex[dexDbSymbol];

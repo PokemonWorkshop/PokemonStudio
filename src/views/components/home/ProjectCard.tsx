@@ -98,7 +98,7 @@ type ProjectCardProps = {
 };
 
 export const ProjectCard = ({ project, onDeleteProjectToList, onUpdateProjectList, index }: ProjectCardProps) => {
-  const { t } = useTranslation(['homepage', 'loader']);
+  const { t } = useTranslation();
   const loaderRef = useLoaderRef();
   const projectLoad = useProjectLoad();
   const navigate = useNavigate();
@@ -127,13 +127,13 @@ export const ProjectCard = ({ project, onDeleteProjectToList, onUpdateProjectLis
       ({ errorMessage }) => {
         // TODO: Make an other way to find out if the project is not found
         if (errorMessage.includes('no such file or directory')) {
-          const errorNode = <SecondaryButton onClick={handleChangeFileClick}>{t('homepage:browse_my_files')}</SecondaryButton>;
-          loaderRef.current.setError('loading_project_error', t('loader:project_studio_not_found'), false, errorNode);
+          const errorNode = <SecondaryButton onClick={handleChangeFileClick}>{t('browse_my_files')}</SecondaryButton>;
+          loaderRef.current.setError('loading_project_error', t('project_studio_not_found'), false, errorNode);
         } else {
           loaderRef.current.setError('loading_project_error', errorMessage);
         }
       },
-      (count) => loaderRef.current.setError('loading_project_error', t('loader:integrity_message', { count }), true)
+      (count) => loaderRef.current.setError('loading_project_error', t('integrity_message', { count }), true)
     );
   };
 

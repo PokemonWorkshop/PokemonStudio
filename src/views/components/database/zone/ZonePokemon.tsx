@@ -34,7 +34,7 @@ const groupPokemon = (allPokemonInZone: StudioGroupEncounter[]): Map<string, Stu
 };
 
 export const ZonePokemon = ({ zone, groups }: ZonePokemonProps) => {
-  const { t } = useTranslation('database_zones');
+  const { t } = useTranslation();
 
   const allPokemonInZone: StudioGroupEncounter[] = useMemo(() => {
     return zone.wildGroups.flatMap((wildGroup) => groups[wildGroup]?.encounters || []);

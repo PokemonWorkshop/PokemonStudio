@@ -42,7 +42,7 @@ type TrainerNewEditorProps = {
 
 export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditorProps>(({ closeDialog }, ref) => {
   const { projectDataValues: trainers, setProjectDataValues: setTrainer } = useProjectTrainers();
-  const { t } = useTranslation('database_trainers');
+  const { t } = useTranslation();
   const aiOptions = useMemo(() => aiCategoryEntries(t), [t]);
   const vsTypeOptions = useMemo(() => vsTypeCategoryEntries(t), [t]);
   const [name, setName] = useState(''); // We can't use a ref because of the button behavior

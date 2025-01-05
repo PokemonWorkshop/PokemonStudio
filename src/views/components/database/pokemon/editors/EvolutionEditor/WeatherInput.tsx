@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { EvolutionConditionEditorInput } from './InputProps';
 
 export const WeatherInput = ({ type, state, dispatch }: EvolutionConditionEditorInput) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const options = useMemo(
     () => [
       { value: '__undef__', label: t('evolutionValue_weather_none') } as const,

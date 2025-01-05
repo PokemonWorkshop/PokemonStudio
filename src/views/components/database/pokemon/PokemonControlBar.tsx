@@ -21,7 +21,7 @@ type Props = {
 
 export const PokemonControlBar = ({ dialogsRef, setEvolutionIndex }: Props) => {
   useSetCurrentDatabasePath();
-  const { t } = useTranslation(['database_pokemon']);
+  const { t } = useTranslation();
   const { selectedDataIdentifier: currentPokemon, setSelectedDataIdentifier, state } = useProjectPokemon();
   const shortcutMap = useMemo<StudioShortcutActions>(() => {
     const isShortcutEnabled = () => dialogsRef?.current?.currentDialog === undefined;

@@ -19,7 +19,7 @@ type QuestFrameProps = {
 };
 
 export const QuestFrame = ({ quest, onClick }: QuestFrameProps) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const getQuestName = useGetEntityNameText();
   const getQuestDescription = useGetEntityDescriptionText();
 

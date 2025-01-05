@@ -18,7 +18,7 @@ type QuestEarningEditorProps = {
 };
 
 export const QuestEarningEditor = ({ quest, earningIndex }: QuestEarningEditorProps) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const refreshUI = useRefreshUI();
   const earningOptions = useMemo(() => earningCategoryEntries(t), [t]);
   const earning = quest.earnings[earningIndex];

@@ -13,7 +13,7 @@ import { useGroupPage } from '@hooks/usePage';
 export const GroupPage = () => {
   const dialogsRef = useDialogsRef<GroupEditorAndDeletionKeys>();
   const { group, cannotDelete } = useGroupPage();
-  const { t } = useTranslation('database_groups');
+  const { t } = useTranslation();
 
   return (
     <DatabasePageStyle>

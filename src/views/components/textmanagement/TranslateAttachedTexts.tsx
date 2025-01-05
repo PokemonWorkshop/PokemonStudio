@@ -60,7 +60,7 @@ export const StyledTextNavigationItem = styled.div<{ align?: string }>`
 `;
 
 export const TranslateAttachedTexts = () => {
-  const { t } = useTranslation('text_management');
+  const { t } = useTranslation();
   const languageContext = useContext(LanguageContext);
   const { allTextsFromFile, defaultLanguageIndexFromFile } = useTranslationPage(languageContext.positionLanguage);
   const textsWithoutIndex = allTextsFromFile.slice(1);

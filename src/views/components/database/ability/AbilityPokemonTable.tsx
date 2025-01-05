@@ -113,7 +113,7 @@ const RenderPokemon = ({ pokemon, ability, state }: RenderAbilityProps) => {
   const { projectDataValues: abilities } = useProjectAbilities();
   const getAbilityName = useGetEntityNameTextUsingTextId();
   const getCreatureName = useGetEntityNameText();
-  const { t } = useTranslation('database_abilities');
+  const { t } = useTranslation();
   const types = state.projectData.types;
 
   const isClickable: boolean = useKeyPress(CONTROL);
@@ -155,7 +155,7 @@ const RenderPokemon = ({ pokemon, ability, state }: RenderAbilityProps) => {
 
 export const AbilityPokemonTable = ({ ability }: AbilityPokemonTableProps) => {
   const [state] = useGlobalState();
-  const { t } = useTranslation('database_abilities');
+  const { t } = useTranslation();
   const allPokemon = getAllPokemonWithCurrentAbility(state, ability);
 
   return (

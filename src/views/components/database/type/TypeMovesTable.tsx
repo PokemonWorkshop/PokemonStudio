@@ -107,7 +107,7 @@ const getMovesWithCurrentType = (type: StudioType, state: State) => {
 
 export const TypeMovesTable = ({ type }: TypeMovesTableProps) => {
   const [state] = useGlobalState();
-  const { t } = useTranslation('database_types');
+  const { t } = useTranslation();
   const allMoves = getMovesWithCurrentType(type, state);
 
   return (

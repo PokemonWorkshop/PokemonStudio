@@ -7,7 +7,7 @@ import { EmbeddedUnitInput } from '@components/inputs/EmbeddedUnitInput';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 
 export const QuestEarningMoney = ({ earning }: QuestEarningProps) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const refreshUI = useRefreshUI();
   return (
     <InputContainer>

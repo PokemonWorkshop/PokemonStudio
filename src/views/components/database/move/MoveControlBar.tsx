@@ -13,7 +13,7 @@ type MoveControlBarProps = {
 };
 
 export const MoveControlBar = ({ dialogsRef }: MoveControlBarProps) => {
-  const { t } = useTranslation('database_moves');
+  const { t } = useTranslation();
   const { selectedDataIdentifier: moveDbSymbol, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol } = useProjectMoves();
   useSetCurrentDatabasePath();
 

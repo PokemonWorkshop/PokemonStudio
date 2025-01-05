@@ -87,7 +87,7 @@ export const DropInput = ({
   showAcceptedFormat,
   onFileChoosen,
 }: DropInputProps) => {
-  const { t } = useTranslation('drop');
+  const { t } = useTranslation();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const chooseFile = useChoosefile();
   const copyFile = useCopyFile();

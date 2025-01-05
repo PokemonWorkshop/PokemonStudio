@@ -32,7 +32,7 @@ export const StatusesEditor = ({
   handleChancesChange,
   getRawFormData,
 }: StatusesEditorProps) => {
-  const { t } = useTranslation('database_moves');
+  const { t } = useTranslation();
 
   return (
     <>

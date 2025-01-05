@@ -11,7 +11,7 @@ type TypeFieldsProps = {
 };
 
 export const TypeFields = ({ defaults, form }: TypeFieldsProps) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const { t: tSelect } = useTranslation('select');
   const [type1, setType1] = useState<string>(form.type1);
   const [type2, setType2] = useState<string>(form.type2);

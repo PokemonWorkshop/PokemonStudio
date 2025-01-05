@@ -31,7 +31,7 @@ type DexPokemonListImportEditorProps = {
 
 export const DexPokemonListImportEditor = forwardRef<EditorHandlingClose, DexPokemonListImportEditorProps>(({ closeDialog }, ref) => {
   const { projectDataValues: allDex, selectedDataIdentifier: currentDex } = useProjectDex();
-  const { t } = useTranslation('database_dex');
+  const { t } = useTranslation();
   const { dex } = useDexPage();
   const updateDex = useUpdateDex(dex);
   const firstDbSymbol = Object.entries(allDex)

@@ -30,7 +30,7 @@ const getCurrentCode = (
 
 export const DashboardLanguageEditor = forwardRef<EditorHandlingClose, DashboardLanguageEditorProps>(({ editLanguage }, ref) => {
   const { languageConfig, projectStudio, updateLanguageConfig, updateProjectStudio } = useDashboardLanguage();
-  const { t } = useTranslation('dashboard_language');
+  const { t } = useTranslation();
   const [languageIndex, setLanguageIndex] = useState(editLanguage.index);
   const otherLanguages = useMemo(
     () => projectStudio.languagesTranslation.filter(({ code }) => !languageConfig.choosableLanguageCode.includes(code)),

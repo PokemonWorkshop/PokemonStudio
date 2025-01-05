@@ -17,7 +17,7 @@ const FLAVORS_EDITOR_SCHEMA = NATURE_VALIDATOR.pick({
 });
 
 export const NatureFlavorsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_natures');
+  const { t } = useTranslation();
   const { nature } = useNaturePage();
   const updateNature = useUpdateNature(nature);
   const { canClose, getFormData, defaults, formRef } = useZodForm(FLAVORS_EDITOR_SCHEMA, nature);

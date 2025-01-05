@@ -40,7 +40,7 @@ export const ZonePage = () => {
     getNextDbSymbol,
   } = useProjectZones();
   const { projectDataValues: groups, setProjectDataValues: setGroup } = useProjectGroups();
-  const { t } = useTranslation('database_zones');
+  const { t } = useTranslation();
   const getZoneName = useGetEntityNameText();
   const onChange: SelectChangeEvent = (selected) => setSelectedDataIdentifier({ zone: selected.value });
   const zone = zones[zoneDbSymbol];

@@ -16,7 +16,7 @@ import { MOVE_DESCRIPTION_TEXT_ID } from '@modelEntities/move';
 export const ItemTechDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { currentItem: item } = useItemPage();
   const { projectDataValues: moves } = useProjectDataReadonly('moves', 'move');
-  const { t } = useTranslation(['database_items', 'database_moves']);
+  const { t } = useTranslation();
   const setItems = useUpdateItem(item);
   const copyText = useCopyProjectText();
 

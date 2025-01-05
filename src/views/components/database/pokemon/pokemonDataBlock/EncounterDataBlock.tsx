@@ -54,7 +54,7 @@ const ItemHeldComponent = ({ itemHeld, items, t, clickable }: ItemHeldComponentP
 export const EncounterDataBlock = ({ pokemonWithForm, dialogsRef }: PokemonDataProps) => {
   const { form } = pokemonWithForm;
   const { projectDataValues: items } = useProjectItems();
-  const { t } = useTranslation(['database_pokemon', 'database_items']);
+  const { t } = useTranslation();
 
   const isClickable: boolean = useKeyPress(CONTROL);
   const shortcutNavigation = useShortcutNavigation('items', 'item', '/database/items');
