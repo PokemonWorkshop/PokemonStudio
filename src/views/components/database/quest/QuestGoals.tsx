@@ -15,6 +15,12 @@ type QuestGoalsProps = {
 export const QuestGoals = ({ quest, dialogsRef, setGoalIndex }: QuestGoalsProps) => {
   const { projectDataValues: quests } = useProjectQuests();
   const { t } = useTranslation('database_quests');
+
+  const editGoal = (index: number) => {
+    dialogsRef.current?.openDialog('goal');
+    setGoalIndex(index);
+  };
+
   return (
     <DataBlockEditor
       size="full"
@@ -25,7 +31,7 @@ export const QuestGoals = ({ quest, dialogsRef, setGoalIndex }: QuestGoalsProps)
       disabledDeletion={quest.objectives.length === 0}
       disabledImport={Object.keys(quests).length <= 1}
     >
-      <QuestGoalsTable quest={quest} setGoalIndex={setGoalIndex} />
+      <QuestGoalsTable quest={quest} editGoal={editGoal} />
     </DataBlockEditor>
   );
 };

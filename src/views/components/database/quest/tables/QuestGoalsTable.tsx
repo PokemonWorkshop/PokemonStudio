@@ -9,10 +9,10 @@ import { useUpdateQuest } from '../editors/useUpdateQuest';
 
 type QuestGoalsTableProps = {
   quest: StudioQuest;
-  setGoalIndex: (index: number) => void;
+  editGoal: (index: number) => void;
 };
 
-export const QuestGoalsTable = ({ quest, setGoalIndex }: QuestGoalsTableProps) => {
+export const QuestGoalsTable = ({ quest, editGoal }: QuestGoalsTableProps) => {
   const updateQuest = useUpdateQuest(quest);
   const { t } = useTranslation('database_quests');
   const [dragOn, setDragOn] = useState(false);
@@ -55,7 +55,7 @@ export const QuestGoalsTable = ({ quest, setGoalIndex }: QuestGoalsTableProps) =
                       provided={provided}
                       isDragging={snapshot.isDragging}
                       dragOn={dragOn}
-                      onClickEdit={() => setGoalIndex(index)}
+                      onClickEdit={() => editGoal(index)}
                       onClickDelete={() => {
                         const newObjectives = cloneEntity(quest.objectives);
                         newObjectives.splice(index, 1);

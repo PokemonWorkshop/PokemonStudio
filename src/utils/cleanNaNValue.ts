@@ -3,7 +3,7 @@ import { StudioCreatureForm } from '@modelEntities/creature';
 import { StudioExpandPokemonSetup, StudioGroupEncounter, StudioIvEv } from '@modelEntities/groupEncounter';
 import { StudioItem } from '@modelEntities/item';
 import { StudioMove } from '@modelEntities/move';
-import { StudioQuest } from '@modelEntities/quest';
+import { StudioQuestEarning, StudioQuestObjective } from '@modelEntities/quest';
 import { StudioTrainer } from '@modelEntities/trainer';
 import { StudioZone } from '@modelEntities/zone';
 import { StudioGroup } from '@modelEntities/group';
@@ -194,30 +194,37 @@ export const cleaningZoneNaNValues = (v: StudioZone) => {
   v.warp.y = cleaningNaNToNull(v.warp.y);
 };
 
-export const cleaningQuestNaNValues = (v: StudioQuest) => {
-  v.objectives.map(({ objectiveMethodName, objectiveMethodArgs }) => {
+const cleanNaNNullValue = (value: number, replaceBy?: number) => {
+  return value === null ? replaceBy || 0 : cleanNaNValue(value, replaceBy);
+};
+
+export const cleaningQuestObjectivesNaNValues = (objectives: StudioQuestObjective[]) => {
+  objectives.map(({ objectiveMethodName, objectiveMethodArgs }) => {
     switch (objectiveMethodName) {
       case 'objective_beat_npc':
-        objectiveMethodArgs[2] = cleanNaNValue(objectiveMethodArgs[2] as number, 1);
+        objectiveMethodArgs[2] = cleanNaNNullValue(objectiveMethodArgs[2] as number, 1);
         break;
       case 'objective_obtain_egg':
-        objectiveMethodArgs[0] = cleanNaNValue(objectiveMethodArgs[0] as number, 1);
+        objectiveMethodArgs[0] = cleanNaNNullValue(objectiveMethodArgs[0] as number, 1);
         break;
       case 'objective_obtain_item':
       case 'objective_beat_pokemon':
       case 'objective_catch_pokemon':
       case 'objective_hatch_egg':
-        objectiveMethodArgs[1] = cleanNaNValue(objectiveMethodArgs[1] as number, 1);
+        objectiveMethodArgs[1] = cleanNaNNullValue(objectiveMethodArgs[1] as number, 1);
         break;
     }
   });
-  v.earnings.map(({ earningMethodName, earningArgs }) => {
+};
+
+export const cleaningQuestEarningsNaNValues = (earnings: StudioQuestEarning[]) => {
+  earnings.map(({ earningMethodName, earningArgs }) => {
     switch (earningMethodName) {
       case 'earning_money':
-        earningArgs[0] = cleanNaNValue(earningArgs[0] as number, 100);
+        earningArgs[0] = cleanNaNNullValue(earningArgs[0] as number, 100);
         break;
       case 'earning_item':
-        earningArgs[1] = cleanNaNValue(earningArgs[1] as number, 1);
+        earningArgs[1] = cleanNaNNullValue(earningArgs[1] as number, 1);
         break;
     }
   });
