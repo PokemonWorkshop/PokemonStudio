@@ -7,6 +7,7 @@ import type { InvalidJSONError } from '@utils/json/parse';
 import type { ZodError } from 'zod';
 import type { CSVHandler } from './text';
 import type { LoadEntityTextError } from './loadTextOfEntities';
+import { validateEntity } from './load';
 
 export type Entity = Record<string, unknown>;
 export type EntityRecord = Record<string, Entity>;
@@ -52,3 +53,15 @@ export const pushTextError = (error: LoadEntityTextError) => {
 export const setEntityList = (key: string, list: SelectOption<string>[]) => {
   entityLists[key] = list;
 };
+
+export const getErrorCounts = () => ({ entityErrorCount: errors.length, textErrorCount: textErrors.length });
+
+export const getEntityRecord = (type: string): EntityRecord | undefined => entities[type];
+
+export const setEntity = (type: string, dbSymbol: string, entity: unknown) => {
+  entities[type][dbSymbol] = validateEntity(type, dbSymbol, entity);
+};
+
+export const getTextKeys = () => ({ handlers: Object.keys(texts), lists: Object.keys(entityLists) });
+
+// TODO: get whole list + get/set single texts

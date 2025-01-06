@@ -21,7 +21,7 @@ export const loadAllEntities = async (
 ) => {
   const entityTypes = getAllEntityTypeToLoad();
   for (const entityType of entityTypes) {
-    progress(entityType, entityTypes.indexOf(entityType), entityTypes.length);
+    progress(entityType, entityTypes.indexOf(entityType) + 1, entityTypes.length);
     const data = await loadAllEntityOfType(entityType, projectPath);
     setEntities(entityType, data.entities, data.errors);
     const texts = await loadAllEntityTexts(entityType, projectPath, mainLanguage, data.entityList); // Should load the CSV files (texts) and build the initial entityLists
@@ -74,8 +74,23 @@ const getFilenames = async (glob: string, projectPath: string) => {
     const [dirName, endFile] = glob.split('*', 2);
     const pathToRead = path.join(projectPath, dirName);
     const allFiles = await fs.readdir(pathToRead);
-    return allFiles.filter((filename) => filename.endsWith(endFile));
+    return allFiles.filter((filename) => filename.endsWith(endFile)).map((filename) => path.join(pathToRead, filename));
   }
 
   return [path.join(projectPath, glob)];
+};
+
+export const validateEntity = (type: string, dbSymbol: string, entity: unknown): Entity => {
+  const validators = entityRegistry[type];
+  if (!validators) throw new Error(`No entity registered for type ${type}`);
+
+  const entityPathEnd = `/${dbSymbol}.json`;
+
+  const specialValidator = validators.find((v) => v.pathGlob.endsWith(entityPathEnd))?.validator;
+  if (specialValidator) return specialValidator.parse(entity);
+
+  const defaultValidator = validators.find((v) => v.pathGlob.includes('*'))?.validator;
+  if (defaultValidator) return defaultValidator.parse(entity);
+
+  throw new Error(`No validator matches for ${dbSymbol} entity of type ${type}`);
 };

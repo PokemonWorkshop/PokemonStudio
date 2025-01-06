@@ -2,7 +2,7 @@ import type { IpcMain, IpcMainEvent } from 'electron';
 import log from 'electron-log';
 import { BackendTaskFunctionInput, ChannelNames, sendFailure, sendSuccess } from '@utils/BackendTask';
 
-type AnyObject = Record<string, unknown>;
+export type AnyObject = Record<string, unknown>;
 
 export const defineBackendServiceFunction =
   <InputPayload extends AnyObject, OutputPayload extends AnyObject>(

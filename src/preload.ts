@@ -49,6 +49,7 @@ import type { SaveCompilationLogsInput } from './backendTasks/saveCompilationLog
 import type { SynchronizeLanguageInput } from './backendTasks/synchronizeLanguage';
 import type { ReadRMXPEventInput, ReadRMXPEventOutput } from './backendTasks/readRMXPEvents';
 import type { RMXPEventsToStudioEventsInput, RMXPEventsToStudioEventsOutput } from './backendTasks/convertRMXPEventsToStudioEvents';
+import type { GetEntityTaskPayload, GetTextKeysInProjectOutput, LoadProjectTaskPayload, SetEntityTaskPayload } from './projectState/backendTasks';
 
 contextBridge.exposeInMainWorld('api', {
   isDev: process.env.NODE_ENV === 'development',
@@ -163,6 +164,13 @@ contextBridge.exposeInMainWorld('api', {
   convertRMXPEventsToStudioEvents: defineBackendTask(ipcRenderer, 'convert-rmxp-events-to-studio-events'),
 });
 
+contextBridge.exposeInMainWorld('stateApi', {
+  load: defineBackendTask(ipcRenderer, 'load-project-state-task'),
+  getEntity: defineBackendTask(ipcRenderer, 'get-entity-in-project-state'),
+  setEntity: defineBackendTask(ipcRenderer, 'set-entity-in-project-state'),
+  getTextKeys: defineBackendTask(ipcRenderer, 'get-text-keys-in-project-state'),
+});
+
 type AnyObj = Record<string, never>;
 
 declare global {
@@ -256,6 +264,12 @@ declare global {
       synchronizeLanguage: BackendTaskWithGenericErrorAndNoProgress<SynchronizeLanguageInput, AnyObj>;
       readRMXPEvents: BackendTaskWithGenericErrorAndNoProgress<ReadRMXPEventInput, ReadRMXPEventOutput>;
       convertRMXPEventsToStudioEvents: BackendTaskWithGenericErrorAndNoProgress<RMXPEventsToStudioEventsInput, RMXPEventsToStudioEventsOutput>;
+    };
+    stateApi: {
+      load: BackendTaskWithGenericError<LoadProjectTaskPayload, AnyObj, GenericBackendProgress>;
+      getEntity: BackendTaskWithGenericErrorAndNoProgress<GetEntityTaskPayload, AnyObj>;
+      setEntity: BackendTaskWithGenericErrorAndNoProgress<SetEntityTaskPayload, AnyObj>;
+      getTextKeys: BackendTaskWithGenericErrorAndNoProgress<AnyObj, GetTextKeysInProjectOutput>;
     };
   }
 }
