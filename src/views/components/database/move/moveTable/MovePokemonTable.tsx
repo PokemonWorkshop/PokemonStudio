@@ -11,6 +11,7 @@ import { StudioCreature, StudioLevelLearnableMove } from '@modelEntities/creatur
 import { StudioMove } from '@modelEntities/move';
 import { CONTROL, useKeyPress } from '@hooks/useKeyPress';
 import { usePokemonShortcutNavigation } from '@hooks/useShortcutNavigation';
+import { buildCreaturesListByDexOrder } from '@utils/buildCreaturesListByDexOrder';
 
 export type FilterType = 'LevelLearnableMove' | 'TutorLearnableMove' | 'TechLearnableMove' | 'BreedLearnableMove' | 'EvolutionLearnableMove';
 
@@ -20,15 +21,15 @@ type MovePokemonTableProps = {
 };
 
 const getAllPokemonFiltered = (state: State, move: StudioMove, filter: FilterType) => {
-  return Object.values(state.projectData.pokemon).filter((pokemon) =>
-    pokemon.forms.find((form) => form.moveSet.find((m) => m.klass === filter && m.move === move.dbSymbol))
-  );
+  return buildCreaturesListByDexOrder(state)
+    .map((pokemon) => state.projectData.pokemon[pokemon.dbSymbol])
+    .filter((pokemon) => pokemon.forms.find((form) => form.moveSet.find((m) => m.klass === filter && m.move === move.dbSymbol)));
 };
 
 export const MovePokemonTable = ({ move, filter }: MovePokemonTableProps) => {
   const [state] = useGlobalState();
   const { t } = useTranslation(['database_types', 'database_moves', 'database_pokemon']);
-  const allPokemon = getAllPokemonFiltered(state, move, filter).sort((a, b) => a.id - b.id);
+  const allPokemon = getAllPokemonFiltered(state, move, filter);
 
   return allPokemon.length === 0 ? (
     <NoPokemonFound>{t('database_pokemon:no_option')}</NoPokemonFound>
