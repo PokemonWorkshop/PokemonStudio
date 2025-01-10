@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { Input } from '@components/inputs';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 
@@ -25,3 +25,14 @@ export const InputNumber = ({ name, value, setValue }: InputNumberProps) => {
     />
   );
 };
+
+type InputNumber2Props = {
+  name: string;
+  defaultValue: number;
+  onChange: () => void;
+};
+
+export const InputNumber2 = forwardRef<HTMLInputElement, InputNumber2Props>(({ name, defaultValue, onChange }, ref) => {
+  return <Input ref={ref} type="number" name={name} min="1" max="999" defaultValue={defaultValue} onChange={() => onChange()} />;
+});
+InputNumber2.displayName = 'InputNumber2';
