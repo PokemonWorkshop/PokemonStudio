@@ -1,10 +1,16 @@
 import { DbSymbol } from '@modelEntities/dbSymbol';
-import { StudioQuestEarning } from '@modelEntities/quest';
+import { StudioQuestEarning, StudioQuestEarningType } from '@modelEntities/quest';
 import { assertUnreachable } from '@utils/assertUnreachable';
+import { cloneEntity } from '@utils/cloneEntity';
+import { createQuestEarning } from '@utils/entityCreation';
 import { useRef, useState } from 'react';
 
-export const useEarningQuest = (initialEarning: StudioQuestEarning) => {
-  const [earning, setEarning] = useState(initialEarning);
+const initializeEarning = (initialEarning?: StudioQuestEarning): StudioQuestEarning => {
+  return initialEarning ? cloneEntity(initialEarning) : createQuestEarning('earning_money');
+};
+
+export const useEarningQuest = (initialEarning?: StudioQuestEarning) => {
+  const [earning, setEarning] = useState(initializeEarning(initialEarning));
   const [isValid, setIsValid] = useState<boolean>(true);
   const entityRef = useRef<DbSymbol | undefined>();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -24,8 +30,8 @@ export const useEarningQuest = (initialEarning: StudioQuestEarning) => {
     return setIsValid(true);
   };
 
-  const updateEarning = (earning: StudioQuestEarning) => {
-    setEarning(earning);
+  const updateEarning = (earningMethod: StudioQuestEarningType) => {
+    setEarning(createQuestEarning(earningMethod));
     setIsValid(true);
   };
 

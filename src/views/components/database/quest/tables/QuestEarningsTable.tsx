@@ -8,10 +8,10 @@ import { useUpdateQuest } from '../editors/useUpdateQuest';
 
 type QuestEarningsTableProps = {
   quest: StudioQuest;
-  setEarningIndex: (index: number) => void;
+  editEarning: (index: number) => void;
 };
 
-export const QuestEarningsTable = ({ quest, setEarningIndex }: QuestEarningsTableProps) => {
+export const QuestEarningsTable = ({ quest, editEarning }: QuestEarningsTableProps) => {
   const updateQuest = useUpdateQuest(quest);
   const { t } = useTranslation('database_quests');
 
@@ -27,7 +27,7 @@ export const QuestEarningsTable = ({ quest, setEarningIndex }: QuestEarningsTabl
         <RenderEarning
           key={`earning-${index}`}
           earning={earning}
-          onClickEdit={() => setEarningIndex(index)}
+          onClickEdit={() => editEarning(index)}
           onClickDelete={() => {
             const newEarnings = cloneEntity(quest.earnings);
             newEarnings.splice(index, 1);

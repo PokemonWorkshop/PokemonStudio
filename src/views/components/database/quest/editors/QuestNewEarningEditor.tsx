@@ -2,7 +2,6 @@ import { DarkButton, PrimaryButton } from '@components/buttons';
 import { Editor } from '@components/editor/Editor';
 import { InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { QUEST_EARNINGS, StudioQuestEarningType } from '@modelEntities/quest';
-import { createQuestEarning } from '@utils/entityCreation';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { QuestEarningItem, QuestEarningMoney, QuestEarningPokemon } from './earnings';
@@ -35,7 +34,7 @@ export const QuestNewEarningEditor = forwardRef<EditorHandlingClose, QuestNewEar
   const { quest } = useQuestPage();
   const updateQuest = useUpdateQuest(quest);
   const earningOptions = useMemo(() => earningCategoryEntries(t), [t]);
-  const { earning, refs, updateEarning, checkIsValid, isValid } = useEarningQuest(createQuestEarning('earning_money'));
+  const { earning, refs, updateEarning, checkIsValid, isValid } = useEarningQuest();
   const earningMethodName = earning.earningMethodName;
 
   useEditorHandlingClose(ref);
@@ -43,7 +42,7 @@ export const QuestNewEarningEditor = forwardRef<EditorHandlingClose, QuestNewEar
   const changeEarning = (value: StudioQuestEarningType) => {
     if (value === earning.earningMethodName) return;
 
-    updateEarning(createQuestEarning(value));
+    updateEarning(value);
   };
 
   const onClickNew = () => {
@@ -82,8 +81,8 @@ export const QuestNewEarningEditor = forwardRef<EditorHandlingClose, QuestNewEar
     <Editor type="creation" title={t('earning')}>
       <InputContainer>
         <InputWithTopLabelContainer>
-          <Label htmlFor="earning-type">{t('earning_type')}</Label>
-          <Select id="earning-type" value={earning.earningMethodName} options={earningOptions} onChange={changeEarning} />
+          <Label htmlFor="earning-method-name">{t('earning_type')}</Label>
+          <Select name="earning-method-name" value={earning.earningMethodName} options={earningOptions} onChange={changeEarning} />
         </InputWithTopLabelContainer>
         {earningMethodName === 'earning_money' && <QuestEarningMoney earning={earning} refs={refs} checkIsValid={checkIsValid} />}
         {earningMethodName === 'earning_item' && <QuestEarningItem earning={earning} refs={refs} checkIsValid={checkIsValid} />}

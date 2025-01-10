@@ -15,6 +15,12 @@ type QuestEarningsProps = {
 export const QuestEarnings = ({ quest, dialogsRef, setEarningIndex }: QuestEarningsProps) => {
   const { projectDataValues: quests } = useProjectQuests();
   const { t } = useTranslation('database_quests');
+
+  const editEarning = (index: number) => {
+    dialogsRef.current?.openDialog('earning');
+    setEarningIndex(index);
+  };
+
   return (
     <DataBlockEditor
       size="full"
@@ -25,7 +31,7 @@ export const QuestEarnings = ({ quest, dialogsRef, setEarningIndex }: QuestEarni
       disabledDeletion={quest.earnings.length === 0}
       disabledImport={Object.keys(quests).length <= 1}
     >
-      <QuestEarningsTable quest={quest} setEarningIndex={setEarningIndex} />
+      <QuestEarningsTable quest={quest} editEarning={editEarning} />
     </DataBlockEditor>
   );
 };
