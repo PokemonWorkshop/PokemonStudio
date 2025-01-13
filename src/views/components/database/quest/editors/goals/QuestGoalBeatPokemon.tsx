@@ -1,26 +1,29 @@
 import { InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
 import { useTranslation } from 'react-i18next';
-import { InputNumber } from './InputNumber';
-import { QuestUpdateGoalProps } from './QuestGoalProps';
-import { SelectPokemon } from '@components/selects/SelectPokemon';
+import { InputNumber2 } from './InputNumber';
+import { QuestGoalProps } from './QuestGoalProps';
+import { SelectPokemon2 } from '@components/selects/SelectPokemon';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 import React from 'react';
 
-export const QuestGoalBeatPokemon = ({ objective, updateObjective }: QuestUpdateGoalProps) => {
-  const { t } = useTranslation(['database_pokemon', 'database_quests', 'select']);
+export const QuestGoalBeatPokemon = ({ objective, refs, checkIsValid }: QuestGoalProps) => {
+  const { t } = useTranslation(['database_pokemon', 'database_quests']);
+  const defaultCreature = objective.objectiveMethodArgs[0] === '__undef__' ? undefined : (objective.objectiveMethodArgs[0] as DbSymbol);
+
   return (
     <PaddedInputContainer>
       <InputWithTopLabelContainer>
         <Label htmlFor="select-pokemon">{t('database_pokemon:pokemon')}</Label>
-        <SelectPokemon
-          dbSymbol={objective.objectiveMethodArgs[0] as string}
-          onChange={(value) => updateObjective(0, value)}
-          undefValueOption={t('select:none')}
-          noLabel
-        />
+        <SelectPokemon2 name="select-pokemon" optionRef={refs.entityRef} defaultValue={defaultCreature} />
       </InputWithTopLabelContainer>
       <InputWithLeftLabelContainer>
         <Label htmlFor="amount-beat-pokemon">{t('database_quests:amount')}</Label>
-        <InputNumber name="amount-beat-pokemon" value={objective.objectiveMethodArgs[1] as number} setValue={(value) => updateObjective(1, value)} />
+        <InputNumber2
+          name="amount-beat-pokemon"
+          ref={refs.valueRef}
+          defaultValue={objective.objectiveMethodArgs[1] as number}
+          onChange={() => checkIsValid && checkIsValid()}
+        />
       </InputWithLeftLabelContainer>
     </PaddedInputContainer>
   );

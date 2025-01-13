@@ -16,18 +16,23 @@ export const useEarningQuest = (initialEarning?: StudioQuestEarning) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const checkIsValid = () => {
+    let result = false;
     switch (earning.earningMethodName) {
       case 'earning_money':
-        return setIsValid(!!inputRef.current && inputRef.current.validity.valid);
+        result = !!inputRef.current && inputRef.current.validity.valid;
+        break;
       case 'earning_item':
-        return setIsValid(!!entityRef.current && !!inputRef.current && inputRef.current.validity.valid);
+        result = !!entityRef.current && !!inputRef.current && inputRef.current.validity.valid;
+        break;
       case 'earning_pokemon':
       case 'earning_egg':
-        return setIsValid(!!entityRef.current);
+        result = !!entityRef.current;
+        break;
       default:
         assertUnreachable(earning.earningMethodName);
     }
-    return setIsValid(true);
+    setIsValid(result);
+    return result;
   };
 
   const updateEarning = (earningMethod: StudioQuestEarningType) => {

@@ -1,8 +1,7 @@
 import { EditorWithCollapse } from '@components/editor/Editor';
 import { EditorChildWithSubEditorContainer } from '@components/editor/EditorContainer';
 import { InputContainer, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
-import { QUEST_OBJECTIVES, StudioQuestObjectiveType } from '@modelEntities/quest';
-import { createQuestObjective } from '@utils/entityCreation';
+import { QUEST_OBJECTIVES, StudioQuestObjectiveType, updateIndexSpeakToBeatNpc } from '@modelEntities/quest';
 import { padStr } from '@utils/PadStr';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
@@ -17,12 +16,13 @@ import {
 } from './goals';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { useQuestPage } from '@src/hooks/usePage';
-import { useUpdateObjectiveQuest } from './useUpdateObjectiveQuest';
+import { useObjectiveQuest } from './useObjectiveQuest';
 import { useUpdateQuest } from './useUpdateQuest';
 import { Select } from '@ds/Select';
 import { cloneEntity } from '@utils/cloneEntity';
+import { cleanNaNValue } from '@utils/cleanNaNValue';
+import { assertUnreachable } from '@utils/assertUnreachable';
 import React, { forwardRef, useMemo } from 'react';
-import { cleaningQuestObjectivesNaNValues } from '@utils/cleanNaNValue';
 
 const objectiveCategoryEntries = (t: TFunction<'database_quests'>) =>
   QUEST_OBJECTIVES.map((objective) => ({ value: objective, label: t(objective) }));
@@ -36,27 +36,70 @@ export const QuestGoalEditor = forwardRef<EditorHandlingClose, QuestGoalEditorPr
   const { quest } = useQuestPage();
   const updateQuest = useUpdateQuest(quest);
   const objectiveOptions = useMemo(() => objectiveCategoryEntries(t), [t]);
-  const { objective, setObjective, updateObjective } = useUpdateObjectiveQuest(quest.objectives[objectiveIndex]);
+  const { objective, refs, setObjective, updateObjective, checkIsValid } = useObjectiveQuest(quest.objectives[objectiveIndex]);
   const objectiveMethodName = objective.objectiveMethodName;
 
   const changeObjective = (value: StudioQuestObjectiveType) => {
     if (value === objective.objectiveMethodName) return;
 
-    setObjective(createQuestObjective(value));
+    updateObjective(value);
   };
 
-  const canClose = () => {
-    if (!['objective_speak_to', 'objective_beat_npc'].includes(objective.objectiveMethodName)) return true;
-
-    return objective.objectiveMethodArgs[1] !== '';
-  };
+  const canClose = () => checkIsValid();
 
   const onClose = () => {
     if (!canClose()) return;
 
+    const newObjective = cloneEntity(objective);
+    const oldObjective = quest.objectives[objectiveIndex];
+    const isSameMethodName = newObjective.objectiveMethodName === oldObjective.objectiveMethodName;
+    switch (objectiveMethodName) {
+      case 'objective_beat_npc': {
+        if (!refs.nameRef.current || !refs.valueRef.current) return;
+
+        const backupValue = isSameMethodName ? (oldObjective.objectiveMethodArgs[2] as number) : 1;
+        newObjective.objectiveMethodArgs[1] = refs.nameRef.current.value;
+        newObjective.objectiveMethodArgs[2] = cleanNaNValue(refs.valueRef.current.valueAsNumber, backupValue);
+        break;
+      }
+      case 'objective_beat_pokemon':
+      case 'objective_hatch_egg':
+      case 'objective_obtain_egg':
+      case 'objective_obtain_item': {
+        if (!refs.entityRef.current || !refs.valueRef.current) return;
+
+        const backupValue = isSameMethodName ? (oldObjective.objectiveMethodArgs[1] as number) : 1;
+        newObjective.objectiveMethodArgs[0] = refs.entityRef.current;
+        newObjective.objectiveMethodArgs[1] = cleanNaNValue(refs.valueRef.current.valueAsNumber, backupValue);
+        break;
+      }
+      case 'objective_catch_pokemon': {
+        if (!refs.valueRef.current) return;
+
+        const backupValue = isSameMethodName ? (oldObjective.objectiveMethodArgs[1] as number) : 1;
+        newObjective.objectiveMethodArgs[1] = cleanNaNValue(refs.valueRef.current.valueAsNumber, backupValue);
+        // The conditions are managed by the QuestGoalConditions component
+        break;
+      }
+      case 'objective_see_pokemon': {
+        if (!refs.entityRef.current) return;
+
+        newObjective.objectiveMethodArgs[0] = refs.entityRef.current;
+        break;
+      }
+      case 'objective_speak_to': {
+        if (!refs.nameRef.current) return;
+
+        newObjective.objectiveMethodArgs[1] = refs.nameRef.current.value;
+        break;
+      }
+      default:
+        assertUnreachable(objectiveMethodName);
+    }
+
     const updatedObjectives = cloneEntity(quest.objectives);
-    updatedObjectives[objectiveIndex] = cloneEntity(objective);
-    cleaningQuestObjectivesNaNValues(updatedObjectives);
+    updatedObjectives[objectiveIndex] = cloneEntity(newObjective);
+    updateIndexSpeakToBeatNpc(updatedObjectives);
     updateQuest({ objectives: updatedObjectives });
   };
 
@@ -72,20 +115,16 @@ export const QuestGoalEditor = forwardRef<EditorHandlingClose, QuestGoalEditorPr
               <Select id="goal-type" value={objective.objectiveMethodName} options={objectiveOptions} onChange={changeObjective} />
             </InputWithTopLabelContainer>
           </PaddedInputContainer>
-          {objectiveMethodName === 'objective_speak_to' && (
-            <QuestGoalSpeakTo objective={objective} setObjective={setObjective} setIsEmptyText={() => {}} />
-          )}
-          {objectiveMethodName === 'objective_beat_npc' && (
-            <QuestGoalBeatNpc objective={objective} setObjective={setObjective} setIsEmptyText={() => {}} />
-          )}
-          {objectiveMethodName === 'objective_obtain_item' && <QuestGoalObtainItem objective={objective} updateObjective={updateObjective} />}
-          {objectiveMethodName === 'objective_see_pokemon' && <QuestGoalSeePokemon objective={objective} updateObjective={updateObjective} />}
-          {objectiveMethodName === 'objective_beat_pokemon' && <QuestGoalBeatPokemon objective={objective} updateObjective={updateObjective} />}
+          {objectiveMethodName === 'objective_speak_to' && <QuestGoalSpeakTo objective={objective} refs={refs} />}
+          {objectiveMethodName === 'objective_beat_npc' && <QuestGoalBeatNpc objective={objective} refs={refs} />}
+          {objectiveMethodName === 'objective_obtain_item' && <QuestGoalObtainItem objective={objective} refs={refs} />}
+          {objectiveMethodName === 'objective_see_pokemon' && <QuestGoalSeePokemon objective={objective} refs={refs} />}
+          {objectiveMethodName === 'objective_beat_pokemon' && <QuestGoalBeatPokemon objective={objective} refs={refs} />}
           {objectiveMethodName === 'objective_catch_pokemon' && (
-            <QuestGoalCatchPokemon objective={objective} setObjective={setObjective} updateObjective={updateObjective} />
+            <QuestGoalCatchPokemon objective={objective} refs={refs} setObjective={setObjective} />
           )}
-          {objectiveMethodName === 'objective_obtain_egg' && <QuestGoalEgg objective={objective} updateObjective={updateObjective} />}
-          {objectiveMethodName === 'objective_hatch_egg' && <QuestGoalEgg objective={objective} updateObjective={updateObjective} />}
+          {objectiveMethodName === 'objective_obtain_egg' && <QuestGoalEgg objective={objective} refs={refs} />}
+          {objectiveMethodName === 'objective_hatch_egg' && <QuestGoalEgg objective={objective} refs={refs} />}
         </InputContainer>
       </EditorChildWithSubEditorContainer>
     </EditorWithCollapse>

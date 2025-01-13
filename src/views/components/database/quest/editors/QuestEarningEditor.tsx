@@ -25,7 +25,7 @@ export const QuestEarningEditor = forwardRef<EditorHandlingClose, QuestEarningEd
   const { t } = useTranslation('database_quests');
   const { quest } = useQuestPage();
   const updateQuest = useUpdateQuest(quest);
-  const { earning, refs, updateEarning, isValid } = useEarningQuest(quest.earnings[earningIndex]);
+  const { earning, refs, updateEarning, checkIsValid } = useEarningQuest(quest.earnings[earningIndex]);
   const earningOptions = useMemo(() => earningCategoryEntries(t), [t]);
   const earningMethodName = earning.earningMethodName;
 
@@ -35,7 +35,7 @@ export const QuestEarningEditor = forwardRef<EditorHandlingClose, QuestEarningEd
     updateEarning(value);
   };
 
-  const canClose = () => isValid;
+  const canClose = () => checkIsValid();
 
   const onClose = () => {
     if (!canClose()) return;
