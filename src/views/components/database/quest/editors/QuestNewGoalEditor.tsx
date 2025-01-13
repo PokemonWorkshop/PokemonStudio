@@ -19,11 +19,11 @@ import { useQuestPage } from '@src/hooks/usePage';
 import { Select } from '@ds/Select';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { useObjectiveQuest } from './useObjectiveQuest';
-import styled from 'styled-components';
-import React, { forwardRef, useMemo } from 'react';
 import { cloneEntity } from '@utils/cloneEntity';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { assertUnreachable } from '@utils/assertUnreachable';
+import styled from 'styled-components';
+import React, { forwardRef, useMemo } from 'react';
 
 const ButtonContainer = styled.div`
   display: flex;

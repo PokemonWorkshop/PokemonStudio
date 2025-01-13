@@ -1,5 +1,6 @@
 import { DbSymbol } from '@modelEntities/dbSymbol';
-import { StudioQuestObjective, StudioQuestObjectiveType } from '@modelEntities/quest';
+import { StudioCreatureQuestCondition, StudioQuestObjective, StudioQuestObjectiveType } from '@modelEntities/quest';
+import { useConfigSettings } from '@src/hooks/useProjectConfig';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import { cloneEntity } from '@utils/cloneEntity';
 import { createQuestObjective } from '@utils/entityCreation';
@@ -12,9 +13,29 @@ const initializeObjective = (initialObjective?: StudioQuestObjective): StudioQue
 export const useObjectiveQuest = (initialObjective?: StudioQuestObjective) => {
   const [objective, setObjective] = useState(initializeObjective(initialObjective));
   const [isValid, setIsValid] = useState<boolean>(false);
+  const { projectConfigValues: settings } = useConfigSettings();
   const entityRef = useRef<DbSymbol | undefined>();
   const nameRef = useRef<HTMLInputElement>(null);
   const valueRef = useRef<HTMLInputElement>(null);
+
+  const checkConditionsIsValid = () => {
+    return objective.objectiveMethodArgs.reduce((prev, arg) => {
+      if (typeof arg === 'number' || typeof arg === 'string') return prev;
+
+      const conditions = arg as StudioCreatureQuestCondition[];
+      return (
+        prev &&
+        conditions.reduce((conditionsIsValid, condition) => {
+          const type = condition.type;
+          if (type === 'level' || type === 'maxLevel' || type === 'minLevel') {
+            const result = condition.value > 0 && condition.value <= settings.pokemonMaxLevel;
+            return conditionsIsValid && result;
+          }
+          return conditionsIsValid;
+        }, true)
+      );
+    }, true);
+  };
 
   const checkIsValid = () => {
     let result = false;
@@ -32,7 +53,7 @@ export const useObjectiveQuest = (initialObjective?: StudioQuestObjective) => {
         result = !!entityRef.current && !!valueRef.current && valueRef.current.validity.valid;
         break;
       case 'objective_catch_pokemon':
-        result = !!valueRef.current && valueRef.current.validity.valid;
+        result = !!valueRef.current && valueRef.current.validity.valid && checkConditionsIsValid();
         break;
       case 'objective_see_pokemon':
         result = !!entityRef.current;
