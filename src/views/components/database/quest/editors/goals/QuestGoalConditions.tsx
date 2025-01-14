@@ -20,6 +20,7 @@ import { DbSymbol } from '@modelEntities/dbSymbol';
 import { createCreatureQuestCondition } from '@utils/entityCreation';
 import { SelectPokemon } from '@components/selects/SelectPokemon';
 import { cloneEntity } from '@utils/cloneEntity';
+import { useConfigSettings } from '@src/hooks/useProjectConfig';
 
 type SelectConditionProps = {
   condition: StudioCreatureQuestCondition;
@@ -68,14 +69,24 @@ const TitleContainer = styled.div`
 `;
 
 const buildExcludeConditions = (conditions: StudioCreatureQuestCondition[], index: number) => {
-  const excludes: StudioCreatureQuestConditionType[] = [];
-  conditions.map(({ type }, indexCondition) => {
-    if (index === indexCondition) return;
-    if (type === 'level') excludes.push('level', 'minLevel', 'maxLevel');
-    if (type === 'minLevel' || type === 'maxLevel') excludes.push('level', type);
-    if (type === 'pokemon') excludes.push(type);
-  });
-  if (conditions.filter(({ type }) => type === 'type').length === 2) excludes.push('type');
+  const excludes = conditions.reduce<StudioCreatureQuestConditionType[]>((prev, { type }, indexCondition) => {
+    if (index === indexCondition) return prev;
+
+    switch (type) {
+      case 'level':
+        return [...prev, 'level', 'minLevel', 'maxLevel'];
+      case 'minLevel':
+      case 'maxLevel':
+        return [...prev, 'level', type];
+      case 'pokemon':
+      case 'nature':
+        return [...prev, type];
+    }
+    return prev;
+  }, []);
+  if (conditions.filter(({ type }) => type === 'type').length === 2) {
+    excludes.push('type');
+  }
   return Array.from(new Set(excludes));
 };
 
@@ -87,6 +98,7 @@ type ValueConditionProps = {
 const ValueCondition = ({ condition, updateCondition }: ValueConditionProps) => {
   const { t } = useTranslation('database_quests');
   const { t: tSelect } = useTranslation('select');
+  const { projectConfigValues: settings } = useConfigSettings();
   const { type, value } = condition;
 
   const updateValue = (value: number | DbSymbol) => {
@@ -98,7 +110,7 @@ const ValueCondition = ({ condition, updateCondition }: ValueConditionProps) => 
     return (
       <InputWithLeftLabelContainer>
         <Label htmlFor="input-level">{t('level')}</Label>
-        <InputNumber name="input-level" value={value as number} setValue={updateValue} />
+        <InputNumber name="input-level" value={value as number} max={settings.pokemonMaxLevel} setValue={updateValue} />
       </InputWithLeftLabelContainer>
     );
   } else if (type === 'nature') {
