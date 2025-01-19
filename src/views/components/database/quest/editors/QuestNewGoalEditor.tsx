@@ -22,6 +22,7 @@ import { useObjectiveQuest } from './useObjectiveQuest';
 import { cloneEntity } from '@utils/cloneEntity';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { assertUnreachable } from '@utils/assertUnreachable';
+import { ObjectiveEggIndex } from '@utils/QuestUtils';
 import styled from 'styled-components';
 import React, { forwardRef, useMemo } from 'react';
 
@@ -68,13 +69,18 @@ export const QuestNewGoalEditor = forwardRef<EditorHandlingClose, QuestNewGoalEd
         break;
       }
       case 'objective_beat_pokemon':
-      case 'objective_hatch_egg':
-      case 'objective_obtain_egg':
       case 'objective_obtain_item': {
         if (!refs.entityRef.current || !refs.valueRef.current) return;
 
         newObjective.objectiveMethodArgs[0] = refs.entityRef.current;
         newObjective.objectiveMethodArgs[1] = cleanNaNValue(refs.valueRef.current.valueAsNumber, 1);
+        break;
+      }
+      case 'objective_hatch_egg':
+      case 'objective_obtain_egg': {
+        if (!refs.valueRef.current) return;
+
+        newObjective.objectiveMethodArgs[ObjectiveEggIndex[objectiveMethodName]] = cleanNaNValue(refs.valueRef.current.valueAsNumber, 1);
         break;
       }
       case 'objective_catch_pokemon': {

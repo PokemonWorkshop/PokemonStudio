@@ -48,9 +48,11 @@ export const useObjectiveQuest = (initialObjective?: StudioQuestObjective) => {
         break;
       case 'objective_obtain_item':
       case 'objective_beat_pokemon':
+        result = !!entityRef.current && !!valueRef.current && valueRef.current.validity.valid;
+        break;
       case 'objective_obtain_egg':
       case 'objective_hatch_egg':
-        result = !!entityRef.current && !!valueRef.current && valueRef.current.validity.valid;
+        result = !!valueRef.current && valueRef.current.validity.valid;
         break;
       case 'objective_catch_pokemon':
         result = !!valueRef.current && valueRef.current.validity.valid && checkConditionsIsValid();

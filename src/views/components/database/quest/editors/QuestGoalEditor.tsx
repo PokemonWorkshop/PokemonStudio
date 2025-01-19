@@ -22,6 +22,7 @@ import { Select } from '@ds/Select';
 import { cloneEntity } from '@utils/cloneEntity';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { assertUnreachable } from '@utils/assertUnreachable';
+import { ObjectiveEggIndex } from '@utils/QuestUtils';
 import React, { forwardRef, useMemo } from 'react';
 
 const objectiveCategoryEntries = (t: TFunction<'database_quests'>) =>
@@ -63,14 +64,21 @@ export const QuestGoalEditor = forwardRef<EditorHandlingClose, QuestGoalEditorPr
         break;
       }
       case 'objective_beat_pokemon':
-      case 'objective_hatch_egg':
-      case 'objective_obtain_egg':
       case 'objective_obtain_item': {
         if (!refs.entityRef.current || !refs.valueRef.current) return;
 
         const backupValue = isSameMethodName ? (oldObjective.objectiveMethodArgs[1] as number) : 1;
         newObjective.objectiveMethodArgs[0] = refs.entityRef.current;
         newObjective.objectiveMethodArgs[1] = cleanNaNValue(refs.valueRef.current.valueAsNumber, backupValue);
+        break;
+      }
+      case 'objective_hatch_egg':
+      case 'objective_obtain_egg': {
+        if (!refs.valueRef.current) return;
+
+        const index = ObjectiveEggIndex[objectiveMethodName];
+        const backupValue = isSameMethodName ? (oldObjective.objectiveMethodArgs[index] as number) : 1;
+        newObjective.objectiveMethodArgs[index] = cleanNaNValue(refs.valueRef.current.valueAsNumber, backupValue);
         break;
       }
       case 'objective_catch_pokemon': {
