@@ -51,6 +51,7 @@ import settings_maps from '../../assets/i18n/en/settings_maps.json';
 import onboarding from '../../assets/i18n/en/onboarding.json';
 import compilation from '../../assets/i18n/en/compilation.json';
 import settings_language from '../../assets/i18n/en/settings_language.json';
+import migration from '../../assets/i18n/en/migration.json';
 
 // react-i18next versions higher than 11.11.0
 declare module 'react-i18next' {
@@ -108,6 +109,7 @@ declare module 'react-i18next' {
       settings_maps: typeof settings_maps;
       onboarding: typeof onboarding;
       compilation: typeof compilation;
+      migration: typeof migration;
     };
   }
 }

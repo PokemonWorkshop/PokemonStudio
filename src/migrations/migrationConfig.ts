@@ -1,0 +1,110 @@
+import type { MigrationTask } from '@src/backendTasks/migrateData';
+import { migrateMapLinks } from './migrateMapLinks';
+import { linkResourcesToCreatures } from './linkResourcesToCreatures';
+import { migrateHeadbutt } from './migrateHeadbutt';
+import { fixBeMethodMoveSelfStatus } from './fixBeMethodMoveSelfStatus';
+import { migrationV2 } from './migrationV2';
+import { addAvailableLanguagesForTranslation } from './addAvailableLanguagesForTranslation';
+import { addVolumeAndPitchInMaps } from './addVolumeAndPitchInMaps';
+import { generatingMapOverviews } from './generatingMapOverviews';
+import { addOtherLanguages } from './addOtherLanguages';
+import { fixCreatureValuesAfterZodChange } from './fixCreatureValuesAfterZodChange';
+import { addFormNamesDescriptions } from './addFormNamesDescriptions';
+import { migrateNaturesToEntities } from './migrateNaturesToEntities';
+import { migrateUndefinedBreedingGroupToUnknown } from './migrateUndefinedBreedingGroupToUnknown';
+import { addTrainerAdditionalDialogs } from './addTrainerAdditionalDialogs';
+
+type MigrateConfigType = {
+  migration: MigrationTask;
+  version: string;
+  message: string;
+};
+
+/*
+ * How add a migration
+ *
+ * Add the migration config in the array below with the following structure:
+ * {
+ *    migration: newMigration,
+ *    version: '2.4.0',
+ *    message: 'new_migration',
+ * }
+ *
+ * migration: The method that must be called to do the migration.
+ * version: The version of the project where the migration is to take place. The migration will also run if the project has a lower version.
+ * message: A message will be displayed for the user to understand what is happening.
+ *          You need to enter the translation key used by i18n. The translations must be in the migration.json files.
+ */
+
+export const MIGRATION_CONFIG: MigrateConfigType[] = [
+  {
+    migration: migrateMapLinks,
+    version: '1.0.2',
+    message: 'migrate_maplinks',
+  },
+  {
+    migration: linkResourcesToCreatures,
+    version: '1.3.0',
+    message: 'link_resources_to_creatures',
+  },
+  {
+    migration: migrateHeadbutt,
+    version: '1.3.0',
+    message: 'move_headbutt_tool_in_systag',
+  },
+  {
+    migration: fixBeMethodMoveSelfStatus,
+    version: '1.3.0',
+    message: 'fix_be_method',
+  },
+  {
+    migration: migrationV2,
+    version: '1.4.4',
+    message: 'migration_to_version_2_0',
+  },
+  {
+    migration: addAvailableLanguagesForTranslation,
+    version: '2.0.3',
+    message: 'add_available_languages_for_translation',
+  },
+  {
+    migration: addVolumeAndPitchInMaps,
+    version: '2.0.3',
+    message: 'add_volume_and_pitch_in_maps',
+  },
+  {
+    migration: generatingMapOverviews,
+    version: '2.0.3',
+    message: 'generating_map_overviews',
+  },
+  {
+    migration: addOtherLanguages,
+    version: '2.1.0',
+    message: 'add_basic_languages',
+  },
+  {
+    migration: fixCreatureValuesAfterZodChange,
+    version: '2.2.2',
+    message: 'update_creatures_after_zod_change',
+  },
+  {
+    migration: addFormNamesDescriptions,
+    version: '2.2.4',
+    message: 'update_creatures_to_manage_form',
+  },
+  {
+    migration: migrateNaturesToEntities,
+    version: '2.3.0',
+    message: 'migrate_natures',
+  },
+  {
+    migration: migrateUndefinedBreedingGroupToUnknown,
+    version: '2.3.0',
+    message: 'migrate_breeding_group',
+  },
+  {
+    migration: addTrainerAdditionalDialogs,
+    version: '2.4.0',
+    message: 'add_trainer_additional_dialogs',
+  },
+];

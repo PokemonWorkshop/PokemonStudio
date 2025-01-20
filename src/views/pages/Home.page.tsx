@@ -15,7 +15,7 @@ import {
 import { ReactComponent as StudioIcon } from '@assets/icons/global/StudioIcon.svg';
 import { RecentProjectContainer } from '@components/home/ActionContainer';
 import { HomeEditorAndDeletionKeys, HomeEditorOverlay } from '@components/home/editors/HomeEditorOverlay';
-import { deleteProjectToList, getProjectList } from '@utils/projectList';
+import { deleteProjectToList, getProjectList, updateProjectPath } from '@utils/projectList';
 import { useDialogsRef } from '@hooks/useDialogsRef';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,7 +23,7 @@ const HomePageComponent = () => {
   const dialogsRef = useDialogsRef<HomeEditorAndDeletionKeys>();
   const [appVersion, setAppVersion] = useState('');
   const [projectList, setProjectList] = useState(getProjectList());
-  const { t } = useTranslation('homepage');
+  const { t, i18n } = useTranslation('homepage');
   const navigate = useNavigate();
 
   const onDeleteProjectToList = (event: React.MouseEvent<HTMLSpanElement>, projectPath: string) => {
@@ -32,8 +32,18 @@ const HomePageComponent = () => {
     setProjectList(getProjectList());
   };
 
+  const onUpdateProjectList = (projectPath: string, index: number) => {
+    updateProjectPath(projectPath, index);
+    setProjectList(getProjectList());
+  };
+
   useEffect(() => {
     window.api.getAppVersion().then((version) => setAppVersion(version));
+    window.api.synchronizeLanguage(
+      { language: i18n.language },
+      () => {},
+      () => {}
+    );
     window.api.getCompilationConfig(
       {},
       (result) => {
@@ -66,10 +76,30 @@ const HomePageComponent = () => {
           <RecentProjectContainer>
             <div>{t('recent_projects')}</div>
             <ProjectCardContainer>
-              <ProjectCard project={projectList[0]} onDeleteProjectToList={onDeleteProjectToList} />
-              <ProjectCard project={projectList[1]} onDeleteProjectToList={onDeleteProjectToList} />
-              <ProjectCard project={projectList[2]} onDeleteProjectToList={onDeleteProjectToList} />
-              <ProjectCard project={projectList[3]} onDeleteProjectToList={onDeleteProjectToList} />
+              <ProjectCard
+                project={projectList[0]}
+                onDeleteProjectToList={onDeleteProjectToList}
+                onUpdateProjectList={onUpdateProjectList}
+                index={0}
+              />
+              <ProjectCard
+                project={projectList[1]}
+                onDeleteProjectToList={onDeleteProjectToList}
+                onUpdateProjectList={onUpdateProjectList}
+                index={1}
+              />
+              <ProjectCard
+                project={projectList[2]}
+                onDeleteProjectToList={onDeleteProjectToList}
+                onUpdateProjectList={onUpdateProjectList}
+                index={2}
+              />
+              <ProjectCard
+                project={projectList[3]}
+                onDeleteProjectToList={onDeleteProjectToList}
+                onUpdateProjectList={onUpdateProjectList}
+                index={3}
+              />
             </ProjectCardContainer>
           </RecentProjectContainer>
         )}

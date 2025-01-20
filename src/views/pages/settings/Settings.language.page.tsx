@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageEditor, PageTemplate } from '@components/pages';
 import { Label, RadioInput } from '@components/inputs';
-import i18n from '@src/i18n';
 import styled from 'styled-components';
 
 const STUDIO_LANGUAGES = ['de', 'es', 'en', 'fr', 'it', 'pt'] as const;
@@ -52,7 +51,7 @@ const LanguageContainer = styled.div`
 `;
 
 export const SettingsLanguagePage = () => {
-  const { t } = useTranslation(['settings', 'settings_language']);
+  const { t, i18n } = useTranslation(['settings', 'settings_language']);
   const [userLanguage, setUserLanguage] = useState<string>(i18n.language);
 
   const isChecked = (language: string) => {
@@ -64,6 +63,11 @@ export const SettingsLanguagePage = () => {
   const onChangeUserLanguage = (language: string) => {
     setUserLanguage(language);
     i18n.changeLanguage(language);
+    window.api.synchronizeLanguage(
+      { language },
+      () => {},
+      () => {}
+    );
   };
 
   return (

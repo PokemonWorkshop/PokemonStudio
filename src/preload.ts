@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
-import { ipcRenderer, contextBridge, webFrame, IpcRendererEvent } from 'electron';
+import { ipcRenderer, contextBridge, webFrame, IpcRendererEvent, webUtils } from 'electron';
 import { BackendTaskWithGenericError, BackendTaskWithGenericErrorAndNoProgress, GenericBackendProgress, defineBackendTask } from '@utils/BackendTask';
 import type { PSDKVersion } from '@services/getPSDKVersion';
 import type { StudioShortcut } from '@hooks/useShortcuts';
@@ -46,6 +46,7 @@ import type { OpenCompilationWindowInput } from './backendTasks/openCompilationW
 import type { GetCompilationConfigOutput } from './backendTasks/getCompilationConfig';
 import type { StartCompilationInput, StartCompilationOutput } from './backendTasks/startCompilation';
 import type { SaveCompilationLogsInput } from './backendTasks/saveCompilationLogs';
+import type { SynchronizeLanguageInput } from './backendTasks/synchronizeLanguage';
 
 contextBridge.exposeInMainWorld('api', {
   isDev: process.env.NODE_ENV === 'development',
@@ -111,6 +112,7 @@ contextBridge.exposeInMainWorld('api', {
   },
   platform: process.platform,
   externalWindow: (link) => ipcRenderer.send('external-window', link),
+  getPathForFile: (file) => webUtils.getPathForFile(file),
   getStudioVersion: defineBackendTask(ipcRenderer, 'get-studio-version'),
   chooseProjectFileToOpen: defineBackendTask(ipcRenderer, 'choose-project-file-to-open'),
   writeProjectMetadata: defineBackendTask(ipcRenderer, 'write-project-metadata'),
@@ -154,6 +156,7 @@ contextBridge.exposeInMainWorld('api', {
   getCompilationConfig: defineBackendTask(ipcRenderer, 'get-compilation-config'),
   startCompilation: defineBackendTask(ipcRenderer, 'start-compilation'),
   saveCompilationLogs: defineBackendTask(ipcRenderer, 'save-compilation-logs'),
+  synchronizeLanguage: defineBackendTask(ipcRenderer, 'synchronize-language'),
 });
 
 type AnyObj = Record<string, never>;
@@ -202,6 +205,7 @@ declare global {
       startPSDKWorldmap: (projectPath: string) => void;
       platform: string;
       externalWindow: (link: string) => void;
+      getPathForFile: (file: File) => string;
       getStudioVersion: BackendTaskWithGenericErrorAndNoProgress<AnyObj, GetStudioVersionOutput>;
       chooseProjectFileToOpen: BackendTaskWithGenericErrorAndNoProgress<ChooseProjectFileToOpenInput, ChooseProjectFileToOpenOutput>;
       writeProjectMetadata: BackendTaskWithGenericErrorAndNoProgress<WriteProjectMetadataInput, AnyObj>;
@@ -245,6 +249,7 @@ declare global {
       getCompilationConfig: BackendTaskWithGenericErrorAndNoProgress<AnyObj, GetCompilationConfigOutput>;
       startCompilation: BackendTaskWithGenericError<StartCompilationInput, StartCompilationOutput, GenericBackendProgress>;
       saveCompilationLogs: BackendTaskWithGenericErrorAndNoProgress<SaveCompilationLogsInput, AnyObj>;
+      synchronizeLanguage: BackendTaskWithGenericErrorAndNoProgress<SynchronizeLanguageInput, AnyObj>;
     };
   }
 }

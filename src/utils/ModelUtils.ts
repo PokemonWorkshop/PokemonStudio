@@ -1,12 +1,15 @@
 import { StudioTextInfo } from '@modelEntities/textInfo';
+import { StudioTrainerAdditionalDialogs } from '@modelEntities/trainer';
 import { ProjectData } from '@src/GlobalStateProvider';
 
 /**
  * Find the first available text id
- * @param allData The project data containing the abilities or types
+ * @param allData The project data containing the abilities, types or a textId
  * @returns The text id
  */
-export const findFirstAvailableTextId = (allData: ProjectData['abilities'] | ProjectData['types'] | StudioTextInfo[]) => {
+export const findFirstAvailableTextId = (
+  allData: ProjectData['abilities'] | ProjectData['types'] | StudioTextInfo[] | StudioTrainerAdditionalDialogs[]
+) => {
   const textIdSet = Object.values(allData)
     .map(({ textId }) => textId) // Fetch all ids
     .filter((textId, index, array) => index === array.indexOf(textId)) // reject all duplicates

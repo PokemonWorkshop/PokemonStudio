@@ -13,6 +13,7 @@ import { StudioCreature } from '@modelEntities/creature';
 import { StudioType } from '@modelEntities/type';
 import { CONTROL, useKeyPress } from '@hooks/useKeyPress';
 import { usePokemonShortcutNavigation, useShortcutNavigation } from '@hooks/useShortcutNavigation';
+import { buildCreaturesListByDexOrder } from '@utils/buildCreaturesListByDexOrder';
 
 type TypePokemonTableProps = {
   type: StudioType;
@@ -151,9 +152,9 @@ const RenderPokemon = ({ pokemon, type, state }: RenderMoveProps) => {
 };
 
 const getAllPokemonWithCurrentType = (type: StudioType, state: State) => {
-  return Object.values(state.projectData.pokemon)
-    .filter((pokemon) => pokemon.forms.find((form) => form.type1 === type.dbSymbol || form.type2 === type.dbSymbol))
-    .sort((a, b) => a.id - b.id);
+  return buildCreaturesListByDexOrder(state)
+    .map((pokemon) => state.projectData.pokemon[pokemon.dbSymbol])
+    .filter((pokemon) => pokemon.forms.find((form) => form.type1 === type.dbSymbol || form.type2 === type.dbSymbol));
 };
 
 export const TypePokemonTable = ({ type }: TypePokemonTableProps) => {

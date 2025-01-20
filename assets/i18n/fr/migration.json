@@ -1,0 +1,16 @@
+{
+  "migrate_maplinks": "Ajout du MapLinks",
+  "link_resources_to_creatures": "Lier les ressources aux créatures",
+  "move_headbutt_tool_in_systag": "Déplacement de l'outil «\u00a0Headbutt\u00a0» dans les «\u00a0system tags\u00a0»",
+  "fix_be_method": "Correction d'une procédure (battle engine method) pour les attaques",
+  "migration_to_version_2_0": "Migration à la version 2.0",
+  "add_available_languages_for_translation": "Ajout des langues disponibles pour la traduction",
+  "add_volume_and_pitch_in_maps": "Ajout du volume et de la hauteur pour les musiques dans la carte",
+  "generating_map_overviews": "Génération des aperçus de cartes",
+  "add_basic_languages": "Ajout des langages de base",
+  "update_creatures_after_zod_change": "Mise à jour des données des créatures après la mise à jour des valeurs autorisées",
+  "update_creatures_to_manage_form": "Mise à jour des créatures et création de fichiers CSV pour gérer les noms et descriptions des formes des créatures",
+  "migrate_natures": "Migration des natures",
+  "migrate_breeding_group": "Migration du groupe d'œuf «\u00a0Non défini\u00a0» en «\u00a0Inconnu\u00a0»",
+  "add_trainer_additional_dialogs": "Ajout des dialogues additionnels pour les dresseurs"
+}

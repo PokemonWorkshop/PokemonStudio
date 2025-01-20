@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useLoaderRef } from '@utils/loaderContext';
-import { ClearButtonOnlyIcon, FolderButtonOnlyIcon } from '@components/buttons';
+import { ClearButtonOnlyIcon, FolderButtonOnlyIcon, SecondaryButton } from '@components/buttons';
 import { Code } from '@components/Code';
 import { useProjectLoad } from '@hooks/useProjectLoad';
 import { Project } from '@utils/projectList';
@@ -92,15 +92,28 @@ const ProjectCardContainer = styled(ActiveContainer)`
 
 type ProjectCardProps = {
   project: Project | undefined;
+  index: number;
   onDeleteProjectToList: (event: React.MouseEvent<HTMLSpanElement>, projectPath: string) => void;
+  onUpdateProjectList: (projectPath: string, index: number) => void;
 };
 
-export const ProjectCard = ({ project, onDeleteProjectToList }: ProjectCardProps) => {
+export const ProjectCard = ({ project, onDeleteProjectToList, onUpdateProjectList, index }: ProjectCardProps) => {
   const { t } = useTranslation(['homepage', 'loader']);
   const loaderRef = useLoaderRef();
   const projectLoad = useProjectLoad();
   const navigate = useNavigate();
   const showItemInFolder = useShowItemInFolder();
+
+  const handleChangeFileClick = () => {
+    return window.api.chooseProjectFileToOpen(
+      { fileType: 'studio' },
+      ({ dirName }) => {
+        onUpdateProjectList(dirName, index);
+        loaderRef.current.close();
+      },
+      () => {}
+    );
+  };
 
   const handleClick = async () => {
     if (!project) return;
@@ -111,7 +124,15 @@ export const ProjectCard = ({ project, onDeleteProjectToList }: ProjectCardProps
         loaderRef.current.close();
         navigate('/dashboard');
       },
-      ({ errorMessage }) => loaderRef.current.setError('loading_project_error', errorMessage),
+      ({ errorMessage }) => {
+        // TODO: Make an other way to find out if the project is not found
+        if (errorMessage.includes('no such file or directory')) {
+          const errorNode = <SecondaryButton onClick={handleChangeFileClick}>{t('homepage:browse_my_files')}</SecondaryButton>;
+          loaderRef.current.setError('loading_project_error', t('loader:project_studio_not_found'), false, errorNode);
+        } else {
+          loaderRef.current.setError('loading_project_error', errorMessage);
+        }
+      },
       (count) => loaderRef.current.setError('loading_project_error', t('loader:integrity_message', { count }), true)
     );
   };
@@ -123,7 +144,9 @@ export const ProjectCard = ({ project, onDeleteProjectToList }: ProjectCardProps
     showItemInFolder(
       { filePath: join(path, 'project.studio') },
       () => {},
-      () => {}
+      () => {
+        handleClick();
+      }
     );
   };
 

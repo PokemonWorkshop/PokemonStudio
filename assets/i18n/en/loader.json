@@ -12,6 +12,7 @@
   "saving_project_error": "Error while saving project",
   "loading_project_error": "Error while loading project",
   "updating_psdk_error": "Error while updating PSDK",
+  "project_studio_not_found": "The file ‘project.studio’ needed to load the project could not be found or has been moved. You can search for the file to try opening it again.",
   "importing_tiled_maps_error": "Error while importing Tiled maps",
   "updating_maps_error": "Error while updating maps",
   "compilation_project_error": "Error while compiling the projet",

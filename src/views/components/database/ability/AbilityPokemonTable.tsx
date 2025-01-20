@@ -13,6 +13,7 @@ import { pokemonIconPath } from '@utils/resourcePath';
 import { useGetEntityNameText, useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
 import { CONTROL, useKeyPress } from '@hooks/useKeyPress';
 import { usePokemonShortcutNavigation, useShortcutNavigation } from '@hooks/useShortcutNavigation';
+import { buildCreaturesListByDexOrder } from '@utils/buildCreaturesListByDexOrder';
 
 type AbilityPokemonTableProps = {
   ability: StudioAbility;
@@ -98,14 +99,14 @@ const getFormWithCurrentAbility = (pokemon: StudioCreature, ability: StudioAbili
     (form) => form.abilities[0] === ability.dbSymbol || form.abilities[1] === ability.dbSymbol || form.abilities[2] === ability.dbSymbol
   ) || pokemon.forms[0];
 
-const getAllPokemonWithCurrentAbility = (state: State, ability: StudioAbility): StudioCreature[] => {
-  return (Object.values(state.projectData.pokemon) as unknown[] as StudioCreature[]) // TODO: Remove as - as
+const getAllPokemonWithCurrentAbility = (state: State, ability: StudioAbility) => {
+  return buildCreaturesListByDexOrder(state)
+    .map((pokemon) => state.projectData.pokemon[pokemon.dbSymbol])
     .filter((pokemon) =>
       pokemon.forms.find(
         (form) => form.abilities[0] === ability.dbSymbol || form.abilities[1] === ability.dbSymbol || form.abilities[2] === ability.dbSymbol
       )
-    )
-    .sort((a, b) => a.id - b.id);
+    );
 };
 
 const RenderPokemon = ({ pokemon, ability, state }: RenderAbilityProps) => {
