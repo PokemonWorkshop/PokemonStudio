@@ -26,7 +26,7 @@ export const NumberInput = ({ state, inputRefs, type, min, max, label }: NumberI
 
     ref.value = state.defaults[type]?.toString() || '';
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state]);
+  }, [state.evolutionIndex]);
 
   if (!isTypeValidInput(type)) return null;
 
