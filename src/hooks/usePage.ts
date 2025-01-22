@@ -242,3 +242,16 @@ export const useNaturePage = () => {
     cannotDelete: Object.keys(natures).length <= 1,
   };
 };
+
+export const useQuestPage = () => {
+  const { projectDataValues: quests, selectedDataIdentifier: questSelected, state } = useProjectDataReadonly('quests', 'quest');
+  const quest = quests[questSelected];
+  const questName = getEntityNameText(quest, state);
+
+  return {
+    quests,
+    quest,
+    questName,
+    cannotDelete: Object.keys(quests).length <= 1,
+  };
+};

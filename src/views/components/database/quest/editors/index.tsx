@@ -6,3 +6,4 @@ export { QuestNewGoalEditor } from './QuestNewGoalEditor';
 export { QuestEarningImportEditor } from './QuestEarningImportEditor';
 export { QuestEarningEditor } from './QuestEarningEditor';
 export { QuestNewEarningEditor } from './QuestNewEarningEditor';
+export { QuestDeletion } from './QuestDeletion';

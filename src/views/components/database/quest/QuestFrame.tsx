@@ -12,19 +12,20 @@ import { QuestCategory } from '@components/categories';
 import { padStr } from '@utils/PadStr';
 import { useGetEntityDescriptionText, useGetEntityNameText } from '@utils/ReadingProjectText';
 import { StudioQuest } from '@modelEntities/quest';
+import { QuestDialogsRef } from './editors/QuestEditorOverlay';
 
 type QuestFrameProps = {
   quest: StudioQuest;
-  onClick: () => void;
+  dialogsRef: QuestDialogsRef;
 };
 
-export const QuestFrame = ({ quest, onClick }: QuestFrameProps) => {
+export const QuestFrame = ({ quest, dialogsRef }: QuestFrameProps) => {
   const { t } = useTranslation('database_quests');
   const getQuestName = useGetEntityNameText();
   const getQuestDescription = useGetEntityDescriptionText();
 
   return (
-    <DataBlockContainer size="full" onClick={onClick}>
+    <DataBlockContainer size="full" onClick={() => dialogsRef.current?.openDialog('frame')}>
       <DataGrid columns="minmax(min-content, 1024px)">
         <DataInfoContainer>
           <DataInfoContainerHeader>

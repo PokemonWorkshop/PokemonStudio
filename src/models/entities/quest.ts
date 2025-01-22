@@ -76,9 +76,9 @@ export const QUEST_EARNINGS = ['earning_money', 'earning_item', 'earning_pokemon
 export type StudioQuestEarningType = (typeof QUEST_EARNINGS)[number];
 export type StudioQuestEarningCategoryType = 'money' | 'item' | 'pokemon' | 'egg';
 
-export const updateIndexSpeakToBeatNpc = (quest: StudioQuest) => {
+export const updateIndexSpeakToBeatNpc = (objectives: StudioQuestObjective[]) => {
   const index = { speakTo: 0, beatNpc: 0 };
-  quest.objectives.forEach((objective) => {
+  objectives.forEach((objective) => {
     if (objective.objectiveMethodName === 'objective_speak_to' || objective.objectiveMethodName === 'objective_beat_npc') {
       if (objective.objectiveMethodName === 'objective_speak_to') objective.objectiveMethodArgs[0] = index.speakTo++;
       else objective.objectiveMethodArgs[0] = index.beatNpc++;

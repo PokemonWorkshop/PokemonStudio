@@ -1,19 +1,18 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { DataEarningGrid, DataQuestTable, TableEmpty } from './QuestTableStyle';
 import { useTranslation } from 'react-i18next';
-import { useProjectQuests } from '@hooks/useProjectData';
 import { RenderEarning } from './RenderEarning';
 import { cloneEntity } from '@utils/cloneEntity';
 import { StudioQuest } from '@modelEntities/quest';
+import { useUpdateQuest } from '../editors/useUpdateQuest';
 
 type QuestEarningsTableProps = {
   quest: StudioQuest;
-  onEdit: (index: number) => void;
+  editEarning: (index: number) => void;
 };
 
-export const QuestEarningsTable = ({ quest, onEdit }: QuestEarningsTableProps) => {
-  const { setProjectDataValues: setQuest } = useProjectQuests();
-  const currentEditedQuest = useMemo(() => cloneEntity(quest), [quest]);
+export const QuestEarningsTable = ({ quest, editEarning }: QuestEarningsTableProps) => {
+  const updateQuest = useUpdateQuest(quest);
   const { t } = useTranslation('database_quests');
 
   return quest.earnings.length === 0 ? (
@@ -28,12 +27,11 @@ export const QuestEarningsTable = ({ quest, onEdit }: QuestEarningsTableProps) =
         <RenderEarning
           key={`earning-${index}`}
           earning={earning}
-          onClickEdit={() => {
-            onEdit(index);
-          }}
+          onClickEdit={() => editEarning(index)}
           onClickDelete={() => {
-            currentEditedQuest.earnings.splice(index, 1);
-            setQuest({ [quest.dbSymbol]: currentEditedQuest });
+            const newEarnings = cloneEntity(quest.earnings);
+            newEarnings.splice(index, 1);
+            updateQuest({ earnings: newEarnings });
           }}
         />
       ))}

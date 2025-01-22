@@ -459,15 +459,19 @@ export const createQuestEarning = (type: StudioQuestEarningType): StudioQuestEar
   return { earningMethodName: type, earningArgs: [1], textFormatMethodName };
 };
 
-export const createQuest = (dbSymbol: DbSymbol, id: number, isPrimary: boolean, resolution: StudioQuestResolution): StudioQuest => ({
-  klass: 'Quest',
-  id,
-  dbSymbol,
-  isPrimary,
-  resolution,
-  objectives: [],
-  earnings: [],
-});
+export const createQuest = (allQuests: ProjectData['quests'], isPrimary: boolean, resolution: StudioQuestResolution): StudioQuest => {
+  const id = findFirstAvailableId(allQuests, 0);
+  const dbSymbol = `quest_${id}` as DbSymbol;
+  return {
+    klass: 'Quest',
+    id,
+    dbSymbol,
+    isPrimary,
+    resolution,
+    objectives: [],
+    earnings: [],
+  };
+};
 
 export const createConfigTextsMessage = () => ({
   windowSkin: null,
