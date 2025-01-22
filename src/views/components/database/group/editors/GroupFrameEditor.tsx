@@ -140,8 +140,8 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
                   onChange={(event) => {
                     const newValue = event.target.valueAsNumber;
                     setSwitchValue(newValue);
-                    setActivation(onSwitchUpdateActivation(newValue));
                   }}
+                  onBlur={(event) => setActivation(onSwitchUpdateActivation(event.target.valueAsNumber))}
                 />
               </InputWithLeftLabelContainer>
             )}

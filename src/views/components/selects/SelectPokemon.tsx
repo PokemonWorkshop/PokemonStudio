@@ -47,6 +47,7 @@ export const SelectPokemon = ({ dbSymbol, onChange, breakpoint, noLabel, undefVa
 type SelectPokemon2Props = {
   name: string;
   defaultValue?: DbSymbol;
+  optionRef?: React.MutableRefObject<'__undef__' | DbSymbol | undefined>;
   onChange?: (v: DbSymbol) => void;
 };
 
@@ -54,5 +55,5 @@ export const SelectPokemon2 = (props: SelectPokemon2Props) => {
   const { t } = useTranslation('database_pokemon');
   const creatureOptions = useSelectOptions('creatures') as SelectOption<DbSymbol>[];
 
-  return <Select options={creatureOptions} notFoundLabel={t('pokemon_deleted')} chooseValue="__undef__" {...props} />;
+  return <Select options={creatureOptions} notFoundLabel={t('pokemon_deleted')} chooseValue={creatureOptions[0]?.value || '__undef__'} {...props} />;
 };

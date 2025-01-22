@@ -127,3 +127,10 @@ const earningTexts: Record<StudioQuestEarningType, (earning: StudioQuestEarning,
 export const buildEarningText = (earning: StudioQuestEarning, state: State) => {
   return earningTexts[earning.earningMethodName](earning, state);
 };
+
+export type ObjectivesEgg = 'objective_obtain_egg' | 'objective_hatch_egg';
+
+export const ObjectiveEggIndex: Record<ObjectivesEgg, number> = {
+  objective_obtain_egg: 0,
+  objective_hatch_egg: 1,
+};

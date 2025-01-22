@@ -4,29 +4,34 @@ import { useProjectQuests } from '@hooks/useProjectData';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { QuestEarningsTable } from './tables';
+import { QuestDialogsRef } from './editors/QuestEditorOverlay';
 
 type QuestEarningsProps = {
   quest: StudioQuest;
-  onDelete: () => void;
-  onImport: () => void;
-  onNew: () => void;
-  onEdit: (index: number) => void;
+  dialogsRef: QuestDialogsRef;
+  setEarningIndex: (index: number) => void;
 };
 
-export const QuestEarnings = ({ quest, onDelete, onImport, onNew, onEdit }: QuestEarningsProps) => {
+export const QuestEarnings = ({ quest, dialogsRef, setEarningIndex }: QuestEarningsProps) => {
   const { projectDataValues: quests } = useProjectQuests();
   const { t } = useTranslation('database_quests');
+
+  const editEarning = (index: number) => {
+    dialogsRef.current?.openDialog('earning');
+    setEarningIndex(index);
+  };
+
   return (
     <DataBlockEditor
       size="full"
       title={t('earnings')}
-      onClickDelete={onDelete}
-      importation={{ label: t('import_earnings'), onClick: onImport }}
-      add={{ label: t('add_earning'), onClick: onNew }}
+      onClickDelete={() => dialogsRef.current?.openDialog('earning_deletion', true)}
+      importation={{ label: t('import_earnings'), onClick: () => dialogsRef.current?.openDialog('earning_import') }}
+      add={{ label: t('add_earning'), onClick: () => dialogsRef.current?.openDialog('earning_new') }}
       disabledDeletion={quest.earnings.length === 0}
-      disabledImport={Object.entries(quests).length <= 1}
+      disabledImport={Object.keys(quests).length <= 1}
     >
-      <QuestEarningsTable quest={quest} onEdit={onEdit} />
+      <QuestEarningsTable quest={quest} editEarning={editEarning} />
     </DataBlockEditor>
   );
 };
