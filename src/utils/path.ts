@@ -86,30 +86,28 @@ export const formResourcesPath = (form: StudioCreatureForm, resource: CreatureFo
   switch (resource) {
     case 'icon':
     case 'iconF':
-      return `graphics/pokedex/pokeicon/${(resources.hasFemale && resources[resource]) || resources.icon}`;
     case 'iconShiny':
     case 'iconShinyF':
-      return `graphics/pokedex/pokeicon/${(resources.hasFemale && resources[resource]) || resources.iconShiny}`;
+      return `graphics/pokedex/pokeicon/${resources[resource] ?? ''}`;
     case 'front':
     case 'frontF':
-      return `graphics/pokedex/pokefront/${(resources.hasFemale && resources[resource]) || resources.front}`;
+      return `graphics/pokedex/pokefront/${resources[resource] ?? ''}`;
     case 'frontShiny':
     case 'frontShinyF':
-      return `graphics/pokedex/pokefrontshiny/${(resources.hasFemale && resources[resource]) || resources.frontShiny}`;
+      return `graphics/pokedex/pokefrontshiny/${resources[resource] ?? ''}`;
     case 'back':
     case 'backF':
-      return `graphics/pokedex/pokeback/${(resources.hasFemale && resources[resource]) || resources.back}`;
+      return `graphics/pokedex/pokeback/${resources[resource] ?? ''}`;
     case 'backShiny':
     case 'backShinyF':
-      return `graphics/pokedex/pokebackshiny/${(resources.hasFemale && resources[resource]) || resources.backShiny}`;
+      return `graphics/pokedex/pokebackshiny/${resources[resource] ?? ''}`;
     case 'footprint':
       return `graphics/pokedex/footprints/${resources.footprint}`;
     case 'character':
     case 'characterF':
-      return `graphics/characters/${(resources.hasFemale && resources[resource]) || resources.character}`;
     case 'characterShiny':
     case 'characterShinyF':
-      return `graphics/characters/${(resources.hasFemale && resources[resource]) || resources.characterShiny}`;
+      return `graphics/characters/${resources[resource] ?? ''}`;
     case 'cry':
       return `audio/se/cries/${form.resources.cry}`;
     default:
