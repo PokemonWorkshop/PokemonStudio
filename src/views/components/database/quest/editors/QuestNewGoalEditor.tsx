@@ -102,6 +102,12 @@ export const QuestNewGoalEditor = forwardRef<EditorHandlingClose, QuestNewGoalEd
         newObjective.objectiveMethodArgs[1] = refs.nameRef.current.value;
         break;
       }
+      case 'objective_custom': {
+        if (!refs.nameRef.current) return;
+
+        newObjective.objectiveMethodArgs[1] = refs.nameRef.current.value;
+        break;
+      }
       default:
         assertUnreachable(objectiveMethodName);
     }

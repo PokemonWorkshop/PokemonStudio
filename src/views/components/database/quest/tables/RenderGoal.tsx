@@ -106,6 +106,7 @@ const categoryGoal: Record<StudioQuestObjectiveType, StudioQuestObjectiveCategor
   objective_beat_npc: 'battle',
   objective_obtain_egg: 'discovery',
   objective_hatch_egg: 'discovery',
+  objective_custom: 'interaction',
 };
 
 const categoryClickable: Record<StudioQuestObjectiveType, StudioQuestCategoryClickable | null> = {
@@ -117,6 +118,7 @@ const categoryClickable: Record<StudioQuestObjectiveType, StudioQuestCategoryCli
   objective_beat_npc: null,
   objective_obtain_egg: null,
   objective_hatch_egg: null,
+  objective_custom: null,
 };
 
 type RenderGoalProps = {
