@@ -11,6 +11,7 @@ export { SelectZone } from './SelectZone';
 export { SelectDex } from './SelectDex';
 export { SelectMaplink } from './SelectMaplink';
 export { SelectText } from './SelectText';
+export { SelectDialog } from './SelectDialog';
 export { SelectMap } from './SelectMap';
 export { SelectItemBall } from './SelectItemBall';
 export { SelectItemHeld } from './SelectItemHeld';

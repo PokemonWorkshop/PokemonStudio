@@ -60,6 +60,9 @@ export const useObjectiveQuest = (initialObjective?: StudioQuestObjective) => {
       case 'objective_see_pokemon':
         result = !!entityRef.current;
         break;
+      case 'objective_custom':
+        result = !!nameRef.current && nameRef.current.value !== '';
+        break;
       default:
         assertUnreachable(objective.objectiveMethodName);
     }

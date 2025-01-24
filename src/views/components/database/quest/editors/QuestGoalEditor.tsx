@@ -13,6 +13,7 @@ import {
   QuestGoalObtainItem,
   QuestGoalSeePokemon,
   QuestGoalSpeakTo,
+  QuestGoalCustom,
 } from './goals';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { useQuestPage } from '@src/hooks/usePage';
@@ -99,6 +100,12 @@ export const QuestGoalEditor = forwardRef<EditorHandlingClose, QuestGoalEditorPr
         if (!refs.nameRef.current) return;
 
         newObjective.objectiveMethodArgs[1] = refs.nameRef.current.value;
+        break;
+      }
+      case 'objective_custom': {
+        if (!refs.nameRef.current) return;
+
+        newObjective.objectiveMethodArgs[0] = refs.nameRef.current.value;
         break;
       }
       default:
