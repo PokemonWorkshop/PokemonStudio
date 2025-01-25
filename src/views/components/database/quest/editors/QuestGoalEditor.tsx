@@ -140,6 +140,7 @@ export const QuestGoalEditor = forwardRef<EditorHandlingClose, QuestGoalEditorPr
           )}
           {objectiveMethodName === 'objective_obtain_egg' && <QuestGoalEgg objective={objective} refs={refs} />}
           {objectiveMethodName === 'objective_hatch_egg' && <QuestGoalEgg objective={objective} refs={refs} />}
+          {objectiveMethodName === 'objective_custom' && <QuestGoalCustom objective={objective} refs={refs} />}
         </InputContainer>
       </EditorChildWithSubEditorContainer>
     </EditorWithCollapse>

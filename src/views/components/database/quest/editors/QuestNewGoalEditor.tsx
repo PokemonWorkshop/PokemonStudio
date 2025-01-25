@@ -8,6 +8,7 @@ import {
   QuestGoalBeatNpc,
   QuestGoalBeatPokemon,
   QuestGoalCatchPokemon,
+  QuestGoalCustom,
   QuestGoalEgg,
   QuestGoalObtainItem,
   QuestGoalSeePokemon,
@@ -137,6 +138,7 @@ export const QuestNewGoalEditor = forwardRef<EditorHandlingClose, QuestNewGoalEd
         )}
         {objectiveMethodName === 'objective_obtain_egg' && <QuestGoalEgg objective={objective} refs={refs} checkIsValid={checkIsValid} />}
         {objectiveMethodName === 'objective_hatch_egg' && <QuestGoalEgg objective={objective} refs={refs} checkIsValid={checkIsValid} />}
+        {objectiveMethodName === 'objective_custom' && <QuestGoalCustom objective={objective} refs={refs} checkIsValid={checkIsValid} />}
         <ButtonContainer>
           <TooltipWrapper data-tooltip={!isValid ? t('fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickNew} disabled={!isValid}>

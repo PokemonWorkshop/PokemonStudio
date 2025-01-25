@@ -86,6 +86,18 @@ const buildObtainEgg = (objective: StudioQuestObjective, _state: State, t: TFunc
   return `${objective.objectiveMethodArgs[0]} ${t('eggs')}`;
 };
 
+const buildCustomText = (objective: StudioQuestObjective, state: State) => {
+  const projectText = {
+    texts: state.projectText,
+    languages: state.projectStudio.languagesTranslation,
+    defaultLanguage: state.projectConfig.language_config.defaultLanguage,
+  };
+  const lang = state.projectConfig.language_config.defaultLanguage;
+  const texts = objective.objectiveMethodArgs[0] as [number, number];
+
+  return getText(projectText, texts[0], texts[1], lang);
+};
+
 const goalTexts: Record<
   StudioQuestObjectiveType,
   (objective: StudioQuestObjective, state: State, t: TFunction<'database_quests'>) => string | string[]
@@ -98,6 +110,7 @@ const goalTexts: Record<
   objective_beat_npc: buildBeatNpcText,
   objective_hatch_egg: buildHatchEggText,
   objective_obtain_egg: buildObtainEgg,
+  objective_custom: buildCustomText,
 };
 
 export const buildGoalText = (objective: StudioQuestObjective, state: State, t: TFunction<'database_quests'>) => {
