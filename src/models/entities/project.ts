@@ -12,7 +12,6 @@ export const PROJECT_VALIDATOR = z.object({
   iconPath: z.string().default('graphics/icons/game.png'),
   isTiledMode: z.boolean().nullable().default(null),
   languagesTranslation: z.array(PROJECT_LANGUAGE_TRANSLATION_VALIDATOR),
-  defaultFileId: z.number().default(100300),
 });
 export type StudioProject = z.infer<typeof PROJECT_VALIDATOR>;
 
@@ -26,12 +25,10 @@ export const createProjectStudio = (
   iconPath: string,
   isTiledMode: boolean,
   languagesTranslation: StudioProjectLanguageTranslation[],
-  defaultFileId?: number
 ): StudioProject => ({
   title,
   studioVersion,
   iconPath,
   isTiledMode,
   languagesTranslation,
-  defaultFileId: defaultFileId ?? 100300,
 });

@@ -1,7 +1,7 @@
 import { EditorWithCollapse } from '@components/editor/Editor';
 import { EditorChildWithSubEditorContainer } from '@components/editor/EditorContainer';
 import { InputContainer, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
-import { QUEST_OBJECTIVES, StudioQuestObjectiveType, updateIndexSpeakToBeatNpc } from '@modelEntities/quest';
+import { QUEST_OBJECTIVES, StudioQuestObjectiveType, updateIndexSpeakToBeatNpc, CUSTOM_GOAL_TEXT_ID } from '@modelEntities/quest';
 import { padStr } from '@utils/PadStr';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
@@ -103,9 +103,13 @@ export const QuestGoalEditor = forwardRef<EditorHandlingClose, QuestGoalEditorPr
         break;
       }
       case 'objective_custom': {
-        if (!refs.nameRef.current) return;
+        if (!refs.valueRef.current) return;
 
-        newObjective.objectiveMethodArgs[0] = refs.nameRef.current.value;
+        if (Array.isArray(newObjective.objectiveMethodArgs[0])) {
+          newObjective.objectiveMethodArgs[0][0] = CUSTOM_GOAL_TEXT_ID;
+          newObjective.objectiveMethodArgs[0][1] = cleanNaNValue(refs.valueRef.current.valueAsNumber, 1);
+        }
+        newObjective.objectiveMethodArgs[1] = objectiveIndex;
         break;
       }
       default:

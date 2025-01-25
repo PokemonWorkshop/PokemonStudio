@@ -61,7 +61,7 @@ export const useObjectiveQuest = (initialObjective?: StudioQuestObjective) => {
         result = !!entityRef.current;
         break;
       case 'objective_custom':
-        result = !!nameRef.current && nameRef.current.value !== '';
+        result = !!valueRef.current && valueRef.current.value !== '';
         break;
       default:
         assertUnreachable(objective.objectiveMethodName);

@@ -4,6 +4,7 @@ import {
   StudioQuestEarningType,
   StudioQuestObjective,
   StudioQuestObjectiveType,
+  CUSTOM_GOAL_TEXT_ID,
 } from '@modelEntities/quest';
 import { State } from '@src/GlobalStateProvider';
 import { TFunction } from 'i18next';
@@ -93,9 +94,12 @@ const buildCustomText = (objective: StudioQuestObjective, state: State) => {
     defaultLanguage: state.projectConfig.language_config.defaultLanguage,
   };
   const lang = state.projectConfig.language_config.defaultLanguage;
-  const text = objective.objectiveMethodArgs[1] as number;
-
-  return getText(projectText, QUEST_CUSTOM_GOAL_TEXT_ID, text, lang);
+  const methodArgs = objective.objectiveMethodArgs[0];
+  if (Array.isArray(methodArgs) && methodArgs[1] !== undefined) {
+    const text = methodArgs[1] as number;
+    return getText(projectText, CUSTOM_GOAL_TEXT_ID, text, lang);
+  }
+  return '';
 };
 
 const goalTexts: Record<
@@ -148,5 +152,3 @@ export const ObjectiveEggIndex: Record<ObjectivesEgg, number> = {
   objective_obtain_egg: 0,
   objective_hatch_egg: 1,
 };
-
-export const QUEST_CUSTOM_GOAL_TEXT_ID = 3;

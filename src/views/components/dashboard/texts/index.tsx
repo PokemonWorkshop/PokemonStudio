@@ -3,4 +3,3 @@ export { DashboardFontsTable } from './DashboardFontsTable';
 export { DataDashboardFontsTable, DataDashboardFontGrid } from './DashboardFontsTableStyle';
 export { RenderDashboardFont } from './RenderDashboardFont';
 export { DashboardMessages } from './DashboardMessages';
-export { DashboardQuest } from './DashboardQuest';

@@ -99,8 +99,10 @@ export const updateIndexSpeakToBeatNpc = (objectives: StudioQuestObjective[]) =>
         objective.objectiveMethodArgs[0] = index.beatNpc++;
         break;
       case 'objective_custom':
-        objective.objectiveMethodArgs[0] = index.custom++;
+        objective.objectiveMethodArgs[1] = index.custom++;
         break;
     }
   });
 };
+
+export const CUSTOM_GOAL_TEXT_ID = 300;
