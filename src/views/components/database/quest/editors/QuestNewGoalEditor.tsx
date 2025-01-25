@@ -1,7 +1,7 @@
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { EditorWithCollapse } from '@components/editor/Editor';
 import { InputContainer, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
-import { QUEST_OBJECTIVES, StudioQuestObjectiveType, updateIndexSpeakToBeatNpc } from '@modelEntities/quest';
+import { QUEST_OBJECTIVES, StudioQuestObjectiveType, updateIndexSpeakToBeatNpc, CUSTOM_GOAL_TEXT_ID } from '@modelEntities/quest';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import {
@@ -48,6 +48,7 @@ export const QuestNewGoalEditor = forwardRef<EditorHandlingClose, QuestNewGoalEd
   const objectiveOptions = useMemo(() => objectiveCategoryEntries(t), [t]);
   const { objective, refs, isValid, setObjective, updateObjective, checkIsValid } = useObjectiveQuest();
   const objectiveMethodName = objective.objectiveMethodName;
+  const objectiveIndex = quest.objectives.length;
 
   useEditorHandlingClose(ref);
 
@@ -104,9 +105,13 @@ export const QuestNewGoalEditor = forwardRef<EditorHandlingClose, QuestNewGoalEd
         break;
       }
       case 'objective_custom': {
-        if (!refs.nameRef.current) return;
+        if (!refs.valueRef.current) return;
 
-        newObjective.objectiveMethodArgs[1] = refs.nameRef.current.value;
+        if (Array.isArray(newObjective.objectiveMethodArgs[0])) {
+          newObjective.objectiveMethodArgs[0][0] = CUSTOM_GOAL_TEXT_ID;
+          newObjective.objectiveMethodArgs[0][1] = cleanNaNValue(refs.valueRef.current.valueAsNumber, 1);
+        }
+        newObjective.objectiveMethodArgs[1] = objectiveIndex;
         break;
       }
       default:

@@ -16,6 +16,7 @@ import {
   StudioQuestObjective,
   StudioQuestObjectiveType,
   StudioQuestResolution,
+  CUSTOM_GOAL_TEXT_ID,
 } from '@modelEntities/quest';
 import { StudioTrainer, StudioTrainerVsType } from '@modelEntities/trainer';
 import { StudioType } from '@modelEntities/type';
@@ -420,7 +421,7 @@ export const createQuestObjective = (type: StudioQuestObjectiveType): StudioQues
     case 'objective_hatch_egg':
       return { objectiveMethodName: type, objectiveMethodArgs: [undefined, 1], textFormatMethodName, hiddenByDefault };
     case 'objective_custom':
-      return { objectiveMethodName: type, objectiveMethodArgs: [0, ''], textFormatMethodName, hiddenByDefault };
+      return { objectiveMethodName: type, objectiveMethodArgs: [[CUSTOM_GOAL_TEXT_ID, 1], 0], textFormatMethodName, hiddenByDefault };
     default:
       assertUnreachable(type);
   }

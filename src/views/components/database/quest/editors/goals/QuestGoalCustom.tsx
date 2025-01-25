@@ -6,19 +6,15 @@ import React from 'react';
 
 export const QuestGoalCustom = ({ objective, refs, checkIsValid }: QuestGoalProps) => {
   const { t } = useTranslation('database_quests');
+  const defaultValue = Array.isArray(objective.objectiveMethodArgs[0]) ? (objective.objectiveMethodArgs[0][1] as number) : 0;
 
   return (
     <PaddedInputContainer>
       <InputWithTopLabelContainer>
         <Label htmlFor="custom-objective" required>
-          {t('objective_custom')}
+          {t('custom_text')}
         </Label>
-        <InputNumber2
-          ref={refs.nameRef}
-          name="custom-objective"
-          defaultValue={objective.objectiveMethodArgs[1] as number}
-          onChange={() => checkIsValid && checkIsValid()}
-        />
+        <InputNumber2 ref={refs.valueRef} name="custom-objective" defaultValue={defaultValue} onChange={() => checkIsValid && checkIsValid()} />
       </InputWithTopLabelContainer>
     </PaddedInputContainer>
   );
