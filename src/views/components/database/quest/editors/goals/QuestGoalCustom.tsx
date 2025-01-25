@@ -1,57 +1,37 @@
-import { InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
+import { Input, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { QuestGoalProps } from './QuestGoalProps';
-import { SelectText, SelectDialog } from '@components/selects';
-import { useRefreshUI } from '@components/editor';
 import { useProjectStudio } from '@hooks/useProjectStudio';
-import React from 'react';
+import { useSetProjectText } from '@utils/ReadingProjectText';
 
-type QuestGoalCustomProps = {
-  setIsEmptyText: React.Dispatch<React.SetStateAction<boolean>>;
-} & QuestGoalProps;
-
-export const QuestGoalCustom = ({ objective, refs, checkIsValid, setIsEmptyText }: QuestGoalCustomProps) => {
-  const { t } = useTranslation(['select', 'text_management']);
+export const QuestGoalCustom = ({ objective, refs, checkIsValid }: QuestGoalProps) => {
+  const { t } = useTranslation('database_quests');
   const { defaultFileId } = useProjectStudio().projectStudioValues;
-  const refreshUI = useRefreshUI();
-  const textPtrs = objective.objectiveMethodArgs[0] as Array<number | undefined>;
+  const inputRef = useRef<HTMLInputElement>(null);
+  const setText = useSetProjectText();
 
-  if (textPtrs.includes(undefined)) {
-    if (textPtrs[0] === undefined) textPtrs[0] = defaultFileId;
-    if (setIsEmptyText) setIsEmptyText(textPtrs[1] === undefined || textPtrs[0] === undefined);
-  }
+  const handleChange = () => {
+    if (inputRef.current) {
+      const objectiveArg = typeof objective.objectiveMethodArgs[0] === 'number' ? objective.objectiveMethodArgs[0] : 0;
+      setText(defaultFileId, objectiveArg, inputRef.current.value);
+      if (checkIsValid) checkIsValid();
+    }
+  };
 
   return (
     <PaddedInputContainer>
       <InputWithTopLabelContainer>
-        <Label htmlFor="file-id" required>
-          {t('text_management:texts_file')}
+        <Label htmlFor="custom-objective" required>
+          {t('objective_custom')}
         </Label>
-        <SelectText
-          name="file-id"
-          fileId={textPtrs[0]?.toString() ?? '__undef__'}
-          onChange={(selected) => {
-            refreshUI((textPtrs[0] = selected === '__undef__' ? undefined : Number(selected)));
-            refreshUI((textPtrs[1] = undefined));
-            if (checkIsValid) checkIsValid();
-          }}
-          undefValueOption={t('select:none')}
-        />
-      </InputWithTopLabelContainer>
-
-      <InputWithTopLabelContainer>
-        <Label htmlFor="text-id">{t('text_management:texts')}</Label>
-        <SelectDialog
-          name="text-id"
-          fileId={textPtrs[0]?.toString() ?? '__undef__'}
-          textId={textPtrs[1]?.toString() ?? '__undef__'}
-          onChange={(selected) => {
-            refreshUI((textPtrs[1] = selected === '__undef__' ? undefined : Number(selected)));
-            if (setIsEmptyText) setIsEmptyText(selected === '__undef__');
-            if (checkIsValid) checkIsValid();
-          }}
-          undefValueOption={t('select:none')}
-          disabled={textPtrs[0] === undefined && defaultFileId === undefined}
+        <Input
+          ref={refs.nameRef}
+          type="text"
+          name="custom-objective"
+          defaultValue={objective.objectiveMethodArgs[0] as string}
+          onChange={handleChange}
+          placeholder={t('example_custom_objective')}
         />
       </InputWithTopLabelContainer>
     </PaddedInputContainer>
