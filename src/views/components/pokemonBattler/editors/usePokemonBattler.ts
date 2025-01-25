@@ -193,7 +193,7 @@ export const usePokemonBattler = ({ action, currentBattler, from }: Props) => {
       });
     }
     const newEncounter = { ...cloneEntity(encounterCleaned), expandPokemonSetup: buildExpandPokemonSetup(cloneEntity(expandPokemonSetupCleaned)) };
-    cleanExpandPokemonSetup(newEncounter, creatures, from === 'group', state);
+    cleanExpandPokemonSetup(newEncounter, creatures, from, state);
     return newEncounter;
   };
 
