@@ -93,9 +93,9 @@ const buildCustomText = (objective: StudioQuestObjective, state: State) => {
     defaultLanguage: state.projectConfig.language_config.defaultLanguage,
   };
   const lang = state.projectConfig.language_config.defaultLanguage;
-  const texts = objective.objectiveMethodArgs[0] as [number, number];
+  const text = objective.objectiveMethodArgs[1] as number;
 
-  return getText(projectText, texts[0], texts[1], lang);
+  return getText(projectText, QUEST_CUSTOM_GOAL_TEXT_ID, text, lang);
 };
 
 const goalTexts: Record<
@@ -148,3 +148,5 @@ export const ObjectiveEggIndex: Record<ObjectivesEgg, number> = {
   objective_obtain_egg: 0,
   objective_hatch_egg: 1,
 };
+
+export const QUEST_CUSTOM_GOAL_TEXT_ID = 3;
