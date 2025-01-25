@@ -18,7 +18,7 @@ type PokemonBattlerListProps = {
   title: string;
   encounters: StudioGroupEncounter[];
   disabledImport: boolean;
-  from: PokemonBattlerFrom;
+  from: Exclude<PokemonBattlerFrom, 'quest_earning'>;
 };
 
 export const PokemonBattlerListComponent = styled(DataBlockEditorContainer)`

@@ -14,7 +14,7 @@ export type CurrentBattlerType = {
 };
 type PokemonBattlerEditorOverlayProps = {
   currentBattler: CurrentBattlerType;
-  from: PokemonBattlerFrom;
+  from: Exclude<PokemonBattlerFrom, 'quest_earning'>;
 };
 
 /**
