@@ -108,7 +108,7 @@ export const cleaningMoveNaNValues = (v: StudioMove) => {
   v.battleStageMod.forEach((bsm) => (bsm.modificator = cleanNaNValue(bsm.modificator)));
 };
 
-const removeExpandPokemonSetup = (encounter: StudioGroupEncounter, type: StudioExpandPokemonSetup['type']) => {
+export const removeExpandPokemonSetup = (encounter: StudioGroupEncounter, type: StudioExpandPokemonSetup['type']) => {
   const index = encounter.expandPokemonSetup.findIndex((eps) => eps.type === type);
   if (index !== -1) encounter.expandPokemonSetup.splice(index, 1);
 };

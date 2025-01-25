@@ -7,6 +7,7 @@ import { QUEST_VALIDATOR, StudioQuest } from '@modelEntities/quest';
 import { parseJSON } from '@utils/json/parse';
 import { createEncounter } from '@utils/entityCreation';
 import { DbSymbol } from '@modelEntities/dbSymbol';
+import { removeExpandPokemonSetup } from '@utils/cleanNaNValue';
 
 const migrateEarnings = (quest: StudioQuest) => {
   quest.earnings.forEach((earning) => {
@@ -14,6 +15,8 @@ const migrateEarnings = (quest: StudioQuest) => {
 
     const encounter = createEncounter(false);
     encounter.specie = earning.earningArgs[0] as DbSymbol;
+    removeExpandPokemonSetup(encounter, 'originalTrainerId');
+    removeExpandPokemonSetup(encounter, 'originalTrainerName');
     earning.earningArgs[0] = encounter;
   });
 };
