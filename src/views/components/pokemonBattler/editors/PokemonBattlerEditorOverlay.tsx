@@ -6,7 +6,7 @@ import { PokemonBattlerChangeOrder, PokemonBattlerDeletion, PokemonBattlerEditor
 
 export type PokemonBattlerEditorAndDeletionKeys = 'new' | 'edit' | 'import' | 'change_order' | 'deletion';
 export type PokemonBattlerDialogsRef = React.RefObject<DialogRefData<PokemonBattlerEditorAndDeletionKeys>>;
-export type PokemonBattlerFrom = 'trainer' | 'group';
+export type PokemonBattlerFrom = 'trainer' | 'group' | 'quest_earning';
 export type PokemonPropertyType = 'default' | 'evs' | 'moves';
 export type CurrentBattlerType = {
   index: number;

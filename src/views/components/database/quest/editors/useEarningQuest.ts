@@ -1,3 +1,4 @@
+import { usePokemonBattler } from '@components/pokemonBattler/editors/usePokemonBattler';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { StudioQuestEarning, StudioQuestEarningType } from '@modelEntities/quest';
 import { assertUnreachable } from '@utils/assertUnreachable';
@@ -9,7 +10,14 @@ const initializeEarning = (initialEarning?: StudioQuestEarning): StudioQuestEarn
   return initialEarning ? cloneEntity(initialEarning) : createQuestEarning('earning_money');
 };
 
-export const useEarningQuest = (initialEarning?: StudioQuestEarning) => {
+type EarningQuestPayload = {
+  action: 'edit' | 'creation';
+  earningIndex: number;
+  initialEarning?: StudioQuestEarning;
+};
+
+export const useEarningQuest = ({ action, earningIndex, initialEarning }: EarningQuestPayload) => {
+  const earningCreature = usePokemonBattler({ action, currentBattler: { index: earningIndex, kind: undefined }, from: 'quest_earning' });
   const [earning, setEarning] = useState(initializeEarning(initialEarning));
   const [isValid, setIsValid] = useState<boolean>(true);
   const entityRef = useRef<DbSymbol | undefined>();
@@ -26,7 +34,7 @@ export const useEarningQuest = (initialEarning?: StudioQuestEarning) => {
         break;
       case 'earning_pokemon':
       case 'earning_egg':
-        result = !!entityRef.current;
+        result = action === 'creation' ? earningCreature.canNew : earningCreature.canClose();
         break;
       default:
         assertUnreachable(earning.earningMethodName);
@@ -46,6 +54,7 @@ export const useEarningQuest = (initialEarning?: StudioQuestEarning) => {
       entityRef,
       inputRef,
     },
+    earningCreature,
     updateEarning,
     checkIsValid,
     isValid,

@@ -1,10 +1,10 @@
 import { DarkButton, PrimaryButton } from '@components/buttons';
-import { Editor } from '@components/editor/Editor';
-import { InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
+import { EditorWithCollapse } from '@components/editor/Editor';
+import { InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
 import { QUEST_EARNINGS, StudioQuestEarningType } from '@modelEntities/quest';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import { QuestEarningItem, QuestEarningMoney, QuestEarningPokemon } from './earnings';
+import { QuestEarningItem, QuestEarningMoney } from './earnings';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { useQuestPage } from '@src/hooks/usePage';
 import { useUpdateQuest } from './useUpdateQuest';
@@ -12,9 +12,10 @@ import { Select } from '@ds/Select';
 import { useEarningQuest } from './useEarningQuest';
 import { cloneEntity } from '@utils/cloneEntity';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
+import { assertUnreachable } from '@utils/assertUnreachable';
+import { QuestEarningPokemonV2 } from './earnings/QuestEarningPokemonV2';
 import styled from 'styled-components';
 import React, { forwardRef, useMemo } from 'react';
-import { assertUnreachable } from '@utils/assertUnreachable';
 
 const earningCategoryEntries = (t: TFunction<'database_quests'>) => QUEST_EARNINGS.map((earning) => ({ value: earning, label: t(earning) }));
 
@@ -34,7 +35,10 @@ export const QuestNewEarningEditor = forwardRef<EditorHandlingClose, QuestNewEar
   const { quest } = useQuestPage();
   const updateQuest = useUpdateQuest(quest);
   const earningOptions = useMemo(() => earningCategoryEntries(t), [t]);
-  const { earning, refs, updateEarning, checkIsValid, isValid } = useEarningQuest();
+  const { earning, refs, earningCreature, updateEarning, checkIsValid, isValid } = useEarningQuest({
+    action: 'creation',
+    earningIndex: 0,
+  });
   const earningMethodName = earning.earningMethodName;
 
   useEditorHandlingClose(ref);
@@ -65,9 +69,9 @@ export const QuestNewEarningEditor = forwardRef<EditorHandlingClose, QuestNewEar
       }
       case 'earning_pokemon':
       case 'earning_egg': {
-        if (!refs.entityRef.current) return;
-
-        newEarning.earningArgs[0] = refs.entityRef.current;
+        const newEncounter = earningCreature.cleanEncounter();
+        if (earningMethodName === 'earning_egg') newEncounter.levelSetup.level = 1;
+        newEarning.earningArgs[0] = newEncounter;
         break;
       }
       default:
@@ -78,24 +82,24 @@ export const QuestNewEarningEditor = forwardRef<EditorHandlingClose, QuestNewEar
   };
 
   return (
-    <Editor type="creation" title={t('earning')}>
-      <InputContainer>
+    <EditorWithCollapse type="creation" title={t('earning')}>
+      <PaddedInputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="earning-method-name">{t('earning_type')}</Label>
           <Select name="earning-method-name" value={earning.earningMethodName} options={earningOptions} onChange={changeEarning} />
         </InputWithTopLabelContainer>
         {earningMethodName === 'earning_money' && <QuestEarningMoney earning={earning} refs={refs} checkIsValid={checkIsValid} />}
         {earningMethodName === 'earning_item' && <QuestEarningItem earning={earning} refs={refs} checkIsValid={checkIsValid} />}
-        {earningMethodName === 'earning_pokemon' && <QuestEarningPokemon earning={earning} refs={refs} />}
-        {earningMethodName === 'earning_egg' && <QuestEarningPokemon earning={earning} refs={refs} />}
+        {earningMethodName === 'earning_pokemon' && <QuestEarningPokemonV2 earning={earning} earningCreature={earningCreature} />}
+        {earningMethodName === 'earning_egg' && <QuestEarningPokemonV2 earning={earning} earningCreature={earningCreature} />}
         <ButtonContainer>
           <PrimaryButton onClick={onClickNew} disabled={!isValid}>
             {t('add_earning')}
           </PrimaryButton>
           <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
         </ButtonContainer>
-      </InputContainer>
-    </Editor>
+      </PaddedInputContainer>
+    </EditorWithCollapse>
   );
 });
 QuestNewEarningEditor.displayName = 'QuestNewEarningEditor';
