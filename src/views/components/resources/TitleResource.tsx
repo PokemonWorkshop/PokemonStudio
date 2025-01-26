@@ -7,6 +7,11 @@ const TitleResourceContainer = styled.div`
   justify-content: space-between;
   user-select: none;
 
+  @media ${({ theme }) => theme.breakpoints.dataBox422} {
+    flex-direction: column;
+    gap: 8px;
+  }
+
   .title {
     ${({ theme }) => theme.fonts.titlesHeadline4}
   }
@@ -37,6 +42,10 @@ const TitleResourceWithToggleContainer = styled(TitleResourceContainer)`
     border: 1px solid ${({ theme }) => theme.colors.dark20};
     border-radius: 4px;
     ${({ theme }) => theme.fonts.normalRegular};
+
+    @media ${({ theme }) => theme.breakpoints.dataBox422} {
+      justify-content: space-between;
+    }
   }
 `;
 
