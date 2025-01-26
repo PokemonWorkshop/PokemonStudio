@@ -13,7 +13,7 @@ import { useEarningQuest } from './useEarningQuest';
 import { cloneEntity } from '@utils/cloneEntity';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { assertUnreachable } from '@utils/assertUnreachable';
-import { QuestEarningPokemonV2 } from './earnings/QuestEarningPokemonV2';
+import { QuestEarningPokemon } from './earnings/QuestEarningPokemon';
 import styled from 'styled-components';
 import React, { forwardRef, useMemo } from 'react';
 
@@ -40,6 +40,7 @@ export const QuestNewEarningEditor = forwardRef<EditorHandlingClose, QuestNewEar
     earningIndex: 0,
   });
   const earningMethodName = earning.earningMethodName;
+  const isDisabled = !isValid || (['earning_pokemon', 'earning_egg'].includes(earningMethodName) && !earningCreature.canNew);
 
   useEditorHandlingClose(ref);
 
@@ -50,7 +51,7 @@ export const QuestNewEarningEditor = forwardRef<EditorHandlingClose, QuestNewEar
   };
 
   const onClickNew = () => {
-    if (!isValid) return;
+    if (isDisabled) return;
 
     const newEarning = cloneEntity(earning);
     switch (earningMethodName) {
@@ -90,10 +91,10 @@ export const QuestNewEarningEditor = forwardRef<EditorHandlingClose, QuestNewEar
         </InputWithTopLabelContainer>
         {earningMethodName === 'earning_money' && <QuestEarningMoney earning={earning} refs={refs} checkIsValid={checkIsValid} />}
         {earningMethodName === 'earning_item' && <QuestEarningItem earning={earning} refs={refs} checkIsValid={checkIsValid} />}
-        {earningMethodName === 'earning_pokemon' && <QuestEarningPokemonV2 earning={earning} earningCreature={earningCreature} />}
-        {earningMethodName === 'earning_egg' && <QuestEarningPokemonV2 earning={earning} earningCreature={earningCreature} />}
+        {earningMethodName === 'earning_pokemon' && <QuestEarningPokemon earning={earning} earningCreature={earningCreature} />}
+        {earningMethodName === 'earning_egg' && <QuestEarningPokemon earning={earning} earningCreature={earningCreature} />}
         <ButtonContainer>
-          <PrimaryButton onClick={onClickNew} disabled={!isValid}>
+          <PrimaryButton onClick={onClickNew} disabled={isDisabled}>
             {t('add_earning')}
           </PrimaryButton>
           <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>

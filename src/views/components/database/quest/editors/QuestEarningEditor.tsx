@@ -13,7 +13,7 @@ import { cloneEntity } from '@utils/cloneEntity';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { Select } from '@ds/Select';
-import { QuestEarningPokemonV2 } from './earnings/QuestEarningPokemonV2';
+import { QuestEarningPokemon } from './earnings/QuestEarningPokemon';
 import React, { forwardRef, useMemo } from 'react';
 
 const earningCategoryEntries = (t: TFunction<'database_quests'>) => QUEST_EARNINGS.map((earning) => ({ value: earning, label: t(earning) }));
@@ -90,8 +90,8 @@ export const QuestEarningEditor = forwardRef<EditorHandlingClose, QuestEarningEd
         </InputWithTopLabelContainer>
         {earningMethodName === 'earning_money' && <QuestEarningMoney earning={earning} refs={refs} />}
         {earningMethodName === 'earning_item' && <QuestEarningItem earning={earning} refs={refs} />}
-        {earningMethodName === 'earning_pokemon' && <QuestEarningPokemonV2 earning={earning} earningCreature={earningCreature} />}
-        {earningMethodName === 'earning_egg' && <QuestEarningPokemonV2 earning={earning} earningCreature={earningCreature} />}
+        {earningMethodName === 'earning_pokemon' && <QuestEarningPokemon earning={earning} earningCreature={earningCreature} />}
+        {earningMethodName === 'earning_egg' && <QuestEarningPokemon earning={earning} earningCreature={earningCreature} />}
       </PaddedInputContainer>
     </EditorWithCollapse>
   );
