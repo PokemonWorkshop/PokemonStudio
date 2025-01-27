@@ -116,14 +116,10 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
                             #{padStr(textsFiltered[index].textId, 4)}
                           </span>
                           <ClearInput
-                            key={`${textsFiltered[index].textId}-${textsFiltered[index].dialog}`}
-                            defaultValue={textsFiltered[index].dialog}
+                            key={`${textsFiltered[index].textId}`}
+                            value={textsFiltered[index].dialog}
                             placeholder={`[~ ${index}]`}
-                            onBlur={(event) => {
-                              const newText = event.target.value;
-                              if (newText === event.target.defaultValue) return;
-                              setText(textInfo.fileId, textsFiltered[index].textId, newText);
-                            }}
+                            onChange={(event) => setText(textInfo.fileId, textsFiltered[index].textId, event.target.value)}
                             onClear={() => setText(textInfo.fileId, textsFiltered[index].textId, '')}
                             onFocus={(event) => (focusedInputRef.current = event.target)}
                           />
