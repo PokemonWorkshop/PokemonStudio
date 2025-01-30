@@ -90,5 +90,9 @@
   "sentence_spoken": "Sentence spoken",
   "delete_dialog": "Delete this dialog",
   "max_dialog": "You cannot create more dialogs",
-  "no_sentence": "No text provided"
+  "no_sentence": "No text provided",
+  "trainer_import_info": "You can create this new trainer by importing data from another existing trainer.",
+  "none_option": "None",
+  "other-data": "Other data",
+  "import_trainer_from": "Import data from"
 }

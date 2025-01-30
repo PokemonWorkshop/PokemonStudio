@@ -90,5 +90,9 @@
   "sentence_spoken": "Phrase prononcée",
   "delete_dialog": "Supprimer ce dialogue",
   "max_dialog": "Vous ne pouvez pas créer de dialogues supplémentaires",
-  "no_sentence": "Aucun texte renseigné"
+  "no_sentence": "Aucun texte renseigné",
+  "trainer_import_info": "Vous pouvez créer ce nouveau dresseur en copiant les données d'un autre dresseur déjà existant.",
+  "none_option": "Aucun",
+  "other-data": "Autres données",
+  "import_trainer_from": "Importer les données de"
 }
