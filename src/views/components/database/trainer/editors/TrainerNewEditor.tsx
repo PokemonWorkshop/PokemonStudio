@@ -24,6 +24,7 @@ import { useSetProjectText, useGetProjectText } from '@utils/ReadingProjectText'
 import { createTrainer } from '@utils/entityCreation';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { TooltipWrapper } from '@ds/Tooltip';
+import { importEntityData } from '@utils/importEntityData';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -83,13 +84,7 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
       setText(TRAINER_VICTORY_SENTENCE_TEXT_ID, newTrainer.id, getText(TRAINER_VICTORY_SENTENCE_TEXT_ID, trainers[selectedTrainer].id));
       setText(TRAINER_DEFEAT_SENTENCE_TEXT_ID, newTrainer.id, getText(TRAINER_DEFEAT_SENTENCE_TEXT_ID, trainers[selectedTrainer].id));
 
-      newTrainer = {
-        ...newTrainer,
-        bagEntries: trainers[selectedTrainer].bagEntries,
-        party: trainers[selectedTrainer].party,
-        additionalDialogs: trainers[selectedTrainer].additionalDialogs,
-        resources: trainers[selectedTrainer].resources,
-      };
+      newTrainer = importEntityData(newTrainer, trainers[selectedTrainer]);
     } else {
       setText(TRAINER_VICTORY_SENTENCE_TEXT_ID, newTrainer.id, '');
       setText(TRAINER_DEFEAT_SENTENCE_TEXT_ID, newTrainer.id, '');
