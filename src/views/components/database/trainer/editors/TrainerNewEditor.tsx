@@ -162,7 +162,7 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
           <Label htmlFor="base-money">{t('base_money')}</Label>
           <Input type="number" name="base-money" min="0" max="99999" defaultValue={10} ref={baseMoneyRef} onChange={onBaseMoneyChange} />
         </InputWithLeftLabelContainer>
-        <InputGroupCollapse title={t('other-data')} gap="16px" onClick={() => setImporting(!importing)}>
+        <InputGroupCollapse title={t('other_data')} gap="16px" onClick={() => setImporting(!importing)}>
           <ImportInfoContainer>
             <ImportInfo>{t('trainer_import_info')}</ImportInfo>
           </ImportInfoContainer>
