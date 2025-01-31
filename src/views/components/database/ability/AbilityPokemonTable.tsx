@@ -162,7 +162,7 @@ export const AbilityPokemonTable = ({ ability }: AbilityPokemonTableProps) => {
     <DataPokemonTable>
       <DataPokemonGrid gap="16px" className="header">
         <span></span>
-        <span>{t('pokemon_pokemon')}</span>
+        <span>{t('creature')}</span>
         <span>{t('pokemon_type')}</span>
         <span>{t('pokemon_ability1')}</span>
         <span>{t('pokemon_ability2')}</span>

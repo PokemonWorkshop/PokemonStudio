@@ -38,7 +38,7 @@ export const AbilityControlBar = ({ dialogsRef }: AbilityControlBarProps) => {
 
   return (
     <ControlBar>
-      {onClickNew ? <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new')}</SecondaryButtonWithPlusIcon> : <div />}
+      {onClickNew ? <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new_ability')}</SecondaryButtonWithPlusIcon> : <div />}
       <SelectAbility dbSymbol={abilityDbSymbol} onChange={(ability) => setSelectedDataIdentifier({ ability })} />
     </ControlBar>
   );

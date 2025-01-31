@@ -27,7 +27,7 @@ export const NaturePage = () => {
           <DataBlockWrapper>
             <DataBlockWithAction size="full" title={t('deleting')}>
               <DeleteButtonWithIcon onClick={() => dialogsRef.current?.openDialog('deletion', true)} disabled={cannotDelete}>
-                {t('delete')}
+                {t('delete_this_nature')}
               </DeleteButtonWithIcon>
             </DataBlockWithAction>
           </DataBlockWrapper>

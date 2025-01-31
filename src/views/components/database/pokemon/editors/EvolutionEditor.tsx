@@ -36,7 +36,6 @@ type Props = {
 
 export const EvolutionEditor = forwardRef<EditorHandlingClose, Props>(({ evolutionIndex, setEvolutionIndex, closeDialog }, ref) => {
   const { t } = useTranslation();
-  const { t: tSelect } = useTranslation('select');
   const { creature, creatureName, form } = useCreaturePage();
   const { projectDataValues: creatures } = useProjectPokemon();
   const getCreatureName = useGetEntityNameText();
@@ -104,7 +103,7 @@ export const EvolutionEditor = forwardRef<EditorHandlingClose, Props>(({ evoluti
                 <SelectPokemon
                   dbSymbol={state.evolveTo}
                   onChange={(value) => dispatch({ type: 'updateSpecie', value: value as DbSymbol })}
-                  undefValueOption={state.evolveTo === '__undef__' ? tSelect('none') : undefined}
+                  undefValueOption={state.evolveTo === '__undef__' ? t('none') : undefined}
                   noLabel
                 />
               )}
@@ -129,18 +128,18 @@ export const EvolutionEditor = forwardRef<EditorHandlingClose, Props>(({ evoluti
             state.evolveTo !== '__undef__' && (
               <SecondaryNoBackground onClick={() => dispatch({ type: 'add', key: 'none' })}>
                 <PlusIcon />
-                <span>{t('evolutionAddCondition')}</span>
+                <span>{t('evolution_add_condition')}</span>
               </SecondaryNoBackground>
             )}
         </EvolutionEditorContainer>
         <SubEditorContainer>
           <SubEditorTopButtonContainer>
-            <DeleteButton onClick={onRemoveEvolution}>{t('removeEvolution')}</DeleteButton>
+            <DeleteButton onClick={onRemoveEvolution}>{t('delete_this_evolution' /*'remove_this_evolution'*/)}</DeleteButton>
           </SubEditorTopButtonContainer>
           <SubEditorSeparator parentEditorHasScrollBar />
-          <Editor type="creation" title={t('additionalEvolution')}>
+          <Editor type="creation" title={t('additional_evolution')}>
             <SecondaryButtonWithPlusIcon onClick={onAddEvolution} disabled={state.evolveTo === '__undef__' && !state.isMega}>
-              {t('addNewEvolution')}
+              {t('new_evolution')}
             </SecondaryButtonWithPlusIcon>
           </Editor>
         </SubEditorContainer>

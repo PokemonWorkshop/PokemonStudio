@@ -57,7 +57,7 @@ export const NumberInput = ({ state, inputRefs, type, min, max, label }: NumberI
           required
         />
       </InputWithLeftLabelContainer>
-      {error && <TextInputError>{max ? t('numberInputErrorMinMax', { min, max }) : t('numberInputErrorMin', { min })}</TextInputError>}
+      {error && <TextInputError>{max ? t('number_input_error_min_max', { min, max }) : t('number_input_error_min', { min })}</TextInputError>}
     </InputWithTopLabelContainer>
   );
 };

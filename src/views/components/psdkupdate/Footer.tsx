@@ -34,14 +34,14 @@ const Footer = ({ version }: { version: string }) => {
   return (
     <FooterContainer>
       <LinkContainer>
-        <Link external href="https://psdk.pokemonworkshop.fr/wiki/en/index.html" text={t('psdk_update:wiki')} />
-        <Link external href="https://psdk.pokemonworkshop.com/yard/" text={t('psdk_update:documentation')} />
-        <Link external href="https://gitlab.com/pokemonsdk/pokemonsdk" text={t('psdk_update:gitlab')} />
-        <Link external href="https://twitter.com/pokemonsdk" text={t('psdk_update:twitter')} />
+        <Link external href="https://psdk.pokemonworkshop.fr/wiki/en/index.html" text={t('wiki')} />
+        <Link external href="https://psdk.pokemonworkshop.com/yard/" text={t('documentation')} />
+        <Link external href="https://gitlab.com/pokemonsdk/pokemonsdk" text={t('gitlab')} />
+        <Link external href="https://twitter.com/pokemonsdk" text={t('twitter')} />
       </LinkContainer>
       {version && (
         <LatestVersionContainer>
-          <div className="latest-version-text">{t('psdk_update:latest_version')}&nbsp;</div>
+          <div className="latest-version-text">{t('latest_version')}&nbsp;</div>
           <div className="latest-version">{version}</div>
         </LatestVersionContainer>
       )}

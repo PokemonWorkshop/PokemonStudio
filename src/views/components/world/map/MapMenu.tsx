@@ -57,7 +57,7 @@ export const MapMenu = () => {
         <MapSubMenuContainer>
           <div className="buttons">
             <SecondaryButtonWithPlusIcon className="new" onClick={() => dialogsRef.current?.openDialog('new')} disabled={isRMXPMode}>
-              {t('new')}
+              {t('new_map')}
             </SecondaryButtonWithPlusIcon>
             <NewFolderButtonOnlyIcon onClick={handleNewFolder} data-tooltip={t('new_folder')} disabled={isRMXPMode} />
           </div>

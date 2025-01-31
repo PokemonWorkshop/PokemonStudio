@@ -18,18 +18,18 @@ export const SelectItem = ({ dbSymbol, onChange, noLabel, noneValue, undefValueO
 
   const options = useMemo(() => {
     if (undefValueOption) return [{ value: '__undef__', label: undefValueOption }, ...typeOptions];
-    if (noneValue) return [{ value: '__undef__', label: t('select:none') }, ...typeOptions];
+    if (noneValue) return [{ value: '__undef__', label: t('none') }, ...typeOptions];
     return typeOptions;
   }, [undefValueOption, typeOptions, noneValue, t]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const optionals = useMemo(() => ({ deletedOption: t('database_items:no_option') }), []);
+  const optionals = useMemo(() => ({ deletedOption: t('item_not_found') }), []);
 
   if (noLabel) return <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />;
 
   return (
     <SelectContainerWithLabel>
-      <span>{t('database_items:item')}</span>
+      <span>{t('item')}</span>
       <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />
     </SelectContainerWithLabel>
   );

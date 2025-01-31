@@ -20,13 +20,13 @@ export const ItemInput = ({ type, state, dispatch }: EvolutionConditionEditorInp
 
   return (
     <InputWithTopLabelContainer>
-      <Label>{t('database_pokemon:evolutionValue_item')}</Label>
+      <Label>{t('evolution_value_item')}</Label>
       {type !== 'itemHold' ? (
         <SelectDataGeneric
-          data={{ value: dbSymbol, label: items[dbSymbol] ? getItemName(items[dbSymbol]) : t('database_items:item_deleted') }}
+          data={{ value: dbSymbol, label: items[dbSymbol] ? getItemName(items[dbSymbol]) : t('item_deleted') }}
           options={type === 'stone' ? stoneOptions : gemmeOptions}
           onChange={(option) => dispatch({ type: 'update', key: type, value: option.value as DbSymbol })}
-          noOptionsText={t('database_items:no_option')}
+          noOptionsText={t('item_not_found')}
           error={!items[dbSymbol]}
           noneValue
         />

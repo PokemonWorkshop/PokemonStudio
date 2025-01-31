@@ -27,5 +27,5 @@
       "react": ["./node_modules/@types/react"]
     }
   },
-  "include": ["src/**/*", "config/**/*", "forge.config.ts"]
+  "include": ["src/**/*", "config/**/*", "forge.config.ts", "merge_i18n.js"]
 }

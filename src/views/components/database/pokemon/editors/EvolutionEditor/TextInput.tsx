@@ -36,7 +36,7 @@ export const TextInput = ({ type, state, inputRefs, evolutionInfo }: TextInputPr
 
   return (
     <InputWithTopLabelContainer>
-      <Label>{t(`evolutionValue_${type}`)}</Label>
+      <Label>{t(`evolution_value_${type}`)}</Label>
       <Input type="text" defaultValue={state.defaults[type]?.toString()} ref={(ref) => (inputRefs.current[type] = ref)} />
       {evolutionInfo && <EvolutionInfo>{evolutionInfo}</EvolutionInfo>}
     </InputWithTopLabelContainer>

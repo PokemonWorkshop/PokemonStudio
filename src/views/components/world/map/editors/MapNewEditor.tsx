@@ -124,7 +124,7 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
   };
 
   return (
-    <EditorWithCollapse type="creation" title={t('new')}>
+    <EditorWithCollapse type="creation" title={t('new_map')}>
       <EditorChildWithSubEditorContainer>
         <InputContainer size="l">
           <PaddedInputContainer size="m">
@@ -216,7 +216,7 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
           <ButtonContainer>
             <TooltipWrapper data-tooltip={checkDisabled() ? t('fields_asterisk_required') : undefined}>
               <PrimaryButton onClick={onClickNew} disabled={checkDisabled()}>
-                {t('create_map')}
+                {t('add_map')}
               </PrimaryButton>
             </TooltipWrapper>
             <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>

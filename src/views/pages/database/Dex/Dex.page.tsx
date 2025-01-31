@@ -43,13 +43,13 @@ export const DexPage = () => {
             {dex.dbSymbol === 'national' ? (
               <DataBlockWithAction title={t('deleting')} size="full" disabled={true}>
                 <TooltipWrapper data-tooltip={t('deletion_disabled')}>
-                  <DeleteButtonWithIcon disabled={true}>{t('delete')}</DeleteButtonWithIcon>
+                  <DeleteButtonWithIcon disabled={true}>{t('delete_this_pokedex')}</DeleteButtonWithIcon>
                 </TooltipWrapper>
               </DataBlockWithAction>
             ) : (
               <DataBlockWithAction size="full" title={t('deleting')}>
                 <DeleteButtonWithIcon onClick={() => dialogsRef?.current?.openDialog('deletion_dex', true)} disabled={cannotDelete}>
-                  {t('delete')}
+                  {t('delete_this_pokedex')}
                 </DeleteButtonWithIcon>
               </DataBlockWithAction>
             )}

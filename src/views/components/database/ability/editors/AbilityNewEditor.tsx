@@ -87,7 +87,7 @@ export const AbilityNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
   const checkDisabled = () => !name || !!dbSymbolErrorType;
 
   return (
-    <Editor type="creation" title={t('new')}>
+    <Editor type="creation" title={t('new_ability')}>
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="name" required>

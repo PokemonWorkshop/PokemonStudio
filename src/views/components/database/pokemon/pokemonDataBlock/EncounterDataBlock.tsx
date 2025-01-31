@@ -62,19 +62,19 @@ export const EncounterDataBlock = ({ pokemonWithForm, dialogsRef }: PokemonDataP
   return (
     <DataBlockWithTitle
       size="fourth"
-      title={t('database_pokemon:encounter')}
+      title={t('encounter')}
       onClick={() => (isClickable ? null : dialogsRef.current?.openDialog('encounter'))}
     >
       <DataGrid columns="1fr" rows="42px 42px 1fr">
-        <DataFieldsetField label={t('database_pokemon:catch_rate')} data={form.catchRate} />
+        <DataFieldsetField label={t('catch_rate')} data={form.catchRate} />
         <DataFieldsetField
-          label={t('database_pokemon:female_rate')}
-          data={form.femaleRate === -1 ? t('database_pokemon:genderless') : `${form.femaleRate} %`}
+          label={t('female_rate')}
+          data={form.femaleRate === -1 ? t('genderless') : `${form.femaleRate} %`}
         />
         {form.itemHeld.length === 0 || (form.itemHeld[0].dbSymbol === 'none' && form.itemHeld[1].dbSymbol === 'none') ? (
-          <DataFieldsetField label={t('database_pokemon:items_held')} data={t('database_pokemon:none_item')} disabled />
+          <DataFieldsetField label={t('items_held')} data={t('none_item')} disabled />
         ) : (
-          <DataFieldsetFieldWithChild label={t('database_pokemon:items_held')}>
+          <DataFieldsetFieldWithChild label={t('items_held')}>
             {[0, 1].map(
               (index) =>
                 form.itemHeld[index].dbSymbol !== 'none' && (

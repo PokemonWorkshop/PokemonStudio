@@ -67,7 +67,7 @@ export const EvolutionDataBlock = ({ pokemonWithForm, evolutionIndex, setEvoluti
             }}
           />
           {minLevel !== undefined && <DataFieldsetField label={t('at_level')} data={minLevel.toString()} />}
-          {conditionType !== undefined && <DataFieldsetField label={t('evolves_if')} data={t(`evolutionCondition_${conditionType}`)} />}
+          {conditionType !== undefined && <DataFieldsetField label={t('evolves_if')} data={t(`evolution_condition_${conditionType}`)} />}
         </DataGrid>
       )}
     </DataBlockWithTitlePagination>

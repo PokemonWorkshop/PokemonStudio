@@ -69,18 +69,16 @@ const PSDKUpdatePageComponent = () => {
       <ActionContainer>
         <BrandingActionContainer>
           <BrandingTitleContainer>
-            <BrandingTitle>{t('psdk_update:title')}</BrandingTitle>
-            <BrandingCurrentVersion>
-              {state.loading ? ' ' : t('psdk_update:version', { version: state.currentVersion.string })}
-            </BrandingCurrentVersion>
+            <BrandingTitle>{t('psdk_title')}</BrandingTitle>
+            <BrandingCurrentVersion>{state.loading ? ' ' : t('version', { version: state.currentVersion.string })}</BrandingCurrentVersion>
           </BrandingTitleContainer>
           <BrandingButtonContainer>
-            {!state.loading && !needUpdate(state) && <span>{t('psdk_update:project_up_to_date')}</span>}
+            {!state.loading && !needUpdate(state) && <span>{t('project_up_to_date')}</span>}
             <PrimaryButton onClick={updatePSDK} disabled={!needUpdate(state)}>
-              {t('psdk_update:update')}
+              {t('update')}
             </PrimaryButton>
             <SecondaryButton href="https://discord.com/channels/143824995867557888/527528414626971663" target="_blank">
-              {t('psdk_update:view_latest_changes')}
+              {t('view_latest_changes')}
             </SecondaryButton>
           </BrandingButtonContainer>
         </BrandingActionContainer>

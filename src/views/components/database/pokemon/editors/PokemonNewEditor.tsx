@@ -43,7 +43,6 @@ export const PokemonNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
   const { projectDataValues: creatures, setProjectDataValues: setCreature } = useProjectPokemon();
   const { projectDataValues: dex, setProjectDataValues: setDex } = useProjectDex();
   const { t } = useTranslation();
-  const { t: tMove } = useTranslation('database_moves');
   const setText = useSetProjectText();
   const [name, setName] = useState(''); // We use a state because synchronizing dbSymbol is easier with a state
   const formNameRef = useRef<HTMLInputElement>(null);
@@ -108,7 +107,7 @@ export const PokemonNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
   const isDisabled = !name || !!dbSymbolErrorType;
 
   return (
-    <Editor type="creation" title={t('new')}>
+    <Editor type="creation" title={t('new_creature')}>
       <InputFormContainer ref={formRef}>
         <InputWithTopLabelContainer>
           <Label required>{t('name')}</Label>
@@ -125,7 +124,7 @@ export const PokemonNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
         <TypeFields form={form} defaults={defaults} />
         <InputWithTopLabelContainer>
           <Label htmlFor="dbSymbol" required>
-            {tMove('symbol')}
+            {t('symbol')}
           </Label>
           <Input
             type="text"
@@ -133,18 +132,18 @@ export const PokemonNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
             ref={dbSymbolRef}
             onChange={(e) => onChangeDbSymbol(e.currentTarget.value)}
             error={!!dbSymbolErrorType}
-            placeholder={tMove('example_db_symbol')}
+            placeholder={t('example_db_symbol')}
           />
-          {dbSymbolErrorType === 'value' && <TextInputError>{tMove('incorrect_format')}</TextInputError>}
-          {dbSymbolErrorType === 'duplicate' && <TextInputError>{tMove('db_symbol_already_used')}</TextInputError>}
+          {dbSymbolErrorType === 'value' && <TextInputError>{t('incorrect_format')}</TextInputError>}
+          {dbSymbolErrorType === 'duplicate' && <TextInputError>{t('db_symbol_already_used')}</TextInputError>}
         </InputWithTopLabelContainer>
         <ButtonContainer>
-          <TooltipWrapper data-tooltip={isDisabled ? tMove('fields_asterisk_required') : undefined}>
+          <TooltipWrapper data-tooltip={isDisabled ? t('fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickNew} disabled={isDisabled}>
               {t('create_pokemon')}
             </PrimaryButton>
           </TooltipWrapper>
-          <DarkButton onClick={closeDialog}>{tMove('cancel')}</DarkButton>
+          <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputFormContainer>
     </Editor>

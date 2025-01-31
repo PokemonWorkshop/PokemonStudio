@@ -47,7 +47,7 @@ export const PokemonMovepoolPage = () => {
             <DatabaseTabsBar
               currentTabIndex={1}
               tabs={[
-                { label: t('pokemon'), path: '/database/pokemon' },
+                { label: t('creature'), path: '/database/pokemon' },
                 { label: t('movepool'), path: '/database/pokemon/movepool' },
                 { label: t('resources'), path: '/database/pokemon/resources' },
               ]}

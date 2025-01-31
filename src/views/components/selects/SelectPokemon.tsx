@@ -38,7 +38,7 @@ export const SelectPokemon = ({ dbSymbol, onChange, breakpoint, noLabel, undefVa
 
   return (
     <SelectContainerWithLabel>
-      <BreakableSpan breakpoint={breakpoint}>{t('pokemon')}</BreakableSpan>
+      <BreakableSpan breakpoint={breakpoint}>{t('creature')}</BreakableSpan>
       <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />
     </SelectContainerWithLabel>
   );
@@ -54,5 +54,5 @@ export const SelectPokemon2 = (props: SelectPokemon2Props) => {
   const { t } = useTranslation();
   const creatureOptions = useSelectOptions('creatures') as SelectOption<DbSymbol>[];
 
-  return <Select options={creatureOptions} notFoundLabel={t('pokemon_deleted')} chooseValue="__undef__" {...props} />;
+  return <Select options={creatureOptions} notFoundLabel={t('creature_deleted')} chooseValue="__undef__" {...props} />;
 };

@@ -56,12 +56,8 @@ export const PokemonControlBar = ({ dialogsRef, setEvolutionIndex }: Props) => {
   return (
     <ControlBar>
       {onClickNew ? (
-        <SecondaryButtonWithPlusIconResponsive
-          data-tooltip-responsive={t('database_pokemon:newPokemon')}
-          breakpoint={NEW_BREAKPOINT}
-          onClick={onClickNew}
-        >
-          {t('database_pokemon:newPokemon')}
+        <SecondaryButtonWithPlusIconResponsive data-tooltip-responsive={t('new_creature')} breakpoint={NEW_BREAKPOINT} onClick={onClickNew}>
+          {t('new_creature')}
         </SecondaryButtonWithPlusIconResponsive>
       ) : (
         <div />
@@ -73,12 +69,8 @@ export const PokemonControlBar = ({ dialogsRef, setEvolutionIndex }: Props) => {
         <ControlBarLabelContainer>
           <SelectPokemonForm dbSymbol={currentPokemon.specie} form={currentPokemon.form} onChange={onFormChange} breakpoint={SELECT_BREAKPOINT} />
           {onClickFormNew && (
-            <DarkButtonWithPlusIconResponsive
-              data-tooltip-responsive={t('database_pokemon:newForm')}
-              breakpoint={FORM_BREAKPOINT}
-              onClick={onClickFormNew}
-            >
-              <span>{t('database_pokemon:newForm')}</span>
+            <DarkButtonWithPlusIconResponsive data-tooltip-responsive={t('new_form')} breakpoint={FORM_BREAKPOINT} onClick={onClickFormNew}>
+              <span>{t('new_form')}</span>
             </DarkButtonWithPlusIconResponsive>
           )}
         </ControlBarLabelContainer>

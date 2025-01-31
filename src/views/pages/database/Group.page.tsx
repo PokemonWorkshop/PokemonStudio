@@ -29,7 +29,7 @@ export const GroupPage = () => {
           <DataBlockWrapper>
             <DataBlockWithAction size="full" title={t('deleting')}>
               <DeleteButtonWithIcon onClick={() => dialogsRef.current?.openDialog('deletion', true)} disabled={cannotDelete}>
-                {t('delete')}
+                {t('delete_this_group')}
               </DeleteButtonWithIcon>
             </DataBlockWithAction>
           </DataBlockWrapper>

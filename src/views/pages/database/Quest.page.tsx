@@ -140,7 +140,7 @@ export const QuestPage = () => {
           <DataBlockWrapper>
             <DataBlockWithAction size="full" title={t('deleting')}>
               <DeleteButtonWithIcon onClick={() => setCurrentDeletion('quest')} disabled={Object.entries(quests).length === 1}>
-                {t('delete')}
+                {t('delete_this_quest')}
               </DeleteButtonWithIcon>
             </DataBlockWithAction>
           </DataBlockWrapper>

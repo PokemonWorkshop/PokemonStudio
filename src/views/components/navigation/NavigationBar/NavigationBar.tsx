@@ -32,7 +32,7 @@ export const NavigationBarComponent = () => {
           <NavigationBarItem path="/dashboard" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('dashboard'), 'right-center', true)}>
             <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="dashboard" />
           </NavigationBarItem>
-          <NavigationBarItem path="/psdkupdate" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('update'), 'right-center', true)}>
+          <NavigationBarItem path="/psdkupdate" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('update_sdk'), 'right-center', true)}>
             <BaseIcon color={needUpdate ? theme.colors.successBase : theme.colors.navigationIconColor} size="s" icon="update" />
           </NavigationBarItem>
         </div>
@@ -62,7 +62,11 @@ export const NavigationBarComponent = () => {
           {/* <NavigationBarItem path="/help">
           <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="help" />
         </NavigationBarItem>*/}
-          <NavigationBarItem path="/settings" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('settings'), 'right-center', true)}>
+          <NavigationBarItem
+            path="/settings"
+            onMouseLeave={onMouseLeave}
+            onMouseEnter={buildOnMouseEnter(t('application_settings'), 'right-center', true)}
+          >
             <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="settings" />
           </NavigationBarItem>
         </div>

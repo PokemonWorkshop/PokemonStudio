@@ -36,7 +36,7 @@ export const MovePage = () => {
             </DataBlockWithAction>
             <DataBlockWithAction size="full" title={t('deleting')}>
               <DeleteButtonWithIcon onClick={() => dialogsRef.current?.openDialog('deletion', true)} disabled={cannotDelete}>
-                {t('delete')}
+                {t('delete_this_move')}
               </DeleteButtonWithIcon>
             </DataBlockWithAction>
           </DataBlockWrapper>

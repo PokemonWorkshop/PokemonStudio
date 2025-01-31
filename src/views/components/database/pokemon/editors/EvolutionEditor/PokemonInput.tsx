@@ -11,11 +11,11 @@ export const PokemonInput = ({ type, state, dispatch }: EvolutionConditionEditor
 
   return (
     <InputWithTopLabelContainer>
-      <Label>{t('database_pokemon:evolutionValue_pokemon')}</Label>
+      <Label>{t('evolution_value_pokemon')}</Label>
       <SelectPokemon
         dbSymbol={state[type]}
         onChange={(value) => dispatch({ type: 'update', key: type, value: value as DbSymbol })}
-        undefValueOption={t('select:none')}
+        undefValueOption={t('none')}
         noLabel
       />
     </InputWithTopLabelContainer>

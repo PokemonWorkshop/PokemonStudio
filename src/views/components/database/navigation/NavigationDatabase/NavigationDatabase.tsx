@@ -9,8 +9,8 @@ export const NavigationDatabase = () => {
   return (
     <NavigationDatabaseStyle>
       <NavigationDatabaseGroup title={t('data')}>
-        <NavigationDatabaseItem path="/database/pokemon" label={t('pokemon')} />
-        <NavigationDatabaseItem path="/database/dex" label={t('dex')} />
+        <NavigationDatabaseItem path="/database/pokemon" label={t('creature')} />
+        <NavigationDatabaseItem path="/database/dex" label={t('bestiary')} />
         <NavigationDatabaseItem path="/database/moves" label={t('moves')} />
         <NavigationDatabaseItem path="/database/abilities" label={t('abilities')} />
         <NavigationDatabaseItem path="/database/types" label={t('types')} />

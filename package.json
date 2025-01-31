@@ -30,7 +30,7 @@
     }
   },
   "scripts": {
-    "start": "run-script-os",
+    "start": "node merge_i18n && run-script-os",
     "start:win32": "chcp 65001 && electron-forge start",
     "start:darwin:linux": "electron-forge start",
     "package": "electron-forge package",

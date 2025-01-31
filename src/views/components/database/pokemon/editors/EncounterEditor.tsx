@@ -23,11 +23,10 @@ const initForm = (form: StudioCreatureForm) => {
 
 export const EncounterEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { t } = useTranslation();
-  const { t: tSelect } = useTranslation('select');
   const { creature, form } = useCreaturePage();
   const updateForm = useUpdateForm(creature, form);
   const itemOptions = useSelectOptions('itemHeld');
-  const options = useMemo(() => [{ value: 'none', label: tSelect('none') }, ...itemOptions], []);
+  const options = useMemo(() => [{ value: 'none', label: t('none') }, ...itemOptions], []);
   const { canClose, getFormData, getRawFormData, onInputTouched: onTouched, defaults, formRef } = useZodForm(ENCOUNTER_EDITOR_SCHEMA, initForm(form));
   const { Input } = useInputAttrsWithLabel(ENCOUNTER_EDITOR_SCHEMA, defaults);
 
