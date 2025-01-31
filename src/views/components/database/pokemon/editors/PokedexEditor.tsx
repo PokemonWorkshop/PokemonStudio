@@ -53,7 +53,7 @@ export const PokedexEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   };
 
   return (
-    <Editor type="edit" title={t('pokedex')}>
+    <Editor type="edit" title={t('bestiary')}>
       <InputFormContainer ref={formRef}>
         <EmbeddedUnitInput name="height" unit="m" label={t('height')} labelLeft onInput={onInputTouched} />
         <EmbeddedUnitInput name="weight" unit="kg" label={t('weight')} labelLeft onInput={onInputTouched} />

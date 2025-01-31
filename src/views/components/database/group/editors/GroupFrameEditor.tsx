@@ -105,7 +105,7 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   };
 
   return (
-    <Editor type="edit" title={t('informations')}>
+    <Editor type="edit" title={t('information')}>
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="name" required>

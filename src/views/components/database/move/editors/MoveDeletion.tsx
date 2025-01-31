@@ -32,8 +32,8 @@ export const MoveDeletion = forwardRef<EditorHandlingClose, MoveDeletionProps>((
 
   return (
     <Deletion
-      title={t('deletion_of', { move: moveName })}
-      message={t('deletion_message', { move: moveName })}
+      title={t('deletion_of_move', { move: moveName })}
+      message={t('deletion_message_move', { move: moveName })}
       onClickDelete={onClickDelete}
       onClose={closeDialog}
     />

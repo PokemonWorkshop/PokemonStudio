@@ -78,15 +78,15 @@ export const DexResetNationalPopUp = ({ onClose }: DexResetNationalPopUpProps) =
   return (
     <DeletionContainer>
       <TitleContainer>
-        <h3>{t('database_dex:reset_national_title')}</h3>
+        <h3>{t('reset_national_title')}</h3>
       </TitleContainer>
       <TextWarningContainer>
-        <p>{t('database_dex:reset_national_warning_message')}</p>
-        <p className="red">{t('deletion:action_irreversible')}</p>
+        <p>{t('reset_national_warning_message')}</p>
+        <p className="red">{t('action_irreversible')}</p>
       </TextWarningContainer>
       <ActionContainer>
-        <CancelLink onClick={onClose}>{t('deletion:cancel')}</CancelLink>
-        <DeleteButton onClick={onClickReset}>{t('database_dex:reset_national_action')}</DeleteButton>
+        <CancelLink onClick={onClose}>{t('cancel')}</CancelLink>
+        <DeleteButton onClick={onClickReset}>{t('reset_national_action')}</DeleteButton>
       </ActionContainer>
     </DeletionContainer>
   );

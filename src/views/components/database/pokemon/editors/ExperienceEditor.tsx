@@ -20,7 +20,10 @@ export const ExperienceEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const updateForm = useUpdateForm(creature, form);
   const { canClose, getFormData, onInputTouched, defaults, formRef } = useZodForm(EXPERIENCE_EDITOR_SCHEMA, form);
   const { Input, Select } = useInputAttrsWithLabel(EXPERIENCE_EDITOR_SCHEMA, defaults);
-  const xpCurveOptions = useMemo(() => xpCurveEntries([t('fast'), t('normal'), t('slow'), t('parabolic'), t('erratic'), t('fluctuating')]), []);
+  const xpCurveOptions = useMemo(
+    () => xpCurveEntries([t('fast'), t('normal_creature'), t('slow'), t('parabolic'), t('erratic'), t('fluctuating')]),
+    []
+  );
 
   const onClose = () => {
     const result = canClose() && getFormData();

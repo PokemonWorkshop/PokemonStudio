@@ -110,7 +110,7 @@ export const TrainerFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   };
 
   return (
-    <EditorWithCollapse type="edit" title={t('informations')}>
+    <EditorWithCollapse type="edit" title={t('information')}>
       <InputContainer>
         <PaddedInputContainer>
           <InputWithTopLabelContainer>

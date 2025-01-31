@@ -20,7 +20,7 @@ export const ZoneFrameEditor = ({ zone, openTranslationEditor }: ZoneFrameEditor
   const getZoneDescription = useGetEntityDescriptionText();
 
   return (
-    <Editor type="edit" title={t('informations')}>
+    <Editor type="edit" title={t('information')}>
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="name" required>

@@ -95,17 +95,17 @@ export const DexNewEditor = forwardRef<EditorHandlingClose, DexNewEditorProps>((
     !!dbSymbolErrorType;
 
   return (
-    <EditorWithCollapse type="creation" title={t('database_dex:new')}>
+    <EditorWithCollapse type="creation" title={t('new_bestiary')}>
       <InputContainer size="l">
         <PaddedInputContainer size="m">
           <InputWithTopLabelContainer>
             <Label htmlFor="name" required>
-              {t('database_dex:dex_name')}
+              {t('name')}
             </Label>
-            <Input type="text" name="name" value={dexName} onChange={onChangeName} placeholder={t('database_dex:example_name')} />
+            <Input type="text" name="name" value={dexName} onChange={onChangeName} placeholder={t('example_name')} />
           </InputWithTopLabelContainer>
           <InputWithLeftLabelContainer>
-            <Label htmlFor="first-number">{t('database_dex:first_number')}</Label>
+            <Label htmlFor="first-number">{t('first_number')}</Label>
             <Input
               type="number"
               name="first-number"
@@ -119,7 +119,7 @@ export const DexNewEditor = forwardRef<EditorHandlingClose, DexNewEditorProps>((
           </InputWithLeftLabelContainer>
           <InputWithTopLabelContainer>
             <Label htmlFor="dbSymbol" required>
-              {t('database_moves:symbol')}
+              {t('symbol')}
             </Label>
             <Input
               type="text"
@@ -127,28 +127,28 @@ export const DexNewEditor = forwardRef<EditorHandlingClose, DexNewEditorProps>((
               ref={dbSymbolRef}
               onChange={(e) => onChangeDbSymbol(e.currentTarget.value)}
               error={!!dbSymbolErrorType}
-              placeholder={t('database_dex:example_db_symbol')}
+              placeholder={t('example_db_symbol')}
             />
-            {dbSymbolErrorType == 'value' && <TextInputError>{t('database_moves:incorrect_format')}</TextInputError>}
-            {dbSymbolErrorType == 'duplicate' && <TextInputError>{t('database_moves:db_symbol_already_used')}</TextInputError>}
+            {dbSymbolErrorType == 'value' && <TextInputError>{t('incorrect_format')}</TextInputError>}
+            {dbSymbolErrorType == 'duplicate' && <TextInputError>{t('db_symbol_already_used')}</TextInputError>}
           </InputWithTopLabelContainer>
         </PaddedInputContainer>
-        <InputGroupCollapse title={t('database_dex:other_data')} noMargin collapseByDefault>
+        <InputGroupCollapse title={t('other_data')} noMargin collapseByDefault>
           <PaddedInputContainer size="s">
-            <DexImportInfo>{t('database_dex:import_info')}</DexImportInfo>
+            <DexImportInfo>{t('import_info')}</DexImportInfo>
             <InputWithTopLabelContainer>
-              <Label>{t('database_dex:import_list_dex')}</Label>
+              <Label>{t('import_list_bestiary')}</Label>
               <SelectDex dbSymbol={selectedDexImport} onChange={(selected) => setSelectedDexImport(selected)} noLabel noneValue />
             </InputWithTopLabelContainer>
           </PaddedInputContainer>
         </InputGroupCollapse>
         <ButtonContainer>
-          <TooltipWrapper data-tooltip={checkDisabled() ? t('database_moves:fields_asterisk_required') : undefined}>
+          <TooltipWrapper data-tooltip={checkDisabled() ? t('fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickNew} disabled={checkDisabled()}>
-              {t('database_dex:create_dex')}
+              {t('create_bestiary')}
             </PrimaryButton>
           </TooltipWrapper>
-          <DarkButton onClick={onClose}>{t('database_dex:cancel')}</DarkButton>
+          <DarkButton onClick={onClose}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
     </EditorWithCollapse>

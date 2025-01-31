@@ -30,7 +30,7 @@ export const QuestFrameEditor = ({ quest, openTranslationEditor }: QuestFrameEdi
   const refreshUI = useRefreshUI();
 
   return (
-    <Editor type="edit" title={t('informations')}>
+    <Editor type="edit" title={t('information')}>
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="name" required>

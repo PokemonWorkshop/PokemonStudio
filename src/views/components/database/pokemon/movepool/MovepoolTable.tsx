@@ -240,7 +240,7 @@ export const MovepoolTable = ({ movepoolType }: MovepoolTableProps) => {
   );
 
   return movepoolData.length === 0 ? (
-    <NoMoveFound>{t('database_moves:no_option')}</NoMoveFound>
+    <NoMoveFound>{t('no_option_creature')}</NoMoveFound>
   ) : (
     <DataMoveTable>
       <DataMoveGrid gap="8px" className="header">

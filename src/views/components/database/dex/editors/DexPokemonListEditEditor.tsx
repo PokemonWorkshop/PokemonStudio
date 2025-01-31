@@ -48,11 +48,11 @@ export const DexPokemonListEditEditor = forwardRef<EditorHandlingClose, DexPokem
   useEditorHandlingClose(ref, onClose);
 
   return (
-    <Editor type="edit" title={t('database_pokemon:pokemon')}>
+    <Editor type="edit" title={t('creature')}>
       <InputContainer size="l">
         <InputContainer size="m">
           <InputWithTopLabelContainer>
-            <Label htmlFor="name">{t('database_pokemon:pokemon')}</Label>
+            <Label htmlFor="name">{t('creature')}</Label>
             <StudioDropDown
               options={pokemonAvailable}
               value={dbSymbol}
@@ -63,7 +63,7 @@ export const DexPokemonListEditEditor = forwardRef<EditorHandlingClose, DexPokem
           </InputWithTopLabelContainer>
           {creature.dbSymbol !== '__undef__' && (
             <InputWithTopLabelContainer>
-              <Label htmlFor="form">{t('database_pokemon:form')}</Label>
+              <Label htmlFor="form">{t('form')}</Label>
               <SelectPokemonForm
                 dbSymbol={dbSymbol}
                 form={form}

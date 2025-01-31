@@ -62,12 +62,12 @@ export const DexPokemonListAddEditor = forwardRef<EditorHandlingClose, DexPokemo
   };
 
   return (
-    <Editor type="addition" title={t('database_pokemon:pokemon')}>
+    <Editor type="addition" title={t('creature')}>
       <InputContainer size="l">
         <InputContainer size="m">
           <InputWithTopLabelContainer>
             <Label htmlFor="name" required>
-              {t('database_pokemon:pokemon')}
+              {t('creature')}
             </Label>
             <StudioDropDown
               value={creature.dbSymbol}
@@ -77,7 +77,7 @@ export const DexPokemonListAddEditor = forwardRef<EditorHandlingClose, DexPokemo
           </InputWithTopLabelContainer>
           {creature.dbSymbol !== '__undef__' && allPokemon[creature.dbSymbol].forms.length > 1 && (
             <InputWithTopLabelContainer>
-              <Label htmlFor="form">{t('database_pokemon:form')}</Label>
+              <Label htmlFor="form">{t('form')}</Label>
               <SelectPokemonForm
                 dbSymbol={creature.dbSymbol}
                 form={creature.form}
@@ -88,16 +88,16 @@ export const DexPokemonListAddEditor = forwardRef<EditorHandlingClose, DexPokemo
           )}
         </InputContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="add_evolution">{t('database_dex:add_all_evolution')}</Label>
+          <Label htmlFor="add_evolution">{t('add_all_evolution')}</Label>
           <Toggle name="add_evolution" checked={isAddingEvolutions} onChange={(event) => setIsAddingEvolutions(event.target.checked)} />
         </InputWithLeftLabelContainer>
         <ButtonContainer>
-          <TooltipWrapper data-tooltip={creature.dbSymbol === '__undef__' ? t('database_moves:fields_asterisk_required') : undefined}>
+          <TooltipWrapper data-tooltip={creature.dbSymbol === '__undef__' ? t('fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickAdd} disabled={creature.dbSymbol === '__undef__'}>
-              {t('database_dex:add_the_pokemon')}
+              {t('add_a_creature')}
             </PrimaryButton>
           </TooltipWrapper>
-          <DarkButton onClick={onClose}>{t('database_dex:cancel')}</DarkButton>
+          <DarkButton onClick={onClose}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
     </Editor>

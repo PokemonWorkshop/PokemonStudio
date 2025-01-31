@@ -55,7 +55,7 @@ export const TypeFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   };
 
   return (
-    <Editor type="edit" title={t('database_types:informations')}>
+    <Editor type="edit" title={t('database_types:information')}>
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="name" required>

@@ -49,12 +49,12 @@ export const DexPokemonListImportEditor = forwardRef<EditorHandlingClose, DexPok
   };
 
   return (
-    <Editor type="importation" title={t('dex')}>
+    <Editor type="importation" title={t('bestiary')}>
       <InputContainer size="l">
         <InputContainer size="m">
           <DexImportInfo>{t('import_info')}</DexImportInfo>
           <InputWithTopLabelContainer>
-            <Label>{t('import_list_dex')}</Label>
+            <Label>{t('import_list_bestiary')}</Label>
             <SelectDex
               dbSymbol={selectedDexImport}
               onChange={(selected) => setSelectedDexImport(selected)}

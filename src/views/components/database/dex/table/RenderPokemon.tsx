@@ -189,17 +189,9 @@ export const RenderPokemon = forwardRef<HTMLInputElement, RenderPokemonProps>(
 
       const creatures = searchUnderAndEvolutions(pokemonForm, creature, allPokemon);
       if (isCreatureHasNotEvolution(creatures, creature)) {
-        return showNotification(
-          'info',
-          t('database_dex:dex'),
-          t('database_dex:creature_no_evolution', { name: getCreatureName(allPokemon[creature.dbSymbol]) })
-        );
+        return showNotification('info', t('bestiary'), t('creature_no_evolution', { name: getCreatureName(allPokemon[creature.dbSymbol]) }));
       } else if (isCreaturesAlreadyInDex(dex.creatures, creatures)) {
-        return showNotification(
-          'info',
-          t('database_dex:dex'),
-          t('database_dex:creatures_already_in_dex', { name: getCreatureName(allPokemon[creature.dbSymbol]) })
-        );
+        return showNotification('info', t('bestiary'), t('creatures_already_in_bestiary', { name: getCreatureName(allPokemon[creature.dbSymbol]) }));
       }
 
       creatures.forEach((c, i) => dex.creatures.splice(index + i + 1, 0, c));
@@ -270,7 +262,7 @@ export const RenderPokemon = forwardRef<HTMLInputElement, RenderPokemonProps>(
             {getCreatureName(pokemon.data)}
           </span>
         ) : (
-          <span className="error">{pokemon.undef ? t('database_dex:free_slot') : t('database_pokemon:pokemon_deleted')}</span>
+          <span className="error">{pokemon.undef ? t('free_slot') : t('creature_deleted')}</span>
         )}
         {pokemonForm ? (
           <TypeContainer>
@@ -288,10 +280,10 @@ export const RenderPokemon = forwardRef<HTMLInputElement, RenderPokemonProps>(
           {pokemonForm && (
             <DarkButtonImportResponsive
               onClick={() => onAddEvolution(index)}
-              data-tooltip-responsive={t('database_dex:evolutions')}
+              data-tooltip-responsive={t('evolutions')}
               breakpoint="screen and (max-width: 1393px)"
             >
-              {t('database_dex:evolutions')}
+              {t('evolutions')}
             </DarkButtonImportResponsive>
           )}
           <EditButtonOnlyIcon

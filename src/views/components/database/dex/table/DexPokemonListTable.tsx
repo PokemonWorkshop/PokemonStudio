@@ -45,15 +45,15 @@ export const DexPokemonListTable = ({ dex, dialogsRef, setCreatureIndex }: DexPo
   }, [selectedDex]);
 
   return dex.creatures.length === 0 ? (
-    <TableEmpty>{t('database_dex:no_creature')}</TableEmpty>
+    <TableEmpty>{t('no_creature')}</TableEmpty>
   ) : (
     <DataPokemonListTable>
       <DataPokemonGrid gap="16px" className="header" dragOn={dragOn}>
         <span />
         <span>ID</span>
         <span />
-        <span>{t('database_pokemon:pokemon')}</span>
-        <span>{t('database_types:pokemon_types')}</span>
+        <span>{t('creature')}</span>
+        <span>{t('creature_types')}</span>
       </DataPokemonGrid>
       <DragDropContext
         onDragStart={() => setDragOn(true)}

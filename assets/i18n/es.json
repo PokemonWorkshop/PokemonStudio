@@ -1561,5 +1561,13 @@
   "normal_move": "Normal (6.25 %)",
   "normal_creature": "Medium fast",
   "condition_value": "Condition #{{number}}",
-  "import_maps": "Import maps"
+  "import_maps": "Import maps",
+  "create_bestiary": "Add the Pokédex",
+  "import_list_bestiary": "Import the Pokédex list",
+  "creatures_already_in_bestiary": "All the evolutions of {{name}} have already been added.",
+  "creature_types": "Types",
+  "bestiary_creature_list_title": "Pokémon in the Pokédex",
+  "import_a_creature_list": "Import a list of Pokémon",
+  "add_a_creature": "Add a Pokémon",
+  "update_sdk": "Pokémon SDK Update"
 }

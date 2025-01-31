@@ -127,7 +127,6 @@ type TranslateEditorProps = {
 
 export const TranslationEditor = ({ title, name, textId, fileId, onClose, isMultiline }: TranslateEditorProps) => {
   const { t } = useTranslation();
-  const { t: tq } = useTranslation('pokemon_battler_list');
   const [state] = useGlobalState();
   const defaultLanguageCode = state.projectConfig.language_config.defaultLanguage;
   const languageOrder = useMemo(
@@ -157,7 +156,7 @@ export const TranslationEditor = ({ title, name, textId, fileId, onClose, isMult
         <InputWithTopLabelContainer>
           <Label htmlFor={defaultLanguageCode}>
             <span>{defaultLanguageName}</span>
-            <SecondaryTag>{tq('by_default')}</SecondaryTag>
+            <SecondaryTag>{t('by_default')}</SecondaryTag>
           </Label>
           <InputContainer>
             <TranslationInput textId={textId} fileId={fileId} languageCode={defaultLanguageCode} isMultiline={isMultiline} />

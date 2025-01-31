@@ -31,10 +31,10 @@ export const MovePage = () => {
             <MoveStatistics move={move} dialogsRef={dialogsRef} />
           </DataBlockWrapper>
           <DataBlockWrapper>
-            <DataBlockWithAction size="full" title={t('pokemon_with_move', { move: moveName })}>
-              <DarkButton onClick={onClickedPokemonList}>{t('button_list_pokemon')}</DarkButton>
+            <DataBlockWithAction size="full" title={t('creature_with_move', { move: moveName })}>
+              <DarkButton onClick={onClickedPokemonList}>{t('button_list_creature')}</DarkButton>
             </DataBlockWithAction>
-            <DataBlockWithAction size="full" title={t('deleting')}>
+            <DataBlockWithAction size="full" title={t('deletion')}>
               <DeleteButtonWithIcon onClick={() => dialogsRef.current?.openDialog('deletion', true)} disabled={cannotDelete}>
                 {t('delete_this_move')}
               </DeleteButtonWithIcon>

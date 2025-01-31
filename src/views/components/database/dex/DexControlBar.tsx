@@ -30,7 +30,7 @@ export const DexControlBar = ({ dialogsRef }: DexControlBarProps) => {
 
   return (
     <ControlBar>
-      <SecondaryButtonWithPlusIcon onClick={() => dialogsRef?.current?.openDialog('new')}>{t('new')}</SecondaryButtonWithPlusIcon>
+      <SecondaryButtonWithPlusIcon onClick={() => dialogsRef?.current?.openDialog('new')}>{t('new_bestiary')}</SecondaryButtonWithPlusIcon>
       <SelectDex dbSymbol={dexDbSymbol} onChange={(selected) => setSelectedDataIdentifier({ dex: selected })} />
     </ControlBar>
   );
