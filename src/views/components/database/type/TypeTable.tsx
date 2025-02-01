@@ -27,7 +27,7 @@ export const TypeTable = () => {
     <TypeTableMainContainer>
       <TypeTableContainer size="full" data-noactive onMouseLeave={onMouseLeaveEnter}>
         <TitleContainer onMouseEnter={onMouseLeaveEnter}>
-          <p>{t('edit')}</p>
+          <p>{t('edition')}</p>
           <h3>{t('table')}</h3>
         </TitleContainer>
         <TableTypeContainer>

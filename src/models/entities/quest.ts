@@ -11,6 +11,7 @@ export const CREATURE_QUEST_CONDITION_VALIDATOR = z.discriminatedUnion('type', [
   z.object({ type: z.literal('level'), value: POSITIVE_INT }),
 ]);
 export type StudioCreatureQuestCondition = z.infer<typeof CREATURE_QUEST_CONDITION_VALIDATOR>;
+// RISQUE DE TOUT CASSé à ESSAYER
 export const CREATURE_QUEST_CONDITIONS = ['pokemon', 'type', 'nature', 'minLevel', 'maxLevel', 'level'] as const;
 export type StudioCreatureQuestConditionType = (typeof CREATURE_QUEST_CONDITIONS)[number];
 

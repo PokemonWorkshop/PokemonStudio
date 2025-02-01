@@ -78,7 +78,7 @@ export const NewLinkEditor = ({ mapLink, cardinal, onClose, onAddLink }: NewLink
                 onBlur={() => setOffset(cleanNaNValue(offset))}
               />
             </InputWithLeftLabelContainer>
-            <OffsetInfo>{t('database_maplinks:offset_info', { shift: getShift(cardinal, t) })}</OffsetInfo>
+            <OffsetInfo>{t('offset_info', { shift: getShift(cardinal, t) })}</OffsetInfo>
           </InputWithTopLabelContainer>
         </InputContainer>
         <ButtonContainer>
