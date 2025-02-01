@@ -11,7 +11,7 @@ export const QuestGoalSeePokemon = ({ objective }: QuestGoalProps) => {
   return (
     <PaddedInputContainer>
       <InputWithTopLabelContainer>
-        <Label htmlFor="select-pokemon">{t('pokemon')}</Label>
+        <Label htmlFor="select-pokemon">{t('creature')}</Label>
         <SelectPokemon
           dbSymbol={objective.objectiveMethodArgs[0] as string}
           onChange={(value) => refreshUI((objective.objectiveMethodArgs[0] = value))}

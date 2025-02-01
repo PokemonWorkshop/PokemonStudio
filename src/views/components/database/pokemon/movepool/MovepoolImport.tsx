@@ -55,7 +55,7 @@ export const MovepoolImport = ({ type, onClose }: MovepoolImportProps) => {
   return (
     <Editor type="movepool" title={t('importation')}>
       <InputContainer size="s">
-        <MovepoolImportInfo>{t(`database_pokemon:${type}_learnable_info` as never)}</MovepoolImportInfo>
+        <MovepoolImportInfo>{t(`${type}_learnable_info` as never)}</MovepoolImportInfo>
         <InputWithTopLabelContainer>
           <Label htmlFor="pokemon">{t('import_moves_from')}</Label>
           <SelectPokemon

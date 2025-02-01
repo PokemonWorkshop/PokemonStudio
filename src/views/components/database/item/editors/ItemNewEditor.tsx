@@ -151,7 +151,7 @@ export const ItemNewEditor = forwardRef<EditorHandlingClose, ItemNewEditorProps>
             ref={dbSymbolRef}
             onChange={(e) => onChangeDbSymbol(e.currentTarget.value)}
             error={!!dbSymbolErrorType}
-            placeholder={t('example_db_symbol')}
+            placeholder={t('example_db_symbol_item')}
           />
           {dbSymbolErrorType == 'value' && <TextInputError>{t('incorrect_format')}</TextInputError>}
           {dbSymbolErrorType == 'duplicate' && <TextInputError>{t('db_symbol_already_used')}</TextInputError>}

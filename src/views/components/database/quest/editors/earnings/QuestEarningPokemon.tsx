@@ -11,7 +11,7 @@ export const QuestEarningPokemon = ({ earning }: QuestEarningProps) => {
   return (
     <InputContainer>
       <InputWithTopLabelContainer>
-        <Label htmlFor="select-pokemon">{t('pokemon')}</Label>
+        <Label htmlFor="select-pokemon">{t('creature')}</Label>
         <SelectPokemon
           dbSymbol={earning.earningArgs[0] as string}
           onChange={(value) => refreshUI((earning.earningArgs[0] = value))}

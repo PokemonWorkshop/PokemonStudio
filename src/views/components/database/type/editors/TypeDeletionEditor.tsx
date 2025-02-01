@@ -34,8 +34,8 @@ export const TypeDeletionEditor = forwardRef<EditorHandlingClose, TypeDeletionEd
 
   return (
     <Deletion
-      title={t('deletion_of', { type: currentTypeName })}
-      message={t('deletion_message', { type: currentTypeName })}
+      title={t('deletion_of_type', { type: currentTypeName })}
+      message={t('deletion_message_type', { type: currentTypeName })}
       onClickDelete={onClickDelete}
       onClose={onClose}
     />

@@ -33,8 +33,8 @@ export const ItemDeletion = forwardRef<EditorHandlingClose, ItemDeletionProps>((
 
   return (
     <Deletion
-      title={t('deletion_of', { item: currentItemName })}
-      message={t('deletion_message', { item: currentItemName })}
+      title={t('deletion_of_item', { item: currentItemName })}
+      message={t('deletion_message_item', { item: currentItemName })}
       onClickDelete={onClickDelete}
       onClose={closeDialog}
     />

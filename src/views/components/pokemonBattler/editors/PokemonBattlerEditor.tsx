@@ -72,13 +72,13 @@ export const PokemonBattlerEditor = forwardRef<EditorHandlingClose, PokemonBattl
     useEditorHandlingClose(ref, onClose, canClose);
 
     return (
-      <EditorWithCollapse type={action} title={t('pokemon')}>
+      <EditorWithCollapse type={action} title={t('creature')}>
         <InputContainer size="l">
           {creatureUnavailable ? (
             <PaddedInputContainer>
               <InputWithTopLabelContainer>
                 <Label htmlFor="select-pokemon" required>
-                  {t('pokemon')}
+                  {t('creature')}
                 </Label>
                 <SelectPokemon
                   onChange={(dbSymbol) => updateEncounter({ specie: dbSymbol as DbSymbol })}
@@ -93,7 +93,7 @@ export const PokemonBattlerEditor = forwardRef<EditorHandlingClose, PokemonBattl
               <PaddedInputContainer>
                 <InputWithTopLabelContainer>
                   <Label htmlFor="select-pokemon" required>
-                    {t('pokemon')}
+                    {t('creature')}
                   </Label>
                   <SelectPokemon onChange={(dbSymbol) => updateEncounter({ specie: dbSymbol as DbSymbol })} dbSymbol={encounter.specie} noLabel />
                 </InputWithTopLabelContainer>
