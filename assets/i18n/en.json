@@ -464,8 +464,6 @@
   "params": "Settings",
   "effect": "Effect on map",
   "creature_type": "Types",
-  "deletion_of": "Deletion of {{ability}}",
-  "deletion_message": "You are about to permanently delete {{ability}}.",
   "create_ability": "Add the ability",
   "bestiary_deleted": "Pokédex deleted",
   "dex_deletion_of": "Deletion of the Pokédex",

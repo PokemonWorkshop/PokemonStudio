@@ -34,8 +34,8 @@ export const AbilityDeletion = forwardRef<EditorHandlingClose, AbilityDeletionPr
 
   return (
     <Deletion
-      title={t('deletion_of', { ability: abilityName })}
-      message={t('deletion_message', { ability: abilityName })}
+      title={t('deletion_of_ability', { ability: abilityName })}
+      message={t('deletion_message_ability', { ability: abilityName })}
       onClickDelete={onClickDelete}
       onClose={closeDialog}
     />
