@@ -80,10 +80,10 @@ export const UnsavedWarningModal = () => {
           <MessageBoxIconContainer>
             <BaseIcon icon="save" size="s" color={theme.colors.primaryBase} />
           </MessageBoxIconContainer>
-          <h3>{t('title')}</h3>
+          <h3>{t('unregistered_changes')}</h3>
         </MessageBoxTitleIconContainer>
         <MessageBoxTextContainer>
-          <p>{t('description')}</p>
+          <p>{t('unregistered_changes_description')}</p>
         </MessageBoxTextContainer>
         <MessageBoxActionContainer>
           <MessageBoxCancelLink onClick={() => setShow(false)}>{t('cancel')}</MessageBoxCancelLink>
