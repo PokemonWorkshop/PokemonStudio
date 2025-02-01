@@ -119,13 +119,13 @@ export const MapFrameEditor = forwardRef<EditorHandlingClose, MapFrameEditorProp
               {t('name')}
             </Label>
             <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_name')}>
-              <Input type="text" name="name" defaultValue={getMapName(map)} ref={nameRef} placeholder={t('example_name')} />
+              <Input type="text" name="name" defaultValue={getMapName(map)} ref={nameRef} placeholder={t('example_map')} />
             </TranslateInputContainer>
           </InputWithTopLabelContainer>
           <InputWithTopLabelContainer>
             <Label htmlFor="descr">{t('description')}</Label>
             <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_description')}>
-              <MultiLineInput id="descr" defaultValue={getMapDescription(map)} ref={descriptionRef} placeholder={t('example_description')} />
+              <MultiLineInput id="descr" defaultValue={getMapDescription(map)} ref={descriptionRef} placeholder={t('example_description_map')} />
             </TranslateInputContainer>
           </InputWithTopLabelContainer>
           <InputWithLeftLabelContainer>

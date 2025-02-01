@@ -19,7 +19,7 @@ export const ZoneControlBar = ({ onChange, zone, onClickNewZone }: ZoneControlBa
 
   return (
     <ControlBar>
-      <SecondaryButtonWithPlusIcon onClick={onClickNewZone}>{t('new')}</SecondaryButtonWithPlusIcon>
+      <SecondaryButtonWithPlusIcon onClick={onClickNewZone}>{t('new_zone')}</SecondaryButtonWithPlusIcon>
       <SelectZone dbSymbol={zone.dbSymbol} onChange={onChange} />
     </ControlBar>
   );

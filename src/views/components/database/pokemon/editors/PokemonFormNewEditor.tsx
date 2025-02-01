@@ -47,7 +47,6 @@ const CREATURE_FORM_NEW_EDITOR_SCHEMA = CREATURE_FORM_VALIDATOR.pick({ type1: tr
 
 export const PokemonFormNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeDialog, setEvolutionIndex }, ref) => {
   const { t } = useTranslation();
-  const { t: tMove } = useTranslation('database_moves');
   const { creature, form, creatureName } = useCreaturePage();
   const { projectDataValues: creatures, setProjectDataValues: setCreature } = useProjectPokemon();
   const setText = useSetProjectText();
@@ -105,7 +104,7 @@ export const PokemonFormNewEditor = forwardRef<EditorHandlingClose, Props>(({ cl
           <PrimaryButton onClick={onClickNew} disabled={isDisabled}>
             {t('create_form')}
           </PrimaryButton>
-          <DarkButton onClick={closeDialog}>{tMove('cancel')}</DarkButton>
+          <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputFormContainer>
     </Editor>

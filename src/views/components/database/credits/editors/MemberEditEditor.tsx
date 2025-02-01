@@ -49,9 +49,9 @@ export const MemberEditEditor = ({ credits, index, onClose }: CreditsNewMemberEd
           type="text"
           value={value}
           onChange={(event) => handleInputChange(key, event.target.value)}
-          placeholder={key === 'title' ? t('dashboard_credits:project_leader') : t('dashboard_credits:leader_name')}
+          placeholder={key === 'title' ? t('project_leader') : t('leader_name')}
         />
-        {key === 'name' && <InfoContainer>{t('dashboard_credits:names_info_edition')}</InfoContainer>}
+        {key === 'name' && <InfoContainer>{t('names_info_edition')}</InfoContainer>}
       </InputWithTopLabelContainer>
     );
   };
@@ -66,17 +66,17 @@ export const MemberEditEditor = ({ credits, index, onClose }: CreditsNewMemberEd
   };
 
   return (
-    <Editor type="creation" title={t('dashboard_credits:developers')}>
+    <Editor type="creation" title={t('developers')}>
       <InputContainer>
-        {inputRender('title', t('dashboard_credits:role'), title)}
-        {inputRender('name', t('dashboard_credits:names'), name)}
+        {inputRender('title', t('role'), title)}
+        {inputRender('name', t('names'), name)}
         <ButtonContainer>
-          <TooltipWrapper data-tooltip={checkDisabled() ? t('database_moves:fields_asterisk_required') : undefined}>
+          <TooltipWrapper data-tooltip={checkDisabled() ? t('fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickSave} disabled={checkDisabled()}>
-              {t('dashboard_credits:save')}
+              {t('save')}
             </PrimaryButton>
           </TooltipWrapper>
-          <DarkButton onClick={onClose}>{t('dashboard_credits:cancel')}</DarkButton>
+          <DarkButton onClick={onClose}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
     </Editor>

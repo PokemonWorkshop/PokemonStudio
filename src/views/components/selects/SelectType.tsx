@@ -29,7 +29,7 @@ export const SelectType = ({ dbSymbol, onChange, noLabel, noneValue, undefValueO
 
   return (
     <SelectContainerWithLabel>
-      <span>{t('title')}</span>
+      <span>{t('type')}</span>
       <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />
     </SelectContainerWithLabel>
   );

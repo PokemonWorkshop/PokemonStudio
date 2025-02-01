@@ -51,7 +51,7 @@ export const DexFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
             {t('name')}
           </Label>
           <TranslateInputContainer onTranslateClick={handleTranslateClick}>
-            <Input type="text" name="name" defaultValue={getDexName(dex)} ref={nameRef} placeholder={t('example_name')} />
+            <Input type="text" name="name" defaultValue={getDexName(dex)} ref={nameRef} placeholder={t('example_bestiary')} />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>
         <InputWithLeftLabelContainer>

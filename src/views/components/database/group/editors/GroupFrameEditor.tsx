@@ -112,7 +112,7 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
             {t('group_name')}
           </Label>
           <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_name')}>
-            <Input type="text" name="name" defaultValue={getGroupName(group)} ref={nameRef} placeholder={t('example_name')} />
+            <Input type="text" name="name" defaultValue={getGroupName(group)} ref={nameRef} placeholder={t('example_group')} />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>

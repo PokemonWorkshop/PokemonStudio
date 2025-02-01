@@ -102,7 +102,7 @@ export const DexNewEditor = forwardRef<EditorHandlingClose, DexNewEditorProps>((
             <Label htmlFor="name" required>
               {t('name')}
             </Label>
-            <Input type="text" name="name" value={dexName} onChange={onChangeName} placeholder={t('example_name')} />
+            <Input type="text" name="name" value={dexName} onChange={onChangeName} placeholder={t('example_bestiary')} />
           </InputWithTopLabelContainer>
           <InputWithLeftLabelContainer>
             <Label htmlFor="first-number">{t('first_number')}</Label>
@@ -127,7 +127,7 @@ export const DexNewEditor = forwardRef<EditorHandlingClose, DexNewEditorProps>((
               ref={dbSymbolRef}
               onChange={(e) => onChangeDbSymbol(e.currentTarget.value)}
               error={!!dbSymbolErrorType}
-              placeholder={t('example_db_symbol')}
+              placeholder={t('example_db_symbol_bestiary')}
             />
             {dbSymbolErrorType == 'value' && <TextInputError>{t('incorrect_format')}</TextInputError>}
             {dbSymbolErrorType == 'duplicate' && <TextInputError>{t('db_symbol_already_used')}</TextInputError>}

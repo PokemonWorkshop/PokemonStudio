@@ -229,7 +229,7 @@ export const MapImport = ({ closeDialog, closeParentDialog }: MapImportProps) =>
                 <PrimaryButton onClick={handleImport} disabled={disableImport()}>
                   {amountMapShouldBeImport === 1
                     ? t('import_selected_map_singular')
-                    : t('import_selected_map_plurial', { amount: amountMapShouldBeImport })}
+                    : t('import_selected_map_plural', { amount: amountMapShouldBeImport })}
                 </PrimaryButton>
               )}
             </div>

@@ -159,7 +159,7 @@ export const ProjectCard = ({ project, onDeleteProjectToList, onUpdateProjectLis
       )}
       <h2>{project.projectStudio.title}</h2>
       <p>
-        {t('homepage:last_edit', {
+        {t('last_edit', {
           date: project.lastEdit.toLocaleDateString(),
         })}
       </p>

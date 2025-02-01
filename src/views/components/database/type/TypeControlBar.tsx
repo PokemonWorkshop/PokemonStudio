@@ -50,7 +50,7 @@ export const TypeControlBar = ({ dialogsRef, onRedirect }: TypeControlBarProps) 
   return (
     <ControlBar>
       <ControlBarLabelContainer>
-        {onClickNew && <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new')}</SecondaryButtonWithPlusIcon>}
+        {onClickNew && <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new_type')}</SecondaryButtonWithPlusIcon>}
         {onRedirect !== 'table' && <SecondaryButton onClick={() => navigate(`/database/types/table`)}>{t('type_table')}</SecondaryButton>}
       </ControlBarLabelContainer>
       <SelectType

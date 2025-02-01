@@ -62,7 +62,7 @@ export const DataBlockCollapseEditor = ({
     <DataBlockCollapseEditorContainer size={size} data-disabled={disabled && 'true'} data-noactive>
       <WrapContainer onClick={onClickedCollapse}>
         <TitleContainer>
-          {collapse ? <p>{t(`editor:${editorTitle}`)}</p> : <></>}
+          {collapse ? <p>{t(`${editorTitle}`)}</p> : <></>}
           <h3>{title}</h3>
         </TitleContainer>
         {!disabled && <ArrowContainer>{collapse ? <UpIcon /> : <DownIcon />}</ArrowContainer>}
@@ -71,7 +71,7 @@ export const DataBlockCollapseEditor = ({
       {collapse && (
         <ButtonContainer>
           <DeleteButtonWithIcon onClick={onClickDelete} disabled={disabledDeletion || false}>
-            {t('editor:all_delete')}
+            {t('all_delete')}
           </DeleteButtonWithIcon>
           <ButtonRightContainer>
             <DarkButton onClick={importation.onClick} disabled={disabledImport || false}>

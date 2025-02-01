@@ -57,20 +57,20 @@ export const DashboardInfos = () => {
   };
 
   return (
-    <PageEditor editorTitle={t('dashboard:infos')} title={t('dashboard_infos:project')}>
+    <PageEditor editorTitle={t('infos')} title={t('project')}>
       <InputWithTopLabelContainer>
-        <Label htmlFor="project-name">{t('dashboard_infos:project_name')}</Label>
+        <Label htmlFor="project-name">{t('project_name')}</Label>
         <Input
           type="text"
           name="project-name"
           value={gameTitleVersion.gameTitle}
           onChange={(event) => onChangeGameTitle(event.target.value)}
           onBlur={(event) => onBlurGameTitle(event.target.value)}
-          placeholder={t('dashboard_infos:pokemon_sdk')}
+          placeholder={t('pokemon_sdk')}
         />
       </InputWithTopLabelContainer>
       <InputWithTopLabelContainer>
-        <Label htmlFor="project-version">{t('dashboard_infos:project_version')}</Label>
+        <Label htmlFor="project-version">{t('project_version')}</Label>
         <InputVersion
           type="number"
           name="project-version"
@@ -83,19 +83,19 @@ export const DashboardInfos = () => {
         />
       </InputWithTopLabelContainer>
       <InputWithTopLabelContainer>
-        <Label htmlFor="project-version">{t('dashboard_infos:project_icon')}</Label>
+        <Label htmlFor="project-version">{t('project_icon')}</Label>
         {projectStudio.iconPath.length === 0 ? (
           <DropInput
             destFolderToCopy=""
             imageWidth={128}
             imageHeight={128}
-            name={t('dashboard_infos:project_icon')}
+            name={t('project_icon')}
             extensions={['png']}
             onFileChoosen={onIconChoosen}
           />
         ) : (
           <IconInput
-            name={t('dashboard_infos:project_icon')}
+            name={t('project_icon')}
             extensions={['png']}
             iconPathInProject={projectStudio.iconPath}
             destFolderToCopy=""

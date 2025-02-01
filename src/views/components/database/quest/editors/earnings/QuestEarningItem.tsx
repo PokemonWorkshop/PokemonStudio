@@ -12,7 +12,7 @@ export const QuestEarningItem = ({ earning }: QuestEarningProps) => {
   return (
     <InputContainer>
       <InputWithTopLabelContainer>
-        <Label htmlFor="select-item">{t('database_items:item')}</Label>
+        <Label htmlFor="select-item">{t('item')}</Label>
         <SelectItem
           dbSymbol={earning.earningArgs[0] as string}
           onChange={(selected) => refreshUI((earning.earningArgs[0] = selected))}
@@ -21,7 +21,7 @@ export const QuestEarningItem = ({ earning }: QuestEarningProps) => {
         />
       </InputWithTopLabelContainer>
       <InputWithLeftLabelContainer>
-        <Label htmlFor="amount-item">{t('database_quests:amount')}</Label>
+        <Label htmlFor="amount-item">{t('amount')}</Label>
         <InputNumber
           name="amount-item"
           value={earning.earningArgs[1] as number}

@@ -42,7 +42,7 @@ export const QuestFrameEditor = ({ quest, openTranslationEditor }: QuestFrameEdi
               name="name"
               value={getQuestName(quest)}
               onChange={(event) => setText(QUEST_NAME_TEXT_ID, quest.id, event.target.value)}
-              placeholder={t('example_name')}
+              placeholder={t('example_quest')}
             />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>
@@ -73,7 +73,7 @@ export const QuestFrameEditor = ({ quest, openTranslationEditor }: QuestFrameEdi
               id="descr"
               value={getQuestDescription(quest)}
               onChange={(event) => setText(QUEST_DESCRIPTION_TEXT_ID, quest.id, event.target.value)}
-              placeholder={t('example_descr')}
+              placeholder={t('example_description_quest')}
             />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>

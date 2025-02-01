@@ -28,9 +28,7 @@ import { useItemPage } from '@hooks/usePage';
 import { TooltipWrapper } from '@ds/Tooltip';
 
 const itemCategoryEntries = (t: TFunction<('database_items' | 'database_types' | 'database_moves')[]>) =>
-  StudioItemCategories.map((category) => ({ value: category, label: t(`database_types:${category}`) })).sort((a, b) =>
-    a.label.localeCompare(b.label)
-  );
+  StudioItemCategories.map((category) => ({ value: category, label: t(`${category}`) })).sort((a, b) => a.label.localeCompare(b.label));
 
 type ItemNewEditorProps = {
   closeDialog: () => void;
@@ -99,38 +97,38 @@ export const ItemNewEditor = forwardRef<EditorHandlingClose, ItemNewEditorProps>
   };
 
   return (
-    <Editor type="creation" title={t('database_items:new')}>
+    <Editor type="creation" title={t('new_item')}>
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="name" required>
-            {t('database_items:name')}
+            {t('name')}
           </Label>
-          <Input type="text" name="name" value={name} onChange={onChangeName} placeholder={t('database_items:example_name')} />
+          <Input type="text" name="name" value={name} onChange={onChangeName} placeholder={t('example_item')} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
-          <Label htmlFor="name-plural">{t('database_items:name_plural')}</Label>
-          <Input type="text" name="name-plural" ref={namePluralRef} placeholder={t('database_items:example_name_plural')} />
+          <Label htmlFor="name-plural">{t('name_plural')}</Label>
+          <Input type="text" name="name-plural" ref={namePluralRef} placeholder={t('example_item_plural')} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
-          <Label htmlFor="descr">{t('database_items:description')}</Label>
-          <MultiLineInput id="descr" ref={descriptionRef} placeholder={t('database_items:example_description')} />
+          <Label htmlFor="descr">{t('description')}</Label>
+          <MultiLineInput id="descr" ref={descriptionRef} placeholder={t('example_description_item')} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="icon" required>
-            {t('database_items:icon')}
+            {t('icon')}
           </Label>
           {!icon ? (
             <DropInput
               destFolderToCopy="graphics/icons"
               imageWidth={32}
               imageHeight={32}
-              name={t('database_items:icon_of_the_item')}
+              name={t('icon_of_the_item')}
               extensions={['png']}
               onFileChoosen={onIconChosen}
             />
           ) : (
             <IconInput
-              name={t('database_items:icon_of_the_item')}
+              name={t('icon_of_the_item')}
               extensions={['png']}
               iconPathInProject={itemIconPath(icon)}
               destFolderToCopy="graphics/icons"
@@ -140,12 +138,12 @@ export const ItemNewEditor = forwardRef<EditorHandlingClose, ItemNewEditorProps>
           )}
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
-          <Label htmlFor="category">{t('database_items:category')}</Label>
+          <Label htmlFor="category">{t('category')}</Label>
           <SelectCustomSimple id="select-category" options={options} onChange={setItemCategory as (v: string) => void} value={itemCategory} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="dbSymbol" required>
-            {t('database_moves:symbol')}
+            {t('symbol')}
           </Label>
           <Input
             type="text"
@@ -153,18 +151,18 @@ export const ItemNewEditor = forwardRef<EditorHandlingClose, ItemNewEditorProps>
             ref={dbSymbolRef}
             onChange={(e) => onChangeDbSymbol(e.currentTarget.value)}
             error={!!dbSymbolErrorType}
-            placeholder={t('database_items:example_db_symbol')}
+            placeholder={t('example_db_symbol')}
           />
-          {dbSymbolErrorType == 'value' && <TextInputError>{t('database_moves:incorrect_format')}</TextInputError>}
-          {dbSymbolErrorType == 'duplicate' && <TextInputError>{t('database_moves:db_symbol_already_used')}</TextInputError>}
+          {dbSymbolErrorType == 'value' && <TextInputError>{t('incorrect_format')}</TextInputError>}
+          {dbSymbolErrorType == 'duplicate' && <TextInputError>{t('db_symbol_already_used')}</TextInputError>}
         </InputWithTopLabelContainer>
         <ButtonContainer>
-          <TooltipWrapper data-tooltip={checkDisabled() ? t('database_moves:fields_asterisk_required') : undefined}>
+          <TooltipWrapper data-tooltip={checkDisabled() ? t('fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickNew} disabled={checkDisabled()}>
-              {t('database_items:create_item')}
+              {t('create_item')}
             </PrimaryButton>
           </TooltipWrapper>
-          <DarkButton onClick={closeDialog}>{t('database_moves:cancel')}</DarkButton>
+          <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
     </Editor>

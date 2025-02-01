@@ -165,11 +165,11 @@ export const TypePokemonTable = ({ type }: TypePokemonTableProps) => {
     <DataPokemonTable>
       <DataPokemonGrid gap="16px" className="header">
         <span></span>
-        <span>{t('pokemon_pokemon')}</span>
-        <span>{t('pokemon_types')}</span>
-        <span>{t('pokemon_ability1')}</span>
-        <span>{t('pokemon_ability2')}</span>
-        <span>{t('pokemon_ability3')}</span>
+        <span>{t('creature')}</span>
+        <span>{t('creature_types')}</span>
+        <span>{t('creature_ability1')}</span>
+        <span>{t('creature_ability2')}</span>
+        <span>{t('creature_ability3')}</span>
       </DataPokemonGrid>
       {allPokemon.map((pokemon) => (
         <RenderPokemon key={`type-pokemon-${pokemon.dbSymbol}`} pokemon={pokemon} type={type} state={state} />

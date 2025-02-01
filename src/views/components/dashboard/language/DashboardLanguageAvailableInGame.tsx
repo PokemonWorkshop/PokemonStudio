@@ -34,7 +34,7 @@ export const DashboardLanguageAvailableInGame = ({ dialogsRef, setEditLanguage }
           <div className="buttons">
             <EditButtonOnlyIcon onClick={() => handleEdit(index)} color={theme.colors.primaryBase} />
             <DarkButton onClick={() => disabledLanguage(code)} disabled={languageConfig.choosableLanguageCode.length <= 1}>
-              {t('dashboard_language:disable')}
+              {t('disable')}
             </DarkButton>
           </div>
         </div>

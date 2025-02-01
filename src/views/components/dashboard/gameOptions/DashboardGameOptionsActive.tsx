@@ -20,12 +20,12 @@ type RenderOptionActiveProps = {
 
 const RenderOptionActive = forwardRef<HTMLDivElement, RenderOptionActiveProps>(
   ({ index, option, provided, isDragging, dragOn, disabledDisableOption, disableOption }, ref) => {
-    const { t, i18n } = useTranslation('dashboard_game_options');
+    const { t, i18n } = useTranslation();
     const disabledLanguage = option === 'language';
     const isOptionUnknown = !(DEFAULT_GAME_OPTIONS as readonly string[]).includes(option);
 
     const gameOptionName = (option: string) => {
-      if (i18n.exists(`dashboard_game_options:${option}`)) {
+      if (i18n.exists(`${option}`)) {
         return t(option as DefaultGameOptions);
       }
       return t('option_unknown', { option });

@@ -35,7 +35,7 @@ export const GroupControlBar = ({ dialogsRef }: GroupContralBarProps) => {
 
   return (
     <ControlBar>
-      <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new')}</SecondaryButtonWithPlusIcon>
+      <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new_group')}</SecondaryButtonWithPlusIcon>
       <SelectGroup dbSymbol={groupDbSymbol} onChange={(dbSymbol) => setSelectedDataIdentifier({ group: dbSymbol })} />
     </ControlBar>
   );

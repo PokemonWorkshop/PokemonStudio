@@ -88,11 +88,11 @@ export const TextNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeDial
             <Label htmlFor="name" required>
               {t('name')}
             </Label>
-            <Input type="text" id="name" value={name} onChange={(event) => setName(event.target.value)} placeholder={t('example_name')} />
+            <Input type="text" id="name" value={name} onChange={(event) => setName(event.target.value)} placeholder={t('example_texts_file')} />
           </InputWithTopLabelContainer>
           <InputWithTopLabelContainer>
             <Label htmlFor="descr">{t('description')}</Label>
-            <MultiLineInput id="descr" ref={descriptionRef} placeholder={t('example_description')} />
+            <MultiLineInput id="descr" ref={descriptionRef} placeholder={t('example_description_texts_file')} />
           </InputWithTopLabelContainer>
         </PaddedInputContainer>
         <InputGroupCollapse title={t('other_data')} collapseByDefault noMargin>

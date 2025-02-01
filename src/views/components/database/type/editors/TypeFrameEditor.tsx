@@ -55,22 +55,22 @@ export const TypeFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   };
 
   return (
-    <Editor type="edit" title={t('database_types:information')}>
+    <Editor type="edit" title={t('information')}>
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="name" required>
-            {t('database_moves:name')}
+            {t('name')}
           </Label>
           <TranslateInputContainer onTranslateClick={handleTranslateClick}>
-            <Input type="text" name="name" ref={nameRef} defaultValue={currentTypeName} placeholder={t('database_types:example_name')} />
+            <Input type="text" name="name" ref={nameRef} defaultValue={currentTypeName} placeholder={t('example_type')} />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>
         <InputWithColorLabelContainer>
-          <Label htmlFor="color">{t('database_types:color')}</Label>
+          <Label htmlFor="color">{t('color')}</Label>
           <Input type="color" name="color" defaultValue={color} onBlur={(event) => setColor(event.target.value)} />
         </InputWithColorLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="preview">{t('database_types:preview')}</Label>
+          <Label htmlFor="preview">{t('preview')}</Label>
           <TypeCategoryPreview type={color}>{currentTypeName || '???'}</TypeCategoryPreview>
         </InputWithLeftLabelContainer>
       </InputContainer>

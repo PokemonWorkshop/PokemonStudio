@@ -15,7 +15,7 @@ import { InputFormContainer } from '@components/inputs/InputContainer';
 import { useSelectOptions } from '@hooks/useSelectOptions';
 
 const moveCategoryEntries = (t: TFunction<('database_moves' | 'database_types')[]>) =>
-  MOVE_CATEGORIES.map((category) => ({ value: category, label: t(`database_types:${category}`) })).sort((a, b) => a.label.localeCompare(b.label));
+  MOVE_CATEGORIES.map((category) => ({ value: category, label: t(`${category}`) })).sort((a, b) => a.label.localeCompare(b.label));
 
 const FRAME_EDITOR_SCHEMA = MOVE_VALIDATOR.pick({ type: true, category: true });
 
@@ -50,11 +50,11 @@ export const MoveFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const onTranslationOverlayClose = () => tTFR.current?.onTranslationOverlayClose();
 
   return (
-    <Editor type="edit" title={t('database_moves:information')}>
+    <Editor type="edit" title={t('information')}>
       <InputFormContainer ref={formRef}>
         <TranslatableTextFields ref={tTFR} handleTranslateClick={handleTranslateClick} move={move} moveName={moveName} />
-        <Select name="type" label={t('database_moves:type')} options={typeOptions} />
-        <Select name="category" label={t('database_moves:category')} options={categoryOptions} />
+        <Select name="type" label={t('type')} options={typeOptions} />
+        <Select name="category" label={t('category')} options={categoryOptions} />
       </InputFormContainer>
       <MoveTranslationOverlay move={move} onClose={onTranslationOverlayClose} ref={dialogsRef} />
     </Editor>

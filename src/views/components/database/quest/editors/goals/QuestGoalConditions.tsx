@@ -80,7 +80,6 @@ type ValueConditionProps = {
 
 const ValueCondition = ({ condition }: ValueConditionProps) => {
   const { t } = useTranslation();
-  const { t: tSelect } = useTranslation('select');
   const refreshUI = useRefreshUI();
   const { type, value } = condition;
 
@@ -108,11 +107,11 @@ const ValueCondition = ({ condition }: ValueConditionProps) => {
   } else {
     return (
       <InputWithTopLabelContainer>
-        <Label htmlFor="pokemon">{t('condition_pokemon')}</Label>
+        <Label htmlFor="creature">{t('condition_creature')}</Label>
         <SelectPokemon
           dbSymbol={value as string}
           onChange={(value) => refreshUI((condition.value = value as DbSymbol))}
-          undefValueOption={tSelect('none')}
+          undefValueOption={t('none')}
           noLabel
         />
       </InputWithTopLabelContainer>

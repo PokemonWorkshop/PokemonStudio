@@ -62,13 +62,18 @@ export const TextFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
             {t('name')}
           </Label>
           <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_name')}>
-            <Input type="text" id="name" defaultValue={getName(textInfo)} ref={nameRef} placeholder={t('example_name')} />
+            <Input type="text" id="name" defaultValue={getName(textInfo)} ref={nameRef} placeholder={t('example_texts_file')} />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="descr">{t('description')}</Label>
           <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_description')}>
-            <MultiLineInput id="descr" defaultValue={getDescription(textInfo)} ref={descriptionRef} placeholder={t('example_description')} />
+            <MultiLineInput
+              id="descr"
+              defaultValue={getDescription(textInfo)}
+              ref={descriptionRef}
+              placeholder={t('example_description_texts_file')}
+            />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>
       </InputContainer>

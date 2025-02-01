@@ -79,11 +79,11 @@ export const NatureNewEditor = forwardRef<EditorHandlingClose, NatureNewEditorPr
   const isDisabled = !name || !!dbSymbolErrorType;
 
   return (
-    <Editor type="creation" title={t('new')}>
+    <Editor type="creation" title={t('new_nature')}>
       <InputFormContainer>
         <InputWithTopLabelContainer>
           <Label required>{t('name')}</Label>
-          <Input value={name} onChange={onChangeName} placeholder={t('example_name')} />
+          <Input value={name} onChange={onChangeName} placeholder={t('example_nature')} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="dbSymbol" required>
@@ -95,7 +95,7 @@ export const NatureNewEditor = forwardRef<EditorHandlingClose, NatureNewEditorPr
             ref={dbSymbolRef}
             onChange={(e) => onChangeDbSymbol(e.currentTarget.value)}
             error={!!dbSymbolErrorType}
-            placeholder={t('example_db_symbol')}
+            placeholder={t('example_db_symbol_nature')}
           />
           {dbSymbolErrorType === 'value' && <TextInputError>{t('incorrect_format')}</TextInputError>}
           {dbSymbolErrorType === 'duplicate' && <TextInputError>{t('db_symbol_already_used')}</TextInputError>}

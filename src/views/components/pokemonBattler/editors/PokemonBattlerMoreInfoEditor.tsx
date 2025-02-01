@@ -30,10 +30,10 @@ const determineShinyCategory = (shinySetup: StudioGroupEncounter['shinySetup']) 
 };
 
 const shinyCategoryEntries = (t: TFunction<('database_items' | 'pokemon_battler_list')[]>) =>
-  ShinyCategories.map((category) => ({ value: category.toString(), label: t(`pokemon_battler_list:shiny_${category}`) }));
+  ShinyCategories.map((category) => ({ value: category.toString(), label: t(`shiny_${category}`) }));
 
 const genderCategoryEntries = (t: TFunction<('database_items' | 'pokemon_battler_list')[]>) =>
-  GenderCategories.map((category) => ({ value: category.toString(), label: t(`pokemon_battler_list:gender${category}`) }));
+  GenderCategories.map((category) => ({ value: category.toString(), label: t(`gender${category}`) }));
 
 type PokemonBattlerModeInfoEditorProps = {
   encounter: PartialStudioGroupEncounter;
@@ -83,10 +83,10 @@ export const PokemonBattlerMoreInfoEditor = ({
   }, [encounter.specie]);
 
   return (
-    <InputGroupCollapse title={t(`pokemon_battler_list:more_info_title`)} gap="24px" collapseByDefault={collapseByDefault || undefined}>
+    <InputGroupCollapse title={t(`more_info_title`)} gap="24px" collapseByDefault={collapseByDefault || undefined}>
       {from !== 'group' && (
         <InputWithTopLabelContainer>
-          <Label htmlFor="given-name">{t('pokemon_battler_list:given_name')}</Label>
+          <Label htmlFor="given-name">{t('given_name')}</Label>
           <Input
             type="text"
             name="given-name"
@@ -96,7 +96,7 @@ export const PokemonBattlerMoreInfoEditor = ({
         </InputWithTopLabelContainer>
       )}
       <InputWithTopLabelContainer>
-        <Label htmlFor="select-shiny">{t('pokemon_battler_list:shiny')}</Label>
+        <Label htmlFor="select-shiny">{t('shiny')}</Label>
         <SelectCustomSimple
           id="select-shiny"
           options={shinyOptions}
@@ -107,7 +107,7 @@ export const PokemonBattlerMoreInfoEditor = ({
       </InputWithTopLabelContainer>
       {shinyCategory === 'custom' && (
         <InputWithLeftLabelContainer>
-          <Label htmlFor="shiny-custom">{t('pokemon_battler_list:shiny_custom')}</Label>
+          <Label htmlFor="shiny-custom">{t('shiny_custom')}</Label>
           <EmbeddedUnitInputNumber
             name="shiny-custom"
             min="0"
@@ -120,7 +120,7 @@ export const PokemonBattlerMoreInfoEditor = ({
         </InputWithLeftLabelContainer>
       )}
       <InputWithTopLabelContainer>
-        <Label htmlFor="select-gender">{t('pokemon_battler_list:gender')}</Label>
+        <Label htmlFor="select-gender">{t('gender')}</Label>
         <SelectCustomSimple
           id="select-gender"
           options={genderOptions}
@@ -130,17 +130,17 @@ export const PokemonBattlerMoreInfoEditor = ({
         />
       </InputWithTopLabelContainer>
       <InputWithTopLabelContainer>
-        <Label htmlFor="select-item-held">{t('pokemon_battler_list:item_held')}</Label>
+        <Label htmlFor="select-item-held">{t('item_held')}</Label>
         <SelectItemHeld
           dbSymbol={expandPokemonSetup.itemHeld as string}
           onChange={(itemHeld) => updateExpandPokemonSetup({ itemHeld })}
-          undefValueOption={t('pokemon_battler_list:none_item')}
+          undefValueOption={t('none_item')}
           noLabel
         />
       </InputWithTopLabelContainer>
       {from !== 'group' && (
         <InputWithTopLabelContainer>
-          <Label htmlFor="select-caught-with">{t('pokemon_battler_list:caught_with')}</Label>
+          <Label htmlFor="select-caught-with">{t('caught_with')}</Label>
           <SelectItemBall
             dbSymbol={expandPokemonSetup.caughtWith as string}
             onChange={(caughtWith) => updateExpandPokemonSetup({ caughtWith })}
@@ -149,7 +149,7 @@ export const PokemonBattlerMoreInfoEditor = ({
         </InputWithTopLabelContainer>
       )}
       <InputWithLeftLabelContainer>
-        <Label htmlFor="loyalty">{t('pokemon_battler_list:loyalty')}</Label>
+        <Label htmlFor="loyalty">{t('loyalty')}</Label>
         <InputNumber
           name="loyalty"
           min="0"
@@ -161,7 +161,7 @@ export const PokemonBattlerMoreInfoEditor = ({
       </InputWithLeftLabelContainer>
       {from === 'group' && (
         <InputWithLeftLabelContainer>
-          <Label htmlFor="rareness">{t('pokemon_battler_list:rareness')}</Label>
+          <Label htmlFor="rareness">{t('rareness')}</Label>
           <InputNumber
             name="rareness"
             min="0"

@@ -104,13 +104,13 @@ export const GroupNewEditor = forwardRef<EditorHandlingClose, GroupNewEditorProp
   };
 
   return (
-    <Editor type="creation" title={t('new')}>
+    <Editor type="creation" title={t('new_group')}>
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="name" required>
             {t('group_name')}
           </Label>
-          <Input type="text" name="name" value={name} onChange={(event) => setName(event.currentTarget.value)} placeholder={t('example_name')} />
+          <Input type="text" name="name" value={name} onChange={(event) => setName(event.currentTarget.value)} placeholder={t('example_group')} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="select-activation">{t('activation')}</Label>

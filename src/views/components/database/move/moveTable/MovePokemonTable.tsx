@@ -36,9 +36,9 @@ export const MovePokemonTable = ({ move, filter }: MovePokemonTableProps) => {
     <DataPokemonTable>
       <DataPokemonGrid gap="16px" className="header">
         <span></span>
-        <span>{t('database_types:pokemon_pokemon')}</span>
-        <span>{t('database_types:pokemon_type')}</span>
-        {filter === 'LevelLearnableMove' && <span>{t('database_moves:level')}</span>}
+        <span>{t('creature')}</span>
+        <span>{t('types')}</span>
+        {filter === 'LevelLearnableMove' && <span>{t('level')}</span>}
       </DataPokemonGrid>
       {allPokemon.map((pokemon) => (
         <RenderPokemon key={`type-pokemon-${pokemon.dbSymbol}`} pokemon={pokemon} move={move} state={state} filter={filter} />

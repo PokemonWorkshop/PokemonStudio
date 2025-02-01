@@ -53,7 +53,7 @@ export const MapMenu = () => {
 
   return (
     <MapMenuContainer>
-      <NavigationDatabaseGroup title={t('world:maps')}>
+      <NavigationDatabaseGroup title={t('maps')}>
         <MapSubMenuContainer>
           <div className="buttons">
             <SecondaryButtonWithPlusIcon className="new" onClick={() => dialogsRef.current?.openDialog('new')} disabled={isRMXPMode}>

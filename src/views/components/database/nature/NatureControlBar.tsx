@@ -34,7 +34,7 @@ export const NatureControlBar = ({ dialogsRef }: NatureControlBarProps) => {
 
   return (
     <ControlBar>
-      {onClickNew ? <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new')}</SecondaryButtonWithPlusIcon> : <div />}
+      {onClickNew ? <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new_nature')}</SecondaryButtonWithPlusIcon> : <div />}
       <SelectContainerWithLabel>
         <span>{t('nature')}</span>
         <SelectNature

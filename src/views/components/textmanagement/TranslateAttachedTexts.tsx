@@ -72,14 +72,14 @@ export const TranslateAttachedTexts = () => {
     const beforeText = textsWithoutIndex[languageContext.positionLanguage - 2];
     if (wanted === 'before' && beforeText && beforeText.length > 1) {
       if (beforeText[defaultLanguageIndexFromFile.index] === '') {
-        return t('waiting_tranlaste');
+        return t('waiting_translate');
       }
       return beforeText[defaultLanguageIndexFromFile.index];
     }
     const afterText = textsWithoutIndex[languageContext.positionLanguage];
     if (wanted === 'after' && afterText && afterText.length > 1) {
       if (afterText[defaultLanguageIndexFromFile.index] === '') {
-        return t('waiting_tranlaste');
+        return t('waiting_translate');
       }
       return afterText[defaultLanguageIndexFromFile.index];
     }

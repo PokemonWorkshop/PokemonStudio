@@ -88,7 +88,7 @@ export const HomeProjectNewEditor = forwardRef<EditorHandlingClose, HomeProjectN
           </InputWithTopLabelContainer>
         )}
         <InputWithTopLabelContainer>
-          <Label htmlFor="default_language">{t('default_langauge')}</Label>
+          <Label htmlFor="default_language">{t('default_language')}</Label>
           <SelectCustomSimple
             id="select-default-language"
             value={newProjectData.defaultLanguage}

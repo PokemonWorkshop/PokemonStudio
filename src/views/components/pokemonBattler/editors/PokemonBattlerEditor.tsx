@@ -72,18 +72,18 @@ export const PokemonBattlerEditor = forwardRef<EditorHandlingClose, PokemonBattl
     useEditorHandlingClose(ref, onClose, canClose);
 
     return (
-      <EditorWithCollapse type={action} title={t('database_pokemon:pokemon')}>
+      <EditorWithCollapse type={action} title={t('pokemon')}>
         <InputContainer size="l">
           {creatureUnavailable ? (
             <PaddedInputContainer>
               <InputWithTopLabelContainer>
                 <Label htmlFor="select-pokemon" required>
-                  {t('database_pokemon:pokemon')}
+                  {t('pokemon')}
                 </Label>
                 <SelectPokemon
                   onChange={(dbSymbol) => updateEncounter({ specie: dbSymbol as DbSymbol })}
                   dbSymbol={encounter.specie}
-                  undefValueOption={t('select:none')}
+                  undefValueOption={t('none')}
                   noLabel
                 />
               </InputWithTopLabelContainer>
@@ -93,13 +93,13 @@ export const PokemonBattlerEditor = forwardRef<EditorHandlingClose, PokemonBattl
               <PaddedInputContainer>
                 <InputWithTopLabelContainer>
                   <Label htmlFor="select-pokemon" required>
-                    {t('database_pokemon:pokemon')}
+                    {t('pokemon')}
                   </Label>
                   <SelectPokemon onChange={(dbSymbol) => updateEncounter({ specie: dbSymbol as DbSymbol })} dbSymbol={encounter.specie} noLabel />
                 </InputWithTopLabelContainer>
                 {formAvailable && (
                   <InputWithTopLabelContainer>
-                    <Label htmlFor="select-form">{t('database_pokemon:form')}</Label>
+                    <Label htmlFor="select-form">{t('form')}</Label>
                     <SelectPokemonForm
                       onChange={(value) => {
                         if (value === '__undef__') return updateEncounter({ form: -1 });
@@ -107,14 +107,14 @@ export const PokemonBattlerEditor = forwardRef<EditorHandlingClose, PokemonBattl
                       }}
                       dbSymbol={encounter.specie}
                       form={encounter.form === -1 ? '__undef__' : encounter.form}
-                      undefValueOption={t('pokemon_battler_list:random')}
+                      undefValueOption={t('random')}
                       noLabel
                     />
                   </InputWithTopLabelContainer>
                 )}
                 {from !== 'group' && encounter.levelSetup.kind === 'fixed' && (
                   <InputWithLeftLabelContainer>
-                    <Label htmlFor="fixed-level">{t('pokemon_battler_list:level')}</Label>
+                    <Label htmlFor="fixed-level">{t('level')}</Label>
                     <InputNumber
                       name="fixed-level"
                       min="1"
@@ -127,7 +127,7 @@ export const PokemonBattlerEditor = forwardRef<EditorHandlingClose, PokemonBattl
                 {from === 'group' && encounter.levelSetup.kind === 'minmax' && (
                   <InputWithTopLabelContainer>
                     <InputWithLeftLabelContainer>
-                      <Label htmlFor="minmax-level">{t('pokemon_battler_list:level')}</Label>
+                      <Label htmlFor="minmax-level">{t('level')}</Label>
                       <InputWithSeparatorContainer>
                         <InputNumber
                           name="min-level"
@@ -146,7 +146,7 @@ export const PokemonBattlerEditor = forwardRef<EditorHandlingClose, PokemonBattl
                           }}
                           error={minMaxLevelError}
                         />
-                        <span className="separator">{t('pokemon_battler_list:level_separator')}</span>
+                        <span className="separator">{t('level_separator')}</span>
                         <InputNumber
                           name="max-level"
                           min="1"
@@ -166,12 +166,12 @@ export const PokemonBattlerEditor = forwardRef<EditorHandlingClose, PokemonBattl
                         />
                       </InputWithSeparatorContainer>
                     </InputWithLeftLabelContainer>
-                    {minMaxLevelError && <TextInputError>{t('pokemon_battler_list:min_max_level_error')}</TextInputError>}
+                    {minMaxLevelError && <TextInputError>{t('min_max_level_error')}</TextInputError>}
                   </InputWithTopLabelContainer>
                 )}
                 {from === 'group' && (
                   <InputWithLeftLabelContainer>
-                    <Label htmlFor="encounter-chance">{t('pokemon_battler_list:random_encounter_chance')}</Label>
+                    <Label htmlFor="encounter-chance">{t('random_encounter_chance')}</Label>
                     <EmbeddedUnitInputNumber
                       name="encounter-chance"
                       min="1"
@@ -183,20 +183,20 @@ export const PokemonBattlerEditor = forwardRef<EditorHandlingClose, PokemonBattl
                   </InputWithLeftLabelContainer>
                 )}
                 <InputWithTopLabelContainer>
-                  <Label htmlFor="select-ability">{t('database_abilities:ability')}</Label>
+                  <Label htmlFor="select-ability">{t('ability')}</Label>
                   <SelectAbility
                     dbSymbol={expandPokemonSetup.ability as string}
                     onChange={(dbSymbol) => updateExpandPokemonSetup({ ability: dbSymbol })}
-                    undefValueOption={t('pokemon_battler_list:random')}
+                    undefValueOption={t('random')}
                     noLabel
                   />
                 </InputWithTopLabelContainer>
                 <InputWithTopLabelContainer>
-                  <Label htmlFor="select-nature">{t('pokemon_battler_list:nature')}</Label>
+                  <Label htmlFor="select-nature">{t('nature')}</Label>
                   <SelectNature
                     dbSymbol={expandPokemonSetup.nature as string}
                     onChange={(selected) => updateExpandPokemonSetup({ nature: selected.value })}
-                    overwriteNoneValue={t('pokemon_battler_list:random')}
+                    overwriteNoneValue={t('random')}
                     noneValue
                   />
                 </InputWithTopLabelContainer>
@@ -234,12 +234,12 @@ export const PokemonBattlerEditor = forwardRef<EditorHandlingClose, PokemonBattl
           )}
           {action === 'creation' && (
             <ButtonContainer>
-              <TooltipWrapper data-tooltip={!canNew ? t('pokemon_battler_list:fields_asterisk_required') : undefined}>
+              <TooltipWrapper data-tooltip={!canNew ? t('fields_asterisk_required') : undefined}>
                 <PrimaryButton onClick={handleNew} disabled={!canNew}>
-                  {t('database_pokemon:create_pokemon')}
+                  {t('create_creature')}
                 </PrimaryButton>
               </TooltipWrapper>
-              <DarkButton onClick={closeDialog}>{t('database_pokemon:cancel')}</DarkButton>
+              <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
             </ButtonContainer>
           )}
         </InputContainer>

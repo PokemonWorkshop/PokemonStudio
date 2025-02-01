@@ -21,8 +21,8 @@ export const AbilityPokemonPage = () => {
       <PageContainerStyle>
         <PageDataConstrainerStyle>
           <DataBlockWrapper>
-            <SubPageTitle title={t('pokemon_with_ability', { ability: abilityName })} onClickedBack={onClickedBack} />
-            <DataBlockWithTitleNoActive title={t('pokemon_with_ability', { ability: abilityName })} size="full">
+            <SubPageTitle title={t('creature_with_ability', { ability: abilityName })} onClickedBack={onClickedBack} />
+            <DataBlockWithTitleNoActive title={t('creature_with_ability', { ability: abilityName })} size="full">
               <AbilityPokemonTable ability={ability} />
             </DataBlockWithTitleNoActive>
           </DataBlockWrapper>

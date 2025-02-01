@@ -54,13 +54,13 @@ export const QuestNewEditor = ({ onClose }: QuestNewEditorProps) => {
   };
 
   return (
-    <Editor type="creation" title={t('new')}>
+    <Editor type="creation" title={t('new_quest')}>
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="name" required>
             {t('quest_name')}
           </Label>
-          <Input type="text" name="name" value={name} onChange={(event) => setName(event.target.value)} placeholder={t('example_name')} />
+          <Input type="text" name="name" value={name} onChange={(event) => setName(event.target.value)} placeholder={t('example_quest')} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="select-category">{t('category')}</Label>
@@ -84,7 +84,7 @@ export const QuestNewEditor = ({ onClose }: QuestNewEditorProps) => {
         </InputWithTopLabelContainer> */}
         <InputWithTopLabelContainer>
           <Label htmlFor="descr">{t('description')}</Label>
-          <MultiLineInput id="descr" ref={descriptionRef} placeholder={t('example_descr')} />
+          <MultiLineInput id="descr" ref={descriptionRef} placeholder={t('example_description_quest')} />
         </InputWithTopLabelContainer>
         <ButtonContainer>
           <TooltipWrapper data-tooltip={!name ? t('fields_asterisk_required') : undefined}>

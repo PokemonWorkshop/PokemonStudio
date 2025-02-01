@@ -29,8 +29,8 @@ export const CreatureDeletion = forwardRef<EditorHandlingClose, CreatureDeletion
 
   return (
     <Deletion
-      title={t('deletion_of_pokemon', { pokemon })}
-      message={t('deletion_message_pokemon', { pokemon })}
+      title={t('deletion_of_creature', { pokemon })}
+      message={t('deletion_message_creature', { pokemon })}
       onClickDelete={onClickDelete}
       onClose={closeDialog}
     />

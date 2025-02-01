@@ -40,7 +40,7 @@ const ItemHeldComponent = ({ itemHeld, items, t, clickable }: ItemHeldComponentP
   return (
     <FieldData disabled={false} error={items[itemHeld.dbSymbol] === undefined}>
       {items[itemHeld.dbSymbol] === undefined ? (
-        t('database_items:item_deleted')
+        t('item_deleted')
       ) : (
         <ItemHeldStyle onClick={clickable?.isClickable ? clickable.callback : undefined} className={clickable?.isClickable ? 'clickable' : undefined}>
           {getItemName(items[itemHeld.dbSymbol])}
@@ -60,17 +60,10 @@ export const EncounterDataBlock = ({ pokemonWithForm, dialogsRef }: PokemonDataP
   const shortcutNavigation = useShortcutNavigation('items', 'item', '/database/items');
 
   return (
-    <DataBlockWithTitle
-      size="fourth"
-      title={t('encounter')}
-      onClick={() => (isClickable ? null : dialogsRef.current?.openDialog('encounter'))}
-    >
+    <DataBlockWithTitle size="fourth" title={t('encounter')} onClick={() => (isClickable ? null : dialogsRef.current?.openDialog('encounter'))}>
       <DataGrid columns="1fr" rows="42px 42px 1fr">
         <DataFieldsetField label={t('catch_rate')} data={form.catchRate} />
-        <DataFieldsetField
-          label={t('female_rate')}
-          data={form.femaleRate === -1 ? t('genderless') : `${form.femaleRate} %`}
-        />
+        <DataFieldsetField label={t('female_rate')} data={form.femaleRate === -1 ? t('genderless') : `${form.femaleRate} %`} />
         {form.itemHeld.length === 0 || (form.itemHeld[0].dbSymbol === 'none' && form.itemHeld[1].dbSymbol === 'none') ? (
           <DataFieldsetField label={t('items_held')} data={t('none_item')} disabled />
         ) : (

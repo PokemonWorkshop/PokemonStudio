@@ -111,11 +111,11 @@ export const PokemonNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
       <InputFormContainer ref={formRef}>
         <InputWithTopLabelContainer>
           <Label required>{t('name')}</Label>
-          <Input value={name} onChange={onChangeName} placeholder={t('example_name')} />
+          <Input value={name} onChange={onChangeName} placeholder={t('example_creature')} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label>{t('description')}</Label>
-          <MultiLineInput ref={descriptionRef} placeholder={t('example_description')} />
+          <MultiLineInput ref={descriptionRef} placeholder={t('example_description_creature')} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label>{t('form_name')}</Label>
@@ -132,7 +132,7 @@ export const PokemonNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
             ref={dbSymbolRef}
             onChange={(e) => onChangeDbSymbol(e.currentTarget.value)}
             error={!!dbSymbolErrorType}
-            placeholder={t('example_db_symbol')}
+            placeholder={t('example_db_symbol_creature')}
           />
           {dbSymbolErrorType === 'value' && <TextInputError>{t('incorrect_format')}</TextInputError>}
           {dbSymbolErrorType === 'duplicate' && <TextInputError>{t('db_symbol_already_used')}</TextInputError>}
@@ -140,7 +140,7 @@ export const PokemonNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
         <ButtonContainer>
           <TooltipWrapper data-tooltip={isDisabled ? t('fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickNew} disabled={isDisabled}>
-              {t('create_pokemon')}
+              {t('create_creature')}
             </PrimaryButton>
           </TooltipWrapper>
           <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>

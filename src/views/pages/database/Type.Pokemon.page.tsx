@@ -36,8 +36,8 @@ export const TypePokemonPage = () => {
       <PageContainerStyle>
         <PageDataConstrainerStyle>
           <DataBlockWrapper>
-            <SubPageTitle title={t('pokemon_with_type', { type: currentTypeName })} onClickedBack={onClickedBack} />
-            <DataBlockWithTitleNoActive title={t('pokemon_with_type', { type: currentTypeName })} size="full">
+            <SubPageTitle title={t('creature_with_type', { type: currentTypeName })} onClickedBack={onClickedBack} />
+            <DataBlockWithTitleNoActive title={t('creature_with_type', { type: currentTypeName })} size="full">
               <TypePokemonTable type={currentType} />
             </DataBlockWithTitleNoActive>
           </DataBlockWrapper>

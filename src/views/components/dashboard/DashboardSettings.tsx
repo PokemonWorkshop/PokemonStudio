@@ -55,7 +55,7 @@ export const DashboardSettings = () => {
   return (
     <PageEditor editorTitle={t('settings')} title={t('general')}>
       <InputWithLeftLabelContainer>
-        <Label htmlFor="max-level">{t('max_pokemon_level')}</Label>
+        <Label htmlFor="max-level">{t('max_creature_level')}</Label>
         <Input
           type="number"
           name="max-level"

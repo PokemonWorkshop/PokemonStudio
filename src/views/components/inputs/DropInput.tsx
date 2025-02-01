@@ -29,7 +29,7 @@ export const DropInputContainer = styled.div`
     }
   }
 
-  & div.recommanded-size {
+  & div.recommended-size {
     padding-top: 4px;
   }
 
@@ -136,12 +136,12 @@ export const DropInput = ({
         </LinkContainer>
       </div>
       {imageWidth && imageHeight && (
-        <div className="recommanded-size">
-          <span>{t('recommanded_size', { width: imageWidth, height: imageHeight })}</span>
+        <div className="recommended-size">
+          <span>{t('recommended_size', { width: imageWidth, height: imageHeight })}</span>
         </div>
       )}
       {showAcceptedFormat && (
-        <div className="recommanded-size">
+        <div className="recommended-size">
           <span>{t(extensions.length > 1 ? 'accepted_formats' : 'accepted_format', { formats: getFormatsList(extensions) })}</span>
         </div>
       )}

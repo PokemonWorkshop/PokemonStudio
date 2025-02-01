@@ -35,7 +35,7 @@ export const ItemControlBar = ({ dialogsRef }: ItemControlBarProps) => {
 
   return (
     <ControlBar>
-      <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new')}</SecondaryButtonWithPlusIcon>
+      <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new_item')}</SecondaryButtonWithPlusIcon>
       <SelectItem dbSymbol={itemDbSymbol} onChange={(value) => setSelectedDataIdentifier({ item: value })} />
     </ControlBar>
   );

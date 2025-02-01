@@ -35,13 +35,13 @@ const getLanguageConfig = (projectData: { defaultLanguage: DefaultLanguageType; 
 
 export const useProjectNewProcessor = () => {
   const loaderRef = useLoaderRef();
-  const { t: tl } = useTranslation('loader');
+  const { t } = useTranslation();
   const binding = useRef<ProjectNewFunctionBinding>(DEFAULT_BINDING);
   const processors: SpecialStateProcessors<ProjectNewStateObject> = useMemo(
     () => ({
       ...PROCESS_DONE_STATE,
       choosingDestinationFolder: (state, setState) => {
-        loaderRef.current.open('creating_project', 0, 0, tl('creating_project_opening_path'));
+        loaderRef.current.open('creating_project', 0, 0, t('creating_project_opening_path'));
         return window.api.chooseFolder(
           {},
           ({ folderPath }) => setState({ ...state, state: 'checkingFolderExist', projectDirName: join(folderPath, state.payload.title) }),
@@ -52,12 +52,12 @@ export const useProjectNewProcessor = () => {
         );
       },
       checkingFolderExist: (state, setState) => {
-        loaderRef.current.setProgress(1, 6, tl('creating_project_checking'));
+        loaderRef.current.setProgress(1, 6, t('creating_project_checking'));
         return window.api.fileExists(
           { filePath: state.projectDirName },
           ({ result }) => {
             if (result) {
-              handleFailure(setState, binding)({ errorMessage: tl('creating_project_child_folder_exist_error') });
+              handleFailure(setState, binding)({ errorMessage: t('creating_project_child_folder_exist_error') });
             } else {
               setState({ ...state, state: 'readingVersion' });
             }
@@ -66,7 +66,7 @@ export const useProjectNewProcessor = () => {
         );
       },
       readingVersion: (state, setState) => {
-        loaderRef.current.setProgress(2, 6, tl('importing_project_reading_version'));
+        loaderRef.current.setProgress(2, 6, t('importing_project_reading_version'));
         return window.api.getStudioVersion(
           {},
           (projectVersion) => setState({ ...state, state: 'checkingNeedDownload', studioVersion: projectVersion.studioVersion }),
@@ -74,7 +74,7 @@ export const useProjectNewProcessor = () => {
         );
       },
       checkingNeedDownload: (state, setState) => {
-        loaderRef.current.setProgress(3, 6, tl('creating_project_checking_need_download'));
+        loaderRef.current.setProgress(3, 6, t('creating_project_checking_need_download'));
         return window.api.checkDownloadNewProject(
           { url: new URL('latest.json', REPOSITORY_URL).href },
           (output) => {
@@ -87,7 +87,7 @@ export const useProjectNewProcessor = () => {
         );
       },
       download: (state, setState) => {
-        loaderRef.current.setProgress(4, 6, tl('creating_project_downloading', { progress: 0, speed: downloadSpeed(0, tl) }));
+        loaderRef.current.setProgress(4, 6, t('creating_project_downloading', { progress: 0, speed: downloadSpeed(0, t) }));
         return window.api.downloadFile(
           {
             url: new URL(state.latestFile.filename, REPOSITORY_URL).href,
@@ -97,22 +97,22 @@ export const useProjectNewProcessor = () => {
           () => setState({ ...state, state: 'extract' }),
           handleFailure(setState, binding),
           ({ step, stepText }) => {
-            const speed = downloadSpeed(Number(stepText), tl);
-            loaderRef.current.setProgress(4, 6, tl('creating_project_downloading', { progress: `${step.toFixed(1)}`, speed }));
+            const speed = downloadSpeed(Number(stepText), t);
+            loaderRef.current.setProgress(4, 6, t('creating_project_downloading', { progress: `${step.toFixed(1)}`, speed }));
           }
         );
       },
       extract: (state, setState) => {
-        loaderRef.current.setProgress(5, 6, tl('creating_project_extraction', { progress: 0 }));
+        loaderRef.current.setProgress(5, 6, t('creating_project_extraction', { progress: 0 }));
         return window.api.extractNewProject(
           { projectDirName: state.projectDirName },
           () => setState({ ...state, state: 'configure' }),
           handleFailure(setState, binding),
-          ({ step }) => loaderRef.current.setProgress(3, 4, tl('creating_project_extraction', { progress: step.toFixed(1) }))
+          ({ step }) => loaderRef.current.setProgress(3, 4, t('creating_project_extraction', { progress: step.toFixed(1) }))
         );
       },
       configure: (state, setState) => {
-        loaderRef.current.setProgress(6, 6, tl('creating_project_configuration'));
+        loaderRef.current.setProgress(6, 6, t('creating_project_configuration'));
         const newProjectData = state.payload;
         const config = getLanguageConfig({ defaultLanguage: newProjectData.defaultLanguage, multiLanguage: newProjectData.multiLanguage });
         return window.api.configureNewProject(

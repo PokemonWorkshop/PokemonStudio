@@ -40,8 +40,8 @@ export const TypePage = () => {
             <TypeResistanceData />
           </DataBlockWrapper>
           <DataBlockWrapper>
-            <DataBlockWithTitleNoActive size="half" title={t('list_all_pokemon', { type: currentTypeName })} data-noactive>
-              <DarkButton onClick={() => navigate(`/database/types/${currentType.dbSymbol}/pokemon`)}>{t('show_all_pokemon')}</DarkButton>
+            <DataBlockWithTitleNoActive size="half" title={t('list_all_creature', { type: currentTypeName })} data-noactive>
+              <DarkButton onClick={() => navigate(`/database/types/${currentType.dbSymbol}/pokemon`)}>{t('show_all_creature')}</DarkButton>
             </DataBlockWithTitleNoActive>
             <DataBlockWithTitleNoActive size="half" title={t('list_all_moves', { type: currentTypeName })} data-noactive>
               <DarkButton onClick={() => navigate(`/database/types/${currentType.dbSymbol}/moves`)}>{t('show_all_moves')}</DarkButton>

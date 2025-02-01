@@ -24,10 +24,10 @@ export const GroupPage = () => {
             <GroupFrame group={group} dialogsRef={dialogsRef} />
           </DataBlockWrapper>
           <DataBlockWrapper>
-            <PokemonBattlerList title={t('pokemon_group')} encounters={group.encounters} disabledImport={cannotDelete} from="group" />
+            <PokemonBattlerList title={t('creature_group')} encounters={group.encounters} disabledImport={cannotDelete} from="group" />
           </DataBlockWrapper>
           <DataBlockWrapper>
-            <DataBlockWithAction size="full" title={t('deleting')}>
+            <DataBlockWithAction size="full" title={t('deletion')}>
               <DeleteButtonWithIcon onClick={() => dialogsRef.current?.openDialog('deletion', true)} disabled={cannotDelete}>
                 {t('delete_this_group')}
               </DeleteButtonWithIcon>

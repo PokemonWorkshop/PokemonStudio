@@ -44,7 +44,7 @@ export const DashboardLanguageOtherLanguages = ({ dialogsRef, setEditLanguage }:
   return (
     <DashboardLanguageTableContainer>
       {otherLanguages.length === 0 ? (
-        <span className="empty-list">{t('dashboard_language:no_other_language')}</span>
+        <span className="empty-list">{t('no_other_language')}</span>
       ) : (
         otherLanguages.map(({ code, name }, index) => {
           const disableDelete = DEFAULT_OTHER_LANGUAGES.find(({ code: c }) => c === code);
@@ -57,11 +57,11 @@ export const DashboardLanguageOtherLanguages = ({ dialogsRef, setEditLanguage }:
               <div className="buttons">
                 <div className="actions">
                   <EditButtonOnlyIcon onClick={() => handleEdit(index)} color={theme.colors.primaryBase} />
-                  <TooltipWrapper data-tooltip={disableDelete ? t('dashboard_language:disable_delete') : undefined}>
+                  <TooltipWrapper data-tooltip={disableDelete ? t('disable_delete') : undefined}>
                     <DeleteButtonOnlyIcon onClick={() => handleDelete(code)} disabled={disableDelete} />
                   </TooltipWrapper>
                 </div>
-                <SecondaryButton onClick={() => enableLanguageInGame(code)}>{t('dashboard_language:enable_in_game')}</SecondaryButton>
+                <SecondaryButton onClick={() => enableLanguageInGame(code)}>{t('enable_in_game')}</SecondaryButton>
               </div>
             </div>
           );

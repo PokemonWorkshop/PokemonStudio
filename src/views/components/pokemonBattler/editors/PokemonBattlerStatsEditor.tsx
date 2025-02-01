@@ -26,10 +26,10 @@ export const PokemonBattlerStatsEditor = ({
   const statsRef = useRef<(HTMLInputElement | null | undefined)[]>([]);
 
   return (
-    <InputGroupCollapse title={t(`pokemon_battler_list:${type}_title`)} gap="24px" collapseByDefault={collapseByDefault || undefined}>
+    <InputGroupCollapse title={t(`${type}_title`)} gap="24px" collapseByDefault={collapseByDefault || undefined}>
       <PaddedInputContainer size="xs">
         <InputWithLeftLabelContainer>
-          <Label htmlFor="hp">{t('database_pokemon:hp')}</Label>
+          <Label htmlFor="hp">{t('hp')}</Label>
           <InputNumberStats
             name="hp"
             defaultValue={stats.hp}
@@ -38,7 +38,7 @@ export const PokemonBattlerStatsEditor = ({
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="attack">{t('database_pokemon:attack')}</Label>
+          <Label htmlFor="attack">{t('attack')}</Label>
           <InputNumberStats
             name="attack"
             defaultValue={stats.atk}
@@ -47,7 +47,7 @@ export const PokemonBattlerStatsEditor = ({
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="defense">{t('database_pokemon:defense')}</Label>
+          <Label htmlFor="defense">{t('defense')}</Label>
           <InputNumberStats
             name="defense"
             defaultValue={stats.dfe}
@@ -56,7 +56,7 @@ export const PokemonBattlerStatsEditor = ({
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="special_attack">{t('database_pokemon:special_attack')}</Label>
+          <Label htmlFor="special_attack">{t('special_attack')}</Label>
           <InputNumberStats
             name="special_attack"
             defaultValue={stats.ats}
@@ -65,7 +65,7 @@ export const PokemonBattlerStatsEditor = ({
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="special-defense">{t('database_pokemon:special_defense')}</Label>
+          <Label htmlFor="special-defense">{t('special_defense')}</Label>
           <InputNumberStats
             name="special-defense"
             defaultValue={stats.dfs}
@@ -74,7 +74,7 @@ export const PokemonBattlerStatsEditor = ({
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="speed">{t('database_pokemon:speed')}</Label>
+          <Label htmlFor="speed">{t('speed')}</Label>
           <InputNumberStats
             name="speed"
             defaultValue={stats.spd}

@@ -132,11 +132,11 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
               <Label htmlFor="name" required>
                 {t('name')}
               </Label>
-              <Input type="text" name="name" value={name} onChange={(event) => setName(event.target.value)} placeholder={t('example_name')} />
+              <Input type="text" name="name" value={name} onChange={(event) => setName(event.target.value)} placeholder={t('example_map')} />
             </InputWithTopLabelContainer>
             <InputWithTopLabelContainer>
               <Label htmlFor="descr">{t('description')}</Label>
-              <MultiLineInput id="descr" ref={descriptionRef} placeholder={t('example_description')} />
+              <MultiLineInput id="descr" ref={descriptionRef} placeholder={t('example_description_map')} />
             </InputWithTopLabelContainer>
             <InputWithLeftLabelContainer>
               <Label htmlFor="steps-average" required>

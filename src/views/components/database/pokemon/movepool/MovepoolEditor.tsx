@@ -78,11 +78,11 @@ export const MovepoolEditor = ({ type, setCurrentEditor, setCurrentDeletion }: M
   return (
     <DataBlockCollapseEditor
       editorTitle="edit"
-      title={t(`database_pokemon:${type}_learnable_moves`)}
+      title={t(`${type}_learnable_moves`)}
       size="full"
       onClickDelete={() => setCurrentDeletion(type)}
-      importation={{ label: t('database_pokemon:movepool_import'), onClick: () => setCurrentEditor(type) }}
-      add={{ label: t('database_pokemon:add_move'), onClick: onClickAdd }}
+      importation={{ label: t('movepool_import'), onClick: () => setCurrentEditor(type) }}
+      add={{ label: t('add_move'), onClick: onClickAdd }}
       disabledDeletion={disabledDeletion()}
     >
       {type === 'level' ? <MovepoolLevelLearnableTable /> : <MovepoolTable movepoolType={type} />}

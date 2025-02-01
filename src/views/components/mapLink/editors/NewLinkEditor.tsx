@@ -24,9 +24,9 @@ const ButtonContainer = styled.div`
 `;
 
 const getShift = (cardinal: StudioMapLinkCardinal, t: TFunction<('database_maplinks' | 'database_moves')[]>) => {
-  if (cardinal === 'north' || cardinal === 'south') return t('database_maplinks:offset_shift_right');
+  if (cardinal === 'north' || cardinal === 'south') return t('offset_shift_right');
 
-  return t('database_maplinks:offset_downward_shift');
+  return t('offset_downward_shift');
 };
 
 const mapsAlreadyAssigned = (mapLink: StudioMapLink) => {
@@ -46,12 +46,12 @@ export const NewLinkEditor = ({ mapLink, cardinal, onClose, onAddLink }: NewLink
   const [offset, setOffset] = useState<number>(0);
 
   return (
-    <Editor type="creation" title={t('database_maplinks:maplinks')}>
+    <Editor type="creation" title={t('maplinks')}>
       <InputContainer size="l">
         <InputContainer size="s">
           <InputWithTopLabelContainer>
             <Label htmlFor="map" required>
-              {t('database_maplinks:map_located', { cardinal: t(`database_maplinks:${cardinal}`) })}
+              {t('map_located', { cardinal: t(`${cardinal}`) })}
             </Label>
             <SelectMaplink
               mapId={selectedMap}
@@ -63,7 +63,7 @@ export const NewLinkEditor = ({ mapLink, cardinal, onClose, onAddLink }: NewLink
           </InputWithTopLabelContainer>
           <InputWithTopLabelContainer>
             <InputWithLeftLabelContainer>
-              <Label htmlFor="offset">{t('database_maplinks:offset')}</Label>
+              <Label htmlFor="offset">{t('offset')}</Label>
               <Input
                 type="number"
                 name="offset"
@@ -82,12 +82,12 @@ export const NewLinkEditor = ({ mapLink, cardinal, onClose, onAddLink }: NewLink
           </InputWithTopLabelContainer>
         </InputContainer>
         <ButtonContainer>
-          <TooltipWrapper data-tooltip={selectedMap === '__undef__' ? t('database_moves:fields_asterisk_required') : undefined}>
+          <TooltipWrapper data-tooltip={selectedMap === '__undef__' ? t('fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={() => onAddLink(cardinal, selectedMap, offset)} disabled={selectedMap === '__undef__'}>
-              {t('database_maplinks:add_link')}
+              {t('add_link')}
             </PrimaryButton>
           </TooltipWrapper>
-          <DarkButton onClick={onClose}>{t('database_moves:cancel')}</DarkButton>
+          <DarkButton onClick={onClose}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
     </Editor>

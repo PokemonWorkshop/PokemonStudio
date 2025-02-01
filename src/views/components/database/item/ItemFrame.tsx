@@ -39,7 +39,7 @@ export const ItemFrame = ({ dialogsRef }: ItemFrameProps) => {
               <CopyIdentifier dataToCopy={item.dbSymbol} />
             </DataInfoContainerHeaderTitle>
             <DataInfoContainerHeaderBadges>
-              <ItemCategory category={category}>{t(`database_types:${category}`)}</ItemCategory>
+              <ItemCategory category={category}>{t(`${category}`)}</ItemCategory>
             </DataInfoContainerHeaderBadges>
           </DataInfoContainerHeader>
           <p>{getItemDescription(item)}</p>

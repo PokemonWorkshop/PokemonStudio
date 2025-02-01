@@ -78,9 +78,7 @@ const getFirstDbSymbol = (
 
 export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattlerImportProps>(({ closeDialog, from }, ref) => {
   const isGroup = from === 'group';
-  const translationContext = isGroup ? 'database_groups' : 'database_trainers';
-  const { t } = useTranslation(translationContext);
-  const { t: tTrainer } = useTranslation('database_trainers');
+  const { t } = useTranslation();
 
   const { projectDataValues: trainers } = useProjectTrainers();
   const { projectDataValues: groups } = useProjectGroups();
@@ -100,7 +98,7 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
   const SelectComponent = isGroup ? SelectGroup : SelectTrainer;
 
   const dropDownOptions = [
-    { value: 'default', label: t('default_option_label') },
+    { value: 'default', label: isGroup ? t('default_option_label_group') : t('default_option_label_trainer') },
     { value: 'showdown', label: t('showdown_option_label') },
   ];
 
@@ -113,7 +111,7 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
       setShowdownEncounter([]);
       return setError(t('error_message'));
     } else if (!isGroup && !override && currentTrainer && convertedTeam.length + currentTrainer.party.length > 6) {
-      setError(tTrainer('party_length_limit'));
+      setError(t('party_length_limit'));
     } else {
       setError('');
     }
@@ -125,7 +123,7 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
     setDropDownSelection(type);
     if (type === 'default' && !isGroup) {
       const lengthPartyToImport = trainers[selectedEntity].party.length;
-      setError(override || (currentTrainer && currentTrainer.party.length + lengthPartyToImport <= 6) ? '' : tTrainer('party_length_limit'));
+      setError(override || (currentTrainer && currentTrainer.party.length + lengthPartyToImport <= 6) ? '' : t('party_length_limit'));
     } else {
       setError('');
       setShowdownEncounter([]);
@@ -152,7 +150,7 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
     if (newValue) {
       setError('');
     } else {
-      setError(canImport(newValue) ? '' : tTrainer('party_length_limit'));
+      setError(canImport(newValue) ? '' : t('party_length_limit'));
     }
   };
 
@@ -189,7 +187,7 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
     <Editor type={from} title={t('import')}>
       <InputContainer size="m">
         <ImportInfoContainer>
-          <ImportInfo>{t('battler_import_info')}</ImportInfo>
+          <ImportInfo>{isGroup ? t('battler_import_info_group') : t('battler_import_info_trainer')}</ImportInfo>
           {dropDownSelection === 'showdown' && <ImportInfo>{t('battler_import_details')}</ImportInfo>}
         </ImportInfoContainer>
         {selectedEntity !== '__undef__' && (
@@ -232,7 +230,7 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
           <Toggle name="override" checked={override} onChange={(event) => handleSetOverride(event.target.checked)} />
         </InputWithLeftLabelContainer>
         <ButtonContainer>
-          <TooltipWrapper data-tooltip={dropDownSelection === 'default' && !canImport(override) ? tTrainer('party_length_limit') : undefined}>
+          <TooltipWrapper data-tooltip={dropDownSelection === 'default' && !canImport(override) ? t('party_length_limit') : undefined}>
             <PrimaryButton onClick={onClickImport} disabled={!canImport(override)}>
               {t('to_import')}
             </PrimaryButton>

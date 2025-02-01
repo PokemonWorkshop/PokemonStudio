@@ -90,7 +90,7 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
   const checkDisabled = () => !name || !trainerClass || !!baseMoneyError || !!battleIdError;
 
   return (
-    <Editor type="creation" title={t('new')}>
+    <Editor type="creation" title={t('new_trainer')}>
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="trainer-name" required>

@@ -12,7 +12,7 @@ export const QuestGoalObtainItem = ({ objective }: QuestGoalProps) => {
   return (
     <PaddedInputContainer>
       <InputWithTopLabelContainer>
-        <Label htmlFor="select-item">{t('database_items:item')}</Label>
+        <Label htmlFor="select-item">{t('item')}</Label>
         <SelectItem
           dbSymbol={objective.objectiveMethodArgs[0] as string}
           onChange={(selected) => refreshUI((objective.objectiveMethodArgs[0] = selected))}
@@ -21,7 +21,7 @@ export const QuestGoalObtainItem = ({ objective }: QuestGoalProps) => {
         />
       </InputWithTopLabelContainer>
       <InputWithLeftLabelContainer>
-        <Label htmlFor="amount-item">{t('database_quests:amount')}</Label>
+        <Label htmlFor="amount-item">{t('amount')}</Label>
         <InputNumber
           name="amount-item"
           value={objective.objectiveMethodArgs[1] as number}

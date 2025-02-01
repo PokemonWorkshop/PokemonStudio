@@ -27,7 +27,7 @@ const getDescription = (id: KeyDefaultTextInfoType, lang: string, t: TFunction<'
 };
 
 export const useDefaultTextInfoTranslation = () => {
-  const { t, i18n } = useTranslation('text_management');
+  const { t, i18n } = useTranslation();
 
   return () => {
     const allTextGeneric = i18n.languages.map((lang) => ({ lang, generic: t(`text_info_generic`, { lng: lang }) }));

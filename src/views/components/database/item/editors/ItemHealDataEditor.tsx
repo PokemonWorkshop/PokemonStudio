@@ -198,10 +198,10 @@ export const ItemHealDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
         )}
         {'loyaltyMalus' in item && (
           <InputWithLeftLabelContainer>
-            <Label htmlFor="hapiness_malus">{t('hapiness_malus')}</Label>
+            <Label htmlFor="happiness_malus">{t('happiness_malus')}</Label>
             <Input
               type="number"
-              name="hapiness_malus"
+              name="happiness_malus"
               value={healChanges.loyaltyMalus}
               min="-255"
               max="255"

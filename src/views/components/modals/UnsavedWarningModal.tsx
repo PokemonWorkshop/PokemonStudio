@@ -80,15 +80,15 @@ export const UnsavedWarningModal = () => {
           <MessageBoxIconContainer>
             <BaseIcon icon="save" size="s" color={theme.colors.primaryBase} />
           </MessageBoxIconContainer>
-          <h3>{t('unsaved_modal:title')}</h3>
+          <h3>{t('title')}</h3>
         </MessageBoxTitleIconContainer>
         <MessageBoxTextContainer>
-          <p>{t('unsaved_modal:description')}</p>
+          <p>{t('description')}</p>
         </MessageBoxTextContainer>
         <MessageBoxActionContainer>
-          <MessageBoxCancelLink onClick={() => setShow(false)}>{t('unsaved_modal:cancel')}</MessageBoxCancelLink>
-          <MessageBoxCancelLink onClick={onQuit}>{t('unsaved_modal:quit')}</MessageBoxCancelLink>
-          <PrimaryButton onClick={onSave}>{t('unsaved_modal:save')}</PrimaryButton>
+          <MessageBoxCancelLink onClick={() => setShow(false)}>{t('cancel')}</MessageBoxCancelLink>
+          <MessageBoxCancelLink onClick={onQuit}>{t('quit')}</MessageBoxCancelLink>
+          <PrimaryButton onClick={onSave}>{t('save')}</PrimaryButton>
         </MessageBoxActionContainer>
       </MessageBoxContainer>
     </OverlayContainer>

@@ -72,7 +72,7 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
   return (
     <DataBlockEditorContainer size="full" color="light" data-noactive>
       <TitleContainer>
-        <h3>{t('text_management:texts')}</h3>
+        <h3>{t('texts')}</h3>
         <ClearInput
           name="research"
           value={research}
@@ -151,16 +151,16 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
           </DataTextList>
         </DataTextListTable>
       ) : (
-        <TableEmpty>{t('text_management:no_text')}</TableEmpty>
+        <TableEmpty>{t('no_text')}</TableEmpty>
       )}
       <ButtonContainer color="light">
         <ClearButtonWithIcon onClick={onClearAll} disabled={textsFiltered.length === 0}>
-          {t('text_management:clear_all')}
+          {t('clear_all')}
         </ClearButtonWithIcon>
         <ButtonRightContainer>
-          <DarkButton onClick={() => dialogsRef.current?.openDialog('import')}>{t('text_management:import_texts')}</DarkButton>
-          <SecondaryButtonWithPlusIconResponsive onClick={onAdd} data-tooltip-responsive={t('text_management:add_a_text')}>
-            {t('text_management:add_a_text')}
+          <DarkButton onClick={() => dialogsRef.current?.openDialog('import')}>{t('import_texts')}</DarkButton>
+          <SecondaryButtonWithPlusIconResponsive onClick={onAdd} data-tooltip-responsive={t('add_a_text')}>
+            {t('add_a_text')}
           </SecondaryButtonWithPlusIconResponsive>
         </ButtonRightContainer>
       </ButtonContainer>

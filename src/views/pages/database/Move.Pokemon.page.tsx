@@ -35,7 +35,7 @@ export const MovePokemonPage = () => {
       <PageContainerStyle>
         <PageDataConstrainerStyle>
           <DataBlockWrapper>
-            <SubPageTitle title={t('pokemon_with_move', { move: moveName })} onClickedBack={onClickedBack} />
+            <SubPageTitle title={t('creature_with_move', { move: moveName })} onClickedBack={onClickedBack} />
             {parameters.map((params, i) => (
               <DataBlockWithTitleCollapse key={i} title={t(params.title, { move: moveName })} size="full">
                 <MovePokemonTable move={move} filter={params.filter} />

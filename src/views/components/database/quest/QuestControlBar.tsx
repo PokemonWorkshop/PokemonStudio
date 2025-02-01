@@ -19,7 +19,7 @@ export const QuestControlBar = ({ onChange, quest, onClickNewQuest }: QuestContr
 
   return (
     <ControlBar>
-      <SecondaryButtonWithPlusIcon onClick={onClickNewQuest}>{t('new')}</SecondaryButtonWithPlusIcon>
+      <SecondaryButtonWithPlusIcon onClick={onClickNewQuest}>{t('new_quest')}</SecondaryButtonWithPlusIcon>
       <SelectQuest dbSymbol={quest.dbSymbol} onChange={onChange} />
     </ControlBar>
   );

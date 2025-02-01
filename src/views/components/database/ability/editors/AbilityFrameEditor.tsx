@@ -74,11 +74,11 @@ export const AbilityFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
             {t('name')}
           </Label>
           <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_name')}>
-            <Input type="text" name="name" defaultValue={getName(ability)} ref={nameRef} placeholder={t('example_name')} />
+            <Input type="text" name="name" defaultValue={getName(ability)} ref={nameRef} placeholder={t('example_ability')} />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
-          <Label htmlFor="descr">{t('description')}</Label>
+          <Label htmlFor="descr">{t('example_description_ability')}</Label>
           <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_description')}>
             <MultiLineInput id="descr" defaultValue={getDescription(ability)} ref={descriptionRef} />
           </TranslateInputContainer>

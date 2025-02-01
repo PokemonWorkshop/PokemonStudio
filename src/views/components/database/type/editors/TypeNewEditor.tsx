@@ -91,32 +91,25 @@ export const TypeNewEditor = forwardRef<EditorHandlingClose, TypeNewEditorProps>
   };
 
   return (
-    <Editor type="creation" title={t('database_types:new')}>
+    <Editor type="creation" title={t('new_type')}>
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="name" required>
-            {t('database_moves:name')}
+            {t('name')}
           </Label>
-          <Input type="text" name="name" value={name} onChange={onChangeName} placeholder={t('database_types:example_name')} />
+          <Input type="text" name="name" value={name} onChange={onChangeName} placeholder={t('example_type')} />
         </InputWithTopLabelContainer>
         <InputWithColorLabelContainer>
-          <Label htmlFor="color">{t('database_types:color')}</Label>
-          <Input
-            type="color"
-            name="color"
-            defaultValue={previewColor}
-            ref={colorRef}
-            placeholder={t('database_types:example_name')}
-            onBlur={onBlurColor}
-          />
+          <Label htmlFor="color">{t('color')}</Label>
+          <Input type="color" name="color" defaultValue={previewColor} ref={colorRef} placeholder={t('example_type')} onBlur={onBlurColor} />
         </InputWithColorLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="preview">{t('database_types:preview')}</Label>
+          <Label htmlFor="preview">{t('preview')}</Label>
           <TypeCategoryPreview type={previewColor}>{name || '???'}</TypeCategoryPreview>
         </InputWithLeftLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="dbSymbol" required>
-            {t('database_moves:symbol')}
+            {t('symbol')}
           </Label>
           <Input
             type="text"
@@ -124,18 +117,18 @@ export const TypeNewEditor = forwardRef<EditorHandlingClose, TypeNewEditorProps>
             ref={dbSymbolRef}
             onChange={(e) => onChangeDbSymbol(e.currentTarget.value)}
             error={!!dbSymbolErrorType}
-            placeholder={t('database_types:example_db_symbol')}
+            placeholder={t('example_db_symbol_type')}
           />
-          {dbSymbolErrorType == 'value' && <TextInputError>{t('database_moves:incorrect_format')}</TextInputError>}
-          {dbSymbolErrorType == 'duplicate' && <TextInputError>{t('database_moves:db_symbol_already_used')}</TextInputError>}
+          {dbSymbolErrorType == 'value' && <TextInputError>{t('incorrect_format')}</TextInputError>}
+          {dbSymbolErrorType == 'duplicate' && <TextInputError>{t('db_symbol_already_used')}</TextInputError>}
         </InputWithTopLabelContainer>
         <ButtonContainer>
-          <TooltipWrapper data-tooltip={checkDisabled() ? t('database_moves:fields_asterisk_required') : undefined}>
+          <TooltipWrapper data-tooltip={checkDisabled() ? t('fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickNew} disabled={checkDisabled()}>
-              {t('database_types:create_type')}
+              {t('create_type')}
             </PrimaryButton>
           </TooltipWrapper>
-          <DarkButton onClick={closeDialog}>{t('database_moves:cancel')}</DarkButton>
+          <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
     </Editor>

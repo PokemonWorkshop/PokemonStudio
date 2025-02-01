@@ -32,7 +32,7 @@ export const ZoneFrameEditor = ({ zone, openTranslationEditor }: ZoneFrameEditor
               name="name"
               value={getZoneName(zone)}
               onChange={(event) => setText(ZONE_NAME_TEXT_ID, zone.id, event.target.value)}
-              placeholder={t('example_name')}
+              placeholder={t('example_zone')}
             />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>
@@ -43,7 +43,7 @@ export const ZoneFrameEditor = ({ zone, openTranslationEditor }: ZoneFrameEditor
               id="descr"
               value={getZoneDescription(zone)}
               onChange={(event) => setText(ZONE_DESCRIPTION_TEXT_ID, zone.id, event.target.value)}
-              placeholder={t('example_descr')}
+              placeholder={t('example_description_zone')}
             />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>

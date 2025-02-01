@@ -70,10 +70,10 @@ export const ZoneAddGroupEditor = ({ zone, groups, onAddGroup, onClose }: ZoneAd
   };
 
   return (
-    <Editor type="creation" title={t('database_groups:groups')}>
+    <Editor type="creation" title={t('groups')}>
       <InputContainer>
         <InputWithTopLabelContainer>
-          <Label htmlFor="groups">{t('database_groups:group')}</Label>
+          <Label htmlFor="groups">{t('group')}</Label>
           <GroupContainer>
             <SelectGroup
               dbSymbol={group.dbSymbol}
@@ -81,14 +81,14 @@ export const ZoneAddGroupEditor = ({ zone, groups, onAddGroup, onClose }: ZoneAd
               filter={(dbSymbol) => !zone.wildGroups.includes(dbSymbol as DbSymbol)}
               noLabel
             />
-            <TooltipWrapper data-tooltip={t('database_trainers:available_future_release')}>
-              <SecondaryButton disabled>{t('database_zones:create_new_group')}</SecondaryButton>
+            <TooltipWrapper data-tooltip={t('available_future_release')}>
+              <SecondaryButton disabled>{t('create_new_group')}</SecondaryButton>
             </TooltipWrapper>
           </GroupContainer>
         </InputWithTopLabelContainer>
         {zone.maps.length !== 0 && (
           <InputWithTopLabelContainer>
-            <Label htmlFor="present-on-maps">{t('database_zones:present_on_maps')}</Label>
+            <Label htmlFor="present-on-maps">{t('present_on_maps')}</Label>
             <MapsListContainer>
               {zone.maps
                 .sort((a, b) => a - b)
@@ -101,8 +101,8 @@ export const ZoneAddGroupEditor = ({ zone, groups, onAddGroup, onClose }: ZoneAd
           </InputWithTopLabelContainer>
         )}
         <ButtonContainer>
-          <PrimaryButton onClick={() => onAddGroup(currentEditedGroup)}>{t('database_zones:add_this_group')}</PrimaryButton>
-          <DarkButton onClick={onClose}>{t('database_zones:cancel')}</DarkButton>
+          <PrimaryButton onClick={() => onAddGroup(currentEditedGroup)}>{t('add_this_group')}</PrimaryButton>
+          <DarkButton onClick={onClose}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
     </Editor>

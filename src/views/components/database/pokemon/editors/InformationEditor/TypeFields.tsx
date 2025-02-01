@@ -12,14 +12,13 @@ type TypeFieldsProps = {
 
 export const TypeFields = ({ defaults, form }: TypeFieldsProps) => {
   const { t } = useTranslation();
-  const { t: tSelect } = useTranslation('select');
   const [type1, setType1] = useState<string>(form.type1);
   const [type2, setType2] = useState<string>(form.type2);
   const typeOptions = useSelectOptions('types');
   const { Select } = useInputAttrsWithLabel(INFORMATION_EDITOR_SCHEMA, defaults);
 
   const type1Options = typeOptions.filter(({ value }) => value !== type2);
-  const type2Options = [{ value: '__undef__', label: tSelect('none') }, ...typeOptions.filter(({ value }) => value !== type1)];
+  const type2Options = [{ value: '__undef__', label: t('none') }, ...typeOptions.filter(({ value }) => value !== type1)];
 
   return (
     <>

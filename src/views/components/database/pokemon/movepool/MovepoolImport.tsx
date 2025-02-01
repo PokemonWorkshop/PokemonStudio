@@ -53,11 +53,11 @@ export const MovepoolImport = ({ type, onClose }: MovepoolImportProps) => {
   };
 
   return (
-    <Editor type="movepool" title={t('database_pokemon:importation')}>
+    <Editor type="movepool" title={t('importation')}>
       <InputContainer size="s">
         <MovepoolImportInfo>{t(`database_pokemon:${type}_learnable_info` as never)}</MovepoolImportInfo>
         <InputWithTopLabelContainer>
-          <Label htmlFor="pokemon">{t('database_pokemon:import_moves_from')}</Label>
+          <Label htmlFor="pokemon">{t('import_moves_from')}</Label>
           <SelectPokemon
             dbSymbol={selectedPokemon}
             onChange={(event) => {
@@ -65,16 +65,16 @@ export const MovepoolImport = ({ type, onClose }: MovepoolImportProps) => {
               setSelectedForm(0);
             }}
             noLabel
-            undefValueOption={t('select:none')}
+            undefValueOption={t('none')}
           />
           {selectedPokemon !== '__undef__' && pokemon[selectedPokemon].forms.length > 1 && (
             <SelectPokemonForm dbSymbol={selectedPokemon} form={selectedForm} onChange={(event) => setSelectedForm(Number(event))} noLabel />
           )}
           <ButtonContainer>
             <PrimaryButton onClick={onClickValidate} disabled={selectedPokemon === '__undef__'}>
-              {t('database_pokemon:validate')}
+              {t('validate')}
             </PrimaryButton>
-            <DarkButton onClick={onClose}>{t('database_pokemon:cancel')}</DarkButton>
+            <DarkButton onClick={onClose}>{t('cancel')}</DarkButton>
           </ButtonContainer>
         </InputWithTopLabelContainer>
       </InputContainer>

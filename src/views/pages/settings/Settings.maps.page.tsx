@@ -32,7 +32,7 @@ export const SettingsMapsPage = () => {
 
   const handleFileChoosen = (filePath: string) => {
     if (isWin32 && basename(filePath).toLowerCase() !== 'tiled.exe') {
-      showNotification('danger', t('settings:map_management'), t('settings_maps:tiled_path_invalid_path_error'));
+      showNotification('danger', t('map_management'), t('tiled_path_invalid_path_error'));
       return;
     }
 

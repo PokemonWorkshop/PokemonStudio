@@ -32,7 +32,7 @@ export const MoveControlBar = ({ dialogsRef }: MoveControlBarProps) => {
 
   return (
     <ControlBar>
-      {onClickNew ? <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new')}</SecondaryButtonWithPlusIcon> : <div />}
+      {onClickNew ? <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new_move')}</SecondaryButtonWithPlusIcon> : <div />}
       <SelectMove dbSymbol={moveDbSymbol} onChange={(dbSymbol) => setSelectedDataIdentifier({ move: dbSymbol })} />
     </ControlBar>
   );

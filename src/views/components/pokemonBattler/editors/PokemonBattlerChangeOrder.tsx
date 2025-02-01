@@ -189,16 +189,16 @@ export const PokemonBattlerChangeOrder = forwardRef<EditorHandlingClose, Pokemon
   useEditorHandlingClose(ref);
 
   return (
-    <Editor type="reorganization" title={t('database_trainers:trainer_party')}>
+    <Editor type="reorganization" title={t('trainer_party')}>
       <InputContainer size="l">
         <InputContainer size="s">
-          <ChangeOrderInfoContainer>{t('database_trainers:change_order_info')}</ChangeOrderInfoContainer>
+          <ChangeOrderInfoContainer>{t('change_order_info')}</ChangeOrderInfoContainer>
           <ChangeOrderList>
             <DataChangeOrderGrid gap="16px" className="header" dragOn={dragOn}>
               <span />
               <span />
               <span>Pokémon</span>
-              <span className="level">{t('pokemon_battler_list:level')}</span>
+              <span className="level">{t('level')}</span>
             </DataChangeOrderGrid>
             <DragDropContext
               onDragStart={() => setDragOn(true)}
@@ -247,8 +247,8 @@ export const PokemonBattlerChangeOrder = forwardRef<EditorHandlingClose, Pokemon
           </ChangeOrderList>
         </InputContainer>
         <ButtonContainer>
-          <PrimaryButton onClick={onClickSave}>{t('unsaved_modal:save')}</PrimaryButton>
-          <DarkButton onClick={closeDialog}>{t('database_trainers:cancel')}</DarkButton>
+          <PrimaryButton onClick={onClickSave}>{t('save')}</PrimaryButton>
+          <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
     </Editor>

@@ -54,10 +54,10 @@ export const ZoneEditGroupEditor = ({ zone, groups, group, index }: ZoneEditGrou
   };
 
   return (
-    <Editor type="creation" title={t('database_groups:groups')}>
+    <Editor type="creation" title={t('groups')}>
       <InputContainer>
         <InputWithTopLabelContainer>
-          <Label htmlFor="groups">{t('database_groups:group')}</Label>
+          <Label htmlFor="groups">{t('group')}</Label>
           <SelectGroup
             dbSymbol={group.data.dbSymbol}
             onChange={(dbSymbol) => refreshUI(onChangeGroup(dbSymbol))}
@@ -67,7 +67,7 @@ export const ZoneEditGroupEditor = ({ zone, groups, group, index }: ZoneEditGrou
         </InputWithTopLabelContainer>
         {zone.maps.length !== 0 && (
           <InputWithTopLabelContainer>
-            <Label htmlFor="present-on-maps">{t('database_zones:present_on_maps')}</Label>
+            <Label htmlFor="present-on-maps">{t('present_on_maps')}</Label>
             <MapsListContainer>
               {zone.maps
                 .sort((a, b) => a - b)

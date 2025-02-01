@@ -26,9 +26,7 @@ import { ItemTranslationOverlay, TranslationEditorTitle } from './ItemTranslatio
 import { cloneEntity } from '@utils/cloneEntity';
 
 const itemCategoryEntries = (t: TFunction<('database_items' | 'database_types')[]>) =>
-  StudioItemCategories.map((category) => ({ value: category, label: t(`database_types:${category}`) })).sort((a, b) =>
-    a.label.localeCompare(b.label)
-  );
+  StudioItemCategories.map((category) => ({ value: category, label: t(`${category}`) })).sort((a, b) => a.label.localeCompare(b.label));
 
 export const ItemFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { currentItem: item, currentItemName } = useItemPage();
@@ -79,55 +77,44 @@ export const ItemFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const onIconChosen = (iconPath: string) => setIcon(basename(iconPath).split('.')[0]);
 
   return (
-    <Editor type="edit" title={t('database_items:information')}>
+    <Editor type="edit" title={t('information')}>
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="name" required>
-            {t('database_items:name')}
+            {t('name')}
           </Label>
           <TranslateInputContainer onTranslateClick={() => handleTranslateClick('translation_name')}>
-            <Input type="text" name="name" defaultValue={currentItemName} ref={nameRef} placeholder={t('database_items:example_name')} />
+            <Input type="text" name="name" defaultValue={currentItemName} ref={nameRef} placeholder={t('example_item')} />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
-          <Label htmlFor="name-plural">{t('database_items:name_plural')}</Label>
+          <Label htmlFor="name-plural">{t('name_plural')}</Label>
           <TranslateInputContainer onTranslateClick={() => handleTranslateClick('translation_name_plural')}>
-            <Input
-              type="text"
-              name="name-plural"
-              defaultValue={getItemNamePlural(item)}
-              ref={namePluralRef}
-              placeholder={t('database_items:example_name_plural')}
-            />
+            <Input type="text" name="name-plural" defaultValue={getItemNamePlural(item)} ref={namePluralRef} placeholder={t('example_item_plural')} />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
-          <Label htmlFor="descr">{t('database_items:description')}</Label>
+          <Label htmlFor="descr">{t('description')}</Label>
           <TranslateInputContainer onTranslateClick={() => handleTranslateClick('translation_description')}>
-            <MultiLineInput
-              id="descr"
-              defaultValue={getItemDescription(item)}
-              ref={descriptionRef}
-              placeholder={t('database_items:example_description')}
-            />
+            <MultiLineInput id="descr" defaultValue={getItemDescription(item)} ref={descriptionRef} placeholder={t('example_description_item')} />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="icon" required>
-            {t('database_items:icon')}
+            {t('icon')}
           </Label>
           {item.icon.length === 0 ? (
             <DropInput
               destFolderToCopy="graphics/icons"
               imageWidth={32}
               imageHeight={32}
-              name={t('database_items:icon_of_the_item')}
+              name={t('icon_of_the_item')}
               extensions={['png']}
               onFileChoosen={onIconChosen}
             />
           ) : (
             <IconInput
-              name={t('database_items:icon_of_the_item')}
+              name={t('icon_of_the_item')}
               extensions={['png']}
               iconPathInProject={itemIconPath(icon)}
               destFolderToCopy="graphics/icons"
@@ -137,7 +124,7 @@ export const ItemFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
           )}
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
-          <Label htmlFor="category">{t('database_items:category')}</Label>
+          <Label htmlFor="category">{t('category')}</Label>
           <SelectCustomSimple
             id="select-category"
             options={options}

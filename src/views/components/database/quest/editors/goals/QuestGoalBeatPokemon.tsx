@@ -12,16 +12,16 @@ export const QuestGoalBeatPokemon = ({ objective }: QuestGoalProps) => {
   return (
     <PaddedInputContainer>
       <InputWithTopLabelContainer>
-        <Label htmlFor="select-pokemon">{t('database_pokemon:pokemon')}</Label>
+        <Label htmlFor="select-pokemon">{t('pokemon')}</Label>
         <SelectPokemon
           dbSymbol={objective.objectiveMethodArgs[0] as string}
           onChange={(value) => refreshUI((objective.objectiveMethodArgs[0] = value))}
-          undefValueOption={t('select:none')}
+          undefValueOption={t('none')}
           noLabel
         />
       </InputWithTopLabelContainer>
       <InputWithLeftLabelContainer>
-        <Label htmlFor="amount-beat-pokemon">{t('database_quests:amount')}</Label>
+        <Label htmlFor="amount-beat-pokemon">{t('amount')}</Label>
         <InputNumber
           name="amount-beat-pokemon"
           value={objective.objectiveMethodArgs[1] as number}

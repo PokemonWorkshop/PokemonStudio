@@ -53,7 +53,7 @@ const getSafeName = (
   getEntityName: ReturnType<typeof useGetEntityNameText>
 ) => {
   if (move) return getEntityName(move);
-  return t('database_moves:move_deleted');
+  return t('move_deleted');
 };
 
 const getMoveTechOptions = (
@@ -184,13 +184,13 @@ const RenderEditMove = ({
             [pokemonIdentifier.specie]: editMove(index, moveSet, currentEditedPokemon, selected.value),
           });
         }}
-        noOptionsText={t('database_moves:no_option')}
+        noOptionsText={t('no_option')}
         value={value}
         error={(occurrences.find((occ) => occ.dbSymbol === learnableMove.move)?.occurrence || 1) > 1 || !move}
       />
       {move ? <TypeCategory type={move.type}>{getNameType(types, move.type, state)}</TypeCategory> : <TypeCategory type="normal">???</TypeCategory>}
       {move ? (
-        <MoveCategory category={move.category}>{t(`database_moves:${move.category}` as never)}</MoveCategory>
+        <MoveCategory category={move.category}>{t(`${move.category}` as never)}</MoveCategory>
       ) : (
         <MoveCategory category="physical">???</MoveCategory>
       )}
@@ -244,12 +244,12 @@ export const MovepoolTable = ({ movepoolType }: MovepoolTableProps) => {
   ) : (
     <DataMoveTable>
       <DataMoveGrid gap="8px" className="header">
-        <span>{t('database_pokemon:move')}</span>
-        <span>{t('database_moves:type')}</span>
-        <span>{t('database_moves:category')}</span>
-        <span>{t('database_moves:pp')}</span>
-        <span>{t('database_moves:power')}</span>
-        <span>{t('database_moves:accuracy')}</span>
+        <span>{t('move')}</span>
+        <span>{t('type')}</span>
+        <span>{t('category')}</span>
+        <span>{t('pp')}</span>
+        <span>{t('power')}</span>
+        <span>{t('accuracy')}</span>
       </DataMoveGrid>
       {movepoolData.map((learnableMove, index) => (
         <RenderEditMove

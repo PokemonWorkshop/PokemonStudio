@@ -45,8 +45,8 @@ export const MovepoolDeletion = ({ type, onClose }: MovepoolDeletionProps) => {
 
   return (
     <Deletion
-      title={t(`database_pokemon:movepool_deletion`)}
-      message={t(`database_pokemon:movepool_deletion_message_${type}`, { pokemon: getCreatureName(pokemon[currentPokemon.specie]) })}
+      title={t(`movepool_deletion`)}
+      message={t(`movepool_deletion_message_${type}`, { pokemon: getCreatureName(pokemon[currentPokemon.specie]) })}
       onClickDelete={onClickDelete}
       onClose={onClose}
     />
