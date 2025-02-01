@@ -1545,5 +1545,10 @@
   "evolution_condition_trade": "By trade with a trainer",
   "evolution_condition_tradeWith": "By trade for another Pokémon",
   "evolution_condition_weather": "Depending on the weather",
-  "evolution_condition_env": "Depending on the environment"
+  "evolution_condition_env": "Depending on the environment",
+  "new_evolution": "New evolution",
+  "delete_this_evolution": "Delete this evolution",
+  "evolution_condition_select": "Evolution condition",
+  "additional_evolution": "Additional Evolution",
+  "condition_pokemon": "The Pokémon is"
 }
