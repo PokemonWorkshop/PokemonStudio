@@ -40,7 +40,7 @@ const findFirstFormNotUsed = (pokemon: StudioCreature, category: FormCategory) =
   return -1;
 };
 
-const formCategoryEntries = (t: TFunction<'database_pokemon'>) =>
+const formCategoryEntries = (t: TFunction) =>
   FormCategories.map((category) => ({ value: category, label: t(`${category}`) })).sort((a, b) => a.label.localeCompare(b.label));
 
 const CREATURE_FORM_NEW_EDITOR_SCHEMA = CREATURE_FORM_VALIDATOR.pick({ type1: true, type2: true });

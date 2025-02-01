@@ -38,13 +38,13 @@ export const getSelectDataOptionsOrderedByLabel = <K extends keyof ProjectData>(
     .map((data) => ({ value: data.dbSymbol, label: getText(data) }))
     .sort((a, b) => a.label.localeCompare(b.label));
 
-const getValue = (data: Entity | SelectOption, t: TFunction<'select'>, options: SelectOption[], overwriteNoneValue?: string) => {
+const getValue = (data: Entity | SelectOption, t: TFunction, options: SelectOption[], overwriteNoneValue?: string) => {
   if ('value' in data && data.value === '__undef__') return { value: data.value, label: overwriteNoneValue || t('none') };
   if ('value' in data) return data;
   return options.find(({ value }) => value === data.dbSymbol) || { value: data.dbSymbol, label: overwriteNoneValue || t('none') };
 };
 
-const getOptions = (selectOptions: SelectOption[], t: TFunction<'select'>, rejected?: string[], noneValue?: true, overwriteNoneValue?: string) => {
+const getOptions = (selectOptions: SelectOption[], t: TFunction, rejected?: string[], noneValue?: true, overwriteNoneValue?: string) => {
   const options = rejected ? selectOptions.filter((so) => !rejected.includes(so.value)) : selectOptions.slice();
   if (noneValue && (options.length === 0 || options[0].value !== '__undef__')) {
     options.unshift({ value: '__undef__', label: overwriteNoneValue || t('none') });

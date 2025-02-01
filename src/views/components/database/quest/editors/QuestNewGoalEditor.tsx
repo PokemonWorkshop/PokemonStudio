@@ -28,8 +28,7 @@ const ButtonContainer = styled.div`
   gap: 8px;
 `;
 
-const objectiveCategoryEntries = (t: TFunction<'database_quests'>) =>
-  QUEST_OBJECTIVES.map((objective) => ({ value: objective, label: t(objective) }));
+const objectiveCategoryEntries = (t: TFunction) => QUEST_OBJECTIVES.map((objective) => ({ value: objective, label: t(objective) }));
 
 type QuestNewGoalEditorProps = {
   quest: StudioQuest;

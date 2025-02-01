@@ -10,10 +10,9 @@ import { TranslateInputContainer } from '@components/inputs/TranslateInputContai
 import { useGetEntityDescriptionText, useGetEntityNameText, useSetProjectText } from '@utils/ReadingProjectText';
 import { QUEST_CATEGORIES, QUEST_DESCRIPTION_TEXT_ID, QUEST_NAME_TEXT_ID, QUEST_RESOLUTIONS, StudioQuest } from '@modelEntities/quest';
 
-const questCategoryEntries = (t: TFunction<'database_quests'>) => QUEST_CATEGORIES.map((category) => ({ value: category, label: t(category) }));
+const questCategoryEntries = (t: TFunction) => QUEST_CATEGORIES.map((category) => ({ value: category, label: t(category) }));
 
-const questResolutionEntries = (t: TFunction<'database_quests'>) =>
-  QUEST_RESOLUTIONS.map((resolution) => ({ value: resolution, label: t(resolution) }));
+const questResolutionEntries = (t: TFunction) => QUEST_RESOLUTIONS.map((resolution) => ({ value: resolution, label: t(resolution) }));
 
 type QuestFrameEditorProps = {
   quest: StudioQuest;

@@ -105,7 +105,7 @@ type RenderMemberProps = {
   onClickDelete: () => void;
 };
 
-const showMemberName = (name: string, t: TFunction<'dashboard_credits'>) => {
+const showMemberName = (name: string, t: TFunction) => {
   const splits = name.split(/,\s*/);
   const countMembers = splits.length;
   if (countMembers <= 3) return name;

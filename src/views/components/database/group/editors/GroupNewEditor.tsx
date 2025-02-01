@@ -29,13 +29,10 @@ import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/
 import { TooltipWrapper } from '@ds/Tooltip';
 import { TextInputError } from '@components/inputs/Input';
 
-const groupActivationEntries = (t: TFunction<'database_groups'>) =>
-  GroupActivationsMap.map((activation) => ({ value: activation.value, label: t(activation.label) }));
-const groupBattleTypeEntries = (t: TFunction<'database_groups'>) => GroupBattleTypes.map((type) => ({ value: type, label: t(type) }));
-const systemTagsEntries = (t: TFunction<'database_groups'>) =>
-  [...GROUP_SYSTEM_TAGS, 'custom' as const].map((tag) => ({ value: tag, label: t(tag) }));
-const groupVariationEntries = (t: TFunction<'database_groups'>) =>
-  GroupVariationsMap.map((variation) => ({ value: variation.value, label: t(variation.label) }));
+const groupActivationEntries = (t: TFunction) => GroupActivationsMap.map((activation) => ({ value: activation.value, label: t(activation.label) }));
+const groupBattleTypeEntries = (t: TFunction) => GroupBattleTypes.map((type) => ({ value: type, label: t(type) }));
+const systemTagsEntries = (t: TFunction) => [...GROUP_SYSTEM_TAGS, 'custom' as const].map((tag) => ({ value: tag, label: t(tag) }));
+const groupVariationEntries = (t: TFunction) => GroupVariationsMap.map((variation) => ({ value: variation.value, label: t(variation.label) }));
 const isTool = (variation: unknown): variation is StudioGroupTool => ['OldRod', 'GoodRod', 'SuperRod', 'RockSmash'].includes(variation as string);
 
 const ButtonContainer = styled.div`

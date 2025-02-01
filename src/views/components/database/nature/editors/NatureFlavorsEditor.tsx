@@ -10,7 +10,7 @@ import { useZodForm } from '@hooks/useZodForm';
 import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 import { InputFormContainer } from '@components/inputs/InputContainer';
 
-const flavorEntries = (t: TFunction<'database_natures'>) => FLAVOR_LIST.map((flavor) => ({ value: flavor, label: t(flavor) }));
+const flavorEntries = (t: TFunction) => FLAVOR_LIST.map((flavor) => ({ value: flavor, label: t(flavor) }));
 
 const FLAVORS_EDITOR_SCHEMA = NATURE_VALIDATOR.pick({
   flavors: true,

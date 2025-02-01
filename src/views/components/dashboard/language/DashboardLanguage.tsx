@@ -15,7 +15,7 @@ import { LanguageDefaultContainer } from './DashboardLanguageStyle';
 import { getLanguageName } from '@utils/getLanguageDisplayText';
 import i18n from '@src/i18n';
 
-const languageDefaultEntries = (language: StudioLanguageConfig, t: TFunction<'text_management'>) =>
+const languageDefaultEntries = (language: StudioLanguageConfig, t: TFunction) =>
   language.choosableLanguageCode
     .map((code, index) => ({ value: code, label: getLanguageName(code, language.choosableLanguageTexts[index], t, i18n) }))
     .sort((a, b) => a.label.localeCompare(b.label));

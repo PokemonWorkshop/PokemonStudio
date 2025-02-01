@@ -19,8 +19,8 @@ export const KeyDefaultTextInfo = [
 ] as const;
 export type KeyDefaultTextInfoType = (typeof KeyDefaultTextInfo)[number];
 
-const getDescription = (id: KeyDefaultTextInfoType, lang: string, t: TFunction<'text_management'>) => {
-  const hasDescr = i18n.exists(`text_management:text_info_description_${id}`, { lng: lang });
+const getDescription = (id: KeyDefaultTextInfoType, lang: string, t: TFunction) => {
+  const hasDescr = i18n.exists(`text_info_description_${id}`, { lng: lang });
   if (!hasDescr) return '';
   // The description is optional, that is why we use 'never'
   return t(`text_info_description_${id}` as never, { lng: lang });

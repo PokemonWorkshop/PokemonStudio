@@ -10,7 +10,7 @@ import { useTypePage } from '@hooks/usePage';
 import { useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
 
 type RenderEfficienceProps = {
-  t: TFunction<'database_types'>;
+  t: TFunction;
   efficience: 'high_efficience' | 'low_efficience' | 'zero_efficience';
   types: StudioType[];
 };

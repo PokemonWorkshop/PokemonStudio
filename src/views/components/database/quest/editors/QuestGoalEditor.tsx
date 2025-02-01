@@ -19,8 +19,7 @@ import {
   QuestGoalSpeakTo,
 } from './goals';
 
-const objectiveCategoryEntries = (t: TFunction<'database_quests'>) =>
-  QUEST_OBJECTIVES.map((objective) => ({ value: objective, label: t(objective) }));
+const objectiveCategoryEntries = (t: TFunction) => QUEST_OBJECTIVES.map((objective) => ({ value: objective, label: t(objective) }));
 
 type QuestGoalEditorProps = {
   quest: StudioQuest;

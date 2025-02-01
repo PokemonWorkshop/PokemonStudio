@@ -22,7 +22,7 @@ const ButtonContainer = styled.div`
 
 const iconFileExtensions = ['png'];
 
-const languageEntries = (t: TFunction<'homepage'>) => DefaultLanguages.map((language) => ({ value: language, label: t(language) }));
+const languageEntries = (t: TFunction) => DefaultLanguages.map((language) => ({ value: language, label: t(language) }));
 const wrongTitle = (title: string) => {
   return title.match('[\\\\/:*?"<>|$.]') !== null;
 };

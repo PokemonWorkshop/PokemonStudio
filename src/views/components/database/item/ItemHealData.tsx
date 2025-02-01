@@ -9,7 +9,7 @@ import { ItemDialogsRef } from './editors/ItemEditorOverlay';
 
 type ItemHealDataProps = { dialogsRef: ItemDialogsRef };
 
-const getHealValue = (t: TFunction<'database_items'>, item: Extract<StudioItem, { loyaltyMalus: number }>): string => {
+const getHealValue = (t: TFunction, item: Extract<StudioItem, { loyaltyMalus: number }>): string => {
   if ('hpCount' in item) {
     if ('statusList' in item) {
       return `${item.hpCount} & ${t(getHealedStatus(item.statusList))}`;

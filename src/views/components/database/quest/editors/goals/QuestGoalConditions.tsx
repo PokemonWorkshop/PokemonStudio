@@ -23,11 +23,7 @@ type SelectConditionProps = {
   onChange: (value: string) => void;
 };
 
-const conditionCategoryEntries = (
-  t: TFunction<'database_quests'>,
-  excludes: StudioCreatureQuestConditionType[],
-  itSelf: StudioCreatureQuestConditionType
-) =>
+const conditionCategoryEntries = (t: TFunction, excludes: StudioCreatureQuestConditionType[], itSelf: StudioCreatureQuestConditionType) =>
   CREATURE_QUEST_CONDITIONS.map((type) => ({ value: type, label: t(`condition_${type}`) })).filter(
     ({ value }) => !excludes.includes(value) || value === itSelf
   );

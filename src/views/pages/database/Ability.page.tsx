@@ -34,7 +34,7 @@ export const AbilityPage = () => {
             </DataBlockWithAction>
             <DataBlockWithAction size="full" title={t('deletion')}>
               <DeleteButtonWithIcon onClick={() => dialogsRef.current?.openDialog('deletion', true)} disabled={cannotDelete}>
-                {t('delete')}
+                {t('delete_this_ability')}
               </DeleteButtonWithIcon>
             </DataBlockWithAction>
           </DataBlockWrapper>

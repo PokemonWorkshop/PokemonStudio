@@ -35,7 +35,7 @@ const buildSeePokemonText = (objective: StudioQuestObjective, state: State) => {
   return getEntityNameSafe(state, state.projectData.pokemon[objective.objectiveMethodArgs[0] as string]);
 };
 
-const buildConditionsText = (conditions: StudioCreatureQuestCondition[], state: State, t: TFunction<'database_quests'>) => {
+const buildConditionsText = (conditions: StudioCreatureQuestCondition[], state: State, t: TFunction) => {
   if (conditions.length === 0) return '-';
 
   const conditionsTexts = conditions.map(({ type, value }) => {
@@ -65,7 +65,7 @@ const buildBeatPokemonText = (objective: StudioQuestObjective, state: State) => 
   return amount === 1 ? pokemonName : `${amount} ${pokemonName}`;
 };
 
-const buildCatchPokemonText = (objective: StudioQuestObjective, state: State, t: TFunction<'database_quests'>) => {
+const buildCatchPokemonText = (objective: StudioQuestObjective, state: State, t: TFunction) => {
   const conditionsText = buildConditionsText(objective.objectiveMethodArgs[0] as unknown as StudioCreatureQuestCondition[], state, t);
   const amount = objective.objectiveMethodArgs[1] as number;
   return amount === 1 ? conditionsText : `${amount} ${conditionsText}`;
@@ -77,18 +77,15 @@ const buildBeatNpcText = (objective: StudioQuestObjective) => {
   return amount === 1 ? npcName : `${amount} ${npcName}`;
 };
 
-const buildHatchEggText = (objective: StudioQuestObjective, _state: State, t: TFunction<'database_quests'>) => {
+const buildHatchEggText = (objective: StudioQuestObjective, _state: State, t: TFunction) => {
   return `${objective.objectiveMethodArgs[1]} ${t('eggs')}`;
 };
 
-const buildObtainEgg = (objective: StudioQuestObjective, _state: State, t: TFunction<'database_quests'>) => {
+const buildObtainEgg = (objective: StudioQuestObjective, _state: State, t: TFunction) => {
   return `${objective.objectiveMethodArgs[0]} ${t('eggs')}`;
 };
 
-const goalTexts: Record<
-  StudioQuestObjectiveType,
-  (objective: StudioQuestObjective, state: State, t: TFunction<'database_quests'>) => string | string[]
-> = {
+const goalTexts: Record<StudioQuestObjectiveType, (objective: StudioQuestObjective, state: State, t: TFunction) => string | string[]> = {
   objective_speak_to: buildSpeakToText,
   objective_obtain_item: buildObtainItemText,
   objective_see_pokemon: buildSeePokemonText,
@@ -99,7 +96,7 @@ const goalTexts: Record<
   objective_obtain_egg: buildObtainEgg,
 };
 
-export const buildGoalText = (objective: StudioQuestObjective, state: State, t: TFunction<'database_quests'>) => {
+export const buildGoalText = (objective: StudioQuestObjective, state: State, t: TFunction) => {
   return goalTexts[objective.objectiveMethodName](objective, state, t);
 };
 

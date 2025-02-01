@@ -30,10 +30,10 @@ const ButtonContainer = styled.div`
   gap: 8px;
 `;
 
-const aiCategoryEntries = (t: TFunction<'database_trainers'>) =>
+const aiCategoryEntries = (t: TFunction) =>
   TRAINER_AI_CATEGORIES.map((category, index) => ({ value: (index + 1).toString(), label: `${padStr(index + 1, 2)} - ${t(category)}` }));
 
-const vsTypeCategoryEntries = (t: TFunction<'database_trainers'>) =>
+const vsTypeCategoryEntries = (t: TFunction) =>
   TRAINER_VS_TYPE_CATEGORIES.map((category) => ({ value: category.toString(), label: t(`vs_type${category}`) }));
 
 type TrainerNewEditorProps = {

@@ -23,7 +23,7 @@ const getHelperText = (
   offensive: DbSymbol,
   defensive: DbSymbol,
   allTypes: StudioType[],
-  t: TFunction<'database_types'>,
+  t: TFunction,
   getTypeName: ReturnType<typeof useGetEntityNameTextUsingTextId>
 ) => {
   const offensiveType = allTypes.find(({ dbSymbol }) => dbSymbol === offensive) || allTypes[0];

@@ -32,7 +32,7 @@ const breedingGroupEntries = [
   'unknown',
 ] as const;
 
-const getBreedingGroupOptions = (t: TFunction<'database_pokemon'>) =>
+const getBreedingGroupOptions = (t: TFunction) =>
   breedingGroupEntries
     .map((breedingGroup, index) => ({ value: (index + 1).toString(), label: t(breedingGroup) }))
     .sort((a, b) => a.label.localeCompare(b.label));

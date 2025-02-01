@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import React, { Ref, useMemo } from 'react';
 
-const dialogConditionEntries = (dialogs: TrainerDialogAdditionalDialogs[], dialogIndex: number, t: TFunction<'database_trainers'>) => {
+const dialogConditionEntries = (dialogs: TrainerDialogAdditionalDialogs[], dialogIndex: number, t: TFunction) => {
   const currentConditions = dialogs.map(({ condition }) => condition).filter((condition) => condition !== dialogs[dialogIndex].condition);
   const conditions = TRAINER_ADDITIONAL_DIALOGS_CONDITION.filter((condition) => !currentConditions.includes(condition)).map((condition) => ({
     value: condition.toString(),

@@ -11,9 +11,9 @@ import { InputFormContainer } from '@components/inputs/InputContainer';
 import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 import { BattleEngineMethodEditor } from './MoveParametersEditor/BattleEngineMethodEditor';
 
-const targetEntries = (t: TFunction<'database_moves'>) => MOVE_TARGETS.map((target) => ({ value: target, label: t(`${target}`) }));
+const targetEntries = (t: TFunction) => MOVE_TARGETS.map((target) => ({ value: target, label: t(`${target}`) }));
 
-const battleEngineMethodEntries = (t: TFunction<'database_moves'>) => [
+const battleEngineMethodEntries = (t: TFunction) => [
   ...MOVE_BATTLE_ENGINE_METHODS.map((beMethod) => ({ value: beMethod, label: t(`${beMethod}`) })),
   { value: '__custom__', label: t('move_custom') },
 ];

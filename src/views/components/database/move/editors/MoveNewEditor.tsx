@@ -19,7 +19,7 @@ import { useSelectOptions } from '@hooks/useSelectOptions';
 import { InputFormContainer } from '@components/inputs/InputContainer';
 import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 
-const moveCategoryEntries = (t: TFunction<'database_types'>) =>
+const moveCategoryEntries = (t: TFunction) =>
   MOVE_CATEGORIES.map((category) => ({ value: category, label: t(category) })).sort((a, b) => a.label.localeCompare(b.label));
 
 const ButtonContainer = styled.div`

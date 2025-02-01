@@ -15,10 +15,9 @@ import { DbSymbol } from '@modelEntities/dbSymbol';
 import { createQuest } from '@utils/entityCreation';
 import { TooltipWrapper } from '@ds/Tooltip';
 
-const questCategoryEntries = (t: TFunction<'database_quests'>) => QUEST_CATEGORIES.map((category) => ({ value: category, label: t(category) }));
+const questCategoryEntries = (t: TFunction) => QUEST_CATEGORIES.map((category) => ({ value: category, label: t(category) }));
 
-const questResolutionEntries = (t: TFunction<'database_quests'>) =>
-  QUEST_RESOLUTIONS.map((resolution) => ({ value: resolution, label: t(resolution) }));
+const questResolutionEntries = (t: TFunction) => QUEST_RESOLUTIONS.map((resolution) => ({ value: resolution, label: t(resolution) }));
 
 const ButtonContainer = styled.div`
   display: flex;

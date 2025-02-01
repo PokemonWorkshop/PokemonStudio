@@ -25,7 +25,7 @@ const initForm = (gameInfo: StudioInfoConfig, state: State): StudioCompilation =
   };
 };
 
-const getExecutableInfoText = (t: TFunction<'compilation'>) => {
+const getExecutableInfoText = (t: TFunction) => {
   const platform = window.api.platform;
   if (platform === 'darwin') return t('executable_info_darwin');
   if (platform === 'linux') return t('executable_info_linux');

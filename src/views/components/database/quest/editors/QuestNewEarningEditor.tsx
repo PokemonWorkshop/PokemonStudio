@@ -12,7 +12,7 @@ import { TFunction } from 'i18next';
 import styled from 'styled-components';
 import { QuestEarningItem, QuestEarningMoney, QuestEarningPokemon } from './earnings';
 
-const earningCategoryEntries = (t: TFunction<'database_quests'>) => QUEST_EARNINGS.map((earning) => ({ value: earning, label: t(earning) }));
+const earningCategoryEntries = (t: TFunction) => QUEST_EARNINGS.map((earning) => ({ value: earning, label: t(earning) }));
 
 const ButtonContainer = styled.div`
   display: flex;

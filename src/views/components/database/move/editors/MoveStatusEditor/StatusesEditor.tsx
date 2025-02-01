@@ -14,7 +14,7 @@ type StatusesEditorProps = {
   getRawFormData: () => Record<string, unknown>;
 };
 
-const moveStatusEntries = (t: TFunction<'database_moves'>) => [
+const moveStatusEntries = (t: TFunction) => [
   { value: '__undef__', label: t('none') },
   ...MOVE_STATUS_LIST.map((status) => ({
     value: status,

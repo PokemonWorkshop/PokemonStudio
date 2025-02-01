@@ -10,7 +10,7 @@ import { useZodForm } from '@hooks/useZodForm';
 import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 import { InputFormContainer } from '@components/inputs/InputContainer';
 
-const moveCrititalRateEntries = (t: TFunction<'database_moves'>) =>
+const moveCrititalRateEntries = (t: TFunction) =>
   MOVE_CRITICAL_RATES.map((critialRate) => ({ value: critialRate.toString(), label: t(TEXT_CRITICAL_RATES[critialRate]) }));
 
 const DATA_EDITOR_SCHEMA = MOVE_VALIDATOR.pick({

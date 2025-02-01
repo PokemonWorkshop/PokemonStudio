@@ -18,7 +18,7 @@ type TypeMovesTableProps = {
 type RenderMoveProps = {
   move: StudioMove;
   state: State;
-  t: TFunction<'database_types'>;
+  t: TFunction;
 };
 
 const DataMoveTable = styled.div`

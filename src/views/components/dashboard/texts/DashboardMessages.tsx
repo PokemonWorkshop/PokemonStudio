@@ -35,7 +35,7 @@ const fontEntries = (ttfFiles: StudioTextTtfFileConfig[]) => {
   return ttfFiles.map((ttf) => ({ value: ttf.id.toString(), label: `${ttf.id} - ${ttf.name}` }));
 };
 
-const defaultTitle = (index: number, key: string, t: TFunction<'dashboard_texts'>, isChoice: boolean) => {
+const defaultTitle = (index: number, key: string, t: TFunction, isChoice: boolean) => {
   if (isChoice) {
     if (index === 0) return t('default_choices');
     else return t('scene_choices', { className: key });
