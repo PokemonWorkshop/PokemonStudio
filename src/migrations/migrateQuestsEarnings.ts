@@ -15,6 +15,7 @@ const migrateEarnings = (quest: StudioQuest) => {
 
     const encounter = createEncounter(false);
     encounter.specie = earning.earningArgs[0] as DbSymbol;
+    encounter.levelSetup = { kind: 'fixed', level: 5 };
     removeExpandPokemonSetup(encounter, 'originalTrainerId');
     removeExpandPokemonSetup(encounter, 'originalTrainerName');
     earning.earningArgs[0] = encounter;
