@@ -4,6 +4,22 @@ import React, { forwardRef, PropsWithoutRef, ReactNode, useEffect, useImperative
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 
+export const BackDrop = styled.div`
+  display: none; /* Hidden by default */
+  position: fixed;
+  z-index: 99; /* Ensure the backdrop is just below the modal */
+  left: 0;
+  width: 100vw; /* Full viewport width */
+
+  background-color: rgba(10, 9, 11, 0.3);
+  top: ${({ theme }) => theme.calc.titleBarHeight};
+  height: ${({ theme }) => theme.calc.height};
+
+  &.open {
+    display: block; /* Show the backdrop when open */
+  }
+`;
+
 export const DialogContainer = styled.dialog`
   overflow: visible;
   padding: 0;
@@ -16,29 +32,30 @@ export const DialogContainer = styled.dialog`
     top: ${({ theme }) => theme.calc.titleBarHeight};
     height: ${({ theme }) => theme.calc.height};
     left: 100%;
+
+    &.open {
+      transform: translateX(-100%);
+      opacity: 1;
+    }
+  }
+
+  &.open {
+    display: block;
+    z-index: 100;
   }
 
   &.center {
     opacity: 0;
+
+    &.open {
+      opacity: 1;
+      top: 40%;
+    }
   }
 
   & > div {
     left: unset;
     position: unset;
-  }
-
-  &::backdrop {
-    background-color: rgba(10, 9, 11, 0.3);
-    top: ${({ theme }) => theme.calc.titleBarHeight};
-    height: ${({ theme }) => theme.calc.height};
-  }
-
-  &.right[open] {
-    transform: translateX(-100%);
-  }
-
-  &.center[open] {
-    opacity: 1;
   }
 
   &:focus {
@@ -80,18 +97,22 @@ const animationOption = {
   easing: 'ease-in',
 } as const;
 
-const closeDialogWithAnimation = (dialog: HTMLDialogElement, isCenter: boolean, onFinish: () => void) => {
+const closeDialogWithAnimation = (dialog: HTMLDialogElement, backdrop: HTMLDivElement, isCenter: boolean, onFinish: () => void) => {
   const animation = dialog.animate(isCenter ? animationKeys.center.close : animationKeys.right.close, animationOption);
+
   animation.onfinish = () => {
-    onFinish();
+    dialog.classList.remove('open');
+    backdrop.classList.remove('open');
     dialog.close();
+    onFinish();
     dialog.removeEventListener('cancel', onDialogCancel);
   };
 };
 
-const openDialogWithAnimation = (dialog: HTMLDialogElement, isCenter: boolean) => {
+const openDialogWithAnimation = (dialog: HTMLDialogElement, backdrop: HTMLDivElement, isCenter: boolean) => {
   dialog.addEventListener('cancel', onDialogCancel);
-  dialog.showModal();
+  dialog.classList.add('open');
+  backdrop.classList.add('open');
   dialog.animate(isCenter ? animationKeys.center.open : animationKeys.right.open, animationOption);
 };
 
@@ -138,10 +159,12 @@ export const defineEditorOverlay = <Keys extends string, Props extends Record<st
     const handleCloseRef = useEditorHandlingCloseRef();
     const [currentDialog, setCurrentDialog] = useState<Keys | undefined>(undefined);
     const [isCenter, setIsCenter] = useState(false);
+    const backdropRef = useRef<HTMLDivElement>(null);
 
     const closeDialog = () => {
       handleCloseRef.current?.onClose();
-      if (dialogRef.current) closeDialogWithAnimation(dialogRef.current, isCenter, () => setCurrentDialog(undefined));
+      if (dialogRef.current && backdropRef.current)
+        closeDialogWithAnimation(dialogRef.current, backdropRef.current, isCenter, () => setCurrentDialog(undefined));
     };
 
     const currentlyRenderedDialog = useMemo(() => {
@@ -154,14 +177,17 @@ export const defineEditorOverlay = <Keys extends string, Props extends Record<st
       if (handleCloseRef.current?.canClose()) closeDialog();
     };
 
-    const onClickOutside = (e: React.MouseEvent<HTMLDialogElement, MouseEvent>) => {
+    const onClickOutside = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       if (e.currentTarget === e.target) onEscape();
     };
 
     const openDialog = (name: Keys, isCenterDialog?: boolean) => {
       setIsCenter(isCenterDialog || false);
       setCurrentDialog(name);
-      if (dialogRef.current) openDialogWithAnimation(dialogRef.current, isCenterDialog || false);
+      // Without tick, if the dialog change between center and right, the dialog is not displayed correctly
+      setTimeout(() => {
+        if (dialogRef.current && backdropRef.current) openDialogWithAnimation(dialogRef.current, backdropRef.current, isCenterDialog || false);
+      }, 0);
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -182,9 +208,12 @@ export const defineEditorOverlay = <Keys extends string, Props extends Record<st
     }, [currentDialog]);
 
     return createPortal(
-      <DialogContainer ref={dialogRef} onMouseDown={onClickOutside} className={isCenter ? 'center' : 'right'}>
-        {currentlyRenderedDialog}
-      </DialogContainer>,
+      <>
+        <BackDrop ref={backdropRef} onClick={onClickOutside}></BackDrop>
+        <DialogContainer ref={dialogRef} className={isCenter ? 'center' : 'right'}>
+          {currentlyRenderedDialog}
+        </DialogContainer>
+      </>,
       document.querySelector('#dialogs') || document.createElement('div')
     );
   });
