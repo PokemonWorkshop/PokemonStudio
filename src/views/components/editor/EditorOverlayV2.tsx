@@ -207,6 +207,36 @@ export const defineEditorOverlay = <Keys extends string, Props extends Record<st
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentDialog]);
 
+     useEffect(() => {
+       const handleTabKey = (event: KeyboardEvent) => {
+         if (event.key !== 'Tab') return;
+
+         const focusableElements = dialogRef.current?.querySelectorAll('a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])');
+         if (!focusableElements || focusableElements.length === 0) return;
+
+         const firstElement = focusableElements[0] as HTMLElement;
+         const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+
+         if (event.shiftKey) {
+           // Shift + Tab
+           if (document.activeElement === firstElement) {
+             lastElement.focus();
+             event.preventDefault();
+           }
+         } else {
+           // Tab
+           if (document.activeElement === lastElement) {
+             firstElement.focus();
+             event.preventDefault();
+           }
+         }
+       };
+
+       window.addEventListener('keydown', handleTabKey);
+
+       return () => window.removeEventListener('keydown', handleTabKey);
+     }, [currentDialog]);
+
     return createPortal(
       <>
         <BackDrop ref={backdropRef} onClick={onClickOutside}></BackDrop>
