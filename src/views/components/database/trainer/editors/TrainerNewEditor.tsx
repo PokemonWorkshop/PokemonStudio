@@ -4,7 +4,9 @@ import { Editor } from '@components/editor';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
+import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import { SelectCustomSimple } from '@components/SelectCustom';
+import { SelectTrainer } from '@components/selects';
 import styled from 'styled-components';
 import { padStr } from '@utils/PadStr';
 import { useProjectTrainers } from '@hooks/useProjectData';
@@ -18,16 +20,29 @@ import {
   TRAINER_VICTORY_SENTENCE_TEXT_ID,
   TRAINER_VS_TYPE_CATEGORIES,
 } from '@modelEntities/trainer';
-import { useSetProjectText } from '@utils/ReadingProjectText';
+import { useSetProjectText, useGetProjectText } from '@utils/ReadingProjectText';
 import { createTrainer } from '@utils/entityCreation';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { TooltipWrapper } from '@ds/Tooltip';
+import { importTrainerData } from '@utils/importEntityDataUtils';
 
 const ButtonContainer = styled.div`
   display: flex;
   flex-direction: column;
   padding: 16px 0 0 0;
   gap: 8px;
+`;
+
+const ImportInfo = styled.div`
+  ${({ theme }) => theme.fonts.normalSmall};
+  color: ${({ theme }) => theme.colors.text400};
+  user-select: none;
+`;
+
+const ImportInfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 `;
 
 const aiCategoryEntries = (t: TFunction<'database_trainers'>) =>
@@ -54,17 +69,30 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
   const baseMoneyRef = useRef<HTMLInputElement>(null);
   const [baseMoneyError, setBaseMoneyError] = useState<'value' | undefined>(undefined);
   const setText = useSetProjectText();
+  const getText = useGetProjectText();
+  const [selectedTrainer, setSelectedTrainer] = useState('__undef__');
+  const [importing, setImporting] = useState(false);
 
   useEditorHandlingClose(ref);
 
   const onClickNew = () => {
     if (!baseMoneyRef.current || !battleIdRef.current) return;
 
-    const newTrainer = createTrainer(trainers, ai, vsType, battleIdRef.current.valueAsNumber, baseMoneyRef.current.valueAsNumber);
+    let newTrainer = createTrainer(trainers, ai, vsType, battleIdRef.current.valueAsNumber, baseMoneyRef.current.valueAsNumber);
+
+    if (importing && selectedTrainer !== '__undef__') {
+      setText(TRAINER_VICTORY_SENTENCE_TEXT_ID, newTrainer.id, getText(TRAINER_VICTORY_SENTENCE_TEXT_ID, trainers[selectedTrainer].id));
+      setText(TRAINER_DEFEAT_SENTENCE_TEXT_ID, newTrainer.id, getText(TRAINER_DEFEAT_SENTENCE_TEXT_ID, trainers[selectedTrainer].id));
+
+      newTrainer = importTrainerData(newTrainer, trainers[selectedTrainer]);
+    } else {
+      setText(TRAINER_VICTORY_SENTENCE_TEXT_ID, newTrainer.id, '');
+      setText(TRAINER_DEFEAT_SENTENCE_TEXT_ID, newTrainer.id, '');
+    }
+
     setText(TRAINER_CLASS_TEXT_ID, newTrainer.id, trainerClass);
     setText(TRAINER_NAME_TEXT_ID, newTrainer.id, name);
-    setText(TRAINER_VICTORY_SENTENCE_TEXT_ID, newTrainer.id, '');
-    setText(TRAINER_DEFEAT_SENTENCE_TEXT_ID, newTrainer.id, '');
+
     setTrainer({ [newTrainer.dbSymbol]: newTrainer }, { trainer: newTrainer.dbSymbol });
     closeDialog();
   };
@@ -134,6 +162,20 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
           <Label htmlFor="base-money">{t('base_money')}</Label>
           <Input type="number" name="base-money" min="0" max="99999" defaultValue={10} ref={baseMoneyRef} onChange={onBaseMoneyChange} />
         </InputWithLeftLabelContainer>
+        <InputGroupCollapse title={t('other_data')} gap="16px" onClick={() => setImporting(!importing)}>
+          <ImportInfoContainer>
+            <ImportInfo>{t('trainer_import_info')}</ImportInfo>
+          </ImportInfoContainer>
+          <InputWithTopLabelContainer>
+            <Label htmlFor="select-trainer-to-import">{t('import_trainer_from')}</Label>
+            <SelectTrainer
+              dbSymbol={selectedTrainer}
+              onChange={(dbSymbol) => setSelectedTrainer(dbSymbol)}
+              noLabel
+              undefValueOption={t('none_option')}
+            />
+          </InputWithTopLabelContainer>
+        </InputGroupCollapse>
         <ButtonContainer>
           <TooltipWrapper data-tooltip={checkDisabled() ? t('fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickNew} disabled={checkDisabled()}>
