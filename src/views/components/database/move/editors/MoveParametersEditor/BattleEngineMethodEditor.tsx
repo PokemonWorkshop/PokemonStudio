@@ -6,6 +6,7 @@ import { MOVE_BATTLE_ENGINE_METHODS, StudioMove } from '@modelEntities/move';
 import { Input } from '@components/inputs/Input';
 import { InputWithTopLabelContainer, Label } from '@components/inputs';
 import { Select } from '@ds/Select/Select';
+import { SelectCustomWithInput } from '@components/SelectCustom/SelectCustomWithInput';
 
 const BattleEngineMethodEditorContainer = styled.div`
   display: flex;
@@ -28,16 +29,29 @@ export const BattleEngineMethodEditor = ({ move, options, getRawFormData, defaul
   const battleEngineMethod = String(getRawFormData().battleEngineMethod ?? defaults.battleEngineMethod);
 
   const onChange = (value: string) => {
-    const isCustom = value === '__custom__';
-    if (isCustom) setDefaultInputValue(`s_${move.dbSymbol}`);
-    setIsCustom(isCustom);
+    // const isCustom = value === 'custom';
+    // if (isCustom) setDefaultInputValue(`s_${move.dbSymbol}`);
+    // setIsCustom(isCustom);
   };
 
   return (
     <BattleEngineMethodEditorContainer>
       <InputWithTopLabelContainer>
         <Label>{t('procedure')}</Label>
-        <Select
+        <SelectCustomWithInput
+          value={battleEngineMethod}
+          selectCustomLabel={t('move_custom')}
+          zodFormName="battleEngineMethod"
+          onSelectValueChange={onChange}
+          inputLabel={t('function')}
+          defaultCustomValue={`s_${move.dbSymbol}`}
+          setCustomValue={(value) => setDefaultInputValue(value)}
+          selectOptions={options}
+          isTopLabel={true}
+        />
+      </InputWithTopLabelContainer>
+
+      {/* <Select
           name={isCustom ? '__ignore__' : 'battleEngineMethod'}
           options={options}
           onChange={onChange}
@@ -50,7 +64,7 @@ export const BattleEngineMethodEditor = ({ move, options, getRawFormData, defaul
           <Label required>{t('function')}</Label>
           <Input name={isCustom ? 'battleEngineMethod' : '__ignore__'} pattern="^[a-z_][a-z0-9_]+$" defaultValue={defaultInputValue} />
         </InputWithTopLabelContainer>
-      )}
+      )} */}
     </BattleEngineMethodEditorContainer>
   );
 };

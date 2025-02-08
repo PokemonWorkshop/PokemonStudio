@@ -89,6 +89,7 @@ export const TrainerFrame = ({ trainer, dialogsRef }: TrainerFrameProps) => {
   const getText = useGetProjectText();
   const trainerClass = getText(TRAINER_CLASS_TEXT_ID, trainer.id);
   const trainerName = `${trainerClass} ${getTrainerName(trainer)}`;
+  const aiLevelName = trainer.ai > TRAINER_AI_CATEGORIES.length ? 'custom' : TRAINER_AI_CATEGORIES[trainer.ai - 1].label;
 
   return (
     <DataBlockContainer size="full" onClick={() => dialogsRef.current?.openDialog('frame')}>
@@ -105,7 +106,7 @@ export const TrainerFrame = ({ trainer, dialogsRef }: TrainerFrameProps) => {
           </DataInfoContainerHeader>
           <TrainerSubInfoContainer>
             <DataFieldsetField label={t('trainer_class')} data={trainerClass} />
-            <DataFieldsetField label={t('ai_level')} data={t(TRAINER_AI_CATEGORIES[trainer.ai - 1])} />
+            <DataFieldsetField label={t('ai_level')} data={t(aiLevelName)} />
             <DataFieldsetField label={t('money_given')} data={`${getTrainerMoney(trainer)} P$`} />
           </TrainerSubInfoContainer>
         </TrainerInfoContainer>

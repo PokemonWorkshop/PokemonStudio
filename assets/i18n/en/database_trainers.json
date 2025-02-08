@@ -24,6 +24,7 @@
   "lieutenant": "Lieutenant",
   "gym_leader": "Gym Leader",
   "champion": "Champion",
+  "custom": "Custom",
   "trainer_sprite": "Trainer sprite",
   "money": "Money",
   "base_money": "Base money",
@@ -90,5 +91,6 @@
   "sentence_spoken": "Sentence spoken",
   "delete_dialog": "Delete this dialog",
   "max_dialog": "You cannot create more dialogs",
-  "no_sentence": "No text provided"
+  "no_sentence": "No text provided",
+  "ai_level_custom": "Custom level"
 }

@@ -4,7 +4,7 @@ import { EditorWithCollapse } from '@components/editor';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
-import { SelectCustomSimple } from '@components/SelectCustom';
+import { SelectCustomSimple, SelectCustomWithInput } from '@components/SelectCustom';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import styled from 'styled-components';
 import { Tag } from '@components/Tag';
@@ -12,6 +12,7 @@ import { padStr } from '@utils/PadStr';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 import {
   getTrainerMoney,
+  StudioTrainerAICategoryType,
   StudioTrainerVsType,
   TRAINER_AI_CATEGORIES,
   TRAINER_CLASS_TEXT_ID,
@@ -50,7 +51,7 @@ const MoneyContainer = styled.div`
 `;
 
 const aiCategoryEntries = (t: TFunction<'database_trainers'>) =>
-  TRAINER_AI_CATEGORIES.map((category, index) => ({ value: (index + 1).toString(), label: `${padStr(index + 1, 2)} - ${t(category)}` }));
+  TRAINER_AI_CATEGORIES.map((category) => ({ value: category.value, label: `${padStr(Number(category.value), 2)} - ${t(category.label)}` }));
 
 const vsTypeCategoryEntries = (t: TFunction<'database_trainers'>) =>
   TRAINER_VS_TYPE_CATEGORIES.map((category) => ({ value: category.toString(), label: t(`vs_type${category}`) }));
@@ -68,6 +69,9 @@ export const TrainerFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const trainerClassRef = useRef<HTMLInputElement>(null);
   const battleIdRef = useRef<HTMLInputElement>(null);
   const [baseMoney, setBaseMoney] = useState<number>(trainer.baseMoney);
+  const [aiCategory, setAiCategory] = useState<StudioTrainerAICategoryType>(
+    (trainer.ai > 7 ? 'custom' : trainer.ai.toString()) as StudioTrainerAICategoryType
+  );
   const [aiLevel, setAiLevel] = useState<number>(trainer.ai);
   const [vsType, setVsType] = useState<StudioTrainerVsType>(trainer.vsType);
 
@@ -109,6 +113,11 @@ export const TrainerFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
     trainerClassRef.current.value = trainerClassRef.current.defaultValue;
   };
 
+  const handleSelectValueChange = (value: string) => {
+    setAiCategory(value as StudioTrainerAICategoryType);
+    setAiLevel(value === 'custom' ? 8 : Number(value));
+  };
+
   return (
     <EditorWithCollapse type="edit" title={t('informations')}>
       <InputContainer>
@@ -143,13 +152,22 @@ export const TrainerFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
           </InputWithTopLabelContainer>
           <InputWithTopLabelContainer>
             <Label htmlFor="select-ai-level">{t('ai_level')}</Label>
-            <SelectCustomSimple
+            <SelectCustomWithInput
+              value={aiCategory}
+              selectCustomLabel={t('custom')}
+              onSelectValueChange={handleSelectValueChange}
+              inputLabel={t('ai_level_custom')}
+              defaultCustomValue={aiLevel.toString()}
+              setCustomValue={(value) => setAiLevel(Number(value))}
+              selectOptions={aiOptions}
+            />
+            {/* <SelectCustomSimple
               id="select-ai-level"
               options={aiOptions}
               onChange={(value) => setAiLevel(Number(value))}
               value={aiLevel.toString()}
               noTooltip
-            />
+            /> */}
           </InputWithTopLabelContainer>
           <InputWithTopLabelContainer>
             <Label htmlFor="select-vs-type">{t('vs_type')}</Label>

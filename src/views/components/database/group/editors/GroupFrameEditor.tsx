@@ -4,7 +4,7 @@ import { Editor } from '@components/editor';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
-import { SelectCustomSimple } from '@components/SelectCustom';
+import { SelectCustomSimple, SelectCustomWithInput } from '@components/SelectCustom';
 import {
   defineRelationCustomCondition,
   getActivationValue,
@@ -104,8 +104,13 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
     nameRef.current.value = nameRef.current.defaultValue;
   };
 
+  const handleSelectValueChange = (value: string) => {
+    setActivation(value as StudioGroupActivationType);
+    setSwitchValue(getSwitchValue(value as StudioGroupActivationType));
+  };
+
   return (
-    <Editor type="edit" title={t('informations')}>
+    <Editor type="edit" title={t('information')}>
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="name" required>
@@ -117,7 +122,16 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="select-activation">{t('activation')}</Label>
-          <InputContainer size="s">
+          <SelectCustomWithInput
+            value={activation}
+            selectCustomLabel={t('custom')}
+            onSelectValueChange={handleSelectValueChange}
+            inputLabel={t('switch')}
+            defaultCustomValue={switchValue.toString()}
+            setCustomValue={(value) => setSwitchValue(Number(value))}
+            selectOptions={activationOptions}
+          />
+          {/* <InputContainer size="s">
             <SelectCustomSimple
               id="select-activation"
               options={activationOptions}
@@ -145,7 +159,7 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
                 />
               </InputWithLeftLabelContainer>
             )}
-          </InputContainer>
+          </InputContainer> */}
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="select-battle-type">{t('battle_type')}</Label>
