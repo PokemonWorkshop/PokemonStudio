@@ -862,7 +862,6 @@
   "evolution_learnable_info": "You can import moves learned by evolving from another Pokémon.",
   "import_moves_from": "Importing the moves of",
   "validate": "Validate",
-
   "movepool_deletion": "Deletion of moves learned",
   "movepool_deletion_message_level": "You are about to permanently delete the moves learned by leveling up of {{pokemon}}.",
   "movepool_deletion_message_tutor": "You are about to permanently delete the moves learned by Move Tutor of {{pokemon}}.",
