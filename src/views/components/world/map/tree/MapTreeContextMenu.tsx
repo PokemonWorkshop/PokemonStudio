@@ -99,7 +99,7 @@ export const MapTreeContextMenu = ({ mapInfoValue, isDeleted, enableRename, dial
         <span className="icon">
           <DeleteIcon />
         </span>
-        {t('delete')}
+        {t('delete_this_map')}
       </div>
     </>
   );

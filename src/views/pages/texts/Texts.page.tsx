@@ -20,7 +20,7 @@ export const TextsPage = () => {
       <TextList dialogsRef={dialogsRef} disabledTranslation={disabledTranslation} />
       <DataBlockWithAction size="full" title={t('deletion')}>
         <DeleteButtonWithIcon onClick={() => dialogsRef.current?.openDialog('deletion', true)} disabled={cannotDelete}>
-          {t('delete')}
+          {t('delete_this_texts_file')}
         </DeleteButtonWithIcon>
       </DataBlockWithAction>
     </DataBlockWrapper>
