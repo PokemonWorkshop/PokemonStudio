@@ -29,6 +29,7 @@ export const BattleEngineMethodEditor = ({ move, options, getRawFormData, defaul
   const battleEngineMethod = String(getRawFormData().battleEngineMethod ?? defaults.battleEngineMethod);
 
   const onChange = (value: string) => {
+    setDefaultInputValue(`s_${move.dbSymbol}`);
     // const isCustom = value === 'custom';
     // if (isCustom) setDefaultInputValue(`s_${move.dbSymbol}`);
     // setIsCustom(isCustom);
@@ -42,9 +43,9 @@ export const BattleEngineMethodEditor = ({ move, options, getRawFormData, defaul
           value={battleEngineMethod}
           selectCustomLabel={t('move_custom')}
           zodFormName="battleEngineMethod"
-          onSelectValueChange={onChange}
+          onSelectValueChange={(value) => onChange(value)}
           inputLabel={t('function')}
-          defaultCustomValue={`s_${move.dbSymbol}`}
+          defaultCustomValue={defaultInputValue}
           setCustomValue={(value) => setDefaultInputValue(value)}
           selectOptions={options}
           isTopLabel={true}

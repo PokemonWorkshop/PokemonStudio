@@ -30,12 +30,22 @@ export const SelectCustomWithInput = ({
     return [...selectOptions, { label: selectCustomLabel, value: 'custom' }];
   }, [selectOptions, selectCustomLabel]);
   window.console.log(value);
-  const [isCustom, setIsCustom] = useState(!options.some((option) => option.value === value));
+  const [isCustom, setIsCustom] = useState(!selectOptions.some((option) => option.value === value));
+  const [selectValue, setSelectValue] = useState(isCustom ? 'custom' : selectOptions.find((option) => option.value === value)?.value);
+
+  const handleOnChangeSelect = (value: string) => {
+    setIsCustom(value === 'custom');
+    setSelectValue(options.find((option) => option.value === value)?.value);
+    onSelectValueChange(value);
+  };
 
   const handleBlurInput = (value: string) => {
-    if (options.find((option) => option.value === value)) {
+    if (selectOptions.find((option) => option.value === value)) {
+      setSelectValue(selectOptions.find((option) => option.value === value)?.value);
       onSelectValueChange(value);
       setIsCustom(false);
+    } else {
+      setIsCustom(true);
     }
     setCustomValue(value);
   };
@@ -44,20 +54,18 @@ export const SelectCustomWithInput = ({
     <InputContainer size="s">
       <Select
         name={isCustom ? '__ignore__' : zodFormName}
-        value={value}
+        //value={isCustom ? 'custom' : value}
+        value={selectValue}
         options={options}
-        onChange={(value) => {
-          setIsCustom(value === 'custom');
-          onSelectValueChange(value);
-        }}
+        onChange={(value) => handleOnChangeSelect(value)}
       />
       {isCustom &&
         (isTopLabel ? (
           <InputWithTopLabelContainer>
-            <Label htmlFor="input">{inputLabel}</Label>
+            <Label>{inputLabel}</Label>
             <Input
               type="string"
-              name={zodFormName || 'custom'}
+              name={isCustom ? zodFormName : '__ignore__'}
               defaultValue={defaultCustomValue}
               onChange={(event) => setCustomValue(event.target.value)}
               onBlur={(event) => handleBlurInput(event.target.value)}
@@ -65,10 +73,10 @@ export const SelectCustomWithInput = ({
           </InputWithTopLabelContainer>
         ) : (
           <InputWithLeftLabelContainer>
-            <Label htmlFor="input">{inputLabel}</Label>
+            <Label>{inputLabel}</Label>
             <Input
               type="number"
-              name={zodFormName || 'custom'}
+              name={isCustom ? zodFormName : '__ignore__'}
               defaultValue={defaultCustomValue}
               onChange={(event) => setCustomValue(event.target.value)}
               onBlur={(event) => handleBlurInput(event.target.value)}
