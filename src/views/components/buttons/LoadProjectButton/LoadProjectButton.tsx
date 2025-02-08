@@ -21,7 +21,7 @@ export const LoadProjectButton = ({ children }: LoadProjectButtonProps) => {
         navigate('/dashboard');
       },
       ({ errorMessage }) => loaderRef.current.setError('loading_project_error', errorMessage),
-      (count) => loaderRef.current.setError('loading_project_error', t('loader:integrity_message', { count }), true)
+      (count) => loaderRef.current.setError('loading_project_error', t('integrity_message', { count }), true)
     );
   };
 

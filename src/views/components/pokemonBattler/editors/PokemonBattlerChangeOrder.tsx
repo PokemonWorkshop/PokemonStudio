@@ -136,7 +136,7 @@ const RenderBattler = forwardRef<HTMLDivElement, RenderBattlerProps>(({ battler,
   const { projectDataValues: species, state } = useProjectPokemon();
   const { t } = useTranslation();
   const specie = species[battler.specie];
-  const creatureName = specie ? getEntityNameText(specie, state) : t('pokemon_deleted');
+  const creatureName = specie ? getEntityNameText(specie, state) : t('creature_deleted');
   const level = battler.levelSetup.kind === 'fixed' ? battler.levelSetup.level : 0;
 
   return (

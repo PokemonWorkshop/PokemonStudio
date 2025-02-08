@@ -9,9 +9,9 @@ export const GenderInput = ({ state, inputRefs }: EvolutionConditionEditorInput)
   const [value, setValue] = useState<string | undefined>(state.defaults.gender?.toString());
   const options = useMemo(
     () => [
-      { value: '1', label: t('evolution_value_gender_male') } as const,
-      { value: '2', label: t('evolution_value_gender_female') } as const,
-      { value: '0', label: t('evolution_value_gender_unknown') } as const,
+      { value: '1', label: t('evolutionValue_gender_male') } as const,
+      { value: '2', label: t('evolutionValue_gender_female') } as const,
+      { value: '0', label: t('evolutionValue_gender_unknown') } as const,
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
@@ -23,7 +23,7 @@ export const GenderInput = ({ state, inputRefs }: EvolutionConditionEditorInput)
 
   return (
     <InputWithTopLabelContainer>
-      <Label>{t('evolution_value_gender')}</Label>
+      <Label>{t('evolutionValue_gender')}</Label>
       <SelectCustomSimple
         id="gender-DropDown"
         options={options}

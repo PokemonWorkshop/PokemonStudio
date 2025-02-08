@@ -57,7 +57,7 @@ export const EvolutionDataBlock = ({ pokemonWithForm, evolutionIndex, setEvoluti
           <DataFieldsetField
             label={t('evolves_into')}
             data={`${megaPrefix}${
-              currentCreature ? getEntityName(currentCreature) : evolution?.dbSymbol === '__undef__' ? t('none') : t('pokemon_deleted')
+              currentCreature ? getEntityName(currentCreature) : evolution?.dbSymbol === '__undef__' ? t('none') : t('creature_deleted')
             }`}
             error={evolution?.dbSymbol !== '__undef__' && currentCreature === undefined}
             disabled={evolution?.dbSymbol === '__undef__'}

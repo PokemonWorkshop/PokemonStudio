@@ -325,7 +325,7 @@ export const PokemonBattler = ({ pokemon, index, from, dialogsRef, setCurrentBat
                 shortcut={() => shortcutPokemonNavigation(specie.dbSymbol, pokemon.form)}
               />
             ) : (
-              <span className="error">{t('pokemon_deleted')}</span>
+              <span className="error">{t('creature_deleted')}</span>
             )}
             <span className="level">
               {pokemon.levelSetup.kind === 'fixed'

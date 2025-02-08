@@ -95,7 +95,7 @@ export const ZonePokemonList = ({ pokemon }: PokemonZoneProps) => {
             {getEntityName(specie)}
           </span>
         ) : (
-          <span className="error">{t('pokemon_deleted')}</span>
+          <span className="error">{t('creature_deleted')}</span>
         )}
         <span className="form">{getForm(pokemon)}</span>
       </div>

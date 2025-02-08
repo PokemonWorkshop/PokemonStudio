@@ -9,14 +9,14 @@ export const WeatherInput = ({ type, state, dispatch }: EvolutionConditionEditor
   const { t } = useTranslation();
   const options = useMemo(
     () => [
-      { value: '__undef__', label: t('evolution_value_weather_none') } as const,
-      { value: 'rain', label: t('evolution_value_weather_rain') } as const,
-      { value: 'sunny', label: t('evolution_value_weather_sunny') } as const,
-      { value: 'sandstorm', label: t('evolution_value_weather_sandstorm') } as const,
-      { value: 'hail', label: t('evolution_value_weather_hail') } as const,
-      { value: 'fog', label: t('evolution_value_weather_fog') } as const,
-      { value: 'hardsun', label: t('evolution_value_weather_hardsun') } as const,
-      { value: 'hardrain', label: t('evolution_value_weather_hardrain') } as const,
+      { value: '__undef__', label: t('evolutionValue_weather_none') } as const,
+      { value: 'rain', label: t('evolutionValue_weather_rain') } as const,
+      { value: 'sunny', label: t('evolutionValue_weather_sunny') } as const,
+      { value: 'sandstorm', label: t('evolutionValue_weather_sandstorm') } as const,
+      { value: 'hail', label: t('evolutionValue_weather_hail') } as const,
+      { value: 'fog', label: t('evolutionValue_weather_fog') } as const,
+      { value: 'hardsun', label: t('evolutionValue_weather_hardsun') } as const,
+      { value: 'hardrain', label: t('evolutionValue_weather_hardrain') } as const,
     ],
     [t]
   );
@@ -24,7 +24,7 @@ export const WeatherInput = ({ type, state, dispatch }: EvolutionConditionEditor
 
   return (
     <InputWithTopLabelContainer>
-      <Label>{t('evolution_value_weather')}</Label>
+      <Label>{t('evolutionValue_weather')}</Label>
       <SelectCustomSimple
         id="weather-DropDown"
         options={options}

@@ -23,7 +23,7 @@ export const SelectItem = ({ dbSymbol, onChange, noLabel, noneValue, undefValueO
   }, [undefValueOption, typeOptions, noneValue, t]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const optionals = useMemo(() => ({ deletedOption: t('item_not_found') }), []);
+  const optionals = useMemo(() => ({ deletedOption: t('no_item_found') }), []);
 
   if (noLabel) return <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />;
 

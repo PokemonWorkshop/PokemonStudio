@@ -45,7 +45,7 @@ export const ReproductionDataBlock = ({ pokemonWithForm, dialogsRef }: PokemonDa
               ? '-'
               : pokemons[form.babyDbSymbol]
               ? getCreatureName(pokemons[form.babyDbSymbol])
-              : t('pokemon_deleted')
+              : t('creature_deleted')
           }
           error={!pokemons[form.babyDbSymbol]}
           clickable={{

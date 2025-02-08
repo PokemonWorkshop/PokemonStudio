@@ -127,7 +127,7 @@ export const ZonePage = () => {
     zone: (
       <Deletion
         title={t('deletion_of_zone')}
-        message={t('deletion_message', { zone: getZoneName(zone) })}
+        message={t('deletion_message_zone', { zone: getZoneName(zone) })}
         onClickDelete={onClickDelete}
         onClose={() => setCurrentDeletion(undefined)}
       />
