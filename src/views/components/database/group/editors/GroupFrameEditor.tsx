@@ -14,7 +14,6 @@ import {
   StudioGroupActivationType,
   GroupBattleTypes,
   GroupVariationsMap,
-  onSwitchUpdateActivation,
   updateActivation,
   GroupToolMap,
   isCustomEnvironment as isCustomEnvironmentFunc,
@@ -104,7 +103,7 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
     nameRef.current.value = nameRef.current.defaultValue;
   };
 
-  const handleSelectValueChange = (value: string) => {
+  const handleGroupActivationChange = (value: string) => {
     setActivation(value as StudioGroupActivationType);
     setSwitchValue(getSwitchValue(value as StudioGroupActivationType));
   };
@@ -125,41 +124,12 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
           <SelectCustomWithInput
             value={activation}
             selectCustomLabel={t('custom')}
-            onSelectValueChange={handleSelectValueChange}
+            onSelectValueChange={handleGroupActivationChange}
             inputLabel={t('switch')}
             defaultCustomValue={switchValue.toString()}
             setCustomValue={(value) => setSwitchValue(Number(value))}
             selectOptions={activationOptions}
           />
-          {/* <InputContainer size="s">
-            <SelectCustomSimple
-              id="select-activation"
-              options={activationOptions}
-              onChange={(value) => {
-                setActivation(value as StudioGroupActivationType);
-                setSwitchValue(getSwitchValue(value as StudioGroupActivationType));
-              }}
-              value={activation}
-              noTooltip
-            />
-            {activation === 'custom' && (
-              <InputWithLeftLabelContainer>
-                <Label htmlFor="switch">{t('switch')}</Label>
-                <Input
-                  type="number"
-                  name="switch"
-                  min="1"
-                  max="99999"
-                  value={isNaN(switchValue) ? '' : switchValue}
-                  onChange={(event) => {
-                    const newValue = event.target.valueAsNumber;
-                    setSwitchValue(newValue);
-                  }}
-                  onBlur={(event) => setActivation(onSwitchUpdateActivation(event.target.valueAsNumber))}
-                />
-              </InputWithLeftLabelContainer>
-            )}
-          </InputContainer> */}
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="select-battle-type">{t('battle_type')}</Label>

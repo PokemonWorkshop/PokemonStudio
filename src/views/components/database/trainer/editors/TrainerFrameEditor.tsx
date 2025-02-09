@@ -113,7 +113,7 @@ export const TrainerFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
     trainerClassRef.current.value = trainerClassRef.current.defaultValue;
   };
 
-  const handleSelectValueChange = (value: string) => {
+  const handleTrainerAiLevelChange = (value: string) => {
     setAiCategory(value as StudioTrainerAICategoryType);
     setAiLevel(value === 'custom' ? 8 : Number(value));
   };
@@ -155,19 +155,12 @@ export const TrainerFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
             <SelectCustomWithInput
               value={aiCategory}
               selectCustomLabel={t('custom')}
-              onSelectValueChange={handleSelectValueChange}
+              onSelectValueChange={handleTrainerAiLevelChange}
               inputLabel={t('ai_level_custom')}
               defaultCustomValue={aiLevel.toString()}
               setCustomValue={(value) => setAiLevel(Number(value))}
               selectOptions={aiOptions}
             />
-            {/* <SelectCustomSimple
-              id="select-ai-level"
-              options={aiOptions}
-              onChange={(value) => setAiLevel(Number(value))}
-              value={aiLevel.toString()}
-              noTooltip
-            /> */}
           </InputWithTopLabelContainer>
           <InputWithTopLabelContainer>
             <Label htmlFor="select-vs-type">{t('vs_type')}</Label>

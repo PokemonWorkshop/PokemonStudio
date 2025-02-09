@@ -91,7 +91,7 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
 
   const checkDisabled = () => !name || !trainerClass || !!baseMoneyError || !!battleIdError;
 
-  const handleSelectValueChange = (value: string) => {
+  const handleTrainerAiLevelChange = (value: string) => {
     setAiCategory(value as StudioTrainerAICategoryType);
     setAi(value === 'custom' ? 8 : Number(value));
   };
@@ -122,13 +122,12 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
           <SelectCustomWithInput
             value={aiCategory}
             selectCustomLabel={t('custom')}
-            onSelectValueChange={handleSelectValueChange}
+            onSelectValueChange={handleTrainerAiLevelChange}
             inputLabel={t('ai_level_custom')}
             defaultCustomValue={ai.toString()}
             setCustomValue={(value) => setAi(Number(value))}
             selectOptions={aiOptions}
           />
-          {/* <SelectCustomSimple id="select-ai-level" options={aiOptions} onChange={(value) => setAi(Number(value))} value={ai.toString()} noTooltip /> */}
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="select-vs-type">{t('vs_type')}</Label>

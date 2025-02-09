@@ -15,7 +15,6 @@ import {
   GroupBattleTypes,
   GroupVariationsMap,
   getSwitchValue,
-  onSwitchUpdateActivation,
   isCustomEnvironment as isCustomEnvironmentFunc,
   setCustomEnvironment,
   wrongEnvironment,
@@ -103,7 +102,7 @@ export const GroupNewEditor = forwardRef<EditorHandlingClose, GroupNewEditorProp
     return true;
   };
 
-  const handleSelectValueChange = (value: string) => {
+  const handleGroupActivationChange = (value: string) => {
     setActivation(value as StudioGroupActivationType);
     setSwitchId(getSwitchValue(value as StudioGroupActivationType));
   };
@@ -122,7 +121,7 @@ export const GroupNewEditor = forwardRef<EditorHandlingClose, GroupNewEditorProp
           <SelectCustomWithInput
             value={activation}
             selectCustomLabel={t('custom')}
-            onSelectValueChange={handleSelectValueChange}
+            onSelectValueChange={handleGroupActivationChange}
             inputLabel={t('switch')}
             defaultCustomValue={switchId.toString()}
             setCustomValue={(value) => setSwitchId(Number(value))}
