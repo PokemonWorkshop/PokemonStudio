@@ -79,17 +79,6 @@ export const updateActivation = (value: string, group: StudioGroup, switchValue:
   return conditions;
 };
 
-export const onSwitchUpdateActivation = (value: number): StudioGroupActivationType => {
-  switch (value) {
-    case 11:
-    case 12:
-    case 13:
-    case 14:
-      return value.toString() as StudioGroupActivationType;
-  }
-  return 'custom';
-};
-
 export const getSwitchValue = (activation: StudioGroupActivationType) => {
   switch (activation) {
     case 'always':
