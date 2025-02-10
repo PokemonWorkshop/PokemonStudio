@@ -18,6 +18,7 @@ type InputGroupCollapseProps = {
   noMargin?: true;
   collapseByDefault?: true;
   onDelete?: () => void;
+  onClick?: () => void;
 };
 
 const CollapseGroupTitleStyle = styled.span`
@@ -113,10 +114,13 @@ export const InputGroupCollapse: FunctionComponent<InputGroupCollapseProps> = ({
   noMargin,
   collapseByDefault,
   onDelete,
+  onClick,
 }: InputGroupCollapseProps) => {
   const [collapse, setCollapse] = useState(collapseByDefault || false);
   const onClickedCollapse = () => {
     setCollapse(!collapse);
+
+    if (onClick) onClick();
   };
   return (
     <InputGroupCollapseContainer>
