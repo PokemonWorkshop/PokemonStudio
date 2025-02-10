@@ -126,6 +126,8 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
             selectCustomLabel={t('custom')}
             onSelectValueChange={handleGroupActivationChange}
             inputLabel={t('switch')}
+            minInput="1"
+            maxInput="99999"
             defaultCustomValue={switchValue.toString()}
             setCustomValue={(value) => setSwitchValue(Number(value))}
             selectOptions={activationOptions}

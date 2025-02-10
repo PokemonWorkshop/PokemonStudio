@@ -152,6 +152,8 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
             selectCustomLabel={t('custom')}
             onSelectValueChange={handleTrainerAiLevelChange}
             inputLabel={t('ai_level_custom')}
+            minInput="1"
+            maxInput="99999"
             defaultCustomValue={ai.toString()}
             setCustomValue={(value) => setAi(Number(value))}
             selectOptions={aiOptions}

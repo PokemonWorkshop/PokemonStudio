@@ -83,6 +83,7 @@ export const TrainerFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   };
 
   const canClose = () => {
+    if (aiLevel < 1 || aiLevel > 99999) return false;
     const result = !!trainerNameRef.current?.value && !!trainerClassRef.current?.value && !!battleIdRef.current?.validity.valid;
     return result && (isNaN(baseMoney) || (baseMoney >= 0 && baseMoney <= 99999)) && !dialogsRef.current?.currentDialog;
   };
@@ -157,6 +158,8 @@ export const TrainerFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
               selectCustomLabel={t('custom')}
               onSelectValueChange={handleTrainerAiLevelChange}
               inputLabel={t('ai_level_custom')}
+              minInput="1"
+              maxInput="99999"
               defaultCustomValue={aiLevel.toString()}
               setCustomValue={(value) => setAiLevel(Number(value))}
               selectOptions={aiOptions}

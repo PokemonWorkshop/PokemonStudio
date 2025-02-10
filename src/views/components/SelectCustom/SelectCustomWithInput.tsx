@@ -9,6 +9,8 @@ type SelectCustomWithInputProps = {
   zodFormName?: string;
   onSelectValueChange: (value: string) => void;
   inputLabel: string;
+  minInput?: string;
+  maxInput?: string;
   inputPattern?: string;
   defaultCustomValue: string | undefined;
   setCustomValue: (value: string) => void;
@@ -22,6 +24,8 @@ export const SelectCustomWithInput = ({
   zodFormName,
   onSelectValueChange,
   inputLabel,
+  minInput,
+  maxInput,
   inputPattern,
   defaultCustomValue,
   setCustomValue,
@@ -57,10 +61,12 @@ export const SelectCustomWithInput = ({
       <Select name={isCustom ? '__ignore__' : zodFormName} value={selectValue} options={options} onChange={(value) => handleSelectChange(value)} />
       {isCustom && (
         <InputContainerComponent>
-          <Label>{inputLabel}</Label>
+          <Label required>{inputLabel}</Label>
           <Input
             type={isTopLabel ? 'string' : 'number'}
             name={isCustom ? zodFormName : '__ignore__'}
+            min={minInput}
+            max={maxInput}
             defaultValue={defaultCustomValue}
             pattern={inputPattern}
             onChange={(event) => setCustomValue(event.target.value)}

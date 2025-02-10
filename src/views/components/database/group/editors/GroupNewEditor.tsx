@@ -123,6 +123,8 @@ export const GroupNewEditor = forwardRef<EditorHandlingClose, GroupNewEditorProp
             selectCustomLabel={t('custom')}
             onSelectValueChange={handleGroupActivationChange}
             inputLabel={t('switch')}
+            minInput="1"
+            maxInput="99999"
             defaultCustomValue={switchId.toString()}
             setCustomValue={(value) => setSwitchId(Number(value))}
             selectOptions={activationOptions}
