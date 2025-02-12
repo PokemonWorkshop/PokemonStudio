@@ -106,6 +106,17 @@ const closeDialogWithAnimation = (dialog: HTMLDialogElement, backdrop: HTMLDivEl
     dialog.close();
     onFinish();
     dialog.removeEventListener('cancel', onDialogCancel);
+
+    // If another dialogs is open, then focus the first focusable element in this modal
+    const otherDialogs = document.querySelectorAll('dialog.open');
+    if (otherDialogs.length) {
+      const focusableElements = otherDialogs[otherDialogs.length - 1].querySelectorAll(
+        'a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusableElements.length > 0) {
+        (focusableElements[0] as HTMLElement).focus();
+      }
+    }
   };
 };
 
@@ -114,6 +125,13 @@ const openDialogWithAnimation = (dialog: HTMLDialogElement, backdrop: HTMLDivEle
   dialog.classList.add('open');
   backdrop.classList.add('open');
   dialog.animate(isCenter ? animationKeys.center.open : animationKeys.right.open, animationOption);
+
+  setTimeout(() => {
+    const focusableElements = dialog.querySelectorAll('a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])');
+    if (focusableElements.length > 0) {
+      (focusableElements[0] as HTMLElement).focus();
+    }
+  }, animationOption.duration);
 };
 
 /**
@@ -207,35 +225,34 @@ export const defineEditorOverlay = <Keys extends string, Props extends Record<st
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentDialog]);
 
-     useEffect(() => {
-       const handleTabKey = (event: KeyboardEvent) => {
-         if (event.key !== 'Tab') return;
+    useEffect(() => {
+      const handleTabKey = (event: KeyboardEvent) => {
+        if (event.key !== 'Tab') return;
+        const focusableElements = dialogRef.current?.querySelectorAll('a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])');
+        if (!focusableElements || focusableElements.length === 0) return;
 
-         const focusableElements = dialogRef.current?.querySelectorAll('a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])');
-         if (!focusableElements || focusableElements.length === 0) return;
+        const firstElement = focusableElements[0] as HTMLElement;
+        const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
 
-         const firstElement = focusableElements[0] as HTMLElement;
-         const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+        if (event.shiftKey) {
+          // Shift + Tab
+          if (document.activeElement === firstElement) {
+            lastElement.focus();
+            event.preventDefault();
+          }
+        } else {
+          // Tab
+          if (document.activeElement === lastElement) {
+            firstElement.focus();
+            event.preventDefault();
+          }
+        }
+      };
 
-         if (event.shiftKey) {
-           // Shift + Tab
-           if (document.activeElement === firstElement) {
-             lastElement.focus();
-             event.preventDefault();
-           }
-         } else {
-           // Tab
-           if (document.activeElement === lastElement) {
-             firstElement.focus();
-             event.preventDefault();
-           }
-         }
-       };
+      window.addEventListener('keydown', handleTabKey);
 
-       window.addEventListener('keydown', handleTabKey);
-
-       return () => window.removeEventListener('keydown', handleTabKey);
-     }, [currentDialog]);
+      return () => window.removeEventListener('keydown', handleTabKey);
+    }, [currentDialog]);
 
     return createPortal(
       <>
