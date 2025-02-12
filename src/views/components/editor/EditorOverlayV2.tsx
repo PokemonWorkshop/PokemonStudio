@@ -65,6 +65,8 @@ export const DialogContainer = styled.dialog`
 
 const onDialogCancel = (e: Event) => e.preventDefault();
 
+const focusableHtmlElements = 'a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])';
+
 const animationKeys = {
   right: {
     open: [
@@ -110,9 +112,7 @@ const closeDialogWithAnimation = (dialog: HTMLDialogElement, backdrop: HTMLDivEl
     // If another dialogs is open, then focus the first focusable element in this modal
     const otherDialogs = document.querySelectorAll('dialog.open');
     if (otherDialogs.length) {
-      const focusableElements = otherDialogs[otherDialogs.length - 1].querySelectorAll(
-        'a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])'
-      );
+      const focusableElements = otherDialogs[otherDialogs.length - 1].querySelectorAll(focusableHtmlElements);
       if (focusableElements.length > 0) {
         (focusableElements[0] as HTMLElement).focus();
       }
@@ -127,7 +127,7 @@ const openDialogWithAnimation = (dialog: HTMLDialogElement, backdrop: HTMLDivEle
   dialog.animate(isCenter ? animationKeys.center.open : animationKeys.right.open, animationOption);
 
   setTimeout(() => {
-    const focusableElements = dialog.querySelectorAll('a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])');
+    const focusableElements = dialog.querySelectorAll(focusableHtmlElements);
     if (focusableElements.length > 0) {
       (focusableElements[0] as HTMLElement).focus();
     }
@@ -228,7 +228,8 @@ export const defineEditorOverlay = <Keys extends string, Props extends Record<st
     useEffect(() => {
       const handleTabKey = (event: KeyboardEvent) => {
         if (event.key !== 'Tab') return;
-        const focusableElements = dialogRef.current?.querySelectorAll('a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])');
+        const focusableElements = dialogRef.current?.querySelectorAll(focusableHtmlElements);
+
         if (!focusableElements || focusableElements.length === 0) return;
 
         const firstElement = focusableElements[0] as HTMLElement;
