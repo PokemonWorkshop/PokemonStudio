@@ -13,9 +13,10 @@ const migrateEarnings = (quest: StudioQuest) => {
   quest.earnings.forEach((earning) => {
     if (!['earning_pokemon', 'earning_egg'].includes(earning.earningMethodName)) return;
 
+    const level = earning.earningMethodName === 'earning_egg' ? 1 : 5;
     const encounter = createEncounter(false);
     encounter.specie = earning.earningArgs[0] as DbSymbol;
-    encounter.levelSetup = { kind: 'fixed', level: 5 };
+    encounter.levelSetup = { kind: 'fixed', level };
     removeExpandPokemonSetup(encounter, 'originalTrainerId');
     removeExpandPokemonSetup(encounter, 'originalTrainerName');
     earning.earningArgs[0] = encounter;
