@@ -128,7 +128,7 @@ const openDialogWithAnimation = (dialog: HTMLDialogElement, backdrop: HTMLDivEle
 
   setTimeout(() => {
     const focusableElements = dialog.querySelectorAll(focusableHtmlElements);
-    if (focusableElements.length > 0) {
+    if (focusableElements?.length) {
       (focusableElements[0] as HTMLElement).focus();
     }
   }, animationOption.duration);
@@ -227,22 +227,39 @@ export const defineEditorOverlay = <Keys extends string, Props extends Record<st
 
     useEffect(() => {
       const handleTabKey = (event: KeyboardEvent) => {
-        if (event.key !== 'Tab') return;
-        const focusableElements = dialogRef.current?.querySelectorAll(focusableHtmlElements);
+        if (event.key !== 'Tab' || !currentDialog || !dialogRef.current) {
+          return;
+        }
 
-        if (!focusableElements || focusableElements.length === 0) return;
+        const focusableElements = Array.from(dialogRef.current.querySelectorAll(focusableHtmlElements)) as HTMLElement[];
 
-        const firstElement = focusableElements[0] as HTMLElement;
-        const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+        if (focusableElements.length === 0) {
+          event.preventDefault();
+          return;
+        }
+
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
 
         if (event.shiftKey) {
-          // Shift + Tab
-          if (document.activeElement === firstElement) {
-            lastElement.focus();
+          if (document.activeElement === firstElement || !dialogRef.current.contains(document.activeElement)) {
+            const otherDialogs = document.querySelectorAll('dialog.open');
+            const currentDialogIndex = Array.from(otherDialogs).indexOf(dialogRef.current);
+            if (otherDialogs.length > 1 && currentDialogIndex > 0) {
+              const lastDialog = otherDialogs[currentDialogIndex - 1] as HTMLDialogElement;
+              const otherFocusableElements = Array.from(lastDialog.querySelectorAll(focusableHtmlElements)) as HTMLElement[];
+
+              //
+              if (otherFocusableElements.length > 0) {
+                otherFocusableElements[otherFocusableElements.length - 1].focus();
+              }
+            } else {
+              lastElement.focus();
+            }
+
             event.preventDefault();
           }
         } else {
-          // Tab
           if (document.activeElement === lastElement) {
             firstElement.focus();
             event.preventDefault();
@@ -251,7 +268,6 @@ export const defineEditorOverlay = <Keys extends string, Props extends Record<st
       };
 
       window.addEventListener('keydown', handleTabKey);
-
       return () => window.removeEventListener('keydown', handleTabKey);
     }, [currentDialog]);
 
@@ -259,7 +275,27 @@ export const defineEditorOverlay = <Keys extends string, Props extends Record<st
       <>
         <BackDrop ref={backdropRef} onClick={onClickOutside}></BackDrop>
         <DialogContainer ref={dialogRef} className={isCenter ? 'center' : 'right'}>
+          <div
+            tabIndex={0}
+            onFocus={(e) => {
+              const focusableElements = Array.from(dialogRef.current?.querySelectorAll(focusableHtmlElements) || []) as HTMLElement[];
+              if (focusableElements.length > 0 && e.relatedTarget === focusableElements[focusableElements.length - 1]) {
+                requestAnimationFrame(() => focusableElements[0].focus());
+              }
+            }}
+          ></div>
+
           {currentlyRenderedDialog}
+
+          <div
+            tabIndex={0}
+            onFocus={(e) => {
+              const focusableElements = Array.from(dialogRef.current?.querySelectorAll(focusableHtmlElements) || []) as HTMLElement[];
+              if (focusableElements.length > 0 && e.relatedTarget === focusableElements[0]) {
+                requestAnimationFrame(() => focusableElements[focusableElements.length - 1].focus());
+              }
+            }}
+          ></div>
         </DialogContainer>
       </>,
       document.querySelector('#dialogs') || document.createElement('div')
