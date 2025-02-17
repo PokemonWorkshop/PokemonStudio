@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
-import { SelectCustomSimple } from '@components/SelectCustom';
+import { SelectCustomSimple, SelectCustomWithInput } from '@components/SelectCustom';
 import { SelectTrainer } from '@components/selects';
 import styled from 'styled-components';
 import { padStr } from '@utils/PadStr';
@@ -13,6 +13,7 @@ import { useProjectTrainers } from '@hooks/useProjectData';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import {
   StudioTrainerVsType,
+  StudioTrainerAICategoryType,
   TRAINER_AI_CATEGORIES,
   TRAINER_CLASS_TEXT_ID,
   TRAINER_DEFEAT_SENTENCE_TEXT_ID,
@@ -46,7 +47,7 @@ const ImportInfoContainer = styled.div`
 `;
 
 const aiCategoryEntries = (t: TFunction<'database_trainers'>) =>
-  TRAINER_AI_CATEGORIES.map((category, index) => ({ value: (index + 1).toString(), label: `${padStr(index + 1, 2)} - ${t(category)}` }));
+  TRAINER_AI_CATEGORIES.map((category) => ({ value: category.value, label: `${padStr(Number(category.value), 2)} - ${t(category.label)}` }));
 
 const vsTypeCategoryEntries = (t: TFunction<'database_trainers'>) =>
   TRAINER_VS_TYPE_CATEGORIES.map((category) => ({ value: category.toString(), label: t(`vs_type${category}`) }));
@@ -62,6 +63,7 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
   const vsTypeOptions = useMemo(() => vsTypeCategoryEntries(t), [t]);
   const [name, setName] = useState(''); // We can't use a ref because of the button behavior
   const [trainerClass, setTrainerClass] = useState(''); // We can't use a ref because of the button behavior
+  const [aiCategory, setAiCategory] = useState<StudioTrainerAICategoryType>('1');
   const [ai, setAi] = useState(1);
   const [vsType, setVsType] = useState<StudioTrainerVsType>(1);
   const battleIdRef = useRef<HTMLInputElement>(null);
@@ -117,6 +119,11 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
 
   const checkDisabled = () => !name || !trainerClass || !!baseMoneyError || !!battleIdError;
 
+  const handleTrainerAiLevelChange = (value: string) => {
+    setAiCategory(value as StudioTrainerAICategoryType);
+    setAi(value === 'custom' ? 8 : Number(value));
+  };
+
   return (
     <Editor type="creation" title={t('new')}>
       <InputContainer>
@@ -140,7 +147,17 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="select-ai-level">{t('ai_level')}</Label>
-          <SelectCustomSimple id="select-ai-level" options={aiOptions} onChange={(value) => setAi(Number(value))} value={ai.toString()} noTooltip />
+          <SelectCustomWithInput
+            value={aiCategory}
+            selectCustomLabel={t('custom')}
+            onSelectValueChange={handleTrainerAiLevelChange}
+            inputLabel={t('ai_level_custom')}
+            minInput="1"
+            maxInput="99999"
+            defaultCustomValue={ai.toString()}
+            setCustomValue={(value) => setAi(Number(value))}
+            selectOptions={aiOptions}
+          />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="select-vs-type">{t('vs_type')}</Label>

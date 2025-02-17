@@ -4,7 +4,7 @@ import { Editor } from '@components/editor';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
-import { SelectCustomSimple } from '@components/SelectCustom';
+import { SelectCustomSimple, SelectCustomWithInput } from '@components/SelectCustom';
 import {
   defineRelationCustomCondition,
   getActivationValue,
@@ -14,7 +14,6 @@ import {
   StudioGroupActivationType,
   GroupBattleTypes,
   GroupVariationsMap,
-  onSwitchUpdateActivation,
   updateActivation,
   GroupToolMap,
   isCustomEnvironment as isCustomEnvironmentFunc,
@@ -104,8 +103,13 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
     nameRef.current.value = nameRef.current.defaultValue;
   };
 
+  const handleGroupActivationChange = (value: string) => {
+    setActivation(value as StudioGroupActivationType);
+    setSwitchValue(getSwitchValue(value as StudioGroupActivationType));
+  };
+
   return (
-    <Editor type="edit" title={t('informations')}>
+    <Editor type="edit" title={t('information')}>
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="name" required>
@@ -117,35 +121,17 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="select-activation">{t('activation')}</Label>
-          <InputContainer size="s">
-            <SelectCustomSimple
-              id="select-activation"
-              options={activationOptions}
-              onChange={(value) => {
-                setActivation(value as StudioGroupActivationType);
-                setSwitchValue(getSwitchValue(value as StudioGroupActivationType));
-              }}
-              value={activation}
-              noTooltip
-            />
-            {activation === 'custom' && (
-              <InputWithLeftLabelContainer>
-                <Label htmlFor="switch">{t('switch')}</Label>
-                <Input
-                  type="number"
-                  name="switch"
-                  min="1"
-                  max="99999"
-                  value={isNaN(switchValue) ? '' : switchValue}
-                  onChange={(event) => {
-                    const newValue = event.target.valueAsNumber;
-                    setSwitchValue(newValue);
-                  }}
-                  onBlur={(event) => setActivation(onSwitchUpdateActivation(event.target.valueAsNumber))}
-                />
-              </InputWithLeftLabelContainer>
-            )}
-          </InputContainer>
+          <SelectCustomWithInput
+            value={activation}
+            selectCustomLabel={t('custom')}
+            onSelectValueChange={handleGroupActivationChange}
+            inputLabel={t('switch')}
+            minInput="1"
+            maxInput="99999"
+            defaultCustomValue={switchValue.toString()}
+            setCustomValue={(value) => setSwitchValue(Number(value))}
+            selectOptions={activationOptions}
+          />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="select-battle-type">{t('battle_type')}</Label>
