@@ -25,6 +25,14 @@ export const PokemonControlBar = ({ dialogsRef, setEvolutionIndex }: Props) => {
   const { selectedDataIdentifier: currentPokemon, setSelectedDataIdentifier, state } = useProjectPokemon();
   const shortcutMap = useMemo<StudioShortcutActions>(() => {
     const isShortcutEnabled = () => dialogsRef?.current?.currentDialog === undefined;
+    const offsetCurrentForm = (offset: number) => {
+      // To avoid issues with negative numbers
+      const mod = (n: number, m: number) => ((n % m) + m) % m;
+
+      const forms = state.projectData.pokemon[currentPokemon.specie]?.forms ?? [];
+      const currentIndex = forms.findIndex(({ form }) => currentPokemon.form === form);
+      return forms[mod(currentIndex + offset, forms.length)].form;
+    };
 
     return {
       db_previous: () => {
@@ -37,9 +45,19 @@ export const PokemonControlBar = ({ dialogsRef, setEvolutionIndex }: Props) => {
         if (setEvolutionIndex) setEvolutionIndex(0);
         setSelectedDataIdentifier({ pokemon: { specie: getNextDbSymbolByDexOrder(currentPokemon.specie, state), form: 0 } });
       },
+      db_previous_variant: () => {
+        if (!isShortcutEnabled()) return;
+        if (setEvolutionIndex) setEvolutionIndex(0);
+        setSelectedDataIdentifier({ pokemon: { specie: currentPokemon.specie, form: offsetCurrentForm(-1) } });
+      },
+      db_next_variant: () => {
+        if (!isShortcutEnabled()) return;
+        if (setEvolutionIndex) setEvolutionIndex(0);
+        setSelectedDataIdentifier({ pokemon: { specie: currentPokemon.specie, form: offsetCurrentForm(1) } });
+      },
       db_new: () => isShortcutEnabled() && dialogsRef?.current?.openDialog('new'),
     };
-  }, [currentPokemon.specie]);
+  }, [currentPokemon.specie, currentPokemon.form]);
   useShortcut(shortcutMap);
 
   const onClickNew = dialogsRef ? () => dialogsRef.current?.openDialog('new') : undefined;
