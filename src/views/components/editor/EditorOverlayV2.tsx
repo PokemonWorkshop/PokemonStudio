@@ -225,81 +225,78 @@ export const defineEditorOverlay = <Keys extends string, Props extends Record<st
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentDialog]);
 
-    useEffect(() => {
-      const handleTabKey = (event: KeyboardEvent) => {
-        if (event.key !== 'Tab' || !currentDialog || !dialogRef.current) {
-          return;
-        }
+useEffect(() => {
+  const handleTabKey = (event: KeyboardEvent) => {
+    if (event.key !== 'Tab') return;
 
-        const focusableElements = Array.from(dialogRef.current.querySelectorAll(focusableHtmlElements)) as HTMLElement[];
+    const openDialogs = document.querySelectorAll('dialog.open');
+    if (openDialogs.length === 0) return;
 
-        if (focusableElements.length === 0) {
-          event.preventDefault();
-          return;
-        }
+    const lastDialog = openDialogs[openDialogs.length - 1] as HTMLDialogElement;
+    if (!lastDialog.contains(event.target as Node)) return;
 
-        const firstElement = focusableElements[0];
-        const lastElement = focusableElements[focusableElements.length - 1];
+    const focusableElements = Array.from(lastDialog.querySelectorAll(focusableHtmlElements)) as HTMLElement[];
+    if (focusableElements.length === 0) return;
 
-        if (event.shiftKey) {
-          if (document.activeElement === firstElement || !dialogRef.current.contains(document.activeElement)) {
-            const otherDialogs = document.querySelectorAll('dialog.open');
-            const currentDialogIndex = Array.from(otherDialogs).indexOf(dialogRef.current);
-            if (otherDialogs.length > 1 && currentDialogIndex > 0) {
-              const lastDialog = otherDialogs[currentDialogIndex - 1] as HTMLDialogElement;
-              const otherFocusableElements = Array.from(lastDialog.querySelectorAll(focusableHtmlElements)) as HTMLElement[];
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
 
-              //
-              if (otherFocusableElements.length > 0) {
-                otherFocusableElements[otherFocusableElements.length - 1].focus();
-              }
-            } else {
-              lastElement.focus();
-            }
+    if (event.shiftKey) {
 
-            event.preventDefault();
-          }
+      if (document.activeElement === firstElement) {
+        event.preventDefault();
+        if (focusableElements[focusableElements.length - 2].getAttribute('type') === 'hidden') {
+          const lastFocusableElement = focusableElements
+            .reverse()
+            .find((el) => el.getAttribute('type') !== 'hidden' && el.getAttribute('aria-hidden') !== 'true');
+          lastFocusableElement?.focus();
         } else {
-          if (document.activeElement === lastElement) {
-            firstElement.focus();
-            event.preventDefault();
-          }
+          focusableElements[focusableElements.length - 2].focus();
         }
-      };
+      }
+    } else {
+      if (document.activeElement === lastElement) {
+        event.preventDefault();
+        focusableElements[1].focus();
+      }
+    }
+  };
 
-      window.addEventListener('keydown', handleTabKey);
-      return () => window.removeEventListener('keydown', handleTabKey);
-    }, [currentDialog]);
+  window.addEventListener('keydown', handleTabKey);
+  return () => window.removeEventListener('keydown', handleTabKey);
+}, [currentDialog]);
 
-    return createPortal(
-      <>
-        <BackDrop ref={backdropRef} onClick={onClickOutside}></BackDrop>
-        <DialogContainer ref={dialogRef} className={isCenter ? 'center' : 'right'}>
-          <div
-            tabIndex={0}
-            onFocus={(e) => {
-              const focusableElements = Array.from(dialogRef.current?.querySelectorAll(focusableHtmlElements) || []) as HTMLElement[];
-              if (focusableElements.length > 0 && e.relatedTarget === focusableElements[focusableElements.length - 1]) {
-                requestAnimationFrame(() => focusableElements[0].focus());
-              }
-            }}
-          ></div>
+return createPortal(
+  <>
+    <BackDrop ref={backdropRef} onClick={onClickOutside}></BackDrop>
+    <DialogContainer ref={dialogRef} className={isCenter ? 'center' : 'right'}>
+      <div
+        tabIndex={0}
+        aria-hidden="true"
+        onFocus={(e) => {
+          const focusableElements = Array.from(dialogRef.current?.querySelectorAll(focusableHtmlElements) || []) as HTMLElement[];
+          if (focusableElements.length > 0 && e.relatedTarget === focusableElements[focusableElements.length - 1]) {
+            requestAnimationFrame(() => focusableElements[0].focus());
+          }
+        }}
+      ></div>
 
-          {currentlyRenderedDialog}
+      {currentlyRenderedDialog}
 
-          <div
-            tabIndex={0}
-            onFocus={(e) => {
-              const focusableElements = Array.from(dialogRef.current?.querySelectorAll(focusableHtmlElements) || []) as HTMLElement[];
-              if (focusableElements.length > 0 && e.relatedTarget === focusableElements[0]) {
-                requestAnimationFrame(() => focusableElements[focusableElements.length - 1].focus());
-              }
-            }}
-          ></div>
-        </DialogContainer>
-      </>,
-      document.querySelector('#dialogs') || document.createElement('div')
-    );
+      <div
+        tabIndex={0}
+        aria-hidden="true"
+        onFocus={(e) => {
+          const focusableElements = Array.from(dialogRef.current?.querySelectorAll(focusableHtmlElements) || []) as HTMLElement[];
+          if (focusableElements.length > 0 && e.relatedTarget === focusableElements[0]) {
+            requestAnimationFrame(() => focusableElements[focusableElements.length - 1].focus());
+          }
+        }}
+      ></div>
+    </DialogContainer>
+  </>,
+  document.querySelector('#dialogs') || document.createElement('div')
+);
   });
   reactComponent.displayName = displayName;
   return reactComponent;
