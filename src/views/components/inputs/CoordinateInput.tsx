@@ -1,4 +1,4 @@
-import React, { InputHTMLAttributes } from 'react';
+import React, { forwardRef, InputHTMLAttributes } from 'react';
 import styled from 'styled-components';
 import { Input } from '.';
 
@@ -24,9 +24,10 @@ type CoordinateInputProps = {
   unit?: string;
 } & InputHTMLAttributes<HTMLInputElement>;
 
-export const CoordinateInput = ({ unit, ...props }: CoordinateInputProps) => (
+export const CoordinateInput = forwardRef<HTMLInputElement, CoordinateInputProps>(({ unit, ...props }, ref) => (
   <CoordinateInputContainer>
-    <Input {...props} />
+    <Input ref={ref} {...props} />
     <span>{unit ?? 'x'}</span>
   </CoordinateInputContainer>
-);
+));
+CoordinateInput.displayName = 'CoordinateInput';

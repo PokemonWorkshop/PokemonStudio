@@ -7,6 +7,17 @@ const MAP_COORDINATE_VALIDATOR = z.object({
   y: z.union([POSITIVE_OR_ZERO_INT, z.null()]),
 });
 
+const FORCED_WEATHER_VALIDATOR = z.union([
+  z.null(),
+  z.literal(-1),
+  z.literal(0),
+  z.literal(1),
+  z.literal(2),
+  z.literal(3),
+  z.literal(4),
+  z.literal(5),
+]);
+
 export const ZONE_VALIDATOR = z.object({
   klass: z.literal('Zone'),
   id: POSITIVE_OR_ZERO_INT,
@@ -18,10 +29,11 @@ export const ZONE_VALIDATOR = z.object({
   position: MAP_COORDINATE_VALIDATOR,
   isFlyAllowed: z.boolean(),
   isWarpDisallowed: z.boolean(),
-  forcedWeather: z.union([z.null(), z.literal(-1), z.literal(0), z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5)]),
+  forcedWeather: FORCED_WEATHER_VALIDATOR,
   wildGroups: z.array(DB_SYMBOL_VALIDATOR),
 });
 export type StudioZone = z.infer<typeof ZONE_VALIDATOR>;
+export type StudioZoneForcedWeather = z.infer<typeof FORCED_WEATHER_VALIDATOR>;
 
 export const ZONE_DESCRIPTION_TEXT_ID = 100064;
 export const ZONE_NAME_TEXT_ID = 100010;

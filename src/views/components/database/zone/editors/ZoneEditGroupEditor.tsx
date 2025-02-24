@@ -1,16 +1,20 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+
 import { Editor, useRefreshUI } from '@components/editor';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { SelectGroup } from '@components/selects';
-import { ProjectData } from '@src/GlobalStateProvider';
 import { TagWithSelection } from '@components/Tag';
+
+import { useZonePage } from '@src/hooks/usePage';
+
+import { StudioGroup } from '@modelEntities/group';
+import { DbSymbol } from '@modelEntities/dbSymbol';
+
 import { padStr } from '@utils/PadStr';
 import { cloneEntity } from '@utils/cloneEntity';
-import { StudioGroup } from '@modelEntities/group';
-import { StudioZone } from '@modelEntities/zone';
-import { DbSymbol } from '@modelEntities/dbSymbol';
 
 const MapsListContainer = styled.div`
   display: flex;
@@ -29,14 +33,9 @@ const rejectedGroup = (wildGroups: string[], group: StudioGroup) => {
   return wildGroupsCopy;
 };
 
-type ZoneEditGroupEditorProps = {
-  zone: StudioZone;
-  groups: ProjectData['groups'];
-  group: { data: StudioGroup } | undefined;
-  index: number;
-};
+export const ZoneEditGroupEditor = forwardRef<EditorHandlingClose>((_, ref) => {
+  const { zone } = useZonePage();
 
-export const ZoneEditGroupEditor = ({ zone, groups, group, index }: ZoneEditGroupEditorProps) => {
   if (!group) throw new Error('group is undefined');
 
   const { t } = useTranslation(['database_zones', 'database_groups']);
@@ -52,6 +51,18 @@ export const ZoneEditGroupEditor = ({ zone, groups, group, index }: ZoneEditGrou
     if (mapIdIndex === -1) group.data.customConditions.push({ type: 'mapId', relationWithPreviousCondition: 'OR', value: mapId });
     else group.data.customConditions.splice(mapIdIndex, 1);
   };
+
+  const canClose = () => {
+    const result = true;
+
+    return result;
+  };
+
+  const onClose = () => {
+    if (!canClose()) return;
+  };
+
+  useEditorHandlingClose(ref, onClose, canClose);
 
   return (
     <Editor type="creation" title={t('database_groups:groups')}>
@@ -82,4 +93,4 @@ export const ZoneEditGroupEditor = ({ zone, groups, group, index }: ZoneEditGrou
       </InputContainer>
     </Editor>
   );
-};
+});

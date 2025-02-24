@@ -1,18 +1,26 @@
-import React, { useMemo, useState } from 'react';
+import React, { forwardRef, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+
 import { Editor, useRefreshUI } from '@components/editor';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { SelectGroup } from '@components/selects';
-import { ProjectData } from '@src/GlobalStateProvider';
 import { DarkButton, PrimaryButton, SecondaryButton } from '@components/buttons';
 import { TagWithSelection } from '@components/Tag';
-import { padStr } from '@utils/PadStr';
-import { cloneEntity } from '@utils/cloneEntity';
+import { TooltipWrapper } from '@ds/Tooltip';
+
+import { ProjectData } from '@src/GlobalStateProvider';
+import { useZonePage } from '@src/hooks/usePage';
+import { useProjectGroups, useProjectZones } from '@src/hooks/useProjectData';
+
 import { StudioGroup } from '@modelEntities/group';
 import { StudioZone } from '@modelEntities/zone';
 import { DbSymbol } from '@modelEntities/dbSymbol';
-import { TooltipWrapper } from '@ds/Tooltip';
+
+import { padStr } from '@utils/PadStr';
+import { cloneEntity } from '@utils/cloneEntity';
+import { defineRelationCustomCondition } from '@utils/GroupUtils';
 
 const GroupContainer = styled.div`
   display: flex;
@@ -45,29 +53,44 @@ const setAllTagsMapsOnByDefault = (group: StudioGroup, zone: StudioZone) => {
 };
 
 type ZoneAddGroupEditorProps = {
-  zone: StudioZone;
-  groups: ProjectData['groups'];
-  onAddGroup: (group: StudioGroup) => void;
-  onClose: () => void;
+  closeDialog: () => void;
 };
 
-export const ZoneAddGroupEditor = ({ zone, groups, onAddGroup, onClose }: ZoneAddGroupEditorProps) => {
+export const ZoneAddGroupEditor = forwardRef<EditorHandlingClose, ZoneAddGroupEditorProps>(({ closeDialog }, ref) => {
   const { t } = useTranslation(['database_zones', 'database_groups', 'database_trainers']);
+  const { projectDataValues: groups, setProjectDataValues: setGroup } = useProjectGroups();
+  const { setProjectDataValues: setZone } = useProjectZones();
+  const { zone } = useZonePage();
+
   const firstDbSymbol = Object.entries(groups)
     .map(([value, groupData]) => ({ value, index: groupData.id }))
-    .filter((d) => !zone.wildGroups.includes(d.value as DbSymbol))
+    .filter((data) => !zone.wildGroups.includes(data.value as DbSymbol))
     .sort((a, b) => a.index - b.index)[0].value;
+
   const [selectedGroup, setSelectedGroup] = useState(firstDbSymbol);
   const group = groups[selectedGroup];
   const currentEditedGroup = useMemo(() => cloneEntity(group), [group]);
-  const refreshUI = useRefreshUI();
+  const currentEditedZone = useMemo(() => cloneEntity(zone), [zone]);
   useMemo(() => setAllTagsMapsOnByDefault(currentEditedGroup, zone), [currentEditedGroup, zone]);
+
+  const refreshUI = useRefreshUI();
 
   const onClickTag = (mapId: number) => {
     const index = mapIdIndexInGroup(mapId, currentEditedGroup);
     if (index === -1) currentEditedGroup.customConditions.push({ type: 'mapId', relationWithPreviousCondition: 'OR', value: mapId });
     else currentEditedGroup.customConditions.splice(index, 1);
   };
+
+  const onAddGroup = (editedGroup: StudioGroup) => {
+    currentEditedZone.wildGroups.push(editedGroup.dbSymbol);
+    editedGroup.customConditions = defineRelationCustomCondition(editedGroup.customConditions);
+    setZone({ [zone.dbSymbol]: currentEditedZone });
+    setGroup({ [editedGroup.dbSymbol]: editedGroup });
+
+    closeDialog();
+  };
+
+  useEditorHandlingClose(ref);
 
   return (
     <Editor type="creation" title={t('database_groups:groups')}>
@@ -102,9 +125,9 @@ export const ZoneAddGroupEditor = ({ zone, groups, onAddGroup, onClose }: ZoneAd
         )}
         <ButtonContainer>
           <PrimaryButton onClick={() => onAddGroup(currentEditedGroup)}>{t('database_zones:add_this_group')}</PrimaryButton>
-          <DarkButton onClick={onClose}>{t('database_zones:cancel')}</DarkButton>
+          <DarkButton onClick={closeDialog}>{t('database_zones:cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
     </Editor>
   );
-};
+});
