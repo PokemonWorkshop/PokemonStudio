@@ -27,6 +27,10 @@ export const TypeTableRowContainer = styled.div`
   flex-wrap: nowrap;
   column-gap: 16px;
   row-gap: 8px;
+  width: max-content;
+  .type-indicator > span {
+    box-shadow: 0px 0px 0px 2px ${({ theme }) => theme.colors.dark16};
+  }
   &:hover > .type-indicator > span {
     box-shadow: 0px 0px 0px 2px ${({ theme }) => theme.colors.primaryHover};
   }
@@ -36,12 +40,26 @@ export const TypeTableHeadContainer = styled(TypeTableRowContainer)`
   position: sticky;
   top: 0;
   margin-bottom: 16px;
+  z-index: 2;
+  width: max-content;
   &:hover {
     filter: none;
   }
 `;
 
-export const TypeTableHeadTitleContainer = styled.span`
+export const TypeTableDefensiveContainer = styled.span`
+  ${({ theme }) => theme.fonts.normalRegular}
+  color: ${(props) => props.theme.colors.text400};
+  text-align: center;
+  gap: 8px;
+  width: calc(100% - 112px);
+  align-self: flex-end;
+  margin-top: -4px;
+  margin-bottom: 8px;
+  background-color: ${({ theme }) => theme.colors.dark16};
+`;
+
+export const TypeTableOffensiveContainer = styled.span`
   width: 96px;
   ${({ theme }) => theme.fonts.normalRegular}
   color: ${(props) => props.theme.colors.text400};
@@ -53,6 +71,7 @@ export const TypeTableHeadTitleContainer = styled.span`
   flex-direction: column-reverse;
   flex-shrink: 0;
   background-color: ${({ theme }) => theme.colors.dark16};
+  box-shadow: 0px 0px 0px 2px ${({ theme }) => theme.colors.dark16};
 `;
 
 export const TypeIconListContainer = styled.div`
@@ -60,6 +79,9 @@ export const TypeIconListContainer = styled.div`
   flex-wrap: nowrap;
   column-gap: 8px;
   row-gap: 8px;
+  span {
+    box-shadow: 0px 0px 0px 2px ${({ theme }) => theme.colors.dark16};
+  }
 `;
 
 export const TableTypeContainer = styled.div`
@@ -67,6 +89,8 @@ export const TableTypeContainer = styled.div`
   max-width: calc(100vw - 400px);
   padding-left: 2px;
   margin-left: -2px;
+  padding-top: 2px;
+  margin-top: -2px;
 
   padding-bottom: 8px;
 
