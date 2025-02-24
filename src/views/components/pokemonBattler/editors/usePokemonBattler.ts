@@ -1,4 +1,4 @@
-import { useGroupPage, useTrainerPage } from '@hooks/usePage';
+import { useGroupPage, useQuestPage, useTrainerPage } from '@hooks/usePage';
 import { CurrentBattlerType, PokemonBattlerFrom } from './PokemonBattlerEditorOverlay';
 import { useProjectPokemon } from '@hooks/useProjectData';
 import { useEffect, useMemo, useState } from 'react';
@@ -66,6 +66,7 @@ type Props = {
 export const usePokemonBattler = ({ action, currentBattler, from }: Props) => {
   const { trainer } = useTrainerPage();
   const { group } = useGroupPage();
+  const { quest } = useQuestPage();
   const { projectDataValues: creatures, state } = useProjectPokemon();
   const updateTrainer = useUpdateTrainer(trainer);
   const updateGroup = useUpdateGroup(group);
@@ -87,6 +88,15 @@ export const usePokemonBattler = ({ action, currentBattler, from }: Props) => {
           const { expandPokemonSetup, ...partialEncounter } = currentEncounter;
           return partialEncounter;
         }
+        case 'quest_earning': {
+          const isEarningPokemonOrEgg = ['earning_pokemon', 'earning_egg'].includes(quest.earnings[currentBattler.index].earningMethodName);
+          if (!isEarningPokemonOrEgg) break;
+
+          const currentEncounter = quest.earnings[currentBattler.index].earningArgs[0] as StudioGroupEncounter;
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { expandPokemonSetup, ...partialEncounter } = currentEncounter;
+          return partialEncounter;
+        }
         default:
           assertUnreachable(from);
       }
@@ -102,8 +112,14 @@ export const usePokemonBattler = ({ action, currentBattler, from }: Props) => {
       switch (from) {
         case 'group':
           return createRecordExpandPokemonSetup(cloneEntity(group.encounters[currentBattler.index]), creatures, getEntityName);
-        case 'trainer': {
+        case 'trainer':
           return createRecordExpandPokemonSetup(cloneEntity(trainer.party[currentBattler.index]), creatures, getEntityName);
+        case 'quest_earning': {
+          const isEarningPokemonOrEgg = ['earning_pokemon', 'earning_egg'].includes(quest.earnings[currentBattler.index].earningMethodName);
+          if (!isEarningPokemonOrEgg) break;
+
+          const encounter = quest.earnings[currentBattler.index].earningArgs[0] as StudioGroupEncounter;
+          return createRecordExpandPokemonSetup(cloneEntity(encounter), creatures, getEntityName);
         }
         default:
           assertUnreachable(from);
@@ -177,7 +193,7 @@ export const usePokemonBattler = ({ action, currentBattler, from }: Props) => {
       });
     }
     const newEncounter = { ...cloneEntity(encounterCleaned), expandPokemonSetup: buildExpandPokemonSetup(cloneEntity(expandPokemonSetupCleaned)) };
-    cleanExpandPokemonSetup(newEncounter, creatures, from === 'group', state);
+    cleanExpandPokemonSetup(newEncounter, creatures, from, state);
     return newEncounter;
   };
 
@@ -202,6 +218,8 @@ export const usePokemonBattler = ({ action, currentBattler, from }: Props) => {
         }
         return updateTrainer({ party: newParty });
       }
+      case 'quest_earning':
+        throw new Error("Don't use 'updateStudioEntity' function in mode 'quest_earning'.");
       default:
         assertUnreachable(from);
     }
@@ -300,6 +318,7 @@ export const usePokemonBattler = ({ action, currentBattler, from }: Props) => {
     expandPokemonSetup,
     updateExpandPokemonSetup,
     updateStudioEntity,
+    cleanEncounter,
     canClose,
     canNew,
     creatureUnavailable,

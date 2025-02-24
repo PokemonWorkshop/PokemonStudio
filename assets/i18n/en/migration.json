@@ -12,5 +12,6 @@
   "update_creatures_to_manage_form": "Update creatures and create CSV files to manage form names and descriptions",
   "migrate_natures": "Migrate natures config to nature entities",
   "migrate_breeding_group": "Migrate undefined breeding group to unknown breeding group",
-  "add_trainer_additional_dialogs": "Additional dialogue added for trainers"
+  "add_trainer_additional_dialogs": "Additional dialogue added for trainers",
+  "migrate_quests_earnings": "Migrate quest earnings"
 }

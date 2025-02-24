@@ -19,7 +19,7 @@ export const QuestEarningMoney = ({ earning, refs, checkIsValid }: QuestEarningP
           type="number"
           min="1"
           max="999_999_999"
-          defaultValue={earning.earningArgs[0]}
+          defaultValue={earning.earningArgs[0] as number}
           onChange={() => checkIsValid && checkIsValid()}
         />
       </InputWithTopLabelContainer>

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { POSITIVE_INT, POSITIVE_OR_ZERO_INT } from './common';
 import { DB_SYMBOL_VALIDATOR } from './dbSymbol';
+import { ENCOUNTER_VALIDATOR } from './groupEncounter';
 
 export const CREATURE_QUEST_CONDITION_VALIDATOR = z.discriminatedUnion('type', [
   z.object({ type: z.literal('pokemon'), value: DB_SYMBOL_VALIDATOR }),
@@ -33,7 +34,7 @@ export type StudioQuestObjective = z.infer<typeof QUEST_OBJECTIVE_VALIDATOR>;
 
 export const QUEST_EARNING_VALIDATOR = z.object({
   earningMethodName: z.union([z.literal('earning_money'), z.literal('earning_item'), z.literal('earning_pokemon'), z.literal('earning_egg')]),
-  earningArgs: z.array(z.union([z.string(), z.number()])),
+  earningArgs: z.array(z.union([z.string(), z.number(), ENCOUNTER_VALIDATOR])),
   textFormatMethodName: z.string(),
 });
 export type StudioQuestEarning = z.infer<typeof QUEST_EARNING_VALIDATOR>;

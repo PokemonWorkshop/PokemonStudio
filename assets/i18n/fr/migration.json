@@ -12,5 +12,6 @@
   "update_creatures_to_manage_form": "Mise à jour des créatures et création de fichiers CSV pour gérer les noms et descriptions des formes des créatures",
   "migrate_natures": "Migration des natures",
   "migrate_breeding_group": "Migration du groupe d'œuf «\u00a0Non défini\u00a0» en «\u00a0Inconnu\u00a0»",
-  "add_trainer_additional_dialogs": "Ajout des dialogues additionnels pour les dresseurs"
+  "add_trainer_additional_dialogs": "Ajout des dialogues additionnels pour les dresseurs",
+  "migrate_quests_earnings": "Migration des récompenses de quêtes"
 }

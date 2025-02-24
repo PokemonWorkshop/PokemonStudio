@@ -8,6 +8,7 @@ import {
 import { State } from '@src/GlobalStateProvider';
 import { TFunction } from 'i18next';
 import { getEntityNameText, getEntityNameTextUsingTextId } from './ReadingProjectText';
+import { StudioGroupEncounter } from '@modelEntities/groupEncounter';
 
 const buildSpeakToText = (objective: StudioQuestObjective) => {
   return objective.objectiveMethodArgs[1] as string;
@@ -113,7 +114,7 @@ const buildEarningItemText = (earning: StudioQuestEarning, state: State) => {
 };
 
 const buildEarningPokemonText = (earning: StudioQuestEarning, state: State) => {
-  const pokemonName = getEntityNameSafe(state, state.projectData.pokemon[earning.earningArgs[0] as string]);
+  const pokemonName = getEntityNameSafe(state, state.projectData.pokemon[(earning.earningArgs[0] as StudioGroupEncounter).specie]);
   return `1 ${pokemonName}`;
 };
 

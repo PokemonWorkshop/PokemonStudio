@@ -13,6 +13,7 @@ import { addFormNamesDescriptions } from './addFormNamesDescriptions';
 import { migrateNaturesToEntities } from './migrateNaturesToEntities';
 import { migrateUndefinedBreedingGroupToUnknown } from './migrateUndefinedBreedingGroupToUnknown';
 import { addTrainerAdditionalDialogs } from './addTrainerAdditionalDialogs';
+import { migrateQuestsEarnings } from './migrateQuestsEarnings';
 
 type MigrateConfigType = {
   migration: MigrationTask;
@@ -106,5 +107,10 @@ export const MIGRATION_CONFIG: MigrateConfigType[] = [
     migration: addTrainerAdditionalDialogs,
     version: '2.4.0',
     message: 'add_trainer_additional_dialogs',
+  },
+  {
+    migration: migrateQuestsEarnings,
+    version: '2.4.1',
+    message: 'migrate_quests_earnings',
   },
 ];

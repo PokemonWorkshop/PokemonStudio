@@ -8,6 +8,8 @@ import { StudioZone } from '@modelEntities/zone';
 import { StudioGroup } from '@modelEntities/group';
 import { ProjectData, State } from '@src/GlobalStateProvider';
 import { getEntityNameText } from './ReadingProjectText';
+import { PokemonBattlerFrom } from '@components/pokemonBattler/editors/PokemonBattlerEditorOverlay';
+import { assertUnreachable } from './assertUnreachable';
 
 /**
  * Replace NaN value by 0 or for the value given
@@ -106,7 +108,7 @@ export const cleaningMoveNaNValues = (v: StudioMove) => {
   v.battleStageMod.forEach((bsm) => (bsm.modificator = cleanNaNValue(bsm.modificator)));
 };
 
-const removeExpandPokemonSetup = (encounter: StudioGroupEncounter, type: StudioExpandPokemonSetup['type']) => {
+export const removeExpandPokemonSetup = (encounter: StudioGroupEncounter, type: StudioExpandPokemonSetup['type']) => {
   const index = encounter.expandPokemonSetup.findIndex((eps) => eps.type === type);
   if (index !== -1) encounter.expandPokemonSetup.splice(index, 1);
 };
@@ -145,7 +147,7 @@ const cleanNanValueEncounter = (encounter: StudioGroupEncounter) => {
   if (rareness) rareness.value = cleanNaNValue(rareness.value as number, -1);
 };
 
-export const cleanExpandPokemonSetup = (encounter: StudioGroupEncounter, species: ProjectData['pokemon'], isWild: boolean, state: State) => {
+export const cleanExpandPokemonSetup = (encounter: StudioGroupEncounter, species: ProjectData['pokemon'], from: PokemonBattlerFrom, state: State) => {
   cleanNanValueEncounter(encounter);
   removeExpandPokemonSetupWithCondition(encounter, 'ability', '__undef__');
   removeExpandPokemonSetupWithCondition(encounter, 'nature', '__undef__');
@@ -160,14 +162,24 @@ export const cleanExpandPokemonSetup = (encounter: StudioGroupEncounter, species
     const form = specie.forms.find((f) => f.form === encounter.form);
     if (form) removeExpandPokemonSetupWithCondition(encounter, 'rareness', form.catchRate);
   }
-  if (isWild) {
-    removeExpandPokemonSetup(encounter, 'ivs');
-    removeExpandPokemonSetup(encounter, 'caughtWith');
-    removeExpandPokemonSetup(encounter, 'originalTrainerName');
-    removeExpandPokemonSetup(encounter, 'originalTrainerId');
-    removeExpandPokemonSetup(encounter, 'givenName');
-  } else {
-    removeExpandPokemonSetup(encounter, 'rareness');
+  switch (from) {
+    case 'group':
+      removeExpandPokemonSetup(encounter, 'ivs');
+      removeExpandPokemonSetup(encounter, 'caughtWith');
+      removeExpandPokemonSetup(encounter, 'originalTrainerName');
+      removeExpandPokemonSetup(encounter, 'originalTrainerId');
+      removeExpandPokemonSetup(encounter, 'givenName');
+      break;
+    case 'trainer':
+      removeExpandPokemonSetup(encounter, 'rareness');
+      break;
+    case 'quest_earning':
+      removeExpandPokemonSetup(encounter, 'rareness');
+      removeExpandPokemonSetup(encounter, 'originalTrainerName');
+      removeExpandPokemonSetup(encounter, 'originalTrainerId');
+      break;
+    default:
+      assertUnreachable(from);
   }
 };
 
