@@ -72,6 +72,23 @@ export const UnsavedWarningModal = () => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDataToSave, state]);
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Tab' || (event.shiftKey && event.key === 'Tab') || (event.ctrlKey && event.key === 'a')) {
+        event.preventDefault();
+      }
+    };
+
+    if (show) {
+      document.addEventListener('keydown', handleKeyDown);
+    } else {
+      document.removeEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [show]);
 
   return show ? (
     <OverlayContainer className="active">
