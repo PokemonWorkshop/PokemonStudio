@@ -262,8 +262,35 @@ useEffect(() => {
     }
   };
 
-  window.addEventListener('keydown', handleTabKey);
-  return () => window.removeEventListener('keydown', handleTabKey);
+        const handleCtrlA = (event: KeyboardEvent) => {
+          if (event.key === 'a' && (event.ctrlKey || event.metaKey)) {
+            const openDialogs = document.querySelectorAll('dialog.open');
+            if (openDialogs.length === 0) return;
+
+            const lastDialog = openDialogs[openDialogs.length - 1] as HTMLDialogElement;
+            if (lastDialog.contains(event.target as Node)) {
+              event.preventDefault();
+              const target = event.target as HTMLElement;
+
+              if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+                (target as HTMLInputElement | HTMLTextAreaElement).select();
+              } else {
+                const range = document.createRange();
+                range.selectNodeContents(lastDialog);
+                const selection = window.getSelection();
+                selection?.removeAllRanges();
+                selection?.addRange(range);
+              }
+            }
+          }
+        };
+
+        window.addEventListener('keydown', handleCtrlA);
+        window.addEventListener('keydown', handleTabKey);
+        return () => {
+          window.removeEventListener('keydown', handleCtrlA);
+          window.removeEventListener('keydown', handleTabKey);
+        };
 }, [currentDialog]);
 
 return createPortal(
