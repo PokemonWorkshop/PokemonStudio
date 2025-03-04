@@ -8,7 +8,7 @@ import {
 } from '@modelEntities/quest';
 import { State } from '@src/GlobalStateProvider';
 import { TFunction } from 'i18next';
-import { getEntityNameText, getEntityNameTextUsingTextId } from './ReadingProjectText';
+import { getText, getEntityNameText, getEntityNameTextUsingTextId } from './ReadingProjectText';
 import { StudioGroupEncounter } from '@modelEntities/groupEncounter';
 
 const buildSpeakToText = (objective: StudioQuestObjective) => {
