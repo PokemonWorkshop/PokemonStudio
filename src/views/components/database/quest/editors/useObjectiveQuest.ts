@@ -1,22 +1,28 @@
 import { DbSymbol } from '@modelEntities/dbSymbol';
-import { StudioCreatureQuestCondition, StudioQuestObjective, StudioQuestObjectiveType } from '@modelEntities/quest';
+import { QUEST_CUSTOM_OBJECTIVE_TEXT_ID, StudioCreatureQuestCondition, StudioQuestObjective, StudioQuestObjectiveType } from '@modelEntities/quest';
+import { ProjectData } from '@src/GlobalStateProvider';
 import { useConfigSettings } from '@src/hooks/useProjectConfig';
+import { useProjectData } from '@src/hooks/useProjectData';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import { cloneEntity } from '@utils/cloneEntity';
 import { createQuestObjective } from '@utils/entityCreation';
+import { useSetProjectText } from '@utils/ReadingProjectText';
 import { useEffect, useRef, useState } from 'react';
 
-const initializeObjective = (initialObjective?: StudioQuestObjective): StudioQuestObjective => {
-  return initialObjective ? cloneEntity(initialObjective) : createQuestObjective('objective_speak_to');
+const initializeObjective = (quests: ProjectData['quests'], initialObjective?: StudioQuestObjective): StudioQuestObjective => {
+  return initialObjective ? cloneEntity(initialObjective) : createQuestObjective('objective_speak_to', quests);
 };
 
 export const useObjectiveQuest = (initialObjective?: StudioQuestObjective) => {
-  const [objective, setObjective] = useState(initializeObjective(initialObjective));
+  const { projectDataValues: quests } = useProjectData('quests', 'quest');
+  const [objective, setObjective] = useState(initializeObjective(quests, initialObjective));
   const [isValid, setIsValid] = useState<boolean>(false);
   const { projectConfigValues: settings } = useConfigSettings();
+  const setText = useSetProjectText();
   const entityRef = useRef<DbSymbol | undefined>();
   const nameRef = useRef<HTMLInputElement>(null);
   const valueRef = useRef<HTMLInputElement>(null);
+  const customObjectiveRef = useRef<HTMLTextAreaElement>(null);
 
   const checkConditionsIsValid = () => {
     return objective.objectiveMethodArgs.reduce((prev, arg) => {
@@ -61,7 +67,7 @@ export const useObjectiveQuest = (initialObjective?: StudioQuestObjective) => {
         result = !!entityRef.current;
         break;
       case 'objective_custom':
-        result = !!valueRef.current && valueRef.current.value !== '';
+        result = !!customObjectiveRef.current;
         break;
       default:
         assertUnreachable(objective.objectiveMethodName);
@@ -71,7 +77,14 @@ export const useObjectiveQuest = (initialObjective?: StudioQuestObjective) => {
   };
 
   const updateObjective = (objectiveMethod: StudioQuestObjectiveType) => {
-    setObjective(createQuestObjective(objectiveMethod));
+    const newObjective = createQuestObjective(objectiveMethod, quests);
+
+    if (objectiveMethod === 'objective_custom') {
+      const textId = newObjective.objectiveMethodArgs[0] as number;
+      setText(QUEST_CUSTOM_OBJECTIVE_TEXT_ID, textId, '');
+    }
+
+    setTimeout(() => setObjective(newObjective));
   };
 
   useEffect(() => {
@@ -85,6 +98,7 @@ export const useObjectiveQuest = (initialObjective?: StudioQuestObjective) => {
       entityRef,
       nameRef,
       valueRef,
+      customObjectiveRef,
     },
     setObjective,
     updateObjective,

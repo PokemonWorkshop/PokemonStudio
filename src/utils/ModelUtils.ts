@@ -79,3 +79,33 @@ export const findFirstAvailableFormTextId = (allPokemon: ProjectData['pokemon'],
 
   return textIdSet[holeIndex - 1] + 1;
 };
+
+export const findFirstAvailableCustomObjectiveTextId = (allQuests: ProjectData['quests'], startId: number) => {
+  const quests = Object.values(allQuests);
+  if (quests.length === 0) return startId;
+
+  // Fetch all custom objective text ids
+  const fetchValues = quests.reduce<number[]>((prev, quest) => {
+    return [
+      ...prev,
+      ...quest.objectives.reduce<number[]>((objectiveTextIds, objective) => {
+        if (objective.objectiveMethodName !== 'objective_custom') return objectiveTextIds;
+
+        return [...objectiveTextIds, objective.objectiveMethodArgs[0] as number];
+      }, []),
+    ];
+  }, []);
+
+  if (fetchValues.length === 0) return startId;
+
+  const textIdSet = fetchValues
+    .filter((textId, index, array) => index === array.indexOf(textId)) // reject all duplicates
+    .sort((a, b) => a - b); // sort id by ascending order
+  // Since ids are ordered, if the first isn't the startId that means we need to fill the beginning of the list ;)
+  if (textIdSet[0] > startId) return startId;
+
+  const holeIndex = textIdSet.findIndex((textId, index) => textId !== index + startId);
+  if (holeIndex === -1) return textIdSet[textIdSet.length - 1] + 1;
+
+  return textIdSet[holeIndex - 1] + 1;
+};

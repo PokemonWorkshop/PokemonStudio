@@ -181,7 +181,6 @@ const getCurrentOption = (options: DropDownOption[], value: string) => {
 };
 
 type StudioDropDownProps = {
-  name?: string;
   value: string;
   options: DropDownOption[];
   onChange: (value: string) => void;
@@ -193,7 +192,7 @@ type StudioDropDownProps = {
   };
 };
 
-export const StudioDropDown = ({ name, value, options, onChange, optionals }: StudioDropDownProps) => {
+export const StudioDropDown = ({ value, options, onChange, optionals }: StudioDropDownProps) => {
   const [entry, setEntry] = useState<string>('');
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const optionsFilter = useMemo(() => applyFilter(options, optionals?.filter), [options, optionals?.filter]);
@@ -244,26 +243,14 @@ export const StudioDropDown = ({ name, value, options, onChange, optionals }: St
 
   return (
     <DropDownContainer className={isOpen ? 'open' : notOpenClass} onClick={onClick}>
-      {name ? (
-        <Input
-          name={name}
-          ref={inputRef}
-          className={notOpenClass}
-          value={entry}
-          onChange={onInputChange}
-          placeholder={label}
-          disabled={optionals?.disabledResearch}
-        />
-      ) : (
-        <Input
-          ref={inputRef}
-          className={notOpenClass}
-          value={entry}
-          onChange={onInputChange}
-          placeholder={label}
-          disabled={optionals?.disabledResearch}
-        />
-      )}
+      <Input
+        ref={inputRef}
+        className={notOpenClass}
+        value={entry}
+        onChange={onInputChange}
+        placeholder={label}
+        disabled={optionals?.disabledResearch}
+      />
       <DownIcon />
       <DropDownOptions height={getHeight(optionsList, isOpen)}>
         {optionsList.length > 0 ? (

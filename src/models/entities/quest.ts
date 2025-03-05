@@ -27,16 +27,7 @@ export const QUEST_OBJECTIVE_VALIDATOR = z.object({
     z.literal('objective_hatch_egg'),
     z.literal('objective_custom'),
   ]),
-  objectiveMethodArgs: z.array(
-    z.union([
-      z.string(),
-      z.number(),
-      z.array(CREATURE_QUEST_CONDITION_VALIDATOR),
-      z.array(z.union([z.number(), z.undefined()])),
-      z.undefined(),
-      z.null(),
-    ])
-  ),
+  objectiveMethodArgs: z.array(z.union([z.string(), z.number(), z.array(CREATURE_QUEST_CONDITION_VALIDATOR), z.undefined(), z.null()])),
   textFormatMethodName: z.string(),
   hiddenByDefault: z.boolean(),
 });
@@ -62,6 +53,7 @@ export type StudioQuest = z.infer<typeof QUEST_VALIDATOR>;
 
 export const QUEST_DESCRIPTION_TEXT_ID = 100046;
 export const QUEST_NAME_TEXT_ID = 100045;
+export const QUEST_CUSTOM_OBJECTIVE_TEXT_ID = 100070;
 
 export const QUEST_CATEGORIES = ['primary', 'secondary'] as const;
 export type StudioQuestCategory = (typeof QUEST_CATEGORIES)[number];
@@ -89,7 +81,7 @@ export type StudioQuestEarningType = (typeof QUEST_EARNINGS)[number];
 export type StudioQuestEarningCategoryType = 'money' | 'item' | 'pokemon' | 'egg';
 
 export const updateIndexSpeakToBeatNpc = (objectives: StudioQuestObjective[]) => {
-  const index = { speakTo: 0, beatNpc: 0, custom: 0 };
+  const index = { speakTo: 0, beatNpc: 0 };
   objectives.forEach((objective) => {
     switch (objective.objectiveMethodName) {
       case 'objective_speak_to':
@@ -98,11 +90,6 @@ export const updateIndexSpeakToBeatNpc = (objectives: StudioQuestObjective[]) =>
       case 'objective_beat_npc':
         objective.objectiveMethodArgs[0] = index.beatNpc++;
         break;
-      case 'objective_custom':
-        objective.objectiveMethodArgs[1] = index.custom++;
-        break;
     }
   });
 };
-
-export const CUSTOM_GOAL_TEXT_ID = 300;

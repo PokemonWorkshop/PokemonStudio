@@ -1,12 +1,21 @@
-import { InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
+import { MultiLineInput, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
 import { useTranslation } from 'react-i18next';
 import { QuestGoalProps } from './QuestGoalProps';
-import { InputNumber2 } from './InputNumber';
+import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
+import { useGetProjectText } from '@utils/ReadingProjectText';
+import { QUEST_CUSTOM_OBJECTIVE_TEXT_ID } from '@modelEntities/quest';
+import { QuestTranslationEditorTitle } from '../QuestTranslationOverlay';
 import React from 'react';
 
-export const QuestGoalCustom = ({ objective, refs, checkIsValid }: QuestGoalProps) => {
+type QuestGoalCustomProps = QuestGoalProps & {
+  handleTranslateClick?: (editorTitle: QuestTranslationEditorTitle) => () => void;
+};
+
+export const QuestGoalCustom = ({ objective, refs, checkIsValid, handleTranslateClick }: QuestGoalCustomProps) => {
   const { t } = useTranslation('database_quests');
-  const defaultValue = Array.isArray(objective.objectiveMethodArgs[0]) ? (objective.objectiveMethodArgs[0][1] as number) : 0;
+  const getText = useGetProjectText();
+  const isNewObjective = !handleTranslateClick;
+  const defaultValue = getText(QUEST_CUSTOM_OBJECTIVE_TEXT_ID, objective.objectiveMethodArgs[0] as number);
 
   return (
     <PaddedInputContainer>
@@ -14,7 +23,23 @@ export const QuestGoalCustom = ({ objective, refs, checkIsValid }: QuestGoalProp
         <Label htmlFor="custom-objective" required>
           {t('custom_text')}
         </Label>
-        <InputNumber2 ref={refs.valueRef} name="custom-objective" defaultValue={defaultValue} onChange={() => checkIsValid && checkIsValid()} />
+        {isNewObjective ? (
+          <MultiLineInput
+            defaultValue={defaultValue}
+            ref={refs.customObjectiveRef}
+            placeholder={t('example_custom_objective')}
+            onChange={() => checkIsValid && checkIsValid()}
+          />
+        ) : (
+          <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_custom_objective')}>
+            <MultiLineInput
+              defaultValue={defaultValue}
+              ref={refs.customObjectiveRef}
+              placeholder={t('example_custom_objective')}
+              onChange={() => checkIsValid && checkIsValid()}
+            />
+          </TranslateInputContainer>
+        )}
       </InputWithTopLabelContainer>
     </PaddedInputContainer>
   );
