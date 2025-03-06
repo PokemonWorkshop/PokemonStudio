@@ -160,5 +160,9 @@
   "error_status_format": "The status format is not correct.",
   "error_chances": "The chances of inflicting a status must be between 1 and 100.",
   "error_overflow": "The sum of your chances to inflict a status must not exceed 100%.",
-  "invalid_format": "Invalid format"
+  "invalid_format": "Invalid format",
+  "move_import_info": "You can create this new Move by importing data from another existing Move.",
+  "none_option": "None",
+  "other_data": "Other data",
+  "import_move_from": "Import data from"
 }
