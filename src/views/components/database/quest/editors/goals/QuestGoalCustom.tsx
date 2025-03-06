@@ -8,13 +8,12 @@ import { QuestTranslationEditorTitle } from '../QuestTranslationOverlay';
 import React from 'react';
 
 type QuestGoalCustomProps = QuestGoalProps & {
-  handleTranslateClick?: (editorTitle: QuestTranslationEditorTitle) => () => void;
+  handleTranslateClick: (editorTitle: QuestTranslationEditorTitle) => () => void;
 };
 
 export const QuestGoalCustom = ({ objective, refs, checkIsValid, handleTranslateClick }: QuestGoalCustomProps) => {
   const { t } = useTranslation('database_quests');
   const getText = useGetProjectText();
-  const isNewObjective = !handleTranslateClick;
   const defaultValue = getText(QUEST_CUSTOM_OBJECTIVE_TEXT_ID, objective.objectiveMethodArgs[0] as number);
 
   return (
@@ -23,23 +22,14 @@ export const QuestGoalCustom = ({ objective, refs, checkIsValid, handleTranslate
         <Label htmlFor="custom-objective" required>
           {t('custom_text')}
         </Label>
-        {isNewObjective ? (
+        <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_custom_objective')}>
           <MultiLineInput
             defaultValue={defaultValue}
             ref={refs.customObjectiveRef}
             placeholder={t('example_custom_objective')}
             onChange={() => checkIsValid && checkIsValid()}
           />
-        ) : (
-          <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_custom_objective')}>
-            <MultiLineInput
-              defaultValue={defaultValue}
-              ref={refs.customObjectiveRef}
-              placeholder={t('example_custom_objective')}
-              onChange={() => checkIsValid && checkIsValid()}
-            />
-          </TranslateInputContainer>
-        )}
+        </TranslateInputContainer>
       </InputWithTopLabelContainer>
     </PaddedInputContainer>
   );

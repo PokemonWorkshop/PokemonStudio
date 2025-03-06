@@ -94,5 +94,6 @@
   "earning_item": "Item",
   "earning_pokemon": "Pokémon",
   "earning_egg": "Egg",
-  "earning": "Earning"
+  "earning": "Earning",
+  "example_custom_objective": "Text for a custom objective"
 }

@@ -23,5 +23,6 @@
   "translation_additional_dialog": "Scripted dialog of {{name}}",
   "translation_name_plural": "Plural name of {{name}}",
   "translation_form_name": "Form name of {{name}}",
-  "translation_form_description": "Form description of {{name}}"
+  "translation_form_description": "Form description of {{name}}",
+  "translation_custom_objective": "Custom objective"
 }

@@ -67,7 +67,7 @@ export const useObjectiveQuest = (initialObjective?: StudioQuestObjective) => {
         result = !!entityRef.current;
         break;
       case 'objective_custom':
-        result = !!customObjectiveRef.current;
+        result = !!customObjectiveRef.current && customObjectiveRef.current.value !== '';
         break;
       default:
         assertUnreachable(objective.objectiveMethodName);
@@ -82,9 +82,11 @@ export const useObjectiveQuest = (initialObjective?: StudioQuestObjective) => {
     if (objectiveMethod === 'objective_custom') {
       const textId = newObjective.objectiveMethodArgs[0] as number;
       setText(QUEST_CUSTOM_OBJECTIVE_TEXT_ID, textId, '');
+      setTimeout(() => setObjective(newObjective));
+      return;
     }
 
-    setTimeout(() => setObjective(newObjective));
+    setObjective(newObjective);
   };
 
   useEffect(() => {

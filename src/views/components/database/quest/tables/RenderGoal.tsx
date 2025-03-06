@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import styled from 'styled-components';
 import { padStr } from '@utils/PadStr';
 import { useTranslation } from 'react-i18next';
@@ -37,7 +37,6 @@ const RenderGoalContainer = styled(DataGoalGrid).attrs<RenderGoalContainerProps>
 
   & span {
     color: ${({ theme }) => theme.colors.text400};
-    text-transform: capitalize;
   }
 
   & .drag {
@@ -196,7 +195,7 @@ const RenderGoalChildren = ({ objective, texts, index }: { objective: StudioQues
   );
 };
 
-export const RenderGoal = React.forwardRef<HTMLInputElement, RenderGoalProps>(
+export const RenderGoal = forwardRef<HTMLInputElement, RenderGoalProps>(
   ({ objective, index, provided, isDragging, dragOn, onClickEdit, onClickDelete }, ref) => {
     const [state] = useGlobalState();
     const { t } = useTranslation('database_quests');
