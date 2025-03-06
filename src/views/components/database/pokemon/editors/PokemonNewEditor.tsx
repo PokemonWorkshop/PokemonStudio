@@ -8,13 +8,14 @@ import { TextInputError } from '@components/inputs/Input';
 import { checkDbSymbolExist, generateDefaultDbSymbol, wrongDbSymbol } from '@utils/dbSymbolUtils';
 import { useProjectPokemon, useProjectDex } from '@hooks/useProjectData';
 import { createCreature } from '@utils/entityCreation';
-import { useSetProjectText } from '@utils/ReadingProjectText';
+import { useSetProjectText, useGetProjectText } from '@utils/ReadingProjectText';
 import {
   CREATURE_DESCRIPTION_TEXT_ID,
   CREATURE_FORM_NAME_TEXT_ID,
   CREATURE_FORM_VALIDATOR,
   CREATURE_NAME_TEXT_ID,
   CREATURE_SPECIE_TEXT_ID,
+  CREATURE_FORM_DESCRIPTION_TEXT_ID,
 } from '@modelEntities/creature';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
@@ -24,12 +25,27 @@ import { useZodForm } from '@hooks/useZodForm';
 import { InputFormContainer } from '@components/inputs/InputContainer';
 import { TypeFields } from './InformationEditor/TypeFields';
 import { useSelectOptions } from '@hooks/useSelectOptions';
+import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
+import { SelectPokemon } from '@components/selects/SelectPokemon';
+import { importCreatureData } from '@utils/importEntityDataUtils';
 
 const ButtonContainer = styled.div`
   display: flex;
   flex-direction: column;
   padding: 16px 0 0 0;
   gap: 8px;
+`;
+
+const ImportInfo = styled.div`
+  ${({ theme }) => theme.fonts.normalSmall};
+  color: ${({ theme }) => theme.colors.text400};
+  user-select: none;
+`;
+
+const ImportInfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 `;
 
 type Props = {
@@ -54,6 +70,9 @@ export const PokemonNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
   const form = { type1: (typeOptions[0]?.value || '__undef__') as DbSymbol, type2: '__undef__' as DbSymbol };
   const { getFormData, defaults, formRef } = useZodForm(CREATURE_NEW_EDITOR_SCHEMA, form);
   useEditorHandlingClose(ref);
+  const getText = useGetProjectText();
+  const [selectedCreature, setSelectedCreature] = useState('__undef__');
+  const [importing, setImporting] = useState(false);
 
   const onClickNew = () => {
     const result = getFormData();
@@ -61,10 +80,31 @@ export const PokemonNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
 
     const dbSymbol = dbSymbolRef.current.value as DbSymbol;
     const { type1, type2 } = result.data;
-    const newCreature = createCreature(creatures, dbSymbol, type1, type2);
+    let newCreature = createCreature(creatures, dbSymbol, type1, type2);
+
+    if (importing && selectedCreature !== '__undef__') {
+      newCreature = importCreatureData(newCreature, creatures[selectedCreature], creatures);
+      setText(CREATURE_SPECIE_TEXT_ID, newCreature.id, getText(CREATURE_SPECIE_TEXT_ID, creatures[selectedCreature].id));
+
+      //Copy other forms texts
+      for (let i = 1; i < newCreature.forms.length; i++) {
+        setText(
+          CREATURE_FORM_NAME_TEXT_ID,
+          newCreature.forms[i].formTextId.name,
+          getText(CREATURE_FORM_NAME_TEXT_ID, creatures[selectedCreature].forms[i].formTextId.name)
+        );
+        setText(
+          CREATURE_FORM_DESCRIPTION_TEXT_ID,
+          newCreature.forms[i].formTextId.description,
+          getText(CREATURE_FORM_DESCRIPTION_TEXT_ID, creatures[selectedCreature].forms[i].formTextId.description)
+        );
+      }
+    } else {
+      setText(CREATURE_SPECIE_TEXT_ID, newCreature.id, '-');
+    }
+
     setText(CREATURE_NAME_TEXT_ID, newCreature.id, name);
     setText(CREATURE_DESCRIPTION_TEXT_ID, newCreature.id, descriptionRef.current.value);
-    setText(CREATURE_SPECIE_TEXT_ID, newCreature.id, '-');
     setText(CREATURE_FORM_NAME_TEXT_ID, newCreature.forms[0].formTextId.name, formNameRef.current.value || name);
 
     setCreature({ [dbSymbol]: newCreature }, { pokemon: { specie: dbSymbol, form: 0 } });
@@ -138,6 +178,20 @@ export const PokemonNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
           {dbSymbolErrorType === 'value' && <TextInputError>{tMove('incorrect_format')}</TextInputError>}
           {dbSymbolErrorType === 'duplicate' && <TextInputError>{tMove('db_symbol_already_used')}</TextInputError>}
         </InputWithTopLabelContainer>
+        <InputGroupCollapse title={t('other_data')} gap="16px" onClick={() => setImporting(!importing)}>
+          <ImportInfoContainer>
+            <ImportInfo>{t('creature_import_info')}</ImportInfo>
+          </ImportInfoContainer>
+          <InputWithTopLabelContainer>
+            <Label htmlFor="select-creature-to-import">{t('import_creature_from')}</Label>
+            <SelectPokemon
+              dbSymbol={selectedCreature}
+              onChange={(dbSymbol) => setSelectedCreature(dbSymbol)}
+              noLabel
+              undefValueOption={t('none_option')}
+            />
+          </InputWithTopLabelContainer>
+        </InputGroupCollapse>
         <ButtonContainer>
           <TooltipWrapper data-tooltip={isDisabled ? tMove('fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickNew} disabled={isDisabled}>
