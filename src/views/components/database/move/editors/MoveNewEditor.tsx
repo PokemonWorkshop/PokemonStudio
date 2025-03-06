@@ -11,7 +11,7 @@ import { checkDbSymbolExist, generateDefaultDbSymbol, wrongDbSymbol } from '@uti
 import { MOVE_CATEGORIES, MOVE_DESCRIPTION_TEXT_ID, MOVE_NAME_TEXT_ID, MOVE_VALIDATOR } from '@modelEntities/move';
 import { createMove } from '@utils/entityCreation';
 import { DbSymbol } from '@modelEntities/dbSymbol';
-import { useSetProjectText, useGetProjectText } from '@utils/ReadingProjectText';
+import { useSetProjectText } from '@utils/ReadingProjectText';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { TooltipWrapper } from '@ds/Tooltip';
 import { useZodForm } from '@hooks/useZodForm';
@@ -64,7 +64,6 @@ export const MoveNewEditor = forwardRef<EditorHandlingClose, MoveNewEditorProps>
   const move = { type: (typeOptions[0]?.value || '__undef__') as DbSymbol, category: categoryOptions[0].value };
   const { getFormData, defaults, formRef } = useZodForm(MOVE_NEW_EDITOR_SCHEMA, move);
   const { Select } = useInputAttrsWithLabel(MOVE_NEW_EDITOR_SCHEMA, defaults);
-  const getText = useGetProjectText();
   const [selectedMove, setSelectedMove] = useState('__undef__');
   const [importing, setImporting] = useState(false);
 
