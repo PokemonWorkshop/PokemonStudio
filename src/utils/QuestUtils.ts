@@ -94,7 +94,7 @@ const buildCustomText = (objective: StudioQuestObjective, state: State) => {
     defaultLanguage: state.projectConfig.language_config.defaultLanguage,
   };
   const lang = state.projectConfig.language_config.defaultLanguage;
-  const textId = objective.objectiveMethodArgs[0];
+  const textId = objective.objectiveMethodArgs[1];
   if (typeof textId === 'number') {
     return getText(projectText, QUEST_CUSTOM_OBJECTIVE_TEXT_ID, textId, lang);
   }

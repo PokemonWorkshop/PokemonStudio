@@ -421,7 +421,7 @@ export const createQuestObjective = (type: StudioQuestObjectiveType, quests: Pro
       return { objectiveMethodName: type, objectiveMethodArgs: [undefined, 1], textFormatMethodName, hiddenByDefault };
     case 'objective_custom': {
       const customTextId = findFirstAvailableCustomObjectiveTextId(quests, 0);
-      return { objectiveMethodName: type, objectiveMethodArgs: [customTextId], textFormatMethodName, hiddenByDefault };
+      return { objectiveMethodName: type, objectiveMethodArgs: [0, customTextId], textFormatMethodName, hiddenByDefault };
     }
     default:
       assertUnreachable(type);

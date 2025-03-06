@@ -14,7 +14,7 @@ type QuestGoalCustomProps = QuestGoalProps & {
 export const QuestGoalCustom = ({ objective, refs, checkIsValid, handleTranslateClick }: QuestGoalCustomProps) => {
   const { t } = useTranslation('database_quests');
   const getText = useGetProjectText();
-  const defaultValue = getText(QUEST_CUSTOM_OBJECTIVE_TEXT_ID, objective.objectiveMethodArgs[0] as number);
+  const defaultValue = getText(QUEST_CUSTOM_OBJECTIVE_TEXT_ID, objective.objectiveMethodArgs[1] as number);
 
   return (
     <PaddedInputContainer>

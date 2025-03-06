@@ -49,7 +49,7 @@ export const QuestGoalEditor = forwardRef<EditorHandlingClose, QuestGoalEditorPr
   const saveTexts = () => {
     if (!refs.customObjectiveRef.current) return;
 
-    const textId = objective.objectiveMethodArgs[0] as number;
+    const textId = objective.objectiveMethodArgs[1] as number;
     setText(QUEST_CUSTOM_OBJECTIVE_TEXT_ID, textId, refs.customObjectiveRef.current.value);
   };
 

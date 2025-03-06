@@ -91,7 +91,7 @@ export const findFirstAvailableCustomObjectiveTextId = (allQuests: ProjectData['
       ...quest.objectives.reduce<number[]>((objectiveTextIds, objective) => {
         if (objective.objectiveMethodName !== 'objective_custom') return objectiveTextIds;
 
-        return [...objectiveTextIds, objective.objectiveMethodArgs[0] as number];
+        return [...objectiveTextIds, objective.objectiveMethodArgs[1] as number];
       }, []),
     ];
   }, []);

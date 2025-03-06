@@ -81,7 +81,7 @@ export type StudioQuestEarningType = (typeof QUEST_EARNINGS)[number];
 export type StudioQuestEarningCategoryType = 'money' | 'item' | 'pokemon' | 'egg';
 
 export const updateIndexSpeakToBeatNpc = (objectives: StudioQuestObjective[]) => {
-  const index = { speakTo: 0, beatNpc: 0 };
+  const index = { speakTo: 0, beatNpc: 0, custom: 0 };
   objectives.forEach((objective) => {
     switch (objective.objectiveMethodName) {
       case 'objective_speak_to':
@@ -89,6 +89,9 @@ export const updateIndexSpeakToBeatNpc = (objectives: StudioQuestObjective[]) =>
         break;
       case 'objective_beat_npc':
         objective.objectiveMethodArgs[0] = index.beatNpc++;
+        break;
+      case 'objective_custom':
+        objective.objectiveMethodArgs[0] = index.custom++;
         break;
     }
   });

@@ -80,7 +80,7 @@ export const useObjectiveQuest = (initialObjective?: StudioQuestObjective) => {
     const newObjective = createQuestObjective(objectiveMethod, quests);
 
     if (objectiveMethod === 'objective_custom') {
-      const textId = newObjective.objectiveMethodArgs[0] as number;
+      const textId = newObjective.objectiveMethodArgs[1] as number;
       setText(QUEST_CUSTOM_OBJECTIVE_TEXT_ID, textId, '');
       setTimeout(() => setObjective(newObjective));
       return;
