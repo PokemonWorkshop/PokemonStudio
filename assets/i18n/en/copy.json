@@ -1,5 +1,6 @@
 {
   "identifier_message": "Copy the identifier",
-  "copied": "Copied!",
+  "copied": "Copied! ✅",
+  "failed_to_copy": "Failed to copy ❌",
   "copy_code": "Copy the code"
 }

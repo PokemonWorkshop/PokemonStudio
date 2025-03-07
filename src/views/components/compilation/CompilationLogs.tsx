@@ -9,6 +9,8 @@ import { join } from '@utils/path';
 import { showNotification } from '@utils/showNotification';
 import { useLoaderRef } from '@utils/loaderContext';
 import { CompilationLogsContainer, ProgressBarCompilationContainer } from './CompilationStyle';
+import { CopyButton } from '@components/Copy';
+import { ONLY_SHOW_ON_CHANGE_TEXT } from '@ds/Tooltip/TooltipContext';
 
 const getPlatform = () => {
   const platform = window.api.platform;
@@ -30,10 +32,10 @@ export const CompilationLogs = ({ configuration }: CompilationLogsProps) => {
   const showItemInFolder = useShowItemInFolder();
   const isError = exitCode !== undefined && (exitCode === null || exitCode > 0);
 
-  const onClickClipboard = () => {
-    if (!logsRef.current) return;
+  const getDataToCopy = () => {
+    if (!logsRef.current) throw new Error('no logs to copy');
 
-    navigator.clipboard.writeText(logsRef.current.textContent || '');
+    return logsRef.current.textContent || '';
   };
 
   const onClickSaveLogs = () => {
@@ -101,7 +103,9 @@ export const CompilationLogs = ({ configuration }: CompilationLogsProps) => {
       <div className="logs">
         <LoggerInput ref={logsRef} disabled />
         <div className="actions">
-          <DarkButton onClick={onClickClipboard}>{t('copy_to_clipboard')}</DarkButton>
+          <CopyButton message={ONLY_SHOW_ON_CHANGE_TEXT} dataToCopy={getDataToCopy}>
+            {t('copy_to_clipboard')}
+          </CopyButton>
           <DarkButton onClick={onClickSaveLogs}>{t('save_logs')}</DarkButton>
         </div>
       </div>
