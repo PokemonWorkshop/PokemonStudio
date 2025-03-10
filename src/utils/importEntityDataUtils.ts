@@ -28,23 +28,18 @@ export const importCreatureData = (creature: StudioCreature, dataToImport: Studi
   newCreature.forms[0].type2 = creature.forms[0].type2;
   newCreature.forms[0].formTextId.name = findFirstAvailableFormTextId(allPokemon, 0, 'name');
 
-  let newAllPokemon = {
+  const newAllPokemon = {
     ...allPokemon,
     [newCreature.dbSymbol]: newCreature,
   }; //To avoid getting same text IDs for other forms
 
   //Update form text IDs
-  for (let i = 1; i < newCreature.forms.length; i++) {
+  newCreature.forms.slice(1).forEach((form) => {
     const formTextIdName = findFirstAvailableFormTextId(newAllPokemon, 0, 'name');
     const formTextIdDescription = findFirstAvailableFormTextId(newAllPokemon, 0, 'description');
-    newCreature.forms[i].formTextId.name = formTextIdName;
-    newCreature.forms[i].formTextId.description = formTextIdDescription;
-
-    newAllPokemon = {
-      ...allPokemon,
-      [newCreature.dbSymbol]: newCreature,
-    }; //To avoid getting same text IDs for other forms
-  }
+    form.formTextId.name = formTextIdName;
+    form.formTextId.description = formTextIdDescription;
+  });
 
   return newCreature;
 };

@@ -87,18 +87,20 @@ export const PokemonNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
       setText(CREATURE_SPECIE_TEXT_ID, newCreature.id, getText(CREATURE_SPECIE_TEXT_ID, creatures[selectedCreature].id));
 
       //Copy other forms texts
-      for (let i = 1; i < newCreature.forms.length; i++) {
+      let formCpt = 1;
+      newCreature.forms.slice(1).forEach((form) => {
         setText(
           CREATURE_FORM_NAME_TEXT_ID,
-          newCreature.forms[i].formTextId.name,
-          getText(CREATURE_FORM_NAME_TEXT_ID, creatures[selectedCreature].forms[i].formTextId.name)
+          form.formTextId.name,
+          getText(CREATURE_FORM_NAME_TEXT_ID, creatures[selectedCreature].forms[formCpt].formTextId.name)
         );
         setText(
           CREATURE_FORM_DESCRIPTION_TEXT_ID,
-          newCreature.forms[i].formTextId.description,
-          getText(CREATURE_FORM_DESCRIPTION_TEXT_ID, creatures[selectedCreature].forms[i].formTextId.description)
+          form.formTextId.description,
+          getText(CREATURE_FORM_DESCRIPTION_TEXT_ID, creatures[selectedCreature].forms[formCpt].formTextId.description)
         );
-      }
+        formCpt++;
+      });
     } else {
       setText(CREATURE_SPECIE_TEXT_ID, newCreature.id, '-');
     }
