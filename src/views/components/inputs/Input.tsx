@@ -1,5 +1,4 @@
 import styled, { css } from 'styled-components';
-import TextareaAutosize from 'react-textarea-autosize';
 
 type InputProps = {
   error?: boolean;
@@ -130,7 +129,8 @@ const sharedInputStyles = css<SharedInputStylesProps>`
 
 type MultiLineInputProps = SharedInputStylesProps;
 
-export const MultiLineInput = styled(TextareaAutosize)<MultiLineInputProps>`
+export const MultiLineInput = styled.textarea<MultiLineInputProps>`
+  field-sizing: content;
   ${sharedInputStyles}
 `;
 
