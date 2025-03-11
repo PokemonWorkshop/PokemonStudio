@@ -160,5 +160,9 @@
   "error_status_format": "Le format du status n'est pas correct.",
   "error_chances": "Les chances d'infliger un statut doivent être comprises entre 1 et 100.",
   "error_overflow": "La somme de vos chances d'infliger un statut ne doit pas excéder 100\u00a0%.",
-  "invalid_format": "Format non valide"
+  "invalid_format": "Format non valide",
+  "move_import_info": "Vous pouvez créer cette nouvelle attaque en copiant les données d'une autre attaque déjà existante.",
+  "none_option": "Aucun",
+  "other_data": "Autres données",
+  "import_move_from": "Importer les données de"
 }

@@ -1,4 +1,5 @@
 import { StudioTrainer } from '@modelEntities/trainer';
+import { StudioMove } from '@modelEntities/move';
 import { StudioCreature } from '@modelEntities/creature';
 import { cloneEntity } from './cloneEntity';
 import { findFirstAvailableFormTextId } from './ModelUtils';
@@ -15,6 +16,18 @@ export const importTrainerData = (trainer: StudioTrainer, dataToImport: StudioTr
     resources: cloneData.resources,
   };
 };
+
+export const importMoveData = (move: StudioMove, dataToImport: StudioMove): StudioMove => {
+  const cloneData = cloneEntity(dataToImport);
+
+  return {
+    ...cloneData,
+    id: move.id,
+    dbSymbol: move.dbSymbol,
+    type: move.type,
+    category: move.category,
+  };
+}
 
 export const importCreatureData = (creature: StudioCreature, dataToImport: StudioCreature, allPokemon: ProjectData['pokemon']): StudioCreature => {
   const cloneData = cloneEntity(dataToImport);
