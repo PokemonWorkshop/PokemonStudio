@@ -225,5 +225,9 @@
   "form_name": "Form name",
   "example_form_name": "Unown A",
   "form_description": "Form description",
-  "use_default_description": "Use the default description"
+  "use_default_description": "Use the default description",
+  "creature_import_info": "You can create this new Pokémon by importing data from another existing Pokémon.",
+  "none_option": "None",
+  "other_data": "Other data",
+  "import_creature_from": "Import data from"
 }
