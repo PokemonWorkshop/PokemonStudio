@@ -57,7 +57,12 @@ export const ZoneGroupImportEditor = forwardRef<EditorHandlingClose, ZoneGroupIm
         <ZoneGroupImportInfo>{t('zone_group_import_info')}</ZoneGroupImportInfo>
         <InputWithTopLabelContainer>
           <Label htmlFor="zone">{t('import_group_from')}</Label>
-          <SelectZone dbSymbol={selectedZone} onChange={(selected) => setSelectedZone(selected.value)} rejected={[zone.dbSymbol]} noLabel />
+          <SelectZone
+            dbSymbol={selectedZone}
+            onChange={(dbSymbol) => setSelectedZone(dbSymbol)}
+            filter={(dbSymbol) => dbSymbol !== zone.dbSymbol}
+            noLabel
+          />
         </InputWithTopLabelContainer>
         <InputWithLeftLabelContainer>
           <Label htmlFor="override">{t('replace_group')}</Label>
@@ -71,3 +76,4 @@ export const ZoneGroupImportEditor = forwardRef<EditorHandlingClose, ZoneGroupIm
     </Editor>
   );
 });
+ZoneGroupImportEditor.displayName = 'ZoneGroupImportEditor';

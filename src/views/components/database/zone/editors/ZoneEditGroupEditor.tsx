@@ -1,8 +1,8 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
-import { Editor, useRefreshUI } from '@components/editor';
+import { Editor } from '@components/editor';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { SelectGroup } from '@components/selects';
@@ -15,6 +15,9 @@ import { DbSymbol } from '@modelEntities/dbSymbol';
 
 import { padStr } from '@utils/PadStr';
 import { cloneEntity } from '@utils/cloneEntity';
+import { useUpdateZone } from './useUpdateZone';
+import { useUpdateGroup } from '@components/database/group/editors/useUpdateGroup';
+import { defineRelationCustomCondition } from '@utils/GroupUtils';
 
 const MapsListContainer = styled.div`
   display: flex;
@@ -33,36 +36,45 @@ const rejectedGroup = (wildGroups: string[], group: StudioGroup) => {
   return wildGroupsCopy;
 };
 
-export const ZoneEditGroupEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { zone } = useZonePage();
+type ZoneEditGroupEditorProps = {
+  currentGroupIndex: number;
+};
 
-  if (!group) throw new Error('group is undefined');
-
+export const ZoneEditGroupEditor = forwardRef<EditorHandlingClose, ZoneEditGroupEditorProps>(({ currentGroupIndex }, ref) => {
+  const { zone, groups } = useZonePage();
+  const updateZone = useUpdateZone(zone);
+  const [group, setGroup] = useState<StudioGroup>(cloneEntity(groups[zone.wildGroups[currentGroupIndex]]));
+  const updateGroup = useUpdateGroup(group);
+  const [wildGroups, setWildGroups] = useState(cloneEntity(zone.wildGroups));
   const { t } = useTranslation(['database_zones', 'database_groups']);
-  const refreshUI = useRefreshUI();
 
   const onChangeGroup = (dbSymbol: string) => {
-    group.data = cloneEntity(groups[dbSymbol]);
-    zone.wildGroups[index] = dbSymbol as DbSymbol;
+    setGroup(cloneEntity(groups[dbSymbol]));
+    const wildGroupsEdited = cloneEntity(wildGroups);
+    wildGroupsEdited[currentGroupIndex] = dbSymbol as DbSymbol;
+    setWildGroups(wildGroupsEdited);
   };
 
   const onClickTag = (mapId: number) => {
-    const mapIdIndex = mapIdIndexInGroup(mapId, group.data);
-    if (mapIdIndex === -1) group.data.customConditions.push({ type: 'mapId', relationWithPreviousCondition: 'OR', value: mapId });
-    else group.data.customConditions.splice(mapIdIndex, 1);
-  };
-
-  const canClose = () => {
-    const result = true;
-
-    return result;
+    const mapIdIndex = mapIdIndexInGroup(mapId, group);
+    const customConditions = cloneEntity(group.customConditions);
+    if (mapIdIndex === -1) {
+      customConditions.push({ type: 'mapId', relationWithPreviousCondition: 'OR', value: mapId });
+    } else {
+      customConditions.splice(mapIdIndex, 1);
+    }
+    setGroup({ ...group, customConditions });
   };
 
   const onClose = () => {
-    if (!canClose()) return;
+    const customConditions = cloneEntity(group.customConditions);
+    updateZone({
+      wildGroups: wildGroups,
+    });
+    updateGroup({ customConditions: defineRelationCustomCondition(customConditions) });
   };
 
-  useEditorHandlingClose(ref, onClose, canClose);
+  useEditorHandlingClose(ref, onClose);
 
   return (
     <Editor type="creation" title={t('database_groups:groups')}>
@@ -70,9 +82,9 @@ export const ZoneEditGroupEditor = forwardRef<EditorHandlingClose>((_, ref) => {
         <InputWithTopLabelContainer>
           <Label htmlFor="groups">{t('database_groups:group')}</Label>
           <SelectGroup
-            dbSymbol={group.data.dbSymbol}
-            onChange={(dbSymbol) => refreshUI(onChangeGroup(dbSymbol))}
-            filter={(dbSymbol) => !rejectedGroup(zone.wildGroups, group.data).includes(dbSymbol as DbSymbol)}
+            dbSymbol={group.dbSymbol}
+            onChange={(dbSymbol) => onChangeGroup(dbSymbol)}
+            filter={(dbSymbol) => !rejectedGroup(wildGroups, group).includes(dbSymbol as DbSymbol)}
             noLabel
           />
         </InputWithTopLabelContainer>
@@ -83,7 +95,7 @@ export const ZoneEditGroupEditor = forwardRef<EditorHandlingClose>((_, ref) => {
               {zone.maps
                 .sort((a, b) => a - b)
                 .map((id, mapIdIndex) => (
-                  <TagWithSelection key={mapIdIndex} onClick={() => refreshUI(onClickTag(id))} selected={mapIdIndexInGroup(id, group.data) !== -1}>
+                  <TagWithSelection key={mapIdIndex} onClick={() => onClickTag(id)} selected={mapIdIndexInGroup(id, group) !== -1}>
                     <span className="map-id">{padStr(id, 2)}</span>
                   </TagWithSelection>
                 ))}
@@ -94,3 +106,4 @@ export const ZoneEditGroupEditor = forwardRef<EditorHandlingClose>((_, ref) => {
     </Editor>
   );
 });
+ZoneEditGroupEditor.displayName = 'ZoneEditGroupEditor';

@@ -18,9 +18,6 @@ import { StudioZoneForcedWeather } from '@modelEntities/zone';
 import { padStr } from '@utils/PadStr';
 import { cloneEntity } from '@utils/cloneEntity';
 
-// 6. Imports de fichiers locaux
-import { ZoneTranslationEditorTitle } from './ZoneTranslationOverlay';
-
 const InputMapsListContainer = styled(InputWithTopLabelContainer)`
   gap: 16px;
 `;

@@ -75,3 +75,4 @@ export const ZoneNewEditor = forwardRef<EditorHandlingClose, ZoneNewEditorProps>
     </Editor>
   );
 });
+ZoneNewEditor.displayName = 'ZoneNewEditor';

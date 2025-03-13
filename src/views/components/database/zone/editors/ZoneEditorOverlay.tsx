@@ -19,23 +19,26 @@ export type ZoneDialogsRef = React.RefObject<DialogRefData<ZoneEditorAndDeletion
  * Editor overlay for the zones.
  * This component uses the generic editor overlay to show the components based on what's called from dialogsRef.
  */
-export const ZoneEditorOverlay = defineEditorOverlay<ZoneEditorAndDeletionKeys>('ZoneEditorOverlay', (dialogToShow, handleCloseRef, closeDialog) => {
-  switch (dialogToShow) {
-    case 'new':
-      return <ZoneNewEditor closeDialog={closeDialog} ref={handleCloseRef} />;
-    case 'frame':
-      return <ZoneFrameEditor ref={handleCloseRef} />;
-    case 'settings':
-      return <ZoneSettingsEditor ref={handleCloseRef} />;
-    case 'travel':
-      return <ZoneTravelEditor ref={handleCloseRef} />;
-    case 'addGroup':
-      return <ZoneAddGroupEditor closeDialog={closeDialog} ref={handleCloseRef} />;
-    case 'editGroup':
-      return <ZoneEditGroupEditor ref={handleCloseRef} />;
-    case 'importGroup':
-      return <ZoneGroupImportEditor closeDialog={closeDialog} ref={handleCloseRef} />;
-    default:
-      assertUnreachable(dialogToShow);
+export const ZoneEditorOverlay = defineEditorOverlay<ZoneEditorAndDeletionKeys, { currentGroupIndex: number }>(
+  'ZoneEditorOverlay',
+  (dialogToShow, handleCloseRef, closeDialog, props) => {
+    switch (dialogToShow) {
+      case 'new':
+        return <ZoneNewEditor closeDialog={closeDialog} ref={handleCloseRef} />;
+      case 'frame':
+        return <ZoneFrameEditor ref={handleCloseRef} />;
+      case 'settings':
+        return <ZoneSettingsEditor ref={handleCloseRef} />;
+      case 'travel':
+        return <ZoneTravelEditor ref={handleCloseRef} />;
+      case 'addGroup':
+        return <ZoneAddGroupEditor closeDialog={closeDialog} ref={handleCloseRef} />;
+      case 'editGroup':
+        return <ZoneEditGroupEditor ref={handleCloseRef} currentGroupIndex={props.currentGroupIndex} />;
+      case 'importGroup':
+        return <ZoneGroupImportEditor closeDialog={closeDialog} ref={handleCloseRef} />;
+      default:
+        assertUnreachable(dialogToShow);
+    }
   }
-});
+);

@@ -97,3 +97,4 @@ export const ZoneTravelEditor = forwardRef<EditorHandlingClose>((_, ref) => {
     </Editor>
   );
 });
+ZoneTravelEditor.displayName = 'ZoneTravelEditor';

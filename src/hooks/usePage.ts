@@ -258,12 +258,14 @@ export const useQuestPage = () => {
 
 export const useZonePage = () => {
   const { projectDataValues: zones, selectedDataIdentifier: zoneSelected, state } = useProjectDataReadonly('zones', 'zone');
+  const { projectDataValues: groups } = useProjectDataReadonly('groups', 'group');
   const zone = zones[zoneSelected];
   const zoneName = getEntityNameText(zone, state);
 
   return {
     zone,
     zoneName,
+    groups,
     cannotDelete: Object.keys(zones).length <= 1,
   };
 };

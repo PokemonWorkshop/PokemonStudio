@@ -5,6 +5,7 @@ import { padStr } from '@utils/PadStr';
 import { CopyIdentifier } from '@components/Copy';
 import { useGetEntityDescriptionText, useGetEntityNameText } from '@utils/ReadingProjectText';
 import { StudioZone } from '@modelEntities/zone';
+import { ZoneDialogsRef } from './editors/ZoneEditorOverlay';
 
 const DataZoneContainer = styled(DataInfoContainer)`
   gap: 8px;
@@ -12,14 +13,15 @@ const DataZoneContainer = styled(DataInfoContainer)`
 
 type ZoneFrameProps = {
   zone: StudioZone;
-  onClick: () => void;
+  dialogsRef: ZoneDialogsRef;
 };
 
-export const ZoneFrame = ({ zone, onClick }: ZoneFrameProps) => {
+export const ZoneFrame = ({ zone, dialogsRef }: ZoneFrameProps) => {
   const getZoneName = useGetEntityNameText();
   const getZoneDescription = useGetEntityDescriptionText();
+
   return (
-    <DataBlockContainer size="full" onClick={onClick}>
+    <DataBlockContainer size="full" onClick={() => dialogsRef.current?.openDialog('frame')}>
       <DataGrid columns="minmax(min-content, 1024px)">
         <DataZoneContainer>
           <DataInfoContainerHeaderTitle>

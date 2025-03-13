@@ -3,20 +3,21 @@ import { DataBlockWithTitle, DataGrid } from '../dataBlocks';
 import { useTranslation } from 'react-i18next';
 import { DataFieldsetField, DataFieldsetFieldCode } from '../dataBlocks/DataFieldsetField';
 import { StudioZone } from '@modelEntities/zone';
+import { ZoneDialogsRef } from './editors/ZoneEditorOverlay';
 
 const isPositionUndefined = (zone: StudioZone) => zone.position.x === null || zone.position.y === null;
 const isWarpUndefined = (zone: StudioZone) => zone.warp.x === null || zone.warp.y === null;
 
 type ZoneTravelProps = {
   zone: StudioZone;
-  onClick: () => void;
+  dialogsRef: ZoneDialogsRef;
 };
 
-export const ZoneTravel = ({ zone, onClick }: ZoneTravelProps) => {
+export const ZoneTravel = ({ zone, dialogsRef }: ZoneTravelProps) => {
   const { t } = useTranslation('database_zones');
 
   return (
-    <DataBlockWithTitle size="half" title={t('travel')} onClick={onClick}>
+    <DataBlockWithTitle size="half" title={t('travel')} onClick={() => dialogsRef.current?.openDialog('travel')}>
       <DataGrid columns="136px 1fr" rows="53px 53px">
         <DataFieldsetField label={t('warp')} data={zone.isWarpDisallowed ? t('not_allowed') : t('allowed')} />
         <DataFieldsetField label={t('zone_type')} data={zone.isFlyAllowed ? t('outdoor') : t('indoor')} />
