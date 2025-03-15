@@ -85,7 +85,9 @@ export const ZoneSettingsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   };
 
   const onDeleteMap = (index: number) => {
-    setMaps(cloneEntity(maps).splice(index, 1));
+    const mapsEdited = cloneEntity(maps);
+    mapsEdited.splice(index, 1);
+    setMaps(mapsEdited);
   };
 
   const canClose = () => {
@@ -102,6 +104,7 @@ export const ZoneSettingsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
     updateZone({
       forcedWeather,
       panelId: panelIdRef.current.valueAsNumber,
+      maps,
     });
   };
 

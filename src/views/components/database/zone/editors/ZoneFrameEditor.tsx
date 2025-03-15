@@ -64,13 +64,13 @@ export const ZoneFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
           <Label htmlFor="name" required>
             {t('name')}
           </Label>
-          <TranslateInputContainer onTranslateClick={() => handleTranslateClick('translation_name')}>
+          <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_name')}>
             <Input type="text" name="zone-name" defaultValue={getText(ZONE_NAME_TEXT_ID, zone.id)} ref={nameRef} placeholder={t('example_name')} />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="descr">{t('description')}</Label>
-          <TranslateInputContainer onTranslateClick={() => handleTranslateClick('translation_description')}>
+          <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_description')}>
             <MultiLineInput
               id="descr"
               defaultValue={getText(ZONE_DESCRIPTION_TEXT_ID, zone.id)}

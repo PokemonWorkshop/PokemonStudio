@@ -20,8 +20,8 @@ export const ZoneTravelEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { zone } = useZonePage();
   const updateZone = useUpdateZone(zone);
 
-  const [isWarpDisallowed, setIsWarpDisallowed] = useState<boolean>(false);
-  const [isFlyAllowed, setIsFlyAllowed] = useState<boolean>(false);
+  const [isWarpDisallowed, setIsWarpDisallowed] = useState<boolean>(zone.isWarpDisallowed);
+  const [isFlyAllowed, setIsFlyAllowed] = useState<boolean>(zone.isFlyAllowed);
   const positionXRef = useRef<HTMLInputElement>(null);
   const positionYRef = useRef<HTMLInputElement>(null);
   const warpXRef = useRef<HTMLInputElement>(null);
@@ -35,23 +35,29 @@ export const ZoneTravelEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   };
 
   const canClose = () => {
-    const result =
-      !!warpXRef?.current?.validity.valid &&
-      !warpYRef?.current?.validity.valid &&
-      !positionXRef?.current?.validity.valid &&
-      !positionYRef?.current?.validity.valid;
-
+    let result = true;
+    if (!isWarpDisallowed) {
+      result &&= !!positionXRef.current && !!positionYRef.current && positionXRef.current.validity.valid && positionYRef.current.validity.valid;
+    }
+    if (isFlyAllowed) {
+      result &&= !!warpXRef.current && !!warpYRef.current && warpXRef.current.validity.valid && warpYRef.current.validity.valid;
+    }
     return result;
   };
 
   const onClose = () => {
-    if (!warpXRef?.current || !warpYRef?.current || !positionXRef?.current || !positionYRef?.current || !canClose()) return;
+    if (!canClose()) return;
+
+    const warpX = !warpXRef.current ? null : isNaN(warpXRef.current.valueAsNumber) ? null : warpXRef.current.valueAsNumber;
+    const warpY = !warpYRef.current ? null : isNaN(warpYRef.current.valueAsNumber) ? null : warpYRef.current.valueAsNumber;
+    const posX = !positionXRef.current ? null : isNaN(positionXRef.current.valueAsNumber) ? null : positionXRef.current.valueAsNumber;
+    const posY = !positionYRef.current ? null : isNaN(positionYRef.current.valueAsNumber) ? null : positionYRef.current.valueAsNumber;
 
     updateZone({
-      warp: isWarpDisallowed ? { x: null, y: null } : { x: warpXRef.current.valueAsNumber, y: warpYRef.current.valueAsNumber },
-      position: { x: positionXRef.current.valueAsNumber, y: positionYRef.current.valueAsNumber },
-      isWarpDisallowed: isWarpDisallowed,
-      isFlyAllowed: isFlyAllowed,
+      warp: { x: warpX, y: warpY },
+      position: { x: posX, y: posY },
+      isWarpDisallowed,
+      isFlyAllowed,
     });
   };
 
@@ -62,7 +68,7 @@ export const ZoneTravelEditor = forwardRef<EditorHandlingClose>((_, ref) => {
       <InputContainer>
         <InputWithLeftLabelContainer>
           <Label htmlFor="warp">{t('warp')}</Label>
-          <Toggle name="warp" checked={!zone.isWarpDisallowed} onChange={(event) => onChangeWarp(!event.target.checked)} />
+          <Toggle name="warp" checked={!isWarpDisallowed} onChange={(event) => onChangeWarp(!event.target.checked)} />
         </InputWithLeftLabelContainer>
         {isWarpDisallowed && !isFlyAllowed ? (
           <></>
@@ -71,7 +77,7 @@ export const ZoneTravelEditor = forwardRef<EditorHandlingClose>((_, ref) => {
             {!isWarpDisallowed && (
               <InputWithLeftLabelContainer>
                 <Label htmlFor="outside-zone">{t('outdoor_zone')}</Label>
-                <Toggle name="outside-zone" checked={zone.isFlyAllowed} onChange={(event) => setIsFlyAllowed(event.target.checked)} />
+                <Toggle name="outside-zone" checked={isFlyAllowed} onChange={(event) => setIsFlyAllowed(event.target.checked)} />
               </InputWithLeftLabelContainer>
             )}
 
@@ -80,7 +86,7 @@ export const ZoneTravelEditor = forwardRef<EditorHandlingClose>((_, ref) => {
                 <Label htmlFor="landing-coordinates">{t('landing_coordinates')}</Label>
                 <div className="coordinates">
                   <CoordinateInput type="number" unit="x" min="0" max="99999" defaultValue={zone.warp.x?.toString()} ref={warpXRef} />
-                  <CoordinateInput type="number" unit="y" min="0" max="99999" defaultValue={zone.warp.x?.toString()} ref={warpYRef} />
+                  <CoordinateInput type="number" unit="y" min="0" max="99999" defaultValue={zone.warp.y?.toString()} ref={warpYRef} />
                 </div>
               </InputWithCoordinateLabelContainer>
             )}
