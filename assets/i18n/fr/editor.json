@@ -23,5 +23,6 @@
   "translation_additional_dialog": "Dialogue scénarisé de {{name}}",
   "translation_name_plural": "Nom au pluriel de {{name}}",
   "translation_form_name": "Nom de la forme de {{name}}",
-  "translation_form_description": "Description de la forme de {{name}}"
+  "translation_form_description": "Description de la forme de {{name}}",
+  "translation_custom_objective": "Objectif personnalisé"
 }

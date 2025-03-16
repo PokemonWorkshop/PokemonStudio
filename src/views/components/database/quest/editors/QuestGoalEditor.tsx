@@ -1,7 +1,7 @@
 import { EditorWithCollapse } from '@components/editor/Editor';
 import { EditorChildWithSubEditorContainer } from '@components/editor/EditorContainer';
 import { InputContainer, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
-import { QUEST_OBJECTIVES, StudioQuestObjectiveType, updateIndexSpeakToBeatNpc } from '@modelEntities/quest';
+import { QUEST_CUSTOM_OBJECTIVE_TEXT_ID, QUEST_OBJECTIVES, StudioQuestObjectiveType, updateIndexSpeakToBeatNpc } from '@modelEntities/quest';
 import { padStr } from '@utils/PadStr';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
@@ -13,6 +13,7 @@ import {
   QuestGoalObtainItem,
   QuestGoalSeePokemon,
   QuestGoalSpeakTo,
+  QuestGoalCustom,
 } from './goals';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { useQuestPage } from '@src/hooks/usePage';
@@ -23,6 +24,9 @@ import { cloneEntity } from '@utils/cloneEntity';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import { ObjectiveEggIndex } from '@utils/QuestUtils';
+import { useDialogsRef } from '@src/hooks/useDialogsRef';
+import { useSetProjectText } from '@utils/ReadingProjectText';
+import { QuestTranslationEditorTitle, QuestTranslationOverlay } from './QuestTranslationOverlay';
 import React, { forwardRef, useMemo } from 'react';
 
 const objectiveCategoryEntries = (t: TFunction<'database_quests'>) =>
@@ -36,9 +40,29 @@ export const QuestGoalEditor = forwardRef<EditorHandlingClose, QuestGoalEditorPr
   const { t } = useTranslation('database_quests');
   const { quest } = useQuestPage();
   const updateQuest = useUpdateQuest(quest);
+  const dialogsRef = useDialogsRef<QuestTranslationEditorTitle>();
+  const setText = useSetProjectText();
   const objectiveOptions = useMemo(() => objectiveCategoryEntries(t), [t]);
   const { objective, refs, setObjective, updateObjective, checkIsValid } = useObjectiveQuest(quest.objectives[objectiveIndex]);
   const objectiveMethodName = objective.objectiveMethodName;
+
+  const saveTexts = () => {
+    if (!refs.customObjectiveRef.current) return;
+
+    const textId = objective.objectiveMethodArgs[1] as number;
+    setText(QUEST_CUSTOM_OBJECTIVE_TEXT_ID, textId, refs.customObjectiveRef.current.value);
+  };
+
+  const handleTranslateClick = (editorTitle: QuestTranslationEditorTitle) => () => {
+    saveTexts();
+    setTimeout(() => dialogsRef.current?.openDialog(editorTitle), 0);
+  };
+
+  const onTranslationOverlayClose = () => {
+    if (!refs.customObjectiveRef.current) return;
+
+    refs.customObjectiveRef.current.value = refs.customObjectiveRef.current.defaultValue;
+  };
 
   const changeObjective = (value: StudioQuestObjectiveType) => {
     if (value === objective.objectiveMethodName) return;
@@ -101,6 +125,12 @@ export const QuestGoalEditor = forwardRef<EditorHandlingClose, QuestGoalEditorPr
         newObjective.objectiveMethodArgs[1] = refs.nameRef.current.value;
         break;
       }
+      case 'objective_custom': {
+        if (!refs.customObjectiveRef.current) return;
+
+        saveTexts();
+        break;
+      }
       default:
         assertUnreachable(objectiveMethodName);
     }
@@ -133,8 +163,12 @@ export const QuestGoalEditor = forwardRef<EditorHandlingClose, QuestGoalEditorPr
           )}
           {objectiveMethodName === 'objective_obtain_egg' && <QuestGoalEgg objective={objective} refs={refs} />}
           {objectiveMethodName === 'objective_hatch_egg' && <QuestGoalEgg objective={objective} refs={refs} />}
+          {objectiveMethodName === 'objective_custom' && (
+            <QuestGoalCustom objective={objective} refs={refs} handleTranslateClick={handleTranslateClick} />
+          )}
         </InputContainer>
       </EditorChildWithSubEditorContainer>
+      <QuestTranslationOverlay quest={quest} objective={objective} onClose={onTranslationOverlayClose} ref={dialogsRef} />
     </EditorWithCollapse>
   );
 });

@@ -8,6 +8,7 @@ export type QuestGoalProps = {
     entityRef: MutableRefObject<DbSymbol | undefined>;
     nameRef: RefObject<HTMLInputElement>;
     valueRef: RefObject<HTMLInputElement>;
+    customObjectiveRef: RefObject<HTMLTextAreaElement>;
   };
   checkIsValid?: () => void;
 };

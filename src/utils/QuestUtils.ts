@@ -4,10 +4,11 @@ import {
   StudioQuestEarningType,
   StudioQuestObjective,
   StudioQuestObjectiveType,
+  QUEST_CUSTOM_OBJECTIVE_TEXT_ID,
 } from '@modelEntities/quest';
 import { State } from '@src/GlobalStateProvider';
 import { TFunction } from 'i18next';
-import { getEntityNameText, getEntityNameTextUsingTextId } from './ReadingProjectText';
+import { getText, getEntityNameText, getEntityNameTextUsingTextId } from './ReadingProjectText';
 import { StudioGroupEncounter } from '@modelEntities/groupEncounter';
 
 const buildSpeakToText = (objective: StudioQuestObjective) => {
@@ -86,6 +87,20 @@ const buildObtainEgg = (objective: StudioQuestObjective, _state: State, t: TFunc
   return `${objective.objectiveMethodArgs[0]} ${t('eggs')}`;
 };
 
+const buildCustomText = (objective: StudioQuestObjective, state: State) => {
+  const projectText = {
+    texts: state.projectText,
+    languages: state.projectStudio.languagesTranslation,
+    defaultLanguage: state.projectConfig.language_config.defaultLanguage,
+  };
+  const lang = state.projectConfig.language_config.defaultLanguage;
+  const textId = objective.objectiveMethodArgs[1];
+  if (typeof textId === 'number') {
+    return getText(projectText, QUEST_CUSTOM_OBJECTIVE_TEXT_ID, textId, lang);
+  }
+  return '';
+};
+
 const goalTexts: Record<
   StudioQuestObjectiveType,
   (objective: StudioQuestObjective, state: State, t: TFunction<'database_quests'>) => string | string[]
@@ -98,6 +113,7 @@ const goalTexts: Record<
   objective_beat_npc: buildBeatNpcText,
   objective_hatch_egg: buildHatchEggText,
   objective_obtain_egg: buildObtainEgg,
+  objective_custom: buildCustomText,
 };
 
 export const buildGoalText = (objective: StudioQuestObjective, state: State, t: TFunction<'database_quests'>) => {

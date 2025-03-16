@@ -1,13 +1,14 @@
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { EditorWithCollapse } from '@components/editor/Editor';
 import { InputContainer, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
-import { QUEST_OBJECTIVES, StudioQuestObjectiveType, updateIndexSpeakToBeatNpc } from '@modelEntities/quest';
+import { QUEST_CUSTOM_OBJECTIVE_TEXT_ID, QUEST_OBJECTIVES, StudioQuestObjectiveType, updateIndexSpeakToBeatNpc } from '@modelEntities/quest';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import {
   QuestGoalBeatNpc,
   QuestGoalBeatPokemon,
   QuestGoalCatchPokemon,
+  QuestGoalCustom,
   QuestGoalEgg,
   QuestGoalObtainItem,
   QuestGoalSeePokemon,
@@ -23,8 +24,11 @@ import { cloneEntity } from '@utils/cloneEntity';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import { ObjectiveEggIndex } from '@utils/QuestUtils';
+import { useSetProjectText } from '@utils/ReadingProjectText';
 import styled from 'styled-components';
 import React, { forwardRef, useMemo } from 'react';
+import { QuestTranslationEditorTitle, QuestTranslationOverlay } from './QuestTranslationOverlay';
+import { useDialogsRef } from '@src/hooks/useDialogsRef';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -44,11 +48,31 @@ export const QuestNewGoalEditor = forwardRef<EditorHandlingClose, QuestNewGoalEd
   const { t } = useTranslation('database_quests');
   const { quest } = useQuestPage();
   const updateQuest = useUpdateQuest(quest);
+  const dialogsRef = useDialogsRef<QuestTranslationEditorTitle>();
+  const setText = useSetProjectText();
   const objectiveOptions = useMemo(() => objectiveCategoryEntries(t), [t]);
   const { objective, refs, isValid, setObjective, updateObjective, checkIsValid } = useObjectiveQuest();
   const objectiveMethodName = objective.objectiveMethodName;
 
   useEditorHandlingClose(ref);
+
+  const saveTexts = () => {
+    if (!refs.customObjectiveRef.current) return;
+
+    const textId = objective.objectiveMethodArgs[1] as number;
+    setText(QUEST_CUSTOM_OBJECTIVE_TEXT_ID, textId, refs.customObjectiveRef.current.value);
+  };
+
+  const handleTranslateClick = (editorTitle: QuestTranslationEditorTitle) => () => {
+    saveTexts();
+    setTimeout(() => dialogsRef.current?.openDialog(editorTitle), 0);
+  };
+
+  const onTranslationOverlayClose = () => {
+    if (!refs.nameRef.current) return;
+
+    refs.nameRef.current.value = refs.nameRef.current.defaultValue;
+  };
 
   const changeObjective = (value: StudioQuestObjectiveType) => {
     if (value === objective.objectiveMethodName) return;
@@ -102,6 +126,12 @@ export const QuestNewGoalEditor = forwardRef<EditorHandlingClose, QuestNewGoalEd
         newObjective.objectiveMethodArgs[1] = refs.nameRef.current.value;
         break;
       }
+      case 'objective_custom': {
+        if (!refs.customObjectiveRef.current) return;
+
+        saveTexts();
+        break;
+      }
       default:
         assertUnreachable(objectiveMethodName);
     }
@@ -131,6 +161,9 @@ export const QuestNewGoalEditor = forwardRef<EditorHandlingClose, QuestNewGoalEd
         )}
         {objectiveMethodName === 'objective_obtain_egg' && <QuestGoalEgg objective={objective} refs={refs} checkIsValid={checkIsValid} />}
         {objectiveMethodName === 'objective_hatch_egg' && <QuestGoalEgg objective={objective} refs={refs} checkIsValid={checkIsValid} />}
+        {objectiveMethodName === 'objective_custom' && (
+          <QuestGoalCustom objective={objective} refs={refs} checkIsValid={checkIsValid} handleTranslateClick={handleTranslateClick} />
+        )}
         <ButtonContainer>
           <TooltipWrapper data-tooltip={!isValid ? t('fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickNew} disabled={!isValid}>
@@ -140,6 +173,7 @@ export const QuestNewGoalEditor = forwardRef<EditorHandlingClose, QuestNewGoalEd
           <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
+      <QuestTranslationOverlay quest={quest} objective={objective} onClose={onTranslationOverlayClose} ref={dialogsRef} />
     </EditorWithCollapse>
   );
 });
