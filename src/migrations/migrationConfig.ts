@@ -116,7 +116,7 @@ export const MIGRATION_CONFIG: MigrateConfigType[] = [
   },
   {
     migration: addCsvForQuestsCustomObjectives,
-    version: '2.4.1',
+    version: '2.4.2',
     message: 'add_csv_quests_custom_objectives',
   },
 ];
