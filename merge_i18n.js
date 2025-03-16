@@ -2,49 +2,75 @@
 const fs = require('fs');
 
 /**
- * Merges the properties of the baseJson object into the targetJson object.
- * If a property in baseJson is an object, it will recursively merge its properties.
- * If a property in baseJson is a simple value and does not exist in targetJson, it will be added.
+ * Synchronizes targetJson with baseJson:
+ * - Preserves the order of baseJson.
+ * - Adds missing keys.
+ * - Removes extra keys not present in baseJson.
  *
- * @param {Object} baseJson - The base JSON object containing default properties.
- * @param {Object} targetJson - The target JSON object to be merged with baseJson properties.
+ * @param {Object} baseJson - The reference JSON object.
+ * @param {Object} targetJson - The target JSON object to be updated.
+ * @returns {boolean} - Returns true if any changes were made.
  */
-function mergeJson(baseJson, targetJson) {
+function syncJson(baseJson, targetJson) {
+  let hasChanges = false;
+  const updatedJson = {};
+
   for (const key in baseJson) {
     if (typeof baseJson[key] === 'object' && !Array.isArray(baseJson[key])) {
-      if (!targetJson[key]) {
+      if (!targetJson[key] || typeof targetJson[key] !== 'object') {
         targetJson[key] = {};
+        hasChanges = true;
       }
-      mergeJson(baseJson[key], targetJson[key]);
+      hasChanges = syncJson(baseJson[key], targetJson[key]) || hasChanges;
     } else {
-      // If the key is a simple value, add it if it is missing
       if (!Object.prototype.hasOwnProperty.call(targetJson, key)) {
         targetJson[key] = baseJson[key];
+        hasChanges = true;
       }
     }
+    updatedJson[key] = targetJson[key]; // Keep the order from baseJson
   }
+
+  // Remove extra keys that are not in baseJson
+  Object.keys(targetJson).forEach((key) => {
+    if (!Object.prototype.hasOwnProperty.call(baseJson, key)) {
+      hasChanges = true;
+    }
+  });
+
+  // Replace targetJson with the cleaned-up version
+  Object.keys(targetJson).forEach((key) => delete targetJson[key]);
+  Object.assign(targetJson, updatedJson);
+
+  return hasChanges;
 }
 
 const basePath = './assets/i18n/en.json';
 const targetLanguages = ['fr', 'de', 'pt', 'it', 'es'];
 
 try {
-  const baseJson = JSON.parse(fs.readFileSync(basePath, 'utf8'));
+  const baseJson = JSON.parse(fs.readFileSync(basePath, 'utf-8'));
 
   targetLanguages.forEach((lang) => {
     const targetPath = `./assets/i18n/${lang}.json`;
 
     try {
-      const targetJson = JSON.parse(fs.readFileSync(targetPath, 'utf8'));
+      const targetJson = JSON.parse(fs.readFileSync(targetPath, 'utf-8'));
+      const originalJson = JSON.stringify(targetJson, null, 2);
 
-      mergeJson(baseJson, targetJson);
-
-      fs.writeFileSync(targetPath, JSON.stringify(targetJson, null, 2), 'utf8');
-      console.log(`Update completed for ${lang}.json: missing keys have been added.`);
-    } catch (error) {
-      console.error(`Error processing the file ${lang}.json:`, error);
+      if (syncJson(baseJson, targetJson)) {
+        const updatedJson = JSON.stringify(targetJson, null, 2);
+        if (originalJson !== updatedJson) {
+          fs.writeFileSync(targetPath, updatedJson, 'utf-8');
+          console.log(`✅ ${lang}.json updated: synchronized with en.json.`);
+        }
+      } else {
+        console.log(`✅ ${lang}.json is already up-to-date.`);
+      }
+    } catch (e) {
+      console.error(`❌ Error processing ${lang}.json:`, e);
     }
   });
-} catch (error) {
-  console.error('Error reading the base file en.json:', error);
+} catch (e) {
+  console.error('❌ Error reading en.json:', e);
 }
