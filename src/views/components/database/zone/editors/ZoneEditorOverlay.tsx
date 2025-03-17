@@ -10,9 +10,20 @@ import {
   ZoneAddGroupEditor,
   ZoneEditGroupEditor,
   ZoneGroupImportEditor,
+  ZoneDeletion,
+  ZoneGroupsDeletion,
 } from '.';
 
-export type ZoneEditorAndDeletionKeys = 'new' | 'frame' | 'settings' | 'travel' | 'addGroup' | 'editGroup' | 'importGroup';
+export type ZoneEditorAndDeletionKeys =
+  | 'new'
+  | 'frame'
+  | 'settings'
+  | 'travel'
+  | 'addGroup'
+  | 'editGroup'
+  | 'importGroup'
+  | 'deleteZone'
+  | 'deleteGroupsZone';
 export type ZoneDialogsRef = React.RefObject<DialogRefData<ZoneEditorAndDeletionKeys>>;
 
 /**
@@ -37,6 +48,10 @@ export const ZoneEditorOverlay = defineEditorOverlay<ZoneEditorAndDeletionKeys, 
         return <ZoneEditGroupEditor ref={handleCloseRef} currentGroupIndex={props.currentGroupIndex} />;
       case 'importGroup':
         return <ZoneGroupImportEditor closeDialog={closeDialog} ref={handleCloseRef} />;
+      case 'deleteZone':
+        return <ZoneDeletion closeDialog={closeDialog} ref={handleCloseRef} />;
+      case 'deleteGroupsZone':
+        return <ZoneGroupsDeletion closeDialog={closeDialog} ref={handleCloseRef} />;
       default:
         assertUnreachable(dialogToShow);
     }

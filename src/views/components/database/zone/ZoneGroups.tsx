@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataBlockEditor } from '@components/editor';
 import { ProjectData } from '@src/GlobalStateProvider';
@@ -11,12 +11,11 @@ type ZoneGroupsProps = {
   groups: ProjectData['groups'];
   dialogsRef: ZoneDialogsRef;
   setCurrentGroupIndex: (index: number) => void;
-  onDelete: () => void;
 };
 
-export const ZoneGroups = ({ zone, groups, dialogsRef, setCurrentGroupIndex, onDelete }: ZoneGroupsProps) => {
+export const ZoneGroups = ({ zone, groups, dialogsRef, setCurrentGroupIndex }: ZoneGroupsProps) => {
   const { t } = useTranslation('database_zones');
-  const groupLength = Object.keys(groups).length;
+  const groupLength = useMemo(() => Object.keys(groups).length, [groups]);
 
   const onEdit = (index: number) => {
     setCurrentGroupIndex(index);
@@ -27,7 +26,7 @@ export const ZoneGroups = ({ zone, groups, dialogsRef, setCurrentGroupIndex, onD
     <DataBlockEditor
       size="full"
       title={t('groups_of_zone')}
-      onClickDelete={onDelete}
+      onClickDelete={() => dialogsRef.current?.openDialog('deleteGroupsZone', true)}
       importation={{ label: t('import_groups'), onClick: () => dialogsRef.current?.openDialog('importGroup') }}
       add={{ label: t('add_group'), onClick: () => dialogsRef.current?.openDialog('addGroup') }}
       disabledDeletion={zone.wildGroups.length === 0}
