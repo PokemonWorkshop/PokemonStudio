@@ -43,9 +43,10 @@ export const ZoneGroupImportEditor = forwardRef<EditorHandlingClose, ZoneGroupIm
   const [override, setOverride] = useState(false);
 
   const onClickImport = () => {
-    if (override) zone.wildGroups = cloneEntity(zones[selectedZone].wildGroups);
-    else zone.wildGroups.push(...cloneEntity(zones[selectedZone].wildGroups));
-    setZone({ [zone.dbSymbol]: zone });
+    const zoneEdited = cloneEntity(zone);
+    if (override) zoneEdited.wildGroups = cloneEntity(zones[selectedZone].wildGroups);
+    else zoneEdited.wildGroups.push(...cloneEntity(zones[selectedZone].wildGroups));
+    setZone({ [zone.dbSymbol]: zoneEdited });
     closeDialog();
   };
 
