@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { forwardRef, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { Editor, useRefreshUI } from '@components/editor';
-import { CoordinateInput, InputContainer, InputWithLeftLabelContainer, InputWithCoordinateLabelContainer, Label, Toggle } from '@components/inputs';
 import { useTranslation } from 'react-i18next';
-import { cleaningNaNToNull } from '@utils/cleanNaNValue';
-import { StudioZone } from '@modelEntities/zone';
+
+import { Editor } from '@components/editor';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { CoordinateInput, InputContainer, InputWithLeftLabelContainer, InputWithCoordinateLabelContainer, Label, Toggle } from '@components/inputs';
+
+import { useZonePage } from '@src/hooks/usePage';
+import { useUpdateZone } from './useUpdateZone';
 
 const OutsideContainer = styled.div`
   display: flex;
@@ -12,70 +15,78 @@ const OutsideContainer = styled.div`
   gap: 16px;
 `;
 
-type ZoneCoordinateInputProps = {
-  unit: string;
-  value: number | null;
-  setValue: (v: number | null) => void;
-  refreshUI: (_: unknown) => void;
-};
-
-const ZoneCoordinateInput = ({ unit, value, setValue, refreshUI }: ZoneCoordinateInputProps) => {
-  return (
-    <CoordinateInput
-      type="text"
-      unit={unit}
-      min="0"
-      max="99999"
-      value={value === null || isNaN(value) ? '' : value}
-      onChange={(event) => {
-        const val = parseInt(event.target.value);
-        if (val < 0 || val > 99_999) return event.preventDefault();
-        refreshUI(setValue(val));
-      }}
-      onBlur={() => refreshUI(setValue(cleaningNaNToNull(value)))}
-    />
-  );
-};
-
-type ZoneTravelEditorProps = {
-  zone: StudioZone;
-};
-
-export const ZoneTravelEditor = ({ zone }: ZoneTravelEditorProps) => {
+export const ZoneTravelEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { t } = useTranslation('database_zones');
-  const refreshUI = useRefreshUI();
+  const { zone } = useZonePage();
+  const updateZone = useUpdateZone(zone);
 
-  const onChangeWarp = (b: boolean) => {
-    zone.isWarpDisallowed = b;
-    if (!b) return;
+  const [isWarpDisallowed, setIsWarpDisallowed] = useState<boolean>(zone.isWarpDisallowed);
+  const [isFlyAllowed, setIsFlyAllowed] = useState<boolean>(zone.isFlyAllowed);
+  const positionXRef = useRef<HTMLInputElement>(null);
+  const positionYRef = useRef<HTMLInputElement>(null);
+  const warpXRef = useRef<HTMLInputElement>(null);
+  const warpYRef = useRef<HTMLInputElement>(null);
 
-    zone.warp = { x: null, y: null };
-    zone.isFlyAllowed = false;
+  const onChangeWarp = (checked: boolean) => {
+    setIsWarpDisallowed(checked);
+    if (!checked) return;
+
+    setIsFlyAllowed(false);
   };
+
+  const canClose = () => {
+    let result = true;
+    if (!isWarpDisallowed) {
+      result &&= !!positionXRef.current && !!positionYRef.current && positionXRef.current.validity.valid && positionYRef.current.validity.valid;
+    }
+    if (isFlyAllowed) {
+      result &&= !!warpXRef.current && !!warpYRef.current && warpXRef.current.validity.valid && warpYRef.current.validity.valid;
+    }
+    return result;
+  };
+
+  const onClose = () => {
+    if (!canClose()) return;
+
+    const warpX = !warpXRef.current ? null : isNaN(warpXRef.current.valueAsNumber) ? null : warpXRef.current.valueAsNumber;
+    const warpY = !warpYRef.current ? null : isNaN(warpYRef.current.valueAsNumber) ? null : warpYRef.current.valueAsNumber;
+    const posX = !positionXRef.current ? null : isNaN(positionXRef.current.valueAsNumber) ? null : positionXRef.current.valueAsNumber;
+    const posY = !positionYRef.current ? null : isNaN(positionYRef.current.valueAsNumber) ? null : positionYRef.current.valueAsNumber;
+
+    updateZone({
+      warp: { x: warpX, y: warpY },
+      position: { x: posX, y: posY },
+      isWarpDisallowed,
+      isFlyAllowed,
+    });
+  };
+
+  useEditorHandlingClose(ref, onClose, canClose);
 
   return (
     <Editor type="edit" title={t('travel')}>
       <InputContainer>
         <InputWithLeftLabelContainer>
           <Label htmlFor="warp">{t('warp')}</Label>
-          <Toggle name="warp" checked={!zone.isWarpDisallowed} onChange={(event) => refreshUI(onChangeWarp(!event.target.checked))} />
+          <Toggle name="warp" checked={!isWarpDisallowed} onChange={(event) => onChangeWarp(!event.target.checked)} />
         </InputWithLeftLabelContainer>
-        {zone.isWarpDisallowed && !zone.isFlyAllowed ? (
+        {isWarpDisallowed && !isFlyAllowed ? (
           <></>
         ) : (
           <OutsideContainer>
-            {!zone.isWarpDisallowed && (
+            {!isWarpDisallowed && (
               <InputWithLeftLabelContainer>
                 <Label htmlFor="outside-zone">{t('outdoor_zone')}</Label>
-                <Toggle name="outside-zone" checked={zone.isFlyAllowed} onChange={(event) => refreshUI((zone.isFlyAllowed = event.target.checked))} />
+                <Toggle name="outside-zone" checked={isFlyAllowed} onChange={(event) => setIsFlyAllowed(event.target.checked)} />
               </InputWithLeftLabelContainer>
             )}
-            {zone.isFlyAllowed && (
+
+            {isFlyAllowed && (
               <InputWithCoordinateLabelContainer>
                 <Label htmlFor="landing-coordinates">{t('landing_coordinates')}</Label>
                 <div className="coordinates">
-                  <ZoneCoordinateInput unit="x" value={zone.warp.x} setValue={(value) => (zone.warp.x = value)} refreshUI={refreshUI} />
-                  <ZoneCoordinateInput unit="y" value={zone.warp.y} setValue={(value) => (zone.warp.y = value)} refreshUI={refreshUI} />
+                  <CoordinateInput type="number" unit="x" min="0" max="99999" defaultValue={zone.warp.x?.toString()} ref={warpXRef} />
+                  <CoordinateInput type="number" unit="y" min="0" max="99999" defaultValue={zone.warp.y?.toString()} ref={warpYRef} />
                 </div>
               </InputWithCoordinateLabelContainer>
             )}
@@ -84,11 +95,12 @@ export const ZoneTravelEditor = ({ zone }: ZoneTravelEditorProps) => {
         <InputWithCoordinateLabelContainer>
           <Label htmlFor="position-worldmap">{t('worldmap_coordinates')}</Label>
           <div className="coordinates">
-            <ZoneCoordinateInput unit="x" value={zone.position.x} setValue={(value) => (zone.position.x = value)} refreshUI={refreshUI} />
-            <ZoneCoordinateInput unit="y" value={zone.position.y} setValue={(value) => (zone.position.y = value)} refreshUI={refreshUI} />
+            <CoordinateInput type="number" unit="x" min="0" max="99999" defaultValue={zone.position.x?.toString()} ref={positionXRef} />
+            <CoordinateInput type="number" unit="y" min="0" max="99999" defaultValue={zone.position.y?.toString()} ref={positionYRef} />
           </div>
         </InputWithCoordinateLabelContainer>
       </InputContainer>
     </Editor>
   );
-};
+});
+ZoneTravelEditor.displayName = 'ZoneTravelEditor';

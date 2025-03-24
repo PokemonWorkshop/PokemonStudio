@@ -1,17 +1,21 @@
-import React, { useRef, useState } from 'react';
+import React, { forwardRef, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { Editor } from '@components/editor';
-
 import { useTranslation } from 'react-i18next';
+
+import { Editor } from '@components/editor';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
-import { useProjectZones } from '@hooks/useProjectData';
 import { DarkButton, PrimaryButton } from '@components/buttons';
-import { useSetProjectText } from '@utils/ReadingProjectText';
+import { TooltipWrapper } from '@ds/Tooltip';
+
+import { useProjectZones } from '@hooks/useProjectData';
+
 import { ZONE_DESCRIPTION_TEXT_ID, ZONE_NAME_TEXT_ID } from '@modelEntities/zone';
 import { DbSymbol } from '@modelEntities/dbSymbol';
+
+import { useSetProjectText } from '@utils/ReadingProjectText';
 import { findFirstAvailableId } from '@utils/ModelUtils';
 import { createZone } from '@utils/entityCreation';
-import { TooltipWrapper } from '@ds/Tooltip';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -21,15 +25,17 @@ const ButtonContainer = styled.div`
 `;
 
 type ZoneNewEditorProps = {
-  onClose: () => void;
+  closeDialog: () => void;
 };
 
-export const ZoneNewEditor = ({ onClose }: ZoneNewEditorProps) => {
+export const ZoneNewEditor = forwardRef<EditorHandlingClose, ZoneNewEditorProps>(({ closeDialog }, ref) => {
   const { projectDataValues: zones, setProjectDataValues: setZone } = useProjectZones();
   const { t } = useTranslation('database_zones');
   const setText = useSetProjectText();
-  const [name, setName] = useState(''); // We can't use a ref because of the button behavior
+  const [name, setName] = useState(''); // We use a state because synchronizing dbSymbol is easier with a state
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
+
+  useEditorHandlingClose(ref);
 
   const onClickNew = () => {
     if (!descriptionRef.current) return;
@@ -40,7 +46,8 @@ export const ZoneNewEditor = ({ onClose }: ZoneNewEditorProps) => {
     setText(ZONE_NAME_TEXT_ID, id, name);
     setText(ZONE_DESCRIPTION_TEXT_ID, id, descriptionRef.current.value);
     setZone({ [dbSymbol]: zone }, { zone: dbSymbol });
-    onClose();
+
+    closeDialog();
   };
 
   return (
@@ -62,9 +69,10 @@ export const ZoneNewEditor = ({ onClose }: ZoneNewEditorProps) => {
               {t('create_zone')}
             </PrimaryButton>
           </TooltipWrapper>
-          <DarkButton onClick={onClose}>{t('cancel')}</DarkButton>
+          <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
     </Editor>
   );
-};
+});
+ZoneNewEditor.displayName = 'ZoneNewEditor';
