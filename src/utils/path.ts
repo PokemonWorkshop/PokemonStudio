@@ -123,8 +123,9 @@ export const pokemonSpritePath = (form: StudioCreatureForm) => {
 
 export const pokemonIconPath = (specie: StudioCreature, formId?: number, icon?: 'icon' | 'iconF' | 'iconShiny' | 'iconShinyF') => {
   const form = specie.forms.find((f) => f.form === formId) ?? specie.forms[0];
-  if (!form?.resources[icon ?? 'icon']) return formResourcesPath(form, 'icon');
-  return formResourcesPath(form, icon ?? 'icon');
+  const resource = form.femaleRate === 100 ? 'iconF' : 'icon';
+  if (!form?.resources[icon ?? resource]) return formResourcesPath(form, resource);
+  return formResourcesPath(form, icon ?? resource);
 };
 
 export const itemIconPath = (icon: string) => {
