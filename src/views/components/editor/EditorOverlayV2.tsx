@@ -293,20 +293,23 @@ export const defineEditorOverlay = <Keys extends string, Props extends Record<st
     }, [currentDialog]);
 
     useEffect(() => {
-      if (!isCenter) return;
-      else {
+      if (!isCenter) {
+        if (!dialogRef.current) return;
+        dialogRef.current.style.top = '26px';
+        dialogRef.current.style.transform = 'translateX(-100%)';
+      } else {
         const adjustDialogPosition = () => {
           if (!dialogRef.current) return;
 
           const dialogHeight = dialogRef.current.offsetHeight;
           const windowHeight = window.innerHeight;
 
-          if (dialogHeight > windowHeight * 0.6) {
+          if (dialogHeight > windowHeight * 0.8) {
             dialogRef.current.style.top = '10%';
-            dialogRef.current.style.transform = 'translateY(0)';
+            dialogRef.current.style.transform = 'translate(-50%, 0)';
           } else {
-            dialogRef.current.style.top = '40%';
-            dialogRef.current.style.transform = 'translateY(-50%)';
+            dialogRef.current.style.top = '50%';
+            dialogRef.current.style.transform = 'translate(0%, -50%)';
           }
         };
 
