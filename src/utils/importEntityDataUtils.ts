@@ -4,6 +4,7 @@ import { StudioCreature } from '@modelEntities/creature';
 import { cloneEntity } from './cloneEntity';
 import { findFirstAvailableFormTextId } from './ModelUtils';
 import { ProjectData } from '@src/GlobalStateProvider';
+import { StudioGroup } from '@modelEntities/group';
 
 export const importTrainerData = (trainer: StudioTrainer, dataToImport: StudioTrainer): StudioTrainer => {
   const cloneData = cloneEntity(dataToImport);
@@ -27,7 +28,7 @@ export const importMoveData = (move: StudioMove, dataToImport: StudioMove): Stud
     type: move.type,
     category: move.category,
   };
-}
+};
 
 export const importCreatureData = (creature: StudioCreature, dataToImport: StudioCreature, allPokemon: ProjectData['pokemon']): StudioCreature => {
   const cloneData = cloneEntity(dataToImport);
@@ -55,4 +56,14 @@ export const importCreatureData = (creature: StudioCreature, dataToImport: Studi
   });
 
   return newCreature;
+};
+
+export const importGroupData = (group: StudioGroup, dataToImport: StudioGroup): StudioGroup => {
+  const cloneData = cloneEntity(dataToImport);
+
+  return {
+    ...group,
+    isHordeBattle: cloneData.isHordeBattle,
+    encounters: cloneData.encounters,
+  };
 };

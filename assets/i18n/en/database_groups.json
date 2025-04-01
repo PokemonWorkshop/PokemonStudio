@@ -73,5 +73,9 @@
   "title_data_modification": "Data modification",
   "warning_headbutt_data_change": "Headbutt should now be set in the Environment list.",
   "custom_environment": "Custom environment",
-  "invalid_format": "Invalid format"
+  "invalid_format": "Invalid format",
+  "group_import_info": "You can create this new group by importing data from another existing group.",
+  "none_option": "None",
+  "other_data": "Other data",
+  "import_group_from": "Import data from"
 }
