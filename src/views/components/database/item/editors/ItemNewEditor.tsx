@@ -26,6 +26,9 @@ import { useSetProjectText } from '@utils/ReadingProjectText';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { useItemPage } from '@hooks/usePage';
 import { TooltipWrapper } from '@ds/Tooltip';
+import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
+import { SelectItem } from '@components/selects';
+import { importItemData } from '@utils/importEntityDataUtils';
 
 const itemCategoryEntries = (t: TFunction<('database_items' | 'database_types' | 'database_moves')[]>) =>
   StudioItemCategories.map((category) => ({ value: category, label: t(`database_types:${category}`) })).sort((a, b) =>
@@ -43,6 +46,18 @@ const ButtonContainer = styled.div`
   gap: 8px;
 `;
 
+const ImportInfo = styled.div`
+  ${({ theme }) => theme.fonts.normalSmall};
+  color: ${({ theme }) => theme.colors.text400};
+  user-select: none;
+`;
+
+const ImportInfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
 export const ItemNewEditor = forwardRef<EditorHandlingClose, ItemNewEditorProps>(({ closeDialog }, ref) => {
   const { setProjectDataValues: setItem } = useProjectItems();
   const { items } = useItemPage();
@@ -56,6 +71,8 @@ export const ItemNewEditor = forwardRef<EditorHandlingClose, ItemNewEditorProps>
   const [dbSymbolErrorType, setDbSymbolErrorType] = useState<'value' | 'duplicate' | undefined>(undefined);
   const [itemCategory, setItemCategory] = useState<StudioItemCategory>('generic');
   const [icon, setIcon] = useState('');
+  const [selectedItem, setSelectedItem] = useState('__undef__');
+  const [importing, setImporting] = useState(false);
 
   useEditorHandlingClose(ref);
 
@@ -64,7 +81,12 @@ export const ItemNewEditor = forwardRef<EditorHandlingClose, ItemNewEditorProps>
 
     const dbSymbol = dbSymbolRef.current.value as DbSymbol;
     const id = findFirstAvailableId(items, 1);
-    const newItem = createItem(ITEM_CATEGORY_INITIAL_CLASSES[itemCategory], dbSymbol, id);
+    let newItem = createItem(ITEM_CATEGORY_INITIAL_CLASSES[itemCategory], dbSymbol, id);
+
+    if (importing && selectedItem !== '__undef__') {
+      newItem = importItemData(newItem, items[selectedItem]);
+    }
+
     newItem.icon = icon;
     setText(ITEM_NAME_TEXT_ID, newItem.id, name);
     setText(ITEM_DESCRIPTION_TEXT_ID, newItem.id, descriptionRef.current.value);
@@ -158,6 +180,15 @@ export const ItemNewEditor = forwardRef<EditorHandlingClose, ItemNewEditorProps>
           {dbSymbolErrorType == 'value' && <TextInputError>{t('database_moves:incorrect_format')}</TextInputError>}
           {dbSymbolErrorType == 'duplicate' && <TextInputError>{t('database_moves:db_symbol_already_used')}</TextInputError>}
         </InputWithTopLabelContainer>
+        <InputGroupCollapse title={t('other_data')} gap="16px" onClick={() => setImporting(!importing)}>
+          <ImportInfoContainer>
+            <ImportInfo>{t('item_import_info')}</ImportInfo>
+          </ImportInfoContainer>
+          <InputWithTopLabelContainer>
+            <Label htmlFor="select-item-to-import">{t('import_item_from')}</Label>
+            <SelectItem dbSymbol={selectedItem} onChange={(dbSymbol) => setSelectedItem(dbSymbol)} noLabel undefValueOption={t('none_option')} />
+          </InputWithTopLabelContainer>
+        </InputGroupCollapse>
         <ButtonContainer>
           <TooltipWrapper data-tooltip={checkDisabled() ? t('database_moves:fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickNew} disabled={checkDisabled()}>

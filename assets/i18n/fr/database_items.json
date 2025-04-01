@@ -115,5 +115,9 @@
   "deletion_of": "Suppression de l'objet {{item}}",
   "deletion_message": "Vous êtes sur le point de supprimer définitivement l'objet {{item}}.",
   "item_deleted": "Objet supprimé",
-  "no_parameter": "Aucun paramètre"
+  "no_parameter": "Aucun paramètre",
+  "item_import_info": "Vous pouvez créer ce nouvel objet en copiant les données d'un autre objet déjà existant.",
+  "none_option": "Aucun",
+  "other_data": "Autres données",
+  "import_item_from": "Importer les données de"
 }

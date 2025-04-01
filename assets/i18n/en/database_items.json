@@ -115,5 +115,9 @@
   "deletion_of": "Deletion of the item {{item}}",
   "deletion_message": "You are about to permanently delete the item {{item}}.",
   "item_deleted": "Item deleted",
-  "no_parameter": "No parameter"
+  "no_parameter": "No parameter",
+  "item_import_info": "You can create this new item by importing data from another existing item.",
+  "none_option": "None",
+  "other_data": "Other data",
+  "import_item_from": "Import data from"
 }
