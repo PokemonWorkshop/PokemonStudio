@@ -4,6 +4,7 @@ import { StudioCreature } from '@modelEntities/creature';
 import { cloneEntity } from './cloneEntity';
 import { findFirstAvailableFormTextId } from './ModelUtils';
 import { ProjectData } from '@src/GlobalStateProvider';
+import { StudioQuest } from '@modelEntities/quest';
 
 export const importTrainerData = (trainer: StudioTrainer, dataToImport: StudioTrainer): StudioTrainer => {
   const cloneData = cloneEntity(dataToImport);
@@ -27,7 +28,7 @@ export const importMoveData = (move: StudioMove, dataToImport: StudioMove): Stud
     type: move.type,
     category: move.category,
   };
-}
+};
 
 export const importCreatureData = (creature: StudioCreature, dataToImport: StudioCreature, allPokemon: ProjectData['pokemon']): StudioCreature => {
   const cloneData = cloneEntity(dataToImport);
@@ -55,4 +56,15 @@ export const importCreatureData = (creature: StudioCreature, dataToImport: Studi
   });
 
   return newCreature;
+};
+
+export const importQuestData = (quest: StudioQuest, dataToImport: StudioQuest): StudioQuest => {
+  const cloneData = cloneEntity(dataToImport);
+
+  return {
+    ...cloneData,
+    id: quest.id,
+    dbSymbol: quest.dbSymbol,
+    isPrimary: quest.isPrimary,
+  };
 };
