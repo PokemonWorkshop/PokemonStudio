@@ -29,6 +29,7 @@ import { TooltipWrapper } from '@ds/Tooltip';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import { SelectItem } from '@components/selects';
 import { importItemData } from '@utils/importEntityDataUtils';
+import { OptionSourceKey } from '@src/hooks/useSelectOptions';
 
 const itemCategoryEntries = (t: TFunction<('database_items' | 'database_types' | 'database_moves')[]>) =>
   StudioItemCategories.map((category) => ({ value: category, label: t(`database_types:${category}`) })).sort((a, b) =>
@@ -57,6 +58,17 @@ const ImportInfoContainer = styled.div`
   flex-direction: column;
   gap: 4px;
 `;
+
+const CATEGORY_TO_OPTION = {
+  ball: 'itemBall',
+  event: 'itemEvent',
+  fleeing: 'itemFleeing',
+  generic: 'itemGeneric',
+  heal: 'itemHealing',
+  repel: 'itemRepel',
+  stone: 'itemStone',
+  tech: 'itemTech',
+};
 
 export const ItemNewEditor = forwardRef<EditorHandlingClose, ItemNewEditorProps>(({ closeDialog }, ref) => {
   const { setProjectDataValues: setItem } = useProjectItems();
@@ -186,7 +198,13 @@ export const ItemNewEditor = forwardRef<EditorHandlingClose, ItemNewEditorProps>
           </ImportInfoContainer>
           <InputWithTopLabelContainer>
             <Label htmlFor="select-item-to-import">{t('import_item_from')}</Label>
-            <SelectItem dbSymbol={selectedItem} onChange={(dbSymbol) => setSelectedItem(dbSymbol)} noLabel undefValueOption={t('none_option')} />
+            <SelectItem
+              dbSymbol={selectedItem}
+              onChange={(dbSymbol) => setSelectedItem(dbSymbol)}
+              noLabel
+              undefValueOption={t('none_option')}
+              klassFilter={CATEGORY_TO_OPTION[itemCategory] as OptionSourceKey}
+            />
           </InputWithTopLabelContainer>
         </InputGroupCollapse>
         <ButtonContainer>

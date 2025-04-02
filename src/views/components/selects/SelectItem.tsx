@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelectOptions } from '@hooks/useSelectOptions';
+import { OptionSourceKey, useSelectOptions } from '@hooks/useSelectOptions';
 import { StudioDropDown } from '@components/StudioDropDown';
 import { SelectContainerWithLabel } from './SelectContainerWithLabel';
 import { DbSymbol } from '@modelEntities/dbSymbol';
@@ -13,11 +13,12 @@ type SelectItemProps = {
   undefValueOption?: string;
   noLabel?: boolean;
   noneValue?: boolean;
+  klassFilter?: OptionSourceKey;
 };
 
-export const SelectItem = ({ dbSymbol, onChange, noLabel, noneValue, undefValueOption }: SelectItemProps) => {
+export const SelectItem = ({ dbSymbol, onChange, noLabel, noneValue, undefValueOption, klassFilter }: SelectItemProps) => {
   const { t } = useTranslation(['database_items', 'select']);
-  const typeOptions = useSelectOptions('items');
+  const typeOptions = useSelectOptions(klassFilter || 'items');
 
   const options = useMemo(() => {
     if (undefValueOption) return [{ value: '__undef__', label: undefValueOption }, ...typeOptions];

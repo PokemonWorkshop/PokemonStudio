@@ -27,6 +27,12 @@ const OPTION_SOURCE_KEYS = [
   'itemStone',
   'itemGem',
   'itemBall',
+  'itemEvent',
+  'itemFleeing',
+  'itemGeneric',
+  'itemRepel',
+  'itemTech',
+  'itemHealing',
   'moves',
   'abilities',
   'dex',
@@ -48,6 +54,12 @@ const OptionSources: Record<OptionSourceKey, SelectOption[]> = {
   itemStone: [],
   itemGem: [],
   itemBall: [],
+  itemEvent: [],
+  itemFleeing: [],
+  itemGeneric: [],
+  itemRepel: [],
+  itemTech: [],
+  itemHealing: [],
   moves: [],
   abilities: [],
   dex: [],
@@ -85,6 +97,12 @@ const OptionToTextKey: Record<OptionSourceKey, TextSourceKey> = {
   itemStone: 'items',
   itemGem: 'items',
   itemBall: 'items',
+  itemEvent: 'items',
+  itemFleeing: 'items',
+  itemGeneric: 'items',
+  itemRepel: 'items',
+  itemTech: 'items',
+  itemHealing: 'items',
   moves: 'moves',
   abilities: 'abilities',
   dex: 'dex',
@@ -232,6 +250,21 @@ const adjustSelectOptionValue = (option: SelectOption, value: string) => {
   return option;
 };
 
+const HEAL_ITEM_KLASSES = [
+  'AllPPHealItem',
+  'ConstantHealItem',
+  'EVBoostItem',
+  'HealingItem',
+  'LevelIncreaseItem',
+  'ExpGiveItem',
+  'ExpGiveItem',
+  'PPIncreaseItem',
+  'RateHealItem',
+  'StatBoostItem',
+  'StatusConstantHealItem',
+  'StatusHealItem',
+  'StatusRateHealItem',
+];
 const buildSelectOptionsFromKey = (key: OptionSourceKey, state: State) => {
   const textKey = OptionToTextKey[key];
   const originalObjects = TextSources[textKey];
@@ -263,6 +296,36 @@ const buildSelectOptionsFromKey = (key: OptionSourceKey, state: State) => {
     case 'itemBall':
       return Object.values(state.projectData.items)
         .filter((data) => data.klass === 'BallItem')
+        .sort((a, b) => a.id - b.id)
+        .map((data) => adjustSelectOptionValue(originalObjects[data.id] || cloneEntity(originalObjects[0]), data.dbSymbol));
+    case 'itemEvent':
+      return Object.values(state.projectData.items)
+        .filter((data) => data.klass === 'EventItem')
+        .sort((a, b) => a.id - b.id)
+        .map((data) => adjustSelectOptionValue(originalObjects[data.id] || cloneEntity(originalObjects[0]), data.dbSymbol));
+    case 'itemFleeing':
+      return Object.values(state.projectData.items)
+        .filter((data) => data.klass === 'FleeingItem')
+        .sort((a, b) => a.id - b.id)
+        .map((data) => adjustSelectOptionValue(originalObjects[data.id] || cloneEntity(originalObjects[0]), data.dbSymbol));
+    case 'itemGeneric':
+      return Object.values(state.projectData.items)
+        .filter((data) => data.klass === 'Item')
+        .sort((a, b) => a.id - b.id)
+        .map((data) => adjustSelectOptionValue(originalObjects[data.id] || cloneEntity(originalObjects[0]), data.dbSymbol));
+    case 'itemRepel':
+      return Object.values(state.projectData.items)
+        .filter((data) => data.klass === 'RepelItem')
+        .sort((a, b) => a.id - b.id)
+        .map((data) => adjustSelectOptionValue(originalObjects[data.id] || cloneEntity(originalObjects[0]), data.dbSymbol));
+    case 'itemTech':
+      return Object.values(state.projectData.items)
+        .filter((data) => data.klass === 'TechItem')
+        .sort((a, b) => a.id - b.id)
+        .map((data) => adjustSelectOptionValue(originalObjects[data.id] || cloneEntity(originalObjects[0]), data.dbSymbol));
+    case 'itemHealing':
+      return Object.values(state.projectData.items)
+        .filter((data) => HEAL_ITEM_KLASSES.includes(data.klass))
         .sort((a, b) => a.id - b.id)
         .map((data) => adjustSelectOptionValue(originalObjects[data.id] || cloneEntity(originalObjects[0]), data.dbSymbol));
     case 'moves':
