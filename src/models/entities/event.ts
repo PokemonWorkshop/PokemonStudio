@@ -62,7 +62,7 @@ export const TEMPLATE_USE_EVENT_VALIDATOR = z.object({
 });
 export type TemplateUseEvent = z.infer<typeof TEMPLATE_USE_EVENT_VALIDATOR>;
 
-export const APPARENCE_VALIDATOR = z.union([
+export const APPEARANCE_VALIDATOR = z.union([
   z.object({
     isFromTileset: z.literal(true),
     tileset: z.string(),
@@ -73,10 +73,10 @@ export const APPARENCE_VALIDATOR = z.union([
     character: z.string(),
   }),
 ]);
-export type Appearance = z.infer<typeof APPARENCE_VALIDATOR>;
+export type Appearance = z.infer<typeof APPEARANCE_VALIDATOR>;
 
 export const EVENT_APPEARANCE_VALIDATOR = z.object({
-  appearance: APPARENCE_VALIDATOR,
+  appearance: APPEARANCE_VALIDATOR,
   direction: POSITIVE_OR_ZERO_INT,
   hasShadow: z.boolean(),
   isSurfing: z.boolean(),
