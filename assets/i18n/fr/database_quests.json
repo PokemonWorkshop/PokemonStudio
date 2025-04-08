@@ -95,5 +95,9 @@
   "earning_pokemon": "Pokémon",
   "earning_egg": "Œuf",
   "earning": "Récompense",
-  "example_custom_objective": "Texte pour un objectif personnalisé"
+  "example_custom_objective": "Texte pour un objectif personnalisé",
+  "quest_import_info": "Vous pouvez créer cette nouvelle quête en copiant les données d'une autre quête déjà existante.",
+  "none_option": "Aucun",
+  "other_data": "Autres données",
+  "import_quest_from": "Importer les données de"
 }

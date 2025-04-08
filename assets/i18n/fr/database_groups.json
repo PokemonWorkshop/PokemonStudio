@@ -73,5 +73,9 @@
   "title_data_modification": "Modification de données",
   "warning_headbutt_data_change": "Coup d'Boule doit désormais être paramétrée dans la liste Environnement.",
   "custom_environment": "Environnement personnalisé",
-  "invalid_format": "Format non valide"
+  "invalid_format": "Format non valide",
+  "group_import_info": "Vous pouvez créer ce nouveau groupe en copiant les données d'un autre groupe déjà existant.",
+  "none_option": "Aucun",
+  "other_data": "Autres données",
+  "import_group_from": "Importer les données de"
 }
