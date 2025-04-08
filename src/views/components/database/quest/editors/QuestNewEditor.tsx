@@ -12,6 +12,9 @@ import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/
 import styled from 'styled-components';
 import React, { forwardRef, useMemo, useRef, useState } from 'react';
 import { Select } from '@ds/Select';
+import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
+import { SelectQuest } from '@components/selects';
+import { importQuestData } from '@utils/importEntityDataUtils';
 
 const questCategoryEntries = (t: TFunction<'database_quests'>) => QUEST_CATEGORIES.map((category) => ({ value: category, label: t(category) }));
 
@@ -23,6 +26,18 @@ const ButtonContainer = styled.div`
   flex-direction: column;
   padding: 16px 0 0 0;
   gap: 8px;
+`;
+
+const ImportInfo = styled.div`
+  ${({ theme }) => theme.fonts.normalSmall};
+  color: ${({ theme }) => theme.colors.text400};
+  user-select: none;
+`;
+
+const ImportInfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 `;
 
 type QuestNewEditorProps = {
@@ -39,13 +54,20 @@ export const QuestNewEditor = forwardRef<EditorHandlingClose, QuestNewEditorProp
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const categoryRef = useRef<string | undefined>();
   //const resolutionRef = useRef<string | undefined>();
+  const [selectedQuest, setSelectedQuest] = useState('__undef__');
+  const [importing, setImporting] = useState(false);
 
   useEditorHandlingClose(ref);
 
   const onClickNew = () => {
     if (!descriptionRef.current || !categoryRef.current) return;
 
-    const newQuest = createQuest(quests, categoryRef.current === 'primary', 'default');
+    let newQuest = createQuest(quests, categoryRef.current === 'primary', 'default');
+
+    if (importing && selectedQuest !== '__undef__') {
+      newQuest = importQuestData(newQuest, quests[selectedQuest]);
+    }
+
     setText(QUEST_NAME_TEXT_ID, newQuest.id, name);
     setText(QUEST_DESCRIPTION_TEXT_ID, newQuest.id, descriptionRef.current.value);
     setQuest({ [newQuest.dbSymbol]: newQuest }, { quest: newQuest.dbSymbol });
@@ -73,6 +95,15 @@ export const QuestNewEditor = forwardRef<EditorHandlingClose, QuestNewEditorProp
           <Label htmlFor="descr">{t('description')}</Label>
           <MultiLineInput id="descr" ref={descriptionRef} placeholder={t('example_descr')} />
         </InputWithTopLabelContainer>
+        <InputGroupCollapse title={t('other_data')} gap="16px" onClick={() => setImporting(!importing)}>
+          <ImportInfoContainer>
+            <ImportInfo>{t('quest_import_info')}</ImportInfo>
+          </ImportInfoContainer>
+          <InputWithTopLabelContainer>
+            <Label htmlFor="select-quest-to-import">{t('import_quest_from')}</Label>
+            <SelectQuest dbSymbol={selectedQuest} onChange={(dbSymbol) => setSelectedQuest(dbSymbol)} noLabel undefValueOption={t('none_option')} />
+          </InputWithTopLabelContainer>
+        </InputGroupCollapse>
         <ButtonContainer>
           <TooltipWrapper data-tooltip={!name ? t('fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickNew} disabled={!name}>

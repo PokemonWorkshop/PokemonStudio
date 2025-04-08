@@ -95,5 +95,9 @@
   "earning_pokemon": "Pokémon",
   "earning_egg": "Egg",
   "earning": "Earning",
-  "example_custom_objective": "Text for a custom objective"
+  "example_custom_objective": "Text for a custom objective",
+  "quest_import_info": "You can create this new quest by importing data from another existing quest.",
+  "none_option": "None",
+  "other_data": "Other data",
+  "import_quest_from": "Import data from"
 }
