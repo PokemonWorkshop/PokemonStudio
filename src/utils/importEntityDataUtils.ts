@@ -4,6 +4,7 @@ import { StudioCreature } from '@modelEntities/creature';
 import { cloneEntity } from './cloneEntity';
 import { findFirstAvailableFormTextId } from './ModelUtils';
 import { ProjectData } from '@src/GlobalStateProvider';
+import { StudioItem } from '@modelEntities/item';
 import { StudioQuest } from '@modelEntities/quest';
 import { StudioGroup } from '@modelEntities/group';
 
@@ -57,6 +58,16 @@ export const importCreatureData = (creature: StudioCreature, dataToImport: Studi
   });
 
   return newCreature;
+};
+
+export const importItemData = (item: StudioItem, dataToImport: StudioItem): StudioItem => {
+  const cloneData = cloneEntity(dataToImport);
+
+  return {
+    ...cloneData,
+    id: item.id,
+    dbSymbol: item.dbSymbol,
+  };
 };
 
 export const importQuestData = (quest: StudioQuest, dataToImport: StudioQuest): StudioQuest => {
