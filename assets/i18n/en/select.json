@@ -1,4 +1,6 @@
 {
   "no_option": "No result found",
-  "none": "None"
+  "none": "None",
+  "select": "Select option",
+  "selected": "{{count}} selected"
 }

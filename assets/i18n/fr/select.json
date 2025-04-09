@@ -1,4 +1,6 @@
 {
   "no_option": "Aucun résultat trouvé",
-  "none": "Aucun"
+  "none": "Aucun",
+  "select": "Sélectionner",
+  "selected": "{{count}} sélectionnés"
 }
