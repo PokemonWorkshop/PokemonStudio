@@ -45,7 +45,7 @@ export const DexPokemonListImportEditor = forwardRef<EditorHandlingClose, DexPok
 
   const onClickImport = () => {
     const creatures = cloneEntity(allDex[selectedDexImport].creatures);
-    if (overrideRef.current && overrideRef.current.checked) {
+    if (overrideRef.current?.checked) {
       updateDex({ creatures });
     } else {
       updateDex({ creatures: [...dex.creatures, ...creatures] });
