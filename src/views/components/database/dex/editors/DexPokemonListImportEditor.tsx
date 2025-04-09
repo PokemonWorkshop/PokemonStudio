@@ -1,9 +1,9 @@
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { Editor } from '@components/editor';
 
 import { useTranslation } from 'react-i18next';
-import { InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
+import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
 
 import { useProjectDex } from '@hooks/useProjectData';
 import { DarkButton, PrimaryButton } from '@components/buttons';
@@ -39,12 +39,17 @@ export const DexPokemonListImportEditor = forwardRef<EditorHandlingClose, DexPok
     .filter((d) => d.value !== dex.dbSymbol)
     .sort((a, b) => a.index - b.index)[0].value;
   const [selectedDexImport, setSelectedDexImport] = useState<string>(firstDbSymbol);
+  const overrideRef = useRef<HTMLInputElement>(null);
 
   useEditorHandlingClose(ref);
 
   const onClickImport = () => {
     const creatures = cloneEntity(allDex[selectedDexImport].creatures);
-    updateDex({ creatures });
+    if (overrideRef.current && overrideRef.current.checked) {
+      updateDex({ creatures });
+    } else {
+      updateDex({ creatures: [...dex.creatures, ...creatures] });
+    }
     closeDialog();
   };
 
@@ -62,6 +67,10 @@ export const DexPokemonListImportEditor = forwardRef<EditorHandlingClose, DexPok
               noLabel
             />
           </InputWithTopLabelContainer>
+          <InputWithLeftLabelContainer>
+            <Label htmlFor="override">{t('replace_creatures')}</Label>
+            <Toggle name="override" ref={overrideRef} />
+          </InputWithLeftLabelContainer>
         </InputContainer>
         <ButtonContainer>
           <PrimaryButton onClick={onClickImport}>{t('import_the_list')}</PrimaryButton>
