@@ -306,7 +306,7 @@ export const defineEditorOverlay = <Keys extends string, Props extends Record<st
 
           if (dialogHeight > windowHeight * 0.8) {
             dialogRef.current.style.top = '10%';
-            dialogRef.current.style.transform = 'translate(-50%, 0)';
+            dialogRef.current.style.transform = 'translate(0%, 0)';
           } else {
             dialogRef.current.style.top = '50%';
             dialogRef.current.style.transform = 'translate(0%, -50%)';
