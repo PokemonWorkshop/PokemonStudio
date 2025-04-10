@@ -12,6 +12,7 @@ import { cloneEntity } from '@utils/cloneEntity';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { useDexPage } from '@hooks/usePage';
 import { useUpdateDex } from './useUpdateDex';
+import type { StudioDexCreature } from '@modelEntities/dex';
 
 const DexImportInfo = styled.div`
   ${({ theme }) => theme.fonts.normalRegular};
@@ -24,6 +25,15 @@ const ButtonContainer = styled.div`
   flex-direction: column;
   gap: 8px;
 `;
+
+const addNewCreaturesInList = (creatures: StudioDexCreature[], newCreatures: StudioDexCreature[]): StudioDexCreature[] => {
+  return newCreatures.reduce((newCreaturesList, newCreature) => {
+    if (newCreaturesList.findIndex((creature) => creature.dbSymbol === newCreature.dbSymbol) === -1) {
+      return [...newCreaturesList, newCreature];
+    }
+    return newCreaturesList;
+  }, cloneEntity(creatures));
+};
 
 type DexPokemonListImportEditorProps = {
   closeDialog: () => void;
@@ -44,11 +54,11 @@ export const DexPokemonListImportEditor = forwardRef<EditorHandlingClose, DexPok
   useEditorHandlingClose(ref);
 
   const onClickImport = () => {
-    const creatures = cloneEntity(allDex[selectedDexImport].creatures);
+    const newCreatures = cloneEntity(allDex[selectedDexImport].creatures);
     if (overrideRef.current?.checked) {
-      updateDex({ creatures });
+      updateDex({ creatures: newCreatures });
     } else {
-      updateDex({ creatures: [...dex.creatures, ...creatures] });
+      updateDex({ creatures: addNewCreaturesInList(dex.creatures, newCreatures) });
     }
     closeDialog();
   };
