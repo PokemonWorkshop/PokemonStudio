@@ -27,12 +27,9 @@ const ButtonContainer = styled.div`
 `;
 
 const addNewCreaturesInList = (creatures: StudioDexCreature[], newCreatures: StudioDexCreature[]): StudioDexCreature[] => {
-  return newCreatures.reduce((newCreaturesList, newCreature) => {
-    if (newCreaturesList.findIndex((creature) => creature.dbSymbol === newCreature.dbSymbol) === -1) {
-      return [...newCreaturesList, newCreature];
-    }
-    return newCreaturesList;
-  }, cloneEntity(creatures));
+  const existingSymbols = new Set(creatures.map((creature) => creature.dbSymbol));
+  const newCreaturesToAdd = newCreatures.filter((newCreature) => !existingSymbols.has(newCreature.dbSymbol));
+  return [...creatures, ...newCreaturesToAdd];
 };
 
 type DexPokemonListImportEditorProps = {
