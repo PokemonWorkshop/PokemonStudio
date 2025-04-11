@@ -15,6 +15,7 @@ import { migrateUndefinedBreedingGroupToUnknown } from './migrateUndefinedBreedi
 import { addTrainerAdditionalDialogs } from './addTrainerAdditionalDialogs';
 import { migrateQuestsEarnings } from './migrateQuestsEarnings';
 import { addCsvForQuestsCustomObjectives } from './addCsvForQuestsCustomObjectives';
+import { addEggInCreatureResources } from './addEggInCreatureResources';
 
 type MigrateConfigType = {
   migration: MigrationTask;
@@ -118,5 +119,10 @@ export const MIGRATION_CONFIG: MigrateConfigType[] = [
     migration: addCsvForQuestsCustomObjectives,
     version: '2.4.2',
     message: 'add_csv_quests_custom_objectives',
+  },
+  {
+    migration: addEggInCreatureResources,
+    version: '2.4.3',
+    message: 'add_egg_in_creature_resources',
   },
 ];

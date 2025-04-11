@@ -14,5 +14,6 @@
   "migrate_breeding_group": "Migration du groupe d'œuf «\u00a0Non défini\u00a0» en «\u00a0Inconnu\u00a0»",
   "add_trainer_additional_dialogs": "Ajout des dialogues additionnels pour les dresseurs",
   "migrate_quests_earnings": "Migration des récompenses de quêtes",
-  "add_csv_quests_custom_objectives": "Ajout d'un fichier CSV pour les objectives personnalisés des quêtes"
+  "add_csv_quests_custom_objectives": "Ajout d'un fichier CSV pour les objectives personnalisés des quêtes",
+  "add_egg_in_creature_resources": "Ajout de l'œuf dans les ressources des créatures"
 }
