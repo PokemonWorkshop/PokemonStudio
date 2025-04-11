@@ -43,7 +43,7 @@ export const ItemHealData = ({ dialogsRef }: ItemHealDataProps) => {
       onClick={isDisabled ? undefined : () => dialogsRef?.current?.openDialog('heal')}
     >
       {!isDisabled && 'loyaltyMalus' in item && (
-        <DataGrid rows="1fr 1fr 1fr">
+        <DataGrid rows="auto 1fr auto">
           <DataFieldsetField label={t('heal_category')} data={t(item.klass)} />
           <DataFieldsetField label={t('value')} data={getHealValue(t, item)} />
           <DataFieldsetField label={t('hapiness_malus')} data={item.loyaltyMalus} />
