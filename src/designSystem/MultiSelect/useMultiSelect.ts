@@ -26,7 +26,12 @@ export type MultiSelectProps<Value extends ValueType, ChooseValue extends Value>
   optionRef?: React.MutableRefObject<Value[] | ChooseValue[]>;
   onChange?: (value: Value[]) => void;
   disabled?: boolean;
+  selectAllOption?: {
+    label: string;
+  };
 } & Omit<InputHTMLAttributes<HTMLInputElement>, 'min' | 'max' | 'value' | 'onChange' | 'type' | 'multiple' | 'list' | 'checked'>;
+
+export const defaultSelectAllValue = 'ALL' as const;
 
 export const useMultiSelect = <Value extends ValueType, ChooseValue extends Value>({
   options,
@@ -39,6 +44,7 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
   onChange,
   disabled: disabledFromOutside,
   name,
+  selectAllOption,
   ...props
 }: MultiSelectProps<Value, ChooseValue>) => {
   const { t } = useTranslation('select');
@@ -48,17 +54,26 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
   const [currentValues, setCurrentValues] = useState(value ?? defaultValue ?? chooseValue ?? []);
   const popoverRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<List>(null);
-  const defaultInputValue = useMemo(() => getSelectDefaultLabel(currentValues, defaultValue, options, t), [value]);
+  const extendedOptions = useMemo(() => {
+    if (!selectAllOption) return options;
+    return [{ label: selectAllOption.label, value: defaultSelectAllValue as Value }, ...options];
+  }, [options, selectAllOption]);
+  const defaultInputValue = useMemo(() => getSelectDefaultLabel(currentValues, defaultValue, extendedOptions, t), [value]);
   const disabled = disabledFromOutside || options.length === 0;
+  const [isInvalid, setIsInvalid] = useState(false);
 
   useImperativeHandle(optionRef, () => currentValues, [currentValues]);
-    useEffect(() => {
-      if (outputRef.current && Array.isArray(currentValues)) {
-        if(inputRef.current) inputRef.current.value = getSelectDefaultLabel(currentValues, defaultValue, options, t);
-        outputRef.current.value = currentValues.map((value) => value.toString()).join(',');
+  useEffect(() => {
+    if (outputRef.current && Array.isArray(currentValues)) {
+      if (inputRef.current) {
+        const optionIndex = findOptionIndices(extendedOptions, currentValues);
+        const shouldShowTooltip = currentValues.length > 3;
+        inputRef.current.title = shouldShowTooltip ? optionIndex.map((index) => extendedOptions[index]?.label).join(', ') || '' : '';
       }
-    }, [currentValues, defaultValue, value]);
-    
+      outputRef.current.value = currentValues.map((value) => value.toString()).join(',');
+    }
+  }, [currentValues, defaultValue, value]);
+
   // Reset input value whenever defaultInputValue changes because defaultValue is definitive so value change can't be forwarded through defaultValue
   useEffect(() => {
     // If defaultInputValue did change, then current value must change
@@ -66,42 +81,51 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
       const newValue = value ?? chooseValue ?? [];
       setCurrentValues(newValue);
       onChange?.(newValue);
-      if (inputRef.current) inputRef.current.value = getSelectDefaultLabel(newValue, defaultValue, options, t);
+      if (inputRef.current) inputRef.current.value = getSelectDefaultLabel(newValue, defaultValue, extendedOptions, t);
     }
   }, [value]);
 
-    // Select value again when options changes and main input visually change
-    useEffect(() => {
-      const newInputLabel = getSelectDefaultLabel(currentValues, defaultValue, options, t);
-      const currentInputLabel = inputRef.current?.value;
-      if (newInputLabel !== currentInputLabel) {
-        if (inputRef.current) inputRef.current.value = newInputLabel;
-        if (currentValues !== chooseValue) onChange?.(currentValues);
-      }
-    }, [options]);
-
+  // Select value again when options changes and main input visually change
+  useEffect(() => {
+    const newInputLabel = getSelectDefaultLabel(currentValues, defaultValue, extendedOptions, t);
+    const currentInputLabel = inputRef.current?.value;
+    if (newInputLabel !== currentInputLabel) {
+      if (inputRef.current) inputRef.current.value = newInputLabel;
+      if (currentValues !== chooseValue) onChange?.(currentValues);
+    }
+  }, [extendedOptions]);
 
   // Apply selected value
-const onSelectValue = (value: Value) => {
-  const newValues = currentValues.includes(value) ? currentValues.filter((v) => v !== value) : [...currentValues, value];
+  const onSelectValue = (value: Value) => {
+    let newValues: Value[] = [];
+    const isAll = value === 'ALL';
+    const isCurrentlyAll = currentValues.includes('ALL' as Value);
 
-  setCurrentValues(newValues);
+    if (isAll) {
+      const allOptionValues = extendedOptions.map((opt) => opt.value).filter((v) => v !== 'ALL') as Value[];
+      const isFullySelected = allOptionValues.every((val) => currentValues.includes(val));
+      newValues = isFullySelected ? [] : allOptionValues;
+    } else {
+      newValues = isCurrentlyAll ? [value] : currentValues.includes(value) ? currentValues.filter((v) => v !== value) : [...currentValues, value];
+    }
 
-  onChange?.(newValues);
+    setCurrentValues(newValues);
+    onChange?.(newValues);
+    validateSelection(newValues);
 
-  if (inputRef.current) {
-    const optionIndex = findOptionIndices(options, newValues);
-    const shouldShowTooltip = newValues.length > 3;
-    inputRef.current.title = shouldShowTooltip ? optionIndex.map((index) => options[index]?.label).join(', ') || '' : '';
-    inputRef.current.value = getSelectDefaultLabel(newValues, defaultValue, options, t);
-  }
-};
+    if (inputRef.current) {
+      const optionIndex = findOptionIndices(extendedOptions, newValues);
+      const shouldShowTooltip = newValues.length > 3;
+      inputRef.current.title = shouldShowTooltip ? optionIndex.map((index) => extendedOptions[index]?.label).join(', ') || '' : '';
+      inputRef.current.value = getSelectDefaultLabel(newValues, defaultValue, extendedOptions, t);
+    }
+  };
 
   // Let the popover know what to show when the input gets focus
   const onFocus: FocusEventHandler<HTMLInputElement> = (event) => {
     if (disabled || !popoverRef.current) return;
 
-    optionsUtilsRef.current?.show(Array.isArray(currentValues) ? currentValues : [currentValues], options);
+    optionsUtilsRef.current?.show(Array.isArray(currentValues) ? currentValues : [currentValues], extendedOptions);
     positionAndShowPopover(event.currentTarget, popoverRef.current);
   };
 
@@ -141,8 +165,16 @@ const onSelectValue = (value: Value) => {
     if (disabled) return;
 
     const value = normalize(event.currentTarget.value);
-    const newOptions = options.filter((o) => normalize(o.value).includes(value) || normalize(o.label).includes(value));
+    const newOptions = extendedOptions.filter((o) => normalize(o.value).includes(value) || normalize(o.label).includes(value));
     optionsUtilsRef.current?.refine(newOptions);
+  };
+
+  const validateSelection = (values: Value[]) => {
+    if (values.length === 0) {
+      setIsInvalid(true);
+    } else {
+      setIsInvalid(false);
+    }
   };
 
   return {
@@ -159,6 +191,7 @@ const onSelectValue = (value: Value) => {
       onFocus,
       onBlur,
       onKeyDown,
+      invalid: isInvalid,
       onChange: onInputChange,
       pattern: getNotFoundExclusionPattern(notFoundLabel),
       defaultValue: defaultInputValue,

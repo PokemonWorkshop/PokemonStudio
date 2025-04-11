@@ -3,7 +3,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { DataBlockWithTitle, DataFieldsetField, DataGrid } from '../dataBlocks';
-import { getHealedStatus } from './editors/ItemHealDataEditor';
 import { useItemPage } from '@hooks/usePage';
 import { ItemDialogsRef } from './editors/ItemEditorOverlay';
 
@@ -12,17 +11,17 @@ type ItemHealDataProps = { dialogsRef: ItemDialogsRef };
 const getHealValue = (t: TFunction<'database_items'>, item: Extract<StudioItem, { loyaltyMalus: number }>): string => {
   if ('hpCount' in item) {
     if ('statusList' in item) {
-      return `${item.hpCount} & ${t(getHealedStatus(item.statusList))}`;
+      return `${item.hpCount} & ${item.statusList.map((statusKey) => t(statusKey)).join(', ')}`;
     }
     return item.hpCount.toString();
   }
   if ('hpRate' in item) {
     if ('statusList' in item) {
-      return `${(item.hpRate * 100).toFixed(1)}% & ${t(getHealedStatus(item.statusList))}`;
+      return `${(item.hpRate * 100).toFixed(1)}% & ${item.statusList.map((statusKey) => t(statusKey)).join(', ')}`;
     }
     return `${(item.hpRate * 100).toFixed(1)}%`;
   }
-  if ('statusList' in item) return t(getHealedStatus(item.statusList));
+  if ('statusList' in item) return item.statusList.map((statusKey) => t(statusKey)).join(', ');
   if (item.klass === 'StatBoostItem') return t(item.stat);
   if (item.klass === 'EVBoostItem') return t(`${item.stat}_STAGE`);
   if (item.klass === 'PPIncreaseItem') return item.isMax ? 'Max' : '+20%';

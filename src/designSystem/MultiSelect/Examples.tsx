@@ -24,7 +24,7 @@ export const MultiSelectExamples = () => {
       <h2>MultiSelect</h2>
       <SelectContainerWithLabel>
         <span>Controlled</span>
-        <MultiSelect value={value1} onChange={setValue1} options={genericOptions} />
+        <MultiSelect value={value1} onChange={setValue1} options={genericOptions} selectAllOption={{ label: 'all' }} />
         {value1.toString()}
         <button onClick={() => setValue1(['value_e'])}>Reset</button>
       </SelectContainerWithLabel>

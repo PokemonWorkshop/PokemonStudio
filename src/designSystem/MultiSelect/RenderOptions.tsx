@@ -30,7 +30,12 @@ export const RenderOptions = <Value extends ValueType, ChooseValue extends Value
   const rowRenderer = ({ style, index, key }: ListRowProps) => {
     if (!options) return null;
     const option = options[index];
+    const totalOptionsCount = options.length - 1;
     const isChecked = props.currentValues.includes(option.value as ChooseValue);
+    const isAll = option.value === 'ALL';
+    const isAllChecked = props.currentValues.length === totalOptionsCount;
+    const hasSomeChecked = props.currentValues.length > 0 && props.currentValues.length < totalOptionsCount;
+
     return (
       <Option
         key={key}
@@ -43,15 +48,14 @@ export const RenderOptions = <Value extends ValueType, ChooseValue extends Value
         style={style}
       >
         <Checkbox
-          checked={isChecked}
+          checked={isChecked || (isAll && isAllChecked)}
+          indeterminate={isAll && !isChecked && hasSomeChecked}
           onChange={(e) => {
             e.preventDefault();
           }}
           className="checkbox"
         />
-        <span>
-          {option.label}
-        </span>
+        <span>{option.label}</span>
       </Option>
     );
   };

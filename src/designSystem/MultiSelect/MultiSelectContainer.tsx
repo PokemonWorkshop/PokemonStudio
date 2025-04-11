@@ -33,6 +33,14 @@ export const MultiSelectContainer = styled.div`
     }
   }
 
+  &.invalid {
+    color: ${({ theme }) => theme.colors.dangerBase};
+
+    input {
+      color: ${({ theme }) => theme.colors.dangerBase};
+    }
+  }
+
   @keyframes selectPopoverOpen {
     from {
       opacity: 0;
@@ -83,7 +91,6 @@ export const MultiSelectContainer = styled.div`
       background-color: ${({ theme }) => theme.colors.dark22};
     }
 
-
     & span.current {
       color: ${({ theme }) => theme.colors.text100};
       background: ${({ theme }) => theme.colors.dark23};
@@ -115,48 +122,48 @@ export const MultiSelectContainer = styled.div`
 `;
 
 export const MultiSelectInput = styled.input`
-    box-sizing: border-box;
-    padding: 9.5px 15px;
-    padding-right: 36px;
-    text-overflow: ellipsis;
-    margin: 0;
-    background-color: ${({ theme }) => theme.colors.dark20};
-    border: 1px solid transparent;
-    border-radius: 8px;
-    ${({ theme }) => theme.fonts.normalMedium}
+  box-sizing: border-box;
+  padding: 9.5px 15px;
+  padding-right: 36px;
+  text-overflow: ellipsis;
+  margin: 0;
+  background-color: ${({ theme }) => theme.colors.dark20};
+  border: 1px solid transparent;
+  border-radius: 8px;
+  ${({ theme }) => theme.fonts.normalMedium}
+  color: ${({ theme }) => theme.colors.text400};
+  min-width: 180px;
+  width: 100%;
+  height: 40px;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    border-color: ${({ theme }) => theme.colors.dark24};
+    outline: 1.5px solid ${({ theme }) => theme.colors.dark24};
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    filter: opacity(60%);
+  }
+
+  &:active:not(:disabled),
+  &:focus:not(:disabled) {
+    border-color: ${({ theme }) => theme.colors.primaryBase};
+    outline: 1.5px solid ${({ theme }) => theme.colors.primaryBase};
+  }
+
+  &:invalid::placeholder {
+    color: ${({ theme }) => theme.colors.dangerBase};
+  }
+
+  &::placeholder {
     color: ${({ theme }) => theme.colors.text400};
-    min-width: 180px;
-    width: 100%;
-    height: 40px;
-    cursor: pointer;
+  }
 
-    &:hover:not(:disabled) {
-      border-color: ${({ theme }) => theme.colors.dark24};
-      outline: 1.5px solid ${({ theme }) => theme.colors.dark24};
-    }
-
-    &:disabled {
-      cursor: not-allowed;
-      filter: opacity(60%);
-    }
-
-    &:active:not(:disabled),
-    &:focus:not(:disabled) {
-      border-color: ${({ theme }) => theme.colors.primaryBase};
-      outline: 1.5px solid ${({ theme }) => theme.colors.primaryBase};
-    }
-
-    &:invalid::placeholder {
-      color: ${({ theme }) => theme.colors.dangerBase};
-    }
-
-    &::placeholder {
-      color: ${({ theme }) => theme.colors.text400};
-    }
-
-    &:invalid {
-      color: ${({ theme }) => theme.colors.dangerBase};
-    }
+  &:invalid {
+    color: ${({ theme }) => theme.colors.dangerBase};
+  }
 `;
 
 
