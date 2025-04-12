@@ -2,8 +2,8 @@ import { z } from 'zod';
 import { DB_SYMBOL_VALIDATOR } from './dbSymbol';
 import { POSITIVE_OR_ZERO_INT } from './common';
 
-const COMMAND_LIST_ID_VALIDATOR = z.string().and(z.object({ tag: z.literal('CommandListId') }));
-const TEMPLATE_PARAMETER_NAME_VALIDATOR = z.string().and(z.object({ tag: z.literal('TemplateParameterName') }));
+const COMMAND_LIST_ID_VALIDATOR = z.string().brand('CommandListId');
+const TEMPLATE_PARAMETER_NAME_VALIDATOR = z.string().brand('TemplateParameterName');
 
 const COMMAND_VALIDATOR = z.object({}); // TODO: update this when the command type will be defined
 const TRIGGER_CONDITION_VALIDATOR = z.object({}); // TODO: update this when the trigger condition type will be defined
@@ -90,7 +90,7 @@ export const MAP_EVENT_LINK_VALIDATOR = z.object({
   conditions: z.array(MAP_EVENT_LINK_CONDITION_VALIDATOR),
   parameters: LINK_PARAMETER_VALIDATOR.partial(),
   eventDbSymbol: DB_SYMBOL_VALIDATOR,
-  defaultAppearance: EVENT_APPEARANCE_VALIDATOR.or(z.undefined()),
+  defaultAppearance: EVENT_APPEARANCE_VALIDATOR.optional(),
   position: COORDINATE_VALIDATOR,
 });
 export type MapEventLink = z.infer<typeof MAP_EVENT_LINK_VALIDATOR>;
