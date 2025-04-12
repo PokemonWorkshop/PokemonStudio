@@ -47,6 +47,14 @@ export const IconsResources = ({ creature, form, canShowFemale }: IconsResources
           ))}
         <OtherResource
           type="icon"
+          title={t('iconEgg')}
+          resourcePath={formResourcesPath(form, 'iconEgg')}
+          extensions={['png', 'gif']}
+          onResourceChoosen={(resourcePath) => onResourceChoosen(resourcePath, 'iconEgg')}
+          onResourceClean={() => onResourceClean('iconEgg')}
+        />
+        <OtherResource
+          type="icon"
           title={t('footprint')}
           resourcePath={formResourcesPath(form, 'footprint')}
           extensions={['png']}

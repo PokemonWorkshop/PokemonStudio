@@ -18,7 +18,11 @@ type StudioCreatureDataBeforeMigration = z.infer<typeof PRE_MIGRATION_CREATURE_V
 
 const GRAPHICS_FRONT_PATH = 'graphics/pokedex/pokefront';
 const GRAPHICS_ICON_PATH = 'graphics/pokedex/pokeicon';
-const DEFAULT_EGG_RESOURCE = 'egg.png';
+const DEFAULT_EGG_RESOURCE = 'egg';
+
+const resourceExists = (resourcePath: string) => {
+  return fs.existsSync(`${resourcePath}.gif`) || fs.existsSync(`${resourcePath}.png`);
+};
 
 const addEggResource = async (
   creature: StudioCreatureDataBeforeMigration,
@@ -26,9 +30,9 @@ const addEggResource = async (
   hasDefaultEggSprite: boolean,
   hasDefaultEggIcon: boolean
 ) => {
-  const filename = `egg_${padStr(creature.id, 3)}.png`;
-  const hasCustomEggSprite = fs.existsSync(path.join(projectPath, GRAPHICS_FRONT_PATH, filename));
-  const hasCustomEggIcon = fs.existsSync(path.join(projectPath, GRAPHICS_ICON_PATH, filename));
+  const filename = `${DEFAULT_EGG_RESOURCE}_${padStr(creature.id, 3)}`;
+  const hasCustomEggSprite = resourceExists(path.join(projectPath, GRAPHICS_FRONT_PATH, filename));
+  const hasCustomEggIcon = resourceExists(path.join(projectPath, GRAPHICS_ICON_PATH, filename));
 
   await creature.forms.reduce(async (lastPromise, form) => {
     await lastPromise;
@@ -44,8 +48,8 @@ const addEggResource = async (
 export const addEggInCreatureResources = async (_: IpcMainEvent, projectPath: string) => {
   deletePSDKDatFile(projectPath);
 
-  const hasDefaultEggSprite = fs.existsSync(path.join(projectPath, GRAPHICS_FRONT_PATH, DEFAULT_EGG_RESOURCE));
-  const hasDefaultEggIcon = fs.existsSync(path.join(projectPath, GRAPHICS_ICON_PATH, DEFAULT_EGG_RESOURCE));
+  const hasDefaultEggSprite = resourceExists(path.join(projectPath, GRAPHICS_FRONT_PATH, DEFAULT_EGG_RESOURCE));
+  const hasDefaultEggIcon = resourceExists(path.join(projectPath, GRAPHICS_ICON_PATH, DEFAULT_EGG_RESOURCE));
 
   const creatures = await readProjectFolder(projectPath, 'pokemon');
   await creatures.reduce(async (lastPromise, creature) => {
