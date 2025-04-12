@@ -1,9 +1,9 @@
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { Editor } from '@components/editor';
 
 import { useTranslation } from 'react-i18next';
-import { InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
+import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
 
 import { useProjectDex } from '@hooks/useProjectData';
 import { DarkButton, PrimaryButton } from '@components/buttons';
@@ -12,6 +12,7 @@ import { cloneEntity } from '@utils/cloneEntity';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { useDexPage } from '@hooks/usePage';
 import { useUpdateDex } from './useUpdateDex';
+import type { StudioDexCreature } from '@modelEntities/dex';
 
 const DexImportInfo = styled.div`
   ${({ theme }) => theme.fonts.normalRegular};
@@ -24,6 +25,12 @@ const ButtonContainer = styled.div`
   flex-direction: column;
   gap: 8px;
 `;
+
+const addNewCreaturesInList = (creatures: StudioDexCreature[], newCreatures: StudioDexCreature[]): StudioDexCreature[] => {
+  const existingSymbols = new Set(creatures.map((creature) => creature.dbSymbol));
+  const newCreaturesToAdd = newCreatures.filter((newCreature) => !existingSymbols.has(newCreature.dbSymbol));
+  return [...creatures, ...newCreaturesToAdd];
+};
 
 type DexPokemonListImportEditorProps = {
   closeDialog: () => void;
@@ -39,12 +46,17 @@ export const DexPokemonListImportEditor = forwardRef<EditorHandlingClose, DexPok
     .filter((d) => d.value !== dex.dbSymbol)
     .sort((a, b) => a.index - b.index)[0].value;
   const [selectedDexImport, setSelectedDexImport] = useState<string>(firstDbSymbol);
+  const overrideRef = useRef<HTMLInputElement>(null);
 
   useEditorHandlingClose(ref);
 
   const onClickImport = () => {
-    const creatures = cloneEntity(allDex[selectedDexImport].creatures);
-    updateDex({ creatures });
+    const newCreatures = cloneEntity(allDex[selectedDexImport].creatures);
+    if (overrideRef.current?.checked) {
+      updateDex({ creatures: newCreatures });
+    } else {
+      updateDex({ creatures: addNewCreaturesInList(dex.creatures, newCreatures) });
+    }
     closeDialog();
   };
 
@@ -62,6 +74,10 @@ export const DexPokemonListImportEditor = forwardRef<EditorHandlingClose, DexPok
               noLabel
             />
           </InputWithTopLabelContainer>
+          <InputWithLeftLabelContainer>
+            <Label htmlFor="override">{t('replace_creatures')}</Label>
+            <Toggle name="override" ref={overrideRef} />
+          </InputWithLeftLabelContainer>
         </InputContainer>
         <ButtonContainer>
           <PrimaryButton onClick={onClickImport}>{t('import_the_list')}</PrimaryButton>
