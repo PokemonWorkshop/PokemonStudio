@@ -99,5 +99,6 @@
   "quest_import_info": "You can create this new quest by importing data from another existing quest.",
   "none_option": "None",
   "other_data": "Other data",
-  "import_quest_from": "Import data from"
+  "import_quest_from": "Import data from",
+  "hidden_default": "Hidden by default"
 }
