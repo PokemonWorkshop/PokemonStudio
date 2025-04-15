@@ -21,7 +21,7 @@ export const QuestGoalBeatNpc = ({ objective, refs, checkIsValid }: QuestGoalPro
           name="text-beat-npc"
           defaultValue={objective.objectiveMethodArgs[1] as string}
           onChange={() => checkIsValid && checkIsValid()}
-          placeholder={t('examPple_beat_npc')}
+          placeholder={t('example_beat_npc')}
         />
       </InputWithTopLabelContainer>
       <InputWithLeftLabelContainer>
