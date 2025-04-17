@@ -79,7 +79,7 @@ export const BagEntryImport = forwardRef<EditorHandlingClose, BagEntryImportProp
   return (
     <Editor type={from} title={t('import')}>
       <InputContainer size="m">
-        <ImportInfo>{t('item_import_info')}</ImportInfo>
+        <ImportInfo>{t('import_item_info')}</ImportInfo>
         <InputWithTopLabelContainer>
           <Label htmlFor="item">{t('import_item_from')}</Label>
           <SelectTrainer
