@@ -8,7 +8,6 @@ export const QuestGoalBeatNpc = ({ objective, refs, checkIsValid }: QuestGoalPro
   const [hiddenByDefault, setHiddenByDefault] = useState(objective.hiddenByDefault);
   const { t } = useTranslation('database_quests');
 
-  console.log('hiddenByDefault', refs);
   return (
     <PaddedInputContainer>
       <InputWithTopLabelContainer>
