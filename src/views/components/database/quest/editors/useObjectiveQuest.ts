@@ -22,6 +22,7 @@ export const useObjectiveQuest = (initialObjective?: StudioQuestObjective) => {
   const entityRef = useRef<DbSymbol | undefined>();
   const nameRef = useRef<HTMLInputElement>(null);
   const valueRef = useRef<HTMLInputElement>(null);
+  const hiddenByDefaultRef = useRef<HTMLInputElement>(null);
   const customObjectiveRef = useRef<HTMLTextAreaElement>(null);
 
   const checkConditionsIsValid = () => {
@@ -50,7 +51,13 @@ export const useObjectiveQuest = (initialObjective?: StudioQuestObjective) => {
         result = !!nameRef.current && nameRef.current.value !== '';
         break;
       case 'objective_beat_npc':
-        result = !!nameRef.current && !!valueRef.current && nameRef.current.value !== '' && valueRef.current.validity.valid;
+        result =
+          !!nameRef.current &&
+          !!valueRef.current &&
+          !!hiddenByDefaultRef.current &&
+          nameRef.current.value !== '' &&
+          valueRef.current.validity.valid &&
+          hiddenByDefaultRef.current.checked;
         break;
       case 'objective_obtain_item':
       case 'objective_beat_pokemon':
@@ -101,6 +108,7 @@ export const useObjectiveQuest = (initialObjective?: StudioQuestObjective) => {
       nameRef,
       valueRef,
       customObjectiveRef,
+      hiddenByDefaultRef,
     },
     setObjective,
     updateObjective,

@@ -9,6 +9,7 @@ export type QuestGoalProps = {
     nameRef: RefObject<HTMLInputElement>;
     valueRef: RefObject<HTMLInputElement>;
     customObjectiveRef: RefObject<HTMLTextAreaElement>;
+    hiddenByDefaultRef: RefObject<HTMLInputElement>;
   };
   checkIsValid?: () => void;
 };

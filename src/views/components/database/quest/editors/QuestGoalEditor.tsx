@@ -1,33 +1,33 @@
 import { EditorWithCollapse } from '@components/editor/Editor';
 import { EditorChildWithSubEditorContainer } from '@components/editor/EditorContainer';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { InputContainer, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
+import { Select } from '@ds/Select';
 import { QUEST_CUSTOM_OBJECTIVE_TEXT_ID, QUEST_OBJECTIVES, StudioQuestObjectiveType, updateIndexSpeakToBeatNpc } from '@modelEntities/quest';
+import { useDialogsRef } from '@src/hooks/useDialogsRef';
+import { useQuestPage } from '@src/hooks/usePage';
+import { assertUnreachable } from '@utils/assertUnreachable';
+import { cleanNaNValue } from '@utils/cleanNaNValue';
+import { cloneEntity } from '@utils/cloneEntity';
 import { padStr } from '@utils/PadStr';
-import { useTranslation } from 'react-i18next';
+import { ObjectiveEggIndex } from '@utils/QuestUtils';
+import { useSetProjectText } from '@utils/ReadingProjectText';
 import { TFunction } from 'i18next';
+import React, { forwardRef, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   QuestGoalBeatNpc,
   QuestGoalBeatPokemon,
   QuestGoalCatchPokemon,
+  QuestGoalCustom,
   QuestGoalEgg,
   QuestGoalObtainItem,
   QuestGoalSeePokemon,
   QuestGoalSpeakTo,
-  QuestGoalCustom,
 } from './goals';
-import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useQuestPage } from '@src/hooks/usePage';
+import { QuestTranslationEditorTitle, QuestTranslationOverlay } from './QuestTranslationOverlay';
 import { useObjectiveQuest } from './useObjectiveQuest';
 import { useUpdateQuest } from './useUpdateQuest';
-import { Select } from '@ds/Select';
-import { cloneEntity } from '@utils/cloneEntity';
-import { cleanNaNValue } from '@utils/cleanNaNValue';
-import { assertUnreachable } from '@utils/assertUnreachable';
-import { ObjectiveEggIndex } from '@utils/QuestUtils';
-import { useDialogsRef } from '@src/hooks/useDialogsRef';
-import { useSetProjectText } from '@utils/ReadingProjectText';
-import { QuestTranslationEditorTitle, QuestTranslationOverlay } from './QuestTranslationOverlay';
-import React, { forwardRef, useMemo } from 'react';
 
 const objectiveCategoryEntries = (t: TFunction<'database_quests'>) =>
   QUEST_OBJECTIVES.map((objective) => ({ value: objective, label: t(objective) }));
@@ -80,11 +80,12 @@ export const QuestGoalEditor = forwardRef<EditorHandlingClose, QuestGoalEditorPr
     const isSameMethodName = newObjective.objectiveMethodName === oldObjective.objectiveMethodName;
     switch (objectiveMethodName) {
       case 'objective_beat_npc': {
-        if (!refs.nameRef.current || !refs.valueRef.current) return;
+        if (!refs.nameRef.current || !refs.valueRef.current || !refs.hiddenByDefaultRef.current) return;
 
         const backupValue = isSameMethodName ? (oldObjective.objectiveMethodArgs[2] as number) : 1;
         newObjective.objectiveMethodArgs[1] = refs.nameRef.current.value;
         newObjective.objectiveMethodArgs[2] = cleanNaNValue(refs.valueRef.current.valueAsNumber, backupValue);
+        newObjective.hiddenByDefault = refs.hiddenByDefaultRef.current?.checked;
         break;
       }
       case 'objective_beat_pokemon':
