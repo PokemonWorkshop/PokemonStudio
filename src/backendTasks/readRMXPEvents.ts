@@ -1,8 +1,10 @@
-import { padStr } from '@utils/PadStr';
 import log from 'electron-log';
 import path from 'path';
-import { isMarshalStandardObject, Marshal } from 'ts-marshal';
+import fsPromise from 'fs/promises';
+import { isMarshalStandardObject, isMarshalHash, Marshal, MarshalHash } from 'ts-marshal';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
+import { isMapObject, isRecord } from './readRMXPMap';
+import { padStr } from '@utils/PadStr';
 
 // RMXP Documentation: https://www.rpg-maker.fr/dl/monos/aide/xp/index.html?page=source%2Frgss%2Frgss.html
 
@@ -112,7 +114,7 @@ type EventCommandData = {
 };
 
 type EventPageData = {
-  '@conditon': EventPageConditionData;
+  '@condition': EventPageConditionData;
   '@graphic': EventPageGraphicData;
   '@move_type': number;
   '@move_speed': number;
@@ -133,6 +135,7 @@ type EventData = {
   '@x': number;
   '@y': number;
   '@pages': EventPageData[];
+  __class: symbol;
 };
 
 const isPageConditionObject = (object: unknown): object is EventPageConditionData =>
@@ -215,7 +218,7 @@ const isEventPageObject = (object: unknown): object is EventPageData =>
   '@trigger' in object &&
   '@list' in object &&
   isPageConditionObject(object['@condition']) &&
-  isPageGraphicObject(['@graphic']) &&
+  isPageGraphicObject(object['@graphic']) &&
   typeof object['@move_type'] === 'number' &&
   typeof object['@move_speed'] === 'number' &&
   typeof object['@move_frequency'] === 'number' &&
@@ -243,15 +246,111 @@ const isEventObject = (object: unknown): object is EventData =>
   Array.isArray(object['@pages']) &&
   object['@pages'].reduce<boolean>((prev, page) => prev && isEventPageObject(page), true);
 
-export const readRMXPEvents = async (events: unknown[]): Promise<RMXPEvent[] | undefined> => {
-  // TODO:
-  return [];
+const buildCondition = (condition: EventPageConditionData): RMXPEventPageCondition => ({
+  isSwitch1: condition['@switch1_valid'],
+  isSwitch2: condition['@switch2_valid'],
+  isVariable: condition['@variable_valid'],
+  isSelfSwitch: condition['@self_switch_valid'],
+  switch1Id: condition['@switch1_id'],
+  switch2Id: condition['@switch2_id'],
+  variableId: condition['@variable_id'],
+  variableValue: condition['@variable_value'],
+  selfSwitch: condition['@self_switch_ch'],
+});
+
+const buildGraphic = (graphic: EventPageGraphicData): RMXPEventPageGraphic => ({
+  tileId: graphic['@tile_id'],
+  characterName: graphic['@character_name'],
+  characterHue: graphic['@character_hue'],
+  direction: graphic['@direction'],
+  pattern: graphic['@pattern'],
+  opacity: graphic['@opacity'],
+  blendType: graphic['@blend_type'],
+});
+
+const buildParameter = (parameter: unknown): unknown => {
+  if (parameter && typeof parameter === 'object') {
+    if (Array.isArray(parameter)) return buildParameters(parameter);
+
+    return Object.entries(parameter)
+      .filter(([key]) => key !== '__class')
+      .map(([, value]) => buildParameter(value));
+  }
+  if (typeof parameter === 'symbol') return String(parameter);
+
+  return parameter;
+};
+
+const buildParameters = (parameters: unknown[]): unknown[] => {
+  return parameters.map((parameter) => buildParameter(parameter));
+};
+
+const buildMoveCommand = (moveCommands: MoveCommandData[]): RMXPMoveCommand[] =>
+  moveCommands.map((moveCommand) => ({
+    code: moveCommand['@code'],
+    parameters: moveCommand['@parameters'],
+  }));
+
+const buildMoveRoute = (moveRoute: MoveRouteData): RMXPMoveRoute => ({
+  isRepeat: moveRoute['@repeat'],
+  isSkippable: moveRoute['@skippable'],
+  list: buildMoveCommand(moveRoute['@list']),
+});
+
+const buildEventCommandList = (eventCommands: EventCommandData[]): RMXPEventCommand[] =>
+  eventCommands.map((eventCommand) => ({
+    code: eventCommand['@code'],
+    indent: eventCommand['@indent'],
+    parameters: buildParameters(eventCommand['@parameters']),
+  }));
+
+const buildEventPages = (pages: EventPageData[]): RMXPEventPage[] => {
+  return pages.map((page) => ({
+    condition: buildCondition(page['@condition']),
+    graphic: buildGraphic(page['@graphic']),
+    moveType: page['@move_type'],
+    moveSpeed: page['@move_speed'],
+    moveFrequency: page['@move_frequency'],
+    moveRoute: buildMoveRoute(page['@move_route']),
+    isWalkAnime: page['@walk_anime'],
+    isStepAnime: page['@step_anime'],
+    isDirectionFix: page['@direction_fix'],
+    isThrough: page['@through'],
+    isAlwaysOnTop: page['@always_on_top'],
+    trigger: page['@trigger'],
+    list: buildEventCommandList(page['@list']),
+  }));
+};
+
+const buildEvents = (eventHash: MarshalHash) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { __class, __extendedModules, __default, ...events } = eventHash;
+  return Object.entries(events)
+    .map(([, data]) => {
+      if (!isEventObject(data)) return undefined;
+
+      log.info(`Read event #${data['@id']} (${data['@name']})`);
+      return { id: data['@id'], name: data['@name'], x: data['@x'], y: data['@y'], pages: buildEventPages(data['@pages']) };
+    })
+    .filter(<T>(data: T): data is Exclude<T, undefined> => !!data);
+};
+
+export const readRMXPEvents = async (eventsData: unknown): Promise<RMXPEvent[] | undefined> => {
+  if (!isMarshalHash(eventsData)) throw new Error('Loaded object is not a Hash');
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  return buildEvents(eventsData);
 };
 
 const readRMXPEventsBackendService = async (payload: ReadRMXPEventInput): Promise<ReadRMXPEventOutput> => {
   log.info('read-rmxp-events', payload);
-  // TODO:
-  const rmxpEvents = await readRMXPEvents([]);
+
+  const mapData = await fsPromise.readFile(path.join(payload.projectPath, 'Data', `Map${padStr(payload.mapId, 3)}.rxdata`));
+  const marshalMapData = Marshal.load(mapData);
+  if (!isRecord(marshalMapData)) throw new Error('Loaded object is not a Record');
+  if (!isMapObject(marshalMapData)) throw new Error(`The file Map${padStr(payload.mapId, 3)} is not a valid map object.`);
+
+  const rmxpEvents = await readRMXPEvents(marshalMapData['@events']);
   if (!rmxpEvents) {
     throw new Error(`The file Map${padStr(payload.mapId, 3)} contains a invalid event object.`);
   }

@@ -15,10 +15,8 @@ export type RMXPMap = {
   bgm: RMXPMapAudio;
   autoplayBgs: boolean;
   bgs: RMXPMapAudio;
-  /* not currently in use */
-  //data: unknown;
-  //events: unknown[];
 };
+
 export type RMXPMapAudio = {
   name: string;
   volume: number;
@@ -41,20 +39,22 @@ type MapData = {
   '@events': unknown[];
 };
 
-const isMapObject = (object: unknown): object is MapData =>
+export const isMapObject = (object: unknown): object is MapData =>
   isMarshalStandardObject(object) &&
   '@autoplay_bgm' in object &&
   '@bgm' in object &&
   '@autoplay_bgs' in object &&
   '@bgs' in object &&
   '@encounter_step' in object &&
+  '@events' in object &&
   typeof object['@autoplay_bgm'] === 'boolean' &&
   typeof object['@bgm'] === 'object' &&
   typeof object['@autoplay_bgs'] === 'boolean' &&
   typeof object['@bgs'] === 'object' &&
-  typeof object['@encounter_step'] === 'number';
+  typeof object['@encounter_step'] === 'number' &&
+  typeof object['@events'] === 'object';
 
-const isRecord = (object: unknown): object is Record<string | symbol, unknown> => typeof object === 'object' && object !== null;
+export const isRecord = (object: unknown): object is Record<string | symbol, unknown> => typeof object === 'object' && object !== null;
 
 const addAudioExtensionFile = (projectPath: string, filename: string, type: 'bgm' | 'bgs') => {
   const filePath = path.join(projectPath, 'Audio', type, filename);
