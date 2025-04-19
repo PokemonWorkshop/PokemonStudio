@@ -30,6 +30,7 @@ import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import { SelectItem } from '@components/selects';
 import { importItemData } from '@utils/importEntityDataUtils';
 import { OptionSourceKey } from '@src/hooks/useSelectOptions';
+import { useNavigate } from 'react-router-dom';
 
 const itemCategoryEntries = (t: TFunction<('database_items' | 'database_types' | 'database_moves')[]>) =>
   StudioItemCategories.map((category) => ({ value: category, label: t(`database_types:${category}`) })).sort((a, b) =>
@@ -37,6 +38,7 @@ const itemCategoryEntries = (t: TFunction<('database_items' | 'database_types' |
   );
 
 type ItemNewEditorProps = {
+  from: 'items' | 'techItemsTable';
   closeDialog: () => void;
 };
 
@@ -70,7 +72,7 @@ const CATEGORY_TO_OPTION = {
   tech: 'itemTech',
 };
 
-export const ItemNewEditor = forwardRef<EditorHandlingClose, ItemNewEditorProps>(({ closeDialog }, ref) => {
+export const ItemNewEditor = forwardRef<EditorHandlingClose, ItemNewEditorProps>(({ from, closeDialog }, ref) => {
   const { setProjectDataValues: setItem } = useProjectItems();
   const { items } = useItemPage();
   const { t } = useTranslation(['database_items', 'database_types', 'database_moves']);
@@ -85,6 +87,7 @@ export const ItemNewEditor = forwardRef<EditorHandlingClose, ItemNewEditorProps>
   const [icon, setIcon] = useState('');
   const [selectedItem, setSelectedItem] = useState('__undef__');
   const [importing, setImporting] = useState(false);
+  const navigate = useNavigate();
 
   useEditorHandlingClose(ref);
 
@@ -104,6 +107,8 @@ export const ItemNewEditor = forwardRef<EditorHandlingClose, ItemNewEditorProps>
     setText(ITEM_DESCRIPTION_TEXT_ID, newItem.id, descriptionRef.current.value);
     setText(ITEM_PLURAL_NAME_TEXT_ID, newItem.id, namePluralRef.current.value);
     setItem({ [dbSymbol]: newItem }, { item: dbSymbol });
+    if (from === 'items') navigate(`/database/items`);
+    else navigate(`/database/items/techItemsTable`);
     closeDialog();
   };
 

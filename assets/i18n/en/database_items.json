@@ -119,5 +119,7 @@
   "item_import_info": "You can create this new item by importing data from another existing item.",
   "none_option": "None",
   "other_data": "Other data",
-  "import_item_from": "Import data from"
+  "import_item_from": "Import data from",
+  "handle_tech_list": "Manage tech items",
+  "tech_list": "Techniques list"
 }
