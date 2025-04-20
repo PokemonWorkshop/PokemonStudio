@@ -268,6 +268,8 @@ const buildGraphic = (graphic: EventPageGraphicData): RMXPEventPageGraphic => ({
   blendType: graphic['@blend_type'],
 });
 
+// This function can be updated to change the parameters output format
+// It depends on what the converter will need
 const buildParameter = (parameter: unknown): unknown => {
   if (parameter && typeof parameter === 'object') {
     if (Array.isArray(parameter)) return buildParameters(parameter);
@@ -322,12 +324,15 @@ const buildEventPages = (pages: EventPageData[]): RMXPEventPage[] => {
   }));
 };
 
-const buildEvents = (eventHash: MarshalHash) => {
+const buildEvents = (eventHash: MarshalHash, mapId: number) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { __class, __extendedModules, __default, ...events } = eventHash;
   return Object.entries(events)
-    .map(([, data]) => {
-      if (!isEventObject(data)) return undefined;
+    .map(([id, data]) => {
+      if (!isEventObject(data)) {
+        log.warn(`The event #${id} in the file Map${padStr(mapId, 3)}.rxdata is invalid.`);
+        return undefined;
+      }
 
       log.info(`Read event #${data['@id']} (${data['@name']})`);
       return { id: data['@id'], name: data['@name'], x: data['@x'], y: data['@y'], pages: buildEventPages(data['@pages']) };
@@ -335,25 +340,24 @@ const buildEvents = (eventHash: MarshalHash) => {
     .filter(<T>(data: T): data is Exclude<T, undefined> => !!data);
 };
 
-export const readRMXPEvents = async (eventsData: unknown): Promise<RMXPEvent[] | undefined> => {
+export const readRMXPEvents = async (projectPath: string, mapId: number): Promise<RMXPEvent[]> => {
+  const mapData = await fsPromise.readFile(path.join(projectPath, 'Data', `Map${padStr(mapId, 3)}.rxdata`));
+  const marshalMapData = Marshal.load(mapData);
+
+  if (!isRecord(marshalMapData)) throw new Error('Loaded object is not a Record');
+  if (!isMapObject(marshalMapData)) throw new Error(`The file Map${padStr(mapId, 3)}.rxdata is not a valid map object.`);
+
+  const eventsData = marshalMapData['@events'];
   if (!isMarshalHash(eventsData)) throw new Error('Loaded object is not a Hash');
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  return buildEvents(eventsData);
+  return buildEvents(eventsData, mapId);
 };
 
 const readRMXPEventsBackendService = async (payload: ReadRMXPEventInput): Promise<ReadRMXPEventOutput> => {
   log.info('read-rmxp-events', payload);
 
-  const mapData = await fsPromise.readFile(path.join(payload.projectPath, 'Data', `Map${padStr(payload.mapId, 3)}.rxdata`));
-  const marshalMapData = Marshal.load(mapData);
-  if (!isRecord(marshalMapData)) throw new Error('Loaded object is not a Record');
-  if (!isMapObject(marshalMapData)) throw new Error(`The file Map${padStr(payload.mapId, 3)} is not a valid map object.`);
+  const rmxpEvents = await readRMXPEvents(payload.projectPath, payload.mapId);
 
-  const rmxpEvents = await readRMXPEvents(marshalMapData['@events']);
-  if (!rmxpEvents) {
-    throw new Error(`The file Map${padStr(payload.mapId, 3)} contains a invalid event object.`);
-  }
   log.info('read-rmxp-events/success');
   return { rmxpEvents };
 };
