@@ -144,6 +144,8 @@ export const createCreature = (allPokemon: ProjectData['pokemon'], dbSymbol: DbS
           footprint: '',
           character: '',
           characterShiny: '',
+          egg: '',
+          iconEgg: '',
           cry: '',
           hasFemale: false,
         },
