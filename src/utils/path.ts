@@ -73,6 +73,8 @@ export type CreatureFormResourcesPath =
   | 'character'
   | 'characterShiny'
   | 'cry'
+  | 'egg'
+  | 'iconEgg'
   | CreatureFormResourcesFemalePath;
 
 export const formResourcesPath = (form: StudioCreatureForm, resource: CreatureFormResourcesPath) => {
@@ -88,9 +90,11 @@ export const formResourcesPath = (form: StudioCreatureForm, resource: CreatureFo
     case 'iconF':
     case 'iconShiny':
     case 'iconShinyF':
+    case 'iconEgg':
       return `graphics/pokedex/pokeicon/${resources[resource] ?? ''}`;
     case 'front':
     case 'frontF':
+    case 'egg':
       return `graphics/pokedex/pokefront/${resources[resource] ?? ''}`;
     case 'frontShiny':
     case 'frontShinyF':
