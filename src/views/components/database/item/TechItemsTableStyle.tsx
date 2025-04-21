@@ -35,6 +35,7 @@ export const DataTechItemGrid = styled(DataGrid)`
   }
 
   & span:nth-child(11) {
+    text-align: right;
     display: none;
   }
 

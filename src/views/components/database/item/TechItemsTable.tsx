@@ -56,13 +56,21 @@ const RenderTechItem = ({ item, state, t }: RenderTechItemProps) => {
         />
       </span>
       <span></span>
-      {techItemMove !== '__undef__' && (
+      {techItemMove !== '__undef__' ? (
         <>
           <TypeCategory type={move.type}>{getTypeName(state.projectData.types[move.type])}</TypeCategory>
           <MoveCategory category={move.category}>{t(move.category as never)}</MoveCategory>
           <span>{move.pp}</span>
           <span>{move.power || '---'}</span>
           <span>{move.accuracy || '---'}</span>
+        </>
+      ) : (
+        <>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
         </>
       )}
       <span></span>
