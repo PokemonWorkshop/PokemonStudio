@@ -1,5 +1,5 @@
 import { State, useGlobalState } from '@src/GlobalStateProvider';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ResourceImage } from '@components/ResourceImage';
 import { itemIconPath } from '@utils/path';
@@ -29,11 +29,13 @@ const RenderTechItem = ({ item, state, t }: RenderTechItemProps) => {
   const setItems = useUpdateItem(item);
   const copyText = useCopyProjectText();
   const { projectDataValues: moves } = useProjectDataReadonly('moves', 'move');
-  const move = moves[item.move];
+  const [techItemMove, setTechItemMove] = useState(item.move || '__undef__');
+  const move = moves[techItemMove] || ('__undef__' as DbSymbol);
   const shortcutItemNavigation = useShortcutNavigation('items', 'item', '/database/items/');
 
   const handleMoveChange = (dbSymbol: DbSymbol) => {
     const move = moves[dbSymbol];
+    setTechItemMove(dbSymbol);
     copyText({ fileId: MOVE_DESCRIPTION_TEXT_ID, textId: move.id + 1 }, { fileId: ITEM_DESCRIPTION_TEXT_ID, textId: item.id + 1 });
     setItems({ ...item, move: dbSymbol });
   };
@@ -46,7 +48,7 @@ const RenderTechItem = ({ item, state, t }: RenderTechItemProps) => {
       </span>
       <span className="select">
         <SelectMove
-          dbSymbol={move.dbSymbol}
+          dbSymbol={techItemMove}
           onChange={(dbSymbol) => {
             handleMoveChange(dbSymbol as DbSymbol);
           }}
@@ -54,11 +56,15 @@ const RenderTechItem = ({ item, state, t }: RenderTechItemProps) => {
         />
       </span>
       <span></span>
-      <TypeCategory type={move.type}>{getTypeName(state.projectData.types[move.type])}</TypeCategory>
-      <MoveCategory category={move.category}>{t(move.category as never)}</MoveCategory>
-      <span>{move.pp}</span>
-      <span>{move.power || '---'}</span>
-      <span>{move.accuracy || '---'}</span>
+      {techItemMove !== '__undef__' && (
+        <>
+          <TypeCategory type={move.type}>{getTypeName(state.projectData.types[move.type])}</TypeCategory>
+          <MoveCategory category={move.category}>{t(move.category as never)}</MoveCategory>
+          <span>{move.pp}</span>
+          <span>{move.power || '---'}</span>
+          <span>{move.accuracy || '---'}</span>
+        </>
+      )}
       <span></span>
       <span className="edit">
         <EditButtonOnlyIcon color={theme.colors.primaryBase} onClick={() => shortcutItemNavigation(item.dbSymbol)} />
