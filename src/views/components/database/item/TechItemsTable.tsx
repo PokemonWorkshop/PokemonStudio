@@ -1,180 +1,94 @@
-import { TypeCategory } from '@components/categories';
 import { State, useGlobalState } from '@src/GlobalStateProvider';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
-import { DataGrid } from '../dataBlocks';
-import { useProjectAbilities } from '@hooks/useProjectData';
-import { getNameType } from '@utils/getNameType';
 import { ResourceImage } from '@components/ResourceImage';
+import { itemIconPath } from '@utils/path';
+import { TFunction } from 'i18next';
+import { DataTechItemTable, DataTechItemGrid, RenderTechItemContainer } from './TechItemsTableStyle';
+import { StudioTechItem } from '@modelEntities/item';
 import { useGetEntityNameText, useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
-import { pokemonIconPath } from '@utils/path';
-import { StudioCreature } from '@modelEntities/creature';
-import { StudioType } from '@modelEntities/type';
-import { CONTROL, useKeyPress } from '@hooks/useKeyPress';
-import { usePokemonShortcutNavigation, useShortcutNavigation } from '@hooks/useShortcutNavigation';
-import { buildCreaturesListByDexOrder } from '@utils/buildCreaturesListByDexOrder';
+import { MoveCategory, TypeCategory } from '@components/categories';
+import { SelectMove } from '@components/selects';
+import { DbSymbol } from '@modelEntities/dbSymbol';
+import { EditButtonOnlyIcon } from '@components/buttons';
+import theme from '@src/AppTheme';
+import { useProjectItems } from '@src/hooks/useProjectData';
+import { NavigateFunction, useNavigate } from 'react-router/dist';
+import { useShortcutNavigation } from '@src/hooks/useShortcutNavigation';
 
-type TypePokemonTableProps = {
-  type: StudioType;
-};
-
-type RenderMoveProps = {
-  pokemon: StudioCreature;
-  type: StudioType;
+type RenderTechItemProps = {
+  item: StudioTechItem;
   state: State;
+  t: TFunction<'database_items'>;
 };
 
-const DataPokemonTable = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+const RenderTechItem = ({ item, state, t }: RenderTechItemProps) => {
+  const getItemName = useGetEntityNameText();
+  const getTypeName = useGetEntityNameTextUsingTextId();
+  const [techItemMove, setTechItemMove] = useState<DbSymbol>(item.move);
+  const move = state.projectData.moves[techItemMove];
 
-  & div:first-child {
-    padding: 0 0 12px 0;
-    border-bottom: solid 1px ${({ theme }) => theme.colors.dark14};
-  }
-`;
+  const shortcutItemNavigation = useShortcutNavigation('items', 'item', '/database/items/');
 
-const DataPokemonGrid = styled(DataGrid)`
-  ${({ theme }) => theme.fonts.normalRegular};
-  color: ${({ theme }) => theme.colors.text400};
-  grid-template-columns: 32px 172px 174px 144px 144px 144px auto;
-  align-items: center;
-
-  &:hover:not(.header) {
-    background-color: ${({ theme }) => theme.colors.dark14};
-    color: ${({ theme }) => theme.colors.text100};
-    border-radius: 8px;
-  }
-
-  & .name {
-    ${({ theme }) => theme.fonts.normalMedium};
-    color: ${({ theme }) => theme.colors.text100};
-  }
-
-  & .clickable {
-    :hover {
-      cursor: pointer;
-      text-decoration: underline;
-    }
-  }
-
-  & .error {
-    color: ${({ theme }) => theme.colors.dangerBase};
-  }
-
-  @media ${({ theme }) => theme.breakpoints.dataBox422} {
-    grid-template-columns: 32px 172px 158px;
-
-    & span:nth-child(4),
-    & span:nth-child(5),
-    & span:nth-child(6) {
-      display: none;
-    }
-  }
-`;
-
-const RenderPokemonContainer = styled(DataPokemonGrid)`
-  box-sizing: border-box;
-  height: 40px;
-  padding: 0 8px 0 8px;
-  margin: 0 -8px 0 -8px;
-
-  & .icon {
-    width: 32px;
-    height: 32px;
-    object-fit: cover;
-    object-position: 0 100%;
-  }
-`;
-
-const TypeContainer = styled.span`
-  display: flex;
-  gap: 8px;
-`;
-
-const getFormWithCurrentType = (pokemon: StudioCreature, type: StudioType) =>
-  pokemon.forms.find((form) => form.type1 === type.dbSymbol || form.type2 === type.dbSymbol) || pokemon.forms[0];
-
-const RenderPokemon = ({ pokemon, type, state }: RenderMoveProps) => {
-  const form = getFormWithCurrentType(pokemon, type);
-  const { t } = useTranslation('database_types');
-  const getCreatureName = useGetEntityNameText();
-  const getAbilityName = useGetEntityNameTextUsingTextId();
-  const { projectDataValues: abilities } = useProjectAbilities();
-  const types = state.projectData.types;
-
-  const isClickable: boolean = useKeyPress(CONTROL);
-  const shortcutPokemonNavigation = usePokemonShortcutNavigation();
-  const shortcutAbilityNavigation = useShortcutNavigation('abilities', 'ability', '/database/abilities/');
-
-  const getAbilityNameByIndex = (index: number) => {
-    if (!form.abilities[index]) return '---';
-    if (abilities[form.abilities[index]]) return getAbilityName(abilities[form.abilities[index]]);
-
-    return t('ability_deleted');
+  const handleMoveChange = (dbSymbol: DbSymbol) => {
+    setTechItemMove(dbSymbol);
+    item.move = dbSymbol;
   };
 
   return (
-    <RenderPokemonContainer gap="16px">
-      <span>
-        <ResourceImage
-          imagePathInProject={pokemonIconPath(pokemon, form.form)}
-          fallback={form.form === 0 ? undefined : pokemonIconPath(pokemon)}
-          className="icon"
+    <RenderTechItemContainer gap="8px">
+      <span>{getItemName(item)}</span>
+      <span className="icon">
+        <ResourceImage imagePathInProject={itemIconPath(item.icon)} />
+      </span>
+      <span className="select">
+        <SelectMove
+          dbSymbol={techItemMove}
+          onChange={(dbSymbol) => {
+            handleMoveChange(dbSymbol as DbSymbol);
+          }}
+          noLabel
         />
       </span>
-      <span
-        onClick={isClickable ? () => shortcutPokemonNavigation(pokemon.dbSymbol, form.form) : undefined}
-        className={`${isClickable ? 'clickable' : null} name`}
-      >
-        {getCreatureName(pokemon)}
-      </span>
-      <TypeContainer>
-        <TypeCategory type={form.type1}>{getNameType(types, form.type1, state)}</TypeCategory>
-        {form.type2 !== '__undef__' ? <TypeCategory type={form.type2}>{getNameType(types, form.type2, state)}</TypeCategory> : <span></span>}
-      </TypeContainer>
-      {[0, 1, 2].map((index) => {
-        const ability = abilities[form.abilities[index]];
-        return (
-          <span
-            key={index}
-            onClick={isClickable && ability ? () => shortcutAbilityNavigation(ability.dbSymbol) : undefined}
-            className={`${isClickable && ability ? 'clickable' : null} ${ability ? '' : 'error'}`}
-          >
-            {getAbilityNameByIndex(index)}
-          </span>
-        );
-      })}
-    </RenderPokemonContainer>
+      <span></span>
+      <TypeCategory type={move.type}>{getTypeName(state.projectData.types[move.type])}</TypeCategory>
+      <MoveCategory category={move.category}>{t(move.category as never)}</MoveCategory>
+      <span>{move.pp}</span>
+      <span>{move.power || '---'}</span>
+      <span>{move.accuracy || '---'}</span>
+      <span></span>
+      <EditButtonOnlyIcon color={theme.colors.primaryBase} onClick={() => shortcutItemNavigation(item.dbSymbol)} />
+    </RenderTechItemContainer>
   );
 };
 
-const getAllPokemonWithCurrentType = (type: StudioType, state: State) => {
-  return buildCreaturesListByDexOrder(state)
-    .map((pokemon) => state.projectData.pokemon[pokemon.dbSymbol])
-    .filter((pokemon) => pokemon.forms.find((form) => form.type1 === type.dbSymbol || form.type2 === type.dbSymbol));
+const getTechItems = (state: State) => {
+  return Object.values(state.projectData.items)
+    .filter((item) => item.klass === 'TechItem')
+    .sort((a, b) => a.id - b.id);
 };
 
 export const TechItemsTable = () => {
   const [state] = useGlobalState();
-  const { t } = useTranslation('database_types');
-  //const allPokemon = getAllPokemonWithCurrentType(type, state);
+  const { t } = useTranslation(['database_items', 'database_moves']);
+  const allTechItems = getTechItems(state);
 
   return (
-    <DataPokemonTable>
-      <DataPokemonGrid gap="16px" className="header">
+    <DataTechItemTable>
+      <DataTechItemGrid gap="8px" className="header">
+        <span>{t('database_items:name')}</span>
         <span></span>
-        <span>{t('pokemon_pokemon')}</span>
-        <span>{t('pokemon_types')}</span>
-        <span>{t('pokemon_ability1')}</span>
-        <span>{t('pokemon_ability2')}</span>
-        <span>{t('pokemon_ability3')}</span>
-      </DataPokemonGrid>
-      {/* {allPokemon.map((pokemon) => (
-        <RenderPokemon key={`type-pokemon-${pokemon.dbSymbol}`} pokemon={pokemon} type={type} state={state} />
-      ))} */}
-    </DataPokemonTable>
+        <span>{t('database_moves:move')}</span>
+        <span></span>
+        <span>{t('database_moves:type')}</span>
+        <span>{t('database_moves:category')}</span>
+        <span>{t('database_moves:pp')}</span>
+        <span>{t('database_moves:power')}</span>
+        <span>{t('database_moves:accuracy')}</span>
+      </DataTechItemGrid>
+      {allTechItems.map((item) => (
+        <RenderTechItem key={`type-items-${item.dbSymbol}`} item={item} t={t} state={state} />
+      ))}
+    </DataTechItemTable>
   );
 };

@@ -9,6 +9,7 @@ import { TechItemsTable } from '@components/database/item/TechItemsTable';
 import { DataBlockWrapperWithNoBreakpoint } from '@components/database/dataBlocks/DataBlockWrapper';
 import { ItemEditorAndDeletionKeys, ItemEditorOverlay } from '@components/database/item/editors/ItemEditorOverlay';
 import { useDialogsRef } from '@hooks/useDialogsRef';
+import { DataBlockWithoutActionButtonsEditor } from '@components/editor/DataBlockWithoutActionButtonsEditor';
 
 export const TechItemsTablePage = () => {
   const dialogsRef = useDialogsRef<ItemEditorAndDeletionKeys>();
@@ -24,7 +25,9 @@ export const TechItemsTablePage = () => {
         <PageDataConstrainerStyle>
           <DataBlockWrapperWithNoBreakpoint>
             <SubPageTitle title={t('tech_list')} onClickedBack={onClickedBack} />
-            <TechItemsTable />
+            <DataBlockWithoutActionButtonsEditor title={t('tech_list')} size="full">
+              <TechItemsTable />
+            </DataBlockWithoutActionButtonsEditor>
           </DataBlockWrapperWithNoBreakpoint>
           <ItemEditorOverlay ref={dialogsRef} />
         </PageDataConstrainerStyle>
