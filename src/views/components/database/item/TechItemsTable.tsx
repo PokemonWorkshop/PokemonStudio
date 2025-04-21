@@ -1,18 +1,21 @@
 import { State, useGlobalState } from '@src/GlobalStateProvider';
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ResourceImage } from '@components/ResourceImage';
 import { itemIconPath } from '@utils/path';
 import { TFunction } from 'i18next';
 import { DataTechItemTable, DataTechItemGrid, RenderTechItemContainer } from './TechItemsTableStyle';
-import { StudioTechItem } from '@modelEntities/item';
-import { useGetEntityNameText, useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
+import { ITEM_DESCRIPTION_TEXT_ID, StudioTechItem } from '@modelEntities/item';
+import { useCopyProjectText, useGetEntityNameText, useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
 import { MoveCategory, TypeCategory } from '@components/categories';
 import { SelectMove } from '@components/selects';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { EditButtonOnlyIcon } from '@components/buttons';
 import theme from '@src/AppTheme';
 import { useShortcutNavigation } from '@src/hooks/useShortcutNavigation';
+import { useUpdateItem } from './editors/useUpdateItem';
+import { MOVE_DESCRIPTION_TEXT_ID } from '@modelEntities/move';
+import { useProjectDataReadonly } from '@src/hooks/useProjectData';
 
 type RenderTechItemProps = {
   item: StudioTechItem;
@@ -23,14 +26,16 @@ type RenderTechItemProps = {
 const RenderTechItem = ({ item, state, t }: RenderTechItemProps) => {
   const getItemName = useGetEntityNameText();
   const getTypeName = useGetEntityNameTextUsingTextId();
-  const [techItemMove, setTechItemMove] = useState<DbSymbol>(item.move);
-  const move = state.projectData.moves[techItemMove];
-
+  const setItems = useUpdateItem(item);
+  const copyText = useCopyProjectText();
+  const { projectDataValues: moves } = useProjectDataReadonly('moves', 'move');
+  const move = moves[item.move];
   const shortcutItemNavigation = useShortcutNavigation('items', 'item', '/database/items/');
 
   const handleMoveChange = (dbSymbol: DbSymbol) => {
-    setTechItemMove(dbSymbol);
-    item.move = dbSymbol;
+    const move = moves[dbSymbol];
+    copyText({ fileId: MOVE_DESCRIPTION_TEXT_ID, textId: move.id + 1 }, { fileId: ITEM_DESCRIPTION_TEXT_ID, textId: item.id + 1 });
+    setItems({ ...item, move: dbSymbol });
   };
 
   return (
@@ -41,7 +46,7 @@ const RenderTechItem = ({ item, state, t }: RenderTechItemProps) => {
       </span>
       <span className="select">
         <SelectMove
-          dbSymbol={techItemMove}
+          dbSymbol={move.dbSymbol}
           onChange={(dbSymbol) => {
             handleMoveChange(dbSymbol as DbSymbol);
           }}
