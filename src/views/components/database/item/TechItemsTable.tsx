@@ -12,8 +12,6 @@ import { SelectMove } from '@components/selects';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { EditButtonOnlyIcon } from '@components/buttons';
 import theme from '@src/AppTheme';
-import { useProjectItems } from '@src/hooks/useProjectData';
-import { NavigateFunction, useNavigate } from 'react-router/dist';
 import { useShortcutNavigation } from '@src/hooks/useShortcutNavigation';
 
 type RenderTechItemProps = {
@@ -65,7 +63,23 @@ const RenderTechItem = ({ item, state, t }: RenderTechItemProps) => {
 const getTechItems = (state: State) => {
   return Object.values(state.projectData.items)
     .filter((item) => item.klass === 'TechItem')
-    .sort((a, b) => a.id - b.id);
+    .sort((a, b) => {
+      const getPriority = (symbol: string): number => {
+        if (symbol.startsWith('cs') || symbol.startsWith('hm')) return 0;
+        if (symbol.startsWith('ct') || symbol.startsWith('tm')) return 1;
+        if (symbol.startsWith('tr') || symbol.startsWith('tr')) return 2;
+        return 3;
+      };
+
+      const priorityA = getPriority(a.dbSymbol);
+      const priorityB = getPriority(b.dbSymbol);
+
+      if (priorityA !== priorityB) {
+        return priorityA - priorityB;
+      }
+
+      return a.id - b.id;
+    });
 };
 
 export const TechItemsTable = () => {
