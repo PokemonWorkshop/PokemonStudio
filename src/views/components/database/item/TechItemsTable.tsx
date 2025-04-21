@@ -60,7 +60,9 @@ const RenderTechItem = ({ item, state, t }: RenderTechItemProps) => {
       <span>{move.power || '---'}</span>
       <span>{move.accuracy || '---'}</span>
       <span></span>
-      <EditButtonOnlyIcon color={theme.colors.primaryBase} onClick={() => shortcutItemNavigation(item.dbSymbol)} />
+      <span className="edit">
+        <EditButtonOnlyIcon color={theme.colors.primaryBase} onClick={() => shortcutItemNavigation(item.dbSymbol)} />
+      </span>
     </RenderTechItemContainer>
   );
 };

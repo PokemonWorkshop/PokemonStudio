@@ -21,9 +21,8 @@ export const DataTechItemGrid = styled(DataGrid)`
   &:hover:not(.header) {
     background-color: ${({ theme }) => theme.colors.dark18};
     color: ${({ theme }) => theme.colors.text100};
-    border-radius: 8px;
 
-    .delete {
+    .edit {
       display: flex;
     }
   }
@@ -35,8 +34,12 @@ export const DataTechItemGrid = styled(DataGrid)`
     text-align: right;
   }
 
+  & span:nth-child(11) {
+    display: none;
+  }
+
   @media ${({ theme }) => theme.breakpoints.dataBox422} {
-    grid-template-columns: 43px 32px 240px 75px auto;
+    grid-template-columns: 43px 32px 240px 75px auto 40px;
 
     & span:nth-child(4),
     & span:nth-child(6),
