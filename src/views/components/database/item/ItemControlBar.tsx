@@ -45,7 +45,7 @@ export const ItemControlBar = ({ dialogsRef, onRedirect }: ItemControlBarProps) 
           <SecondaryButton onClick={() => navigate(`/database/items/techItemsTable`)}>{t('handle_tech_list')}</SecondaryButton>
         )}
       </ControlBarLabelContainer>
-      <SelectItem dbSymbol={itemDbSymbol} onChange={(value) => setSelectedDataIdentifier({ item: value })} />
+      {onRedirect !== 'table' && <SelectItem dbSymbol={itemDbSymbol} onChange={(value) => setSelectedDataIdentifier({ item: value })} />}
     </ControlBar>
   );
 };
