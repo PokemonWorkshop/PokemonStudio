@@ -132,8 +132,9 @@ export const QuestGoalEditor = forwardRef<EditorHandlingClose, QuestGoalEditorPr
         break;
       }
       case 'objective_custom': {
-        if (!refs.customObjectiveRef.current) return;
+        if (!refs.customObjectiveRef.current || !refs.hiddenByDefaultRef.current) return;
 
+        newObjective.hiddenByDefault = refs.hiddenByDefaultRef.current?.checked;
         saveTexts();
         break;
       }

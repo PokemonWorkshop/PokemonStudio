@@ -2,7 +2,7 @@ import { InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, MultiLi
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 import { QUEST_CUSTOM_OBJECTIVE_TEXT_ID } from '@modelEntities/quest';
 import { useGetProjectText } from '@utils/ReadingProjectText';
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { QuestTranslationEditorTitle } from '../QuestTranslationOverlay';
 import { QuestGoalProps } from './QuestGoalProps';
@@ -15,7 +15,6 @@ export const QuestGoalCustom = ({ objective, refs, checkIsValid, handleTranslate
   const { t } = useTranslation('database_quests');
   const getText = useGetProjectText();
   const defaultValue = getText(QUEST_CUSTOM_OBJECTIVE_TEXT_ID, objective.objectiveMethodArgs[1] as number);
-  const [hiddenByDefault, setHiddenByDefault] = useState(objective.hiddenByDefault);
 
   return (
     <PaddedInputContainer>
@@ -35,14 +34,10 @@ export const QuestGoalCustom = ({ objective, refs, checkIsValid, handleTranslate
       <InputWithLeftLabelContainer>
         <Label htmlFor="hidden-by-default">{t('hidden_default')}</Label>
         <Toggle
-          ref={refs.valueRef}
+          ref={refs.hiddenByDefaultRef}
           name="hidden-by-default"
-          checked={hiddenByDefault}
-          onChange={(event) => {
-            objective.hiddenByDefault = event.target.checked;
-            setHiddenByDefault(event.target.checked);
-            checkIsValid?.();
-          }}
+          defaultChecked={objective.hiddenByDefault}
+          onChange={() => checkIsValid && checkIsValid()}
         />
       </InputWithLeftLabelContainer>
     </PaddedInputContainer>
