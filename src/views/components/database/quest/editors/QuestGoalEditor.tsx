@@ -73,9 +73,7 @@ export const QuestGoalEditor = forwardRef<EditorHandlingClose, QuestGoalEditorPr
   const canClose = () => checkIsValid();
 
   const onClose = () => {
-    if (!canClose()) {
-      return;
-    }
+    if (!canClose()) return;
 
     const newObjective = cloneEntity(objective);
     const oldObjective = quest.objectives[objectiveIndex];
