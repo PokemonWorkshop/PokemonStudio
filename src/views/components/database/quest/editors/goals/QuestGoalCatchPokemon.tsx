@@ -1,6 +1,6 @@
 import { InputContainer, InputWithLeftLabelContainer, Label, PaddedInputContainer, Toggle } from '@components/inputs';
 import { StudioQuestObjective } from '@modelEntities/quest';
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { InputNumber2 } from './InputNumber';
 import { QuestGoalConditions } from './QuestGoalConditions';
@@ -12,7 +12,6 @@ type QuestGoalCatchPokemonProps = {
 
 export const QuestGoalCatchPokemon = ({ objective, refs, checkIsValid, setObjective }: QuestGoalCatchPokemonProps) => {
   const { t } = useTranslation('database_quests');
-  const [hiddenByDefault, setHiddenByDefault] = useState(objective.hiddenByDefault);
 
   return (
     <InputContainer>
@@ -29,14 +28,10 @@ export const QuestGoalCatchPokemon = ({ objective, refs, checkIsValid, setObject
         <InputWithLeftLabelContainer>
           <Label htmlFor="hidden-by-default">{t('hidden_default')}</Label>
           <Toggle
-            ref={refs.valueRef}
+            ref={refs.hiddenByDefaultRef}
             name="hidden-by-default"
-            checked={hiddenByDefault}
-            onChange={(event) => {
-              objective.hiddenByDefault = event.target.checked;
-              setHiddenByDefault(event.target.checked);
-              checkIsValid?.();
-            }}
+            defaultChecked={objective.hiddenByDefault}
+            onChange={() => checkIsValid && checkIsValid()}
           />
         </InputWithLeftLabelContainer>
       </PaddedInputContainer>

@@ -1,7 +1,7 @@
 import { InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PaddedInputContainer, Toggle } from '@components/inputs';
 import { SelectItem2 } from '@components/selects/SelectItem';
 import { DbSymbol } from '@modelEntities/dbSymbol';
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { InputNumber2 } from './InputNumber';
 import { QuestGoalProps } from './QuestGoalProps';
@@ -9,7 +9,6 @@ import { QuestGoalProps } from './QuestGoalProps';
 export const QuestGoalObtainItem = ({ objective, refs, checkIsValid }: QuestGoalProps) => {
   const { t } = useTranslation(['database_items', 'database_quests']);
   const defaultItem = objective.objectiveMethodArgs[0] === '__undef__' ? undefined : (objective.objectiveMethodArgs[0] as DbSymbol);
-  const [hiddenByDefault, setHiddenByDefault] = useState(objective.hiddenByDefault);
 
   return (
     <PaddedInputContainer>
@@ -29,14 +28,10 @@ export const QuestGoalObtainItem = ({ objective, refs, checkIsValid }: QuestGoal
       <InputWithLeftLabelContainer>
         <Label htmlFor="hidden-by-default">{t('database_quests:hidden_default')}</Label>
         <Toggle
-          ref={refs.valueRef}
+          ref={refs.hiddenByDefaultRef}
           name="hidden-by-default"
-          checked={hiddenByDefault}
-          onChange={(event) => {
-            objective.hiddenByDefault = event.target.checked;
-            setHiddenByDefault(event.target.checked);
-            checkIsValid?.();
-          }}
+          defaultChecked={objective.hiddenByDefault}
+          onChange={() => checkIsValid && checkIsValid()}
         />
       </InputWithLeftLabelContainer>
     </PaddedInputContainer>

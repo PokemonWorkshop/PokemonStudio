@@ -94,36 +94,41 @@ export const QuestNewGoalEditor = forwardRef<EditorHandlingClose, QuestNewGoalEd
       }
       case 'objective_beat_pokemon':
       case 'objective_obtain_item': {
-        if (!refs.entityRef.current || !refs.valueRef.current) return;
+        if (!refs.entityRef.current || !refs.valueRef.current || !refs.hiddenByDefaultRef.current) return;
 
         newObjective.objectiveMethodArgs[0] = refs.entityRef.current;
         newObjective.objectiveMethodArgs[1] = cleanNaNValue(refs.valueRef.current.valueAsNumber, 1);
+        newObjective.hiddenByDefault = refs.hiddenByDefaultRef.current?.checked;
         break;
       }
       case 'objective_hatch_egg':
       case 'objective_obtain_egg': {
-        if (!refs.valueRef.current) return;
+        if (!refs.valueRef.current || !refs.hiddenByDefaultRef.current) return;
 
         newObjective.objectiveMethodArgs[ObjectiveEggIndex[objectiveMethodName]] = cleanNaNValue(refs.valueRef.current.valueAsNumber, 1);
+        newObjective.hiddenByDefault = refs.hiddenByDefaultRef.current?.checked;
         break;
       }
       case 'objective_catch_pokemon': {
-        if (!refs.valueRef.current) return;
+        if (!refs.valueRef.current || !refs.hiddenByDefaultRef.current) return;
 
         newObjective.objectiveMethodArgs[1] = cleanNaNValue(refs.valueRef.current.valueAsNumber, 1);
+        newObjective.hiddenByDefault = refs.hiddenByDefaultRef.current?.checked;
         // The conditions are managed by the QuestGoalConditions component
         break;
       }
       case 'objective_see_pokemon': {
-        if (!refs.entityRef.current) return;
+        if (!refs.entityRef.current || !refs.hiddenByDefaultRef.current) return;
 
         newObjective.objectiveMethodArgs[0] = refs.entityRef.current;
+        newObjective.hiddenByDefault = refs.hiddenByDefaultRef.current?.checked;
         break;
       }
       case 'objective_speak_to': {
-        if (!refs.nameRef.current) return;
+        if (!refs.nameRef.current || !refs.hiddenByDefaultRef.current) return;
 
         newObjective.objectiveMethodArgs[1] = refs.nameRef.current.value;
+        newObjective.hiddenByDefault = refs.hiddenByDefaultRef.current?.checked;
         break;
       }
       case 'objective_custom': {

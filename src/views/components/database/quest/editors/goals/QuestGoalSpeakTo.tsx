@@ -1,11 +1,10 @@
 import { Input, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PaddedInputContainer, Toggle } from '@components/inputs';
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { QuestGoalProps } from './QuestGoalProps';
 
 export const QuestGoalSpeakTo = ({ objective, refs, checkIsValid }: QuestGoalProps) => {
   const { t } = useTranslation('database_quests');
-  const [hiddenByDefault, setHiddenByDefault] = useState(objective.hiddenByDefault);
 
   return (
     <PaddedInputContainer>
@@ -25,14 +24,10 @@ export const QuestGoalSpeakTo = ({ objective, refs, checkIsValid }: QuestGoalPro
       <InputWithLeftLabelContainer>
         <Label htmlFor="hidden-by-default">{t('hidden_default')}</Label>
         <Toggle
-          ref={refs.valueRef}
+          ref={refs.hiddenByDefaultRef}
           name="hidden-by-default"
-          checked={hiddenByDefault}
-          onChange={(event) => {
-            objective.hiddenByDefault = event.target.checked;
-            setHiddenByDefault(event.target.checked);
-            checkIsValid?.();
-          }}
+          defaultChecked={objective.hiddenByDefault}
+          onChange={() => checkIsValid && checkIsValid()}
         />
       </InputWithLeftLabelContainer>
     </PaddedInputContainer>
