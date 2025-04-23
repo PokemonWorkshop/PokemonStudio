@@ -3,8 +3,13 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ResourceImage } from '@components/ResourceImage';
 import { itemIconPath } from '@utils/path';
-import { TFunction } from 'i18next';
-import { DataTechItemTable, DataTechItemGrid, RenderTechItemContainer } from './TechItemsTableStyle';
+import {
+  DataTechItemTable,
+  DataTechItemGrid,
+  RenderTechItemContainer,
+  DataTechItemVirtualizedListContainer,
+  DataTechItemList,
+} from './TechItemsTableStyle';
 import { ITEM_DESCRIPTION_TEXT_ID, StudioTechItem } from '@modelEntities/item';
 import { useCopyProjectText, useGetEntityNameText, useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
 import { MoveCategory, TypeCategory } from '@components/categories';
@@ -16,11 +21,17 @@ import { useShortcutNavigation } from '@src/hooks/useShortcutNavigation';
 import { useUpdateItem } from './editors/useUpdateItem';
 import { MOVE_DESCRIPTION_TEXT_ID } from '@modelEntities/move';
 import { useProjectDataReadonly } from '@src/hooks/useProjectData';
+import { AutoSizer } from 'react-virtualized';
 
 type RenderTechItemProps = {
   item: StudioTechItem;
   state: State;
-  //t: TFunction<'database_moves'>;
+};
+
+type RowRendererType = {
+  key: string;
+  index: number;
+  style: React.CSSProperties;
 };
 
 const RenderTechItem = ({ item, state }: RenderTechItemProps) => {
@@ -122,9 +133,29 @@ export const TechItemsTable = () => {
         <span>{t('database_moves:power')}</span>
         <span>{t('database_moves:accuracy')}</span>
       </DataTechItemGrid>
-      {allTechItems.map((item) => (
+      <DataTechItemVirtualizedListContainer height={allTechItems.length <= 12 ? 48 * allTechItems.length : 600}>
+        <AutoSizer>
+          {({ width }) => (
+            <DataTechItemList
+              width={width}
+              height={allTechItems.length <= 12 ? 48 * allTechItems.length : 600}
+              rowCount={allTechItems.length}
+              rowHeight={48}
+              rowRenderer={({ key, index, style }: RowRendererType) => {
+                const item = allTechItems[index];
+                return (
+                  <div key={key} style={style}>
+                    <RenderTechItem item={item} state={state} />
+                  </div>
+                );
+              }}
+            />
+          )}
+        </AutoSizer>
+      </DataTechItemVirtualizedListContainer>
+      {/* {allTechItems.map((item) => (
         <RenderTechItem key={`type-items-${item.dbSymbol}`} item={item} state={state} />
-      ))}
+      ))} */}
     </DataTechItemTable>
   );
 };
