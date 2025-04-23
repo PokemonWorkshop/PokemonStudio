@@ -20,10 +20,10 @@ import { useProjectDataReadonly } from '@src/hooks/useProjectData';
 type RenderTechItemProps = {
   item: StudioTechItem;
   state: State;
-  t: TFunction<'database_items'>;
+  //t: TFunction<'database_moves'>;
 };
 
-const RenderTechItem = ({ item, state, t }: RenderTechItemProps) => {
+const RenderTechItem = ({ item, state }: RenderTechItemProps) => {
   const getItemName = useGetEntityNameText();
   const getTypeName = useGetEntityNameTextUsingTextId();
   const setItems = useUpdateItem(item);
@@ -32,6 +32,7 @@ const RenderTechItem = ({ item, state, t }: RenderTechItemProps) => {
   const [techItemMove, setTechItemMove] = useState(item.move || '__undef__');
   const move = moves[techItemMove] || ('__undef__' as DbSymbol);
   const shortcutItemNavigation = useShortcutNavigation('items', 'item', '/database/items/');
+  const { t } = useTranslation('database_moves');
 
   const handleMoveChange = (dbSymbol: DbSymbol) => {
     const move = moves[dbSymbol];
@@ -59,7 +60,7 @@ const RenderTechItem = ({ item, state, t }: RenderTechItemProps) => {
       {techItemMove !== '__undef__' ? (
         <>
           <TypeCategory type={move.type}>{getTypeName(state.projectData.types[move.type])}</TypeCategory>
-          <MoveCategory category={move.category}>{t(move.category as never)}</MoveCategory>
+          <MoveCategory category={move.category}>{t(move.category)}</MoveCategory>
           <span>{move.pp}</span>
           <span>{move.power || '---'}</span>
           <span>{move.accuracy || '---'}</span>
@@ -122,7 +123,7 @@ export const TechItemsTable = () => {
         <span>{t('database_moves:accuracy')}</span>
       </DataTechItemGrid>
       {allTechItems.map((item) => (
-        <RenderTechItem key={`type-items-${item.dbSymbol}`} item={item} t={t} state={state} />
+        <RenderTechItem key={`type-items-${item.dbSymbol}`} item={item} state={state} />
       ))}
     </DataTechItemTable>
   );
