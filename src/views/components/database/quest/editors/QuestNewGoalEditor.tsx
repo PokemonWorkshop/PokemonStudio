@@ -89,7 +89,7 @@ export const QuestNewGoalEditor = forwardRef<EditorHandlingClose, QuestNewGoalEd
 
         newObjective.objectiveMethodArgs[1] = refs.nameRef.current.value;
         newObjective.objectiveMethodArgs[2] = cleanNaNValue(refs.valueRef.current.valueAsNumber, 1);
-        newObjective.hiddenByDefault = refs.hiddenByDefaultRef.current?.checked;
+        newObjective.hiddenByDefault = refs.hiddenByDefaultRef.current.checked;
         break;
       }
       case 'objective_beat_pokemon':
@@ -98,7 +98,7 @@ export const QuestNewGoalEditor = forwardRef<EditorHandlingClose, QuestNewGoalEd
 
         newObjective.objectiveMethodArgs[0] = refs.entityRef.current;
         newObjective.objectiveMethodArgs[1] = cleanNaNValue(refs.valueRef.current.valueAsNumber, 1);
-        newObjective.hiddenByDefault = refs.hiddenByDefaultRef.current?.checked;
+        newObjective.hiddenByDefault = refs.hiddenByDefaultRef.current.checked;
         break;
       }
       case 'objective_hatch_egg':
@@ -106,14 +106,14 @@ export const QuestNewGoalEditor = forwardRef<EditorHandlingClose, QuestNewGoalEd
         if (!refs.valueRef.current || !refs.hiddenByDefaultRef.current) return;
 
         newObjective.objectiveMethodArgs[ObjectiveEggIndex[objectiveMethodName]] = cleanNaNValue(refs.valueRef.current.valueAsNumber, 1);
-        newObjective.hiddenByDefault = refs.hiddenByDefaultRef.current?.checked;
+        newObjective.hiddenByDefault = refs.hiddenByDefaultRef.current.checked;
         break;
       }
       case 'objective_catch_pokemon': {
         if (!refs.valueRef.current || !refs.hiddenByDefaultRef.current) return;
 
         newObjective.objectiveMethodArgs[1] = cleanNaNValue(refs.valueRef.current.valueAsNumber, 1);
-        newObjective.hiddenByDefault = refs.hiddenByDefaultRef.current?.checked;
+        newObjective.hiddenByDefault = refs.hiddenByDefaultRef.current.checked;
         // The conditions are managed by the QuestGoalConditions component
         break;
       }
@@ -121,20 +121,20 @@ export const QuestNewGoalEditor = forwardRef<EditorHandlingClose, QuestNewGoalEd
         if (!refs.entityRef.current || !refs.hiddenByDefaultRef.current) return;
 
         newObjective.objectiveMethodArgs[0] = refs.entityRef.current;
-        newObjective.hiddenByDefault = refs.hiddenByDefaultRef.current?.checked;
+        newObjective.hiddenByDefault = refs.hiddenByDefaultRef.current.checked;
         break;
       }
       case 'objective_speak_to': {
         if (!refs.nameRef.current || !refs.hiddenByDefaultRef.current) return;
 
         newObjective.objectiveMethodArgs[1] = refs.nameRef.current.value;
-        newObjective.hiddenByDefault = refs.hiddenByDefaultRef.current?.checked;
+        newObjective.hiddenByDefault = refs.hiddenByDefaultRef.current.checked;
         break;
       }
       case 'objective_custom': {
         if (!refs.customObjectiveRef.current || !refs.hiddenByDefaultRef.current) return;
 
-        newObjective.hiddenByDefault = refs.hiddenByDefaultRef.current?.checked;
+        newObjective.hiddenByDefault = refs.hiddenByDefaultRef.current.checked;
         saveTexts();
         break;
       }
