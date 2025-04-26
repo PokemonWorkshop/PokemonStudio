@@ -3,10 +3,13 @@ import path from 'path';
 import fsPromise from 'fs/promises';
 import { parseJSON } from '@utils/json/parse';
 import { SETTINGS_CONFIG_VALIDATOR, StudioSettingConfig } from '@modelEntities/config';
+import { deletePSDKDatFile } from './migrateUtils';
 
 const PRE_MIGRATION_SETTINGS_CONFIG_VALIDATOR = SETTINGS_CONFIG_VALIDATOR.omit({ isUseBattleCamera3d: true });
 
 export const addBattleCamera3dToSettings = async (_: IpcMainEvent, projectPath: string) => {
+  deletePSDKDatFile(projectPath);
+
   const settingsFilePath = path.join(projectPath, 'Data/configs/settings_config.json');
 
   const settingsFile = await fsPromise.readFile(settingsFilePath, { encoding: 'utf-8' });
