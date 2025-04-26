@@ -99,6 +99,13 @@ const animationOption = {
   easing: 'ease-in',
 } as const;
 
+const DIALOG_TOP_OFFSET = '26px';
+const DIALOG_TRANSFORM_RIGHT = 'translateX(-100%)';
+const DIALOG_TRANSFORM_CENTER = 'translate(0%, -50%)';
+const DIALOG_TOP_PERCENTAGE = '10%';
+const DIALOG_TOP_CENTER = '50%';
+const DIALOG_TRANSFORM_NONE = 'translate(0%, 0)';
+
 const closeDialogWithAnimation = (dialog: HTMLDialogElement, backdrop: HTMLDivElement, isCenter: boolean, onFinish: () => void) => {
   const animation = dialog.animate(isCenter ? animationKeys.center.close : animationKeys.right.close, animationOption);
 
@@ -295,8 +302,8 @@ export const defineEditorOverlay = <Keys extends string, Props extends Record<st
     useEffect(() => {
       if (!isCenter) {
         if (!dialogRef.current) return;
-        dialogRef.current.style.top = '26px';
-        dialogRef.current.style.transform = 'translateX(-100%)';
+        dialogRef.current.style.top = DIALOG_TOP_OFFSET;
+        dialogRef.current.style.transform = DIALOG_TRANSFORM_RIGHT;
       } else {
         const adjustDialogPosition = () => {
           if (!dialogRef.current) return;
@@ -305,11 +312,11 @@ export const defineEditorOverlay = <Keys extends string, Props extends Record<st
           const windowHeight = window.innerHeight;
 
           if (dialogHeight > windowHeight * 0.8) {
-            dialogRef.current.style.top = '10%';
-            dialogRef.current.style.transform = 'translate(0%, 0)';
+            dialogRef.current.style.top = DIALOG_TOP_PERCENTAGE;
+            dialogRef.current.style.transform = DIALOG_TRANSFORM_NONE;
           } else {
-            dialogRef.current.style.top = '50%';
-            dialogRef.current.style.transform = 'translate(0%, -50%)';
+            dialogRef.current.style.top = DIALOG_TOP_CENTER;
+            dialogRef.current.style.transform = DIALOG_TRANSFORM_CENTER;
           }
         };
 
