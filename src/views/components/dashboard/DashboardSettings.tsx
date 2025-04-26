@@ -105,7 +105,7 @@ export const DashboardSettings = () => {
         </InputWithLeftLabelContainer>
         <UnlimitedItemsInfoContainer>{t('unlimited_items')}</UnlimitedItemsInfoContainer>
         <InputWithLeftLabelContainer>
-          <Label>{'Use Battle Camera 3D'}</Label>
+          <Label>{t('battle_camera_3d')}</Label>
           <Toggle
             name="battle_camera_3d"
             checked={settings.isUseBattleCamera3d}

@@ -5,5 +5,6 @@
   "evolution_form": "Toujours utiliser la forme de base pour les évolutions",
   "evolution_form_no_data": "Utiliser la forme de base si aucune donnée d'évolution n'est disponible",
   "max_bag_item_count": "Nombre maximum d'un même objet",
-  "unlimited_items": "Vous pouvez régler cette donnée à 0 si vous souhaitez que le nombre maximum d'un même objet ne soit pas limité."
+  "unlimited_items": "Vous pouvez régler cette donnée à 0 si vous souhaitez que le nombre maximum d'un même objet ne soit pas limité.",
+  "battle_camera_3d": "Utiliser la caméra 3D en combat"
 }
