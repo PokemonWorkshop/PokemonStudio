@@ -1,18 +1,26 @@
-import React, { useMemo, useState } from 'react';
+import React, { forwardRef, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { Editor, useRefreshUI } from '@components/editor';
+
+import { Editor } from '@components/editor';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { SelectGroup } from '@components/selects';
-import { ProjectData } from '@src/GlobalStateProvider';
 import { DarkButton, PrimaryButton, SecondaryButton } from '@components/buttons';
 import { TagWithSelection } from '@components/Tag';
-import { padStr } from '@utils/PadStr';
-import { cloneEntity } from '@utils/cloneEntity';
+import { TooltipWrapper } from '@ds/Tooltip';
+
+import { useZonePage } from '@src/hooks/usePage';
+
 import { StudioGroup } from '@modelEntities/group';
 import { StudioZone } from '@modelEntities/zone';
 import { DbSymbol } from '@modelEntities/dbSymbol';
-import { TooltipWrapper } from '@ds/Tooltip';
+
+import { padStr } from '@utils/PadStr';
+import { cloneEntity } from '@utils/cloneEntity';
+import { defineRelationCustomCondition } from '@utils/GroupUtils';
+import { useUpdateZone } from './useUpdateZone';
+import { useUpdateGroup } from '@components/database/group/editors/useUpdateGroup';
 
 const GroupContainer = styled.div`
   display: flex;
@@ -42,32 +50,52 @@ const setAllTagsMapsOnByDefault = (group: StudioGroup, zone: StudioZone) => {
     const index = mapIdIndexInGroup(mapId, group);
     if (index === -1) group.customConditions.push({ type: 'mapId', relationWithPreviousCondition: 'OR', value: mapId });
   });
+  return group;
 };
 
 type ZoneAddGroupEditorProps = {
-  zone: StudioZone;
-  groups: ProjectData['groups'];
-  onAddGroup: (group: StudioGroup) => void;
-  onClose: () => void;
+  closeDialog: () => void;
 };
 
-export const ZoneAddGroupEditor = ({ zone, groups, onAddGroup, onClose }: ZoneAddGroupEditorProps) => {
+export const ZoneAddGroupEditor = forwardRef<EditorHandlingClose, ZoneAddGroupEditorProps>(({ closeDialog }, ref) => {
   const { t } = useTranslation();
+  const { zone, groups } = useZonePage();
+  const updateZone = useUpdateZone(zone);
+
   const firstDbSymbol = Object.entries(groups)
     .map(([value, groupData]) => ({ value, index: groupData.id }))
-    .filter((d) => !zone.wildGroups.includes(d.value as DbSymbol))
+    .filter((data) => !zone.wildGroups.includes(data.value as DbSymbol))
     .sort((a, b) => a.index - b.index)[0].value;
-  const [selectedGroup, setSelectedGroup] = useState(firstDbSymbol);
-  const group = groups[selectedGroup];
-  const currentEditedGroup = useMemo(() => cloneEntity(group), [group]);
-  const refreshUI = useRefreshUI();
-  useMemo(() => setAllTagsMapsOnByDefault(currentEditedGroup, zone), [currentEditedGroup, zone]);
+
+  const [group, setGroup] = useState<StudioGroup>(setAllTagsMapsOnByDefault(cloneEntity(groups[firstDbSymbol]), zone));
+  const updateGroup = useUpdateGroup(group);
+
+  const onChange = (dbSymbol: string) => {
+    setGroup(setAllTagsMapsOnByDefault(cloneEntity(groups[dbSymbol]), zone));
+  };
 
   const onClickTag = (mapId: number) => {
-    const index = mapIdIndexInGroup(mapId, currentEditedGroup);
-    if (index === -1) currentEditedGroup.customConditions.push({ type: 'mapId', relationWithPreviousCondition: 'OR', value: mapId });
-    else currentEditedGroup.customConditions.splice(index, 1);
+    const index = mapIdIndexInGroup(mapId, group);
+    const customConditions = cloneEntity(group.customConditions);
+    if (index === -1) {
+      customConditions.push({ type: 'mapId', relationWithPreviousCondition: 'OR', value: mapId });
+    } else {
+      customConditions.splice(index, 1);
+    }
+    setGroup({ ...group, customConditions });
   };
+
+  const onAddGroup = () => {
+    const wildGroups = cloneEntity(zone.wildGroups);
+    const customConditions = cloneEntity(group.customConditions);
+    wildGroups.push(group.dbSymbol);
+
+    updateZone({ wildGroups });
+    updateGroup({ customConditions: defineRelationCustomCondition(customConditions) });
+    closeDialog();
+  };
+
+  useEditorHandlingClose(ref);
 
   return (
     <Editor type="creation" title={t('groups')}>
@@ -77,7 +105,7 @@ export const ZoneAddGroupEditor = ({ zone, groups, onAddGroup, onClose }: ZoneAd
           <GroupContainer>
             <SelectGroup
               dbSymbol={group.dbSymbol}
-              onChange={(dbSymbol) => setSelectedGroup(dbSymbol)}
+              onChange={onChange}
               filter={(dbSymbol) => !zone.wildGroups.includes(dbSymbol as DbSymbol)}
               noLabel
             />
@@ -93,7 +121,7 @@ export const ZoneAddGroupEditor = ({ zone, groups, onAddGroup, onClose }: ZoneAd
               {zone.maps
                 .sort((a, b) => a - b)
                 .map((id, index) => (
-                  <TagWithSelection key={index} onClick={() => refreshUI(onClickTag(id))} selected={mapIdIndexInGroup(id, currentEditedGroup) !== -1}>
+                  <TagWithSelection key={index} onClick={() => onClickTag(id)} selected={mapIdIndexInGroup(id, group) !== -1}>
                     <span className="map-id">{padStr(id, 2)}</span>
                   </TagWithSelection>
                 ))}
@@ -101,10 +129,11 @@ export const ZoneAddGroupEditor = ({ zone, groups, onAddGroup, onClose }: ZoneAd
           </InputWithTopLabelContainer>
         )}
         <ButtonContainer>
-          <PrimaryButton onClick={() => onAddGroup(currentEditedGroup)}>{t('add_this_group')}</PrimaryButton>
-          <DarkButton onClick={onClose}>{t('cancel')}</DarkButton>
+          <PrimaryButton onClick={onAddGroup}>{t('add_this_group')}</PrimaryButton>
+          <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
     </Editor>
   );
-};
+});
+ZoneAddGroupEditor.displayName = 'ZoneAddGroupEditor';

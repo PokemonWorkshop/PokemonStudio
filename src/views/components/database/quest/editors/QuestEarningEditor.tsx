@@ -1,51 +1,99 @@
-import { useRefreshUI } from '@components/editor';
-import { Editor } from '@components/editor/Editor';
-import { InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
-import { SelectCustomSimple } from '@components/SelectCustom';
-import { QUEST_EARNINGS, StudioQuest, StudioQuestEarningType } from '@modelEntities/quest';
-import { createQuestEarning } from '@utils/entityCreation';
+import { EditorWithCollapse } from '@components/editor/Editor';
+import { InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
+import { QUEST_EARNINGS, StudioQuestEarningType } from '@modelEntities/quest';
 import { padStr } from '@utils/PadStr';
-import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import { QuestEarningItem, QuestEarningMoney, QuestEarningPokemon } from './earnings';
+import { QuestEarningItem, QuestEarningMoney } from './earnings';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { useQuestPage } from '@src/hooks/usePage';
+import { useUpdateQuest } from './useUpdateQuest';
+import { useEarningQuest } from './useEarningQuest';
+import { cloneEntity } from '@utils/cloneEntity';
+import { assertUnreachable } from '@utils/assertUnreachable';
+import { cleanNaNValue } from '@utils/cleanNaNValue';
+import { Select } from '@ds/Select';
+import { QuestEarningPokemon } from './earnings/QuestEarningPokemon';
+import React, { forwardRef, useMemo } from 'react';
 
 const earningCategoryEntries = (t: TFunction) => QUEST_EARNINGS.map((earning) => ({ value: earning, label: t(earning) }));
 
 type QuestEarningEditorProps = {
-  quest: StudioQuest;
   earningIndex: number;
 };
 
-export const QuestEarningEditor = ({ quest, earningIndex }: QuestEarningEditorProps) => {
+export const QuestEarningEditor = forwardRef<EditorHandlingClose, QuestEarningEditorProps>(({ earningIndex }, ref) => {
   const { t } = useTranslation();
-  const refreshUI = useRefreshUI();
+  const { quest } = useQuestPage();
+  const updateQuest = useUpdateQuest(quest);
+  const { earning, refs, earningCreature, updateEarning, checkIsValid } = useEarningQuest({
+    action: 'edit',
+    earningIndex,
+    initialEarning: quest.earnings[earningIndex],
+  });
   const earningOptions = useMemo(() => earningCategoryEntries(t), [t]);
-  const earning = quest.earnings[earningIndex];
+  const earningMethodName = earning.earningMethodName;
 
   const changeEarning = (value: StudioQuestEarningType) => {
-    if (value === quest.earnings[earningIndex].earningMethodName) return;
-    quest.earnings[earningIndex] = createQuestEarning(value);
+    if (value === earningMethodName) return;
+
+    updateEarning(value);
   };
 
+  const canClose = () => checkIsValid();
+
+  const onClose = () => {
+    if (!canClose()) return;
+
+    const newEarning = cloneEntity(earning);
+    const oldEarning = quest.earnings[earningIndex];
+    const isSameMethodName = newEarning.earningMethodName === oldEarning.earningMethodName;
+    switch (earningMethodName) {
+      case 'earning_money': {
+        if (!refs.inputRef.current) return;
+
+        const backupValue = isSameMethodName ? (oldEarning.earningArgs[0] as number) : 100;
+        newEarning.earningArgs[0] = cleanNaNValue(refs.inputRef.current.valueAsNumber, backupValue);
+        break;
+      }
+      case 'earning_item': {
+        if (!refs.entityRef.current || !refs.inputRef.current) return;
+
+        const backupValue = isSameMethodName ? (oldEarning.earningArgs[1] as number) : 1;
+        newEarning.earningArgs[0] = refs.entityRef.current;
+        newEarning.earningArgs[1] = cleanNaNValue(refs.inputRef.current.valueAsNumber, backupValue);
+        break;
+      }
+      case 'earning_pokemon':
+      case 'earning_egg': {
+        const newEncounter = earningCreature.cleanEncounter();
+        if (earningMethodName === 'earning_egg') newEncounter.levelSetup.level = 1;
+        newEarning.earningArgs[0] = newEncounter;
+        break;
+      }
+      default:
+        assertUnreachable(earningMethodName);
+    }
+    const updatedEarnings = cloneEntity(quest.earnings);
+    updatedEarnings[earningIndex] = cloneEntity(newEarning);
+    updateQuest({ earnings: updatedEarnings });
+  };
+
+  useEditorHandlingClose(ref, onClose, canClose);
+
   return (
-    <Editor type="edit" title={t('earning_title', { id: padStr(earningIndex + 1, 2) })}>
-      <InputContainer>
+    <EditorWithCollapse type="edit" title={t('earning_title', { id: padStr(earningIndex + 1, 2) })}>
+      <PaddedInputContainer>
         <InputWithTopLabelContainer>
-          <Label htmlFor="earning-type">{t('earning_type')}</Label>
-          <SelectCustomSimple
-            id={'earning-type-select'}
-            value={earning.earningMethodName}
-            options={earningOptions}
-            onChange={(value) => refreshUI(changeEarning(value as StudioQuestEarningType))}
-            noTooltip
-          />
+          <Label htmlFor="earning-method-name">{t('earning_type')}</Label>
+          <Select name="earning-method-name" value={earning.earningMethodName} options={earningOptions} onChange={changeEarning} />
         </InputWithTopLabelContainer>
-        {earning.earningMethodName === 'earning_money' && <QuestEarningMoney earning={earning} />}
-        {earning.earningMethodName === 'earning_item' && <QuestEarningItem earning={earning} />}
-        {earning.earningMethodName === 'earning_pokemon' && <QuestEarningPokemon earning={earning} />}
-        {earning.earningMethodName === 'earning_egg' && <QuestEarningPokemon earning={earning} />}
-      </InputContainer>
-    </Editor>
+        {earningMethodName === 'earning_money' && <QuestEarningMoney earning={earning} refs={refs} />}
+        {earningMethodName === 'earning_item' && <QuestEarningItem earning={earning} refs={refs} />}
+        {earningMethodName === 'earning_pokemon' && <QuestEarningPokemon earning={earning} earningCreature={earningCreature} />}
+        {earningMethodName === 'earning_egg' && <QuestEarningPokemon earning={earning} earningCreature={earningCreature} />}
+      </PaddedInputContainer>
+    </EditorWithCollapse>
   );
-};
+});
+QuestEarningEditor.displayName = 'QuestEarningEditor';

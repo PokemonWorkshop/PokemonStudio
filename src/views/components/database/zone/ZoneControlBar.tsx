@@ -1,26 +1,39 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { ControlBar } from '@components/ControlBar';
 import { SelectZone } from '@components/selects';
 import { SecondaryButtonWithPlusIcon } from '@components/buttons';
-import { StudioZone } from '@modelEntities/zone';
 import { useSetCurrentDatabasePath } from '@hooks/useSetCurrentDatabasePage';
+import { ZoneDialogsRef } from './editors/ZoneEditorOverlay';
+import { useProjectZones } from '@src/hooks/useProjectData';
+import { StudioShortcutActions, useShortcut } from '@src/hooks/useShortcuts';
 
 type ZoneControlBarProps = {
-  onChange: SelectChangeEvent;
-  zone: StudioZone;
-  onClickNewZone: () => void;
+  dialogsRef?: ZoneDialogsRef;
 };
 
-export const ZoneControlBar = ({ onChange, zone, onClickNewZone }: ZoneControlBarProps) => {
+export const ZoneControlBar = ({ dialogsRef }: ZoneControlBarProps) => {
   const { t } = useTranslation();
+  const { selectedDataIdentifier: zoneDbSymbol, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol } = useProjectZones();
   useSetCurrentDatabasePath();
+
+  const shortcutMap = useMemo<StudioShortcutActions>(() => {
+    const isShortcutEnabled = () => dialogsRef?.current?.currentDialog === undefined;
+    return {
+      db_previous: () => isShortcutEnabled() && setSelectedDataIdentifier({ zone: getPreviousDbSymbol('id') }),
+      db_next: () => isShortcutEnabled() && setSelectedDataIdentifier({ zone: getNextDbSymbol('id') }),
+      db_new: () => isShortcutEnabled() && dialogsRef?.current?.openDialog('new'),
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [zoneDbSymbol]);
+  useShortcut(shortcutMap);
+
+  const onClickNew = dialogsRef ? () => dialogsRef.current?.openDialog('new') : undefined;
 
   return (
     <ControlBar>
-      <SecondaryButtonWithPlusIcon onClick={onClickNewZone}>{t('new_zone')}</SecondaryButtonWithPlusIcon>
-      <SelectZone dbSymbol={zone.dbSymbol} onChange={onChange} />
+      {onClickNew ? <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new_zone')}</SecondaryButtonWithPlusIcon> : <div />}
+      <SelectZone dbSymbol={zoneDbSymbol} onChange={(dbSymbol) => setSelectedDataIdentifier({ zone: dbSymbol })} />
     </ControlBar>
   );
 };

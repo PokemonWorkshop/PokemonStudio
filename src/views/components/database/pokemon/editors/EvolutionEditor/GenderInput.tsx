@@ -19,7 +19,8 @@ export const GenderInput = ({ state, inputRefs }: EvolutionConditionEditorInput)
 
   useEffect(() => {
     setValue(state.defaults.gender?.toString());
-  }, [state]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.evolutionIndex]);
 
   return (
     <InputWithTopLabelContainer>

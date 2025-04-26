@@ -45,14 +45,17 @@ export const IconsResources = ({ creature, form, canShowFemale }: IconsResources
               key={resource}
             />
           ))}
-        <OtherResource
-          type="icon"
-          title={t('footprint')}
-          resourcePath={formResourcesPath(form, 'footprint')}
-          extensions={['png']}
-          onResourceChoosen={(resourcePath) => onResourceChoosen(resourcePath, 'footprint')}
-          onResourceClean={() => onResourceClean('footprint')}
-        />
+        {(['iconEgg', 'footprint'] as CreatureFormResourcesPath[]).map((resource) => (
+          <OtherResource
+            type="icon"
+            title={t(resource)}
+            resourcePath={formResourcesPath(form, resource)}
+            extensions={resource === 'iconEgg' ? ['png', 'gif'] : ['png']}
+            onResourceChoosen={(resourcePath) => onResourceChoosen(resourcePath, resource)}
+            onResourceClean={() => onResourceClean(resource)}
+            key={resource}
+          />
+        ))}
       </ResourceWrapper>
     </ResourcesContainer>
   );

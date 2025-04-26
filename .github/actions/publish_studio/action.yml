@@ -9,7 +9,7 @@ runs:
       run: |
         git submodule update --init --recursive
         cd psdk-binaries
-        curl -s https://download.psdk.pokemonworkshop.com/binaries/${{ runner.os }}.7z -o binaries.7z
+        curl -L https://github.com/PokemonWorkshop/PokemonSDKBinaries/releases/latest/download/${{ runner.os }}.7z > binaries.7z
         7z x binaries.7z
         rm binaries.7z
         cd ..
@@ -19,7 +19,7 @@ runs:
         GITHUB_TOKEN: ${{ github.token }}
 
     - name: Save to Github Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: studio_${{ env.BRANCH_NAME }}_${{ runner.os }}
         path: ./out/make

@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
-import { Editor, useRefreshUI } from '@components/editor';
+import React, { forwardRef, useMemo, useRef, useState } from 'react';
+import { Editor } from '@components/editor';
 
 import { useTranslation } from 'react-i18next';
 import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
 
 import styled from 'styled-components';
 import { SelectQuest } from '@components/selects';
-import { useProjectQuests } from '@hooks/useProjectData';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { cloneEntity } from '@utils/cloneEntity';
-import { StudioQuest } from '@modelEntities/quest';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { useQuestPage } from '@src/hooks/usePage';
+import { useUpdateQuest } from './useUpdateQuest';
 
 const EarningImportInfo = styled.div`
   ${({ theme }) => theme.fonts.normalRegular};
@@ -25,26 +26,32 @@ const ButtonContainer = styled.div`
 `;
 
 type QuestEarningImportEditorProps = {
-  quest: StudioQuest;
-  onClose: () => void;
+  closeDialog: () => void;
 };
 
-export const QuestEarningImportEditor = ({ quest, onClose }: QuestEarningImportEditorProps) => {
-  const { projectDataValues: quests, setProjectDataValues: setQuest } = useProjectQuests();
-  const firstDbSymbol = Object.entries(quests)
-    .map(([value, questData]) => ({ value, index: questData.id }))
-    .filter((d) => d.value !== quest.dbSymbol)
-    .sort((a, b) => a.index - b.index)[0].value;
-  const [selectedQuest, setSelectedQuest] = useState(firstDbSymbol);
+export const QuestEarningImportEditor = forwardRef<EditorHandlingClose, QuestEarningImportEditorProps>(({ closeDialog }, ref) => {
   const { t } = useTranslation();
-  const [override, setOverride] = useState(false);
-  const refreshUI = useRefreshUI();
+  const { quests, quest } = useQuestPage();
+  const updateQuest = useUpdateQuest(quest);
+  const firstDbSymbol = useMemo(
+    () =>
+      Object.entries(quests)
+        .map(([value, questData]) => ({ value, index: questData.id }))
+        .filter((d) => d.value !== quest.dbSymbol)
+        .sort((a, b) => a.index - b.index)[0].value,
+    [quests, quest]
+  );
+  const [selectedQuest, setSelectedQuest] = useState(firstDbSymbol);
+  const overrideRef = useRef<HTMLInputElement>(null);
+
+  useEditorHandlingClose(ref);
 
   const onClickImport = () => {
-    if (override) quest.earnings = cloneEntity(quests[selectedQuest].earnings);
-    else quest.earnings.push(...cloneEntity(quests[selectedQuest].earnings));
-    setQuest({ [quest.dbSymbol]: quest });
-    onClose();
+    if (!overrideRef.current) return;
+
+    if (overrideRef.current.checked) updateQuest({ earnings: cloneEntity(quests[selectedQuest].earnings) });
+    else updateQuest({ earnings: [...quest.earnings, ...cloneEntity(quests[selectedQuest].earnings)] });
+    closeDialog();
   };
 
   return (
@@ -53,17 +60,23 @@ export const QuestEarningImportEditor = ({ quest, onClose }: QuestEarningImportE
         <EarningImportInfo>{t('earning_import_info')}</EarningImportInfo>
         <InputWithTopLabelContainer>
           <Label htmlFor="quest">{t('import_earning_from')}</Label>
-          <SelectQuest dbSymbol={selectedQuest} onChange={(selected) => setSelectedQuest(selected.value)} rejected={[quest.dbSymbol]} noLabel />
+          <SelectQuest
+            dbSymbol={selectedQuest}
+            onChange={(dbSymbol) => setSelectedQuest(dbSymbol)}
+            filter={(dbSymbol) => dbSymbol !== quest.dbSymbol}
+            noLabel
+          />
         </InputWithTopLabelContainer>
         <InputWithLeftLabelContainer>
           <Label htmlFor="override">{t('replace_earnings')}</Label>
-          <Toggle name="override" checked={override} onChange={(event) => refreshUI(setOverride(event.target.checked))} />
+          <Toggle name="override" ref={overrideRef} />
         </InputWithLeftLabelContainer>
         <ButtonContainer>
           <PrimaryButton onClick={onClickImport}>{t('to_import')}</PrimaryButton>
-          <DarkButton onClick={onClose}>{t('cancel')}</DarkButton>
+          <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
     </Editor>
   );
-};
+});
+QuestEarningImportEditor.displayName = 'QuestEarningImportEditor';

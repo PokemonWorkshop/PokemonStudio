@@ -13,7 +13,7 @@ import type { PokemonBattlerFrom } from './PokemonBattlerEditorOverlay';
 import type { StudioGroup } from '@modelEntities/group';
 import type { StudioTrainer } from '@modelEntities/trainer';
 
-const getEncounters = (from: PokemonBattlerFrom, index: number, trainer: StudioTrainer, group: StudioGroup) => {
+const getEncounters = (from: Exclude<PokemonBattlerFrom, 'quest_earning'>, index: number, trainer: StudioTrainer, group: StudioGroup) => {
   switch (from) {
     case 'group':
       return group.encounters[index].specie;
@@ -28,7 +28,7 @@ const getEncounters = (from: PokemonBattlerFrom, index: number, trainer: StudioT
 type PokemonBattlerDeletionProps = {
   closeDialog: () => void;
   index: number;
-  from: PokemonBattlerFrom;
+  from: Exclude<PokemonBattlerFrom, 'quest_earning'>;
 };
 
 export const PokemonBattlerDeletion = forwardRef<EditorHandlingClose, PokemonBattlerDeletionProps>(({ closeDialog, index, from }, ref) => {

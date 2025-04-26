@@ -64,7 +64,16 @@ export const TRAINER_VICTORY_SENTENCE_TEXT_ID = 100047;
 export const TRAINER_DEFEAT_SENTENCE_TEXT_ID = 100048;
 export const TRAINER_ADDITIONAL_DIALOGS_TEXT_ID = 100069;
 
-export const TRAINER_AI_CATEGORIES = ['basic', 'regular', 'medium', 'hard', 'lieutenant', 'gym_leader', 'champion'] as const;
+export const TRAINER_AI_CATEGORIES = [
+  { value: '1', label: 'basic' },
+  { value: '2', label: 'regular' },
+  { value: '3', label: 'medium' },
+  { value: '4', label: 'hard' },
+  { value: '5', label: 'lieutenant' },
+  { value: '6', label: 'gym_leader' },
+  { value: '7', label: 'champion' },
+];
+export type StudioTrainerAICategoryType = (typeof TRAINER_AI_CATEGORIES)[number]['value'] | 'custom';
 export const TRAINER_VS_TYPE_CATEGORIES = [1, 2] as const;
 export const TRAINER_ADDITIONAL_DIALOGS_CONDITION = [
   'before_creature_send',

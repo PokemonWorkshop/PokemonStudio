@@ -13,6 +13,9 @@ import { addFormNamesDescriptions } from './addFormNamesDescriptions';
 import { migrateNaturesToEntities } from './migrateNaturesToEntities';
 import { migrateUndefinedBreedingGroupToUnknown } from './migrateUndefinedBreedingGroupToUnknown';
 import { addTrainerAdditionalDialogs } from './addTrainerAdditionalDialogs';
+import { migrateQuestsEarnings } from './migrateQuestsEarnings';
+import { addCsvForQuestsCustomObjectives } from './addCsvForQuestsCustomObjectives';
+import { addEggInCreatureResources } from './addEggInCreatureResources';
 
 type MigrateConfigType = {
   migration: MigrationTask;
@@ -106,5 +109,20 @@ export const MIGRATION_CONFIG: MigrateConfigType[] = [
     migration: addTrainerAdditionalDialogs,
     version: '2.4.0',
     message: 'add_trainer_additional_dialogs',
+  },
+  {
+    migration: migrateQuestsEarnings,
+    version: '2.4.1',
+    message: 'migrate_quests_earnings',
+  },
+  {
+    migration: addCsvForQuestsCustomObjectives,
+    version: '2.4.2',
+    message: 'add_csv_quests_custom_objectives',
+  },
+  {
+    migration: addEggInCreatureResources,
+    version: '2.4.3',
+    message: 'add_egg_in_creature_resources',
   },
 ];

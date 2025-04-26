@@ -24,7 +24,7 @@ export const createProjectStudio = (
   studioVersion: string,
   iconPath: string,
   isTiledMode: boolean,
-  languagesTranslation: StudioProjectLanguageTranslation[]
+  languagesTranslation: StudioProjectLanguageTranslation[],
 ): StudioProject => ({
   title,
   studioVersion,

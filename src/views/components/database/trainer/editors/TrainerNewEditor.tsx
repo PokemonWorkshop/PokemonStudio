@@ -4,13 +4,16 @@ import { Editor } from '@components/editor';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
-import { SelectCustomSimple } from '@components/SelectCustom';
+import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
+import { SelectCustomSimple, SelectCustomWithInput } from '@components/SelectCustom';
+import { SelectTrainer } from '@components/selects';
 import styled from 'styled-components';
 import { padStr } from '@utils/PadStr';
 import { useProjectTrainers } from '@hooks/useProjectData';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import {
   StudioTrainerVsType,
+  StudioTrainerAICategoryType,
   TRAINER_AI_CATEGORIES,
   TRAINER_CLASS_TEXT_ID,
   TRAINER_DEFEAT_SENTENCE_TEXT_ID,
@@ -18,10 +21,11 @@ import {
   TRAINER_VICTORY_SENTENCE_TEXT_ID,
   TRAINER_VS_TYPE_CATEGORIES,
 } from '@modelEntities/trainer';
-import { useSetProjectText } from '@utils/ReadingProjectText';
+import { useSetProjectText, useGetProjectText } from '@utils/ReadingProjectText';
 import { createTrainer } from '@utils/entityCreation';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { TooltipWrapper } from '@ds/Tooltip';
+import { importTrainerData } from '@utils/importEntityDataUtils';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -30,8 +34,20 @@ const ButtonContainer = styled.div`
   gap: 8px;
 `;
 
+const ImportInfo = styled.div`
+  ${({ theme }) => theme.fonts.normalSmall};
+  color: ${({ theme }) => theme.colors.text400};
+  user-select: none;
+`;
+
+const ImportInfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
 const aiCategoryEntries = (t: TFunction) =>
-  TRAINER_AI_CATEGORIES.map((category, index) => ({ value: (index + 1).toString(), label: `${padStr(index + 1, 2)} - ${t(category)}` }));
+  TRAINER_AI_CATEGORIES.map((category) => ({ value: category.value, label: `${padStr(Number(category.value), 2)} - ${t(category.label)}` }));
 
 const vsTypeCategoryEntries = (t: TFunction) =>
   TRAINER_VS_TYPE_CATEGORIES.map((category) => ({ value: category.toString(), label: t(`vs_type${category}`) }));
@@ -47,6 +63,7 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
   const vsTypeOptions = useMemo(() => vsTypeCategoryEntries(t), [t]);
   const [name, setName] = useState(''); // We can't use a ref because of the button behavior
   const [trainerClass, setTrainerClass] = useState(''); // We can't use a ref because of the button behavior
+  const [aiCategory, setAiCategory] = useState<StudioTrainerAICategoryType>('1');
   const [ai, setAi] = useState(1);
   const [vsType, setVsType] = useState<StudioTrainerVsType>(1);
   const battleIdRef = useRef<HTMLInputElement>(null);
@@ -54,17 +71,30 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
   const baseMoneyRef = useRef<HTMLInputElement>(null);
   const [baseMoneyError, setBaseMoneyError] = useState<'value' | undefined>(undefined);
   const setText = useSetProjectText();
+  const getText = useGetProjectText();
+  const [selectedTrainer, setSelectedTrainer] = useState('__undef__');
+  const [importing, setImporting] = useState(false);
 
   useEditorHandlingClose(ref);
 
   const onClickNew = () => {
     if (!baseMoneyRef.current || !battleIdRef.current) return;
 
-    const newTrainer = createTrainer(trainers, ai, vsType, battleIdRef.current.valueAsNumber, baseMoneyRef.current.valueAsNumber);
+    let newTrainer = createTrainer(trainers, ai, vsType, battleIdRef.current.valueAsNumber, baseMoneyRef.current.valueAsNumber);
+
+    if (importing && selectedTrainer !== '__undef__') {
+      setText(TRAINER_VICTORY_SENTENCE_TEXT_ID, newTrainer.id, getText(TRAINER_VICTORY_SENTENCE_TEXT_ID, trainers[selectedTrainer].id));
+      setText(TRAINER_DEFEAT_SENTENCE_TEXT_ID, newTrainer.id, getText(TRAINER_DEFEAT_SENTENCE_TEXT_ID, trainers[selectedTrainer].id));
+
+      newTrainer = importTrainerData(newTrainer, trainers[selectedTrainer]);
+    } else {
+      setText(TRAINER_VICTORY_SENTENCE_TEXT_ID, newTrainer.id, '');
+      setText(TRAINER_DEFEAT_SENTENCE_TEXT_ID, newTrainer.id, '');
+    }
+
     setText(TRAINER_CLASS_TEXT_ID, newTrainer.id, trainerClass);
     setText(TRAINER_NAME_TEXT_ID, newTrainer.id, name);
-    setText(TRAINER_VICTORY_SENTENCE_TEXT_ID, newTrainer.id, '');
-    setText(TRAINER_DEFEAT_SENTENCE_TEXT_ID, newTrainer.id, '');
+
     setTrainer({ [newTrainer.dbSymbol]: newTrainer }, { trainer: newTrainer.dbSymbol });
     closeDialog();
   };
@@ -89,6 +119,11 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
 
   const checkDisabled = () => !name || !trainerClass || !!baseMoneyError || !!battleIdError;
 
+  const handleTrainerAiLevelChange = (value: string) => {
+    setAiCategory(value as StudioTrainerAICategoryType);
+    setAi(value === 'custom' ? 8 : Number(value));
+  };
+
   return (
     <Editor type="creation" title={t('new_trainer')}>
       <InputContainer>
@@ -112,7 +147,17 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="select-ai-level">{t('ai_level')}</Label>
-          <SelectCustomSimple id="select-ai-level" options={aiOptions} onChange={(value) => setAi(Number(value))} value={ai.toString()} noTooltip />
+          <SelectCustomWithInput
+            value={aiCategory}
+            selectCustomLabel={t('custom')}
+            onSelectValueChange={handleTrainerAiLevelChange}
+            inputLabel={t('ai_level_custom')}
+            minInput="1"
+            maxInput="99999"
+            defaultCustomValue={ai.toString()}
+            setCustomValue={(value) => setAi(Number(value))}
+            selectOptions={aiOptions}
+          />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="select-vs-type">{t('vs_type')}</Label>
@@ -134,6 +179,20 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
           <Label htmlFor="base-money">{t('base_money')}</Label>
           <Input type="number" name="base-money" min="0" max="99999" defaultValue={10} ref={baseMoneyRef} onChange={onBaseMoneyChange} />
         </InputWithLeftLabelContainer>
+        <InputGroupCollapse title={t('other_data')} gap="16px" onClick={() => setImporting(!importing)}>
+          <ImportInfoContainer>
+            <ImportInfo>{t('trainer_import_info')}</ImportInfo>
+          </ImportInfoContainer>
+          <InputWithTopLabelContainer>
+            <Label htmlFor="select-trainer-to-import">{t('import_data_from')}</Label>
+            <SelectTrainer
+              dbSymbol={selectedTrainer}
+              onChange={(dbSymbol) => setSelectedTrainer(dbSymbol)}
+              noLabel
+              undefValueOption={t('none_option')}
+            />
+          </InputWithTopLabelContainer>
+        </InputGroupCollapse>
         <ButtonContainer>
           <TooltipWrapper data-tooltip={checkDisabled() ? t('fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickNew} disabled={checkDisabled()}>

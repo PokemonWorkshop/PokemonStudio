@@ -1,32 +1,37 @@
 import { DataBlockEditor } from '@components/editor';
 import { StudioQuest } from '@modelEntities/quest';
 import { useProjectQuests } from '@hooks/useProjectData';
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { QuestGoalsTable } from './tables';
+import { QuestDialogsRef } from './editors/QuestEditorOverlay';
+import React from 'react';
 
 type QuestGoalsProps = {
   quest: StudioQuest;
-  onDelete: () => void;
-  onImport: () => void;
-  onNew: () => void;
-  onEdit: (index: number) => void;
+  dialogsRef: QuestDialogsRef;
+  setGoalIndex: (index: number) => void;
 };
 
-export const QuestGoals = ({ quest, onDelete, onImport, onNew, onEdit }: QuestGoalsProps) => {
+export const QuestGoals = ({ quest, dialogsRef, setGoalIndex }: QuestGoalsProps) => {
   const { projectDataValues: quests } = useProjectQuests();
   const { t } = useTranslation();
+
+  const editGoal = (index: number) => {
+    dialogsRef.current?.openDialog('goal');
+    setGoalIndex(index);
+  };
+
   return (
     <DataBlockEditor
       size="full"
       title={t('goals')}
-      onClickDelete={onDelete}
-      importation={{ label: t('import_goals'), onClick: onImport }}
-      add={{ label: t('add_goal'), onClick: onNew }}
+      onClickDelete={() => dialogsRef.current?.openDialog('goal_deletion', true)}
+      importation={{ label: t('import_goals'), onClick: () => dialogsRef.current?.openDialog('goal_import') }}
+      add={{ label: t('add_goal'), onClick: () => dialogsRef.current?.openDialog('goal_new') }}
       disabledDeletion={quest.objectives.length === 0}
-      disabledImport={Object.entries(quests).length <= 1}
+      disabledImport={Object.keys(quests).length <= 1}
     >
-      <QuestGoalsTable quest={quest} onEdit={onEdit} />
+      <QuestGoalsTable quest={quest} editGoal={editGoal} />
     </DataBlockEditor>
   );
 };

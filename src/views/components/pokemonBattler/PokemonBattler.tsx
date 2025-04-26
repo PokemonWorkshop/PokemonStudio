@@ -241,6 +241,7 @@ const showChance = (from: PokemonBattlerFrom) => {
     case 'group':
       return true;
     case 'trainer':
+    case 'quest_earning':
       return false;
     default:
       assertUnreachable(from);

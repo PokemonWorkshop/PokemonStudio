@@ -5,3 +5,5 @@ export { ZoneTravelEditor } from './ZoneTravelEditor';
 export { ZoneAddGroupEditor } from './ZoneAddGroupEditor';
 export { ZoneEditGroupEditor } from './ZoneEditGroupEditor';
 export { ZoneGroupImportEditor } from './ZoneGroupImportEditor';
+export { ZoneDeletion } from './ZoneDeletion';
+export { ZoneGroupsDeletion } from './ZoneGroupsDeletion';

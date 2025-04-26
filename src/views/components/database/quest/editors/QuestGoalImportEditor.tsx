@@ -1,15 +1,14 @@
-import React, { useState } from 'react';
-import { Editor, useRefreshUI } from '@components/editor';
-
+import { Editor } from '@components/editor';
 import { useTranslation } from 'react-i18next';
 import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
-
-import styled from 'styled-components';
 import { SelectQuest } from '@components/selects';
-import { useProjectQuests } from '@hooks/useProjectData';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { cloneEntity } from '@utils/cloneEntity';
-import { StudioQuest } from '@modelEntities/quest';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { useQuestPage } from '@src/hooks/usePage';
+import { useUpdateQuest } from './useUpdateQuest';
+import styled from 'styled-components';
+import React, { forwardRef, useMemo, useRef, useState } from 'react';
 
 const GoalImportInfo = styled.div`
   ${({ theme }) => theme.fonts.normalRegular};
@@ -25,26 +24,32 @@ const ButtonContainer = styled.div`
 `;
 
 type QuestGoalImportEditorProps = {
-  quest: StudioQuest;
-  onClose: () => void;
+  closeDialog: () => void;
 };
 
-export const QuestGoalImportEditor = ({ quest, onClose }: QuestGoalImportEditorProps) => {
-  const { projectDataValues: quests, setProjectDataValues: setQuest } = useProjectQuests();
-  const firstDbSymbol = Object.entries(quests)
-    .map(([value, questData]) => ({ value, index: questData.id }))
-    .filter((d) => d.value !== quest.dbSymbol)
-    .sort((a, b) => a.index - b.index)[0].value;
-  const [selectedQuest, setSelectedQuest] = useState(firstDbSymbol);
+export const QuestGoalImportEditor = forwardRef<EditorHandlingClose, QuestGoalImportEditorProps>(({ closeDialog }, ref) => {
   const { t } = useTranslation();
-  const [override, setOverride] = useState(false);
-  const refreshUI = useRefreshUI();
+  const { quests, quest } = useQuestPage();
+  const updateQuest = useUpdateQuest(quest);
+  const firstDbSymbol = useMemo(
+    () =>
+      Object.entries(quests)
+        .map(([value, questData]) => ({ value, index: questData.id }))
+        .filter((d) => d.value !== quest.dbSymbol)
+        .sort((a, b) => a.index - b.index)[0].value,
+    [quests, quest]
+  );
+  const [selectedQuest, setSelectedQuest] = useState(firstDbSymbol);
+  const overrideRef = useRef<HTMLInputElement>(null);
+
+  useEditorHandlingClose(ref);
 
   const onClickImport = () => {
-    if (override) quest.objectives = cloneEntity(quests[selectedQuest].objectives);
-    else quest.objectives.push(...cloneEntity(quests[selectedQuest].objectives));
-    setQuest({ [quest.dbSymbol]: quest });
-    onClose();
+    if (!overrideRef.current) return;
+
+    if (overrideRef.current.checked) updateQuest({ objectives: cloneEntity(quests[selectedQuest].objectives) });
+    else updateQuest({ objectives: [...quest.objectives, ...cloneEntity(quests[selectedQuest].objectives)] });
+    closeDialog();
   };
 
   return (
@@ -53,17 +58,23 @@ export const QuestGoalImportEditor = ({ quest, onClose }: QuestGoalImportEditorP
         <GoalImportInfo>{t('goal_import_info')}</GoalImportInfo>
         <InputWithTopLabelContainer>
           <Label htmlFor="quest">{t('import_goal_from')}</Label>
-          <SelectQuest dbSymbol={selectedQuest} onChange={(selected) => setSelectedQuest(selected.value)} rejected={[quest.dbSymbol]} noLabel />
+          <SelectQuest
+            dbSymbol={selectedQuest}
+            onChange={(dbSymbol) => setSelectedQuest(dbSymbol)}
+            filter={(dbSymbol) => dbSymbol !== quest.dbSymbol}
+            noLabel
+          />
         </InputWithTopLabelContainer>
         <InputWithLeftLabelContainer>
           <Label htmlFor="override">{t('replace_goals')}</Label>
-          <Toggle name="override" checked={override} onChange={(event) => refreshUI(setOverride(event.target.checked))} />
+          <Toggle name="override" ref={overrideRef} />
         </InputWithLeftLabelContainer>
         <ButtonContainer>
           <PrimaryButton onClick={onClickImport}>{t('to_import')}</PrimaryButton>
-          <DarkButton onClick={onClose}>{t('cancel')}</DarkButton>
+          <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
     </Editor>
   );
-};
+});
+QuestGoalImportEditor.displayName = 'QuestGoalImportEditor';

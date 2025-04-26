@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { POSITIVE_INT, POSITIVE_OR_ZERO_INT } from './common';
 import { DB_SYMBOL_VALIDATOR } from './dbSymbol';
+import { ENCOUNTER_VALIDATOR } from './groupEncounter';
 
 export const CREATURE_QUEST_CONDITION_VALIDATOR = z.discriminatedUnion('type', [
   z.object({ type: z.literal('pokemon'), value: DB_SYMBOL_VALIDATOR }),
@@ -25,6 +26,7 @@ export const QUEST_OBJECTIVE_VALIDATOR = z.object({
     z.literal('objective_catch_pokemon'),
     z.literal('objective_obtain_egg'),
     z.literal('objective_hatch_egg'),
+    z.literal('objective_custom'),
   ]),
   objectiveMethodArgs: z.array(z.union([z.string(), z.number(), z.array(CREATURE_QUEST_CONDITION_VALIDATOR), z.undefined(), z.null()])),
   textFormatMethodName: z.string(),
@@ -34,7 +36,7 @@ export type StudioQuestObjective = z.infer<typeof QUEST_OBJECTIVE_VALIDATOR>;
 
 export const QUEST_EARNING_VALIDATOR = z.object({
   earningMethodName: z.union([z.literal('earning_money'), z.literal('earning_item'), z.literal('earning_pokemon'), z.literal('earning_egg')]),
-  earningArgs: z.array(z.union([z.string(), z.number()])),
+  earningArgs: z.array(z.union([z.string(), z.number(), ENCOUNTER_VALIDATOR])),
   textFormatMethodName: z.string(),
 });
 export type StudioQuestEarning = z.infer<typeof QUEST_EARNING_VALIDATOR>;
@@ -52,6 +54,7 @@ export type StudioQuest = z.infer<typeof QUEST_VALIDATOR>;
 
 export const QUEST_DESCRIPTION_TEXT_ID = 100046;
 export const QUEST_NAME_TEXT_ID = 100045;
+export const QUEST_CUSTOM_OBJECTIVE_TEXT_ID = 100070;
 
 export const QUEST_CATEGORIES = ['primary', 'secondary'] as const;
 export type StudioQuestCategory = (typeof QUEST_CATEGORIES)[number];
@@ -68,6 +71,7 @@ export const QUEST_OBJECTIVES = [
   'objective_catch_pokemon',
   'objective_obtain_egg',
   'objective_hatch_egg',
+  'objective_custom',
 ] as const;
 export type StudioQuestObjectiveType = (typeof QUEST_OBJECTIVES)[number];
 export type StudioQuestObjectiveCategoryType = 'interaction' | 'battle' | 'discovery' | 'exploration';
@@ -77,12 +81,19 @@ export const QUEST_EARNINGS = ['earning_money', 'earning_item', 'earning_pokemon
 export type StudioQuestEarningType = (typeof QUEST_EARNINGS)[number];
 export type StudioQuestEarningCategoryType = 'money' | 'item' | 'pokemon' | 'egg';
 
-export const updateIndexSpeakToBeatNpc = (quest: StudioQuest) => {
-  const index = { speakTo: 0, beatNpc: 0 };
-  quest.objectives.forEach((objective) => {
-    if (objective.objectiveMethodName === 'objective_speak_to' || objective.objectiveMethodName === 'objective_beat_npc') {
-      if (objective.objectiveMethodName === 'objective_speak_to') objective.objectiveMethodArgs[0] = index.speakTo++;
-      else objective.objectiveMethodArgs[0] = index.beatNpc++;
+export const updateIndexSpeakToBeatNpc = (objectives: StudioQuestObjective[]) => {
+  const index = { speakTo: 0, beatNpc: 0, custom: 0 };
+  objectives.forEach((objective) => {
+    switch (objective.objectiveMethodName) {
+      case 'objective_speak_to':
+        objective.objectiveMethodArgs[0] = index.speakTo++;
+        break;
+      case 'objective_beat_npc':
+        objective.objectiveMethodArgs[0] = index.beatNpc++;
+        break;
+      case 'objective_custom':
+        objective.objectiveMethodArgs[0] = index.custom++;
+        break;
     }
   });
 };

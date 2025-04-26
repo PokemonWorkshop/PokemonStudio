@@ -186,11 +186,8 @@ export const ItemHealDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
               options={statusesOptions}
               value={healChanges.statusList[0] || '???'}
               onChange={(value) => {
-                const newValue = (item.statusList = (value === 'ALL' ? Statuses.slice(0, -2) : [value]) as [
-                  StudioItemStatusCondition,
-                  ...StudioItemStatusCondition[]
-                ]);
-                setHealChanges((prevFormData) => ({ ...prevFormData, statusList: newValue }));
+                const newValue = value === 'ALL' ? Statuses.slice(0, -2) : ([value] as [StudioItemStatusCondition, ...StudioItemStatusCondition[]]);
+                setHealChanges((prevFormData) => ({ ...prevFormData, statusList: newValue.length > 1 ? ['ALL'] : newValue }));
               }}
               noTooltip
             />

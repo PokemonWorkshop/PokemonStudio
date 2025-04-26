@@ -30,7 +30,7 @@ export const TextInput = ({ type, state, inputRefs, evolutionInfo }: TextInputPr
 
     ref.value = state.defaults[type]?.toString() || '';
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state]);
+  }, [state.evolutionIndex]);
 
   if (!isTypeValidInput(type)) return null;
 

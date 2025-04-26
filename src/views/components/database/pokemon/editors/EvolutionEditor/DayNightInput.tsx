@@ -20,7 +20,8 @@ export const DayNightInput = ({ state, inputRefs }: EvolutionConditionEditorInpu
 
   useEffect(() => {
     setValue(state.defaults.dayNight?.toString());
-  }, [state]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.evolutionIndex]);
 
   return (
     <InputWithTopLabelContainer>

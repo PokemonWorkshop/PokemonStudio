@@ -22,7 +22,7 @@ import { StudioType } from '@modelEntities/type';
 import { StudioZone } from '@modelEntities/zone';
 import { ProjectData } from '@src/GlobalStateProvider';
 import { assertUnreachable } from './assertUnreachable';
-import { findFirstAvailableFormTextId, findFirstAvailableId, findFirstAvailableTextId } from './ModelUtils';
+import { findFirstAvailableCustomObjectiveTextId, findFirstAvailableFormTextId, findFirstAvailableId, findFirstAvailableTextId } from './ModelUtils';
 import { padStr } from './PadStr';
 import { StudioTextInfo } from '@modelEntities/textInfo';
 import { StudioMap, StudioMapAudio } from '@modelEntities/map';
@@ -144,6 +144,8 @@ export const createCreature = (allPokemon: ProjectData['pokemon'], dbSymbol: DbS
           footprint: '',
           character: '',
           characterShiny: '',
+          egg: '',
+          iconEgg: '',
           cry: '',
           hasFemale: false,
         },
@@ -394,7 +396,7 @@ export const createType = (dbSymbol: DbSymbol, id: number, textId: number, color
  * @param type The type of objective
  * @returns The new objective
  */
-export const createQuestObjective = (type: StudioQuestObjectiveType): StudioQuestObjective => {
+export const createQuestObjective = (type: StudioQuestObjectiveType, quests: ProjectData['quests']): StudioQuestObjective => {
   const textFormatMethodName = type.replace('objective', 'text');
   const hiddenByDefault = false;
   switch (type) {
@@ -419,6 +421,10 @@ export const createQuestObjective = (type: StudioQuestObjectiveType): StudioQues
       return { objectiveMethodName: type, objectiveMethodArgs: [1], textFormatMethodName, hiddenByDefault };
     case 'objective_hatch_egg':
       return { objectiveMethodName: type, objectiveMethodArgs: [undefined, 1], textFormatMethodName, hiddenByDefault };
+    case 'objective_custom': {
+      const customTextId = findFirstAvailableCustomObjectiveTextId(quests, 0);
+      return { objectiveMethodName: type, objectiveMethodArgs: [0, customTextId], textFormatMethodName, hiddenByDefault };
+    }
     default:
       assertUnreachable(type);
   }
@@ -459,15 +465,19 @@ export const createQuestEarning = (type: StudioQuestEarningType): StudioQuestEar
   return { earningMethodName: type, earningArgs: [1], textFormatMethodName };
 };
 
-export const createQuest = (dbSymbol: DbSymbol, id: number, isPrimary: boolean, resolution: StudioQuestResolution): StudioQuest => ({
-  klass: 'Quest',
-  id,
-  dbSymbol,
-  isPrimary,
-  resolution,
-  objectives: [],
-  earnings: [],
-});
+export const createQuest = (allQuests: ProjectData['quests'], isPrimary: boolean, resolution: StudioQuestResolution): StudioQuest => {
+  const id = findFirstAvailableId(allQuests, 0);
+  const dbSymbol = `quest_${id}` as DbSymbol;
+  return {
+    klass: 'Quest',
+    id,
+    dbSymbol,
+    isPrimary,
+    resolution,
+    objectives: [],
+    earnings: [],
+  };
+};
 
 export const createConfigTextsMessage = () => ({
   windowSkin: null,

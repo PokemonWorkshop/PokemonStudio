@@ -8,7 +8,6 @@ export const GroupActivationsMap = [
   { value: '12', label: 'activation_night' },
   { value: '13', label: 'activation_morning' },
   { value: '14', label: 'activation_sunset' },
-  { value: 'custom', label: 'activation_custom' },
 ] as const;
 export const GroupVariationsMap = [
   { value: '0', label: 'variation_0' },
@@ -28,7 +27,7 @@ export const GroupToolMap = [
   { value: 'RockSmash', label: 'RockSmash' },
 ] as const;
 export const GroupBattleTypes = ['simple', 'double'] as const;
-export type StudioGroupActivationType = (typeof GroupActivationsMap)[number]['value'];
+export type StudioGroupActivationType = (typeof GroupActivationsMap)[number]['value'] | 'custom';
 
 export const getActivationValue = (newGroup: StudioGroup) => {
   const conditions = newGroup.customConditions ? newGroup.customConditions.filter((condition) => condition.type === CustomConditionTypes[0]) : [];
@@ -78,17 +77,6 @@ export const updateActivation = (value: string, group: StudioGroup, switchValue:
     }
   }
   return conditions;
-};
-
-export const onSwitchUpdateActivation = (value: number): StudioGroupActivationType => {
-  switch (value) {
-    case 11:
-    case 12:
-    case 13:
-    case 14:
-      return value.toString() as StudioGroupActivationType;
-  }
-  return 'custom';
 };
 
 export const getSwitchValue = (activation: StudioGroupActivationType) => {

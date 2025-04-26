@@ -15,7 +15,6 @@ const targetEntries = (t: TFunction) => MOVE_TARGETS.map((target) => ({ value: t
 
 const battleEngineMethodEntries = (t: TFunction) => [
   ...MOVE_BATTLE_ENGINE_METHODS.map((beMethod) => ({ value: beMethod, label: t(`${beMethod}`) })),
-  { value: '__custom__', label: t('move_custom') },
 ];
 
 const PARAMETERS_EDITOR_SCHEMA = MOVE_VALIDATOR.pick({ battleEngineAimedTarget: true, battleEngineMethod: true });

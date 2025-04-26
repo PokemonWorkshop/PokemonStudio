@@ -18,6 +18,9 @@ import { useZodForm } from '@hooks/useZodForm';
 import { useSelectOptions } from '@hooks/useSelectOptions';
 import { InputFormContainer } from '@components/inputs/InputContainer';
 import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
+import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
+import { SelectMove } from '@components/selects';
+import { importMoveData } from '@utils/importEntityDataUtils';
 
 const moveCategoryEntries = (t: TFunction) =>
   MOVE_CATEGORIES.map((category) => ({ value: category, label: t(category) })).sort((a, b) => a.label.localeCompare(b.label));
@@ -27,6 +30,18 @@ const ButtonContainer = styled.div`
   flex-direction: column;
   padding: 16px 0 0 0;
   gap: 8px;
+`;
+
+const ImportInfo = styled.div`
+  ${({ theme }) => theme.fonts.normalSmall};
+  color: ${({ theme }) => theme.colors.text400};
+  user-select: none;
+`;
+
+const ImportInfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 `;
 
 type MoveNewEditorProps = {
@@ -48,6 +63,8 @@ export const MoveNewEditor = forwardRef<EditorHandlingClose, MoveNewEditorProps>
   const move = { type: (typeOptions[0]?.value || '__undef__') as DbSymbol, category: categoryOptions[0].value };
   const { getFormData, defaults, formRef } = useZodForm(MOVE_NEW_EDITOR_SCHEMA, move);
   const { Select } = useInputAttrsWithLabel(MOVE_NEW_EDITOR_SCHEMA, defaults);
+  const [selectedMove, setSelectedMove] = useState('__undef__');
+  const [importing, setImporting] = useState(false);
 
   useEditorHandlingClose(ref);
 
@@ -57,7 +74,12 @@ export const MoveNewEditor = forwardRef<EditorHandlingClose, MoveNewEditorProps>
 
     const dbSymbol = dbSymbolRef.current.value as DbSymbol;
     const { type, category } = result.data;
-    const newMove = createMove(moves, dbSymbol, type, category);
+    let newMove = createMove(moves, dbSymbol, type, category);
+
+    if (importing && selectedMove !== '__undef__') {
+      newMove = importMoveData(newMove, moves[selectedMove]);
+    }
+
     setText(MOVE_NAME_TEXT_ID, newMove.id, name);
     setText(MOVE_DESCRIPTION_TEXT_ID, newMove.id, descriptionRef.current.value);
 
@@ -125,6 +147,15 @@ export const MoveNewEditor = forwardRef<EditorHandlingClose, MoveNewEditorProps>
           {dbSymbolErrorType === 'value' && <TextInputError>{t('incorrect_format')}</TextInputError>}
           {dbSymbolErrorType === 'duplicate' && <TextInputError>{t('db_symbol_already_used')}</TextInputError>}
         </InputWithTopLabelContainer>
+        <InputGroupCollapse title={t('other_data')} gap="16px" onClick={() => setImporting(!importing)}>
+          <ImportInfoContainer>
+            <ImportInfo>{t('move_import_info')}</ImportInfo>
+          </ImportInfoContainer>
+          <InputWithTopLabelContainer>
+            <Label htmlFor="select-move-to-import">{t('import_data_from')}</Label>
+            <SelectMove dbSymbol={selectedMove} onChange={(dbSymbol) => setSelectedMove(dbSymbol)} noLabel undefValueOption={t('none_option')} />
+          </InputWithTopLabelContainer>
+        </InputGroupCollapse>
         <ButtonContainer>
           <TooltipWrapper data-tooltip={isDisabled ? t('fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickNew} disabled={isDisabled}>

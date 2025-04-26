@@ -9,6 +9,8 @@ Pokémon Studio is a standalone software allowing people to create their monster
 - managing maps and map links from Tiled (coming with 2.0 version),
 - manage events (coming with 3.0 version).
 
+[![Weblate translation status](https://hosted.weblate.org/widget/pokemon-studio/svg-badge.svg)](https://hosted.weblate.org/engage/pokemon-studio/?utm_source=widget)
+
 ## Useful links
 
 - License: [English](LICENSE.md) - [Français](LICENSE-FR.md)
@@ -74,19 +76,17 @@ To package apps for the local platform:
 npm run package
 ```
 
-## Texts and translations
+## Translating
+
+You can translate Pokémon Studio App texts by using the convinient web-interface on weblate https://hosted.weblate.org/engage/pokemon-studio/. There you can add new languages to the App and improve existing translations. For the technically more experienced, you can send a merge request.
+
+Here are some Weblate statistics.
+
+[![Translation status](https://hosted.weblate.org/widget/pokemon-studio/287x66-white.png)](https://hosted.weblate.org/engage/pokemon-studio/?utm_source=widget)
+
+[![Translation status](https://hosted.weblate.org/widget/pokemon-studio/multi-auto.svg)](https://hosted.weblate.org/engage/pokemon-studio/?utm_source=widget)
 
 Before doing anything, please communicate on the [Pokémon Workshop discord](https://discord.gg/0noB0gBDd91B8pMk) server so you're not wasting time on things that are already done.
-
-To start with the translations, you can run the script: `assets\i18n\json2csv.rb`  
-This script will create a `translations.csv` file, you can replace `your_language` with the language code of your language (eg. ko for Korean).
-
-Once you're done with the translations, the script `assets/i18n/csv2json.rb` will convert `translations.csv` to the respective i18n json files. The script ask you about location and locale of the translations.
-
-In each language directory the `index.js` file is used to group all the .json files in a single export, don't forget to build it when adding a new language (this might as simple as copying it from another translation folder).
-
-> [!NOTE]
-> We're planning on using [Weblate](https://weblate.org/) to make sure Pokémon Studio localization will be way easier to do.
 
 ### Add a new locale to Studio
 
@@ -97,4 +97,4 @@ In the `src\i18n.ts` file, add a new line `import translationXX from '../assets/
 - `XX` if the capitalized code name of the language (`EN` for English),
 - `xx` the same code name but in lower case (`en` for English).
 
-In the same file, add a new line `xx: translationXX`, around the 28th. Same logic for XX & xx.
+In the same file, add a new line `xx: translationXX`. Same logic for XX & xx.

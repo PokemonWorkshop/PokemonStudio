@@ -1,31 +1,28 @@
-import { useRefreshUI } from '@components/editor';
 import { InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
-import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { InputNumber } from './InputNumber';
+import { InputNumber2 } from './InputNumber';
 import { QuestGoalProps } from './QuestGoalProps';
-import { SelectPokemon } from '@components/selects/SelectPokemon';
+import { SelectPokemon2 } from '@components/selects/SelectPokemon';
+import { DbSymbol } from '@modelEntities/dbSymbol';
+import React from 'react';
 
-export const QuestGoalBeatPokemon = ({ objective }: QuestGoalProps) => {
+export const QuestGoalBeatPokemon = ({ objective, refs, checkIsValid }: QuestGoalProps) => {
   const { t } = useTranslation();
-  const refreshUI = useRefreshUI();
+  const defaultCreature = objective.objectiveMethodArgs[0] === '__undef__' ? undefined : (objective.objectiveMethodArgs[0] as DbSymbol);
+
   return (
     <PaddedInputContainer>
       <InputWithTopLabelContainer>
         <Label htmlFor="select-pokemon">{t('creature')}</Label>
-        <SelectPokemon
-          dbSymbol={objective.objectiveMethodArgs[0] as string}
-          onChange={(value) => refreshUI((objective.objectiveMethodArgs[0] = value))}
-          undefValueOption={t('none')}
-          noLabel
-        />
+        <SelectPokemon2 name="select-pokemon" optionRef={refs.entityRef} defaultValue={defaultCreature} />
       </InputWithTopLabelContainer>
       <InputWithLeftLabelContainer>
         <Label htmlFor="amount-beat-pokemon">{t('amount')}</Label>
-        <InputNumber
+        <InputNumber2
           name="amount-beat-pokemon"
-          value={objective.objectiveMethodArgs[1] as number}
-          setValue={(value: number) => refreshUI((objective.objectiveMethodArgs[1] = value))}
+          ref={refs.valueRef}
+          defaultValue={objective.objectiveMethodArgs[1] as number}
+          onChange={() => checkIsValid && checkIsValid()}
         />
       </InputWithLeftLabelContainer>
     </PaddedInputContainer>

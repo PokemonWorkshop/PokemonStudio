@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
-import { Editor, useRefreshUI } from '@components/editor';
-
+import React, { forwardRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
-
 import styled from 'styled-components';
+
+import { Editor } from '@components/editor';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+
+import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
 import { SelectZone } from '@components/selects';
-import { useProjectZones } from '@hooks/useProjectData';
 import { DarkButton, PrimaryButton } from '@components/buttons';
+
+import { useProjectZones } from '@hooks/useProjectData';
+import { useZonePage } from '@src/hooks/usePage';
+
 import { cloneEntity } from '@utils/cloneEntity';
-import { StudioZone } from '@modelEntities/zone';
 
 const ZoneGroupImportInfo = styled.div`
   ${({ theme }) => theme.fonts.normalRegular};
@@ -25,27 +28,29 @@ const ButtonContainer = styled.div`
 `;
 
 type ZoneGroupImportEditorProps = {
-  zone: StudioZone;
-  onClose: () => void;
+  closeDialog: () => void;
 };
 
-export const ZoneGroupImportEditor = ({ zone, onClose }: ZoneGroupImportEditorProps) => {
+export const ZoneGroupImportEditor = forwardRef<EditorHandlingClose, ZoneGroupImportEditorProps>(({ closeDialog }, ref) => {
   const { projectDataValues: zones, setProjectDataValues: setZone } = useProjectZones();
+  const { t } = useTranslation();
+  const { zone } = useZonePage();
   const firstDbSymbol = Object.entries(zones)
     .map(([value, zoneData]) => ({ value, index: zoneData.id }))
-    .filter((d) => d.value !== zone.dbSymbol)
+    .filter((data) => data.value !== zone.dbSymbol)
     .sort((a, b) => a.index - b.index)[0].value;
   const [selectedZone, setSelectedZone] = useState(firstDbSymbol);
-  const { t } = useTranslation();
   const [override, setOverride] = useState(false);
-  const refreshUI = useRefreshUI();
 
   const onClickImport = () => {
-    if (override) zone.wildGroups = cloneEntity(zones[selectedZone].wildGroups);
-    else zone.wildGroups.push(...cloneEntity(zones[selectedZone].wildGroups));
-    setZone({ [zone.dbSymbol]: zone });
-    onClose();
+    const zoneEdited = cloneEntity(zone);
+    if (override) zoneEdited.wildGroups = cloneEntity(zones[selectedZone].wildGroups);
+    else zoneEdited.wildGroups.push(...cloneEntity(zones[selectedZone].wildGroups));
+    setZone({ [zone.dbSymbol]: zoneEdited });
+    closeDialog();
   };
+
+  useEditorHandlingClose(ref);
 
   return (
     <Editor type="zone" title={t('import')}>
@@ -53,17 +58,23 @@ export const ZoneGroupImportEditor = ({ zone, onClose }: ZoneGroupImportEditorPr
         <ZoneGroupImportInfo>{t('zone_group_import_info')}</ZoneGroupImportInfo>
         <InputWithTopLabelContainer>
           <Label htmlFor="zone">{t('import_group_from')}</Label>
-          <SelectZone dbSymbol={selectedZone} onChange={(selected) => setSelectedZone(selected.value)} rejected={[zone.dbSymbol]} noLabel />
+          <SelectZone
+            dbSymbol={selectedZone}
+            onChange={(dbSymbol) => setSelectedZone(dbSymbol)}
+            filter={(dbSymbol) => dbSymbol !== zone.dbSymbol}
+            noLabel
+          />
         </InputWithTopLabelContainer>
         <InputWithLeftLabelContainer>
           <Label htmlFor="override">{t('replace_group')}</Label>
-          <Toggle name="override" checked={override} onChange={(event) => refreshUI(setOverride(event.target.checked))} />
+          <Toggle name="override" checked={override} onChange={(event) => setOverride(event.target.checked)} />
         </InputWithLeftLabelContainer>
         <ButtonContainer>
           <PrimaryButton onClick={onClickImport}>{t('to_import')}</PrimaryButton>
-          <DarkButton onClick={onClose}>{t('cancel')}</DarkButton>
+          <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
     </Editor>
   );
-};
+});
+ZoneGroupImportEditor.displayName = 'ZoneGroupImportEditor';

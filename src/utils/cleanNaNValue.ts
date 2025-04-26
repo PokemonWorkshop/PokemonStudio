@@ -3,12 +3,13 @@ import { StudioCreatureForm } from '@modelEntities/creature';
 import { StudioExpandPokemonSetup, StudioGroupEncounter, StudioIvEv } from '@modelEntities/groupEncounter';
 import { StudioItem } from '@modelEntities/item';
 import { StudioMove } from '@modelEntities/move';
-import { StudioQuest } from '@modelEntities/quest';
 import { StudioTrainer } from '@modelEntities/trainer';
 import { StudioZone } from '@modelEntities/zone';
 import { StudioGroup } from '@modelEntities/group';
 import { ProjectData, State } from '@src/GlobalStateProvider';
 import { getEntityNameText } from './ReadingProjectText';
+import { PokemonBattlerFrom } from '@components/pokemonBattler/editors/PokemonBattlerEditorOverlay';
+import { assertUnreachable } from './assertUnreachable';
 
 /**
  * Replace NaN value by 0 or for the value given
@@ -107,7 +108,7 @@ export const cleaningMoveNaNValues = (v: StudioMove) => {
   v.battleStageMod.forEach((bsm) => (bsm.modificator = cleanNaNValue(bsm.modificator)));
 };
 
-const removeExpandPokemonSetup = (encounter: StudioGroupEncounter, type: StudioExpandPokemonSetup['type']) => {
+export const removeExpandPokemonSetup = (encounter: StudioGroupEncounter, type: StudioExpandPokemonSetup['type']) => {
   const index = encounter.expandPokemonSetup.findIndex((eps) => eps.type === type);
   if (index !== -1) encounter.expandPokemonSetup.splice(index, 1);
 };
@@ -146,7 +147,7 @@ const cleanNanValueEncounter = (encounter: StudioGroupEncounter) => {
   if (rareness) rareness.value = cleanNaNValue(rareness.value as number, -1);
 };
 
-export const cleanExpandPokemonSetup = (encounter: StudioGroupEncounter, species: ProjectData['pokemon'], isWild: boolean, state: State) => {
+export const cleanExpandPokemonSetup = (encounter: StudioGroupEncounter, species: ProjectData['pokemon'], from: PokemonBattlerFrom, state: State) => {
   cleanNanValueEncounter(encounter);
   removeExpandPokemonSetupWithCondition(encounter, 'ability', '__undef__');
   removeExpandPokemonSetupWithCondition(encounter, 'nature', '__undef__');
@@ -161,14 +162,24 @@ export const cleanExpandPokemonSetup = (encounter: StudioGroupEncounter, species
     const form = specie.forms.find((f) => f.form === encounter.form);
     if (form) removeExpandPokemonSetupWithCondition(encounter, 'rareness', form.catchRate);
   }
-  if (isWild) {
-    removeExpandPokemonSetup(encounter, 'ivs');
-    removeExpandPokemonSetup(encounter, 'caughtWith');
-    removeExpandPokemonSetup(encounter, 'originalTrainerName');
-    removeExpandPokemonSetup(encounter, 'originalTrainerId');
-    removeExpandPokemonSetup(encounter, 'givenName');
-  } else {
-    removeExpandPokemonSetup(encounter, 'rareness');
+  switch (from) {
+    case 'group':
+      removeExpandPokemonSetup(encounter, 'ivs');
+      removeExpandPokemonSetup(encounter, 'caughtWith');
+      removeExpandPokemonSetup(encounter, 'originalTrainerName');
+      removeExpandPokemonSetup(encounter, 'originalTrainerId');
+      removeExpandPokemonSetup(encounter, 'givenName');
+      break;
+    case 'trainer':
+      removeExpandPokemonSetup(encounter, 'rareness');
+      break;
+    case 'quest_earning':
+      removeExpandPokemonSetup(encounter, 'rareness');
+      removeExpandPokemonSetup(encounter, 'originalTrainerName');
+      removeExpandPokemonSetup(encounter, 'originalTrainerId');
+      break;
+    default:
+      assertUnreachable(from);
   }
 };
 
@@ -192,35 +203,6 @@ export const cleaningZoneNaNValues = (v: StudioZone) => {
   v.position.y = cleaningNaNToNull(v.position.y);
   v.warp.x = cleaningNaNToNull(v.warp.x);
   v.warp.y = cleaningNaNToNull(v.warp.y);
-};
-
-export const cleaningQuestNaNValues = (v: StudioQuest) => {
-  v.objectives.map(({ objectiveMethodName, objectiveMethodArgs }) => {
-    switch (objectiveMethodName) {
-      case 'objective_beat_npc':
-        objectiveMethodArgs[2] = cleanNaNValue(objectiveMethodArgs[2] as number, 1);
-        break;
-      case 'objective_obtain_egg':
-        objectiveMethodArgs[0] = cleanNaNValue(objectiveMethodArgs[0] as number, 1);
-        break;
-      case 'objective_obtain_item':
-      case 'objective_beat_pokemon':
-      case 'objective_catch_pokemon':
-      case 'objective_hatch_egg':
-        objectiveMethodArgs[1] = cleanNaNValue(objectiveMethodArgs[1] as number, 1);
-        break;
-    }
-  });
-  v.earnings.map(({ earningMethodName, earningArgs }) => {
-    switch (earningMethodName) {
-      case 'earning_money':
-        earningArgs[0] = cleanNaNValue(earningArgs[0] as number, 100);
-        break;
-      case 'earning_item':
-        earningArgs[1] = cleanNaNValue(earningArgs[1] as number, 1);
-        break;
-    }
-  });
 };
 
 export const cleaningGroupNaNValues = (v: StudioGroup) => {

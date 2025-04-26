@@ -4,7 +4,7 @@ import { Editor } from '@components/editor';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
-import { SelectCustomSimple } from '@components/SelectCustom';
+import { SelectCustomSimple, SelectCustomWithInput } from '@components/SelectCustom';
 import styled from 'styled-components';
 import { useProjectGroups } from '@hooks/useProjectData';
 import { DarkButton, PrimaryButton } from '@components/buttons';
@@ -15,7 +15,6 @@ import {
   GroupBattleTypes,
   GroupVariationsMap,
   getSwitchValue,
-  onSwitchUpdateActivation,
   isCustomEnvironment as isCustomEnvironmentFunc,
   setCustomEnvironment,
   wrongEnvironment,
@@ -28,6 +27,9 @@ import { findFirstAvailableId } from '@utils/ModelUtils';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { TooltipWrapper } from '@ds/Tooltip';
 import { TextInputError } from '@components/inputs/Input';
+import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
+import { SelectGroup } from '@components/selects';
+import { importGroupData } from '@utils/importEntityDataUtils';
 
 const groupActivationEntries = (t: TFunction) => GroupActivationsMap.map((activation) => ({ value: activation.value, label: t(activation.label) }));
 const groupBattleTypeEntries = (t: TFunction) => GroupBattleTypes.map((type) => ({ value: type, label: t(type) }));
@@ -40,6 +42,18 @@ const ButtonContainer = styled.div`
   flex-direction: column;
   padding: 16px 0 0 0;
   gap: 8px;
+`;
+
+const ImportInfo = styled.div`
+  ${({ theme }) => theme.fonts.normalSmall};
+  color: ${({ theme }) => theme.colors.text400};
+  user-select: none;
+`;
+
+const ImportInfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 `;
 
 type GroupNewEditorProps = {
@@ -64,6 +78,8 @@ export const GroupNewEditor = forwardRef<EditorHandlingClose, GroupNewEditorProp
   const [stepsAverage, setStepsAverage] = useState<number>(30);
   const isCustomEnvironment = useMemo(() => isCustomEnvironmentFunc(systemTag), [systemTag]);
   const customEnvironmentError = systemTag !== '' && wrongEnvironment(systemTag);
+  const [selectedGroup, setSelectedGroup] = useState('__undef__');
+  const [importing, setImporting] = useState(false);
 
   useEditorHandlingClose(ref);
 
@@ -75,7 +91,7 @@ export const GroupNewEditor = forwardRef<EditorHandlingClose, GroupNewEditorProp
     const activationSwitchId = activation === 'custom' ? switchId : Number(activation);
     const newSystemTag = isCustomEnvironment ? setCustomEnvironment(systemTag) : systemTag;
 
-    const group = createGroup(
+    let group = createGroup(
       dbSymbol,
       id,
       newSystemTag,
@@ -85,6 +101,11 @@ export const GroupNewEditor = forwardRef<EditorHandlingClose, GroupNewEditorProp
       activation === 'always' ? undefined : { value: activationSwitchId, type: 'enabledSwitch', relationWithPreviousCondition: 'AND' },
       stepsAverage
     );
+
+    if (importing && selectedGroup !== '__undef__') {
+      group = importGroupData(group, groups[selectedGroup]);
+    }
+
     group.customConditions = defineRelationCustomCondition(group.customConditions);
     setText(GROUP_NAME_TEXT_ID, group.id, name);
     setGroup({ [dbSymbol]: group }, { group: dbSymbol });
@@ -100,6 +121,11 @@ export const GroupNewEditor = forwardRef<EditorHandlingClose, GroupNewEditorProp
     return true;
   };
 
+  const handleGroupActivationChange = (value: string) => {
+    setActivation(value as StudioGroupActivationType);
+    setSwitchId(getSwitchValue(value as StudioGroupActivationType));
+  };
+
   return (
     <Editor type="creation" title={t('new_group')}>
       <InputContainer>
@@ -111,37 +137,17 @@ export const GroupNewEditor = forwardRef<EditorHandlingClose, GroupNewEditorProp
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="select-activation">{t('activation')}</Label>
-          <InputContainer size="s">
-            <SelectCustomSimple
-              id="select-activation"
-              options={activationOptions}
-              onChange={(value) => {
-                setActivation(value as StudioGroupActivationType);
-                setSwitchId(getSwitchValue(value as StudioGroupActivationType));
-              }}
-              value={activation}
-              noTooltip
-            />
-            {activation === 'custom' && (
-              <InputWithLeftLabelContainer>
-                <Label htmlFor="switch" required>
-                  {t('switch')}
-                </Label>
-                <Input
-                  type="number"
-                  name="switch"
-                  min="1"
-                  max="99999"
-                  value={isNaN(switchId) ? '' : switchId}
-                  onChange={(event) => {
-                    const newValue = event.target.valueAsNumber;
-                    setSwitchId(newValue);
-                    setActivation(onSwitchUpdateActivation(newValue));
-                  }}
-                />
-              </InputWithLeftLabelContainer>
-            )}
-          </InputContainer>
+          <SelectCustomWithInput
+            value={activation}
+            selectCustomLabel={t('custom')}
+            onSelectValueChange={handleGroupActivationChange}
+            inputLabel={t('switch')}
+            minInput="1"
+            maxInput="99999"
+            defaultCustomValue={switchId.toString()}
+            setCustomValue={(value) => setSwitchId(Number(value))}
+            selectOptions={activationOptions}
+          />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="select-battle-type">{t('battle_type')}</Label>
@@ -202,6 +208,15 @@ export const GroupNewEditor = forwardRef<EditorHandlingClose, GroupNewEditorProp
             onChange={(event) => setStepsAverage(event.target.valueAsNumber)}
           />
         </InputWithLeftLabelContainer>
+        <InputGroupCollapse title={t('other_data')} gap="16px" onClick={() => setImporting(!importing)}>
+          <ImportInfoContainer>
+            <ImportInfo>{t('group_import_info')}</ImportInfo>
+          </ImportInfoContainer>
+          <InputWithTopLabelContainer>
+            <Label htmlFor="select-group-to-import">{t('import_data_from')}</Label>
+            <SelectGroup dbSymbol={selectedGroup} onChange={(dbSymbol) => setSelectedGroup(dbSymbol)} noLabel undefValueOption={t('none_option')} />
+          </InputWithTopLabelContainer>
+        </InputGroupCollapse>
         <ButtonContainer>
           <TooltipWrapper data-tooltip={!canNew() ? t('fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickNew} disabled={!canNew()}>

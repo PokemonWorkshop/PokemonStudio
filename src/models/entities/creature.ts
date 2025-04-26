@@ -94,6 +94,8 @@ export const CREATURE_RESOURCES_VALIDATOR = z.object({
   characterF: z.string().optional(),
   characterShiny: z.string(),
   characterShinyF: z.string().optional(),
+  egg: z.string(),
+  iconEgg: z.string(),
   cry: z.string(),
   hasFemale: z.boolean(),
 });

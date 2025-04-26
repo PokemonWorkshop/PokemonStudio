@@ -6,6 +6,7 @@ import { TitleContainer } from '@components/editor/DataBlockEditorStyle';
 import { useProjectTypes } from '@hooks/useProjectData';
 import { HelperSelectedType, TypeHelper } from './TypeHelper';
 import { StudioType } from '@modelEntities/type';
+import { TypeTableDefensiveContainer } from './table/TypeTableContainers';
 
 export const TypeTable = () => {
   const { projectDataValues: types, setProjectDataValues: setType } = useProjectTypes();
@@ -29,6 +30,7 @@ export const TypeTable = () => {
         <TitleContainer onMouseEnter={onMouseLeaveEnter}>
           <p>{t('edition')}</p>
           <h3>{t('table')}</h3>
+          <TypeTableDefensiveContainer>{t('defensive')}</TypeTableDefensiveContainer>
         </TitleContainer>
         <TableTypeContainer>
           <TypeTableHead allTypes={allTypes} t={t} hoveredDefensiveType={hoveredDefensiveType} />

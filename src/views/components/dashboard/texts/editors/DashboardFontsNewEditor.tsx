@@ -29,7 +29,8 @@ export const DashboardFontsNewEditor = ({ isAlternative, onClose }: DashbordFont
   const lineHeightRef = useRef<HTMLInputElement>(null);
 
   const onClickNew = () => {
-    if (!idRef.current || !name || !sizeRef.current || !lineHeightRef.current) return;
+    if (!idRef.current || (!isAlternative && !name) || !sizeRef.current || !lineHeightRef.current) return;
+
     const data = {
       id: parseInt(idRef.current.value),
       size: parseInt(sizeRef.current.value),

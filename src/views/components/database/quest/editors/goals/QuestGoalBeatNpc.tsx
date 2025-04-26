@@ -1,17 +1,12 @@
-import { useRefreshUI } from '@components/editor';
 import { Input, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
-import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { InputNumber } from './InputNumber';
+import { InputNumber2 } from './InputNumber';
 import { QuestGoalProps } from './QuestGoalProps';
+import React from 'react';
 
-type QuestGoalBeatNpcProps = {
-  setIsEmptyText?: React.Dispatch<React.SetStateAction<boolean>>;
-} & QuestGoalProps;
-
-export const QuestGoalBeatNpc = ({ objective, setIsEmptyText }: QuestGoalBeatNpcProps) => {
+export const QuestGoalBeatNpc = ({ objective, refs, checkIsValid }: QuestGoalProps) => {
   const { t } = useTranslation();
-  const refreshUI = useRefreshUI();
+
   return (
     <PaddedInputContainer>
       <InputWithTopLabelContainer>
@@ -19,22 +14,21 @@ export const QuestGoalBeatNpc = ({ objective, setIsEmptyText }: QuestGoalBeatNpc
           {t('trainer_name')}
         </Label>
         <Input
+          ref={refs.nameRef}
           type="text"
           name="text-beat-npc"
-          value={objective.objectiveMethodArgs[1] as string}
-          onChange={(event) => {
-            refreshUI((objective.objectiveMethodArgs[1] = event.target.value));
-            if (setIsEmptyText) setIsEmptyText(objective.objectiveMethodArgs[1] === '');
-          }}
+          defaultValue={objective.objectiveMethodArgs[1] as string}
+          onChange={() => checkIsValid && checkIsValid()}
           placeholder={t('example_beat_npc')}
         />
       </InputWithTopLabelContainer>
       <InputWithLeftLabelContainer>
         <Label htmlFor="amount-beat-npc">{t('amount')}</Label>
-        <InputNumber
+        <InputNumber2
+          ref={refs.valueRef}
           name="amount-beat-npc"
-          value={objective.objectiveMethodArgs[2] as number}
-          setValue={(value: number) => refreshUI((objective.objectiveMethodArgs[2] = value))}
+          defaultValue={objective.objectiveMethodArgs[2] as number}
+          onChange={() => checkIsValid && checkIsValid()}
         />
       </InputWithLeftLabelContainer>
     </PaddedInputContainer>

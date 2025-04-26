@@ -46,7 +46,7 @@ const ImportInfoContainer = styled.div`
 
 type PokemonBattlerImportProps = {
   closeDialog: () => void;
-  from: PokemonBattlerFrom;
+  from: Exclude<PokemonBattlerFrom, 'quest_earning'>;
 };
 
 const getFirstDbSymbol = (

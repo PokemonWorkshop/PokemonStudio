@@ -5,6 +5,8 @@ type TooltipContextProps = {
   children: ReactNode;
 };
 
+export const ONLY_SHOW_ON_CHANGE_TEXT = 'tooltip:ChangeTextOnly';
+
 const isTargetElementShowingTooltip = (target: EventTarget | null): target is HTMLElement => {
   if (!(target instanceof HTMLElement)) return false;
 
@@ -38,8 +40,13 @@ const placeTooltip = (container: HTMLElement, target: HTMLElement) => {
     container.style.top = `${clientPos.top - containerHeight - TOOLTIP_VERTICAL_SPACING}px`;
   }
 
+  const position = target.dataset.tooltipPosition;
+  // If requested to be centered
+  if (position === 'center') {
+    container.style.left = `${clientPos.left + (clientPos.width - containerWidth) / 2}px`;
+  }
   // If target position too close to window right, show aligned with right side of target
-  if (clientPos.left + containerWidth > window.innerWidth) {
+  else if (position === 'right' || (clientPos.left + containerWidth > window.innerWidth && position !== 'left')) {
     container.style.left = `${clientPos.right - containerWidth}px`;
   } else {
     container.style.left = `${clientPos.left}px`;
@@ -79,9 +86,10 @@ export const TooltipContext = ({ children }: TooltipContextProps) => {
 
     popoverEntity = target;
     displayTooltipData(tooltipContainer, target);
-    tooltipContainer.showPopover();
+    const showingNow = tooltipContainer.innerText !== ONLY_SHOW_ON_CHANGE_TEXT;
+    if (showingNow) tooltipContainer.showPopover();
     placeTooltip(tooltipContainer, target);
-    tooltipContainer.classList.add('visible');
+    if (showingNow) tooltipContainer.classList.add('visible');
   };
 
   const clearTooltip = () => {
@@ -111,7 +119,11 @@ export const TooltipContext = ({ children }: TooltipContextProps) => {
   const onTooltipChangeText = (e: Event) => {
     if (!tooltipContainer || !(e instanceof CustomEvent) || typeof e.detail !== 'string') return;
 
+    const wasNotShowing = tooltipContainer.innerText === ONLY_SHOW_ON_CHANGE_TEXT;
     tooltipContainer.innerText = e.detail;
+    if (wasNotShowing) tooltipContainer.showPopover();
+    if (popoverEntity) placeTooltip(tooltipContainer, popoverEntity);
+    if (wasNotShowing) tooltipContainer.classList.add('visible');
   };
 
   useEffect(() => {

@@ -1,16 +1,22 @@
-import React, { useMemo, useRef, useState } from 'react';
-import { Editor, useRefreshUI } from '@components/editor';
-
+import React, { forwardRef, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import styled from 'styled-components';
-import { TagWithDeletion, TagWithDeletionContainer } from '@components/Tag';
-import { padStr } from '@utils/PadStr';
-import { cleanNaNValue } from '@utils/cleanNaNValue';
-import { SelectCustomSimple } from '@components/SelectCustom';
+
+import { Editor } from '@components/editor';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { TextInputError } from '@components/inputs/Input';
-import { StudioZone } from '@modelEntities/zone';
+import { TagWithDeletion, TagWithDeletionContainer } from '@components/Tag';
+import { Select } from '@ds/Select';
+
+import { useZonePage } from '@src/hooks/usePage';
+import { useUpdateZone } from './useUpdateZone';
+
+import { StudioZoneForcedWeather } from '@modelEntities/zone';
+
+import { padStr } from '@utils/PadStr';
+import { cloneEntity } from '@utils/cloneEntity';
 
 const InputMapsListContainer = styled(InputWithTopLabelContainer)`
   gap: 16px;
@@ -47,16 +53,16 @@ const WeatherCategories = [-1, 0, 1, 2, 3, 4, 5] as const;
 const weatherCategoryEntries = (t: TFunction) =>
   WeatherCategories.map((category) => ({ value: category.toString(), label: t(`weather${category}`) }));
 
-type ZoneSettingsEditorProps = {
-  zone: StudioZone;
-};
-
-export const ZoneSettingsEditor = ({ zone }: ZoneSettingsEditorProps) => {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [errorNewMap, setErrorNewMap] = useState<number | false>(false);
+export const ZoneSettingsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { t } = useTranslation();
+  const { zone } = useZonePage();
+  const updateZone = useUpdateZone(zone);
+  const forcedWeatherRef = useRef<string | undefined>();
+  const panelIdRef = useRef<HTMLInputElement>(null);
   const weatherOptions = useMemo(() => weatherCategoryEntries(t), [t]);
-  const refreshUI = useRefreshUI();
+  const [maps, setMaps] = useState<number[]>(cloneEntity(zone.maps));
+  const [errorNewMap, setErrorNewMap] = useState<number | false>(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (event) => {
     if (inputRef.current && inputRef.current.validity.valid && event.key === 'Enter') {
@@ -66,7 +72,7 @@ export const ZoneSettingsEditor = ({ zone }: ZoneSettingsEditorProps) => {
         .filter((v) => v.trim().length !== 0)
         .map((v) => Number(v))
         .filter((v, i, a) => i === a.indexOf(v));
-      const errorMapId = mapIds.find((mapId) => zone.maps.includes(mapId));
+      const errorMapId = mapIds.find((mapId) => maps.includes(mapId));
       if (errorMapId !== undefined) {
         setErrorNewMap(errorMapId);
         return;
@@ -74,17 +80,35 @@ export const ZoneSettingsEditor = ({ zone }: ZoneSettingsEditorProps) => {
 
       inputRef.current.value = '';
       if (errorNewMap !== false) setErrorNewMap(false);
-      refreshUI((zone.maps = zone.maps.concat(mapIds)));
+      setMaps(maps.concat(mapIds));
     }
   };
 
   const onDeleteMap = (index: number) => {
-    refreshUI(zone.maps.splice(index, 1));
+    const mapsEdited = cloneEntity(maps);
+    mapsEdited.splice(index, 1);
+    setMaps(mapsEdited);
   };
 
-  const onChangeForcedWeather = (value: number) => {
-    refreshUI((zone.forcedWeather = value === -1 ? null : (value as 1)));
+  const canClose = () => {
+    const result = !!panelIdRef?.current?.validity.valid;
+
+    return result;
   };
+
+  const onClose = () => {
+    if (!forcedWeatherRef?.current || !panelIdRef?.current || !canClose()) return;
+
+    const forcedWeather = forcedWeatherRef.current === '-1' ? null : (parseInt(forcedWeatherRef.current) as StudioZoneForcedWeather);
+
+    updateZone({
+      forcedWeather,
+      panelId: panelIdRef.current.valueAsNumber,
+      maps,
+    });
+  };
+
+  useEditorHandlingClose(ref, onClose, canClose);
 
   return (
     <Editor type="edit" title={t('settings')}>
@@ -96,7 +120,7 @@ export const ZoneSettingsEditor = ({ zone }: ZoneSettingsEditorProps) => {
             {errorNewMap !== false && <TextInputError>{t('map_already_exists', { mapId: padStr(errorNewMap, 2) })}</TextInputError>}
           </InputMapWithErrorContainer>
           <MapsListContainer>
-            {zone.maps
+            {maps
               .sort((a, b) => a - b)
               .map((id, index) => (
                 <TagWithDeletion key={index} index={index} onClickDelete={onDeleteMap}>
@@ -107,31 +131,19 @@ export const ZoneSettingsEditor = ({ zone }: ZoneSettingsEditorProps) => {
         </InputMapsListContainer>
         <InputWithLeftLabelContainer>
           <Label htmlFor="panel-number">{t('panel_number')}</Label>
-          <Input
-            type="number"
-            name="panel-number"
-            min="0"
-            max="99999"
-            value={isNaN(zone.panelId) ? '' : zone.panelId}
-            onChange={(event) => {
-              const value = parseInt(event.target.value);
-              if (value < 0 || value > 99_999) return event.preventDefault();
-              refreshUI((zone.panelId = value));
-            }}
-            onBlur={() => refreshUI((zone.panelId = cleanNaNValue(zone.panelId)))}
-          />
+          <Input type="number" name="panel-number" min="0" max="99999" defaultValue={zone.panelId} ref={panelIdRef} />
         </InputWithLeftLabelContainer>
         <InputWithTopLabelContainer>
-          <Label htmlFor="weather">{t('forced_weather')}</Label>
-          <SelectCustomSimple
+          <Label htmlFor="select-weather">{t('forced_weather')}</Label>
+          <Select
             id="select-weather"
             options={weatherOptions}
-            onChange={(value) => onChangeForcedWeather(Number(value))}
-            value={String(zone.forcedWeather === null ? -1 : zone.forcedWeather)}
-            noTooltip
+            optionRef={forcedWeatherRef}
+            defaultValue={zone.forcedWeather === null ? '-1' : zone.forcedWeather.toString()}
           />
         </InputWithTopLabelContainer>
       </InputContainer>
     </Editor>
   );
-};
+});
+ZoneSettingsEditor.displayName = 'ZoneSettingsEditor';

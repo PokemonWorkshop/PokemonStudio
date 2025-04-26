@@ -73,6 +73,8 @@ export type CreatureFormResourcesPath =
   | 'character'
   | 'characterShiny'
   | 'cry'
+  | 'egg'
+  | 'iconEgg'
   | CreatureFormResourcesFemalePath;
 
 export const formResourcesPath = (form: StudioCreatureForm, resource: CreatureFormResourcesPath) => {
@@ -86,30 +88,30 @@ export const formResourcesPath = (form: StudioCreatureForm, resource: CreatureFo
   switch (resource) {
     case 'icon':
     case 'iconF':
-      return `graphics/pokedex/pokeicon/${(resources.hasFemale && resources[resource]) || resources.icon}`;
     case 'iconShiny':
     case 'iconShinyF':
-      return `graphics/pokedex/pokeicon/${(resources.hasFemale && resources[resource]) || resources.iconShiny}`;
+    case 'iconEgg':
+      return `graphics/pokedex/pokeicon/${resources[resource] ?? ''}`;
     case 'front':
     case 'frontF':
-      return `graphics/pokedex/pokefront/${(resources.hasFemale && resources[resource]) || resources.front}`;
+    case 'egg':
+      return `graphics/pokedex/pokefront/${resources[resource] ?? ''}`;
     case 'frontShiny':
     case 'frontShinyF':
-      return `graphics/pokedex/pokefrontshiny/${(resources.hasFemale && resources[resource]) || resources.frontShiny}`;
+      return `graphics/pokedex/pokefrontshiny/${resources[resource] ?? ''}`;
     case 'back':
     case 'backF':
-      return `graphics/pokedex/pokeback/${(resources.hasFemale && resources[resource]) || resources.back}`;
+      return `graphics/pokedex/pokeback/${resources[resource] ?? ''}`;
     case 'backShiny':
     case 'backShinyF':
-      return `graphics/pokedex/pokebackshiny/${(resources.hasFemale && resources[resource]) || resources.backShiny}`;
+      return `graphics/pokedex/pokebackshiny/${resources[resource] ?? ''}`;
     case 'footprint':
       return `graphics/pokedex/footprints/${resources.footprint}`;
     case 'character':
     case 'characterF':
-      return `graphics/characters/${(resources.hasFemale && resources[resource]) || resources.character}`;
     case 'characterShiny':
     case 'characterShinyF':
-      return `graphics/characters/${(resources.hasFemale && resources[resource]) || resources.characterShiny}`;
+      return `graphics/characters/${resources[resource] ?? ''}`;
     case 'cry':
       return `audio/se/cries/${form.resources.cry}`;
     default:
@@ -125,8 +127,9 @@ export const pokemonSpritePath = (form: StudioCreatureForm) => {
 
 export const pokemonIconPath = (specie: StudioCreature, formId?: number, icon?: 'icon' | 'iconF' | 'iconShiny' | 'iconShinyF') => {
   const form = specie.forms.find((f) => f.form === formId) ?? specie.forms[0];
-  if (!form?.resources[icon ?? 'icon']) return formResourcesPath(form, 'icon');
-  return formResourcesPath(form, icon ?? 'icon');
+  const resource = form.femaleRate === 100 ? 'iconF' : 'icon';
+  if (!form?.resources[icon ?? resource]) return formResourcesPath(form, resource);
+  return formResourcesPath(form, icon ?? resource);
 };
 
 export const itemIconPath = (icon: string) => {
