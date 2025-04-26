@@ -21,7 +21,7 @@ export const PokemonBattlerMoveEditor = ({ expandPokemonSetup, updateExpandPokem
     <InputGroupCollapse title={t(`moves_title`)} gap="16px" collapseByDefault={collapseByDefault || undefined}>
       {moves.map((move, index) => (
         <InputWithTopLabelContainer key={`${move}-${index}`}>
-          <Label htmlFor={`move-${index}`}>{t('move', { id: index + 1 })}</Label>
+          <Label htmlFor={`move-${index}`}>{t('move_with_number', { id: index + 1 })}</Label>
           <SelectMoveBattler
             dbSymbol={move}
             onChange={(dbSymbol) => {
