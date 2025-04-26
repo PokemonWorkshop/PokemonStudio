@@ -12,7 +12,7 @@ import { ItemDialogsRef } from './editors/ItemEditorOverlay';
 
 type ItemTechDataProps = { dialogsRef: ItemDialogsRef };
 
-const getMoveName = (state: State, techItem: StudioTechItem, t: TFunction<('database_items' | 'database_moves')[]>): string => {
+const getMoveName = (state: State, techItem: StudioTechItem, t: TFunction): string => {
   const move = state.projectData.moves[techItem.move];
 
   return move ? getEntityNameText(move, state) : t('move_deleted');

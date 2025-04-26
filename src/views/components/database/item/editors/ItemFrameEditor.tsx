@@ -25,7 +25,7 @@ import { useItemPage } from '@hooks/usePage';
 import { ItemTranslationOverlay, TranslationEditorTitle } from './ItemTranslationOverlay';
 import { cloneEntity } from '@utils/cloneEntity';
 
-const itemCategoryEntries = (t: TFunction<('database_items' | 'database_types')[]>) =>
+const itemCategoryEntries = (t: TFunction) =>
   StudioItemCategories.map((category) => ({ value: category, label: t(`${category}`) })).sort((a, b) => a.label.localeCompare(b.label));
 
 export const ItemFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {

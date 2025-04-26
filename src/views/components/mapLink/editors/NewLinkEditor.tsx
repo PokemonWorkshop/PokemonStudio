@@ -23,7 +23,7 @@ const ButtonContainer = styled.div`
   gap: 8px;
 `;
 
-const getShift = (cardinal: StudioMapLinkCardinal, t: TFunction<('database_maplinks' | 'database_moves')[]>) => {
+const getShift = (cardinal: StudioMapLinkCardinal, t: TFunction) => {
   if (cardinal === 'north' || cardinal === 'south') return t('offset_shift_right');
 
   return t('offset_downward_shift');

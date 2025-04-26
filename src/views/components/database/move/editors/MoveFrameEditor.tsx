@@ -14,7 +14,7 @@ import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 import { InputFormContainer } from '@components/inputs/InputContainer';
 import { useSelectOptions } from '@hooks/useSelectOptions';
 
-const moveCategoryEntries = (t: TFunction<('database_moves' | 'database_types')[]>) =>
+const moveCategoryEntries = (t: TFunction) =>
   MOVE_CATEGORIES.map((category) => ({ value: category, label: t(`${category}`) })).sort((a, b) => a.label.localeCompare(b.label));
 
 const FRAME_EDITOR_SCHEMA = MOVE_VALIDATOR.pick({ type: true, category: true });

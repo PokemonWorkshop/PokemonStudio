@@ -29,11 +29,9 @@ const determineShinyCategory = (shinySetup: StudioGroupEncounter['shinySetup']) 
   return 'default';
 };
 
-const shinyCategoryEntries = (t: TFunction<('database_items' | 'pokemon_battler_list')[]>) =>
-  ShinyCategories.map((category) => ({ value: category.toString(), label: t(`shiny_${category}`) }));
+const shinyCategoryEntries = (t: TFunction) => ShinyCategories.map((category) => ({ value: category.toString(), label: t(`shiny_${category}`) }));
 
-const genderCategoryEntries = (t: TFunction<('database_items' | 'pokemon_battler_list')[]>) =>
-  GenderCategories.map((category) => ({ value: category.toString(), label: t(`gender${category}`) }));
+const genderCategoryEntries = (t: TFunction) => GenderCategories.map((category) => ({ value: category.toString(), label: t(`gender${category}`) }));
 
 type PokemonBattlerModeInfoEditorProps = {
   encounter: PartialStudioGroupEncounter;

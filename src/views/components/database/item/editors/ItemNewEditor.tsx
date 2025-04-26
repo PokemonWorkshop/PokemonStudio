@@ -31,7 +31,7 @@ import { SelectItem } from '@components/selects';
 import { importItemData } from '@utils/importEntityDataUtils';
 import { OptionSourceKey } from '@src/hooks/useSelectOptions';
 
-const itemCategoryEntries = (t: TFunction<('database_items' | 'database_types' | 'database_moves')[]>) =>
+const itemCategoryEntries = (t: TFunction) =>
   StudioItemCategories.map((category) => ({ value: category, label: t(`${category}`) })).sort((a, b) => a.label.localeCompare(b.label));
 
 type ItemNewEditorProps = {

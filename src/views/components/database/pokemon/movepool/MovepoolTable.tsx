@@ -47,11 +47,7 @@ type MoveOccurrenceType = {
   occurrence: number;
 };
 
-const getSafeName = (
-  move: StudioMove,
-  t: TFunction<('database_pokemon' | 'database_moves')[]>,
-  getEntityName: ReturnType<typeof useGetEntityNameText>
-) => {
+const getSafeName = (move: StudioMove, t: TFunction, getEntityName: ReturnType<typeof useGetEntityNameText>) => {
   if (move) return getEntityName(move);
   return t('move_deleted');
 };
@@ -59,7 +55,7 @@ const getSafeName = (
 const getMoveTechOptions = (
   allItems: ProjectData['items'],
   allMoves: ProjectData['moves'],
-  t: TFunction<('database_pokemon' | 'database_moves')[]>,
+  t: TFunction,
   getEntityName: ReturnType<typeof useGetEntityNameText>
 ) =>
   Object.values(allItems)
@@ -93,7 +89,7 @@ const getMovepoolData = (
   moves: ProjectData['moves'],
   items: ProjectData['items'],
   currentEditedForm: StudioCreatureForm,
-  t: TFunction<('database_pokemon' | 'database_moves')[]>,
+  t: TFunction,
   getEntityName: ReturnType<typeof useGetEntityNameText>
 ) => {
   if (type === 'tech') {

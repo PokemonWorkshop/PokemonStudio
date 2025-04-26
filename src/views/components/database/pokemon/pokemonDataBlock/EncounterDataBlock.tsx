@@ -31,7 +31,7 @@ const ItemHeldStyle = styled.div`
 type ItemHeldComponentProps = {
   itemHeld: StudioItemHeld;
   items: ProjectData['items'];
-  t: TFunction<('database_pokemon' | 'database_items')[]>;
+  t: TFunction;
   clickable?: IClickable;
 };
 
