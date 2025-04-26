@@ -16,6 +16,7 @@ import { addTrainerAdditionalDialogs } from './addTrainerAdditionalDialogs';
 import { migrateQuestsEarnings } from './migrateQuestsEarnings';
 import { addCsvForQuestsCustomObjectives } from './addCsvForQuestsCustomObjectives';
 import { addEggInCreatureResources } from './addEggInCreatureResources';
+import { addBattleCamera3dToSettings } from './addBattleCamera3dToSettings';
 
 type MigrateConfigType = {
   migration: MigrationTask;
@@ -124,5 +125,10 @@ export const MIGRATION_CONFIG: MigrateConfigType[] = [
     migration: addEggInCreatureResources,
     version: '2.4.3',
     message: 'add_egg_in_creature_resources',
+  },
+  {
+    migration: addBattleCamera3dToSettings,
+    version: '2.4.3',
+    message: 'add_battle_camera_3D_to_settings',
   },
 ];
