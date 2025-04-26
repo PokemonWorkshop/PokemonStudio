@@ -168,9 +168,9 @@ export const TypePokemonTable = ({ type }: TypePokemonTableProps) => {
         <span></span>
         <span>{t('creature')}</span>
         <span>{t('creature_types')}</span>
-        <span>{t('creature_ability1')}</span>
-        <span>{t('creature_ability2')}</span>
-        <span>{t('creature_ability3')}</span>
+        <span>{t('ability_1')}</span>
+        <span>{t('ability_2')}</span>
+        <span>{t('hidden_ability')}</span>
       </DataPokemonGrid>
       {allPokemon.map((pokemon) => (
         <RenderPokemon key={`type-pokemon-${pokemon.dbSymbol}`} pokemon={pokemon} type={type} state={state} />
