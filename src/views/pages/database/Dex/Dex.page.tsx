@@ -42,7 +42,7 @@ export const DexPage = () => {
           <DataBlockWrapper>
             {dex.dbSymbol === 'national' ? (
               <DataBlockWithAction title={t('deletion')} size="full" disabled={true}>
-                <TooltipWrapper data-tooltip={t('deletion_disabled')}>
+                <TooltipWrapper data-tooltip={t('bestiary_deletion_disabled')}>
                   <DeleteButtonWithIcon disabled={true}>{t('delete_this_bestiary')}</DeleteButtonWithIcon>
                 </TooltipWrapper>
               </DataBlockWithAction>

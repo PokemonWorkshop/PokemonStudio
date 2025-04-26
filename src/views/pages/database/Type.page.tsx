@@ -47,7 +47,7 @@ export const TypePage = () => {
               <DarkButton onClick={() => navigate(`/database/types/${currentType.dbSymbol}/moves`)}>{t('show_all_moves')}</DarkButton>
             </DataBlockWithTitleNoActive>
             <DataBlockWithAction title={t('deletion')} size="full" disabled={canBeDeleted}>
-              <TooltipWrapper data-tooltip={canBeDeleted ? t('deletion_disabled') : undefined}>
+              <TooltipWrapper data-tooltip={canBeDeleted ? t('type_deletion_disabled') : undefined}>
                 <DeleteButtonWithIcon onClick={() => dialogsRef?.current?.openDialog('deletion', true)} disabled={canBeDeleted}>
                   {t('delete_this_type')}
                 </DeleteButtonWithIcon>

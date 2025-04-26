@@ -93,7 +93,7 @@ type ValueConditionProps = {
 
 const ValueCondition = ({ condition, updateCondition }: ValueConditionProps) => {
   const { t } = useTranslation();
-  const { t: tSelect } = useTranslation('select');
+  const { t: tSelect } = useTranslation();
   const { projectConfigValues: settings } = useConfigSettings();
   const { type, value } = condition;
 
@@ -147,7 +147,7 @@ const GoalCondition = ({ condition, index, excludeConditions, onChange, onDelete
   return (
     <InputContainer>
       <TitleContainer>
-        <span>{t('condition', { number: index + 1 })}</span>
+        <span>{t('condition_with_number', { number: index + 1 })}</span>
         {index !== 0 && <DeleteIcon onClick={onDelete} />}
       </TitleContainer>
       <PaddedInputContainer>
