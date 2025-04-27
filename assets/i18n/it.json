@@ -1274,7 +1274,7 @@
   "importing_project_checking": "Audit del progetto",
   "importing_not_import_studio_project": "Non è possibile importare un progetto di Pokémon Studio.",
   "integrity_message": "Sono stati rilevati {{count}} file non conformi che non sono stati caricati. Ulteriori informazioni sono disponibili nei registri di Pokémon Studio.",
-  "failed_deserialization": "Mancata interpretazione",
+  "failed_deserialize": "Mancata interpretazione",
   "error_project_version": "Il progetto è stato aperto o creato con una versione più recente dell'applicazione. Aggiornare Pokémon Studio.",
   "MB": "MB",
   "KB": "KB",
