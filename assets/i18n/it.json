@@ -149,7 +149,7 @@
   "delete_this_evolution": "Delete this evolution",
   "deletion_of_ability": "Deletion of {{ability}}",
   "deletion_of_item": "Deletion of the item {{item}}",
-  "deletion_of_map": "Deletion of the map",
+  "deletion_of_map": "Deletion of the map {{map}}",
   "deletion_of_move": "Deletion of {{move}}",
   "deletion_of_nature": "Deletion of {{nature}}",
   "deletion_of_type": "Deletion of the type {{type}}",

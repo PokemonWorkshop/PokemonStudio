@@ -51,7 +51,7 @@ export const MapDeletion = forwardRef<EditorHandlingClose, MapDeletionProps>(({ 
 
   return (
     <Deletion
-      title={t('deletion_of_map')}
+      title={t('deletion_of_map', { map: mapName })}
       message={t('deletion_message_map', { map: mapName })}
       onClickDelete={onClickDelete}
       onClose={closeDialog}

@@ -149,7 +149,7 @@
   "delete_this_evolution": "Supprimer cette évolution",
   "deletion_of_ability": "Suppression du talent {{ability}}",
   "deletion_of_item": "Suppression de l'objet {{item}}",
-  "deletion_of_map": "Suppression de la carte",
+  "deletion_of_map": "Suppression de la carte {{map}}",
   "deletion_of_move": "Suppression de la capacité {{move}}",
   "deletion_of_nature": "Suppression de {{nature}}",
   "deletion_of_type": "Suppression du type {{type}}",
