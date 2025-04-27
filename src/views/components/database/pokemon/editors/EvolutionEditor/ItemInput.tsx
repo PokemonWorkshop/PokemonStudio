@@ -20,7 +20,7 @@ export const ItemInput = ({ type, state, dispatch }: EvolutionConditionEditorInp
 
   return (
     <InputWithTopLabelContainer>
-      <Label>{t('evolutionValue_item')}</Label>
+      <Label>{t('evolution_value_item')}</Label>
       {type !== 'itemHold' ? (
         <SelectDataGeneric
           data={{ value: dbSymbol, label: items[dbSymbol] ? getItemName(items[dbSymbol]) : t('item_deleted') }}

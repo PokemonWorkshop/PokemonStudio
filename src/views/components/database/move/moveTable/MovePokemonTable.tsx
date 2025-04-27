@@ -32,7 +32,7 @@ export const MovePokemonTable = ({ move, filter }: MovePokemonTableProps) => {
   const allPokemon = getAllPokemonFiltered(state, move, filter);
 
   return allPokemon.length === 0 ? (
-    <NoPokemonFound>{t('no_option_creature')}</NoPokemonFound>
+    <NoPokemonFound>{t('no_creature_found')}</NoPokemonFound>
   ) : (
     <DataPokemonTable>
       <DataPokemonGrid gap="16px" className="header">

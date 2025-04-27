@@ -194,7 +194,7 @@ const ConditionFields = ({ type, state, dispatch, inputRefs }: EvolutionConditio
     case 'env': // number
       return (
         <ConditionContainerWithSelect currentType={type} keysToExclude={keysToExclude} onChange={onKeyChange}>
-          <NumberInput label={t('evolutionValue_env')} min={0} type={type} state={state} dispatch={dispatch} inputRefs={inputRefs} />
+          <NumberInput label={t('evolution_value_env')} min={0} type={type} state={state} dispatch={dispatch} inputRefs={inputRefs} />
         </ConditionContainerWithSelect>
       );
     default:
