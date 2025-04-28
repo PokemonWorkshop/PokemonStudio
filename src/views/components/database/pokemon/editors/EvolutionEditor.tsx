@@ -134,7 +134,7 @@ export const EvolutionEditor = forwardRef<EditorHandlingClose, Props>(({ evoluti
         </EvolutionEditorContainer>
         <SubEditorContainer>
           <SubEditorTopButtonContainer>
-            <DeleteButton onClick={onRemoveEvolution}>{t('delete_this_evolution' /*'remove_this_evolution'*/)}</DeleteButton>
+            <DeleteButton onClick={onRemoveEvolution}>{t('delete_this_evolution')}</DeleteButton>
           </SubEditorTopButtonContainer>
           <SubEditorSeparator parentEditorHasScrollBar />
           <Editor type="creation" title={t('additional_evolution')}>
