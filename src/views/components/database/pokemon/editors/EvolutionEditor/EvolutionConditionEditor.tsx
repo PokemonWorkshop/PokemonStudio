@@ -153,14 +153,14 @@ const ConditionFields = ({ type, state, dispatch, inputRefs }: EvolutionConditio
     case 'minLevel': // number
       return (
         <ConditionContainerWithSelect currentType={type} keysToExclude={keysToExclude} onChange={onKeyChange}>
-          <NumberInput label={t('level')} min={1} max={999} type={type} state={state} dispatch={dispatch} inputRefs={inputRefs} />
+          <NumberInput label={t('evolution_value_level')} min={1} max={999} type={type} state={state} dispatch={dispatch} inputRefs={inputRefs} />
         </ConditionContainerWithSelect>
       );
     case 'maxLoyalty': // number
     case 'minLoyalty': // number
       return (
         <ConditionContainerWithSelect currentType={type} keysToExclude={keysToExclude} onChange={onKeyChange}>
-          <NumberInput label={t('loyalty')} min={1} max={255} type={type} state={state} dispatch={dispatch} inputRefs={inputRefs} />
+          <NumberInput label={t('evolution_value_loyalty')} min={1} max={255} type={type} state={state} dispatch={dispatch} inputRefs={inputRefs} />
         </ConditionContainerWithSelect>
       );
     case 'skill1': // skill string
