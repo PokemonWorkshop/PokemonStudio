@@ -126,7 +126,7 @@ const ValueCondition = ({ condition, updateCondition }: ValueConditionProps) => 
   } else {
     return (
       <InputWithTopLabelContainer>
-        <Label htmlFor="pokemon">{t('condition_creature')}</Label>
+        <Label htmlFor="pokemon">{t('condition_pokemon')}</Label>
         <SelectPokemon dbSymbol={value as string} onChange={(value) => updateValue(value as DbSymbol)} undefValueOption={tSelect('none')} noLabel />
       </InputWithTopLabelContainer>
     );

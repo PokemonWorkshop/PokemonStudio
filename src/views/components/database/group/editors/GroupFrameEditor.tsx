@@ -153,7 +153,7 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
         {isCustomEnvironment && (
           <InputWithTopLabelContainer>
             <Label htmlFor="custom-environment" required>
-              {t('custom_environment')}
+              {t('customized_environment')}
             </Label>
             <Input
               id="custom-environment"
