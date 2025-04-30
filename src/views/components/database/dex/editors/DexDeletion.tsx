@@ -41,8 +41,8 @@ export const DexDeletion = forwardRef<EditorHandlingClose, DexDeletionProps>(({ 
 
   return (
     <Deletion
-      title={t('list_deletion_of')}
-      message={t('list_deletion_message', { dex: getDexName(dex).replaceAll(' ', '\u00a0') })}
+      title={t('dex_deletion_of')}
+      message={t('dex_deletion_message', { dex: getDexName(dex).replaceAll(' ', '\u00a0') })}
       onClickDelete={onClickDelete}
       onClose={onClose}
     />
