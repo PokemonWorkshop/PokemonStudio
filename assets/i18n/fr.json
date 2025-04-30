@@ -1360,7 +1360,7 @@
   "project_up_to_date": "Votre projet est à jour !",
   "wiki": "Wiki",
   "gitlab": "Gitlab",
-  "notif_title": "Pokémon SDK Update",
+  "notif_title": "Mise à jour de Pokémon SDK",
   "update_success": "Votre projet a été mis à jour vers la dernière version avec succès !",
   "update_error": "Impossible de télécharger la mise à jour !",
   "update_status": "Téléchargement de {{version}}",
