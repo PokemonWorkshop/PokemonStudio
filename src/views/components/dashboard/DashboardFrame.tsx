@@ -37,7 +37,7 @@ export const DashboardFrame = () => {
             <DataInfoContainerHeaderTitle>
               <h1>{projectStudio.title}</h1>
             </DataInfoContainerHeaderTitle>
-            <ProjectVersionContainer>{t('project_version', { project_version: infos.gameVersion })}</ProjectVersionContainer>
+            <ProjectVersionContainer>{t('version_value', { project_version: infos.gameVersion })}</ProjectVersionContainer>
           </DataInfoContainerHeader>
           <Code>{`/${state.projectPath?.replaceAll('\\', '/').split('/').splice(-1)[0]}`}</Code>
         </DataInfoContainer>
