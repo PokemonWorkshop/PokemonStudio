@@ -14,7 +14,7 @@ type QuestGoalsTableProps = {
 
 export const QuestGoalsTable = ({ quest, editGoal }: QuestGoalsTableProps) => {
   const updateQuest = useUpdateQuest(quest);
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const [dragOn, setDragOn] = useState(false);
 
   return quest.objectives.length === 0 ? (

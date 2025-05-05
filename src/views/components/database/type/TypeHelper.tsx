@@ -23,7 +23,7 @@ const getHelperText = (
   offensive: DbSymbol,
   defensive: DbSymbol,
   allTypes: StudioType[],
-  t: TFunction<'database_types'>,
+  t: TFunction,
   getTypeName: ReturnType<typeof useGetEntityNameTextUsingTextId>
 ) => {
   const offensiveType = allTypes.find(({ dbSymbol }) => dbSymbol === offensive) || allTypes[0];
@@ -50,7 +50,7 @@ type TypeHelperProps = {
 };
 
 export const TypeHelper = ({ typeHelperSelected, allTypes }: TypeHelperProps) => {
-  const { t } = useTranslation('database_types');
+  const { t } = useTranslation();
   const getTypeName = useGetEntityNameTextUsingTextId();
 
   return !typeHelperSelected.offensiveType || !typeHelperSelected.defensiveType ? (

@@ -16,10 +16,9 @@ import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import { SelectQuest } from '@components/selects';
 import { importQuestData } from '@utils/importEntityDataUtils';
 
-const questCategoryEntries = (t: TFunction<'database_quests'>) => QUEST_CATEGORIES.map((category) => ({ value: category, label: t(category) }));
+const questCategoryEntries = (t: TFunction) => QUEST_CATEGORIES.map((category) => ({ value: category, label: t(category) }));
 
-const questResolutionEntries = (t: TFunction<'database_quests'>) =>
-  QUEST_RESOLUTIONS.map((resolution) => ({ value: resolution, label: t(resolution) }));
+const questResolutionEntries = (t: TFunction) => QUEST_RESOLUTIONS.map((resolution) => ({ value: resolution, label: t(resolution) }));
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -46,7 +45,7 @@ type QuestNewEditorProps = {
 
 export const QuestNewEditor = forwardRef<EditorHandlingClose, QuestNewEditorProps>(({ closeDialog }, ref) => {
   const { projectDataValues: quests, setProjectDataValues: setQuest } = useProjectQuests();
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const setText = useSetProjectText();
   const categoryOptions = useMemo(() => questCategoryEntries(t), [t]);
   const resolutionOptions = useMemo(() => questResolutionEntries(t), [t]);
@@ -75,13 +74,13 @@ export const QuestNewEditor = forwardRef<EditorHandlingClose, QuestNewEditorProp
   };
 
   return (
-    <Editor type="creation" title={t('new')}>
+    <Editor type="creation" title={t('new_quest')}>
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="name" required>
             {t('quest_name')}
           </Label>
-          <Input type="text" name="name" value={name} onChange={(event) => setName(event.target.value)} placeholder={t('example_name')} />
+          <Input type="text" name="name" value={name} onChange={(event) => setName(event.target.value)} placeholder={t('example_quest')} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="select-category">{t('category')}</Label>
@@ -93,14 +92,14 @@ export const QuestNewEditor = forwardRef<EditorHandlingClose, QuestNewEditorProp
         </InputWithTopLabelContainer> */}
         <InputWithTopLabelContainer>
           <Label htmlFor="descr">{t('description')}</Label>
-          <MultiLineInput id="descr" ref={descriptionRef} placeholder={t('example_descr')} />
+          <MultiLineInput id="descr" ref={descriptionRef} placeholder={t('example_description_quest')} />
         </InputWithTopLabelContainer>
         <InputGroupCollapse title={t('other_data')} gap="16px" onClick={() => setImporting(!importing)}>
           <ImportInfoContainer>
             <ImportInfo>{t('quest_import_info')}</ImportInfo>
           </ImportInfoContainer>
           <InputWithTopLabelContainer>
-            <Label htmlFor="select-quest-to-import">{t('import_quest_from')}</Label>
+            <Label htmlFor="select-quest-to-import">{t('import_data_from')}</Label>
             <SelectQuest dbSymbol={selectedQuest} onChange={(dbSymbol) => setSelectedQuest(dbSymbol)} noLabel undefValueOption={t('none_option')} />
           </InputWithTopLabelContainer>
         </InputGroupCollapse>

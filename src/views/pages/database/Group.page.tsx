@@ -13,7 +13,7 @@ import { useGroupPage } from '@hooks/usePage';
 export const GroupPage = () => {
   const dialogsRef = useDialogsRef<GroupEditorAndDeletionKeys>();
   const { group, cannotDelete } = useGroupPage();
-  const { t } = useTranslation('database_groups');
+  const { t } = useTranslation();
 
   return (
     <DatabasePageStyle>
@@ -24,12 +24,12 @@ export const GroupPage = () => {
             <GroupFrame group={group} dialogsRef={dialogsRef} />
           </DataBlockWrapper>
           <DataBlockWrapper>
-            <PokemonBattlerList title={t('pokemon_group')} encounters={group.encounters} disabledImport={cannotDelete} from="group" />
+            <PokemonBattlerList title={t('creature_group')} encounters={group.encounters} disabledImport={cannotDelete} from="group" />
           </DataBlockWrapper>
           <DataBlockWrapper>
-            <DataBlockWithAction size="full" title={t('deleting')}>
+            <DataBlockWithAction size="full" title={t('deletion')}>
               <DeleteButtonWithIcon onClick={() => dialogsRef.current?.openDialog('deletion', true)} disabled={cannotDelete}>
-                {t('delete')}
+                {t('delete_this_group')}
               </DeleteButtonWithIcon>
             </DataBlockWithAction>
           </DataBlockWrapper>

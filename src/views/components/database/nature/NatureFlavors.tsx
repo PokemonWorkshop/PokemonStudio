@@ -10,7 +10,7 @@ type NatureDataProps = {
 };
 
 export const NatureFlavors = ({ nature, dialogsRef }: NatureDataProps) => {
-  const { t } = useTranslation('database_natures');
+  const { t } = useTranslation();
 
   return (
     <DataBlockWithTitle size="half" title={t('flavors')} onClick={() => dialogsRef?.current?.openDialog('flavors')}>

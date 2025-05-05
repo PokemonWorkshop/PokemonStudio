@@ -29,15 +29,14 @@ import { useSetProjectText } from '@utils/ReadingProjectText';
 import { QuestTranslationEditorTitle, QuestTranslationOverlay } from './QuestTranslationOverlay';
 import React, { forwardRef, useMemo } from 'react';
 
-const objectiveCategoryEntries = (t: TFunction<'database_quests'>) =>
-  QUEST_OBJECTIVES.map((objective) => ({ value: objective, label: t(objective) }));
+const objectiveCategoryEntries = (t: TFunction) => QUEST_OBJECTIVES.map((objective) => ({ value: objective, label: t(objective) }));
 
 type QuestGoalEditorProps = {
   objectiveIndex: number;
 };
 
 export const QuestGoalEditor = forwardRef<EditorHandlingClose, QuestGoalEditorProps>(({ objectiveIndex }, ref) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const { quest } = useQuestPage();
   const updateQuest = useUpdateQuest(quest);
   const dialogsRef = useDialogsRef<QuestTranslationEditorTitle>();

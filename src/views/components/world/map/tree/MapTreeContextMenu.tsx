@@ -22,7 +22,7 @@ type MapTreeContextMenuProps = {
 };
 
 export const MapTreeContextMenu = ({ mapInfoValue, isDeleted, enableRename, dialogsRef }: MapTreeContextMenuProps) => {
-  const { t } = useTranslation('database_maps');
+  const { t } = useTranslation();
   const { mapInfo, setMapInfo } = useMapInfo();
   const { projectDataValues: maps, setProjectDataValues: setMap } = useProjectMaps();
   const setText = useSetProjectText();
@@ -99,7 +99,7 @@ export const MapTreeContextMenu = ({ mapInfoValue, isDeleted, enableRename, dial
         <span className="icon">
           <DeleteIcon />
         </span>
-        {t('context_menu_delete')}
+        {t('delete')}
       </div>
     </>
   );

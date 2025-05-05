@@ -27,7 +27,7 @@ type CopyProps = {
 };
 
 const Copy = ({ dataToCopy, message, noColon, children }: CopyProps) => {
-  const { t } = useTranslation('copy');
+  const { t } = useTranslation();
 
   const onClickCopy: React.MouseEventHandler<HTMLButtonElement | HTMLAnchorElement> = async (event) => {
     event.stopPropagation();
@@ -57,7 +57,7 @@ const Copy = ({ dataToCopy, message, noColon, children }: CopyProps) => {
 type CopyIdentifierProps = Omit<CopyProps, 'message'>;
 
 export const CopyIdentifier = ({ dataToCopy, noColon }: CopyIdentifierProps) => {
-  const { t } = useTranslation('copy');
+  const { t } = useTranslation();
   return <Copy dataToCopy={dataToCopy} message={t('identifier_message')} noColon={noColon} />;
 };
 

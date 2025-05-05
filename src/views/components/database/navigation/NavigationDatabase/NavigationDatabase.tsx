@@ -5,12 +5,12 @@ import { NavigationDatabaseItem } from '../NavigationDatabaseItem';
 import { NavigationDatabaseStyle } from './NavigationDatabaseStyle';
 
 export const NavigationDatabase = () => {
-  const { t } = useTranslation('submenu_database');
+  const { t } = useTranslation();
   return (
     <NavigationDatabaseStyle>
       <NavigationDatabaseGroup title={t('data')}>
-        <NavigationDatabaseItem path="/database/pokemon" label={t('pokemon')} />
-        <NavigationDatabaseItem path="/database/dex" label={t('dex')} />
+        <NavigationDatabaseItem path="/database/pokemon" label={t('creature')} />
+        <NavigationDatabaseItem path="/database/dex" label={t('bestiary')} />
         <NavigationDatabaseItem path="/database/moves" label={t('moves')} />
         <NavigationDatabaseItem path="/database/abilities" label={t('abilities')} />
         <NavigationDatabaseItem path="/database/types" label={t('types')} />

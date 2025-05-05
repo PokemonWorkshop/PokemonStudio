@@ -21,7 +21,7 @@ const HeaderInfoContainer = styled.span`
 `;
 
 export const DashboardSave = () => {
-  const { t } = useTranslation('dashboard_save');
+  const { t } = useTranslation();
   const { projectConfigValues: save, setProjectConfigValues: setSave } = useConfigSave();
   const currentEditedSave = useMemo(() => cloneEntity(save), [save]);
   const [filename, setFilename] = useState(currentEditedSave.baseFilename);

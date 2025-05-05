@@ -25,7 +25,7 @@ const initForm = (gameInfo: StudioInfoConfig, state: State): StudioCompilation =
   };
 };
 
-const getExecutableInfoText = (t: TFunction<'compilation'>) => {
+const getExecutableInfoText = (t: TFunction) => {
   const platform = window.api.platform;
   if (platform === 'darwin') return t('executable_info_darwin');
   if (platform === 'linux') return t('executable_info_linux');
@@ -42,7 +42,7 @@ export const CompilationDialog = ({ closeDialog }: CompilationDialogProps) => {
   const [, setGlobalState] = useGlobalState();
   const { canClose, getFormData, onInputTouched, defaults, formRef } = useZodForm(COMPILATION_DIALOG_SCHEMA, initForm(gameInfo, state));
   const { Input } = useInputAttrsWithLabel(COMPILATION_DIALOG_SCHEMA, defaults);
-  const { t } = useTranslation('compilation');
+  const { t } = useTranslation();
   const loaderRef = useLoaderRef();
 
   const onClickCompile = () => {

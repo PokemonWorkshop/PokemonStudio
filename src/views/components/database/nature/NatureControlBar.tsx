@@ -15,7 +15,7 @@ type NatureControlBarProps = {
 };
 
 export const NatureControlBar = ({ dialogsRef }: NatureControlBarProps) => {
-  const { t } = useTranslation('database_natures');
+  const { t } = useTranslation();
   const { selectedDataIdentifier: natureDbSymbol, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol } = useProjectNatures();
   useSetCurrentDatabasePath();
 
@@ -34,7 +34,7 @@ export const NatureControlBar = ({ dialogsRef }: NatureControlBarProps) => {
 
   return (
     <ControlBar>
-      {onClickNew ? <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new')}</SecondaryButtonWithPlusIcon> : <div />}
+      {onClickNew ? <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new_nature')}</SecondaryButtonWithPlusIcon> : <div />}
       <SelectContainerWithLabel>
         <span>{t('nature')}</span>
         <SelectNature

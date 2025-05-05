@@ -22,7 +22,7 @@ const ButtonContainer = styled.div`
 
 export const DashboardFontsNewEditor = ({ isAlternative, onClose }: DashbordFontsNewEditorProps) => {
   const { projectConfigValues: texts, setProjectConfigValues: setTexts } = useConfigTexts();
-  const { t } = useTranslation('dashboard_texts');
+  const { t } = useTranslation();
   const [name, setName] = useState(''); // We can't use a ref because of the button behavior
   const idRef = useRef<HTMLInputElement>(null);
   const sizeRef = useRef<HTMLInputElement>(null);

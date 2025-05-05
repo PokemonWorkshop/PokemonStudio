@@ -29,15 +29,15 @@ type DexPokemonListProps = {
 
 export const DexPokemonList = ({ dex, cannotImport, allPokemon, dialogsRef, setCreatureIndex }: DexPokemonListProps) => {
   const isAddUnavailable = useMemo(() => checkAddUnavailable(dex, allPokemon), [dex, allPokemon]);
-  const { t } = useTranslation('database_dex');
+  const { t } = useTranslation();
   return (
     <DataBlockEditor
       size="full"
       color="light"
-      title={t('dex_pokemon_list_title')}
+      title={t('bestiary_creature_list_title')}
       onClickDelete={() => dialogsRef?.current?.openDialog('deletion_list', true)}
-      importation={{ label: t('import_a_pokemon_list'), onClick: () => dialogsRef?.current?.openDialog('import') }}
-      add={{ label: t('add_a_pokemon'), onClick: () => dialogsRef?.current?.openDialog('add_pokemon') }}
+      importation={{ label: t('import_a_creature_list'), onClick: () => dialogsRef?.current?.openDialog('import') }}
+      add={{ label: t('add_a_creature'), onClick: () => dialogsRef?.current?.openDialog('add_pokemon') }}
       disabledDeletion={dex.creatures.length === 0}
       disabledImport={cannotImport}
       disabledAdd={isAddUnavailable}

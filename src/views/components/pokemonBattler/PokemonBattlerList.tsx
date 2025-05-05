@@ -66,14 +66,14 @@ export const PokemonBattlerListGrid = styled.div`
 
 export const PokemonBattlerList = ({ title, encounters, disabledImport, from }: PokemonBattlerListProps) => {
   const dialogsRef = useDialogsRef<PokemonBattlerEditorAndDeletionKeys>();
-  const { t } = useTranslation('pokemon_battler_list');
+  const { t } = useTranslation();
   const { trainer } = useTrainerPage();
   const [currentBattler, setCurrentBattler] = useState<CurrentBattlerType>({ index: 0, kind: undefined });
 
   const importText = () => {
     switch (from) {
       case 'group':
-        return t('import_pokemon_list');
+        return t('import_creature_list');
       case 'trainer':
         return t('import_team');
       default:
@@ -110,15 +110,15 @@ export const PokemonBattlerList = ({ title, encounters, disabledImport, from }: 
           </DarkButtonImportResponsive>
           <SecondaryButtonWithPlusIconResponsive
             onClick={() => dialogsRef.current?.openDialog('new')}
-            data-tooltip-responsive={t('add_pokemon')}
+            data-tooltip-responsive={t('add_creature')}
             disabled={from === 'trainer' && trainer.party.length >= 6}
           >
-            {t('add_pokemon')}
+            {t('add_creature')}
           </SecondaryButtonWithPlusIconResponsive>
         </div>
       </PokemonBattlerListHeader>
       {encounters.length === 0 ? (
-        <span className="no-data">{t('no_pokemon')}</span>
+        <span className="no-data">{t('no_creature')}</span>
       ) : (
         <PokemonBattlerListGrid>
           {encounters.map((encounter, index) => (

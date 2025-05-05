@@ -9,7 +9,7 @@ import { useUpdateItem } from './useUpdateItem';
 
 export const ItemParametersDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { currentItem: item } = useItemPage();
-  const { t } = useTranslation('database_items');
+  const { t } = useTranslation();
 
   const setItems = useUpdateItem(item);
 

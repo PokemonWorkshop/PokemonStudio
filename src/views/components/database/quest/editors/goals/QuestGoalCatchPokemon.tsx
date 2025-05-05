@@ -11,7 +11,7 @@ type QuestGoalCatchPokemonProps = {
 } & QuestGoalProps;
 
 export const QuestGoalCatchPokemon = ({ objective, refs, checkIsValid, setObjective }: QuestGoalCatchPokemonProps) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   return (
     <InputContainer>
       <PaddedInputContainer>

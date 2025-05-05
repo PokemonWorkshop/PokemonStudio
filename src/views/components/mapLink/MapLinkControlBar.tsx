@@ -16,7 +16,7 @@ type MapLinkControlBarProps = {
 };
 
 export const MapLinkControlBar = ({ onChange, mapId }: MapLinkControlBarProps) => {
-  const { t } = useTranslation('database_maplinks');
+  const { t } = useTranslation();
   return (
     <MapLinkControlBarContainer>
       <SelectMaplink mapId={mapId} onChange={onChange} label={t('map')} />

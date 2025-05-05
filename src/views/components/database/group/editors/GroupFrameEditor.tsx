@@ -31,17 +31,14 @@ import { useDialogsRef } from '@hooks/useDialogsRef';
 import { GroupTranslationEditorTitle, GroupTranslationOverlay } from './GroupTranslationOverlay';
 import { TextInputError } from '@components/inputs/Input';
 
-const groupActivationEntries = (t: TFunction<'database_groups'>) =>
-  GroupActivationsMap.map((option) => ({ value: option.value, label: t(option.label as never) }));
-const groupBattleTypeEntries = (t: TFunction<'database_groups'>) => GroupBattleTypes.map((type) => ({ value: type, label: t(type) }));
-const systemTagsEntries = (t: TFunction<'database_groups'>) =>
-  [...GROUP_SYSTEM_TAGS, 'custom' as const].map((tag) => ({ value: tag, label: t(tag) }));
-const groupVariationEntries = (t: TFunction<'database_groups'>) =>
-  GroupVariationsMap.map((variation) => ({ value: variation.value, label: t(variation.label) }));
-const groupToolEntries = (t: TFunction<'database_groups'>) => GroupToolMap.map((option) => ({ value: option.value, label: t(option.label) }));
+const groupActivationEntries = (t: TFunction) => GroupActivationsMap.map((option) => ({ value: option.value, label: t(option.label as never) }));
+const groupBattleTypeEntries = (t: TFunction) => GroupBattleTypes.map((type) => ({ value: type, label: t(type) }));
+const systemTagsEntries = (t: TFunction) => [...GROUP_SYSTEM_TAGS, 'custom' as const].map((tag) => ({ value: tag, label: t(tag) }));
+const groupVariationEntries = (t: TFunction) => GroupVariationsMap.map((variation) => ({ value: variation.value, label: t(variation.label) }));
+const groupToolEntries = (t: TFunction) => GroupToolMap.map((option) => ({ value: option.value, label: t(option.label) }));
 
 export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_groups');
+  const { t } = useTranslation();
   const { group } = useGroupPage();
   const updateGroup = useUpdateGroup(group);
   const dialogsRef = useDialogsRef<GroupTranslationEditorTitle>();
@@ -116,7 +113,7 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
             {t('group_name')}
           </Label>
           <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_name')}>
-            <Input type="text" name="name" defaultValue={getGroupName(group)} ref={nameRef} placeholder={t('example_name')} />
+            <Input type="text" name="name" defaultValue={getGroupName(group)} ref={nameRef} placeholder={t('example_group')} />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
@@ -156,7 +153,7 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
         {isCustomEnvironment && (
           <InputWithTopLabelContainer>
             <Label htmlFor="custom-environment" required>
-              {t('custom_environment')}
+              {t('customized_environment')}
             </Label>
             <Input
               id="custom-environment"

@@ -36,7 +36,7 @@ const OverviewPageStyle = styled.div`
 
 export const OverviewPage = () => {
   const { map, disabledOverview, disabledGenerating, version, state, checkMapOverview, onClickGenerating } = useOverviewPage();
-  const { t } = useTranslation('database_maps');
+  const { t } = useTranslation();
 
   useEffect(() => {
     checkMapOverview();

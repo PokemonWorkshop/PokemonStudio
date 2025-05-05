@@ -49,7 +49,7 @@ export const ItemHealDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { currentItem } = useItemPage();
   const { setProjectDataValues: setProjectItem } = useProjectItems();
 
-  const { t } = useTranslation('database_items');
+  const { t } = useTranslation();
   const healingOptions = useMemo(
     () => HealingItemCategories.map((category) => ({ value: category, label: t(category) })).sort((a, b) => a.label.localeCompare(b.label)),
     [t]
@@ -195,10 +195,10 @@ export const ItemHealDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
         )}
         {'loyaltyMalus' in item && (
           <InputWithLeftLabelContainer>
-            <Label htmlFor="hapiness_malus">{t('hapiness_malus')}</Label>
+            <Label htmlFor="happiness_malus">{t('happiness_malus')}</Label>
             <Input
               type="number"
-              name="hapiness_malus"
+              name="happiness_malus"
               value={healChanges.loyaltyMalus}
               min="-255"
               max="255"

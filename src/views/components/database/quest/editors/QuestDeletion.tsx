@@ -13,7 +13,7 @@ type QuestDeletionProps = {
 
 export const QuestDeletion = forwardRef<EditorHandlingClose, QuestDeletionProps>(({ type, closeDialog }, ref) => {
   const { projectDataValues: quests, selectedDataIdentifier: questDbSymbol, removeProjectDataValue: deleteQuest, state } = useProjectQuests();
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const quest = quests[questDbSymbol];
   const updateQuest = useUpdateQuest(quest);
   // eslint-disable-next-line react-hooks/exhaustive-deps

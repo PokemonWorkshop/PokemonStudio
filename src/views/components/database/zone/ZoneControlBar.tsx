@@ -13,7 +13,7 @@ type ZoneControlBarProps = {
 };
 
 export const ZoneControlBar = ({ dialogsRef }: ZoneControlBarProps) => {
-  const { t } = useTranslation('database_zones');
+  const { t } = useTranslation();
   const { selectedDataIdentifier: zoneDbSymbol, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol } = useProjectZones();
   useSetCurrentDatabasePath();
 
@@ -32,7 +32,7 @@ export const ZoneControlBar = ({ dialogsRef }: ZoneControlBarProps) => {
 
   return (
     <ControlBar>
-      {onClickNew ? <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new')}</SecondaryButtonWithPlusIcon> : <div />}
+      {onClickNew ? <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new_zone')}</SecondaryButtonWithPlusIcon> : <div />}
       <SelectZone dbSymbol={zoneDbSymbol} onChange={(dbSymbol) => setSelectedDataIdentifier({ zone: dbSymbol })} />
     </ControlBar>
   );

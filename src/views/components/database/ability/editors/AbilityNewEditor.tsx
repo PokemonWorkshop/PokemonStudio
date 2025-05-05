@@ -30,7 +30,7 @@ const ButtonContainer = styled.div`
  */
 export const AbilityNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeDialog }, ref) => {
   const { projectDataValues: abilities, setProjectDataValues: setAbility } = useProjectAbilities();
-  const { t } = useTranslation('database_abilities');
+  const { t } = useTranslation();
   const setText = useSetProjectText();
   const [name, setName] = useState(''); // We use a state because synchronizing dbSymbol is easier with a state
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
@@ -87,17 +87,17 @@ export const AbilityNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
   const checkDisabled = () => !name || !!dbSymbolErrorType;
 
   return (
-    <Editor type="creation" title={t('new')}>
+    <Editor type="creation" title={t('new_ability')}>
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="name" required>
             {t('name')}
           </Label>
-          <Input type="text" name="name" value={name} onChange={onChangeName} placeholder={t('example_name')} />
+          <Input type="text" name="name" value={name} onChange={onChangeName} placeholder={t('example_ability')} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="descr">{t('description')}</Label>
-          <MultiLineInput id="descr" ref={descriptionRef} placeholder={t('example_description')} />
+          <MultiLineInput id="descr" ref={descriptionRef} placeholder={t('example_description_ability')} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="dbSymbol" required>
@@ -109,7 +109,7 @@ export const AbilityNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
             ref={dbSymbolRef}
             onChange={(e) => onChangeDbSymbol(e.currentTarget.value)}
             error={!!dbSymbolErrorType}
-            placeholder={t('example_db_symbol')}
+            placeholder={t('example_db_symbol_ability')}
           />
           {dbSymbolErrorType == 'value' && <TextInputError>{t('incorrect_format')}</TextInputError>}
           {dbSymbolErrorType == 'duplicate' && <TextInputError>{t('db_symbol_already_used')}</TextInputError>}

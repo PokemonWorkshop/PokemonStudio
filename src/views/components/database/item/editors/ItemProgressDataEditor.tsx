@@ -14,7 +14,7 @@ import { cloneEntity } from '@utils/cloneEntity';
 const statBoost = ['ATK_STAGE', 'ATS_STAGE', 'DFE_STAGE', 'DFS_STAGE', 'SPD_STAGE', 'EVA_STAGE', 'ACC_STAGE', 'HP_STAGE'] as const;
 
 export const ItemProgressDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_items');
+  const { t } = useTranslation();
   const { currentItem } = useItemPage();
   const item = cloneEntity(currentItem) as StudioEVBoostItem | StudioLevelIncreaseItem | StudioExpIncreaseItem;
   const setItems = useUpdateItem(item);

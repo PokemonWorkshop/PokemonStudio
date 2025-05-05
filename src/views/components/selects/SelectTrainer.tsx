@@ -13,7 +13,7 @@ type SelectTrainerProps = {
 };
 
 export const SelectTrainer = ({ dbSymbol, onChange, noLabel, undefValueOption, filter }: SelectTrainerProps) => {
-  const { t } = useTranslation('database_trainers');
+  const { t } = useTranslation();
   const trainerOptions = useSelectOptions('trainers');
   const options = useMemo(() => {
     if (undefValueOption) return [{ value: '__undef__', label: undefValueOption }, ...trainerOptions];

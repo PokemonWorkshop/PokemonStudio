@@ -28,18 +28,18 @@ const getAllPokemonFiltered = (state: State, move: StudioMove, filter: FilterTyp
 
 export const MovePokemonTable = ({ move, filter }: MovePokemonTableProps) => {
   const [state] = useGlobalState();
-  const { t } = useTranslation(['database_types', 'database_moves', 'database_pokemon']);
+  const { t } = useTranslation();
   const allPokemon = getAllPokemonFiltered(state, move, filter);
 
   return allPokemon.length === 0 ? (
-    <NoPokemonFound>{t('database_pokemon:no_option')}</NoPokemonFound>
+    <NoPokemonFound>{t('no_creature_found')}</NoPokemonFound>
   ) : (
     <DataPokemonTable>
       <DataPokemonGrid gap="16px" className="header">
         <span></span>
-        <span>{t('database_types:pokemon_pokemon')}</span>
-        <span>{t('database_types:pokemon_type')}</span>
-        {filter === 'LevelLearnableMove' && <span>{t('database_moves:level')}</span>}
+        <span>{t('creature')}</span>
+        <span>{t('types')}</span>
+        {filter === 'LevelLearnableMove' && <span>{t('level')}</span>}
       </DataPokemonGrid>
       {allPokemon.map((pokemon) => (
         <RenderPokemon key={`type-pokemon-${pokemon.dbSymbol}`} pokemon={pokemon} move={move} state={state} filter={filter} />

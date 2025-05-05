@@ -12,7 +12,7 @@ type DashbordFontsEditorProps = {
 
 export const DashboardFontsEditor = ({ texts, index, isAlternative }: DashbordFontsEditorProps) => {
   const ttfFileOrAltSize = isAlternative ? texts.fonts.altSizes[index] : texts.fonts.ttfFiles[index];
-  const { t } = useTranslation('dashboard_texts');
+  const { t } = useTranslation();
   const refreshUI = useRefreshUI();
 
   return (

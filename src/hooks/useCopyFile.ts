@@ -17,7 +17,7 @@ export const useCopyFile = () => {
   const [callbacks, setCallbacks] = useState<{ onFailure: CopyFileFailureCallback; onSuccess: CopyFileSuccessCallback } | undefined>(undefined);
   const [state, setState] = useState<CopyFileStateObject>({ state: 'done' });
   const [globalState] = useGlobalState();
-  const { t } = useTranslation('show_message_box');
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (state.state !== 'copyFile') return;

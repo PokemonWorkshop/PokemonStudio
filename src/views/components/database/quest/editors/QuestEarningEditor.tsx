@@ -16,14 +16,14 @@ import { Select } from '@ds/Select';
 import { QuestEarningPokemon } from './earnings/QuestEarningPokemon';
 import React, { forwardRef, useMemo } from 'react';
 
-const earningCategoryEntries = (t: TFunction<'database_quests'>) => QUEST_EARNINGS.map((earning) => ({ value: earning, label: t(earning) }));
+const earningCategoryEntries = (t: TFunction) => QUEST_EARNINGS.map((earning) => ({ value: earning, label: t(earning) }));
 
 type QuestEarningEditorProps = {
   earningIndex: number;
 };
 
 export const QuestEarningEditor = forwardRef<EditorHandlingClose, QuestEarningEditorProps>(({ earningIndex }, ref) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const { quest } = useQuestPage();
   const updateQuest = useUpdateQuest(quest);
   const { earning, refs, earningCreature, updateEarning, checkIsValid } = useEarningQuest({

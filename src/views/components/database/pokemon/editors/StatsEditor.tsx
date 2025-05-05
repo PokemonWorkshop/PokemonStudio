@@ -45,7 +45,7 @@ const STATS_EDITOR_SCHEMA = CREATURE_FORM_VALIDATOR.pick({
 });
 
 export const StatEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const { creature, form } = useCreaturePage();
   const updateForm = useUpdateForm(creature, form);
   const totalRef = useRef<HTMLSpanElement>(null);

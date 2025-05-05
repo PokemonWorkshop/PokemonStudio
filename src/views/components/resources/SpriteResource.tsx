@@ -18,7 +18,7 @@ type SpriteResourceProps = {
 };
 
 export const SpriteResource = ({ type, title, resourcePath, extensions, onResourceChoosen, onResourceClean }: SpriteResourceProps) => {
-  const { t } = useTranslation('drop');
+  const { t } = useTranslation();
   const { onDrop, onDragOver, onClick, onClickFolder, isDialogOpen, flipFlap } = useResource({
     name: title,
     path: resourcePath,

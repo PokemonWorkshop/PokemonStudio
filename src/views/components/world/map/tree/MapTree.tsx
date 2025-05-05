@@ -8,7 +8,7 @@ import { MapTreeContainer } from './style';
 
 export const MapTree = () => {
   const [research, setResearch] = useState('');
-  const { t } = useTranslation('database_maps');
+  const { t } = useTranslation();
   const treeScrollbarRef = useRef<HTMLDivElement>(null);
 
   return (

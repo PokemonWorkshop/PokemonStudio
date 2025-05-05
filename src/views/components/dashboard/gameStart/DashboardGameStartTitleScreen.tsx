@@ -23,7 +23,7 @@ const DurationContainer = styled(InputWithLeftLabelContainer)`
 `;
 
 export const DashboardGameStartTitleScreen = () => {
-  const { t } = useTranslation('dashboard_game_start');
+  const { t } = useTranslation();
   const { projectConfigValues: gameStart, setProjectConfigValues: setGameStart } = useConfigSceneTitle();
   const currentEditedGameStart = useMemo(() => cloneEntity(gameStart), [gameStart]);
   const [titleScreenData, setTitleScreenData] = useState({ duration: gameStart.bgmDuration, controlWaitTime: gameStart.controlWaitTime });

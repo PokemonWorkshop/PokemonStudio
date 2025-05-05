@@ -11,16 +11,16 @@ import { InputFormContainer } from '@components/inputs/InputContainer';
 import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 import { BattleEngineMethodEditor } from './MoveParametersEditor/BattleEngineMethodEditor';
 
-const targetEntries = (t: TFunction<'database_moves'>) => MOVE_TARGETS.map((target) => ({ value: target, label: t(`${target}`) }));
+const targetEntries = (t: TFunction) => MOVE_TARGETS.map((target) => ({ value: target, label: t(`${target}`) }));
 
-const battleEngineMethodEntries = (t: TFunction<'database_moves'>) => [
+const battleEngineMethodEntries = (t: TFunction) => [
   ...MOVE_BATTLE_ENGINE_METHODS.map((beMethod) => ({ value: beMethod, label: t(`${beMethod}`) })),
 ];
 
 const PARAMETERS_EDITOR_SCHEMA = MOVE_VALIDATOR.pick({ battleEngineAimedTarget: true, battleEngineMethod: true });
 
 export const MoveParametersEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_moves');
+  const { t } = useTranslation();
   const { move } = useMovePage();
   const updateMove = useUpdateMove(move);
   const { canClose, getFormData, getRawFormData, defaults, formRef } = useZodForm(PARAMETERS_EDITOR_SCHEMA, move);

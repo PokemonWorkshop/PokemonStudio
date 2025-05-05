@@ -32,7 +32,7 @@ const breedingGroupEntries = [
   'unknown',
 ] as const;
 
-const getBreedingGroupOptions = (t: TFunction<'database_pokemon'>) =>
+const getBreedingGroupOptions = (t: TFunction) =>
   breedingGroupEntries
     .map((breedingGroup, index) => ({ value: (index + 1).toString(), label: t(breedingGroup) }))
     .sort((a, b) => a.label.localeCompare(b.label));
@@ -45,7 +45,7 @@ const BREEDING_EDITOR_SCHEMA = CREATURE_FORM_VALIDATOR.pick({
 });
 
 export const BreedingEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const { creature, form } = useCreaturePage();
   const updateForm = useUpdateForm(creature, form);
   const { canClose, getFormData, onInputTouched, defaults, formRef } = useZodForm(BREEDING_EDITOR_SCHEMA, form);

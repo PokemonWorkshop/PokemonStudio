@@ -5,7 +5,7 @@ import { NavigationDatabaseItem } from '@components/database/navigation/Navigati
 import { useTranslation } from 'react-i18next';
 
 export const SettingsNavigation = () => {
-  const { t } = useTranslation('settings');
+  const { t } = useTranslation();
   return (
     <NavigationDatabaseStyle>
       <NavigationDatabaseGroup title={t('user_settings')}>

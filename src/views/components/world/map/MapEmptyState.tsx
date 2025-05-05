@@ -33,12 +33,12 @@ type MapEmptyStateProps = {
 };
 
 export const MapEmptyState = ({ dialogsRef, dialogsMapImportRef }: MapEmptyStateProps) => {
-  const { t } = useTranslation('database_maps');
+  const { t } = useTranslation();
 
   return (
     <PageEmptyState title={t('title_empty_state')} icon={<MapIcon />} description={t('description_empty_state')}>
       <MapEmptyStateContainer>
-        <PrimaryButton onClick={() => dialogsRef.current?.openDialog('new')}>{t('new')}</PrimaryButton>
+        <PrimaryButton onClick={() => dialogsRef.current?.openDialog('new')}>{t('new_map')}</PrimaryButton>
         <SecondaryButton onClick={() => dialogsMapImportRef.current?.openDialog('import', true)}>{t('import')}</SecondaryButton>
         <span className="helper">{t('helper_empty_state')}</span>
       </MapEmptyStateContainer>

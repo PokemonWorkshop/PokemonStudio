@@ -25,7 +25,7 @@ const OverlayContainer = styled(EditorOverlayContainer)`
 `;
 
 export const UnsavedWarningModal = () => {
-  const { t } = useTranslation(['unsaved_modal']);
+  const { t } = useTranslation();
   const { isDataToSave, save } = useProjectSave();
   const loaderRef = useLoaderRef();
   const [show, setShow] = useState<boolean>(false);
@@ -97,15 +97,15 @@ export const UnsavedWarningModal = () => {
           <MessageBoxIconContainer>
             <BaseIcon icon="save" size="s" color={theme.colors.primaryBase} />
           </MessageBoxIconContainer>
-          <h3>{t('unsaved_modal:title')}</h3>
+          <h3>{t('unsaved_title_modal')}</h3>
         </MessageBoxTitleIconContainer>
         <MessageBoxTextContainer>
-          <p>{t('unsaved_modal:description')}</p>
+          <p>{t('unsaved_description_modal')}</p>
         </MessageBoxTextContainer>
         <MessageBoxActionContainer>
-          <MessageBoxCancelLink onClick={() => setShow(false)}>{t('unsaved_modal:cancel')}</MessageBoxCancelLink>
-          <MessageBoxCancelLink onClick={onQuit}>{t('unsaved_modal:quit')}</MessageBoxCancelLink>
-          <PrimaryButton onClick={onSave}>{t('unsaved_modal:save')}</PrimaryButton>
+          <MessageBoxCancelLink onClick={() => setShow(false)}>{t('cancel')}</MessageBoxCancelLink>
+          <MessageBoxCancelLink onClick={onQuit}>{t('quit')}</MessageBoxCancelLink>
+          <PrimaryButton onClick={onSave}>{t('save')}</PrimaryButton>
         </MessageBoxActionContainer>
       </MessageBoxContainer>
     </OverlayContainer>

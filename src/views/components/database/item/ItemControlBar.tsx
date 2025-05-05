@@ -15,7 +15,7 @@ type ItemControlBarProps = {
 
 export const ItemControlBar = ({ dialogsRef }: ItemControlBarProps) => {
   const { itemDbSymbol } = useItemPage();
-  const { t } = useTranslation('database_items');
+  const { t } = useTranslation();
   const { setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol } = useProjectItems();
 
   useSetCurrentDatabasePath();
@@ -35,7 +35,7 @@ export const ItemControlBar = ({ dialogsRef }: ItemControlBarProps) => {
 
   return (
     <ControlBar>
-      <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new')}</SecondaryButtonWithPlusIcon>
+      <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new_item')}</SecondaryButtonWithPlusIcon>
       <SelectItem dbSymbol={itemDbSymbol} onChange={(value) => setSelectedDataIdentifier({ item: value })} />
     </ControlBar>
   );

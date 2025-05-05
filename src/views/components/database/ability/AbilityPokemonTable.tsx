@@ -114,7 +114,7 @@ const RenderPokemon = ({ pokemon, ability, state }: RenderAbilityProps) => {
   const { projectDataValues: abilities } = useProjectAbilities();
   const getAbilityName = useGetEntityNameTextUsingTextId();
   const getCreatureName = useGetEntityNameText();
-  const { t } = useTranslation('database_abilities');
+  const { t } = useTranslation();
   const types = state.projectData.types;
 
   const isClickable: boolean = useKeyPress(CONTROL);
@@ -156,18 +156,18 @@ const RenderPokemon = ({ pokemon, ability, state }: RenderAbilityProps) => {
 
 export const AbilityPokemonTable = ({ ability }: AbilityPokemonTableProps) => {
   const [state] = useGlobalState();
-  const { t } = useTranslation('database_abilities');
+  const { t } = useTranslation();
   const allPokemon = getAllPokemonWithCurrentAbility(state, ability);
 
   return (
     <DataPokemonTable>
       <DataPokemonGrid gap="16px" className="header">
         <span></span>
-        <span>{t('pokemon_pokemon')}</span>
-        <span>{t('pokemon_type')}</span>
-        <span>{t('pokemon_ability1')}</span>
-        <span>{t('pokemon_ability2')}</span>
-        <span>{t('pokemon_ability3')}</span>
+        <span>{t('creature')}</span>
+        <span>{t('types')}</span>
+        <span>{t('ability_1')}</span>
+        <span>{t('ability_2')}</span>
+        <span>{t('hidden_ability')}</span>
       </DataPokemonGrid>
       {allPokemon.map((pokemon) => (
         <RenderPokemon key={`ability-pokemon-${pokemon.dbSymbol}`} pokemon={pokemon} ability={ability} state={state} />

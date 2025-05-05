@@ -14,7 +14,7 @@ export const TypeMovesPage = () => {
   const navigate = useNavigate();
   const { selectedDataIdentifier } = useProjectTypes();
   const { currentTypeName, currentType: type, types } = useTypePage();
-  const { t } = useTranslation('database_types');
+  const { t } = useTranslation();
   const [currentType, setCurrentType] = useState(type);
 
   const onClickedBack = () => navigate(`/database/types/${currentType.dbSymbol}`);

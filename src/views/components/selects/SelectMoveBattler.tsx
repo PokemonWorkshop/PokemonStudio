@@ -11,25 +11,21 @@ type SelectMoveBattlerProps = {
 };
 
 export const SelectMoveBattler = ({ dbSymbol, onChange, noLabel }: SelectMoveBattlerProps) => {
-  const { t } = useTranslation(['database_moves', 'pokemon_battler_list']);
+  const { t } = useTranslation();
   const moveOptions = useSelectOptions('moves');
   const options = useMemo(
-    () => [
-      { value: '__undef__', label: t('pokemon_battler_list:by_default') },
-      { value: '__remove__', label: t('pokemon_battler_list:none') },
-      ...moveOptions,
-    ],
+    () => [{ value: '__undef__', label: t('by_default') }, { value: '__remove__', label: t('none') }, ...moveOptions],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [moveOptions]
   );
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const optionals = useMemo(() => ({ deletedOption: t('database_moves:move_deleted') }), []);
+  const optionals = useMemo(() => ({ deletedOption: t('move_deleted') }), []);
 
   if (noLabel) return <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />;
 
   return (
     <SelectContainerWithLabel>
-      <span>{t('database_moves:move')}</span>
+      <span>{t('move')}</span>
       <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />
     </SelectContainerWithLabel>
   );

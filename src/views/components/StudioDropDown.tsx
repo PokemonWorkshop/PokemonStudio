@@ -199,7 +199,7 @@ export const StudioDropDown = ({ value, options, onChange, optionals }: StudioDr
   const optionsList = useMemo(() => research(optionsFilter, entry), [optionsFilter, entry]);
   const currentOption = useMemo(() => getCurrentOption(optionsList, value), [optionsList, value]);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { t } = useTranslation('select');
+  const { t } = useTranslation();
   const notOpenClass = currentOption ? undefined : 'error';
   const label = currentOption?.option.label || optionals?.deletedOption || '???';
 

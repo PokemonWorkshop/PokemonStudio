@@ -10,7 +10,7 @@ import { StudioType } from '@modelEntities/type';
 import { useTypePage } from '@hooks/usePage';
 
 type RenderResistanceProps = {
-  t: TFunction<'database_types'>;
+  t: TFunction;
   resistance: 'weak_resistance' | 'high_resistance' | 'immunity';
   types: StudioType[];
 };
@@ -48,7 +48,7 @@ const getResistances = (allTypes: StudioType[], type: StudioType) => {
 export const TypeResistanceData = () => {
   const { types: allTypes, currentType: type } = useTypePage();
   const types: StudioType[] = Object.values(allTypes);
-  const { t } = useTranslation('database_types');
+  const { t } = useTranslation();
   const efficiencyData = getResistances(types, type);
 
   return (

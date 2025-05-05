@@ -18,7 +18,7 @@ type MapDeletionProps = {
  * Component responsive of asking the user if they really want to delete the map before doing so.
  */
 export const MapDeletion = forwardRef<EditorHandlingClose, MapDeletionProps>(({ closeDialog, dbSymbol }, ref) => {
-  const { t } = useTranslation('database_maps');
+  const { t } = useTranslation();
   const { projectDataValues: maps, selectedDataIdentifier: currentDbSymbol, removeProjectDataValue: deleteMap, state } = useProjectMaps();
   const { mapInfo, setMapInfo } = useMapInfo();
   const map = maps[dbSymbol || currentDbSymbol];
@@ -49,6 +49,13 @@ export const MapDeletion = forwardRef<EditorHandlingClose, MapDeletionProps>(({ 
 
   useEditorHandlingClose(ref);
 
-  return <Deletion title={t('deletion_of')} message={t('deletion_message', { map: mapName })} onClickDelete={onClickDelete} onClose={closeDialog} />;
+  return (
+    <Deletion
+      title={t('deletion_of_map', { map: mapName })}
+      message={t('deletion_message_map', { map: mapName })}
+      onClickDelete={onClickDelete}
+      onClose={closeDialog}
+    />
+  );
 });
 MapDeletion.displayName = 'MapDeletion';
