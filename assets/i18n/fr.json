@@ -1518,5 +1518,6 @@
   "hidden_default": "Masqué par défaut",
   "none_option": "Aucun",
   "import_data_from": "Importer les données de",
-  "replace_creatures": "Remplacer les Pokémon"
+  "replace_creatures": "Remplacer les Pokémon",
+  "battle_camera_3d": "Utiliser la caméra 3D en combat"
 }
