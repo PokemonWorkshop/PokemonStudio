@@ -4,7 +4,7 @@ import { DashboardTemplate } from '@components/dashboard';
 import { DashboardGameOptions } from '@components/dashboard/gameOptions';
 
 export const DashboardGameOptionsPage = () => {
-  const { t } = useTranslation('dashboard_game_options');
+  const { t } = useTranslation();
   return (
     <DashboardTemplate title={t('game_options')}>
       <DashboardGameOptions />

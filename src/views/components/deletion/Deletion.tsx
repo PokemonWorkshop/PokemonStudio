@@ -29,7 +29,7 @@ type DeletionProps = {
 };
 
 export const Deletion = ({ title, message, icon, onClickDelete, onClose }: DeletionProps) => {
-  const { t } = useTranslation('deletion');
+  const { t } = useTranslation();
 
   useEffect(() => {
     const deleteKeyListener = (event: KeyboardEvent) => {

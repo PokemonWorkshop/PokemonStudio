@@ -11,7 +11,7 @@ type Props = {
 };
 
 export const AbilityParametersData = ({ ability, dialogsRef }: Props) => {
-  const { t } = useTranslation('database_abilities');
+  const { t } = useTranslation();
   const isDisabled = true; // TODO @Aerun: Figure out how this thing is supposed to be enabled/editable.
 
   return (

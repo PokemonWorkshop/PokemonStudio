@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import React, { Ref, useMemo } from 'react';
 
-const dialogConditionEntries = (dialogs: TrainerDialogAdditionalDialogs[], dialogIndex: number, t: TFunction<'database_trainers'>) => {
+const dialogConditionEntries = (dialogs: TrainerDialogAdditionalDialogs[], dialogIndex: number, t: TFunction) => {
   const currentConditions = dialogs.map(({ condition }) => condition).filter((condition) => condition !== dialogs[dialogIndex].condition);
   const conditions = TRAINER_ADDITIONAL_DIALOGS_CONDITION.filter((condition) => !currentConditions.includes(condition)).map((condition) => ({
     value: condition.toString(),
@@ -27,7 +27,7 @@ type AdditionalDialogEditorProps = {
 };
 
 export const AdditionalDialogEditor = ({ dialogs, dialogIndex, sentenceRef, changeCondition, handleTranslateClick }: AdditionalDialogEditorProps) => {
-  const { t } = useTranslation('database_trainers');
+  const { t } = useTranslation();
   const getText = useGetProjectText();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const options = useMemo(() => dialogConditionEntries(dialogs, dialogIndex, t), [dialogs, dialogIndex]);

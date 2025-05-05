@@ -17,23 +17,23 @@ type SelectItemProps = {
 };
 
 export const SelectItem = ({ dbSymbol, onChange, noLabel, noneValue, undefValueOption, klassFilter }: SelectItemProps) => {
-  const { t } = useTranslation(['database_items', 'select']);
+  const { t } = useTranslation();
   const typeOptions = useSelectOptions(klassFilter || 'items');
 
   const options = useMemo(() => {
     if (undefValueOption) return [{ value: '__undef__', label: undefValueOption }, ...typeOptions];
-    if (noneValue) return [{ value: '__undef__', label: t('select:none') }, ...typeOptions];
+    if (noneValue) return [{ value: '__undef__', label: t('none') }, ...typeOptions];
     return typeOptions;
   }, [undefValueOption, typeOptions, noneValue, t]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const optionals = useMemo(() => ({ deletedOption: t('database_items:no_option') }), []);
+  const optionals = useMemo(() => ({ deletedOption: t('no_item_found') }), []);
 
   if (noLabel) return <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />;
 
   return (
     <SelectContainerWithLabel>
-      <span>{t('database_items:item')}</span>
+      <span>{t('item')}</span>
       <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />
     </SelectContainerWithLabel>
   );
@@ -47,7 +47,7 @@ type SelectItem2Props = {
 };
 
 export const SelectItem2 = (props: SelectItem2Props) => {
-  const { t } = useTranslation('database_items');
+  const { t } = useTranslation();
   const itemOptions = useSelectOptions('items') as SelectOption<DbSymbol>[];
 
   return <Select options={itemOptions} notFoundLabel={t('item_deleted')} chooseValue={itemOptions[0]?.value || '__undef__'} {...props} />;

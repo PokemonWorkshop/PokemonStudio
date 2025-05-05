@@ -58,7 +58,7 @@ type ZoneAddGroupEditorProps = {
 };
 
 export const ZoneAddGroupEditor = forwardRef<EditorHandlingClose, ZoneAddGroupEditorProps>(({ closeDialog }, ref) => {
-  const { t } = useTranslation(['database_zones', 'database_groups', 'database_trainers']);
+  const { t } = useTranslation();
   const { zone, groups } = useZonePage();
   const updateZone = useUpdateZone(zone);
 
@@ -98,10 +98,10 @@ export const ZoneAddGroupEditor = forwardRef<EditorHandlingClose, ZoneAddGroupEd
   useEditorHandlingClose(ref);
 
   return (
-    <Editor type="creation" title={t('database_groups:groups')}>
+    <Editor type="creation" title={t('groups')}>
       <InputContainer>
         <InputWithTopLabelContainer>
-          <Label htmlFor="groups">{t('database_groups:group')}</Label>
+          <Label htmlFor="groups">{t('group')}</Label>
           <GroupContainer>
             <SelectGroup
               dbSymbol={group.dbSymbol}
@@ -109,14 +109,14 @@ export const ZoneAddGroupEditor = forwardRef<EditorHandlingClose, ZoneAddGroupEd
               filter={(dbSymbol) => !zone.wildGroups.includes(dbSymbol as DbSymbol)}
               noLabel
             />
-            <TooltipWrapper data-tooltip={t('database_trainers:available_future_release')}>
-              <SecondaryButton disabled>{t('database_zones:create_new_group')}</SecondaryButton>
+            <TooltipWrapper data-tooltip={t('available_future_release')}>
+              <SecondaryButton disabled>{t('create_new_group')}</SecondaryButton>
             </TooltipWrapper>
           </GroupContainer>
         </InputWithTopLabelContainer>
         {zone.maps.length !== 0 && (
           <InputWithTopLabelContainer>
-            <Label htmlFor="present-on-maps">{t('database_zones:present_on_maps')}</Label>
+            <Label htmlFor="present-on-maps">{t('present_on_maps')}</Label>
             <MapsListContainer>
               {zone.maps
                 .sort((a, b) => a - b)
@@ -129,8 +129,8 @@ export const ZoneAddGroupEditor = forwardRef<EditorHandlingClose, ZoneAddGroupEd
           </InputWithTopLabelContainer>
         )}
         <ButtonContainer>
-          <PrimaryButton onClick={onAddGroup}>{t('database_zones:add_this_group')}</PrimaryButton>
-          <DarkButton onClick={closeDialog}>{t('database_zones:cancel')}</DarkButton>
+          <PrimaryButton onClick={onAddGroup}>{t('add_this_group')}</PrimaryButton>
+          <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputContainer>
     </Editor>

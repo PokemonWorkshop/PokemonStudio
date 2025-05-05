@@ -13,7 +13,7 @@ type SelectQuestProps = {
 };
 
 export const SelectQuest = ({ dbSymbol, onChange, noLabel, undefValueOption, filter }: SelectQuestProps) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const questOptions = useSelectOptions('quests');
   const options = useMemo(() => {
     if (undefValueOption) return [{ value: '__undef__', label: undefValueOption }, ...questOptions];

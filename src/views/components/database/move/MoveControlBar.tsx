@@ -13,7 +13,7 @@ type MoveControlBarProps = {
 };
 
 export const MoveControlBar = ({ dialogsRef }: MoveControlBarProps) => {
-  const { t } = useTranslation('database_moves');
+  const { t } = useTranslation();
   const { selectedDataIdentifier: moveDbSymbol, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol } = useProjectMoves();
   useSetCurrentDatabasePath();
 
@@ -32,7 +32,7 @@ export const MoveControlBar = ({ dialogsRef }: MoveControlBarProps) => {
 
   return (
     <ControlBar>
-      {onClickNew ? <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new')}</SecondaryButtonWithPlusIcon> : <div />}
+      {onClickNew ? <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new_move')}</SecondaryButtonWithPlusIcon> : <div />}
       <SelectMove dbSymbol={moveDbSymbol} onChange={(dbSymbol) => setSelectedDataIdentifier({ move: dbSymbol })} />
     </ControlBar>
   );

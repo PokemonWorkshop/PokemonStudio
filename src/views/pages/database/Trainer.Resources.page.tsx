@@ -11,7 +11,7 @@ import { BattlersResources, CharacterResource } from '@components/database/train
 import { useTrainerPage } from '@hooks/usePage';
 
 export const TrainerResourcesPage = () => {
-  const { t } = useTranslation('database_trainers');
+  const { t } = useTranslation();
   const { trainer } = useTrainerPage();
 
   return (

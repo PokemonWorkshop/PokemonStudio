@@ -5,14 +5,14 @@ import { useTranslation } from 'react-i18next';
 import { EvolutionConditionEditorInput } from './InputProps';
 
 export const DayNightInput = ({ state, inputRefs }: EvolutionConditionEditorInput) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const [value, setValue] = useState<string | undefined>(state.defaults.dayNight?.toString());
   const options = useMemo(
     () => [
-      { value: '3', label: t('evolutionValue_dayNight_day') } as const,
-      { value: '1', label: t('evolutionValue_dayNight_sunset') } as const,
-      { value: '0', label: t('evolutionValue_dayNight_night') } as const,
-      { value: '2', label: t('evolutionValue_dayNight_morning') } as const,
+      { value: '3', label: t('evolution_value_dayNight_day') } as const,
+      { value: '1', label: t('evolution_value_dayNight_sunset') } as const,
+      { value: '0', label: t('evolution_value_dayNight_night') } as const,
+      { value: '2', label: t('evolution_value_dayNight_morning') } as const,
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
@@ -25,7 +25,7 @@ export const DayNightInput = ({ state, inputRefs }: EvolutionConditionEditorInpu
 
   return (
     <InputWithTopLabelContainer>
-      <Label>{t('evolutionValue_dayNight')}</Label>
+      <Label>{t('evolution_value_dayNight')}</Label>
       <SelectCustomSimple
         id="dayNight-DropDown"
         options={options}

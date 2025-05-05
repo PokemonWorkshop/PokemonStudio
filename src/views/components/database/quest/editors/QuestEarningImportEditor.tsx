@@ -30,7 +30,7 @@ type QuestEarningImportEditorProps = {
 };
 
 export const QuestEarningImportEditor = forwardRef<EditorHandlingClose, QuestEarningImportEditorProps>(({ closeDialog }, ref) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const { quests, quest } = useQuestPage();
   const updateQuest = useUpdateQuest(quest);
   const firstDbSymbol = useMemo(

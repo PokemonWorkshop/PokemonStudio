@@ -14,7 +14,7 @@ type QuestEarningsProps = {
 
 export const QuestEarnings = ({ quest, dialogsRef, setEarningIndex }: QuestEarningsProps) => {
   const { projectDataValues: quests } = useProjectQuests();
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
 
   const editEarning = (index: number) => {
     dialogsRef.current?.openDialog('earning');

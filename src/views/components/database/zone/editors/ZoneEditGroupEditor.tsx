@@ -46,7 +46,7 @@ export const ZoneEditGroupEditor = forwardRef<EditorHandlingClose, ZoneEditGroup
   const [group, setGroup] = useState<StudioGroup>(cloneEntity(groups[zone.wildGroups[currentGroupIndex]]));
   const updateGroup = useUpdateGroup(group);
   const [wildGroups, setWildGroups] = useState(cloneEntity(zone.wildGroups));
-  const { t } = useTranslation(['database_zones', 'database_groups']);
+  const { t } = useTranslation();
 
   const onChangeGroup = (dbSymbol: string) => {
     setGroup(cloneEntity(groups[dbSymbol]));
@@ -77,10 +77,10 @@ export const ZoneEditGroupEditor = forwardRef<EditorHandlingClose, ZoneEditGroup
   useEditorHandlingClose(ref, onClose);
 
   return (
-    <Editor type="creation" title={t('database_groups:groups')}>
+    <Editor type="creation" title={t('groups')}>
       <InputContainer>
         <InputWithTopLabelContainer>
-          <Label htmlFor="groups">{t('database_groups:group')}</Label>
+          <Label htmlFor="groups">{t('group')}</Label>
           <SelectGroup
             dbSymbol={group.dbSymbol}
             onChange={(dbSymbol) => onChangeGroup(dbSymbol)}
@@ -90,7 +90,7 @@ export const ZoneEditGroupEditor = forwardRef<EditorHandlingClose, ZoneEditGroup
         </InputWithTopLabelContainer>
         {zone.maps.length !== 0 && (
           <InputWithTopLabelContainer>
-            <Label htmlFor="present-on-maps">{t('database_zones:present_on_maps')}</Label>
+            <Label htmlFor="present-on-maps">{t('present_on_maps')}</Label>
             <MapsListContainer>
               {zone.maps
                 .sort((a, b) => a - b)

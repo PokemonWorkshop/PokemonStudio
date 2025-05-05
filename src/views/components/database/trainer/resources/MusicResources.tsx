@@ -11,7 +11,7 @@ type MusicResourcesProps = {
 };
 
 export const MusicResources = ({ trainer }: MusicResourcesProps) => {
-  const { t } = useTranslation('database_trainers');
+  const { t } = useTranslation();
   const { onResourceMusicsChoosen, onResourceMusicsClean } = useUpdateResources(trainer);
 
   return (

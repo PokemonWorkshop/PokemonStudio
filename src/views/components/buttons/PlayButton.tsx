@@ -89,7 +89,7 @@ const PlayButtonContainer = styled.div`
 export const PlayButton = () => {
   const [state] = useGlobalState();
   const [isOpen, setIsOpen] = useState(false);
-  const { t } = useTranslation('main_menu');
+  const { t } = useTranslation();
 
   const startPSDKAndCloseMenu = (startPSDK: (projectPath: string) => void) => {
     startPSDK(state.projectPath || '');

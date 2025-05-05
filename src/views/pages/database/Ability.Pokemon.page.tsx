@@ -10,7 +10,7 @@ import { useAbilityPage } from '@hooks/usePage';
 
 export const AbilityPokemonPage = () => {
   const { ability, abilityName } = useAbilityPage();
-  const { t } = useTranslation('database_abilities');
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const onClickedBack = () => navigate('/database/abilities');
@@ -21,8 +21,8 @@ export const AbilityPokemonPage = () => {
       <PageContainerStyle>
         <PageDataConstrainerStyle>
           <DataBlockWrapper>
-            <SubPageTitle title={t('pokemon_with_ability', { ability: abilityName })} onClickedBack={onClickedBack} />
-            <DataBlockWithTitleNoActive title={t('pokemon_with_ability', { ability: abilityName })} size="full">
+            <SubPageTitle title={t('creature_with_ability', { ability: abilityName })} onClickedBack={onClickedBack} />
+            <DataBlockWithTitleNoActive title={t('creature_with_ability', { ability: abilityName })} size="full">
               <AbilityPokemonTable ability={ability} />
             </DataBlockWithTitleNoActive>
           </DataBlockWrapper>

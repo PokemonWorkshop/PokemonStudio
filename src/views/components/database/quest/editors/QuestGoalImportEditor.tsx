@@ -28,7 +28,7 @@ type QuestGoalImportEditorProps = {
 };
 
 export const QuestGoalImportEditor = forwardRef<EditorHandlingClose, QuestGoalImportEditorProps>(({ closeDialog }, ref) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const { quests, quest } = useQuestPage();
   const updateQuest = useUpdateQuest(quest);
   const firstDbSymbol = useMemo(

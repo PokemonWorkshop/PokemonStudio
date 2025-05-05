@@ -24,7 +24,7 @@ type TextControlBarProps = {
  * Control bar responsive of handling navigation through texts & opening the texts creation dialog.
  */
 export const TextControlBar = ({ dialogsRef }: TextControlBarProps) => {
-  const { t } = useTranslation('text_management');
+  const { t } = useTranslation();
   const { selectedDataIdentifier: fileId, setSelectedDataIdentifier, getPreviousFileId, getNextFileId, state } = useTextInfos();
   const navigate = useNavigate();
 
@@ -58,8 +58,8 @@ export const TextControlBar = ({ dialogsRef }: TextControlBarProps) => {
     <ControlBar>
       <ButtonContainer>
         {onClickNew ? (
-          <SecondaryButtonWithPlusIconResponsive onClick={onClickNew} data-tooltip-responsive={t('new')} breakpoint={NEW_BREAKPOINT}>
-            {t('new')}
+          <SecondaryButtonWithPlusIconResponsive onClick={onClickNew} data-tooltip-responsive={t('new_texts_file')} breakpoint={NEW_BREAKPOINT}>
+            {t('new_texts_file')}
           </SecondaryButtonWithPlusIconResponsive>
         ) : (
           <></>

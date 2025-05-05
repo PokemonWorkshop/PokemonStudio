@@ -22,7 +22,7 @@ import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import { SelectMove } from '@components/selects';
 import { importMoveData } from '@utils/importEntityDataUtils';
 
-const moveCategoryEntries = (t: TFunction<'database_types'>) =>
+const moveCategoryEntries = (t: TFunction) =>
   MOVE_CATEGORIES.map((category) => ({ value: category, label: t(category) })).sort((a, b) => a.label.localeCompare(b.label));
 
 const ButtonContainer = styled.div`
@@ -52,14 +52,13 @@ const MOVE_NEW_EDITOR_SCHEMA = MOVE_VALIDATOR.pick({ type: true, category: true 
 
 export const MoveNewEditor = forwardRef<EditorHandlingClose, MoveNewEditorProps>(({ closeDialog }, ref) => {
   const { projectDataValues: moves, setProjectDataValues: setMove } = useProjectMoves();
-  const { t } = useTranslation('database_moves');
-  const { t: tType } = useTranslation('database_types');
+  const { t } = useTranslation();
   const setText = useSetProjectText();
   const [name, setName] = useState(''); // We use a state because synchronizing dbSymbol is easier with a state
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const dbSymbolRef = useRef<HTMLInputElement>(null);
   const [dbSymbolErrorType, setDbSymbolErrorType] = useState<'value' | 'duplicate' | undefined>(undefined);
-  const categoryOptions = useMemo(() => moveCategoryEntries(tType), [tType]);
+  const categoryOptions = useMemo(() => moveCategoryEntries(t), [t]);
   const typeOptions = useSelectOptions('types');
   const move = { type: (typeOptions[0]?.value || '__undef__') as DbSymbol, category: categoryOptions[0].value };
   const { getFormData, defaults, formRef } = useZodForm(MOVE_NEW_EDITOR_SCHEMA, move);
@@ -121,15 +120,15 @@ export const MoveNewEditor = forwardRef<EditorHandlingClose, MoveNewEditorProps>
   const isDisabled = !name || !!dbSymbolErrorType;
 
   return (
-    <Editor type="creation" title={t('new')}>
+    <Editor type="creation" title={t('new_move')}>
       <InputFormContainer ref={formRef}>
         <InputWithTopLabelContainer>
           <Label required>{t('name')}</Label>
-          <Input value={name} onChange={onChangeName} placeholder={t('example_name')} />
+          <Input value={name} onChange={onChangeName} placeholder={t('example_move')} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label>{t('description')}</Label>
-          <MultiLineInput ref={descriptionRef} placeholder={t('example_description')} />
+          <MultiLineInput ref={descriptionRef} placeholder={t('example_description_move')} />
         </InputWithTopLabelContainer>
         <Select name="type" label={t('type')} options={typeOptions} />
         <Select name="category" label={t('category')} options={categoryOptions} />
@@ -143,7 +142,7 @@ export const MoveNewEditor = forwardRef<EditorHandlingClose, MoveNewEditorProps>
             ref={dbSymbolRef}
             onChange={(e) => onChangeDbSymbol(e.currentTarget.value)}
             error={!!dbSymbolErrorType}
-            placeholder={t('example_db_symbol')}
+            placeholder={t('example_db_symbol_move')}
           />
           {dbSymbolErrorType === 'value' && <TextInputError>{t('incorrect_format')}</TextInputError>}
           {dbSymbolErrorType === 'duplicate' && <TextInputError>{t('db_symbol_already_used')}</TextInputError>}
@@ -153,7 +152,7 @@ export const MoveNewEditor = forwardRef<EditorHandlingClose, MoveNewEditorProps>
             <ImportInfo>{t('move_import_info')}</ImportInfo>
           </ImportInfoContainer>
           <InputWithTopLabelContainer>
-            <Label htmlFor="select-move-to-import">{t('import_move_from')}</Label>
+            <Label htmlFor="select-move-to-import">{t('import_data_from')}</Label>
             <SelectMove dbSymbol={selectedMove} onChange={(dbSymbol) => setSelectedMove(dbSymbol)} noLabel undefValueOption={t('none_option')} />
           </InputWithTopLabelContainer>
         </InputGroupCollapse>

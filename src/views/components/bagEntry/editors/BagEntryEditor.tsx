@@ -44,7 +44,7 @@ type BagEntryEditorProps = {
 };
 
 export const BagEntryEditor = forwardRef<EditorHandlingClose, BagEntryEditorProps>(({ action, index, from, closeDialog }, ref) => {
-  const { t } = useTranslation('bag_entry_list');
+  const { t } = useTranslation();
   const { trainer } = useTrainerPage();
   const updateTrainer = useUpdateTrainer(trainer);
   const [bagEntry, setBagEntry] = useState<StudioTrainerBagEntry>(getDefaultBagEntry(action, from, index, trainer));

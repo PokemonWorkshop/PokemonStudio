@@ -20,7 +20,7 @@ type BattleEngineMethodEditorProps = {
 };
 
 export const BattleEngineMethodEditor = ({ move, options, getRawFormData, defaults }: BattleEngineMethodEditorProps) => {
-  const { t } = useTranslation('database_moves');
+  const { t } = useTranslation();
   const [defaultInputValue, setDefaultInputValue] = useState(String(defaults.battleEngineMethod));
 
   const battleEngineMethod = String(getRawFormData().battleEngineMethod ?? defaults.battleEngineMethod);

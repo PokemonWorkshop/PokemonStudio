@@ -17,7 +17,7 @@ type ItemControlBarProps = {
 
 export const ItemControlBar = ({ dialogsRef, onRedirect }: ItemControlBarProps) => {
   const { itemDbSymbol } = useItemPage();
-  const { t } = useTranslation('database_items');
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol } = useProjectItems();
 

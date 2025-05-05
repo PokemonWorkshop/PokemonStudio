@@ -15,7 +15,7 @@ const OffsetInfo = styled.div`
   user-select: none;
 `;
 
-const getShift = (cardinal: StudioMapLinkCardinal, t: TFunction<'database_maplinks'>) => {
+const getShift = (cardinal: StudioMapLinkCardinal, t: TFunction) => {
   if (cardinal === 'north' || cardinal === 'south') return t('offset_shift_right');
 
   return t('offset_downward_shift');
@@ -41,7 +41,7 @@ type NewLinkEditorProps = {
 };
 
 export const LinkEditor = ({ mapLink, cardinal, index }: NewLinkEditorProps) => {
-  const { t } = useTranslation('database_maplinks');
+  const { t } = useTranslation();
   const link = useMemo(() => getLinksFromMapLink(mapLink, cardinal)[index], [cardinal, index, mapLink]);
   const refreshUI = useRefreshUI();
 

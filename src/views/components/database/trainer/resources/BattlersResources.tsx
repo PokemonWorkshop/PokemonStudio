@@ -11,7 +11,7 @@ type BattlersResourcesProps = {
 };
 
 export const BattlersResources = ({ trainer }: BattlersResourcesProps) => {
-  const { t } = useTranslation('database_trainers');
+  const { t } = useTranslation();
   const { onResourceGraphicsChoosen, onResourceGraphicsClean } = useUpdateResources(trainer);
   const titleResource = useTitleResource();
 

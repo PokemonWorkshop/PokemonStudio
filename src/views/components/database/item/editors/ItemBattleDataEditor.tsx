@@ -16,7 +16,7 @@ export const ItemBattleDataEditor = forwardRef<EditorHandlingClose>((_, ref) => 
   const { currentItem } = useItemPage();
   const item: StudioStatBoostItem = cloneEntity(currentItem) as StudioStatBoostItem;
   const setItems = useUpdateItem(item);
-  const { t } = useTranslation('database_items');
+  const { t } = useTranslation();
   const isStatBoostItem: boolean = item.klass === 'StatBoostItem';
   const statisticOptions = useMemo(() => stageBoost.map((stage) => ({ value: stage, label: t(stage) })), [t]);
 

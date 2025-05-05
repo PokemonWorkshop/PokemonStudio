@@ -27,7 +27,7 @@ export const DashboardStudioModeMessageBox = ({ closeDialog }: DashboardStudioMo
   const [state, setState] = useState<DashboardStudioModeMessageBoxState>('select_mode');
   const [mode, setMode] = useState<'tiled' | 'rmxp' | undefined>(undefined);
   const { projectStudioValues: projectStudio, state: globalState } = useProjectStudio();
-  const { t } = useTranslation(['loader', 'dashboard']);
+  const { t } = useTranslation();
 
   useEffect(() => {
     switch (state) {
@@ -39,7 +39,7 @@ export const DashboardStudioModeMessageBox = ({ closeDialog }: DashboardStudioMo
           { path: globalState.projectPath!, metaData: JSON.stringify({ ...projectStudio, isTiledMode: mode === 'tiled' }, null, 2) },
           () => setState('reload_project'),
           ({ errorMessage }) => {
-            showNotification('danger', t('loader:saving_project_error'), errorMessage);
+            showNotification('danger', t('saving_project_error'), errorMessage);
             closeDialog();
           }
         );
@@ -52,7 +52,7 @@ export const DashboardStudioModeMessageBox = ({ closeDialog }: DashboardStudioMo
             closeDialog();
           },
           ({ errorMessage }) => loaderRef.current.setError('loading_project_error', errorMessage),
-          (count) => loaderRef.current.setError('loading_project_error', t('loader:integrity_message', { count }), true)
+          (count) => loaderRef.current.setError('loading_project_error', t('integrity_message', { count }), true)
         );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -64,17 +64,17 @@ export const DashboardStudioModeMessageBox = ({ closeDialog }: DashboardStudioMo
         <MessageBoxIconContainer>
           <BaseIcon icon="map" size="s" color={theme.colors.primaryBase} />
         </MessageBoxIconContainer>
-        <h3>{t('dashboard:title_studio_mode_message_box')}</h3>
+        <h3>{t('title_studio_mode_message_box')}</h3>
       </MessageBoxTitleIconContainer>
       <MessageBoxTextContainer>
-        <p>{t('dashboard:message_studio_mode_message_box')}</p>
+        <p>{t('message_studio_mode_message_box')}</p>
         <p className="red" style={{ marginTop: '1rem' }}>
-          {t('dashboard:warning_message')}
+          {t('warning_message')}
         </p>
       </MessageBoxTextContainer>
       <MessageBoxActionContainer>
-        <SecondaryButton onClick={() => setMode('rmxp')}>{t('dashboard:button_use_rmxp')}</SecondaryButton>
-        <PrimaryButton onClick={() => setMode('tiled')}>{t('dashboard:button_use_tiled')}</PrimaryButton>
+        <SecondaryButton onClick={() => setMode('rmxp')}>{t('button_use_rmxp')}</SecondaryButton>
+        <PrimaryButton onClick={() => setMode('tiled')}>{t('button_use_tiled')}</PrimaryButton>
       </MessageBoxActionContainer>
     </MessageBoxContainer>
   );

@@ -37,15 +37,14 @@ const ButtonContainer = styled.div`
   gap: 8px;
 `;
 
-const objectiveCategoryEntries = (t: TFunction<'database_quests'>) =>
-  QUEST_OBJECTIVES.map((objective) => ({ value: objective, label: t(objective) }));
+const objectiveCategoryEntries = (t: TFunction) => QUEST_OBJECTIVES.map((objective) => ({ value: objective, label: t(objective) }));
 
 type QuestNewGoalEditorProps = {
   closeDialog: () => void;
 };
 
 export const QuestNewGoalEditor = forwardRef<EditorHandlingClose, QuestNewGoalEditorProps>(({ closeDialog }, ref) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const { quest } = useQuestPage();
   const updateQuest = useUpdateQuest(quest);
   const dialogsRef = useDialogsRef<QuestTranslationEditorTitle>();

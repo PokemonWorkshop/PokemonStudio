@@ -12,7 +12,7 @@ type SelectMoveProps = {
 };
 
 export const SelectMove = ({ dbSymbol, onChange, noLabel, undefValueOption }: SelectMoveProps) => {
-  const { t } = useTranslation('database_moves');
+  const { t } = useTranslation();
   const moveOptions = useSelectOptions('moves');
   const options = useMemo(() => {
     if (undefValueOption) return [{ value: '__undef__', label: undefValueOption }, ...moveOptions];

@@ -21,7 +21,7 @@ type ItemHeldEditorProps = {
 };
 
 export const ItemHeldEditor = ({ index, options, getRawFormData, onTouched, defaults, formRef }: ItemHeldEditorProps) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const divRef = useRef<HTMLDivElement>(null);
   const { Select, EmbeddedUnitInput } = useInputAttrsWithLabel(ENCOUNTER_EDITOR_SCHEMA, defaults);
 

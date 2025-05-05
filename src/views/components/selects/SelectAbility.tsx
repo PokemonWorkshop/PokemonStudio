@@ -12,7 +12,7 @@ type SelectAbilityProps = {
 };
 
 export const SelectAbility = ({ dbSymbol, onChange, noLabel, undefValueOption }: SelectAbilityProps) => {
-  const { t } = useTranslation('database_abilities');
+  const { t } = useTranslation();
   const abilityOption = useSelectOptions('abilities');
   const options = useMemo(() => {
     if (undefValueOption) return [{ value: '__undef__', label: undefValueOption }, ...abilityOption];

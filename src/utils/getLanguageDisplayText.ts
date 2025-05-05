@@ -1,7 +1,7 @@
 import type { TFunction, i18n } from 'i18next';
 
-export const getLanguageDisplayText = (languageKey: string, t: TFunction<'text_management'>, i18n: i18n, prefix?: string) => {
-  const languageTextKey = `text_management:language_${languageKey.toLowerCase()}`;
+export const getLanguageDisplayText = (languageKey: string, t: TFunction, i18n: i18n, prefix?: string) => {
+  const languageTextKey = `${languageKey.toLowerCase()}`;
   if (i18n.exists(languageTextKey)) {
     return t(languageTextKey);
   } else {
@@ -9,8 +9,8 @@ export const getLanguageDisplayText = (languageKey: string, t: TFunction<'text_m
   }
 };
 
-export const getLanguageName = (code: string, defaultName: string, t: TFunction<'text_management'>, i18n: i18n) => {
-  const languageTextKey = `text_management:language_${code.toLowerCase()}`;
+export const getLanguageName = (code: string, defaultName: string, t: TFunction, i18n: i18n) => {
+  const languageTextKey = `${code.toLowerCase()}`;
   if (i18n.exists(languageTextKey)) {
     return t(languageTextKey);
   } else {

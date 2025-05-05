@@ -1,5 +1,0 @@
-{
-  "copy_title": "File copy",
-  "copy_message": "The «\u00a0${{filename}}\u00a0» file already exists in the «\u00a0{{target}}\u00a0» folder.\nDo you want to replace it?",
-  "file_copied_message": "The «\u00a0{{filename}}\u00a0» file has been copied to the «\u00a0{{target}}\u00a0» folder."
-}

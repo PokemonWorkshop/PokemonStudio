@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export const useMoveStatus = (moveWithStatus: StudioMove) => {
-  const { t } = useTranslation('database_moves');
+  const { t } = useTranslation();
   // We use states here because we need a lot of control over the values to satisfy the UX
   const [status, setStatus] = useState<StudioMoveStatusList[]>(cloneEntity(moveWithStatus.moveStatus.map((s) => s.status)));
   const [chances, setChances] = useState<number[]>(cloneEntity(moveWithStatus.moveStatus.map(({ luckRate }) => luckRate)));

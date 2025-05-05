@@ -196,7 +196,7 @@ type PokemonBattlerMovesetProps = {
 
 const PokemonBattlerMoveset = ({ moveset, onClick }: PokemonBattlerMovesetProps) => {
   const { projectDataValues: moves } = useProjectMoves();
-  const { t } = useTranslation('database_moves');
+  const { t } = useTranslation();
   const getMoveName = useGetEntityNameText();
   const isClickable: boolean = useKeyPress(CONTROL);
   const shortcutNavigation = useShortcutNavigation('moves', 'move', '/database/moves/');
@@ -264,7 +264,7 @@ export const PokemonBattler = ({ pokemon, index, from, dialogsRef, setCurrentBat
   const nature = natures[natureSetup];
   const evSetup = pokemon.expandPokemonSetup.find((setup) => setup.type === 'evs')?.value as StudioIvEv;
   const movesSetup = pokemon.expandPokemonSetup.find((setup) => setup.type === 'moves')?.value as string[];
-  const { t } = useTranslation(['database_abilities', 'database_pokemon', 'database_items', 'pokemon_battler_list']);
+  const { t } = useTranslation();
   const [allowParentHover, setAllowParentHover] = useState(true);
   const getEntityName = useGetEntityNameText();
 
@@ -326,14 +326,14 @@ export const PokemonBattler = ({ pokemon, index, from, dialogsRef, setCurrentBat
                 shortcut={() => shortcutPokemonNavigation(specie.dbSymbol, pokemon.form)}
               />
             ) : (
-              <span className="error">{t('database_pokemon:pokemon_deleted')}</span>
+              <span className="error">{t('creature_deleted')}</span>
             )}
             <span className="level">
               {pokemon.levelSetup.kind === 'fixed'
-                ? t('pokemon_battler_list:level_value', { level: pokemon.levelSetup.level })
+                ? t('level_value', { level: pokemon.levelSetup.level })
                 : pokemon.levelSetup.level.minimumLevel === pokemon.levelSetup.level.maximumLevel
-                ? t('pokemon_battler_list:level_value', { level: pokemon.levelSetup.level.minimumLevel })
-                : t('pokemon_battler_list:level_to', { min: pokemon.levelSetup.level.minimumLevel, max: pokemon.levelSetup.level.maximumLevel })}
+                ? t('level_value', { level: pokemon.levelSetup.level.minimumLevel })
+                : t('level_to', { min: pokemon.levelSetup.level.minimumLevel, max: pokemon.levelSetup.level.maximumLevel })}
             </span>
           </div>
           <div className="chance-delete-button">
@@ -347,14 +347,14 @@ export const PokemonBattler = ({ pokemon, index, from, dialogsRef, setCurrentBat
             {item ? (
               <RenderSpanClickable label={getEntityName(item)} isClickable={isClickable} shortcut={() => shortcutItemNavigation(item.dbSymbol)} />
             ) : (
-              <span className="error">{t('database_items:item_deleted')}</span>
+              <span className="error">{t('item_deleted')}</span>
             )}
           </PokemonBattlerItem>
         )}
         {(abilitySetup || nature) && (
           <PokemonBattlerAbilityNature>
             {abilitySetup && (
-              <DataFieldsetFieldWithChild label={t('database_abilities:ability')}>
+              <DataFieldsetFieldWithChild label={t('ability')}>
                 {ability ? (
                   <RenderSpanClickable
                     label={getAbilityName(ability)}
@@ -362,11 +362,11 @@ export const PokemonBattler = ({ pokemon, index, from, dialogsRef, setCurrentBat
                     shortcut={() => shortcutAbilityNavigation(ability.dbSymbol)}
                   />
                 ) : (
-                  <span className="error">{t('database_abilities:ability_deleted')}</span>
+                  <span className="error">{t('ability_deleted')}</span>
                 )}
               </DataFieldsetFieldWithChild>
             )}
-            {nature && <DataFieldsetFieldWithChild label={t('pokemon_battler_list:nature')}>{getEntityName(nature)}</DataFieldsetFieldWithChild>}
+            {nature && <DataFieldsetFieldWithChild label={t('nature')}>{getEntityName(nature)}</DataFieldsetFieldWithChild>}
           </PokemonBattlerAbilityNature>
         )}
 

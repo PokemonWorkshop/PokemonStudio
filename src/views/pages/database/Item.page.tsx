@@ -24,7 +24,7 @@ export const ItemPage = () => {
   const dialogsRef = useDialogsRef<ItemEditorAndDeletionKeys>();
   const { items } = useItemPage();
 
-  const { t } = useTranslation('database_items');
+  const { t } = useTranslation();
 
   return (
     <DatabasePageStyle>

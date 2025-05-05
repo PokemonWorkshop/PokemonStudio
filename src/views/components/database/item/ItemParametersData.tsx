@@ -26,7 +26,7 @@ type ItemParemetersDataProps = {
 
 export const ItemParametersData = ({ dialogsRef }: ItemParemetersDataProps) => {
   const { currentItem: item } = useItemPage();
-  const { t } = useTranslation('database_items');
+  const { t } = useTranslation();
   const isDisabled = LOCKED_ITEM_EDITOR[item.klass].includes('parameters');
 
   return (

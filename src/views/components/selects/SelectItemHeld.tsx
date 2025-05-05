@@ -12,7 +12,7 @@ type SelectItemHeldProps = {
 };
 
 export const SelectItemHeld = ({ dbSymbol, onChange, noLabel, undefValueOption }: SelectItemHeldProps) => {
-  const { t } = useTranslation('database_items');
+  const { t } = useTranslation();
   const itemOptions = useSelectOptions('itemHeld');
   const options = useMemo(() => {
     if (undefValueOption) return [{ value: '__undef__', label: undefValueOption }, ...itemOptions];

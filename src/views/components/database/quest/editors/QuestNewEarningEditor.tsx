@@ -17,7 +17,7 @@ import { QuestEarningPokemon } from './earnings/QuestEarningPokemon';
 import styled from 'styled-components';
 import React, { forwardRef, useMemo } from 'react';
 
-const earningCategoryEntries = (t: TFunction<'database_quests'>) => QUEST_EARNINGS.map((earning) => ({ value: earning, label: t(earning) }));
+const earningCategoryEntries = (t: TFunction) => QUEST_EARNINGS.map((earning) => ({ value: earning, label: t(earning) }));
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -31,7 +31,7 @@ type QuestNewEarningEditorProps = {
 };
 
 export const QuestNewEarningEditor = forwardRef<EditorHandlingClose, QuestNewEarningEditorProps>(({ closeDialog }, ref) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const { quest } = useQuestPage();
   const updateQuest = useUpdateQuest(quest);
   const earningOptions = useMemo(() => earningCategoryEntries(t), [t]);

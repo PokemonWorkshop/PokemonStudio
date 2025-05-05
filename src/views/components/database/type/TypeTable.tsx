@@ -13,7 +13,7 @@ export const TypeTable = () => {
   const allTypes = useMemo(() => Object.values(types).sort((a, b) => a.id - b.id), [types]);
   const [hoveredDefensiveType, setHoveredDefensiveType] = useState('__undef__');
   const [typeHelperSelected, setTypeHelperSelected] = useState<HelperSelectedType>({ offensiveType: undefined, defensiveType: undefined });
-  const { t } = useTranslation('database_types');
+  const { t } = useTranslation();
 
   const editType = (type: StudioType) => {
     setType({ [type.dbSymbol]: type });
@@ -28,7 +28,7 @@ export const TypeTable = () => {
     <TypeTableMainContainer>
       <TypeTableContainer size="full" data-noactive onMouseLeave={onMouseLeaveEnter}>
         <TitleContainer onMouseEnter={onMouseLeaveEnter}>
-          <p>{t('edit')}</p>
+          <p>{t('edition')}</p>
           <h3>{t('table')}</h3>
           <TypeTableDefensiveContainer>{t('defensive')}</TypeTableDefensiveContainer>
         </TitleContainer>

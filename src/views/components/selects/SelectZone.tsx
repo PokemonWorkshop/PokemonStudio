@@ -13,7 +13,7 @@ type SelectZoneProps = {
 };
 
 export const SelectZone = ({ dbSymbol, onChange, noLabel, undefValueOption, filter }: SelectZoneProps) => {
-  const { t } = useTranslation('database_zones');
+  const { t } = useTranslation();
   const zoneOptions = useSelectOptions('zones');
   const options = useMemo(() => {
     if (undefValueOption) return [{ value: '__undef__', label: undefValueOption }, ...zoneOptions];

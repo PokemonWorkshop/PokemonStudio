@@ -16,7 +16,7 @@ type DashboardLanguageAvailableInGameProps = {
 
 export const DashboardLanguageAvailableInGame = ({ dialogsRef, setEditLanguage }: DashboardLanguageAvailableInGameProps) => {
   const { languageConfig, disabledLanguage } = useDashboardLanguage();
-  const { t } = useTranslation(['dashboard_language', 'text_management']);
+  const { t } = useTranslation();
 
   const handleEdit = (index: number) => {
     dialogsRef.current?.openDialog('edit');
@@ -34,7 +34,7 @@ export const DashboardLanguageAvailableInGame = ({ dialogsRef, setEditLanguage }
           <div className="buttons">
             <EditButtonOnlyIcon onClick={() => handleEdit(index)} color={theme.colors.primaryBase} />
             <DarkButton onClick={() => disabledLanguage(code)} disabled={languageConfig.choosableLanguageCode.length <= 1}>
-              {t('dashboard_language:disable')}
+              {t('disable')}
             </DarkButton>
           </div>
         </div>

@@ -15,7 +15,7 @@ import { useAbilityPage } from '@hooks/usePage';
  * Component that is mainly responsive of editing the name and description of the ability when we click over the top frame in the ability page.
  */
 export const AbilityFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_abilities');
+  const { t } = useTranslation();
   const { ability } = useAbilityPage();
   // dialogsRef used to open the translation editor through AbilityTranslationOverlay
   const dialogsRef = useDialogsRef<TranslationEditorTitle>();
@@ -74,11 +74,11 @@ export const AbilityFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
             {t('name')}
           </Label>
           <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_name')}>
-            <Input type="text" name="name" defaultValue={getName(ability)} ref={nameRef} placeholder={t('example_name')} />
+            <Input type="text" name="name" defaultValue={getName(ability)} ref={nameRef} placeholder={t('example_ability')} />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
-          <Label htmlFor="descr">{t('description')}</Label>
+          <Label htmlFor="descr">{t('example_description_ability')}</Label>
           <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_description')}>
             <MultiLineInput id="descr" defaultValue={getDescription(ability)} ref={descriptionRef} />
           </TranslateInputContainer>

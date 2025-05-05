@@ -26,7 +26,7 @@ export const MoveFrame = ({ move, dialogsRef }: MoveFrameProps) => {
   const [state] = useGlobalState();
   const getMoveName = useGetEntityNameText();
   const getMoveDescription = useGetEntityDescriptionText();
-  const { t } = useTranslation('database_moves');
+  const { t } = useTranslation();
 
   return (
     <DataBlockContainer size="full" onClick={() => dialogsRef?.current?.openDialog('frame')}>
@@ -37,7 +37,7 @@ export const MoveFrame = ({ move, dialogsRef }: MoveFrameProps) => {
               <h1>
                 {move && getMoveName(move)}
                 <span className="data-id">#{padStr(move?.id, 3)}</span>
-                </h1>
+              </h1>
               <CopyIdentifier dataToCopy={move.dbSymbol} />
             </DataInfoContainerHeaderTitle>
             <DataInfoContainerHeaderBadges>

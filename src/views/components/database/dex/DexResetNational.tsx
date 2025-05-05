@@ -39,7 +39,7 @@ type DexResetNationalProps = {
 };
 
 export const DexResetNational = ({ dialogsRef }: DexResetNationalProps) => {
-  const { t } = useTranslation('database_dex');
+  const { t } = useTranslation();
   return (
     <DexResetNationalContainer size="full" data-noactive>
       <h2>{t('reset_national_title')}</h2>

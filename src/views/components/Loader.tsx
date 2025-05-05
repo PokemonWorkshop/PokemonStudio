@@ -63,7 +63,7 @@ const LoaderCurrentActionText = styled.span`
 export const Loader = () => {
   const { thingInProgress, step, total, stepText, errorTitle, errorText, successTitle, successText, isOpen, isLogsAvailable, dynamicAction, close } =
     useLoaderContext();
-  const { t } = useTranslation('loader');
+  const { t } = useTranslation();
 
   const containerClass = () => {
     if (!isOpen) return undefined;

@@ -84,7 +84,7 @@ const TrainerSpriteContainer = styled.div`
 `;
 
 export const TrainerFrame = ({ trainer, dialogsRef }: TrainerFrameProps) => {
-  const { t } = useTranslation('database_trainers');
+  const { t } = useTranslation();
   const getTrainerName = useGetEntityNameText();
   const getText = useGetProjectText();
   const trainerClass = getText(TRAINER_CLASS_TEXT_ID, trainer.id);

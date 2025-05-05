@@ -47,19 +47,15 @@ type MoveOccurrenceType = {
   occurrence: number;
 };
 
-const getSafeName = (
-  move: StudioMove,
-  t: TFunction<('database_pokemon' | 'database_moves')[]>,
-  getEntityName: ReturnType<typeof useGetEntityNameText>
-) => {
+const getSafeName = (move: StudioMove, t: TFunction, getEntityName: ReturnType<typeof useGetEntityNameText>) => {
   if (move) return getEntityName(move);
-  return t('database_moves:move_deleted');
+  return t('move_deleted');
 };
 
 const getMoveTechOptions = (
   allItems: ProjectData['items'],
   allMoves: ProjectData['moves'],
-  t: TFunction<('database_pokemon' | 'database_moves')[]>,
+  t: TFunction,
   getEntityName: ReturnType<typeof useGetEntityNameText>
 ) =>
   Object.values(allItems)
@@ -93,7 +89,7 @@ const getMovepoolData = (
   moves: ProjectData['moves'],
   items: ProjectData['items'],
   currentEditedForm: StudioCreatureForm,
-  t: TFunction<('database_pokemon' | 'database_moves')[]>,
+  t: TFunction,
   getEntityName: ReturnType<typeof useGetEntityNameText>
 ) => {
   if (type === 'tech') {
@@ -160,7 +156,7 @@ const RenderEditMove = ({
   occurrences,
   moveSet,
 }: RenderEditMoveProps) => {
-  const { t } = useTranslation(['database_pokemon', 'database_moves']);
+  const { t } = useTranslation();
   const [state] = useGlobalState();
   const getEntityName = useGetEntityNameText();
   const move = moves[learnableMove.move];
@@ -184,13 +180,13 @@ const RenderEditMove = ({
             [pokemonIdentifier.specie]: editMove(index, moveSet, currentEditedPokemon, selected.value),
           });
         }}
-        noOptionsText={t('database_moves:no_option')}
+        noOptionsText={t('no_option')}
         value={value}
         error={(occurrences.find((occ) => occ.dbSymbol === learnableMove.move)?.occurrence || 1) > 1 || !move}
       />
       {move ? <TypeCategory type={move.type}>{getNameType(types, move.type, state)}</TypeCategory> : <TypeCategory type="normal">???</TypeCategory>}
       {move ? (
-        <MoveCategory category={move.category}>{t(`database_moves:${move.category}` as never)}</MoveCategory>
+        <MoveCategory category={move.category}>{t(`${move.category}` as never)}</MoveCategory>
       ) : (
         <MoveCategory category="physical">???</MoveCategory>
       )}
@@ -220,7 +216,7 @@ export const MovepoolTable = ({ movepoolType }: MovepoolTableProps) => {
     setProjectDataValues: setPokemon,
     state,
   } = useProjectData('pokemon', 'pokemon');
-  const { t } = useTranslation(['database_pokemon', 'database_moves']);
+  const { t } = useTranslation();
   const getEntityName = useGetEntityNameText();
   const currentEditedPokemon = cloneEntity(pokemon[pokemonIdentifier.specie]);
   const form = useMemo(
@@ -240,16 +236,16 @@ export const MovepoolTable = ({ movepoolType }: MovepoolTableProps) => {
   );
 
   return movepoolData.length === 0 ? (
-    <NoMoveFound>{t('database_moves:no_option')}</NoMoveFound>
+    <NoMoveFound>{t('no_move_found')}</NoMoveFound>
   ) : (
     <DataMoveTable>
       <DataMoveGrid gap="8px" className="header">
-        <span>{t('database_pokemon:move')}</span>
-        <span>{t('database_moves:type')}</span>
-        <span>{t('database_moves:category')}</span>
-        <span>{t('database_moves:pp')}</span>
-        <span>{t('database_moves:power')}</span>
-        <span>{t('database_moves:accuracy')}</span>
+        <span>{t('move')}</span>
+        <span>{t('type')}</span>
+        <span>{t('category')}</span>
+        <span>{t('pp')}</span>
+        <span>{t('power')}</span>
+        <span>{t('accuracy')}</span>
       </DataMoveGrid>
       {movepoolData.map((learnableMove, index) => (
         <RenderEditMove

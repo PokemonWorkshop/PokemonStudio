@@ -19,7 +19,7 @@ export const ItemCatchDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { currentItem } = useItemPage();
   const item = currentItem as StudioBallItem;
 
-  const { t } = useTranslation('database_items');
+  const { t } = useTranslation();
   const setItems = useUpdateItem(item);
 
   const catchRateRef = useRef<HTMLInputElement>(null);

@@ -17,7 +17,7 @@ export const DashboardFontsTable = ({ texts, isAlternative, onEdit }: DashboardF
   const currentEditedTexts = useMemo(() => cloneEntity(texts), [texts]);
   const currentTtfFilesOrAltSizes = isAlternative ? currentEditedTexts.fonts.altSizes : currentEditedTexts.fonts.ttfFiles;
   const ttfFilesOrAltSizes = isAlternative ? texts.fonts.altSizes : texts.fonts.ttfFiles;
-  const { t } = useTranslation('dashboard_texts');
+  const { t } = useTranslation();
 
   const onEditId = (index: number, id: number) => {
     currentTtfFilesOrAltSizes[index].id = id;

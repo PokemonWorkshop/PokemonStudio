@@ -15,7 +15,7 @@ export const TypeTablePage = () => {
   const { types, typeDbSymbol } = useTypePage();
   const dialogsRef = useDialogsRef<TypeEditorAndDeletionKeys>();
   const navigate = useNavigate();
-  const { t } = useTranslation('database_types');
+  const { t } = useTranslation();
   const currentType = types[typeDbSymbol] || types[typeDbSymbol];
 
   const onClickedBack = () => navigate(`/database/types/${currentType.dbSymbol}`);

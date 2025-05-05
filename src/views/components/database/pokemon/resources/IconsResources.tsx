@@ -13,7 +13,7 @@ type IconsResourcesProps = {
 };
 
 export const IconsResources = ({ creature, form, canShowFemale }: IconsResourcesProps) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const { onResourceChoosen, onResourceClean } = useUpdateResources(creature, form);
   const titleResource = useTitleResource();
 

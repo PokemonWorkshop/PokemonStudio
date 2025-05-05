@@ -33,7 +33,7 @@ type ZoneGroupImportEditorProps = {
 
 export const ZoneGroupImportEditor = forwardRef<EditorHandlingClose, ZoneGroupImportEditorProps>(({ closeDialog }, ref) => {
   const { projectDataValues: zones, setProjectDataValues: setZone } = useProjectZones();
-  const { t } = useTranslation('database_zones');
+  const { t } = useTranslation();
   const { zone } = useZonePage();
   const firstDbSymbol = Object.entries(zones)
     .map(([value, zoneData]) => ({ value, index: zoneData.id }))

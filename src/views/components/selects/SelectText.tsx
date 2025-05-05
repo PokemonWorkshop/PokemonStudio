@@ -12,7 +12,7 @@ type SelectTextProps = {
 };
 
 export const SelectText = ({ fileId, onChange, noLabel, undefValueOption }: SelectTextProps) => {
-  const { t } = useTranslation('text_management');
+  const { t } = useTranslation();
   const textInfosOption = useSelectOptions('textInfos');
   const options = useMemo(() => {
     if (undefValueOption) return [{ value: '__undef__', label: undefValueOption }, ...textInfosOption];

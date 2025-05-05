@@ -25,7 +25,7 @@ export const MovepoolDeletion = ({ type, onClose }: MovepoolDeletionProps) => {
   const { projectDataValues: pokemon, selectedDataIdentifier: currentPokemon, setProjectDataValues: setPokemon } = useProjectPokemon();
   const { projectDataValues: moves } = useProjectMoves();
   const getCreatureName = useGetEntityNameText();
-  const { t } = useTranslation(['database_pokemon']);
+  const { t } = useTranslation();
 
   const onClickDelete = () => {
     const currentEditedPokemon = cloneEntity(pokemon[currentPokemon.specie]);
@@ -45,8 +45,8 @@ export const MovepoolDeletion = ({ type, onClose }: MovepoolDeletionProps) => {
 
   return (
     <Deletion
-      title={t(`database_pokemon:movepool_deletion`)}
-      message={t(`database_pokemon:movepool_deletion_message_${type}`, { pokemon: getCreatureName(pokemon[currentPokemon.specie]) })}
+      title={t(`movepool_deletion`)}
+      message={t(`movepool_deletion_message_${type}`, { pokemon: getCreatureName(pokemon[currentPokemon.specie]) })}
       onClickDelete={onClickDelete}
       onClose={onClose}
     />

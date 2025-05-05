@@ -17,7 +17,7 @@ export const useGeneratingMapOverview = () => {
     { onFailure: GeneratingMapOverviewFailureCallback; onSuccess: GeneratingMapOverviewSuccessCallback } | undefined
   >(undefined);
   const [state, setState] = useState<GeneratingMapOverviewStateObject>({ state: 'done' });
-  const { t } = useTranslation('database_maps');
+  const { t } = useTranslation();
   const [globalState] = useGlobalState();
   const loaderRef = useLoaderRef();
 
