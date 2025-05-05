@@ -18,7 +18,7 @@ const DataBlockWithoutActionButtonsEditorContainer = styled(DataBlockEditorConta
 `;
 
 export const DataBlockWithoutActionButtonsEditor = ({ title, size, children, disabled, color }: DataBlockWithoutActionButtonsEditorProps) => {
-  const { t } = useTranslation('editor');
+  const { t } = useTranslation();
   return (
     <DataBlockWithoutActionButtonsEditorContainer size={size} color={color} data-disabled={disabled && 'true'} data-noactive>
       <TitleContainer>

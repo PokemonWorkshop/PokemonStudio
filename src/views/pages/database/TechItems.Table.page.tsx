@@ -14,7 +14,7 @@ import { DataBlockWithoutActionButtonsEditor } from '@components/editor/DataBloc
 export const TechItemsTablePage = () => {
   const dialogsRef = useDialogsRef<ItemEditorAndDeletionKeys>();
   const navigate = useNavigate();
-  const { t } = useTranslation('database_items');
+  const { t } = useTranslation();
 
   const onClickedBack = () => navigate(`/database/items`);
 

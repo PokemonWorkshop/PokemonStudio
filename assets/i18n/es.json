@@ -1518,5 +1518,7 @@
   "hidden_default": "Hidden by default",
   "none_option": "None",
   "import_data_from": "Import data from",
-  "replace_creatures": "Reemplazar Pokémon"
+  "replace_creatures": "Reemplazar Pokémon",
+  "handle_tech_list": "Manage technique items",
+  "tech_list": "List of technique items"
 }

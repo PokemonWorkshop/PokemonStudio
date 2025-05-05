@@ -40,7 +40,7 @@ export const ItemControlBar = ({ dialogsRef, onRedirect }: ItemControlBarProps) 
   return (
     <ControlBar>
       <ControlBarLabelContainer>
-        <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new')}</SecondaryButtonWithPlusIcon>
+        <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new_item')}</SecondaryButtonWithPlusIcon>
         {onRedirect !== 'table' && (
           <SecondaryButton onClick={() => navigate(`/database/items/techItemsTable`)}>{t('handle_tech_list')}</SecondaryButton>
         )}

@@ -43,7 +43,7 @@ const RenderTechItem = ({ item, state }: RenderTechItemProps) => {
   const [techItemMove, setTechItemMove] = useState(item.move || '__undef__');
   const move = moves[techItemMove] || ('__undef__' as DbSymbol);
   const shortcutItemNavigation = useShortcutNavigation('items', 'item', '/database/items/');
-  const { t } = useTranslation('database_moves');
+  const { t } = useTranslation();
 
   const handleMoveChange = (dbSymbol: DbSymbol) => {
     const move = moves[dbSymbol];
@@ -117,21 +117,21 @@ const getTechItems = (state: State) => {
 
 export const TechItemsTable = () => {
   const [state] = useGlobalState();
-  const { t } = useTranslation(['database_items', 'database_moves']);
+  const { t } = useTranslation();
   const allTechItems = getTechItems(state);
 
   return (
     <DataTechItemTable>
       <DataTechItemGrid gap="8px" className="header">
-        <span>{t('database_items:name')}</span>
+        <span>{t('name')}</span>
         <span></span>
-        <span>{t('database_moves:move')}</span>
+        <span>{t('move')}</span>
         <span></span>
-        <span>{t('database_moves:type')}</span>
-        <span>{t('database_moves:category')}</span>
-        <span>{t('database_moves:pp')}</span>
-        <span>{t('database_moves:power')}</span>
-        <span>{t('database_moves:accuracy')}</span>
+        <span>{t('type')}</span>
+        <span>{t('category')}</span>
+        <span>{t('pp')}</span>
+        <span>{t('power')}</span>
+        <span>{t('accuracy')}</span>
       </DataTechItemGrid>
       <DataTechItemVirtualizedListContainer height={allTechItems.length <= 12 ? 48 * allTechItems.length : 600}>
         <AutoSizer>
@@ -153,9 +153,6 @@ export const TechItemsTable = () => {
           )}
         </AutoSizer>
       </DataTechItemVirtualizedListContainer>
-      {/* {allTechItems.map((item) => (
-        <RenderTechItem key={`type-items-${item.dbSymbol}`} item={item} state={state} />
-      ))} */}
     </DataTechItemTable>
   );
 };
