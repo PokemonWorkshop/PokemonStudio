@@ -15,7 +15,7 @@ import { useZonePage } from '@src/hooks/usePage';
 export const ZonePage = () => {
   const dialogsRef = useDialogsRef<ZoneEditorAndDeletionKeys>();
   const { zone, groups, cannotDelete } = useZonePage();
-  const { t } = useTranslation('database_zones');
+  const { t } = useTranslation();
   const [currentGroupIndex, setCurrentGroupIndex] = useState(0);
 
   return (

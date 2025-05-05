@@ -16,7 +16,7 @@ const OutsideContainer = styled.div`
 `;
 
 export const ZoneTravelEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_zones');
+  const { t } = useTranslation();
   const { zone } = useZonePage();
   const updateZone = useUpdateZone(zone);
 

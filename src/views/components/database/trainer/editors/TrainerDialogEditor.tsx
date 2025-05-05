@@ -32,7 +32,7 @@ const InputWithDeleteButton = styled.div`
 `;
 
 export const TrainerDialogEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_trainers');
+  const { t } = useTranslation();
   const { trainer } = useTrainerPage();
   const updateTrainer = useUpdateTrainer(trainer);
   const { dialogs, currentDialog, dialogIndex, canAddDialog, updateDialogIndex, addDialog, deleteDialog, changeCondition } = useTrainerDialog();

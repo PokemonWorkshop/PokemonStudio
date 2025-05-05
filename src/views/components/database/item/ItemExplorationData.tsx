@@ -9,7 +9,7 @@ type ItemExplorationDataProps = { dialogsRef: ItemDialogsRef };
 
 export const ItemExplorationData = ({ dialogsRef }: ItemExplorationDataProps) => {
   const { currentItem: item } = useItemPage();
-  const { t } = useTranslation('database_items');
+  const { t } = useTranslation();
   const isItemRepel = item.klass === 'RepelItem';
   const isItemEvent = item.klass === 'EventItem';
   const isDisabled = LOCKED_ITEM_EDITOR[item.klass].includes('exploration');

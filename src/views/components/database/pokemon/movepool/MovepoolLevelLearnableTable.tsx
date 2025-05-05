@@ -149,7 +149,7 @@ const RenderEditMove = ({
   occurrences,
   movePool,
 }: RenderEditMoveProps) => {
-  const { t } = useTranslation(['database_moves']);
+  const { t } = useTranslation();
   const [state] = useGlobalState();
   const getMoveName = useGetEntityNameText();
   const move = moves[learnableMove.move];
@@ -181,8 +181,8 @@ const RenderEditMove = ({
             [pokemonIdentifier.specie]: editMove(index, movePool, currentEditedPokemon, selected.value),
           });
         }}
-        noOptionsText={t('database_moves:no_option')}
-        value={{ value: learnableMove.move, label: move ? getMoveName(move) : t('database_moves:move_deleted') }}
+        noOptionsText={t('no_option')}
+        value={{ value: learnableMove.move, label: move ? getMoveName(move) : t('move_deleted') }}
         error={
           (occurrences.find((occ) => occ.move.dbSymbol === learnableMove.move && occ.move.level === learnableMove.level)?.occurrence || 1) > 1 ||
           !move
@@ -190,7 +190,7 @@ const RenderEditMove = ({
       />
       {move ? <TypeCategory type={move.type}>{getNameType(types, move.type, state)}</TypeCategory> : <TypeCategory type="normal">???</TypeCategory>}
       {move ? (
-        <MoveCategory category={move.category}>{t(`database_moves:${move.category}` as never)}</MoveCategory>
+        <MoveCategory category={move.category}>{t(`${move.category}` as never)}</MoveCategory>
       ) : (
         <MoveCategory category="physical">???</MoveCategory>
       )}
@@ -219,7 +219,7 @@ export const MovepoolLevelLearnableTable = () => {
     selectedDataIdentifier: pokemonIdentifier,
     setProjectDataValues: setPokemon,
   } = useProjectData('pokemon', 'pokemon');
-  const { t } = useTranslation(['database_pokemon', 'database_moves']);
+  const { t } = useTranslation();
   const currentEditedPokemon = cloneEntity(pokemon[pokemonIdentifier.specie]);
   const getMoveName = useGetEntityNameText();
   const moveOptions = useMemo(() => getMoveOptions(moves, getMoveName), [moves, getMoveName]);
@@ -231,17 +231,17 @@ export const MovepoolLevelLearnableTable = () => {
   const occurrences = getOccurrences(form);
 
   return movePool.length === 0 ? (
-    <NoMoveFound>{t('database_moves:no_option')}</NoMoveFound>
+    <NoMoveFound>{t('no_option')}</NoMoveFound>
   ) : (
     <DataMoveTable>
       <DataMoveGrid gap="8px" className="header">
-        <span>{t('database_moves:level')}</span>
-        <span>{t('database_pokemon:move')}</span>
-        <span>{t('database_moves:type')}</span>
-        <span>{t('database_moves:category')}</span>
-        <span>{t('database_moves:pp')}</span>
-        <span>{t('database_moves:power')}</span>
-        <span>{t('database_moves:accuracy')}</span>
+        <span>{t('level')}</span>
+        <span>{t('move')}</span>
+        <span>{t('type')}</span>
+        <span>{t('category')}</span>
+        <span>{t('pp')}</span>
+        <span>{t('power')}</span>
+        <span>{t('accuracy')}</span>
       </DataMoveGrid>
       {movePool.map((learnableMove, index) => (
         <RenderEditMove

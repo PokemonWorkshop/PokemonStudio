@@ -13,7 +13,7 @@ type QuestControlBarProps = {
 };
 
 export const QuestControlBar = ({ dialogsRef }: QuestControlBarProps) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const { selectedDataIdentifier: questDbSymbol, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol } = useProjectQuests();
   useSetCurrentDatabasePath();
 
@@ -32,7 +32,7 @@ export const QuestControlBar = ({ dialogsRef }: QuestControlBarProps) => {
 
   return (
     <ControlBar>
-      {onClickNew ? <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new')}</SecondaryButtonWithPlusIcon> : <div />}
+      {onClickNew ? <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new_quest')}</SecondaryButtonWithPlusIcon> : <div />}
       <SelectQuest dbSymbol={questDbSymbol} onChange={(dbSymbol) => setSelectedDataIdentifier({ quest: dbSymbol })} />
     </ControlBar>
   );

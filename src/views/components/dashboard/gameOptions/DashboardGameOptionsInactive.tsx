@@ -7,7 +7,7 @@ import { TooltipWrapper } from '@ds/Tooltip';
 
 export const DashboardGameOptionsInactive = () => {
   const { inactiveOptions, enableOption } = useDashboardGameOptions();
-  const { t } = useTranslation('dashboard_game_options');
+  const { t } = useTranslation();
 
   return (
     <DashboardGameOptionsTableContainer>

@@ -16,7 +16,7 @@ import { MOVE_DESCRIPTION_TEXT_ID } from '@modelEntities/move';
 export const ItemTechDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { currentItem: item } = useItemPage();
   const { projectDataValues: moves } = useProjectDataReadonly('moves', 'move');
-  const { t } = useTranslation(['database_items', 'database_moves']);
+  const { t } = useTranslation();
   const setItems = useUpdateItem(item);
   const copyText = useCopyProjectText();
 
@@ -29,10 +29,7 @@ export const ItemTechDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   });
 
   const machineOptions = useMemo(
-    () =>
-      (['hm', 'tm'] as const)
-        .map((machine) => ({ value: machine, label: t(`database_items:${machine}`) }))
-        .sort((a, b) => a.label.localeCompare(b.label)),
+    () => (['hm', 'tm'] as const).map((machine) => ({ value: machine, label: t(`${machine}`) })).sort((a, b) => a.label.localeCompare(b.label)),
     [t]
   );
 
@@ -57,11 +54,11 @@ export const ItemTechDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   return LOCKED_ITEM_EDITOR[item.klass].includes('tech') ? (
     <></>
   ) : (
-    <Editor type="edit" title={t('database_items:techniques')}>
+    <Editor type="edit" title={t('techniques')}>
       <InputContainer>
         {isTechItem && (
           <InputWithTopLabelContainer>
-            <Label htmlFor="machines_category">{t('database_items:machines_category')}</Label>
+            <Label htmlFor="machines_category">{t('machines_category')}</Label>
             <SelectCustomSimple
               id="select-machines_category"
               options={machineOptions}
@@ -73,7 +70,7 @@ export const ItemTechDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
         )}
         {isTechItem && (
           <InputWithTopLabelContainer>
-            <Label htmlFor="move_learnt">{t('database_items:move_learnt')}</Label>
+            <Label htmlFor="move_learnt">{t('move_learnt')}</Label>
             <SelectMove
               dbSymbol={techForm.move}
               onChange={(dbSymbol) => setTechForm((prevFormData) => ({ ...prevFormData, move: dbSymbol as DbSymbol }))}
@@ -82,7 +79,7 @@ export const ItemTechDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
           </InputWithTopLabelContainer>
         )}
         <InputWithLeftLabelContainer>
-          <Label htmlFor="fling">{t('database_items:fling')}</Label>
+          <Label htmlFor="fling">{t('fling')}</Label>
           <Input type="number" name="fling" defaultValue={item.flingPower} ref={flingPowerRef} min="0" max="999" />
         </InputWithLeftLabelContainer>
       </InputContainer>

@@ -5,9 +5,9 @@ import { PokemonDataProps } from '../PokemonDataPropsInterface';
 
 export const StatisticsDataBlock = ({ pokemonWithForm, dialogsRef }: PokemonDataProps) => {
   const { form } = pokemonWithForm;
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
 
-  const totalBaseStats = form.baseHp + form.baseAtk + form.baseDfe + form.baseAts + form.baseDfs + form.baseSpd
+  const totalBaseStats = form.baseHp + form.baseAtk + form.baseDfe + form.baseAts + form.baseDfs + form.baseSpd;
 
   return (
     <DataBlockWithTitle size="half" title={t('stats')} onClick={() => dialogsRef.current?.openDialog('stats')}>

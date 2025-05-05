@@ -18,7 +18,7 @@ type ParametersTitleType =
 
 export const MovePokemonPage = () => {
   const { move, moveName } = useMovePage();
-  const { t } = useTranslation('database_moves');
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const onClickedBack = () => navigate('/database/moves');
   const parameters: Array<{ title: ParametersTitleType; filter: FilterType }> = [
@@ -35,7 +35,7 @@ export const MovePokemonPage = () => {
       <PageContainerStyle>
         <PageDataConstrainerStyle>
           <DataBlockWrapper>
-            <SubPageTitle title={t('pokemon_with_move', { move: moveName })} onClickedBack={onClickedBack} />
+            <SubPageTitle title={t('creature_with_move', { move: moveName })} onClickedBack={onClickedBack} />
             {parameters.map((params, i) => (
               <DataBlockWithTitleCollapse key={i} title={t(params.title, { move: moveName })} size="full">
                 <MovePokemonTable move={move} filter={params.filter} />

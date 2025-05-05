@@ -42,7 +42,7 @@ const EnvironmentContainer = styled.div`
 `;
 
 export const GroupFrame = ({ group, dialogsRef }: GroupFrameProps) => {
-  const { t } = useTranslation('database_groups');
+  const { t } = useTranslation();
   const getGroupName = useGetEntityNameText();
   const variationText = (
     GroupToolMap.find((variation) => variation.value === group.tool) ?? GroupVariationsMap.find(({ value }) => Number(value) === group.terrainTag)

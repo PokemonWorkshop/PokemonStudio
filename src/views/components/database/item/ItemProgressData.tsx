@@ -9,7 +9,7 @@ type ItemProgressDataProps = { dialogsRef: ItemDialogsRef };
 
 export const ItemProgressData = ({ dialogsRef }: ItemProgressDataProps) => {
   const { currentItem: item } = useItemPage();
-  const { t } = useTranslation('database_items');
+  const { t } = useTranslation();
   const isItemEvBoost = item.klass === 'EVBoostItem';
   const isItemLevelBoost = item.klass === 'LevelIncreaseItem';
   const isDisabled = LOCKED_ITEM_EDITOR[item.klass].includes('progress');

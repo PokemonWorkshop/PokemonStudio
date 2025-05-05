@@ -5,7 +5,7 @@ import { QuestEarningProps } from './QuestEarningProps';
 import { EmbeddedUnitInput } from '@components/inputs/EmbeddedUnitInput';
 
 export const QuestEarningMoney = ({ earning, refs, checkIsValid }: QuestEarningProps) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
 
   return (
     <InputContainer>

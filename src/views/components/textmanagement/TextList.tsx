@@ -20,7 +20,7 @@ type TextListProps = {
 };
 
 export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => {
-  const { t } = useTranslation(['text_management', 'copy']);
+  const { t } = useTranslation();
   const [research, setResearch] = useState<string>('');
   const [scrollToEnd, setScrollToEnd] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -45,7 +45,7 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
     navigator.clipboard.writeText(
       textInfo.fileId >= 100000 && textInfo.fileId < 200000 ? `text_get(${textInfo.fileId - 100000}, ${row})` : `ext_text(${textInfo.fileId}, ${row})`
     );
-    window.dispatchEvent(new CustomEvent('tooltip:ChangeText', { detail: t('copy:copied') }));
+    window.dispatchEvent(new CustomEvent('ChangeText', { detail: t('copied') }));
   };
 
   const handleScroll = () => {
@@ -72,12 +72,12 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
   return (
     <DataBlockEditorContainer size="full" color="light" data-noactive>
       <TitleContainer>
-        <h3>{t('text_management:texts')}</h3>
+        <h3>{t('texts')}</h3>
         <ClearInput
           name="research"
           value={research}
           onChange={(event) => setResearch(event.target.value.toLowerCase())}
-          placeholder={t('text_management:search_text')}
+          placeholder={t('search_text')}
           onClear={() => setResearch('')}
         />
       </TitleContainer>
@@ -85,7 +85,7 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
         <DataTextListTable>
           <DataTextGrid gap="8px" className="header">
             <span>ID</span>
-            <span>{t('text_management:text')}</span>
+            <span>{t('text')}</span>
             <span />
           </DataTextGrid>
           <DataTextList height={getHeight(textsFiltered.length)}>
@@ -107,7 +107,7 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
                           style={{ ...style, width: 'calc(100% - 4px)' }}
                         >
                           <span
-                            data-tooltip={t('copy:copy_code')}
+                            data-tooltip={t('copy_code')}
                             data-tooltip-remain-on-click
                             onClick={(event) => onClickCopy(event, textsFiltered[index].textId)}
                             style={{ cursor: 'pointer' }}
@@ -147,16 +147,16 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
           </DataTextList>
         </DataTextListTable>
       ) : (
-        <TableEmpty>{t('text_management:no_text')}</TableEmpty>
+        <TableEmpty>{t('no_text')}</TableEmpty>
       )}
       <ButtonContainer color="light">
         <ClearButtonWithIcon onClick={onClearAll} disabled={textsFiltered.length === 0}>
-          {t('text_management:clear_all')}
+          {t('clear_all')}
         </ClearButtonWithIcon>
         <ButtonRightContainer>
-          <DarkButton onClick={() => dialogsRef.current?.openDialog('import')}>{t('text_management:import_texts')}</DarkButton>
-          <SecondaryButtonWithPlusIconResponsive onClick={onAdd} data-tooltip-responsive={t('text_management:add_a_text')}>
-            {t('text_management:add_a_text')}
+          <DarkButton onClick={() => dialogsRef.current?.openDialog('import')}>{t('import_texts')}</DarkButton>
+          <SecondaryButtonWithPlusIconResponsive onClick={onAdd} data-tooltip-responsive={t('add_a_text')}>
+            {t('add_a_text')}
           </SecondaryButtonWithPlusIconResponsive>
         </ButtonRightContainer>
       </ButtonContainer>

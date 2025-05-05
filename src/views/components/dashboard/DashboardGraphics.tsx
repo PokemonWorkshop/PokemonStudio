@@ -6,7 +6,7 @@ import { useConfigGraphic } from '@hooks/useProjectConfig';
 import { cloneEntity } from '@utils/cloneEntity';
 
 export const DashboardGraphics = () => {
-  const { t } = useTranslation('dashboard_graphics');
+  const { t } = useTranslation();
   const { projectConfigValues: graphics, setProjectConfigValues: setGraphics } = useConfigGraphic();
   const currentEditedGraphics = useMemo(() => cloneEntity(graphics), [graphics]);
 

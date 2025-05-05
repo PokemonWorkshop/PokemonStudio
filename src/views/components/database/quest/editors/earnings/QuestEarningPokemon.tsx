@@ -16,7 +16,7 @@ type QuestEarningPokemonProps = {
 };
 
 export const QuestEarningPokemon = ({ earning, earningCreature }: QuestEarningPokemonProps) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const { encounter, updateEncounter, expandPokemonSetup, updateExpandPokemonSetup, creatureUnavailable, formAvailable, state } = earningCreature;
   const earningMethod = earning.earningMethodName;
 
@@ -25,12 +25,12 @@ export const QuestEarningPokemon = ({ earning, earningCreature }: QuestEarningPo
       {creatureUnavailable ? (
         <InputWithTopLabelContainer>
           <Label htmlFor="select-pokemon" required>
-            {t('database_pokemon:pokemon')}
+            {t('creature')}
           </Label>
           <SelectPokemon
             onChange={(dbSymbol) => updateEncounter({ specie: dbSymbol as DbSymbol })}
             dbSymbol={encounter.specie}
-            undefValueOption={t('select:none')}
+            undefValueOption={t('none')}
             noLabel
           />
         </InputWithTopLabelContainer>
@@ -38,13 +38,13 @@ export const QuestEarningPokemon = ({ earning, earningCreature }: QuestEarningPo
         <>
           <InputWithTopLabelContainer>
             <Label htmlFor="select-pokemon" required>
-              {t('database_pokemon:pokemon')}
+              {t('creature')}
             </Label>
             <SelectPokemon onChange={(dbSymbol) => updateEncounter({ specie: dbSymbol as DbSymbol })} dbSymbol={encounter.specie} noLabel />
           </InputWithTopLabelContainer>
           {formAvailable && (
             <InputWithTopLabelContainer>
-              <Label htmlFor="select-form">{t('database_pokemon:form')}</Label>
+              <Label htmlFor="select-form">{t('form')}</Label>
               <SelectPokemonForm
                 onChange={(value) => {
                   if (value === '__undef__') return updateEncounter({ form: -1 });
@@ -52,14 +52,14 @@ export const QuestEarningPokemon = ({ earning, earningCreature }: QuestEarningPo
                 }}
                 dbSymbol={encounter.specie}
                 form={encounter.form === -1 ? '__undef__' : encounter.form}
-                undefValueOption={t('pokemon_battler_list:random')}
+                undefValueOption={t('random')}
                 noLabel
               />
             </InputWithTopLabelContainer>
           )}
           {encounter.levelSetup.kind === 'fixed' && earningMethod === 'earning_pokemon' && (
             <InputWithLeftLabelContainer>
-              <Label htmlFor="fixed-level">{t('pokemon_battler_list:level')}</Label>
+              <Label htmlFor="fixed-level">{t('level')}</Label>
               <InputNumber
                 name="fixed-level"
                 min="1"
@@ -70,20 +70,20 @@ export const QuestEarningPokemon = ({ earning, earningCreature }: QuestEarningPo
             </InputWithLeftLabelContainer>
           )}
           <InputWithTopLabelContainer>
-            <Label htmlFor="select-ability">{t('database_abilities:ability')}</Label>
+            <Label htmlFor="select-ability">{t('ability')}</Label>
             <SelectAbility
               dbSymbol={expandPokemonSetup.ability as string}
               onChange={(dbSymbol) => updateExpandPokemonSetup({ ability: dbSymbol })}
-              undefValueOption={t('pokemon_battler_list:random')}
+              undefValueOption={t('random')}
               noLabel
             />
           </InputWithTopLabelContainer>
           <InputWithTopLabelContainer>
-            <Label htmlFor="select-nature">{t('pokemon_battler_list:nature')}</Label>
+            <Label htmlFor="select-nature">{t('nature')}</Label>
             <SelectNature
               dbSymbol={expandPokemonSetup.nature as string}
               onChange={(selected) => updateExpandPokemonSetup({ nature: selected.value })}
-              overwriteNoneValue={t('pokemon_battler_list:random')}
+              overwriteNoneValue={t('random')}
               noneValue
             />
           </InputWithTopLabelContainer>

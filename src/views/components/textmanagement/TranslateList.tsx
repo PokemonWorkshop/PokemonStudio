@@ -59,7 +59,7 @@ const RenderTranslateContainer = styled(DataTranslateGrid)`
 
 const RenderText = ({ text, language }: RenderTextProps) => {
   const [hovered, setHovered] = useState(false);
-  const { t, i18n } = useTranslation('text_management');
+  const { t, i18n } = useTranslation();
   const languageContext = useContext(LanguageContext);
 
   const languageToDisplay = getLanguageDisplayText(language.value, t, i18n);
@@ -95,7 +95,7 @@ const DataTranslatesTable = styled.div`
 `;
 
 export const TranslateList = () => {
-  const { t } = useTranslation('text_management');
+  const { t } = useTranslation();
   const languageContext = useContext(LanguageContext);
   const { state, languageByIndexFiltered, currentTextFromFile, allTextsFromFile } = useTranslationPage(languageContext.positionLanguage);
   const defaultLanguageCode = state.projectConfig.language_config.defaultLanguage;

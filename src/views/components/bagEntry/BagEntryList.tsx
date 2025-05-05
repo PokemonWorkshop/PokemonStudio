@@ -21,7 +21,7 @@ const BagEntryListGrid = styled(PokemonBattlerListGrid)``;
 
 export const BagEntryList = ({ title, bagEntries, disabledImport, from }: BagEntryListProps) => {
   const dialogsRef = useDialogsRef<BagEntryEditorAndDeletionKeys>();
-  const { t } = useTranslation('bag_entry_list');
+  const { t } = useTranslation();
   const [index, setIndex] = useState<number>(0);
 
   return (

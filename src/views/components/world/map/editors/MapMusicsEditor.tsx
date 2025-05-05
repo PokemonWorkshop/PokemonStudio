@@ -13,7 +13,7 @@ import { StudioMapAudio } from '@modelEntities/map';
 import { EmbeddedUnitInput } from '@components/inputs/EmbeddedUnitInput';
 
 export const MapMusicsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_maps');
+  const { t } = useTranslation();
   const { map } = useMapPage();
   const updateMap = useUpdateMap(map);
   const [bgm, setBgm] = useState<StudioMapAudio>(map.bgm);

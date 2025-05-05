@@ -20,7 +20,7 @@ const DEFAULT_BINDING: RMXP2StudioMapsUpdateFunctionBinding = {
 export const useRMXP2StudioMapsUpdateProcessor = () => {
   const [globalState, setGlobalState] = useGlobalState();
   const loaderRef = useLoaderRef();
-  const { t } = useTranslation('database_maps');
+  const { t } = useTranslation();
   const binding = useRef<RMXP2StudioMapsUpdateFunctionBinding>(DEFAULT_BINDING);
 
   const processors: SpecialStateProcessors<RMXP2StudioMapsUpdateStateObject> = useMemo(

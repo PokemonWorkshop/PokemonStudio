@@ -7,7 +7,7 @@ import { useConfigDevices } from '@hooks/useProjectConfig';
 import { cloneEntity } from '@utils/cloneEntity';
 
 export const DashboardDevices = () => {
-  const { t } = useTranslation('dashboard_devices');
+  const { t } = useTranslation();
   const { projectConfigValues: devices, setProjectConfigValues: setDevices } = useConfigDevices();
   const currentEditedDevices = useMemo(() => cloneEntity(devices), [devices]);
 

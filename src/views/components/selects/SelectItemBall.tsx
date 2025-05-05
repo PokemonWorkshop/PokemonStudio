@@ -12,7 +12,7 @@ type SelectItemBallProps = {
 };
 
 export const SelectItemBall = ({ dbSymbol, onChange, noLabel, undefValueOption }: SelectItemBallProps) => {
-  const { t } = useTranslation('database_items');
+  const { t } = useTranslation();
   const itemOptions = useSelectOptions('itemBall');
   const options = useMemo(() => {
     if (undefValueOption) return [{ value: '__undef__', label: undefValueOption }, ...itemOptions];

@@ -129,7 +129,7 @@ type MapImportListType = {
 };
 
 export const MapImportList = ({ files, mapInfoOptions, mapIdsUsed, setFiles }: MapImportListType) => {
-  const { t } = useTranslation('database_maps');
+  const { t } = useTranslation();
 
   const allFilesChecked = (checked: boolean) => {
     setFiles(files.map((file) => ({ ...file, shouldBeImport: (file.shouldBeImport = checked) })));

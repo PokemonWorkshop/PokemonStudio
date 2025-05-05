@@ -34,7 +34,7 @@ type Props = {
 export const TextImportEditor = forwardRef<EditorHandlingClose, Props>(({ closeDialog }, ref) => {
   const { textInfo } = useTextPage();
   const setImportProjectText = useImportProjectText();
-  const { t } = useTranslation('text_management');
+  const { t } = useTranslation();
   const [textSelected, setTextSelected] = useState('__undef__');
 
   useEditorHandlingClose(ref);

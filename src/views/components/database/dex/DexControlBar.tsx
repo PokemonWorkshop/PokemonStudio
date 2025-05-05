@@ -13,7 +13,7 @@ type DexControlBarProps = {
 };
 
 export const DexControlBar = ({ dialogsRef }: DexControlBarProps) => {
-  const { t } = useTranslation('database_dex');
+  const { t } = useTranslation();
   const { selectedDataIdentifier: dexDbSymbol, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol } = useProjectDex();
   useSetCurrentDatabasePath();
 
@@ -30,7 +30,7 @@ export const DexControlBar = ({ dialogsRef }: DexControlBarProps) => {
 
   return (
     <ControlBar>
-      <SecondaryButtonWithPlusIcon onClick={() => dialogsRef?.current?.openDialog('new')}>{t('new')}</SecondaryButtonWithPlusIcon>
+      <SecondaryButtonWithPlusIcon onClick={() => dialogsRef?.current?.openDialog('new')}>{t('new_bestiary')}</SecondaryButtonWithPlusIcon>
       <SelectDex dbSymbol={dexDbSymbol} onChange={(selected) => setSelectedDataIdentifier({ dex: selected })} />
     </ControlBar>
   );

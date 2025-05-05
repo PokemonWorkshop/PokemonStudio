@@ -14,7 +14,7 @@ type ZoneTravelProps = {
 };
 
 export const ZoneTravel = ({ zone, dialogsRef }: ZoneTravelProps) => {
-  const { t } = useTranslation('database_zones');
+  const { t } = useTranslation();
 
   return (
     <DataBlockWithTitle size="half" title={t('travel')} onClick={() => dialogsRef.current?.openDialog('travel')}>

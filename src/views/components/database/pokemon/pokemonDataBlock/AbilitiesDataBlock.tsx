@@ -11,7 +11,7 @@ export const AbilitiesDataBlock = ({ pokemonWithForm, dialogsRef }: PokemonDataP
   const { form } = pokemonWithForm;
   const { projectDataValues: abilities } = useProjectAbilities();
   const getAbilityName = useGetEntityNameTextUsingTextId();
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const isClickable: boolean = useKeyPress(CONTROL);
   const shortcutNavigation = useShortcutNavigation('abilities', 'ability', '/database/abilities/');
 

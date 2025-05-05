@@ -29,7 +29,7 @@ export const useProjectLoadProcessor = () => {
   const [, setGlobalState] = useGlobalState();
   const defaultTextInfoTranslation = useDefaultTextInfoTranslation();
   const loaderRef = useLoaderRef();
-  const { t } = useTranslation('loader');
+  const { t } = useTranslation();
   const binding = useRef<ProjectLoadFunctionBinding>(DEFAULT_BINDING);
   const processors: SpecialStateProcessors<ProjectLoadStateObject> = useMemo(
     () => ({

@@ -98,7 +98,7 @@ type MapListProps = {
 
 export const MapList = ({ research }: MapListProps) => {
   const { selectedDataIdentifier: currentMap, setSelectedDataIdentifier: setCurrentMap } = useProjectMaps();
-  const { t } = useTranslation('database_maps');
+  const { t } = useTranslation();
   const options = useSelectOptions('maps');
   const optionsFiltered = useMemo(() => filter(options, research), [options, research]);
 

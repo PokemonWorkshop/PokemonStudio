@@ -10,7 +10,7 @@ type ItemGenericDataProps = { dialogsRef: ItemDialogsRef };
 
 export const ItemGenericData = ({ dialogsRef }: ItemGenericDataProps) => {
   const { currentItem: item } = useItemPage();
-  const { t } = useTranslation('database_items');
+  const { t } = useTranslation();
   const getPocketName = useGetItemPocketText();
   const isDisabled = LOCKED_ITEM_EDITOR[item.klass].includes('generic');
 

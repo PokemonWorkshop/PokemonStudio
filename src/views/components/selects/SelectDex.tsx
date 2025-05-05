@@ -14,21 +14,21 @@ type SelectDexProps = {
 };
 
 export const SelectDex = ({ dbSymbol, onChange, noLabel, noneValue, undefValueOption, filter }: SelectDexProps) => {
-  const { t } = useTranslation(['database_dex', 'select']);
+  const { t } = useTranslation();
   const dexOptions = useSelectOptions('dex');
   const options = useMemo(() => {
     if (undefValueOption) return [{ value: '__undef__', label: undefValueOption }, ...dexOptions];
-    if (noneValue) return [{ value: '__undef__', label: t('select:none') }, ...dexOptions];
+    if (noneValue) return [{ value: '__undef__', label: t('none') }, ...dexOptions];
     return dexOptions;
   }, [dexOptions, undefValueOption, noneValue]);
 
-  const optionals = { deletedOption: t('database_dex:dex_deleted'), filter };
+  const optionals = { deletedOption: t('bestiary_deleted'), filter };
 
   if (noLabel) return <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />;
 
   return (
     <SelectContainerWithLabel>
-      <span>{t('database_dex:dex')}</span>
+      <span>{t('bestiary')}</span>
       <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />
     </SelectContainerWithLabel>
   );

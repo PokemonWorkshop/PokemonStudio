@@ -15,7 +15,7 @@ type CheckMapsModifiedStateObject = { state: 'done' } | { state: 'checkMapsModif
 export const useCheckMapsModified = () => {
   const [state, setState] = useState<CheckMapsModifiedStateObject>({ state: 'done' });
   const [globalState, setGlobalState] = useGlobalState();
-  const { t } = useTranslation('database_maps');
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (state.state !== 'checkMapsModified') return;

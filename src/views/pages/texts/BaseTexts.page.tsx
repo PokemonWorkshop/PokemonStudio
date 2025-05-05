@@ -22,7 +22,7 @@ const TextsPageContainerStyle = styled(PageContainerStyle)`
 `;
 export const BaseTextsPage = () => {
   const dialogsRef = useDialogsRef<TextEditorAndDeletionKeys>();
-  const { t } = useTranslation('text_management');
+  const { t } = useTranslation();
   const { disabledTranslation } = useTextPage();
   const location = useLocation();
 

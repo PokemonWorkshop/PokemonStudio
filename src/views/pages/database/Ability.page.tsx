@@ -15,7 +15,7 @@ import { useDialogsRef } from '@hooks/useDialogsRef';
 export const AbilityPage = () => {
   const dialogsRef = useDialogsRef<AbilityEditorAndDeletionKeys>();
   const { ability, abilityName, cannotDelete } = useAbilityPage();
-  const { t } = useTranslation('database_abilities');
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const onClickedPokemonList = () => navigate(`/database/abilities/pokemon`);
 
@@ -29,12 +29,12 @@ export const AbilityPage = () => {
             {/* <AbilityParametersData ability={ability} dialogsRef={dialogsRef} /> */}
           </DataBlockWrapper>
           <DataBlockWrapper>
-            <DataBlockWithAction size="full" title={t('pokemon_with_ability', { ability: abilityName })}>
-              <DarkButton onClick={onClickedPokemonList}>{t('button_list_pokemon')}</DarkButton>
+            <DataBlockWithAction size="full" title={t('creature_with_ability', { ability: abilityName })}>
+              <DarkButton onClick={onClickedPokemonList}>{t('button_list_creature')}</DarkButton>
             </DataBlockWithAction>
-            <DataBlockWithAction size="full" title={t('deleting')}>
+            <DataBlockWithAction size="full" title={t('deletion')}>
               <DeleteButtonWithIcon onClick={() => dialogsRef.current?.openDialog('deletion', true)} disabled={cannotDelete}>
-                {t('delete')}
+                {t('delete_this_ability')}
               </DeleteButtonWithIcon>
             </DataBlockWithAction>
           </DataBlockWrapper>

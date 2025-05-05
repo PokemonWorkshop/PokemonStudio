@@ -19,7 +19,7 @@ type MapFolderDeletionProps = {
  * Component responsive of asking the user if they really want to delete all the map of a folder before doing so.
  */
 export const MapFolderDeletion = forwardRef<EditorHandlingClose, MapFolderDeletionProps>(({ closeDialog, mapInfoFolder }, ref) => {
-  const { t } = useTranslation('database_maps');
+  const { t } = useTranslation();
   const {
     projectDataValues: maps,
     selectedDataIdentifier: currentDbSymbol,

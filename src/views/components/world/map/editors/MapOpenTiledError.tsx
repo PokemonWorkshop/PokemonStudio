@@ -21,7 +21,7 @@ type MapOpenTiledErrorProps = {
 };
 
 export const MapOpenTiledError = forwardRef<EditorHandlingClose, MapOpenTiledErrorProps>(({ closeDialog }, ref) => {
-  const { t } = useTranslation(['database_maps', 'error']);
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const openStudioLogsFolder = useOpenStudioLogsFolder();
   const isTiledPathConfigured = !!getSetting('tiledPath');
@@ -41,20 +41,20 @@ export const MapOpenTiledError = forwardRef<EditorHandlingClose, MapOpenTiledErr
         <MessageBoxIconErrorContainer>
           <BaseIcon icon="map" size="s" color={theme.colors.dangerBase} />
         </MessageBoxIconErrorContainer>
-        <h3>{t('database_maps:title_open_tiled_error')}</h3>
+        <h3>{t('title_open_tiled_error')}</h3>
       </MessageBoxTitleIconContainer>
       <MessageBoxTextContainer>
-        {isTiledPathConfigured ? <p>{t('database_maps:message_open_tiled_error')}</p> : <p>{t('database_maps:message_config_open_tiled_error')}</p>}
+        {isTiledPathConfigured ? <p>{t('message_open_tiled_error')}</p> : <p>{t('message_config_open_tiled_error')}</p>}
       </MessageBoxTextContainer>
       {isTiledPathConfigured ? (
         <MessageBoxActionContainer>
-          <SecondaryButton onClick={onClickLogs}>{t('error:logs')}</SecondaryButton>
-          <PrimaryButton onClick={closeDialog}>{t('database_maps:close')}</PrimaryButton>
+          <SecondaryButton onClick={onClickLogs}>{t('logs')}</SecondaryButton>
+          <PrimaryButton onClick={closeDialog}>{t('close')}</PrimaryButton>
         </MessageBoxActionContainer>
       ) : (
         <MessageBoxActionContainer>
-          <MessageBoxCancelLink onClick={closeDialog}>{t('database_maps:close')}</MessageBoxCancelLink>
-          <PrimaryButton onClick={() => navigate('/settings/maps')}>{t('database_maps:configure_tiled_path')}</PrimaryButton>
+          <MessageBoxCancelLink onClick={closeDialog}>{t('close')}</MessageBoxCancelLink>
+          <PrimaryButton onClick={() => navigate('/settings/maps')}>{t('configure_tiled_path')}</PrimaryButton>
         </MessageBoxActionContainer>
       )}
     </MessageBoxContainer>

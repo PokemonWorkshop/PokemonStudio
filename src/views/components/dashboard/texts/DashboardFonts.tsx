@@ -18,7 +18,7 @@ type DashboardFontsProps = {
 export const DashboardFonts = ({ isAlternative, onNew, onEdit, onDeleteAll }: DashboardFontsProps) => {
   const { projectConfigValues: texts, setProjectConfigValues: setTexts } = useConfigTexts();
   const currentEditedTexts = useMemo(() => cloneEntity(texts), [texts]);
-  const { t } = useTranslation('dashboard_texts');
+  const { t } = useTranslation();
 
   return (
     <PageEditor editorTitle={t('texts')} title={isAlternative ? t('alt_sizes') : t('fonts')}>

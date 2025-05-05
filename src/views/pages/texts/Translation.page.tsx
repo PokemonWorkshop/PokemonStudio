@@ -26,7 +26,7 @@ export const TranslationPage = () => {
   const [language, setLanguage] = useState<Language>({ value: languageByIndexFiltered[0].value, index: languageByIndexFiltered[0].index });
   const [positionLanguage, setPositionLanguage] = useState<number>(state?.position || 1);
   const [disabledNavigation, setDisabledNavigation] = useState<boolean>(false);
-  const { t } = useTranslation('text_management');
+  const { t } = useTranslation();
   const languageExistInFile = allTextsFromFile[0].includes(language.value);
 
   useEffect(() => {

@@ -23,7 +23,7 @@ const OffsetInfo = styled.div`
 `;
 
 export const InformationsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const dialogsRef = useDialogsRef<TranslationEditorTitle>();
   const { creature, form, creatureName, formName } = useCreaturePage();
   const updateForm = useUpdateForm(creature, form);
@@ -66,7 +66,7 @@ export const InformationsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
         <TypeFields form={form} defaults={defaults} />
         <InputWithTopLabelContainer>
           <Input name="frontOffsetY" label={t('offset')} labelLeft onInput={onInputTouched} />
-          <OffsetInfo>{t('offset_info')}</OffsetInfo>
+          <OffsetInfo>{t('offset_info_creature')}</OffsetInfo>
         </InputWithTopLabelContainer>
       </InputFormContainer>
       <CreatureTranslationOverlay creature={creature} form={form} onClose={onTranslationOverlayClose} ref={dialogsRef} />

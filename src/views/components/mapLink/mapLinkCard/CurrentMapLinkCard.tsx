@@ -10,7 +10,7 @@ type CurrentMapLinkCardProps = {
 
 export const CurrentMapLinkCard = ({ mapLink, mapData }: CurrentMapLinkCardProps) => {
   const mapName = mapData.get(mapLink.mapId);
-  const { t } = useTranslation('database_maplinks');
+  const { t } = useTranslation();
 
   return (
     <MapLinkCardContainer data-type="current">

@@ -30,11 +30,12 @@
     }
   },
   "scripts": {
-    "start": "run-script-os",
+    "i18n": "node merge_i18n",
+    "start": "node merge_i18n && run-script-os",
     "start:win32": "chcp 65001 && electron-forge start",
     "start:darwin:linux": "electron-forge start",
     "package": "electron-forge package",
-    "make": "electron-forge make",
+    "make": "node merge_i18n && electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx ."
   },

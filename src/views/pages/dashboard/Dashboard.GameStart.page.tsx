@@ -4,7 +4,7 @@ import { DashboardTemplate } from '@components/dashboard';
 import { DashboardGameStartCinematic, DashboardGameStartSplashScreen, DashboardGameStartTitleScreen } from '@components/dashboard/gameStart';
 
 export const DashboardGameStartPage = () => {
-  const { t } = useTranslation('dashboard');
+  const { t } = useTranslation();
   return (
     <DashboardTemplate title={t('game_start')}>
       <DashboardGameStartSplashScreen />

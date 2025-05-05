@@ -63,7 +63,7 @@ const DataBlockTextTranslate = ({ isDefault, languageTitle, textFromFileByIndex,
   const [, setState] = useGlobalState();
   const languageContext = useContext(LanguageContext);
   const { allTextsFromFile } = useTranslationPage(languageContext.positionLanguage);
-  const { t } = useTranslation('text_management');
+  const { t } = useTranslation();
   const [textTranslate, setTextTranslate] = useState<string>(textFromFileByIndex);
   const [numberOfTextTranslated, setNumberOfTextTranslated] = useState(calculateTranslatedTexts(allTextsFromFile, languageContext.language.index));
   const percentage: number = cleanNaNValue((numberOfTextTranslated / (allTextsFromFile.length - 1)) * 100);
@@ -110,7 +110,7 @@ const DataBlockTextTranslate = ({ isDefault, languageTitle, textFromFileByIndex,
         </DataBlockTranslateHeader>
         {!isDefault && (
           <ProgressBar
-            label={`${numberOfTextTranslated}/${allTextsFromFile.length - 1} ` + t('tranlasted_text')}
+            label={`${numberOfTextTranslated}/${allTextsFromFile.length - 1} ` + t('translated_text')}
             value={percentage}
             maxValue={100}
             style={{ alignSelf: 'center' }}
@@ -122,7 +122,7 @@ const DataBlockTextTranslate = ({ isDefault, languageTitle, textFromFileByIndex,
         disabled={isDefault}
         id="descr"
         value={textTranslate}
-        placeholder={t('example_description')}
+        placeholder={t('example_description_texts_file')}
         onChange={(event) => setTextTranslate(event.target.value)}
         onKeyDown={(e) => {
           if (e.key === CONTROL) {
@@ -153,7 +153,7 @@ const DataBlockTextTranslate = ({ isDefault, languageTitle, textFromFileByIndex,
 };
 
 export const TranslateTarget = () => {
-  const { t, i18n } = useTranslation('text_management');
+  const { t, i18n } = useTranslation();
   const languageContext = useContext(LanguageContext);
   const { defaultLanguage, currentTextFromFile, allTextsFromFile, defaultLanguageIndexFromFile } = useTranslationPage(
     languageContext.positionLanguage

@@ -16,7 +16,7 @@ type TypeDeletionEditorProps = {
 export const TypeDeletionEditor = forwardRef<EditorHandlingClose, TypeDeletionEditorProps>(({ onClose }, ref) => {
   const { types, currentTypeName, currentType: type } = useTypePage();
   const { removeProjectDataValue: deleteType } = useProjectTypes();
-  const { t } = useTranslation('database_types');
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const onClickDelete = () => {
     const firstDbSymbol = Object.keys(types)
@@ -34,8 +34,8 @@ export const TypeDeletionEditor = forwardRef<EditorHandlingClose, TypeDeletionEd
 
   return (
     <Deletion
-      title={t('deletion_of', { type: currentTypeName })}
-      message={t('deletion_message', { type: currentTypeName })}
+      title={t('deletion_of_type', { type: currentTypeName })}
+      message={t('deletion_message_type', { type: currentTypeName })}
       onClickDelete={onClickDelete}
       onClose={onClose}
     />

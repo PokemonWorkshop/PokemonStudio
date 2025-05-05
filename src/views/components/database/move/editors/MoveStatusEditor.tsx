@@ -43,7 +43,7 @@ const isLuckRateOverflow = (moveStatus: StudioMoveStatus[]) => {
 };
 
 export const MoveStatusEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_moves');
+  const { t } = useTranslation();
   const { move } = useMovePage();
   const updateMove = useUpdateMove(move);
   const moveWithStatus = useMemo(() => initMoveStatus(move), [move]);

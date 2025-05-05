@@ -12,7 +12,7 @@ type CryResourceProps = {
 };
 
 export const CryResource = ({ creature, form }: CryResourceProps) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const { onCryChoosen, onResourceClean } = useUpdateResources(creature, form);
 
   return (
@@ -21,7 +21,7 @@ export const CryResource = ({ creature, form }: CryResourceProps) => {
       <ResourceWrapper size="half">
         <OtherResource
           type="music"
-          title={t('pokemon_cry')}
+          title={t('creature_cry')}
           resourcePath={formResourcesPath(form, 'cry')}
           extensions={AUDIO_EXT}
           onResourceChoosen={(resourcePath) => onCryChoosen(resourcePath)}

@@ -10,7 +10,7 @@ type MoveStatisticsProps = {
 };
 
 export const MoveStatistics = ({ move, dialogsRef }: MoveStatisticsProps) => {
-  const { t } = useTranslation('database_moves');
+  const { t } = useTranslation();
 
   const getStatistic = (stageType: StudioMoveBattleStage) => {
     const modificator = getBattleStageModModificator(move, stageType);

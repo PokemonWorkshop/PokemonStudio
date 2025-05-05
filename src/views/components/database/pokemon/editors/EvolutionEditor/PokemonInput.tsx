@@ -6,16 +6,16 @@ import { EvolutionConditionEditorInput } from './InputProps';
 import { SelectPokemon } from '@components/selects/SelectPokemon';
 
 export const PokemonInput = ({ type, state, dispatch }: EvolutionConditionEditorInput) => {
-  const { t } = useTranslation(['database_pokemon', 'select']);
+  const { t } = useTranslation();
   if (type !== 'tradeWith') return null;
 
   return (
     <InputWithTopLabelContainer>
-      <Label>{t('database_pokemon:evolutionValue_pokemon')}</Label>
+      <Label>{t('evolution_value_pokemon')}</Label>
       <SelectPokemon
         dbSymbol={state[type]}
         onChange={(value) => dispatch({ type: 'update', key: type, value: value as DbSymbol })}
-        undefValueOption={t('select:none')}
+        undefValueOption={t('none')}
         noLabel
       />
     </InputWithTopLabelContainer>

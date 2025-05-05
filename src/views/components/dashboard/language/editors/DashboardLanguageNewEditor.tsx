@@ -44,7 +44,7 @@ type DashboardLanguageNewEditorProps = {
 export const DashboardLanguageNewEditor = forwardRef<EditorHandlingClose, DashboardLanguageNewEditorProps>(({ closeDialog }, ref) => {
   const { projectStudio, updateProjectStudio } = useDashboardLanguage();
   const { addNewLanguageProjectText } = useProjectSavingLanguage();
-  const { t } = useTranslation('dashboard_language');
+  const { t } = useTranslation();
   const [languageText, setLanguageText] = useState<LanguageDefaultValue>({ text: '', code: '' });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const codes = useMemo(() => projectStudio.languagesTranslation.map(({ code }) => code), []);

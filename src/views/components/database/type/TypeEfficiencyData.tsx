@@ -10,7 +10,7 @@ import { useTypePage } from '@hooks/usePage';
 import { useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
 
 type RenderEfficienceProps = {
-  t: TFunction<'database_types'>;
+  t: TFunction;
   efficience: 'high_efficience' | 'low_efficience' | 'zero_efficience';
   types: StudioType[];
 };
@@ -37,7 +37,7 @@ const RenderEfficience = ({ t, efficience, types }: RenderEfficienceProps) => {
 export const TypeEfficiencyData = () => {
   const { types: allTypes, currentType: type } = useTypePage();
   const types: StudioType[] = Object.values(allTypes);
-  const { t } = useTranslation('database_types');
+  const { t } = useTranslation();
   const efficiencyData = getEfficiencies(types, type);
 
   return (

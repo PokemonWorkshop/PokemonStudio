@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { DashboardTemplate, DashboardSettings } from '@components/dashboard';
 
 export const DashboardSettingsPage = () => {
-  const { t } = useTranslation('dashboard');
+  const { t } = useTranslation();
   return (
     <DashboardTemplate title={t('settings')}>
       <DashboardSettings />

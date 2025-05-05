@@ -40,7 +40,7 @@ const EditorsContainer = styled.div`
 `;
 
 export const DashboardDisplay = () => {
-  const { t } = useTranslation('dashboard_display');
+  const { t } = useTranslation();
   const { projectConfigValues: display, setProjectConfigValues: setDisplay } = useConfigDisplay();
   const currentEditedDisplay = useMemo(() => cloneEntity(display), [display]);
   const [resolution, setResolution] = useState(currentEditedDisplay.gameResolution);

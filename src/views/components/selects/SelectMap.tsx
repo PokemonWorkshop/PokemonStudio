@@ -12,7 +12,7 @@ type SelectMapProps = {
 };
 
 export const SelectMap = ({ dbSymbol, onChange, noLabel, undefValueOption }: SelectMapProps) => {
-  const { t } = useTranslation('database_maps');
+  const { t } = useTranslation();
   const mapOption = useSelectOptions('maps');
   const options = useMemo(() => {
     if (undefValueOption) return [{ value: '__undef__', label: undefValueOption }, ...mapOption];

@@ -17,7 +17,7 @@ const pocketOptions = (getItemPocketText: ReturnType<typeof useGetItemPocketText
 
 export const ItemGenericDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { currentItem, items } = useItemPage();
-  const { t } = useTranslation('database_items');
+  const { t } = useTranslation();
   const item = cloneEntity(currentItem);
   const updateItem = useUpdateItem(currentItem);
   const getItemPocketText = useGetItemPocketText();
