@@ -104,6 +104,17 @@ export const DashboardSettings = () => {
           />
         </InputWithLeftLabelContainer>
         <UnlimitedItemsInfoContainer>{t('unlimited_items')}</UnlimitedItemsInfoContainer>
+        <InputWithLeftLabelContainer>
+          <Label>{t('battle_camera_3d')}</Label>
+          <Toggle
+            name="battle_camera_3d"
+            checked={settings.isUseBattleCamera3d}
+            onChange={(event) => {
+              currentEditedSettings.isUseBattleCamera3d = event.target.checked;
+              setSettings(currentEditedSettings);
+            }}
+          />
+        </InputWithLeftLabelContainer>
       </InputContainer>
     </PageEditor>
   );

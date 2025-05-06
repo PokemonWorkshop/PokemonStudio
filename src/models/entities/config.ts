@@ -102,6 +102,7 @@ export const SETTINGS_CONFIG_VALIDATOR = z.object({
   isAlwaysUseForm0ForEvolution: z.boolean(),
   isUseForm0WhenNoEvolutionData: z.boolean(),
   maxBagItemCount: POSITIVE_OR_ZERO_INT,
+  isUseBattleCamera3d: z.boolean(),
 });
 export type StudioSettingConfig = z.infer<typeof SETTINGS_CONFIG_VALIDATOR>;
 
