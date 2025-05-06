@@ -1,5 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const fs = require('fs');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const path = require('path');
 
 /**
  * Synchronizes targetJson with baseJson:
@@ -28,17 +30,15 @@ function syncJson(baseJson, targetJson) {
         hasChanges = true;
       }
     }
-    updatedJson[key] = targetJson[key]; // Keep the order from baseJson
+    updatedJson[key] = targetJson[key];
   }
 
-  // Remove extra keys that are not in baseJson
   Object.keys(targetJson).forEach((key) => {
     if (!Object.prototype.hasOwnProperty.call(baseJson, key)) {
       hasChanges = true;
     }
   });
 
-  // Replace targetJson with the cleaned-up version
   Object.keys(targetJson).forEach((key) => delete targetJson[key]);
   Object.assign(targetJson, updatedJson);
 
@@ -46,29 +46,41 @@ function syncJson(baseJson, targetJson) {
 }
 
 const basePath = './assets/i18n/en.json';
+const i18nDir = './assets/i18n';
 const targetLanguages = ['fr', 'de', 'pt', 'it', 'es'];
 
 try {
   const baseJson = JSON.parse(fs.readFileSync(basePath, 'utf-8'));
 
   targetLanguages.forEach((lang) => {
-    const targetPath = `./assets/i18n/${lang}.json`;
+    const targetPath = path.join(i18nDir, `${lang}.json`);
+    let targetJson = {};
+    let isNewFile = false;
 
     try {
-      const targetJson = JSON.parse(fs.readFileSync(targetPath, 'utf-8'));
-      const originalJson = JSON.stringify(targetJson, null, 2);
+      const content = fs.readFileSync(targetPath, 'utf-8');
+      targetJson = JSON.parse(content);
+    } catch {
+      console.warn(`⚠️  ${lang}.json not found or invalid. Creating a new one.`);
+      isNewFile = true;
+    }
 
-      if (syncJson(baseJson, targetJson)) {
-        const updatedJson = JSON.stringify(targetJson, null, 2);
-        if (originalJson !== updatedJson) {
-          fs.writeFileSync(targetPath, updatedJson, 'utf-8');
-          console.log(`✅ ${lang}.json updated: synchronized with en.json.`);
-        }
-      } else {
-        console.log(`✅ ${lang}.json is already up-to-date.`);
-      }
-    } catch (e) {
-      console.error(`❌ Error processing ${lang}.json:`, e);
+    if (syncJson(baseJson, targetJson) || isNewFile) {
+      const updatedJson = JSON.stringify(targetJson, null, 2);
+      fs.writeFileSync(targetPath, updatedJson, 'utf-8');
+      console.log(`✅ ${lang}.json ${isNewFile ? 'created' : 'updated'}: synchronized with en.json.`);
+    } else {
+      console.log(`✅ ${lang}.json is already up-to-date.`);
+    }
+  });
+
+  const files = fs.readdirSync(i18nDir);
+  files.forEach((file) => {
+    const ext = path.extname(file);
+    const langCode = path.basename(file, ext);
+    if (ext === '.json' && langCode !== 'en' && !targetLanguages.includes(langCode)) {
+      fs.unlinkSync(path.join(i18nDir, file));
+      console.log(`🗑️  Removed unused file: ${file}`);
     }
   });
 } catch (e) {
