@@ -66,6 +66,10 @@ const i18nOptions: InitOptions = {
   fallbackLng: 'en',
   returnObjects: true,
   resources,
+  saveMissing: true,
+  missingKeyHandler: (lng, ns, key) => {
+    console.error(`[i18n] Missing translation key "${key}" for language "${lng}" in namespace "${ns}"`);
+  },
 };
 
 // eslint-disable-next-line import/no-named-as-default-member
