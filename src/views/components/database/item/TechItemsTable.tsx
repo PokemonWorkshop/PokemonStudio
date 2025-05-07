@@ -10,8 +10,8 @@ import {
   DataTechItemVirtualizedListContainer,
   DataTechItemList,
 } from './TechItemsTableStyle';
-import { ITEM_DESCRIPTION_TEXT_ID, StudioTechItem } from '@modelEntities/item';
-import { useCopyProjectText, useGetEntityNameText, useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
+import { ITEM_DESCRIPTION_TEXT_ID, ITEM_NAME_TEXT_ID, StudioTechItem } from '@modelEntities/item';
+import { useCopyProjectText, useGetEntityNameText, useGetEntityNameTextUsingTextId, useGetProjectText } from '@utils/ReadingProjectText';
 import { MoveCategory, TypeCategory } from '@components/categories';
 import { SelectMove } from '@components/selects';
 import { DbSymbol } from '@modelEntities/dbSymbol';
@@ -55,7 +55,7 @@ const RenderTechItem = ({ item, state }: RenderTechItemProps) => {
   return (
     <RenderTechItemContainer gap="8px">
       <span>{getItemName(item)}</span>
-      <span className="icon">
+      <span>
         <ResourceImage imagePathInProject={itemIconPath(item.icon)} />
       </span>
       <span className="select">
@@ -93,7 +93,7 @@ const RenderTechItem = ({ item, state }: RenderTechItemProps) => {
   );
 };
 
-const getTechItems = (state: State) => {
+const getTechItems = (state: State, getText: (fileId: number, textId: number) => string) => {
   return Object.values(state.projectData.items)
     .filter((item) => item.klass === 'TechItem')
     .sort((a, b) => {
@@ -111,14 +111,32 @@ const getTechItems = (state: State) => {
         return priorityA - priorityB;
       }
 
-      return a.id - b.id;
+      const extractNumber = (name: string): number => {
+        return parseInt(name.match(/\d+/)?.[0] ?? '');
+      };
+
+      const aName = getText(ITEM_NAME_TEXT_ID, a.id);
+      const bName = getText(ITEM_NAME_TEXT_ID, b.id);
+      const numA = extractNumber(aName);
+      const numB = extractNumber(bName);
+
+      if (!isNaN(numA) && !isNaN(numB)) {
+        return numA - numB;
+      } else if (!isNaN(numA)) {
+        return -1;
+      } else if (!isNaN(numB)) {
+        return 1;
+      }
+
+      return aName.localeCompare(bName, 'und', { sensitivity: 'case' });
     });
 };
 
 export const TechItemsTable = () => {
   const [state] = useGlobalState();
   const { t } = useTranslation();
-  const allTechItems = getTechItems(state);
+  const getText = useGetProjectText();
+  const allTechItems = getTechItems(state, getText);
 
   return (
     <DataTechItemTable>

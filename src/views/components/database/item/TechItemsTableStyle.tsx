@@ -69,7 +69,8 @@ export const RenderTechItemContainer = styled(DataTechItemGrid)`
   height: 48px;
   padding: 0 8px 0 8px;
 
-  & .icon {
+  & img {
+    margin-top: 6px;
     width: 32px;
     height: 32px;
     object-fit: cover;
