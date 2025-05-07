@@ -1519,5 +1519,6 @@
   "none_option": "Aucun",
   "import_data_from": "Importer les données de",
   "replace_creatures": "Remplacer les Pokémon",
-  "battle_camera_3d": "Utiliser la caméra 3D en combat"
+  "battle_camera_3d": "Utiliser la caméra 3D en combat",
+  "add_battle_camera_3D_to_settings": "Ajout de la caméra 3D en combat dans les paramètres"
 }
