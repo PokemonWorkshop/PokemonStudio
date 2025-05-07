@@ -37,7 +37,7 @@ type MigrateConfigType = {
  * migration: The method that must be called to do the migration.
  * version: The version of the project where the migration is to take place. The migration will also run if the project has a lower version.
  * message: A message will be displayed for the user to understand what is happening.
- *          You need to enter the translation key used by i18n. The translations must be in the migration.json files.
+ *          You need to enter the translation key used by i18n.
  */
 
 export const MIGRATION_CONFIG: MigrateConfigType[] = [
