@@ -24,6 +24,7 @@
       "@assets/*": ["assets/*"],
       "@src/*": ["src/*"],
       "@hooks/*": ["src/hooks/*"],
+      "@poc/*": ["src/poc/*"],
       "react": ["./node_modules/@types/react"]
     }
   },
