@@ -47,7 +47,8 @@ function syncJson(baseJson, targetJson) {
 
 const basePath = './assets/i18n/en.json';
 const i18nDir = './assets/i18n';
-const targetLanguages = ['fr', 'de', 'pt', 'it', 'es'];
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const targetLanguages = require('./package.json').languages || [];
 
 try {
   const baseJson = JSON.parse(fs.readFileSync(basePath, 'utf-8'));

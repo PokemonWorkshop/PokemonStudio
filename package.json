@@ -29,6 +29,14 @@
       "version": ">=10.9.0"
     }
   },
+  "languages": [
+    "en",
+    "fr",
+    "de",
+    "pt",
+    "it",
+    "es"
+  ],
   "scripts": {
     "i18n": "node updater_i18n",
     "start": "node updater_i18n && run-script-os",
