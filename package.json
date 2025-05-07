@@ -43,7 +43,7 @@
     "start:win32": "chcp 65001 && electron-forge start",
     "start:darwin:linux": "electron-forge start",
     "package": "electron-forge package",
-    "make": "node merge_i18n && electron-forge make",
+    "make": "node updater_i18n && electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx ."
   },
