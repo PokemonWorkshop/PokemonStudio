@@ -2,6 +2,8 @@ import i18next, { InitOptions } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
+import { languages } from '../package.json';
+
 import En from '../assets/i18n/en.json';
 type TranslationSchema = typeof En;
 
@@ -29,6 +31,20 @@ declare const require: {
   };
 };
 
+/**
+ * Extracts the active languages from the `languages` object.
+ *
+ * This function filters the entries of the `languages` object to include only
+ * those where the language is marked as active (`isActive` is `true`). It then
+ * maps the filtered entries to an array of language codes.
+ *
+ * @returns An array of language codes representing the active languages.
+ */
+const activeLanguages = Object.entries(languages)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  .filter(([_, isActive]) => isActive)
+  .map(([lang]) => lang);
+
 const context = require.context('../assets/i18n', false, /\.json$/);
 
 const resources: Record<string, { translation: Record<string, string> }> = {};
@@ -38,6 +54,9 @@ context.keys().forEach((key) => {
   if (!match) return;
 
   const lang = match[1];
+
+  if (!activeLanguages.includes(lang)) return;
+
   const translation = context(key);
   resources[lang] = { translation: translation as TranslationSchema };
 });
