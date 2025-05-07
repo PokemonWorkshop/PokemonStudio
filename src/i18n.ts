@@ -58,6 +58,9 @@ const resources: TranslationResources = {
  * @property {string} fallbackLng - The default language to fall back to if the current language is not available. Defaults to 'en'.
  * @property {boolean} returnObjects - Allows returning objects from translation functions. Defaults to true.
  * @property {object} resources - The translation resources containing language keys and their respective translations.
+ * @property {boolean} saveMissing - Enables saving missing translation keys to a backend or log.
+ * @property {function} missingKeyHandler - A custom handler function that is called when a translation key is missing.
+ *                                Logs an error message with the missing key, language, and namespace.
  */
 const i18nOptions: InitOptions = {
   interpolation: {
