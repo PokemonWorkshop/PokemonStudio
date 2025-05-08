@@ -5,7 +5,7 @@ import { DashboardGameOptionsInactive } from './DashboardGameOptionsInactive';
 import { DashboardGameOptionsActive } from './DashboardGameOptionsActive';
 
 export const DashboardGameOptions = () => {
-  const { t } = useTranslation('dashboard_game_options');
+  const { t } = useTranslation();
 
   return (
     <>

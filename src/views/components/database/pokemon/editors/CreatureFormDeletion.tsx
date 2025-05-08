@@ -11,7 +11,7 @@ type CreatureFormDeletionProps = {
 };
 
 export const CreatureFormDeletion = forwardRef<EditorHandlingClose, CreatureFormDeletionProps>(({ closeDialog }, ref) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const { creature, form } = useCreaturePage();
   const { projectDataValues: creatures, selectedDataIdentifier: currentPokemon, setProjectDataValues: setCreature } = useProjectPokemon();
 

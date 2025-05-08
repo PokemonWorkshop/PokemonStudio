@@ -7,7 +7,7 @@ import { PokemonDataProps } from '../PokemonDataPropsInterface';
 
 export const PokedexDataBlock = ({ pokemonWithForm, dialogsRef }: PokemonDataProps) => {
   const { species, form } = pokemonWithForm;
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const getText = useGetProjectText();
 
   return (

@@ -25,20 +25,20 @@ type SelectPokemonProps = {
 };
 
 export const SelectPokemon = ({ dbSymbol, onChange, breakpoint, noLabel, undefValueOption }: SelectPokemonProps) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const creatureOptions = useSelectOptions('creatures');
   const options = useMemo(() => {
     if (undefValueOption) return [{ value: '__undef__', label: undefValueOption }, ...creatureOptions];
     return creatureOptions;
   }, [creatureOptions, undefValueOption]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const optionals = useMemo(() => ({ deletedOption: t('pokemon_deleted') }), []);
+  const optionals = useMemo(() => ({ deletedOption: t('creature_deleted') }), []);
 
   if (noLabel) return <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />;
 
   return (
     <SelectContainerWithLabel>
-      <BreakableSpan breakpoint={breakpoint}>{t('pokemon')}</BreakableSpan>
+      <BreakableSpan breakpoint={breakpoint}>{t('creature')}</BreakableSpan>
       <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />
     </SelectContainerWithLabel>
   );
@@ -52,8 +52,8 @@ type SelectPokemon2Props = {
 };
 
 export const SelectPokemon2 = (props: SelectPokemon2Props) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const creatureOptions = useSelectOptions('creatures') as SelectOption<DbSymbol>[];
 
-  return <Select options={creatureOptions} notFoundLabel={t('pokemon_deleted')} chooseValue={creatureOptions[0]?.value || '__undef__'} {...props} />;
+  return <Select options={creatureOptions} notFoundLabel={t('creature_deleted')} chooseValue={creatureOptions[0]?.value || '__undef__'} {...props} />;
 };

@@ -15,7 +15,7 @@ type DexFrameProps = {
 const getDexType = (dex: StudioDex): StudioDexType => (dex.dbSymbol === 'national' ? 'national' : 'regional');
 
 export const DexFrame = ({ dex, dialogsRef }: DexFrameProps) => {
-  const { t } = useTranslation('database_dex');
+  const { t } = useTranslation();
   const getDexName = useGetEntityNameUsingCSV();
   return (
     <DataBlockContainer size="full" onClick={() => dialogsRef?.current?.openDialog('frame')}>

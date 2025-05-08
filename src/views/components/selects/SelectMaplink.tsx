@@ -6,7 +6,7 @@ import { TFunction } from 'i18next';
 import { SelectCustom, SelectCustomWithLabel } from '@components/SelectCustom';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
 
-const getValue = (options: SelectOption[], id: string, t: TFunction<'database_maplinks'>) => {
+const getValue = (options: SelectOption[], id: string, t: TFunction) => {
   const option = options.find(({ value }) => value === id);
   return option || { value: '__undef__', label: t('map_deleted') };
 };
@@ -22,7 +22,7 @@ type SelectRMXPMapProps = {
 };
 
 export const SelectMaplink = ({ mapId, onChange, label, noneValue, noneValueIsError, overwriteNoneValue, excludeMaps }: SelectRMXPMapProps) => {
-  const { t } = useTranslation('database_maplinks');
+  const { t } = useTranslation();
   const [state] = useGlobalState();
   const getMapName = useGetEntityNameText();
   const allMaps = useMemo(() => Object.values(state.projectData.maps), [state.projectData.maps]);

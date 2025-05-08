@@ -85,7 +85,7 @@ export const ItemBagEntry = ({ dialogsRef, bagEntry, from, index, setIndex }: It
   const item = items[bagEntry.dbSymbol];
   const { trainer } = useTrainerPage();
   const updateTrainer = useUpdateTrainer(trainer);
-  const { t } = useTranslation('database_items');
+  const { t } = useTranslation();
   const isClickable: boolean = useKeyPress(CONTROL);
   const shortcutItemNavigation = useShortcutNavigation('items', 'item', '/database/items/');
 

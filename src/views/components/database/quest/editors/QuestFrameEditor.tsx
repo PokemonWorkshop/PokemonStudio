@@ -13,13 +13,12 @@ import { QuestTranslationEditorTitle, QuestTranslationOverlay } from './QuestTra
 import { Select } from '@ds/Select';
 import React, { forwardRef, useMemo, useRef } from 'react';
 
-const questCategoryEntries = (t: TFunction<'database_quests'>) => QUEST_CATEGORIES.map((category) => ({ value: category, label: t(category) }));
+const questCategoryEntries = (t: TFunction) => QUEST_CATEGORIES.map((category) => ({ value: category, label: t(category) }));
 
-const questResolutionEntries = (t: TFunction<'database_quests'>) =>
-  QUEST_RESOLUTIONS.map((resolution) => ({ value: resolution, label: t(resolution) }));
+const questResolutionEntries = (t: TFunction) => QUEST_RESOLUTIONS.map((resolution) => ({ value: resolution, label: t(resolution) }));
 
 export const QuestFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const { quest } = useQuestPage();
   const updateQuest = useUpdateQuest(quest);
   const dialogsRef = useDialogsRef<QuestTranslationEditorTitle>();
@@ -68,14 +67,20 @@ export const QuestFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   };
 
   return (
-    <Editor type="edit" title={t('informations')}>
+    <Editor type="edit" title={t('information')}>
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="quest-name" required>
             {t('quest_name')}
           </Label>
           <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_name')}>
-            <Input type="text" name="quest-name" defaultValue={getText(QUEST_NAME_TEXT_ID, quest.id)} ref={nameRef} placeholder={t('example_name')} />
+            <Input
+              type="text"
+              name="quest-name"
+              defaultValue={getText(QUEST_NAME_TEXT_ID, quest.id)}
+              ref={nameRef}
+              placeholder={t('example_quest')}
+            />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
@@ -93,7 +98,7 @@ export const QuestFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
               id="descr"
               defaultValue={getText(QUEST_DESCRIPTION_TEXT_ID, quest.id)}
               ref={descriptionRef}
-              placeholder={t('example_descr')}
+              placeholder={t('example_description_quest')}
             />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>

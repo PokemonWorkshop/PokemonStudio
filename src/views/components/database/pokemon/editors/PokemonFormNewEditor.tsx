@@ -40,14 +40,13 @@ const findFirstFormNotUsed = (pokemon: StudioCreature, category: FormCategory) =
   return -1;
 };
 
-const formCategoryEntries = (t: TFunction<'database_pokemon'>) =>
+const formCategoryEntries = (t: TFunction) =>
   FormCategories.map((category) => ({ value: category, label: t(`${category}`) })).sort((a, b) => a.label.localeCompare(b.label));
 
 const CREATURE_FORM_NEW_EDITOR_SCHEMA = CREATURE_FORM_VALIDATOR.pick({ type1: true, type2: true });
 
 export const PokemonFormNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeDialog, setEvolutionIndex }, ref) => {
-  const { t } = useTranslation('database_pokemon');
-  const { t: tMove } = useTranslation('database_moves');
+  const { t } = useTranslation();
   const { creature, form, creatureName } = useCreaturePage();
   const { projectDataValues: creatures, setProjectDataValues: setCreature } = useProjectPokemon();
   const setText = useSetProjectText();
@@ -105,7 +104,7 @@ export const PokemonFormNewEditor = forwardRef<EditorHandlingClose, Props>(({ cl
           <PrimaryButton onClick={onClickNew} disabled={isDisabled}>
             {t('create_form')}
           </PrimaryButton>
-          <DarkButton onClick={closeDialog}>{tMove('cancel')}</DarkButton>
+          <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputFormContainer>
     </Editor>

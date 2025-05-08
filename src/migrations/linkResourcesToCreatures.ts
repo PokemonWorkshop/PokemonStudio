@@ -4,13 +4,7 @@ import path from 'path';
 import { readProjectFolder } from '@src/backendTasks/readProjectData';
 import { padStr } from '@utils/PadStr';
 import fsPromise from 'fs/promises';
-import {
-  StudioCreatureResources,
-  StudioCreatureForm,
-  CREATURE_VALIDATOR,
-  CREATURE_FORM_VALIDATOR,
-  CREATURE_RESOURCES_VALIDATOR,
-} from '@modelEntities/creature';
+import { StudioCreatureForm, CREATURE_VALIDATOR, CREATURE_FORM_VALIDATOR, CREATURE_RESOURCES_VALIDATOR } from '@modelEntities/creature';
 import { z } from 'zod';
 import { deletePSDKDatFile } from './migrateUtils';
 import { parseJSON } from '@utils/json/parse';
@@ -19,8 +13,16 @@ const PRE_MIGRATION_CREATURE_VALIDATOR = CREATURE_VALIDATOR.extend({
   forms: z.array(CREATURE_FORM_VALIDATOR.omit({ resources: true, formTextId: true })).nonempty(),
 });
 type StudioCreatureDataBeforeMigration = z.infer<typeof PRE_MIGRATION_CREATURE_VALIDATOR>;
-type ComputedCreatureResources = Partial<Omit<Exclude<StudioCreatureResources, { hasFemale: false }>, 'hasFemale'>>;
-const DEFAULT_CREATURE_RESOURCE: StudioCreatureResources = {
+
+const DEFAULT_CREATURE_RESOURCES_VALIDATOR = CREATURE_RESOURCES_VALIDATOR.omit({ egg: true, iconEgg: true });
+type StudioDefaultCreatureResources = z.infer<typeof DEFAULT_CREATURE_RESOURCES_VALIDATOR>;
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const CREATURE_FORM_WITHOUT_EGG_VALIDATOR = CREATURE_FORM_VALIDATOR.extend({ resources: DEFAULT_CREATURE_RESOURCES_VALIDATOR });
+type StudioCreatureFormWithoutEgg = z.infer<typeof CREATURE_FORM_WITHOUT_EGG_VALIDATOR>;
+
+type ComputedCreatureResources = Partial<Omit<Exclude<StudioDefaultCreatureResources, { hasFemale: false }>, 'hasFemale'>>;
+const DEFAULT_CREATURE_RESOURCE: StudioDefaultCreatureResources = {
   hasFemale: false,
   icon: '000',
   iconShiny: '000',
@@ -92,9 +94,12 @@ const hasFemale = (resources: ComputedCreatureResources) => {
   );
 };
 
-const fixResourcesForFemaleOnly = (form: Pick<StudioCreatureForm, 'femaleRate'>, resources: ComputedCreatureResources): StudioCreatureResources => {
+const fixResourcesForFemaleOnly = (
+  form: Pick<StudioCreatureForm, 'femaleRate'>,
+  resources: ComputedCreatureResources
+): StudioDefaultCreatureResources => {
   if (form.femaleRate !== 100) {
-    const resourcesValidated = CREATURE_RESOURCES_VALIDATOR.safeParse({ ...resources, hasFemale: hasFemale(resources) });
+    const resourcesValidated = DEFAULT_CREATURE_RESOURCES_VALIDATOR.safeParse({ ...resources, hasFemale: hasFemale(resources) });
     if (resourcesValidated.success) return resourcesValidated.data;
   }
 
@@ -107,7 +112,7 @@ const fixResourcesForFemaleOnly = (form: Pick<StudioCreatureForm, 'femaleRate'>,
   if (resources.icon) resources.iconF ??= resources.icon;
   if (resources.iconShiny) resources.iconShinyF ??= resources.iconShiny;
 
-  const resourcesValidated = CREATURE_RESOURCES_VALIDATOR.safeParse({ ...resources, hasFemale: true });
+  const resourcesValidated = DEFAULT_CREATURE_RESOURCES_VALIDATOR.safeParse({ ...resources, hasFemale: true });
   if (resourcesValidated.success) return resourcesValidated.data;
 
   return { ...DEFAULT_CREATURE_RESOURCE, ...resources, hasFemale: true };
@@ -136,7 +141,7 @@ const linkResources = (creature: StudioCreatureDataBeforeMigration, projectPath:
       characterShinyF: searchCharacterResource(creature.id, form.form, projectPath, true, true),
       cry: searchCry(creature.id, projectPath),
     };
-    (form as StudioCreatureForm).resources = fixResourcesForFemaleOnly(form, resources);
+    (form as StudioCreatureFormWithoutEgg).resources = fixResourcesForFemaleOnly(form, resources);
   });
 };
 

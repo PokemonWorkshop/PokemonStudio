@@ -35,7 +35,7 @@ const isDisabledStatus = (status: StudioMoveStatus[] | null, index: number) => {
 const STATUS_KEY = ['status_1', 'status_2', 'status_3'] as const;
 
 export const MoveStatus = ({ move, dialogsRef }: MoveStatusProps) => {
-  const { t } = useTranslation('database_moves');
+  const { t } = useTranslation();
 
   const getStatus = (statuses: StudioMoveStatus[] | null, index: number) => {
     const status = statuses === null ? null : statuses[index]?.status ?? null;

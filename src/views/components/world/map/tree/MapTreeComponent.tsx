@@ -54,7 +54,7 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
   const navigate = useNavigate();
   const location = useLocation();
   const { buildOnClick, renderContextMenu } = useContextMenu();
-  const { t } = useTranslation('database_maps');
+  const { t } = useTranslation();
   const [tree, setTree] = useState<TreeData>(convertMapInfoToTree(mapInfo));
   const [canRename, setCanRename] = useState<ItemId>();
   const [mapInfoSelected, setMapInfoSelected] = useState<StudioMapInfoValue>();

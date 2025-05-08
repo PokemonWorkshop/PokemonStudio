@@ -18,7 +18,7 @@ type RowRenderType = {
 };
 
 export const SelectCustom = ({ options, noOptionsText, defaultValue, onChange, value, error }: SelectCustomProps) => {
-  const { t } = useTranslation('select');
+  const { t } = useTranslation();
 
   const MenuList = (props: MenuListProps) => {
     const width = 232;

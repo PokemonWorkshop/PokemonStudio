@@ -13,7 +13,7 @@ const UnlimitedItemsInfoContainer = styled.span`
 `;
 
 export const DashboardSettings = () => {
-  const { t } = useTranslation('dashboard_settings');
+  const { t } = useTranslation();
   const { projectConfigValues: settings, setProjectConfigValues: setSettings } = useConfigSettings();
   const [maxLevel, setMaxLevel] = useState(settings.pokemonMaxLevel);
   const [maxItemCount, setMaxBagItemCount] = useState(settings.maxBagItemCount);
@@ -55,7 +55,7 @@ export const DashboardSettings = () => {
   return (
     <PageEditor editorTitle={t('settings')} title={t('general')}>
       <InputWithLeftLabelContainer>
-        <Label htmlFor="max-level">{t('max_pokemon_level')}</Label>
+        <Label htmlFor="max-level">{t('max_creature_level')}</Label>
         <Input
           type="number"
           name="max-level"
@@ -104,6 +104,17 @@ export const DashboardSettings = () => {
           />
         </InputWithLeftLabelContainer>
         <UnlimitedItemsInfoContainer>{t('unlimited_items')}</UnlimitedItemsInfoContainer>
+        <InputWithLeftLabelContainer>
+          <Label>{t('battle_camera_3d')}</Label>
+          <Toggle
+            name="battle_camera_3d"
+            checked={settings.isUseBattleCamera3d}
+            onChange={(event) => {
+              currentEditedSettings.isUseBattleCamera3d = event.target.checked;
+              setSettings(currentEditedSettings);
+            }}
+          />
+        </InputWithLeftLabelContainer>
       </InputContainer>
     </PageEditor>
   );

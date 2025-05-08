@@ -11,7 +11,7 @@ import { cleaningTextNaNValues } from '@utils/cleanNaNValue';
 
 export const DashboardTextsPage = () => {
   const { projectConfigValues: texts, setProjectConfigValues: setTexts } = useConfigTexts();
-  const { t } = useTranslation('dashboard_texts');
+  const { t } = useTranslation();
   const currentEditedTexts = useMemo(() => cloneEntity(texts), [texts]);
   const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
   const [currentDeletion, setCurrentDeletion] = useState<string | undefined>(undefined);

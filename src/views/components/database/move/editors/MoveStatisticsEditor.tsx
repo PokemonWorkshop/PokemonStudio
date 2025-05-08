@@ -23,7 +23,7 @@ const initBattleStageMods = (move: StudioMove): StudioMove => {
 };
 
 export const MoveStatisticsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_moves');
+  const { t } = useTranslation();
   const { move } = useMovePage();
   const updateMove = useUpdateMove(move);
   const moveWithBattleStageMods = useMemo(() => initBattleStageMods(move), [move]);

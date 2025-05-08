@@ -13,7 +13,7 @@ type AbilityDeletionProps = {
  * Component responsive of asking the user if they really want to delete the ability before doing so.
  */
 export const AbilityDeletion = forwardRef<EditorHandlingClose, AbilityDeletionProps>(({ closeDialog }, ref) => {
-  const { t } = useTranslation('database_abilities');
+  const { t } = useTranslation();
   const { projectDataValues: abilities, selectedDataIdentifier: dbSymbol, removeProjectDataValue: deleteAbility, state } = useProjectAbilities();
   const ability = abilities[dbSymbol];
   // We memoise the ability name because when this dialog closes, the ability is already deleted and it shows another name than the one we deleted.
@@ -34,8 +34,8 @@ export const AbilityDeletion = forwardRef<EditorHandlingClose, AbilityDeletionPr
 
   return (
     <Deletion
-      title={t('deletion_of', { ability: abilityName })}
-      message={t('deletion_message', { ability: abilityName })}
+      title={t('deletion_of_ability', { ability: abilityName })}
+      message={t('deletion_message_ability', { ability: abilityName })}
       onClickDelete={onClickDelete}
       onClose={closeDialog}
     />

@@ -35,7 +35,7 @@ const fontEntries = (ttfFiles: StudioTextTtfFileConfig[]) => {
   return ttfFiles.map((ttf) => ({ value: ttf.id.toString(), label: `${ttf.id} - ${ttf.name}` }));
 };
 
-const defaultTitle = (index: number, key: string, t: TFunction<'dashboard_texts'>, isChoice: boolean) => {
+const defaultTitle = (index: number, key: string, t: TFunction, isChoice: boolean) => {
   if (isChoice) {
     if (index === 0) return t('default_choices');
     else return t('scene_choices', { className: key });
@@ -79,7 +79,7 @@ export const DashboardMessages = ({ isChoice }: DashboardMessagesProps) => {
   const [referenceScene, setReferenceScene] = useState<string | undefined>(undefined);
   const [errorReferenceScene, setErrorReferenceScene] = useState<number | undefined>(undefined);
   const currentEditedTexts = useMemo(() => cloneEntity(texts), [texts]);
-  const { t } = useTranslation('dashboard_texts');
+  const { t } = useTranslation();
   const refreshUI = useRefreshUI();
   const fontOptions = useMemo(() => fontEntries(texts.fonts.ttfFiles), [texts]);
   const messagesOrChoices = useMemo(

@@ -46,10 +46,10 @@ const ImportInfoContainer = styled.div`
   gap: 4px;
 `;
 
-const aiCategoryEntries = (t: TFunction<'database_trainers'>) =>
+const aiCategoryEntries = (t: TFunction) =>
   TRAINER_AI_CATEGORIES.map((category) => ({ value: category.value, label: `${padStr(Number(category.value), 2)} - ${t(category.label)}` }));
 
-const vsTypeCategoryEntries = (t: TFunction<'database_trainers'>) =>
+const vsTypeCategoryEntries = (t: TFunction) =>
   TRAINER_VS_TYPE_CATEGORIES.map((category) => ({ value: category.toString(), label: t(`vs_type${category}`) }));
 
 type TrainerNewEditorProps = {
@@ -58,7 +58,7 @@ type TrainerNewEditorProps = {
 
 export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditorProps>(({ closeDialog }, ref) => {
   const { projectDataValues: trainers, setProjectDataValues: setTrainer } = useProjectTrainers();
-  const { t } = useTranslation('database_trainers');
+  const { t } = useTranslation();
   const aiOptions = useMemo(() => aiCategoryEntries(t), [t]);
   const vsTypeOptions = useMemo(() => vsTypeCategoryEntries(t), [t]);
   const [name, setName] = useState(''); // We can't use a ref because of the button behavior
@@ -125,7 +125,7 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
   };
 
   return (
-    <Editor type="creation" title={t('new')}>
+    <Editor type="creation" title={t('new_trainer')}>
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="trainer-name" required>
@@ -184,7 +184,7 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
             <ImportInfo>{t('trainer_import_info')}</ImportInfo>
           </ImportInfoContainer>
           <InputWithTopLabelContainer>
-            <Label htmlFor="select-trainer-to-import">{t('import_trainer_from')}</Label>
+            <Label htmlFor="select-trainer-to-import">{t('import_data_from')}</Label>
             <SelectTrainer
               dbSymbol={selectedTrainer}
               onChange={(dbSymbol) => setSelectedTrainer(dbSymbol)}

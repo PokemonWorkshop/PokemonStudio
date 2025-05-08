@@ -13,7 +13,7 @@ type ZoneDeletionProps = {
  * Component responsive of asking the user if they really want to delete the zone before doing so.
  */
 export const ZoneDeletion = forwardRef<EditorHandlingClose, ZoneDeletionProps>(({ closeDialog }, ref) => {
-  const { t } = useTranslation('database_zones');
+  const { t } = useTranslation();
   const { projectDataValues: zones, selectedDataIdentifier: dbSymbol, removeProjectDataValue: deleteZone, state } = useProjectZones();
   const zone = zones[dbSymbol];
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -31,7 +31,12 @@ export const ZoneDeletion = forwardRef<EditorHandlingClose, ZoneDeletionProps>((
   useEditorHandlingClose(ref);
 
   return (
-    <Deletion title={t('deletion_of_zone')} message={t('deletion_message', { zone: zoneName })} onClickDelete={onClickDelete} onClose={closeDialog} />
+    <Deletion
+      title={t('deletion_of_zone')}
+      message={t('deletion_message_zone', { zone: zoneName })}
+      onClickDelete={onClickDelete}
+      onClose={closeDialog}
+    />
   );
 });
 ZoneDeletion.displayName = 'ZoneDeletion';

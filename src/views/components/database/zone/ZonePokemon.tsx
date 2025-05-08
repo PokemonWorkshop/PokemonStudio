@@ -34,7 +34,7 @@ const groupPokemon = (allPokemonInZone: StudioGroupEncounter[]): Map<string, Stu
 };
 
 export const ZonePokemon = ({ zone, groups }: ZonePokemonProps) => {
-  const { t } = useTranslation('database_zones');
+  const { t } = useTranslation();
 
   const allPokemonInZone: StudioGroupEncounter[] = useMemo(() => {
     return zone.wildGroups.flatMap((wildGroup) => groups[wildGroup]?.encounters || []);
@@ -46,8 +46,8 @@ export const ZonePokemon = ({ zone, groups }: ZonePokemonProps) => {
 
   if (groupedPokemon.size === 0) {
     return (
-      <DataBlockWithTitleNoActive size="full" title={t('zone_pokemon')}>
-        <TableEmpty>{t('no_pokemon')}</TableEmpty>
+      <DataBlockWithTitleNoActive size="full" title={t('zone_creature')}>
+        <TableEmpty>{t('no_creature')}</TableEmpty>
       </DataBlockWithTitleNoActive>
     );
   }
@@ -55,7 +55,7 @@ export const ZonePokemon = ({ zone, groups }: ZonePokemonProps) => {
   const pokemonList = Array.from(groupedPokemon.entries()).map(([key, group]) => <ZonePokemonList key={`pokemon-zone-${key}`} pokemon={group[0]} />);
 
   return (
-    <DataBlockWithTitleNoActive size="full" title={t('zone_pokemon')}>
+    <DataBlockWithTitleNoActive size="full" title={t('zone_creature')}>
       <PokemonZoneListGrid>{pokemonList}</PokemonZoneListGrid>
     </DataBlockWithTitleNoActive>
   );

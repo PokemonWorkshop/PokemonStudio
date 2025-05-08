@@ -32,8 +32,7 @@ export const MapPage = () => {
   const dialogsMapImportRef = useDialogsRef<MapImportEditorTitle>();
   const { map, hasMap, hasMapModified, isRMXPMode, disabledOpenTiled } = useMapPage();
   const openTiled = useOpenTiled();
-  const { t } = useTranslation('database_maps');
-  const { t: tSub } = useTranslation('submenu_database');
+  const { t } = useTranslation();
 
   return (
     <MapPageStyle>
@@ -57,7 +56,7 @@ export const MapPage = () => {
               <MapMusics map={map} dialogsRef={dialogsRef} disabled={isRMXPMode} />
             </DataBlockWrapper>
             <DataBlockWrapper>
-              <DataBlockWithAction size="full" title={tSub('edition')} disabled={disabledOpenTiled}>
+              <DataBlockWithAction size="full" title={t('edition')} disabled={disabledOpenTiled}>
                 <SecondaryButton onClick={() => openTiled(map.tiledFilename, dialogsRef)} disabled={disabledOpenTiled}>
                   <BaseIcon icon="mapPadded" size="s" color={disabledOpenTiled ? theme.colors.text700 : theme.colors.primaryBase} />
                   <span>{t('open_with_tiled')}</span>
@@ -65,9 +64,9 @@ export const MapPage = () => {
               </DataBlockWithAction>
             </DataBlockWrapper>
             <DataBlockWrapper>
-              <DataBlockWithAction size="full" title={t('deleting')} disabled={isRMXPMode}>
+              <DataBlockWithAction size="full" title={t('deletion')} disabled={isRMXPMode}>
                 <DeleteButtonWithIcon onClick={() => dialogsRef.current?.openDialog('deletion', true)} disabled={isRMXPMode}>
-                  {t('delete')}
+                  {t('delete_this_map')}
                 </DeleteButtonWithIcon>
               </DataBlockWithAction>
             </DataBlockWrapper>

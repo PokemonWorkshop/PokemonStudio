@@ -6,7 +6,7 @@ import { InputNumber2 } from './InputNumber';
 import { QuestGoalProps } from './QuestGoalProps';
 
 export const QuestGoalEgg = ({ objective, refs, checkIsValid }: QuestGoalProps) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const eggMethodName = objective.objectiveMethodName as ObjectivesEgg;
 
   return (

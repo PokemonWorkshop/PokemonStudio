@@ -14,7 +14,7 @@ type EvolutionDataBlockProps = {
 
 export const EvolutionDataBlock = ({ pokemonWithForm, evolutionIndex, setEvolutionIndex, dialogsRef }: EvolutionDataBlockProps) => {
   const { projectDataValues: pokemon } = useProjectPokemon();
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const getEntityName = useGetEntityNameText();
   const { species, form } = pokemonWithForm;
 
@@ -57,7 +57,7 @@ export const EvolutionDataBlock = ({ pokemonWithForm, evolutionIndex, setEvoluti
           <DataFieldsetField
             label={t('evolves_into')}
             data={`${megaPrefix}${
-              currentCreature ? getEntityName(currentCreature) : evolution?.dbSymbol === '__undef__' ? t('none') : t('pokemon_deleted')
+              currentCreature ? getEntityName(currentCreature) : evolution?.dbSymbol === '__undef__' ? t('none') : t('creature_deleted')
             }`}
             error={evolution?.dbSymbol !== '__undef__' && currentCreature === undefined}
             disabled={evolution?.dbSymbol === '__undef__'}
@@ -67,7 +67,7 @@ export const EvolutionDataBlock = ({ pokemonWithForm, evolutionIndex, setEvoluti
             }}
           />
           {minLevel !== undefined && <DataFieldsetField label={t('at_level')} data={minLevel.toString()} />}
-          {conditionType !== undefined && <DataFieldsetField label={t('evolves_if')} data={t(`evolutionCondition_${conditionType}`)} />}
+          {conditionType !== undefined && <DataFieldsetField label={t('evolves_if')} data={t(`evolution_condition_${conditionType}`)} />}
         </DataGrid>
       )}
     </DataBlockWithTitlePagination>

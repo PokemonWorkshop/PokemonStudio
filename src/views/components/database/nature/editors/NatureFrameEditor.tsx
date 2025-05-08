@@ -13,7 +13,7 @@ import { z } from 'zod';
 const FRAME_EDITOR_SCHEMA = z.object({});
 
 export const NatureFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_natures');
+  const { t } = useTranslation();
   const { nature, natureName } = useNaturePage();
   const dialogsRef = useDialogsRef<TranslationEditorTitle>();
   const tTFR = useRef<TranslatableTextFieldsRef>(null);

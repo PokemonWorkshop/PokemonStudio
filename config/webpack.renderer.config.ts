@@ -26,6 +26,7 @@ export const rendererConfig: Configuration = {
       '@assets': path.resolve(__dirname, '..', 'assets'),
       '@src': path.resolve(__dirname, '..', 'src'),
       '@hooks': path.resolve(__dirname, '..', 'src/hooks'),
+      '@poc': path.resolve(__dirname, '..', 'src/poc'),
     },
   },
 };

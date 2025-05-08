@@ -21,7 +21,7 @@ export const useMapUpdateProcessor = () => {
   const [globalState, setGlobalState] = useGlobalState();
   const loaderRef = useLoaderRef();
   const { projectDataValues: maps, setProjectDataValues: setMap } = useProjectMaps();
-  const { t } = useTranslation('database_maps');
+  const { t } = useTranslation();
   const binding = useRef<MapUpdateFunctionBinding>(DEFAULT_BINDING);
 
   const processors: SpecialStateProcessors<MapUpdateStateObject> = useMemo(

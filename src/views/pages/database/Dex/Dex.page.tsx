@@ -18,7 +18,7 @@ import { TooltipWrapper } from '@ds/Tooltip';
 export const DexPage = () => {
   const [creatureIndex, setCreatureIndex] = useState(0);
   const { dex, allPokemon, cannotDelete, cannotImport } = useDexPage();
-  const { t } = useTranslation('database_dex');
+  const { t } = useTranslation();
   const dialogsRef = useDialogsRef<DexEditorAndDeletionKeys>();
 
   return (
@@ -41,15 +41,15 @@ export const DexPage = () => {
           </DataBlockWrapper>
           <DataBlockWrapper>
             {dex.dbSymbol === 'national' ? (
-              <DataBlockWithAction title={t('deleting')} size="full" disabled={true}>
-                <TooltipWrapper data-tooltip={t('deletion_disabled')}>
-                  <DeleteButtonWithIcon disabled={true}>{t('delete')}</DeleteButtonWithIcon>
+              <DataBlockWithAction title={t('deletion')} size="full" disabled={true}>
+                <TooltipWrapper data-tooltip={t('bestiary_deletion_disabled')}>
+                  <DeleteButtonWithIcon disabled={true}>{t('delete_this_bestiary')}</DeleteButtonWithIcon>
                 </TooltipWrapper>
               </DataBlockWithAction>
             ) : (
-              <DataBlockWithAction size="full" title={t('deleting')}>
+              <DataBlockWithAction size="full" title={t('deletion')}>
                 <DeleteButtonWithIcon onClick={() => dialogsRef?.current?.openDialog('deletion_dex', true)} disabled={cannotDelete}>
-                  {t('delete')}
+                  {t('delete_this_bestiary')}
                 </DeleteButtonWithIcon>
               </DataBlockWithAction>
             )}

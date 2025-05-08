@@ -20,7 +20,7 @@ const DashboardContainerStyle = styled(PageContainerStyle)`
 `;
 
 export const DashboardPage = () => {
-  const { t } = useTranslation('dashboard');
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const dialogsRef = useDialogsRef<DashboardEditorAndDeletionKeys>();
   const { projectStudioValues: projectStudio } = useProjectStudio();

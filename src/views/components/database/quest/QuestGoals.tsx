@@ -14,7 +14,7 @@ type QuestGoalsProps = {
 
 export const QuestGoals = ({ quest, dialogsRef, setGoalIndex }: QuestGoalsProps) => {
   const { projectDataValues: quests } = useProjectQuests();
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
 
   const editGoal = (index: number) => {
     dialogsRef.current?.openDialog('goal');

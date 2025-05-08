@@ -37,7 +37,7 @@ export const MapUpdateContainer = styled.div`
 `;
 
 export const MapUpdate = () => {
-  const { t } = useTranslation('database_maps');
+  const { t } = useTranslation();
   const mapUpdate = useMapUpdate();
   const loaderRef = useLoaderRef();
   const disabledUpdate = !getSetting('tiledPath');

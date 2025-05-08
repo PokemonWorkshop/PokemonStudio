@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { QuestGoalProps } from './QuestGoalProps';
 
 export const QuestGoalSpeakTo = ({ objective, refs, checkIsValid }: QuestGoalProps) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
 
   return (
     <PaddedInputContainer>

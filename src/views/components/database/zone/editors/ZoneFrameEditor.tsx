@@ -20,7 +20,7 @@ export const ZoneFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const nameRef = useRef<HTMLInputElement>(null);
 
-  const { t } = useTranslation('database_zones');
+  const { t } = useTranslation();
   const setText = useSetProjectText();
   const getText = useGetProjectText();
   const { zone } = useZonePage();
@@ -58,14 +58,14 @@ export const ZoneFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   };
 
   return (
-    <Editor type="edit" title={t('informations')}>
+    <Editor type="edit" title={t('information')}>
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="name" required>
             {t('name')}
           </Label>
           <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_name')}>
-            <Input type="text" name="zone-name" defaultValue={getText(ZONE_NAME_TEXT_ID, zone.id)} ref={nameRef} placeholder={t('example_name')} />
+            <Input type="text" name="zone-name" defaultValue={getText(ZONE_NAME_TEXT_ID, zone.id)} ref={nameRef} placeholder={t('example_zone')} />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
@@ -75,7 +75,7 @@ export const ZoneFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
               id="descr"
               defaultValue={getText(ZONE_DESCRIPTION_TEXT_ID, zone.id)}
               ref={descriptionRef}
-              placeholder={t('example_descr')}
+              placeholder={t('example_description_zone')}
             />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>

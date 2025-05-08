@@ -8,7 +8,7 @@ import { StudioType } from '@modelEntities/type';
 
 type TypeTableHeadProps = {
   allTypes: StudioType[];
-  t: TFunction<'database_types'>;
+  t: TFunction;
   hoveredDefensiveType: string;
 };
 

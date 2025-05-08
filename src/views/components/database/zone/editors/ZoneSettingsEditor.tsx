@@ -50,11 +50,11 @@ const MapsListContainer = styled.div`
 // -1 = By default, 0 = None, 1 = Rain, 2 = Sun/Zenith, 3 = Sandstorm, 4 = Hail, 5 = Foggy
 const WeatherCategories = [-1, 0, 1, 2, 3, 4, 5] as const;
 
-const weatherCategoryEntries = (t: TFunction<'database_zones'>) =>
+const weatherCategoryEntries = (t: TFunction) =>
   WeatherCategories.map((category) => ({ value: category.toString(), label: t(`weather${category}`) }));
 
 export const ZoneSettingsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_zones');
+  const { t } = useTranslation();
   const { zone } = useZonePage();
   const updateZone = useUpdateZone(zone);
   const forcedWeatherRef = useRef<string | undefined>();

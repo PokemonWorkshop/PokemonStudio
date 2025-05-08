@@ -12,7 +12,7 @@ import { useDialogsRef } from '@hooks/useDialogsRef';
 import { useUpdateDex } from './useUpdateDex';
 
 export const DexFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_dex');
+  const { t } = useTranslation();
   const { dex } = useDexPage();
   const updateDex = useUpdateDex(dex);
   const getDexName = useGetEntityNameUsingCSV();
@@ -44,14 +44,14 @@ export const DexFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   };
 
   return (
-    <Editor type="edit" title={t('informations')}>
+    <Editor type="edit" title={t('information')}>
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="name" required>
-            {t('dex_name')}
+            {t('name')}
           </Label>
           <TranslateInputContainer onTranslateClick={handleTranslateClick}>
-            <Input type="text" name="name" defaultValue={getDexName(dex)} ref={nameRef} placeholder={t('example_name')} />
+            <Input type="text" name="name" defaultValue={getDexName(dex)} ref={nameRef} placeholder={t('example_bestiary')} />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>
         <InputWithLeftLabelContainer>

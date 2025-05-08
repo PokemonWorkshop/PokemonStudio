@@ -50,14 +50,14 @@ const MoneyContainer = styled.div`
   }
 `;
 
-const aiCategoryEntries = (t: TFunction<'database_trainers'>) =>
+const aiCategoryEntries = (t: TFunction) =>
   TRAINER_AI_CATEGORIES.map((category) => ({ value: category.value, label: `${padStr(Number(category.value), 2)} - ${t(category.label)}` }));
 
-const vsTypeCategoryEntries = (t: TFunction<'database_trainers'>) =>
+const vsTypeCategoryEntries = (t: TFunction) =>
   TRAINER_VS_TYPE_CATEGORIES.map((category) => ({ value: category.toString(), label: t(`vs_type${category}`) }));
 
 export const TrainerFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_trainers');
+  const { t } = useTranslation();
   const { trainer } = useTrainerPage();
   const updateTrainer = useUpdateTrainer(trainer);
   const dialogsRef = useDialogsRef<TrainerTranslationEditorTitle>();
@@ -120,7 +120,7 @@ export const TrainerFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   };
 
   return (
-    <EditorWithCollapse type="edit" title={t('informations')}>
+    <EditorWithCollapse type="edit" title={t('information')}>
       <InputContainer>
         <PaddedInputContainer>
           <InputWithTopLabelContainer>

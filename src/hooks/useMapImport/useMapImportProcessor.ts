@@ -35,7 +35,7 @@ export const useMapImportProcessor = () => {
   const { mapInfo, setMapInfo } = useMapInfo();
   const { projectDataValues: mapLinks, selectedDataIdentifier: currentMapLink, setSelectedDataIdentifier: setSelectedMapLink } = useProjectMapLinks();
   const setText = useSetProjectText();
-  const { t } = useTranslation('database_maps');
+  const { t } = useTranslation();
   const binding = useRef<MapImportFunctionBinding>(DEFAULT_BINDING);
 
   const processors: SpecialStateProcessors<MapImportStateObject> = useMemo(

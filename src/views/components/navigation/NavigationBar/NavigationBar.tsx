@@ -13,7 +13,7 @@ import { useToolTip } from '@hooks/useToolTip';
 export const NavigationBarComponent = () => {
   const theme = useTheme();
   const [state] = useGlobalState();
-  const { t } = useTranslation('main_menu');
+  const { t } = useTranslation();
   const { buildOnMouseEnter, onMouseLeave, renderToolTip } = useToolTip(); // TODO: Add position + Arrow support to automatic tooltip
   const needUpdate = state.projectData && state.currentPSDKVersion.int < state.lastPSDKVersion.int;
 
@@ -32,7 +32,7 @@ export const NavigationBarComponent = () => {
           <NavigationBarItem path="/dashboard" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('dashboard'), 'right-center', true)}>
             <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="dashboard" />
           </NavigationBarItem>
-          <NavigationBarItem path="/psdkupdate" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('update'), 'right-center', true)}>
+          <NavigationBarItem path="/psdkupdate" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('update_sdk'), 'right-center', true)}>
             <BaseIcon color={needUpdate ? theme.colors.successBase : theme.colors.navigationIconColor} size="s" icon="update" />
           </NavigationBarItem>
         </div>
@@ -45,7 +45,11 @@ export const NavigationBarComponent = () => {
             <BaseIcon color={theme.colors.navigationIconColor} size="m" icon="texts" />
           </NavigationBarItem>
           <WorldButton path="/world" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('world_management'), 'right-center', true)} />
-
+          {window.api.isDev && (
+            <NavigationBarItem path="/poc" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter('Proof of concept', 'right-center', true)}>
+              <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="poc" />
+            </NavigationBarItem>
+          )}
           {/*<NavigationBarItem
           path="/code"
           disabled
@@ -62,7 +66,11 @@ export const NavigationBarComponent = () => {
           {/* <NavigationBarItem path="/help">
           <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="help" />
         </NavigationBarItem>*/}
-          <NavigationBarItem path="/settings" onMouseLeave={onMouseLeave} onMouseEnter={buildOnMouseEnter(t('settings'), 'right-center', true)}>
+          <NavigationBarItem
+            path="/settings"
+            onMouseLeave={onMouseLeave}
+            onMouseEnter={buildOnMouseEnter(t('application_settings'), 'right-center', true)}
+          >
             <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="settings" />
           </NavigationBarItem>
         </div>

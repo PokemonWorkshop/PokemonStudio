@@ -47,6 +47,7 @@ import type { GetCompilationConfigOutput } from './backendTasks/getCompilationCo
 import type { StartCompilationInput, StartCompilationOutput } from './backendTasks/startCompilation';
 import type { SaveCompilationLogsInput } from './backendTasks/saveCompilationLogs';
 import type { SynchronizeLanguageInput } from './backendTasks/synchronizeLanguage';
+import type { ReadRMXPEventInput, ReadRMXPEventOutput } from './backendTasks/readRMXPEvents';
 
 contextBridge.exposeInMainWorld('api', {
   isDev: process.env.NODE_ENV === 'development',
@@ -157,6 +158,7 @@ contextBridge.exposeInMainWorld('api', {
   startCompilation: defineBackendTask(ipcRenderer, 'start-compilation'),
   saveCompilationLogs: defineBackendTask(ipcRenderer, 'save-compilation-logs'),
   synchronizeLanguage: defineBackendTask(ipcRenderer, 'synchronize-language'),
+  readRMXPEvents: defineBackendTask(ipcRenderer, 'read-rmxp-events'),
 });
 
 type AnyObj = Record<string, never>;
@@ -250,6 +252,7 @@ declare global {
       startCompilation: BackendTaskWithGenericError<StartCompilationInput, StartCompilationOutput, GenericBackendProgress>;
       saveCompilationLogs: BackendTaskWithGenericErrorAndNoProgress<SaveCompilationLogsInput, AnyObj>;
       synchronizeLanguage: BackendTaskWithGenericErrorAndNoProgress<SynchronizeLanguageInput, AnyObj>;
+      readRMXPEvents: BackendTaskWithGenericErrorAndNoProgress<ReadRMXPEventInput, ReadRMXPEventOutput>;
     };
   }
 }

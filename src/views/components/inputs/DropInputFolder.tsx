@@ -33,7 +33,7 @@ type DropInputFolderProps = {
 };
 
 export const DropInputFolder = ({ onFolderChoosen }: DropInputFolderProps) => {
-  const { t } = useTranslation('drop');
+  const { t } = useTranslation();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const onDrop: DragEventHandler<HTMLDivElement> = (event) => {

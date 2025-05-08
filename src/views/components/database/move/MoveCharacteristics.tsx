@@ -52,7 +52,7 @@ type MoveCharacteristicsProps = {
 };
 
 export const MoveCharacteristics = ({ move, dialogsRef }: MoveCharacteristicsProps) => {
-  const { t } = useTranslation('database_moves');
+  const { t } = useTranslation();
 
   return (
     <DataBlockWithTitle size="full" title={t('characteristics')} onClick={() => dialogsRef?.current?.openDialog('characteristics')}>

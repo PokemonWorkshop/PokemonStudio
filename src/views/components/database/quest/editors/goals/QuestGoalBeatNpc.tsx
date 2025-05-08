@@ -5,7 +5,7 @@ import { InputNumber2 } from './InputNumber';
 import { QuestGoalProps } from './QuestGoalProps';
 
 export const QuestGoalBeatNpc = ({ objective, refs, checkIsValid }: QuestGoalProps) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
 
   return (
     <PaddedInputContainer>

@@ -13,7 +13,7 @@ type TextListClearProps = {
  * Component responsive of asking the user if they really want to clear the texts before doing so.
  */
 export const TextListClear = forwardRef<EditorHandlingClose, TextListClearProps>(({ closeDialog }, ref) => {
-  const { t } = useTranslation('text_management');
+  const { t } = useTranslation();
   const { currentTextInfo: currentTextInfo, state } = useTextInfos();
   const getTextList = useGetTextList();
   const setText = useSetProjectText();

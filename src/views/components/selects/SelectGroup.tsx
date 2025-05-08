@@ -13,7 +13,7 @@ type SelectGroupProps = {
 };
 
 export const SelectGroup = ({ dbSymbol, onChange, noLabel, undefValueOption, filter }: SelectGroupProps) => {
-  const { t } = useTranslation('database_groups');
+  const { t } = useTranslation();
   const groupOptions = useSelectOptions('groups');
   const options = useMemo(() => {
     if (undefValueOption) return [{ value: '__undef__', label: undefValueOption }, ...groupOptions];

@@ -14,7 +14,7 @@ const ABILITY_TEXT_KEYS = ['ability_1', 'ability_2', 'hidden_ability'] as const;
 const ABILITY_EDITOR_SCHEMA = CREATURE_FORM_VALIDATOR.pick({ abilities: true });
 
 export const AbilityEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const { creature, form } = useCreaturePage();
   const updateForm = useUpdateForm(creature, form);
   const options = useSelectOptions('abilities');

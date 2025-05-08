@@ -61,7 +61,7 @@ In this part I'll show an ideal Studio page based on the Move page:
 ```typescript
 export const MovePage = () => {
   const { move, moveName, cannotDelete, dialogsRef } = useMovePage();
-  const { t } = useTranslation('database_moves');
+  const { t } = useTranslation();
   const history = useHistory();
   const onClickedPokemonList = () => history.push(`/database/moves/pokemon`);
 

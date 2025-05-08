@@ -45,7 +45,7 @@ type EditorProps = {
 };
 
 export const Editor = ({ type, title, children }: EditorProps) => {
-  const { t } = useTranslation('editor');
+  const { t } = useTranslation();
 
   return (
     <EditorContainer>
@@ -59,7 +59,7 @@ export const Editor = ({ type, title, children }: EditorProps) => {
 };
 
 export const EditorWithCollapse = ({ type, title, children }: EditorProps) => {
-  const { t } = useTranslation('editor');
+  const { t } = useTranslation();
 
   return (
     <EditorWithCollapseContainer>
@@ -77,7 +77,7 @@ type EditorWithPaginationProps = {
 } & EditorProps;
 
 export const EditorWithPagination = ({ type, title, children, paginationProps }: EditorWithPaginationProps) => {
-  const { t } = useTranslation('editor');
+  const { t } = useTranslation();
 
   return (
     <EditorWithCollapseContainer>

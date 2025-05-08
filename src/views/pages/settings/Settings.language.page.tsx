@@ -51,7 +51,7 @@ const LanguageContainer = styled.div`
 `;
 
 export const SettingsLanguagePage = () => {
-  const { t, i18n } = useTranslation(['settings', 'settings_language']);
+  const { t, i18n } = useTranslation();
   const [userLanguage, setUserLanguage] = useState<string>(i18n.language);
 
   const isChecked = (language: string) => {
@@ -71,15 +71,15 @@ export const SettingsLanguagePage = () => {
   };
 
   return (
-    <PageTemplate title={t('settings:language')} size="default">
-      <PageEditor title={t('settings_language:language_choice')} editorTitle={t('settings:language')}>
+    <PageTemplate title={t('language')} size="default">
+      <PageEditor title={t('language_choice')} editorTitle={t('language')}>
         <LanguageListContainer>
           {STUDIO_LANGUAGES.map((language) => (
             <LanguageContainer key={language} data-checked={isChecked(language)} onClick={() => onChangeUserLanguage(language)}>
               <RadioInput checked={isChecked(language)} onChange={() => onChangeUserLanguage(language)} />
               <Label className="language-label">
                 {STUDIO_LANGUAGE_NAMES[language]}
-                <span className="language-details">- {t(`settings_language:${language}`)}</span>
+                <span className="language-details">- {t(`${language}`)}</span>
               </Label>
             </LanguageContainer>
           ))}

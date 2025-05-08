@@ -13,7 +13,7 @@ type BattlersResourcesProps = {
 };
 
 export const BattlersResources = ({ creature, form, canShowFemale }: BattlersResourcesProps) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const { onResourceChoosen, onResourceClean, onShowFemale } = useUpdateResources(creature, form);
   const titleResource = useTitleResource();
 
@@ -49,6 +49,15 @@ export const BattlersResources = ({ creature, form, canShowFemale }: BattlersRes
               key={resource}
             />
           ))}
+        <SpriteResource
+          type="creature"
+          title={t('egg')}
+          resourcePath={formResourcesPath(form, 'egg')}
+          extensions={['png', 'gif']}
+          onResourceChoosen={(resourcePath) => onResourceChoosen(resourcePath, 'egg')}
+          onResourceClean={() => onResourceClean('egg')}
+          key="egg"
+        />
       </ResourceWrapper>
     </ResourcesContainer>
   );

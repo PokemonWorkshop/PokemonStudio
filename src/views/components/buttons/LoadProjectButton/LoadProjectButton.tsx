@@ -11,7 +11,7 @@ export const LoadProjectButton = ({ children }: LoadProjectButtonProps) => {
   const navigate = useNavigate();
   const loaderRef = useLoaderRef();
   const projectLoad = useProjectLoad();
-  const { t } = useTranslation(['loader']);
+  const { t } = useTranslation();
 
   const handleClick = async (projectDirName?: string) => {
     projectLoad(
@@ -21,7 +21,7 @@ export const LoadProjectButton = ({ children }: LoadProjectButtonProps) => {
         navigate('/dashboard');
       },
       ({ errorMessage }) => loaderRef.current.setError('loading_project_error', errorMessage),
-      (count) => loaderRef.current.setError('loading_project_error', t('loader:integrity_message', { count }), true)
+      (count) => loaderRef.current.setError('loading_project_error', t('integrity_message', { count }), true)
     );
   };
 

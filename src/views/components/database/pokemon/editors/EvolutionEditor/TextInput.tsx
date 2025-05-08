@@ -20,7 +20,7 @@ type TextInputProps = EvolutionConditionEditorInput & {
 };
 
 export const TextInput = ({ type, state, inputRefs, evolutionInfo }: TextInputProps) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!isTypeValidInput(type)) return;
@@ -36,7 +36,7 @@ export const TextInput = ({ type, state, inputRefs, evolutionInfo }: TextInputPr
 
   return (
     <InputWithTopLabelContainer>
-      <Label>{t(`evolutionValue_${type}`)}</Label>
+      <Label>{t(`evolution_value_${type}`)}</Label>
       <Input type="text" defaultValue={state.defaults[type]?.toString()} ref={(ref) => (inputRefs.current[type] = ref)} />
       {evolutionInfo && <EvolutionInfo>{evolutionInfo}</EvolutionInfo>}
     </InputWithTopLabelContainer>

@@ -17,7 +17,7 @@ type AbilityControlBarProps = {
  */
 export const AbilityControlBar = ({ dialogsRef }: AbilityControlBarProps) => {
   useSetCurrentDatabasePath();
-  const { t } = useTranslation('database_abilities');
+  const { t } = useTranslation();
   const { selectedDataIdentifier: abilityDbSymbol, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol } = useProjectAbilities();
 
   // Definition of the control bar shortcuts
@@ -38,7 +38,7 @@ export const AbilityControlBar = ({ dialogsRef }: AbilityControlBarProps) => {
 
   return (
     <ControlBar>
-      {onClickNew ? <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new')}</SecondaryButtonWithPlusIcon> : <div />}
+      {onClickNew ? <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new_ability')}</SecondaryButtonWithPlusIcon> : <div />}
       <SelectAbility dbSymbol={abilityDbSymbol} onChange={(ability) => setSelectedDataIdentifier({ ability })} />
     </ControlBar>
   );

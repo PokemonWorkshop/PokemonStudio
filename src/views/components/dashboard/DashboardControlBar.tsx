@@ -9,7 +9,7 @@ type DashboardControlBarProps = {
 };
 
 export const DashboardControlBar = ({ dialogsRef }: DashboardControlBarProps) => {
-  const { t } = useTranslation('dashboard');
+  const { t } = useTranslation();
 
   const onClickPlayableGame = dialogsRef ? () => dialogsRef.current?.openDialog('create_playable_game', true) : undefined;
 

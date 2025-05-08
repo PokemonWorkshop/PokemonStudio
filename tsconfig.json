@@ -24,8 +24,9 @@
       "@assets/*": ["assets/*"],
       "@src/*": ["src/*"],
       "@hooks/*": ["src/hooks/*"],
+      "@poc/*": ["src/poc/*"],
       "react": ["./node_modules/@types/react"]
     }
   },
-  "include": ["src/**/*", "config/**/*", "forge.config.ts"]
+  "include": ["src/**/*", "config/**/*", "forge.config.ts", "updater_i18n.js"]
 }

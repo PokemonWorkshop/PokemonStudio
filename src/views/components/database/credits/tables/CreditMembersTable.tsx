@@ -15,7 +15,7 @@ type CreditsMembersTableProps = {
 export const CreditMembersTable = ({ credits, onEdit }: CreditsMembersTableProps) => {
   const { setProjectConfigValues: setCredits } = useConfigCredits();
   const currentEditedCredits = useMemo(() => cloneEntity(credits), [credits]);
-  const { t } = useTranslation('dashboard_credits');
+  const { t } = useTranslation();
   const [dragOn, setDragOn] = useState(false);
 
   return credits.leaders.length === 0 ? (

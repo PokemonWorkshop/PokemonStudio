@@ -5,7 +5,7 @@ import { PokemonDataProps } from '../PokemonDataPropsInterface';
 
 export const ExperienceDataBlock = ({ pokemonWithForm, dialogsRef }: PokemonDataProps) => {
   const { form } = pokemonWithForm;
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const curveTypes = [t('fast'), t('normal'), t('slow'), t('parabolic'), t('erratic'), t('fluctuating')];
 
   return (

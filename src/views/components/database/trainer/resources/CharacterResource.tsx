@@ -35,7 +35,7 @@ type CharacterResourceProps = {
 };
 
 export const CharacterResource = ({ trainer }: CharacterResourceProps) => {
-  const { t } = useTranslation('database_trainers');
+  const { t } = useTranslation();
   const { onResourceGraphicsChoosen, onResourceGraphicsClean } = useUpdateResources(trainer);
 
   return (

@@ -14,7 +14,7 @@ type ZoneGroupsDeletionProps = {
  * Component responsive of asking the user if they really want to delete the groups of a zone before doing so.
  */
 export const ZoneGroupsDeletion = forwardRef<EditorHandlingClose, ZoneGroupsDeletionProps>(({ closeDialog }, ref) => {
-  const { t } = useTranslation('database_zones');
+  const { t } = useTranslation();
   const { zone } = useZonePage();
   const updateZone = useUpdateZone(zone);
   const getZoneName = useGetEntityNameText();

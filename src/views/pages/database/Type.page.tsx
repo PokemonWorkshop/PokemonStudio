@@ -20,7 +20,7 @@ export const TypePage = () => {
   const dialogsRef = useDialogsRef<TypeEditorAndDeletionKeys>();
   const { setProjectDataValues: setType } = useProjectTypes();
   const { currentTypeName, currentType } = useTypePage();
-  const { t } = useTranslation('database_types');
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const canBeDeleted: boolean = currentType.id <= 18;
 
@@ -40,14 +40,14 @@ export const TypePage = () => {
             <TypeResistanceData />
           </DataBlockWrapper>
           <DataBlockWrapper>
-            <DataBlockWithTitleNoActive size="half" title={t('list_all_pokemon', { type: currentTypeName })} data-noactive>
-              <DarkButton onClick={() => navigate(`/database/types/${currentType.dbSymbol}/pokemon`)}>{t('show_all_pokemon')}</DarkButton>
+            <DataBlockWithTitleNoActive size="half" title={t('list_all_creature', { type: currentTypeName })} data-noactive>
+              <DarkButton onClick={() => navigate(`/database/types/${currentType.dbSymbol}/pokemon`)}>{t('show_all_creature')}</DarkButton>
             </DataBlockWithTitleNoActive>
             <DataBlockWithTitleNoActive size="half" title={t('list_all_moves', { type: currentTypeName })} data-noactive>
               <DarkButton onClick={() => navigate(`/database/types/${currentType.dbSymbol}/moves`)}>{t('show_all_moves')}</DarkButton>
             </DataBlockWithTitleNoActive>
             <DataBlockWithAction title={t('deletion')} size="full" disabled={canBeDeleted}>
-              <TooltipWrapper data-tooltip={canBeDeleted ? t('deletion_disabled') : undefined}>
+              <TooltipWrapper data-tooltip={canBeDeleted ? t('type_deletion_disabled') : undefined}>
                 <DeleteButtonWithIcon onClick={() => dialogsRef?.current?.openDialog('deletion', true)} disabled={canBeDeleted}>
                   {t('delete_this_type')}
                 </DeleteButtonWithIcon>

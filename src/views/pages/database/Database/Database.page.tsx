@@ -5,6 +5,7 @@ import { NavigationDatabase } from '../../../components/database/navigation/Navi
 import { PokemonPage } from '../Pokemon.page';
 import { MovePage } from '../Move.page';
 import { ItemPage } from '../Item.page';
+import { TechItemsTablePage } from '../TechItems.Table.page';
 import { TypePage } from '../Type.page';
 import { TypeMovesPage } from '../Type.Moves.page';
 import { TypePokemonPage } from '../Type.Pokemon.page';
@@ -38,6 +39,7 @@ const DatabasePageComponent = () => {
         <Route path="pokemon/resources" element={<PokemonResourcesPage />} />
         <Route path="pokemon" element={<PokemonPage />} />
         <Route path="items" element={<ItemPage />} />
+        <Route path="items/techItemsTable" element={<TechItemsTablePage />} />
         <Route path="abilities/pokemon" element={<AbilityPokemonPage />} />
         <Route path="abilities" element={<AbilityPage />} />
         <Route path="types/table" element={<TypeTablePage />} />

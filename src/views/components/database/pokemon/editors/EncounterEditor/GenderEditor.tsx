@@ -11,7 +11,7 @@ type GenderEditorProps = {
 };
 
 export const GenderEditor = ({ getRawFormData, onTouched, defaults, formRef }: GenderEditorProps) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const { EmbeddedUnitInput, Toggle } = useInputAttrsWithLabel(ENCOUNTER_EDITOR_SCHEMA, defaults);
   const divRef = useRef<HTMLDivElement>(null);
   const isGenderless = Boolean(getRawFormData().isGenderLess ?? defaults.isGenderLess === 'true');

@@ -52,7 +52,7 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
   const { projectDataValues: maps, setProjectDataValues: setMap, state } = useProjectMaps();
   const { mapInfo, setMapInfo } = useMapInfo();
   const updateMapModified = useUpdateMapModified();
-  const { t } = useTranslation(['database_moves', 'database_maps']);
+  const { t } = useTranslation();
   const dialogsRef = useDialogsRef<MapImportEditorTitle>();
   const navigate = useNavigate();
   const setText = useSetProjectText();
@@ -124,29 +124,23 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
   };
 
   return (
-    <EditorWithCollapse type="creation" title={t('database_maps:new')}>
+    <EditorWithCollapse type="creation" title={t('new_map')}>
       <EditorChildWithSubEditorContainer>
         <InputContainer size="l">
           <PaddedInputContainer size="m">
             <InputWithTopLabelContainer>
               <Label htmlFor="name" required>
-                {t('database_maps:name')}
+                {t('name')}
               </Label>
-              <Input
-                type="text"
-                name="name"
-                value={name}
-                onChange={(event) => setName(event.target.value)}
-                placeholder={t('database_maps:example_name')}
-              />
+              <Input type="text" name="name" value={name} onChange={(event) => setName(event.target.value)} placeholder={t('example_map')} />
             </InputWithTopLabelContainer>
             <InputWithTopLabelContainer>
-              <Label htmlFor="descr">{t('database_maps:description')}</Label>
-              <MultiLineInput id="descr" ref={descriptionRef} placeholder={t('database_maps:example_description')} />
+              <Label htmlFor="descr">{t('description')}</Label>
+              <MultiLineInput id="descr" ref={descriptionRef} placeholder={t('example_description_map')} />
             </InputWithTopLabelContainer>
             <InputWithLeftLabelContainer>
               <Label htmlFor="steps-average" required>
-                {t('database_maps:steps_average')}
+                {t('steps_average')}
               </Label>
               <Input
                 type="number"
@@ -158,13 +152,13 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
               />
             </InputWithLeftLabelContainer>
             <InputWithTopLabelContainer>
-              <Label htmlFor="tiled-file">{t('database_maps:map_made_tiled')}</Label>
+              <Label htmlFor="tiled-file">{t('map_made_tiled')}</Label>
               {!tiledFilename ? (
-                <DropInput name={t('database_maps:tiled_file')} extensions={['tmx']} onFileChoosen={copyTmxFile} showAcceptedFormat />
+                <DropInput name={t('tiled_file')} extensions={['tmx']} onFileChoosen={copyTmxFile} showAcceptedFormat />
               ) : (
                 <FileInput
                   filePath={`Data/Tiled/Maps/${basename(tiledFilename, '.tmx')}.tmx`}
-                  name={t('database_maps:tiled_file')}
+                  name={t('tiled_file')}
                   extensions={['tmx']}
                   onFileChoosen={copyTmxFile}
                   onFileClear={() => {
@@ -176,12 +170,12 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
               )}
             </InputWithTopLabelContainer>
           </PaddedInputContainer>
-          <InputGroupCollapse title={t('database_maps:musics')} noMargin>
+          <InputGroupCollapse title={t('musics')} noMargin>
             <InputWithTopLabelContainer>
-              <Label htmlFor="bgm">{t('database_maps:background_music')}</Label>
+              <Label htmlFor="bgm">{t('background_music')}</Label>
               {!bgm ? (
                 <DropInput
-                  name={t('database_maps:background_music_file')}
+                  name={t('background_music_file')}
                   extensions={AUDIO_EXT}
                   destFolderToCopy="audio/bgm"
                   onFileChoosen={(filePath) => setBgm(basename(filePath))}
@@ -189,7 +183,7 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
               ) : (
                 <FileInput
                   filePath={`audio/bgm/${bgm}`}
-                  name={t('database_maps:background_music_file')}
+                  name={t('background_music_file')}
                   extensions={AUDIO_EXT}
                   onFileChoosen={(filePath) => setBgm(basename(filePath))}
                   onFileClear={() => setBgm('')}
@@ -198,10 +192,10 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
               )}
             </InputWithTopLabelContainer>
             <InputWithTopLabelContainer>
-              <Label htmlFor="bgs">{t('database_maps:background_sound')}</Label>
+              <Label htmlFor="bgs">{t('background_sound')}</Label>
               {!bgs ? (
                 <DropInput
-                  name={t('database_maps:background_sound_file')}
+                  name={t('background_sound_file')}
                   extensions={AUDIO_EXT}
                   destFolderToCopy="audio/bgs"
                   onFileChoosen={(filePath) => setBgs(basename(filePath))}
@@ -209,7 +203,7 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
               ) : (
                 <FileInput
                   filePath={`audio/bgs/${bgs}`}
-                  name={t('database_maps:background_sound_file')}
+                  name={t('background_sound_file')}
                   extensions={AUDIO_EXT}
                   onFileChoosen={(filePath) => setBgs(basename(filePath))}
                   onFileClear={() => setBgs('')}
@@ -220,18 +214,18 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
             </InputWithTopLabelContainer>
           </InputGroupCollapse>
           <ButtonContainer>
-            <TooltipWrapper data-tooltip={checkDisabled() ? t('database_moves:fields_asterisk_required') : undefined}>
+            <TooltipWrapper data-tooltip={checkDisabled() ? t('fields_asterisk_required') : undefined}>
               <PrimaryButton onClick={onClickNew} disabled={checkDisabled()}>
-                {t('database_maps:create_map')}
+                {t('add_map')}
               </PrimaryButton>
             </TooltipWrapper>
-            <DarkButton onClick={closeDialog}>{t('database_moves:cancel')}</DarkButton>
+            <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
           </ButtonContainer>
         </InputContainer>
         <SubEditorContainer>
           <SubEditorSeparator parentEditorHasScrollBar />
-          <Editor type="importation" title={t('database_maps:import_tiled_maps')}>
-            <SecondaryButton onClick={() => dialogsRef.current?.openDialog('import', true)}>{t('database_maps:import')}</SecondaryButton>
+          <Editor type="importation" title={t('import_tiled_maps')}>
+            <SecondaryButton onClick={() => dialogsRef.current?.openDialog('import', true)}>{t('import')}</SecondaryButton>
           </Editor>
         </SubEditorContainer>
       </EditorChildWithSubEditorContainer>

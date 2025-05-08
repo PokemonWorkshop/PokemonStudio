@@ -39,7 +39,7 @@ type Props = {
  */
 export const TextFrame = ({ textInfo, dialogsRef }: Props) => {
   const [state] = useGlobalState();
-  const { t } = useTranslation('text_management');
+  const { t } = useTranslation();
   const getName = useGetEntityNameTextUsingTextId();
   const getDescription = useGetEntityDescriptionTextUsingTextId();
   const projectTextFromFileId: string[][] | undefined = state.projectText[textInfo.fileId];

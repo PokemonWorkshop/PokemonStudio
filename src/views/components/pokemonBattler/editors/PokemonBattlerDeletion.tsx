@@ -37,7 +37,7 @@ export const PokemonBattlerDeletion = forwardRef<EditorHandlingClose, PokemonBat
   const { group, groupName } = useGroupPage();
   const updateTrainer = useUpdateTrainer(trainer);
   const updateGroup = useUpdateGroup(group);
-  const { t } = useTranslation(['database_trainers', 'database_groups']);
+  const { t } = useTranslation();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const creature = useMemo(() => creatures[getEncounters(from, index, trainer, group)], []);
@@ -46,9 +46,9 @@ export const PokemonBattlerDeletion = forwardRef<EditorHandlingClose, PokemonBat
   const getMessage = () => {
     switch (from) {
       case 'group':
-        return t('database_groups:battler_deletion_message', { battler: battlerName, group: groupName });
+        return t('battler_deletion_message_group', { battler: battlerName, group: groupName });
       case 'trainer':
-        return t('database_trainers:battler_deletion_message', { battler: battlerName, trainer: trainerName });
+        return t('battler_deletion_message_trainer', { battler: battlerName, trainer: trainerName });
       default:
         assertUnreachable(from);
     }
@@ -77,6 +77,6 @@ export const PokemonBattlerDeletion = forwardRef<EditorHandlingClose, PokemonBat
 
   useEditorHandlingClose(ref);
 
-  return <Deletion title={t('database_trainers:battler_deletion_of')} message={getMessage()} onClickDelete={onClickDelete} onClose={closeDialog} />;
+  return <Deletion title={t('battler_deletion_of')} message={getMessage()} onClickDelete={onClickDelete} onClose={closeDialog} />;
 });
 PokemonBattlerDeletion.displayName = 'PokemonBattlerDeletion';

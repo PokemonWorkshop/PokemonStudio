@@ -64,7 +64,7 @@ const TitleBarActions = styled.div`
 
 export const TitleBar = () => {
   const [isMaximized, setIsMaximized] = useState(true);
-  const { t } = useTranslation('update');
+  const { t } = useTranslation();
 
   const listenerUpdateAvailable: Parameters<typeof window.api.requestUpdateAvailable.on>[0] = async () => {
     showNotification('info', t('studio_update_available_title'), t('studio_update_available'));
