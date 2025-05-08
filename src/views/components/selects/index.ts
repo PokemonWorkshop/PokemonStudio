@@ -2,7 +2,7 @@ export { SelectDataGeneric } from './SelectDataGeneric';
 export { SelectAbility } from './SelectAbility';
 export { SelectGroup } from './SelectGroup';
 export { SelectItem } from './SelectItem';
-export { SelectMove } from './SelectMove';
+export { SelectMove, SelectMove2 } from './SelectMove';
 export { SelectMoveBattler } from './SelectMoveBattler';
 export { SelectQuest } from './SelectQuest';
 export { SelectTrainer } from './SelectTrainer';
