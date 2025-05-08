@@ -13,7 +13,7 @@ import {
 import { ITEM_DESCRIPTION_TEXT_ID, ITEM_NAME_TEXT_ID, StudioTechItem } from '@modelEntities/item';
 import { useCopyProjectText, useGetEntityNameText, useGetEntityNameTextUsingTextId, useGetProjectText } from '@utils/ReadingProjectText';
 import { MoveCategory, TypeCategory } from '@components/categories';
-import { SelectMove } from '@components/selects';
+import { SelectMove2 } from '@components/selects';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { EditButtonOnlyIcon } from '@components/buttons';
 import theme from '@src/AppTheme';
@@ -59,12 +59,12 @@ const RenderTechItem = ({ item, state }: RenderTechItemProps) => {
         <ResourceImage imagePathInProject={itemIconPath(item.icon)} />
       </span>
       <span className="select">
-        <SelectMove
-          dbSymbol={techItemMove}
+        <SelectMove2
+          name="moveDbSymbol"
+          defaultValue={techItemMove as DbSymbol}
           onChange={(dbSymbol) => {
             handleMoveChange(dbSymbol as DbSymbol);
           }}
-          noLabel
         />
       </span>
       <span></span>
