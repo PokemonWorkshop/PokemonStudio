@@ -1,8 +1,8 @@
-import { Input, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
+import { Input, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PaddedInputContainer, Toggle } from '@components/inputs';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { InputNumber2 } from './InputNumber';
 import { QuestGoalProps } from './QuestGoalProps';
-import React from 'react';
 
 export const QuestGoalBeatNpc = ({ objective, refs, checkIsValid }: QuestGoalProps) => {
   const { t } = useTranslation();
@@ -28,6 +28,15 @@ export const QuestGoalBeatNpc = ({ objective, refs, checkIsValid }: QuestGoalPro
           ref={refs.valueRef}
           name="amount-beat-npc"
           defaultValue={objective.objectiveMethodArgs[2] as number}
+          onChange={() => checkIsValid && checkIsValid()}
+        />
+      </InputWithLeftLabelContainer>
+      <InputWithLeftLabelContainer>
+        <Label htmlFor="hidden-by-default">{t('hidden_default')}</Label>
+        <Toggle
+          ref={refs.hiddenByDefaultRef}
+          name="hidden-by-default"
+          defaultChecked={objective.hiddenByDefault}
           onChange={() => checkIsValid && checkIsValid()}
         />
       </InputWithLeftLabelContainer>

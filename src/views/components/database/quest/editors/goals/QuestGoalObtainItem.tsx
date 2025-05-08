@@ -1,10 +1,10 @@
-import { InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
+import { InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PaddedInputContainer, Toggle } from '@components/inputs';
 import { SelectItem2 } from '@components/selects/SelectItem';
+import { DbSymbol } from '@modelEntities/dbSymbol';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { InputNumber2 } from './InputNumber';
 import { QuestGoalProps } from './QuestGoalProps';
-import { DbSymbol } from '@modelEntities/dbSymbol';
-import React from 'react';
 
 export const QuestGoalObtainItem = ({ objective, refs, checkIsValid }: QuestGoalProps) => {
   const { t } = useTranslation();
@@ -22,6 +22,15 @@ export const QuestGoalObtainItem = ({ objective, refs, checkIsValid }: QuestGoal
           name="amount-item"
           ref={refs.valueRef}
           defaultValue={objective.objectiveMethodArgs[1] as number}
+          onChange={() => checkIsValid && checkIsValid()}
+        />
+      </InputWithLeftLabelContainer>
+      <InputWithLeftLabelContainer>
+        <Label htmlFor="hidden-by-default">{t('database_quests:hidden_default')}</Label>
+        <Toggle
+          ref={refs.hiddenByDefaultRef}
+          name="hidden-by-default"
+          defaultChecked={objective.hiddenByDefault}
           onChange={() => checkIsValid && checkIsValid()}
         />
       </InputWithLeftLabelContainer>

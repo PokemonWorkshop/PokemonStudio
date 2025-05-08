@@ -1,9 +1,21 @@
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { EditorWithCollapse } from '@components/editor/Editor';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { InputContainer, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
+import { Select } from '@ds/Select';
+import { TooltipWrapper } from '@ds/Tooltip';
 import { QUEST_CUSTOM_OBJECTIVE_TEXT_ID, QUEST_OBJECTIVES, StudioQuestObjectiveType, updateIndexSpeakToBeatNpc } from '@modelEntities/quest';
-import { useTranslation } from 'react-i18next';
+import { useDialogsRef } from '@src/hooks/useDialogsRef';
+import { useQuestPage } from '@src/hooks/usePage';
+import { assertUnreachable } from '@utils/assertUnreachable';
+import { cleanNaNValue } from '@utils/cleanNaNValue';
+import { cloneEntity } from '@utils/cloneEntity';
+import { ObjectiveEggIndex } from '@utils/QuestUtils';
+import { useSetProjectText } from '@utils/ReadingProjectText';
 import { TFunction } from 'i18next';
+import React, { forwardRef, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 import {
   QuestGoalBeatNpc,
   QuestGoalBeatPokemon,
@@ -14,21 +26,9 @@ import {
   QuestGoalSeePokemon,
   QuestGoalSpeakTo,
 } from './goals';
-import { TooltipWrapper } from '@ds/Tooltip';
-import { useUpdateQuest } from './useUpdateQuest';
-import { useQuestPage } from '@src/hooks/usePage';
-import { Select } from '@ds/Select';
-import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useObjectiveQuest } from './useObjectiveQuest';
-import { cloneEntity } from '@utils/cloneEntity';
-import { cleanNaNValue } from '@utils/cleanNaNValue';
-import { assertUnreachable } from '@utils/assertUnreachable';
-import { ObjectiveEggIndex } from '@utils/QuestUtils';
-import { useSetProjectText } from '@utils/ReadingProjectText';
-import styled from 'styled-components';
-import React, { forwardRef, useMemo } from 'react';
 import { QuestTranslationEditorTitle, QuestTranslationOverlay } from './QuestTranslationOverlay';
-import { useDialogsRef } from '@src/hooks/useDialogsRef';
+import { useObjectiveQuest } from './useObjectiveQuest';
+import { useUpdateQuest } from './useUpdateQuest';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -75,7 +75,6 @@ export const QuestNewGoalEditor = forwardRef<EditorHandlingClose, QuestNewGoalEd
 
   const changeObjective = (value: StudioQuestObjectiveType) => {
     if (value === objective.objectiveMethodName) return;
-
     updateObjective(value);
   };
 
@@ -85,49 +84,56 @@ export const QuestNewGoalEditor = forwardRef<EditorHandlingClose, QuestNewGoalEd
     const newObjective = cloneEntity(objective);
     switch (objectiveMethodName) {
       case 'objective_beat_npc': {
-        if (!refs.nameRef.current || !refs.valueRef.current) return;
+        if (!refs.nameRef.current || !refs.valueRef.current || !refs.hiddenByDefaultRef.current) return;
 
         newObjective.objectiveMethodArgs[1] = refs.nameRef.current.value;
         newObjective.objectiveMethodArgs[2] = cleanNaNValue(refs.valueRef.current.valueAsNumber, 1);
+        newObjective.hiddenByDefault = refs.hiddenByDefaultRef.current.checked;
         break;
       }
       case 'objective_beat_pokemon':
       case 'objective_obtain_item': {
-        if (!refs.entityRef.current || !refs.valueRef.current) return;
+        if (!refs.entityRef.current || !refs.valueRef.current || !refs.hiddenByDefaultRef.current) return;
 
         newObjective.objectiveMethodArgs[0] = refs.entityRef.current;
         newObjective.objectiveMethodArgs[1] = cleanNaNValue(refs.valueRef.current.valueAsNumber, 1);
+        newObjective.hiddenByDefault = refs.hiddenByDefaultRef.current.checked;
         break;
       }
       case 'objective_hatch_egg':
       case 'objective_obtain_egg': {
-        if (!refs.valueRef.current) return;
+        if (!refs.valueRef.current || !refs.hiddenByDefaultRef.current) return;
 
         newObjective.objectiveMethodArgs[ObjectiveEggIndex[objectiveMethodName]] = cleanNaNValue(refs.valueRef.current.valueAsNumber, 1);
+        newObjective.hiddenByDefault = refs.hiddenByDefaultRef.current.checked;
         break;
       }
       case 'objective_catch_pokemon': {
-        if (!refs.valueRef.current) return;
+        if (!refs.valueRef.current || !refs.hiddenByDefaultRef.current) return;
 
         newObjective.objectiveMethodArgs[1] = cleanNaNValue(refs.valueRef.current.valueAsNumber, 1);
+        newObjective.hiddenByDefault = refs.hiddenByDefaultRef.current.checked;
         // The conditions are managed by the QuestGoalConditions component
         break;
       }
       case 'objective_see_pokemon': {
-        if (!refs.entityRef.current) return;
+        if (!refs.entityRef.current || !refs.hiddenByDefaultRef.current) return;
 
         newObjective.objectiveMethodArgs[0] = refs.entityRef.current;
+        newObjective.hiddenByDefault = refs.hiddenByDefaultRef.current.checked;
         break;
       }
       case 'objective_speak_to': {
-        if (!refs.nameRef.current) return;
+        if (!refs.nameRef.current || !refs.hiddenByDefaultRef.current) return;
 
         newObjective.objectiveMethodArgs[1] = refs.nameRef.current.value;
+        newObjective.hiddenByDefault = refs.hiddenByDefaultRef.current.checked;
         break;
       }
       case 'objective_custom': {
-        if (!refs.customObjectiveRef.current) return;
+        if (!refs.customObjectiveRef.current || !refs.hiddenByDefaultRef.current) return;
 
+        newObjective.hiddenByDefault = refs.hiddenByDefaultRef.current.checked;
         saveTexts();
         break;
       }

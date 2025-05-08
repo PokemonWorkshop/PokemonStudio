@@ -22,6 +22,7 @@ export const useObjectiveQuest = (initialObjective?: StudioQuestObjective) => {
   const entityRef = useRef<DbSymbol | undefined>();
   const nameRef = useRef<HTMLInputElement>(null);
   const valueRef = useRef<HTMLInputElement>(null);
+  const hiddenByDefaultRef = useRef<HTMLInputElement>(null);
   const customObjectiveRef = useRef<HTMLTextAreaElement>(null);
 
   const checkConditionsIsValid = () => {
@@ -47,27 +48,28 @@ export const useObjectiveQuest = (initialObjective?: StudioQuestObjective) => {
     let result = false;
     switch (objective.objectiveMethodName) {
       case 'objective_speak_to':
-        result = !!nameRef.current && nameRef.current.value !== '';
+        result = !!nameRef.current && !!hiddenByDefaultRef.current && nameRef.current.value !== '';
         break;
       case 'objective_beat_npc':
-        result = !!nameRef.current && !!valueRef.current && nameRef.current.value !== '' && valueRef.current.validity.valid;
+        result =
+          !!nameRef.current && !!valueRef.current && !!hiddenByDefaultRef.current && nameRef.current.value !== '' && valueRef.current.validity.valid;
         break;
       case 'objective_obtain_item':
       case 'objective_beat_pokemon':
-        result = !!entityRef.current && !!valueRef.current && valueRef.current.validity.valid;
+        result = !!entityRef.current && !!hiddenByDefaultRef.current && !!valueRef.current && valueRef.current.validity.valid;
         break;
       case 'objective_obtain_egg':
       case 'objective_hatch_egg':
-        result = !!valueRef.current && valueRef.current.validity.valid;
+        result = !!valueRef.current && !!hiddenByDefaultRef.current && valueRef.current.validity.valid;
         break;
       case 'objective_catch_pokemon':
-        result = !!valueRef.current && valueRef.current.validity.valid && checkConditionsIsValid();
+        result = !!valueRef.current && !!hiddenByDefaultRef.current && valueRef.current.validity.valid && checkConditionsIsValid();
         break;
       case 'objective_see_pokemon':
-        result = !!entityRef.current;
+        result = !!entityRef.current && !!hiddenByDefaultRef.current;
         break;
       case 'objective_custom':
-        result = !!customObjectiveRef.current && customObjectiveRef.current.value !== '';
+        result = !!customObjectiveRef.current && !!hiddenByDefaultRef.current && customObjectiveRef.current.value !== '';
         break;
       default:
         assertUnreachable(objective.objectiveMethodName);
@@ -101,6 +103,7 @@ export const useObjectiveQuest = (initialObjective?: StudioQuestObjective) => {
       nameRef,
       valueRef,
       customObjectiveRef,
+      hiddenByDefaultRef,
     },
     setObjective,
     updateObjective,
