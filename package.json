@@ -29,13 +29,21 @@
       "version": ">=10.9.0"
     }
   },
+  "languages": {
+    "en": true,
+    "fr": true,
+    "de": true,
+    "pt": true,
+    "it": true,
+    "es": true
+  },
   "scripts": {
-    "i18n": "node merge_i18n",
-    "start": "node merge_i18n && run-script-os",
+    "i18n": "node updater_i18n",
+    "start": "node updater_i18n && run-script-os",
     "start:win32": "chcp 65001 && electron-forge start",
     "start:darwin:linux": "electron-forge start",
     "package": "electron-forge package",
-    "make": "node merge_i18n && electron-forge make",
+    "make": "node updater_i18n && electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx ."
   },
