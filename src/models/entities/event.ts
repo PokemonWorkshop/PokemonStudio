@@ -81,7 +81,7 @@ export const EVENT_APPEARANCE_VALIDATOR = z.object({
   hasShadow: z.boolean(),
   isSurfing: z.boolean(),
   isInvisible: z.boolean(),
-  disableReflection: z.boolean(),
+  hasReflection: z.boolean(),
   offsets: z.object({ x: z.number(), y: z.number() }),
 });
 export type EventAppearance = z.infer<typeof EVENT_APPEARANCE_VALIDATOR>;
