@@ -12,6 +12,8 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { DashboardPageStyle } from './DashboardPageStyle';
 // Import des composants Chart.js
+import { useDexPage } from '@src/hooks/usePage';
+import { useProjectTypes } from '@src/hooks/useProjectData';
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 
@@ -37,14 +39,43 @@ export const DashboardPage = () => {
   const navigate = useNavigate();
   const dialogsRef = useDialogsRef<DashboardEditorAndDeletionKeys>();
   const { projectStudioValues: projectStudio } = useProjectStudio();
+  const { dex, allPokemon } = useDexPage();
+  const { projectDataValues: types } = useProjectTypes();
+
+  const getData = () => {
+    const dataGraph: Record<string, number> = {};
+
+    Object.keys(types).forEach((type) => {
+      dataGraph[type] = 0;
+    });
+
+    dex.creatures.forEach((creature) => {
+      const pokemon = allPokemon[creature.dbSymbol];
+      if (pokemon) {
+        const type1P = pokemon.forms[0].type1;
+        const type2P = pokemon.forms[0].type2;
+
+        dataGraph[type1P] += 1;
+
+        if (type2P !== '__undef__') {
+          dataGraph[type2P] += 1;
+        }
+      }
+    });
+
+    return dataGraph;
+  };
+
+  const dataGraph = getData();
+  const dataGraphLabels = Object.keys(dataGraph);
+  const dataGraphValues = Object.values(dataGraph);
 
   // MOCK DATA
   const chartData = {
-    labels: ['1', '2', '3', '4'],
+    labels: dataGraphLabels,
     datasets: [
       {
-        label: t('project_data'),
-        data: [65, 59, 80, 45],
+        data: dataGraphValues,
         backgroundColor: ['rgba(255, 99, 132, 0.7)', 'rgba(54, 162, 235, 0.7)', 'rgba(255, 206, 86, 0.7)', 'rgba(75, 192, 192, 0.7)'],
         borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)'],
         borderWidth: 1,
@@ -81,7 +112,7 @@ export const DashboardPage = () => {
           </DataBlockWrapper>
           <Onboarding />
           <DataBlockWrapper>
-            <DataBlockWithAction size="full" title={t('project_statistics')}>
+            <DataBlockWithAction size="full" title={'Graphique des types du pokédex'}>
               <ChartContainerStyle>
                 <Doughnut data={chartData} options={chartOptions} />
               </ChartContainerStyle>
