@@ -1,7 +1,7 @@
 import { StudioMap } from '@modelEntities/map';
 import { readRMXPEvents, RMXPEvent } from './readRMXPEvents';
 import { DbSymbol } from '@modelEntities/dbSymbol';
-import { EventAppearance, MapEventLink } from '@modelEntities/event';
+import { Appearance, EventAppearance, LinkParameter, MapEventLink } from '@modelEntities/event';
 import log from 'electron-log';
 import { findFirstAvailableId } from '@utils/ModelUtils';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
@@ -64,19 +64,26 @@ const getDisableShadowTagFromEventName = (name: string) => name.includes('§');
 /** Tag that add 1 to the superiority of the Sprite_Character */
 const getSupTagFromEventName = (name: string) => name.startsWith('¤');
 
-const createDefaultAppareance = (rmxpEvent: RMXPEvent): EventAppearance => {
+const createEventAppearance = (rmxpEvent: RMXPEvent, pageIndex: number): EventAppearance => {
   const name = rmxpEvent.name;
-  const isFromTileset = rmxpEvent.pages[0].graphic.tileId !== 0;
+  const graphic = rmxpEvent.pages[pageIndex].graphic;
+  const tileId = graphic.tileId;
 
-  // TODO: We support the event appareance from tileset?
-  if (isFromTileset) log.warn('The event appareance from tileset is not supported');
+  const appearance: Appearance =
+    tileId !== 0
+      ? { isFromTileset: true, tileId }
+      : {
+          isFromTileset: false,
+          characterName: graphic.characterName,
+          pattern: graphic.pattern,
+        };
 
   return {
-    appearance: {
-      isFromTileset: false,
-      character: rmxpEvent.pages[0].graphic.characterName,
-    },
-    direction: rmxpEvent.pages[0].graphic.direction,
+    appearance,
+    direction: graphic.direction,
+    hue: graphic.characterHue,
+    opacity: graphic.opacity,
+    blendType: graphic.blendType,
     hasReflection: getReflectionTagFromEventName(name),
     hasShadow: !getDisableShadowTagFromEventName(name),
     isInvisible: getInvisibleEventTagFromEventName(name),
@@ -88,6 +95,24 @@ const createDefaultAppareance = (rmxpEvent: RMXPEvent): EventAppearance => {
   };
 };
 
+const createLinkParameters = (rmxpEvent: RMXPEvent, pageIndex: number): LinkParameter => {
+  const name = rmxpEvent.name;
+  const page = rmxpEvent.pages[pageIndex];
+
+  return {
+    moveType: page.moveType,
+    moveSpeed: page.moveSpeed,
+    moveFrequency: page.moveFrequency,
+    isAlwaysOnTop: page.isAlwaysOnTop,
+    isDirectionFix: page.isDirectionFix,
+    isStepAnime: page.isStepAnime,
+    isThrough: page.isThrough,
+    isWalkAnime: page.isWalkAnime,
+    hasParticuleOff: getParticleOffFromEventName(name),
+    hasNoSlide: getNoSlideTagFromEventName(name),
+  };
+};
+
 const createNewEventLink = (events: Record<string, PartialStudioEvent>, rmxpEvent: RMXPEvent): MapEventLink => {
   const id = findFirstAvailableId(events, 0);
   const dbSymbol = `event_${id}` as DbSymbol;
@@ -95,9 +120,9 @@ const createNewEventLink = (events: Record<string, PartialStudioEvent>, rmxpEven
 
   return {
     conditions: [], // TODO:
-    parameters: {}, // TODO:
+    parameters: createLinkParameters(rmxpEvent, 0),
     eventDbSymbol: dbSymbol,
-    defaultAppearance: createDefaultAppareance(rmxpEvent),
+    defaultAppearance: createEventAppearance(rmxpEvent, 0),
     position: {
       x: rmxpEvent.x,
       y: rmxpEvent.y,
