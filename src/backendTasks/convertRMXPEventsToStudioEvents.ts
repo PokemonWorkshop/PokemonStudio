@@ -1,7 +1,7 @@
 import { StudioMap } from '@modelEntities/map';
 import { readRMXPEvents, RMXPEvent } from './readRMXPEvents';
 import { DbSymbol } from '@modelEntities/dbSymbol';
-import { Appearance, EventAppearance, LinkParameter, MapEventLink } from '@modelEntities/event';
+import type { Appearance, CommandListId, CustomEvent, EventAppearance, EventTrigger, LinkParameter, MapEventLink } from '@modelEntities/event';
 import log from 'electron-log';
 import { findFirstAvailableId } from '@utils/ModelUtils';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
@@ -10,6 +10,14 @@ type PartialStudioEvent = { dbSymbol: DbSymbol; id: number };
 export type RMXPEventsToStudioEventsInput = { projectPath: string; map: string; events: PartialStudioEvent[] };
 export type RMXPEventsToStudioEventsOutput = {};
 //export type RMXPEventsToStudioEventsOutput = { map: StudioMap, events: PartialStudioEvent[], newStudioEvents: unknown[]}
+
+const RMXP_TRIGGER_TO_STUDIO_TRIGGER: Record<number, EventTrigger> = {
+  0: 'KeyPress', // action button
+  1: 'Contact', // contact with player
+  2: 'Overlap', // contact with event
+  3: 'Cinematic', // autorun
+  4: 'Parallel', // parallel processing
+};
 
 // Based from Game_Event and Sprite_Characters PSDK scripts
 
@@ -131,10 +139,28 @@ const createNewEventLink = (events: Record<string, PartialStudioEvent>, rmxpEven
   };
 };
 
+const getEventTriggers = (rmxpEvent: RMXPEvent): CustomEvent['triggers'] => {
+  return rmxpEvent.pages.map(({ trigger, condition }) => ({
+    type: RMXP_TRIGGER_TO_STUDIO_TRIGGER[trigger],
+    conditions: [], // TODO: convert rmxp condition to studio condition
+    commandListId: '' as CommandListId, // TODO: replace '' by ??
+  }));
+};
+
+const createCustomEvent = (rmxpEvent: RMXPEvent, eventIdentifier: PartialStudioEvent): CustomEvent => {
+  return {
+    dbSymbol: eventIdentifier.dbSymbol,
+    id: eventIdentifier.id,
+    type: 'custom',
+    triggers: getEventTriggers(rmxpEvent),
+    commandLists: { '': [] } as Record<CommandListId, []>, // TODO: implement command lists
+  };
+};
+
 export const convertRMXPEventsToStudioEvents = async (payload: RMXPEventsToStudioEventsInput): Promise<RMXPEventsToStudioEventsOutput> => {
   const map: StudioMap = JSON.parse(payload.map);
   const rmxpEvents = await readRMXPEvents(payload.projectPath, map.id);
-  const newStudioEvents = [];
+  const newStudioEvents: CustomEvent[] = [];
   const newEventLinks: MapEventLink[] = [];
   const events = Object.fromEntries(payload.events.map((event) => [event.dbSymbol, event]));
 
@@ -143,10 +169,14 @@ export const convertRMXPEventsToStudioEvents = async (payload: RMXPEventsToStudi
 
     const newEventLink = createNewEventLink(events, rmxpEvent);
     newEventLinks.push(newEventLink);
+
+    const newCustomEvent = createCustomEvent(rmxpEvent, events[newEventLink.eventDbSymbol]);
+    newStudioEvents.push(newCustomEvent);
   }, Promise.resolve());
 
   // TODO: don't forget to remove this later
   newEventLinks.forEach((e) => log.info(e));
+  newStudioEvents.forEach((e) => log.info(e));
 
   return {};
 };

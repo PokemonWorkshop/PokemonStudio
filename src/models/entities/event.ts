@@ -3,6 +3,8 @@ import { DB_SYMBOL_VALIDATOR } from './dbSymbol';
 import { POSITIVE_OR_ZERO_INT } from './common';
 
 const COMMAND_LIST_ID_VALIDATOR = z.string().brand('CommandListId');
+export type CommandListId = z.infer<typeof COMMAND_LIST_ID_VALIDATOR>;
+
 const TEMPLATE_PARAMETER_NAME_VALIDATOR = z.string().brand('TemplateParameterName');
 
 const COMMAND_VALIDATOR = z.object({}); // TODO: update this when the command type will be defined
@@ -40,6 +42,7 @@ const EVENT_TRIGGER_TYPE_VALIDATOR = z.union([
   z.literal('Parallel'),
   z.literal('Cinematic'),
 ]);
+export type EventTrigger = z.infer<typeof EVENT_TRIGGER_TYPE_VALIDATOR>;
 
 const EVENT_TRIGGER_VALIDATOR = z.object({
   type: EVENT_TRIGGER_TYPE_VALIDATOR,
@@ -49,6 +52,7 @@ const EVENT_TRIGGER_VALIDATOR = z.object({
 
 export const CUSTOM_EVENT_VALIDATOR = z.object({
   dbSymbol: DB_SYMBOL_VALIDATOR,
+  id: POSITIVE_OR_ZERO_INT,
   type: z.literal('custom'),
   commandLists: z.record(COMMAND_LIST_ID_VALIDATOR, z.array(COMMAND_VALIDATOR)),
   triggers: z.array(EVENT_TRIGGER_VALIDATOR),
