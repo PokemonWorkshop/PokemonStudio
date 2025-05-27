@@ -64,4 +64,5 @@ export const setEntity = (type: string, dbSymbol: string, entity: unknown) => {
 
 export const getTextKeys = () => ({ handlers: Object.keys(texts), lists: Object.keys(entityLists) });
 
-// TODO: get whole list + get/set single texts
+export const getEntityList = (key: string): SelectOption<string>[] | undefined => entityLists[key];
+export const getTextHandler = (key: string): CSVHandler | undefined => texts[key];

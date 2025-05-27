@@ -50,6 +50,7 @@ import type { SynchronizeLanguageInput } from './backendTasks/synchronizeLanguag
 import type { ReadRMXPEventInput, ReadRMXPEventOutput } from './backendTasks/readRMXPEvents';
 import type { RMXPEventsToStudioEventsInput, RMXPEventsToStudioEventsOutput } from './backendTasks/convertRMXPEventsToStudioEvents';
 import type { GetEntityTaskPayload, GetTextKeysInProjectOutput, LoadProjectTaskPayload, SetEntityTaskPayload } from './projectState/backendTasks';
+import { getEntityList } from './projectState/state';
 
 contextBridge.exposeInMainWorld('api', {
   isDev: process.env.NODE_ENV === 'development',
@@ -169,6 +170,10 @@ contextBridge.exposeInMainWorld('stateApi', {
   getEntity: defineBackendTask(ipcRenderer, 'get-entity-in-project-state'),
   setEntity: defineBackendTask(ipcRenderer, 'set-entity-in-project-state'),
   getTextKeys: defineBackendTask(ipcRenderer, 'get-text-keys-in-project-state'),
+  getEntityList: defineBackendTask(ipcRenderer, 'get-entity-list-in-project-state'),
+  getText: defineBackendTask(ipcRenderer, 'get-text-in-project-state'),
+  getTextColumn: defineBackendTask(ipcRenderer, 'get-text-column-in-project-state'),
+  setText: defineBackendTask(ipcRenderer, 'set-text-in-project-state'),
 });
 
 type AnyObj = Record<string, never>;
@@ -270,6 +275,10 @@ declare global {
       getEntity: BackendTaskWithGenericErrorAndNoProgress<GetEntityTaskPayload, AnyObj>;
       setEntity: BackendTaskWithGenericErrorAndNoProgress<SetEntityTaskPayload, AnyObj>;
       getTextKeys: BackendTaskWithGenericErrorAndNoProgress<AnyObj, GetTextKeysInProjectOutput>;
+      getEntityList: BackendTaskWithGenericErrorAndNoProgress<GetEntityListInProjectInput, GetEntityListInProjectOutput>;
+      getText: BackendTaskWithGenericErrorAndNoProgress<GetTextInProjectStateInput, GetTextInProjectStateOutput>;
+      getTextColumn: BackendTaskWithGenericErrorAndNoProgress<GetTextColumnInProjectStateInput, GetTextColumnInProjectStateOutput>;
+      setText: BackendTaskWithGenericErrorAndNoProgress<SetTextInProjectStateInput, AnyObj>;
     };
   }
 }

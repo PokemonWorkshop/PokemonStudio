@@ -1,5 +1,14 @@
 import { type AnyObject, defineBackendServiceFunction } from '@src/backendTasks/defineBackendServiceFunction';
-import { getEntityRecord, getErrorCounts, getTextKeys, setEntity, setProjectAndResetData } from './state';
+import {
+  getEntityList,
+  getEntityRecord,
+  getErrorCounts,
+  getProjectMainLanguage,
+  getTextHandler,
+  getTextKeys,
+  setEntity,
+  setProjectAndResetData,
+} from './state';
 import { loadAllEntities } from './load';
 import { sendProgress } from '@utils/BackendTask';
 import './loadDefinitions';
@@ -47,4 +56,37 @@ export type GetTextKeysInProjectOutput = ReturnType<typeof getTextKeys>;
 export const registerGetTextKeysInProjectStateTask = defineBackendServiceFunction<AnyObject, GetTextKeysInProjectOutput>(
   'get-text-keys-in-project-state',
   async () => getTextKeys()
+);
+
+export type GetEntityListInProjectInput = { key: string };
+export type GetEntityListInProjectOutput = { list: ReturnType<typeof getEntityList> };
+export const registerGetEntityListInProjectStateTask = defineBackendServiceFunction<GetEntityListInProjectInput, GetEntityListInProjectOutput>(
+  'get-entity-list-in-project-state',
+  async ({ key }) => ({ list: getEntityList(key) })
+);
+
+export type GetTextInProjectStateInput = { key: string; index: number; language?: string };
+export type GetTextInProjectStateOutput = { text: string | undefined };
+export const registerGetTextInProjectState = defineBackendServiceFunction<GetTextInProjectStateInput, GetTextInProjectStateOutput>(
+  'get-text-in-project-state',
+  async ({ key, index, language }) => ({ text: getTextHandler(key)?.getColumn(language ?? getProjectMainLanguage())?.[index] })
+);
+
+export type GetTextColumnInProjectStateInput = { key: string; language: string };
+export type GetTextColumnInProjectStateOutput = { texts: readonly string[] | undefined };
+export const registerGetTextColumnInProjectState = defineBackendServiceFunction<GetTextColumnInProjectStateInput, GetTextColumnInProjectStateOutput>(
+  'get-text-column-in-project-state',
+  async ({ key, language }) => ({ texts: getTextHandler(key)?.getColumn(language) })
+);
+
+export type SetTextInProjectStateInput = { key: string; index: number; language?: string; text: string };
+export const registerSetTextInProjectState = defineBackendServiceFunction<SetTextInProjectStateInput, AnyObject>(
+  'set-text-in-project-state',
+  async ({ key, index, language, text }) => {
+    const handler = getTextHandler(key);
+    if (!handler) return {};
+
+    handler.setValue(language ?? getProjectMainLanguage(), text, index);
+    return {};
+  }
 );
