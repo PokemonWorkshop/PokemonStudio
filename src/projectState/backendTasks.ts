@@ -12,6 +12,7 @@ import {
 import { loadAllEntities } from './load';
 import { sendProgress } from '@utils/BackendTask';
 import './loadDefinitions';
+import { EntityHint, updateEntityList } from './updateEntityList';
 
 // window.stateApi.load({ projectPath: '/Volumes/ssd/projects/PSDK', mainLanguage: 'en' }, console.info, console.error, console.log);
 export type LoadProjectTaskPayload = { projectPath: string; mainLanguage: string };
@@ -79,14 +80,17 @@ export const registerGetTextColumnInProjectState = defineBackendServiceFunction<
   async ({ key, language }) => ({ texts: getTextHandler(key)?.getColumn(language) })
 );
 
-export type SetTextInProjectStateInput = { key: string; index: number; language?: string; text: string };
+export type SetTextInProjectStateInput = { key: string; index: number; language?: string; text: string; entityHint?: EntityHint };
 export const registerSetTextInProjectState = defineBackendServiceFunction<SetTextInProjectStateInput, AnyObject>(
   'set-text-in-project-state',
-  async ({ key, index, language, text }) => {
+  async ({ key, index, language, text, entityHint }) => {
     const handler = getTextHandler(key);
     if (!handler) return {};
 
     handler.setValue(language ?? getProjectMainLanguage(), text, index);
+
+    if (entityHint) updateEntityList(entityHint);
+
     return {};
   }
 );

@@ -82,7 +82,7 @@ const loadWithoutFileId = (
   };
 };
 
-const mapEntityListFromMultipleHandlers = (
+export const mapEntityListFromMultipleHandlers = (
   getHandler: (fileId: number) => CSVHandler | undefined,
   discriminator: string,
   entityList: EntityListEntry[],
@@ -118,7 +118,7 @@ const loadWithFileId = (
   };
 };
 
-const mapEntityListFromSingleHandlerColumn = (
+export const mapEntityListFromSingleHandlerColumn = (
   column: readonly string[],
   discriminator: (entity: Entity) => number,
   entityList: EntityListEntry[]
@@ -126,3 +126,5 @@ const mapEntityListFromSingleHandlerColumn = (
   entityList
     .map(([dbSymbol, entity]) => ({ value: dbSymbol, label: column[discriminator(entity)] ?? '---' }))
     .sort((a, b) => a.value.localeCompare(b.value));
+
+export const getEntityTextDescription = (entityType: string): EntityTextDescription[] => entityTextRegistry[entityType];
