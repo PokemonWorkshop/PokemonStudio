@@ -26,8 +26,6 @@ import {
 } from '@modelEntities/config';
 import { registerEntityText } from './loadTextOfEntities';
 
-const csv = (id: number) => `Data/Text/Dialogs/${id}.csv`;
-
 registerEntity('ability', 'Data/Studio/abilities/*.json', ABILITY_VALIDATOR);
 registerEntityText('ability', { propertyInEntity: 'name', discriminator: 'textId', textFileId: ABILITY_NAME_TEXT_ID });
 registerEntityText('ability', { propertyInEntity: 'description', discriminator: 'textId', textFileId: ABILITY_DESCRIPTION_TEXT_ID });

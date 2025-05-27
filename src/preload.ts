@@ -50,6 +50,20 @@ import type { SynchronizeLanguageInput } from './backendTasks/synchronizeLanguag
 import type { ReadRMXPEventInput, ReadRMXPEventOutput } from './backendTasks/readRMXPEvents';
 import type { RMXPEventsToStudioEventsInput, RMXPEventsToStudioEventsOutput } from './backendTasks/convertRMXPEventsToStudioEvents';
 import type { GetEntityTaskPayload, GetTextKeysInProjectOutput, LoadProjectTaskPayload, SetEntityTaskPayload } from './projectState/backendTasks';
+import type {
+  GetDataToSaveStateInProjectStateOutput,
+  GetEntityListInProjectInput,
+  GetEntityListInProjectOutput,
+  GetEntityTaskPayload,
+  GetTextColumnInProjectStateInput,
+  GetTextColumnInProjectStateOutput,
+  GetTextInProjectStateInput,
+  GetTextInProjectStateOutput,
+  GetTextKeysInProjectOutput,
+  LoadProjectTaskPayload,
+  SetEntityTaskPayload,
+  SetTextInProjectStateInput,
+} from './projectState/backendTasks';
 import { getEntityList } from './projectState/state';
 
 contextBridge.exposeInMainWorld('api', {
@@ -174,6 +188,7 @@ contextBridge.exposeInMainWorld('stateApi', {
   getText: defineBackendTask(ipcRenderer, 'get-text-in-project-state'),
   getTextColumn: defineBackendTask(ipcRenderer, 'get-text-column-in-project-state'),
   setText: defineBackendTask(ipcRenderer, 'set-text-in-project-state'),
+  dataToSaveState: defineBackendTask(ipcRenderer, 'get-data-to-save-state-in-project-state'),
 });
 
 type AnyObj = Record<string, never>;
@@ -279,6 +294,7 @@ declare global {
       getText: BackendTaskWithGenericErrorAndNoProgress<GetTextInProjectStateInput, GetTextInProjectStateOutput>;
       getTextColumn: BackendTaskWithGenericErrorAndNoProgress<GetTextColumnInProjectStateInput, GetTextColumnInProjectStateOutput>;
       setText: BackendTaskWithGenericErrorAndNoProgress<SetTextInProjectStateInput, AnyObj>;
+      dataToSaveState: BackendTaskWithGenericErrorAndNoProgress<AnyObj, GetDataToSaveStateInProjectStateOutput>;
     };
   }
 }

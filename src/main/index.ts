@@ -59,6 +59,7 @@ import { registerSynchronizeLanguage } from '@src/backendTasks/synchronizeLangua
 import { registerReadRMXPEvents } from '@src/backendTasks/readRMXPEvents';
 import { registerConvertRMXPEventsToStudioEvents } from '@src/backendTasks/convertRMXPEventsToStudioEvents';
 import {
+  registerGetDataToSaveStateInProjectState,
   registerGetEntityInProjectStateTask,
   registerGetEntityListInProjectStateTask,
   registerGetTextColumnInProjectState,
@@ -224,6 +225,7 @@ registerGetEntityListInProjectStateTask(ipcMain);
 registerGetTextInProjectState(ipcMain);
 registerGetTextColumnInProjectState(ipcMain);
 registerSetTextInProjectState(ipcMain);
+registerGetDataToSaveStateInProjectState(ipcMain);
 
 ipcMain.on('get-md5-hash', (event, value: string) => (event.returnValue = crypto.createHash('md5').update(value, 'utf8').digest().toString('hex')));
 app.whenReady().then(createWindow).catch(log.error);

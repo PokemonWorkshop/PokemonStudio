@@ -1,5 +1,6 @@
 import { type AnyObject, defineBackendServiceFunction } from '@src/backendTasks/defineBackendServiceFunction';
 import {
+  anyDataToSave,
   getEntityList,
   getEntityRecord,
   getErrorCounts,
@@ -93,4 +94,10 @@ export const registerSetTextInProjectState = defineBackendServiceFunction<SetTex
 
     return {};
   }
+);
+
+export type GetDataToSaveStateInProjectStateOutput = { hasDataToSave: boolean };
+export const registerGetDataToSaveStateInProjectState = defineBackendServiceFunction<AnyObject, GetDataToSaveStateInProjectStateOutput>(
+  'get-data-to-save-state-in-project-state',
+  async () => ({ hasDataToSave: anyDataToSave() })
 );

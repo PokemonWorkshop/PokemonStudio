@@ -59,6 +59,13 @@ export const getErrorCounts = () => ({ entityErrorCount: errors.length, textErro
 export const getEntityRecord = (type: string): EntityRecord | undefined => entities[type];
 
 export const setEntity = (type: string, dbSymbol: string, entity: unknown) => {
+  // TODO: move history management out
+  const current = entities[type][dbSymbol];
+  if (current) {
+    history[type] ||= {};
+    history[type][dbSymbol] ||= { previous: [], next: [] };
+    history[type][dbSymbol].previous.push(current);
+  }
   entities[type][dbSymbol] = validateEntity(type, dbSymbol, entity);
 };
 
@@ -66,3 +73,5 @@ export const getTextKeys = () => ({ handlers: Object.keys(texts), lists: Object.
 
 export const getEntityList = (key: string): SelectOption<string>[] | undefined => entityLists[key];
 export const getTextHandler = (key: string): CSVHandler | undefined => texts[key];
+
+export const anyDataToSave = () => Object.keys(history).length !== 0 || Object.values(texts).some((v) => v.isTainted());
