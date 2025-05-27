@@ -59,7 +59,7 @@ const loadWithoutFileId = (
   projectPath: string,
   mainLanguage: string,
   description: EntityTextDescription,
-  entityList: (readonly [dbSymbol: string, data: Entity])[]
+  entityList: EntityListEntry[]
 ): LoadedTextResult => {
   const entityListKey = `${entityType}:${description.propertyInEntity}`;
   const discriminator = description.discriminator;
@@ -71,20 +71,30 @@ const loadWithoutFileId = (
       return csv.csvFileId;
     })
   );
-  const fileHandlers = new Map([...fileIds].map((fileId) => [fileId, loadCSV(fileId, projectPath, false)] as const));
+  const fileHandlers = new Map([...fileIds].map((fileId) => [fileId, loadCSV(fileId, projectPath, Math.floor(fileId / 100000) === 2)] as const));
+  // Note: Extracting a method from an OOP object unbind the said method (and this is stupid)
+  const getHandler = (id: number) => fileHandlers.get(id);
 
   return {
     handlers: [...fileHandlers.entries()].map(([fileId, handler]) => [`${fileId}`, handler] as const),
     entityListKey,
-    entityList: entityList
-      .map(([dbSymbol, entity]) => {
-        const csv = entity[discriminator] as CSVAccess;
-        const column = fileHandlers.get(csv.csvFileId)?.getColumn(mainLanguage) as string[]; // Always exist as how it was loaded
-        return { value: dbSymbol, label: column[csv.csvTextIndex] ?? '---' };
-      })
-      .sort((a, b) => a.value.localeCompare(b.value)),
+    entityList: mapEntityListFromMultipleHandlers(getHandler, discriminator, entityList, mainLanguage),
   };
 };
+
+const mapEntityListFromMultipleHandlers = (
+  getHandler: (fileId: number) => CSVHandler | undefined,
+  discriminator: string,
+  entityList: EntityListEntry[],
+  language: string
+): SelectOption<string>[] =>
+  entityList
+    .map(([dbSymbol, entity]) => {
+      const csv = entity[discriminator] as CSVAccess;
+      const column = getHandler(csv.csvFileId)?.getColumn(language) as string[]; // Always exist as how it was loaded
+      return { value: dbSymbol, label: column[csv.csvTextIndex] ?? '---' };
+    })
+    .sort((a, b) => a.value.localeCompare(b.value));
 
 const loadWithFileId = (
   entityType: string,
@@ -92,7 +102,7 @@ const loadWithFileId = (
   mainLanguage: string,
   textFileId: number,
   description: EntityTextDescription,
-  entityList: (readonly [dbSymbol: string, data: Entity])[]
+  entityList: EntityListEntry[]
 ): LoadedTextResult => {
   const handler = loadCSV(textFileId, projectPath, description.textIsSystemFile ?? false);
   const entityListKey = `${entityType}:${description.propertyInEntity}`;
@@ -100,11 +110,19 @@ const loadWithFileId = (
   const descriptionDiscriminator = description.discriminator;
   const discriminator =
     typeof descriptionDiscriminator === 'string' ? (entity: Entity) => entity[descriptionDiscriminator] as number : descriptionDiscriminator;
+
   return {
     handlers: [[entityListKey, handler]],
     entityListKey,
-    entityList: entityList
-      .map(([dbSymbol, entity]) => ({ value: dbSymbol, label: column[discriminator(entity)] ?? '---' }))
-      .sort((a, b) => a.value.localeCompare(b.value)),
+    entityList: mapEntityListFromSingleHandlerColumn(column, discriminator, entityList),
   };
 };
+
+const mapEntityListFromSingleHandlerColumn = (
+  column: readonly string[],
+  discriminator: (entity: Entity) => number,
+  entityList: EntityListEntry[]
+): SelectOption<string>[] =>
+  entityList
+    .map(([dbSymbol, entity]) => ({ value: dbSymbol, label: column[discriminator(entity)] ?? '---' }))
+    .sort((a, b) => a.value.localeCompare(b.value));

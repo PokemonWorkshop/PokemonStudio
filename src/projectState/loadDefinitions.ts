@@ -66,10 +66,12 @@ registerEntityText('item', { propertyInEntity: 'pluralName', discriminator: 'id'
 registerEntityText('item', { propertyInEntity: 'description', discriminator: 'id', textFileId: ITEM_DESCRIPTION_TEXT_ID });
 
 registerEntity('map', 'Data/Studio/maps/*.json', MAP_VALIDATOR);
-registerEntityText('map', { propertyInEntity: 'name', discriminator: 'mapId', textFileId: MAP_NAME_TEXT_ID });
+registerEntityText('map', { propertyInEntity: 'name', discriminator: 'mapId', textFileId: MAP_NAME_TEXT_ID, textIsSystemFile: true });
 
 registerEntity('mapLink', 'Data/Studio/maplinks/*.json', MAP_LINK_VALIDATOR);
-registerEntityText('mapLink', { propertyInEntity: 'name', discriminator: 'mapId', textFileId: MAP_NAME_TEXT_ID });
+registerEntityText('mapLink', { propertyInEntity: 'name', discriminator: 'mapId', textFileId: MAP_NAME_TEXT_ID, textIsSystemFile: true });
+
+// TODO: Add map infos (don't forget textIsSystemFile)
 
 registerEntity('move', 'Data/Studio/moves/*.json', MOVE_VALIDATOR);
 registerEntityText('move', { propertyInEntity: 'name', discriminator: 'id', textFileId: MOVE_NAME_TEXT_ID });
