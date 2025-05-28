@@ -77,7 +77,7 @@ export const MapImport = ({ closeDialog, closeParentDialog }: MapImportProps) =>
   const [folderPath, setFolderPath] = useState<string | undefined>(undefined);
   const [files, setFiles] = useState<MapImportFiles[]>([]);
   const [hasError, setHasError] = useState<boolean>(false);
-  const [mapInfoOptions, setMapInfoOptions] = useState<DropDownOption[]>([{ value: 'new', label: t('new') }]);
+  const [mapInfoOptions, setMapInfoOptions] = useState<DropDownOption[]>([{ value: 'new', label: t('new_map') }]);
   const [mapIdsUsed, setMapIdsUsed] = useState<number[]>([]);
   const [rmxpMapInfo, setRmxpMapInfo] = useState<RMXPMapInfo[]>([]);
   const amountMapShouldBeImport = useMemo(() => files.filter((file) => file.shouldBeImport).length, [files]);
@@ -212,7 +212,7 @@ export const MapImport = ({ closeDialog, closeParentDialog }: MapImportProps) =>
               onClick={() => {
                 setFolderPath(undefined);
                 setFiles([]);
-                setMapInfoOptions([{ value: 'new', label: t('new') }]);
+                setMapInfoOptions([{ value: 'new', label: t('new_map') }]);
                 setRmxpMapInfo([]);
                 setState('select_folder');
                 setHasError(false);
