@@ -1,4 +1,4 @@
-import { useState, useImperativeHandle, RefObject, useEffect } from 'react';
+import { useState, useImperativeHandle, RefObject, useEffect, useCallback } from 'react';
 import type { RenderOptionRef, MultiSelectOption } from './types';
 import { findOptionIndices } from './utils';
 import type { List } from 'react-virtualized/dist/es/List';
@@ -19,14 +19,49 @@ export const useRenderOptions = <Value extends ValueType, ChooseValue extends Va
   currentValues,
 }: RenderOptionsProps<Value, ChooseValue>) => {
   const [options, setOptions] = useState<Readonly<MultiSelectOption<Value>[]>>([]);
-  const [highlightIndex, setHighlightIndex] = useState<number[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (!options.length) return;
+
+      if (e.key === 'ArrowDown') {
+        setSelectedIndex((prev) => {
+          if (prev === null) return 0;
+          return prev + 1 >= options.length ? 0 : prev + 1;
+        });
+        e.preventDefault();
+      } else if (e.key === 'ArrowUp') {
+        setSelectedIndex((prev) => {
+          if (prev === null) return options.length - 1;
+          return prev - 1 < 0 ? options.length - 1 : prev - 1;
+        });
+        e.preventDefault();
+      } else if (e.key === 'Enter') {
+        if (selectedIndex !== null) {
+          onSelectValue(options[selectedIndex].value);
+        }
+      }
+    },
+    [options, selectedIndex]
+  );
 
   useEffect(() => {
-    if (options.length === 0 || currentValues.length === 0) return;
+    if (selectedIndex !== null) {
+      gotoRow(selectedIndex);
+    }
+  }, [selectedIndex]);
 
-    const newHighlightIndexes = findOptionIndices(options, currentValues as Value[]);
-    setHighlightIndex(newHighlightIndexes);
-  }, [currentValues, options]);
+  const gotoRow = (idx: number) => {
+    if (options[idx]) {
+      const safeIndex = Math.max(0, Math.min(idx, options.length - 1));
+      listRef.current?.scrollToRow(safeIndex);
+    }
+  };
+
+  const handleMouseEnter = useCallback(() => {
+    setSelectedIndex(null);
+  }, []);
 
   useImperativeHandle(
     utils,
@@ -40,26 +75,30 @@ export const useRenderOptions = <Value extends ValueType, ChooseValue extends Va
       hide: () => setOptions([]),
       refine: (newOptions) => {
         if (newOptions.length === 0) return;
-
-        const newHighlightIndexes = options ? findOptionIndices(newOptions, currentValues) : [0];
         setOptions(newOptions);
-        newHighlightIndexes.forEach((index) => listRef.current?.scrollToRow(index));
       },
       highlightNext: () => {
         if (!options) return;
-
-        const lastIndex = options.length - 1;
-        const newIndexes = highlightIndex.map((index) => (index < lastIndex ? index + 1 : index));
-        setHighlightIndex(newIndexes);
+        setSelectedIndex((prev) => {
+          if (prev === null) return 0;
+          return (prev + 1) % options.length;
+        });
       },
       highlightPrevious: () => {
-        const newHighlightIndex = highlightIndex.map((r) => (r > 0 ? r - 1 : 0));
-        setHighlightIndex(newHighlightIndex);
+        if (!options) return;
+        setSelectedIndex((prev) => {
+          if (prev === null) return options.length - 1;
+          return (prev - 1 + options.length) % options.length;
+        });
       },
-      pickHighlighted: () => options && onSelectValue(options[highlightIndex[0]]?.value ?? []),
+      pickHighlighted: () => {
+        if (selectedIndex !== null && options[selectedIndex]) {
+          onSelectValue(options[selectedIndex].value);
+        }
+      },
     }),
-    [setHighlightIndex, options, onSelectValue, highlightIndex]
+    [setOptions, options, onSelectValue, selectedIndex, listRef, currentValues]
   );
 
-  return { options, highlightIndex };
+  return { options, selectedIndex, setSelectedIndex, handleKeyDown, handleMouseEnter };
 };

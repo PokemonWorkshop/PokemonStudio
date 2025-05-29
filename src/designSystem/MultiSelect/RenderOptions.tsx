@@ -1,31 +1,27 @@
+import React, { useEffect } from 'react';
 import List, { ListRowProps } from 'react-virtualized/dist/es/List';
-import { MultiSelectOption } from './types';
 import { RenderOptionsProps, useRenderOptions, ValueType } from './useRenderOptions';
-import React, { MouseEventHandler, useEffect } from 'react';
 import { Checkbox } from '@components/Checkbox';
 import { Option } from './MultiSelectContainer';
 
-const CLASSES = ['option', 'option highlighted', 'option current', 'option highlighted current'];
-
-
-const getClassName = (option: MultiSelectOption<ValueType>, currentValues: ValueType[], index: number, highlightIndex: number[]) => {
-  const isCurrentValue = currentValues.includes(option.value);
-  if (highlightIndex.includes(index)) {
-    return CLASSES[isCurrentValue ? 3 : 1];
-  }
-  return CLASSES[isCurrentValue ? 2 : 0];
-};
-
 const LIST_STYLE = { height: 'auto', maxHeight: '195px' };
 
-const allowScroll: MouseEventHandler<HTMLDivElement> = (event) => {
-  if (event.target instanceof HTMLElement && event.target.tagName === 'DIV') {
-    event.preventDefault();
-  }
-};
-
 export const RenderOptions = <Value extends ValueType, ChooseValue extends Value>(props: RenderOptionsProps<Value, ChooseValue>) => {
-  const { options, highlightIndex } = useRenderOptions(props);
+  const { options, selectedIndex, handleKeyDown, handleMouseEnter } = useRenderOptions(props);
+
+  useEffect(() => {
+    const listElement = props.popover;
+    if (!listElement) return;
+
+    const rows = listElement.current?.querySelectorAll<HTMLElement>('.ReactVirtualized__Grid__innerScrollContainer > div');
+    rows?.forEach((row: HTMLElement, index: number) => {
+      if (selectedIndex === index) {
+        row.classList.add('highlighted');
+      } else {
+        row.classList.remove('highlighted');
+      }
+    });
+  }, [selectedIndex, props.listRef]);
 
   const rowRenderer = ({ style, index, key }: ListRowProps) => {
     if (!options) return null;
@@ -36,14 +32,17 @@ export const RenderOptions = <Value extends ValueType, ChooseValue extends Value
     const isAllChecked = props.currentValues.length === totalOptionsCount;
     const hasSomeChecked = props.currentValues.length > 0 && props.currentValues.length < totalOptionsCount;
 
+    const className = selectedIndex === index ? 'option highlighted' : 'option';
+
     return (
       <Option
         key={key}
-        className={getClassName(option, props.currentValues, index, highlightIndex)}
+        className={className}
         onMouseDown={(e) => {
           e.preventDefault();
           props.onSelectValue(option.value);
         }}
+        onMouseEnter={() => handleMouseEnter()}
         data-tooltip={option.tooltip}
         style={style}
       >
@@ -61,7 +60,7 @@ export const RenderOptions = <Value extends ValueType, ChooseValue extends Value
   };
 
   return (
-    <div className="select-popover" ref={props.popover} onMouseDown={allowScroll}>
+    <div className="select-popover" ref={props.popover} tabIndex={0} onKeyDown={handleKeyDown}>
       {options ? (
         <List
           ref={props.listRef}

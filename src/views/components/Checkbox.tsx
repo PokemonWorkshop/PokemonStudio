@@ -37,12 +37,11 @@ const CheckboxInput = styled.input.attrs({ type: 'checkbox' })`
     content: '';
     position: absolute;
     top: 50%;
-    left: 25%;
-    right: 0;
+    left: 50%;
     width: 50%;
     height: 2px;
     background-color: ${({ theme }) => theme.colors.text100};
-    transform: translateY(-50%);
+    transform: translate(-50%, -50%);
   }
 `;
 

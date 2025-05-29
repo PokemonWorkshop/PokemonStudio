@@ -26,13 +26,27 @@ export const MultiSelectExamples = () => {
         <span>Controlled</span>
         <MultiSelect value={value1} onChange={setValue1} options={genericOptions} selectAllOption={{ label: 'all' }} />
         {value1.toString()}
-        <button onClick={() => setValue1(['value_e'])}>Reset</button>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setValue1(['value_e']);
+          }}
+        >
+          Reset
+        </button>
       </SelectContainerWithLabel>
       <br />
       <SelectContainerWithLabel>
         <span>Uncontrolled</span>
         <MultiSelect options={bigOptions} placeholder="Choose a value" optionRef={ref1} />
-        <button onClick={() => alert(`Value: ${ref1.current}`)}>Show Value</button>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            alert(`Value: ${ref1.current}`);
+          }}
+        >
+          Show Value
+        </button>
       </SelectContainerWithLabel>
     </div>
   );

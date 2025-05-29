@@ -19,7 +19,6 @@ import { useTranslation } from 'react-i18next';
 export type MultiSelectProps<Value extends ValueType, ChooseValue extends Value> = {
   options: Readonly<MultiSelectOption<Value>[]>;
   chooseValue?: ChooseValue[];
-  className?: string;
   notFoundLabel?: string;
   value?: Value[] | ChooseValue[];
   defaultValue?: Value[];
@@ -29,27 +28,24 @@ export type MultiSelectProps<Value extends ValueType, ChooseValue extends Value>
   selectAllOption?: {
     label: string;
   };
-} & Omit<InputHTMLAttributes<HTMLInputElement>, 'min' | 'max' | 'value' | 'onChange' | 'type' | 'multiple' | 'list' | 'checked'>;
+} & Omit<InputHTMLAttributes<HTMLTextAreaElement>, 'min' | 'max' | 'value' | 'onChange' | 'type' | 'multiple' | 'list' | 'checked'>;
 
 export const defaultSelectAllValue = 'ALL' as const;
 
 export const useMultiSelect = <Value extends ValueType, ChooseValue extends Value>({
   options,
   chooseValue,
-  className,
   notFoundLabel,
   value,
   defaultValue,
   optionRef,
   onChange,
   disabled: disabledFromOutside,
-  name,
   selectAllOption,
   ...props
 }: MultiSelectProps<Value, ChooseValue>) => {
   const { t } = useTranslation('select');
-  const inputRef = useRef<HTMLInputElement>(null);
-  const outputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const optionsUtilsRef = useRef<RenderOptionRef<Value, ChooseValue>>(null);
   const [currentValues, setCurrentValues] = useState(value ?? defaultValue ?? chooseValue ?? []);
   const popoverRef = useRef<HTMLDivElement>(null);
@@ -58,42 +54,48 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
     if (!selectAllOption) return options;
     return [{ label: selectAllOption.label, value: defaultSelectAllValue as Value }, ...options];
   }, [options, selectAllOption]);
-  const defaultInputValue = useMemo(() => getSelectDefaultLabel(currentValues, defaultValue, extendedOptions, t), [value]);
+  const defaultInputValue = useMemo(() => getSelectDefaultLabel(currentValues, extendedOptions, t), [value]);
   const disabled = disabledFromOutside || options.length === 0;
   const [isInvalid, setIsInvalid] = useState(false);
 
   useImperativeHandle(optionRef, () => currentValues, [currentValues]);
   useEffect(() => {
-    if (outputRef.current && Array.isArray(currentValues)) {
-      if (inputRef.current) {
-        const optionIndex = findOptionIndices(extendedOptions, currentValues);
-        const shouldShowTooltip = currentValues.length > 3;
-        inputRef.current.title = shouldShowTooltip ? optionIndex.map((index) => extendedOptions[index]?.label).join(', ') || '' : '';
-      }
-      outputRef.current.value = currentValues.map((value) => value.toString()).join(',');
+    if (inputRef.current) {
+      const concatenatedValues = currentValues.map((value) => value.toString()).join(', ');
+      const optionIndex = findOptionIndices(extendedOptions, currentValues);
+      const shouldShowTooltip = currentValues.length > 3;
+      const tooltipContent = shouldShowTooltip ? optionIndex.map((index) => extendedOptions[index]?.label).join(', ') : '';
+      inputRef.current.title = tooltipContent;
+      inputRef.current.value = concatenatedValues;
     }
   }, [currentValues, defaultValue, value]);
 
   // Reset input value whenever defaultInputValue changes because defaultValue is definitive so value change can't be forwarded through defaultValue
   useEffect(() => {
     // If defaultInputValue did change, then current value must change
+    resizeInput();
+
     if (value != currentValues && !defaultValue) {
       const newValue = value ?? chooseValue ?? [];
       setCurrentValues(newValue);
-      onChange?.(newValue);
-      if (inputRef.current) inputRef.current.value = getSelectDefaultLabel(newValue, defaultValue, extendedOptions, t);
+      if (inputRef.current) {
+        const optionIndex = findOptionIndices(extendedOptions, newValue);
+        const shouldShowTooltip = newValue.length > 3;
+        const tooltipContent = shouldShowTooltip ? optionIndex.map((index) => extendedOptions[index]?.label).join(', ') : '';
+        inputRef.current.title = tooltipContent;
+        inputRef.current.value = getSelectDefaultLabel(newValue, extendedOptions, t);
+      }
     }
   }, [value]);
 
   // Select value again when options changes and main input visually change
   useEffect(() => {
-    const newInputLabel = getSelectDefaultLabel(currentValues, defaultValue, extendedOptions, t);
+    const newInputLabel = getSelectDefaultLabel(currentValues, extendedOptions, t);
     const currentInputLabel = inputRef.current?.value;
     if (newInputLabel !== currentInputLabel) {
       if (inputRef.current) inputRef.current.value = newInputLabel;
-      if (currentValues !== chooseValue) onChange?.(currentValues);
     }
-  }, [extendedOptions]);
+  }, [extendedOptions, currentValues, defaultValue, t]);
 
   // Apply selected value
   const onSelectValue = (value: Value) => {
@@ -116,21 +118,75 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
     if (inputRef.current) {
       const optionIndex = findOptionIndices(extendedOptions, newValues);
       const shouldShowTooltip = newValues.length > 3;
-      inputRef.current.title = shouldShowTooltip ? optionIndex.map((index) => extendedOptions[index]?.label).join(', ') || '' : '';
-      inputRef.current.value = getSelectDefaultLabel(newValues, defaultValue, extendedOptions, t);
+      const tooltipContent = shouldShowTooltip ? optionIndex.map((index) => extendedOptions[index]?.label).join(', ') : '';
+      inputRef.current.title = tooltipContent;
+      inputRef.current.value = getSelectDefaultLabel(newValues, extendedOptions, t);
     }
   };
 
+  const resizeInput = () => {
+    if (inputRef.current) {
+      const content = inputRef.current.value;
+
+      // Create a temporary div to estimate the height of the content
+      const tempDiv = document.createElement('div');
+      const inputStyles = window.getComputedStyle(inputRef.current);
+      const totalPadding = parseInt(inputStyles.paddingLeft) + parseInt(inputStyles.paddingRight);
+      const totalBorder = parseInt(inputStyles.borderLeftWidth) + parseInt(inputStyles.borderRightWidth);
+      const padding = parseInt(inputStyles.paddingTop) + parseInt(inputStyles.paddingBottom);
+
+      let width = inputRef.current.offsetWidth;
+      if (width === 0) {
+        const parentWidth = inputRef.current.parentElement?.offsetWidth;
+        width = parentWidth || 180;
+      }
+
+      tempDiv.style.visibility = 'hidden';
+      tempDiv.style.position = 'absolute';
+      tempDiv.style.width = `${width - totalPadding - totalBorder}px`;
+
+      tempDiv.style.font = inputStyles.font;
+      tempDiv.style.lineHeight = inputStyles.lineHeight;
+      tempDiv.style.whiteSpace = 'pre-wrap';
+      tempDiv.style.wordBreak = 'break-word';
+      tempDiv.textContent = content;
+
+      document.body.appendChild(tempDiv);
+      const height = tempDiv.offsetHeight;
+      document.body.removeChild(tempDiv);
+
+      const estimatedHeight = Math.min(height + padding, 70);
+      inputRef.current.style.height = `${estimatedHeight}px`;
+
+      // Reposition the popover if it is visible
+      if (popoverRef.current?.classList.contains('visible')) {
+        positionAndShowPopover(inputRef.current, popoverRef.current);
+      }
+    }
+  };
+
+  useEffect(() => {
+    resizeInput();
+  }, [currentValues]);
+
   // Let the popover know what to show when the input gets focus
-  const onFocus: FocusEventHandler<HTMLInputElement> = (event) => {
+  const onFocus: FocusEventHandler<HTMLTextAreaElement> = (event) => {
     if (disabled || !popoverRef.current) return;
 
     optionsUtilsRef.current?.show(Array.isArray(currentValues) ? currentValues : [currentValues], extendedOptions);
     positionAndShowPopover(event.currentTarget, popoverRef.current);
+
+    // Focus sur la première option de la liste
+    setTimeout(() => {
+      const firstOption = popoverRef.current?.querySelector('.select-list span');
+      if (firstOption) {
+        (firstOption as HTMLElement).focus();
+      }
+    }, 0);
   };
 
   // Hide the popover when it loses focus and revert text value to appropriate one
-  const onBlur: FocusEventHandler<HTMLInputElement> = (event) => {
+  const onBlur: FocusEventHandler<HTMLTextAreaElement> = () => {
     if (disabled || !popoverRef.current) return;
 
     optionsUtilsRef.current?.hide();
@@ -138,8 +194,9 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
   };
 
   // Handle navigation in select elements
-  const onKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {
+  const onKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (event) => {
     if (disabled) return;
+
     if (event.key !== 'Enter' && event.key !== 'ArrowUp' && event.key !== 'ArrowDown' && event.key !== 'Escape') return;
 
     event.preventDefault();
@@ -161,7 +218,7 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
   };
 
   // Handle search when user inputs stuff in the input, we let the select unfiltered by default so user knows there's more options than the current one!
-  const onInputChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+  const onInputChange: ChangeEventHandler<HTMLTextAreaElement> = (event) => {
     if (disabled) return;
 
     const value = normalize(event.currentTarget.value);
@@ -182,7 +239,6 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
     currentValues,
     optionsUtilsRef,
     inputRef,
-    outputRef,
     popoverRef,
     listRef,
     inputProps: {
@@ -195,11 +251,7 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
       onChange: onInputChange,
       pattern: getNotFoundExclusionPattern(notFoundLabel),
       defaultValue: defaultInputValue,
-      'data-tooltip': inputRef.current?.title,
-    },
-    outputProps: {
-      name,
-      'data-input-type': 'data-input-type' in props ? props['data-input-type'] : undefined,
+      'data-tooltip': inputRef.current?.title === '' ? null : inputRef.current?.title,
     },
   };
 };

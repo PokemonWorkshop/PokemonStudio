@@ -22,15 +22,12 @@ export const findOptionIndexOrZero = <Value extends ValueType>(options: Readonly
 
 export const getSelectDefaultLabel = <Value extends ValueType, ChooseValue extends Value>(
   currentValues: Value[] | ChooseValue[],
-  defaultValue: string[] | undefined,
   options: Readonly<MultiSelectOption<Value>[]> | Readonly<MultiSelectOption<ChooseValue>[]>,
   t: TFunction
 ): string => {
   const optionIndex = findOptionIndices(options, currentValues);
   if (options.length > 0) {
-    return currentValues && currentValues.length > 3
-      ? t('selected', { count: currentValues.length })
-      : currentValues && currentValues.length > 0
+    return currentValues && currentValues.length
       ? optionIndex.map((index) => options[index]?.label).join(', ') || t?.('select')
       : t?.('select') || '';
   }

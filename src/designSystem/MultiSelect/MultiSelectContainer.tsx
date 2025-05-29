@@ -3,7 +3,8 @@ import styled from 'styled-components';
 export const MultiSelectContainer = styled.div`
   display: flex;
   position: relative;
-  height: 40px;
+  min-height: 40px;
+  height: auto;
   box-sizing: border-box;
   user-select: none;
   cursor: pointer;
@@ -24,10 +25,9 @@ export const MultiSelectContainer = styled.div`
 
     #downArrow {
       transform: scaleY(-1);
-      color: ${({ theme }) => theme.colors.text100};
     }
 
-    & MultiselectInput {
+    & MultiSelectTextArea {
       background-color: ${({ theme }) => theme.colors.dark12};
       cursor: text;
     }
@@ -36,7 +36,7 @@ export const MultiSelectContainer = styled.div`
   &.invalid {
     color: ${({ theme }) => theme.colors.dangerBase};
 
-    input {
+    textarea {
       color: ${({ theme }) => theme.colors.dangerBase};
     }
   }
@@ -85,15 +85,21 @@ export const MultiSelectContainer = styled.div`
       text-overflow: ellipsis;
       text-wrap: nowrap;
       cursor: pointer;
+      outline: none;
+
+      &:focus {
+        background-color: ${({ theme }) => theme.colors.dark22};
+        color: ${({ theme }) => theme.colors.text100};
+      }
     }
 
-    & span:hover:not(.current) {
+    & span:hover {
       background-color: ${({ theme }) => theme.colors.dark22};
     }
 
     & span.current {
       color: ${({ theme }) => theme.colors.text100};
-      background: ${({ theme }) => theme.colors.dark23};
+      background: none;
     }
 
     ::-webkit-scrollbar {
@@ -119,14 +125,50 @@ export const MultiSelectContainer = styled.div`
       border-color: ${({ theme }) => theme.colors.text400};
     }
   }
+
+  & .highlighted {
+    background-color: ${({ theme }) => theme.colors.dark22};
+    color: ${({ theme }) => theme.colors.text100};
+  }
+
+  & span.highlighted {
+    background-color: ${({ theme }) => theme.colors.dark22};
+    color: ${({ theme }) => theme.colors.text100};
+  }
 `;
 
-export const MultiSelectInput = styled.input`
+export const Option = styled.span`
+  display: flex;
+  padding: 8px 4px 8px 8px;
+  gap: 8px;
+  cursor: pointer;
+  ${({ theme }) => theme.fonts.normalMedium};
+  color: ${({ theme }) => theme.colors.text400};
+
+  input {
+    margin-right: 8px;
+  }
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.dark22};
+  }
+
+  &.current {
+    color: ${({ theme }) => theme.colors.text100};
+    background: ${({ theme }) => theme.colors.dark23};
+  }
+
+  &.current.highlighted,
+  &.current:hover {
+    background: ${({ theme }) => theme.colors.dark22};
+    color: ${({ theme }) => theme.colors.text100};
+  }
+`;
+
+export const MultiSelectTextArea = styled.textarea`
   box-sizing: border-box;
   padding: 9.5px 15px;
   padding-right: 36px;
-  text-overflow: ellipsis;
-  margin: 0;
   background-color: ${({ theme }) => theme.colors.dark20};
   border: 1px solid transparent;
   border-radius: 8px;
@@ -134,8 +176,17 @@ export const MultiSelectInput = styled.input`
   color: ${({ theme }) => theme.colors.text400};
   min-width: 180px;
   width: 100%;
-  height: 40px;
+  min-height: 40px;
+  height: auto;
+  max-height: 70px;
   cursor: pointer;
+  resize: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: pre-line;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
 
   &:hover:not(:disabled) {
     border-color: ${({ theme }) => theme.colors.dark24};
@@ -157,34 +208,7 @@ export const MultiSelectInput = styled.input`
     color: ${({ theme }) => theme.colors.dangerBase};
   }
 
-  &::placeholder {
-    color: ${({ theme }) => theme.colors.text400};
-  }
-
   &:invalid {
     color: ${({ theme }) => theme.colors.dangerBase};
-  }
-`;
-
-
-export const Option = styled.span`
-  display: flex;
-  padding: 8px 4px 8px 8px;
-  gap: 8px;
-  cursor: pointer;
-  ${({ theme }) => theme.fonts.normalMedium};
-  color: ${({ theme }) => theme.colors.text400};
-
-  input {
-    margin-right: 8px;
-  }
-
-  &:hover {
-    background-color: ${({ theme }) => theme.colors.dark22};
-  }
-
-  &.current {
-    color: ${({ theme }) => theme.colors.text100};
-    background: ${({ theme }) => theme.colors.dark23};
   }
 `;
