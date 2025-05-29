@@ -26,13 +26,11 @@ export const getSelectDefaultLabel = <Value extends ValueType, ChooseValue exten
   t: TFunction
 ): string => {
   const optionIndex = findOptionIndices(options, currentValues);
-  if (options.length > 0) {
-    return currentValues && currentValues.length
-      ? optionIndex.map((index) => options[index]?.label).join(', ') || t?.('select')
-      : t?.('select') || '';
+  if (optionIndex.length > 0) {
+    return optionIndex.map((index) => options[index]?.label).join(', ');
   }
-
-  return t?.('select');
+  console.log(t('placeholder_select'));
+  return t?.('placeholder_select');
 };
 
 export const getNotFoundExclusionPattern = (notFoundLabel: string | undefined) => {

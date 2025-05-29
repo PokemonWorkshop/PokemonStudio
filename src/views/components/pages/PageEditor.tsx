@@ -68,7 +68,7 @@ export const PageEditor = ({
   disabledImport,
   canCollapse,
 }: PageEditorProps) => {
-  const { t } = useTranslation('editor');
+  const { t } = useTranslation();
   const [collapse, setCollapse] = useState(false);
   const onClickedCollapse = () => {
     setCollapse(!collapse);

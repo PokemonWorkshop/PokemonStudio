@@ -22,7 +22,7 @@ const ButtonContainer = styled.div`
 
 const iconFileExtensions = ['png'];
 
-const languageEntries = (t: TFunction<'homepage'>) => DefaultLanguages.map((language) => ({ value: language, label: t(language) }));
+const languageEntries = (t: TFunction) => DefaultLanguages.map((language) => ({ value: language, label: t(language) }));
 const wrongTitle = (title: string) => {
   return title.match('[\\\\/:*?"<>|$.]') !== null;
 };
@@ -32,7 +32,7 @@ type HomeProjectNewEditorProps = {
 };
 
 export const HomeProjectNewEditor = forwardRef<EditorHandlingClose, HomeProjectNewEditorProps>(({ closeDialog }, ref) => {
-  const { t } = useTranslation('homepage');
+  const { t } = useTranslation();
   const [newProjectData, setNewProjectData] = useState<Omit<NewProjectData, 'clone'>>({
     title: '',
     icon: undefined,
@@ -88,7 +88,7 @@ export const HomeProjectNewEditor = forwardRef<EditorHandlingClose, HomeProjectN
           </InputWithTopLabelContainer>
         )}
         <InputWithTopLabelContainer>
-          <Label htmlFor="default_language">{t('default_langauge')}</Label>
+          <Label htmlFor="default_language">{t('default_language')}</Label>
           <SelectCustomSimple
             id="select-default-language"
             value={newProjectData.defaultLanguage}

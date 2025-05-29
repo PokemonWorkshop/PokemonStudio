@@ -28,7 +28,7 @@ type TrainerDialogProps = {
 };
 
 export const TrainerDialog = ({ trainer, dialogsRef }: TrainerDialogProps) => {
-  const { t } = useTranslation('database_trainers');
+  const { t } = useTranslation();
   const getText = useGetProjectText();
   const victorySentence = getText(TRAINER_VICTORY_SENTENCE_TEXT_ID, trainer.id);
   const defeatSentence = getText(TRAINER_DEFEAT_SENTENCE_TEXT_ID, trainer.id);

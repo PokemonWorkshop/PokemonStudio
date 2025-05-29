@@ -21,7 +21,7 @@ type SelectPokemonFormProps = {
 };
 
 export const SelectPokemonForm = ({ dbSymbol, form, onChange, noLabel, breakpoint, undefValueOption }: SelectPokemonFormProps) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const [state] = useGlobalState();
   const getCreatureFormName = useGetCreatureFormNameText();
   const options = useMemo(() => {
@@ -50,7 +50,7 @@ type SelectCreatureFormProps = {
 };
 
 export const SelectCreatureForm = ({ dbSymbol, onChange, ...props }: SelectCreatureFormProps) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const [state] = useGlobalState();
   const getCreatureFormName = useGetCreatureFormNameText();
   const options = useMemo(() => getFormOptions(getCreatureFormName, state.projectData.pokemon[dbSymbol]?.forms || []), [dbSymbol, state]);

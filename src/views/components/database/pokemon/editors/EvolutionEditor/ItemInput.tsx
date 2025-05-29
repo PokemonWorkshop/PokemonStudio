@@ -13,20 +13,20 @@ export const ItemInput = ({ type, state, dispatch }: EvolutionConditionEditorInp
   const getItemName = useGetEntityNameText();
   const stoneOptions = useSelectOptions('itemStone');
   const gemmeOptions = useSelectOptions('itemGem');
-  const { t } = useTranslation(['database_pokemon', 'database_items']);
+  const { t } = useTranslation();
   if (type !== 'gemme' && type !== 'stone' && type !== 'itemHold') return null;
 
   const dbSymbol = state[type];
 
   return (
     <InputWithTopLabelContainer>
-      <Label>{t('database_pokemon:evolutionValue_item')}</Label>
+      <Label>{t('evolution_value_item')}</Label>
       {type !== 'itemHold' ? (
         <SelectDataGeneric
-          data={{ value: dbSymbol, label: items[dbSymbol] ? getItemName(items[dbSymbol]) : t('database_items:item_deleted') }}
+          data={{ value: dbSymbol, label: items[dbSymbol] ? getItemName(items[dbSymbol]) : t('item_deleted') }}
           options={type === 'stone' ? stoneOptions : gemmeOptions}
           onChange={(option) => dispatch({ type: 'update', key: type, value: option.value as DbSymbol })}
-          noOptionsText={t('database_items:no_option')}
+          noOptionsText={t('no_item_found')}
           error={!items[dbSymbol]}
           noneValue
         />

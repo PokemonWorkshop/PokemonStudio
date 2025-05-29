@@ -126,7 +126,7 @@ const SplashScreenCard = forwardRef<HTMLInputElement, SplashScreenCardProps>(({ 
 SplashScreenCard.displayName = 'SplashScreenCard';
 
 export const DashboardGameStartSplashScreen = () => {
-  const { t } = useTranslation('dashboard_game_start');
+  const { t } = useTranslation();
   const { projectConfigValues: gameStart, setProjectConfigValues: setGameStart } = useConfigSceneTitle();
   const currentEditedGameStart = useMemo(() => cloneEntity(gameStart), [gameStart]);
 

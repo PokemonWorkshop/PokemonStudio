@@ -10,12 +10,17 @@ export const Toggle = styled.input.attrs(() => ({ type: 'checkbox' }))`
   background-color: ${({ theme }) => theme.colors.dark24};
   transition: 0.2s;
 
+  &:hover {
+    cursor: pointer;
+  }
+
   &:checked {
     background-color: ${({ theme }) => theme.colors.primaryBase};
   }
 
   &:disabled {
     background-color: ${({ theme }) => theme.colors.dark22};
+    cursor: not-allowed;
   }
 
   &::before {

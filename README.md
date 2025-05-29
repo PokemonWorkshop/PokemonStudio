@@ -78,7 +78,7 @@ npm run package
 
 ## Translating
 
-You can translate Pokémon Studio App texts by using the convinient web-interface on weblate https://hosted.weblate.org/engage/pokemon-studio/. There you can add new languages to the App and improve existing translations. For the technically more experienced, you can send a merge request.
+You can translate Pokémon Studio application texts by using the convinient web-interface on the [Pokémon Studio Weblate](https://hosted.weblate.org/engage/pokemon-studio/). There you can add new languages to the App and improve existing translations. For the technically more experienced, you can send a merge request.
 
 Here are some Weblate statistics.
 
@@ -90,11 +90,7 @@ Before doing anything, please communicate on the [Pokémon Workshop discord](htt
 
 ### Add a new locale to Studio
 
-This section assumes you did what was mentioned above.
+In the `package.json` file, add a new line `"xx": true` at the end of the `languages` object. `xx` is the code name of the language (i.e. `en` for English, for `assets/i18n/en.json`).
 
-In the `src\i18n.ts` file, add a new line `import translationXX from '../assets/i18n/xx';` around the 8th one where:
-
-- `XX` if the capitalized code name of the language (`EN` for English),
-- `xx` the same code name but in lower case (`en` for English).
-
-In the same file, add a new line `xx: translationXX`. Same logic for XX & xx.
+You can set a locale to `false` if you don't want to be loaded at runtime.
+If a locale is not listed in the `languages` object, the json file will be deleted so make sure to just set it to `false` if you want to keep it.

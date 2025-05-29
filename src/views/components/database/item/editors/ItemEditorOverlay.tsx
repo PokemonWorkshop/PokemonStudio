@@ -17,7 +17,8 @@ import {
 } from '.';
 
 export type ItemEditorAndDeletionKeys =
-  | 'new'
+  | 'newItem'
+  | 'newTable'
   | 'frame'
   | 'generic'
   | 'parameters'
@@ -36,8 +37,10 @@ export type ItemDialogsRef = React.RefObject<DialogRefData<ItemEditorAndDeletion
  */
 export const ItemEditorOverlay = defineEditorOverlay<ItemEditorAndDeletionKeys>('ItemEditorOverlay', (dialogToShow, handleCloseRef, closeDialog) => {
   switch (dialogToShow) {
-    case 'new':
-      return <ItemNewEditor closeDialog={closeDialog} ref={handleCloseRef} />;
+    case 'newItem':
+      return <ItemNewEditor from={'items'} closeDialog={closeDialog} ref={handleCloseRef} />;
+    case 'newTable':
+      return <ItemNewEditor from={'techItemsTable'} closeDialog={closeDialog} ref={handleCloseRef} />;
     case 'frame':
       return <ItemFrameEditor ref={handleCloseRef} />;
     case 'generic':

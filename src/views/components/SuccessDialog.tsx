@@ -23,7 +23,7 @@ type SuccessDialogProps = {
 };
 
 export const SuccessDialog = ({ title, message, onClose }: SuccessDialogProps) => {
-  const { t } = useTranslation('loader');
+  const { t } = useTranslation();
 
   return (
     <MessageBoxContainer>

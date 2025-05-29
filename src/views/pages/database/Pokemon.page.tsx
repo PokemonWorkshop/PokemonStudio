@@ -23,7 +23,7 @@ export const PokemonPage = () => {
   const dialogsRef = useDialogsRef<PokemonEditorAndDeletionKeys>();
   const { creature, form, cannotDelete } = useCreaturePage();
   const pokemonWithForm = { species: creature, form };
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
 
   return (
     <DatabasePageStyle>
@@ -34,7 +34,7 @@ export const PokemonPage = () => {
             <DatabaseTabsBar
               currentTabIndex={0}
               tabs={[
-                { label: t('pokemon'), path: '/database/pokemon' },
+                { label: t('creature'), path: '/database/pokemon' },
                 { label: t('movepool'), path: '/database/pokemon/movepool' },
                 { label: t('resources'), path: '/database/pokemon/resources' },
               ]}
@@ -56,13 +56,15 @@ export const PokemonPage = () => {
             <StatisticsDataBlock pokemonWithForm={pokemonWithForm} dialogsRef={dialogsRef} />
           </DataBlockWrapper>
           <DataBlockWrapper>
-            <DataBlockWithAction size="full" title={t('deleting')}>
+            <DataBlockWithAction size="full" title={t('deletion')}>
               {form.form === 0 ? (
                 <DeleteButtonWithIcon onClick={() => dialogsRef.current?.openDialog('deletion', true)} disabled={cannotDelete}>
-                  {t('delete')}
+                  {t('delete_this_creature')}
                 </DeleteButtonWithIcon>
               ) : (
-                <DeleteButtonWithIcon onClick={() => dialogsRef.current?.openDialog('deleteForm', true)}>{t('delete_form')}</DeleteButtonWithIcon>
+                <DeleteButtonWithIcon onClick={() => dialogsRef.current?.openDialog('deleteForm', true)}>
+                  {t('delete_this_form')}
+                </DeleteButtonWithIcon>
               )}
             </DataBlockWithAction>
           </DataBlockWrapper>

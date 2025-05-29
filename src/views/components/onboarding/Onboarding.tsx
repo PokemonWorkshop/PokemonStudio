@@ -17,7 +17,7 @@ const OnboardingTitleContainer = styled.div`
 
 export const Onboarding = () => {
   const [state, setState] = useState(getOnboarding());
-  const { t } = useTranslation('onboarding');
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const updateStep = (updated: OnboardingLocalStorage) => {

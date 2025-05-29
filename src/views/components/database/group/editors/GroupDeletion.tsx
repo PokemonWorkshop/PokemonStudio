@@ -11,7 +11,7 @@ type GroupDeletionProps = {
 
 export const GroupDeletion = forwardRef<EditorHandlingClose, GroupDeletionProps>(({ closeDialog }, ref) => {
   const { projectDataValues: groups, selectedDataIdentifier: groupDbSymbol, removeProjectDataValue: deleteGroup, state } = useProjectGroups();
-  const { t } = useTranslation('database_groups');
+  const { t } = useTranslation();
   const group = groups[groupDbSymbol];
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const groupName = useMemo(() => getEntityNameText(group, state), []);

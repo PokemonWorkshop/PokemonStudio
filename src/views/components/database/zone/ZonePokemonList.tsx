@@ -54,7 +54,7 @@ export const ZonePokemonList = ({ pokemon }: PokemonZoneProps) => {
   const { projectDataValues: species } = useProjectPokemon();
   const getEntityName = useGetEntityNameText();
   const specie = species[pokemon.specie];
-  const { t } = useTranslation(['database_zones', 'database_pokemon']);
+  const { t } = useTranslation();
   const isClickable: boolean = useKeyPress(CONTROL);
   const shortcutPokemonNavigation = usePokemonShortcutNavigation();
 
@@ -68,11 +68,11 @@ export const ZonePokemonList = ({ pokemon }: PokemonZoneProps) => {
 
   const getForm = (pokemon: StudioGroupEncounter) => {
     if (pokemon.form === 0) {
-      return t('database_zones:default_form');
+      return t('default_form');
     } else if (pokemon.form >= 30) {
-      return `${t('database_zones:mega_evolution')} ${pokemon.form - 29}`;
+      return `${t('mega_evolution')} ${pokemon.form - 29}`;
     } else {
-      return `${t('database_zones:form')} ${pokemon.form}`;
+      return `${t('form')} ${pokemon.form}`;
     }
   };
 
@@ -95,7 +95,7 @@ export const ZonePokemonList = ({ pokemon }: PokemonZoneProps) => {
             {getEntityName(specie)}
           </span>
         ) : (
-          <span className="error">{t('database_pokemon:pokemon_deleted')}</span>
+          <span className="error">{t('creature_deleted')}</span>
         )}
         <span className="form">{getForm(pokemon)}</span>
       </div>

@@ -2,7 +2,7 @@ import { CreatureFormResourcesPath } from '@utils/path';
 import { useTranslation } from 'react-i18next';
 
 export const useTitleResource = () => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
 
   const titleResource = (resource: CreatureFormResourcesPath, isFemale: boolean, canBeFemale: boolean) => {
     if (isFemale) return t(resource);

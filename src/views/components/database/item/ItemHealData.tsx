@@ -8,7 +8,7 @@ import { ItemDialogsRef } from './editors/ItemEditorOverlay';
 
 type ItemHealDataProps = { dialogsRef: ItemDialogsRef };
 
-const getHealValue = (t: TFunction<'database_items'>, item: Extract<StudioItem, { loyaltyMalus: number }>): string => {
+const getHealValue = (t: TFunction, item: Extract<StudioItem, { loyaltyMalus: number }>): string => {
   if ('hpCount' in item) {
     if ('statusList' in item) {
       return `${item.hpCount} & ${item.statusList.map((statusKey) => t(statusKey)).join(', ')}`;
@@ -32,7 +32,7 @@ const getHealValue = (t: TFunction<'database_items'>, item: Extract<StudioItem, 
 
 export const ItemHealData = ({ dialogsRef }: ItemHealDataProps) => {
   const { currentItem: item } = useItemPage();
-  const { t } = useTranslation('database_items');
+  const { t } = useTranslation();
   const isDisabled = LOCKED_ITEM_EDITOR[item.klass].includes('heal');
 
   return (
@@ -46,7 +46,7 @@ export const ItemHealData = ({ dialogsRef }: ItemHealDataProps) => {
         <DataGrid rows="auto 1fr auto">
           <DataFieldsetField label={t('heal_category')} data={t(item.klass)} />
           <DataFieldsetField label={t('value')} data={getHealValue(t, item)} />
-          <DataFieldsetField label={t('hapiness_malus')} data={item.loyaltyMalus} />
+          <DataFieldsetField label={t('happiness_malus')} data={item.loyaltyMalus} />
         </DataGrid>
       )}
     </DataBlockWithTitle>

@@ -10,7 +10,7 @@ import { MapUpdateContainer } from './MapUpdate';
 const MapRMXPUpdateContainer = MapUpdateContainer;
 
 export const MapRMXP2StudioUpdate = () => {
-  const { t } = useTranslation('database_maps');
+  const { t } = useTranslation();
   const update = useRMXP2StudioMapsUpdate();
   const loaderRef = useLoaderRef();
 

@@ -66,7 +66,7 @@ type AudioInputProps = {
 export const AudioInput = ({ audioPathInProject, name, extensions, destFolderToCopy, onAudioChoosen, onAudioClear }: AudioInputProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [error, setError] = useState<boolean>(false);
-  const { t } = useTranslation('audio');
+  const { t } = useTranslation();
   const chooseFile = useChoosefile();
   const copyFile = useCopyFile();
   const [state] = useGlobalState();

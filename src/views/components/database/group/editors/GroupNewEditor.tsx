@@ -31,13 +31,10 @@ import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import { SelectGroup } from '@components/selects';
 import { importGroupData } from '@utils/importEntityDataUtils';
 
-const groupActivationEntries = (t: TFunction<'database_groups'>) =>
-  GroupActivationsMap.map((activation) => ({ value: activation.value, label: t(activation.label) }));
-const groupBattleTypeEntries = (t: TFunction<'database_groups'>) => GroupBattleTypes.map((type) => ({ value: type, label: t(type) }));
-const systemTagsEntries = (t: TFunction<'database_groups'>) =>
-  [...GROUP_SYSTEM_TAGS, 'custom' as const].map((tag) => ({ value: tag, label: t(tag) }));
-const groupVariationEntries = (t: TFunction<'database_groups'>) =>
-  GroupVariationsMap.map((variation) => ({ value: variation.value, label: t(variation.label) }));
+const groupActivationEntries = (t: TFunction) => GroupActivationsMap.map((activation) => ({ value: activation.value, label: t(activation.label) }));
+const groupBattleTypeEntries = (t: TFunction) => GroupBattleTypes.map((type) => ({ value: type, label: t(type) }));
+const systemTagsEntries = (t: TFunction) => [...GROUP_SYSTEM_TAGS, 'custom' as const].map((tag) => ({ value: tag, label: t(tag) }));
+const groupVariationEntries = (t: TFunction) => GroupVariationsMap.map((variation) => ({ value: variation.value, label: t(variation.label) }));
 const isTool = (variation: unknown): variation is StudioGroupTool => ['OldRod', 'GoodRod', 'SuperRod', 'RockSmash'].includes(variation as string);
 
 const ButtonContainer = styled.div`
@@ -65,7 +62,7 @@ type GroupNewEditorProps = {
 
 export const GroupNewEditor = forwardRef<EditorHandlingClose, GroupNewEditorProps>(({ closeDialog }, ref) => {
   const { projectDataValues: groups, setProjectDataValues: setGroup } = useProjectGroups();
-  const { t } = useTranslation('database_groups');
+  const { t } = useTranslation();
   const activationOptions = useMemo(() => groupActivationEntries(t), [t]);
   const battleTypeOptions = useMemo(() => groupBattleTypeEntries(t), [t]);
   const systemTagsOptions = useMemo(() => systemTagsEntries(t), [t]);
@@ -130,13 +127,13 @@ export const GroupNewEditor = forwardRef<EditorHandlingClose, GroupNewEditorProp
   };
 
   return (
-    <Editor type="creation" title={t('new')}>
+    <Editor type="creation" title={t('new_group')}>
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="name" required>
             {t('group_name')}
           </Label>
-          <Input type="text" name="name" value={name} onChange={(event) => setName(event.currentTarget.value)} placeholder={t('example_name')} />
+          <Input type="text" name="name" value={name} onChange={(event) => setName(event.currentTarget.value)} placeholder={t('example_group')} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="select-activation">{t('activation')}</Label>
@@ -175,7 +172,7 @@ export const GroupNewEditor = forwardRef<EditorHandlingClose, GroupNewEditorProp
         {isCustomEnvironment && (
           <InputWithTopLabelContainer>
             <Label htmlFor="custom-environment" required>
-              {t('custom_environment')}
+              {t('customized_environment')}
             </Label>
             <Input
               id="custom-environment"
@@ -216,7 +213,7 @@ export const GroupNewEditor = forwardRef<EditorHandlingClose, GroupNewEditorProp
             <ImportInfo>{t('group_import_info')}</ImportInfo>
           </ImportInfoContainer>
           <InputWithTopLabelContainer>
-            <Label htmlFor="select-group-to-import">{t('import_group_from')}</Label>
+            <Label htmlFor="select-group-to-import">{t('import_data_from')}</Label>
             <SelectGroup dbSymbol={selectedGroup} onChange={(dbSymbol) => setSelectedGroup(dbSymbol)} noLabel undefValueOption={t('none_option')} />
           </InputWithTopLabelContainer>
         </InputGroupCollapse>

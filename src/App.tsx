@@ -22,6 +22,7 @@ import SettingsRouter from '@pages/settings/Settings.Router.page';
 
 import './i18n';
 import DesignSystemRouterComponent from '@ds/DesignSystem.router';
+import PocRouterComponent from '@poc/Poc.router';
 import { TooltipContext } from '@ds/Tooltip/TooltipContext';
 
 const App = () => {
@@ -47,6 +48,7 @@ const App = () => {
                 <Route path="/account" />
                 <Route path="/designSystem/*" element={<DesignSystemRouterComponent />} />
                 <Route path="/compilation" element={<CompilationPage />} />
+                <Route path="/poc/*" element={<PocRouterComponent />} />
                 <Route path="/" element={<Navigate to="/home" />} />
               </Routes>
             </MemoryRouter>

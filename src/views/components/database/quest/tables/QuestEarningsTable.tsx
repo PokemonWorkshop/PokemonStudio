@@ -13,7 +13,7 @@ type QuestEarningsTableProps = {
 
 export const QuestEarningsTable = ({ quest, editEarning }: QuestEarningsTableProps) => {
   const updateQuest = useUpdateQuest(quest);
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
 
   return quest.earnings.length === 0 ? (
     <TableEmpty>{t('no_earning')}</TableEmpty>

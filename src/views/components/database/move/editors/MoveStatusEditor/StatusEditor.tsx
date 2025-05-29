@@ -57,7 +57,7 @@ export const StatusEditor = ({
   handleStatusChange,
   handleChancesChange,
 }: StatusEditorProps) => {
-  const { t } = useTranslation('database_moves');
+  const { t } = useTranslation();
   const { EmbeddedUnitInput } = useInputAttrsWithLabel(STATUS_EDITOR_SCHEMA, defaults);
   const divRef = useRef<HTMLDivElement>(null);
   const divInputRef = useRef<HTMLDivElement>(null);

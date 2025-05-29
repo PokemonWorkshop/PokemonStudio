@@ -12,7 +12,7 @@ import React, { useState } from 'react';
 export const QuestPage = () => {
   const dialogsRef = useDialogsRef<QuestEditorAndDeletionKeys>();
   const { quest, cannotDelete } = useQuestPage();
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const [goalIndex, setGoalIndex] = useState(0);
   const [earningIndex, setEarningIndex] = useState(0);
 
@@ -29,9 +29,9 @@ export const QuestPage = () => {
             <QuestEarnings quest={quest} dialogsRef={dialogsRef} setEarningIndex={setEarningIndex} />
           </DataBlockWrapper>
           <DataBlockWrapper>
-            <DataBlockWithAction size="full" title={t('deleting')}>
+            <DataBlockWithAction size="full" title={t('deletion')}>
               <DeleteButtonWithIcon onClick={() => dialogsRef.current?.openDialog('deletion', true)} disabled={cannotDelete}>
-                {t('delete')}
+                {t('delete_this_quest')}
               </DeleteButtonWithIcon>
             </DataBlockWithAction>
           </DataBlockWrapper>

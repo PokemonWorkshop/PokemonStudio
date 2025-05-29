@@ -12,6 +12,7 @@ import { ReactComponent as CodeIcon } from '../../../../../assets/icons/navigati
 import { ReactComponent as HelpIcon } from '../../../../../assets/icons/navigation/help-icon.svg';
 import { ReactComponent as SettingsIcon } from '../../../../../assets/icons/navigation/settings-icon.svg';
 import { ReactComponent as AccountIcon } from '../../../../../assets/icons/navigation/account-icon.svg';
+import { ReactComponent as PocIcon } from '../../../../../assets/icons/navigation/adb-icon.svg';
 import { ReactComponent as PlusIcon } from '../../../../../assets/icons/global/plus-icon.svg';
 import { ReactComponent as DeleteIcon } from '../../../../../assets/icons/global/delete-icon.svg';
 import { ReactComponent as SaveIcon } from '../../../../../assets/icons/navigation/save-icon.svg';
@@ -39,7 +40,8 @@ export type IconName =
   | 'edit'
   | 'clear'
   | 'folder'
-  | 'newFolder';
+  | 'newFolder'
+  | 'poc';
 
 const iconNameToIcon: Record<IconName, typeof TopIcon> = {
   top: TopIcon,
@@ -60,6 +62,7 @@ const iconNameToIcon: Record<IconName, typeof TopIcon> = {
   clear: ClearIcon,
   folder: FolderIcon,
   newFolder: NewFolderIcon,
+  poc: PocIcon,
 };
 
 type Size = 's' | 'm' | 'l';

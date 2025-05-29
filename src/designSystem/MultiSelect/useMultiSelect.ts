@@ -44,7 +44,7 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
   selectAllOption,
   ...props
 }: MultiSelectProps<Value, ChooseValue>) => {
-  const { t } = useTranslation('select');
+  const { t } = useTranslation();
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const optionsUtilsRef = useRef<RenderOptionRef<Value, ChooseValue>>(null);
   const [currentValues, setCurrentValues] = useState(value ?? defaultValue ?? chooseValue ?? []);

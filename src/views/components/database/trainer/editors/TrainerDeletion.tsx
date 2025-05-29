@@ -13,7 +13,7 @@ type TrainerDeletionProps = {
  * Component responsive of asking the user if they really want to delete the trainer before doing so.
  */
 export const TrainerDeletion = forwardRef<EditorHandlingClose, TrainerDeletionProps>(({ closeDialog }, ref) => {
-  const { t } = useTranslation('database_trainers');
+  const { t } = useTranslation();
   const { projectDataValues: trainers, selectedDataIdentifier: dbSymbol, removeProjectDataValue: deleteTrainer, state } = useProjectTrainers();
   const trainer = trainers[dbSymbol];
   // eslint-disable-next-line react-hooks/exhaustive-deps

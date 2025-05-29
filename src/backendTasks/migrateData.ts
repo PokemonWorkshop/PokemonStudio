@@ -23,7 +23,7 @@ const migrateData = async (payload: MigrateDataInput, event: IpcMainEvent, chann
     log.info('migrate-data', `Found ${migrationFound.length} migrations`);
     await migrationFound.reduce(async (prev, curr, index) => {
       await prev;
-      const message = i18n.t(curr.message, { ns: 'migration' });
+      const message = i18n.t(curr.message);
       log.info('migrate-data/progress', message);
       sendProgress(event, channels, { step: index + 1, total: migrationFound.length, stepText: message });
       await curr.migration(event, payload.projectPath, payload.studioSettings);

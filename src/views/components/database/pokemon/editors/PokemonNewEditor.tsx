@@ -58,8 +58,7 @@ const CREATURE_NEW_EDITOR_SCHEMA = CREATURE_FORM_VALIDATOR.pick({ type1: true, t
 export const PokemonNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeDialog, setEvolutionIndex }, ref) => {
   const { projectDataValues: creatures, setProjectDataValues: setCreature } = useProjectPokemon();
   const { projectDataValues: dex, setProjectDataValues: setDex } = useProjectDex();
-  const { t } = useTranslation('database_pokemon');
-  const { t: tMove } = useTranslation('database_moves');
+  const { t } = useTranslation();
   const setText = useSetProjectText();
   const [name, setName] = useState(''); // We use a state because synchronizing dbSymbol is easier with a state
   const formNameRef = useRef<HTMLInputElement>(null);
@@ -150,15 +149,15 @@ export const PokemonNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
   const isDisabled = !name || !!dbSymbolErrorType;
 
   return (
-    <Editor type="creation" title={t('new')}>
+    <Editor type="creation" title={t('new_creature')}>
       <InputFormContainer ref={formRef}>
         <InputWithTopLabelContainer>
           <Label required>{t('name')}</Label>
-          <Input value={name} onChange={onChangeName} placeholder={t('example_name')} />
+          <Input value={name} onChange={onChangeName} placeholder={t('example_creature')} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label>{t('description')}</Label>
-          <MultiLineInput ref={descriptionRef} placeholder={t('example_description')} />
+          <MultiLineInput ref={descriptionRef} placeholder={t('example_description_creature')} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label>{t('form_name')}</Label>
@@ -167,7 +166,7 @@ export const PokemonNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
         <TypeFields form={form} defaults={defaults} />
         <InputWithTopLabelContainer>
           <Label htmlFor="dbSymbol" required>
-            {tMove('symbol')}
+            {t('symbol')}
           </Label>
           <Input
             type="text"
@@ -175,17 +174,17 @@ export const PokemonNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
             ref={dbSymbolRef}
             onChange={(e) => onChangeDbSymbol(e.currentTarget.value)}
             error={!!dbSymbolErrorType}
-            placeholder={tMove('example_db_symbol')}
+            placeholder={t('example_db_symbol_creature')}
           />
-          {dbSymbolErrorType === 'value' && <TextInputError>{tMove('incorrect_format')}</TextInputError>}
-          {dbSymbolErrorType === 'duplicate' && <TextInputError>{tMove('db_symbol_already_used')}</TextInputError>}
+          {dbSymbolErrorType === 'value' && <TextInputError>{t('incorrect_format')}</TextInputError>}
+          {dbSymbolErrorType === 'duplicate' && <TextInputError>{t('db_symbol_already_used')}</TextInputError>}
         </InputWithTopLabelContainer>
         <InputGroupCollapse title={t('other_data')} gap="16px" onClick={() => setImporting(!importing)}>
           <ImportInfoContainer>
             <ImportInfo>{t('creature_import_info')}</ImportInfo>
           </ImportInfoContainer>
           <InputWithTopLabelContainer>
-            <Label htmlFor="select-creature-to-import">{t('import_creature_from')}</Label>
+            <Label htmlFor="select-creature-to-import">{t('import_data_from')}</Label>
             <SelectPokemon
               dbSymbol={selectedCreature}
               onChange={(dbSymbol) => setSelectedCreature(dbSymbol)}
@@ -195,12 +194,12 @@ export const PokemonNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
           </InputWithTopLabelContainer>
         </InputGroupCollapse>
         <ButtonContainer>
-          <TooltipWrapper data-tooltip={isDisabled ? tMove('fields_asterisk_required') : undefined}>
+          <TooltipWrapper data-tooltip={isDisabled ? t('fields_asterisk_required') : undefined}>
             <PrimaryButton onClick={onClickNew} disabled={isDisabled}>
-              {t('create_pokemon')}
+              {t('create_creature')}
             </PrimaryButton>
           </TooltipWrapper>
-          <DarkButton onClick={closeDialog}>{tMove('cancel')}</DarkButton>
+          <DarkButton onClick={closeDialog}>{t('cancel')}</DarkButton>
         </ButtonContainer>
       </InputFormContainer>
     </Editor>

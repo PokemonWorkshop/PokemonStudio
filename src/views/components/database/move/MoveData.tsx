@@ -10,7 +10,7 @@ type MoveDataProps = {
 };
 
 export const MoveData = ({ move, dialogsRef }: MoveDataProps) => {
-  const { t } = useTranslation('database_moves');
+  const { t } = useTranslation();
 
   const getTextCriticalRate = () => {
     if (move.movecriticalRate > 3) return t(TEXT_CRITICAL_RATES[4]);

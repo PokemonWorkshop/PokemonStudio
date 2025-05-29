@@ -69,7 +69,7 @@ type MapImportProps = {
 };
 
 export const MapImport = ({ closeDialog, closeParentDialog }: MapImportProps) => {
-  const { t } = useTranslation('database_maps');
+  const { t } = useTranslation();
   const loaderRef = useLoaderRef();
   const mapImport = useMapImport();
   const { projectDataValues: maps, state: globalState } = useProjectDataReadonly('maps', 'map');
@@ -229,7 +229,7 @@ export const MapImport = ({ closeDialog, closeParentDialog }: MapImportProps) =>
                 <PrimaryButton onClick={handleImport} disabled={disableImport()}>
                   {amountMapShouldBeImport === 1
                     ? t('import_selected_map_singular')
-                    : t('import_selected_map_plurial', { amount: amountMapShouldBeImport })}
+                    : t('import_selected_map_plural', { amount: amountMapShouldBeImport })}
                 </PrimaryButton>
               )}
             </div>

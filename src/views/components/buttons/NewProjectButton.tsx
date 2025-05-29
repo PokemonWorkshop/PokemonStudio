@@ -19,7 +19,7 @@ export const NewProjectButton = ({ newProjectData, disabled, closeDialog }: NewP
   const projectNew = useProjectNew();
   const projectLoad = useProjectLoad();
   const navigate = useNavigate();
-  const { t } = useTranslation(['loader', 'homepage']);
+  const { t } = useTranslation();
 
   const handleClick = async () => {
     projectNew(
@@ -37,7 +37,7 @@ export const NewProjectButton = ({ newProjectData, disabled, closeDialog }: NewP
           },
           (count) => {
             closeDialog();
-            loaderRef.current.setError('loading_project_error', t('loader:integrity_message', { count }), true);
+            loaderRef.current.setError('loading_project_error', t('integrity_message', { count }), true);
           }
         );
       },
@@ -49,7 +49,7 @@ export const NewProjectButton = ({ newProjectData, disabled, closeDialog }: NewP
   };
   return (
     <PrimaryButton disabled={disabled} onClick={handleClick}>
-      {t('homepage:create_my_project')}
+      {t('create_my_project')}
     </PrimaryButton>
   );
 };

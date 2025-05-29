@@ -15,6 +15,8 @@ import { migrateUndefinedBreedingGroupToUnknown } from './migrateUndefinedBreedi
 import { addTrainerAdditionalDialogs } from './addTrainerAdditionalDialogs';
 import { migrateQuestsEarnings } from './migrateQuestsEarnings';
 import { addCsvForQuestsCustomObjectives } from './addCsvForQuestsCustomObjectives';
+import { addEggInCreatureResources } from './addEggInCreatureResources';
+import { addBattleCamera3dToSettings } from './addBattleCamera3dToSettings';
 
 type MigrateConfigType = {
   migration: MigrationTask;
@@ -35,7 +37,7 @@ type MigrateConfigType = {
  * migration: The method that must be called to do the migration.
  * version: The version of the project where the migration is to take place. The migration will also run if the project has a lower version.
  * message: A message will be displayed for the user to understand what is happening.
- *          You need to enter the translation key used by i18n. The translations must be in the migration.json files.
+ *          You need to enter the translation key used by i18n.
  */
 
 export const MIGRATION_CONFIG: MigrateConfigType[] = [
@@ -118,5 +120,15 @@ export const MIGRATION_CONFIG: MigrateConfigType[] = [
     migration: addCsvForQuestsCustomObjectives,
     version: '2.4.2',
     message: 'add_csv_quests_custom_objectives',
+  },
+  {
+    migration: addEggInCreatureResources,
+    version: '2.4.3',
+    message: 'add_egg_in_creature_resources',
+  },
+  {
+    migration: addBattleCamera3dToSettings,
+    version: '2.4.3',
+    message: 'add_battle_camera_3D_to_settings',
   },
 ];

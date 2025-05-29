@@ -45,7 +45,7 @@ const CHARACTERISTICS_EDITOR_SCHEMA = MOVE_VALIDATOR.pick({
 });
 
 export const MoveCharacteristicsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_moves');
+  const { t } = useTranslation();
   const { move } = useMovePage();
   const updateMove = useUpdateMove(move);
   const { canClose, getFormData, defaults, formRef } = useZodForm(CHARACTERISTICS_EDITOR_SCHEMA, move);

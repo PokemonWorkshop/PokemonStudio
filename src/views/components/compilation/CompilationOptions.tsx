@@ -9,7 +9,7 @@ type CompilationOptionsProps = {
 };
 
 export const CompilationOptions = ({ defaults }: CompilationOptionsProps) => {
-  const { t } = useTranslation('compilation');
+  const { t } = useTranslation();
 
   return (
     <CompilationOptionsContainer>

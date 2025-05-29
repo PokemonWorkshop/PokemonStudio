@@ -1,10 +1,10 @@
-import { Input, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
+import { Input, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PaddedInputContainer, Toggle } from '@components/inputs';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { QuestGoalProps } from './QuestGoalProps';
 
 export const QuestGoalSpeakTo = ({ objective, refs, checkIsValid }: QuestGoalProps) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
 
   return (
     <PaddedInputContainer>
@@ -21,6 +21,15 @@ export const QuestGoalSpeakTo = ({ objective, refs, checkIsValid }: QuestGoalPro
           placeholder={t('example_speak_to')}
         />
       </InputWithTopLabelContainer>
+      <InputWithLeftLabelContainer>
+        <Label htmlFor="hidden-by-default">{t('hidden_default')}</Label>
+        <Toggle
+          ref={refs.hiddenByDefaultRef}
+          name="hidden-by-default"
+          defaultChecked={objective.hiddenByDefault}
+          onChange={() => checkIsValid && checkIsValid()}
+        />
+      </InputWithLeftLabelContainer>
     </PaddedInputContainer>
   );
 };

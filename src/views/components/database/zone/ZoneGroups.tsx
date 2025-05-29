@@ -14,7 +14,7 @@ type ZoneGroupsProps = {
 };
 
 export const ZoneGroups = ({ zone, groups, dialogsRef, setCurrentGroupIndex }: ZoneGroupsProps) => {
-  const { t } = useTranslation('database_zones');
+  const { t } = useTranslation();
   const groupLength = useMemo(() => Object.keys(groups).length, [groups]);
 
   const onEdit = (index: number) => {

@@ -20,7 +20,7 @@ export const MapLinkCard = ({ mapLinkLink, index, cardinal, mapData, onDeleteLin
   const mapName = mapData.get(mapLinkLink.mapId);
   const [offset, setOffset] = useState<number>(mapLinkLink.offset);
   const [lockEdit, setLockEdit] = useState<boolean>(false);
-  const { t } = useTranslation('database_maplinks');
+  const { t } = useTranslation();
 
   useEffect(() => {
     setOffset(mapLinkLink.offset);

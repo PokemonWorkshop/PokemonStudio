@@ -29,17 +29,13 @@ type SelectConditionProps = {
   onChange: (value: string) => void;
 };
 
-const conditionCategoryEntries = (
-  t: TFunction<'database_quests'>,
-  excludes: StudioCreatureQuestConditionType[],
-  itSelf: StudioCreatureQuestConditionType
-) =>
+const conditionCategoryEntries = (t: TFunction, excludes: StudioCreatureQuestConditionType[], itSelf: StudioCreatureQuestConditionType) =>
   CREATURE_QUEST_CONDITIONS.map((type) => ({ value: type, label: t(`condition_${type}`) })).filter(
     ({ value }) => !excludes.includes(value) || value === itSelf
   );
 
 const SelectCondition = ({ condition, index, excludeConditions, onChange }: SelectConditionProps) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const conditionOptions = useMemo(() => conditionCategoryEntries(t, excludeConditions, condition.type), [t, excludeConditions, condition.type]);
   return (
     <SelectCustomSimple id={`select-condition-${index}`} value={condition.type} options={conditionOptions} onChange={(value) => onChange(value)} />
@@ -96,8 +92,8 @@ type ValueConditionProps = {
 };
 
 const ValueCondition = ({ condition, updateCondition }: ValueConditionProps) => {
-  const { t } = useTranslation('database_quests');
-  const { t: tSelect } = useTranslation('select');
+  const { t } = useTranslation();
+  const { t: tSelect } = useTranslation();
   const { projectConfigValues: settings } = useConfigSettings();
   const { type, value } = condition;
 
@@ -147,11 +143,11 @@ type GoalConditionProps = {
 };
 
 const GoalCondition = ({ condition, index, excludeConditions, onChange, onDelete, updateCondition }: GoalConditionProps) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   return (
     <InputContainer>
       <TitleContainer>
-        <span>{t('condition', { number: index + 1 })}</span>
+        <span>{t('condition_with_number', { number: index + 1 })}</span>
         {index !== 0 && <DeleteIcon onClick={onDelete} />}
       </TitleContainer>
       <PaddedInputContainer>
@@ -178,7 +174,7 @@ type QuestGoalConditionsProps = {
 };
 
 export const QuestGoalConditions = ({ objective, setObjective }: QuestGoalConditionsProps) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const conditions = useMemo(() => cloneEntity(objective.objectiveMethodArgs[0] as StudioCreatureQuestCondition[]), [objective]);
   const excludeConditions = buildExcludeConditions(conditions, -1);
 

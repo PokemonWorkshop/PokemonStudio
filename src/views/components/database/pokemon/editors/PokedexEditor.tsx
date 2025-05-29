@@ -17,7 +17,7 @@ import { InputFormContainer } from '@components/inputs/InputContainer';
 const POKEDEX_EDITOR_SCHEMA = CREATURE_FORM_VALIDATOR.pick({ weight: true, height: true });
 
 export const PokedexEditor = forwardRef<EditorHandlingClose>((_, ref) => {
-  const { t } = useTranslation('database_pokemon');
+  const { t } = useTranslation();
   const dialogsRef = useDialogsRef<TranslationEditorTitle>();
   const { creature, form } = useCreaturePage();
   const updateForm = useUpdateForm(creature, form);
@@ -53,7 +53,7 @@ export const PokedexEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   };
 
   return (
-    <Editor type="edit" title={t('pokedex')}>
+    <Editor type="edit" title={t('bestiary')}>
       <InputFormContainer ref={formRef}>
         <EmbeddedUnitInput name="height" unit="m" label={t('height')} labelLeft onInput={onInputTouched} />
         <EmbeddedUnitInput name="weight" unit="kg" label={t('weight')} labelLeft onInput={onInputTouched} />

@@ -1,12 +1,12 @@
-import { InputWithLeftLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
+import { InputWithLeftLabelContainer, Label, PaddedInputContainer, Toggle } from '@components/inputs';
+import { ObjectiveEggIndex, ObjectivesEgg } from '@utils/QuestUtils';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { InputNumber2 } from './InputNumber';
 import { QuestGoalProps } from './QuestGoalProps';
-import { ObjectiveEggIndex, ObjectivesEgg } from '@utils/QuestUtils';
-import React from 'react';
 
 export const QuestGoalEgg = ({ objective, refs, checkIsValid }: QuestGoalProps) => {
-  const { t } = useTranslation('database_quests');
+  const { t } = useTranslation();
   const eggMethodName = objective.objectiveMethodName as ObjectivesEgg;
 
   return (
@@ -17,6 +17,15 @@ export const QuestGoalEgg = ({ objective, refs, checkIsValid }: QuestGoalProps) 
           name="amount-egg"
           ref={refs.valueRef}
           defaultValue={objective.objectiveMethodArgs[ObjectiveEggIndex[eggMethodName]] as number}
+          onChange={() => checkIsValid && checkIsValid()}
+        />
+      </InputWithLeftLabelContainer>
+      <InputWithLeftLabelContainer>
+        <Label htmlFor="hidden-by-default">{t('hidden_default')}</Label>
+        <Toggle
+          ref={refs.hiddenByDefaultRef}
+          name="hidden-by-default"
+          defaultChecked={objective.hiddenByDefault}
           onChange={() => checkIsValid && checkIsValid()}
         />
       </InputWithLeftLabelContainer>

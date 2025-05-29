@@ -99,6 +99,13 @@ const animationOption = {
   easing: 'ease-in',
 } as const;
 
+const DIALOG_TOP_OFFSET = '26px';
+const DIALOG_TRANSFORM_RIGHT = 'translateX(-100%)';
+const DIALOG_TRANSFORM_CENTER = 'translate(0%, -50%)';
+const DIALOG_TOP_PERCENTAGE = '10%';
+const DIALOG_TOP_CENTER = '50%';
+const DIALOG_TRANSFORM_NONE = 'translate(0%, 0)';
+
 const closeDialogWithAnimation = (dialog: HTMLDialogElement, backdrop: HTMLDivElement, isCenter: boolean, onFinish: () => void) => {
   const animation = dialog.animate(isCenter ? animationKeys.center.close : animationKeys.right.close, animationOption);
 
@@ -225,105 +232,130 @@ export const defineEditorOverlay = <Keys extends string, Props extends Record<st
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentDialog]);
 
-useEffect(() => {
-  const handleTabKey = (event: KeyboardEvent) => {
-    if (event.key !== 'Tab') return;
+    useEffect(() => {
+      const handleTabKey = (event: KeyboardEvent) => {
+        if (event.key !== 'Tab') return;
 
-    const openDialogs = document.querySelectorAll('dialog.open');
-    if (openDialogs.length === 0) return;
+        const openDialogs = document.querySelectorAll('dialog.open');
+        if (openDialogs.length === 0) return;
 
-    const lastDialog = openDialogs[openDialogs.length - 1] as HTMLDialogElement;
-    if (!lastDialog.contains(event.target as Node)) return;
+        const lastDialog = openDialogs[openDialogs.length - 1] as HTMLDialogElement;
+        if (!lastDialog.contains(event.target as Node)) return;
 
-    const focusableElements = Array.from(lastDialog.querySelectorAll(focusableHtmlElements)) as HTMLElement[];
-    if (focusableElements.length === 0) return;
+        const focusableElements = Array.from(lastDialog.querySelectorAll(focusableHtmlElements)) as HTMLElement[];
+        if (focusableElements.length === 0) return;
 
-    const firstElement = focusableElements[0];
-    const lastElement = focusableElements[focusableElements.length - 1];
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
 
-    if (event.shiftKey) {
-
-      if (document.activeElement === firstElement) {
-        event.preventDefault();
-        if (focusableElements[focusableElements.length - 2].getAttribute('type') === 'hidden') {
-          const lastFocusableElement = focusableElements
-            .reverse()
-            .find((el) => el.getAttribute('type') !== 'hidden' && el.getAttribute('aria-hidden') !== 'true');
-          lastFocusableElement?.focus();
-        } else {
-          focusableElements[focusableElements.length - 2].focus();
-        }
-      }
-    } else {
-      if (document.activeElement === lastElement) {
-        event.preventDefault();
-        focusableElements[1].focus();
-      }
-    }
-  };
-
-        const handleCtrlA = (event: KeyboardEvent) => {
-          if (event.key === 'a' && (event.ctrlKey || event.metaKey)) {
-            const openDialogs = document.querySelectorAll('dialog.open');
-            if (openDialogs.length === 0) return;
-
-            const lastDialog = openDialogs[openDialogs.length - 1] as HTMLDialogElement;
-            if (lastDialog.contains(event.target as Node)) {
-              event.preventDefault();
-              const target = event.target as HTMLElement;
-
-              if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
-                (target as HTMLInputElement | HTMLTextAreaElement).select();
-              } else {
-                const range = document.createRange();
-                range.selectNodeContents(lastDialog);
-                const selection = window.getSelection();
-                selection?.removeAllRanges();
-                selection?.addRange(range);
-              }
+        if (event.shiftKey) {
+          if (document.activeElement === firstElement) {
+            event.preventDefault();
+            if (focusableElements[focusableElements.length - 2].getAttribute('type') === 'hidden') {
+              const lastFocusableElement = focusableElements
+                .reverse()
+                .find((el) => el.getAttribute('type') !== 'hidden' && el.getAttribute('aria-hidden') !== 'true');
+              lastFocusableElement?.focus();
+            } else {
+              focusableElements[focusableElements.length - 2].focus();
             }
           }
+        } else {
+          if (document.activeElement === lastElement) {
+            event.preventDefault();
+            focusableElements[1].focus();
+          }
+        }
+      };
+
+      const handleCtrlA = (event: KeyboardEvent) => {
+        if (event.key === 'a' && (event.ctrlKey || event.metaKey)) {
+          const openDialogs = document.querySelectorAll('dialog.open');
+          if (openDialogs.length === 0) return;
+
+          const lastDialog = openDialogs[openDialogs.length - 1] as HTMLDialogElement;
+          if (lastDialog.contains(event.target as Node)) {
+            event.preventDefault();
+            const target = event.target as HTMLElement;
+
+            if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+              (target as HTMLInputElement | HTMLTextAreaElement).select();
+            } else {
+              const range = document.createRange();
+              range.selectNodeContents(lastDialog);
+              const selection = window.getSelection();
+              selection?.removeAllRanges();
+              selection?.addRange(range);
+            }
+          }
+        }
+      };
+
+      window.addEventListener('keydown', handleCtrlA);
+      window.addEventListener('keydown', handleTabKey);
+      return () => {
+        window.removeEventListener('keydown', handleCtrlA);
+        window.removeEventListener('keydown', handleTabKey);
+      };
+    }, [currentDialog]);
+
+    useEffect(() => {
+      if (!isCenter) {
+        if (!dialogRef.current) return;
+        dialogRef.current.style.top = DIALOG_TOP_OFFSET;
+        dialogRef.current.style.transform = DIALOG_TRANSFORM_RIGHT;
+      } else {
+        const adjustDialogPosition = () => {
+          if (!dialogRef.current) return;
+
+          const dialogHeight = dialogRef.current.offsetHeight;
+          const windowHeight = window.innerHeight;
+
+          if (dialogHeight > windowHeight * 0.8) {
+            dialogRef.current.style.top = DIALOG_TOP_PERCENTAGE;
+            dialogRef.current.style.transform = DIALOG_TRANSFORM_NONE;
+          } else {
+            dialogRef.current.style.top = DIALOG_TOP_CENTER;
+            dialogRef.current.style.transform = DIALOG_TRANSFORM_CENTER;
+          }
         };
 
-        window.addEventListener('keydown', handleCtrlA);
-        window.addEventListener('keydown', handleTabKey);
-        return () => {
-          window.removeEventListener('keydown', handleCtrlA);
-          window.removeEventListener('keydown', handleTabKey);
-        };
-}, [currentDialog]);
+        adjustDialogPosition();
+        window.addEventListener('resize', adjustDialogPosition);
 
-return createPortal(
-  <>
-    <BackDrop ref={backdropRef} onClick={onClickOutside}></BackDrop>
-    <DialogContainer ref={dialogRef} className={isCenter ? 'center' : 'right'}>
-      <div
-        tabIndex={0}
-        aria-hidden="true"
-        onFocus={(e) => {
-          const focusableElements = Array.from(dialogRef.current?.querySelectorAll(focusableHtmlElements) || []) as HTMLElement[];
-          if (focusableElements.length > 0 && e.relatedTarget === focusableElements[focusableElements.length - 1]) {
-            requestAnimationFrame(() => focusableElements[0].focus());
-          }
-        }}
-      ></div>
+        return () => window.removeEventListener('resize', adjustDialogPosition);
+      }
+    }, [isCenter]);
 
-      {currentlyRenderedDialog}
+    return createPortal(
+      <>
+        <BackDrop ref={backdropRef} onClick={onClickOutside}></BackDrop>
+        <DialogContainer ref={dialogRef} className={isCenter ? 'center' : 'right'}>
+          <div
+            tabIndex={0}
+            onFocus={(e) => {
+              const focusableElements = Array.from(dialogRef.current?.querySelectorAll(focusableHtmlElements) || []) as HTMLElement[];
+              if (focusableElements.length > 0 && e.relatedTarget === focusableElements[focusableElements.length - 1]) {
+                requestAnimationFrame(() => focusableElements[0].focus());
+              }
+            }}
+          ></div>
 
-      <div
-        tabIndex={0}
-        aria-hidden="true"
-        onFocus={(e) => {
-          const focusableElements = Array.from(dialogRef.current?.querySelectorAll(focusableHtmlElements) || []) as HTMLElement[];
-          if (focusableElements.length > 0 && e.relatedTarget === focusableElements[0]) {
-            requestAnimationFrame(() => focusableElements[focusableElements.length - 1].focus());
-          }
-        }}
-      ></div>
-    </DialogContainer>
-  </>,
-  document.querySelector('#dialogs') || document.createElement('div')
-);
+          {currentlyRenderedDialog}
+
+          <div
+            tabIndex={0}
+            onFocus={(e) => {
+              const focusableElements = Array.from(dialogRef.current?.querySelectorAll(focusableHtmlElements) || []) as HTMLElement[];
+              if (focusableElements.length > 0 && e.relatedTarget === focusableElements[0]) {
+                requestAnimationFrame(() => focusableElements[focusableElements.length - 1].focus());
+              }
+            }}
+          ></div>
+        </DialogContainer>
+      </>,
+      document.querySelector('#dialogs') || document.createElement('div')
+    );
   });
   reactComponent.displayName = displayName;
   return reactComponent;

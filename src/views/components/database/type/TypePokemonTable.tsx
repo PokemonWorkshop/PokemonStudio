@@ -99,7 +99,7 @@ const getFormWithCurrentType = (pokemon: StudioCreature, type: StudioType) =>
 
 const RenderPokemon = ({ pokemon, type, state }: RenderMoveProps) => {
   const form = getFormWithCurrentType(pokemon, type);
-  const { t } = useTranslation('database_types');
+  const { t } = useTranslation();
   const getCreatureName = useGetEntityNameText();
   const getAbilityName = useGetEntityNameTextUsingTextId();
   const { projectDataValues: abilities } = useProjectAbilities();
@@ -159,18 +159,18 @@ const getAllPokemonWithCurrentType = (type: StudioType, state: State) => {
 
 export const TypePokemonTable = ({ type }: TypePokemonTableProps) => {
   const [state] = useGlobalState();
-  const { t } = useTranslation('database_types');
+  const { t } = useTranslation();
   const allPokemon = getAllPokemonWithCurrentType(type, state);
 
   return (
     <DataPokemonTable>
       <DataPokemonGrid gap="16px" className="header">
         <span></span>
-        <span>{t('pokemon_pokemon')}</span>
-        <span>{t('pokemon_types')}</span>
-        <span>{t('pokemon_ability1')}</span>
-        <span>{t('pokemon_ability2')}</span>
-        <span>{t('pokemon_ability3')}</span>
+        <span>{t('creature')}</span>
+        <span>{t('creature_types')}</span>
+        <span>{t('ability_1')}</span>
+        <span>{t('ability_2')}</span>
+        <span>{t('hidden_ability')}</span>
       </DataPokemonGrid>
       {allPokemon.map((pokemon) => (
         <RenderPokemon key={`type-pokemon-${pokemon.dbSymbol}`} pokemon={pokemon} type={type} state={state} />

@@ -18,7 +18,7 @@ type NatureDataProps = {
 };
 
 export const NatureChangingStats = ({ nature, dialogsRef }: NatureDataProps) => {
-  const { t } = useTranslation('database_natures');
+  const { t } = useTranslation();
 
   return (
     <DataBlockWithTitle size="half" title={t('changing_stats')} onClick={() => dialogsRef?.current?.openDialog('stats')}>

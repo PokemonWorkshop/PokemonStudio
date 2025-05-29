@@ -10,7 +10,7 @@ type CompilationOptionProps = {
 
 export const CompilationOption = ({ option, defaults }: CompilationOptionProps) => {
   const { Toggle } = useInputAttrsWithLabel(COMPILATION_DIALOG_SCHEMA, defaults);
-  const { t } = useTranslation('compilation');
+  const { t } = useTranslation();
 
   return (
     <div className="option">

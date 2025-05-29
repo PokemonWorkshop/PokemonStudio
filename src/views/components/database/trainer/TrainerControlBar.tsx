@@ -13,7 +13,7 @@ type TrainerControlBarProps = {
 };
 
 export const TrainerControlBar = ({ dialogsRef }: TrainerControlBarProps) => {
-  const { t } = useTranslation('database_trainers');
+  const { t } = useTranslation();
   const { selectedDataIdentifier: trainerDbSymbol, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol } = useProjectTrainers();
   useSetCurrentDatabasePath();
 
@@ -32,7 +32,7 @@ export const TrainerControlBar = ({ dialogsRef }: TrainerControlBarProps) => {
 
   return (
     <ControlBar>
-      {onClickNew ? <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new')}</SecondaryButtonWithPlusIcon> : <div />}
+      {onClickNew ? <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new_trainer')}</SecondaryButtonWithPlusIcon> : <div />}
       <SelectTrainer dbSymbol={trainerDbSymbol} onChange={(dbSymbol) => setSelectedDataIdentifier({ trainer: dbSymbol })} />
     </ControlBar>
   );
