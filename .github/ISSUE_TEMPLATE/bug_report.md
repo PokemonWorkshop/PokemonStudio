@@ -25,5 +25,5 @@ A clear and concise description of what you expected to happen.
 ## Relevant logs and/or screenshots
 If applicable, add screenshots or videos to help explain your problem.
 
-## Which version of Pokémon Studio are you sing?
+## Which version of Pokémon Studio are you using?
 You can check the Pokémon Studio version on the application's home screen. We won't provide support for outdated projects. Please do not write "latest" because we need the right version.
