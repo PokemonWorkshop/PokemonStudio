@@ -55,6 +55,7 @@ import type {
   GetEntityListInProjectInput,
   GetEntityListInProjectOutput,
   GetEntityTaskPayload,
+  GetEntityTextTaskOutput,
   GetTextColumnInProjectStateInput,
   GetTextColumnInProjectStateOutput,
   GetTextInProjectStateInput,
@@ -189,6 +190,9 @@ contextBridge.exposeInMainWorld('stateApi', {
   getTextColumn: defineBackendTask(ipcRenderer, 'get-text-column-in-project-state'),
   setText: defineBackendTask(ipcRenderer, 'set-text-in-project-state'),
   dataToSaveState: defineBackendTask(ipcRenderer, 'get-data-to-save-state-in-project-state'),
+  getEntityText: defineBackendTask(ipcRenderer, 'get-entity-text-in-project-state'),
+  undoSetEntity: defineBackendTask(ipcRenderer, 'undo-entity-in-project-state'),
+  redoSetEntity: defineBackendTask(ipcRenderer, 'redo-entity-in-project-state'),
 });
 
 type AnyObj = Record<string, never>;
@@ -295,6 +299,9 @@ declare global {
       getTextColumn: BackendTaskWithGenericErrorAndNoProgress<GetTextColumnInProjectStateInput, GetTextColumnInProjectStateOutput>;
       setText: BackendTaskWithGenericErrorAndNoProgress<SetTextInProjectStateInput, AnyObj>;
       dataToSaveState: BackendTaskWithGenericErrorAndNoProgress<AnyObj, GetDataToSaveStateInProjectStateOutput>;
+      getEntityText: BackendTaskWithGenericErrorAndNoProgress<GetEntityTaskPayload, GetEntityTextTaskOutput>;
+      undoSetEntity: BackendTaskWithGenericErrorAndNoProgress<GetEntityTaskPayload, AnyObj>;
+      redoSetEntity: BackendTaskWithGenericErrorAndNoProgress<GetEntityTaskPayload, AnyObj>;
     };
   }
 }

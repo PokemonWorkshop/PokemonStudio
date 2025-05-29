@@ -7,13 +7,16 @@ import {
   getProjectMainLanguage,
   getTextHandler,
   getTextKeys,
+  redoSetEntity,
   setEntity,
   setProjectAndResetData,
+  undoSetEntity,
 } from './state';
 import { loadAllEntities } from './load';
 import { sendProgress } from '@utils/BackendTask';
 import './loadDefinitions';
 import { EntityHint, updateEntityList } from './updateEntityList';
+import { getEntityTexts } from './getEntityTexts';
 
 // window.stateApi.load({ projectPath: '/Volumes/ssd/projects/PSDK', mainLanguage: 'en' }, console.info, console.error, console.log);
 export type LoadProjectTaskPayload = { projectPath: string; mainLanguage: string };
@@ -43,7 +46,37 @@ export const registerGetEntityInProjectStateTask = defineBackendServiceFunction<
   }
 );
 
+export type GetEntityTextTaskOutput = Record<string, string | undefined>;
+export const registerGetEntityTextInProjectStateTask = defineBackendServiceFunction<GetEntityTaskPayload, GetEntityTextTaskOutput>(
+  'get-entity-text-in-project-state',
+  async ({ type, dbSymbol }) => {
+    const record = getEntityRecord(type);
+    if (!record) throw new Error(`No entity of type ${type}`);
+
+    const entity = record[dbSymbol];
+    if (!entity) throw new Error(`No entity for ${dbSymbol} in ${type}`);
+
+    return getEntityTexts(type, dbSymbol);
+  }
+);
+
 export type SetEntityTaskPayload = { type: string; dbSymbol: string; entity: unknown };
+
+export const registerUndoEntityInProjectStateTask = defineBackendServiceFunction<GetEntityTaskPayload, AnyObject>(
+  'undo-entity-in-project-state',
+  async ({ type, dbSymbol }) => {
+    undoSetEntity(type, dbSymbol);
+    return {};
+  }
+);
+
+export const registerRedoEntityInProjectStateTask = defineBackendServiceFunction<GetEntityTaskPayload, AnyObject>(
+  'redo-entity-in-project-state',
+  async ({ type, dbSymbol }) => {
+    redoSetEntity(type, dbSymbol);
+    return {};
+  }
+);
 
 export const registerSetEntityInProjectStateTask = defineBackendServiceFunction<SetEntityTaskPayload, AnyObject>(
   'set-entity-in-project-state',

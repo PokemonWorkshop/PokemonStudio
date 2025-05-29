@@ -8,7 +8,7 @@ import type { ZodError } from 'zod';
 import type { CSVHandler } from './text';
 import type { LoadEntityTextError } from './loadTextOfEntities';
 import { validateEntity } from './load';
-import { clearHistory, pushToHistory } from './history';
+import { clearHistory, hasEntityToSave, pushToHistory, redo, undo } from './history';
 
 export type Entity = Record<string, unknown>;
 export type EntityRecord = Record<string, Entity>;
@@ -68,4 +68,22 @@ export const getTextKeys = () => ({ handlers: Object.keys(texts), lists: Object.
 export const getEntityList = (key: string): SelectOption<string>[] | undefined => entityLists[key];
 export const getTextHandler = (key: string): CSVHandler | undefined => texts[key];
 
-export const anyDataToSave = () => Object.keys(history).length !== 0 || Object.values(texts).some((v) => v.isTainted());
+export const anyDataToSave = () => hasEntityToSave() || Object.values(texts).some((v) => v.isTainted());
+
+export const undoSetEntity = (type: string, dbSymbol: string) => {
+  const current = entities[type][dbSymbol];
+  if (!current) return;
+
+  const previous = undo(type, dbSymbol, current);
+
+  if (previous) entities[type][dbSymbol] = previous;
+};
+
+export const redoSetEntity = (type: string, dbSymbol: string) => {
+  const current = entities[type][dbSymbol];
+  if (!current) return;
+
+  const next = redo(type, dbSymbol, current);
+
+  if (next) entities[type][dbSymbol] = next;
+};
