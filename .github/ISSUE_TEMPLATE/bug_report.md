@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-Issue tracker is used for reporting crashes or bugs. New features should be discussed on our Discord server or suggested in the right Discord channel.
+Issue tracker is used for reporting crashes or bugs. New features should be discussed on our [Discord server](https://discord.gg/0noB0gBDd91B8pMk) or [suggested in the right Discord channel](https://discord.com/channels/143824995867557888/1019954233900007464).
 
 ## Describe the bug
 A clear and concise description of what the bug is.
