@@ -32,14 +32,14 @@ const loadCSVContentByLanguage = (filename: string): CSVRowByLanguage => {
   const [header, ...rows] = parse(fs.readFileSync(filename, { encoding: 'utf-8' }), { delimiter: ',', relax_column_count: true }) as string[][];
   return header.reduce((record, language, index) => {
     const langId = language.trim().toLowerCase();
-    if (langId === 'index') return record;
+    if (langId === 'index' || langId.length === 0) return record;
 
-    record[langId] = rows.map((row) => row[index] ?? `[~${index}]`);
+    record[langId] = rows.map((row) => row[index] ?? `[~${index - 1}]`);
     return record;
   }, {} as CSVRowByLanguage);
 };
 
-const newLanguageColumn = (rows: CSVRowByLanguage, language: string) => {
+const newLanguageColumn = (rows: CSVRowByLanguage) => {
   if (rows.en) {
     return rows.en.slice();
   }
@@ -52,7 +52,7 @@ const getLanguageColumn = (rows: CSVRowByLanguage, language: string, onAddedNewC
   const column = rows[language];
   if (column) return column;
 
-  const newColumn = (rows[language] = newLanguageColumn(rows, language));
+  const newColumn = (rows[language] = newLanguageColumn(rows));
   onAddedNewColumn();
   return newColumn;
 };
@@ -60,7 +60,9 @@ const getLanguageColumn = (rows: CSVRowByLanguage, language: string, onAddedNewC
 const setValue = (rows: CSVRowByLanguage, language: string, value: string, index: number) => {
   if (index < 0) return;
 
-  const column = rows[language] ?? newLanguageColumn(rows, language);
+  const column = rows[language] ?? newLanguageColumn(rows);
+  if (!rows[language]) rows[language] = column;
+
   if (index == column.length) {
     const newOtherValue = `[~${index}]`;
     Object.values(rows).forEach((c) => c.push(newOtherValue));

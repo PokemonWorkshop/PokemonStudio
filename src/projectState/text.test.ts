@@ -44,6 +44,15 @@ describe('text', () => {
       expect(mockedWriteFileSync).toHaveBeenCalledWith('path/Data/Text/Dialogs/0.csv', 'fr,de\nText0,text0\nText1,text1\n');
     });
 
+    it('does not set value out of bounds', () => {
+      const handler = loadCSV(0, 'path', false);
+      handler.setValue('fr', 'Text1', -1);
+      expect(handler.isTainted()).toBeTruthy();
+      handler.save();
+      expect(handler.isTainted()).toBeFalsy();
+      expect(mockedWriteFileSync).toHaveBeenCalledWith('path/Data/Text/Dialogs/0.csv', 'fr,de\nText0,text0\n"Text,""1",text1\n');
+    });
+
     it('does not save if already saved and save if modified after last save', () => {
       const handler = loadCSV(0, 'path', false);
       handler.setValue('fr', 'Text1', 1);
@@ -79,6 +88,13 @@ describe('text', () => {
       handler.save();
       expect(mockedWriteFileSync).toHaveBeenCalledWith('path/Data/Text/Dialogs/0.csv', 'fr,de,it\nText0,text0,[~0]\n"Text,""1",text1,[~1]\n');
     });
+
+    it('makes a new column with placeholder values when setting to un-existing column', () => {
+      const handler = loadCSV(0, 'path', false);
+      handler.setValue('it', 'textit1', 1);
+      handler.save();
+      expect(mockedWriteFileSync).toHaveBeenCalledWith('path/Data/Text/Dialogs/0.csv', 'fr,de,it\nText0,text0,[~0]\n"Text,""1",text1,textit1\n');
+    });
   });
 
   describe('with english column', () => {
@@ -88,6 +104,33 @@ describe('text', () => {
       handler.getColumn('it');
       handler.save();
       expect(mockedWriteFileSync).toHaveBeenCalledWith('path/Data/Text/Dialogs/0.csv', 'fr,en,it\nText0,text0,text0\n"Text,""1",text1,text1\n');
+    });
+  });
+
+  describe('with missing entries', () => {
+    it('it adds placeholders where entries are missing', () => {
+      mockedReadFileSync.mockReturnValueOnce('index,fr,en\n0,Text0,text0\n1,"Text,""1"\n');
+      const handler = loadCSV(0, 'path', false);
+      handler.setValue('fr', 'text1', 1);
+      handler.save();
+      expect(mockedWriteFileSync).toHaveBeenCalledWith('path/Data/Text/Dialogs/0.csv', 'fr,en\nText0,text0\ntext1,[~1]\n');
+    });
+  });
+
+  describe('with empty file', () => {
+    it('makes a new empty column', () => {
+      mockedReadFileSync.mockReturnValueOnce('index,fr\n');
+      const handler = loadCSV(0, 'path', false);
+      handler.getColumn('en');
+      handler.save();
+      expect(mockedWriteFileSync).toHaveBeenCalledWith('path/Data/Text/Dialogs/0.csv', 'fr,en\n');
+    });
+    it('makes a new empty column from no column at all', () => {
+      mockedReadFileSync.mockReturnValueOnce('\n');
+      const handler = loadCSV(0, 'path', false);
+      handler.getColumn('en');
+      handler.save();
+      expect(mockedWriteFileSync).toHaveBeenCalledWith('path/Data/Text/Dialogs/0.csv', 'en\n');
     });
   });
 });

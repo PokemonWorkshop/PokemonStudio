@@ -8,18 +8,17 @@ import type { ZodError } from 'zod';
 import type { CSVHandler } from './text';
 import type { LoadEntityTextError } from './loadTextOfEntities';
 import { validateEntity } from './load';
+import { clearHistory, pushToHistory } from './history';
 
 export type Entity = Record<string, unknown>;
 export type EntityRecord = Record<string, Entity>;
 export type EntityError = { dbSymbol: string; entityType: string; error: ZodError | InvalidJSONError };
-type History = { previous: Entity[]; next: Entity[] };
 
 let projectPath = '';
 let mainLanguage = 'en';
 let entities: Record<string, EntityRecord> = {};
 let errors: EntityError[] = [];
 let textErrors: LoadEntityTextError[] = [];
-let history: Record<string, Record<string, History>> = {};
 let entityLists: Record<string, SelectOption<string>[]> = {};
 let texts: Record<string, CSVHandler> = {};
 
@@ -29,7 +28,7 @@ export const setProjectAndResetData = (newProjectPath: string, newMainLanguage: 
   entities = {};
   errors = [];
   textErrors = [];
-  history = {};
+  clearHistory();
   entityLists = {};
   texts = {};
 };
@@ -59,13 +58,8 @@ export const getErrorCounts = () => ({ entityErrorCount: errors.length, textErro
 export const getEntityRecord = (type: string): EntityRecord | undefined => entities[type];
 
 export const setEntity = (type: string, dbSymbol: string, entity: unknown) => {
-  // TODO: move history management out
   const current = entities[type][dbSymbol];
-  if (current) {
-    history[type] ||= {};
-    history[type][dbSymbol] ||= { previous: [], next: [] };
-    history[type][dbSymbol].previous.push(current);
-  }
+  if (current) pushToHistory(type, dbSymbol, current);
   entities[type][dbSymbol] = validateEntity(type, dbSymbol, entity);
 };
 
