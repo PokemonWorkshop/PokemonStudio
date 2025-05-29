@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { MultiSelect } from './MultiSelect';
 import { SelectContainerWithLabel } from '@components/selects/SelectContainerWithLabel';
+import { useTranslation } from 'react-i18next';
 
 const genericOptions = [
   { value: 'value_a', label: 'Option A' },
@@ -15,6 +16,7 @@ type GenericOption = (typeof genericOptions)[number];
 type GenericOptionValue = GenericOption['value'];
 
 export const MultiSelectExamples = () => {
+  const { t } = useTranslation();
   const [value1, setValue1] = useState<GenericOptionValue[]>(['value_c']);
   const ref1 = useRef([]);
   const bigOptions = Array.from({ length: 2000 }, (_, i) => ({ value: `value_${i}`, label: `Option ${i}` }));
@@ -24,7 +26,7 @@ export const MultiSelectExamples = () => {
       <h2>MultiSelect</h2>
       <SelectContainerWithLabel>
         <span>Controlled</span>
-        <MultiSelect value={value1} onChange={setValue1} options={genericOptions} selectAllOption={{ label: 'all' }} />
+        <MultiSelect value={value1} onChange={setValue1} options={genericOptions} selectAllOption={{ label: t('placeholder_select_all') }} />
         {value1.toString()}
         <button
           onClick={(e) => {

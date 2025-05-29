@@ -1517,6 +1517,7 @@
   "trainer_import_info": "Vous pouvez créer ce nouveau dresseur en copiant les données d'un autre dresseur déjà existant.",
   "hidden_default": "Masqué par défaut",
   "placeholder_select": "Sélectionner une option",
+  "placeholder_select_all": "Tout sélectionner",
   "none_option": "Aucun",
   "import_data_from": "Importer les données de",
   "replace_creatures": "Remplacer les Pokémon",

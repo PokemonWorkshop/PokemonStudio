@@ -172,11 +172,13 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
   // Let the popover know what to show when the input gets focus
   const onFocus: FocusEventHandler<HTMLTextAreaElement> = (event) => {
     if (disabled || !popoverRef.current) return;
+    if (popoverRef.current?.classList.contains('visible')) {
+      popoverRef.current.classList.remove('visible');
+    } else {
+      optionsUtilsRef.current?.show(Array.isArray(currentValues) ? currentValues : [currentValues], extendedOptions);
+      positionAndShowPopover(event.currentTarget, popoverRef.current);
+    }
 
-    optionsUtilsRef.current?.show(Array.isArray(currentValues) ? currentValues : [currentValues], extendedOptions);
-    positionAndShowPopover(event.currentTarget, popoverRef.current);
-
-    // Focus sur la première option de la liste
     setTimeout(() => {
       const firstOption = popoverRef.current?.querySelector('.select-list span');
       if (firstOption) {
@@ -244,7 +246,7 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
     inputProps: {
       ...props,
       disabled,
-      onFocus,
+      onClick: onFocus,
       onBlur,
       onKeyDown,
       invalid: isInvalid,

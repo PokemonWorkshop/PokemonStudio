@@ -29,7 +29,6 @@ export const getSelectDefaultLabel = <Value extends ValueType, ChooseValue exten
   if (optionIndex.length > 0) {
     return optionIndex.map((index) => options[index]?.label).join(', ');
   }
-  console.log(t('placeholder_select'));
   return t?.('placeholder_select');
 };
 

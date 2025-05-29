@@ -3,6 +3,7 @@ import List, { ListRowProps } from 'react-virtualized/dist/es/List';
 import { RenderOptionsProps, useRenderOptions, ValueType } from './useRenderOptions';
 import { Checkbox } from '@components/Checkbox';
 import { Option } from './MultiSelectContainer';
+import { defaultSelectAllValue } from './useMultiSelect';
 
 const LIST_STYLE = { height: 'auto', maxHeight: '195px' };
 
@@ -28,7 +29,7 @@ export const RenderOptions = <Value extends ValueType, ChooseValue extends Value
     const option = options[index];
     const totalOptionsCount = options.length - 1;
     const isChecked = props.currentValues.includes(option.value as ChooseValue);
-    const isAll = option.value === 'ALL';
+    const isAll = option.value === defaultSelectAllValue;
     const isAllChecked = props.currentValues.length === totalOptionsCount;
     const hasSomeChecked = props.currentValues.length > 0 && props.currentValues.length < totalOptionsCount;
 
