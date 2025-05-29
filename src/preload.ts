@@ -182,6 +182,7 @@ contextBridge.exposeInMainWorld('api', {
 
 contextBridge.exposeInMainWorld('stateApi', {
   load: defineBackendTask(ipcRenderer, 'load-project-state-task'),
+  save: defineBackendTask(ipcRenderer, 'save-project-state-task'),
   getEntity: defineBackendTask(ipcRenderer, 'get-entity-in-project-state'),
   setEntity: defineBackendTask(ipcRenderer, 'set-entity-in-project-state'),
   getTextKeys: defineBackendTask(ipcRenderer, 'get-text-keys-in-project-state'),
@@ -291,6 +292,7 @@ declare global {
     };
     stateApi: {
       load: BackendTaskWithGenericError<LoadProjectTaskPayload, AnyObj, GenericBackendProgress>;
+      save: BackendTaskWithGenericError<AnyObj, AnyObj, GenericBackendProgress>;
       getEntity: BackendTaskWithGenericErrorAndNoProgress<GetEntityTaskPayload, AnyObj>;
       setEntity: BackendTaskWithGenericErrorAndNoProgress<SetEntityTaskPayload, AnyObj>;
       getTextKeys: BackendTaskWithGenericErrorAndNoProgress<AnyObj, GetTextKeysInProjectOutput>;

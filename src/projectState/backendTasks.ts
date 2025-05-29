@@ -5,6 +5,7 @@ import {
   getEntityRecord,
   getErrorCounts,
   getProjectMainLanguage,
+  getProjectPath,
   getTextHandler,
   getTextKeys,
   redoSetEntity,
@@ -17,6 +18,7 @@ import { sendProgress } from '@utils/BackendTask';
 import './loadDefinitions';
 import { EntityHint, updateEntityList } from './updateEntityList';
 import { getEntityTexts } from './getEntityTexts';
+import { saveAllEntities } from './save';
 
 // window.stateApi.load({ projectPath: '/Volumes/ssd/projects/PSDK', mainLanguage: 'en' }, console.info, console.error, console.log);
 export type LoadProjectTaskPayload = { projectPath: string; mainLanguage: string };
@@ -28,6 +30,14 @@ export const registerLoadProjectStateTask = defineBackendServiceFunction<LoadPro
     setProjectAndResetData(projectPath, mainLanguage);
     await loadAllEntities(projectPath, mainLanguage, (stepText, step, total) => sendProgress(event, channels, { stepText, step, total }));
     return getErrorCounts();
+  }
+);
+
+export const registerSaveProjectStateTask = defineBackendServiceFunction<AnyObject, AnyObject>(
+  'save-project-state-task',
+  async (_, event, channels) => {
+    await saveAllEntities(getProjectPath(), (stepText, step, total) => sendProgress(event, channels, { stepText, step, total }));
+    return {};
   }
 );
 

@@ -1,25 +1,27 @@
-import type { ZodObject, ZodRawShape } from 'zod';
+import type { ZodSchema } from 'zod';
 import { pushTextError, setEntities, setEntityList, setTexts, type Entity, type EntityError, type EntityRecord } from './state';
 import path from 'path';
 import fs from 'fs/promises';
 import { safeParseJSON } from '@utils/json/parse';
 import { loadAllEntityTexts } from './loadTextOfEntities';
 
-const entityRegistry: Record<string, { pathGlob: string; validator: ZodObject<ZodRawShape> }[]> = {};
+export type EntityRegistryEntry = { pathGlob: string; validator: ZodSchema };
+const entityRegistry: Record<string, EntityRegistryEntry[]> = {};
 
-export const registerEntity = <T extends ZodRawShape>(entityType: string, pathGlob: `${string}.json`, validator: ZodObject<T>) => {
+export const registerEntity = <T>(entityType: string, pathGlob: `${string}.json`, validator: ZodSchema<T>) => {
   entityRegistry[entityType] ??= [];
   entityRegistry[entityType].push({ pathGlob, validator });
 };
 
-const getAllEntityTypeToLoad = () => Object.keys(entityRegistry);
+export const getAllEntityTypes = () => Object.keys(entityRegistry);
+export const getEntityRegistry = (entityType: string) => entityRegistry[entityType];
 
 export const loadAllEntities = async (
   projectPath: string,
   mainLanguage: string,
   progress: (entityType: string, step: number, total: number) => void
 ) => {
-  const entityTypes = getAllEntityTypeToLoad();
+  const entityTypes = getAllEntityTypes();
   for (const entityType of entityTypes) {
     progress(entityType, entityTypes.indexOf(entityType) + 1, entityTypes.length);
     const data = await loadAllEntityOfType(entityType, projectPath);

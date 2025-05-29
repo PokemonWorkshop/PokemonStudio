@@ -18,7 +18,7 @@ export const parseJSON = <T>(content: string, filename: string): T => {
   }
 };
 
-export const safeParseJSON = <T extends z.ZodRawShape>(schema: z.ZodObject<T>, content: string, filename: string) => {
+export const safeParseJSON = <T>(schema: z.ZodSchema<T>, content: string, filename: string) => {
   try {
     return schema.safeParse(JSON.parse(content));
   } catch (error) {

@@ -59,3 +59,4 @@ export const markAllAsSaved = () =>
       e.saved = true;
     })
   );
+export const needsToBeSaved = (entityType: string, dbSymbol: string): boolean => history[entityType]?.[dbSymbol]?.saved === false;

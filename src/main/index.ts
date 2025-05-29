@@ -68,6 +68,7 @@ import {
   registerGetTextKeysInProjectStateTask,
   registerLoadProjectStateTask,
   registerRedoEntityInProjectStateTask,
+  registerSaveProjectStateTask,
   registerSetEntityInProjectStateTask,
   registerSetTextInProjectState,
   registerUndoEntityInProjectStateTask,
@@ -232,6 +233,7 @@ registerGetDataToSaveStateInProjectState(ipcMain);
 registerGetEntityTextInProjectStateTask(ipcMain);
 registerUndoEntityInProjectStateTask(ipcMain);
 registerRedoEntityInProjectStateTask(ipcMain);
+registerSaveProjectStateTask(ipcMain);
 
 ipcMain.on('get-md5-hash', (event, value: string) => (event.returnValue = crypto.createHash('md5').update(value, 'utf8').digest().toString('hex')));
 app.whenReady().then(createWindow).catch(log.error);
