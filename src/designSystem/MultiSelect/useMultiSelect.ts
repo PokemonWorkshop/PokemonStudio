@@ -172,19 +172,24 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
   // Let the popover know what to show when the input gets focus
   const onFocus: FocusEventHandler<HTMLTextAreaElement> = (event) => {
     if (disabled || !popoverRef.current) return;
-    if (popoverRef.current?.classList.contains('visible')) {
+
+    const firstOption = popoverRef.current?.querySelector('.select-list span');
+    if (firstOption) {
+      (firstOption as HTMLElement).focus();
+    }
+  };
+
+  // Handle click when input is already focused
+  const onClick: React.MouseEventHandler<HTMLTextAreaElement> = (event) => {
+    if (disabled || !popoverRef.current) return;
+
+    if (popoverRef.current.classList.contains('visible')) {
       popoverRef.current.classList.remove('visible');
+      optionsUtilsRef.current?.hide();
     } else {
       optionsUtilsRef.current?.show(Array.isArray(currentValues) ? currentValues : [currentValues], extendedOptions);
       positionAndShowPopover(event.currentTarget, popoverRef.current);
     }
-
-    setTimeout(() => {
-      const firstOption = popoverRef.current?.querySelector('.select-list span');
-      if (firstOption) {
-        (firstOption as HTMLElement).focus();
-      }
-    }, 0);
   };
 
   // Hide the popover when it loses focus and revert text value to appropriate one
@@ -246,7 +251,8 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
     inputProps: {
       ...props,
       disabled,
-      onClick: onFocus,
+      onFocus,
+      onClick,
       onBlur,
       onKeyDown,
       invalid: isInvalid,
