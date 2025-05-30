@@ -1,8 +1,9 @@
 import log from 'electron-log';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import { compilationConfig } from './getCompilationConfig';
-import WindowManager, { mainWindowWebpackEntry } from './windowManager';
+import WindowManager, { mainWindowViteDevServerUrl, mainWindowViteName } from './windowManager';
 import { StudioCompilation } from '@components/compilation/CompilationDialogSchema';
+import path from 'path';
 
 export type OpenCompilationWindowInput = {
   configuration: StudioCompilation;
@@ -15,7 +16,12 @@ const openCompilationWindow = async (payload: OpenCompilationWindowInput) => {
     name: 'compilation',
   });
 
-  await compilationWindow.loadURL(mainWindowWebpackEntry);
+  if (mainWindowViteDevServerUrl) {
+    await compilationWindow.loadURL(mainWindowViteDevServerUrl);
+  } else {
+    compilationWindow.loadFile(path.join(__dirname, `../../renderer/${mainWindowViteName}/index.html`));
+  }
+
   compilationConfig.push(payload.configuration);
 
   compilationWindow.show();

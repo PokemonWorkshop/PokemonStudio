@@ -2,11 +2,10 @@ import type { ForgeConfig } from '@electron-forge/shared-types';
 import { MakerZIP } from '@electron-forge/maker-zip';
 import { MakerDeb } from '@electron-forge/maker-deb';
 import { MakerRpm } from '@electron-forge/maker-rpm';
-import { WebpackPlugin } from '@electron-forge/plugin-webpack';
 import { MakerNSIS } from './src/MakerNSIS';
-
-import { mainConfig } from './config/webpack.main.config';
-import { rendererConfig } from './config/webpack.renderer.config';
+import { FusesPlugin } from '@electron-forge/plugin-fuses';
+import { FuseV1Options, FuseVersion } from '@electron/fuses';
+import { VitePlugin } from '@electron-forge/plugin-vite';
 
 const config: ForgeConfig = {
   packagerConfig: {
@@ -35,29 +34,35 @@ const config: ForgeConfig = {
     },
   ],
   plugins: [
-    new WebpackPlugin({
-      mainConfig,
-      renderer: {
-        config: rendererConfig,
-        entryPoints: [
-          {
-            html: './src/index.html',
-            js: './src/renderer.ts',
-            name: 'main_window',
-            preload: {
-              js: './src/preload.ts',
-              config: {
-                // https://github.com/electron/forge/issues/3115#issuecomment-1387391556 (it's funny how this solution is 1 week old)
-                ...rendererConfig,
-                plugins: [],
-              },
-            },
-          },
-        ],
-      },
-      devServer: { liveReload: false },
-      devContentSecurityPolicy:
-        "default-src 'self' 'unsafe-inline' data:; script-src 'self' 'unsafe-eval'; font-src 'self' static:; img-src 'self' project:; media-src 'self' project:",
+    new VitePlugin({
+      // `build` can specify multiple entry builds, which can be Main process, Preload scripts, Worker process, etc.
+      // If you are familiar with Vite configuration, it will look really familiar.
+      build: [
+        {
+          // `entry` is just an alias for `build.lib.entry` in the corresponding file of `config`.
+          entry: 'src/main/index.ts',
+          config: 'config/vite.main.config.ts',
+          target: 'main',
+        },
+        {
+          entry: 'src/preload.ts',
+          config: 'config/vite.preload.config.ts',
+          target: 'preload',
+        },
+      ],
+      renderer: [
+        {
+          name: 'main_window',
+          config: 'config/vite.renderer.config.ts',
+        },
+      ],
+    }),
+    new FusesPlugin({
+      version: FuseVersion.V1,
+      [FuseV1Options.RunAsNode]: false,
+      [FuseV1Options.EnableCookieEncryption]: true,
+      [FuseV1Options.EnableNodeOptionsEnvironmentVariable]: false,
+      [FuseV1Options.EnableNodeCliInspectArguments]: false,
     }),
   ],
 };

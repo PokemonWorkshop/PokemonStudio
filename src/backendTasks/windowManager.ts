@@ -6,17 +6,18 @@
  */
 
 import { BrowserWindow, BrowserWindowConstructorOptions, IpcMainEvent, IpcMainInvokeEvent, app, ipcMain } from 'electron';
+import log from 'electron-log';
 import { join } from 'path';
 
 /**
- * Declared constants for Webpack entries and resource paths
+ * Declared constants for Vite entries and resource paths
  */
 
-declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
-declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
+declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string;
+declare const MAIN_WINDOW_VITE_NAME: string;
 
-const mainWindowWebpackEntry = MAIN_WINDOW_WEBPACK_ENTRY;
-const mainWindowPreloadWebpackEntry = MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY;
+const mainWindowViteDevServerUrl = MAIN_WINDOW_VITE_DEV_SERVER_URL;
+const mainWindowViteName = MAIN_WINDOW_VITE_NAME;
 
 const RESOURCES_PATH = app.isPackaged ? join(process.resourcesPath, 'assets') : join(__dirname, '../../assets');
 const getAssetPath = (...paths: string[]): string => join(RESOURCES_PATH, ...paths);
@@ -223,7 +224,7 @@ class WindowManager {
       autoHideMenuBar: process.platform === 'linux',
       webPreferences: {
         contextIsolation: true,
-        preload: mainWindowPreloadWebpackEntry,
+        preload: join(__dirname, 'preload.js'),
       },
     };
 
@@ -247,7 +248,12 @@ class WindowManager {
     } else if (windowOptions.file) {
       newWindow.loadFile(windowOptions.file);
     } else {
-      newWindow.loadURL(mainWindowWebpackEntry);
+      if (mainWindowViteDevServerUrl) {
+        log.info(mainWindowViteDevServerUrl);
+        newWindow.loadURL(mainWindowViteDevServerUrl);
+      } else {
+        newWindow.loadFile(join(__dirname, `../renderer/${mainWindowViteName}/index.html`));
+      }
     }
 
     if (options.isMain) {
@@ -325,4 +331,4 @@ class WindowManager {
 
 // Export the singleton instance of WindowManager
 export default WindowManager.getInstance();
-export { mainWindowWebpackEntry, mainWindowPreloadWebpackEntry };
+export { mainWindowViteName, mainWindowViteDevServerUrl };
