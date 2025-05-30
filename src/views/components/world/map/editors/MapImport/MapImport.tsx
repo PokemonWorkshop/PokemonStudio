@@ -218,7 +218,7 @@ export const MapImport = ({ closeDialog, closeParentDialog }: MapImportProps) =>
                 setHasError(false);
               }}
             >
-              {t('back')}
+              {t('action_back')}
             </DarkButton>
             <div className="right-action">
               <span className="cancel" onClick={closeDialog}>
