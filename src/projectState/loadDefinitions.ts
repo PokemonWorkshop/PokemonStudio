@@ -25,6 +25,8 @@ import {
   TEXT_CONFIG_VALIDATOR,
 } from '@modelEntities/config';
 import { registerEntityText } from './loadTextOfEntities';
+import { TEXT_INFO_VALIDATOR } from '@modelEntities/textInfo';
+import { z } from 'zod';
 
 registerEntity('ability', 'Data/Studio/abilities/*.json', ABILITY_VALIDATOR);
 registerEntityText('ability', { propertyInEntity: 'name', discriminator: 'textId', textFileId: ABILITY_NAME_TEXT_ID });
@@ -45,6 +47,9 @@ registerEntity('config', 'Data/configs/save_config.json', SAVE_CONFIG_VALIDATOR)
 registerEntity('config', 'Data/configs/scene_title_config.json', SCENE_TITLE_CONFIG_VALIDATOR);
 registerEntity('config', 'Data/configs/settings_config.json', SETTINGS_CONFIG_VALIDATOR);
 registerEntity('config', 'Data/configs/texts_config.json', TEXT_CONFIG_VALIDATOR);
+registerEntity('config', 'Data/Studio/text_info.json', z.array(TEXT_INFO_VALIDATOR));
+// registerEntityText('config', { propertyInEntity: 'name', discriminator: 'textId', textFileId: CREATURE_NAME_TEXT_ID });
+// registerEntityText('config', { propertyInEntity: 'description', discriminator: 'textId', textFileId: CREATURE_DESCRIPTION_TEXT_ID });
 
 registerEntity('creature', 'Data/Studio/pokemon/*.json', CREATURE_VALIDATOR);
 registerEntityText('creature', { propertyInEntity: 'name', discriminator: 'id', textFileId: CREATURE_NAME_TEXT_ID });
