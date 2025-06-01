@@ -33,7 +33,7 @@ export const loadAllEntities = async (
         return;
       }
       result.value.handlers.forEach(([key, handler]) => setTexts(key, handler));
-      setEntityList(result.value.entityListKey, result.value.entityList);
+      if (result.value.entityList) setEntityList(result.value.entityListKey, result.value.entityList);
     });
   }
 };

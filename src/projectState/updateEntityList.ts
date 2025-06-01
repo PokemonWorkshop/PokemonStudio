@@ -1,4 +1,4 @@
-import { getEntityTextDescription, mapEntityListFromMultipleHandlers, mapEntityListFromSingleHandlerColumn } from './loadTextOfEntities';
+import { getEntityTextDescription } from './loadTextOfEntities';
 import { getEntityRecord, getProjectMainLanguage, getTextHandler, setEntityList } from './state';
 
 export type EntityHint = { entityType: string; propertyInEntity: string };
@@ -8,32 +8,14 @@ export const updateEntityList = ({ entityType, propertyInEntity }: EntityHint) =
   if (!descriptors) return;
 
   const descriptor = descriptors.find((k) => k.propertyInEntity === propertyInEntity);
-  if (!descriptor) return;
+  if (!descriptor || !descriptor.getEntityList) return;
 
-  const discriminator = descriptor.discriminator satisfies string; // satisfies here is for compilation error in case discriminator is no longer string
   const entityListKey = `${entityType}:${descriptor.propertyInEntity}`;
   const entityRecord = getEntityRecord(entityType);
   if (!entityRecord) return;
 
-  if (descriptor.textFileId) {
-    const column = getTextHandler(entityListKey)?.getColumn(getProjectMainLanguage());
-    if (!column) return;
-
-    setEntityList(
-      entityListKey,
-      mapEntityListFromSingleHandlerColumn(column, (e) => e[discriminator] as number, Object.entries(entityRecord))
-    );
-  } else {
-    setEntityList(
-      entityListKey,
-      mapEntityListFromMultipleHandlers(
-        (fileId) => getTextHandler(`${fileId}`),
-        discriminator,
-        Object.entries(entityRecord),
-        getProjectMainLanguage()
-      )
-    );
-  }
+  const list = descriptor.getEntityList(entityType, Object.entries(entityRecord), descriptor, getTextHandler, getProjectMainLanguage());
+  setEntityList(entityListKey, list);
 };
 
 /*

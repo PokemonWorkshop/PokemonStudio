@@ -25,6 +25,8 @@ export const loadCSV = (fileId: number, projectPath: string, isSystemText: boole
       tainted = true;
     },
     isTainted: () => tainted,
+    fileId,
+    isSystemText,
   };
 };
 

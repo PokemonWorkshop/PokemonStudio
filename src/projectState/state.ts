@@ -64,6 +64,7 @@ export const setEntity = (type: string, dbSymbol: string, entity: unknown) => {
 };
 
 export const getTextKeys = () => ({ handlers: Object.keys(texts), lists: Object.keys(entityLists) });
+export const getTextKeysWithIds = () => Object.entries(texts).map(([k, h]) => [k, { fileId: h.fileId, isSystemText: h.isSystemText }] as const);
 
 export const getEntityList = (key: string): SelectOption<string>[] | undefined => entityLists[key];
 export const getTextHandler = (key: string): CSVHandler | undefined => texts[key];

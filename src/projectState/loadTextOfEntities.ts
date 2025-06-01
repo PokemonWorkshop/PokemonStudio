@@ -9,19 +9,36 @@ export const registerEntityText = (entityType: string, description: EntityTextDe
   entityTextRegistry[entityType].push(description);
 };
 
-type EntityTextDescription = {
+export type GetEntityListFunction = (
+  entityType: string,
+  entityListEntries: EntityListEntry[],
+  description: EntityTextDescription,
+  getHandler: (id: string) => CSVHandler | undefined,
+  mainLanguage: string
+) => SelectOption<string>[];
+
+export type LoadTextFunction = (
+  entityType: string,
+  projectPath: string,
+  mainLanguage: string,
+  description: EntityTextDescription,
+  entityList: EntityListEntry[]
+) => LoadedTextResult;
+export type EntityListRefinementFunction = (entityList: EntityListEntry[]) => EntityListEntry[];
+
+export type EntityTextDescription = {
   propertyInEntity: string;
   textFileId?: number;
   textIsSystemFile?: boolean;
   discriminator: string; //| ((entity: Entity) => number);
-  // dbSymbol?: string; // Removed to simplify the problem
-  // pathToProperties?: (string | NumberConstructor)[]; // Removed to simplify the problem
+  getEntityList?: GetEntityListFunction;
+  loadTexts: LoadTextFunction;
 };
 type EntityListEntry = readonly [dbSymbol: string, data: Entity];
 type LoadedTextResult = {
   handlers: (readonly [name: string, handler: CSVHandler])[];
   entityListKey: string;
-  entityList: SelectOption<string>[];
+  entityList?: SelectOption<string>[];
 };
 export type LoadEntityTextError = { description: EntityTextDescription; error: unknown };
 
@@ -38,12 +55,7 @@ export const loadAllEntityTexts = async (
     (description) =>
       new Promise<LoadedTextResult>((resolve, reject) => {
         try {
-          const textFileId = description.textFileId;
-          if (typeof textFileId === 'number') {
-            resolve(loadWithFileId(entityType, projectPath, mainLanguage, textFileId, description, entityList));
-          }
-
-          resolve(loadWithoutFileId(entityType, projectPath, mainLanguage, description, entityList));
+          resolve(description.loadTexts(entityType, projectPath, mainLanguage, description, entityList));
         } catch (e) {
           const error: LoadEntityTextError = { description, error: e };
           reject(error);
@@ -54,77 +66,73 @@ export const loadAllEntityTexts = async (
 };
 
 type CSVAccess = { csvFileId: number; csvTextIndex: number };
-const loadWithoutFileId = (
-  entityType: string,
-  projectPath: string,
-  mainLanguage: string,
-  description: EntityTextDescription,
-  entityList: EntityListEntry[]
-): LoadedTextResult => {
-  const entityListKey = `${entityType}:${description.propertyInEntity}`;
-  const discriminator = description.discriminator;
-  if (typeof discriminator !== 'string') throw new Error('Invalid discriminator, cannot accept function when fileId is not known');
 
-  const fileIds = new Set(
-    entityList.map(([_, entity]) => {
-      const csv = entity[discriminator] as CSVAccess;
-      return csv.csvFileId;
-    })
-  );
-  const fileHandlers = new Map([...fileIds].map((fileId) => [fileId, loadCSV(fileId, projectPath, Math.floor(fileId / 100000) === 2)] as const));
-  // Note: Extracting a method from an OOP object unbind the said method (and this is stupid)
-  const getHandler = (id: number) => fileHandlers.get(id);
+export const loadTextByCSVAccess =
+  (refinement?: EntityListRefinementFunction): LoadTextFunction =>
+  (entityType, projectPath, mainLanguage, description, entityList) => {
+    const entityListKey = `${entityType}:${description.propertyInEntity}`;
+    const discriminator = description.discriminator;
+    if (typeof discriminator !== 'string') throw new Error('Invalid discriminator, cannot accept function when fileId is not known');
 
-  return {
-    handlers: [...fileHandlers.entries()].map(([fileId, handler]) => [`${fileId}`, handler] as const),
-    entityListKey,
-    entityList: mapEntityListFromMultipleHandlers(getHandler, discriminator, entityList, mainLanguage),
+    const refinedEntityList = refinement ? refinement(entityList) : entityList;
+    const fileIds = new Set(refinedEntityList.map(([_, entity]) => (entity[discriminator] as CSVAccess).csvFileId));
+    const fileHandlers = new Map([...fileIds].map((fileId) => [fileId, loadCSV(fileId, projectPath, Math.floor(fileId / 100000) === 2)] as const));
+    // Note: Extracting a method from an OOP object unbind the said method (and this is stupid)
+    const getHandler = (id: string) => fileHandlers.get(+id);
+
+    return {
+      handlers: [...fileHandlers.entries()].map(([fileId, handler]) => [`${fileId}`, handler] as const),
+      entityListKey,
+      entityList: description.getEntityList?.(entityType, entityList, description, getHandler, mainLanguage),
+    };
   };
-};
 
-export const mapEntityListFromMultipleHandlers = (
-  getHandler: (fileId: number) => CSVHandler | undefined,
-  discriminator: string,
-  entityList: EntityListEntry[],
-  language: string
-): SelectOption<string>[] =>
-  entityList
-    .map(([dbSymbol, entity]) => {
-      const csv = entity[discriminator] as CSVAccess;
-      const column = getHandler(csv.csvFileId)?.getColumn(language) as string[]; // Always exist as how it was loaded
-      return { value: dbSymbol, label: column[csv.csvTextIndex] ?? '---' };
-    })
-    .sort((a, b) => a.value.localeCompare(b.value));
+export const mapEntityListByCSVAccess =
+  (refinement?: EntityListRefinementFunction): GetEntityListFunction =>
+  (_, entityListEntries, description, getHandler, mainLanguage) => {
+    const entityList = refinement ? refinement(entityListEntries) : entityListEntries;
+    const discriminator = description.discriminator;
 
-const loadWithFileId = (
-  entityType: string,
-  projectPath: string,
-  mainLanguage: string,
-  textFileId: number,
-  description: EntityTextDescription,
-  entityList: EntityListEntry[]
-): LoadedTextResult => {
-  const handler = loadCSV(textFileId, projectPath, description.textIsSystemFile ?? false);
-  const entityListKey = `${entityType}:${description.propertyInEntity}`;
-  const column = handler.getColumn(mainLanguage);
-  const descriptionDiscriminator = description.discriminator;
-  const discriminator =
-    typeof descriptionDiscriminator === 'string' ? (entity: Entity) => entity[descriptionDiscriminator] as number : descriptionDiscriminator;
-
-  return {
-    handlers: [[entityListKey, handler]],
-    entityListKey,
-    entityList: mapEntityListFromSingleHandlerColumn(column, discriminator, entityList),
+    return entityList
+      .map(([dbSymbol, entity]) => {
+        const csv = entity[discriminator] as CSVAccess;
+        const column = getHandler(`${csv.csvFileId}`)?.getColumn(mainLanguage) ?? [];
+        return { value: dbSymbol, label: column[csv.csvTextIndex] ?? '---' };
+      })
+      .sort((a, b) => a.value.localeCompare(b.value));
   };
-};
 
-export const mapEntityListFromSingleHandlerColumn = (
-  column: readonly string[],
-  discriminator: (entity: Entity) => number,
-  entityList: EntityListEntry[]
-): SelectOption<string>[] =>
-  entityList
-    .map(([dbSymbol, entity]) => ({ value: dbSymbol, label: column[discriminator(entity)] ?? '---' }))
-    .sort((a, b) => a.value.localeCompare(b.value));
+export const loadTextByFileId =
+  (fileId: number, isSystemText: boolean): LoadTextFunction =>
+  (
+    entityType: string,
+    projectPath: string,
+    mainLanguage: string,
+    description: EntityTextDescription,
+    entityList: EntityListEntry[]
+  ): LoadedTextResult => {
+    const handler = loadCSV(fileId, projectPath, isSystemText);
+    const entityListKey = `${entityType}:${description.propertyInEntity}`;
 
-export const getEntityTextDescription = (entityType: string): EntityTextDescription[] => entityTextRegistry[entityType];
+    return {
+      handlers: [[entityListKey, handler]],
+      entityListKey,
+      entityList: description.getEntityList?.(entityType, entityList, description, () => handler, mainLanguage),
+    };
+  };
+
+export const mapEntityListByFileId =
+  (refinement?: EntityListRefinementFunction): GetEntityListFunction =>
+  (entityType, entityListEntries, description, getHandler, mainLanguage) => {
+    const discriminator = description.discriminator;
+    const index = (entity: Entity) => entity[discriminator] as number;
+    const entityListKey = `${entityType}:${description.propertyInEntity}`;
+    const column = getHandler(entityListKey)?.getColumn(mainLanguage) ?? [];
+    const entityList = refinement ? refinement(entityListEntries) : entityListEntries;
+
+    return entityList
+      .map(([dbSymbol, entity]) => ({ value: dbSymbol, label: column[index(entity)] ?? '---' }))
+      .sort((a, b) => a.value.localeCompare(b.value));
+  };
+
+export const getEntityTextDescription = (entityType: string) => entityTextRegistry[entityType];
