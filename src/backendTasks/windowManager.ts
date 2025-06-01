@@ -6,7 +6,6 @@
  */
 
 import { BrowserWindow, BrowserWindowConstructorOptions, IpcMainEvent, IpcMainInvokeEvent, app, ipcMain } from 'electron';
-import log from 'electron-log';
 import { join } from 'path';
 
 /**
@@ -101,7 +100,8 @@ class WindowManager {
           window.minimize();
           break;
         case 'maximize':
-          window.isMaximized() ? window.unmaximize() : window.maximize();
+          if (window.isMaximized()) window.unmaximize();
+          else window.maximize();
           break;
         case 'restore':
           window.restore();
@@ -249,7 +249,6 @@ class WindowManager {
       newWindow.loadFile(windowOptions.file);
     } else {
       if (mainWindowViteDevServerUrl) {
-        log.info(mainWindowViteDevServerUrl);
         newWindow.loadURL(mainWindowViteDevServerUrl);
       } else {
         newWindow.loadFile(join(__dirname, `../renderer/${mainWindowViteName}/index.html`));

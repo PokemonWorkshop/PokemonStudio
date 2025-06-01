@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2021",
+    "target": "ESNext",
     "allowJs": true,
     "strict": true,
     "module": "commonjs",
@@ -28,5 +28,5 @@
       "react": ["./node_modules/@types/react"]
     }
   },
-  "include": ["src/**/*", "config/**/*", "forge.config.ts", "updater_i18n.js"]
+  "include": ["src/**/*", "config/**/*", "forge.config.ts", "updater_i18n.js", "*.d.ts"]
 }
