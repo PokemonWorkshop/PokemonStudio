@@ -1,4 +1,11 @@
-import { CREATURE_DESCRIPTION_TEXT_ID, CREATURE_NAME_TEXT_ID, CREATURE_SPECIE_TEXT_ID, CREATURE_VALIDATOR } from '@modelEntities/creature';
+import {
+  CREATURE_DESCRIPTION_TEXT_ID,
+  CREATURE_FORM_DESCRIPTION_TEXT_ID,
+  CREATURE_FORM_NAME_TEXT_ID,
+  CREATURE_NAME_TEXT_ID,
+  CREATURE_SPECIE_TEXT_ID,
+  CREATURE_VALIDATOR,
+} from '@modelEntities/creature';
 import { registerEntity } from './load';
 import { ITEM_DESCRIPTION_TEXT_ID, ITEM_NAME_TEXT_ID, ITEM_PLURAL_NAME_TEXT_ID, ITEM_VALIDATOR } from '@modelEntities/item';
 import { MOVE_DESCRIPTION_TEXT_ID, MOVE_NAME_TEXT_ID, MOVE_VALIDATOR } from '@modelEntities/move';
@@ -35,6 +42,7 @@ import {
 } from './loadTextOfEntities';
 import { StudioTextInfo, TEXT_INFO_DESCRIPTION_TEXT_ID, TEXT_INFO_NAME_TEXT_ID, TEXT_INFO_VALIDATOR } from '@modelEntities/textInfo';
 import { z } from 'zod';
+import { MAP_INFO_FOLDER_NAME_TEXT_ID, MAP_INFO_VALIDATOR } from '@modelEntities/mapInfo';
 
 const fileIdDescriptor = (propertyInEntity: string, discriminator: string, fileId: number, isSystemFile = false): EntityTextDescription => ({
   propertyInEntity,
@@ -70,6 +78,8 @@ registerEntity('config', 'Data/configs/save_config.json', SAVE_CONFIG_VALIDATOR)
 registerEntity('config', 'Data/configs/scene_title_config.json', SCENE_TITLE_CONFIG_VALIDATOR);
 registerEntity('config', 'Data/configs/settings_config.json', SETTINGS_CONFIG_VALIDATOR);
 registerEntity('config', 'Data/configs/texts_config.json', TEXT_CONFIG_VALIDATOR);
+registerEntity('config', 'Data/Studio/map_info.json', MAP_INFO_VALIDATOR);
+registerEntityText('config', fileIdDescriptor('map_info[x].name', 'id', MAP_INFO_FOLDER_NAME_TEXT_ID, true));
 registerEntity('config', 'Data/Studio/text_info.json', z.array(TEXT_INFO_VALIDATOR));
 registerEntityText(
   'config',
@@ -83,6 +93,8 @@ registerEntity('creature', 'Data/Studio/pokemon/*.json', CREATURE_VALIDATOR);
 registerEntityText('creature', fileIdDescriptorWithList('name', 'id', CREATURE_NAME_TEXT_ID));
 registerEntityText('creature', fileIdDescriptor('description', 'id', CREATURE_DESCRIPTION_TEXT_ID));
 registerEntityText('creature', fileIdDescriptor('specie', 'id', CREATURE_SPECIE_TEXT_ID));
+registerEntityText('creature', fileIdDescriptor('form[x].name', 'id', CREATURE_FORM_NAME_TEXT_ID));
+registerEntityText('creature', fileIdDescriptor('form[x].description', 'id', CREATURE_FORM_DESCRIPTION_TEXT_ID));
 
 registerEntity('dex', 'Data/Studio/dex/*.json', DEX_VALIDATOR);
 registerEntityText('dex', {
@@ -105,8 +117,6 @@ registerEntityText('map', fileIdDescriptorWithList('name', 'mapId', MAP_NAME_TEX
 
 registerEntity('mapLink', 'Data/Studio/maplinks/*.json', MAP_LINK_VALIDATOR);
 registerEntityText('mapLink', fileIdDescriptorWithList('name', 'mapId', MAP_NAME_TEXT_ID, true));
-
-// TODO: Add map infos (don't forget textIsSystemFile)
 
 registerEntity('move', 'Data/Studio/moves/*.json', MOVE_VALIDATOR);
 registerEntityText('move', fileIdDescriptorWithList('name', 'id', MOVE_NAME_TEXT_ID));
