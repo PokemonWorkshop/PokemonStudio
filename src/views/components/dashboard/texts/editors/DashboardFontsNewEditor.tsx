@@ -25,7 +25,7 @@ const ButtonContainer = styled.div`
 export const DashboardFontsNewEditor = ({ isAlternative, onClose }: DashbordFontsNewEditorProps) => {
   const { projectConfigValues: texts, setProjectConfigValues: setTexts } = useConfigTexts();
   const { t } = useTranslation();
-  const [name, setName] = useState(''); // We can't use a ref because of the button behavior
+  const [name, setName] = useState('');
   const idRef = useRef<HTMLInputElement>(null);
   const sizeRef = useRef<HTMLInputElement>(null);
   const lineHeightRef = useRef<HTMLInputElement>(null);
@@ -48,9 +48,10 @@ export const DashboardFontsNewEditor = ({ isAlternative, onClose }: DashbordFont
           label: font,
         }));
         setFontOptions(options);
+        setName(options[0].value);
       },
-      (error) => {
-        console.error('Error fetching fonts:', error);
+      () => {
+        setFontOptions([]);
       }
     );
   }, [state.projectPath, isAlternative]);
@@ -105,7 +106,13 @@ export const DashboardFontsNewEditor = ({ isAlternative, onClose }: DashbordFont
             <Label htmlFor="name" required>
               {t('font_name')}
             </Label>
-            <Select options={fontOptions} value={name} onChange={(event) => setName(event)} placeholder="PokemonDS" />
+            <Select
+              defaultValue={fontOptions[0]?.value}
+              options={fontOptions}
+              value={name}
+              onChange={(event) => setName(event)}
+              placeholder={fontOptions.length > 0 ? fontOptions[0]?.label : t('none')}
+            />
           </InputWithTopLabelContainer>
         )}
         <InputWithLeftLabelContainer>
