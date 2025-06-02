@@ -90,7 +90,6 @@ export const MOVE_VALIDATOR = z.object({
   isCharge: z.boolean(),
   isDance: z.boolean(),
   isDirect: z.boolean(),
-  isDistance: z.boolean(),
   isEffectChance: z.boolean().default(false),
   isGravity: z.boolean(),
   isHeal: z.boolean(),
