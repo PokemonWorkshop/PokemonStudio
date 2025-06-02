@@ -27,7 +27,14 @@ export const getSelectDefaultLabel = <Value extends ValueType, ChooseValue exten
 ): string => {
   const optionIndex = findOptionIndices(options, currentValues);
   if (optionIndex.length > 0) {
-    return optionIndex.map((index) => options[index]?.label).join(', ');
+    const label = optionIndex.map((index) => options[index]?.label).join(', ');
+    const MAX_LENGTH = 75;
+
+    if (label.length > MAX_LENGTH) {
+      return label.slice(0, MAX_LENGTH - 1) + '…';
+    }
+
+    return label;
   }
   return t?.('placeholder_select');
 };

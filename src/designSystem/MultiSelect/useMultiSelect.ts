@@ -1,10 +1,10 @@
 import {
-  ChangeEventHandler,
   FocusEventHandler,
   InputHTMLAttributes,
   KeyboardEventHandler,
   useEffect,
   useImperativeHandle,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -12,7 +12,6 @@ import {
 import { RenderOptionRef, MultiSelectOption } from './types';
 import { findOptionIndices, getNotFoundExclusionPattern, getSelectDefaultLabel, positionAndShowPopover } from './utils';
 import type { List } from 'react-virtualized/dist/es/List';
-import { normalize } from '@utils/normalize';
 import { ValueType } from './useRenderOptions';
 import { useTranslation } from 'react-i18next';
 
@@ -73,11 +72,10 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
   // Reset input value whenever defaultInputValue changes because defaultValue is definitive so value change can't be forwarded through defaultValue
   useEffect(() => {
     // If defaultInputValue did change, then current value must change
-    resizeInput();
-
     if (value != currentValues && !defaultValue) {
       const newValue = value ?? chooseValue ?? [];
       setCurrentValues(newValue);
+      resizeInput();
       if (inputRef.current) {
         const optionIndex = findOptionIndices(extendedOptions, newValue);
         const shouldShowTooltip = newValue.length > 3;
@@ -87,6 +85,10 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
       }
     }
   }, [value]);
+
+  useEffect(() => {
+    resizeInput();
+  }, [currentValues]);
 
   // Select value again when options changes and main input visually change
   useEffect(() => {
@@ -133,7 +135,7 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
       const inputStyles = window.getComputedStyle(inputRef.current);
       const totalPadding = parseInt(inputStyles.paddingLeft) + parseInt(inputStyles.paddingRight);
       const totalBorder = parseInt(inputStyles.borderLeftWidth) + parseInt(inputStyles.borderRightWidth);
-      const padding = parseInt(inputStyles.paddingTop) + parseInt(inputStyles.paddingBottom);
+      const verticalPadding = parseInt(inputStyles.paddingTop) + parseInt(inputStyles.paddingBottom);
 
       let width = inputRef.current.offsetWidth;
       if (width === 0) {
@@ -144,7 +146,6 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
       tempDiv.style.visibility = 'hidden';
       tempDiv.style.position = 'absolute';
       tempDiv.style.width = `${width - totalPadding - totalBorder}px`;
-
       tempDiv.style.font = inputStyles.font;
       tempDiv.style.lineHeight = inputStyles.lineHeight;
       tempDiv.style.whiteSpace = 'pre-wrap';
@@ -155,7 +156,7 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
       const height = tempDiv.offsetHeight;
       document.body.removeChild(tempDiv);
 
-      const estimatedHeight = Math.min(height + padding, 70);
+      const estimatedHeight = Math.min(height + verticalPadding, 78);
       inputRef.current.style.height = `${estimatedHeight}px`;
 
       // Reposition the popover if it is visible
@@ -165,12 +166,21 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
     }
   };
 
+  // Initial resize with a small delay to ensure DOM is ready
+  useLayoutEffect(() => {
+    const timer = setTimeout(() => {
+      resizeInput();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Resize on value changes
   useEffect(() => {
     resizeInput();
   }, [currentValues]);
 
   // Let the popover know what to show when the input gets focus
-  const onFocus: FocusEventHandler<HTMLTextAreaElement> = (event) => {
+  const onFocus: FocusEventHandler<HTMLTextAreaElement> = () => {
     if (disabled || !popoverRef.current) return;
 
     const firstOption = popoverRef.current?.querySelector('.select-list span');
@@ -224,15 +234,6 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
     }
   };
 
-  // Handle search when user inputs stuff in the input, we let the select unfiltered by default so user knows there's more options than the current one!
-  const onInputChange: ChangeEventHandler<HTMLTextAreaElement> = (event) => {
-    if (disabled) return;
-
-    const value = normalize(event.currentTarget.value);
-    const newOptions = extendedOptions.filter((o) => normalize(o.value).includes(value) || normalize(o.label).includes(value));
-    optionsUtilsRef.current?.refine(newOptions);
-  };
-
   const validateSelection = (values: Value[]) => {
     if (values.length === 0) {
       setIsInvalid(true);
@@ -256,7 +257,6 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
       onBlur,
       onKeyDown,
       invalid: isInvalid,
-      onChange: onInputChange,
       pattern: getNotFoundExclusionPattern(notFoundLabel),
       defaultValue: defaultInputValue,
       'data-tooltip': inputRef.current?.title === '' ? null : inputRef.current?.title,

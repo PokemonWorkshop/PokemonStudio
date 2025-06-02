@@ -35,6 +35,11 @@ export const RenderOptions = <Value extends ValueType, ChooseValue extends Value
 
     const className = selectedIndex === index ? 'option highlighted' : 'option';
 
+    const determineCheckboxState = (isAll: boolean, isChecked: boolean) => {
+      if (isAll) return isAllChecked;
+      return isChecked;
+    };
+
     return (
       <Option
         key={key}
@@ -48,7 +53,7 @@ export const RenderOptions = <Value extends ValueType, ChooseValue extends Value
         style={style}
       >
         <Checkbox
-          checked={isChecked || (isAll && isAllChecked)}
+          checked={determineCheckboxState(isAll, isChecked)}
           indeterminate={isAll && !isChecked && hasSomeChecked}
           onChange={(e) => {
             e.preventDefault();

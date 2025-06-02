@@ -178,15 +178,11 @@ export const MultiSelectTextArea = styled.textarea`
   width: 100%;
   min-height: 40px;
   height: auto;
-  max-height: 70px;
+  max-height: 78px;
   cursor: pointer;
   resize: none;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: pre-line;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
 
   &:hover:not(:disabled) {
     border-color: ${({ theme }) => theme.colors.dark24};

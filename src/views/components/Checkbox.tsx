@@ -69,6 +69,10 @@ const CheckboxContainer = styled.div`
     visibility: visible;
   }
 
+  ${CheckboxInput}:indeterminate + .icon {
+    visibility: hidden;
+  }
+
   ${CheckboxInput}:disabled + .icon {
     color: ${({ theme }) => theme.colors.text500};
   }
