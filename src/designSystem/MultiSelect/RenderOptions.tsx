@@ -66,7 +66,16 @@ export const RenderOptions = <Value extends ValueType, ChooseValue extends Value
   };
 
   return (
-    <div className="select-popover" ref={props.popover} tabIndex={0} onKeyDown={handleKeyDown}>
+    <div
+      className="select-popover"
+      ref={props.popover}
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
+      onMouseDown={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      }}
+    >
       {options ? (
         <List
           ref={props.listRef}

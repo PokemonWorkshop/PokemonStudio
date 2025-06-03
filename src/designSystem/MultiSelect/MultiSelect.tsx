@@ -13,7 +13,7 @@ export const MultiSelect = <Value extends ValueType, ChooseValue extends Value>(
 
   return (
     <MultiSelectContainer className={`${props.className ?? ''} ${inputProps.invalid ? 'invalid' : ''}`.trim()}>
-      <MultiSelectTextArea readOnly ref={inputRef} tabIndex={0} {...inputProps} />
+      <MultiSelectTextArea readOnly ref={inputRef} {...inputProps} />
       <DownIcon id="downArrow" />
       <RenderOptions currentValues={currentValues} onSelectValue={onSelectValue} utils={optionsUtilsRef} popover={popoverRef} listRef={listRef} />
     </MultiSelectContainer>
