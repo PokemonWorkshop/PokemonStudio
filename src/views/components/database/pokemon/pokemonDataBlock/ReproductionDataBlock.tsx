@@ -42,16 +42,17 @@ export const ReproductionDataBlock = ({ pokemonWithForm, dialogsRef }: PokemonDa
           label={t('baby')}
           data={
             form.babyDbSymbol === '__undef__'
-              ? '-'
+              ? t('none')
               : pokemons[form.babyDbSymbol]
               ? getCreatureName(pokemons[form.babyDbSymbol])
               : t('creature_deleted')
           }
-          error={!pokemons[form.babyDbSymbol]}
+          error={!pokemons[form.babyDbSymbol] && form.babyDbSymbol !== '__undef__'}
           clickable={{
             isClickable,
             callback: () => shortcutNavigation(form.babyDbSymbol, form.babyForm),
           }}
+          disabled={form.babyDbSymbol === '__undef__'}
         />
         <DataFieldsetField
           label={t('egg_groups')}
