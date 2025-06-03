@@ -1,6 +1,7 @@
 import { Editor, useRefreshUI } from '@components/editor';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { Select } from '@ds/Select';
+import { SelectOption } from '@ds/Select/types';
 import { StudioTextConfig, StudioTextTtfFileConfig } from '@modelEntities/config';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import React, { useEffect, useState } from 'react';
@@ -16,7 +17,7 @@ export const DashboardFontsEditor = ({ texts, index, isAlternative }: DashbordFo
   const ttfFileOrAltSize = isAlternative ? texts.fonts.altSizes[index] : texts.fonts.ttfFiles[index];
   const { t } = useTranslation();
   const refreshUI = useRefreshUI();
-  const [fontOptions, setFontOptions] = useState<Array<{ value: string; label: string }>>([]);
+  const [fontOptions, setFontOptions] = useState<SelectOption<string>[]>([]);
   const [state] = useGlobalState();
 
   useEffect(() => {

@@ -2,6 +2,7 @@ import { DarkButton, PrimaryButton } from '@components/buttons';
 import { Editor } from '@components/editor';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { Select } from '@ds/Select';
+import { SelectOption } from '@ds/Select/types';
 import { TooltipWrapper } from '@ds/Tooltip';
 import { useConfigTexts } from '@hooks/useProjectConfig';
 import { useGlobalState } from '@src/GlobalStateProvider';
@@ -29,7 +30,7 @@ export const DashboardFontsNewEditor = ({ isAlternative, onClose }: DashbordFont
   const idRef = useRef<HTMLInputElement>(null);
   const sizeRef = useRef<HTMLInputElement>(null);
   const lineHeightRef = useRef<HTMLInputElement>(null);
-  const [fontOptions, setFontOptions] = useState<Array<{ value: string; label: string }>>([]);
+  const [fontOptions, setFontOptions] = useState<SelectOption<string>[]>([]);
   const [state] = useGlobalState();
 
   useEffect(() => {
