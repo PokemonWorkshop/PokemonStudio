@@ -20,7 +20,7 @@ export const DashboardNavigation = () => {
         <NavigationDatabaseItem path="/dashboard/graphics" label={t('graphic_settings')} />
       </NavigationDatabaseGroup>
       <NavigationDatabaseGroup title={t('config')}>
-        <NavigationDatabaseItem path="/dashboard/save" label={t('save')} />
+        <NavigationDatabaseItem path="/dashboard/save" label={t('dashboard_save')} />
         <NavigationDatabaseItem path="/dashboard/gamestart" label={t('game_start')} />
         <NavigationDatabaseItem path="/dashboard/gameOptions" label={t('options')} />
         <NavigationDatabaseItem path="/dashboard/credits" label={t('credits')} />

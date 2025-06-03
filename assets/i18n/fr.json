@@ -1523,5 +1523,6 @@
   "battle_camera_3d": "Utiliser la caméra 3D en combat",
   "add_battle_camera_3D_to_settings": "Ajout de la caméra 3D en combat dans les paramètres",
   "handle_tech_list": "Gérer la liste des techniques",
-  "tech_list": "Liste des techniques"
+  "tech_list": "Liste des techniques",
+  "dashboard_save": "Sauvegarde"
 }
