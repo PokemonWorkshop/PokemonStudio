@@ -118,6 +118,9 @@ const createLinkParameters = (rmxpEvent: RMXPEvent, pageIndex: number): LinkPara
     isWalkAnime: page.isWalkAnime,
     hasParticuleOff: getParticleOffFromEventName(name),
     hasNoSlide: getNoSlideTagFromEventName(name),
+    hasSubTag: getSupTagFromEventName(name),
+    hasNoSpriteTag: getNoSpriteTagFromEventName(name),
+    symbolAliasTag: getSymbolAliasTag(name),
   };
 };
 
@@ -175,7 +178,9 @@ export const convertRMXPEventsToStudioEvents = async (payload: RMXPEventsToStudi
   }, Promise.resolve());
 
   // TODO: don't forget to remove this later
+  log.info('======= Event link data in the map =======');
   newEventLinks.forEach((e) => log.info(e));
+  log.info('======= Events =======');
   newStudioEvents.forEach((e) => log.info(e));
 
   return {};

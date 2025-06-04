@@ -24,6 +24,9 @@ const LINK_PARAMETER_VALIDATOR = z.object({
   isAlwaysOnTop: z.boolean(),
   hasParticuleOff: z.boolean(),
   hasNoSlide: z.boolean(),
+  hasSubTag: z.boolean(),
+  hasNoSpriteTag: z.boolean(),
+  symbolAliasTag: z.string(),
 });
 export type LinkParameter = z.infer<typeof LINK_PARAMETER_VALIDATOR>;
 
