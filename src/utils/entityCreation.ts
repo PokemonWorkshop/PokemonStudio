@@ -248,7 +248,6 @@ export const createMove = (allMoves: ProjectData['moves'], dbSymbol: DbSymbol, t
     isCharge: false,
     isDance: false,
     isDirect: false,
-    isDistance: false,
     isEffectChance: false,
     isGravity: false,
     isHeal: false,
