@@ -1058,6 +1058,7 @@
   "vs_type": "Kampfart",
   "vs_type1": "Einzel",
   "vs_type2": "Doppel",
+  "vs_type3": "Dreifach",
   "battle_id": "Szenarisierter Kampf",
   "battle_id_tooltip": "Diese Daten beziehen sich auf die Kennung eines szenarisierten Kampfes",
   "trainer_party": "Team",

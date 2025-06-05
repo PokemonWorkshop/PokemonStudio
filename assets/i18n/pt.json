@@ -1058,6 +1058,7 @@
   "vs_type": "Tipo de combate",
   "vs_type1": "Simple",
   "vs_type2": "Dobro",
+  "vs_type3": "Triplo",
   "battle_id": "Combate cenarizado",
   "battle_id_tooltip": "Este dado refere-se ao identificador de um combate cenarizado",
   "trainer_party": "Equipa",

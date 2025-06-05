@@ -1058,6 +1058,7 @@
   "vs_type": "Battle type",
   "vs_type1": "Simple",
   "vs_type2": "Double",
+  "vs_type3": "Triple",
   "battle_id": "Scenarized battle",
   "battle_id_tooltip": "This data refers to the identifier of a scenarized battle",
   "trainer_party": "Party",

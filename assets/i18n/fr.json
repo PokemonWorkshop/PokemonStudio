@@ -1058,6 +1058,7 @@
   "vs_type": "Type de combat",
   "vs_type1": "Simple",
   "vs_type2": "Double",
+  "vs_type3": "Triple",
   "battle_id": "Combat scénarisé",
   "battle_id_tooltip": "Cette donnée fait référence à l'identifiant d'un combat scripté",
   "trainer_party": "Équipe",

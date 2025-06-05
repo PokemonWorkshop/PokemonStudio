@@ -1058,6 +1058,7 @@
   "vs_type": "Tipo de combate",
   "vs_type1": "Individual",
   "vs_type2": "Doble",
+  "vs_type3": "Triple",
   "battle_id": "Combate escenificado",
   "battle_id_tooltip": "Estos datos hacen referencia al identificador de un combate escenificado.",
   "trainer_party": "Equipo",
