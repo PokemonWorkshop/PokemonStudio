@@ -5,7 +5,7 @@ import { DashboardTemplate, DashboardSave } from '@components/dashboard';
 export const DashboardSavePage = () => {
   const { t } = useTranslation();
   return (
-    <DashboardTemplate title={t('save')}>
+    <DashboardTemplate title={t('dashboard_save')}>
       <DashboardSave />
     </DashboardTemplate>
   );

@@ -63,7 +63,7 @@
   "maplinks": "Ligação de mapas",
   "offset": "Deslocamento do sprite",
   "musics": "Musics",
-  "back": "Back",
+  "action_back": "Voltar",
   "close": "Close",
   "stats": "Estatisticas",
   "statistics": "Estatisticas",
@@ -934,6 +934,7 @@
   "erratic": "Errático",
   "front": "Front",
   "front_alt": "Front - Macho",
+  "back": "Back",
   "back_alt": "Back - Macho",
   "frontShiny": "Front - Shiny",
   "frontShiny_alt": "Front - Macho Shiny",
@@ -1524,5 +1525,6 @@
   "battle_camera_3d": "Use 3D camera in battle",
   "add_battle_camera_3D_to_settings": "Add 3D camera in battle in the settings",
   "handle_tech_list": "Manage technique items",
-  "tech_list": "List of technique items"
+  "tech_list": "List of technique items",
+  "dashboard_save": "Save"
 }

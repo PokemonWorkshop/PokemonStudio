@@ -7,12 +7,12 @@ import { TFunction } from 'i18next';
 import React, { forwardRef, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUpdateForm } from './useUpdateForm';
-import { SelectPokemon2 } from '@components/selects/SelectPokemon';
 import { SelectCreatureForm } from '@components/selects/SelectPokemonForm';
 import { CREATURE_FORM_VALIDATOR } from '@modelEntities/creature';
 import { useZodForm } from '@hooks/useZodForm';
 import { InputFormContainer } from '@components/inputs/InputContainer';
 import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
+import { useSelectOptions } from '@src/hooks/useSelectOptions';
 
 const breedingGroupEntries = [
   'monster',
@@ -50,6 +50,8 @@ export const BreedingEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const updateForm = useUpdateForm(creature, form);
   const { canClose, getFormData, onInputTouched, defaults, formRef } = useZodForm(BREEDING_EDITOR_SCHEMA, form);
   const { Input, Select } = useInputAttrsWithLabel(BREEDING_EDITOR_SCHEMA, defaults);
+  const defaultCreatureOptions = useSelectOptions('creatures');
+  const creatureOptions = useMemo(() => [{ value: '__undef__', label: t('none') }, ...defaultCreatureOptions], [defaultCreatureOptions, t]);
   const breedingGroupOptions = useMemo(() => getBreedingGroupOptions(t), [t]);
   const [baby, setBaby] = useState(form.babyDbSymbol);
 
@@ -64,9 +66,15 @@ export const BreedingEditor = forwardRef<EditorHandlingClose>((_, ref) => {
       <InputFormContainer ref={formRef}>
         <InputWithTopLabelContainer>
           <Label htmlFor="baby">{t('baby')}</Label>
-          <SelectPokemon2 name="babyDbSymbol" defaultValue={defaults.babyDbSymbol as DbSymbol} onChange={setBaby} />
+          <Select
+            name="babyDbSymbol"
+            defaultValue={defaults.babyDbSymbol as DbSymbol}
+            options={creatureOptions}
+            onChange={(dbSymbol) => setBaby(dbSymbol as DbSymbol)}
+            notFoundLabel={t('creature_deleted')}
+          />
         </InputWithTopLabelContainer>
-        <InputWithTopLabelContainer>
+        <InputWithTopLabelContainer style={baby === '__undef__' ? { display: 'none' } : undefined}>
           <Label htmlFor="form">{t('form')}</Label>
           <SelectCreatureForm dbSymbol={baby} name="babyForm" defaultValue={defaults.babyForm} />
         </InputWithTopLabelContainer>
