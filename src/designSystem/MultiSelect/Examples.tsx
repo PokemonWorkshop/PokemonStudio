@@ -4,6 +4,7 @@ import { SelectContainerWithLabel } from '@components/selects/SelectContainerWit
 import { useTranslation } from 'react-i18next';
 
 const genericOptions = [
+  { value: 'value_z', label: 'Very long stuff Z that needs tooltip', tooltip: 'Very long stuff Z that needs tooltip' },
   { value: 'value_a', label: 'Option A' },
   { value: 'value_b', label: 'Choice B' },
   { value: 'value_c', label: 'Very long stuff C that needs tooltip', tooltip: 'Very long stuff C that needs tooltip' },
@@ -26,7 +27,13 @@ export const MultiSelectExamples = () => {
       <h2>MultiSelect</h2>
       <SelectContainerWithLabel>
         <span>Controlled</span>
-        <MultiSelect value={value1} onChange={setValue1} options={genericOptions} selectAllOption={{ label: t('placeholder_select_all') }} />
+        <MultiSelect
+          defaultValue={value1}
+          onChange={setValue1}
+          options={genericOptions}
+          selectAllOption={t('placeholder_select_all')}
+          whenAllOptionSelected={t('all_status_selected')}
+        />
         {value1.toString()}
         <button
           onClick={(e) => {

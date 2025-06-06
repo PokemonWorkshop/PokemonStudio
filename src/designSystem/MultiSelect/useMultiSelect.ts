@@ -24,9 +24,8 @@ export type MultiSelectProps<Value extends ValueType, ChooseValue extends Value>
   optionRef?: React.MutableRefObject<Value[] | ChooseValue[]>;
   onChange?: (value: Value[]) => void;
   disabled?: boolean;
-  selectAllOption?: {
-    label: string;
-  };
+  selectAllOption?: string;
+  whenAllOptionSelected?: string;
 } & Omit<InputHTMLAttributes<HTMLTextAreaElement>, 'min' | 'max' | 'value' | 'onChange' | 'type' | 'multiple' | 'list' | 'checked'>;
 
 export const defaultSelectAllValue = 'ALL' as const;
@@ -41,6 +40,7 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
   onChange,
   disabled: disabledFromOutside,
   selectAllOption,
+  whenAllOptionSelected,
   ...props
 }: MultiSelectProps<Value, ChooseValue>) => {
   const { t } = useTranslation();
@@ -51,9 +51,9 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
   const listRef = useRef<List>(null);
   const extendedOptions = useMemo(() => {
     if (!selectAllOption) return options;
-    return [{ label: selectAllOption.label, value: defaultSelectAllValue as Value }, ...options];
+    return [{ label: selectAllOption, value: defaultSelectAllValue as Value }, ...options];
   }, [options, selectAllOption]);
-  const defaultInputValue = useMemo(() => getSelectDefaultLabel(currentValues, extendedOptions, t), [value]);
+  const defaultInputValue = useMemo(() => getSelectDefaultLabel(currentValues, extendedOptions, t, whenAllOptionSelected), [value]);
   const disabled = disabledFromOutside || options.length === 0;
   const [isInvalid, setIsInvalid] = useState(false);
 
@@ -81,7 +81,7 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
         const shouldShowTooltip = newValue.length > 3;
         const tooltipContent = shouldShowTooltip ? optionIndex.map((index) => extendedOptions[index]?.label).join(', ') : '';
         inputRef.current.title = tooltipContent;
-        inputRef.current.value = getSelectDefaultLabel(newValue, extendedOptions, t);
+        inputRef.current.value = getSelectDefaultLabel(newValue, extendedOptions, t, whenAllOptionSelected);
       }
     }
   }, [value]);
@@ -92,7 +92,7 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
 
   // Select value again when options changes and main input visually change
   useEffect(() => {
-    const newInputLabel = getSelectDefaultLabel(currentValues, extendedOptions, t);
+    const newInputLabel = getSelectDefaultLabel(currentValues, extendedOptions, t, whenAllOptionSelected);
     const currentInputLabel = inputRef.current?.value;
     if (newInputLabel !== currentInputLabel) {
       if (inputRef.current) inputRef.current.value = newInputLabel;
@@ -102,14 +102,14 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
   // Apply selected value
   const onSelectValue = (value: Value) => {
     let newValues: Value[] = [];
-    const isAll = value === 'ALL';
-    const isCurrentlyAll = currentValues.includes('ALL' as Value);
+    const isAll = value === defaultSelectAllValue;
 
     if (isAll) {
-      const allOptionValues = extendedOptions.map((opt) => opt.value).filter((v) => v !== 'ALL') as Value[];
+      const allOptionValues = extendedOptions.map((opt) => opt.value).filter((v) => v !== defaultSelectAllValue) as Value[];
       const isFullySelected = allOptionValues.every((val) => currentValues.includes(val));
       newValues = isFullySelected ? [] : allOptionValues;
     } else {
+      const isCurrentlyAll = currentValues.includes(defaultSelectAllValue as Value);
       newValues = isCurrentlyAll ? [value] : currentValues.includes(value) ? currentValues.filter((v) => v !== value) : [...currentValues, value];
     }
 
@@ -122,7 +122,7 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
       const shouldShowTooltip = newValues.length > 3;
       const tooltipContent = shouldShowTooltip ? optionIndex.map((index) => extendedOptions[index]?.label).join(', ') : '';
       inputRef.current.title = tooltipContent;
-      inputRef.current.value = getSelectDefaultLabel(newValues, extendedOptions, t);
+      inputRef.current.value = getSelectDefaultLabel(newValues, extendedOptions, t, whenAllOptionSelected);
     }
   };
 

@@ -1518,6 +1518,7 @@
   "hidden_default": "Hidden by default",
   "placeholder_select": "Select option",
   "placeholder_select_all": "Select all",
+  "all_status_selected": "All statuses",
   "none_option": "None",
   "import_data_from": "Import data from",
   "replace_creatures": "Replace Pokémon",

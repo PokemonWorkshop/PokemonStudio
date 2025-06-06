@@ -179,7 +179,8 @@ export const ItemHealDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
             <Label htmlFor="status">{t('healed_status')}</Label>
             <MultiSelect
               defaultValue={healChanges.statusList}
-              selectAllOption={{ label: t('placeholder_select_all') }}
+              selectAllOption={t('placeholder_select_all')}
+              whenAllOptionSelected={t('all_status_selected')}
               onChange={(value) => {
                 setHealChanges((prevFormData) => ({ ...prevFormData, statusList: value }));
               }}
