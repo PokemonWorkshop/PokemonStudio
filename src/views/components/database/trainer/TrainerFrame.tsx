@@ -103,7 +103,7 @@ export const TrainerFrame = ({ trainer, dialogsRef }: TrainerFrameProps) => {
               </h1>
             </DataInfoContainerHeaderTitle>
             {trainer.vsType === 2 && <TrainerCategory category="double">{t('vs_type2')}</TrainerCategory>}
-            {trainer.vsType === 3 && <TrainerCategory category="double">{t('vs_type3')}</TrainerCategory>}
+            {trainer.vsType === 3 && <TrainerCategory category="triple">{t('vs_type3')}</TrainerCategory>}
           </DataInfoContainerHeader>
           <TrainerSubInfoContainer>
             <DataFieldsetField label={t('trainer_class')} data={trainerClass} />
