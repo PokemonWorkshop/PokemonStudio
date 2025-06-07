@@ -86,7 +86,6 @@ export const importGroupData = (group: StudioGroup, dataToImport: StudioGroup): 
 
   return {
     ...group,
-    isHordeBattle: cloneData.isHordeBattle,
     encounters: cloneData.encounters,
   };
 };

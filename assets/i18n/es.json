@@ -476,6 +476,7 @@
   "activation_custom": "Personalizado",
   "simple": "Simple",
   "double": "Doble",
+  "triple": "Triple",
   "RegularGround": "Terreno normal",
   "Grass": "Hierba alta",
   "TallGrass": "Hierba muy alta",
@@ -1528,5 +1529,6 @@
   "add_battle_camera_3D_to_settings": "Add 3D camera in battle in the settings",
   "handle_tech_list": "Manage technique items",
   "tech_list": "List of technique items",
-  "dashboard_save": "Guardar"
+  "dashboard_save": "Guardar",
+  "migrate_groups_for_3v3_battle_mode": "Migrate groups to support 3v3 combat mode"
 }
