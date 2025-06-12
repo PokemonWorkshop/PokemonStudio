@@ -8,8 +8,8 @@ import { ButtonRightContainer, DataBlockEditorContainer } from '@components/edit
 import { SeparatorGreyLine } from '@components/separators/SeparatorGreyLine';
 import { MultiLineInput } from '@components/inputs';
 import { DarkButton } from '@components/buttons';
-import { ReactComponent as TranslateIcon } from '@assets/icons/global/translate.svg';
-import { ReactComponent as CopyIcon } from '@assets/icons/global/copy.svg';
+import TranslateIcon from '@assets/icons/global/translate.svg';
+import CopyIcon from '@assets/icons/global/copy.svg';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { SavingTextMap } from '@utils/SavingUtils';
 import { useTextInfosReadonly } from '@hooks/useTextInfos';

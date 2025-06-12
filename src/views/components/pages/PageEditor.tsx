@@ -4,8 +4,8 @@ import { DataBlockWithTitleProps } from '@components/database/dataBlocks/DataBlo
 import { useTranslation } from 'react-i18next';
 import { DarkButton, DeleteButtonWithIcon, SecondaryButtonWithPlusIconResponsive } from '@components/buttons';
 import { ButtonContainer, ButtonRightContainer, DataBlockEditorContainer, TitleContainer } from '@components/editor/DataBlockEditorStyle';
-import { ReactComponent as UpIcon } from '@assets/icons/global/up-icon.svg';
-import { ReactComponent as DownIcon } from '@assets/icons/global/down-icon.svg';
+import UpIcon from '@assets/icons/global/up-icon.svg';
+import DownIcon from '@assets/icons/global/down-icon.svg';
 
 type PageEditorButtonProps = {
   label: string;

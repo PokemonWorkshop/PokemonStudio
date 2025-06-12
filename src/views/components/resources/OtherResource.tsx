@@ -1,7 +1,7 @@
 import { ClearButtonOnlyIcon, FolderButtonOnlyIcon } from '@components/buttons';
 import React from 'react';
-import { ReactComponent as FileDrop } from '@assets/icons/global/drop.svg';
-import { ReactComponent as PlayIcon } from '@assets/icons/global/play.svg';
+import FileDrop from '@assets/icons/global/drop.svg';
+import PlayIcon from '@assets/icons/global/play.svg';
 import { basename } from '@utils/path';
 import { useResource } from '@hooks/useResource';
 import { OtherNoResourceContainer, OtherResourceContainer } from './OtherResourceStyle';

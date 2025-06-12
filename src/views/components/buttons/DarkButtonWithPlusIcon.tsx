@@ -1,7 +1,7 @@
 import React from 'react';
-import { ReactComponent as PlusIcon } from '@assets/icons/global/plus-icon.svg';
-import { ReactComponent as ImportIcon } from '@assets/icons/global/import-icon.svg';
-import { ReactComponent as ReOrderIcon } from '@assets/icons/global/reorder.svg';
+import PlusIcon from '@assets/icons/global/plus-icon.svg';
+import ImportIcon from '@assets/icons/global/import-icon.svg';
+import ReOrderIcon from '@assets/icons/global/reorder.svg';
 import { SecondaryButton, DarkButton } from './GenericButtons';
 import styled from 'styled-components';
 

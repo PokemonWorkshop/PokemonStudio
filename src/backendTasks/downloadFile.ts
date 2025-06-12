@@ -2,7 +2,7 @@ import { IpcMainEvent, net } from 'electron';
 import log from 'electron-log';
 import fs from 'fs';
 import path from 'path';
-import * as stream from 'stream';
+import stream from 'stream';
 import { promisify } from 'util';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import { ChannelNames, sendProgress } from '@utils/BackendTask';

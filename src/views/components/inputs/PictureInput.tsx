@@ -3,7 +3,7 @@ import React, { DragEventHandler, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useChoosefile } from '@hooks/useChooseFile';
 import { useCopyFile } from '@hooks/useCopyFile';
-import { ReactComponent as ImageIcon } from '@assets/icons/global/image.svg';
+import ImageIcon from '@assets/icons/global/image.svg';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { basename, join } from '@utils/path';
 import { showNotification } from '@utils/showNotification';

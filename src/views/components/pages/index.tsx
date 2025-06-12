@@ -1,4 +1,4 @@
-export { PageWithMenu, PageWithMenuProps } from './PageWithMenu';
+export { PageWithMenu, type PageWithMenuProps } from './PageWithMenu';
 export { RouterPageStyle } from './RouterPageStyle';
 export { PageTemplate } from './PageTemplate';
 export { SubPageTitle } from './SubPageTitle';

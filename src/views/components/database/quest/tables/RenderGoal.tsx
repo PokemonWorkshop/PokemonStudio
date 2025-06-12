@@ -4,7 +4,7 @@ import { padStr } from '@utils/PadStr';
 import { useTranslation } from 'react-i18next';
 import { GoalCategory } from '@components/categories';
 import { DataGoalGrid } from './QuestTableStyle';
-import { ReactComponent as DragIcon } from '@assets/icons/global/drag.svg';
+import DragIcon from '@assets/icons/global/drag.svg';
 import { buildGoalText } from '@utils/QuestUtils';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { DeleteButtonOnlyIcon, EditButtonOnlyIcon } from '@components/buttons';

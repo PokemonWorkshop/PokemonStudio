@@ -1,7 +1,7 @@
 import React, { InputHTMLAttributes, forwardRef, useState } from 'react';
 import styled from 'styled-components';
 import { Input } from '.';
-import { ReactComponent as ClearIcon } from '@assets/icons/global/clear-tag-icon.svg';
+import ClearIcon from '@assets/icons/global/clear-tag-icon.svg';
 
 const ClearInputContainer = styled.div`
   display: inline-block;

@@ -170,7 +170,7 @@ registerReadProjectConfigs(ipcMain);
 registerReadProjectData(ipcMain);
 registerReadProjectTexts(ipcMain);
 registerReadCsvFile(ipcMain);
-//registerMigrateData(ipcMain); i18n issue: require.context is not a function
+registerMigrateData(ipcMain);
 registerFileExists(ipcMain);
 registerChooseFolder(ipcMain);
 registerExtractNewProject(ipcMain);
@@ -197,7 +197,7 @@ registerReadRMXPMap(ipcMain);
 registerReadMaps(ipcMain);
 registerSaveRMXPMapInfo(ipcMain);
 registerOpenTiled(ipcMain);
-//registerDownloadFile(ipcMain); TypeError: Cannot read properties of undefined (reading 'get')
+registerDownloadFile(ipcMain);
 registerRequestJson(ipcMain);
 registerCheckDownloadNewProject(ipcMain);
 registerGeneratingMapOverview(ipcMain);
@@ -205,7 +205,7 @@ registerOpenCompilationWindow(ipcMain);
 registerGetCompilationConfig(ipcMain);
 registerStartCompilation(ipcMain);
 registerSaveCompilationLogs(ipcMain);
-//registerSynchronizeLanguage(ipcMain); i18n issue: require.context is not a function
+registerSynchronizeLanguage(ipcMain);
 registerReadRMXPEvents(ipcMain);
 registerConvertRMXPEventsToStudioEvents(ipcMain);
 

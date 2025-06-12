@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { ReactComponent as UpIcon } from '@assets/icons/global/up-icon.svg';
-import { ReactComponent as DownIcon } from '@assets/icons/global/down-icon.svg';
+import UpIcon from '@assets/icons/global/up-icon.svg';
+import DownIcon from '@assets/icons/global/down-icon.svg';
 import { DataBlockWithTitleProps } from '@components/database/dataBlocks/DataBlockWithTitle';
 import { useTranslation } from 'react-i18next';
 import { DarkButton, DeleteButtonWithIcon, SecondaryButtonWithPlusIconResponsive } from '@components/buttons';

@@ -1,6 +1,6 @@
 import React, { InputHTMLAttributes, forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import styled from 'styled-components';
-import { ReactComponent as DoneIcon } from '@assets/icons/global/done.svg';
+import DoneIcon from '@assets/icons/global/done.svg';
 
 const CheckboxInput = styled.input.attrs({ type: 'checkbox' })`
   appearance: none;

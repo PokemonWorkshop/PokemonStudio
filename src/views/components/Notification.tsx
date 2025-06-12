@@ -1,9 +1,9 @@
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
-import SuccessIcon from '@assets/icons/notification/success.svg?react';
-import DangerIcon from '@assets/icons/notification/danger.svg?react';
-import InfoIcon from '@assets/icons/notification/info.svg?react';
-import WarningIcon from '@assets/icons/notification/warning.svg?react';
+import SuccessIcon from '@assets/icons/notification/success.svg';
+import DangerIcon from '@assets/icons/notification/danger.svg';
+import InfoIcon from '@assets/icons/notification/info.svg';
+import WarningIcon from '@assets/icons/notification/warning.svg';
 import { assertUnreachable } from '@utils/assertUnreachable';
 
 const NotificationContainer = styled.div`

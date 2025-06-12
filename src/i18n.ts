@@ -8,30 +8,6 @@ import En from '../assets/i18n/en.json';
 type TranslationSchema = typeof En;
 
 /**
- * A custom declaration for the `require` function with a `context` method.
- * This is typically used in environments like Webpack to dynamically load modules
- * based on a specified path, depth, and optional filter.
- *
- * @property context - A method to create a context for dynamically requiring modules.
- * @param path - The base directory to search for modules.
- * @param deep - Optional. If `true`, searches subdirectories recursively. Defaults to `false`.
- * @param filter - Optional. A regular expression to filter the files to include.
- * @returns An object with the following properties:
- *   - `keys`: A function that returns an array of all matched module paths as strings.
- *   - `<T>(id: string): T`: A function to require a module by its path and return it as type `T`.
- */
-declare const require: {
-  context: (
-    path: string,
-    deep?: boolean,
-    filter?: RegExp
-  ) => {
-    keys: () => string[];
-    <T>(id: string): T;
-  };
-};
-
-/**
  * Extracts the active languages from the `languages` object.
  *
  * This function filters the entries of the `languages` object to include only
@@ -45,19 +21,19 @@ const activeLanguages = Object.entries(languages)
   .filter(([_, isActive]) => isActive)
   .map(([lang]) => lang);
 
-const context = require.context('../assets/i18n', false, /\.json$/);
+const context = import.meta.glob('../assets/i18n/*.json', { eager: true });
 
 const resources: Record<string, { translation: Record<string, string> }> = {};
 
-context.keys().forEach((key) => {
-  const match = key.match(/\.\/([a-z]{2})\.json$/);
+Object.keys(context).forEach((key) => {
+  const match = key.match(/\/([a-z]{2})\.json$/);
   if (!match) return;
 
   const lang = match[1];
 
   if (!activeLanguages.includes(lang)) return;
 
-  const translation = context(key);
+  const translation = context[key];
   resources[lang] = { translation: translation as TranslationSchema };
 });
 

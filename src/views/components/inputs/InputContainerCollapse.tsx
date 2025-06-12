@@ -1,8 +1,8 @@
 import React, { FunctionComponent, ReactNode, useState } from 'react';
 import styled from 'styled-components';
-import { ReactComponent as UpIcon } from '@assets/icons/global/up-icon.svg';
-import { ReactComponent as DownIcon } from '@assets/icons/global/down-icon.svg';
-import { ReactComponent as DeleteIcon } from '@assets/icons/global/delete-icon.svg';
+import UpIcon from '@assets/icons/global/up-icon.svg';
+import DownIcon from '@assets/icons/global/down-icon.svg';
+import DeleteIcon from '@assets/icons/global/delete-icon.svg';
 
 type CollapseGroupTitleStyleProps = {
   title: string;

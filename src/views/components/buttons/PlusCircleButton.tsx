@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { SecondaryButton } from '.';
-import { ReactComponent as PlusIcon } from '@assets/icons/global/plus-button.svg';
+import PlusIcon from '@assets/icons/global/plus-button.svg';
 
 const RoundButton = styled(SecondaryButton)`
   width: 48px;

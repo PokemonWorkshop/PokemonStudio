@@ -1,9 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ReactComponent as CopyIcon } from '@assets/icons/global/copy.svg';
-import { ReactComponent as DeleteIcon } from '@assets/icons/global/delete-icon.svg';
-import { ReactComponent as EditIcon } from '@assets/icons/global/edit-icon.svg';
-import { ReactComponent as MapPaddedIcon } from '@assets/icons/global/map-padded.svg';
+import CopyIcon from '@assets/icons/global/copy.svg';
+import DeleteIcon from '@assets/icons/global/delete-icon.svg';
+import EditIcon from '@assets/icons/global/edit-icon.svg';
+import MapPaddedIcon from '@assets/icons/global/map-padded.svg';
 import { MapDialogsRef } from '../editors/MapEditorOverlay';
 import { useMapInfo } from '@hooks/useMapInfo';
 import { mapInfoDuplicateMap, mapInfoRemoveFolder } from '@utils/MapInfoUtils';
