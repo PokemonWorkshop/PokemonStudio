@@ -1,7 +1,7 @@
+import { alias } from './vite.alias.config';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
-import tsConfigPaths from 'vite-tsconfig-paths';
 import path from 'path';
 
 export default defineConfig({
@@ -11,21 +11,11 @@ export default defineConfig({
       input: {
         index: path.resolve(__dirname, 'index.html'),
       },
-      output: {
-        sourcemap: false,
-      },
     },
-    commonjsOptions: {
-      include: [/node_modules/],
-      transformMixedEsModules: true,
-    },
-    sourcemap: false,
-  },
-  optimizeDeps: {
-    include: ['shallowequal', 'react-is', 'hoist-non-react-statics'],
   },
   resolve: {
+    alias,
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.css'],
   },
-  plugins: [react(), svgr(), tsConfigPaths()],
+  plugins: [react(), svgr({ include: '**/*.svg' })],
 });

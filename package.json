@@ -54,10 +54,7 @@
     "@electron-forge/maker-rpm": "^7.8.1",
     "@electron-forge/maker-squirrel": "^7.8.1",
     "@electron-forge/maker-zip": "^7.8.1",
-    "@electron-forge/plugin-auto-unpack-natives": "^7.8.1",
-    "@electron-forge/plugin-fuses": "^7.8.1",
     "@electron-forge/plugin-vite": "^7.8.1",
-    "@electron/fuses": "^1.8.0",
     "@types/lodash.groupby": "^4.6.9",
     "@types/lodash.uniq": "^4.5.9",
     "@types/react": "^18.3.7",
@@ -86,9 +83,8 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.6.2",
     "url-loader": "^4.1.1",
-    "vite": "^5.4.19",
-    "vite-plugin-svgr": "^4.3.0",
-    "vite-tsconfig-paths": "^5.1.4"
+    "vite": "^6.3.5",
+    "vite-plugin-svgr": "^4.3.0"
   },
   "dependencies": {
     "@electron-forge/publisher-github": "^7.8.1",
