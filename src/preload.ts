@@ -48,6 +48,7 @@ import type { StartCompilationInput, StartCompilationOutput } from './backendTas
 import type { SaveCompilationLogsInput } from './backendTasks/saveCompilationLogs';
 import type { SynchronizeLanguageInput } from './backendTasks/synchronizeLanguage';
 import type { ReadRMXPEventInput, ReadRMXPEventOutput } from './backendTasks/readRMXPEvents';
+import type { RMXPEventsToStudioEventsInput, RMXPEventsToStudioEventsOutput } from './backendTasks/convertRMXPEventsToStudioEvents';
 
 contextBridge.exposeInMainWorld('api', {
   isDev: process.env.NODE_ENV === 'development',
@@ -159,6 +160,7 @@ contextBridge.exposeInMainWorld('api', {
   saveCompilationLogs: defineBackendTask(ipcRenderer, 'save-compilation-logs'),
   synchronizeLanguage: defineBackendTask(ipcRenderer, 'synchronize-language'),
   readRMXPEvents: defineBackendTask(ipcRenderer, 'read-rmxp-events'),
+  convertRMXPEventsToStudioEvents: defineBackendTask(ipcRenderer, 'convert-rmxp-events-to-studio-events'),
 });
 
 type AnyObj = Record<string, never>;
@@ -253,6 +255,7 @@ declare global {
       saveCompilationLogs: BackendTaskWithGenericErrorAndNoProgress<SaveCompilationLogsInput, AnyObj>;
       synchronizeLanguage: BackendTaskWithGenericErrorAndNoProgress<SynchronizeLanguageInput, AnyObj>;
       readRMXPEvents: BackendTaskWithGenericErrorAndNoProgress<ReadRMXPEventInput, ReadRMXPEventOutput>;
+      convertRMXPEventsToStudioEvents: BackendTaskWithGenericErrorAndNoProgress<RMXPEventsToStudioEventsInput, RMXPEventsToStudioEventsOutput>;
     };
   }
 }

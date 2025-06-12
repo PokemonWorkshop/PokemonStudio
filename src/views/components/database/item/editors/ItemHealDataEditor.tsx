@@ -10,6 +10,7 @@ import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/
 import { useItemPage } from '@hooks/usePage';
 import { cloneEntity } from '@utils/cloneEntity';
 import { useProjectItems } from '@hooks/useProjectData';
+import { MultiSelect } from '@ds/MultiSelect';
 
 type ItemType = {
   hpCount?: number;
@@ -20,15 +21,7 @@ type ItemType = {
   loyaltyMalus?: number;
 };
 
-export const getHealedStatus: (statusList: StudioItemStatusCondition[]) => StudioItemStatusCondition | 'ALL' | 'NONE' = (statusList) => {
-  if (!statusList) return 'NONE';
-  if (statusList.length === 0) return 'NONE';
-  if (statusList.length === 1) return statusList[0];
-
-  return 'ALL';
-};
-
-const Statuses = ['POISONED', 'PARALYZED', 'BURN', 'ASLEEP', 'FROZEN', 'TOXIC', 'CONFUSED', 'DEATH', 'ALL'] as const;
+const Statuses = ['POISONED', 'PARALYZED', 'BURN', 'ASLEEP', 'FROZEN', 'TOXIC', 'CONFUSED', 'DEATH'] as const;
 const PPIncreaseOptions = [
   { value: '+20%', label: '+20%' },
   { value: 'Max', label: 'Max' },
@@ -40,7 +33,7 @@ const getFormHealData: (item: StudioItem) => ItemType = (item) => {
     hpRate: 'hpRate' in item && !isNaN(item.hpRate) ? item.hpRate : undefined,
     ppCount: 'ppCount' in item && !isNaN(item.ppCount) ? item.ppCount : undefined,
     isMax: 'isMax' in item ? item.isMax : undefined,
-    statusList: 'statusList' in item ? [getHealedStatus(item.statusList)] : undefined,
+    statusList: 'statusList' in item ? item.statusList : undefined,
     loyaltyMalus: 'loyaltyMalus' in item && !isNaN(item.loyaltyMalus) ? item.loyaltyMalus : undefined,
   };
 };
@@ -87,6 +80,9 @@ export const ItemHealDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
 
   const canClose = () => {
     if ('hpRate' in healChanges && (healChanges.hpRate === 0 || (!!healChanges.hpRate && (healChanges.hpRate < 0.01 || healChanges.hpRate > 100)))) {
+      return false;
+    }
+    if ('statusList' in healChanges && healChanges.statusList?.length === 0) {
       return false;
     }
     return true;
@@ -181,15 +177,14 @@ export const ItemHealDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
         {'statusList' in item && healChanges.statusList && (
           <InputWithTopLabelContainer>
             <Label htmlFor="status">{t('healed_status')}</Label>
-            <SelectCustomSimple
-              id="select-status"
-              options={statusesOptions}
-              value={healChanges.statusList[0] || '???'}
+            <MultiSelect
+              defaultValue={healChanges.statusList}
+              selectAllOption={t('placeholder_select_all')}
+              whenAllOptionSelected={t('all_status_selected')}
               onChange={(value) => {
-                const newValue = value === 'ALL' ? Statuses.slice(0, -2) : ([value] as [StudioItemStatusCondition, ...StudioItemStatusCondition[]]);
-                setHealChanges((prevFormData) => ({ ...prevFormData, statusList: newValue.length > 1 ? ['ALL'] : newValue }));
+                setHealChanges((prevFormData) => ({ ...prevFormData, statusList: value }));
               }}
-              noTooltip
+              options={statusesOptions}
             />
           </InputWithTopLabelContainer>
         )}

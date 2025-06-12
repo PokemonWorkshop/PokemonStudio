@@ -83,7 +83,7 @@ export const DashboardSave = () => {
   };
 
   return (
-    <PageEditor title={t('settings')} editorTitle={t('save')}>
+    <PageEditor title={t('settings')} editorTitle={t('dashboard_save')}>
       <InputWithTopLabelContainer>
         <Label htmlFor="base_filename">{t('save_filename')}</Label>
         <Input

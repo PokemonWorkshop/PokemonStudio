@@ -1,8 +1,11 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Editor, useRefreshUI } from '@components/editor';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
+import { Select } from '@ds/Select';
+import { SelectOption } from '@ds/Select/types';
 import { StudioTextConfig, StudioTextTtfFileConfig } from '@modelEntities/config';
+import { useGlobalState } from '@src/GlobalStateProvider';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 type DashbordFontsEditorProps = {
   texts: StudioTextConfig;
@@ -14,6 +17,31 @@ export const DashboardFontsEditor = ({ texts, index, isAlternative }: DashbordFo
   const ttfFileOrAltSize = isAlternative ? texts.fonts.altSizes[index] : texts.fonts.ttfFiles[index];
   const { t } = useTranslation();
   const refreshUI = useRefreshUI();
+  const [fontOptions, setFontOptions] = useState<SelectOption<string>[]>([]);
+  const [state] = useGlobalState();
+
+  useEffect(() => {
+    if (isAlternative) return;
+
+    window.api.getFilePathsFromFolder(
+      {
+        folderPath: `${state.projectPath}/Fonts/`,
+        extensions: ['.ttf'],
+        isRecursive: false,
+        isFileNameOnly: true,
+      },
+      (filePaths) => {
+        const options = filePaths.filePaths.map((font) => ({
+          value: font.replace('.ttf', ''),
+          label: font,
+        }));
+        setFontOptions(options);
+      },
+      (error) => {
+        console.error('Error fetching fonts:', error);
+      }
+    );
+  }, [state.projectPath, isAlternative]);
 
   return (
     <Editor type="edit" title={isAlternative ? t('alt_sizes') : t('fonts')}>
@@ -33,10 +61,10 @@ export const DashboardFontsEditor = ({ texts, index, isAlternative }: DashbordFo
             <Label htmlFor="name" required>
               {t('font_name')}
             </Label>
-            <Input
-              type="text"
+            <Select
+              options={fontOptions}
               value={(ttfFileOrAltSize as StudioTextTtfFileConfig).name}
-              onChange={(event) => refreshUI(((ttfFileOrAltSize as StudioTextTtfFileConfig).name = event.target.value))}
+              onChange={(event) => refreshUI(((ttfFileOrAltSize as StudioTextTtfFileConfig).name = event))}
               placeholder="PokemonDS"
             />
           </InputWithTopLabelContainer>

@@ -3,6 +3,8 @@ import { DB_SYMBOL_VALIDATOR } from './dbSymbol';
 import { POSITIVE_OR_ZERO_INT } from './common';
 
 const COMMAND_LIST_ID_VALIDATOR = z.string().brand('CommandListId');
+export type CommandListId = z.infer<typeof COMMAND_LIST_ID_VALIDATOR>;
+
 const TEMPLATE_PARAMETER_NAME_VALIDATOR = z.string().brand('TemplateParameterName');
 
 const COMMAND_VALIDATOR = z.object({}); // TODO: update this when the command type will be defined
@@ -10,14 +12,29 @@ const TRIGGER_CONDITION_VALIDATOR = z.object({}); // TODO: update this when the 
 const TEMPLATE_PARAMETER_VALIDATOR = z.object({}); // TODO: update this when the template parameter type will be defined
 const TEMPLATE_PARAMETER_INSTANCE_VALIDATOR = z.object({}); // TODO: update this when the template parameter instance type will be defined
 const MAP_EVENT_LINK_CONDITION_VALIDATOR = z.object({}); // TODO: update this when the map event link condition type will be defined
-const LINK_PARAMETER_VALIDATOR = z.object({}); // TODO: update this when the link parameter type will be defined
+
+const LINK_PARAMETER_VALIDATOR = z.object({
+  moveType: POSITIVE_OR_ZERO_INT,
+  moveSpeed: POSITIVE_OR_ZERO_INT,
+  moveFrequency: POSITIVE_OR_ZERO_INT,
+  isWalkAnime: z.boolean(),
+  isStepAnime: z.boolean(),
+  isDirectionFix: z.boolean(),
+  isThrough: z.boolean(),
+  isAlwaysOnTop: z.boolean(),
+  hasParticuleOff: z.boolean(),
+  hasNoSlide: z.boolean(),
+  hasSubTag: z.boolean(),
+  hasNoSpriteTag: z.boolean(),
+  symbolAliasTag: z.string(),
+});
+export type LinkParameter = z.infer<typeof LINK_PARAMETER_VALIDATOR>;
 
 const COORDINATE_VALIDATOR = z.object({
   x: POSITIVE_OR_ZERO_INT,
   y: POSITIVE_OR_ZERO_INT,
   z: POSITIVE_OR_ZERO_INT,
 });
-const COORDINATE_WHITOUT_Z_VALIDATOR = COORDINATE_VALIDATOR.omit({ z: true });
 
 const EVENT_TRIGGER_TYPE_VALIDATOR = z.union([
   z.literal('KeyPress'),
@@ -28,6 +45,7 @@ const EVENT_TRIGGER_TYPE_VALIDATOR = z.union([
   z.literal('Parallel'),
   z.literal('Cinematic'),
 ]);
+export type EventTrigger = z.infer<typeof EVENT_TRIGGER_TYPE_VALIDATOR>;
 
 const EVENT_TRIGGER_VALIDATOR = z.object({
   type: EVENT_TRIGGER_TYPE_VALIDATOR,
@@ -37,6 +55,7 @@ const EVENT_TRIGGER_VALIDATOR = z.object({
 
 export const CUSTOM_EVENT_VALIDATOR = z.object({
   dbSymbol: DB_SYMBOL_VALIDATOR,
+  id: POSITIVE_OR_ZERO_INT,
   type: z.literal('custom'),
   commandLists: z.record(COMMAND_LIST_ID_VALIDATOR, z.array(COMMAND_VALIDATOR)),
   triggers: z.array(EVENT_TRIGGER_VALIDATOR),
@@ -65,12 +84,12 @@ export type TemplateUseEvent = z.infer<typeof TEMPLATE_USE_EVENT_VALIDATOR>;
 export const APPEARANCE_VALIDATOR = z.union([
   z.object({
     isFromTileset: z.literal(true),
-    tileset: z.string(),
-    position: COORDINATE_WHITOUT_Z_VALIDATOR,
+    tileId: POSITIVE_OR_ZERO_INT,
   }),
   z.object({
     isFromTileset: z.literal(false),
-    character: z.string(),
+    characterName: z.string(),
+    pattern: POSITIVE_OR_ZERO_INT,
   }),
 ]);
 export type Appearance = z.infer<typeof APPEARANCE_VALIDATOR>;
@@ -78,10 +97,13 @@ export type Appearance = z.infer<typeof APPEARANCE_VALIDATOR>;
 export const EVENT_APPEARANCE_VALIDATOR = z.object({
   appearance: APPEARANCE_VALIDATOR,
   direction: POSITIVE_OR_ZERO_INT,
+  hue: POSITIVE_OR_ZERO_INT,
+  opacity: POSITIVE_OR_ZERO_INT,
+  blendType: POSITIVE_OR_ZERO_INT,
   hasShadow: z.boolean(),
   isSurfing: z.boolean(),
   isInvisible: z.boolean(),
-  disableReflection: z.boolean(),
+  hasReflection: z.boolean(),
   offsets: z.object({ x: z.number(), y: z.number() }),
 });
 export type EventAppearance = z.infer<typeof EVENT_APPEARANCE_VALIDATOR>;

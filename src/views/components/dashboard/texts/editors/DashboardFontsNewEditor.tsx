@@ -1,12 +1,15 @@
-import React, { useRef, useState } from 'react';
+import { DarkButton, PrimaryButton } from '@components/buttons';
+import { Editor } from '@components/editor';
+import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
+import { Select } from '@ds/Select';
+import { SelectOption } from '@ds/Select/types';
+import { TooltipWrapper } from '@ds/Tooltip';
+import { useConfigTexts } from '@hooks/useProjectConfig';
+import { useGlobalState } from '@src/GlobalStateProvider';
+import { cloneEntity } from '@utils/cloneEntity';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { Editor } from '@components/editor';
-import { DarkButton, PrimaryButton } from '@components/buttons';
-import { useConfigTexts } from '@hooks/useProjectConfig';
-import { cloneEntity } from '@utils/cloneEntity';
-import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
-import { TooltipWrapper } from '@ds/Tooltip';
 
 type DashbordFontsNewEditorProps = {
   isAlternative: boolean;
@@ -23,10 +26,36 @@ const ButtonContainer = styled.div`
 export const DashboardFontsNewEditor = ({ isAlternative, onClose }: DashbordFontsNewEditorProps) => {
   const { projectConfigValues: texts, setProjectConfigValues: setTexts } = useConfigTexts();
   const { t } = useTranslation();
-  const [name, setName] = useState(''); // We can't use a ref because of the button behavior
+  const [name, setName] = useState('');
   const idRef = useRef<HTMLInputElement>(null);
   const sizeRef = useRef<HTMLInputElement>(null);
   const lineHeightRef = useRef<HTMLInputElement>(null);
+  const [fontOptions, setFontOptions] = useState<SelectOption<string>[]>([]);
+  const [state] = useGlobalState();
+
+  useEffect(() => {
+    if (isAlternative) return;
+
+    window.api.getFilePathsFromFolder(
+      {
+        folderPath: `${state.projectPath}/Fonts/`,
+        extensions: ['.ttf'],
+        isRecursive: false,
+        isFileNameOnly: true,
+      },
+      (filePaths) => {
+        const options = filePaths.filePaths.map((font) => ({
+          value: font.replace('.ttf', ''),
+          label: font,
+        }));
+        setFontOptions(options);
+        setName(options[0].value);
+      },
+      () => {
+        setFontOptions([]);
+      }
+    );
+  }, [state.projectPath, isAlternative]);
 
   const onClickNew = () => {
     if (!idRef.current || (!isAlternative && !name) || !sizeRef.current || !lineHeightRef.current) return;
@@ -78,7 +107,13 @@ export const DashboardFontsNewEditor = ({ isAlternative, onClose }: DashbordFont
             <Label htmlFor="name" required>
               {t('font_name')}
             </Label>
-            <Input type="text" value={name} onChange={(event) => setName(event.target.value)} placeholder="PokemonDS" />
+            <Select
+              defaultValue={fontOptions[0]?.value}
+              options={fontOptions}
+              value={name}
+              onChange={(event) => setName(event)}
+              placeholder={fontOptions.length > 0 ? fontOptions[0]?.label : t('none')}
+            />
           </InputWithTopLabelContainer>
         )}
         <InputWithLeftLabelContainer>

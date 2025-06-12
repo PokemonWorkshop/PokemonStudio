@@ -63,7 +63,7 @@
   "maplinks": "Maps link",
   "offset": "Offset",
   "musics": "Musics",
-  "back": "Back",
+  "action_back": "Back",
   "close": "Close",
   "stats": "Stats",
   "statistics": "Statistics",
@@ -934,6 +934,7 @@
   "erratic": "Erratic",
   "front": "Front",
   "front_alt": "Front - Male",
+  "back": "Back",
   "back_alt": "Back - Male",
   "frontShiny": "Front - Shiny",
   "frontShiny_alt": "Front - Male Shiny",
@@ -1516,11 +1517,15 @@
   "item_import_info": "You can create this new item by importing data from another existing item.",
   "trainer_import_info": "You can create this new trainer by importing data from another existing trainer.",
   "hidden_default": "Hidden by default",
+  "placeholder_select": "Select option",
+  "placeholder_select_all": "Select all",
+  "all_status_selected": "All statuses",
   "none_option": "None",
   "import_data_from": "Import data from",
   "replace_creatures": "Replace Pokémon",
   "battle_camera_3d": "Use 3D camera in battle",
   "add_battle_camera_3D_to_settings": "Add 3D camera in battle in the settings",
   "handle_tech_list": "Manage technique items",
-  "tech_list": "List of technique items"
+  "tech_list": "List of technique items",
+  "dashboard_save": "Save"
 }
