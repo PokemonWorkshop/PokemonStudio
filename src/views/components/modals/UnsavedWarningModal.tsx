@@ -1,13 +1,7 @@
-import React, { useMemo, useEffect, useState, useRef } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-
 import theme from '@src/AppTheme';
-import { EditorOverlayContainer } from '@components/editor';
-import { PrimaryButton } from '@components/buttons';
-import { BaseIcon } from '@components/icons/BaseIcon';
-import { useProjectSave } from '@hooks/useProjectSave';
-import { useLoaderRef } from '@utils/loaderContext';
 import {
   MessageBoxActionContainer,
   MessageBoxCancelLink,
@@ -16,6 +10,10 @@ import {
   MessageBoxTextContainer,
   MessageBoxTitleIconContainer,
 } from '@components/MessageBoxContainer';
+import { BaseIcon } from '@components/icons/BaseIcon';
+import { PrimaryButton } from '@components/buttons';
+import { EditorOverlayContainer } from '@components/editor';
+import { useUnsavedWarning } from './unsavedWarningContext';
 
 const OverlayContainer = styled(EditorOverlayContainer)`
   display: flex;
@@ -26,71 +24,11 @@ const OverlayContainer = styled(EditorOverlayContainer)`
 
 export const UnsavedWarningModal = () => {
   const { t } = useTranslation();
-  const { isDataToSave, save } = useProjectSave();
-  const loaderRef = useLoaderRef();
-  const [show, setShow] = useState<boolean>(false);
-  const shouldForceQuit = useRef<boolean>(false);
-  const isDataToSaveRef = useRef<boolean>(isDataToSave);
-  const [state, setState] = useState<'init' | 'update'>('init');
+  const { showModal, closeModal, onConfirmQuit } = useUnsavedWarning();
 
-  const onQuit = async () => {
-    await window.api.safeClose(shouldForceQuit.current);
-  };
+  if (!showModal) return null;
 
-  const onSave = useMemo(
-    () => async () => {
-      setShow(false);
-      save(
-        async () => {
-          loaderRef.current.close();
-          await onQuit();
-        },
-        ({ errorMessage }) => loaderRef.current.setError('saving_project_error', errorMessage)
-      );
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isDataToSave]
-  );
-
-  const listener: Parameters<typeof window.api.requestClose.on>[0] = async (_event, forceQuit = false) => {
-    shouldForceQuit.current = forceQuit;
-    if (isDataToSaveRef.current) {
-      setShow(true);
-    } else {
-      await onQuit();
-    }
-  };
-
-  useEffect(() => {
-    if (state === 'init') {
-      window.api.requestClose.on(listener);
-      setState('update');
-    } else if (state === 'update') isDataToSaveRef.current = isDataToSave;
-
-    return () => {
-      window.api.requestClose.removeListener(listener);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDataToSave, state]);
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Tab' || (event.shiftKey && event.key === 'Tab') || (event.ctrlKey && event.key === 'a')) {
-        event.preventDefault();
-      }
-    };
-
-    if (show) {
-      document.addEventListener('keydown', handleKeyDown);
-    } else {
-      document.removeEventListener('keydown', handleKeyDown);
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [show]);
-
-  return show ? (
+  return (
     <OverlayContainer className="active">
       <MessageBoxContainer>
         <MessageBoxTitleIconContainer>
@@ -103,11 +41,11 @@ export const UnsavedWarningModal = () => {
           <p>{t('unsaved_description_modal')}</p>
         </MessageBoxTextContainer>
         <MessageBoxActionContainer>
-          <MessageBoxCancelLink onClick={() => setShow(false)}>{t('cancel')}</MessageBoxCancelLink>
-          <MessageBoxCancelLink onClick={onQuit}>{t('quit')}</MessageBoxCancelLink>
-          <PrimaryButton onClick={onSave}>{t('save')}</PrimaryButton>
+          <MessageBoxCancelLink onClick={closeModal}>{t('cancel')}</MessageBoxCancelLink>
+          <MessageBoxCancelLink onClick={onConfirmQuit}>{t('quit')}</MessageBoxCancelLink>
+          <PrimaryButton onClick={onConfirmQuit}>{t('save')}</PrimaryButton>
         </MessageBoxActionContainer>
       </MessageBoxContainer>
     </OverlayContainer>
-  ) : null;
+  );
 };

@@ -5,9 +5,12 @@ import { useLoaderRef } from '@utils/loaderContext';
 import { useProjectLoad } from '@hooks/useProjectLoad';
 import { useTranslation } from 'react-i18next';
 
-type LoadProjectButtonProps = { children: ReactNode };
+type LoadProjectButtonProps = {
+  children: ReactNode;
+  onClick?: () => void;
+};
 
-export const LoadProjectButton = ({ children }: LoadProjectButtonProps) => {
+export const LoadProjectButton = ({ children, onClick }: LoadProjectButtonProps) => {
   const navigate = useNavigate();
   const loaderRef = useLoaderRef();
   const projectLoad = useProjectLoad();
@@ -37,5 +40,5 @@ export const LoadProjectButton = ({ children }: LoadProjectButtonProps) => {
     []
   );
 
-  return <SecondaryButton onClick={() => handleClick()}>{children}</SecondaryButton>;
+  return <SecondaryButton onClick={onClick}>{children}</SecondaryButton>;
 };

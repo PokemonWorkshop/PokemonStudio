@@ -19,12 +19,21 @@ import { deleteProjectToList, getProjectList, updateProjectPath } from '@utils/p
 import { useDialogsRef } from '@hooks/useDialogsRef';
 import { useNavigate } from 'react-router-dom';
 
+import { useUnsavedWarning } from '@components/modals/unsavedWarningContext';
+import { useSaveProjectAction } from '@src/hooks/useProjectSave/useSaveProjectAction';
+import { useGlobalState } from '../../GlobalStateProvider'; // adapte si besoin
+// eslint-disable-next-line react-hooks/rules-of-hooks
+
 const HomePageComponent = () => {
   const dialogsRef = useDialogsRef<HomeEditorAndDeletionKeys>();
   const [appVersion, setAppVersion] = useState('');
   const [projectList, setProjectList] = useState(getProjectList());
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+
+  const { openModal, setOnConfirmQuit } = useUnsavedWarning();
+  const { handleSave, isDataToSave } = useSaveProjectAction();
+  const [state] = useGlobalState();
 
   const onDeleteProjectToList = (event: React.MouseEvent<HTMLSpanElement>, projectPath: string) => {
     event.stopPropagation();
@@ -35,6 +44,38 @@ const HomePageComponent = () => {
   const onUpdateProjectList = (projectPath: string, index: number) => {
     updateProjectPath(projectPath, index);
     setProjectList(getProjectList());
+  };
+
+  const handleOpenNewProject = () => {
+    if (isDataToSave && state.projectData) {
+      setOnConfirmQuit(async () => {
+        await handleSave();
+        dialogsRef.current?.openDialog('new_project');
+      });
+      openModal();
+    } else {
+      dialogsRef.current?.openDialog('new_project');
+    }
+  };
+
+  const handleOpenProject = () => {
+    if (isDataToSave && state.projectData) {
+      setOnConfirmQuit(async () => {
+        await handleSave();
+        window.api.chooseProjectFileToOpen(
+          { fileType: 'studio' },
+          () => {},
+          () => {}
+        );
+      });
+      openModal();
+    } else {
+      window.api.chooseProjectFileToOpen(
+        { fileType: 'studio' },
+        () => {},
+        () => {}
+      );
+    }
   };
 
   useEffect(() => {
@@ -56,6 +97,18 @@ const HomePageComponent = () => {
     return () => {};
   }, []);
 
+  const handleOpenProjectWrapper = () => {
+    if (isDataToSave && state.projectData) {
+      setOnConfirmQuit(async () => {
+        await handleSave();
+        handleOpenProject();
+      });
+      openModal();
+    } else {
+      handleOpenProject();
+    }
+  };
+
   return (
     <HomePageContainer>
       <Header>
@@ -69,8 +122,8 @@ const HomePageComponent = () => {
             <StudioIcon />
             <BrandingTitle>Pokémon Studio</BrandingTitle>
           </BrandingTitleContainer>
-          <LoadProjectButton>{t('open_a_project')}</LoadProjectButton>
-          <PrimaryButton onClick={() => dialogsRef.current?.openDialog('new_project')}>{t('new_project')}</PrimaryButton>
+          <LoadProjectButton onClick={handleOpenProjectWrapper}>{t('open_a_project')}</LoadProjectButton>
+          <PrimaryButton onClick={handleOpenNewProject}>{t('new_project')}</PrimaryButton>
         </BrandingActionContainer>
         {projectList.length !== 0 && (
           <RecentProjectContainer>

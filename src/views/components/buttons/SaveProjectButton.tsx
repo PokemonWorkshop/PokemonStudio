@@ -5,11 +5,9 @@ import { BaseIcon } from '@components/icons/BaseIcon';
 import SvgContainer from '@components/icons/BaseIcon/SvgContainer';
 
 import { BaseButtonStyle } from './GenericButtons';
-import { useProjectSave } from '@hooks/useProjectSave';
-import { useLoaderRef } from '@utils/loaderContext';
-import { StudioShortcutActions, useShortcut } from '@hooks/useShortcuts';
-import { useDialogsRef } from '@hooks/useDialogsRef';
-import { SaveEditorAndDeletionKeys, SaveEditorOverlay } from '@components/save/SaveEditorOverlay';
+import { useShortcut, StudioShortcutActions } from '@hooks/useShortcuts';
+import { SaveEditorOverlay } from '@components/save/SaveEditorOverlay';
+import { useSaveProjectAction } from '@src/hooks/useProjectSave/useSaveProjectAction';
 
 const SaveProjectButtonContainer = styled(BaseButtonStyle)`
   display: inline-block;
@@ -28,7 +26,6 @@ const SaveProjectButtonContainer = styled(BaseButtonStyle)`
 
   &:active > ${SvgContainer} {
     background-color: ${theme.colors.primarySoft};
-
     svg {
       color: ${theme.colors.primaryBase};
     }
@@ -41,11 +38,7 @@ const BadgeContainer = styled.div`
   align-items: flex-end;
 `;
 
-type BadgeProps = {
-  visible: boolean;
-};
-
-const Badge = styled.div<BadgeProps>`
+const Badge = styled.div<{ visible: boolean }>`
   ${({ visible }) => !visible && 'display: none;'}
   border-radius: 100%;
   background-color: ${theme.colors.dangerBase};
@@ -54,30 +47,15 @@ const Badge = styled.div<BadgeProps>`
 `;
 
 export const SaveProjectButton = () => {
-  const { isDataToSave, isMapsToSave, save } = useProjectSave();
-  const loaderRef = useLoaderRef();
-  const dialogsRef = useDialogsRef<SaveEditorAndDeletionKeys>();
-
-  const handleSave = async () => {
-    const skipMapWarning = localStorage.getItem('neverRemindMeMapModification') === 'true';
-    if (skipMapWarning || !isMapsToSave) {
-      save(
-        () => loaderRef.current.close(),
-        ({ errorMessage }) => loaderRef.current.setError('saving_project_error', errorMessage)
-      );
-      return;
-    }
-    dialogsRef.current?.openDialog('map_warning', true);
-  };
+  const { handleSave, isDataToSave, dialogsRef } = useSaveProjectAction();
 
   const shortcutMap = useMemo<StudioShortcutActions>(() => {
-    // No shortcut if an editor is opened and no data to save
     const isShortcutEnabled = () => !document.querySelector('#dialogs')?.textContent && isDataToSave;
     return {
       save: () => isShortcutEnabled() && handleSave(),
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [save, isDataToSave]);
+  }, [handleSave, isDataToSave]);
+
   useShortcut(shortcutMap);
 
   return (

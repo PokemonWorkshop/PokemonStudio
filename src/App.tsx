@@ -24,6 +24,8 @@ import './i18n';
 import DesignSystemRouterComponent from '@ds/DesignSystem.router';
 import PocRouterComponent from '@poc/Poc.router';
 import { TooltipContext } from '@ds/Tooltip/TooltipContext';
+import { CloseListener } from '@components/modals/CloseListener';
+import { UnsavedWarningProvider } from '@components/modals/unsavedWarningContext';
 
 const App = () => {
   return (
@@ -32,26 +34,29 @@ const App = () => {
         <LoaderContextProvider>
           <ThemeProvider theme={theme}>
             <GlobalStyle />
-            <UnsavedWarningModal />
-            <MemoryRouter>
-              <NavigationBarComponent />
-              <Routes>
-                <Route path="/home" element={<HomePage />} />
-                <Route path="/dashboard/*" element={<DashboardRouter />} />
-                <Route path="/psdkupdate" element={<PSDKUpdatePage />} />
-                <Route path="/database/*" element={<DatabasePage />} />
-                <Route path="/world/*" element={<WorldRouter />} />
-                <Route path="/texts/*" element={<TextsRouter />} />
-                <Route path="/code" />
-                <Route path="/help" />
-                <Route path="/settings/*" element={<SettingsRouter />} />
-                <Route path="/account" />
-                <Route path="/designSystem/*" element={<DesignSystemRouterComponent />} />
-                <Route path="/compilation" element={<CompilationPage />} />
-                <Route path="/poc/*" element={<PocRouterComponent />} />
-                <Route path="/" element={<Navigate to="/home" />} />
-              </Routes>
-            </MemoryRouter>
+            <UnsavedWarningProvider>
+              <CloseListener />
+              <UnsavedWarningModal />
+              <MemoryRouter>
+                <NavigationBarComponent />
+                <Routes>
+                  <Route path="/home" element={<HomePage />} />
+                  <Route path="/dashboard/*" element={<DashboardRouter />} />
+                  <Route path="/psdkupdate" element={<PSDKUpdatePage />} />
+                  <Route path="/database/*" element={<DatabasePage />} />
+                  <Route path="/world/*" element={<WorldRouter />} />
+                  <Route path="/texts/*" element={<TextsRouter />} />
+                  <Route path="/code" />
+                  <Route path="/help" />
+                  <Route path="/settings/*" element={<SettingsRouter />} />
+                  <Route path="/account" />
+                  <Route path="/designSystem/*" element={<DesignSystemRouterComponent />} />
+                  <Route path="/compilation" element={<CompilationPage />} />
+                  <Route path="/poc/*" element={<PocRouterComponent />} />
+                  <Route path="/" element={<Navigate to="/home" />} />
+                </Routes>
+              </MemoryRouter>
+            </UnsavedWarningProvider>
             <Loader />
             <ReactNotifications />
           </ThemeProvider>

@@ -12,6 +12,9 @@ import { Project } from '@utils/projectList';
 import { ResourceImage } from '@components/ResourceImage';
 import { useShowItemInFolder } from '@hooks/useShowItemInFolder';
 import { join } from '@utils/path';
+import { useUnsavedWarning } from '@components/modals/unsavedWarningContext';
+import { useSaveProjectAction } from '@src/hooks/useProjectSave/useSaveProjectAction';
+import { useGlobalState } from '@src/GlobalStateProvider';
 
 const ProjectCardContainer = styled(ActiveContainer)`
   position: relative;
@@ -103,6 +106,9 @@ export const ProjectCard = ({ project, onDeleteProjectToList, onUpdateProjectLis
   const projectLoad = useProjectLoad();
   const navigate = useNavigate();
   const showItemInFolder = useShowItemInFolder();
+  const { handleSave, isDataToSave } = useSaveProjectAction();
+  const { openModal, setOnConfirmQuit } = useUnsavedWarning();
+  const [state] = useGlobalState();
 
   const handleChangeFileClick = () => {
     return window.api.chooseProjectFileToOpen(
@@ -118,23 +124,34 @@ export const ProjectCard = ({ project, onDeleteProjectToList, onUpdateProjectLis
   const handleClick = async () => {
     if (!project) return;
 
-    projectLoad(
-      { projectDirName: project.projectPath },
-      () => {
-        loaderRef.current.close();
-        navigate('/dashboard');
-      },
-      ({ errorMessage }) => {
-        // TODO: Make an other way to find out if the project is not found
-        if (errorMessage.includes('no such file or directory')) {
-          const errorNode = <SecondaryButton onClick={handleChangeFileClick}>{t('browse_my_files')}</SecondaryButton>;
-          loaderRef.current.setError('loading_project_error', t('project_studio_not_found'), false, errorNode);
-        } else {
-          loaderRef.current.setError('loading_project_error', errorMessage);
-        }
-      },
-      (count) => loaderRef.current.setError('loading_project_error', t('integrity_message', { count }), true)
-    );
+    const loadProject = () => {
+      projectLoad(
+        { projectDirName: project.projectPath },
+        () => {
+          loaderRef.current.close();
+          navigate('/dashboard');
+        },
+        ({ errorMessage }) => {
+          if (errorMessage.includes('no such file or directory')) {
+            const errorNode = <SecondaryButton onClick={handleChangeFileClick}>{t('browse_my_files')}</SecondaryButton>;
+            loaderRef.current.setError('loading_project_error', t('project_studio_not_found'), false, errorNode);
+          } else {
+            loaderRef.current.setError('loading_project_error', errorMessage);
+          }
+        },
+        (count) => loaderRef.current.setError('loading_project_error', t('integrity_message', { count }), true)
+      );
+    };
+
+    if (isDataToSave && state.projectData) {
+      setOnConfirmQuit(async () => {
+        await handleSave();
+        loadProject();
+      });
+      openModal();
+    } else {
+      loadProject();
+    }
   };
 
   const onClickFolder = async (path: string, event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
