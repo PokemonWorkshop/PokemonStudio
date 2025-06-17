@@ -226,6 +226,7 @@ class WindowManager {
         contextIsolation: true,
         preload: join(__dirname, 'preload.js'),
       },
+      backgroundColor: 'rgb(29, 28, 34)',
     };
 
     const icon = getAssetPath(typeof options.icon === 'string' ? options.icon : 'icon.png');
