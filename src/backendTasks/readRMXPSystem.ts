@@ -60,7 +60,23 @@ export const isSystemObject = (object: unknown): object is SystemData =>
   '@battle_start_se' in object &&
   '@escape_se' in object &&
   '@actor_collapse_se' in object &&
-  '@enemy_collapse_se' in object;
+  '@enemy_collapse_se' in object &&
+  typeof object['@title_bgm'] === 'object' &&
+  typeof object['@battle_bgm'] === 'object' &&
+  typeof object['@battle_end_me'] === 'object' &&
+  typeof object['@gameover_me'] === 'object' &&
+  typeof object['@cursor_se'] === 'object' &&
+  typeof object['@decision_se'] === 'object' &&
+  typeof object['@cancel_se'] === 'object' &&
+  typeof object['@buzzer_se'] === 'object' &&
+  typeof object['@equip_se'] === 'object' &&
+  typeof object['@shop_se'] === 'object' &&
+  typeof object['@save_se'] === 'object' &&
+  typeof object['@load_se'] === 'object' &&
+  typeof object['@battle_start_se'] === 'object' &&
+  typeof object['@escape_se'] === 'object' &&
+  typeof object['@actor_collapse_se'] === 'object' &&
+  typeof object['@enemy_collapse_se'] === 'object';
 
 const buildAudio = (audioData: AudioData, projectPath: string): RMXPAudio => {
   const name = audioData['@name'];
