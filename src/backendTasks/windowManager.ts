@@ -8,13 +8,6 @@
 import { BrowserWindow, BrowserWindowConstructorOptions, IpcMainEvent, IpcMainInvokeEvent, app, ipcMain } from 'electron';
 import { join } from 'path';
 
-/**
- * Declared constants for Vite entries and resource paths
- */
-
-declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string;
-declare const MAIN_WINDOW_VITE_NAME: string;
-
 const mainWindowViteDevServerUrl = MAIN_WINDOW_VITE_DEV_SERVER_URL;
 const mainWindowViteName = MAIN_WINDOW_VITE_NAME;
 
