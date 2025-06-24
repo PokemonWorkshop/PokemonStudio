@@ -96,6 +96,6 @@ export const addSoundDesignConfig = async (_: IpcMainEvent, projectPath: string)
   }
 
   const soundDesignConfig = initSoundDesignConfig(rmxpSystem);
-  moveAudioFile(projectPath);
+  await moveAudioFile(projectPath);
   await fsPromise.writeFile(path.join(projectPath, 'Data/configs/sound_design_config.json'), JSON.stringify(soundDesignConfig, null, 2));
 };
