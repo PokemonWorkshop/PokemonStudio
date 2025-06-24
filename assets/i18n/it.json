@@ -476,6 +476,7 @@
   "activation_custom": "Personalizzato",
   "simple": "In singolo",
   "double": "In doppio",
+  "triple": "In triplo",
   "RegularGround": "Terreno regolare",
   "Grass": "Erba alta",
   "TallGrass": "Erba molto alta",
@@ -1058,6 +1059,7 @@
   "vs_type": "Tipo di battaglia",
   "vs_type1": "In singolo",
   "vs_type2": "In doppio",
+  "vs_type3": "In triplo",
   "battle_id": "Battaglia inscenata",
   "battle_id_tooltip": "Questo dato si riferisce all'identificatore di una battaglia inscenata",
   "trainer_party": "Squadra",
@@ -1527,5 +1529,6 @@
   "add_battle_camera_3D_to_settings": "Add 3D camera in battle in the settings",
   "handle_tech_list": "Manage technique items",
   "tech_list": "List of technique items",
-  "dashboard_save": "Salvataggio"
+  "dashboard_save": "Salvataggio",
+  "migrate_groups_for_3v3_battle_mode": "Migrate groups to support 3v3 combat mode"
 }

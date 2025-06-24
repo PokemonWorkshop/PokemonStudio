@@ -17,6 +17,7 @@ import { migrateQuestsEarnings } from './migrateQuestsEarnings';
 import { addCsvForQuestsCustomObjectives } from './addCsvForQuestsCustomObjectives';
 import { addEggInCreatureResources } from './addEggInCreatureResources';
 import { addBattleCamera3dToSettings } from './addBattleCamera3dToSettings';
+import { migrateGroupsFor3v3BattleMode } from './migrateGroupsFor3v3BattleMode';
 
 type MigrateConfigType = {
   migration: MigrationTask;
@@ -130,5 +131,10 @@ export const MIGRATION_CONFIG: MigrateConfigType[] = [
     migration: addBattleCamera3dToSettings,
     version: '2.4.3',
     message: 'add_battle_camera_3D_to_settings',
+  },
+  {
+    migration: migrateGroupsFor3v3BattleMode,
+    version: '2.5.0',
+    message: 'migrate_groups_for_3v3_battle_mode',
   },
 ];

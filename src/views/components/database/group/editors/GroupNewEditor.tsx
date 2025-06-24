@@ -12,14 +12,13 @@ import {
   defineRelationCustomCondition,
   GroupActivationsMap,
   StudioGroupActivationType,
-  GroupBattleTypes,
   GroupVariationsMap,
   getSwitchValue,
   isCustomEnvironment as isCustomEnvironmentFunc,
   setCustomEnvironment,
   wrongEnvironment,
 } from '@utils/GroupUtils';
-import { GROUP_NAME_TEXT_ID, GROUP_SYSTEM_TAGS, StudioGroupSystemTag, StudioGroupTool } from '@modelEntities/group';
+import { GROUP_NAME_TEXT_ID, GROUP_SYSTEM_TAGS, GROUP_VS_TYPE_CATEGORIES, StudioGroupSystemTag, StudioGroupTool } from '@modelEntities/group';
 import { useSetProjectText } from '@utils/ReadingProjectText';
 import { createGroup } from '@utils/entityCreation';
 import { DbSymbol } from '@modelEntities/dbSymbol';
@@ -32,7 +31,7 @@ import { SelectGroup } from '@components/selects';
 import { importGroupData } from '@utils/importEntityDataUtils';
 
 const groupActivationEntries = (t: TFunction) => GroupActivationsMap.map((activation) => ({ value: activation.value, label: t(activation.label) }));
-const groupBattleTypeEntries = (t: TFunction) => GroupBattleTypes.map((type) => ({ value: type, label: t(type) }));
+const groupBattleTypeEntries = (t: TFunction) => GROUP_VS_TYPE_CATEGORIES.map((type) => ({ value: type, label: t(type) }));
 const systemTagsEntries = (t: TFunction) => [...GROUP_SYSTEM_TAGS, 'custom' as const].map((tag) => ({ value: tag, label: t(tag) }));
 const groupVariationEntries = (t: TFunction) => GroupVariationsMap.map((variation) => ({ value: variation.value, label: t(variation.label) }));
 const isTool = (variation: unknown): variation is StudioGroupTool => ['OldRod', 'GoodRod', 'SuperRod', 'RockSmash'].includes(variation as string);
@@ -97,7 +96,7 @@ export const GroupNewEditor = forwardRef<EditorHandlingClose, GroupNewEditorProp
       newSystemTag,
       terrainTag,
       tool,
-      battleType === 'double',
+      battleType,
       activation === 'always' ? undefined : { value: activationSwitchId, type: 'enabledSwitch', relationWithPreviousCondition: 'AND' },
       stepsAverage
     );

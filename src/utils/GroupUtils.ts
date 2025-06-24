@@ -26,7 +26,6 @@ export const GroupToolMap = [
   { value: 'SuperRod', label: 'SuperRod' },
   { value: 'RockSmash', label: 'RockSmash' },
 ] as const;
-export const GroupBattleTypes = ['simple', 'double'] as const;
 export type StudioGroupActivationType = (typeof GroupActivationsMap)[number]['value'] | 'custom';
 
 export const getActivationValue = (newGroup: StudioGroup) => {
