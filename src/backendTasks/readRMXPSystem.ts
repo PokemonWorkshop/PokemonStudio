@@ -81,8 +81,9 @@ export const isSystemObject = (object: unknown): object is SystemData =>
 const buildAudio = (audioData: AudioData, projectPath: string): RMXPAudio => {
   const name = audioData['@name'];
   const type = name.split('_').pop() as RMXPAudioType;
+  const nameWithExt = addAudioExtensionFile(projectPath, name, type);
   return {
-    name: addAudioExtensionFile(projectPath, name, type),
+    name: `audio/${type}/${nameWithExt}`,
     pitch: audioData['@pitch'],
     volume: audioData['@volume'],
   };
