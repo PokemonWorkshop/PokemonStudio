@@ -19,6 +19,11 @@ export const DashboardNavigation = () => {
         <NavigationDatabaseItem path="/dashboard/display" label={t('display')} />
         <NavigationDatabaseItem path="/dashboard/graphics" label={t('graphic_settings')} />
       </NavigationDatabaseGroup>
+
+      <NavigationDatabaseGroup title={t('music_and_sounds')}>
+        <NavigationDatabaseItem path="/dashboard/music" label={t('music_default')} />
+      </NavigationDatabaseGroup>
+
       <NavigationDatabaseGroup title={t('config')}>
         <NavigationDatabaseItem path="/dashboard/save" label={t('dashboard_save')} />
         <NavigationDatabaseItem path="/dashboard/gamestart" label={t('game_start')} />

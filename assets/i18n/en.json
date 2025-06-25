@@ -1534,5 +1534,8 @@
   "add_mega_evolution_parameter_to_items": "Adding Mega Evolution parameter to items",
   "allow_mega": "Mega Evolution",
   "allow_mega_evolution": "Allow Mega Evolution",
-  "add_sound_design_config": "Add a config file to manage the sound design"
+  "add_sound_design_config": "Add a config file to manage the sound design",
+  "music_and_sounds": "Music and sounds",
+  "music_default": "Default music",
+  "interfaces": "Interfaces"
 }

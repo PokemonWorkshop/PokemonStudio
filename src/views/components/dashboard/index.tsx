@@ -10,3 +10,4 @@ export { DashboardDisplay } from './DashboardDisplay';
 export { DashboardSave } from './DashboardSave';
 export { DashboardCredits } from './DashboardCredits';
 export { DashboardControlBar } from './DashboardControlBar';
+export { DashboardMusic } from './music/DashboardMusic';

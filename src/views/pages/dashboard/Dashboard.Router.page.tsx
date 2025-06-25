@@ -14,6 +14,7 @@ import { DashboardGameStartPage } from './Dashboard.GameStart.page';
 import { Route, Routes } from 'react-router-dom';
 import { DashboardTextsPage } from './Dashboard.Texts.page';
 import { PageWithMenu, PageWithMenuProps } from '@components/pages';
+import { DashboardMusicPage } from './Dashboard.Music.page';
 
 const DashboardPageWithMenu = ({ children }: Omit<PageWithMenuProps, 'navigation'>) => (
   <PageWithMenu navigation={<DashboardNavigation />}>{children}</PageWithMenu>
@@ -84,6 +85,14 @@ const DashboardRouterComponent = () => {
         element={
           <DashboardPageWithMenu>
             <DashboardGraphicsPage />
+          </DashboardPageWithMenu>
+        }
+      />
+      <Route
+        path="music"
+        element={
+          <DashboardPageWithMenu>
+            <DashboardMusicPage />
           </DashboardPageWithMenu>
         }
       />

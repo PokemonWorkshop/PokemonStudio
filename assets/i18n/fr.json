@@ -1534,5 +1534,8 @@
   "add_mega_evolution_parameter_to_items": "Ajout du paramètre de Méga-Évolution aux objets",
   "allow_mega": "Méga-Évolution",
   "allow_mega_evolution": "Permet la Méga-Évolution",
-  "add_sound_design_config": "Ajout d'un fichier de configuration pour gérer les musiques et sons"
+  "add_sound_design_config": "Ajout d'un fichier de configuration pour gérer les musiques et sons",
+  "music_and_sounds": "Musiques et sons",
+  "music_default": "Musique par défaut",
+  "interfaces": "Interfaces"
 }
