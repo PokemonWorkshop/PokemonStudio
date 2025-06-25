@@ -1,7 +1,7 @@
 import { ClearButtonOnlyIcon, FolderButtonOnlyIcon } from '@components/buttons';
 import React from 'react';
 import FileDrop from '@assets/icons/global/drop.svg';
-import PlayIcon from '@assets/icons/global/play.svg';
+import MusicNoteIcon from '@assets/icons/global/music-note.svg';
 import { basename } from '@utils/path';
 import { useResource } from '@hooks/useResource';
 import { OtherNoResourceContainer, OtherResourceContainer } from './OtherResourceStyle';
@@ -39,7 +39,7 @@ export const OtherResource = ({ type, title, resourcePath, extensions, onResourc
     <OtherResourceContainer onDrop={onDrop} onDragOver={onDragOver} onClick={isDialogOpen ? undefined : onClick} disabled={isDialogOpen}>
       <div className="icon-title">
         <div className={`svg-${type}-container`}>
-          {type === 'music' ? <PlayIcon /> : <ResourceImage imagePathInProject={resourcePath} versionId={flipFlap ? 2 : 1} />}
+          {type === 'music' ? <MusicNoteIcon /> : <ResourceImage imagePathInProject={resourcePath} versionId={flipFlap ? 2 : 1} />}
         </div>
         {type === 'music' ? (
           <div className="resource-name">
