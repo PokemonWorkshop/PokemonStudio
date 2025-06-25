@@ -19,6 +19,7 @@ import { addEggInCreatureResources } from './addEggInCreatureResources';
 import { addBattleCamera3dToSettings } from './addBattleCamera3dToSettings';
 import { migrateGroupsFor3v3BattleMode } from './migrateGroupsFor3v3BattleMode';
 import { addMegaEvolutionParameterToItems } from './addMegaEvolutionParameterToItems';
+import { addSoundDesignConfig } from './addSoundDesignConfig';
 
 type MigrateConfigType = {
   migration: MigrationTask;
@@ -142,5 +143,10 @@ export const MIGRATION_CONFIG: MigrateConfigType[] = [
     migration: addMegaEvolutionParameterToItems,
     version: '2.5.1',
     message: 'add_mega_evolution_parameter_to_items',
+  },
+  {
+    migration: addSoundDesignConfig,
+    version: '2.5.1',
+    message: 'add_sound_design_config',
   },
 ];

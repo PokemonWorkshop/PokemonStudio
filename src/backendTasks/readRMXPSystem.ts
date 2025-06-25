@@ -78,12 +78,13 @@ export const isSystemObject = (object: unknown): object is SystemData =>
   typeof object['@actor_collapse_se'] === 'object' &&
   typeof object['@enemy_collapse_se'] === 'object';
 
-const buildAudio = (audioData: AudioData, projectPath: string): RMXPAudio => {
+const buildAudio = (systemKey: keyof SystemData, systemData: SystemData, projectPath: string): RMXPAudio => {
+  const audioData = systemData[systemKey];
   const name = audioData['@name'];
-  const type = name.split('_').pop() as RMXPAudioType;
+  const type = systemKey.split('_').pop() as RMXPAudioType;
   const nameWithExt = addAudioExtensionFile(projectPath, name, type);
   return {
-    name: `audio/${type}/${nameWithExt}`,
+    name: !name ? '' : `audio/${type}/${nameWithExt}`,
     pitch: audioData['@pitch'],
     volume: audioData['@volume'],
   };
@@ -97,21 +98,21 @@ export const readRMXPSystem = async (projectPath: string): Promise<RMXPSystem | 
   if (!isSystemObject(marshalData)) return undefined;
 
   return {
-    title: buildAudio(marshalData['@title_bgm'], projectPath),
-    battle: buildAudio(marshalData['@battle_bgm'], projectPath),
-    battleEnd: buildAudio(marshalData['@battle_end_me'], projectPath),
-    gameover: buildAudio(marshalData['@gameover_me'], projectPath),
-    cursor: buildAudio(marshalData['@cursor_se'], projectPath),
-    decision: buildAudio(marshalData['@decision_se'], projectPath),
-    cancel: buildAudio(marshalData['@cancel_se'], projectPath),
-    buzzer: buildAudio(marshalData['@buzzer_se'], projectPath),
-    equip: buildAudio(marshalData['@equip_se'], projectPath),
-    shop: buildAudio(marshalData['@shop_se'], projectPath),
-    save: buildAudio(marshalData['@save_se'], projectPath),
-    load: buildAudio(marshalData['@load_se'], projectPath),
-    battleStart: buildAudio(marshalData['@battle_start_se'], projectPath),
-    escape: buildAudio(marshalData['@escape_se'], projectPath),
-    actorCollapse: buildAudio(marshalData['@actor_collapse_se'], projectPath),
-    enemyCollapse: buildAudio(marshalData['@enemy_collapse_se'], projectPath),
+    title: buildAudio('@title_bgm', marshalData, projectPath),
+    battle: buildAudio('@battle_bgm', marshalData, projectPath),
+    battleEnd: buildAudio('@battle_end_me', marshalData, projectPath),
+    gameover: buildAudio('@gameover_me', marshalData, projectPath),
+    cursor: buildAudio('@cursor_se', marshalData, projectPath),
+    decision: buildAudio('@decision_se', marshalData, projectPath),
+    cancel: buildAudio('@cancel_se', marshalData, projectPath),
+    buzzer: buildAudio('@buzzer_se', marshalData, projectPath),
+    equip: buildAudio('@equip_se', marshalData, projectPath),
+    shop: buildAudio('@shop_se', marshalData, projectPath),
+    save: buildAudio('@save_se', marshalData, projectPath),
+    load: buildAudio('@load_se', marshalData, projectPath),
+    battleStart: buildAudio('@battle_start_se', marshalData, projectPath),
+    escape: buildAudio('@escape_se', marshalData, projectPath),
+    actorCollapse: buildAudio('@actor_collapse_se', marshalData, projectPath),
+    enemyCollapse: buildAudio('@enemy_collapse_se', marshalData, projectPath),
   };
 };
