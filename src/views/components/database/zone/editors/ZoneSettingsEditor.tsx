@@ -35,10 +35,10 @@ const filterMapsAlreadyAssignedInZones = (mapOptions: SelectOption<DbSymbol>[], 
     }, [])
   );
   const mapDbSymbolsAssigned = mapDbSymbolsFromMapIds(Array.from(maps.values()));
-  const mapDbSymbolCurrentZone = mapDbSymbolsFromMapIds(currentZone.maps);
-  return mapOptions.reduce((options, currentOption) => {
-    const index = mapDbSymbolsAssigned.findIndex((mapDbSymbol) => mapDbSymbol === currentOption.value);
-    if (index === -1 || mapDbSymbolCurrentZone.includes(currentOption.value)) return [...options, currentOption];
+  const mapDbSymbolsCurrentZone = mapDbSymbolsFromMapIds(currentZone.maps);
+  return mapOptions.reduce((options, option) => {
+    const index = mapDbSymbolsAssigned.findIndex((mapDbSymbol) => mapDbSymbol === option.value);
+    if (index === -1 || mapDbSymbolsCurrentZone.includes(option.value)) return [...options, option];
 
     return options;
   }, [] as SelectOption<DbSymbol>[]);
