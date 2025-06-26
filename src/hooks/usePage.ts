@@ -267,5 +267,6 @@ export const useZonePage = () => {
     zoneName,
     groups,
     cannotDelete: Object.keys(zones).length <= 1,
+    state,
   };
 };
