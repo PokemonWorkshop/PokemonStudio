@@ -140,7 +140,7 @@ export const MIGRATION_CONFIG: MigrateConfigType[] = [
   },
   {
     migration: addMegaEvolutionParameterToItems,
-    version: '2.5.0',
+    version: '2.5.1',
     message: 'add_mega_evolution_parameter_to_items',
   },
 ];
