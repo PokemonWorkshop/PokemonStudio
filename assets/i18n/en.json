@@ -1530,5 +1530,8 @@
   "handle_tech_list": "Manage technique items",
   "tech_list": "List of technique items",
   "dashboard_save": "Save",
-  "migrate_groups_for_3v3_battle_mode": "Migrate groups to support 3v3 combat mode"
+  "migrate_groups_for_3v3_battle_mode": "Migrate groups to support 3v3 combat mode",
+  "add_mega_evolution_parameter_to_items": "Adding Mega Evolution parameter to items",
+  "allow_mega": "Mega Evolution",
+  "allow_mega_evolution": "Allow Mega Evolution"
 }

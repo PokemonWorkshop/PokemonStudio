@@ -18,6 +18,7 @@ import { addCsvForQuestsCustomObjectives } from './addCsvForQuestsCustomObjectiv
 import { addEggInCreatureResources } from './addEggInCreatureResources';
 import { addBattleCamera3dToSettings } from './addBattleCamera3dToSettings';
 import { migrateGroupsFor3v3BattleMode } from './migrateGroupsFor3v3BattleMode';
+import { addMegaEvolutionParameterToItems } from './addMegaEvolutionParameterToItems';
 
 type MigrateConfigType = {
   migration: MigrationTask;
@@ -136,5 +137,10 @@ export const MIGRATION_CONFIG: MigrateConfigType[] = [
     migration: migrateGroupsFor3v3BattleMode,
     version: '2.5.0',
     message: 'migrate_groups_for_3v3_battle_mode',
+  },
+  {
+    migration: addMegaEvolutionParameterToItems,
+    version: '2.5.0',
+    message: 'add_mega_evolution_parameter_to_items',
   },
 ];
