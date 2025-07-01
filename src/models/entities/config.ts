@@ -232,3 +232,11 @@ export const SOUND_DESIGN_CONFIG_VALIDATOR = z.object({
 });
 
 export type SoundDesignConfig = z.infer<typeof SOUND_DESIGN_CONFIG_VALIDATOR>;
+
+export type SoundEffectsKeys =
+  | keyof SoundDesignConfig['soundEffects']
+  | keyof SoundDesignConfig['musicEffects']
+  | keyof SoundDesignConfig['backgroundMusic']
+  | keyof SoundDesignConfig['backgroundSound'];
+
+export type SoundLocated = keyof SoundDesignConfig;

@@ -9,3 +9,5 @@ export const AUDIO_VALIDATOR = z.object({
   volume: POSITIVE_OR_ZERO_INT.max(100),
   pitch: POSITIVE_INT.min(50).max(150),
 });
+
+export type AudioFile = z.infer<typeof AUDIO_VALIDATOR>;

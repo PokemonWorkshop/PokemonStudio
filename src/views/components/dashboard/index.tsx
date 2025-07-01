@@ -11,3 +11,4 @@ export { DashboardSave } from './DashboardSave';
 export { DashboardCredits } from './DashboardCredits';
 export { DashboardControlBar } from './DashboardControlBar';
 export { DashboardSoundDesign } from './music/DashboardSoundDesign';
+export { DashboardMusicDesign } from './music/DashboardMusicDesign';
