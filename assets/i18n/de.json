@@ -1536,5 +1536,11 @@
   "allow_mega_evolution": "Allow Mega Evolution",
   "add_sound_design_config": "Add a config file to manage the sound design",
   "music_and_sounds": "Music and sounds",
-  "music_default": "Default music"
+  "sound_design": "Sound Design",
+  "sound_default": "Default sound",
+  "interfaces": "Interfaces",
+  "interactions": "Interactions",
+  "fights": "Fights",
+  "creatures": "Creatures",
+  "objects": "Objects"
 }

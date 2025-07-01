@@ -171,7 +171,7 @@ export const DEFAULT_GAME_OPTIONS = [
 
 export type DefaultGameOptions = (typeof DEFAULT_GAME_OPTIONS)[number];
 
-const SOUND_DESIGN_CONFIG_VALIDATOR = z.object({
+export const SOUND_DESIGN_CONFIG_VALIDATOR = z.object({
   klass: z.literal('Configs::Project::SoundDesign'),
   soundEffects: z.object({
     decision: AUDIO_VALIDATOR,

@@ -1535,7 +1535,11 @@
   "allow_mega": "Méga-Évolution",
   "allow_mega_evolution": "Permet la Méga-Évolution",
   "add_sound_design_config": "Ajout d'un fichier de configuration pour gérer les musiques et sons",
-  "music_and_sounds": "Musiques et sons",
-  "music_default": "Musique par défaut",
-  "interfaces": "Interfaces"
+  "sound_design": "Sound Design",
+  "sound_default": "Default sound",
+  "interfaces": "Interfaces",
+  "interactions": "Interactions",
+  "fights": "Combats",
+  "creatures": "Créatures",
+  "objects": "Objets"
 }

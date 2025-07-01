@@ -20,8 +20,8 @@ export const DashboardNavigation = () => {
         <NavigationDatabaseItem path="/dashboard/graphics" label={t('graphic_settings')} />
       </NavigationDatabaseGroup>
 
-      <NavigationDatabaseGroup title={t('music_and_sounds')}>
-        <NavigationDatabaseItem path="/dashboard/music" label={t('music_default')} />
+      <NavigationDatabaseGroup title={t('sound_design')}>
+        <NavigationDatabaseItem path="/dashboard/music" label={t('sound_default')} />
       </NavigationDatabaseGroup>
 
       <NavigationDatabaseGroup title={t('config')}>
