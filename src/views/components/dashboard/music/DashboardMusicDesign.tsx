@@ -7,6 +7,8 @@ import { AUDIO_EXT } from '@components/inputs/AudioInput';
 import type { SoundEffectsKeys, SoundLocated } from '@modelEntities/config';
 import { EditorsContainer } from './music.style';
 import { AudioFile } from '@modelEntities/common';
+import { OtherResource } from '@components/resources';
+import { EditButtonOnlyIcon } from '@components/buttons';
 
 interface SoundMapping {
   title: string;
@@ -70,22 +72,29 @@ export const DashboardMusicDesign = () => {
       {musicState.map((state) => (
         <PageEditor key={state.title} editorTitle={t('music_default')} title={t(state.title)} canCollapse>
           {state.soundEffects.map((soundEffect) => (
-            <div key={soundEffect?.key}>
-              {t(soundEffect?.key ?? '')}
-              <AudioInput
-                key={soundEffect?.key}
-                audioPathInProject={soundEffect?.name ?? ''}
-                destFolderToCopy="audio/sound"
-                name={t(soundEffect?.key ?? '')}
-                extensions={AUDIO_EXT}
-                onAudioChoosen={(path) => {
-                  console.log(path);
-                }}
-                onAudioClear={() => {
-                  console.log('clear');
-                }}
-              />
-            </div>
+            <OtherResource
+              type="music"
+              title={t(`${soundEffect?.key}`)}
+              resourcePath={soundEffect?.name ?? ''}
+              extensions={AUDIO_EXT}
+              onResourceChoosen={(resourcePath) => {
+                console.log(resourcePath);
+              }}
+              onResourceClean={() => {
+                console.log('clear');
+              }}
+              key={soundEffect?.key}
+              beforeButtons={
+                <button>
+                  <EditButtonOnlyIcon
+                    onClick={(e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+                      e.stopPropagation();
+                      console.log('edit');
+                    }}
+                  />
+                </button>
+              }
+            />
           ))}
         </PageEditor>
       ))}

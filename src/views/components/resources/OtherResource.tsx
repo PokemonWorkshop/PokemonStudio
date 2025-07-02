@@ -16,9 +16,11 @@ type OtherResourceProps = {
   extensions: string[];
   onResourceChoosen: (filePath: string) => void;
   onResourceClean: () => void;
+
+  beforeButtons?: React.ReactNode;
 };
 
-export const OtherResource = ({ type, title, resourcePath, extensions, onResourceChoosen, onResourceClean }: OtherResourceProps) => {
+export const OtherResource = ({ type, title, resourcePath, extensions, onResourceChoosen, onResourceClean, beforeButtons }: OtherResourceProps) => {
   const { onDrop, onDragOver, onClick, onClickFolder, isDialogOpen, flipFlap } = useResource({
     name: title,
     path: resourcePath,
@@ -51,6 +53,7 @@ export const OtherResource = ({ type, title, resourcePath, extensions, onResourc
         )}
       </div>
       <div className="buttons">
+        {beforeButtons}
         <button className="folder-button">
           <FolderButtonOnlyIcon onClick={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => onClickFolder(resourcePath, event)} />
         </button>

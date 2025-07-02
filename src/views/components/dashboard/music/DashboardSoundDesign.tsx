@@ -1,12 +1,18 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageEditor } from '@components/pages';
 import { useConfigSoundDesign } from '@src/hooks/useProjectConfig';
-import { SoundEffectsKeys, SoundLocated } from '@modelEntities/config';
+import { SoundDesignConfig, SoundEffectsKeys, SoundLocated } from '@modelEntities/config';
 import { EditorsContainer } from './music.style';
 import { AudioFile } from '@modelEntities/common';
 import { AudioInput } from '@components/inputs';
 import { AUDIO_EXT } from '@components/inputs/AudioInput';
+import { OtherResource } from '@components/resources';
+import { EditButtonOnlyIcon } from '@components/buttons';
+import { useUpdateConfigMusic } from './ressoures/useUpdateConfigSound';
+import { EditorOverlay } from '@components/editor';
+import { DashboardSoundEditor } from './editors/DashboardSoundEditor';
+import { useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 
 interface SoundMapping {
   title: string;
@@ -77,9 +83,13 @@ const SoundState: SoundMapping[] = [
     ],
   },
 ];
+
 export const DashboardSoundDesign = () => {
   const { t } = useTranslation();
-  const { projectConfigValues: soundDesign, setProjectConfigValues: setSoundDesign } = useConfigSoundDesign();
+  const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
+
+  const { projectConfigValues: soundDesign } = useConfigSoundDesign();
+  const { onResourceMusicsChoosen, onResourceMusicsClean } = useUpdateConfigMusic(soundDesign);
 
   const soundState = useMemo(() => {
     return SoundState.map((state) => {
@@ -94,31 +104,68 @@ export const DashboardSoundDesign = () => {
     });
   }, [soundDesign]);
 
-  console.log(soundDesign, soundState);
+  const handleOpenEditor = (soundEffect: AudioFile & { key: SoundEffectsKeys; located: SoundLocated }) => {
+    setCurrentEditor(soundEffect.key);
+  };
+
+  const handleCloseEditor = (result: boolean) => {
+    if (!result) return;
+    setCurrentEditor(undefined);
+  };
+
+  const editors = useMemo(() => {
+    const editorMap: Record<string, React.ReactNode> = {};
+    soundState.forEach((state) => {
+      state.soundEffects.forEach((soundEffect) => {
+        if (soundEffect) {
+          editorMap[soundEffect.key] = (
+            <DashboardSoundEditor
+              audioFile={{
+                ...(soundEffect as AudioFile & { key: SoundEffectsKeys; located: SoundLocated }),
+              }}
+              onClose={() => setCurrentEditor(undefined)}
+            />
+          );
+        }
+      });
+    });
+    return editorMap;
+  }, [soundState]);
+
   return (
     <EditorsContainer>
       {soundState.map((state) => (
         <PageEditor key={state.title} editorTitle={t('sound_default')} title={t(state.title)} canCollapse>
           {state.soundEffects.map((soundEffect) => (
-            <div key={soundEffect?.key}>
-              {t(soundEffect?.key ?? '')}
-              <AudioInput
-                key={soundEffect?.key}
-                audioPathInProject={soundEffect?.name ?? ''}
-                destFolderToCopy="audio/sound"
-                name={t(soundEffect?.key ?? '')}
-                extensions={AUDIO_EXT}
-                onAudioChoosen={(path) => {
-                  console.log(path);
-                }}
-                onAudioClear={() => {
-                  console.log('clear');
-                }}
-              />
-            </div>
+            <OtherResource
+              type="music"
+              title={t(`${soundEffect?.key}`)}
+              resourcePath={soundEffect?.name ?? ''}
+              extensions={AUDIO_EXT}
+              onResourceChoosen={(resourcePath) => {
+                onResourceMusicsChoosen(resourcePath, soundEffect?.key as SoundEffectsKeys);
+              }}
+              onResourceClean={() => {
+                if (soundEffect?.key) onResourceMusicsClean(soundEffect?.key as SoundEffectsKeys);
+              }}
+              key={soundEffect?.key}
+              beforeButtons={
+                <button>
+                  <EditButtonOnlyIcon
+                    onClick={(e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+                      e.stopPropagation();
+                      if (soundEffect) {
+                        handleOpenEditor(soundEffect as AudioFile & { key: SoundEffectsKeys; located: SoundLocated });
+                      }
+                    }}
+                  />
+                </button>
+              }
+            />
           ))}
         </PageEditor>
       ))}
+      <EditorOverlay currentEditor={currentEditor} editors={editors} onClose={() => handleCloseEditor(true)} />
     </EditorsContainer>
   );
 };
