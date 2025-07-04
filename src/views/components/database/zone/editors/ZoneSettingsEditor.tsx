@@ -1,19 +1,48 @@
 import React, { forwardRef, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
+import styled from 'styled-components';
 import { Editor } from '@components/editor';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
+import { TextInputError } from '@components/inputs/Input';
+import { TagWithDeletion, TagWithDeletionContainer } from '@components/Tag';
 import { Select } from '@ds/Select';
 import { useZonePage } from '@src/hooks/usePage';
 import { useUpdateZone } from './useUpdateZone';
 import type { StudioZone, StudioZoneForcedWeather } from '@modelEntities/zone';
 import { padStr } from '@utils/PadStr';
-import { MultiSelect } from '@ds/MultiSelect';
-import { useSelectOptions } from '@src/hooks/useSelectOptions';
+import { cloneEntity } from '@utils/cloneEntity';
 import { ProjectData } from '@src/GlobalStateProvider';
-import type { DbSymbol } from '@modelEntities/dbSymbol';
-import { SelectOption } from '@ds/Select/types';
+
+const InputMapsListContainer = styled(InputWithTopLabelContainer)`
+  gap: 16px;
+`;
+
+const InputMapWithErrorContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  ${Input} {
+    text-align: left;
+  }
+`;
+
+const MapsListContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  gap: 4px;
+
+  ${TagWithDeletionContainer} {
+    gap: 4px;
+
+    span.map-id {
+      height: 18px;
+    }
+  }
+`;
 
 // -1 = By default, 0 = None, 1 = Rain, 2 = Sun/Zenith, 3 = Sandstorm, 4 = Hail, 5 = Foggy
 const WeatherCategories = [-1, 0, 1, 2, 3, 4, 5] as const;
@@ -21,10 +50,7 @@ const WeatherCategories = [-1, 0, 1, 2, 3, 4, 5] as const;
 const weatherCategoryEntries = (t: TFunction) =>
   WeatherCategories.map((category) => ({ value: category.toString(), label: t(`weather${category}`) }));
 
-const mapDbSymbolsFromMapIds = (mapIds: number[]) => mapIds.map((mapId) => `map${padStr(mapId, 3)}` as DbSymbol);
-const mapIdsFromMapDbSymbols = (mapDbSymbols: DbSymbol[], maps: ProjectData['maps']) => mapDbSymbols.map((dbSymbol) => maps[dbSymbol].id);
-
-const filterMapsAlreadyAssignedInZones = (mapOptions: SelectOption<DbSymbol>[], zonesData: ProjectData['zones'], currentZone: StudioZone) => {
+const mapsAlreadyAssignedInZones = (zonesData: ProjectData['zones'], currentZone: StudioZone) => {
   const zones = Object.values(zonesData);
   const maps = new Set(
     zones.reduce<number[]>((maps, zone) => {
@@ -34,14 +60,7 @@ const filterMapsAlreadyAssignedInZones = (mapOptions: SelectOption<DbSymbol>[], 
       return maps;
     }, [])
   );
-  const mapDbSymbolsAssigned = mapDbSymbolsFromMapIds(Array.from(maps.values()));
-  const mapDbSymbolsCurrentZone = mapDbSymbolsFromMapIds(currentZone.maps);
-  return mapOptions.reduce((options, option) => {
-    const index = mapDbSymbolsAssigned.findIndex((mapDbSymbol) => mapDbSymbol === option.value);
-    if (index === -1 || mapDbSymbolsCurrentZone.includes(option.value)) return [...options, option];
-
-    return options;
-  }, [] as SelectOption<DbSymbol>[]);
+  return Array.from(maps.values());
 };
 
 export const ZoneSettingsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
@@ -51,9 +70,37 @@ export const ZoneSettingsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const forcedWeatherRef = useRef<string | undefined>();
   const panelIdRef = useRef<HTMLInputElement>(null);
   const weatherOptions = useMemo(() => weatherCategoryEntries(t), [t]);
-  const [maps, setMaps] = useState<DbSymbol[]>(mapDbSymbolsFromMapIds(zone.maps));
-  const defaultMapOptions = useSelectOptions('maps') as SelectOption<DbSymbol>[];
-  const mapOptions = useMemo(() => filterMapsAlreadyAssignedInZones(defaultMapOptions, state.projectData.zones, zone), []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const mapsAlreadyAssigned = useMemo(() => mapsAlreadyAssignedInZones(state.projectData.zones, zone), []);
+  const [maps, setMaps] = useState<number[]>(cloneEntity(zone.maps));
+  const [errorNewMap, setErrorNewMap] = useState<number | false>(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (event) => {
+    if (inputRef.current && inputRef.current.validity.valid && event.key === 'Enter') {
+      const target = event.target as HTMLInputElement;
+      const mapIds = target.value
+        .split(',')
+        .filter((v) => v.trim().length !== 0)
+        .map((v) => Number(v))
+        .filter((v, i, a) => i === a.indexOf(v));
+      const errorMapId = mapIds.find((mapId) => maps.includes(mapId) || mapsAlreadyAssigned.includes(mapId));
+      if (errorMapId !== undefined) {
+        setErrorNewMap(errorMapId);
+        return;
+      }
+
+      inputRef.current.value = '';
+      if (errorNewMap !== false) setErrorNewMap(false);
+      setMaps(maps.concat(mapIds));
+    }
+  };
+
+  const onDeleteMap = (index: number) => {
+    const mapsEdited = cloneEntity(maps);
+    mapsEdited.splice(index, 1);
+    setMaps(mapsEdited);
+  };
 
   const canClose = () => {
     const result = !!panelIdRef?.current?.validity.valid;
@@ -69,7 +116,7 @@ export const ZoneSettingsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
     updateZone({
       forcedWeather,
       panelId: panelIdRef.current.valueAsNumber,
-      maps: mapIdsFromMapDbSymbols(maps, state.projectData.maps),
+      maps,
     });
   };
 
@@ -78,10 +125,22 @@ export const ZoneSettingsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   return (
     <Editor type="edit" title={t('settings')}>
       <InputContainer>
-        <InputWithTopLabelContainer>
+        <InputMapsListContainer>
           <Label htmlFor="map">{t('maps_list')}</Label>
-          <MultiSelect defaultValue={maps} onChange={setMaps} options={mapOptions} />
-        </InputWithTopLabelContainer>
+          <InputMapWithErrorContainer>
+            <Input type="text" name="map" pattern="[0-9]{1,5} *(?:, *[0-9]{0,5} *)*" ref={inputRef} onKeyDown={handleKeyDown} />
+            {errorNewMap !== false && <TextInputError>{t('map_already_exists', { mapId: padStr(errorNewMap, 2) })}</TextInputError>}
+          </InputMapWithErrorContainer>
+          <MapsListContainer>
+            {maps
+              .sort((a, b) => a - b)
+              .map((id, index) => (
+                <TagWithDeletion key={index} index={index} onClickDelete={onDeleteMap}>
+                  <span className="map-id">{padStr(id, 2)}</span>
+                </TagWithDeletion>
+              ))}
+          </MapsListContainer>
+        </InputMapsListContainer>
         <InputWithLeftLabelContainer>
           <Label htmlFor="panel-number">{t('panel_number')}</Label>
           <Input type="number" name="panel-number" min="0" max="99999" defaultValue={zone.panelId} ref={panelIdRef} />

@@ -1143,7 +1143,7 @@
   "maps_list": "Liste des cartes",
   "displayed_panel": "Panneau affiché",
   "forced_weather": "Météo forcée",
-  "map_already_exists": "La carte #{{mapId}} est déjà dans la liste.",
+  "map_already_exists": "La carte #{{mapId}} est déjà dans la liste ou assignée à une autre zone.",
   "panel_number": "Numéro du panneau",
   "weather-1": "Par défaut",
   "weather0": "Aucune",
