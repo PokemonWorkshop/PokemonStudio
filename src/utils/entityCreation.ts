@@ -1,13 +1,13 @@
-import { StudioAbility } from '@modelEntities/ability';
-import { StudioCreature, StudioCreatureForm } from '@modelEntities/creature';
-import { DbSymbol } from '@modelEntities/dbSymbol';
+import type { StudioAbility } from '@modelEntities/ability';
+import type { StudioCreature, StudioCreatureForm } from '@modelEntities/creature';
+import type { DbSymbol } from '@modelEntities/dbSymbol';
 import { DEX_DEFAULT_NAME_TEXT_ID, StudioDex, StudioDexCreature } from '@modelEntities/dex';
-import { StudioCustomGroupCondition, StudioGroup, StudioGroupSystemTag, StudioGroupTool } from '@modelEntities/group';
+import type { StudioCustomGroupCondition, StudioGroup, StudioGroupSystemTag, StudioGroupTool, StudioGroupVsType } from '@modelEntities/group';
 import { createExpandPokemonSetup, StudioGroupEncounter } from '@modelEntities/groupEncounter';
-import { StudioItem, StudioItemStatusCondition } from '@modelEntities/item';
-import { StudioMapLink } from '@modelEntities/mapLink';
-import { StudioMove, StudioMoveCategory } from '@modelEntities/move';
-import {
+import type { StudioItem, StudioItemStatusCondition } from '@modelEntities/item';
+import type { StudioMapLink } from '@modelEntities/mapLink';
+import type { StudioMove, StudioMoveCategory } from '@modelEntities/move';
+import type {
   StudioCreatureQuestCondition,
   StudioCreatureQuestConditionType,
   StudioQuest,
@@ -17,17 +17,17 @@ import {
   StudioQuestObjectiveType,
   StudioQuestResolution,
 } from '@modelEntities/quest';
-import { StudioTrainer, StudioTrainerVsType } from '@modelEntities/trainer';
-import { StudioType } from '@modelEntities/type';
-import { StudioZone } from '@modelEntities/zone';
+import type { StudioTrainer, StudioTrainerVsType } from '@modelEntities/trainer';
+import type { StudioType } from '@modelEntities/type';
+import type { StudioZone } from '@modelEntities/zone';
 import { ProjectData } from '@src/GlobalStateProvider';
 import { assertUnreachable } from './assertUnreachable';
 import { findFirstAvailableCustomObjectiveTextId, findFirstAvailableFormTextId, findFirstAvailableId, findFirstAvailableTextId } from './ModelUtils';
 import { padStr } from './PadStr';
-import { StudioTextInfo } from '@modelEntities/textInfo';
-import { StudioMap, StudioMapAudio } from '@modelEntities/map';
-import { StudioMapInfo, StudioMapInfoMap } from '@modelEntities/mapInfo';
-import { StudioNature } from '@modelEntities/nature';
+import type { StudioTextInfo } from '@modelEntities/textInfo';
+import type { StudioMap, StudioMapAudio } from '@modelEntities/map';
+import type { StudioMapInfo, StudioMapInfoMap } from '@modelEntities/mapInfo';
+import type { StudioNature } from '@modelEntities/nature';
 import { mapInfoFindFirstAvailableId, mapInfoFindFirstAvailableTextId } from './MapInfoUtils';
 import { cloneEntity } from './cloneEntity';
 
@@ -285,7 +285,7 @@ export const createGroup = (
   systemTag: StudioGroupSystemTag,
   terrainTag: number,
   tool: StudioGroupTool,
-  isDoubleBattle: boolean,
+  vsType: StudioGroupVsType,
   customCondition: StudioCustomGroupCondition | undefined,
   stepsAverage: number
 ): StudioGroup => ({
@@ -293,12 +293,11 @@ export const createGroup = (
   id,
   dbSymbol,
   encounters: [],
-  isDoubleBattle,
+  vsType,
   systemTag,
   terrainTag,
   customConditions: customCondition ? [customCondition] : [],
   tool,
-  isHordeBattle: false,
   stepsAverage,
 });
 

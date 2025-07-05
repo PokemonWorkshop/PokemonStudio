@@ -43,12 +43,7 @@ export const TrainerPage = () => {
               disabledImport={false}
               from="trainer"
             />
-            <BagEntryList
-              title={t('trainer_bag', { name: trainerName })}
-              bagEntries={trainer.bagEntries}
-              disabledImport={cannotDelete}
-              from="trainer"
-            />
+            <BagEntryList title={t('trainer_bag', { name: trainerName })} trainer={trainer} disabledImport={cannotDelete} from="trainer" />
           </DataBlockWrapper>
           <DataBlockWrapper>
             <DataBlockWithAction size="full" title={t('deletion')}>

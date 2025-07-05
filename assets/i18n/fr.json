@@ -476,6 +476,7 @@
   "activation_custom": "Personnalisée",
   "simple": "Simple",
   "double": "Double",
+  "triple": "Triple",
   "RegularGround": "Chemin classique",
   "Grass": "Hautes herbes",
   "TallGrass": "Très hautes herbes",
@@ -1058,6 +1059,7 @@
   "vs_type": "Type de combat",
   "vs_type1": "Simple",
   "vs_type2": "Double",
+  "vs_type3": "Triple",
   "battle_id": "Combat scénarisé",
   "battle_id_tooltip": "Cette donnée fait référence à l'identifiant d'un combat scripté",
   "trainer_party": "Équipe",
@@ -1527,5 +1529,6 @@
   "add_battle_camera_3D_to_settings": "Ajout de la caméra 3D en combat dans les paramètres",
   "handle_tech_list": "Gérer la liste des techniques",
   "tech_list": "Liste des techniques",
-  "dashboard_save": "Sauvegarde"
+  "dashboard_save": "Sauvegarde",
+  "migrate_groups_for_3v3_battle_mode": "Migration des groupes pour le support du mode de combat 3v3"
 }

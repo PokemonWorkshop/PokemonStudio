@@ -55,6 +55,9 @@ export type StudioGroupDefaultSystemTag = (typeof GROUP_SYSTEM_TAGS)[number];
 export const GROUP_TOOL_VALIDATOR = z.union([z.null(), z.literal('OldRod'), z.literal('GoodRod'), z.literal('SuperRod'), z.literal('RockSmash')]);
 export type StudioGroupTool = z.infer<typeof GROUP_TOOL_VALIDATOR>;
 
+export const GROUP_VS_TYPE = z.union([z.literal('simple'), z.literal('double'), z.literal('triple'), z.literal('horde')]);
+export type StudioGroupVsType = z.infer<typeof GROUP_VS_TYPE>;
+
 export const GROUP_VALIDATOR = z.object({
   klass: z.literal('Group'),
   id: POSITIVE_OR_ZERO_INT,
@@ -62,8 +65,7 @@ export const GROUP_VALIDATOR = z.object({
   systemTag: GROUP_SYSTEM_TAG_VALIDATOR,
   terrainTag: POSITIVE_OR_ZERO_INT,
   tool: GROUP_TOOL_VALIDATOR.default(null),
-  isDoubleBattle: z.boolean().default(false),
-  isHordeBattle: z.boolean().default(false),
+  vsType: GROUP_VS_TYPE,
   customConditions: z.array(CUSTOM_GROUP_CONDITION_VALIDATOR),
   encounters: z.array(ENCOUNTER_VALIDATOR),
   stepsAverage: POSITIVE_OR_ZERO_INT,
@@ -71,3 +73,4 @@ export const GROUP_VALIDATOR = z.object({
 export type StudioGroup = z.infer<typeof GROUP_VALIDATOR>;
 
 export const GROUP_NAME_TEXT_ID = 100061;
+export const GROUP_VS_TYPE_CATEGORIES = ['simple', 'double', 'triple'] as const;

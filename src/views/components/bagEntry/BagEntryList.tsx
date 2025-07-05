@@ -4,13 +4,13 @@ import { useTranslation } from 'react-i18next';
 import React, { useState } from 'react';
 import { DarkButtonImportResponsive, SecondaryButtonWithPlusIconResponsive } from '@components/buttons';
 import { ItemBagEntry } from './ItemBagEntry';
-import { StudioTrainerBagEntry } from '@modelEntities/trainer';
+import { StudioTrainer } from '@modelEntities/trainer';
 import { BagEntryEditorOverlay, type BagEntryEditorAndDeletionKeys, type BagEntryFrom } from './editors/BagEntryEditorOverlay';
 import { useDialogsRef } from '@hooks/useDialogsRef';
 
 type BagEntryListProps = {
   title: string;
-  bagEntries: StudioTrainerBagEntry[];
+  trainer: StudioTrainer;
   disabledImport: boolean;
   from: BagEntryFrom;
 };
@@ -19,10 +19,11 @@ const BagEntryListComponent = styled(PokemonBattlerListComponent)``;
 const BagEntryListHeader = styled(PokemonBattlerListHeader)``;
 const BagEntryListGrid = styled(PokemonBattlerListGrid)``;
 
-export const BagEntryList = ({ title, bagEntries, disabledImport, from }: BagEntryListProps) => {
+export const BagEntryList = ({ title, trainer, disabledImport, from }: BagEntryListProps) => {
   const dialogsRef = useDialogsRef<BagEntryEditorAndDeletionKeys>();
   const { t } = useTranslation();
   const [index, setIndex] = useState<number>(0);
+  const bagEntries = trainer.bagEntries;
 
   return (
     <BagEntryListComponent size="full" data-noactive>
@@ -46,7 +47,15 @@ export const BagEntryList = ({ title, bagEntries, disabledImport, from }: BagEnt
       ) : (
         <BagEntryListGrid>
           {bagEntries.map((bagEntry, index) => (
-            <ItemBagEntry key={`item-bag-entry-${index}`} dialogsRef={dialogsRef} bagEntry={bagEntry} from={from} index={index} setIndex={setIndex} />
+            <ItemBagEntry
+              key={`item-bag-entry-${index}`}
+              dialogsRef={dialogsRef}
+              bagEntry={bagEntry}
+              from={from}
+              index={index}
+              trainer={trainer}
+              setIndex={setIndex}
+            />
           ))}
         </BagEntryListGrid>
       )}
