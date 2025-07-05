@@ -35,7 +35,8 @@
     "de": true,
     "pt": true,
     "it": true,
-    "es": true
+    "es": true,
+    "nl": false
   },
   "scripts": {
     "i18n": "node updater_i18n",
