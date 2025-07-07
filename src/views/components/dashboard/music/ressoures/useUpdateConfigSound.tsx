@@ -41,7 +41,6 @@ export const useUpdateConfigMusic = (soundDesign: SoundDesignConfig) => {
 
   const onResourceMusicsChoosen = (resource: string, resourceKey: SoundEffectsKeys, located: SoundLocated) => {
     const currentLocated = soundDesign[located] as Record<string, AudioFile> | undefined;
-
     updateSoundDesign({
       [located]: {
         ...currentLocated,
@@ -58,9 +57,16 @@ export const useUpdateConfigMusic = (soundDesign: SoundDesignConfig) => {
     const currentLocated = soundDesign[located] as Record<string, AudioFile> | undefined;
 
     if (currentLocated) {
-      const { [resourceKey]: removed, ...rest } = currentLocated;
+      const currentResource = currentLocated[resourceKey];
       updateSoundDesign({
-        [located]: rest,
+        [located]: {
+          ...currentLocated,
+          [resourceKey]: {
+            ...currentResource,
+            // If replace by null, some errors occurs in when you reload the project
+            name: '',
+          },
+        },
       });
     }
   };

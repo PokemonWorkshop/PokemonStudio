@@ -2,7 +2,6 @@ import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageEditor } from '@components/pages';
 import { useConfigSoundDesign } from '@src/hooks/useProjectConfig';
-import { AudioInput } from '@components/inputs';
 import { AUDIO_EXT } from '@components/inputs/AudioInput';
 import type { SoundEffectsKeys, SoundLocated } from '@modelEntities/config';
 import { EditorsContainer } from './music.style';
@@ -80,7 +79,7 @@ export const DashboardMusicDesign = () => {
     <EditorsContainer>
       {musicState.map((state) => (
         <PageEditor key={state.title} editorTitle={t('sound_default')} title={t(state.title)} canCollapse>
-          {state.soundEffects.map((soundEffect) => (
+          {state.soundEffects.map((soundEffect, index) => (
             <OtherResource
               type="music"
               title={t(`${soundEffect?.key}`)}
@@ -92,7 +91,7 @@ export const DashboardMusicDesign = () => {
               onResourceClean={() => {
                 if (soundEffect?.key) onResourceMusicsClean(soundEffect?.key as SoundEffectsKeys, soundEffect?.located as SoundLocated);
               }}
-              key={soundEffect?.key}
+              key={soundEffect?.key ?? index}
               beforeButtons={
                 <button>
                   <EditButtonOnlyIcon

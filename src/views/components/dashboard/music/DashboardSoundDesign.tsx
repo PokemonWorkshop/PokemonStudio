@@ -106,13 +106,14 @@ export const DashboardSoundDesign = () => {
   const handleOpenEditor = (soundEffect: AudioFile & { key: SoundEffectsKeys; located: SoundLocated }) => {
     setAudioFile(soundEffect);
     dialogsRef.current?.openDialog('sound_effect', false);
+    console.log('soundEffect', soundEffect);
   };
 
   return (
     <EditorsContainer>
       {soundState.map((state) => (
         <PageEditor key={state.title} editorTitle={t('sound_default')} title={t(state.title)} canCollapse>
-          {state.soundEffects.map((soundEffect) => (
+          {state.soundEffects.map((soundEffect, index) => (
             <OtherResource
               type="music"
               title={t(`${soundEffect?.key}`)}
@@ -124,7 +125,7 @@ export const DashboardSoundDesign = () => {
               onResourceClean={() => {
                 if (soundEffect?.key) onResourceMusicsClean(soundEffect?.key as SoundEffectsKeys, soundEffect?.located as SoundLocated);
               }}
-              key={soundEffect?.key}
+              key={soundEffect?.key ?? index}
               beforeButtons={
                 <button>
                   <EditButtonOnlyIcon
