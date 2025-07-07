@@ -33,6 +33,8 @@
   "resolution": "Risoluzione",
   "disable": "Disable",
   "volume": "Volume",
+  "volume_ingame": "Volume in game",
+  "tempo_ingame": "Tempo in game",
   "project_name": "Nome del progetto",
   "project_icon": "Icona del progetto",
   "default_language": "Lingua predefinita",

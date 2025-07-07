@@ -2,17 +2,15 @@ import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageEditor } from '@components/pages';
 import { useConfigSoundDesign } from '@src/hooks/useProjectConfig';
-import { SoundDesignConfig, SoundEffectsKeys, SoundLocated } from '@modelEntities/config';
+import { SoundEffectsKeys, SoundLocated } from '@modelEntities/config';
 import { EditorsContainer } from './music.style';
 import { AudioFile } from '@modelEntities/common';
-import { AudioInput } from '@components/inputs';
 import { AUDIO_EXT } from '@components/inputs/AudioInput';
 import { OtherResource } from '@components/resources';
 import { EditButtonOnlyIcon } from '@components/buttons';
 import { useUpdateConfigMusic } from './ressoures/useUpdateConfigSound';
-import { EditorOverlay } from '@components/editor';
-import { DashboardSoundEditor } from './editors/DashboardSoundEditor';
-import { useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { SoundEditorKeys, SoundEditorOverlay } from './editors/SoundEditorOverlay';
+import { useDialogsRef } from '@src/hooks/useDialogsRef';
 
 interface SoundMapping {
   title: string;
@@ -86,7 +84,8 @@ const SoundState: SoundMapping[] = [
 
 export const DashboardSoundDesign = () => {
   const { t } = useTranslation();
-  const [currentEditor, setCurrentEditor] = useState<string | undefined>(undefined);
+  const dialogsRef = useDialogsRef<SoundEditorKeys>();
+  const [audioFile, setAudioFile] = useState<(AudioFile & { key: SoundEffectsKeys; located: SoundLocated }) | null>(null);
 
   const { projectConfigValues: soundDesign } = useConfigSoundDesign();
   const { onResourceMusicsChoosen, onResourceMusicsClean } = useUpdateConfigMusic(soundDesign);
@@ -105,32 +104,9 @@ export const DashboardSoundDesign = () => {
   }, [soundDesign]);
 
   const handleOpenEditor = (soundEffect: AudioFile & { key: SoundEffectsKeys; located: SoundLocated }) => {
-    setCurrentEditor(soundEffect.key);
+    setAudioFile(soundEffect);
+    dialogsRef.current?.openDialog('sound_effect', false);
   };
-
-  const handleCloseEditor = (result: boolean) => {
-    if (!result) return;
-    setCurrentEditor(undefined);
-  };
-
-  const editors = useMemo(() => {
-    const editorMap: Record<string, React.ReactNode> = {};
-    soundState.forEach((state) => {
-      state.soundEffects.forEach((soundEffect) => {
-        if (soundEffect) {
-          editorMap[soundEffect.key] = (
-            <DashboardSoundEditor
-              audioFile={{
-                ...(soundEffect as AudioFile & { key: SoundEffectsKeys; located: SoundLocated }),
-              }}
-              onClose={() => setCurrentEditor(undefined)}
-            />
-          );
-        }
-      });
-    });
-    return editorMap;
-  }, [soundState]);
 
   return (
     <EditorsContainer>
@@ -165,7 +141,7 @@ export const DashboardSoundDesign = () => {
           ))}
         </PageEditor>
       ))}
-      <EditorOverlay currentEditor={currentEditor} editors={editors} onClose={() => handleCloseEditor(true)} />
+      <SoundEditorOverlay ref={dialogsRef} audioFile={audioFile ?? undefined} />
     </EditorsContainer>
   );
 };
