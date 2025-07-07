@@ -1,8 +1,9 @@
-import { SoundDesignConfig, SoundEffectsKeys } from '@modelEntities/config';
+import { SoundDesignConfig, SoundEffectsKeys, SoundLocated } from '@modelEntities/config';
 import { useConfigSoundDesign } from '@src/hooks/useProjectConfig';
 import { useCallback } from 'react';
 import { cloneEntity } from '@utils/cloneEntity';
 import { basename } from '@utils/path';
+import { AudioFile } from '@modelEntities/common';
 
 export const useUpdateConfigSound = (soundDesign: SoundDesignConfig) => {
   const { setProjectConfigValues: setSoundDesign } = useConfigSoundDesign();
@@ -23,19 +24,49 @@ export const useUpdateConfigSound = (soundDesign: SoundDesignConfig) => {
 export const useUpdateConfigMusic = (soundDesign: SoundDesignConfig) => {
   const updateSoundDesign = useUpdateConfigSound(soundDesign);
 
-  const onResourceMusicsChoosen = (resourcePath: string, resource: SoundEffectsKeys) => {
+  const onResourceUpdate = (resource: Partial<AudioFile>, resourceKey: SoundEffectsKeys, located: SoundLocated) => {
+    const currentLocated = soundDesign[located] as Record<string, AudioFile> | undefined;
+    const currentResource = currentLocated?.[resourceKey];
+
     updateSoundDesign({
-      [resource]: basename(resourcePath),
+      [located]: {
+        ...currentLocated,
+        [resourceKey]: {
+          ...currentResource,
+          ...resource,
+        },
+      },
     });
   };
 
-  const onResourceMusicsClean = (resource: SoundEffectsKeys) => {
+  const onResourceMusicsChoosen = (resource: string, resourceKey: SoundEffectsKeys, located: SoundLocated) => {
+    const currentLocated = soundDesign[located] as Record<string, AudioFile> | undefined;
+
     updateSoundDesign({
-      [resource]: '',
+      [located]: {
+        ...currentLocated,
+        [resourceKey]: {
+          name: basename(resource),
+          volume: 100,
+          pitch: 100,
+        },
+      },
     });
+  };
+
+  const onResourceMusicsClean = (resourceKey: SoundEffectsKeys, located: SoundLocated) => {
+    const currentLocated = soundDesign[located] as Record<string, AudioFile> | undefined;
+
+    if (currentLocated) {
+      const { [resourceKey]: removed, ...rest } = currentLocated;
+      updateSoundDesign({
+        [located]: rest,
+      });
+    }
   };
 
   return {
+    onResourceUpdate,
     onResourceMusicsChoosen,
     onResourceMusicsClean,
   };

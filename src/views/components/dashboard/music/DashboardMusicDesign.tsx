@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageEditor } from '@components/pages';
 import { useConfigSoundDesign } from '@src/hooks/useProjectConfig';
@@ -9,6 +9,9 @@ import { EditorsContainer } from './music.style';
 import { AudioFile } from '@modelEntities/common';
 import { OtherResource } from '@components/resources';
 import { EditButtonOnlyIcon } from '@components/buttons';
+import { SoundEditorKeys, SoundEditorOverlay } from './editors/SoundEditorOverlay';
+import { useDialogsRef } from '@src/hooks/useDialogsRef';
+import { useUpdateConfigMusic } from './ressoures/useUpdateConfigSound';
 
 interface SoundMapping {
   title: string;
@@ -50,7 +53,10 @@ const MusicState: SoundMapping[] = [
 
 export const DashboardMusicDesign = () => {
   const { t } = useTranslation();
-  const { projectConfigValues: musicDesign, setProjectConfigValues: setMusicDesign } = useConfigSoundDesign();
+  const { projectConfigValues: musicDesign } = useConfigSoundDesign();
+  const dialogsRef = useDialogsRef<SoundEditorKeys>();
+  const [audioFile, setAudioFile] = useState<(AudioFile & { key: SoundEffectsKeys; located: SoundLocated }) | null>(null);
+  const { onResourceMusicsChoosen, onResourceMusicsClean } = useUpdateConfigMusic(musicDesign);
 
   const musicState = useMemo(() => {
     return MusicState.map((state) => {
@@ -65,23 +71,26 @@ export const DashboardMusicDesign = () => {
     });
   }, [musicDesign]);
 
-  console.log(musicDesign, musicState);
+  const handleOpenEditor = (soundEffect: AudioFile & { key: SoundEffectsKeys; located: SoundLocated }) => {
+    setAudioFile(soundEffect);
+    dialogsRef.current?.openDialog('music', false);
+  };
 
   return (
     <EditorsContainer>
       {musicState.map((state) => (
-        <PageEditor key={state.title} editorTitle={t('music_default')} title={t(state.title)} canCollapse>
+        <PageEditor key={state.title} editorTitle={t('sound_default')} title={t(state.title)} canCollapse>
           {state.soundEffects.map((soundEffect) => (
             <OtherResource
               type="music"
               title={t(`${soundEffect?.key}`)}
               resourcePath={soundEffect?.name ?? ''}
               extensions={AUDIO_EXT}
-              onResourceChoosen={(resourcePath) => {
-                console.log(resourcePath);
+              onResourceChoosen={(resourcePath: string) => {
+                onResourceMusicsChoosen(resourcePath, soundEffect?.key as SoundEffectsKeys, soundEffect?.located as SoundLocated);
               }}
               onResourceClean={() => {
-                console.log('clear');
+                if (soundEffect?.key) onResourceMusicsClean(soundEffect?.key as SoundEffectsKeys, soundEffect?.located as SoundLocated);
               }}
               key={soundEffect?.key}
               beforeButtons={
@@ -89,7 +98,9 @@ export const DashboardMusicDesign = () => {
                   <EditButtonOnlyIcon
                     onClick={(e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
                       e.stopPropagation();
-                      console.log('edit');
+                      if (soundEffect) {
+                        handleOpenEditor(soundEffect as AudioFile & { key: SoundEffectsKeys; located: SoundLocated });
+                      }
                     }}
                   />
                 </button>
@@ -98,6 +109,7 @@ export const DashboardMusicDesign = () => {
           ))}
         </PageEditor>
       ))}
+      <SoundEditorOverlay ref={dialogsRef} audioFile={audioFile ?? undefined} />
     </EditorsContainer>
   );
 };

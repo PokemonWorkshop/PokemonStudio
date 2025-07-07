@@ -7,7 +7,7 @@ import { useResource } from '@hooks/useResource';
 import { OtherNoResourceContainer, OtherResourceContainer } from './OtherResourceStyle';
 import { ResourceImage } from '@components/ResourceImage';
 
-const isNoResource = (resourcePath: string) => resourcePath.endsWith('/');
+const isNoResource = (resourcePath: string) => !resourcePath || resourcePath.endsWith('/');
 
 type OtherResourceProps = {
   type: 'icon' | 'music';

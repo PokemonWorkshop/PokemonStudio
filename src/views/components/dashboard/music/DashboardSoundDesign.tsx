@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageEditor } from '@components/pages';
 import { useConfigSoundDesign } from '@src/hooks/useProjectConfig';
@@ -118,11 +118,11 @@ export const DashboardSoundDesign = () => {
               title={t(`${soundEffect?.key}`)}
               resourcePath={soundEffect?.name ?? ''}
               extensions={AUDIO_EXT}
-              onResourceChoosen={(resourcePath) => {
-                onResourceMusicsChoosen(resourcePath, soundEffect?.key as SoundEffectsKeys);
+              onResourceChoosen={(resourcePath: string) => {
+                onResourceMusicsChoosen(resourcePath, soundEffect?.key as SoundEffectsKeys, soundEffect?.located as SoundLocated);
               }}
               onResourceClean={() => {
-                if (soundEffect?.key) onResourceMusicsClean(soundEffect?.key as SoundEffectsKeys);
+                if (soundEffect?.key) onResourceMusicsClean(soundEffect?.key as SoundEffectsKeys, soundEffect?.located as SoundLocated);
               }}
               key={soundEffect?.key}
               beforeButtons={
