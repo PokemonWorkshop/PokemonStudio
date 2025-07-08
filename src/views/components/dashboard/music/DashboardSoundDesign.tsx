@@ -106,7 +106,6 @@ export const DashboardSoundDesign = () => {
   const handleOpenEditor = (soundEffect: AudioFile & { key: SoundEffectsKeys; located: SoundLocated }) => {
     setAudioFile(soundEffect);
     dialogsRef.current?.openDialog('sound_effect', false);
-    console.log('soundEffect', soundEffect);
   };
 
   return (

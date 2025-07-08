@@ -5,6 +5,21 @@ import { cloneEntity } from '@utils/cloneEntity';
 import { basename } from '@utils/path';
 import { AudioFile } from '@modelEntities/common';
 
+const getAudioName = (resource: string, located: SoundLocated) => {
+  const name = basename(resource);
+  switch (located) {
+    case 'backgroundMusic':
+      return `audio/bgm/${name}`;
+    case 'backgroundSound':
+      return `audio/bgs/${name}`;
+    case 'musicEffects':
+      return `audio/me/${name}`;
+    case 'soundEffects':
+      return `audio/se/${name}`;
+  }
+  return name;
+};
+
 export const useUpdateConfigSound = (soundDesign: SoundDesignConfig) => {
   const { setProjectConfigValues: setSoundDesign } = useConfigSoundDesign();
 
@@ -45,7 +60,7 @@ export const useUpdateConfigMusic = (soundDesign: SoundDesignConfig) => {
       [located]: {
         ...currentLocated,
         [resourceKey]: {
-          name: basename(resource),
+          name: getAudioName(resource, located),
           volume: 100,
           pitch: 100,
         },
