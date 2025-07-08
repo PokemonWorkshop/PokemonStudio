@@ -70,7 +70,7 @@
     "@vitejs/plugin-react": "^4.5.0",
     "app-builder-lib": "^25.0.5",
     "css-loader": "^7.1.2",
-    "electron": "^36.3.2",
+    "electron": "^37.2.0",
     "eslint": "^8.57.1",
     "eslint-import-resolver-typescript": "^3.6.3",
     "eslint-plugin-import": "^2.30.0",
