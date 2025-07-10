@@ -2,21 +2,18 @@ import React, { forwardRef, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import styled from 'styled-components';
-
 import { Editor } from '@components/editor';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { TextInputError } from '@components/inputs/Input';
 import { TagWithDeletion, TagWithDeletionContainer } from '@components/Tag';
 import { Select } from '@ds/Select';
-
 import { useZonePage } from '@src/hooks/usePage';
 import { useUpdateZone } from './useUpdateZone';
-
-import { StudioZoneForcedWeather } from '@modelEntities/zone';
-
+import type { StudioZone, StudioZoneForcedWeather } from '@modelEntities/zone';
 import { padStr } from '@utils/PadStr';
 import { cloneEntity } from '@utils/cloneEntity';
+import { ProjectData } from '@src/GlobalStateProvider';
 
 const InputMapsListContainer = styled(InputWithTopLabelContainer)`
   gap: 16px;
@@ -53,13 +50,28 @@ const WeatherCategories = [-1, 0, 1, 2, 3, 4, 5] as const;
 const weatherCategoryEntries = (t: TFunction) =>
   WeatherCategories.map((category) => ({ value: category.toString(), label: t(`weather${category}`) }));
 
+const mapsAlreadyAssignedInZones = (zonesData: ProjectData['zones'], currentZone: StudioZone) => {
+  const zones = Object.values(zonesData);
+  const maps = new Set(
+    zones.reduce<number[]>((maps, zone) => {
+      if (zone.dbSymbol === currentZone.dbSymbol) return maps;
+
+      maps.push(...zone.maps);
+      return maps;
+    }, [])
+  );
+  return Array.from(maps.values());
+};
+
 export const ZoneSettingsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { t } = useTranslation();
-  const { zone } = useZonePage();
+  const { zone, state } = useZonePage();
   const updateZone = useUpdateZone(zone);
   const forcedWeatherRef = useRef<string | undefined>();
   const panelIdRef = useRef<HTMLInputElement>(null);
   const weatherOptions = useMemo(() => weatherCategoryEntries(t), [t]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const mapsAlreadyAssigned = useMemo(() => mapsAlreadyAssignedInZones(state.projectData.zones, zone), []);
   const [maps, setMaps] = useState<number[]>(cloneEntity(zone.maps));
   const [errorNewMap, setErrorNewMap] = useState<number | false>(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -72,7 +84,7 @@ export const ZoneSettingsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
         .filter((v) => v.trim().length !== 0)
         .map((v) => Number(v))
         .filter((v, i, a) => i === a.indexOf(v));
-      const errorMapId = mapIds.find((mapId) => maps.includes(mapId));
+      const errorMapId = mapIds.find((mapId) => maps.includes(mapId) || mapsAlreadyAssigned.includes(mapId));
       if (errorMapId !== undefined) {
         setErrorNewMap(errorMapId);
         return;
