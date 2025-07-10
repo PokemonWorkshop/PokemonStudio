@@ -35,6 +35,7 @@ const PageEditorContainer = styled(DataBlockEditorContainer)`
 
 type PageHeaderContainerProps = {
   isCollapse: boolean;
+  canCollapse: boolean;
 };
 
 const PageHeaderContainer = styled(TitleContainer)<PageHeaderContainerProps>`
@@ -42,6 +43,7 @@ const PageHeaderContainer = styled(TitleContainer)<PageHeaderContainerProps>`
   flex-direction: row;
   justify-content: space-between;
   ${({ theme, isCollapse }) => !isCollapse && `border-bottom: 1px solid ${theme.colors.dark20}; padding-bottom: 16px;`};
+  ${({ canCollapse }) => canCollapse && 'cursor: pointer;'};
 `;
 
 const PageDataContainer = styled.div`
@@ -76,7 +78,7 @@ export const PageEditor = ({
 
   return (
     <PageEditorContainer size="default" data-disabled={disabled && 'true'} data-noactive>
-      <PageHeaderContainer isCollapse={collapse}>
+      <PageHeaderContainer isCollapse={collapse} onClick={canCollapse && onClickedCollapse} canCollapse={!!canCollapse}>
         <TitleContainer>
           <p>{editorTitle}</p>
           <h3>{title}</h3>
