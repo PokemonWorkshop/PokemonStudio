@@ -13,6 +13,7 @@ const ITEM_BASE_VALIDATOR = z.object({
   isMapUsable: z.boolean(),
   isLimited: z.boolean(),
   isHoldable: z.boolean(),
+  isAllowingMega: z.boolean(),
   flingPower: POSITIVE_OR_ZERO_INT,
 });
 
@@ -254,8 +255,22 @@ export const mutateItemInto = <K extends StudioItem['klass']>(
   originItem: StudioItem,
   targetItem: Extract<StudioItem, { klass: K }>
 ): typeof targetItem => {
-  const { id, dbSymbol, icon, price, socket, position, isBattleUsable, isMapUsable, isLimited, isHoldable, flingPower } = originItem;
-  const newItem = { ...targetItem, id, dbSymbol, icon, price, socket, position, isBattleUsable, isMapUsable, isLimited, isHoldable, flingPower };
+  const { id, dbSymbol, icon, price, socket, position, isBattleUsable, isMapUsable, isLimited, isHoldable, isAllowingMega, flingPower } = originItem;
+  const newItem = {
+    ...targetItem,
+    id,
+    dbSymbol,
+    icon,
+    price,
+    socket,
+    position,
+    isBattleUsable,
+    isMapUsable,
+    isLimited,
+    isHoldable,
+    isAllowingMega,
+    flingPower,
+  };
 
   if ('loyaltyMalus' in originItem && 'loyaltyMalus' in newItem) newItem.loyaltyMalus = originItem.loyaltyMalus;
   if ('ppCount' in originItem && 'ppCount' in newItem) newItem.ppCount = originItem.ppCount;

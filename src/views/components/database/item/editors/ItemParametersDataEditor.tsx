@@ -18,6 +18,7 @@ export const ItemParametersDataEditor = forwardRef<EditorHandlingClose>((_, ref)
     isMapUsable: item.isMapUsable,
     isLimited: item.isLimited,
     isHoldable: item.isHoldable,
+    isAllowingMega: item.isAllowingMega,
   });
 
   const handleClose = () => {
@@ -61,6 +62,14 @@ export const ItemParametersDataEditor = forwardRef<EditorHandlingClose>((_, ref)
             name="can_be_held"
             checked={params.isHoldable}
             onChange={(event) => setParams((prevFormData) => ({ ...prevFormData, isHoldable: event.target.checked }))}
+          />
+        </InputWithLeftLabelContainer>
+        <InputWithLeftLabelContainer>
+          <Label htmlFor="allow_mega_evolution">{t('allow_mega_evolution')}</Label>
+          <Toggle
+            name="allow_mega_evolution"
+            checked={params.isAllowingMega}
+            onChange={(event) => setParams((prevFormData) => ({ ...prevFormData, isAllowingMega: event.target.checked }))}
           />
         </InputWithLeftLabelContainer>
       </InputContainer>
