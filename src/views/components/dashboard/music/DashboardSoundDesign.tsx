@@ -11,15 +11,16 @@ import { EditButtonOnlyIcon } from '@components/buttons';
 import { useUpdateConfigMusic } from './ressoures/useUpdateConfigSound';
 import { SoundEditorKeys, SoundEditorOverlay } from './editors/SoundEditorOverlay';
 import { useDialogsRef } from '@src/hooks/useDialogsRef';
+import { TuneButtonOnlyIcon } from '@components/buttons/TuneButtonOnlyIcon';
 
 interface SoundMapping {
   title: string;
-  soundEffects: { key: SoundEffectsKeys; located: SoundLocated }[];
+  soundEffects: { key: SoundEffectsKeys; located: SoundLocated; translateKey?: string }[];
 }
 
 const SoundState: SoundMapping[] = [
   {
-    title: 'interface',
+    title: 'interfaces',
     soundEffects: [
       { key: 'decision', located: 'soundEffects' },
       { key: 'cancel', located: 'soundEffects' },
@@ -52,7 +53,7 @@ const SoundState: SoundMapping[] = [
       { key: 'moveEffective', located: 'soundEffects' },
       { key: 'moveVeryEffective', located: 'soundEffects' },
       { key: 'moveNotVeryEffective', located: 'soundEffects' },
-      { key: 'shiny', located: 'soundEffects' },
+      { key: 'shiny', located: 'soundEffects', translateKey: 'shinySee' },
       { key: 'statRiseUp', located: 'soundEffects' },
       { key: 'statFallDown', located: 'soundEffects' },
       { key: 'sendingBall', located: 'soundEffects' },
@@ -115,7 +116,7 @@ export const DashboardSoundDesign = () => {
           {state.soundEffects.map((soundEffect, index) => (
             <OtherResource
               type="music"
-              title={t(`${soundEffect?.key}`)}
+              title={t(`${soundEffect?.translateKey ?? soundEffect?.key}`)}
               resourcePath={soundEffect?.name ?? ''}
               extensions={AUDIO_EXT}
               onResourceChoosen={(resourcePath: string) => {
@@ -127,7 +128,7 @@ export const DashboardSoundDesign = () => {
               key={soundEffect?.key ?? index}
               beforeButtons={
                 <button>
-                  <EditButtonOnlyIcon
+                  <TuneButtonOnlyIcon
                     onClick={(e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
                       e.stopPropagation();
                       if (soundEffect) {

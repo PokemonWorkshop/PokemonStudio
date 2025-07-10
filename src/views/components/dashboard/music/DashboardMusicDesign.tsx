@@ -7,10 +7,10 @@ import type { SoundEffectsKeys, SoundLocated } from '@modelEntities/config';
 import { EditorsContainer } from './music.style';
 import { AudioFile } from '@modelEntities/common';
 import { OtherResource } from '@components/resources';
-import { EditButtonOnlyIcon } from '@components/buttons';
 import { SoundEditorKeys, SoundEditorOverlay } from './editors/SoundEditorOverlay';
 import { useDialogsRef } from '@src/hooks/useDialogsRef';
 import { useUpdateConfigMusic } from './ressoures/useUpdateConfigSound';
+import { TuneButtonOnlyIcon } from '@components/buttons/TuneButtonOnlyIcon';
 
 interface SoundMapping {
   title: string;
@@ -19,7 +19,7 @@ interface SoundMapping {
 
 const MusicState: SoundMapping[] = [
   {
-    title: 'interface',
+    title: 'interfaces',
     soundEffects: [{ key: 'gameOver', located: 'musicEffects' }],
   },
   {
@@ -94,7 +94,7 @@ export const DashboardMusicDesign = () => {
               key={soundEffect?.key ?? index}
               beforeButtons={
                 <button>
-                  <EditButtonOnlyIcon
+                  <TuneButtonOnlyIcon
                     onClick={(e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
                       e.stopPropagation();
                       if (soundEffect) {
