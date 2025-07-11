@@ -14,7 +14,7 @@ import { useUpdateConfigMusic } from '../ressoures/useUpdateConfigSound';
 
 const SOUND_EDITOR_SCHEMA = z.object({
   volume: z.number().min(0).max(100).default(100),
-  pitch: z.number().min(0).max(100).default(100),
+  pitch: z.number().min(50).max(150).default(100),
 });
 
 type DashbordSoundEditorProps = {
