@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { StyledNavLinkActionItem } from '@components/navigation/NavigationBarItem/StyledNavLink';
 import { NavigationBarItemContainer } from '@components/navigation/NavigationBarItem/NavigationBarItemContainer';
-import { ReactComponent as PlayIcon } from '@assets/icons/global/play.svg';
+import PlayIcon from '@assets/icons/global/play.svg';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useTranslation } from 'react-i18next';
 import { StudioShortcutActions, useShortcut } from '@hooks/useShortcuts';

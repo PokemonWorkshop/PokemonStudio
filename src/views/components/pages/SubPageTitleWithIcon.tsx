@@ -1,7 +1,7 @@
 import { DarkButton } from '@components/buttons';
 import React from 'react';
 import styled from 'styled-components';
-import { ReactComponent as BackIcon } from '@assets/icons/global/back.svg';
+import BackIcon from '@assets/icons/global/back.svg';
 import { SubPageTitleContainer, SubPageTitleProps } from './SubPageTitle';
 import { ResourceImage } from '@components/ResourceImage';
 

@@ -1,7 +1,7 @@
 import React, { InputHTMLAttributes } from 'react';
 import styled from 'styled-components';
 import { Input } from './Input';
-import { ReactComponent as OffsetIcon } from '@assets/icons/global/offset-icon.svg';
+import OffsetIcon from '@assets/icons/global/offset-icon.svg';
 import { StudioMapLinkCardinal } from '@modelEntities/mapLink';
 
 const InputOffsetContainer = styled.div`

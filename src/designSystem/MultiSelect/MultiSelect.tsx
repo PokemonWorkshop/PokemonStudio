@@ -2,7 +2,7 @@ import React from 'react';
 import { RenderOptions } from './RenderOptions';
 import { MultiSelectProps, useMultiSelect } from './useMultiSelect';
 import { MultiSelectContainer, MultiSelectTextArea } from './MultiSelectContainer';
-import { ReactComponent as DownIcon } from '@assets/icons/global/down-icon.svg';
+import DownIcon from '@assets/icons/global/down-icon.svg';
 import { ValueType } from './useRenderOptions';
 
 export const MultiSelect = <Value extends ValueType, ChooseValue extends Value>(props: MultiSelectProps<Value, ChooseValue>) => {

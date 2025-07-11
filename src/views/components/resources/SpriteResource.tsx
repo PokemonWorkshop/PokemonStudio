@@ -2,7 +2,7 @@ import { ClearButtonOnlyIcon, FolderButtonOnlyIcon } from '@components/buttons';
 import { ResourceImage } from '@components/ResourceImage';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ReactComponent as FileDrop } from '@assets/icons/global/drop.svg';
+import FileDrop from '@assets/icons/global/drop.svg';
 import { LinkContainer, SpriteNoResourceContainer, SpriteResourceContainer, SpriteResourceType } from '@components/resources';
 import { useResource } from '@hooks/useResource';
 

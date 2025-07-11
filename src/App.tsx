@@ -1,5 +1,4 @@
-import React, { Suspense } from 'react';
-import { createRoot } from 'react-dom/client';
+import React from 'react';
 import { ReactNotifications } from 'react-notifications-component';
 import { MemoryRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
@@ -16,7 +15,6 @@ import { CompilationPage } from '@pages/Compilation.page';
 import { Loader } from '@components/Loader';
 import { LoaderContextProvider } from '@utils/loaderContext';
 import { UnsavedWarningModal } from '@components/modals/UnsavedWarningModal';
-import { TitleBar } from '@components/titleBar/TitleBar';
 import WorldRouter from '@pages/world/World.Router.page';
 import SettingsRouter from '@pages/settings/Settings.Router.page';
 
@@ -61,24 +59,4 @@ const App = () => {
   );
 };
 
-const TitleBarApp = () => {
-  return (
-    <ThemeProvider theme={theme}>
-      <TitleBar />
-    </ThemeProvider>
-  );
-};
-
-const root = createRoot(document.getElementById('root') as HTMLElement);
-root.render(
-  <Suspense fallback="loading...">
-    <App />
-  </Suspense>
-);
-
-const titlebar = createRoot(document.getElementById('titlebar') as HTMLElement);
-titlebar.render(
-  <Suspense fallback="loading...">
-    <TitleBarApp />
-  </Suspense>
-);
+export default App;

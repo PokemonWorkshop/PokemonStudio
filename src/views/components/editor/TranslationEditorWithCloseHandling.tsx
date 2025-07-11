@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { EditorTitle } from './Editor';
 import { EditorContainer } from './EditorContainer';
-import { ReactComponent as ClearIcon } from '@assets/icons/global/clear-tag-icon.svg';
+import ClearIcon from '@assets/icons/global/clear-tag-icon.svg';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
 import { SecondaryTag } from '@components/Tag';

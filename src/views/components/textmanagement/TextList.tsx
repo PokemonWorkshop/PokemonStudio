@@ -8,7 +8,7 @@ import { DarkButton, ClearButtonWithIcon, SecondaryButtonWithPlusIconResponsive 
 import { ClearInput } from '@components/inputs';
 import { DataTextGrid, DataTextList, DataTextListTable, TableEmpty, TitleContainer } from './TextListStyle';
 import { padStr } from '@utils/PadStr';
-import { ReactComponent as TranslationIcon } from '@assets/icons/global/translate.svg';
+import TranslationIcon from '@assets/icons/global/translate.svg';
 import { useGetTextList, useSetProjectText } from '@utils/ReadingProjectText';
 import { useTextPage } from '@hooks/usePage';
 

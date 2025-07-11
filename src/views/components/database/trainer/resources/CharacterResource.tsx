@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ResourceWrapper, ResourcesContainer, SpriteResource, TitleResource } from '@components/resources';
 import { trainerResourcePath } from '@utils/path';
 import styled from 'styled-components';
-import { ReactComponent as HelpIcon } from '@assets/icons/navigation/help-icon.svg';
+import HelpIcon from '@assets/icons/navigation/help-icon.svg';
 import { StudioTrainer } from '@modelEntities/trainer';
 import { useUpdateResources } from './useUpdateResources';
 import { TooltipWrapper } from '@ds/Tooltip';
