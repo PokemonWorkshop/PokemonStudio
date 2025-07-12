@@ -5,7 +5,7 @@ import { cloneEntity } from '@utils/cloneEntity';
 import { basename } from '@utils/path';
 import { AudioFile } from '@modelEntities/common';
 
-const getAudioName = (resource: string, located: SoundLocated) => {
+export const getAudioName = (located: SoundLocated, resource?: string) => {
   const name = basename(resource);
   switch (located) {
     case 'backgroundMusic':
@@ -60,7 +60,7 @@ export const useUpdateConfigMusic = (soundDesign: SoundDesignConfig) => {
       [located]: {
         ...currentLocated,
         [resourceKey]: {
-          name: getAudioName(resource, located),
+          name: getAudioName(located, resource),
           volume: 100,
           pitch: 100,
         },

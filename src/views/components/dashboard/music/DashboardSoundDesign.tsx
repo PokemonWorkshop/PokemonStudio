@@ -2,19 +2,18 @@ import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageEditor } from '@components/pages';
 import { useConfigSoundDesign } from '@src/hooks/useProjectConfig';
-import { SoundEffectsKeys, SoundLocated } from '@modelEntities/config';
 import { EditorsContainer } from './music.style';
 import { AudioFile } from '@modelEntities/common';
 import { AUDIO_EXT } from '@components/inputs/AudioInput';
 import { OtherResource } from '@components/resources';
-import { useUpdateConfigMusic } from './ressoures/useUpdateConfigSound';
-import { SoundEditorKeys, SoundEditorOverlay } from './editors/SoundEditorOverlay';
+import { getAudioName, useUpdateConfigMusic } from './ressoures/useUpdateConfigSound';
+import { SoundEditorKeys, SoundEditorOverlay, type SoundEffect } from './editors/SoundEditorOverlay';
 import { useDialogsRef } from '@src/hooks/useDialogsRef';
 import { TuneButtonOnlyIcon } from '@components/buttons/TuneButtonOnlyIcon';
 
 interface SoundMapping {
   title: string;
-  soundEffects: { key: SoundEffectsKeys; located: SoundLocated; translateKey?: string }[];
+  soundEffects: SoundEffect[];
 }
 
 const SoundState: SoundMapping[] = [
@@ -85,7 +84,7 @@ const SoundState: SoundMapping[] = [
 export const DashboardSoundDesign = () => {
   const { t } = useTranslation();
   const dialogsRef = useDialogsRef<SoundEditorKeys>();
-  const [audioFile, setAudioFile] = useState<(AudioFile & { key: SoundEffectsKeys; located: SoundLocated }) | null>(null);
+  const [audioFile, setAudioFile] = useState<(AudioFile & SoundEffect) | null>(null);
 
   const { projectConfigValues: soundDesign } = useConfigSoundDesign();
   const { onResourceMusicsChoosen, onResourceMusicsClean } = useUpdateConfigMusic(soundDesign);
@@ -94,16 +93,18 @@ export const DashboardSoundDesign = () => {
     return SoundState.map((state) => {
       return {
         ...state,
-        soundEffects: state.soundEffects.map((soundEffect) => {
+        soundEffects: state.soundEffects.reduce<(SoundEffect & AudioFile)[]>((prev, soundEffect) => {
           const located = soundDesign?.[soundEffect.located];
           const audio = located?.[soundEffect.key as keyof typeof located] as AudioFile | undefined;
-          return audio ? { ...soundEffect, ...audio } : null;
-        }),
+          if (!audio) return prev;
+
+          return [...prev, { ...soundEffect, ...audio }];
+        }, []),
       };
     });
   }, [soundDesign]);
 
-  const handleOpenEditor = (soundEffect: AudioFile & { key: SoundEffectsKeys; located: SoundLocated }) => {
+  const handleOpenEditor = (soundEffect: AudioFile & SoundEffect) => {
     setAudioFile(soundEffect);
     dialogsRef.current?.openDialog('sound_effect', false);
   };
@@ -112,27 +113,25 @@ export const DashboardSoundDesign = () => {
     <EditorsContainer>
       {soundState.map((state) => (
         <PageEditor key={state.title} editorTitle={t('sound_default')} title={t(state.title)} canCollapse>
-          {state.soundEffects.map((soundEffect, index) => (
+          {state.soundEffects.map((soundEffect) => (
             <OtherResource
               type="music"
-              title={t(`${soundEffect?.translateKey ?? soundEffect?.key}`)}
-              resourcePath={soundEffect?.name ?? ''}
+              title={t(`${soundEffect.translateKey ?? soundEffect.key}`)}
+              resourcePath={getAudioName(soundEffect.located, soundEffect.name)}
               extensions={AUDIO_EXT}
               onResourceChoosen={(resourcePath: string) => {
-                onResourceMusicsChoosen(resourcePath, soundEffect?.key as SoundEffectsKeys, soundEffect?.located as SoundLocated);
+                onResourceMusicsChoosen(resourcePath, soundEffect.key, soundEffect.located);
               }}
               onResourceClean={() => {
-                if (soundEffect?.key) onResourceMusicsClean(soundEffect?.key as SoundEffectsKeys, soundEffect?.located as SoundLocated);
+                onResourceMusicsClean(soundEffect.key, soundEffect.located);
               }}
-              key={soundEffect?.key ?? index}
+              key={soundEffect.key}
               beforeButtons={
                 <button>
                   <TuneButtonOnlyIcon
                     onClick={(e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
                       e.stopPropagation();
-                      if (soundEffect) {
-                        handleOpenEditor(soundEffect as AudioFile & { key: SoundEffectsKeys; located: SoundLocated });
-                      }
+                      handleOpenEditor(soundEffect);
                     }}
                   />
                 </button>
