@@ -1,7 +1,7 @@
 import { Editor } from '@components/editor';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { InputFormContainer } from '@components/inputs/InputContainer';
-import { AudioFile } from '@modelEntities/common';
+import { AUDIO_VALIDATOR, AudioFile } from '@modelEntities/common';
 import { SoundLocated, SoundEffectsKeys } from '@modelEntities/config';
 import { useDialogsRef } from '@src/hooks/useDialogsRef';
 import { useInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
@@ -9,12 +9,11 @@ import { useConfigSoundDesign } from '@src/hooks/useProjectConfig';
 import { useZodForm } from '@src/hooks/useZodForm';
 import React, { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { z } from 'zod';
 import { useUpdateConfigMusic } from '../ressoures/useUpdateConfigSound';
 
-const SOUND_EDITOR_SCHEMA = z.object({
-  volume: z.number().min(0).max(100).default(100),
-  pitch: z.number().min(50).max(150).default(100),
+const SOUND_EDITOR_SCHEMA = AUDIO_VALIDATOR.pick({
+  volume: true,
+  pitch: true,
 });
 
 type DashbordSoundEditorProps = {

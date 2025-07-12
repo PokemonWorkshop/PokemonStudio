@@ -7,7 +7,6 @@ import { EditorsContainer } from './music.style';
 import { AudioFile } from '@modelEntities/common';
 import { AUDIO_EXT } from '@components/inputs/AudioInput';
 import { OtherResource } from '@components/resources';
-import { EditButtonOnlyIcon } from '@components/buttons';
 import { useUpdateConfigMusic } from './ressoures/useUpdateConfigSound';
 import { SoundEditorKeys, SoundEditorOverlay } from './editors/SoundEditorOverlay';
 import { useDialogsRef } from '@src/hooks/useDialogsRef';
@@ -47,13 +46,13 @@ const SoundState: SoundMapping[] = [
     soundEffects: [
       { key: 'battleStart', located: 'soundEffects' },
       { key: 'defaultExclamation', located: 'soundEffects' },
-      { key: 'escape', located: 'soundEffects' },
-      { key: 'ability', located: 'soundEffects' },
+      { key: 'escape', located: 'soundEffects', translateKey: 'battle_escape' },
+      { key: 'ability', located: 'soundEffects', translateKey: 'activating_ability_or_item' },
       { key: 'megaEvolve', located: 'soundEffects' },
       { key: 'moveEffective', located: 'soundEffects' },
       { key: 'moveVeryEffective', located: 'soundEffects' },
       { key: 'moveNotVeryEffective', located: 'soundEffects' },
-      { key: 'shiny', located: 'soundEffects', translateKey: 'shinySee' },
+      { key: 'shiny', located: 'soundEffects', translateKey: 'shiny_see' },
       { key: 'statRiseUp', located: 'soundEffects' },
       { key: 'statFallDown', located: 'soundEffects' },
       { key: 'sendingBall', located: 'soundEffects' },
