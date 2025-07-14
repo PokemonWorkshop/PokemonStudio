@@ -6,7 +6,7 @@ import { DashboardSoundDesign } from '@components/dashboard/music/DashboardSound
 export const DashboardSoundDesignPage = () => {
   const { t } = useTranslation();
   return (
-    <DashboardTemplate title={t('sound_design')}>
+    <DashboardTemplate title={t('sound_default')}>
       <DashboardSoundDesign />
     </DashboardTemplate>
   );

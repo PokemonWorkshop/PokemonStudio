@@ -41,7 +41,7 @@ const SoundState: SoundMapping[] = [
     ],
   },
   {
-    title: 'combats',
+    title: 'battles',
     soundEffects: [
       { key: 'battleStart', located: 'soundEffects' },
       { key: 'defaultExclamation', located: 'soundEffects' },
@@ -71,7 +71,7 @@ const SoundState: SoundMapping[] = [
     ],
   },
   {
-    title: 'objects',
+    title: 'items_sound_category',
     soundEffects: [
       { key: 'receiveItem', located: 'musicEffects' },
       { key: 'receiveKeyItem', located: 'musicEffects' },

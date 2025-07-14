@@ -31,7 +31,7 @@ const MusicState: SoundMapping[] = [
     ],
   },
   {
-    title: 'combats',
+    title: 'battles',
     soundEffects: [
       { key: 'baseWildBattle', located: 'backgroundMusic' },
       { key: 'baseWildDefeat', located: 'backgroundMusic' },
@@ -78,7 +78,7 @@ export const DashboardMusicDesign = () => {
   return (
     <EditorsContainer>
       {musicState.map((state) => (
-        <PageEditor key={state.title} editorTitle={t('sound_default')} title={t(state.title)} canCollapse>
+        <PageEditor key={state.title} editorTitle={t('music_default')} title={t(state.title)} canCollapse>
           {state.soundEffects.map((soundEffect, index) => (
             <OtherResource
               type="music"
