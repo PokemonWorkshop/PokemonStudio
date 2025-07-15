@@ -3,7 +3,7 @@
     "target": "es2024",
     "allowJs": true,
     "strict": true,
-    "module": "commonjs",
+    "module": "esnext",
     "skipLibCheck": true,
     "esModuleInterop": true,
     "noImplicitAny": true,
