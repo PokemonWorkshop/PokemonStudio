@@ -60,4 +60,4 @@ const config: ForgeConfig = {
   ],
 };
 
-export default config;
+export = config;
