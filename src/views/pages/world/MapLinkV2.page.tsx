@@ -2,6 +2,7 @@ import { DeleteButtonWithIcon } from '@components/buttons';
 import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
 import { MapLinkControlBarV2, MapLinkNoMap } from '@components/mapLink';
 import { MapLinkEditorAndDeletionKeys, MapLinkEditorOverlay } from '@components/mapLink/editors/MapLinkEditorOverlay';
+import { ReactFlowMapLinkV2 } from '@components/mapLink/ReactFlowMapLinkV2';
 import { State } from '@src/GlobalStateProvider';
 import { useDialogsRef } from '@src/hooks/useDialogsRef';
 import { useMapLinkPage } from '@src/hooks/usePage';
@@ -19,7 +20,7 @@ const checkValidMaplink = (mapId: number, state: State) => {
 
 const MapLinkV2Page = () => {
   const dialogsRef = useDialogsRef<MapLinkEditorAndDeletionKeys>();
-  const { mapLink, state } = useMapLinkPage();
+  const { mapLink, maps, state } = useMapLinkPage();
   const isValidMaplink = useMemo(() => checkValidMaplink(mapLink.mapId, state), [mapLink, state]);
   const { t } = useTranslation();
 
@@ -27,7 +28,7 @@ const MapLinkV2Page = () => {
     <DatabasePageStyle>
       <MapLinkControlBarV2 dialogsRef={dialogsRef} />
       {isValidMaplink ? (
-        <div>{mapLink.mapId}</div>
+        <ReactFlowMapLinkV2 mapLink={mapLink} maps={maps} />
       ) : (
         <MapLinkNoMap>
           <span>{t('no_map')}</span>

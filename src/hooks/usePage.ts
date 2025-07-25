@@ -15,7 +15,7 @@ import type { StudioNature } from '@modelEntities/nature';
 import type { StudioMapLink } from '@modelEntities/mapLink';
 import { Language } from '@pages/texts/Translation.page';
 import { useGlobalState } from '@src/GlobalStateProvider';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getMapOverviewPath } from '@utils/resourcePath';
 import { showNotification } from '@utils/showNotification';
@@ -274,10 +274,13 @@ export const useZonePage = () => {
 
 export const useMapLinkPage = () => {
   const { projectDataValues: mapLinks, selectedDataIdentifier: dbSymbol, state } = useProjectDataReadonly('mapLinks', 'mapLink');
+  const { projectDataValues: allMaps } = useProjectDataReadonly('maps', 'map');
+  const maps = useMemo(() => Object.values(allMaps), [allMaps]);
   const mapLink: StudioMapLink = isNaN(Number(dbSymbol)) ? mapLinks[dbSymbol] : mapLinks['maplink_0'];
 
   return {
     mapLink,
+    maps,
     state,
   };
 };
