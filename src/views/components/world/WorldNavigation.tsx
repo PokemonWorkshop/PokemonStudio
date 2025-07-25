@@ -25,6 +25,7 @@ export const WorldNavigation = () => {
       <WorldBuildingNavigationStyle>
         <NavigationDatabaseGroup title={t('world_building')}>
           <NavigationDatabaseItem path="/world/maplink" label={t('maplinks')} />
+          <NavigationDatabaseItem path="/world/maplink2" label={`${t('maplinks')} V2`} />
           {/*<NavigationDatabaseItem path="/world/region" label={t('regions')} />*/}
         </NavigationDatabaseGroup>
       </WorldBuildingNavigationStyle>

@@ -12,6 +12,7 @@ import type { StudioDex } from '@modelEntities/dex';
 import type { StudioType } from '@modelEntities/type';
 import type { StudioItem } from '@modelEntities/item';
 import type { StudioNature } from '@modelEntities/nature';
+import type { StudioMapLink } from '@modelEntities/mapLink';
 import { Language } from '@pages/texts/Translation.page';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useState } from 'react';
@@ -267,6 +268,16 @@ export const useZonePage = () => {
     zoneName,
     groups,
     cannotDelete: Object.keys(zones).length <= 1,
+    state,
+  };
+};
+
+export const useMapLinkPage = () => {
+  const { projectDataValues: mapLinks, selectedDataIdentifier: dbSymbol, state } = useProjectDataReadonly('mapLinks', 'mapLink');
+  const mapLink: StudioMapLink = isNaN(Number(dbSymbol)) ? mapLinks[dbSymbol] : mapLinks['maplink_0'];
+
+  return {
+    mapLink,
     state,
   };
 };

@@ -1,12 +1,17 @@
 import React, { useMemo } from 'react';
-import { SelectOption, SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { SelectCustom, SelectCustomWithLabel } from '@components/SelectCustom';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
+import { DbSymbol } from '@modelEntities/dbSymbol';
+import { useProjectData } from '@src/hooks/useProjectData';
+import { getValidMaps } from '@utils/MapLinkUtils';
+import { Select } from '@ds/Select';
+import { SelectOption } from '@ds/Select/types';
 
-const getValue = (options: SelectOption[], id: string, t: TFunction) => {
+const getValue = (options: SelectOption<string>[], id: string, t: TFunction) => {
   const option = options.find(({ value }) => value === id);
   return option || { value: '__undef__', label: t('map_deleted') };
 };
@@ -63,4 +68,32 @@ export const SelectMaplink = ({ mapId, onChange, label, noneValue, noneValueIsEr
       noOptionsText={t('no_option')}
     />
   );
+};
+
+type SelectMapLink2Props = {
+  name: string;
+  defaultValue?: DbSymbol;
+  onChange?: (v: DbSymbol) => void;
+};
+
+export const SelectMapLink2 = (props: SelectMapLink2Props) => {
+  const { projectDataValues: mapLinks } = useProjectData('mapLinks', 'mapLink');
+  const { projectDataValues: maps, state } = useProjectData('maps', 'map');
+  const allMapLinks = useMemo(() => Object.values(mapLinks), [mapLinks]);
+  const allMaps = useMemo(() => Object.values(maps), [maps]);
+  const getMapName = useGetEntityNameText();
+  const { t } = useTranslation();
+
+  const getMapFromMapId = (mapId: number) => allMaps.find(({ id }) => id === mapId);
+
+  const mapLinkOptions = useMemo(() => {
+    const validMaps = getValidMaps(state.projectData.zones);
+    return allMapLinks.map(({ dbSymbol, mapId }) => {
+      const map = getMapFromMapId(mapId);
+      const mapName = map && validMaps.includes(map.id) ? getMapName(map) : t('map_deleted');
+      return { value: dbSymbol, label: mapName };
+    });
+  }, [allMapLinks, state.projectData.zones, state]);
+
+  return <Select options={mapLinkOptions} notFoundLabel={t('maplink_deleted')} {...props} />;
 };
