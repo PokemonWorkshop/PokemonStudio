@@ -1,0 +1,212 @@
+import React, { forwardRef, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Editor } from '@components/editor';
+import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PercentInput } from '@components/inputs';
+import { SelectCustomSimple } from '@components/SelectCustom';
+import { HealingItemCategories, mutateItemToProgressionCategory } from './mutateItemToHealingCategory';
+import { cleanNaNValue } from '@utils/cleanNaNValue';
+import { LOCKED_ITEM_EDITOR, StudioItem } from '@modelEntities/item';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { useItemPage } from '@hooks/usePage';
+import { cloneEntity } from '@utils/cloneEntity';
+import { useProjectItems } from '@hooks/useProjectData';
+import { MultiSelect } from '@ds/MultiSelect';
+
+type ItemType = {
+  hpCount?: number;
+  hpRate?: number;
+  ppCount?: number;
+  isMax?: boolean;
+  statusList?: string[];
+  loyaltyMalus?: number;
+};
+
+const Statuses = ['POISONED', 'PARALYZED', 'BURN', 'ASLEEP', 'FROZEN', 'TOXIC', 'CONFUSED', 'DEATH'] as const;
+const PPIncreaseOptions = [
+  { value: '+20%', label: '+20%' },
+  { value: 'Max', label: 'Max' },
+];
+
+const getFormHealData: (item: StudioItem) => ItemType = (item) => {
+  return {
+    hpCount: 'hpCount' in item ? item.hpCount : undefined,
+    hpRate: 'hpRate' in item && !isNaN(item.hpRate) ? item.hpRate : undefined,
+    ppCount: 'ppCount' in item && !isNaN(item.ppCount) ? item.ppCount : undefined,
+    isMax: 'isMax' in item ? item.isMax : undefined,
+    statusList: 'statusList' in item ? item.statusList : undefined,
+    loyaltyMalus: 'loyaltyMalus' in item && !isNaN(item.loyaltyMalus) ? item.loyaltyMalus : undefined,
+  };
+};
+
+export const ItemCookingDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
+  const { currentItem } = useItemPage();
+  const { setProjectDataValues: setProjectItem } = useProjectItems();
+
+  const { t } = useTranslation();
+  const healingOptions = useMemo(
+    () => HealingItemCategories.map((category) => ({ value: category, label: t(category) })).sort((a, b) => a.label.localeCompare(b.label)),
+    [t]
+  );
+  const statusesOptions = useMemo(() => Statuses.map((status) => ({ value: status, label: t(status) })), [t]);
+
+  const [item, setItem] = useState(cloneEntity(currentItem));
+  const [klass, setKlass] = useState<string>(item.klass);
+
+  const [healChanges, setHealChanges] = useState<ItemType>(getFormHealData(item));
+
+  const handleClose = () => {
+    const filteredFormData: ItemType = Object.entries(healChanges)
+      .filter(([_, value]) => value !== undefined)
+      .map(([key, value]) => {
+        if (typeof value === 'number') return [key, cleanNaNValue(value, (item as never)[key])];
+        return [key, value];
+      })
+      .reduce((acc, [key, value]) => {
+        (acc[key as keyof ItemType] as unknown) = value as ItemType[keyof ItemType];
+        return acc;
+      }, {} as ItemType);
+
+    const newItem = {
+      ...item,
+      ...filteredFormData,
+    };
+
+    if (newItem.statusList && newItem.statusList.includes('ALL')) {
+      newItem.statusList = Statuses.slice(0, -2);
+    }
+
+    setProjectItem({ [item.dbSymbol]: newItem as StudioItem });
+  };
+
+  const canClose = () => {
+    if ('hpRate' in healChanges && (healChanges.hpRate === 0 || (!!healChanges.hpRate && (healChanges.hpRate < 0.01 || healChanges.hpRate > 100)))) {
+      return false;
+    }
+    if ('statusList' in healChanges && healChanges.statusList?.length === 0) {
+      return false;
+    }
+    return true;
+  };
+
+  useEditorHandlingClose(ref, handleClose, canClose);
+
+  useEffect(() => {
+    setKlass(item.klass);
+    setHealChanges(getFormHealData(item));
+  }, [item, klass]);
+
+  return LOCKED_ITEM_EDITOR[item.klass].includes('heal') ? (
+    <></>
+  ) : (
+    <Editor type="edit" title={t('heal')}>
+      <InputContainer>
+        <InputWithTopLabelContainer>
+          <Label htmlFor="category">{t('category')}</Label>
+          <SelectCustomSimple
+            id="select-category"
+            options={healingOptions}
+            value={item.klass}
+            onChange={(value) => {
+              setItem(mutateItemToProgressionCategory(item, value as (typeof healingOptions)[number]['value']));
+            }}
+          />
+        </InputWithTopLabelContainer>
+        {'hpCount' in item && (
+          <InputWithLeftLabelContainer>
+            <Label htmlFor="value">{t('healed_hp')}</Label>
+            <Input
+              type="number"
+              name="value"
+              min="0"
+              max="9999"
+              value={healChanges.hpCount}
+              onChange={(event) => {
+                const newValue: number = parseInt(event.target.value);
+                if (newValue < 0 || newValue > 9999) return event.preventDefault();
+                setHealChanges((prevFormData) => ({ ...prevFormData, hpCount: newValue }));
+              }}
+            />
+          </InputWithLeftLabelContainer>
+        )}
+        {'hpRate' in item && healChanges.hpRate !== undefined && (
+          <InputWithLeftLabelContainer>
+            <Label htmlFor="value">{t('healed_hp')}</Label>
+            <PercentInput
+              type="number"
+              name="value"
+              min="1"
+              max="100"
+              value={(healChanges.hpRate * 100).toFixed(0)}
+              onChange={(event) => {
+                const newValue = parseInt(event.target.value);
+                if (newValue < 0 || newValue > 100) return event.preventDefault();
+                setHealChanges((prevFormData) => ({ ...prevFormData, hpRate: newValue / 100 }));
+              }}
+            />
+          </InputWithLeftLabelContainer>
+        )}
+        {'ppCount' in item && (
+          <InputWithLeftLabelContainer>
+            <Label htmlFor="value">{t('healed_pp')}</Label>
+            <Input
+              type="number"
+              name="value"
+              value={healChanges.ppCount}
+              min="0"
+              max="99"
+              onChange={(event) => {
+                const newValue = parseInt(event.target.value);
+                if (newValue < 0 || newValue > 99) return event.preventDefault();
+                setHealChanges((prevFormData) => ({ ...prevFormData, ppCount: newValue }));
+              }}
+            />
+          </InputWithLeftLabelContainer>
+        )}
+        {'isMax' in item && (
+          <InputWithTopLabelContainer>
+            <Label htmlFor="value">{t('value')}</Label>
+            <SelectCustomSimple
+              id="select-value"
+              options={PPIncreaseOptions}
+              value={healChanges.isMax ? 'Max' : '+20%'}
+              onChange={(value) => setHealChanges((prevFormData) => ({ ...prevFormData, isMax: value === 'Max' }))}
+              noTooltip
+            />
+          </InputWithTopLabelContainer>
+        )}
+        {'statusList' in item && healChanges.statusList && (
+          <InputWithTopLabelContainer>
+            <Label htmlFor="status">{t('healed_status')}</Label>
+            <MultiSelect
+              defaultValue={healChanges.statusList}
+              selectAllOption={t('placeholder_select_all')}
+              whenAllOptionSelected={t('all_status_selected')}
+              onChange={(value) => {
+                setHealChanges((prevFormData) => ({ ...prevFormData, statusList: value }));
+              }}
+              options={statusesOptions}
+            />
+          </InputWithTopLabelContainer>
+        )}
+        {'loyaltyMalus' in item && (
+          <InputWithLeftLabelContainer>
+            <Label htmlFor="happiness_malus">{t('happiness_malus')}</Label>
+            <Input
+              type="number"
+              name="happiness_malus"
+              value={healChanges.loyaltyMalus}
+              min="-255"
+              max="255"
+              onChange={(event) => {
+                const newValue: number = parseInt(event.target.value);
+                if (newValue < -255 || newValue > 255) return event.preventDefault();
+                setHealChanges((prevFormData) => ({ ...prevFormData, loyaltyMalus: newValue }));
+              }}
+            />
+          </InputWithLeftLabelContainer>
+        )}
+      </InputContainer>
+    </Editor>
+  );
+});
+ItemCookingDataEditor.displayName = 'ItemCookingDataEditor';
