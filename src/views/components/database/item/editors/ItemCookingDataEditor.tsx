@@ -1,210 +1,123 @@
-import React, { forwardRef, useEffect, useMemo, useState } from 'react';
+import React, { forwardRef, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Editor } from '@components/editor';
-import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PercentInput } from '@components/inputs';
-import { SelectCustomSimple } from '@components/SelectCustom';
-import { HealingItemCategories, mutateItemToProgressionCategory } from './mutateItemToHealingCategory';
+import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
-import { LOCKED_ITEM_EDITOR, StudioItem } from '@modelEntities/item';
+import { LOCKED_ITEM_EDITOR, StudioItemBerryColor } from '@modelEntities/item';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { useItemPage } from '@hooks/usePage';
 import { cloneEntity } from '@utils/cloneEntity';
-import { useProjectItems } from '@hooks/useProjectData';
-import { MultiSelect } from '@ds/MultiSelect';
+import { SelectCustomSimple } from '@components/SelectCustom';
+import { useUpdateItem } from './useUpdateItem';
+import { InputNumber } from '@components/pokemonBattler/editors/InputNumber';
+import styled from 'styled-components';
 
-type ItemType = {
-  hpCount?: number;
-  hpRate?: number;
-  ppCount?: number;
-  isMax?: boolean;
-  statusList?: string[];
-  loyaltyMalus?: number;
-};
+const BetterPokeblockInfo = styled.div`
+  ${({ theme }) => theme.fonts.normalSmall};
+  color: ${({ theme }) => theme.colors.text400};
+  user-select: none;
+`;
 
-const Statuses = ['POISONED', 'PARALYZED', 'BURN', 'ASLEEP', 'FROZEN', 'TOXIC', 'CONFUSED', 'DEATH'] as const;
-const PPIncreaseOptions = [
-  { value: '+20%', label: '+20%' },
-  { value: 'Max', label: 'Max' },
-];
+const BetterPokeblockInfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
 
-const getFormHealData: (item: StudioItem) => ItemType = (item) => {
-  return {
-    hpCount: 'hpCount' in item ? item.hpCount : undefined,
-    hpRate: 'hpRate' in item && !isNaN(item.hpRate) ? item.hpRate : undefined,
-    ppCount: 'ppCount' in item && !isNaN(item.ppCount) ? item.ppCount : undefined,
-    isMax: 'isMax' in item ? item.isMax : undefined,
-    statusList: 'statusList' in item ? item.statusList : undefined,
-    loyaltyMalus: 'loyaltyMalus' in item && !isNaN(item.loyaltyMalus) ? item.loyaltyMalus : undefined,
-  };
-};
+const Colors = ['red', 'blue', 'pink', 'green', 'yellow'] as const;
 
 export const ItemCookingDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { currentItem } = useItemPage();
-  const { setProjectDataValues: setProjectItem } = useProjectItems();
-
   const { t } = useTranslation();
-  const healingOptions = useMemo(
-    () => HealingItemCategories.map((category) => ({ value: category, label: t(category) })).sort((a, b) => a.label.localeCompare(b.label)),
-    [t]
-  );
-  const statusesOptions = useMemo(() => Statuses.map((status) => ({ value: status, label: t(status) })), [t]);
+  const item = cloneEntity(currentItem);
+  const setItems = useUpdateItem(item);
 
-  const [item, setItem] = useState(cloneEntity(currentItem));
-  const [klass, setKlass] = useState<string>(item.klass);
+  const [color, setColor] = useState<string>(item.cookingData ? item.cookingData.color : 'red');
 
-  const [healChanges, setHealChanges] = useState<ItemType>(getFormHealData(item));
+  const betterPokeblockChanceRef = useRef<HTMLInputElement>(null);
+  const smoothnessRef = useRef<HTMLInputElement>(null);
+  const spicyFlavorRef = useRef<HTMLInputElement>(null);
+  const dryFlavorRef = useRef<HTMLInputElement>(null);
+  const sweetFlavorRef = useRef<HTMLInputElement>(null);
+  const bitterFlavorRef = useRef<HTMLInputElement>(null);
+  const sourFlavorRef = useRef<HTMLInputElement>(null);
+
+  const colorsOptions = useMemo(() => Colors.map((color) => ({ value: color, label: t(`${color}`) })), [t]);
 
   const handleClose = () => {
-    const filteredFormData: ItemType = Object.entries(healChanges)
-      .filter(([_, value]) => value !== undefined)
-      .map(([key, value]) => {
-        if (typeof value === 'number') return [key, cleanNaNValue(value, (item as never)[key])];
-        return [key, value];
-      })
-      .reduce((acc, [key, value]) => {
-        (acc[key as keyof ItemType] as unknown) = value as ItemType[keyof ItemType];
-        return acc;
-      }, {} as ItemType);
+    const betterPokeblockChance = betterPokeblockChanceRef.current?.valueAsNumber ?? (item.cookingData ? item.cookingData.betterPokeblockChance : 10);
+    const smoothness = smoothnessRef.current?.valueAsNumber ?? (item.cookingData ? item.cookingData.smoothness : 10);
+    const spicy = spicyFlavorRef.current?.valueAsNumber ?? (item.cookingData ? item.cookingData.flavors[0] : 0);
+    const dry = dryFlavorRef.current?.valueAsNumber ?? (item.cookingData ? item.cookingData.flavors[1] : 0);
+    const sweet = sweetFlavorRef.current?.valueAsNumber ?? (item.cookingData ? item.cookingData.flavors[2] : 0);
+    const bitter = bitterFlavorRef.current?.valueAsNumber ?? (item.cookingData ? item.cookingData.flavors[3] : 0);
+    const sour = sourFlavorRef.current?.valueAsNumber ?? (item.cookingData ? item.cookingData.flavors[4] : 0);
 
-    const newItem = {
+    const flavors = [cleanNaNValue(spicy), cleanNaNValue(dry), cleanNaNValue(sweet), cleanNaNValue(bitter), cleanNaNValue(sour)];
+
+    const updatedItem = {
       ...item,
-      ...filteredFormData,
+      cookingData: {
+        color: color as StudioItemBerryColor,
+        betterPokeblockChance: cleanNaNValue(betterPokeblockChance),
+        smoothness: cleanNaNValue(smoothness),
+        flavors: flavors,
+      },
     };
 
-    if (newItem.statusList && newItem.statusList.includes('ALL')) {
-      newItem.statusList = Statuses.slice(0, -2);
-    }
+    window.api.log.error(updatedItem);
 
-    setProjectItem({ [item.dbSymbol]: newItem as StudioItem });
+    setItems({ ...updatedItem });
   };
 
   const canClose = () => {
-    if ('hpRate' in healChanges && (healChanges.hpRate === 0 || (!!healChanges.hpRate && (healChanges.hpRate < 0.01 || healChanges.hpRate > 100)))) {
-      return false;
-    }
-    if ('statusList' in healChanges && healChanges.statusList?.length === 0) {
-      return false;
-    }
-    return true;
+    const betterPokeblockChanceOk = !!betterPokeblockChanceRef.current && betterPokeblockChanceRef.current.validity.valid;
+    const smoothnessOk = !!smoothnessRef.current && smoothnessRef.current.validity.valid;
+    const spicyOk = !!spicyFlavorRef.current && spicyFlavorRef.current.validity.valid;
+    const dryOk = !!dryFlavorRef.current && dryFlavorRef.current.validity.valid;
+    const sweetOk = !!sweetFlavorRef.current && sweetFlavorRef.current.validity.valid;
+    const bitterOk = !!bitterFlavorRef.current && bitterFlavorRef.current.validity.valid;
+    const sourOk = !!sourFlavorRef.current && sourFlavorRef.current.validity.valid;
+
+    return betterPokeblockChanceOk && smoothnessOk; // && spicyOk && dryOk && sweetOk && bitterOk && sourOk;
   };
 
   useEditorHandlingClose(ref, handleClose, canClose);
 
-  useEffect(() => {
-    setKlass(item.klass);
-    setHealChanges(getFormHealData(item));
-  }, [item, klass]);
-
-  return LOCKED_ITEM_EDITOR[item.klass].includes('heal') ? (
+  return LOCKED_ITEM_EDITOR[item.klass].includes('cooking') ? (
     <></>
   ) : (
-    <Editor type="edit" title={t('heal')}>
+    <Editor type="edit" title={t('cooking_title')}>
       <InputContainer>
         <InputWithTopLabelContainer>
-          <Label htmlFor="category">{t('category')}</Label>
-          <SelectCustomSimple
-            id="select-category"
-            options={healingOptions}
-            value={item.klass}
-            onChange={(value) => {
-              setItem(mutateItemToProgressionCategory(item, value as (typeof healingOptions)[number]['value']));
-            }}
-          />
+          <Label htmlFor="color">{t('pokeblock_color')}</Label>
+          <SelectCustomSimple id="select-color" options={colorsOptions} value={color} onChange={(value) => setColor(value)} />
         </InputWithTopLabelContainer>
-        {'hpCount' in item && (
+        <BetterPokeblockInfoContainer>
           <InputWithLeftLabelContainer>
-            <Label htmlFor="value">{t('healed_hp')}</Label>
-            <Input
-              type="number"
-              name="value"
+            <Label htmlFor="better-pokeblock-chance">{t('berries_better_pokeblock')}</Label>
+            <InputNumber
+              name="better-pokeblock-chance"
               min="0"
-              max="9999"
-              value={healChanges.hpCount}
-              onChange={(event) => {
-                const newValue: number = parseInt(event.target.value);
-                if (newValue < 0 || newValue > 9999) return event.preventDefault();
-                setHealChanges((prevFormData) => ({ ...prevFormData, hpCount: newValue }));
-              }}
-            />
-          </InputWithLeftLabelContainer>
-        )}
-        {'hpRate' in item && healChanges.hpRate !== undefined && (
-          <InputWithLeftLabelContainer>
-            <Label htmlFor="value">{t('healed_hp')}</Label>
-            <PercentInput
-              type="number"
-              name="value"
-              min="1"
               max="100"
-              value={(healChanges.hpRate * 100).toFixed(0)}
-              onChange={(event) => {
-                const newValue = parseInt(event.target.value);
-                if (newValue < 0 || newValue > 100) return event.preventDefault();
-                setHealChanges((prevFormData) => ({ ...prevFormData, hpRate: newValue / 100 }));
-              }}
+              defaultValue={item.cookingData ? cleanNaNValue(item.cookingData.betterPokeblockChance) : 10}
+              ref={betterPokeblockChanceRef}
+              onChange={() => {}}
             />
           </InputWithLeftLabelContainer>
-        )}
-        {'ppCount' in item && (
-          <InputWithLeftLabelContainer>
-            <Label htmlFor="value">{t('healed_pp')}</Label>
-            <Input
-              type="number"
-              name="value"
-              value={healChanges.ppCount}
-              min="0"
-              max="99"
-              onChange={(event) => {
-                const newValue = parseInt(event.target.value);
-                if (newValue < 0 || newValue > 99) return event.preventDefault();
-                setHealChanges((prevFormData) => ({ ...prevFormData, ppCount: newValue }));
-              }}
-            />
-          </InputWithLeftLabelContainer>
-        )}
-        {'isMax' in item && (
-          <InputWithTopLabelContainer>
-            <Label htmlFor="value">{t('value')}</Label>
-            <SelectCustomSimple
-              id="select-value"
-              options={PPIncreaseOptions}
-              value={healChanges.isMax ? 'Max' : '+20%'}
-              onChange={(value) => setHealChanges((prevFormData) => ({ ...prevFormData, isMax: value === 'Max' }))}
-              noTooltip
-            />
-          </InputWithTopLabelContainer>
-        )}
-        {'statusList' in item && healChanges.statusList && (
-          <InputWithTopLabelContainer>
-            <Label htmlFor="status">{t('healed_status')}</Label>
-            <MultiSelect
-              defaultValue={healChanges.statusList}
-              selectAllOption={t('placeholder_select_all')}
-              whenAllOptionSelected={t('all_status_selected')}
-              onChange={(value) => {
-                setHealChanges((prevFormData) => ({ ...prevFormData, statusList: value }));
-              }}
-              options={statusesOptions}
-            />
-          </InputWithTopLabelContainer>
-        )}
-        {'loyaltyMalus' in item && (
-          <InputWithLeftLabelContainer>
-            <Label htmlFor="happiness_malus">{t('happiness_malus')}</Label>
-            <Input
-              type="number"
-              name="happiness_malus"
-              value={healChanges.loyaltyMalus}
-              min="-255"
-              max="255"
-              onChange={(event) => {
-                const newValue: number = parseInt(event.target.value);
-                if (newValue < -255 || newValue > 255) return event.preventDefault();
-                setHealChanges((prevFormData) => ({ ...prevFormData, loyaltyMalus: newValue }));
-              }}
-            />
-          </InputWithLeftLabelContainer>
-        )}
+          <BetterPokeblockInfo>{t('better_pokeblock_info')}</BetterPokeblockInfo>
+        </BetterPokeblockInfoContainer>
+        <InputWithLeftLabelContainer>
+          <Label htmlFor="smoothness">{t('smoothness')}</Label>
+          <InputNumber
+            name="smoothness"
+            min="0"
+            max="100"
+            defaultValue={item.cookingData ? cleanNaNValue(item.cookingData.smoothness) : 10}
+            ref={smoothnessRef}
+            onChange={() => {}}
+          />
+        </InputWithLeftLabelContainer>
       </InputContainer>
     </Editor>
   );

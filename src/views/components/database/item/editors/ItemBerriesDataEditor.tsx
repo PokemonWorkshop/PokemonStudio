@@ -1,9 +1,9 @@
 import React, { forwardRef, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Editor } from '@components/editor';
-import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
+import { InputContainer, InputWithLeftLabelContainer, InputWithSeparatorContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
-import { LOCKED_ITEM_EDITOR, StudioItemBerryFirmness, StudioItem } from '@modelEntities/item';
+import { LOCKED_ITEM_EDITOR, StudioItemBerryFirmness } from '@modelEntities/item';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { useItemPage } from '@hooks/usePage';
 import { cloneEntity } from '@utils/cloneEntity';
@@ -11,6 +11,22 @@ import { EmbeddedUnitInput } from '@components/inputs/EmbeddedUnitInput';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import { useUpdateItem } from './useUpdateItem';
 import { DbSymbol } from '@modelEntities/dbSymbol';
+import { InputNumber } from '@components/pokemonBattler/editors/InputNumber';
+import { SelectType } from '@components/selects';
+import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
+import styled from 'styled-components';
+
+const NaturalGiftInfo = styled.div`
+  ${({ theme }) => theme.fonts.normalSmall};
+  color: ${({ theme }) => theme.colors.text400};
+  user-select: none;
+`;
+
+const NaturalGiftInfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
 
 const Firmnesses = ['very_soft', 'soft', 'hard', 'very_hard', 'super_hard'] as const;
 
@@ -20,16 +36,18 @@ export const ItemBerriesDataEditor = forwardRef<EditorHandlingClose>((_, ref) =>
   const item = cloneEntity(currentItem);
   const setItems = useUpdateItem(item);
 
+  const [naturalGiftType, setNaturalGiftType] = useState<string>(item.berryData ? item.berryData.naturalGiftType : 'normal');
+  const [minMaxBerriesError, setMinMaxBerriesError] = useState<boolean>(false);
+  const [naturalGiftPartOpen, setNaturalGiftPartOpen] = useState<boolean>(false);
   const [firmness, setFirmness] = useState<string>(item.berryData ? item.berryData.firmness : 'very_soft');
+  const firmnessesOptions = useMemo(() => Firmnesses.map((firmness) => ({ value: firmness, label: t(`firmness_${firmness}`) })), [t]);
+
   const sizeRef = useRef<HTMLInputElement>(null);
   const minYieldRef = useRef<HTMLInputElement>(null);
   const maxYieldRef = useRef<HTMLInputElement>(null);
   const growthRef = useRef<HTMLInputElement>(null);
   const drainRateRef = useRef<HTMLInputElement>(null);
-  const naturalGiftTypeRef = useRef<HTMLInputElement>(null);
   const naturalGiftPowerRef = useRef<HTMLInputElement>(null);
-
-  const firmnessesOptions = useMemo(() => Firmnesses.map((firmness) => ({ value: firmness, label: t(`firmness_${firmness}`) })), [t]);
 
   const handleClose = () => {
     const size = sizeRef.current?.valueAsNumber ?? (item.berryData ? item.berryData.size : 5.0);
@@ -37,7 +55,6 @@ export const ItemBerriesDataEditor = forwardRef<EditorHandlingClose>((_, ref) =>
     const maxYield = maxYieldRef.current?.valueAsNumber ?? (item.berryData ? item.berryData.maxYield : 5);
     const growth = growthRef.current?.valueAsNumber ?? (item.berryData ? item.berryData.growth : 8);
     const drainRate = drainRateRef.current?.valueAsNumber ?? (item.berryData ? item.berryData.drainRate : 6);
-    const naturalGiftType = naturalGiftTypeRef.current?.value ?? (item.berryData ? item.berryData.naturalGiftType : 'normal');
     const naturalGiftPower = naturalGiftPowerRef.current?.valueAsNumber ?? (item.berryData ? item.berryData.naturalGiftPower : 80);
 
     const updatedItem = {
@@ -54,8 +71,6 @@ export const ItemBerriesDataEditor = forwardRef<EditorHandlingClose>((_, ref) =>
       },
     };
 
-    window.api.log.error(updatedItem);
-
     setItems({ ...updatedItem });
   };
 
@@ -67,7 +82,11 @@ export const ItemBerriesDataEditor = forwardRef<EditorHandlingClose>((_, ref) =>
     const drainRateOk = !!drainRateRef.current && drainRateRef.current.validity.valid;
     const naturalGiftPowerOk = !!naturalGiftPowerRef.current && naturalGiftPowerRef.current.validity.valid;
 
-    return sizeOk; //&& minYieldOk && maxYieldOk && growthOk && drainRateOk && naturalGiftPowerOk;
+    return sizeOk && minYieldOk && maxYieldOk && !minMaxBerriesError && growthOk && drainRateOk && (naturalGiftPowerOk || !naturalGiftPartOpen);
+  };
+
+  const handleNaturalGiftPartOpen = () => {
+    setNaturalGiftPartOpen(!naturalGiftPartOpen);
   };
 
   useEditorHandlingClose(ref, handleClose, canClose);
@@ -94,6 +113,94 @@ export const ItemBerriesDataEditor = forwardRef<EditorHandlingClose>((_, ref) =>
           <Label htmlFor="firmness">{t('berries_firmness')}</Label>
           <SelectCustomSimple id="select-firmness" options={firmnessesOptions} value={firmness} onChange={(value) => setFirmness(value)} />
         </InputWithTopLabelContainer>
+        <InputWithTopLabelContainer>
+          <InputWithLeftLabelContainer>
+            <Label htmlFor="minmax-berries">{t('berries_title')}</Label>
+            <InputWithSeparatorContainer>
+              <InputNumber
+                name="min-berries"
+                min="1"
+                max="99"
+                defaultValue={item.berryData ? cleanNaNValue(item.berryData.minYield) : 1}
+                ref={minYieldRef}
+                onChange={(value) => {
+                  const maxYield = maxYieldRef.current?.valueAsNumber ?? (item.berryData ? item.berryData.maxYield : 5);
+                  setMinMaxBerriesError(value > maxYield);
+                }}
+                error={minMaxBerriesError}
+              />
+              <span className="separator">{t('level_separator')}</span>
+              <InputNumber
+                name="max-berries"
+                min="1"
+                max="99"
+                defaultValue={item.berryData ? cleanNaNValue(item.berryData.maxYield) : 5}
+                ref={maxYieldRef}
+                onChange={(value) => {
+                  const minYield = minYieldRef.current?.valueAsNumber ?? (item.berryData ? item.berryData.minYield : 1);
+                  setMinMaxBerriesError(value < minYield);
+                }}
+                error={minMaxBerriesError}
+              />
+            </InputWithSeparatorContainer>
+          </InputWithLeftLabelContainer>
+        </InputWithTopLabelContainer>
+        <InputWithLeftLabelContainer>
+          <Label htmlFor="berries-growth">{t('berries_growth')}</Label>
+          <EmbeddedUnitInput
+            name="growth"
+            type="number"
+            unit="h"
+            ref={growthRef}
+            defaultValue={item.berryData ? cleanNaNValue(item.berryData.growth) : 8}
+            min="1"
+            max="999"
+          />
+        </InputWithLeftLabelContainer>
+        <InputWithLeftLabelContainer>
+          <Label htmlFor="berries-drain-rate">{t('berries_drain_rate')}</Label>
+          <EmbeddedUnitInput
+            name="drainRate"
+            type="number"
+            unit="h"
+            ref={drainRateRef}
+            defaultValue={item.berryData ? cleanNaNValue(item.berryData.drainRate) : 6}
+            min="1"
+            max="999"
+          />
+        </InputWithLeftLabelContainer>
+        <InputGroupCollapse
+          title={t('natural_gift_data')}
+          gap="16px"
+          onClick={() => {
+            handleNaturalGiftPartOpen();
+          }}
+        >
+          <NaturalGiftInfoContainer>
+            <NaturalGiftInfo>{t('natural_gift_info')}</NaturalGiftInfo>
+          </NaturalGiftInfoContainer>
+          <InputWithTopLabelContainer>
+            <Label htmlFor="natural-gift-type">{t('type')}</Label>
+            <SelectType
+              noLabel
+              dbSymbol={naturalGiftType}
+              onChange={(value) => {
+                setNaturalGiftType(value);
+              }}
+            />
+          </InputWithTopLabelContainer>
+          <InputWithLeftLabelContainer>
+            <Label htmlFor="natural-gift-power">{t('power')}</Label>
+            <InputNumber
+              name="natural-gift-power"
+              min="1"
+              max="999"
+              defaultValue={item.berryData ? cleanNaNValue(item.berryData.naturalGiftPower) : 80}
+              ref={naturalGiftPowerRef}
+              onChange={() => {}}
+            />
+          </InputWithLeftLabelContainer>
+        </InputGroupCollapse>
       </InputContainer>
     </Editor>
   );
