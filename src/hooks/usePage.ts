@@ -13,6 +13,7 @@ import type { StudioType } from '@modelEntities/type';
 import type { StudioItem } from '@modelEntities/item';
 import type { StudioNature } from '@modelEntities/nature';
 import type { StudioMapLink } from '@modelEntities/mapLink';
+import type { StudioMap } from '@modelEntities/map';
 import { Language } from '@pages/texts/Translation.page';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useMemo, useState } from 'react';
@@ -274,13 +275,21 @@ export const useZonePage = () => {
 
 export const useMapLinkPage = () => {
   const { projectDataValues: mapLinks, selectedDataIdentifier: dbSymbol, state } = useProjectDataReadonly('mapLinks', 'mapLink');
-  const { projectDataValues: allMaps } = useProjectDataReadonly('maps', 'map');
-  const maps = useMemo(() => Object.values(allMaps), [allMaps]);
+  const { projectDataValues: maps } = useProjectDataReadonly('maps', 'map');
   const mapLink: StudioMapLink = isNaN(Number(dbSymbol)) ? mapLinks[dbSymbol] : mapLinks['maplink_0'];
+
+  const transformedMaps = useMemo(
+    () =>
+      Object.values(maps).reduce<Record<number, StudioMap>>((acc, map) => {
+        acc[map.id] = map;
+        return acc;
+      }, {}),
+    [maps]
+  );
 
   return {
     mapLink,
-    maps,
+    maps: transformedMaps,
     state,
   };
 };

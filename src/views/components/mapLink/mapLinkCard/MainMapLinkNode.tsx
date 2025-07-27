@@ -9,6 +9,7 @@ const MainMapLinkNodeContainer = styled.div`
   display: inline-block;
   // Maps can be completely transparent, so we set the background color so that they are visible.
   background-color: black;
+  margin: 16px 0px 0px 16px;
 
   & img {
     display: block;
@@ -18,13 +19,12 @@ const MainMapLinkNodeContainer = styled.div`
 type MainMapLinkNodeProps = {
   data: {
     mapLink: StudioMapLink;
-    maps: StudioMap[];
+    maps: Record<number, StudioMap>;
   };
 };
 
 export const MainMapLinkNode = ({ data }: MainMapLinkNodeProps) => {
-  const map = data.maps.find(({ id }) => id === data.mapLink.mapId);
-
+  const map = data.maps[data.mapLink.mapId];
   return (
     <MainMapLinkNodeContainer>
       {map ? <ResourceImage imagePathInProject={getMapOverviewPath(map.tiledFilename)} versionId={map.mtime} /> : <div>???</div>}

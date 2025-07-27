@@ -1,18 +1,12 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SecondaryButtonWithPlusIcon } from '@components/buttons';
-import { ControlBar, ControlBarButtonContainer, ControlBarLabelContainer } from '@components/ControlBar';
+import { ControlBar, ControlBarLabelContainer } from '@components/ControlBar';
 import { SelectMapLink2 } from '@components/selects';
 import { useProjectMapLinks } from '@hooks/useProjectData';
 import { StudioShortcutActions, useShortcut } from '@hooks/useShortcuts';
 import { MapLinkDialogsRef } from './editors/MapLinkEditorOverlay';
 import { DbSymbol } from '@modelEntities/dbSymbol';
-import styled from 'styled-components';
-
-const MapLinkControlBarButtonContainer = styled(ControlBarButtonContainer)`
-  width: auto;
-  justify-content: space-between;
-`;
 
 type MapLinkControlBarProps = {
   dialogsRef?: MapLinkDialogsRef;
@@ -38,19 +32,18 @@ export const MapLinkControlBarV2 = ({ dialogsRef }: MapLinkControlBarProps) => {
 
   return (
     <ControlBar>
-      {onClickNew ? <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new_maplink')}</SecondaryButtonWithPlusIcon> : <div />}
-      <MapLinkControlBarButtonContainer>
-        <ControlBarLabelContainer>
-          <SelectMapLink2
-            name="maplink-controlbar"
-            defaultValue={mapLinkDbSymbol as DbSymbol}
-            onChange={(dbSymbol) => setSelectedDataIdentifier({ mapLink: dbSymbol })}
-          />
-        </ControlBarLabelContainer>
-        <ControlBarLabelContainer>
-          {onClickNewLink ? <SecondaryButtonWithPlusIcon onClick={onClickNewLink}>{t('new_link')}</SecondaryButtonWithPlusIcon> : <div />}
-        </ControlBarLabelContainer>
-      </MapLinkControlBarButtonContainer>
+      <ControlBarLabelContainer>
+        {onClickNew ? <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new_maplink')}</SecondaryButtonWithPlusIcon> : <div />}
+        {onClickNewLink ? <SecondaryButtonWithPlusIcon onClick={onClickNewLink}>{t('add_a_map')}</SecondaryButtonWithPlusIcon> : <div />}
+      </ControlBarLabelContainer>
+      <ControlBarLabelContainer>
+        <span>{t('maplinks')}</span>
+        <SelectMapLink2
+          name="maplink-controlbar"
+          defaultValue={mapLinkDbSymbol as DbSymbol}
+          onChange={(dbSymbol) => setSelectedDataIdentifier({ mapLink: dbSymbol })}
+        />
+      </ControlBarLabelContainer>
     </ControlBar>
   );
 };

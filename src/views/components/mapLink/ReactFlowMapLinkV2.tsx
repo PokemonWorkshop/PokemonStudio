@@ -8,7 +8,7 @@ import React, { useEffect, useMemo } from 'react';
 type MapLinkNodeData = {
   index?: number;
   mapLink?: StudioMapLink;
-  maps: StudioMap[];
+  maps: Record<number, StudioMap>;
   cardinal?: string;
 };
 
@@ -16,7 +16,7 @@ type MapLinkNodeType = Node<MapLinkNodeData, 'mainMapLinkCard' | 'mapLinkCard'>;
 
 type ReactFlowMapLinkProps = {
   mapLink: StudioMapLink;
-  maps: StudioMap[];
+  maps: Record<number, StudioMap>;
 };
 
 export const ReactFlowMapLinkV2 = ({ mapLink, maps }: ReactFlowMapLinkProps) => {
@@ -27,7 +27,8 @@ export const ReactFlowMapLinkV2 = ({ mapLink, maps }: ReactFlowMapLinkProps) => 
       position: { x: 0, y: 0 },
       type: 'mainMapLinkCard',
       data: { mapLink, maps },
-      //className: 'nopan',
+      draggable: false,
+      className: 'nopan',
     },
   ]);
   const nodeTypes = useMemo(() => ({ mainMapLinkCard: MainMapLinkNode }), []);
