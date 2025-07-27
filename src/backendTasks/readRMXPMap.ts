@@ -1,10 +1,10 @@
 import log from 'electron-log';
 import path from 'path';
-import fs from 'fs';
 import fsPromise from 'fs/promises';
 import { isMarshalStandardObject, Marshal } from 'ts-marshal';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import { padStr } from '@utils/PadStr';
+import { addAudioExtensionFile, isRecord, type AudioData, type RMXPAudio } from '@utils/rmxpUtils';
 
 export type ReadRMXPMapInput = { projectPath: string; mapId: number };
 export type ReadRMXPMapOutput = { rmxpMapData: RMXPMap };
@@ -12,18 +12,10 @@ export type ReadRMXPMapOutput = { rmxpMapData: RMXPMap };
 export type RMXPMap = {
   encounterStep: number;
   autoplayBgm: boolean;
-  bgm: RMXPMapAudio;
+  bgm: RMXPAudio;
   autoplayBgs: boolean;
-  bgs: RMXPMapAudio;
+  bgs: RMXPAudio;
 };
-
-export type RMXPMapAudio = {
-  name: string;
-  volume: number;
-  pitch: number;
-};
-
-type AudioData = { '@name': string; '@volume': number; '@pitch': number };
 
 type MapData = {
   '@tileset_id': number;
@@ -53,16 +45,6 @@ export const isMapObject = (object: unknown): object is MapData =>
   typeof object['@bgs'] === 'object' &&
   typeof object['@encounter_step'] === 'number' &&
   typeof object['@events'] === 'object';
-
-export const isRecord = (object: unknown): object is Record<string | symbol, unknown> => typeof object === 'object' && object !== null;
-
-const addAudioExtensionFile = (projectPath: string, filename: string, type: 'bgm' | 'bgs') => {
-  const filePath = path.join(projectPath, 'Audio', type, filename);
-  const ext = ['ogg', 'mp3', 'midi', 'mid', 'aac', 'wav', 'flac'].find((ext) => fs.existsSync(`${filePath}.${ext}`));
-  if (!ext) return filename;
-
-  return `${filename}.${ext}`;
-};
 
 export const readRMXPMap = async (projectPath: string, mapId: number): Promise<RMXPMap | undefined> => {
   const mapData = await fsPromise.readFile(path.join(projectPath, 'Data', `Map${padStr(mapId, 3)}.rxdata`));

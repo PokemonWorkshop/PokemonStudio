@@ -3,7 +3,8 @@ import path from 'path';
 import fsPromise from 'fs/promises';
 import { isMarshalStandardObject, isMarshalHash, Marshal, MarshalHash } from 'ts-marshal';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
-import { isMapObject, isRecord } from './readRMXPMap';
+import { isMapObject } from './readRMXPMap';
+import { isRecord } from '@utils/rmxpUtils';
 import { padStr } from '@utils/PadStr';
 
 // RMXP Documentation: https://www.rpg-maker.fr/dl/monos/aide/xp/index.html?page=source%2Frgss%2Frgss.html

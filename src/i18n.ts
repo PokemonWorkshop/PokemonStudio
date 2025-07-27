@@ -21,7 +21,7 @@ const activeLanguages = Object.entries(languages)
   .filter(([_, isActive]) => isActive)
   .map(([lang]) => lang);
 
-const context = import.meta.glob('../assets/i18n/*.json', { eager: true });
+const context = import.meta.glob<{ default: TranslationSchema }>('../assets/i18n/*.json', { eager: true });
 
 const resources: Record<string, { translation: Record<string, string> }> = {};
 
@@ -33,7 +33,7 @@ Object.keys(context).forEach((key) => {
 
   if (!activeLanguages.includes(lang)) return;
 
-  const translation = context[key];
+  const translation = context[key].default;
   resources[lang] = { translation: translation as TranslationSchema };
 });
 

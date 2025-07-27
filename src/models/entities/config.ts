@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { POSITIVE_FLOAT, POSITIVE_INT, POSITIVE_OR_ZERO_FLOAT, POSITIVE_OR_ZERO_INT } from './common';
+import { AUDIO_VALIDATOR, POSITIVE_FLOAT, POSITIVE_INT, POSITIVE_OR_ZERO_FLOAT, POSITIVE_OR_ZERO_INT } from './common';
 import { StudioProjectLanguageTranslation } from './project';
 
 export const CREDIT_CONFIG_VALIDATOR = z.object({
@@ -170,3 +170,73 @@ export const DEFAULT_GAME_OPTIONS = [
 ] as const;
 
 export type DefaultGameOptions = (typeof DEFAULT_GAME_OPTIONS)[number];
+
+export const SOUND_DESIGN_CONFIG_VALIDATOR = z.object({
+  klass: z.literal('Configs::Project::SoundDesign'),
+  soundEffects: z.object({
+    decision: AUDIO_VALIDATOR,
+    cancel: AUDIO_VALIDATOR,
+    buzzer: AUDIO_VALIDATOR,
+    save: AUDIO_VALIDATOR,
+    load: AUDIO_VALIDATOR,
+    cursor: AUDIO_VALIDATOR,
+    shop: AUDIO_VALIDATOR,
+    buy: AUDIO_VALIDATOR,
+    pcStart: AUDIO_VALIDATOR,
+    pcShutdown: AUDIO_VALIDATOR,
+    jump: AUDIO_VALIDATOR,
+    bump: AUDIO_VALIDATOR,
+    battleStart: AUDIO_VALIDATOR,
+    defaultExclamation: AUDIO_VALIDATOR,
+    escape: AUDIO_VALIDATOR,
+    ability: AUDIO_VALIDATOR,
+    megaEvolve: AUDIO_VALIDATOR,
+    moveEffective: AUDIO_VALIDATOR,
+    moveVeryEffective: AUDIO_VALIDATOR,
+    moveNotVeryEffective: AUDIO_VALIDATOR,
+    shiny: AUDIO_VALIDATOR,
+    statRiseUp: AUDIO_VALIDATOR,
+    statFallDown: AUDIO_VALIDATOR,
+    sendingBall: AUDIO_VALIDATOR,
+    openingBall: AUDIO_VALIDATOR,
+    backBall: AUDIO_VALIDATOR,
+    actorCollapse: AUDIO_VALIDATOR,
+    enemyCollapse: AUDIO_VALIDATOR,
+    eggMove: AUDIO_VALIDATOR,
+    experienceGain: AUDIO_VALIDATOR,
+  }),
+  musicEffects: z.object({
+    questProgression: AUDIO_VALIDATOR,
+    receivedCreature: AUDIO_VALIDATOR,
+    levelUp: AUDIO_VALIDATOR,
+    receiveItem: AUDIO_VALIDATOR,
+    receiveKeyItem: AUDIO_VALIDATOR,
+    receiveBerry: AUDIO_VALIDATOR,
+    obtainBadge: AUDIO_VALIDATOR,
+    gameOver: AUDIO_VALIDATOR,
+    catchCreature: AUDIO_VALIDATOR,
+  }),
+  backgroundSound: z.object({}),
+  backgroundMusic: z.object({
+    surf: AUDIO_VALIDATOR,
+    acroBike: AUDIO_VALIDATOR,
+    machBike: AUDIO_VALIDATOR,
+    baseWildBattle: AUDIO_VALIDATOR,
+    baseWildDefeat: AUDIO_VALIDATOR,
+    defaultEye: AUDIO_VALIDATOR,
+    baseTrainerBattle: AUDIO_VALIDATOR,
+    baseTrainerDefeatBattle: AUDIO_VALIDATOR,
+    evolve: AUDIO_VALIDATOR,
+    evolved: AUDIO_VALIDATOR,
+  }),
+});
+
+export type SoundDesignConfig = z.infer<typeof SOUND_DESIGN_CONFIG_VALIDATOR>;
+
+export type SoundEffectsKeys =
+  | keyof SoundDesignConfig['soundEffects']
+  | keyof SoundDesignConfig['musicEffects']
+  | keyof SoundDesignConfig['backgroundMusic']
+  | keyof SoundDesignConfig['backgroundSound'];
+
+export type SoundLocated = keyof SoundDesignConfig;

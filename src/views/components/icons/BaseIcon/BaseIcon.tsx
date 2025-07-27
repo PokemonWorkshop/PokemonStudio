@@ -20,6 +20,7 @@ import EditIcon from '@assets/icons/global/edit-icon.svg';
 import ClearIcon from '@assets/icons/global/clear-icon.svg';
 import FolderIcon from '@assets/icons/global/folder.svg';
 import NewFolderIcon from '@assets/icons/global/new-folder.svg';
+import TuneIcon from '@assets/icons/global/tune.svg';
 
 export type IconName =
   | 'top'
@@ -41,7 +42,8 @@ export type IconName =
   | 'clear'
   | 'folder'
   | 'newFolder'
-  | 'poc';
+  | 'poc'
+  | 'tune';
 
 const iconNameToIcon: Record<IconName, typeof TopIcon> = {
   top: TopIcon,
@@ -63,6 +65,7 @@ const iconNameToIcon: Record<IconName, typeof TopIcon> = {
   folder: FolderIcon,
   newFolder: NewFolderIcon,
   poc: PocIcon,
+  tune: TuneIcon,
 };
 
 type Size = 's' | 'm' | 'l';
