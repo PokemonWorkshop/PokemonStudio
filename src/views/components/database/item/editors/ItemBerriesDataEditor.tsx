@@ -1,7 +1,14 @@
 import React, { forwardRef, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Editor } from '@components/editor';
-import { InputContainer, InputWithLeftLabelContainer, InputWithSeparatorContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
+import {
+  Input,
+  InputContainer,
+  InputWithLeftLabelContainer,
+  InputWithSeparatorContainer,
+  InputWithTopLabelContainer,
+  Label,
+} from '@components/inputs';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { LOCKED_ITEM_EDITOR, StudioItemBerryFirmness } from '@modelEntities/item';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
@@ -191,13 +198,13 @@ export const ItemBerriesDataEditor = forwardRef<EditorHandlingClose>((_, ref) =>
           </InputWithTopLabelContainer>
           <InputWithLeftLabelContainer>
             <Label htmlFor="natural-gift-power">{t('power')}</Label>
-            <InputNumber
+            <Input
               name="natural-gift-power"
+              type="number"
               min="1"
               max="999"
               defaultValue={item.berryData ? cleanNaNValue(item.berryData.naturalGiftPower) : 80}
               ref={naturalGiftPowerRef}
-              onChange={() => {}}
             />
           </InputWithLeftLabelContainer>
         </InputGroupCollapse>

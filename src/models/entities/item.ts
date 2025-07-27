@@ -30,7 +30,11 @@ export const COOKING_DATA_VALIDATOR = z.object({
   color: COLOR_VALIDATOR,
   betterPokeblockChance: POSITIVE_OR_ZERO_INT,
   smoothness: POSITIVE_INT,
-  flavors: z.array(POSITIVE_OR_ZERO_INT).min(5).max(5),
+  spicyFlavor: POSITIVE_OR_ZERO_INT,
+  dryFlavor: POSITIVE_OR_ZERO_INT,
+  sweetFlavor: POSITIVE_OR_ZERO_INT,
+  bitterFlavor: POSITIVE_OR_ZERO_INT,
+  sourFlavor: POSITIVE_OR_ZERO_INT,
 });
 export type StudioCookingData = z.infer<typeof COOKING_DATA_VALIDATOR>;
 
@@ -289,7 +293,22 @@ export const mutateItemInto = <K extends StudioItem['klass']>(
   originItem: StudioItem,
   targetItem: Extract<StudioItem, { klass: K }>
 ): typeof targetItem => {
-  const { id, dbSymbol, icon, price, socket, position, isBattleUsable, isMapUsable, isLimited, isHoldable, isAllowingMega, flingPower } = originItem;
+  const {
+    id,
+    dbSymbol,
+    icon,
+    price,
+    socket,
+    position,
+    isBattleUsable,
+    isMapUsable,
+    isLimited,
+    isHoldable,
+    isAllowingMega,
+    flingPower,
+    berryData,
+    cookingData,
+  } = originItem;
   const newItem = {
     ...targetItem,
     id,
@@ -304,6 +323,8 @@ export const mutateItemInto = <K extends StudioItem['klass']>(
     isHoldable,
     isAllowingMega,
     flingPower,
+    berryData,
+    cookingData,
   };
 
   if ('loyaltyMalus' in originItem && 'loyaltyMalus' in newItem) newItem.loyaltyMalus = originItem.loyaltyMalus;

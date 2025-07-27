@@ -22,34 +22,35 @@ export const ItemCookingData = ({ dialogsRef }: ItemCookingDataProps) => {
       {!isDisabled && (
         <DataGrid columns="152px 1fr" rows="1fr">
           <DataFieldgroup title="">
-            <DataFieldsetField label={t('pokeblock_color')} data={item.cookingData != null ? t(`${item.cookingData.color}`) : '---'} />
+            <DataFieldsetField size={'m'} label={t('pokeblock_color')} data={item.cookingData != null ? t(`${item.cookingData.color}`) : '---'} />
             <DataFieldsetField
+              size={'m'}
               label={t('berries_better_pokeblock')}
               data={item.cookingData != null ? t('berry_better_pokeblock', { chance: item.cookingData.betterPokeblockChance }) : '---'}
             />
-            <DataFieldsetField label={t('smoothness')} data={item.cookingData != null ? item.cookingData.smoothness : '---'} />
+            <DataFieldsetField size={'m'} label={t('smoothness')} data={item.cookingData != null ? item.cookingData.smoothness : '---'} />
           </DataFieldgroup>
           <DataFieldgroup title={t('flavors')}>
             <DataFieldgroupField
               label={t('spicy')}
-              data={item.cookingData != null ? item.cookingData.flavors[0] : '---'}
+              data={item.cookingData != null ? item.cookingData.spicyFlavor : '---'}
               width="117px"
               key={'spicy'}
             />
-            <DataFieldgroupField label={t('dry')} data={item.cookingData != null ? item.cookingData.flavors[1] : '---'} width="117px" key={'dry'} />
+            <DataFieldgroupField label={t('dry')} data={item.cookingData != null ? item.cookingData.dryFlavor : '---'} width="117px" key={'dry'} />
             <DataFieldgroupField
               label={t('sweet')}
-              data={item.cookingData != null ? item.cookingData.flavors[2] : '---'}
+              data={item.cookingData != null ? item.cookingData.sweetFlavor : '---'}
               width="117px"
               key={'sweet'}
             />
             <DataFieldgroupField
               label={t('bitter')}
-              data={item.cookingData != null ? item.cookingData.flavors[3] : '---'}
+              data={item.cookingData != null ? item.cookingData.bitterFlavor : '---'}
               width="117px"
               key={'bitter'}
             />
-            <DataFieldgroupField label={t('sour')} data={item.cookingData != null ? item.cookingData.flavors[4] : '---'} width="117px" key={'sour'} />
+            <DataFieldgroupField label={t('sour')} data={item.cookingData != null ? item.cookingData.sourFlavor : '---'} width="117px" key={'sour'} />
           </DataFieldgroup>
         </DataGrid>
       )}
