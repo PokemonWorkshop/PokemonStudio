@@ -3,6 +3,7 @@ import { createContainer } from 'react-tracked';
 import { SavingConfigMap, SavingMap, SavingTextMap } from '@utils/SavingUtils';
 import type { PSDKVersion } from '@services/getPSDKVersion';
 import type {
+  SoundDesignConfig,
   StudioCreditConfig,
   StudioDevicesConfig,
   StudioDisplayConfig,
@@ -84,6 +85,7 @@ export const psdkConfigKeys: (keyof PSDKConfigs)[] = [
   'devices_config',
   'display_config',
   'graphic_config',
+  'sound_design_config',
   'infos_config',
   'language_config',
   'save_config',
@@ -98,6 +100,7 @@ export interface PSDKConfigs {
   devices_config: StudioDevicesConfig;
   display_config: StudioDisplayConfig;
   graphic_config: StudioGraphicConfig;
+  sound_design_config: SoundDesignConfig;
   infos_config: StudioInfoConfig;
   language_config: StudioLanguageConfig;
   save_config: StudioSaveConfig;
