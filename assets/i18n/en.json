@@ -1568,6 +1568,7 @@
   "firmness_hard": "Hard",
   "firmness_very_hard": "Very hard",
   "firmness_super_hard": "Super hard",
+  "add_berry_and_cooking_data_to_items": "Adding berry and cooking data to items",
   "add_sound_design_config": "Add a config file to manage the sound design",
   "sound_design": "Sound Design",
   "sound_default": "Default sound",

@@ -32,7 +32,7 @@ export const ItemCookingDataEditor = forwardRef<EditorHandlingClose>((_, ref) =>
   const item = cloneEntity(currentItem);
   const setItems = useUpdateItem(item);
 
-  const [color, setColor] = useState<string>(item.cookingData ? item.cookingData.color : 'red');
+  const [color, setColor] = useState<string>(item.cookingData ? item.cookingData.pokeblockColor : 'red');
   const [flavorsPartOpen, setFlavorsPartOpen] = useState<boolean>(false);
 
   const betterPokeblockChanceRef = useRef<HTMLInputElement>(null);
@@ -57,7 +57,7 @@ export const ItemCookingDataEditor = forwardRef<EditorHandlingClose>((_, ref) =>
     const updatedItem = {
       ...item,
       cookingData: {
-        color: color as StudioItemBerryColor,
+        pokeblockColor: color as StudioItemBerryColor,
         betterPokeblockChance: cleanNaNValue(betterPokeblockChance),
         smoothness: cleanNaNValue(smoothness),
         spicyFlavor: cleanNaNValue(spicy),

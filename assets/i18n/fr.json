@@ -1568,6 +1568,7 @@
   "firmness_hard": "Ferme",
   "firmness_very_hard": "Très ferme",
   "firmness_super_hard": "Super ferme",
+  "add_berry_and_cooking_data_to_items": "Ajout des données de baies et de préparations aux objets",
   "add_sound_design_config": "Ajout d'un fichier de configuration pour gérer les musiques et sons",
   "sound_design": "Sound Design",
   "sound_default": "Effets sonores par défaut",

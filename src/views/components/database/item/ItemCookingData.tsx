@@ -22,7 +22,11 @@ export const ItemCookingData = ({ dialogsRef }: ItemCookingDataProps) => {
       {!isDisabled && (
         <DataGrid columns="152px 1fr" rows="1fr">
           <DataFieldgroup title="">
-            <DataFieldsetField size={'m'} label={t('pokeblock_color')} data={item.cookingData != null ? t(`${item.cookingData.color}`) : '---'} />
+            <DataFieldsetField
+              size={'m'}
+              label={t('pokeblock_color')}
+              data={item.cookingData != null ? t(`${item.cookingData.pokeblockColor}`) : '---'}
+            />
             <DataFieldsetField
               size={'m'}
               label={t('berries_better_pokeblock')}

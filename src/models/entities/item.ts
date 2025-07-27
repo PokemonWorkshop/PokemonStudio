@@ -27,7 +27,7 @@ export const BERRY_DATA_VALIDATOR = z.object({
 export type StudioBerryData = z.infer<typeof BERRY_DATA_VALIDATOR>;
 
 export const COOKING_DATA_VALIDATOR = z.object({
-  color: COLOR_VALIDATOR,
+  pokeblockColor: COLOR_VALIDATOR,
   betterPokeblockChance: POSITIVE_OR_ZERO_INT,
   smoothness: POSITIVE_INT,
   spicyFlavor: POSITIVE_OR_ZERO_INT,
