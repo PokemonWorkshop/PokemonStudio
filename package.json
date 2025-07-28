@@ -30,13 +30,34 @@
     }
   },
   "languages": {
-    "en": true,
-    "fr": true,
-    "de": true,
-    "pt": true,
-    "it": true,
-    "es": true,
-    "nl": false
+    "en": {
+      "suffix": "English, US",
+      "active": true
+    },
+    "fr": {
+      "suffix": "Français, FR",
+      "active": true
+    },
+    "de": {
+      "suffix": "Español",
+      "active": true
+    },
+    "pt": {
+      "suffix": "Italiano",
+      "active": true
+    },
+    "it": {
+      "suffix": "Deutsch",
+      "active": true
+    },
+    "es": {
+      "suffix": "Português",
+      "active": true
+    },
+    "nl": {
+      "suffix": "Nederlands",
+      "active": false
+    }
   },
   "scripts": {
     "i18n": "node updater_i18n",

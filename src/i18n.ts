@@ -2,7 +2,7 @@ import i18next, { InitOptions } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
-import { languages } from '../package.json';
+import { languages } from '@root/package.json';
 
 import En from '../assets/i18n/en.json';
 type TranslationSchema = typeof En;
@@ -18,7 +18,7 @@ type TranslationSchema = typeof En;
  */
 const activeLanguages = Object.entries(languages)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  .filter(([_, isActive]) => isActive)
+  .filter(([_, isActive]) => isActive['active'])
   .map(([lang]) => lang);
 
 const context = import.meta.glob<{ default: TranslationSchema }>('../assets/i18n/*.json', { eager: true });

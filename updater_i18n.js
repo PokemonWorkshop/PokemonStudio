@@ -53,8 +53,8 @@ try {
   const baseJson = JSON.parse(fs.readFileSync(basePath, 'utf-8'));
 
   const allLangs = Object.keys(languages);
-  const activeLangs = allLangs.filter((lang) => languages[lang] === true);
-  const inactiveLangs = allLangs.filter((lang) => languages[lang] === false);
+  const activeLangs = allLangs.filter((lang) => languages[lang]['active']);
+  const inactiveLangs = allLangs.filter((lang) => !languages[lang]['active']);
 
   activeLangs.forEach((lang) => {
     const targetPath = path.join(i18nDir, `${lang}.json`);
