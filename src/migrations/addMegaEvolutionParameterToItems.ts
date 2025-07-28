@@ -31,26 +31,26 @@ import { parseJSON } from '@utils/json/parse';
 
 // C'est moche, mais d'après ce ticket y a pas moyen de faire autrement https://github.com/colinhacks/zod/discussions/1434
 const PRE_MIGRATION_ITEM_VALIDATOR = z.discriminatedUnion('klass', [
-  UNKNOWN_ITEM_VALIDATOR.omit({ isAllowingMega: true }),
-  HEALING_ITEM_VALIDATOR.omit({ isAllowingMega: true }),
-  PP_HEALING_ITEM_VALIDATOR.omit({ isAllowingMega: true }),
-  ALL_PP_HEALING_ITEM_VALIDATOR.omit({ isAllowingMega: true }),
-  BALL_ITEM_VALIDATOR.omit({ isAllowingMega: true }),
-  CONSTANT_HEALING_ITEM_VALIDATOR.omit({ isAllowingMega: true }),
-  STAT_BOOST_ITEM_VALIDATOR.omit({ isAllowingMega: true }),
-  EV_BOOST_ITEM_VALIDATOR.omit({ isAllowingMega: true }),
-  EVENT_ITEM_VALIDATOR.omit({ isAllowingMega: true }),
-  FLEEING_ITEM_VALIDATOR.omit({ isAllowingMega: true }),
-  LEVEL_INCREASE_ITEM_VALIDATOR.omit({ isAllowingMega: true }),
-  EXP_INCREASE_ITEM_VALIDATOR.omit({ isAllowingMega: true }),
-  PP_INCREASE_ITEM_VALIDATOR.omit({ isAllowingMega: true }),
-  RATE_HEALING_ITEM_VALIDATOR.omit({ isAllowingMega: true }),
-  REPEL_ITEM_VALIDATOR.omit({ isAllowingMega: true }),
-  STATUS_CONSTANT_HEALING_ITEM_VALIDATOR.omit({ isAllowingMega: true }),
-  STATUS_HEALING_ITEM_VALIDATOR.omit({ isAllowingMega: true }),
-  STATUS_RATE_HEALING_ITEM_VALIDATOR.omit({ isAllowingMega: true }),
-  STONE_ITEM_VALIDATOR.omit({ isAllowingMega: true }),
-  TECH_ITEM_VALIDATOR.omit({ isAllowingMega: true }),
+  UNKNOWN_ITEM_VALIDATOR.omit({ isAllowingMega: true, isBerry: true }),
+  HEALING_ITEM_VALIDATOR.omit({ isAllowingMega: true, isBerry: true }),
+  PP_HEALING_ITEM_VALIDATOR.omit({ isAllowingMega: true, isBerry: true }),
+  ALL_PP_HEALING_ITEM_VALIDATOR.omit({ isAllowingMega: true, isBerry: true }),
+  BALL_ITEM_VALIDATOR.omit({ isAllowingMega: true, isBerry: true }),
+  CONSTANT_HEALING_ITEM_VALIDATOR.omit({ isAllowingMega: true, isBerry: true }),
+  STAT_BOOST_ITEM_VALIDATOR.omit({ isAllowingMega: true, isBerry: true }),
+  EV_BOOST_ITEM_VALIDATOR.omit({ isAllowingMega: true, isBerry: true }),
+  EVENT_ITEM_VALIDATOR.omit({ isAllowingMega: true, isBerry: true }),
+  FLEEING_ITEM_VALIDATOR.omit({ isAllowingMega: true, isBerry: true }),
+  LEVEL_INCREASE_ITEM_VALIDATOR.omit({ isAllowingMega: true, isBerry: true }),
+  EXP_INCREASE_ITEM_VALIDATOR.omit({ isAllowingMega: true, isBerry: true }),
+  PP_INCREASE_ITEM_VALIDATOR.omit({ isAllowingMega: true, isBerry: true }),
+  RATE_HEALING_ITEM_VALIDATOR.omit({ isAllowingMega: true, isBerry: true }),
+  REPEL_ITEM_VALIDATOR.omit({ isAllowingMega: true, isBerry: true }),
+  STATUS_CONSTANT_HEALING_ITEM_VALIDATOR.omit({ isAllowingMega: true, isBerry: true }),
+  STATUS_HEALING_ITEM_VALIDATOR.omit({ isAllowingMega: true, isBerry: true }),
+  STATUS_RATE_HEALING_ITEM_VALIDATOR.omit({ isAllowingMega: true, isBerry: true }),
+  STONE_ITEM_VALIDATOR.omit({ isAllowingMega: true, isBerry: true }),
+  TECH_ITEM_VALIDATOR.omit({ isAllowingMega: true, isBerry: true }),
 ]);
 type StudioItemDataBeforeMigration = z.infer<typeof PRE_MIGRATION_ITEM_VALIDATOR>;
 
@@ -72,6 +72,7 @@ const addParameter = (item: StudioItemDataBeforeMigration): StudioItem => {
   return {
     ...item,
     isAllowingMega: MEGA_TOOLS.includes(item.dbSymbol),
+    isBerry: false,
   };
 };
 

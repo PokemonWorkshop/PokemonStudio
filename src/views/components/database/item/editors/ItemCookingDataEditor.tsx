@@ -33,7 +33,6 @@ export const ItemCookingDataEditor = forwardRef<EditorHandlingClose>((_, ref) =>
   const setItems = useUpdateItem(item);
 
   const [color, setColor] = useState<string>(item.cookingData ? item.cookingData.pokeblockColor : 'red');
-  const [flavorsPartOpen, setFlavorsPartOpen] = useState<boolean>(false);
 
   const betterPokeblockChanceRef = useRef<HTMLInputElement>(null);
   const smoothnessRef = useRef<HTMLInputElement>(null);
@@ -68,8 +67,6 @@ export const ItemCookingDataEditor = forwardRef<EditorHandlingClose>((_, ref) =>
       },
     };
 
-    window.api.log.error(updatedItem);
-
     setItems({ ...updatedItem });
   };
 
@@ -82,11 +79,7 @@ export const ItemCookingDataEditor = forwardRef<EditorHandlingClose>((_, ref) =>
     const bitterOk = !!bitterRef.current && bitterRef.current.validity.valid;
     const sourOk = !!sourRef.current && sourRef.current.validity.valid;
 
-    return betterPokeblockChanceOk && smoothnessOk && ((spicyOk && dryOk && sweetOk && bitterOk && sourOk) || !flavorsPartOpen);
-  };
-
-  const handleFlavorsPartOpen = () => {
-    setFlavorsPartOpen(!flavorsPartOpen);
+    return betterPokeblockChanceOk && smoothnessOk && spicyOk && dryOk && sweetOk && bitterOk && sourOk;
   };
 
   useEditorHandlingClose(ref, handleClose, canClose);
@@ -125,13 +118,7 @@ export const ItemCookingDataEditor = forwardRef<EditorHandlingClose>((_, ref) =>
             ref={smoothnessRef}
           />
         </InputWithLeftLabelContainer>
-        <InputGroupCollapse
-          title={t('flavors')}
-          gap="12px"
-          onClick={() => {
-            handleFlavorsPartOpen();
-          }}
-        >
+        <InputGroupCollapse title={t('flavors')} gap="12px">
           <InputWithLeftLabelContainer>
             <Label htmlFor="spicy">{t('spicy')}</Label>
             <Input

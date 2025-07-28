@@ -45,7 +45,6 @@ export const ItemBerriesDataEditor = forwardRef<EditorHandlingClose>((_, ref) =>
 
   const [naturalGiftType, setNaturalGiftType] = useState<string>(item.berryData ? item.berryData.naturalGiftType : 'normal');
   const [minMaxBerriesError, setMinMaxBerriesError] = useState<boolean>(false);
-  const [naturalGiftPartOpen, setNaturalGiftPartOpen] = useState<boolean>(false);
   const [firmness, setFirmness] = useState<string>(item.berryData ? item.berryData.firmness : 'very_soft');
   const firmnessesOptions = useMemo(() => Firmnesses.map((firmness) => ({ value: firmness, label: t(`firmness_${firmness}`) })), [t]);
 
@@ -67,12 +66,12 @@ export const ItemBerriesDataEditor = forwardRef<EditorHandlingClose>((_, ref) =>
     const updatedItem = {
       ...item,
       berryData: {
-        size: cleanNaNValue(size),
+        size: cleanNaNValue(size) || 0.1,
         firmness: firmness as StudioItemBerryFirmness,
-        minYield: cleanNaNValue(minYield),
-        maxYield: cleanNaNValue(maxYield),
-        growth: cleanNaNValue(growth),
-        drainRate: cleanNaNValue(drainRate),
+        minYield: cleanNaNValue(minYield) || 1,
+        maxYield: cleanNaNValue(maxYield) || cleanNaNValue(minYield) + 1,
+        growth: cleanNaNValue(growth) || 1,
+        drainRate: cleanNaNValue(drainRate) || 1,
         naturalGiftType: naturalGiftType as DbSymbol,
         naturalGiftPower: cleanNaNValue(naturalGiftPower),
       },
@@ -89,11 +88,7 @@ export const ItemBerriesDataEditor = forwardRef<EditorHandlingClose>((_, ref) =>
     const drainRateOk = !!drainRateRef.current && drainRateRef.current.validity.valid;
     const naturalGiftPowerOk = !!naturalGiftPowerRef.current && naturalGiftPowerRef.current.validity.valid;
 
-    return sizeOk && minYieldOk && maxYieldOk && !minMaxBerriesError && growthOk && drainRateOk && (naturalGiftPowerOk || !naturalGiftPartOpen);
-  };
-
-  const handleNaturalGiftPartOpen = () => {
-    setNaturalGiftPartOpen(!naturalGiftPartOpen);
+    return sizeOk && minYieldOk && maxYieldOk && !minMaxBerriesError && growthOk && drainRateOk && naturalGiftPowerOk;
   };
 
   useEditorHandlingClose(ref, handleClose, canClose);
@@ -176,13 +171,7 @@ export const ItemBerriesDataEditor = forwardRef<EditorHandlingClose>((_, ref) =>
             max="999"
           />
         </InputWithLeftLabelContainer>
-        <InputGroupCollapse
-          title={t('natural_gift_data')}
-          gap="16px"
-          onClick={() => {
-            handleNaturalGiftPartOpen();
-          }}
-        >
+        <InputGroupCollapse title={t('natural_gift_data')} gap="16px">
           <NaturalGiftInfoContainer>
             <NaturalGiftInfo>{t('natural_gift_info')}</NaturalGiftInfo>
           </NaturalGiftInfoContainer>

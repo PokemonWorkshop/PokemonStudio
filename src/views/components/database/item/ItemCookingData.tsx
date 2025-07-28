@@ -10,7 +10,7 @@ type ItemCookingDataProps = { dialogsRef: ItemDialogsRef };
 export const ItemCookingData = ({ dialogsRef }: ItemCookingDataProps) => {
   const { currentItem: item } = useItemPage();
   const { t } = useTranslation();
-  const isDisabled = LOCKED_ITEM_EDITOR[item.klass].includes('cooking');
+  const isDisabled = LOCKED_ITEM_EDITOR[item.klass].includes('cooking') || !item.isBerry;
 
   return (
     <DataBlockWithTitle

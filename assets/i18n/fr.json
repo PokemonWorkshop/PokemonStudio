@@ -1537,6 +1537,7 @@
   "add_mega_evolution_parameter_to_items": "Ajout du paramètre de Méga-Évolution aux objets",
   "allow_mega": "Méga-Évolution",
   "allow_mega_evolution": "Permet la Méga-Évolution",
+  "is_berry": "Est une Baie",
   "berries_title": "Baies",
   "cooking_title": "Préparations",
   "berries_size": "Dimension",

@@ -2,10 +2,59 @@ import { IpcMainEvent } from 'electron';
 import path from 'path';
 import { readProjectFolder } from '@src/backendTasks/readProjectData';
 import fsPromise from 'fs/promises';
+import { z } from 'zod';
 import { deletePSDKDatFile } from './migrateUtils';
-import { ITEM_VALIDATOR, StudioItem, StudioBerryData, StudioCookingData } from '@modelEntities/item';
+import {
+  StudioItem,
+  StudioBerryData,
+  StudioCookingData,
+  ALL_PP_HEALING_ITEM_VALIDATOR,
+  BALL_ITEM_VALIDATOR,
+  CONSTANT_HEALING_ITEM_VALIDATOR,
+  EV_BOOST_ITEM_VALIDATOR,
+  EVENT_ITEM_VALIDATOR,
+  EXP_INCREASE_ITEM_VALIDATOR,
+  FLEEING_ITEM_VALIDATOR,
+  HEALING_ITEM_VALIDATOR,
+  LEVEL_INCREASE_ITEM_VALIDATOR,
+  PP_HEALING_ITEM_VALIDATOR,
+  PP_INCREASE_ITEM_VALIDATOR,
+  RATE_HEALING_ITEM_VALIDATOR,
+  REPEL_ITEM_VALIDATOR,
+  STAT_BOOST_ITEM_VALIDATOR,
+  STATUS_CONSTANT_HEALING_ITEM_VALIDATOR,
+  STATUS_HEALING_ITEM_VALIDATOR,
+  STATUS_RATE_HEALING_ITEM_VALIDATOR,
+  STONE_ITEM_VALIDATOR,
+  TECH_ITEM_VALIDATOR,
+  UNKNOWN_ITEM_VALIDATOR,
+} from '@modelEntities/item';
 import { parseJSON } from '@utils/json/parse';
 import { DbSymbol } from '@modelEntities/dbSymbol';
+
+const PRE_MIGRATION_ITEM_VALIDATOR = z.discriminatedUnion('klass', [
+  UNKNOWN_ITEM_VALIDATOR.omit({ isBerry: true }),
+  HEALING_ITEM_VALIDATOR.omit({ isBerry: true }),
+  PP_HEALING_ITEM_VALIDATOR.omit({ isBerry: true }),
+  ALL_PP_HEALING_ITEM_VALIDATOR.omit({ isBerry: true }),
+  BALL_ITEM_VALIDATOR.omit({ isBerry: true }),
+  CONSTANT_HEALING_ITEM_VALIDATOR.omit({ isBerry: true }),
+  STAT_BOOST_ITEM_VALIDATOR.omit({ isBerry: true }),
+  EV_BOOST_ITEM_VALIDATOR.omit({ isBerry: true }),
+  EVENT_ITEM_VALIDATOR.omit({ isBerry: true }),
+  FLEEING_ITEM_VALIDATOR.omit({ isBerry: true }),
+  LEVEL_INCREASE_ITEM_VALIDATOR.omit({ isBerry: true }),
+  EXP_INCREASE_ITEM_VALIDATOR.omit({ isBerry: true }),
+  PP_INCREASE_ITEM_VALIDATOR.omit({ isBerry: true }),
+  RATE_HEALING_ITEM_VALIDATOR.omit({ isBerry: true }),
+  REPEL_ITEM_VALIDATOR.omit({ isBerry: true }),
+  STATUS_CONSTANT_HEALING_ITEM_VALIDATOR.omit({ isBerry: true }),
+  STATUS_HEALING_ITEM_VALIDATOR.omit({ isBerry: true }),
+  STATUS_RATE_HEALING_ITEM_VALIDATOR.omit({ isBerry: true }),
+  STONE_ITEM_VALIDATOR.omit({ isBerry: true }),
+  TECH_ITEM_VALIDATOR.omit({ isBerry: true }),
+]);
+type StudioItemDataBeforeMigration = z.infer<typeof PRE_MIGRATION_ITEM_VALIDATOR>;
 
 // These Records are very large, you should collapse them instead of scrolling 1300 lines
 const berriesData: Record<string, StudioBerryData> = {
@@ -1354,12 +1403,20 @@ const cookingsData: Record<string, StudioCookingData> = {
   },
 };
 
-const addParameter = (item: StudioItem): StudioItem => {
-  return {
-    ...item,
-    berryData: berriesData[item.dbSymbol],
-    cookingData: cookingsData[item.dbSymbol],
-  };
+const addParameter = (item: StudioItemDataBeforeMigration): StudioItem => {
+  if (item.dbSymbol in berriesData) {
+    return {
+      ...item,
+      isBerry: true,
+      berryData: berriesData[item.dbSymbol],
+      cookingData: cookingsData[item.dbSymbol],
+    };
+  } else {
+    return {
+      ...item,
+      isBerry: false,
+    };
+  }
 };
 
 export const addBerryAndCookingDataToItems = async (_: IpcMainEvent, projectPath: string) => {
@@ -1368,9 +1425,8 @@ export const addBerryAndCookingDataToItems = async (_: IpcMainEvent, projectPath
   const items = await readProjectFolder(projectPath, 'items');
   await items.reduce(async (lastPromise, item) => {
     await lastPromise;
-    const itemParsed = ITEM_VALIDATOR.safeParse(parseJSON<StudioItem>(item.data, item.filename));
-    if (itemParsed.success && itemParsed.data.dbSymbol in berriesData) {
-      console.log(`Adding berry data to item ${itemParsed.data.dbSymbol}`);
+    const itemParsed = PRE_MIGRATION_ITEM_VALIDATOR.safeParse(parseJSON<StudioItem>(item.data, item.filename));
+    if (itemParsed.success) {
       const newItem = addParameter(itemParsed.data);
       return fsPromise.writeFile(path.join(projectPath, 'Data/Studio/items', `${newItem.dbSymbol}.json`), JSON.stringify(newItem, null, 2));
     }

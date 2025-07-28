@@ -185,6 +185,7 @@ export const createItem = <K extends StudioItem['klass']>(klass: K, dbSymbol: Db
     isLimited: false,
     isHoldable: false,
     isAllowingMega: false,
+    isBerry: false,
     flingPower: 30,
   };
   type Output = Extract<StudioItem, { klass: K }>;

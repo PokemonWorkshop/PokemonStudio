@@ -18,7 +18,8 @@ const NoParameterContainer = styled.div`
   color: ${({ theme }) => theme.colors.text500};
 `;
 
-const atLeastOneParameter = (item: StudioItem) => item.isBattleUsable || item.isMapUsable || item.isLimited || item.isHoldable || item.isAllowingMega;
+const atLeastOneParameter = (item: StudioItem) =>
+  item.isBattleUsable || item.isMapUsable || item.isLimited || item.isHoldable || item.isAllowingMega || item.isBerry;
 
 type ItemParemetersDataProps = {
   dialogsRef: ItemDialogsRef;
@@ -44,6 +45,7 @@ export const ItemParametersData = ({ dialogsRef }: ItemParemetersDataProps) => {
             {item.isLimited && <Tag>{t('limited')}</Tag>}
             {item.isHoldable && <Tag>{t('holdable')}</Tag>}
             {item.isAllowingMega && <Tag>{t('allow_mega')}</Tag>}
+            {item.isBerry && <Tag>{t('berry')}</Tag>}
           </ParameterContainer>
         ) : (
           <NoParameterContainer>{t('no_parameter')}</NoParameterContainer>

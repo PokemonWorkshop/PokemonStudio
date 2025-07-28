@@ -51,6 +51,7 @@ const ITEM_BASE_VALIDATOR = z.object({
   isHoldable: z.boolean(),
   isAllowingMega: z.boolean(),
   flingPower: POSITIVE_OR_ZERO_INT,
+  isBerry: z.boolean(),
   berryData: BERRY_DATA_VALIDATOR.optional(),
   cookingData: COOKING_DATA_VALIDATOR.optional(),
 });
@@ -306,6 +307,7 @@ export const mutateItemInto = <K extends StudioItem['klass']>(
     isHoldable,
     isAllowingMega,
     flingPower,
+    isBerry,
     berryData,
     cookingData,
   } = originItem;
@@ -323,6 +325,7 @@ export const mutateItemInto = <K extends StudioItem['klass']>(
     isHoldable,
     isAllowingMega,
     flingPower,
+    isBerry,
     berryData,
     cookingData,
   };

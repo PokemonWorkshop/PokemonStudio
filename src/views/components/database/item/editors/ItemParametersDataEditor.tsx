@@ -19,9 +19,16 @@ export const ItemParametersDataEditor = forwardRef<EditorHandlingClose>((_, ref)
     isLimited: item.isLimited,
     isHoldable: item.isHoldable,
     isAllowingMega: item.isAllowingMega,
+    isBerry: item.isBerry,
+    berryData: item.berryData,
+    cookingData: item.cookingData,
   });
 
   const handleClose = () => {
+    if (!params.isBerry) {
+      params.berryData = undefined;
+      params.cookingData = undefined;
+    }
     setItems(params);
   };
 
@@ -70,6 +77,14 @@ export const ItemParametersDataEditor = forwardRef<EditorHandlingClose>((_, ref)
             name="allow_mega_evolution"
             checked={params.isAllowingMega}
             onChange={(event) => setParams((prevFormData) => ({ ...prevFormData, isAllowingMega: event.target.checked }))}
+          />
+        </InputWithLeftLabelContainer>
+        <InputWithLeftLabelContainer>
+          <Label htmlFor="is_berry">{t('is_berry')}</Label>
+          <Toggle
+            name="is_berry"
+            checked={params.isBerry}
+            onChange={(event) => setParams((prevFormData) => ({ ...prevFormData, isBerry: event.target.checked }))}
           />
         </InputWithLeftLabelContainer>
       </InputContainer>

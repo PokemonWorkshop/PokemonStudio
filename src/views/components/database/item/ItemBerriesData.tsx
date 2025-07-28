@@ -14,7 +14,7 @@ export const ItemBerriesData = ({ dialogsRef }: ItemBerriesDataProps) => {
   const { projectDataValues: types } = useProjectDataReadonly('types', 'type');
   const getTypeName = useGetEntityNameTextUsingTextId();
   const { t } = useTranslation();
-  const isDisabled = LOCKED_ITEM_EDITOR[item.klass].includes('berries');
+  const isDisabled = LOCKED_ITEM_EDITOR[item.klass].includes('berries') || !item.isBerry;
 
   return (
     <DataBlockWithTitle
@@ -29,7 +29,13 @@ export const ItemBerriesData = ({ dialogsRef }: ItemBerriesDataProps) => {
           <DataFieldsetField label={t('berries_firmness')} data={item.berryData != null ? t(`firmness_${item.berryData.firmness}`) : '---'} />
           <DataFieldsetField
             label={t('berries_yield')}
-            data={item.berryData != null ? t('berry_yield', { min: item.berryData.minYield, max: item.berryData.maxYield }) : '---'}
+            data={
+              item.berryData != null
+                ? item.berryData.minYield === item.berryData.maxYield
+                  ? item.berryData.minYield.toString()
+                  : t('berry_yield', { min: item.berryData.minYield, max: item.berryData.maxYield })
+                : '---'
+            }
           />
           <DataFieldsetField
             label={t('berries_growth')}
