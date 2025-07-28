@@ -14,6 +14,8 @@ const mainWindowViteName = MAIN_WINDOW_VITE_NAME;
 const RESOURCES_PATH = app.isPackaged ? join(process.resourcesPath, 'assets') : join(__dirname, '../../assets');
 const getAssetPath = (...paths: string[]): string => join(RESOURCES_PATH, ...paths);
 
+export const mainWindowFilePath = join(__dirname, `../renderer/${mainWindowViteName}/index.html`);
+
 /**
  * TypeScript union type to allow both number and string
  */
@@ -245,7 +247,7 @@ class WindowManager {
       if (mainWindowViteDevServerUrl) {
         newWindow.loadURL(mainWindowViteDevServerUrl);
       } else {
-        newWindow.loadFile(join(__dirname, `../renderer/${mainWindowViteName}/index.html`));
+        newWindow.loadFile(mainWindowFilePath);
       }
     }
 
