@@ -2,10 +2,10 @@ import { ResourceImage } from '@components/ResourceImage';
 import React from 'react';
 import styled from 'styled-components';
 import type { StudioMap } from '@modelEntities/map';
-import type { StudioMapLink } from '@modelEntities/mapLink';
+import { getLinksFromMapLink, type StudioMapLink, type StudioMapLinkCardinal } from '@modelEntities/mapLink';
 import { getMapOverviewPath } from '@utils/resourcePath';
 
-const MainMapLinkNodeContainer = styled.div`
+const MapLinkNodeContainer = styled.div`
   display: inline-block;
   // Maps can be completely transparent, so we set the background color so that they are visible.
   background-color: black;
@@ -15,18 +15,22 @@ const MainMapLinkNodeContainer = styled.div`
   }
 `;
 
-type MainMapLinkNodeProps = {
+type MapLinkNodeProps = {
   data: {
     mapLink: StudioMapLink;
     maps: Record<number, StudioMap>;
+    cardinal: StudioMapLinkCardinal;
+    index: number;
   };
 };
 
-export const MainMapLinkNode = ({ data }: MainMapLinkNodeProps) => {
-  const map = data.maps[data.mapLink.mapId];
+export const MapLinkNode = ({ data: { mapLink, maps, cardinal, index } }: MapLinkNodeProps) => {
+  const links = getLinksFromMapLink(mapLink, cardinal);
+  const map = maps[links[index].mapId];
+
   return (
-    <MainMapLinkNodeContainer>
+    <MapLinkNodeContainer>
       {map ? <ResourceImage imagePathInProject={getMapOverviewPath(map.tiledFilename)} versionId={map.mtime} /> : <div>???</div>}
-    </MainMapLinkNodeContainer>
+    </MapLinkNodeContainer>
   );
 };
