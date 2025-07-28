@@ -19,11 +19,10 @@ const openCompilationWindow = async (payload: OpenCompilationWindowInput) => {
   if (mainWindowViteDevServerUrl) {
     await compilationWindow.loadURL(mainWindowViteDevServerUrl);
   } else {
-    compilationWindow.loadFile(path.join(__dirname, `../../renderer/${mainWindowViteName}/index.html`));
+    await compilationWindow.loadFile(path.join(__dirname, `../renderer/${mainWindowViteName}/index.html`));
   }
 
   compilationConfig.push(payload.configuration);
-
   compilationWindow.show();
 
   return {};
