@@ -38,19 +38,19 @@
       "suffix": "Français, FR",
       "active": true
     },
-    "de": {
+    "es": {
       "suffix": "Español",
       "active": true
     },
-    "pt": {
+    "it": {
       "suffix": "Italiano",
       "active": true
     },
-    "it": {
+    "de": {
       "suffix": "Deutsch",
       "active": true
     },
-    "es": {
+    "pt": {
       "suffix": "Português",
       "active": true
     },
