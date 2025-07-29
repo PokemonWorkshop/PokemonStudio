@@ -66,6 +66,7 @@ export const ItemBerriesDataEditor = forwardRef<EditorHandlingClose>((_, ref) =>
     const updatedItem = {
       ...item,
       berryData: {
+        ...item.berryData,
         size: cleanNaNValue(size, 0.1),
         firmness: firmness as StudioItemBerryFirmness,
         minYield: cleanNaNValue(minYield, 1),

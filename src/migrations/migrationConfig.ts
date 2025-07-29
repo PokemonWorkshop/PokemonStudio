@@ -152,7 +152,7 @@ export const MIGRATION_CONFIG: MigrateConfigType[] = [
   },
   {
     migration: addBerryAndCookingDataToItems,
-    version: '2.6.0',
+    version: '2.6.1',
     message: 'add_berry_and_cooking_data_to_items',
   },
 ];
