@@ -2,6 +2,18 @@ import type { StudioMap } from '@modelEntities/map';
 import { getLinksFromMapLink, type StudioMapLink, type StudioMapLinkCardinal } from '@modelEntities/mapLink';
 import { ProjectData, State } from '@src/GlobalStateProvider';
 import { assertUnreachable } from './assertUnreachable';
+import type { Node } from '@xyflow/react';
+
+export type MapLinkNodeData = {
+  mapLink: StudioMapLink;
+  maps: Record<number, StudioMap>;
+  cardinal?: StudioMapLinkCardinal;
+  index?: number;
+};
+
+export type MapLinkNodeType = Node<MapLinkNodeData, 'mainMapLinkNode' | 'mapLinkNode'>;
+
+type MapSize = { width: number; height: number };
 
 export const getValidMaps = (zones: ProjectData['zones']) =>
   Object.values(zones)
@@ -14,11 +26,10 @@ export const checkValidMaplink = (mapId: number, state: State) => {
   return mapsFiltered.find((map) => map.id === mapId) ? true : false;
 };
 
-type MapSize = { width: number; height: number };
-
 const getMapSize = (map: StudioMap): MapSize => {
-  const width = map.tileMetadata?.width || 1;
-  const height = map.tileMetadata?.height || 1;
+  const tileMetadata = map.tileMetadata as MapSize;
+  const width = tileMetadata.width;
+  const height = tileMetadata.height;
   return {
     width,
     height,
@@ -38,6 +49,23 @@ const getPosition = (cardinal: StudioMapLinkCardinal, mainMapSize: MapSize, mapS
     default:
       assertUnreachable(cardinal);
   }
+  return { x: 0, y: 0 };
+};
+
+export const getOffset = (cardinal: StudioMapLinkCardinal, position: Node['position'], tileSize: number) => {
+  switch (cardinal) {
+    case 'east':
+      return position.y / tileSize;
+    case 'north':
+      return position.x / tileSize;
+    case 'south':
+      return position.x / tileSize;
+    case 'west':
+      return position.y / tileSize;
+    default:
+      assertUnreachable(cardinal);
+  }
+  return 0;
 };
 
 const buildLinksByCardinal = (
@@ -45,7 +73,7 @@ const buildLinksByCardinal = (
   cardinal: StudioMapLinkCardinal,
   maps: Record<number, StudioMap>,
   tileSize: number
-): unknown[] => {
+): MapLinkNodeType[] => {
   const links = getLinksFromMapLink(mapLink, cardinal);
   const mainMapSize = getMapSize(maps[mapLink.mapId]);
   return links.map(({ mapId, offset }, index) => {
@@ -59,7 +87,16 @@ const buildLinksByCardinal = (
   });
 };
 
-export const buildLinks = (mapLink: StudioMapLink, maps: Record<number, StudioMap>, tileSize: number) => {
+export const initMainMapLinkNode = (mapLink: StudioMapLink, maps: Record<number, StudioMap>): MapLinkNodeType => ({
+  id: 'main-map-link-node',
+  position: { x: 0, y: 0 },
+  type: 'mainMapLinkNode',
+  data: { mapLink, maps },
+  draggable: false,
+  className: 'nopan',
+});
+
+export const buildLinks = (mapLink: StudioMapLink, maps: Record<number, StudioMap>, tileSize: number): MapLinkNodeType[] => {
   return [
     ...buildLinksByCardinal(mapLink, 'east', maps, tileSize),
     ...buildLinksByCardinal(mapLink, 'north', maps, tileSize),
