@@ -11,7 +11,7 @@ import { MoveEditorAndDeletionKeys, MoveEditorOverlay } from '@components/databa
 import { useMovePage } from '@hooks/usePage';
 import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';
 
-export const MovePage = () => {
+export const MoveContestPage = () => {
   const dialogsRef = useDialogsRef<MoveEditorAndDeletionKeys>();
   const { move, moveName, cannotDelete } = useMovePage();
   const { t } = useTranslation();
@@ -25,7 +25,7 @@ export const MovePage = () => {
         <PageDataConstrainerStyle>
           <DataBlockWrapper>
             <DatabaseTabsBar
-              currentTabIndex={0}
+              currentTabIndex={1}
               tabs={[
                 { label: t('general_data'), path: '/database/moves' },
                 { label: t('contest_data'), path: '/database/moves/contest' },
@@ -33,7 +33,7 @@ export const MovePage = () => {
             />
           </DataBlockWrapper>
           <DataBlockWrapper>
-            <MoveFrame move={move} dialogsRef={dialogsRef} contest={false} />
+            <MoveFrame move={move} dialogsRef={dialogsRef} contest={true} />
             <MoveData move={move} dialogsRef={dialogsRef} />
             <MoveParameters move={move} dialogsRef={dialogsRef} />
             <MoveCharacteristics move={move} dialogsRef={dialogsRef} />

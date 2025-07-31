@@ -1595,5 +1595,6 @@
   "baseTrainerBattle": "Trainer battle",
   "baseTrainerDefeatBattle": "Trainer defeat",
   "evolve": "Creature evolution",
-  "evolved": "Creature evolution end"
+  "evolved": "Creature evolution end",
+  "add_move_contest_data": "Adding contest data to moves"
 }

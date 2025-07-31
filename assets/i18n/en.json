@@ -1595,5 +1595,13 @@
   "baseTrainerBattle": "Trainer battle",
   "baseTrainerDefeatBattle": "Trainer defeat",
   "evolve": "Creature evolution",
-  "evolved": "Creature evolution end"
+  "evolved": "Creature evolution end",
+  "add_move_contest_data": "Adding contest data to moves",
+  "general_data": "General data",
+  "contest_data": "Contest data",
+  "cool": "Cool",
+  "beautiful": "Beautiful",
+  "cute": "Cute",
+  "clever": "Clever",
+  "tough": "Tough"
 }

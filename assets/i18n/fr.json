@@ -1595,5 +1595,13 @@
   "baseTrainerBattle": "Combat contre un dresseur",
   "baseTrainerDefeatBattle": "Défaite du dresseur",
   "evolve": "Évolution d'une créature",
-  "evolved": "Fin de l'évolution d'une créature"
+  "evolved": "Fin de l'évolution d'une créature",
+  "add_move_contest_data": "Ajout des informations de concours aux capacités",
+  "general_data": "Données générales",
+  "contest_data": "Données liées aux concours",
+  "cool": "Sang-Froid",
+  "beautiful": "Beauté",
+  "cute": "Grâce",
+  "smart": "Intelligence",
+  "tough": "Robustesse"
 }

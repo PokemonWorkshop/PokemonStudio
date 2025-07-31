@@ -12,8 +12,21 @@ import {
   MoveStatisticsEditor,
   MoveStatusEditor,
 } from '.';
+import { MoveFrameContestEditor } from './MoveFrameContestEditor';
 
-export type MoveEditorAndDeletionKeys = 'new' | 'frame' | 'characteristics' | 'data' | 'parameters' | 'statistics' | 'status' | 'deletion';
+export type MoveEditorAndDeletionKeys =
+  | 'new'
+  | 'frame'
+  | 'characteristics'
+  | 'data'
+  | 'parameters'
+  | 'statistics'
+  | 'status'
+  | 'frame_contest'
+  | 'data_contest'
+  | 'contest_effects'
+  | 'contest_combos'
+  | 'deletion';
 export type MoveDialogsRef = React.RefObject<DialogRefData<MoveEditorAndDeletionKeys>>;
 
 /**
@@ -38,6 +51,8 @@ export const MoveEditorOverlay = defineEditorOverlay<MoveEditorAndDeletionKeys>(
       return <MoveStatusEditor ref={handleCloseRef} />;
     case 'deletion':
       return <MoveDeletion closeDialog={closeDialog} ref={handleCloseRef} />;
+    case 'frame_contest':
+      return <MoveFrameContestEditor ref={handleCloseRef} />;
     default:
       return assertUnreachable(dialogToShow);
   }
