@@ -1,9 +1,21 @@
-import type { StudioMapLink } from '@modelEntities/mapLink';
+import { getLinksFromMapLink, StudioMapLinkCardinal, type StudioMapLink } from '@modelEntities/mapLink';
 import type { StudioMap } from '@modelEntities/map';
-import { applyNodeChanges, Background, BackgroundVariant, Controls, OnNodesChange, ReactFlow, useNodesState, useReactFlow } from '@xyflow/react';
+import {
+  applyNodeChanges,
+  Background,
+  BackgroundVariant,
+  Controls,
+  Node,
+  OnNodesChange,
+  ReactFlow,
+  useNodesState,
+  useReactFlow,
+} from '@xyflow/react';
 import { MainMapLinkNode } from './mapLinkCard/MainMapLinkNode';
 import { buildLinks, getOffset, initMainMapLinkNode, type MapLinkNodeType } from '@utils/MapLinkUtils';
 import { MapLinkNode } from './mapLinkCard/MapLinkNode';
+import { useUpdateMapLink } from './editors';
+import { cloneEntity } from '@utils/cloneEntity';
 import React, { useEffect, useMemo } from 'react';
 
 const TILE_SIZE = 32;
@@ -17,6 +29,15 @@ export const ReactFlowMapLinkV2 = ({ mapLink, maps }: ReactFlowMapLinkProps) => 
   const reactFlowInstance = useReactFlow();
   const [nodes, setNodes] = useNodesState<MapLinkNodeType>([initMainMapLinkNode(mapLink, maps), ...buildLinks(mapLink, maps, TILE_SIZE)]);
   const nodeTypes = useMemo(() => ({ mainMapLinkNode: MainMapLinkNode, mapLinkNode: MapLinkNode }), []);
+  const updateMapLink = useUpdateMapLink(mapLink);
+
+  const updateOffset = (cardinal: StudioMapLinkCardinal, newPosition: Node['position'], index: number) => {
+    const offset = getOffset(cardinal, newPosition, TILE_SIZE);
+    const links = cloneEntity(getLinksFromMapLink(mapLink, cardinal));
+    links[index].offset = offset;
+    updateMapLink({ [`${cardinal}Maps`]: links });
+    // TODO: implement map reverse offset
+  };
 
   const onNodesChange: OnNodesChange<MapLinkNodeType> = (changes) => {
     setNodes((nds) => {
@@ -31,11 +52,9 @@ export const ReactFlowMapLinkV2 = ({ mapLink, maps }: ReactFlowMapLinkProps) => 
         if (!newPos) return change;
 
         if (change.dragging === false) {
-          console.log('drag end'); // TODO: save the change in the global state
-          if (!cardinal) return change;
+          if (!cardinal || index === undefined) return change;
 
-          const offset = getOffset(cardinal, newPos, TILE_SIZE);
-          console.log(offset);
+          updateOffset(cardinal, newPos, index);
         }
 
         switch (cardinal) {

@@ -55,13 +55,11 @@ const getPosition = (cardinal: StudioMapLinkCardinal, mainMapSize: MapSize, mapS
 export const getOffset = (cardinal: StudioMapLinkCardinal, position: Node['position'], tileSize: number) => {
   switch (cardinal) {
     case 'east':
-      return position.y / tileSize;
-    case 'north':
-      return position.x / tileSize;
-    case 'south':
-      return position.x / tileSize;
     case 'west':
       return position.y / tileSize;
+    case 'north':
+    case 'south':
+      return position.x / tileSize;
     default:
       assertUnreachable(cardinal);
   }
