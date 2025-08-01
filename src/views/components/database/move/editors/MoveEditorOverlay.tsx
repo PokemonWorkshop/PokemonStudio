@@ -13,7 +13,9 @@ import {
   MoveParametersEditor,
   MoveStatisticsEditor,
   MoveStatusEditor,
+  MoveComboMovesImportEditor,
 } from '.';
+import { MoveComboNewEditor } from './MoveComboNewEditor';
 
 export type MoveEditorAndDeletionKeys =
   | 'new'
@@ -25,9 +27,10 @@ export type MoveEditorAndDeletionKeys =
   | 'status'
   | 'frame_contest'
   | 'data_contest'
-  | 'contest_effects'
-  | 'contest_combos'
-  | 'deletion';
+  | 'combo_moves_new'
+  | 'combo_moves_import'
+  | 'deletion'
+  | 'combo_move_deletion';
 export type MoveDialogsRef = React.RefObject<DialogRefData<MoveEditorAndDeletionKeys>>;
 
 /**
@@ -51,11 +54,17 @@ export const MoveEditorOverlay = defineEditorOverlay<MoveEditorAndDeletionKeys>(
     case 'status':
       return <MoveStatusEditor ref={handleCloseRef} />;
     case 'deletion':
-      return <MoveDeletion closeDialog={closeDialog} ref={handleCloseRef} />;
+      return <MoveDeletion type="move" closeDialog={closeDialog} ref={handleCloseRef} />;
+    case 'combo_move_deletion':
+      return <MoveDeletion type="combo_moves" closeDialog={closeDialog} ref={handleCloseRef} />;
     case 'frame_contest':
       return <MoveFrameContestEditor ref={handleCloseRef} />;
     case 'data_contest':
       return <MoveDataContestEditor ref={handleCloseRef} />;
+    case 'combo_moves_import':
+      return <MoveComboMovesImportEditor closeDialog={closeDialog} />;
+    case 'combo_moves_new':
+      return <MoveComboNewEditor ref={handleCloseRef} />;
     default:
       return assertUnreachable(dialogToShow);
   }

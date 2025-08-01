@@ -4,6 +4,7 @@ export { MoveDataEditor } from './MoveDataEditor';
 export { MoveDataContestEditor } from './MoveDataContestEditor';
 export { MoveParametersEditor } from './MoveParametersEditor';
 export { MoveCharacteristicsEditor } from './MoveCharacteristicsEditor';
+export { MoveComboMovesImportEditor } from './MoveComboMovesImportEditor';
 export { MoveStatusEditor } from './MoveStatusEditor';
 export { MoveStatisticsEditor } from './MoveStatisticsEditor';
 export { MoveNewEditor } from './MoveNewEditor';

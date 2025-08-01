@@ -1607,5 +1607,17 @@
   "clever": "Clever",
   "tough": "Robustesse",
   "appeal": "Charme",
-  "jam": "Blocage"
+  "jam": "Blocage",
+  "contest_combo_moves": "Attaques effectuant un Combo",
+  "combo_moves": "Attaques de combo",
+  "import_combo_moves": "Importer des attaques",
+  "add_combo_moves": "Ajouter des attaques",
+  "no_combos": "Aucune attaque de combo",
+  "deletion_of_combo_moves": "Suppression des attaques de combo de {{move}}",
+  "deletion_message_combo_moves": "Vous êtes sur le point de supprimer définitivement les attaques de combo de « {{move}} ».",
+  "combo_import_info": "Vous pouvez importer les attaques de combo d'une autre attaque.",
+  "replace_combos": "Remplacer les attaques de combo",
+  "import_combo_from": "Importer les attaques de combo de",
+  "add_another_move": "Ajouter une autre attaque",
+  "combo_new_info": "Vous pouvez ici ajouter des attaques qui, une fois lancées, effectueront un combo avec l'attaqu {{move}}."
 }

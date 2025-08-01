@@ -18,6 +18,7 @@ import { useDialogsRef } from '@hooks/useDialogsRef';
 import { MoveEditorAndDeletionKeys, MoveEditorOverlay } from '@components/database/move/editors/MoveEditorOverlay';
 import { useMovePage } from '@hooks/usePage';
 import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';
+import { MoveContestCombos } from '@components/database/move/MoveContestCombos';
 
 export const MoveContestPage = () => {
   const dialogsRef = useDialogsRef<MoveEditorAndDeletionKeys>();
@@ -43,8 +44,7 @@ export const MoveContestPage = () => {
           <DataBlockWrapper>
             <MoveFrame move={move} dialogsRef={dialogsRef} contest={true} />
             <MoveDataContest move={move} dialogsRef={dialogsRef} />
-            <MoveParameters move={move} dialogsRef={dialogsRef} />
-            <MoveCharacteristics move={move} dialogsRef={dialogsRef} />
+            <MoveContestCombos move={move} dialogsRef={dialogsRef} />
           </DataBlockWrapper>
           <DataBlockWrapper>
             <DataBlockWithAction size="full" title={t('creature_with_move', { move: moveName })}>
