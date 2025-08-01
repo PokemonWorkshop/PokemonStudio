@@ -70,16 +70,16 @@ export const MOVE_STATUS_VALIDATOR = z.object({
 });
 export type StudioMoveStatus = z.infer<typeof MOVE_STATUS_VALIDATOR>;
 
-export const MOVE_CONDITION_LIST_VALIDATOR = z.union([
+export const MOVE_CONDITION_VALIDATOR = z.union([
   z.literal('cool'),
   z.literal('beautiful'),
   z.literal('cute'),
   z.literal('clever'),
   z.literal('tough'),
 ]);
-export type StudioMoveConditionList = z.infer<typeof MOVE_CONDITION_LIST_VALIDATOR>;
+export type StudioMoveCondition = z.infer<typeof MOVE_CONDITION_VALIDATOR>;
 
-export const MOVE_CONTEST_EFFECT_TAG_LIST_VALIDATOR = z.union([
+export const MOVE_CONTEST_EFFECT_TAG_VALIDATOR = z.union([
   z.literal('cant_act_anymore'),
   z.literal('skip_next_turn'),
   z.literal('jam_previous'),
@@ -114,16 +114,7 @@ export const MOVE_CONTEST_EFFECT_TAG_LIST_VALIDATOR = z.union([
   z.literal('bonus_same_condition_previous'),
   z.literal('bonus_raised_condition'),
 ]);
-export type StudioMoveContestEffectTagList = z.infer<typeof MOVE_CONTEST_EFFECT_TAG_LIST_VALIDATOR>;
-
-export const MOVE_CONTEST_DATA_VALIDATOR = z.object({
-  condition: MOVE_CONDITION_LIST_VALIDATOR,
-  appeal: POSITIVE_INT,
-  jam: POSITIVE_OR_ZERO_INT,
-  comboMoves: z.array(DB_SYMBOL_VALIDATOR),
-  effectTags: z.array(MOVE_CONTEST_EFFECT_TAG_LIST_VALIDATOR),
-});
-export type StudioMoveContestData = z.infer<typeof MOVE_CONTEST_DATA_VALIDATOR>;
+export type StudioMoveContestEffectTag = z.infer<typeof MOVE_CONTEST_EFFECT_TAG_VALIDATOR>;
 
 export const MOVE_VALIDATOR = z.object({
   klass: z.literal('Move'),
@@ -166,7 +157,11 @@ export const MOVE_VALIDATOR = z.object({
   battleStageMod: z.array(MOVE_BATTLE_STAGE_MOD_VALIDATOR),
   moveStatus: z.array(MOVE_STATUS_VALIDATOR),
   effectChance: POSITIVE_OR_ZERO_INT.max(100).default(100),
-  contestData: MOVE_CONTEST_DATA_VALIDATOR,
+  condition: MOVE_CONDITION_VALIDATOR,
+  appeal: POSITIVE_INT.max(99),
+  jam: POSITIVE_OR_ZERO_INT.max(99),
+  comboMoves: z.array(DB_SYMBOL_VALIDATOR),
+  effectTags: z.array(MOVE_CONTEST_EFFECT_TAG_VALIDATOR),
 });
 
 export type StudioMove = z.infer<typeof MOVE_VALIDATOR>;
@@ -183,6 +178,7 @@ export type MoveBattleEngineMethodsType =
 
 export const MOVE_NAME_TEXT_ID = 100006;
 export const MOVE_DESCRIPTION_TEXT_ID = 100007;
+export const MOVE_CONTEST_DESCRIPTION_TEXT_ID = 100072;
 export const MOVE_CATEGORIES = ['physical', 'special', 'status'] as const;
 export const MOVE_CONDITIONS = ['cool', 'beautiful', 'cute', 'clever', 'tough'] as const;
 export const MOVE_CRITICAL_RATES = [0, 1, 2, 3, 4] as const;

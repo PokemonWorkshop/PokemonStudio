@@ -8,7 +8,14 @@ import styled from 'styled-components';
 import { DarkButton, PrimaryButton } from '@components/buttons';
 import { TextInputError } from '@components/inputs/Input';
 import { checkDbSymbolExist, generateDefaultDbSymbol, wrongDbSymbol } from '@utils/dbSymbolUtils';
-import { MOVE_CATEGORIES, MOVE_DESCRIPTION_TEXT_ID, MOVE_NAME_TEXT_ID, MOVE_VALIDATOR } from '@modelEntities/move';
+import {
+  MOVE_CATEGORIES,
+  MOVE_CONDITIONS,
+  MOVE_CONTEST_DESCRIPTION_TEXT_ID,
+  MOVE_DESCRIPTION_TEXT_ID,
+  MOVE_NAME_TEXT_ID,
+  MOVE_VALIDATOR,
+} from '@modelEntities/move';
 import { createMove } from '@utils/entityCreation';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { useSetProjectText } from '@utils/ReadingProjectText';
@@ -24,6 +31,8 @@ import { importMoveData } from '@utils/importEntityDataUtils';
 
 const moveCategoryEntries = (t: TFunction) =>
   MOVE_CATEGORIES.map((category) => ({ value: category, label: t(category) })).sort((a, b) => a.label.localeCompare(b.label));
+
+const moveConditionEntries = (t: TFunction) => MOVE_CONDITIONS.map((condition) => ({ value: condition, label: t(`${condition}`) }));
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -48,7 +57,7 @@ type MoveNewEditorProps = {
   closeDialog: () => void;
 };
 
-const MOVE_NEW_EDITOR_SCHEMA = MOVE_VALIDATOR.pick({ type: true, category: true });
+const MOVE_NEW_EDITOR_SCHEMA = MOVE_VALIDATOR.pick({ type: true, category: true, condition: true });
 
 export const MoveNewEditor = forwardRef<EditorHandlingClose, MoveNewEditorProps>(({ closeDialog }, ref) => {
   const { projectDataValues: moves, setProjectDataValues: setMove } = useProjectMoves();
@@ -60,7 +69,8 @@ export const MoveNewEditor = forwardRef<EditorHandlingClose, MoveNewEditorProps>
   const [dbSymbolErrorType, setDbSymbolErrorType] = useState<'value' | 'duplicate' | undefined>(undefined);
   const categoryOptions = useMemo(() => moveCategoryEntries(t), [t]);
   const typeOptions = useSelectOptions('types');
-  const move = { type: (typeOptions[0]?.value || '__undef__') as DbSymbol, category: categoryOptions[0].value };
+  const conditionOptions = useMemo(() => moveConditionEntries(t), [t]);
+  const move = { type: (typeOptions[0]?.value || '__undef__') as DbSymbol, category: categoryOptions[0].value, condition: conditionOptions[0].value };
   const { getFormData, defaults, formRef } = useZodForm(MOVE_NEW_EDITOR_SCHEMA, move);
   const { Select } = useInputAttrsWithLabel(MOVE_NEW_EDITOR_SCHEMA, defaults);
   const [selectedMove, setSelectedMove] = useState('__undef__');
@@ -73,8 +83,8 @@ export const MoveNewEditor = forwardRef<EditorHandlingClose, MoveNewEditorProps>
     if (!dbSymbolRef.current || !name || !descriptionRef.current || !result.success) return;
 
     const dbSymbol = dbSymbolRef.current.value as DbSymbol;
-    const { type, category } = result.data;
-    let newMove = createMove(moves, dbSymbol, type, category);
+    const { type, category, condition } = result.data;
+    let newMove = createMove(moves, dbSymbol, type, category, condition);
 
     if (importing && selectedMove !== '__undef__') {
       newMove = importMoveData(newMove, moves[selectedMove]);
@@ -82,6 +92,7 @@ export const MoveNewEditor = forwardRef<EditorHandlingClose, MoveNewEditorProps>
 
     setText(MOVE_NAME_TEXT_ID, newMove.id, name);
     setText(MOVE_DESCRIPTION_TEXT_ID, newMove.id, descriptionRef.current.value);
+    setText(MOVE_CONTEST_DESCRIPTION_TEXT_ID, newMove.id, '');
 
     setMove({ [dbSymbol]: newMove }, { move: dbSymbol });
     closeDialog();
@@ -147,6 +158,9 @@ export const MoveNewEditor = forwardRef<EditorHandlingClose, MoveNewEditorProps>
           {dbSymbolErrorType === 'value' && <TextInputError>{t('incorrect_format')}</TextInputError>}
           {dbSymbolErrorType === 'duplicate' && <TextInputError>{t('db_symbol_already_used')}</TextInputError>}
         </InputWithTopLabelContainer>
+        <InputGroupCollapse title={t('contest')} gap="16px">
+          <Select name="condition" label={t('contest_condition')} options={conditionOptions} />
+        </InputGroupCollapse>
         <InputGroupCollapse title={t('other_data')} gap="16px" onClick={() => setImporting(!importing)}>
           <ImportInfoContainer>
             <ImportInfo>{t('move_import_info')}</ImportInfo>

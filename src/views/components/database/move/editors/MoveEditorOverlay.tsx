@@ -5,14 +5,15 @@ import { DialogRefData } from '@hooks/useDialogsRef';
 import {
   MoveCharacteristicsEditor,
   MoveDataEditor,
+  MoveDataContestEditor,
   MoveDeletion,
   MoveFrameEditor,
+  MoveFrameContestEditor,
   MoveNewEditor,
   MoveParametersEditor,
   MoveStatisticsEditor,
   MoveStatusEditor,
 } from '.';
-import { MoveFrameContestEditor } from './MoveFrameContestEditor';
 
 export type MoveEditorAndDeletionKeys =
   | 'new'
@@ -53,6 +54,8 @@ export const MoveEditorOverlay = defineEditorOverlay<MoveEditorAndDeletionKeys>(
       return <MoveDeletion closeDialog={closeDialog} ref={handleCloseRef} />;
     case 'frame_contest':
       return <MoveFrameContestEditor ref={handleCloseRef} />;
+    case 'data_contest':
+      return <MoveDataContestEditor ref={handleCloseRef} />;
     default:
       return assertUnreachable(dialogToShow);
   }

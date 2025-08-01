@@ -1599,9 +1599,13 @@
   "add_move_contest_data": "Ajout des informations de concours aux capacités",
   "general_data": "Données générales",
   "contest_data": "Données liées aux concours",
+  "contest_condition": "Condition",
+  "contest": "Concours",
   "cool": "Sang-Froid",
   "beautiful": "Beauté",
   "cute": "Grâce",
-  "smart": "Intelligence",
-  "tough": "Robustesse"
+  "clever": "Clever",
+  "tough": "Robustesse",
+  "appeal": "Charme",
+  "jam": "Blocage"
 }

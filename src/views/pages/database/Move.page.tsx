@@ -33,7 +33,7 @@ export const MovePage = () => {
             />
           </DataBlockWrapper>
           <DataBlockWrapper>
-            <MoveFrame move={move} dialogsRef={dialogsRef} contest={false} />
+            <MoveFrame move={move} dialogsRef={dialogsRef} />
             <MoveData move={move} dialogsRef={dialogsRef} />
             <MoveParameters move={move} dialogsRef={dialogsRef} />
             <MoveCharacteristics move={move} dialogsRef={dialogsRef} />

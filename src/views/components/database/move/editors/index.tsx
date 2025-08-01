@@ -1,5 +1,7 @@
 export { MoveFrameEditor } from './MoveFrameEditor';
+export { MoveFrameContestEditor } from './MoveFrameContestEditor';
 export { MoveDataEditor } from './MoveDataEditor';
+export { MoveDataContestEditor } from './MoveDataContestEditor';
 export { MoveParametersEditor } from './MoveParametersEditor';
 export { MoveCharacteristicsEditor } from './MoveCharacteristicsEditor';
 export { MoveStatusEditor } from './MoveStatusEditor';

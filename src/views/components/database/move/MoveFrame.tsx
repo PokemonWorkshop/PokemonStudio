@@ -3,7 +3,7 @@ import { MoveCategory, TypeCategory } from '@components/categories';
 import { CopyIdentifier } from '@components/Copy';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { getNameType } from '@utils/getNameType';
-import { useGetEntityDescriptionText, useGetEntityNameText } from '@utils/ReadingProjectText';
+import { useGetEntityDescriptionText, useGetEntityNameText, useGetMoveContestDescriptionText } from '@utils/ReadingProjectText';
 import { useTranslation } from 'react-i18next';
 import {
   DataBlockContainer,
@@ -21,13 +21,14 @@ import { MoveCondition } from '@components/categories/MoveCondition';
 type MoveFrameProps = {
   move: StudioMove;
   dialogsRef: MoveDialogsRef;
-  contest: boolean;
+  contest?: boolean;
 };
 
-export const MoveFrame = ({ move, dialogsRef, contest }: MoveFrameProps) => {
+export const MoveFrame = ({ move, dialogsRef, contest = false }: MoveFrameProps) => {
   const [state] = useGlobalState();
   const getMoveName = useGetEntityNameText();
   const getMoveDescription = useGetEntityDescriptionText();
+  const getMoveContestDescription = useGetMoveContestDescriptionText();
   const { t } = useTranslation();
 
   return (
@@ -44,7 +45,7 @@ export const MoveFrame = ({ move, dialogsRef, contest }: MoveFrameProps) => {
             </DataInfoContainerHeaderTitle>
             {contest ? (
               <DataInfoContainerHeaderBadges>
-                <MoveCondition condition={move.contestData.condition}>{t(move.contestData.condition)}</MoveCondition>
+                <MoveCondition condition={move.condition}>{t(move.condition)}</MoveCondition>
               </DataInfoContainerHeaderBadges>
             ) : (
               <DataInfoContainerHeaderBadges>
@@ -53,7 +54,7 @@ export const MoveFrame = ({ move, dialogsRef, contest }: MoveFrameProps) => {
               </DataInfoContainerHeaderBadges>
             )}
           </DataInfoContainerHeader>
-          <p>{contest ? getMoveDescription(move) : getMoveDescription(move)}</p>
+          <p>{contest ? getMoveContestDescription(move) : getMoveDescription(move)}</p>
         </DataInfoContainer>
       </DataGrid>
     </DataBlockContainer>

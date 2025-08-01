@@ -1598,10 +1598,14 @@
   "evolved": "Creature evolution end",
   "add_move_contest_data": "Adding contest data to moves",
   "general_data": "General data",
-  "contest_data": "Contest data",
+  "contest_data": "Contests data",
+  "contest_condition": "Condition",
+  "contest": "Contests",
   "cool": "Cool",
   "beautiful": "Beautiful",
   "cute": "Cute",
   "clever": "Clever",
-  "tough": "Tough"
+  "tough": "Tough",
+  "appeal": "Appeal",
+  "jam": "Jam"
 }

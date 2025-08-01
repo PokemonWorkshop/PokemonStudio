@@ -1,6 +1,14 @@
 import React from 'react';
 import { DataBlockWithAction, DataBlockWrapper } from '../../components/database/dataBlocks';
-import { MoveCharacteristics, MoveControlBar, MoveData, MoveFrame, MoveParameters, MoveStatistics, MoveStatus } from '@components/database/move';
+import {
+  MoveCharacteristics,
+  MoveControlBar,
+  MoveFrame,
+  MoveParameters,
+  MoveStatistics,
+  MoveStatus,
+  MoveDataContest,
+} from '@components/database/move';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { DarkButton, DeleteButtonWithIcon } from '@components/buttons';
 import { useTranslation } from 'react-i18next';
@@ -34,11 +42,9 @@ export const MoveContestPage = () => {
           </DataBlockWrapper>
           <DataBlockWrapper>
             <MoveFrame move={move} dialogsRef={dialogsRef} contest={true} />
-            <MoveData move={move} dialogsRef={dialogsRef} />
+            <MoveDataContest move={move} dialogsRef={dialogsRef} />
             <MoveParameters move={move} dialogsRef={dialogsRef} />
             <MoveCharacteristics move={move} dialogsRef={dialogsRef} />
-            <MoveStatus move={move} dialogsRef={dialogsRef} />
-            <MoveStatistics move={move} dialogsRef={dialogsRef} />
           </DataBlockWrapper>
           <DataBlockWrapper>
             <DataBlockWithAction size="full" title={t('creature_with_move', { move: moveName })}>
