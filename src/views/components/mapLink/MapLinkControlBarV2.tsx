@@ -6,13 +6,13 @@ import { SelectMapLink2 } from '@components/selects';
 import { useProjectMapLinks } from '@hooks/useProjectData';
 import { StudioShortcutActions, useShortcut } from '@hooks/useShortcuts';
 import { MapLinkDialogsRef } from './editors/MapLinkEditorOverlay';
-import { DbSymbol } from '@modelEntities/dbSymbol';
 
 type MapLinkControlBarProps = {
   dialogsRef?: MapLinkDialogsRef;
+  isValidMaplink: boolean;
 };
 
-export const MapLinkControlBarV2 = ({ dialogsRef }: MapLinkControlBarProps) => {
+export const MapLinkControlBarV2 = ({ dialogsRef, isValidMaplink }: MapLinkControlBarProps) => {
   const { t } = useTranslation();
   const { selectedDataIdentifier: mapLinkDbSymbol, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol } = useProjectMapLinks();
 
@@ -28,22 +28,21 @@ export const MapLinkControlBarV2 = ({ dialogsRef }: MapLinkControlBarProps) => {
   useShortcut(shortcutMap);
 
   const onClickNew = dialogsRef ? () => dialogsRef.current?.openDialog('new') : undefined;
-  const onClickNewLink = dialogsRef ? () => dialogsRef.current?.openDialog('new_link') : undefined;
+  const onClickNewLink = dialogsRef ? () => dialogsRef.current?.openDialog('add_map') : undefined;
 
   return (
     <ControlBar>
       <ControlBarLabelContainer>
         {onClickNew ? <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new_maplink')}</SecondaryButtonWithPlusIcon> : <div />}
-        {onClickNewLink ? <SecondaryButtonWithPlusIcon onClick={onClickNewLink}>{t('add_a_map')}</SecondaryButtonWithPlusIcon> : <div />}
+        {onClickNewLink ? (
+          <SecondaryButtonWithPlusIcon onClick={onClickNewLink} disabled={!isValidMaplink}>
+            {t('add_a_map')}
+          </SecondaryButtonWithPlusIcon>
+        ) : (
+          <div />
+        )}
       </ControlBarLabelContainer>
-      <ControlBarLabelContainer>
-        <span>{t('maplinks')}</span>
-        <SelectMapLink2
-          name="maplink-controlbar"
-          defaultValue={mapLinkDbSymbol as DbSymbol}
-          onChange={(dbSymbol) => setSelectedDataIdentifier({ mapLink: dbSymbol })}
-        />
-      </ControlBarLabelContainer>
+      <SelectMapLink2 dbSymbol={mapLinkDbSymbol} onChange={(dbSymbol) => setSelectedDataIdentifier({ mapLink: dbSymbol })} />
     </ControlBar>
   );
 };

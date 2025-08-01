@@ -1724,5 +1724,17 @@
   "bonus_first_tooltip": "Earns an Appeal bonus of 4 when used in first.",
   "bonus_last_tooltip": "Earns an Appeal bonus of 4 when used in last.",
   "bonus_same_condition_previous_tooltip": "Earns an Appeal bonus of 4 if the move is the same condition as the previous Pokémon's.",
-  "bonus_raised_condition_tooltip": "Earns an Appeal bonus of 2 per confidence level instead of the usual 1."
+  "bonus_raised_condition_tooltip": "Earns an Appeal bonus of 2 per confidence level instead of the usual 1.",
+  "new_maplink": "New map link",
+  "add_a_map": "Add a map",
+  "delete_this_maplink": "Delete this map link",
+  "add_the_maplink": "Add the map link",
+  "add_the_map": "Add the map",
+  "cardinal": "Cardinal",
+  "cardinal_north": "North",
+  "cardinal_east": "East",
+  "cardinal_south": "South",
+  "cardinal_west": "West",
+  "deletion_of_maplink": "Deletion of the map link {{mapLink}}",
+  "deletion_message_maplink": "You are about to permanently delete the map link « {{mapLink}} »."
 }

@@ -24,6 +24,7 @@ import { join } from '@utils/path';
 import { useGeneratingMapOverview } from './useGeneratingMapOverview';
 import { useLoaderRef } from '@utils/loaderContext';
 import { getSetting } from '@utils/settings';
+import { checkValidMaplink } from '@utils/MapLinkUtils';
 
 export const useAbilityPage = () => {
   const { projectDataValues: abilities, selectedDataIdentifier: dbSymbol, state } = useProjectDataReadonly('abilities', 'ability');
@@ -276,7 +277,11 @@ export const useZonePage = () => {
 export const useMapLinkPage = () => {
   const { projectDataValues: mapLinks, selectedDataIdentifier: dbSymbol, state } = useProjectDataReadonly('mapLinks', 'mapLink');
   const { projectDataValues: maps } = useProjectDataReadonly('maps', 'map');
-  const mapLink: StudioMapLink = isNaN(Number(dbSymbol)) ? mapLinks[dbSymbol] : mapLinks['maplink_0'];
+  // TODO: fix this on the project launch
+  const mapLink: StudioMapLink = isNaN(Number(dbSymbol))
+    ? mapLinks[dbSymbol]
+    : mapLinks[Object.values(mapLinks).find(({ mapId }) => mapId.toString() === dbSymbol)?.dbSymbol || 'maplink_0'];
+  const isValidMaplink = useMemo(() => checkValidMaplink(mapLink.mapId, state), [mapLink, state]);
 
   const transformedMaps = useMemo(
     () =>
@@ -290,6 +295,7 @@ export const useMapLinkPage = () => {
   return {
     mapLink,
     maps: transformedMaps,
+    isValidMaplink,
     state,
   };
 };

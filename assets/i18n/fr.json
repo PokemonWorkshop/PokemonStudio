@@ -1724,5 +1724,17 @@
   "bonus_first_tooltip": "Gagne un bonus de 4 de Charme si utilisée en premier.",
   "bonus_last_tooltip": "Gagne un bonus de 4 de Charme si utilisée en dernier.",
   "bonus_same_condition_previous_tooltip": "Gagne un bonus de 4 de Charme si l'attaque est de la même condition que celle du Pokémon précédent.",
-  "bonus_raised_condition_tooltip": "Gagne un bonus de 2 de Charme par niveau de confiance au lieu de 1."
+  "bonus_raised_condition_tooltip": "Gagne un bonus de 2 de Charme par niveau de confiance au lieu de 1.",
+  "new_maplink": "Nouvelle liaison de cartes",
+  "add_a_map": "Ajouter une carte",
+  "delete_this_maplink": "Supprimer cette liaison de cartes",
+  "add_the_maplink": "Ajouter la liaison de cartes",
+  "add_the_map": "Ajouter la carte",
+  "cardinal": "Cardinal",
+  "cardinal_north": "Nord",
+  "cardinal_east": "Est",
+  "cardinal_south": "Sud",
+  "cardinal_west": "Ouest",
+  "deletion_of_maplink": "Suppression de la liaison de cartes {{mapLink}}",
+  "deletion_message_maplink": "Vous êtes sur le point de supprimer définitivement la liaison de cartes « {{mapLink}} »."
 }

@@ -3,6 +3,8 @@ import { getLinksFromMapLink, type StudioMapLink, type StudioMapLinkCardinal } f
 import { ProjectData, State } from '@src/GlobalStateProvider';
 import { assertUnreachable } from './assertUnreachable';
 import type { Node } from '@xyflow/react';
+import type { SelectOption as OldSelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import type { SelectOption } from '@ds/Select/types';
 
 export type MapLinkNodeData = {
   mapLink: StudioMapLink;
@@ -41,9 +43,9 @@ const getPosition = (cardinal: StudioMapLinkCardinal, mainMapSize: MapSize, mapS
     case 'east':
       return { x: mainMapSize.width * tileSize, y: offset * tileSize };
     case 'north':
-      return { x: offset * tileSize, y: mapSize.height * tileSize };
+      return { x: offset * tileSize, y: -mapSize.height * tileSize };
     case 'south':
-      return { x: offset * tileSize, y: -mainMapSize.height * tileSize };
+      return { x: offset * tileSize, y: mainMapSize.height * tileSize };
     case 'west':
       return { x: -mapSize.width * tileSize, y: offset * tileSize };
     default:
@@ -101,4 +103,23 @@ export const buildLinks = (mapLink: StudioMapLink, maps: Record<number, StudioMa
     ...buildLinksByCardinal(mapLink, 'south', maps, tileSize),
     ...buildLinksByCardinal(mapLink, 'west', maps, tileSize),
   ];
+};
+
+export const mapLinkMapOptions = (
+  defaultMapOptions: OldSelectOption[],
+  mapLinks: ProjectData['mapLinks'],
+  maps: ProjectData['maps'],
+  zones: ProjectData['zones']
+): SelectOption<string>[] => {
+  const validMaps = getValidMaps(zones);
+  const mainMapsInMapLink = Object.values(mapLinks).map(({ mapId }) => mapId);
+  return defaultMapOptions
+    .reduce<SelectOption<string>[]>((prev, mapOption) => {
+      const { value, label } = mapOption;
+      const id = maps[value]?.id;
+      if (id === undefined) return prev;
+
+      return [...prev, { value: id.toString(), label }];
+    }, [])
+    .filter(({ value }) => validMaps.includes(Number(value)) && !mainMapsInMapLink.includes(Number(value)));
 };

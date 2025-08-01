@@ -2,9 +2,9 @@ import React from 'react';
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import { DialogRefData } from '@hooks/useDialogsRef';
-import { NewLinkEditor } from '.';
+import { MapLinkAddMapEditor, MapLinkDeletion, MapLinkNewEditor } from '.';
 
-export type MapLinkEditorAndDeletionKeys = 'new' | 'new_link';
+export type MapLinkEditorAndDeletionKeys = 'new' | 'add_map' | 'deletion';
 export type MapLinkDialogsRef = React.RefObject<DialogRefData<MapLinkEditorAndDeletionKeys>>;
 
 /**
@@ -16,10 +16,11 @@ export const MapLinkEditorOverlay = defineEditorOverlay<MapLinkEditorAndDeletion
   (dialogToShow, handleCloseRef, closeDialog) => {
     switch (dialogToShow) {
       case 'new':
-        return <div />;
-      case 'new_link':
-        return <div />;
-      //return <NewLinkEditor />; //TODO:
+        return <MapLinkNewEditor closeDialog={closeDialog} ref={handleCloseRef} />;
+      case 'add_map':
+        return <MapLinkAddMapEditor closeDialog={closeDialog} ref={handleCloseRef} />;
+      case 'deletion':
+        return <MapLinkDeletion closeDialog={closeDialog} ref={handleCloseRef} />;
       default:
         return assertUnreachable(dialogToShow);
     }

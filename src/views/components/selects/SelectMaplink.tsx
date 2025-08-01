@@ -5,11 +5,11 @@ import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { SelectCustom, SelectCustomWithLabel } from '@components/SelectCustom';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
-import { DbSymbol } from '@modelEntities/dbSymbol';
-import { useProjectData } from '@src/hooks/useProjectData';
+import { useProjectMapLinks, useProjectMaps, useProjectZones } from '@src/hooks/useProjectData';
 import { getValidMaps } from '@utils/MapLinkUtils';
-import { Select } from '@ds/Select';
 import { SelectOption } from '@ds/Select/types';
+import { SelectContainerWithLabel } from './SelectContainerWithLabel';
+import { StudioDropDown } from '@components/StudioDropDown';
 
 const getValue = (options: SelectOption<string>[], id: string, t: TFunction) => {
   const option = options.find(({ value }) => value === id);
@@ -71,14 +71,16 @@ export const SelectMaplink = ({ mapId, onChange, label, noneValue, noneValueIsEr
 };
 
 type SelectMapLink2Props = {
-  name: string;
-  defaultValue?: DbSymbol;
-  onChange?: (v: DbSymbol) => void;
+  dbSymbol: string;
+  onChange: (dbSymbol: string) => void;
+  undefValueOption?: string;
+  noLabel?: boolean;
 };
 
-export const SelectMapLink2 = (props: SelectMapLink2Props) => {
-  const { projectDataValues: mapLinks } = useProjectData('mapLinks', 'mapLink');
-  const { projectDataValues: maps, state } = useProjectData('maps', 'map');
+export const SelectMapLink2 = ({ dbSymbol, onChange, noLabel, undefValueOption }: SelectMapLink2Props) => {
+  const { projectDataValues: mapLinks } = useProjectMapLinks();
+  const { projectDataValues: maps } = useProjectMaps();
+  const { projectDataValues: zones } = useProjectZones();
   const allMapLinks = useMemo(() => Object.values(mapLinks), [mapLinks]);
   const allMaps = useMemo(() => Object.values(maps), [maps]);
   const getMapName = useGetEntityNameText();
@@ -87,13 +89,28 @@ export const SelectMapLink2 = (props: SelectMapLink2Props) => {
   const getMapFromMapId = (mapId: number) => allMaps.find(({ id }) => id === mapId);
 
   const mapLinkOptions = useMemo(() => {
-    const validMaps = getValidMaps(state.projectData.zones);
+    const validMaps = getValidMaps(zones);
     return allMapLinks.map(({ dbSymbol, mapId }) => {
       const map = getMapFromMapId(mapId);
       const mapName = map && validMaps.includes(map.id) ? getMapName(map) : t('map_deleted');
       return { value: dbSymbol, label: mapName };
     });
-  }, [allMapLinks, state.projectData.zones, state]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allMapLinks, zones]);
 
-  return <Select options={mapLinkOptions} notFoundLabel={t('maplink_deleted')} {...props} />;
+  const options = useMemo(() => {
+    if (undefValueOption) return [{ value: '__undef__', label: undefValueOption }, ...mapLinkOptions];
+    return mapLinkOptions;
+  }, [mapLinkOptions, undefValueOption]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const optionals = useMemo(() => ({ deletedOption: t('maplink_deleted') }), []);
+
+  if (noLabel) return <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />;
+
+  return (
+    <SelectContainerWithLabel>
+      <span>{t('maplinks')}</span>
+      <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />
+    </SelectContainerWithLabel>
+  );
 };

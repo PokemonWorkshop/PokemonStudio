@@ -16,6 +16,7 @@ import { buildLinks, getOffset, initMainMapLinkNode, type MapLinkNodeType } from
 import { MapLinkNode } from './mapLinkCard/MapLinkNode';
 import { useUpdateMapLink } from './editors';
 import { cloneEntity } from '@utils/cloneEntity';
+import type { MapLinkDialogsRef } from './editors/MapLinkEditorOverlay';
 import React, { useEffect, useMemo } from 'react';
 
 const TILE_SIZE = 32;
@@ -23,6 +24,7 @@ const TILE_SIZE = 32;
 type ReactFlowMapLinkProps = {
   mapLink: StudioMapLink;
   maps: Record<number, StudioMap>;
+  dialogsRef?: MapLinkDialogsRef;
 };
 
 export const ReactFlowMapLinkV2 = ({ mapLink, maps }: ReactFlowMapLinkProps) => {
@@ -84,15 +86,19 @@ export const ReactFlowMapLinkV2 = ({ mapLink, maps }: ReactFlowMapLinkProps) => 
   };
 
   useEffect(() => {
-    setNodes([initMainMapLinkNode(mapLink, maps), ...buildLinks(mapLink, maps, TILE_SIZE)]);
-
     // there is not properties to hide the viewport, but it can be moved outside the window ; it's necessary to prevent a blink
     reactFlowInstance.setViewport({ x: 0, y: -10000, zoom: 1 });
 
     // it's necessary to wait that reactFlowInstance has the new nodes and edges to do a correct fitView
     const timer = setTimeout(() => reactFlowInstance.fitView(), 50);
     return () => clearTimeout(timer);
-  }, [mapLink.mapId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mapLink.id]);
+
+  useEffect(() => {
+    setNodes([initMainMapLinkNode(mapLink, maps), ...buildLinks(mapLink, maps, TILE_SIZE)]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mapLink]);
 
   return (
     <ReactFlow
@@ -107,7 +113,7 @@ export const ReactFlowMapLinkV2 = ({ mapLink, maps }: ReactFlowMapLinkProps) => 
       style={{
         zIndex: 1,
       }}
-      minZoom={0.2}
+      minZoom={0.15}
       maxZoom={1}
       deleteKeyCode={null}
     >
