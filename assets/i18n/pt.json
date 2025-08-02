@@ -1557,7 +1557,7 @@
   "berry_drain_rate": "{{drain_rate}}h",
   "berry_natural_gift": "{{type}} ({{power}})",
   "natural_gift_data": "Natural Gift data",
-  "natural_gift_info": "The move Natural Gift see its typing and power determined by the berry held by the Pokémon.",
+  "natural_gift_info": "The move Natural Gift see its typing and power determined by the berry held by the creature.",
   "better_pokeblock_info": "Chance to produce a Pokéblock + at the end of the mixing process.",
   "red": "Red",
   "blue": "Blue",
