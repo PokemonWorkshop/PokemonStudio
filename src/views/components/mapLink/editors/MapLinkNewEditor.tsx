@@ -11,6 +11,9 @@ import { InputFormContainer } from '@components/inputs/InputContainer';
 import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 import { findFirstAvailableId } from '@utils/ModelUtils';
 import { mapLinkMapOptions } from '@utils/MapLinkUtils';
+import { SelectOption as OldSelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { SelectOption } from '@ds/Select/types';
+import { ProjectData } from '@src/GlobalStateProvider';
 import { z } from 'zod';
 import styled from 'styled-components';
 import React, { forwardRef, useMemo } from 'react';
@@ -21,6 +24,17 @@ const ButtonContainer = styled.div`
   padding: 16px 0 0 0;
   gap: 8px;
 `;
+
+const getMapOptions = (
+  defaultMapOptions: OldSelectOption[],
+  mapLinks: ProjectData['mapLinks'],
+  maps: ProjectData['maps'],
+  zones: ProjectData['zones']
+): SelectOption<string>[] => {
+  const mapOptions = mapLinkMapOptions(defaultMapOptions, maps, zones);
+  const mainMapsInMapLink = Object.values(mapLinks).map(({ mapId }) => mapId);
+  return mapOptions.filter(({ value }) => !mainMapsInMapLink.includes(Number(value)));
+};
 
 type MapLinkNewEditorProps = {
   closeDialog: () => void;
@@ -34,7 +48,7 @@ export const MapLinkNewEditor = forwardRef<EditorHandlingClose, MapLinkNewEditor
   const { projectDataValues: zones } = useProjectZones();
   const { t } = useTranslation();
   const defaultMapOptions = useSelectOptions('maps');
-  const mapOptions = useMemo(() => mapLinkMapOptions(defaultMapOptions, mapLinks, maps, zones), [defaultMapOptions, mapLinks, maps, zones]);
+  const mapOptions = useMemo(() => getMapOptions(defaultMapOptions, mapLinks, maps, zones), [defaultMapOptions, mapLinks, maps, zones]);
   const mapLink = { mapId: mapOptions[0]?.value || '__undef__' };
   const { getFormData, defaults, formRef } = useZodForm(MAP_LINK_NEW_EDITOR_SCHEMA, mapLink);
   const { Select } = useInputAttrsWithLabel(MAP_LINK_NEW_EDITOR_SCHEMA, defaults);

@@ -37,11 +37,10 @@ const ButtonContainer = styled.div`
 const getMapOptions = (
   defaultMapOptions: OldSelectOption[],
   mapLink: StudioMapLink,
-  mapLinks: ProjectData['mapLinks'],
   maps: ProjectData['maps'],
   zones: ProjectData['zones']
 ): SelectOption<string>[] => {
-  const mapOptions = mapLinkMapOptions(defaultMapOptions, mapLinks, maps, zones);
+  const mapOptions = mapLinkMapOptions(defaultMapOptions, maps, zones);
   const mapAlreadyAssigned = MAP_LINK_CARDINAL_LIST.flatMap((cardinal) => getLinksFromMapLink(mapLink, cardinal).map((link) => link.mapId)).concat(
     mapLink.mapId
   );
@@ -65,10 +64,7 @@ export const MapLinkAddMapEditor = forwardRef<EditorHandlingClose, MapLinkAddMap
   const updateMapLink = useUpdateMapLink(mapLink);
   const { t } = useTranslation();
   const defaultMapOptions = useSelectOptions('maps');
-  const mapOptions = useMemo(
-    () => getMapOptions(defaultMapOptions, mapLink, mapLinks, maps, zones),
-    [defaultMapOptions, mapLink, mapLinks, maps, zones]
-  );
+  const mapOptions = useMemo(() => getMapOptions(defaultMapOptions, mapLink, maps, zones), [defaultMapOptions, mapLink, maps, zones]);
   const cardinalOptions = getCardinalOptions(t);
   const mapLinkForm = { mapId: mapOptions[0]?.value || '__undef__', cardinal: 'north' as StudioMapLinkCardinal };
   const { getFormData, defaults, formRef } = useZodForm(MAP_LINK_ADD_MAP_EDITOR_SCHEMA, mapLinkForm);

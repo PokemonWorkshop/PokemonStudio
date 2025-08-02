@@ -107,12 +107,10 @@ export const buildLinks = (mapLink: StudioMapLink, maps: Record<number, StudioMa
 
 export const mapLinkMapOptions = (
   defaultMapOptions: OldSelectOption[],
-  mapLinks: ProjectData['mapLinks'],
   maps: ProjectData['maps'],
   zones: ProjectData['zones']
 ): SelectOption<string>[] => {
   const validMaps = getValidMaps(zones);
-  const mainMapsInMapLink = Object.values(mapLinks).map(({ mapId }) => mapId);
   return defaultMapOptions
     .reduce<SelectOption<string>[]>((prev, mapOption) => {
       const { value, label } = mapOption;
@@ -121,5 +119,5 @@ export const mapLinkMapOptions = (
 
       return [...prev, { value: id.toString(), label }];
     }, [])
-    .filter(({ value }) => validMaps.includes(Number(value)) && !mainMapsInMapLink.includes(Number(value)));
+    .filter(({ value }) => validMaps.includes(Number(value)));
 };
