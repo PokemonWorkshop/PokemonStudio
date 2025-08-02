@@ -62,9 +62,9 @@ export const MoveEditorOverlay = defineEditorOverlay<MoveEditorAndDeletionKeys>(
     case 'data_contest':
       return <MoveDataContestEditor ref={handleCloseRef} />;
     case 'combo_moves_import':
-      return <MoveComboMovesImportEditor closeDialog={closeDialog} />;
+      return <MoveComboMovesImportEditor closeDialog={closeDialog} ref={handleCloseRef} />;
     case 'combo_moves_new':
-      return <MoveComboNewEditor ref={handleCloseRef} />;
+      return <MoveComboNewEditor closeDialog={closeDialog} ref={handleCloseRef} />;
     default:
       return assertUnreachable(dialogToShow);
   }

@@ -62,7 +62,7 @@ export const MoveComboMovesImportEditor = forwardRef<EditorHandlingClose, MoveCo
       <InputContainer size="m">
         <ComboImportInfo>{t('combo_import_info')}</ComboImportInfo>
         <InputWithTopLabelContainer>
-          <Label htmlFor="quest">{t('import_combo_from')}</Label>
+          <Label htmlFor="combo">{t('import_combo_from')}</Label>
           <SelectMove dbSymbol={selectedMove} onChange={(dbSymbol) => setSelectedMove(dbSymbol)} noLabel />
         </InputWithTopLabelContainer>
         <InputWithLeftLabelContainer>

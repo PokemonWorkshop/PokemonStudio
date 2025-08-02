@@ -1619,5 +1619,7 @@
   "replace_combos": "Remplacer les attaques de combo",
   "import_combo_from": "Importer les attaques de combo de",
   "add_another_move": "Ajouter une autre attaque",
-  "combo_new_info": "Vous pouvez ici ajouter des attaques qui, une fois lancées, effectueront un combo avec l'attaqu {{move}}."
+  "combo_new_info": "Vous pouvez ici ajouter des attaques qui, une fois lancées, effectueront un combo avec l'attaque {{move}}.",
+  "add_one_move": "Ajouter l'attaque",
+  "add_multiple_moves": "Ajouter les attaques"
 }

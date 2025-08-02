@@ -5,6 +5,7 @@ import { cloneEntity } from '@utils/cloneEntity';
 import { StudioMove } from '@modelEntities/move';
 import { useUpdateMove } from '../editors/useUpdateMove';
 import { RenderComboMove } from './RenderComboMove';
+import { useProjectMoves } from '@src/hooks/useProjectData';
 
 type MoveContestCombosTableProps = {
   move: StudioMove;
@@ -13,6 +14,7 @@ type MoveContestCombosTableProps = {
 export const MoveContestCombosTable = ({ move }: MoveContestCombosTableProps) => {
   const updateMove = useUpdateMove(move);
   const { t } = useTranslation();
+  const { projectDataValues: moves } = useProjectMoves();
 
   return move.comboMoves.length === 0 ? (
     <TableEmpty>{t('no_combos')}</TableEmpty>
@@ -22,17 +24,21 @@ export const MoveContestCombosTable = ({ move }: MoveContestCombosTableProps) =>
         <span>{t('move')}</span>
         <span>{t('contest_condition')}</span>
       </DataCombosGrid>
-      {move.comboMoves.map((cMove, index) => (
-        <RenderComboMove
-          key={`move-${index}`}
-          moveSymbol={cMove}
-          onClickDelete={() => {
-            const newCombos = cloneEntity(move.comboMoves);
-            newCombos.splice(index, 1);
-            updateMove({ comboMoves: newCombos });
-          }}
-        />
-      ))}
+      {move.comboMoves
+        .sort((a, b) => {
+          return moves[a].id - moves[b].id;
+        })
+        .map((cMove, index) => (
+          <RenderComboMove
+            key={`move-${index}`}
+            moveSymbol={cMove}
+            onClickDelete={() => {
+              const newCombos = cloneEntity(move.comboMoves);
+              newCombos.splice(index, 1);
+              updateMove({ comboMoves: newCombos });
+            }}
+          />
+        ))}
     </DataCombosTable>
   );
 };

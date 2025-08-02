@@ -1605,5 +1605,19 @@
   "beautiful": "Beautiful",
   "cute": "Cute",
   "clever": "Clever",
-  "tough": "Tough"
+  "tough": "Tough",
+  "appeal": "Appeal",
+  "jam": "Jam",
+  "contest_combo_moves": "Moves completing a Combo",
+  "combo_moves": "Combo moves",
+  "import_combo_moves": "Import moves",
+  "add_combo_moves": "Add moves",
+  "no_combos": "No combo moves",
+  "deletion_of_combo_moves": "Deletion of the combo moves of {{move}}",
+  "deletion_message_combo_moves": "You are about to permanently delete the combo moves of « {{move}} ».",
+  "combo_import_info": "You can import combo moves from another move.",
+  "replace_combos": "Replace the combo moves",
+  "import_combo_from": "Import the combo moves of",
+  "add_another_move": "Add another move",
+  "combo_new_info": "You here add moves that, when used, will complete a combo with the move {{move}}."
 }

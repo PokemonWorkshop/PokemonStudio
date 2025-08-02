@@ -1619,5 +1619,7 @@
   "replace_combos": "Replace the combo moves",
   "import_combo_from": "Import the combo moves of",
   "add_another_move": "Add another move",
-  "combo_new_info": "You here add moves that, when used, will complete a combo with the move {{move}}."
+  "combo_new_info": "You here add moves that, when used, will complete a combo with the move {{move}}.",
+  "add_one_move": "Add the move",
+  "add_multiple_moves": "Add the moves"
 }
