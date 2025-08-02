@@ -14,6 +14,7 @@ import {
   MoveStatisticsEditor,
   MoveStatusEditor,
   MoveComboMovesImportEditor,
+  MoveContestEffectsEditor,
 } from '.';
 import { MoveComboNewEditor } from './MoveComboNewEditor';
 
@@ -27,6 +28,7 @@ export type MoveEditorAndDeletionKeys =
   | 'status'
   | 'frame_contest'
   | 'data_contest'
+  | 'contest_effects'
   | 'combo_moves_new'
   | 'combo_moves_import'
   | 'deletion'
@@ -65,6 +67,8 @@ export const MoveEditorOverlay = defineEditorOverlay<MoveEditorAndDeletionKeys>(
       return <MoveComboMovesImportEditor closeDialog={closeDialog} ref={handleCloseRef} />;
     case 'combo_moves_new':
       return <MoveComboNewEditor closeDialog={closeDialog} ref={handleCloseRef} />;
+    case 'contest_effects':
+      return <MoveContestEffectsEditor ref={handleCloseRef} />;
     default:
       return assertUnreachable(dialogToShow);
   }

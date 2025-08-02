@@ -2,6 +2,8 @@ export { MoveControlBar } from './MoveControlBar';
 export { MoveFrame } from './MoveFrame';
 export { MoveData } from './MoveData';
 export { MoveDataContest } from './MoveDataContest';
+export { MoveContestEffects } from './MoveContestEffects';
+export { MoveContestCombos } from './MoveContestCombos';
 export { MoveParameters } from './MoveParameters';
 export { MoveCharacteristics } from './MoveCharacteristics';
 export { MoveStatistics } from './MoveStatistics';
