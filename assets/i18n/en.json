@@ -1623,7 +1623,7 @@
   "add_one_move": "Add the move",
   "add_multiple_moves": "Add the moves",
   "contest_effects": "Contest effects",
-  "no_contest_effects": "No contest effects",
+  "no_contest_effects": "No effect",
   "contest_effects_info": "Here, you can parameter the effects of a move, which will influence the contests system and mechanics activation.",
   "tooltip_info": "To get more information about the effects, you can hover over the effect name.",
   "cant_act_anymore": "Can't act anymore",

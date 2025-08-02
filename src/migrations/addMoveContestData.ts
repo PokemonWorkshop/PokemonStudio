@@ -99,6 +99,8 @@ type ContestData = {
   cuteMoves: Array<string>;
   cleverMoves: Array<string>;
   toughMoves: Array<string>;
+  englishDescription: string;
+  frenchDescription: string;
 };
 
 const contestData: Array<ContestData> = [
@@ -170,6 +172,8 @@ const contestData: Array<ContestData> = [
       'vice_grip',
       'waterfall',
     ],
+    englishDescription: 'Quite an appealing move.',
+    frenchDescription: 'Une Démonstration qui plaît énormément.',
   },
   {
     appeal: 8,
@@ -180,6 +184,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: [],
     cleverMoves: ['destiny_bond'],
     toughMoves: ['final_gambit', 'memento'],
+    englishDescription: 'A move of huge appeal, but using it prevents the user from taking further contest moves.',
+    frenchDescription: "Plaît énormément, mais interdit d'effectuer la moindre Démonstration jusqu'à la fin.",
   },
   {
     appeal: 6,
@@ -212,6 +218,8 @@ const contestData: Array<ContestData> = [
       'wild_charge',
       'wood_hammer',
     ],
+    englishDescription: 'A very appealing move, but after using this move, the user is more easily startled.',
+    frenchDescription: 'Une Démonstration très plaisante, mais le Pokémon sera aisément effrayé par la suite.',
   },
   {
     appeal: 3,
@@ -222,6 +230,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: [],
     cleverMoves: [],
     toughMoves: ['brine', 'dragon_rush', 'drill_run', 'skull_bash', 'smelling_salts', 'stone_edge', 'wake_up_slap'],
+    englishDescription: "Affected by how well the previous Pokémon's move went.",
+    frenchDescription: 'Dépend de la façon dont la Démonstration du Pokémon précédent se passe.',
   },
   {
     appeal: 3,
@@ -247,6 +257,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: ['heart_stamp', 'present', 'rollout'],
     cleverMoves: ['attack_order', 'hidden_power', 'kinesis', 'night_shade', 'transform'],
     toughMoves: ['bone_club', 'crabhammer', 'crush_grip', 'mega_punch', 'octazooka', 'seismic_toss', 'steamroller'],
+    englishDescription: 'An appealing move that can be used repeatedly without boring the audience.',
+    frenchDescription: 'Peut être utilisé plusieurs fois sans ennuyer le public.',
   },
   {
     appeal: 1,
@@ -257,6 +269,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: [],
     cleverMoves: ['eerie_impulse', 'hypnosis', 'metal_sound', 'nightmare', 'sleep_powder'],
     toughMoves: ['glare', 'rage'],
+    englishDescription: 'Badly startles all of the Pokémon to act before the user.',
+    frenchDescription: 'Effraie beaucoup tous les Pokémon qui ont fait leur Démonstration.',
   },
   {
     appeal: 2,
@@ -267,6 +281,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: [],
     cleverMoves: ['forest_s_curse', 'mist_ball', 'stun_spore'],
     toughMoves: ['earthquake', 'fissure', 'gunk_shot', 'hurricane', 'sandstorm', 'spite', 'super_fang'],
+    englishDescription: 'Badly startles all Pokémon that successfully showed their appeal.',
+    frenchDescription: 'Effraie beaucoup tous les Pokémon qui ont eu du succès.',
   },
   {
     appeal: 2,
@@ -277,6 +293,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: ['charm', 'soak', 'uproar'],
     cleverMoves: ['confuse_ray', 'taunt'],
     toughMoves: ['sludge_bomb', 'smack_down', 'sticky_web', 'wring_out'],
+    englishDescription: 'Badly startles Pokémon that the audience has high expectations of.',
+    frenchDescription: "Effraie énormément le Pokémon qui a l'attention du public.",
   },
   {
     appeal: 2,
@@ -287,6 +305,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: ['entrainment', 'nuzzle', 'trick_or_treat'],
     cleverMoves: ['electrify', 'foresight', 'heal_order', 'hex', 'luster_purge', 'pursuit', 'switcheroo', 'trick'],
     toughMoves: ['bonemerang', 'dual_chop'],
+    englishDescription: 'Badly startles Pokémon that used a move of the same type.',
+    frenchDescription: 'Effraie énormément les Pokémon qui ont fait une Démonstration du même type.',
   },
   {
     appeal: 1,
@@ -297,6 +317,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: [],
     cleverMoves: ['giga_drain'],
     toughMoves: ['body_slam', 'crunch'],
+    englishDescription: 'Badly startles the last Pokémon to act before the user.',
+    frenchDescription: 'Effraie beaucoup le Pokémon qui vient de faire sa Démonstration.',
   },
   {
     appeal: 3,
@@ -307,6 +329,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: ['bug_bite', 'chatter', 'confide', 'fling', 'mud_slap', 'play_rough', 'pluck', 'simple_beam', 'swagger', 'tickle'],
     cleverMoves: ['acid', 'embargo', 'poison_powder', 'poison_tail', 'toxic', 'venom_drench'],
     toughMoves: ['constrict', 'gastro_acid', 'scary_face', 'sludge_wave', 'thousand_waves'],
+    englishDescription: 'Brings down the energy of any Pokémon that have already used a move this turn.',
+    frenchDescription: 'Diminue la confiance des Pokémon qui ont fait leur Démonstration.',
   },
   {
     appeal: 3,
@@ -317,6 +341,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: ['baby_doll_eyes'],
     cleverMoves: ['feint', 'lock_on', 'me_first', 'mind_reader', 'quash', 'shadow_sneak'],
     toughMoves: ['bullet_punch', 'rock_polish'],
+    englishDescription: 'Causes the user to move earlier on the next turn.',
+    frenchDescription: 'Permet de faire la prochaine Démonstration plus tôt au tour suivant.',
   },
   {
     appeal: 3,
@@ -327,6 +353,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: ['after_you'],
     cleverMoves: ['whirlwind'],
     toughMoves: ['bide', 'curse', 'dragon_tail', 'endure'],
+    englishDescription: 'Causes the user to move later on the next turn.',
+    frenchDescription: 'Permet de faire la prochaine Démonstration plus tard au tour suivant.',
   },
   {
     appeal: 3,
@@ -337,6 +365,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: [],
     cleverMoves: ['ally_switch', 'topsy_turvy', 'trick_room', 'wonder_room'],
     toughMoves: [],
+    englishDescription: 'Scrambles the order in which Pokémon will move on the next turn.',
+    frenchDescription: "Mélange l'ordre de passage des Démonstrations du prochain tour.",
   },
   {
     appeal: 1,
@@ -347,6 +377,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: ['assist', 'barrage', 'double_slap', 'metronome', 'sleep_talk', 'tail_slap'],
     cleverMoves: ['psywave', 'synthesis'],
     toughMoves: ['acupressure', 'arm_thrust', 'bone_rush', 'comet_punch', 'fury_swipes', 'rock_blast'],
+    englishDescription: 'Effectiveness varies depending on when it is used.',
+    frenchDescription: 'Une Démonstration qui plaît plus ou moins selon le moment où elle est exécutée.',
   },
   {
     appeal: 3,
@@ -357,6 +389,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: [],
     cleverMoves: ['crafty_shield', 'electric_terrain', 'hyperspace_hole', 'sucker_punch'],
     toughMoves: ['hyperspace_fury', 'work_up'],
+    englishDescription: 'Excites the audience a lot if used first.',
+    frenchDescription: 'Rend le public très enthousiaste si cette Démonstration est effectuée au départ.',
   },
   {
     appeal: 3,
@@ -367,6 +401,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: ['wish'],
     cleverMoves: [],
     toughMoves: ['heat_crash', 'heavy_slam', 'shell_smash'],
+    englishDescription: 'Excites the audience a lot if used last.',
+    frenchDescription: 'Rend le public très enthousiaste si cette Démonstration est effectuée à la fin.',
   },
   {
     appeal: 2,
@@ -377,6 +413,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: ['celebrate', 'happy_hour', 'mud_sport', 'water_sport'],
     cleverMoves: ['pay_day'],
     toughMoves: ['chip_away', 'flying_press'],
+    englishDescription: 'Excites the audience in any kind of contest.',
+    frenchDescription: 'Une Démonstration qui enthousiasme le public de tous les concours.',
   },
   {
     appeal: 1,
@@ -400,6 +438,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: ['hone_claws', 'lucky_chant', 'sharpen'],
     cleverMoves: ['calm_mind', 'charge', 'ingrain', 'leech_seed', 'magnetic_flux', 'nasty_plot', 'shift_gear'],
     toughMoves: ['ancient_power', 'coil', 'rototiller', 'stockpile'],
+    englishDescription: 'Gets the Pokémon pumped up. Helps prevent nervousness, too.',
+    frenchDescription: 'Augmente la confiance du Pokémon et diminue sa nervosité.',
   },
   {
     appeal: 3,
@@ -410,6 +450,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: ['dizzy_punch', 'sand_attack'],
     cleverMoves: ['poison_gas', 'rock_tomb', 'screech', 'supersonic'],
     toughMoves: ['incinerate', 'rock_climb'],
+    englishDescription: 'Makes audience expect little of other contestants.',
+    frenchDescription: "Détourne l'attention du public des autres Pokémon.",
   },
   {
     appeal: 4,
@@ -420,6 +462,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: ['captivate', 'fake_tears', 'slack_off', 'snore', 'splash', 'u_turn'],
     cleverMoves: ['powder', 'roost'],
     toughMoves: ['snarl'],
+    englishDescription: 'Makes the audience quickly grow bored when an appeal move has little effect.',
+    frenchDescription: 'Si la Démonstration ne correspond pas au concours, le public perd tout enthousiasme.',
   },
   {
     appeal: 2,
@@ -430,6 +474,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: ['attract', 'block', 'encore', 'sing', 'sweet_kiss', 'yawn'],
     cleverMoves: ['dark_void', 'disable', 'flatter', 'gravity', 'magnet_rise', 'spider_web', 'spikes', 'telekinesis', 'toxic_spikes', 'worry_seed'],
     toughMoves: ['scald', 'torment'],
+    englishDescription: 'Makes the remaining Pokémon nervous.',
+    frenchDescription: 'Rend nerveux tous les Pokémon qui font une Démonstration après celle-ci.',
   },
   {
     appeal: 2,
@@ -440,6 +486,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: ['defense_curl', 'protect', 'refresh', 'substitute', 'sweet_scent', 'withdraw'],
     cleverMoves: ['defend_order', 'fly', 'grass_whistle', 'odor_sleuth', 'reflect'],
     toughMoves: ['dig', 'harden', 'swallow'],
+    englishDescription: 'Prevents the user from being startled one time this turn.',
+    frenchDescription: "Évite une fois d'être effrayé par un autre Pokémon.",
   },
   {
     appeal: 1,
@@ -450,6 +498,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: ['amnesia', 'bounce', 'cotton_guard', 'hold_hands', 'minimize', 'rest'],
     cleverMoves: ['aromatherapy'],
     toughMoves: ['acid_armor', 'iron_defense', 'spiky_shield', 'wide_guard'],
+    englishDescription: 'Prevents the user from being startled until the turn ends.',
+    frenchDescription: "Évite d'être effrayé par les autres Pokémon.",
   },
   {
     appeal: 1,
@@ -460,6 +510,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: ['draining_kiss'],
     cleverMoves: ['camouflage', 'guard_split', 'guard_swap', 'heart_swap', 'pain_split', 'parabolic_charge', 'power_split', 'power_swap'],
     toughMoves: ['drain_punch', 'horn_leech', 'thief'],
+    englishDescription: "Shows off the Pokémon's appeal about as well as all the moves before it this turn.",
+    frenchDescription: 'Une Démonstration aussi réussie que celles des Pokémon précédents.',
   },
   {
     appeal: 1,
@@ -470,6 +522,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: ['copycat', 'covet', 'mimic', 'role_play'],
     cleverMoves: ['foul_play', 'leech_life', 'mirror_move', 'recycle', 'sketch', 'skill_swap', 'snatch'],
     toughMoves: [],
+    englishDescription: "Shows off the Pokémon's appeal about as well as the move used just before it.",
+    frenchDescription: 'Une Démonstration aussi réussie que celle du Pokémon précédent.',
   },
   {
     appeal: 2,
@@ -480,6 +534,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: [],
     cleverMoves: [],
     toughMoves: ['bulldoze', 'lava_plume', 'muddy_water', 'rock_slide'],
+    englishDescription: 'Startles all of the Pokémon to act before the user.',
+    frenchDescription: 'Effraie tous les Pokémon qui ont fait leur Démonstration.',
   },
   {
     appeal: 4,
@@ -490,6 +546,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: ['teeter_dance'],
     cleverMoves: [],
     toughMoves: ['boomburst', 'giga_impact', 'grudge', 'rock_wrecker'],
+    englishDescription: 'Startles all other Pokémon. User cannot act in the next turn.',
+    frenchDescription: 'Bloque tous les autres Pokémon, mais perd un tour de Démonstration.',
   },
   {
     appeal: 2,
@@ -500,6 +558,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: ['astonish', 'fake_out', 'frustration', 'lick', 'mud_bomb'],
     cleverMoves: ['gust', 'knock_off', 'low_sweep', 'mega_drain', 'poison_sting', 'smokescreen', 'string_shot'],
     toughMoves: ['bite', 'sludge'],
+    englishDescription: 'Startles the last Pokémon to act before the user.',
+    frenchDescription: 'Effraie le Pokémon qui vient de faire sa Démonstration.',
   },
   {
     appeal: 3,
@@ -510,6 +570,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: ['follow_me', 'infestation'],
     cleverMoves: ['fairy_lock', 'heal_block', 'imprison', 'magic_room', 'rage_powder', 'sand_tomb'],
     toughMoves: ['bind', 'clamp', 'magma_storm', 'sky_drop', 'wrap'],
+    englishDescription: 'Temporarily stops the crowd from growing excited.',
+    frenchDescription: 'Rend le public moins enthousiaste pendant un certain temps après cette Démonstration.',
   },
   {
     appeal: 1,
@@ -520,6 +582,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: ['flail', 'grass_knot'],
     cleverMoves: ['assurance'],
     toughMoves: ['low_kick'],
+    englishDescription: 'Works better the later it is used in a turn.',
+    frenchDescription: "Une Démonstration d'autant plus réussie qu'elle est lancée tard.",
   },
   {
     appeal: 3,
@@ -530,6 +594,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: ['bestow', 'play_nice'],
     cleverMoves: ['natural_gift'],
     toughMoves: ['magnitude', 'power_whip'],
+    englishDescription: 'Works better the more the crowd is excited.',
+    frenchDescription: 'Une Démonstration qui plaît plus si le public est enthousiaste.',
   },
   {
     appeal: 2,
@@ -540,6 +606,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: ['disarming_voice', 'milk_drink', 'soft_boiled'],
     cleverMoves: ['feint_attack', 'miracle_eye', 'shadow_punch'],
     toughMoves: ['noble_roar'],
+    englishDescription: 'Works great if the user goes first this turn.',
+    frenchDescription: "Une Démonstration qui plaît beaucoup si on l'exécute en premier.",
   },
   {
     appeal: 2,
@@ -550,6 +618,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: ['facade', 'growl', 'struggle_bug', 'tail_whip'],
     cleverMoves: ['psycho_shift'],
     toughMoves: ['counter', 'endeavor', 'focus_punch', 'payback', 'revenge'],
+    englishDescription: 'Works great if the user goes last this turn.',
+    frenchDescription: "Une Démonstration d'autant plus réussie qu'elle est lancée tard.",
   },
   {
     appeal: 2,
@@ -560,6 +630,8 @@ const contestData: Array<ContestData> = [
     cuteMoves: [],
     cleverMoves: ['dream_eater', 'future_sight', 'power_trick', 'psych_up', 'recover', 'reflect_type', 'synchronoise'],
     toughMoves: [],
+    englishDescription: 'Works well if it is the same type as the move used by the last Pokémon.',
+    frenchDescription: 'Une Démonstration qui plaît si elle est du même type que celle du Pokémon précédent.',
   },
   {
     appeal: 1,
@@ -570,24 +642,20 @@ const contestData: Array<ContestData> = [
     cuteMoves: ['baton_pass', 'last_resort'],
     cleverMoves: ['beat_up', 'secret_power', 'stored_power'],
     toughMoves: ['belch', 'power_up_punch', 'spit_up'],
+    englishDescription: 'Works well if the user is pumped up.',
+    frenchDescription: 'Une Démonstration qui plaît énormément si le Pokémon est confiant.',
   },
 ];
 
-const createNewCsv = async (projectPath: string) => {
-  const csvPath = path.join(projectPath, 'Data/Text/Dialogs');
-  if (fs.existsSync(path.join(csvPath, `${MOVE_CONTEST_DESCRIPTION_TEXT_ID}.csv`))) {
-    throw new Error(`The file ${MOVE_CONTEST_DESCRIPTION_TEXT_ID}.csv already exists. Please rename your file.`);
-  }
-
-  const movesDescriptions = await loadCSV(path.join(csvPath, `${MOVE_DESCRIPTION_TEXT_ID}.csv`));
-  const header = movesDescriptions[0];
-  saveCSV(path.join(csvPath, `${MOVE_CONTEST_DESCRIPTION_TEXT_ID}.csv`), [header]);
+const addDescriptionLine = (en: string, fr: string, amount: number): string[] => {
+  return [en, fr, ...Array(amount).fill(en)];
 };
 
-const setMoveData = (move: StudioMoveDataBeforeMigration): StudioMove => {
+const setMoveData = (move: StudioMoveDataBeforeMigration, descriptionTexts: string[][]): StudioMove => {
   let data = undefined;
   contestData.forEach((category) => {
     if (category.coolMoves.includes(move.dbSymbol)) {
+      descriptionTexts.push(addDescriptionLine(category.englishDescription, category.frenchDescription, descriptionTexts[0].length - 2));
       data = {
         ...move,
         condition: 'cool',
@@ -598,6 +666,7 @@ const setMoveData = (move: StudioMoveDataBeforeMigration): StudioMove => {
       };
     }
     if (category.beautifulMoves.includes(move.dbSymbol)) {
+      descriptionTexts.push(addDescriptionLine(category.englishDescription, category.frenchDescription, descriptionTexts[0].length - 2));
       data = {
         ...move,
         condition: 'beautiful',
@@ -608,6 +677,7 @@ const setMoveData = (move: StudioMoveDataBeforeMigration): StudioMove => {
       };
     }
     if (category.cuteMoves.includes(move.dbSymbol)) {
+      descriptionTexts.push(addDescriptionLine(category.englishDescription, category.frenchDescription, descriptionTexts[0].length - 2));
       data = {
         ...move,
         condition: 'cute',
@@ -618,6 +688,7 @@ const setMoveData = (move: StudioMoveDataBeforeMigration): StudioMove => {
       };
     }
     if (category.cleverMoves.includes(move.dbSymbol)) {
+      descriptionTexts.push(addDescriptionLine(category.englishDescription, category.frenchDescription, descriptionTexts[0].length - 2));
       data = {
         ...move,
         condition: 'clever',
@@ -628,6 +699,7 @@ const setMoveData = (move: StudioMoveDataBeforeMigration): StudioMove => {
       };
     }
     if (category.toughMoves.includes(move.dbSymbol)) {
+      descriptionTexts.push(addDescriptionLine(category.englishDescription, category.frenchDescription, descriptionTexts[0].length - 2));
       data = {
         ...move,
         condition: 'tough',
@@ -641,6 +713,7 @@ const setMoveData = (move: StudioMoveDataBeforeMigration): StudioMove => {
 
   if (data === undefined) {
     //7G+ moves don't have contest data
+    descriptionTexts.push(addDescriptionLine('Quite an appealing move.', 'Une Démonstration qui plaît énormément.', descriptionTexts[0].length - 2));
     return {
       ...move,
       condition: 'cool',
@@ -657,15 +730,29 @@ const setMoveData = (move: StudioMoveDataBeforeMigration): StudioMove => {
 export const addMoveContestData = async (_: IpcMainEvent, projectPath: string) => {
   deletePSDKDatFile(projectPath);
 
-  await createNewCsv(projectPath);
-
   const moves = await readProjectFolder(projectPath, 'moves');
+  let sortedMoves: Array<z.SafeParseSuccess<StudioMoveDataBeforeMigration>> = [];
   await moves.reduce(async (lastPromise, move) => {
     await lastPromise;
     const moveParsed = PRE_MIGRATION_MOVE_VALIDATOR.safeParse(parseJSON<StudioMove>(move.data, move.filename));
     if (moveParsed.success) {
-      const newMove = setMoveData(moveParsed.data);
-      return fsPromise.writeFile(path.join(projectPath, 'Data/Studio/moves', `${newMove.dbSymbol}.json`), JSON.stringify(newMove, null, 2));
+      sortedMoves.push(moveParsed);
     }
   }, Promise.resolve());
+
+  const csvPath = path.join(projectPath, 'Data/Text/Dialogs');
+  if (fs.existsSync(path.join(csvPath, `${MOVE_CONTEST_DESCRIPTION_TEXT_ID}.csv`))) {
+    throw new Error(`The file ${MOVE_CONTEST_DESCRIPTION_TEXT_ID}.csv already exists. Please rename your file.`);
+  }
+  const movesDescriptions = await loadCSV(path.join(csvPath, `${MOVE_DESCRIPTION_TEXT_ID}.csv`));
+
+  const descriptionTexts: string[][] = [movesDescriptions[0], movesDescriptions[1]];
+  sortedMoves = sortedMoves.sort((a, b) => a.data.id - b.data.id);
+  await sortedMoves.reduce(async (lastPromise, move) => {
+    await lastPromise;
+    const newMove = setMoveData(move.data, descriptionTexts);
+    return fsPromise.writeFile(path.join(projectPath, 'Data/Studio/moves', `${newMove.dbSymbol}.json`), JSON.stringify(newMove, null, 2));
+  }, Promise.resolve());
+
+  saveCSV(path.join(csvPath, `${MOVE_CONTEST_DESCRIPTION_TEXT_ID}.csv`), descriptionTexts);
 };
