@@ -1557,7 +1557,7 @@
   "berry_drain_rate": "{{drain_rate}}h",
   "berry_natural_gift": "{{type}} ({{power}})",
   "natural_gift_data": "Données de Don Naturel",
-  "natural_gift_info": "La capacité Don Naturel voit son type et sa puissance déterminés par la baie portée par la creature.",
+  "natural_gift_info": "La capacité Don Naturel voit son type et sa puissance déterminés par la baie portée par la créature.",
   "better_pokeblock_info": "Chance d'obtenir un Pokébloc + à l'issue du mixage.",
   "red": "Rouge",
   "blue": "Bleu",
