@@ -15,6 +15,7 @@
     "jsx": "react",
     "paths": {
       "*": ["node_modules/*"],
+      "@root/*": ["*"],
       "@components/*": ["src/views/components/*"],
       "@ds/*": ["src/designSystem/*"],
       "@pages/*": ["src/views/pages/*"],
