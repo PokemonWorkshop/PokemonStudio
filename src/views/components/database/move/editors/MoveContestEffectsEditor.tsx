@@ -47,7 +47,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
         <ContestEffectsInfoContainer>{t('contest_effects_info')}</ContestEffectsInfoContainer>
         <ContestEffectsInfoContainer>{t('tooltip_info')}</ContestEffectsInfoContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="cant_act_anymore">{t('cant_act_anymore')}</Label>
+          <Label htmlFor="cant_act_anymore" data-tooltip={t('cant_act_anymore_tooltip')}>
+            {t('cant_act_anymore')}
+          </Label>
           <Toggle
             name="cant_act_anymore"
             checked={hasContestEffect('cant_act_anymore')}
@@ -55,7 +57,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="skip_next_turn">{t('skip_next_turn')}</Label>
+          <Label htmlFor="skip_next_turn" data-tooltip={t('skip_next_turn_tooltip')}>
+            {t('skip_next_turn')}
+          </Label>
           <Toggle
             name="skip_next_turn"
             checked={hasContestEffect('skip_next_turn')}
@@ -63,7 +67,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="jam_previous">{t('jam_previous')}</Label>
+          <Label htmlFor="jam_previous" data-tooltip={t('jam_previous_tooltip')}>
+            {t('jam_previous')}
+          </Label>
           <Toggle
             name="jam_previous"
             checked={hasContestEffect('jam_previous')}
@@ -71,11 +77,15 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="jam_all">{t('jam_all')}</Label>
+          <Label htmlFor="jam_all" data-tooltip={t('jam_all_tooltip')}>
+            {t('jam_all')}
+          </Label>
           <Toggle name="jam_all" checked={hasContestEffect('jam_all')} onChange={(event) => setContestEffect('jam_all', event.target.checked)} />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="jam_same_condition">{t('jam_same_condition')}</Label>
+          <Label htmlFor="jam_same_condition" data-tooltip={t('jam_same_condition_tooltip')}>
+            {t('jam_same_condition')}
+          </Label>
           <Toggle
             name="jam_same_condition"
             checked={hasContestEffect('jam_same_condition')}
@@ -83,7 +93,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="jam_highest_score">{t('jam_highest_score')}</Label>
+          <Label htmlFor="jam_highest_score" data-tooltip={t('jam_highest_score_tooltip')}>
+            {t('jam_highest_score')}
+          </Label>
           <Toggle
             name="jam_highest_score"
             checked={hasContestEffect('jam_highest_score')}
@@ -91,7 +103,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="more_nervous">{t('more_nervous')}</Label>
+          <Label htmlFor="more_nervous" data-tooltip={t('more_nervous_tooltip')}>
+            {t('more_nervous')}
+          </Label>
           <Toggle
             name="more_nervous"
             checked={hasContestEffect('more_nervous')}
@@ -99,7 +113,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="try_make_nervous">{t('try_make_nervous')}</Label>
+          <Label htmlFor="try_make_nervous" data-tooltip={t('try_make_nervous_tooltip')}>
+            {t('try_make_nervous')}
+          </Label>
           <Toggle
             name="try_make_nervous"
             checked={hasContestEffect('try_make_nervous')}
@@ -107,7 +123,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="compare_previous_appeal">{t('compare_previous_appeal')}</Label>
+          <Label htmlFor="compare_previous_appeal" data-tooltip={t('compare_previous_appeal_tooltip')}>
+            {t('compare_previous_appeal')}
+          </Label>
           <Toggle
             name="compare_previous_appeal"
             checked={hasContestEffect('compare_previous_appeal')}
@@ -115,7 +133,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="repeatable">{t('repeatable')}</Label>
+          <Label htmlFor="repeatable" data-tooltip={t('repeatable_tooltip')}>
+            {t('repeatable')}
+          </Label>
           <Toggle
             name="repeatable"
             checked={hasContestEffect('repeatable')}
@@ -123,7 +143,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="raise_condition">{t('raise_condition')}</Label>
+          <Label htmlFor="raise_condition" data-tooltip={t('raise_condition_tooltip')}>
+            {t('raise_condition')}
+          </Label>
           <Toggle
             name="raise_condition"
             checked={hasContestEffect('raise_condition')}
@@ -131,7 +153,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="lower_others_condition">{t('lower_others_condition')}</Label>
+          <Label htmlFor="lower_others_condition" data-tooltip={t('lower_others_condition_tooltip')}>
+            {t('lower_others_condition')}
+          </Label>
           <Toggle
             name="lower_others_condition"
             checked={hasContestEffect('lower_others_condition')}
@@ -139,7 +163,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="cancel_others_combo">{t('cancel_others_combo')}</Label>
+          <Label htmlFor="cancel_others_combo" data-tooltip={t('cancel_others_combo_tooltip')}>
+            {t('cancel_others_combo')}
+          </Label>
           <Toggle
             name="cancel_others_combo"
             checked={hasContestEffect('cancel_others_combo')}
@@ -147,7 +173,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="play_first_next_turn">{t('play_first_next_turn')}</Label>
+          <Label htmlFor="play_first_next_turn" data-tooltip={t('play_first_next_turn_tooltip')}>
+            {t('play_first_next_turn')}
+          </Label>
           <Toggle
             name="play_first_next_turn"
             checked={hasContestEffect('play_first_next_turn')}
@@ -155,7 +183,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="play_last_next_turn">{t('play_last_next_turn')}</Label>
+          <Label htmlFor="play_last_next_turn" data-tooltip={t('play_last_next_turn_tooltip')}>
+            {t('play_last_next_turn')}
+          </Label>
           <Toggle
             name="play_last_next_turn"
             checked={hasContestEffect('play_last_next_turn')}
@@ -163,7 +193,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="randomize_next_turn_order">{t('randomize_next_turn_order')}</Label>
+          <Label htmlFor="randomize_next_turn_order" data-tooltip={t('randomize_next_turn_order_tooltip')}>
+            {t('randomize_next_turn_order')}
+          </Label>
           <Toggle
             name="randomize_next_turn_order"
             checked={hasContestEffect('randomize_next_turn_order')}
@@ -171,7 +203,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="very_exciting_first">{t('very_exciting_first')}</Label>
+          <Label htmlFor="very_exciting_first" data-tooltip={t('very_exciting_first_tooltip')}>
+            {t('very_exciting_first')}
+          </Label>
           <Toggle
             name="very_exciting_first"
             checked={hasContestEffect('very_exciting_first')}
@@ -179,7 +213,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="very_exciting_last">{t('very_exciting_last')}</Label>
+          <Label htmlFor="very_exciting_last" data-tooltip={t('very_exciting_last_tooltip')}>
+            {t('very_exciting_last')}
+          </Label>
           <Toggle
             name="very_exciting_last"
             checked={hasContestEffect('very_exciting_last')}
@@ -187,7 +223,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="lock_excitement">{t('lock_excitement')}</Label>
+          <Label htmlFor="lock_excitement" data-tooltip={t('lock_excitement_tooltip')}>
+            {t('lock_excitement')}
+          </Label>
           <Toggle
             name="lock_excitement"
             checked={hasContestEffect('lock_excitement')}
@@ -195,7 +233,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="always_exciting">{t('always_exciting')}</Label>
+          <Label htmlFor="always_exciting" data-tooltip={t('always_exciting_tooltip')}>
+            {t('always_exciting')}
+          </Label>
           <Toggle
             name="always_exciting"
             checked={hasContestEffect('always_exciting')}
@@ -203,7 +243,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="can_reset_excitement">{t('can_reset_excitement')}</Label>
+          <Label htmlFor="can_reset_excitement" data-tooltip={t('can_reset_excitement_tooltip')}>
+            {t('can_reset_excitement')}
+          </Label>
           <Toggle
             name="can_reset_excitement"
             checked={hasContestEffect('can_reset_excitement')}
@@ -211,7 +253,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="prevent_jam_one_time">{t('prevent_jam_one_time')}</Label>
+          <Label htmlFor="prevent_jam_one_time" data-tooltip={t('prevent_jam_one_time_tooltip')}>
+            {t('prevent_jam_one_time')}
+          </Label>
           <Toggle
             name="prevent_jam_one_time"
             checked={hasContestEffect('prevent_jam_one_time')}
@@ -219,7 +263,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="prevent_jam_one_turn">{t('prevent_jam_one_turn')}</Label>
+          <Label htmlFor="prevent_jam_one_turn" data-tooltip={t('prevent_jam_one_turn_tooltip')}>
+            {t('prevent_jam_one_turn')}
+          </Label>
           <Toggle
             name="prevent_jam_one_turn"
             checked={hasContestEffect('prevent_jam_one_turn')}
@@ -227,7 +273,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="bonus_half_previous_appeals">{t('bonus_half_previous_appeals')}</Label>
+          <Label htmlFor="bonus_half_previous_appeals" data-tooltip={t('bonus_half_previous_appeals_tooltip')}>
+            {t('bonus_half_previous_appeals')}
+          </Label>
           <Toggle
             name="bonus_half_previous_appeals"
             checked={hasContestEffect('bonus_half_previous_appeals')}
@@ -235,7 +283,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="copy_previous_appeal">{t('copy_previous_appeal')}</Label>
+          <Label htmlFor="copy_previous_appeal" data-tooltip={t('copy_previous_appeal_tooltip')}>
+            {t('copy_previous_appeal')}
+          </Label>
           <Toggle
             name="copy_previous_appeal"
             checked={hasContestEffect('copy_previous_appeal')}
@@ -243,7 +293,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="bonus_excitement">{t('bonus_excitement')}</Label>
+          <Label htmlFor="bonus_excitement" data-tooltip={t('bonus_excitement_tooltip')}>
+            {t('bonus_excitement')}
+          </Label>
           <Toggle
             name="bonus_excitement"
             checked={hasContestEffect('bonus_excitement')}
@@ -251,7 +303,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="random_appeal">{t('random_appeal')}</Label>
+          <Label htmlFor="random_appeal" data-tooltip={t('random_appeal_tooltip')}>
+            {t('random_appeal')}
+          </Label>
           <Toggle
             name="random_appeal"
             checked={hasContestEffect('random_appeal')}
@@ -259,7 +313,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="bonus_later">{t('bonus_later')}</Label>
+          <Label htmlFor="bonus_later" data-tooltip={t('bonus_later_tooltip')}>
+            {t('bonus_later')}
+          </Label>
           <Toggle
             name="bonus_later"
             checked={hasContestEffect('bonus_later')}
@@ -267,7 +323,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="bonus_earlier">{t('bonus_earlier')}</Label>
+          <Label htmlFor="bonus_earlier" data-tooltip={t('bonus_earlier_tooltip')}>
+            {t('bonus_earlier')}
+          </Label>
           <Toggle
             name="bonus_earlier"
             checked={hasContestEffect('bonus_earlier')}
@@ -275,7 +333,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="bonus_first">{t('bonus_first')}</Label>
+          <Label htmlFor="bonus_first" data-tooltip={t('bonus_first_tooltip')}>
+            {t('bonus_first')}
+          </Label>
           <Toggle
             name="bonus_first"
             checked={hasContestEffect('bonus_first')}
@@ -283,7 +343,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="bonus_last">{t('bonus_last')}</Label>
+          <Label htmlFor="bonus_last" data-tooltip={t('bonus_last_tooltip')}>
+            {t('bonus_last')}
+          </Label>
           <Toggle
             name="bonus_last"
             checked={hasContestEffect('bonus_last')}
@@ -291,7 +353,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="bonus_same_condition_previous">{t('bonus_same_condition_previous')}</Label>
+          <Label htmlFor="bonus_same_condition_previous" data-tooltip={t('bonus_same_condition_previous_tooltip')}>
+            {t('bonus_same_condition_previous')}
+          </Label>
           <Toggle
             name="bonus_same_condition_previous"
             checked={hasContestEffect('bonus_same_condition_previous')}
@@ -299,7 +363,9 @@ export const MoveContestEffectsEditor = forwardRef<EditorHandlingClose>((_, ref)
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="bonus_raised_condition">{t('bonus_raised_condition')}</Label>
+          <Label htmlFor="bonus_raised_condition" data-tooltip={t('bonus_raised_condition_tooltip')}>
+            {t('bonus_raised_condition')}
+          </Label>
           <Toggle
             name="bonus_raised_condition"
             checked={hasContestEffect('bonus_raised_condition')}
