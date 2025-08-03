@@ -89,7 +89,7 @@ const extractBaseName = (name: string): string => {
 const convertToDbSymbol = (str: string | undefined): DbSymbol =>
   str
     ?.toLowerCase()
-    .normalize('NFD') //Remove accents
+    .normalize('NFD') // Remove accents
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/[\s-’'\\.:]+/g, '_') as DbSymbol;
 
