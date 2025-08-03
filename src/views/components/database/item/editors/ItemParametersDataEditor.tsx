@@ -6,6 +6,7 @@ import { LOCKED_ITEM_EDITOR } from '@modelEntities/item';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { useItemPage } from '@hooks/usePage';
 import { useUpdateItem } from './useUpdateItem';
+import { DbSymbol } from '@root/src/models/entities/dbSymbol';
 
 export const ItemParametersDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { currentItem: item } = useItemPage();
@@ -28,6 +29,28 @@ export const ItemParametersDataEditor = forwardRef<EditorHandlingClose>((_, ref)
     if (!params.isBerry) {
       params.berryData = undefined;
       params.cookingData = undefined;
+    }
+    if (!item.isBerry && params.isBerry) {
+      params.berryData = {
+        size: 5.0,
+        firmness: 'hard',
+        minYield: 1,
+        maxYield: 5,
+        growth: 8,
+        drainRate: 6,
+        naturalGiftType: 'normal' as DbSymbol,
+        naturalGiftPower: 80,
+      };
+      params.cookingData = {
+        pokeblockColor: 'red',
+        betterPokeblockChance: 10,
+        smoothness: 10,
+        spicyFlavor: 0,
+        dryFlavor: 0,
+        sweetFlavor: 0,
+        bitterFlavor: 0,
+        sourFlavor: 0,
+      };
     }
     setItems(params);
   };

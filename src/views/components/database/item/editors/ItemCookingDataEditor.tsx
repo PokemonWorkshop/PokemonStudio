@@ -11,6 +11,7 @@ import { SelectCustomSimple } from '@components/SelectCustom';
 import { useUpdateItem } from './useUpdateItem';
 import styled from 'styled-components';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
+import { EmbeddedUnitInput } from '../../../inputs/EmbeddedUnitInput';
 
 const BetterPokeblockInfo = styled.div`
   ${({ theme }) => theme.fonts.normalSmall};
@@ -96,13 +97,14 @@ export const ItemCookingDataEditor = forwardRef<EditorHandlingClose>((_, ref) =>
         <BetterPokeblockInfoContainer>
           <InputWithLeftLabelContainer>
             <Label htmlFor="better-pokeblock-chance">{t('berries_better_pokeblock')}</Label>
-            <Input
+            <EmbeddedUnitInput
               name="better-pokeblock-chance"
               type="number"
-              min="0"
-              max="100"
+              unit="%"
               defaultValue={item.cookingData ? cleanNaNValue(item.cookingData.betterPokeblockChance) : 10}
               ref={betterPokeblockChanceRef}
+              min="0"
+              max="100"
             />
           </InputWithLeftLabelContainer>
           <BetterPokeblockInfo>{t('better_pokeblock_info')}</BetterPokeblockInfo>
