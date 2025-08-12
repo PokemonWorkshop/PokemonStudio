@@ -15,6 +15,8 @@ import {
   ItemProgressData,
   ItemHealData,
   ItemCatchData,
+  ItemBerriesData,
+  ItemCookingData,
 } from '@components/database/item';
 import { ItemEditorAndDeletionKeys, ItemEditorOverlay } from '@components/database/item/editors/ItemEditorOverlay';
 import { useDialogsRef } from '@hooks/useDialogsRef';
@@ -41,6 +43,8 @@ export const ItemPage = () => {
             <ItemProgressData dialogsRef={dialogsRef} />
             <ItemHealData dialogsRef={dialogsRef} />
             <ItemCatchData dialogsRef={dialogsRef} />
+            <ItemBerriesData dialogsRef={dialogsRef} />
+            <ItemCookingData dialogsRef={dialogsRef} />
           </DataBlockWrapper>
           <DataBlockWrapper>
             <DataBlockWithAction size="full" title={t('deletion')}>

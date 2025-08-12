@@ -7,5 +7,7 @@ export { ItemBattleDataEditor } from './ItemBattleDataEditor';
 export { ItemCatchDataEditor } from './ItemCatchDataEditor';
 export { ItemProgressDataEditor } from './ItemProgressDataEditor';
 export { ItemHealDataEditor } from './ItemHealDataEditor';
+export { ItemBerriesDataEditor } from './ItemBerriesDataEditor';
+export { ItemCookingDataEditor } from './ItemCookingDataEditor';
 export { ItemNewEditor } from './ItemNewEditor';
 export { ItemDeletion } from './ItemDeletion';

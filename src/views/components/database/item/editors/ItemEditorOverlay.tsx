@@ -13,6 +13,8 @@ import {
   ItemCatchDataEditor,
   ItemHealDataEditor,
   ItemProgressDataEditor,
+  ItemBerriesDataEditor,
+  ItemCookingDataEditor,
   ItemDeletion,
 } from '.';
 
@@ -28,6 +30,8 @@ export type ItemEditorAndDeletionKeys =
   | 'catch'
   | 'progress'
   | 'heal'
+  | 'berries'
+  | 'cooking'
   | 'deletion';
 export type ItemDialogsRef = React.RefObject<DialogRefData<ItemEditorAndDeletionKeys>>;
 
@@ -59,6 +63,10 @@ export const ItemEditorOverlay = defineEditorOverlay<ItemEditorAndDeletionKeys>(
       return <ItemProgressDataEditor ref={handleCloseRef} />;
     case 'heal':
       return <ItemHealDataEditor ref={handleCloseRef} />;
+    case 'berries':
+      return <ItemBerriesDataEditor ref={handleCloseRef} />;
+    case 'cooking':
+      return <ItemCookingDataEditor ref={handleCloseRef} />;
     case 'deletion':
       return <ItemDeletion closeDialog={closeDialog} ref={handleCloseRef} />;
     default:
