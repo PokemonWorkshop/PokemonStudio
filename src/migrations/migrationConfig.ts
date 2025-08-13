@@ -19,6 +19,7 @@ import { addEggInCreatureResources } from './addEggInCreatureResources';
 import { addBattleCamera3dToSettings } from './addBattleCamera3dToSettings';
 import { migrateGroupsFor3v3BattleMode } from './migrateGroupsFor3v3BattleMode';
 import { addMegaEvolutionParameterToItems } from './addMegaEvolutionParameterToItems';
+import { addBerryAndCookingDataToItems } from './addBerryAndCookingDataToItems';
 import { addSoundDesignConfig } from './addSoundDesignConfig';
 import { addMoveContestData } from './addMoveContestData';
 
@@ -149,6 +150,11 @@ export const MIGRATION_CONFIG: MigrateConfigType[] = [
     migration: addSoundDesignConfig,
     version: '2.5.1',
     message: 'add_sound_design_config',
+  },
+  {
+    migration: addBerryAndCookingDataToItems,
+    version: '2.6.1',
+    message: 'add_berry_and_cooking_data_to_items',
   },
   {
     migration: addMoveContestData,

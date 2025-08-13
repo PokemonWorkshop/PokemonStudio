@@ -2,6 +2,42 @@ import { z } from 'zod';
 import { POSITIVE_OR_ZERO_INT, POSITIVE_INT, POSITIVE_FLOAT } from './common';
 import { DB_SYMBOL_VALIDATOR } from './dbSymbol';
 
+export const FIRMNESS_VALIDATOR = z.union([
+  z.literal('very_soft'),
+  z.literal('soft'),
+  z.literal('hard'),
+  z.literal('very_hard'),
+  z.literal('super_hard'),
+]);
+export type StudioItemBerryFirmness = z.infer<typeof FIRMNESS_VALIDATOR>;
+
+export const COLOR_VALIDATOR = z.union([z.literal('red'), z.literal('blue'), z.literal('pink'), z.literal('green'), z.literal('yellow')]);
+export type StudioItemBerryColor = z.infer<typeof COLOR_VALIDATOR>;
+
+export const BERRY_DATA_VALIDATOR = z.object({
+  size: POSITIVE_FLOAT,
+  firmness: FIRMNESS_VALIDATOR,
+  minYield: POSITIVE_INT,
+  maxYield: POSITIVE_INT,
+  growth: POSITIVE_INT,
+  drainRate: POSITIVE_INT,
+  naturalGiftPower: POSITIVE_INT,
+  naturalGiftType: DB_SYMBOL_VALIDATOR,
+});
+export type StudioBerryData = z.infer<typeof BERRY_DATA_VALIDATOR>;
+
+export const COOKING_DATA_VALIDATOR = z.object({
+  pokeblockColor: COLOR_VALIDATOR,
+  betterPokeblockChance: POSITIVE_OR_ZERO_INT,
+  smoothness: POSITIVE_INT,
+  spicyFlavor: POSITIVE_OR_ZERO_INT,
+  dryFlavor: POSITIVE_OR_ZERO_INT,
+  sweetFlavor: POSITIVE_OR_ZERO_INT,
+  bitterFlavor: POSITIVE_OR_ZERO_INT,
+  sourFlavor: POSITIVE_OR_ZERO_INT,
+});
+export type StudioCookingData = z.infer<typeof COOKING_DATA_VALIDATOR>;
+
 const ITEM_BASE_VALIDATOR = z.object({
   id: POSITIVE_OR_ZERO_INT,
   dbSymbol: DB_SYMBOL_VALIDATOR,
@@ -15,6 +51,9 @@ const ITEM_BASE_VALIDATOR = z.object({
   isHoldable: z.boolean(),
   isAllowingMega: z.boolean(),
   flingPower: POSITIVE_OR_ZERO_INT,
+  isBerry: z.boolean(),
+  berryData: BERRY_DATA_VALIDATOR.optional(),
+  cookingData: COOKING_DATA_VALIDATOR.optional(),
 });
 
 export const UNKNOWN_ITEM_VALIDATOR = ITEM_BASE_VALIDATOR.extend({
@@ -197,25 +236,25 @@ export type StudioItemEditors = 'generic' | 'parameters' | 'exploration' | 'batt
 
 export const LOCKED_ITEM_EDITOR: Readonly<Record<StudioItem['klass'], Readonly<StudioItemEditors[]>>> = {
   AllPPHealItem: ['exploration', 'battle', 'progress', 'catch'] as const,
-  BallItem: ['exploration', 'battle', 'progress', 'heal', 'berries', 'cooking'] as const,
+  BallItem: ['exploration', 'battle', 'progress', 'heal'] as const,
   ConstantHealItem: ['exploration', 'battle', 'progress', 'catch'] as const,
   EVBoostItem: ['exploration', 'battle', 'catch'] as const,
-  EventItem: ['battle', 'progress', 'catch', 'heal', 'berries', 'cooking'] as const,
-  FleeingItem: ['exploration', 'battle', 'progress', 'heal', 'catch', 'berries', 'cooking'] as const,
+  EventItem: ['battle', 'progress', 'catch', 'heal'] as const,
+  FleeingItem: ['exploration', 'battle', 'progress', 'heal', 'catch'] as const,
   HealingItem: ['exploration', 'progress', 'catch', 'battle'] as const,
-  Item: ['exploration', 'battle', 'progress', 'heal', 'catch', 'berries', 'cooking'] as const,
+  Item: ['exploration', 'battle', 'progress', 'heal', 'catch'] as const,
   LevelIncreaseItem: ['exploration', 'battle', 'catch'] as const,
   ExpGiveItem: ['exploration', 'battle', 'catch'] as const,
   PPHealItem: ['exploration', 'battle', 'progress', 'catch'] as const,
   PPIncreaseItem: ['exploration', 'battle', 'progress', 'catch'] as const,
   RateHealItem: ['exploration', 'battle', 'progress', 'catch'] as const,
-  RepelItem: ['battle', 'progress', 'heal', 'catch', 'berries', 'cooking'] as const,
+  RepelItem: ['battle', 'progress', 'heal', 'catch'] as const,
   StatBoostItem: ['exploration', 'progress', 'catch'] as const,
   StatusConstantHealItem: ['exploration', 'battle', 'progress', 'catch'] as const,
   StatusHealItem: ['exploration', 'battle', 'progress', 'catch'] as const,
   StatusRateHealItem: ['exploration', 'battle', 'progress', 'catch'] as const,
-  StoneItem: ['exploration', 'battle', 'progress', 'heal', 'catch', 'berries', 'cooking'] as const,
-  TechItem: ['exploration', 'battle', 'progress', 'heal', 'catch', 'berries', 'cooking'] as const,
+  StoneItem: ['exploration', 'battle', 'progress', 'heal', 'catch'] as const,
+  TechItem: ['exploration', 'battle', 'progress', 'heal', 'catch'] as const,
 } as const;
 
 export const ITEM_CATEGORY: Readonly<Record<StudioItem['klass'], StudioItemCategory>> = {
@@ -255,7 +294,23 @@ export const mutateItemInto = <K extends StudioItem['klass']>(
   originItem: StudioItem,
   targetItem: Extract<StudioItem, { klass: K }>
 ): typeof targetItem => {
-  const { id, dbSymbol, icon, price, socket, position, isBattleUsable, isMapUsable, isLimited, isHoldable, isAllowingMega, flingPower } = originItem;
+  const {
+    id,
+    dbSymbol,
+    icon,
+    price,
+    socket,
+    position,
+    isBattleUsable,
+    isMapUsable,
+    isLimited,
+    isHoldable,
+    isAllowingMega,
+    flingPower,
+    isBerry,
+    berryData,
+    cookingData,
+  } = originItem;
   const newItem = {
     ...targetItem,
     id,
@@ -270,6 +325,9 @@ export const mutateItemInto = <K extends StudioItem['klass']>(
     isHoldable,
     isAllowingMega,
     flingPower,
+    isBerry,
+    berryData,
+    cookingData,
   };
 
   if ('loyaltyMalus' in originItem && 'loyaltyMalus' in newItem) newItem.loyaltyMalus = originItem.loyaltyMalus;
