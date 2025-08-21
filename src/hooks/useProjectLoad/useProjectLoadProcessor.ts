@@ -138,7 +138,16 @@ export const useProjectLoadProcessor = () => {
         loaderRef.current.setProgress(9, STEPS_TOTAL, t('loading_project_data'));
         return window.api.readProjectData(
           { path: state.projectDirName },
-          (projectData) => setState({ ...state, state: 'readProjectText', projectData }),
+          (projectData) => {
+            window.stateApi.load(
+              {
+                projectPath: state.projectDirName,
+                mainLanguage: 'en', // TODO: Figure out how to define main language
+              },
+              () => setState({ ...state, state: 'readProjectText', projectData }),
+              handleFailure(setState, binding)
+            );
+          },
           handleFailure(setState, binding)
         );
       },
