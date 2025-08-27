@@ -23,9 +23,8 @@ export const getValidMaps = (zones: ProjectData['zones']) =>
     .flatMap((zone) => zone.maps);
 
 export const checkValidMaplink = (mapId: number, state: State) => {
-  const validMaps = getValidMaps(state.projectData.zones);
-  const mapsFiltered = Object.values(state.projectData.maps).filter(({ id }) => validMaps.includes(id));
-  return mapsFiltered.find((map) => map.id === mapId) ? true : false;
+  const maps = Object.values(state.projectData.maps);
+  return maps.find((map) => map.id === mapId) ? true : false;
 };
 
 const getMapSize = (map: StudioMap): MapSize => {

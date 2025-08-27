@@ -6,7 +6,6 @@ import { TFunction } from 'i18next';
 import { SelectCustom, SelectCustomWithLabel } from '@components/SelectCustom';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
 import { useProjectMapLinks, useProjectMaps, useProjectZones } from '@src/hooks/useProjectData';
-import { getValidMaps } from '@utils/MapLinkUtils';
 import { SelectOption } from '@ds/Select/types';
 import { SelectContainerWithLabel } from './SelectContainerWithLabel';
 import { StudioDropDown } from '@components/StudioDropDown';
@@ -89,10 +88,9 @@ export const SelectMapLink2 = ({ dbSymbol, onChange, noLabel, undefValueOption }
   const getMapFromMapId = (mapId: number) => allMaps.find(({ id }) => id === mapId);
 
   const mapLinkOptions = useMemo(() => {
-    const validMaps = getValidMaps(zones);
     return allMapLinks.map(({ dbSymbol, mapId }) => {
       const map = getMapFromMapId(mapId);
-      const mapName = map && validMaps.includes(map.id) ? getMapName(map) : t('map_deleted');
+      const mapName = map ? getMapName(map) : t('map_deleted');
       return { value: dbSymbol, label: mapName };
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
