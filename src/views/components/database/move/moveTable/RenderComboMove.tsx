@@ -67,13 +67,25 @@ export const RenderComboMove = ({ moveSymbol, onClickDelete }: RenderComboMovePr
 
   return (
     <RenderComboMoveContainer gap="48px">
-      <span onClick={isClickable ? () => shortcutMoveNavigation(move.dbSymbol) : undefined} className={isClickable ? 'clickable' : undefined}>
-        {getMoveName(move)}
-      </span>
-      <MoveCondition condition={move.condition}>{t(move.condition)}</MoveCondition>
-      <div className="buttons">
-        <DeleteButtonOnlyIcon size="s" onClick={onClickDelete} />
-      </div>
+      {move ? (
+        <>
+          <span onClick={isClickable ? () => shortcutMoveNavigation(move.dbSymbol) : undefined} className={isClickable ? 'clickable' : undefined}>
+            {getMoveName(move)}
+          </span>
+          <MoveCondition condition={move.condition}>{t(move.condition)}</MoveCondition>
+          <div className="buttons">
+            <DeleteButtonOnlyIcon size="s" onClick={onClickDelete} />
+          </div>
+        </>
+      ) : (
+        <>
+          <span style={{ color: theme.colors.dangerBase }}>{t('move_deleted')}</span>
+          <span></span>
+          <div className="buttons">
+            <DeleteButtonOnlyIcon size="s" onClick={onClickDelete} />
+          </div>
+        </>
+      )}
     </RenderComboMoveContainer>
   );
 };

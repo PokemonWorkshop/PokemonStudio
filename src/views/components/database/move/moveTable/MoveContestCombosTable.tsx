@@ -26,6 +26,9 @@ export const MoveContestCombosTable = ({ move }: MoveContestCombosTableProps) =>
       </DataCombosGrid>
       {move.comboMoves
         .sort((a, b) => {
+          if (!moves[a]) return 1;
+          if (!moves[b]) return -1;
+
           return moves[a].id - moves[b].id;
         })
         .map((cMove, index) => (
