@@ -2,8 +2,8 @@
 
 import { Input, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
-import { MOVE_DESCRIPTION_TEXT_ID, MOVE_NAME_TEXT_ID, StudioMove } from '@modelEntities/move';
-import { useGetEntityDescriptionText, useSetProjectText } from '@utils/ReadingProjectText';
+import { MOVE_CONTEST_DESCRIPTION_TEXT_ID, MOVE_DESCRIPTION_TEXT_ID, MOVE_NAME_TEXT_ID, StudioMove } from '@modelEntities/move';
+import { useGetEntityDescriptionText, useGetMoveContestDescriptionText, useSetProjectText } from '@utils/ReadingProjectText';
 import React, { forwardRef, useImperativeHandle, useRef } from 'react';
 import { TranslationEditorTitle } from '../MoveTranslationOverlay';
 import { useTranslation } from 'react-i18next';
@@ -16,21 +16,23 @@ type TranslatableTextFieldsProps = {
   moveName: string;
   move: StudioMove;
   handleTranslateClick: (editorTitle: TranslationEditorTitle) => () => void;
+  contest?: boolean;
 };
 
 export const TranslatableTextFields = forwardRef<TranslatableTextFieldsRef, TranslatableTextFieldsProps>(
-  ({ moveName, move, handleTranslateClick }, ref) => {
+  ({ moveName, move, handleTranslateClick, contest = false }, ref) => {
     const { t } = useTranslation();
     const nameRef = useRef<HTMLInputElement>(null);
     const descriptionRef = useRef<HTMLTextAreaElement>(null);
     const getMoveDescription = useGetEntityDescriptionText();
+    const getMoveContestDescription = useGetMoveContestDescriptionText();
     const setText = useSetProjectText();
 
     const saveTexts = () => {
       if (!nameRef.current || !descriptionRef.current) return;
 
       setText(MOVE_NAME_TEXT_ID, move.id, nameRef.current.value);
-      setText(MOVE_DESCRIPTION_TEXT_ID, move.id, descriptionRef.current.value);
+      setText(contest ? MOVE_CONTEST_DESCRIPTION_TEXT_ID : MOVE_DESCRIPTION_TEXT_ID, move.id, descriptionRef.current.value);
     };
     const onTranslationOverlayClose = () => {
       if (!nameRef.current || !descriptionRef.current) return;
@@ -50,8 +52,8 @@ export const TranslatableTextFields = forwardRef<TranslatableTextFieldsRef, Tran
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label>{t('description')}</Label>
-          <TranslateInputContainer onTranslateClick={handleTranslateClick('translation_description')}>
-            <MultiLineInput defaultValue={getMoveDescription(move)} ref={descriptionRef} />
+          <TranslateInputContainer onTranslateClick={handleTranslateClick(contest ? 'translation_contest_description' : 'translation_description')}>
+            <MultiLineInput defaultValue={contest ? getMoveContestDescription(move) : getMoveDescription(move)} ref={descriptionRef} />
           </TranslateInputContainer>
         </InputWithTopLabelContainer>
       </>

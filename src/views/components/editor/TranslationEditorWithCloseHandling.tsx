@@ -75,6 +75,7 @@ export type TranslationEditorTitle =
   | 'translation_name'
   | 'translation_name_plural'
   | 'translation_description'
+  | 'translation_contest_description'
   | 'translation_species'
   | 'translation_class'
   | 'translation_victory'

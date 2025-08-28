@@ -6,7 +6,7 @@ import type { StudioCustomGroupCondition, StudioGroup, StudioGroupSystemTag, Stu
 import { createExpandPokemonSetup, StudioGroupEncounter } from '@modelEntities/groupEncounter';
 import type { StudioItem, StudioItemStatusCondition } from '@modelEntities/item';
 import type { StudioMapLink } from '@modelEntities/mapLink';
-import type { StudioMove, StudioMoveCategory } from '@modelEntities/move';
+import type { StudioMove, StudioMoveCategory, StudioMoveCondition } from '@modelEntities/move';
 import type {
   StudioCreatureQuestCondition,
   StudioCreatureQuestConditionType,
@@ -235,7 +235,13 @@ export const createItem = <K extends StudioItem['klass']>(klass: K, dbSymbol: Db
   }
 };
 
-export const createMove = (allMoves: ProjectData['moves'], dbSymbol: DbSymbol, type: DbSymbol, category: StudioMoveCategory): StudioMove => {
+export const createMove = (
+  allMoves: ProjectData['moves'],
+  dbSymbol: DbSymbol,
+  type: DbSymbol,
+  category: StudioMoveCategory,
+  condition: StudioMoveCondition
+): StudioMove => {
   const id = findFirstAvailableId(allMoves, 1);
   return {
     klass: 'Move',
@@ -278,6 +284,11 @@ export const createMove = (allMoves: ProjectData['moves'], dbSymbol: DbSymbol, t
     battleStageMod: [],
     battleEngineAimedTarget: 'adjacent_pokemon',
     mapUse: 0,
+    condition,
+    appeal: 4,
+    jam: 0,
+    comboMoves: [],
+    effectTags: [],
   };
 };
 

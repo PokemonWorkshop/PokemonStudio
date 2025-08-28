@@ -70,6 +70,52 @@ export const MOVE_STATUS_VALIDATOR = z.object({
 });
 export type StudioMoveStatus = z.infer<typeof MOVE_STATUS_VALIDATOR>;
 
+export const MOVE_CONDITION_VALIDATOR = z.union([
+  z.literal('cool'),
+  z.literal('beautiful'),
+  z.literal('cute'),
+  z.literal('clever'),
+  z.literal('tough'),
+]);
+export type StudioMoveCondition = z.infer<typeof MOVE_CONDITION_VALIDATOR>;
+
+export const MOVE_CONTEST_EFFECT_TAG_VALIDATOR = z.union([
+  z.literal('cant_act_anymore'),
+  z.literal('skip_next_turn'),
+  z.literal('jam_previous'),
+  z.literal('jam_all'),
+  z.literal('jam_same_condition'),
+  z.literal('jam_highest_score'),
+  z.literal('more_nervous'),
+  z.literal('try_make_nervous'),
+  z.literal('compare_previous_appeal'),
+  z.literal('repeatable'),
+  z.literal('raise_condition'),
+  z.literal('lower_others_condition'),
+  z.literal('cancel_others_combo'),
+  z.literal('play_first_next_turn'),
+  z.literal('play_last_next_turn'),
+  z.literal('randomize_next_turn_order'),
+  z.literal('very_exciting_first'),
+  z.literal('very_exciting_last'),
+  z.literal('lock_excitement'),
+  z.literal('always_exciting'),
+  z.literal('can_reset_excitement'),
+  z.literal('prevent_jam_one_time'),
+  z.literal('prevent_jam_one_turn'),
+  z.literal('bonus_half_previous_appeals'),
+  z.literal('copy_previous_appeal'),
+  z.literal('bonus_excitement'),
+  z.literal('random_appeal'),
+  z.literal('bonus_later'),
+  z.literal('bonus_earlier'),
+  z.literal('bonus_first'),
+  z.literal('bonus_last'),
+  z.literal('bonus_same_condition_previous'),
+  z.literal('bonus_raised_condition'),
+]);
+export type StudioMoveContestEffectTag = z.infer<typeof MOVE_CONTEST_EFFECT_TAG_VALIDATOR>;
+
 export const MOVE_VALIDATOR = z.object({
   klass: z.literal('Move'),
   id: POSITIVE_OR_ZERO_INT,
@@ -111,6 +157,11 @@ export const MOVE_VALIDATOR = z.object({
   battleStageMod: z.array(MOVE_BATTLE_STAGE_MOD_VALIDATOR),
   moveStatus: z.array(MOVE_STATUS_VALIDATOR),
   effectChance: POSITIVE_OR_ZERO_INT.max(100).default(100),
+  condition: MOVE_CONDITION_VALIDATOR,
+  appeal: POSITIVE_INT.max(99),
+  jam: POSITIVE_OR_ZERO_INT.max(99),
+  comboMoves: z.array(DB_SYMBOL_VALIDATOR),
+  effectTags: z.array(MOVE_CONTEST_EFFECT_TAG_VALIDATOR),
 });
 
 export type StudioMove = z.infer<typeof MOVE_VALIDATOR>;
@@ -127,7 +178,9 @@ export type MoveBattleEngineMethodsType =
 
 export const MOVE_NAME_TEXT_ID = 100006;
 export const MOVE_DESCRIPTION_TEXT_ID = 100007;
+export const MOVE_CONTEST_DESCRIPTION_TEXT_ID = 100072;
 export const MOVE_CATEGORIES = ['physical', 'special', 'status'] as const;
+export const MOVE_CONDITIONS = ['cool', 'beautiful', 'cute', 'clever', 'tough'] as const;
 export const MOVE_CRITICAL_RATES = [0, 1, 2, 3, 4] as const;
 export const MOVE_TARGETS = [
   'adjacent_pokemon',

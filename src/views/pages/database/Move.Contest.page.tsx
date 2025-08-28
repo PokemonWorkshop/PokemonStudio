@@ -1,6 +1,6 @@
 import React from 'react';
 import { DataBlockWithAction, DataBlockWrapper } from '../../components/database/dataBlocks';
-import { MoveCharacteristics, MoveControlBar, MoveData, MoveFrame, MoveParameters, MoveStatistics, MoveStatus } from '@components/database/move';
+import { MoveControlBar, MoveFrame, MoveContestEffects, MoveContestCombos, MoveDataContest } from '@components/database/move';
 import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 import { DarkButton, DeleteButtonWithIcon } from '@components/buttons';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +11,7 @@ import { MoveEditorAndDeletionKeys, MoveEditorOverlay } from '@components/databa
 import { useMovePage } from '@hooks/usePage';
 import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';
 
-export const MovePage = () => {
+export const MoveContestPage = () => {
   const dialogsRef = useDialogsRef<MoveEditorAndDeletionKeys>();
   const { move, moveName, cannotDelete } = useMovePage();
   const { t } = useTranslation();
@@ -25,7 +25,7 @@ export const MovePage = () => {
         <PageDataConstrainerStyle>
           <DataBlockWrapper>
             <DatabaseTabsBar
-              currentTabIndex={0}
+              currentTabIndex={1}
               tabs={[
                 { label: t('general_data'), path: '/database/moves' },
                 { label: t('contest_data'), path: '/database/moves/contest' },
@@ -33,12 +33,10 @@ export const MovePage = () => {
             />
           </DataBlockWrapper>
           <DataBlockWrapper>
-            <MoveFrame move={move} dialogsRef={dialogsRef} />
-            <MoveData move={move} dialogsRef={dialogsRef} />
-            <MoveParameters move={move} dialogsRef={dialogsRef} />
-            <MoveCharacteristics move={move} dialogsRef={dialogsRef} />
-            <MoveStatus move={move} dialogsRef={dialogsRef} />
-            <MoveStatistics move={move} dialogsRef={dialogsRef} />
+            <MoveFrame move={move} dialogsRef={dialogsRef} contest={true} />
+            <MoveDataContest move={move} dialogsRef={dialogsRef} />
+            <MoveContestEffects move={move} dialogsRef={dialogsRef} />
+            <MoveContestCombos move={move} dialogsRef={dialogsRef} />
           </DataBlockWrapper>
           <DataBlockWrapper>
             <DataBlockWithAction size="full" title={t('creature_with_move', { move: moveName })}>

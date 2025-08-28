@@ -29,6 +29,7 @@ export const importMoveData = (move: StudioMove, dataToImport: StudioMove): Stud
     dbSymbol: move.dbSymbol,
     type: move.type,
     category: move.category,
+    condition: move.condition,
   };
 };
 

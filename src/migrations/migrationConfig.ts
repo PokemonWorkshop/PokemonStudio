@@ -21,6 +21,7 @@ import { migrateGroupsFor3v3BattleMode } from './migrateGroupsFor3v3BattleMode';
 import { addMegaEvolutionParameterToItems } from './addMegaEvolutionParameterToItems';
 import { addBerryAndCookingDataToItems } from './addBerryAndCookingDataToItems';
 import { addSoundDesignConfig } from './addSoundDesignConfig';
+import { addMoveContestData } from './addMoveContestData';
 
 type MigrateConfigType = {
   migration: MigrationTask;
@@ -154,5 +155,10 @@ export const MIGRATION_CONFIG: MigrateConfigType[] = [
     migration: addBerryAndCookingDataToItems,
     version: '2.6.1',
     message: 'add_berry_and_cooking_data_to_items',
+  },
+  {
+    migration: addMoveContestData,
+    version: '2.6.1',
+    message: 'add_move_contest_data',
   },
 ];
