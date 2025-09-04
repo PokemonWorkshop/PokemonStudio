@@ -12,6 +12,7 @@ const WorldRouterComponent = () => {
       <WorldNavigation />
       <Routes>
         <Route path="maplink" element={<MapLinkPage />} />
+        <Route path="events" element={<div />} />
         <Route path="region" element={<Outlet />} />
         <Route path="map" element={<MapPage />} />
         <Route path="overview" element={<OverviewPage />} />
