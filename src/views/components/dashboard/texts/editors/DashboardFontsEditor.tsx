@@ -73,6 +73,9 @@ export const DashboardFontsEditor = ({ texts, index, isAlternative }: DashbordFo
           <Label htmlFor="size">{t('size')}</Label>
           <Input
             name="size"
+            defaultValue="1"
+            min="1"
+            max="999"
             type="number"
             value={isNaN(ttfFileOrAltSize.size) ? '' : ttfFileOrAltSize.size}
             onChange={(event) => refreshUI((ttfFileOrAltSize.size = parseInt(event.target.value)))}
@@ -84,9 +87,12 @@ export const DashboardFontsEditor = ({ texts, index, isAlternative }: DashbordFo
           <Input
             name="line-height"
             type="number"
+            min="1"
+            max="999"
+            defaultValue="1"
             value={isNaN(ttfFileOrAltSize.lineHeight) ? '' : ttfFileOrAltSize.lineHeight}
             onChange={(event) => refreshUI((ttfFileOrAltSize.lineHeight = parseInt(event.target.value)))}
-            onBlur={() => refreshUI((ttfFileOrAltSize.lineHeight = isNaN(ttfFileOrAltSize.lineHeight) ? 0 : ttfFileOrAltSize.lineHeight))}
+            onBlur={() => refreshUI((ttfFileOrAltSize.lineHeight = isNaN(ttfFileOrAltSize.lineHeight) ? 1 : ttfFileOrAltSize.lineHeight))}
           />
         </InputWithLeftLabelContainer>
       </InputContainer>
