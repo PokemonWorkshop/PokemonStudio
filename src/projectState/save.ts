@@ -1,4 +1,4 @@
-import { clearHistory, needsToBeSaved } from './history';
+import { markAllAsSaved, needsToBeSaved } from './history';
 import { EntityRegistryEntry, getAllEntityTypes, getEntityRegistry } from './load';
 import { getEntityRecord, getTextHandler, getTextKeys } from './state';
 import fs from 'fs';
@@ -13,7 +13,7 @@ export const saveAllEntities = async (projectPath: string, progress: (entityType
     await saveEntities(projectPath, entityType);
   }
 
-  clearHistory();
+  markAllAsSaved();
 
   for (const textHandlerId of textKeys) {
     progress(textHandlerId, textKeys.indexOf(textHandlerId) + entityTypes.length, totalStep);
