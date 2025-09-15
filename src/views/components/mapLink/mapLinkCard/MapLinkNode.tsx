@@ -7,8 +7,13 @@ import { getMapOverviewPath } from '@utils/resourcePath';
 import { cloneEntity } from '@utils/cloneEntity';
 import { useUpdateMapLink } from '../editors';
 import { ClearButtonOnlyIcon } from '@components/buttons';
+import { useStore } from '@xyflow/react';
 
-const MapLinkNodeContainer = styled.div`
+type MapLinkNodeContainer = {
+  zoom: number;
+};
+
+const MapLinkNodeContainer = styled.div<MapLinkNodeContainer>`
   position: relative;
   display: inline-block;
   // Maps can be completely transparent, so we set the background color so that they are visible.
@@ -30,6 +35,8 @@ const MapLinkNodeContainer = styled.div`
       right: 8px;
       height: 50px;
       width: 52px;
+      scale: ${({ zoom }) => 1.0 / zoom};
+      transform-origin: top right;
     }
   }
 `;
@@ -43,8 +50,11 @@ type MapLinkNodeProps = {
   };
 };
 
+const zoomSelector = (s: { transform: number[] }) => s.transform[2];
+
 export const MapLinkNode = ({ data: { mapLink, maps, cardinal, index } }: MapLinkNodeProps) => {
   const updateMapLink = useUpdateMapLink(mapLink);
+  const currentZoom = useStore(zoomSelector);
   const links = getLinksFromMapLink(mapLink, cardinal);
   const map = maps[links[index].mapId];
 
@@ -55,7 +65,7 @@ export const MapLinkNode = ({ data: { mapLink, maps, cardinal, index } }: MapLin
   };
 
   return (
-    <MapLinkNodeContainer>
+    <MapLinkNodeContainer zoom={currentZoom}>
       {map ? <ResourceImage imagePathInProject={getMapOverviewPath(map.tiledFilename)} versionId={map.mtime} /> : <div>???</div>}
       <ClearButtonOnlyIcon className="clear-button" onClick={onDeleteMap} />
     </MapLinkNodeContainer>
