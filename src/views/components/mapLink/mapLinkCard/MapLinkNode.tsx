@@ -31,13 +31,21 @@ const MapLinkNodeContainer = styled.div<MapLinkNodeContainer>`
     & .clear-button {
       position: absolute;
       display: flex;
-      top: 8px;
-      right: 8px;
+      top: ${({ zoom }) => 4 / zoom}px;
+      right: ${({ zoom }) => 4 / zoom}px;
       height: 50px;
       width: 52px;
-      scale: ${({ zoom }) => 1.0 / zoom};
+      scale: ${({ zoom }) => 1 / zoom};
       transform-origin: top right;
     }
+  }
+
+  &:hover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: ${({ zoom }) => 2 / zoom}px solid ${({ theme }) => theme.colors.primaryBase};
+    pointer-events: none;
   }
 `;
 
