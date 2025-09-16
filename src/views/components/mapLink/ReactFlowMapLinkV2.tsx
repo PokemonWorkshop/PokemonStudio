@@ -11,9 +11,10 @@ import {
   useNodesState,
   useReactFlow,
 } from '@xyflow/react';
-import { MainMapLinkNode } from './mapLinkCard/MainMapLinkNode';
-import { buildLinks, getOffset, initMainMapLinkNode, type MapLinkNodeType } from '@utils/MapLinkUtils';
-import { MapLinkNode } from './mapLinkCard/MapLinkNode';
+import { MainMapLinkNode } from './mapLinkNodeV2/MainMapLinkNode';
+import { buildAddMapNodes, buildLinks, getOffset, initMainMapLinkNode, type MapLinkNodeType } from '@utils/MapLinkUtils';
+import { MapLinkNode } from './mapLinkNodeV2/MapLinkNode';
+import { MapLinkAddMapNode } from './mapLinkNodeV2/MapLinkAddMapNode';
 import { useUpdateMapLink } from './editors';
 import { cloneEntity } from '@utils/cloneEntity';
 import type { MapLinkDialogsRef } from './editors/MapLinkEditorOverlay';
@@ -32,7 +33,7 @@ type ReactFlowMapLinkProps = {
 export const ReactFlowMapLinkV2 = ({ mapLink, maps }: ReactFlowMapLinkProps) => {
   const reactFlowInstance = useReactFlow();
   const [nodes, setNodes] = useNodesState<MapLinkNodeType>([initMainMapLinkNode(mapLink, maps), ...buildLinks(mapLink, maps, TILE_SIZE)]);
-  const nodeTypes = useMemo(() => ({ mainMapLinkNode: MainMapLinkNode, mapLinkNode: MapLinkNode }), []);
+  const nodeTypes = useMemo(() => ({ mainMapLinkNode: MainMapLinkNode, mapLinkNode: MapLinkNode, mapLinkAddMapNode: MapLinkAddMapNode }), []);
   const updateMapLink = useUpdateMapLink(mapLink);
   const [updateOffset, setUpdateOffset] = useState<UpdateOffsetType | undefined>(undefined);
 
@@ -107,7 +108,7 @@ export const ReactFlowMapLinkV2 = ({ mapLink, maps }: ReactFlowMapLinkProps) => 
   }, [mapLink.id]);
 
   useEffect(() => {
-    setNodes([initMainMapLinkNode(mapLink, maps), ...buildLinks(mapLink, maps, TILE_SIZE)]);
+    setNodes([initMainMapLinkNode(mapLink, maps), ...buildLinks(mapLink, maps, TILE_SIZE), ...buildAddMapNodes(mapLink, maps, TILE_SIZE)]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mapLink]);
 
