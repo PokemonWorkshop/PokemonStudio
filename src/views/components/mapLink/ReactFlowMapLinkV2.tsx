@@ -17,9 +17,11 @@ import { MapLinkNode } from './mapLinkCard/MapLinkNode';
 import { useUpdateMapLink } from './editors';
 import { cloneEntity } from '@utils/cloneEntity';
 import type { MapLinkDialogsRef } from './editors/MapLinkEditorOverlay';
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 const TILE_SIZE = 32;
+
+type UpdateOffsetType = { cardinal: StudioMapLinkCardinal; newPosition: Node['position']; index: number };
 
 type ReactFlowMapLinkProps = {
   mapLink: StudioMapLink;
@@ -32,16 +34,24 @@ export const ReactFlowMapLinkV2 = ({ mapLink, maps }: ReactFlowMapLinkProps) => 
   const [nodes, setNodes] = useNodesState<MapLinkNodeType>([initMainMapLinkNode(mapLink, maps), ...buildLinks(mapLink, maps, TILE_SIZE)]);
   const nodeTypes = useMemo(() => ({ mainMapLinkNode: MainMapLinkNode, mapLinkNode: MapLinkNode }), []);
   const updateMapLink = useUpdateMapLink(mapLink);
+  const [updateOffset, setUpdateOffset] = useState<UpdateOffsetType | undefined>(undefined);
 
-  const updateOffset = (cardinal: StudioMapLinkCardinal, newPosition: Node['position'], index: number) => {
+  useEffect(() => {
+    if (!updateOffset) return;
+
+    setUpdateOffset(undefined);
+    const { cardinal, newPosition, index } = updateOffset;
     const offset = getOffset(cardinal, newPosition, TILE_SIZE);
     const links = cloneEntity(getLinksFromMapLink(mapLink, cardinal));
+    if (index !== undefined && links[index].offset === offset) return;
+
     links[index].offset = offset;
     updateMapLink({ [`${cardinal}Maps`]: links });
     // TODO: implement map reverse offset
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [updateOffset]);
 
-  const onNodesChange: OnNodesChange<MapLinkNodeType> = (changes) => {
+  const onNodesChange: OnNodesChange<MapLinkNodeType> = useCallback((changes) => {
     setNodes((nds) => {
       const updatedChanges = changes.map((change) => {
         if (change.type !== 'position') return change;
@@ -56,7 +66,7 @@ export const ReactFlowMapLinkV2 = ({ mapLink, maps }: ReactFlowMapLinkProps) => 
         if (change.dragging === false) {
           if (!cardinal || index === undefined) return change;
 
-          updateOffset(cardinal, newPos, index);
+          setUpdateOffset({ cardinal, newPosition: newPos, index });
         }
 
         switch (cardinal) {
@@ -83,7 +93,8 @@ export const ReactFlowMapLinkV2 = ({ mapLink, maps }: ReactFlowMapLinkProps) => 
       });
       return applyNodeChanges(updatedChanges, nds);
     });
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     // there is not properties to hide the viewport, but it can be moved outside the window ; it's necessary to prevent a blink
