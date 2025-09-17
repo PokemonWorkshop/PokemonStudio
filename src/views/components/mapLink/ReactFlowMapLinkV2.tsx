@@ -30,7 +30,7 @@ type ReactFlowMapLinkProps = {
   dialogsRef?: MapLinkDialogsRef;
 };
 
-export const ReactFlowMapLinkV2 = ({ mapLink, maps }: ReactFlowMapLinkProps) => {
+export const ReactFlowMapLinkV2 = ({ mapLink, maps, dialogsRef }: ReactFlowMapLinkProps) => {
   const reactFlowInstance = useReactFlow();
   const [nodes, setNodes] = useNodesState<MapLinkNodeType>([initMainMapLinkNode(mapLink, maps), ...buildLinks(mapLink, maps, TILE_SIZE)]);
   const nodeTypes = useMemo(() => ({ mainMapLinkNode: MainMapLinkNode, mapLinkNode: MapLinkNode, mapLinkAddMapNode: MapLinkAddMapNode }), []);
@@ -56,7 +56,7 @@ export const ReactFlowMapLinkV2 = ({ mapLink, maps }: ReactFlowMapLinkProps) => 
   useEffect(() => {
     setNodes((nds) => {
       const ndsFiltered = nds.filter((node) => !node.id.startsWith('map-link-add-map-node'));
-      const addMapNodes = buildAddMapNodes(mapLink, maps, TILE_SIZE);
+      const addMapNodes = buildAddMapNodes(mapLink, maps, TILE_SIZE, dialogsRef);
       addMapNodes.forEach((node) => (node.hidden = !showAddMapNode));
       return [...ndsFiltered, ...addMapNodes];
     });
@@ -70,7 +70,7 @@ export const ReactFlowMapLinkV2 = ({ mapLink, maps }: ReactFlowMapLinkProps) => 
           const hasSelectedAddMapNode = changes.some(
             (change) => change.type === 'select' && change.id.startsWith('map-link-add-map-node') && change.selected
           );
-          if (!hasSelectedAddMapNode) setShowAddMapNode(change.selected);
+          setShowAddMapNode(change.selected || hasSelectedAddMapNode);
           return change;
         }
 
@@ -127,7 +127,11 @@ export const ReactFlowMapLinkV2 = ({ mapLink, maps }: ReactFlowMapLinkProps) => 
   }, [mapLink.id]);
 
   useEffect(() => {
-    setNodes([initMainMapLinkNode(mapLink, maps), ...buildLinks(mapLink, maps, TILE_SIZE), ...buildAddMapNodes(mapLink, maps, TILE_SIZE)]);
+    setNodes([
+      initMainMapLinkNode(mapLink, maps),
+      ...buildLinks(mapLink, maps, TILE_SIZE),
+      ...buildAddMapNodes(mapLink, maps, TILE_SIZE, dialogsRef),
+    ]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mapLink]);
 

@@ -5,11 +5,13 @@ import { assertUnreachable } from './assertUnreachable';
 import type { Node } from '@xyflow/react';
 import type { SelectOption as OldSelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
 import type { SelectOption } from '@ds/Select/types';
+import type { MapLinkDialogsRef } from '@components/mapLink/editors/MapLinkEditorOverlay';
 
 export type MapLinkNodeData = {
   mapLink: StudioMapLink;
   maps: Record<number, StudioMap>;
   cardinal?: StudioMapLinkCardinal;
+  dialogsRef?: MapLinkDialogsRef;
   index?: number;
 };
 
@@ -114,14 +116,15 @@ const buildAddMapByCardinal = (
   mapLink: StudioMapLink,
   cardinal: StudioMapLinkCardinal,
   maps: Record<number, StudioMap>,
-  tileSize: number
+  tileSize: number,
+  dialogsRef?: MapLinkDialogsRef
 ): MapLinkNodeType => {
   const mainMapSize = getMapSize(maps[mapLink.mapId]);
   return {
     id: `map-link-add-map-node-${cardinal}`,
     position: getAddMapPosition(cardinal, mainMapSize, tileSize),
     type: 'mapLinkAddMapNode',
-    data: { mapLink, maps, cardinal },
+    data: { mapLink, maps, dialogsRef },
     draggable: false,
     className: 'nopan',
     hidden: true,
@@ -147,9 +150,14 @@ export const buildLinks = (mapLink: StudioMapLink, maps: Record<number, StudioMa
   ];
 };
 
-export const buildAddMapNodes = (mapLink: StudioMapLink, maps: Record<number, StudioMap>, tileSize: number): MapLinkNodeType[] => {
+export const buildAddMapNodes = (
+  mapLink: StudioMapLink,
+  maps: Record<number, StudioMap>,
+  tileSize: number,
+  dialogsRef?: MapLinkDialogsRef
+): MapLinkNodeType[] => {
   return MAP_LINK_CARDINAL_LIST.reduce<MapLinkNodeType[]>(
-    (prev, cardinal) => [...prev, buildAddMapByCardinal(mapLink, cardinal, maps, tileSize)],
+    (prev, cardinal) => [...prev, buildAddMapByCardinal(mapLink, cardinal, maps, tileSize, dialogsRef)],
     []
   );
 };

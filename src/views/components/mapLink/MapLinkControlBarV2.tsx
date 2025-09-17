@@ -9,10 +9,9 @@ import { MapLinkDialogsRef } from './editors/MapLinkEditorOverlay';
 
 type MapLinkControlBarProps = {
   dialogsRef?: MapLinkDialogsRef;
-  isValidMaplink: boolean;
 };
 
-export const MapLinkControlBarV2 = ({ dialogsRef, isValidMaplink }: MapLinkControlBarProps) => {
+export const MapLinkControlBarV2 = ({ dialogsRef }: MapLinkControlBarProps) => {
   const { t } = useTranslation();
   const { selectedDataIdentifier: mapLinkDbSymbol, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol } = useProjectMapLinks();
 
@@ -28,19 +27,11 @@ export const MapLinkControlBarV2 = ({ dialogsRef, isValidMaplink }: MapLinkContr
   useShortcut(shortcutMap);
 
   const onClickNew = dialogsRef ? () => dialogsRef.current?.openDialog('new') : undefined;
-  const onClickNewLink = dialogsRef ? () => dialogsRef.current?.openDialog('add_map') : undefined;
 
   return (
     <ControlBar>
       <ControlBarLabelContainer>
         {onClickNew ? <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new_maplink')}</SecondaryButtonWithPlusIcon> : <div />}
-        {onClickNewLink ? (
-          <SecondaryButtonWithPlusIcon onClick={onClickNewLink} disabled={!isValidMaplink}>
-            {t('add_a_map')}
-          </SecondaryButtonWithPlusIcon>
-        ) : (
-          <div />
-        )}
       </ControlBarLabelContainer>
       <SelectMapLink2 dbSymbol={mapLinkDbSymbol} onChange={(dbSymbol) => setSelectedDataIdentifier({ mapLink: dbSymbol })} />
     </ControlBar>

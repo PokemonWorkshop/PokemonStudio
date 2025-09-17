@@ -16,7 +16,7 @@ const MapLinkV2Page = () => {
 
   return (
     <DatabasePageStyle>
-      <MapLinkControlBarV2 dialogsRef={dialogsRef} isValidMaplink={isValidMaplink} />
+      <MapLinkControlBarV2 dialogsRef={dialogsRef} />
       {isValidMaplink ? (
         <ReactFlowProvider>
           <ReactFlowMapLinkV2 mapLink={mapLink} maps={maps} dialogsRef={dialogsRef} />
