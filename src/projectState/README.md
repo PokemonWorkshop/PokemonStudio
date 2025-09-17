@@ -68,3 +68,91 @@ Note: those has not been tested or implemented, they might need tweaking, especi
 ### Additional notes
 
 As you can see, the Dex requires few functions related to creatures. For instance, knowing if all the creatures has been added to the dex, adding all the creatures to the dex (with some logic). The "add all creature to the dex" must be part of the project state as it only should know what's good to do. The Dex UI itself should only show attributes about the dex at let you modify dex attributes, it should not implement any sort of business logic (eg. adding Pichu before Pikachu).
+
+## How to declare a new entity type
+
+Entity types are defined in `loadDefinitions.ts` using the method: `registerEntity(entityType, pathGlob, schema)`.
+
+Arguments:
+
+- `entityType`: Actual `type` value for `getEntity`, tells to which kind of entity all the files matching `pathGlob` will are storing.
+- `pathGlob`: Path to a single entity file (no `*`) or to many entities `*.json`.
+- `schema`: Zod schema to use to validate all the entities stored in the files matching `pathGlob`.
+
+Note: `pathGlob` is not an actual glob. It can only list all the files from a folder or take a single file.
+
+Examples:
+
+```ts
+registerEntity('ability', 'Data/Studio/abilities/*.json', ABILITY_VALIDATOR);
+registerEntity('config', 'Data/configs/credits_config.json', CREDIT_CONFIG_VALIDATOR);
+registerEntity('config', 'Data/configs/devices_config.json', DEVICES_CONFIG_VALIDATOR);
+```
+
+## How to declare entity texts
+
+Entity texts are defined in using the method: `registerEntityText(entityType, description)`.
+
+Arguments:
+
+- `entityType`: Actual `type` value for `getEntity`, tells to which entity the text description is tied to.
+- `description`: Description of the text of the entity. Gives many information such as how it's extracted from entity, ID of the file etc... (See examples below for more info)
+
+### Define the text with a simple file id that also defines an entity list
+
+Method to use: `fileIdDescriptorWithList(propertyInEntity, discriminator, fileId, isSystemFile = false, refinement)`
+
+Arguments:
+
+- `propertyInEntity`: Property in the `getEntityText` that receives the string. Also constructs the key of the text for `getTextKeys` (key=`${entityType}:${propertyInEntity}`).
+- `discriminator`: Property to use in the entity to get the index of the text in the CSV file.
+- `fileId`: ID of the CSV file.
+- `isSystemFile`: If false, reads the CSV file from Dialogs, if true, reads it from Studio.
+- `refinement`: Optional function to refine the texts of the entity list.
+
+Examples:
+
+```ts
+registerEntityText('ability', fileIdDescriptorWithList('name', 'textId', ABILITY_NAME_TEXT_ID));
+registerEntityText(
+  'config',
+  fileIdDescriptorWithList('text_info[x].name', 'textId', TEXT_INFO_NAME_TEXT_ID, true, (list) =>
+    ((list.find(([key]) => key === 'text_info')?.[1] ?? []) as StudioTextInfo[]).map((v, i) => [`${i}`, v])
+  )
+);
+```
+
+### Define the text with a simple file id
+
+Method to use: `fileIdDescriptor(propertyInEntity, discriminator, fileId, isSystemFile = false)`
+
+Arguments:
+
+- `propertyInEntity`: Property in the `getEntityText` that receives the string. Also constructs the key of the text for `getTextKeys` (key=`${entityType}:${propertyInEntity}`).
+- `discriminator`: Property to use in the entity to get the index of the text in the CSV file.
+- `fileId`: ID of the CSV file.
+- `isSystemFile`: If false, reads the CSV file from Dialogs, if true, reads it from Studio.
+
+Example:
+
+```ts
+registerEntityText('ability', fileIdDescriptor('description', 'textId', ABILITY_DESCRIPTION_TEXT_ID));
+```
+
+### Define the text with a CSVAccess
+
+Please don't. (It's messed up).
+
+## How to get the list of all the texts files
+
+Get the select options of text info:
+
+```ts
+window.stateApi.getEntityList({ key: 'config:text_info[x].name' }, s, e);
+```
+
+Get the list of text info:
+
+```ts
+window.stateApi.getEntity({ type: 'config', dbSymbol: 'text_info' }, s, e);
+```

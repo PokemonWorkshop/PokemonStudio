@@ -84,7 +84,7 @@ registerEntity('config', 'Data/Studio/text_info.json', z.array(TEXT_INFO_VALIDAT
 registerEntityText(
   'config',
   fileIdDescriptorWithList('text_info[x].name', 'textId', TEXT_INFO_NAME_TEXT_ID, true, (list) =>
-    ((list.find(([key]) => key === 'text_info')?.[1] ?? []) as StudioTextInfo[]).map((v) => [`${v.fileId}`, v])
+    ((list.find(([key]) => key === 'text_info')?.[1] ?? []) as StudioTextInfo[]).map((v, i) => [`${i}`, v])
   )
 );
 registerEntityText('config', fileIdDescriptor('text_info[x].description', 'textId', TEXT_INFO_DESCRIPTION_TEXT_ID, true));
