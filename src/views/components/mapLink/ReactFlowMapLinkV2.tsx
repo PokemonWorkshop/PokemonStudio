@@ -36,6 +36,7 @@ export const ReactFlowMapLinkV2 = ({ mapLink, maps }: ReactFlowMapLinkProps) => 
   const nodeTypes = useMemo(() => ({ mainMapLinkNode: MainMapLinkNode, mapLinkNode: MapLinkNode, mapLinkAddMapNode: MapLinkAddMapNode }), []);
   const updateMapLink = useUpdateMapLink(mapLink);
   const [updateOffset, setUpdateOffset] = useState<UpdateOffsetType | undefined>(undefined);
+  const [showAddMapNode, setShowAddMapNode] = useState<boolean>(false);
 
   useEffect(() => {
     if (!updateOffset) return;
@@ -52,9 +53,27 @@ export const ReactFlowMapLinkV2 = ({ mapLink, maps }: ReactFlowMapLinkProps) => 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateOffset]);
 
+  useEffect(() => {
+    setNodes((nds) => {
+      const ndsFiltered = nds.filter((node) => !node.id.startsWith('map-link-add-map-node'));
+      const addMapNodes = buildAddMapNodes(mapLink, maps, TILE_SIZE);
+      addMapNodes.forEach((node) => (node.hidden = !showAddMapNode));
+      return [...ndsFiltered, ...addMapNodes];
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showAddMapNode]);
+
   const onNodesChange: OnNodesChange<MapLinkNodeType> = useCallback((changes) => {
     setNodes((nds) => {
       const updatedChanges = changes.map((change) => {
+        if (change.type === 'select' && !change.id.startsWith('map-link-node')) {
+          const hasSelectedAddMapNode = changes.some(
+            (change) => change.type === 'select' && change.id.startsWith('map-link-add-map-node') && change.selected
+          );
+          if (!hasSelectedAddMapNode) setShowAddMapNode(change.selected);
+          return change;
+        }
+
         if (change.type !== 'position') return change;
 
         const node = nds.find((n) => n.id === change.id);

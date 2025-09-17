@@ -19,7 +19,7 @@ type MapSize = { width: number; height: number };
 
 // The values are used with tileSize, so we don't count in pixels but in tiles
 // Example: If tileSize = 32 and the width 2, the real width is 64px.
-const ADD_MAP_NODE_SIZE = { width: 2, height: 2 };
+const ADD_MAP_NODE_SIZE = { width: 3, height: 3 };
 const ADD_MAP_NODE_OFFSET = 4;
 
 export const getValidMaps = (zones: ProjectData['zones']) =>
@@ -124,6 +124,7 @@ const buildAddMapByCardinal = (
     data: { mapLink, maps, cardinal },
     draggable: false,
     className: 'nopan',
+    hidden: true,
     zIndex: 1,
   };
 };
