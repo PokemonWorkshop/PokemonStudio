@@ -611,6 +611,7 @@
   "checking_maps_message": "Des cartes modifiées ont été détectées.",
   "error_no_project_load": "Impossible de vérifier si les cartes ont été modifiées si le projet n'a pas été chargé.",
   "map_research": "Rechercher une carte…",
+  "event_research": "Rechercher un événement…",
   "new_folder": "Nouveau dossier",
   "duplicate": "Dupliquer",
   "open_with_tiled": "Ouvrir avec Tiled",

@@ -611,6 +611,7 @@
   "checking_maps_message": "Modified maps have been detected.",
   "error_no_project_load": "Impossible to check if the maps have been modified if the project has not been loaded.",
   "map_research": "Find a map…",
+  "event_research": "Find an event…",
   "new_folder": "New folder",
   "duplicate": "Duplicate",
   "open_with_tiled": "Open with Tiled",

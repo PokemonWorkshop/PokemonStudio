@@ -15,12 +15,11 @@ export const EventTree = () => {
         value={research}
         onChange={(event) => setResearch(event.target.value)}
         onClear={() => setResearch('')}
-        placeholder={t('search')}
+        placeholder={t('event_research')}
         className="research-input"
       />
       <div className="tree-scrollbar" onScroll={emitScrollContextMenu} ref={treeScrollbarRef}>
-        <div className="tree">
-        </div>
+        <div className="tree"></div>
       </div>
     </MapTreeContainer>
   );
