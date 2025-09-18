@@ -52,7 +52,7 @@ export const WorldNavigation = () => {
           <NavigationDatabaseItem path="/world/map" label={t('maps')} />
           <NavigationDatabaseItem path="/world/events" label={t('events')} />
         </WorlMapsEventDiv>
-        <NavigationDatabaseItem path="/world/maplinks" label={t('maplinks')} />
+        <NavigationDatabaseItem path="/world/maplink" label={t('maplinks')} />
         {/*<NavigationDatabaseItem path="/world/region" label={t('regions')} />*/}
       </WorldBuildingNavigationStyle>
 
