@@ -15,14 +15,7 @@ import { mapLinkMapOptions } from '@utils/MapLinkUtils';
 import { z } from 'zod';
 import styled from 'styled-components';
 import React, { forwardRef, useMemo } from 'react';
-import {
-  getLinksFromMapLink,
-  MAP_LINK_CARDINAL_LIST,
-  MAP_LINK_CARDINAL_VALIDATOR,
-  StudioMapLink,
-  StudioMapLinkCardinal,
-} from '@modelEntities/mapLink';
-import { TFunction } from 'i18next';
+import { getLinksFromMapLink, MAP_LINK_CARDINAL_LIST, StudioMapLink, StudioMapLinkCardinal } from '@modelEntities/mapLink';
 import { useUpdateMapLink } from './useUpdateMapLink';
 import { useMapLinkPage } from '@src/hooks/usePage';
 import { cloneEntity } from '@utils/cloneEntity';
@@ -47,16 +40,14 @@ const getMapOptions = (
   return mapOptions.filter(({ value }) => !mapAlreadyAssigned.includes(Number(value)));
 };
 
-const getCardinalOptions = (t: TFunction): SelectOption<string>[] =>
-  MAP_LINK_CARDINAL_LIST.map((cardinal) => ({ value: cardinal, label: t(`cardinal_${cardinal}`) }));
-
 type MapLinkAddMapEditorProps = {
   closeDialog: () => void;
+  cardinal: StudioMapLinkCardinal;
 };
 
-const MAP_LINK_ADD_MAP_EDITOR_SCHEMA = z.object({ mapId: z.string(), cardinal: MAP_LINK_CARDINAL_VALIDATOR }).pick({ mapId: true, cardinal: true });
+const MAP_LINK_ADD_MAP_EDITOR_SCHEMA = z.object({ mapId: z.string() }).pick({ mapId: true });
 
-export const MapLinkAddMapEditor = forwardRef<EditorHandlingClose, MapLinkAddMapEditorProps>(({ closeDialog }, ref) => {
+export const MapLinkAddMapEditor = forwardRef<EditorHandlingClose, MapLinkAddMapEditorProps>(({ closeDialog, cardinal }, ref) => {
   const { mapLink } = useMapLinkPage();
   const { projectDataValues: mapLinks, setProjectDataValues: setMapLink } = useProjectMapLinks();
   const { projectDataValues: maps } = useProjectMaps();
@@ -65,7 +56,6 @@ export const MapLinkAddMapEditor = forwardRef<EditorHandlingClose, MapLinkAddMap
   const { t } = useTranslation();
   const defaultMapOptions = useSelectOptions('maps');
   const mapOptions = useMemo(() => getMapOptions(defaultMapOptions, mapLink, maps, zones), [defaultMapOptions, mapLink, maps, zones]);
-  const cardinalOptions = getCardinalOptions(t);
   const mapLinkForm = { mapId: mapOptions[0]?.value || '__undef__', cardinal: 'north' as StudioMapLinkCardinal };
   const { getFormData, defaults, formRef } = useZodForm(MAP_LINK_ADD_MAP_EDITOR_SCHEMA, mapLinkForm);
   const { Select } = useInputAttrsWithLabel(MAP_LINK_ADD_MAP_EDITOR_SCHEMA, defaults);
@@ -76,7 +66,7 @@ export const MapLinkAddMapEditor = forwardRef<EditorHandlingClose, MapLinkAddMap
     const result = getFormData();
     if (!result.success) return;
 
-    const { mapId, cardinal } = result.data;
+    const { mapId } = result.data;
     const links = cloneEntity(mapLink[`${cardinal}Maps`]);
     links.push({ mapId: Number(mapId), offset: 0 });
     updateMapLink({ [`${cardinal}Maps`]: links });
@@ -90,7 +80,6 @@ export const MapLinkAddMapEditor = forwardRef<EditorHandlingClose, MapLinkAddMap
     <Editor type="edit" title={t('add_a_map')}>
       <InputFormContainer ref={formRef}>
         <Select name="mapId" label={t('map')} options={mapOptions} />
-        <Select name="cardinal" label={t('cardinal')} options={cardinalOptions} />
         <ButtonContainer>
           <TooltipWrapper>
             <PrimaryButton onClick={onClickNew} disabled={mapOptions.length === 0}>

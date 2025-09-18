@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import type { StudioMap } from '@modelEntities/map';
-import type { StudioMapLink } from '@modelEntities/mapLink';
+import type { StudioMapLink, StudioMapLinkCardinal } from '@modelEntities/mapLink';
 import { SecondaryButtonWithPlusIcon } from '@components/buttons';
 import type { MapLinkDialogsRef } from '../editors/MapLinkEditorOverlay';
 
@@ -22,11 +22,19 @@ type MapLinkAddMapNodeProps = {
   data: {
     mapLink: StudioMapLink;
     maps: Record<number, StudioMap>;
+    cardinal?: StudioMapLinkCardinal;
+    setCardinal?: (cardinal: StudioMapLinkCardinal) => void;
     dialogsRef?: MapLinkDialogsRef;
   };
 };
 
-export const MapLinkAddMapNode = ({ data: { dialogsRef } }: MapLinkAddMapNodeProps) => {
-  const onClickNewLink = dialogsRef ? () => dialogsRef.current?.openDialog('add_map') : undefined;
+export const MapLinkAddMapNode = ({ data: { cardinal, dialogsRef, setCardinal } }: MapLinkAddMapNodeProps) => {
+  const onClickNewLink = () => {
+    if (!dialogsRef || !cardinal || !setCardinal) return undefined;
+
+    setCardinal(cardinal);
+    dialogsRef.current?.openDialog('add_map');
+  };
+
   return <MapLinkAddMapNodeButton onClick={onClickNewLink} />;
 };

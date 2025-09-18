@@ -13,6 +13,15 @@ type MapLinkNodeContainer = {
   zoom: number;
 };
 
+type MapLinkNodeProps = {
+  data: {
+    mapLink: StudioMapLink;
+    maps: Record<number, StudioMap>;
+    cardinal: StudioMapLinkCardinal;
+    index: number;
+  };
+};
+
 const MapLinkNodeContainer = styled.div<MapLinkNodeContainer>`
   position: relative;
   display: inline-block;
@@ -48,15 +57,6 @@ const MapLinkNodeContainer = styled.div<MapLinkNodeContainer>`
     pointer-events: none;
   }
 `;
-
-type MapLinkNodeProps = {
-  data: {
-    mapLink: StudioMapLink;
-    maps: Record<number, StudioMap>;
-    cardinal: StudioMapLinkCardinal;
-    index: number;
-  };
-};
 
 const zoomSelector = (s: { transform: number[] }) => s.transform[2];
 

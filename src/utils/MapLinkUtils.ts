@@ -11,6 +11,7 @@ export type MapLinkNodeData = {
   mapLink: StudioMapLink;
   maps: Record<number, StudioMap>;
   cardinal?: StudioMapLinkCardinal;
+  setCardinal?: (cardinal: StudioMapLinkCardinal) => void;
   dialogsRef?: MapLinkDialogsRef;
   index?: number;
 };
@@ -117,6 +118,7 @@ const buildAddMapByCardinal = (
   cardinal: StudioMapLinkCardinal,
   maps: Record<number, StudioMap>,
   tileSize: number,
+  setCardinal: (cardinal: StudioMapLinkCardinal) => void,
   dialogsRef?: MapLinkDialogsRef
 ): MapLinkNodeType => {
   const mainMapSize = getMapSize(maps[mapLink.mapId]);
@@ -124,7 +126,7 @@ const buildAddMapByCardinal = (
     id: `map-link-add-map-node-${cardinal}`,
     position: getAddMapPosition(cardinal, mainMapSize, tileSize),
     type: 'mapLinkAddMapNode',
-    data: { mapLink, maps, dialogsRef },
+    data: { mapLink, maps, cardinal, setCardinal, dialogsRef },
     draggable: false,
     className: 'nopan',
     hidden: true,
@@ -154,10 +156,11 @@ export const buildAddMapNodes = (
   mapLink: StudioMapLink,
   maps: Record<number, StudioMap>,
   tileSize: number,
+  setCardinal: (cardinal: StudioMapLinkCardinal) => void,
   dialogsRef?: MapLinkDialogsRef
 ): MapLinkNodeType[] => {
   return MAP_LINK_CARDINAL_LIST.reduce<MapLinkNodeType[]>(
-    (prev, cardinal) => [...prev, buildAddMapByCardinal(mapLink, cardinal, maps, tileSize, dialogsRef)],
+    (prev, cardinal) => [...prev, buildAddMapByCardinal(mapLink, cardinal, maps, tileSize, setCardinal, dialogsRef)],
     []
   );
 };

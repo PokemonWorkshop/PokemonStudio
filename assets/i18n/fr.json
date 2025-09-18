@@ -1730,11 +1730,6 @@
   "delete_this_maplink": "Supprimer cette liaison de cartes",
   "add_the_maplink": "Ajouter la liaison de cartes",
   "add_the_map": "Ajouter la carte",
-  "cardinal": "Cardinal",
-  "cardinal_north": "Nord",
-  "cardinal_east": "Est",
-  "cardinal_south": "Sud",
-  "cardinal_west": "Ouest",
   "deletion_of_maplink": "Suppression de la liaison de cartes {{mapLink}}",
   "deletion_message_maplink": "Vous êtes sur le point de supprimer définitivement la liaison de cartes « {{mapLink}} »."
 }

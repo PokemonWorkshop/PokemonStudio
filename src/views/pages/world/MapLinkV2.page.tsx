@@ -7,19 +7,21 @@ import { ReactFlowProvider } from '@xyflow/react';
 import { useDialogsRef } from '@src/hooks/useDialogsRef';
 import { useMapLinkPage } from '@src/hooks/usePage';
 import { useTranslation } from 'react-i18next';
-import React from 'react';
+import { StudioMapLinkCardinal } from '@src/models/entities/mapLink';
+import React, { useState } from 'react';
 
 const MapLinkV2Page = () => {
   const dialogsRef = useDialogsRef<MapLinkEditorAndDeletionKeys>();
   const { mapLink, maps, isValidMaplink } = useMapLinkPage();
   const { t } = useTranslation();
+  const [cardinal, setCardinal] = useState<StudioMapLinkCardinal>('east');
 
   return (
     <DatabasePageStyle>
       <MapLinkControlBarV2 dialogsRef={dialogsRef} />
       {isValidMaplink ? (
         <ReactFlowProvider>
-          <ReactFlowMapLinkV2 mapLink={mapLink} maps={maps} dialogsRef={dialogsRef} />
+          <ReactFlowMapLinkV2 mapLink={mapLink} maps={maps} dialogsRef={dialogsRef} setCardinal={setCardinal} />
         </ReactFlowProvider>
       ) : (
         <MapLinkNoMap>
@@ -27,7 +29,7 @@ const MapLinkV2Page = () => {
           <DeleteButtonWithIcon onClick={() => dialogsRef.current?.openDialog('deletion', true)}>{t('delete_this_maplink')}</DeleteButtonWithIcon>
         </MapLinkNoMap>
       )}
-      <MapLinkEditorOverlay ref={dialogsRef} />
+      <MapLinkEditorOverlay ref={dialogsRef} cardinal={cardinal} />
     </DatabasePageStyle>
   );
 };
