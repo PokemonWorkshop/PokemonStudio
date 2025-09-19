@@ -12,9 +12,8 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import { MainMapLinkNode } from './mapLinkNodeV2/MainMapLinkNode';
-import { buildAddMapNodes, buildLinks, getOffset, initMainMapLinkNode, type MapLinkNodeType } from '@utils/MapLinkUtils';
+import { buildLinks, getOffset, initMainMapLinkNode, type MapLinkNodeType } from '@utils/MapLinkUtils';
 import { MapLinkNode } from './mapLinkNodeV2/MapLinkNode';
-import { MapLinkAddMapNode } from './mapLinkNodeV2/MapLinkAddMapNode';
 import { useUpdateMapLink } from './editors';
 import { cloneEntity } from '@utils/cloneEntity';
 import type { MapLinkDialogsRef } from './editors/MapLinkEditorOverlay';
@@ -33,11 +32,13 @@ type ReactFlowMapLinkProps = {
 
 export const ReactFlowMapLinkV2 = ({ mapLink, maps, setCardinal, dialogsRef }: ReactFlowMapLinkProps) => {
   const reactFlowInstance = useReactFlow();
-  const [nodes, setNodes] = useNodesState<MapLinkNodeType>([initMainMapLinkNode(mapLink, maps), ...buildLinks(mapLink, maps, TILE_SIZE)]);
-  const nodeTypes = useMemo(() => ({ mainMapLinkNode: MainMapLinkNode, mapLinkNode: MapLinkNode, mapLinkAddMapNode: MapLinkAddMapNode }), []);
+  const [nodes, setNodes] = useNodesState<MapLinkNodeType>([
+    initMainMapLinkNode(mapLink, maps, setCardinal, dialogsRef),
+    ...buildLinks(mapLink, maps, TILE_SIZE),
+  ]);
+  const nodeTypes = useMemo(() => ({ mainMapLinkNode: MainMapLinkNode, mapLinkNode: MapLinkNode }), []);
   const updateMapLink = useUpdateMapLink(mapLink);
   const [updateOffset, setUpdateOffset] = useState<UpdateOffsetType | undefined>(undefined);
-  const [showAddMapNode, setShowAddMapNode] = useState<boolean>(false);
 
   useEffect(() => {
     if (!updateOffset) return;
@@ -54,27 +55,9 @@ export const ReactFlowMapLinkV2 = ({ mapLink, maps, setCardinal, dialogsRef }: R
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateOffset]);
 
-  useEffect(() => {
-    setNodes((nds) => {
-      const ndsFiltered = nds.filter((node) => !node.id.startsWith('map-link-add-map-node'));
-      const addMapNodes = buildAddMapNodes(mapLink, maps, TILE_SIZE, setCardinal, dialogsRef);
-      addMapNodes.forEach((node) => (node.hidden = !showAddMapNode));
-      return [...ndsFiltered, ...addMapNodes];
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showAddMapNode]);
-
   const onNodesChange: OnNodesChange<MapLinkNodeType> = useCallback((changes) => {
     setNodes((nds) => {
       const updatedChanges = changes.map((change) => {
-        if (change.type === 'select' && !change.id.startsWith('map-link-node')) {
-          const hasSelectedAddMapNode = changes.some(
-            (change) => change.type === 'select' && change.id.startsWith('map-link-add-map-node') && change.selected
-          );
-          setShowAddMapNode(change.selected || hasSelectedAddMapNode);
-          return change;
-        }
-
         if (change.type !== 'position') return change;
 
         const node = nds.find((n) => n.id === change.id);
@@ -128,11 +111,7 @@ export const ReactFlowMapLinkV2 = ({ mapLink, maps, setCardinal, dialogsRef }: R
   }, [mapLink.id]);
 
   useEffect(() => {
-    setNodes([
-      initMainMapLinkNode(mapLink, maps),
-      ...buildLinks(mapLink, maps, TILE_SIZE),
-      ...buildAddMapNodes(mapLink, maps, TILE_SIZE, setCardinal, dialogsRef),
-    ]);
+    setNodes([initMainMapLinkNode(mapLink, maps, setCardinal, dialogsRef), ...buildLinks(mapLink, maps, TILE_SIZE)]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mapLink]);
 

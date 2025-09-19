@@ -1,24 +1,45 @@
 import { ResourceImage } from '@components/ResourceImage';
-import React from 'react';
-import styled from 'styled-components';
 import type { StudioMap } from '@modelEntities/map';
-import type { StudioMapLink } from '@modelEntities/mapLink';
+import type { StudioMapLink, StudioMapLinkCardinal } from '@modelEntities/mapLink';
 import { getMapOverviewPath } from '@utils/resourcePath';
 import { useStore } from '@xyflow/react';
+import { SecondaryButtonWithPlusIcon } from '../../buttons';
+import type { MapLinkDialogsRef } from '../editors/MapLinkEditorOverlay';
+import styled from 'styled-components';
+import React from 'react';
 
 type MainMapLinkNodeProps = {
   data: {
     mapLink: StudioMapLink;
     maps: Record<number, StudioMap>;
+    setCardinal: (cardinal: StudioMapLinkCardinal) => void;
+    dialogsRef?: MapLinkDialogsRef;
   };
+  selected: boolean;
 };
 
 type MapLinkNodeContainer = {
+  selected: boolean;
   zoom: number;
 };
 
+const MapLinkAddMapNodeButton = styled(SecondaryButtonWithPlusIcon)`
+  position: absolute;
+  border-radius: 8px;
+  width: 96px;
+  height: 96px;
+  padding: 0;
+  gap: 0;
+
+  & svg {
+    width: 36px;
+    height: 36px;
+  }
+`;
+
 const MainMapLinkNodeContainer = styled.div<MapLinkNodeContainer>`
   display: inline-block;
+  position: relative;
   // Maps can be completely transparent, so we set the background color so that they are visible.
   background-color: black;
 
@@ -31,17 +52,35 @@ const MainMapLinkNodeContainer = styled.div<MapLinkNodeContainer>`
     position: absolute;
     inset: 0;
     border: ${({ zoom }) => 2 / zoom}px solid ${({ theme }) => theme.colors.primaryBase};
+    box-sizing: border-box;
     pointer-events: none;
+  }
+
+  ${MapLinkAddMapNodeButton} {
+    display: ${({ selected }) => (selected ? 'flex' : 'none')};
   }
 `;
 
 const zoomSelector = (s: { transform: number[] }) => s.transform[2];
 
-export const MainMapLinkNode = ({ data }: MainMapLinkNodeProps) => {
+export const MainMapLinkNode = ({ data, selected }: MainMapLinkNodeProps) => {
   const currentZoom = useStore(zoomSelector);
   const map = data.maps[data.mapLink.mapId];
+
+  const onClickAddMap = (cardinal: StudioMapLinkCardinal) => {
+    const { dialogsRef, setCardinal } = data;
+    if (!dialogsRef) return undefined;
+
+    setCardinal(cardinal);
+    dialogsRef.current?.openDialog('add_map');
+  };
+
   return (
-    <MainMapLinkNodeContainer zoom={currentZoom}>
+    <MainMapLinkNodeContainer selected={selected} zoom={currentZoom}>
+      <MapLinkAddMapNodeButton style={{ top: '-192px', left: '50%', transform: 'translateX(-50%)' }} onClick={() => onClickAddMap('north')} />
+      <MapLinkAddMapNodeButton style={{ right: '-192px', top: '50%', transform: 'translateY(-50%)' }} onClick={() => onClickAddMap('east')} />
+      <MapLinkAddMapNodeButton style={{ bottom: '-192px', left: '50%', transform: 'translateX(-50%)' }} onClick={() => onClickAddMap('south')} />
+      <MapLinkAddMapNodeButton style={{ left: '-192px', top: '50%', transform: 'translateY(-50%)' }} onClick={() => onClickAddMap('west')} />
       {map ? <ResourceImage imagePathInProject={getMapOverviewPath(map.tiledFilename)} versionId={map.mtime} /> : <div>???</div>}
     </MainMapLinkNodeContainer>
   );
