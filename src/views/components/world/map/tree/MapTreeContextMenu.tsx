@@ -8,11 +8,12 @@ import { MapDialogsRef } from '../editors/MapEditorOverlay';
 import { useMapInfo } from '@hooks/useMapInfo';
 import { mapInfoDuplicateMap, mapInfoRemoveFolder } from '@utils/MapInfoUtils';
 import { StudioMapInfoFolder, StudioMapInfoMap, StudioMapInfoValue } from '@modelEntities/mapInfo';
-import { useProjectMaps } from '@hooks/useProjectData';
+import { useProjectMapLinks, useProjectMaps } from '@hooks/useProjectData';
 import { createMapInfo, duplicateMap } from '@utils/entityCreation';
 import { useGetEntityDescriptionText, useGetEntityNameText, useSetProjectText } from '@utils/ReadingProjectText';
 import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID } from '@modelEntities/map';
 import { useOpenTiled } from '@hooks/useOpenTiled';
+import { createMapLinkFromMainMapId } from '@utils/MapLinkUtils';
 
 type MapTreeContextMenuProps = {
   mapInfoValue: StudioMapInfoValue;
@@ -25,6 +26,7 @@ export const MapTreeContextMenu = ({ mapInfoValue, isDeleted, enableRename, dial
   const { t } = useTranslation();
   const { mapInfo, setMapInfo } = useMapInfo();
   const { projectDataValues: maps, setProjectDataValues: setMap } = useProjectMaps();
+  const { projectDataValues: mapLinks, setProjectDataValues: setMapLink } = useProjectMapLinks();
   const setText = useSetProjectText();
   const getName = useGetEntityNameText();
   const getDescription = useGetEntityDescriptionText();
@@ -56,6 +58,8 @@ export const MapTreeContextMenu = ({ mapInfoValue, isDeleted, enableRename, dial
       parentId: mapInfoValue.data.parentId,
     }) as StudioMapInfoMap;
     const newMapInfo = mapInfoDuplicateMap(mapInfo, mapInfoValue.data.mapDbSymbol, newMapInfoMap);
+    const mapLink = createMapLinkFromMainMapId(mapLinks, newMap.id);
+    setMapLink({ [mapLink.dbSymbol]: mapLink });
     setText(MAP_NAME_TEXT_ID, newMap.id, t('map_copy_name', { name: getName(mapToDuplicate) }));
     setText(MAP_DESCRIPTION_TEXT_ID, newMap.id, getDescription(mapToDuplicate));
     setMap({ [dbSymbol]: newMap }, { map: dbSymbol });
@@ -66,7 +70,7 @@ export const MapTreeContextMenu = ({ mapInfoValue, isDeleted, enableRename, dial
     if (mapInfoValue.data.klass !== 'MapInfoMap' || isDeleted) return;
 
     const tiledFilename = maps[mapInfoValue.data.mapDbSymbol]?.tiledFilename;
-    tiledFilename && openTiled(tiledFilename, dialogsRef);
+    if (tiledFilename) openTiled(tiledFilename, dialogsRef);
   };
 
   return (

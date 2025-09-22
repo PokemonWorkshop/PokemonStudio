@@ -378,6 +378,20 @@ export const createMapLink = (id: number, mapId: number): StudioMapLink => ({
   westMaps: [],
 });
 
+export const createMapLinkV2 = (allMapLinks: ProjectData['mapLinks'], mainMapId: number): StudioMapLink => {
+  const id = findFirstAvailableId(allMapLinks, 0);
+  return {
+    klass: 'MapLink',
+    id,
+    dbSymbol: `maplink_${id}` as DbSymbol,
+    mapId: mainMapId,
+    northMaps: [],
+    eastMaps: [],
+    southMaps: [],
+    westMaps: [],
+  };
+};
+
 export const createZone = (dbSymbol: DbSymbol, id: number): StudioZone => ({
   klass: 'Zone',
   id,

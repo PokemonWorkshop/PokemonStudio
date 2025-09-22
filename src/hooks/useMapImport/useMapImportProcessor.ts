@@ -19,7 +19,7 @@ import { addNewMapInfo } from '@utils/MapInfoUtils';
 import { padStr } from '@utils/PadStr';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { RMXPMap } from '@src/backendTasks/readRMXPMap';
-import { getValidMaps } from '@utils/MapLinkUtils';
+import { createMapLinkFromMainMapId } from '@utils/MapLinkUtils';
 import { getSetting } from '@utils/settings';
 import { parseJSON } from '@utils/json/parse';
 
@@ -33,7 +33,12 @@ export const useMapImportProcessor = () => {
   const loaderRef = useLoaderRef();
   const { projectDataValues: maps, setProjectDataValues: setMap } = useProjectMaps();
   const { mapInfo, setMapInfo } = useMapInfo();
-  const { projectDataValues: mapLinks, selectedDataIdentifier: currentMapLink, setSelectedDataIdentifier: setSelectedMapLink } = useProjectMapLinks();
+  const {
+    projectDataValues: mapLinks,
+    setProjectDataValues: setMapLink,
+    selectedDataIdentifier: currentMapLink,
+    setSelectedDataIdentifier: setSelectedMapLink,
+  } = useProjectMapLinks();
   const setText = useSetProjectText();
   const { t } = useTranslation();
   const binding = useRef<MapImportFunctionBinding>(DEFAULT_BINDING);
@@ -173,9 +178,7 @@ export const useMapImportProcessor = () => {
             // update the selected maplink by default
             const mapLinkValues = Object.values(mapLinks);
             if (mapLinkValues.length > 0 && currentMapLink === '__undef__') {
-              const validMaps = getValidMaps(globalState.projectData.zones);
-              const mapLinkFiltered = mapLinkValues.filter((mapLink) => validMaps.includes(mapLink.mapId));
-              if (mapLinkFiltered.length > 0) setSelectedMapLink({ mapLink: mapLinkFiltered[0].mapId.toString() });
+              setSelectedMapLink({ mapLink: mapLinkValues[0].dbSymbol });
             }
             binding.current.onSuccess({});
             return setState(DEFAULT_PROCESS_STATE);
@@ -206,6 +209,8 @@ export const useMapImportProcessor = () => {
           const dbSymbol = newMap.dbSymbol;
           const newMapInfoMap = createMapInfo(mapInfo, { klass: 'MapInfoMap', mapDbSymbol: dbSymbol, parentId: 0 }) as StudioMapInfoMap;
           const newMapInfo = addNewMapInfo(mapInfo, newMapInfoMap);
+          const mapLink = createMapLinkFromMainMapId(mapLinks, newMap.id);
+          setMapLink({ [mapLink.dbSymbol]: mapLink });
           setText(MAP_NAME_TEXT_ID, newMap.id, mapToImport.mapName);
           setText(MAP_DESCRIPTION_TEXT_ID, newMap.id, '');
           setMap({ [dbSymbol]: newMap }, { map: dbSymbol });

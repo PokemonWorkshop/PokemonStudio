@@ -6,6 +6,8 @@ import type { Node } from '@xyflow/react';
 import type { SelectOption as OldSelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
 import type { SelectOption } from '@ds/Select/types';
 import type { MapLinkDialogsRef } from '@components/mapLink/editors/MapLinkEditorOverlay';
+import { cloneEntity } from './cloneEntity';
+import { createMapLinkV2 } from './entityCreation';
 
 export type MapLinkNodeData = {
   mapLink: StudioMapLink;
@@ -128,4 +130,20 @@ export const mapLinkMapOptions = (
       return [...prev, { value: id.toString(), label }];
     }, [])
     .filter(({ value }) => validMaps.includes(Number(value)));
+};
+
+/**
+ * Create a maplink if does not exist. If the maplink exists, all the links are cleaned.
+ */
+export const createMapLinkFromMainMapId = (mapLinks: ProjectData['mapLinks'], mainMapId: number) => {
+  const mapLink = Object.values(mapLinks).find((mapLink) => mapLink.mapId === mainMapId);
+  if (mapLink) {
+    const mapLinkEdited = cloneEntity(mapLink);
+    mapLinkEdited.northMaps = [];
+    mapLinkEdited.eastMaps = [];
+    mapLinkEdited.southMaps = [];
+    mapLinkEdited.westMaps = [];
+    return mapLinkEdited;
+  }
+  return createMapLinkV2(mapLinks, mainMapId);
 };
