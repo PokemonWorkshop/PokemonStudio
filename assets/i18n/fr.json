@@ -1731,5 +1731,6 @@
   "add_the_maplink": "Ajouter la liaison de cartes",
   "add_the_map": "Ajouter la carte",
   "deletion_of_maplink": "Suppression de la liaison de cartes {{mapLink}}",
-  "deletion_message_maplink": "Vous êtes sur le point de supprimer définitivement la liaison de cartes « {{mapLink}} »."
+  "deletion_message_maplink": "Vous êtes sur le point de supprimer définitivement la liaison de cartes « {{mapLink}} ».",
+  "add_missing_maplinks": "Ajout des liaisons de cartes manquantes"
 }

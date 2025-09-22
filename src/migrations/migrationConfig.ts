@@ -22,6 +22,7 @@ import { addMegaEvolutionParameterToItems } from './addMegaEvolutionParameterToI
 import { addBerryAndCookingDataToItems } from './addBerryAndCookingDataToItems';
 import { addSoundDesignConfig } from './addSoundDesignConfig';
 import { addMoveContestData } from './addMoveContestData';
+import { addMissingMapLinks } from './addMissingMapLinks';
 
 type MigrateConfigType = {
   migration: MigrationTask;
@@ -160,5 +161,10 @@ export const MIGRATION_CONFIG: MigrateConfigType[] = [
     migration: addMoveContestData,
     version: '2.6.1',
     message: 'add_move_contest_data',
+  },
+  {
+    migration: addMissingMapLinks,
+    version: '2.6.1',
+    message: 'add_missing_maplinks',
   },
 ];
