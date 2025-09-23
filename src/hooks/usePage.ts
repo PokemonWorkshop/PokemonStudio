@@ -12,7 +12,6 @@ import type { StudioDex } from '@modelEntities/dex';
 import type { StudioType } from '@modelEntities/type';
 import type { StudioItem } from '@modelEntities/item';
 import type { StudioNature } from '@modelEntities/nature';
-import type { StudioMapLink } from '@modelEntities/mapLink';
 import type { StudioMap } from '@modelEntities/map';
 import { Language } from '@pages/texts/Translation.page';
 import { useGlobalState } from '@src/GlobalStateProvider';
@@ -277,10 +276,7 @@ export const useZonePage = () => {
 export const useMapLinkPage = () => {
   const { projectDataValues: mapLinks, selectedDataIdentifier: dbSymbol, state } = useProjectDataReadonly('mapLinks', 'mapLink');
   const { projectDataValues: maps } = useProjectDataReadonly('maps', 'map');
-  // TODO: fix this on the project launch
-  const mapLink: StudioMapLink = isNaN(Number(dbSymbol))
-    ? mapLinks[dbSymbol]
-    : mapLinks[Object.values(mapLinks).find(({ mapId }) => mapId.toString() === dbSymbol)?.dbSymbol || 'maplink_0'];
+  const mapLink = mapLinks[dbSymbol];
   const isValidMaplink = useMemo(() => checkValidMaplink(mapLink.mapId, state), [mapLink, state]);
 
   const transformedMaps = useMemo(
