@@ -33,6 +33,8 @@ export const checkValidMaplink = (mapId: number, state: State) => {
 };
 
 const getMapSize = (map: StudioMap): MapSize => {
+  if (!map || !map.tileMetadata) return { width: 20, height: 15 };
+
   const tileMetadata = map.tileMetadata as MapSize;
   const width = tileMetadata.width;
   const height = tileMetadata.height;
@@ -86,7 +88,7 @@ const buildLinksByCardinal = (
       id: `map-link-node-${cardinal}-${index}`,
       position: getLinkPosition(cardinal, mainMapSize, mapSize, offset, tileSize),
       type: 'mapLinkNode',
-      data: { mapLink, maps, cardinal, index },
+      data: { mapLink, maps, cardinal, index, tileSize },
     };
   });
 };

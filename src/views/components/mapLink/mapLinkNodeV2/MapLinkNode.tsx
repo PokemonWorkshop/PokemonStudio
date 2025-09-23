@@ -19,6 +19,7 @@ type MapLinkNodeProps = {
     maps: Record<number, StudioMap>;
     cardinal: StudioMapLinkCardinal;
     index: number;
+    tileSize: number;
   };
 };
 
@@ -60,7 +61,7 @@ const MapLinkNodeContainer = styled.div<MapLinkNodeContainer>`
 
 const zoomSelector = (s: { transform: number[] }) => s.transform[2];
 
-export const MapLinkNode = ({ data: { mapLink, maps, cardinal, index } }: MapLinkNodeProps) => {
+export const MapLinkNode = ({ data: { mapLink, maps, cardinal, index, tileSize } }: MapLinkNodeProps) => {
   const updateMapLink = useUpdateMapLink(mapLink);
   const currentZoom = useStore(zoomSelector);
   const links = getLinksFromMapLink(mapLink, cardinal);
@@ -74,7 +75,11 @@ export const MapLinkNode = ({ data: { mapLink, maps, cardinal, index } }: MapLin
 
   return (
     <MapLinkNodeContainer zoom={currentZoom}>
-      {map ? <ResourceImage imagePathInProject={getMapOverviewPath(map.tiledFilename)} versionId={map.mtime} /> : <div>???</div>}
+      {map ? (
+        <ResourceImage imagePathInProject={getMapOverviewPath(map.tiledFilename)} versionId={map.mtime} />
+      ) : (
+        <div style={{ width: 20 * tileSize, height: 15 * tileSize }}>???</div>
+      )}
       <ClearButtonOnlyIcon className="clear-button" onClick={onDeleteMap} />
     </MapLinkNodeContainer>
   );
