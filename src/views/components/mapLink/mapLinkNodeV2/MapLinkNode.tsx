@@ -1,6 +1,4 @@
 import { ResourceImage } from '@components/ResourceImage';
-import React from 'react';
-import styled from 'styled-components';
 import type { StudioMap } from '@modelEntities/map';
 import { getLinksFromMapLink, type StudioMapLink, type StudioMapLinkCardinal } from '@modelEntities/mapLink';
 import { getMapOverviewPath } from '@utils/resourcePath';
@@ -8,6 +6,10 @@ import { cloneEntity } from '@utils/cloneEntity';
 import { useUpdateMapLink } from '../editors';
 import { ClearButtonOnlyIcon } from '@components/buttons';
 import { useStore } from '@xyflow/react';
+import { getMapSizeStyle } from '@utils/MapLinkUtils';
+import { useTranslation } from 'react-i18next';
+import React from 'react';
+import styled from 'styled-components';
 
 type MapLinkNodeContainer = {
   zoom: number;
@@ -64,6 +66,7 @@ const zoomSelector = (s: { transform: number[] }) => s.transform[2];
 export const MapLinkNode = ({ data: { mapLink, maps, cardinal, index, tileSize } }: MapLinkNodeProps) => {
   const updateMapLink = useUpdateMapLink(mapLink);
   const currentZoom = useStore(zoomSelector);
+  const { t } = useTranslation();
   const links = getLinksFromMapLink(mapLink, cardinal);
   const map = maps[links[index].mapId];
 
@@ -74,12 +77,8 @@ export const MapLinkNode = ({ data: { mapLink, maps, cardinal, index, tileSize }
   };
 
   return (
-    <MapLinkNodeContainer zoom={currentZoom}>
-      {map && map.tileMetadata ? (
-        <ResourceImage imagePathInProject={getMapOverviewPath(map.tiledFilename)} versionId={map.mtime} />
-      ) : (
-        <div style={{ width: 20 * tileSize, height: 15 * tileSize }}>???</div>
-      )}
+    <MapLinkNodeContainer zoom={currentZoom} style={getMapSizeStyle(map, tileSize)}>
+      {map ? <ResourceImage imagePathInProject={getMapOverviewPath(map.tiledFilename)} versionId={map.mtime} /> : <div>{t('map_deleted')}</div>}
       <ClearButtonOnlyIcon className="clear-button" onClick={onDeleteMap} />
     </MapLinkNodeContainer>
   );

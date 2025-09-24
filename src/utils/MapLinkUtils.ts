@@ -12,6 +12,7 @@ import { createMapLinkV2 } from './entityCreation';
 export type MapLinkNodeData = {
   mapLink: StudioMapLink;
   maps: Record<number, StudioMap>;
+  tileSize: number;
   cardinal?: StudioMapLinkCardinal;
   setCardinal?: (cardinal: StudioMapLinkCardinal) => void;
   dialogsRef?: MapLinkDialogsRef;
@@ -96,13 +97,14 @@ const buildLinksByCardinal = (
 export const initMainMapLinkNode = (
   mapLink: StudioMapLink,
   maps: Record<number, StudioMap>,
+  tileSize: number,
   setCardinal: (cardinal: StudioMapLinkCardinal) => void,
   dialogsRef?: MapLinkDialogsRef
 ): MapLinkNodeType => ({
   id: 'main-map-link-node',
   position: { x: 0, y: 0 },
   type: 'mainMapLinkNode',
-  data: { mapLink, maps, setCardinal, dialogsRef },
+  data: { mapLink, maps, tileSize, setCardinal, dialogsRef },
   draggable: false,
   className: 'nopan',
   zIndex: 1,
@@ -148,4 +150,9 @@ export const createMapLinkFromMainMapId = (mapLinks: ProjectData['mapLinks'], ma
     return mapLinkEdited;
   }
   return createMapLinkV2(mapLinks, mainMapId);
+};
+
+export const getMapSizeStyle = (map: StudioMap, tileSize: number) => {
+  const size = getMapSize(map);
+  return { width: size.width * tileSize, height: size.height * tileSize };
 };

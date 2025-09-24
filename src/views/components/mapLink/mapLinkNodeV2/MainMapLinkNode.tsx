@@ -5,6 +5,7 @@ import { getMapOverviewPath } from '@utils/resourcePath';
 import { useStore } from '@xyflow/react';
 import { SecondaryButtonWithPlusIcon } from '../../buttons';
 import type { MapLinkDialogsRef } from '../editors/MapLinkEditorOverlay';
+import { getMapSizeStyle } from '@utils/MapLinkUtils';
 import styled from 'styled-components';
 import React from 'react';
 
@@ -12,6 +13,7 @@ type MainMapLinkNodeProps = {
   data: {
     mapLink: StudioMapLink;
     maps: Record<number, StudioMap>;
+    tileSize: number;
     setCardinal: (cardinal: StudioMapLinkCardinal) => void;
     dialogsRef?: MapLinkDialogsRef;
   };
@@ -76,12 +78,12 @@ export const MainMapLinkNode = ({ data, selected }: MainMapLinkNodeProps) => {
   };
 
   return (
-    <MainMapLinkNodeContainer selected={selected} zoom={currentZoom}>
+    <MainMapLinkNodeContainer selected={selected} zoom={currentZoom} style={getMapSizeStyle(map, data.tileSize)}>
       <MapLinkAddMapNodeButton style={{ top: '-192px', left: '50%', transform: 'translateX(-50%)' }} onClick={() => onClickAddMap('north')} />
       <MapLinkAddMapNodeButton style={{ right: '-192px', top: '50%', transform: 'translateY(-50%)' }} onClick={() => onClickAddMap('east')} />
       <MapLinkAddMapNodeButton style={{ bottom: '-192px', left: '50%', transform: 'translateX(-50%)' }} onClick={() => onClickAddMap('south')} />
       <MapLinkAddMapNodeButton style={{ left: '-192px', top: '50%', transform: 'translateY(-50%)' }} onClick={() => onClickAddMap('west')} />
-      {map ? <ResourceImage imagePathInProject={getMapOverviewPath(map.tiledFilename)} versionId={map.mtime} /> : <div>???</div>}
+      <ResourceImage imagePathInProject={getMapOverviewPath(map.tiledFilename)} versionId={map.mtime} />
     </MainMapLinkNodeContainer>
   );
 };

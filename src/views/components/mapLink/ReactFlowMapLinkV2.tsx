@@ -33,7 +33,7 @@ type ReactFlowMapLinkProps = {
 export const ReactFlowMapLinkV2 = ({ mapLink, maps, setCardinal, dialogsRef }: ReactFlowMapLinkProps) => {
   const reactFlowInstance = useReactFlow();
   const [nodes, setNodes] = useNodesState<MapLinkNodeType>([
-    initMainMapLinkNode(mapLink, maps, setCardinal, dialogsRef),
+    initMainMapLinkNode(mapLink, maps, TILE_SIZE, setCardinal, dialogsRef),
     ...buildLinks(mapLink, maps, TILE_SIZE),
   ]);
   const nodeTypes = useMemo(() => ({ mainMapLinkNode: MainMapLinkNode, mapLinkNode: MapLinkNode }), []);
@@ -111,7 +111,7 @@ export const ReactFlowMapLinkV2 = ({ mapLink, maps, setCardinal, dialogsRef }: R
   }, [mapLink.id]);
 
   useEffect(() => {
-    setNodes([initMainMapLinkNode(mapLink, maps, setCardinal, dialogsRef), ...buildLinks(mapLink, maps, TILE_SIZE)]);
+    setNodes([initMainMapLinkNode(mapLink, maps, TILE_SIZE, setCardinal, dialogsRef), ...buildLinks(mapLink, maps, TILE_SIZE)]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mapLink]);
 
