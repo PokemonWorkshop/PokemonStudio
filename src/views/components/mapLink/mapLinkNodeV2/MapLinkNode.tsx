@@ -75,7 +75,7 @@ export const MapLinkNode = ({ data: { mapLink, maps, cardinal, index, tileSize }
 
   return (
     <MapLinkNodeContainer zoom={currentZoom}>
-      {map ? (
+      {map && map.tileMetadata ? (
         <ResourceImage imagePathInProject={getMapOverviewPath(map.tiledFilename)} versionId={map.mtime} />
       ) : (
         <div style={{ width: 20 * tileSize, height: 15 * tileSize }}>???</div>

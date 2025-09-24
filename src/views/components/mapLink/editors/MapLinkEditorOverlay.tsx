@@ -2,10 +2,10 @@ import React from 'react';
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import { DialogRefData } from '@hooks/useDialogsRef';
-import { MapLinkAddMapEditor, MapLinkDeletion, MapLinkNewEditor } from '.';
+import { MapLinkAddMapEditor, MapLinkDeletion } from '.';
 import type { StudioMapLinkCardinal } from '@src/models/entities/mapLink';
 
-export type MapLinkEditorAndDeletionKeys = 'new' | 'add_map' | 'deletion';
+export type MapLinkEditorAndDeletionKeys = 'add_map' | 'deletion';
 export type MapLinkDialogsRef = React.RefObject<DialogRefData<MapLinkEditorAndDeletionKeys>>;
 
 /**
@@ -19,8 +19,6 @@ export const MapLinkEditorOverlay = defineEditorOverlay<
   }
 >('MapLinkEditorOverlay', (dialogToShow, handleCloseRef, closeDialog, props) => {
   switch (dialogToShow) {
-    case 'new':
-      return <MapLinkNewEditor closeDialog={closeDialog} ref={handleCloseRef} />;
     case 'add_map':
       return <MapLinkAddMapEditor closeDialog={closeDialog} cardinal={props.cardinal} ref={handleCloseRef} />;
     case 'deletion':

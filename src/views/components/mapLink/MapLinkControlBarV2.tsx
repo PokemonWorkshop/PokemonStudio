@@ -1,7 +1,5 @@
 import React, { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { SecondaryButtonWithPlusIcon } from '@components/buttons';
-import { ControlBar, ControlBarLabelContainer } from '@components/ControlBar';
+import { ControlBar } from '@components/ControlBar';
 import { SelectMapLink2 } from '@components/selects';
 import { useProjectMapLinks } from '@hooks/useProjectData';
 import { StudioShortcutActions, useShortcut } from '@hooks/useShortcuts';
@@ -12,7 +10,6 @@ type MapLinkControlBarProps = {
 };
 
 export const MapLinkControlBarV2 = ({ dialogsRef }: MapLinkControlBarProps) => {
-  const { t } = useTranslation();
   const { selectedDataIdentifier: mapLinkDbSymbol, setSelectedDataIdentifier, getPreviousDbSymbol, getNextDbSymbol } = useProjectMapLinks();
 
   const shortcutMap = useMemo<StudioShortcutActions>(() => {
@@ -20,19 +17,14 @@ export const MapLinkControlBarV2 = ({ dialogsRef }: MapLinkControlBarProps) => {
     return {
       db_previous: () => isShortcutEnabled() && setSelectedDataIdentifier({ mapLink: getPreviousDbSymbol('id') }),
       db_next: () => isShortcutEnabled() && setSelectedDataIdentifier({ mapLink: getNextDbSymbol('id') }),
-      db_new: () => isShortcutEnabled() && dialogsRef?.current?.openDialog('new'),
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mapLinkDbSymbol]);
   useShortcut(shortcutMap);
 
-  const onClickNew = dialogsRef ? () => dialogsRef.current?.openDialog('new') : undefined;
-
   return (
     <ControlBar>
-      <ControlBarLabelContainer>
-        {onClickNew ? <SecondaryButtonWithPlusIcon onClick={onClickNew}>{t('new_maplink')}</SecondaryButtonWithPlusIcon> : <div />}
-      </ControlBarLabelContainer>
+      <div />
       <SelectMapLink2 dbSymbol={mapLinkDbSymbol} onChange={(dbSymbol) => setSelectedDataIdentifier({ mapLink: dbSymbol })} />
     </ControlBar>
   );
