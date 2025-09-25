@@ -15,12 +15,16 @@ const WorldNavigationStyle = styled.div`
   min-width: 320px;
 `;
 
-const WorlMapsEventDiv = styled.div`
+const WorlMapsEventDiv = styled.div<{ $showBorder?: boolean }>`
   display: flex;
   flex-direction: row;
   gap: 8px;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.dark20};
-  padding-bottom: 8px;
+  ${({ $showBorder, theme }) =>
+    $showBorder &&
+    `
+    border-bottom: 1px solid ${theme.colors.dark20};
+    padding-bottom: 8px;
+  `}
 `;
 
 const WorldBuildingNavigationStyle = styled(NavigationDatabaseStyle)`
@@ -28,17 +32,22 @@ const WorldBuildingNavigationStyle = styled(NavigationDatabaseStyle)`
   gap: 16px;
 `;
 
+const routeLinks = {
+  events: '/world/events',
+  map: '/world/map',
+  maplink: '/world/maplink',
+};
+
 export const WorldNavigation = () => {
   const { t } = useTranslation();
   const location = useLocation();
 
   const getMenuComponent = (pathname: string) => {
     switch (pathname) {
-      case '/world/map':
+      case routeLinks.map:
+      case routeLinks.maplink:
         return <MapMenu />;
-      case '/world/maplinks':
-        return <MapMenu />;
-      case '/world/events':
+      case routeLinks.events:
         return <EventMenu />;
       default:
         return <MapMenu />;
@@ -48,12 +57,13 @@ export const WorldNavigation = () => {
   return (
     <WorldNavigationStyle>
       <WorldBuildingNavigationStyle>
-        <WorlMapsEventDiv>
-          <NavigationDatabaseItem path="/world/map" label={t('maps')} />
-          <NavigationDatabaseItem path="/world/events" label={t('events')} />
+        <WorlMapsEventDiv $showBorder={location.pathname === routeLinks.map || location.pathname === routeLinks.maplink}>
+          <NavigationDatabaseItem path={routeLinks.map} label={t('maps')} />
+          <NavigationDatabaseItem path={routeLinks.events} label={t('events')} />
         </WorlMapsEventDiv>
-        <NavigationDatabaseItem path="/world/maplink" label={t('maplinks')} />
-        {/*<NavigationDatabaseItem path="/world/region" label={t('regions')} />*/}
+        {(location.pathname === routeLinks.map || location.pathname === routeLinks.maplink) && (
+          <NavigationDatabaseItem path={routeLinks.maplink} label={t('maplinks')} />
+        )}
       </WorldBuildingNavigationStyle>
 
       {getMenuComponent(location.pathname)}

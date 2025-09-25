@@ -21,6 +21,8 @@ export const EventTree = () => {
       <div className="tree-scrollbar" onScroll={emitScrollContextMenu} ref={treeScrollbarRef}>
         <div className="tree"></div>
       </div>
+      {/* TODO: integrate no event in the future three like map three */}
+      <p>{t('no_event_found')}</p>
     </MapTreeContainer>
   );
 };
