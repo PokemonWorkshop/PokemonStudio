@@ -5,9 +5,10 @@ import { mapInfoGetMapsFromMapDbSymbol, mapInfoRemoveMap } from '@utils/MapInfoU
 import { getSelectedMapDbSymbol } from '@utils/MapUtils';
 import { getEntityNameText } from '@utils/ReadingProjectText';
 import { useMapInfo } from '@hooks/useMapInfo';
-import { useProjectMaps } from '@hooks/useProjectData';
+import { useProjectMapLinks, useProjectMaps } from '@hooks/useProjectData';
 import React, { forwardRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getMapLinkFirstDbSymbol, getMapLinksToDelete } from '@root/src/utils/MapLinkUtils';
 
 type MapDeletionProps = {
   closeDialog: () => void;
@@ -20,6 +21,7 @@ type MapDeletionProps = {
 export const MapDeletion = forwardRef<EditorHandlingClose, MapDeletionProps>(({ closeDialog, dbSymbol }, ref) => {
   const { t } = useTranslation();
   const { projectDataValues: maps, selectedDataIdentifier: currentDbSymbol, removeProjectDataValue: deleteMap, state } = useProjectMaps();
+  const { projectDataValues: mapLinks, removeProjectDataValue: deleteMapLink } = useProjectMapLinks();
   const { mapInfo, setMapInfo } = useMapInfo();
   const map = maps[dbSymbol || currentDbSymbol];
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -32,6 +34,9 @@ export const MapDeletion = forwardRef<EditorHandlingClose, MapDeletionProps>(({ 
   const deleteMaps = () => {
     const selectedMap = getSelectedMapDbSymbol(maps, mapDbSymbols, currentDbSymbol as DbSymbol);
     mapDbSymbols.forEach((dbSymbol) => deleteMap(dbSymbol, { map: selectedMap }));
+    const mapLinksToDelete = getMapLinksToDelete(mapDbSymbols, maps, mapLinks);
+    const selectedMapLink = getMapLinkFirstDbSymbol(mapLinks, mapLinksToDelete);
+    mapLinksToDelete.forEach((dbSymbol) => deleteMapLink(dbSymbol, { mapLink: selectedMapLink }));
   };
 
   const onClickDelete = () => {

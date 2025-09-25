@@ -8,6 +8,7 @@ import type { SelectOption } from '@ds/Select/types';
 import type { MapLinkDialogsRef } from '@components/mapLink/editors/MapLinkEditorOverlay';
 import { cloneEntity } from './cloneEntity';
 import { createMapLinkV2 } from './entityCreation';
+import { DbSymbol } from '../models/entities/dbSymbol';
 
 export type MapLinkNodeData = {
   mapLink: StudioMapLink;
@@ -155,4 +156,27 @@ export const createMapLinkFromMainMapId = (mapLinks: ProjectData['mapLinks'], ma
 export const getMapSizeStyle = (map: StudioMap, tileSize: number) => {
   const size = getMapSize(map);
   return { width: size.width * tileSize, height: size.height * tileSize };
+};
+
+export const getMapLinksToDelete = (mapDbSymbols: DbSymbol[], maps: ProjectData['maps'], allMapLinks: ProjectData['mapLinks']) => {
+  const mapLinks = Object.values(allMapLinks);
+  const mapIds = mapDbSymbols.reduce<number[]>((prev, dbSymbol) => {
+    const map = maps[dbSymbol];
+    if (!map) return prev;
+
+    return [...prev, map.id];
+  }, []);
+
+  return mapLinks.reduce<DbSymbol[]>((prev, mapLink) => {
+    if (!mapIds.includes(mapLink.mapId)) return prev;
+
+    return [...prev, mapLink.dbSymbol];
+  }, []);
+};
+
+export const getMapLinkFirstDbSymbol = (mapLinks: ProjectData['mapLinks'], mapLinksToDelete: DbSymbol[]) => {
+  return Object.entries(mapLinks)
+    .map(([value, mapLinkData]) => ({ value, index: mapLinkData.id }))
+    .filter((d) => !mapLinksToDelete.includes(d.value as DbSymbol))
+    .sort((a, b) => a.index - b.index)[0].value;
 };

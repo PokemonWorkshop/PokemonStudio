@@ -12,22 +12,32 @@ import React, { useState } from 'react';
 
 const MapLinkV2Page = () => {
   const dialogsRef = useDialogsRef<MapLinkEditorAndDeletionKeys>();
-  const { mapLink, maps, isValidMaplink } = useMapLinkPage();
+  const { mapLink, maps, isValidMaplink, hasNoMapLinkAvailable } = useMapLinkPage();
   const { t } = useTranslation();
   const [cardinal, setCardinal] = useState<StudioMapLinkCardinal>('east');
 
   return (
     <DatabasePageStyle>
-      <MapLinkControlBarV2 dialogsRef={dialogsRef} />
-      {isValidMaplink ? (
-        <ReactFlowProvider>
-          <ReactFlowMapLinkV2 mapLink={mapLink} maps={maps} dialogsRef={dialogsRef} setCardinal={setCardinal} />
-        </ReactFlowProvider>
+      {hasNoMapLinkAvailable ? (
+        <>
+          <div />
+          <MapLinkNoMap>
+            <span>{t('no_map')}</span>
+          </MapLinkNoMap>
+        </>
       ) : (
-        <MapLinkNoMap>
-          <span>{t('no_map')}</span>
-          <DeleteButtonWithIcon onClick={() => dialogsRef.current?.openDialog('deletion', true)}>{t('delete_this_maplink')}</DeleteButtonWithIcon>
-        </MapLinkNoMap>
+        <>
+          <MapLinkControlBarV2 dialogsRef={dialogsRef} />
+          {isValidMaplink ? (
+            <ReactFlowProvider>
+              <ReactFlowMapLinkV2 mapLink={mapLink} maps={maps} dialogsRef={dialogsRef} setCardinal={setCardinal} />
+            </ReactFlowProvider>
+          ) : (
+            <MapLinkNoMap>
+              <DeleteButtonWithIcon onClick={() => dialogsRef.current?.openDialog('deletion', true)}>{t('delete_this_maplink')}</DeleteButtonWithIcon>
+            </MapLinkNoMap>
+          )}
+        </>
       )}
       <MapLinkEditorOverlay ref={dialogsRef} cardinal={cardinal} />
     </DatabasePageStyle>

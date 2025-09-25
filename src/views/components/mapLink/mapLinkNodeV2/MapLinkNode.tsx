@@ -39,6 +39,15 @@ const MapLinkNodeContainer = styled.div<MapLinkNodeContainer>`
     display: none;
   }
 
+  & .map-deleted {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    ${({ theme }) => theme.fonts.titlesHeadline4};
+    color: ${({ theme }) => theme.colors.dangerBase};
+  }
+
   &:hover {
     & .clear-button {
       position: absolute;
@@ -78,7 +87,11 @@ export const MapLinkNode = ({ data: { mapLink, maps, cardinal, index, tileSize }
 
   return (
     <MapLinkNodeContainer zoom={currentZoom} style={getMapSizeStyle(map, tileSize)}>
-      {map ? <ResourceImage imagePathInProject={getMapOverviewPath(map.tiledFilename)} versionId={map.mtime} /> : <div>{t('map_deleted')}</div>}
+      {map ? (
+        <ResourceImage imagePathInProject={getMapOverviewPath(map.tiledFilename)} versionId={map.mtime} />
+      ) : (
+        <div className="map-deleted">{t('map_deleted')}</div>
+      )}
       <ClearButtonOnlyIcon className="clear-button" onClick={onDeleteMap} />
     </MapLinkNodeContainer>
   );

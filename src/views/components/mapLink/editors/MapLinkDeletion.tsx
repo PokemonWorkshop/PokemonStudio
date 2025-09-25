@@ -3,6 +3,8 @@ import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/
 import { getEntityNameText } from '@utils/ReadingProjectText';
 import { useProjectMapLinks, useProjectMaps } from '@hooks/useProjectData';
 import { useTranslation } from 'react-i18next';
+import { getMapLinkFirstDbSymbol } from '@utils/MapLinkUtils';
+import type { DbSymbol } from '@src/models/entities/dbSymbol';
 import React, { forwardRef, useMemo } from 'react';
 
 type MapLinkDeletionProps = {
@@ -23,10 +25,7 @@ export const MapLinkDeletion = forwardRef<EditorHandlingClose, MapLinkDeletionPr
   const mapLinkName = useMemo(() => (map ? getEntityNameText(map, state) : t('map_deleted')), []);
 
   const onClickDelete = () => {
-    const firstDbSymbol = Object.entries(mapLinks)
-      .map(([value, mapLinkData]) => ({ value, index: mapLinkData.id }))
-      .filter((d) => d.value !== dbSymbol)
-      .sort((a, b) => a.index - b.index)[0].value;
+    const firstDbSymbol = getMapLinkFirstDbSymbol(mapLinks, [dbSymbol as DbSymbol]);
     deleteMapLink(dbSymbol, { mapLink: firstDbSymbol });
     closeDialog();
   };
