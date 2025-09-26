@@ -59,11 +59,10 @@ export const ReactFlowMapLinkV2 = ({ mapLink, maps, setCardinal, dialogsRef }: R
 
     const oppositeCardinal = getOppositeCardinal(cardinal);
     const reverseMapLinkEdited = cloneEntity(reverseMapLink);
-    const reverseLinks = reverseMapLinkEdited[`${oppositeCardinal}Maps`];
-    const reverseLink = reverseLinks.find(({ mapId }) => mapId === mapLink.mapId);
+    const reverseLink = reverseMapLinkEdited[`${oppositeCardinal}Maps`].find(({ mapId }) => mapId === mapLink.mapId);
     if (!reverseLink) return;
 
-    reverseLink.offset = offset;
+    reverseLink.offset = -offset;
     setMapLink({ [reverseMapLinkEdited.dbSymbol]: reverseMapLinkEdited });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateOffset]);
