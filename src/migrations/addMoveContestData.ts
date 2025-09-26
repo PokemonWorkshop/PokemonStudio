@@ -754,7 +754,12 @@ export const addMoveContestData = async (_: IpcMainEvent, projectPath: string) =
     return fsPromise.writeFile(path.join(projectPath, 'Data/Studio/moves', `${newMove.dbSymbol}.json`), JSON.stringify(newMove, null, 2));
   }, Promise.resolve());
 
-  await fsPromise.rm(path.join(projectPath, 'Data/Studio/moves/kotow_cleave.json')); // Remove wrongly named file coming from Gen 9 datapack
+  const wronglyNamedFilePath = path.join(projectPath, 'Data/Studio/moves/kotow_cleave.json');
+
+  // Remove wrongly named file coming from Gen 9 datapack
+  if (fs.existsSync(wronglyNamedFilePath)) {
+    fs.unlinkSync(wronglyNamedFilePath);
+  }
 
   saveCSV(path.join(csvPath, `${MOVE_CONTEST_DESCRIPTION_TEXT_ID}.csv`), descriptionTexts);
 };
