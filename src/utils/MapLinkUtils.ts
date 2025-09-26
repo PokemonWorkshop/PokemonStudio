@@ -180,3 +180,19 @@ export const getMapLinkFirstDbSymbol = (mapLinks: ProjectData['mapLinks'], mapLi
     .filter((d) => !mapLinksToDelete.includes(d.value as DbSymbol))
     .sort((a, b) => a.index - b.index)[0].value;
 };
+
+export const getOppositeCardinal = (cardinal: StudioMapLinkCardinal): StudioMapLinkCardinal => {
+  switch (cardinal) {
+    case 'east':
+      return 'west';
+    case 'north':
+      return 'south';
+    case 'south':
+      return 'north';
+    case 'west':
+      return 'east';
+    default:
+      assertUnreachable(cardinal);
+  }
+  return 'north';
+};

@@ -12,11 +12,12 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import { MainMapLinkNode } from './mapLinkNodeV2/MainMapLinkNode';
-import { buildLinks, getOffset, initMainMapLinkNode, type MapLinkNodeType } from '@utils/MapLinkUtils';
+import { buildLinks, getOffset, getOppositeCardinal, initMainMapLinkNode, type MapLinkNodeType } from '@utils/MapLinkUtils';
 import { MapLinkNode } from './mapLinkNodeV2/MapLinkNode';
 import { useUpdateMapLink } from './editors';
 import { cloneEntity } from '@utils/cloneEntity';
 import type { MapLinkDialogsRef } from './editors/MapLinkEditorOverlay';
+import { useProjectMapLinks } from '@hooks/useProjectData';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 const TILE_SIZE = 32;
@@ -38,6 +39,7 @@ export const ReactFlowMapLinkV2 = ({ mapLink, maps, setCardinal, dialogsRef }: R
   ]);
   const nodeTypes = useMemo(() => ({ mainMapLinkNode: MainMapLinkNode, mapLinkNode: MapLinkNode }), []);
   const updateMapLink = useUpdateMapLink(mapLink);
+  const { projectDataValues: allMapLinks, setProjectDataValues: setMapLink } = useProjectMapLinks();
   const [updateOffset, setUpdateOffset] = useState<UpdateOffsetType | undefined>(undefined);
 
   useEffect(() => {
@@ -51,7 +53,18 @@ export const ReactFlowMapLinkV2 = ({ mapLink, maps, setCardinal, dialogsRef }: R
 
     links[index].offset = offset;
     updateMapLink({ [`${cardinal}Maps`]: links });
-    // TODO: implement map reverse offset
+
+    const reverseMapLink = Object.values(allMapLinks).find((mapLink) => mapLink.mapId === links[index].mapId);
+    if (!reverseMapLink) return;
+
+    const oppositeCardinal = getOppositeCardinal(cardinal);
+    const reverseMapLinkEdited = cloneEntity(reverseMapLink);
+    const reverseLinks = reverseMapLinkEdited[`${oppositeCardinal}Maps`];
+    const reverseLink = reverseLinks.find(({ mapId }) => mapId === mapLink.mapId);
+    if (!reverseLink) return;
+
+    reverseLink.offset = offset;
+    setMapLink({ [reverseMapLinkEdited.dbSymbol]: reverseMapLinkEdited });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateOffset]);
 

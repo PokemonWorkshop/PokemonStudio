@@ -11,7 +11,7 @@ import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 import { SelectOption as OldSelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { SelectOption } from '@ds/Select/types';
 import { ProjectData } from '@src/GlobalStateProvider';
-import { mapLinkMapOptions } from '@utils/MapLinkUtils';
+import { getOppositeCardinal, mapLinkMapOptions } from '@utils/MapLinkUtils';
 import { z } from 'zod';
 import styled from 'styled-components';
 import React, { forwardRef, useMemo } from 'react';
@@ -71,8 +71,16 @@ export const MapLinkAddMapEditor = forwardRef<EditorHandlingClose, MapLinkAddMap
     links.push({ mapId: Number(mapId), offset: 0 });
     updateMapLink({ [`${cardinal}Maps`]: links });
 
-    // TODO: reverse link
-
+    const reverseMapLink = Object.values(mapLinks).find((mapLink) => mapLink.mapId === Number(mapId));
+    if (reverseMapLink) {
+      const oppositeCardinal = getOppositeCardinal(cardinal);
+      const reverseMapLinkEdited = cloneEntity(reverseMapLink);
+      const links = reverseMapLinkEdited[`${oppositeCardinal}Maps`];
+      if (!links.find(({ mapId }) => mapId === mapLink.mapId)) {
+        links.push({ mapId: mapLink.mapId, offset: 0 });
+        setMapLink({ [reverseMapLinkEdited.dbSymbol]: reverseMapLinkEdited });
+      }
+    }
     closeDialog();
   };
 
