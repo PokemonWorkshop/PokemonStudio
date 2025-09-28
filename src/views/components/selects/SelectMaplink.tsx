@@ -88,11 +88,13 @@ export const SelectMapLink2 = ({ dbSymbol, onChange, noLabel, undefValueOption }
   const getMapFromMapId = (mapId: number) => allMaps.find(({ id }) => id === mapId);
 
   const mapLinkOptions = useMemo(() => {
-    return allMapLinks.map(({ dbSymbol, mapId }) => {
-      const map = getMapFromMapId(mapId);
-      const mapName = map ? getMapName(map) : t('map_deleted');
-      return { value: dbSymbol, label: mapName };
-    });
+    return allMapLinks
+      .map(({ dbSymbol, mapId, id }) => {
+        const map = getMapFromMapId(mapId);
+        const mapName = map ? getMapName(map) : t('map_deleted');
+        return { value: dbSymbol, label: mapName, id };
+      })
+      .sort((a, b) => a.id - b.id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allMapLinks, zones]);
 
