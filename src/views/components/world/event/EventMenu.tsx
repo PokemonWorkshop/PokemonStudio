@@ -43,6 +43,7 @@ export const EventMenu = () => {
   const setText = useSetProjectText();
   const { t } = useTranslation();
 
+  // TODO: Replace MapInfo by EventInfo. Actually, handleNewFolder creates a MapInfoFolder.
   const handleNewFolder = () => {
     const newFolder = createMapInfo(mapInfo, { klass: 'MapInfoFolder' }) as StudioMapInfoFolder;
 
@@ -51,15 +52,16 @@ export const EventMenu = () => {
     setMapInfo(newMapInfo);
   };
 
+  // TODO: Remove isDev condition once events tree is finished.
   return (
     <EventMenuContainer>
       <NavigationDatabaseGroup title={t('events')}>
         <MapSubMenuContainer>
           <div className="buttons">
-            <SecondaryButtonWithPlusIcon className="new" onClick={() => dialogsRef.current?.openDialog('new')} disabled={isRMXPMode}>
+            <SecondaryButtonWithPlusIcon className="new" onClick={() => dialogsRef.current?.openDialog('new')} disabled={!window.api.isDev}>
               {t('new_event')}
             </SecondaryButtonWithPlusIcon>
-            <NewFolderButtonOnlyIcon onClick={handleNewFolder} data-tooltip={t('new_folder')} disabled={isRMXPMode} />
+            <NewFolderButtonOnlyIcon onClick={handleNewFolder} data-tooltip={t('new_folder')} disabled={!window.api.isDev} />
           </div>
           <SeparatorGreyLine />
           <EventTree />
