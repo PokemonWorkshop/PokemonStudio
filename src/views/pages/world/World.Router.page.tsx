@@ -5,6 +5,7 @@ import { WorldNavigation } from '@components/world/WorldNavigation';
 import { MapPage } from '@pages/world/Map.page';
 import { RouterPageStyle } from '@components/pages';
 import { OverviewPage } from '@pages/world/Overview.page';
+import { EventPage } from './Event.page';
 
 const WorldRouterComponent = () => {
   return (
@@ -12,7 +13,7 @@ const WorldRouterComponent = () => {
       <WorldNavigation />
       <Routes>
         <Route path="maplink" element={<MapLinkPage />} />
-        <Route path="events" element={<div />} />
+        <Route path="events" element={<EventPage />} />
         <Route path="region" element={<Outlet />} />
         <Route path="map" element={<MapPage />} />
         <Route path="overview" element={<OverviewPage />} />
