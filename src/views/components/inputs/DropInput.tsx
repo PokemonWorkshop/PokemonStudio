@@ -1,6 +1,6 @@
 import React, { DragEventHandler, useState } from 'react';
 import styled from 'styled-components';
-import { ReactComponent as FileDrop } from '@assets/icons/global/drop.svg';
+import FileDrop from '@assets/icons/global/drop.svg';
 import { useTranslation } from 'react-i18next';
 import { useChoosefile } from '@hooks/useChooseFile';
 import { useCopyFile } from '@hooks/useCopyFile';

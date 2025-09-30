@@ -7,7 +7,7 @@ import {
   MessageBoxTextContainer,
   MessageBoxTitleIconContainer,
 } from '@components/MessageBoxContainer';
-import { ReactComponent as SuccessIcon } from '@assets/icons/global/success.svg';
+import SuccessIcon from '@assets/icons/global/success.svg';
 import { DarkButton } from './buttons';
 import styled from 'styled-components';
 

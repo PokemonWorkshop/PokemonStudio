@@ -29,6 +29,7 @@ export const importMoveData = (move: StudioMove, dataToImport: StudioMove): Stud
     dbSymbol: move.dbSymbol,
     type: move.type,
     category: move.category,
+    condition: move.condition,
   };
 };
 
@@ -86,7 +87,6 @@ export const importGroupData = (group: StudioGroup, dataToImport: StudioGroup): 
 
   return {
     ...group,
-    isHordeBattle: cloneData.isHordeBattle,
     encounters: cloneData.encounters,
   };
 };

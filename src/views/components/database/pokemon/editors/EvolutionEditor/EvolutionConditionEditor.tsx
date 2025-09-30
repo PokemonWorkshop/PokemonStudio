@@ -3,7 +3,7 @@ import { assertUnreachable } from '@utils/assertUnreachable';
 import React, { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { ReactComponent as DeleteIcon } from '@assets/icons/global/delete-icon.svg';
+import DeleteIcon from '@assets/icons/global/delete-icon.svg';
 import { InputWithTopLabelContainer, Label } from '@components/inputs';
 import { DayNightInput } from './DayNightInput';
 import { ItemInput } from './ItemInput';

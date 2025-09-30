@@ -4,6 +4,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { NavigationDatabase } from '../../../components/database/navigation/NavigationDatabase';
 import { PokemonPage } from '../Pokemon.page';
 import { MovePage } from '../Move.page';
+import { MoveContestPage } from '../Move.Contest.page';
 import { ItemPage } from '../Item.page';
 import { TechItemsTablePage } from '../TechItems.Table.page';
 import { TypePage } from '../Type.page';
@@ -35,6 +36,7 @@ const DatabasePageComponent = () => {
       <Routes>
         <Route path="moves/pokemon" element={<MovePokemonPage />} />
         <Route path="moves" element={<MovePage />} />
+        <Route path="moves/contest" element={<MoveContestPage />} />
         <Route path="pokemon/movepool" element={<PokemonMovepoolPage />} />
         <Route path="pokemon/resources" element={<PokemonResourcesPage />} />
         <Route path="pokemon" element={<PokemonPage />} />

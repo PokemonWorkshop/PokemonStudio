@@ -99,7 +99,7 @@ const animationOption = {
   easing: 'ease-in',
 } as const;
 
-const DIALOG_TOP_OFFSET = '26px';
+const DIALOG_TOP_OFFSET = window.api.platform === 'win32' ? '26px' : '0px';
 const DIALOG_TRANSFORM_RIGHT = 'translateX(-100%)';
 const DIALOG_TRANSFORM_CENTER = 'translate(0%, -50%)';
 const DIALOG_TOP_PERCENTAGE = '10%';

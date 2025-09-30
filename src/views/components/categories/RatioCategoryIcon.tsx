@@ -2,10 +2,10 @@ import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { CategoryIcon } from './CategoryIcon';
 
-import { ReactComponent as NeutralIcon } from '@assets/icons/ratios/neutral.svg';
-import { ReactComponent as ResistanceIcon } from '@assets/icons/ratios/resistance.svg';
-import { ReactComponent as EffectiveIcon } from '@assets/icons/ratios/effective.svg';
-import { ReactComponent as ImmuneIcon } from '@assets/icons/ratios/immune.svg';
+import NeutralIcon from '@assets/icons/ratios/neutral.svg';
+import ResistanceIcon from '@assets/icons/ratios/resistance.svg';
+import EffectiveIcon from '@assets/icons/ratios/effective.svg';
+import ImmuneIcon from '@assets/icons/ratios/immune.svg';
 
 import { assertUnreachable } from '@utils/assertUnreachable';
 import { HelperSelectedType } from '@components/database/type/TypeHelper';

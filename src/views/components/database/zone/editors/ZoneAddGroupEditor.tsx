@@ -62,12 +62,22 @@ export const ZoneAddGroupEditor = forwardRef<EditorHandlingClose, ZoneAddGroupEd
   const { zone, groups } = useZonePage();
   const updateZone = useUpdateZone(zone);
 
-  const firstDbSymbol = Object.entries(groups)
-    .map(([value, groupData]) => ({ value, index: groupData.id }))
-    .filter((data) => !zone.wildGroups.includes(data.value as DbSymbol))
-    .sort((a, b) => a.index - b.index)[0].value;
+  const firstDbSymbol = () => {
+    const firstUnusedGroup = Object.entries(groups)
+      .map(([value, groupData]) => ({ value, index: groupData.id }))
+      .filter((data) => !zone.wildGroups.includes(data.value as DbSymbol))
+      .sort((a, b) => a.index - b.index)[0];
 
-  const [group, setGroup] = useState<StudioGroup>(setAllTagsMapsOnByDefault(cloneEntity(groups[firstDbSymbol]), zone));
+    if (firstUnusedGroup) {
+      return firstUnusedGroup.value;
+    } else {
+      return Object.entries(groups)
+        .map(([value, groupData]) => ({ value, index: groupData.id }))
+        .sort((a, b) => a.index - b.index)[0].value;
+    }
+  };
+
+  const [group, setGroup] = useState<StudioGroup>(setAllTagsMapsOnByDefault(cloneEntity(groups[firstDbSymbol()]), zone));
   const updateGroup = useUpdateGroup(group);
 
   const onChange = (dbSymbol: string) => {

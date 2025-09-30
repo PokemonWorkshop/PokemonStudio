@@ -9,11 +9,11 @@ import Tree, {
   TreeSourcePosition,
   TreeDestinationPosition,
 } from '@components/tree';
-import { ReactComponent as FolderIcon } from '@assets/icons/global/folder.svg';
-import { ReactComponent as FolderOpenIcon } from '@assets/icons/global/folder_open.svg';
-import { ReactComponent as LeftIcon } from '@assets/icons/global/left-icon.svg';
-import { ReactComponent as PlusIcon } from '@assets/icons/global/plus-icon.svg';
-import { ReactComponent as DotIcon } from '@assets/icons/global/dot.svg';
+import FolderIcon from '@assets/icons/global/folder.svg';
+import FolderOpenIcon from '@assets/icons/global/folder_open.svg';
+import LeftIcon from '@assets/icons/global/left-icon.svg';
+import PlusIcon from '@assets/icons/global/plus-icon.svg';
+import DotIcon from '@assets/icons/global/dot.svg';
 import { MAP_INFO_FOLDER_NAME_TEXT_ID, StudioMapInfoValue } from '@modelEntities/mapInfo';
 import { useProjectMaps } from '@hooks/useProjectData';
 import { useGetEntityNameText, useGetEntityNameTextUsingTextId, useSetProjectText } from '@utils/ReadingProjectText';

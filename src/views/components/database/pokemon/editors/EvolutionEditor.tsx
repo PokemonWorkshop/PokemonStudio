@@ -17,7 +17,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useEvolutionEditorState } from './EvolutionEditor/useEvolutionEditorState';
 import { DbSymbol } from '@modelEntities/dbSymbol';
-import { ReactComponent as PlusIcon } from '@assets/icons/global/plus-icon2.svg';
+import PlusIcon from '@assets/icons/global/plus-icon2.svg';
 import { EVOLUTION_CONDITION_KEYS, EvolutionConditionEditor } from './EvolutionEditor/EvolutionConditionEditor';
 import { SelectPokemon } from '@components/selects/SelectPokemon';
 import { SelectPokemonForm } from '@components/selects/SelectPokemonForm';

@@ -7,7 +7,10 @@ import { deletePSDKDatFile } from './migrateUtils';
 import { GROUP_VALIDATOR, StudioGroup } from '@modelEntities/group';
 import { parseJSON } from '@utils/json/parse';
 
-const PRE_MIGRATION_GROUP_VALIDATOR = GROUP_VALIDATOR.omit({ stepsAverage: true });
+const PRE_MIGRATION_GROUP_VALIDATOR = GROUP_VALIDATOR.omit({ stepsAverage: true }).extend({
+  isDoubleBattle: z.boolean().default(false),
+  isHordeBattle: z.boolean().default(false),
+});
 type StudioGroupDataBeforeMigration = z.infer<typeof PRE_MIGRATION_GROUP_VALIDATOR>;
 
 const addStepsAverage = (group: StudioGroupDataBeforeMigration): StudioGroup => {

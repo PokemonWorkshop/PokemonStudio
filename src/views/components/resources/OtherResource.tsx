@@ -1,13 +1,13 @@
 import { ClearButtonOnlyIcon, FolderButtonOnlyIcon } from '@components/buttons';
 import React from 'react';
-import { ReactComponent as FileDrop } from '@assets/icons/global/drop.svg';
-import { ReactComponent as PlayIcon } from '@assets/icons/global/play.svg';
+import FileDrop from '@assets/icons/global/drop.svg';
+import MusicNoteIcon from '@assets/icons/global/music-note.svg';
 import { basename } from '@utils/path';
 import { useResource } from '@hooks/useResource';
 import { OtherNoResourceContainer, OtherResourceContainer } from './OtherResourceStyle';
 import { ResourceImage } from '@components/ResourceImage';
 
-const isNoResource = (resourcePath: string) => resourcePath.endsWith('/');
+const isNoResource = (resourcePath: string) => !resourcePath || resourcePath.endsWith('/');
 
 type OtherResourceProps = {
   type: 'icon' | 'music';
@@ -16,9 +16,11 @@ type OtherResourceProps = {
   extensions: string[];
   onResourceChoosen: (filePath: string) => void;
   onResourceClean: () => void;
+
+  beforeButtons?: React.ReactNode;
 };
 
-export const OtherResource = ({ type, title, resourcePath, extensions, onResourceChoosen, onResourceClean }: OtherResourceProps) => {
+export const OtherResource = ({ type, title, resourcePath, extensions, onResourceChoosen, onResourceClean, beforeButtons }: OtherResourceProps) => {
   const { onDrop, onDragOver, onClick, onClickFolder, isDialogOpen, flipFlap } = useResource({
     name: title,
     path: resourcePath,
@@ -39,7 +41,7 @@ export const OtherResource = ({ type, title, resourcePath, extensions, onResourc
     <OtherResourceContainer onDrop={onDrop} onDragOver={onDragOver} onClick={isDialogOpen ? undefined : onClick} disabled={isDialogOpen}>
       <div className="icon-title">
         <div className={`svg-${type}-container`}>
-          {type === 'music' ? <PlayIcon /> : <ResourceImage imagePathInProject={resourcePath} versionId={flipFlap ? 2 : 1} />}
+          {type === 'music' ? <MusicNoteIcon /> : <ResourceImage imagePathInProject={resourcePath} versionId={flipFlap ? 2 : 1} />}
         </div>
         {type === 'music' ? (
           <div className="resource-name">
@@ -51,6 +53,7 @@ export const OtherResource = ({ type, title, resourcePath, extensions, onResourc
         )}
       </div>
       <div className="buttons">
+        {beforeButtons}
         <button className="folder-button">
           <FolderButtonOnlyIcon onClick={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => onClickFolder(resourcePath, event)} />
         </button>

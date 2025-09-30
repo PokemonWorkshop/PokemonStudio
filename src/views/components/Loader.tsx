@@ -1,4 +1,4 @@
-import { ReactComponent as MainIcon } from '@assets/icons/global/loaderIcon.svg';
+import MainIcon from '@assets/icons/global/loaderIcon.svg';
 import { useLoaderContext } from '@utils/loaderContext';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

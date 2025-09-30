@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { ReactComponent as LeftIcon } from '@assets/icons/global/navigation-arrow-big-left.svg';
-import { ReactComponent as RightIcon } from '@assets/icons/global/navigation-arrow-big-right.svg';
+import LeftIcon from '@assets/icons/global/navigation-arrow-big-left.svg';
+import RightIcon from '@assets/icons/global/navigation-arrow-big-right.svg';
 import React from 'react';
 
 const PaginationWithTitleContainer = styled.div`

@@ -20,7 +20,6 @@ const NoCharacteristicContainer = styled.span`
 const atLeastOneCharacteristic = (move: StudioMove) => {
   return (
     move.isDirect ||
-    move.isDistance ||
     move.isBlocable ||
     move.isAuthentic ||
     move.isKingRockUtility ||
@@ -59,7 +58,6 @@ export const MoveCharacteristics = ({ move, dialogsRef }: MoveCharacteristicsPro
       {atLeastOneCharacteristic(move) ? (
         <MoveCharacteristicsContainer>
           {move.isDirect && <Tag>{t('contact')}</Tag>}
-          {move.isDistance && <Tag>{t('distance')}</Tag>}
           {move.isBlocable && <Tag>{t('blocable')}</Tag>}
           {move.isAuthentic && <Tag>{t('authentic')}</Tag>}
           {move.isKingRockUtility && <Tag>{t('king_rock')}</Tag>}

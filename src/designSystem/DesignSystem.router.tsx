@@ -7,12 +7,14 @@ import { NavigationDatabaseItem } from '@components/database/navigation/Navigati
 import { DesignSystem } from './DesignSystem';
 import { SelectExamples } from './Select/Examples';
 import { ToolTipExamples } from './Tooltip/Examples';
+import { MultiSelectExamples } from './MultiSelect/Examples';
 
 const DesignSystemNavigation = () => {
   return (
     <NavigationDatabaseStyle>
       <NavigationDatabaseGroup title="Inputs">
         <NavigationDatabaseItem path="/designSystem/select" label="Select" />
+        <NavigationDatabaseItem path="/designSystem/multi-select" label="Multi Select" />
       </NavigationDatabaseGroup>
       <NavigationDatabaseGroup title="Helpers">
         <NavigationDatabaseItem path="/designSystem/tooltip" label="Tooltip" />
@@ -46,6 +48,14 @@ const DesignSystemRouterComponent = () => {
         element={
           <DesignSystemPageWithMenu>
             <SelectExamples />
+          </DesignSystemPageWithMenu>
+        }
+      />
+      <Route
+        path="multi-select"
+        element={
+          <DesignSystemPageWithMenu>
+            <MultiSelectExamples />
           </DesignSystemPageWithMenu>
         }
       />

@@ -1,7 +1,7 @@
 import React, { MouseEvent } from 'react';
 import styled from 'styled-components';
-import { ReactComponent as LeftIcon } from '@assets/icons/global/left-icon.svg';
-import { ReactComponent as RightIcon } from '@assets/icons/global/right-icon.svg';
+import LeftIcon from '@assets/icons/global/left-icon.svg';
+import RightIcon from '@assets/icons/global/right-icon.svg';
 
 const PaginationContainer = styled.div`
   display: flex;

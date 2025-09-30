@@ -24,7 +24,6 @@ const CHARACTERISTICS_EDITOR_SCHEMA = MOVE_VALIDATOR.pick({
   isCharge: true,
   isDance: true,
   isDirect: true,
-  isDistance: true,
   isEffectChance: true,
   isGravity: true,
   isHeal: true,
@@ -63,7 +62,6 @@ export const MoveCharacteristicsEditor = forwardRef<EditorHandlingClose>((_, ref
       <InputFormContainer ref={formRef} size="s">
         <CharactericticsInfoContainer>{t('characteristics_info')}</CharactericticsInfoContainer>
         <Toggle name="isDirect" label={t('description_contact')} />
-        <Toggle name="isDistance" label={t('description_distance')} />
         <Toggle name="isBlocable" label={t('description_blocable')} />
         <Toggle name="isAuthentic" label={t('description_authentic')} />
         <Toggle name="isKingRockUtility" label={t('description_king_rock')} />

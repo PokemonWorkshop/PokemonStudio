@@ -6,7 +6,7 @@ import { Checkbox } from '@components/Checkbox';
 import { AutoSizer, List } from 'react-virtualized';
 import { Input } from '@components/inputs';
 import { cloneEntity } from '@utils/cloneEntity';
-import { ReactComponent as ErrorIcon } from '@assets/icons/global/error2.svg';
+import ErrorIcon from '@assets/icons/global/error2.svg';
 import { DropDownOption, StudioDropDown } from '@components/StudioDropDown';
 
 const MapImportListContainer = styled.div`
