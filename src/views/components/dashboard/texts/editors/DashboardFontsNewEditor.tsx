@@ -122,9 +122,9 @@ export const DashboardFontsNewEditor = ({ isAlternative, onClose }: DashbordFont
             ref={sizeRef}
             type="number"
             name="size"
-            min="0"
+            min="1"
             max="999"
-            defaultValue="0"
+            defaultValue="1"
             onBlur={() => {
               if (sizeRef.current && !sizeRef.current.value) {
                 sizeRef.current.value = sizeRef.current.defaultValue;
@@ -138,9 +138,9 @@ export const DashboardFontsNewEditor = ({ isAlternative, onClose }: DashbordFont
             ref={lineHeightRef}
             type="number"
             name="line-height"
-            min="0"
+            min="1"
             max="999"
-            defaultValue="0"
+            defaultValue="1"
             onBlur={() => {
               if (lineHeightRef.current && !lineHeightRef.current.value) {
                 lineHeightRef.current.value = lineHeightRef.current.defaultValue;
