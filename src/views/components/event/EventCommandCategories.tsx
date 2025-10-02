@@ -2,7 +2,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { EventCommandCategory } from './EventCommandCategory';
 
-export type StudioEventCommandCategory = 'messages' | 'player_interaction' | 'flow_control' | 'game_interfaces';
+export const STUDIO_EVENT_COMMAND_CATEGORY_LIST = ['messages', 'player_interaction', 'flow_control', 'game_interfaces'] as const;
+export type StudioEventCommandCategory = (typeof STUDIO_EVENT_COMMAND_CATEGORY_LIST)[number];
 
 type EventCommandsCategoryProps = {
   setSelectedCommandCategory: (commandCategory: StudioEventCommandCategory) => void;
@@ -13,10 +14,9 @@ export const EventCommandCategories = ({ setSelectedCommandCategory }: EventComm
 
   return (
     <>
-      <EventCommandCategory title="Messages" onClick={() => setSelectedCommandCategory('messages')} />
-      <EventCommandCategory title="Player Interaction" onClick={() => setSelectedCommandCategory('player_interaction')} />
-      <EventCommandCategory title="Flow Control" onClick={() => setSelectedCommandCategory('flow_control')} />
-      <EventCommandCategory title="Game Interfaces" onClick={() => setSelectedCommandCategory('game_interfaces')} />
+      {STUDIO_EVENT_COMMAND_CATEGORY_LIST.map((category) => (
+        <EventCommandCategory key={category} title={t(`event_category_${category}`)} onClick={() => setSelectedCommandCategory(category)} />
+      ))}
     </>
   );
 };
