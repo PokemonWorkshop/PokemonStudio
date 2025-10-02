@@ -61,7 +61,12 @@ export const EventCommandsEditor = () => {
           <h2>{t('instructions')}</h2>
           <span>Icon</span>
         </div>
-        <ClearInput value={research} onChange={(event) => setResearch(event.target.value.toLowerCase())} onClear={onClear} placeholder="Search..." />
+        <ClearInput
+          value={research}
+          onChange={(event) => setResearch(event.target.value.toLowerCase())}
+          onClear={onClear}
+          placeholder={t('search')}
+        />
       </div>
       {research ? (
         <>

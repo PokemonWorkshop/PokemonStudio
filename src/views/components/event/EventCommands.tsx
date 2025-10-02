@@ -1,9 +1,10 @@
 import BackIcon from '@assets/icons/global/back.svg';
 import { EventCommand } from './EventCommand';
 import type { StudioEventCommandCategory } from './EventCommandCategories';
-import styled from 'styled-components';
-import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
+import styled from 'styled-components';
+import React, { useMemo } from 'react';
 
 const EventCommandsContainer = styled.div`
   .category-header {
@@ -59,55 +60,44 @@ type EventCommandsProps = {
   research?: string;
 };
 
-/*const CommandsFromCategory: Record<StudioEventCommandCategory, React.JSX.Element> = {
-  flow_control: (
-    <>
-      <EventCommand title="Call an Event" />
-      <EventCommand title="Add a Condition" />
-      <EventCommand title="Insert a Loop" />
-      <EventCommand title="Stop Event Execution" />
-      <EventCommand title="Add a Jump to another command" />
-    </>
-  ),
-  game_interfaces: <></>,
-  messages: (
-    <>
-      <EventCommand title="Show a message" />
-    </>
-  ),
-  player_interaction: <></>,
-};*/
-
 // TODO: change string[] to better type
 const CommandsFromCategory: Record<StudioEventCommandCategory, string[]> = {
-  flow_control: ['call_event', 'add_condition', 'insert_loop', 'stop_event_execution', 'add_jump_other_command'],
+  flow_control: ['call_event', 'add_condition', 'insert_loop', 'stop_event_execution', 'add_jump_another_command'],
   game_interfaces: [],
   messages: ['show_message'],
   player_interaction: [],
 };
 
+const getCommands = (category: StudioEventCommandCategory, t: TFunction, research?: string) => {
+  if (!research) return CommandsFromCategory[category];
+
+  return CommandsFromCategory[category]
+    .map((command) => ({ command, title: t(`event_command_${command}`) }))
+    .filter(({ title }) => title.toLowerCase().startsWith(research))
+    .map(({ command }) => command);
+};
+
 export const EventCommands = ({ category, setSelectedCommandCategory, research }: EventCommandsProps) => {
   const { t } = useTranslation();
-  const [commandsCount, setCommandsCount] = useState<number | undefined>(undefined);
-  const commandsRef = useRef<HTMLDivElement>(null);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const commands = useMemo(() => getCommands(category, t, research), [category, research]);
+  const commandsCount = commands.length;
 
-  useEffect(() => {
-    if (!commandsRef.current) return;
-
-    setCommandsCount(commandsRef.current.childElementCount);
-  }, []);
-
-  return (
+  return research && commandsCount === 0 ? (
+    <></>
+  ) : (
     <EventCommandsContainer>
       <div className="category-header">
-        <span className="back-icon" onClick={() => setSelectedCommandCategory(undefined)}>
-          <BackIcon />
-        </span>
-        <h2>{t(category)}</h2>
+        {!research && (
+          <span className="back-icon" onClick={() => setSelectedCommandCategory(undefined)}>
+            <BackIcon />
+          </span>
+        )}
+        <h2>{t(`event_category_${category}`)}</h2>
         <span className="count">{commandsCount}</span>
       </div>
-      <div className="commands" ref={commandsRef}>
-        {CommandsFromCategory[category].map((command) => (
+      <div className="commands">
+        {commands.map((command) => (
           <EventCommand key={command} title={t(`event_command_${command}`)} />
         ))}
       </div>
