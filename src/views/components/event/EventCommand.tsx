@@ -2,6 +2,7 @@ import React, { DragEvent } from 'react';
 import styled from 'styled-components';
 import { useEventDnD } from './EventDnDContext';
 import { useTranslation } from 'react-i18next';
+import HelperIcon from '@assets/icons/global/error2.svg';
 
 const EventCommandContainer = styled.div`
   display: flex;
@@ -31,6 +32,14 @@ const EventCommandContainer = styled.div`
     }
 
     .helper-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: ${({ theme }) => theme.colors.text400};
+
+      svg {
+        pointer-events: all;
+      }
     }
   }
 
@@ -59,8 +68,8 @@ export const EventCommand = ({ command, hasHelper }: EventCommandProps) => {
       <div className="header">
         <span className="command-icon">CI</span>
         {hasHelper && (
-          <span data-tooltip={t(`event_command_${command}_helper`)} className="helper-icon">
-            HI
+          <span className="helper-icon" data-tooltip={t(`event_command_${command}_helper`)}>
+            <HelperIcon />
           </span>
         )}
       </div>
