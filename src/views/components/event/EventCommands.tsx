@@ -54,17 +54,27 @@ const EventCommandsContainer = styled.div`
   }
 `;
 
+type EventCommandHelperType = {
+  commandType: string; // TODO: change string to better type
+  helper?: boolean;
+};
+
 type EventCommandsProps = {
   category: StudioEventCommandCategory;
   setSelectedCommandCategory: (category: StudioEventCommandCategory | undefined) => void;
   research?: string;
 };
 
-// TODO: change string[] to better type
-const CommandsFromCategory: Record<StudioEventCommandCategory, string[]> = {
-  flow_control: ['call_event', 'add_condition', 'insert_loop', 'stop_event_execution', 'add_jump_another_command'],
+const CommandsFromCategory: Record<StudioEventCommandCategory, EventCommandHelperType[]> = {
+  flow_control: [
+    { commandType: 'call_event', helper: true },
+    { commandType: 'add_condition' },
+    { commandType: 'insert_loop' },
+    { commandType: 'stop_event_execution' },
+    { commandType: 'add_jump_another_command' },
+  ],
   game_interfaces: [],
-  messages: ['show_message'],
+  messages: [{ commandType: 'show_message' }],
   player_interaction: [],
 };
 
@@ -72,7 +82,7 @@ const getCommands = (category: StudioEventCommandCategory, t: TFunction, researc
   if (!research) return CommandsFromCategory[category];
 
   return CommandsFromCategory[category]
-    .map((command) => ({ command, title: t(`event_command_${command}`) }))
+    .map((command) => ({ command, title: t(`event_command_${command.commandType}`) }))
     .filter(({ title }) => title.toLowerCase().startsWith(research))
     .map(({ command }) => command);
 };
@@ -97,8 +107,8 @@ export const EventCommands = ({ category, setSelectedCommandCategory, research }
         <span className="count">{commandsCount}</span>
       </div>
       <div className="commands">
-        {commands.map((command) => (
-          <EventCommand key={command} command={command} title={t(`event_command_${command}`)} />
+        {commands.map(({ commandType, helper }) => (
+          <EventCommand key={commandType} command={commandType} hasHelper={helper} />
         ))}
       </div>
     </EventCommandsContainer>

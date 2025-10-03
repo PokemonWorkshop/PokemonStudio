@@ -1,6 +1,7 @@
 import React, { DragEvent } from 'react';
 import styled from 'styled-components';
 import { useEventDnD } from './EventDnDContext';
+import { useTranslation } from 'react-i18next';
 
 const EventCommandContainer = styled.div`
   display: flex;
@@ -41,11 +42,12 @@ const EventCommandContainer = styled.div`
 
 type EventCommandProps = {
   command: string;
-  title: string;
+  hasHelper?: boolean;
 };
 
-export const EventCommand = ({ command, title }: EventCommandProps) => {
+export const EventCommand = ({ command, hasHelper }: EventCommandProps) => {
   const { setType } = useEventDnD();
+  const { t } = useTranslation();
 
   const onDragStart = (event: DragEvent<HTMLDivElement>, nodeType?: string) => {
     setType(nodeType);
@@ -56,9 +58,13 @@ export const EventCommand = ({ command, title }: EventCommandProps) => {
     <EventCommandContainer draggable onDragStart={(event) => onDragStart(event, command)}>
       <div className="header">
         <span className="command-icon">CI</span>
-        <span className="helper-icon">HI</span>
+        {hasHelper && (
+          <span data-tooltip={t(`event_command_${command}_helper`)} className="helper-icon">
+            HI
+          </span>
+        )}
       </div>
-      <span className="title">{title}</span>
+      <span className="title">{t(`event_command_${command}`)}</span>
     </EventCommandContainer>
   );
 };
