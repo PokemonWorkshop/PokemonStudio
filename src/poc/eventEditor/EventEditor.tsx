@@ -1,4 +1,3 @@
-import { EditorContainer } from '@components/editor/EditorContainer';
 import {
   addEdge,
   Background,
@@ -13,15 +12,16 @@ import {
 } from '@xyflow/react';
 import React, { DragEvent, DragEventHandler, useCallback, useRef } from 'react';
 import styled from 'styled-components';
-import { EventProvider, useEventDnD } from './EventDnDContext';
+
+import { EventCommandsEditor } from '@components/event/EventCommandsEditor';
+import { EventProvider, useEventDnD } from '@components/event/EventDnDContext';
+import { useTranslation } from 'react-i18next';
 
 // From example: https://reactflow.dev/examples/interaction/drag-and-drop
 
-type NodeCommandType = 'input' | 'default' | 'output';
-
 type NodeEvent = {
   id: string;
-  type: NodeCommandType;
+  type: string;
   data: { label: string };
   position: { x: number; y: number };
 };
@@ -39,61 +39,8 @@ const EventEditorContainer = styled.div`
   }
 `;
 
-const CommandsContainer = styled(EditorContainer)`
-  position: unset;
-  min-width: 308px;
-  gap: 8px;
-  ${({ theme }) => theme.fonts.normalRegular}
-  color: ${({ theme }) => theme.colors.text100};
-
-  .dndnode {
-    height: 24px;
-    padding: 4px;
-    border: 1px solid #449c50;
-    border-radius: 2px;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: grab;
-    background-color: ${({ theme }) => theme.colors.dark22};
-  }
-
-  .dndnode.input {
-    border-color: #0041d0;
-  }
-
-  .dndnode.output {
-    border-color: #ff0072;
-  }
-`;
-
 let id = 0;
 const getId = () => `dndnode_${id++}`;
-
-const CommandsEditor = () => {
-  const { setType } = useEventDnD();
-
-  const onDragStart = (event: DragEvent<HTMLDivElement>, nodeType?: NodeCommandType) => {
-    setType(nodeType);
-    event.dataTransfer.effectAllowed = 'move';
-  };
-
-  return (
-    <CommandsContainer>
-      <div className="description">You can drag these commands.</div>
-      <div className="dndnode input" onDragStart={(event) => onDragStart(event, 'input')} draggable>
-        Input Command
-      </div>
-      <div className="dndnode" onDragStart={(event) => onDragStart(event, 'default')} draggable>
-        Default Command
-      </div>
-      <div className="dndnode output" onDragStart={(event) => onDragStart(event, 'output')} draggable>
-        Output Command
-      </div>
-    </CommandsContainer>
-  );
-};
 
 const EventFlow = () => {
   const reactFlowWrapper = useRef(null);
@@ -101,6 +48,7 @@ const EventFlow = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const { screenToFlowPosition } = useReactFlow();
   const { type, setType } = useEventDnD();
+  const { t } = useTranslation();
 
   const onConnect = useCallback((params: Connection) => setEdges((eds) => addEdge(params, eds)), []);
 
@@ -124,9 +72,9 @@ const EventFlow = () => {
       });
       const newNode = {
         id: getId(),
-        type: type as NodeCommandType,
+        type: 'default', // TODO: use the type of the command
         position,
-        data: { label: `${type} command` },
+        data: { label: t(`event_command_${type}`) },
       };
 
       setNodes((nds) => nds.concat(newNode));
@@ -134,7 +82,7 @@ const EventFlow = () => {
     [screenToFlowPosition, type]
   );
 
-  const onDragStart = (event: DragEvent<HTMLDivElement>, nodeType: NodeCommandType) => {
+  const onDragStart = (event: DragEvent<HTMLDivElement>, nodeType: string) => {
     setType(nodeType);
     event.dataTransfer.setData('text/plain', nodeType);
     event.dataTransfer.effectAllowed = 'move';
@@ -158,7 +106,7 @@ const EventFlow = () => {
           <Background />
         </ReactFlow>
       </div>
-      <CommandsEditor />
+      <EventCommandsEditor />
     </EventEditorContainer>
   );
 };

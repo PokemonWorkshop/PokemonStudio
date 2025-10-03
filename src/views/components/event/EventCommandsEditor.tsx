@@ -4,17 +4,20 @@ import { ClearInput } from '../inputs';
 import { EventCommandCategories, STUDIO_EVENT_COMMAND_CATEGORY_LIST, type StudioEventCommandCategory } from './EventCommandCategories';
 import { EventCommands } from './EventCommands';
 import { useTranslation } from 'react-i18next';
+import { EditorContainer } from '../editor/EditorContainer';
 
-const EventCommandsEditorContainer = styled.div`
-  position: absolute;
+const EventCommandsEditorContainer = styled(EditorContainer)`
+  position: unset;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  width: 240px;
+  min-width: 240px;
   height: 100%;
   background-color: rgb(23, 24, 26);
   border-left: 1px solid rgb(46, 48, 54);
-  overflow-y: auto;
+  overflow: unset;
+  padding: 0;
+  user-select: none;
 
   .head {
     display: flex;

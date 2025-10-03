@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { DragEvent } from 'react';
 import styled from 'styled-components';
+import { useEventDnD } from './EventDnDContext';
 
 const EventCommandContainer = styled.div`
   display: flex;
@@ -9,7 +10,7 @@ const EventCommandContainer = styled.div`
   gap: 8px;
   height: 100px;
   justify-content: space-between;
-  cursor: pointer;
+  cursor: grab;
 
   background: linear-gradient(180deg, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.05) 100%), rgb(37, 38, 42);
   background-blend-mode: overlay, normal;
@@ -39,12 +40,20 @@ const EventCommandContainer = styled.div`
 `;
 
 type EventCommandProps = {
+  command: string;
   title: string;
 };
 
-export const EventCommand = ({ title }: EventCommandProps) => {
+export const EventCommand = ({ command, title }: EventCommandProps) => {
+  const { setType } = useEventDnD();
+
+  const onDragStart = (event: DragEvent<HTMLDivElement>, nodeType?: string) => {
+    setType(nodeType);
+    event.dataTransfer.effectAllowed = 'move';
+  };
+
   return (
-    <EventCommandContainer>
+    <EventCommandContainer draggable onDragStart={(event) => onDragStart(event, command)}>
       <div className="header">
         <span className="command-icon">CI</span>
         <span className="helper-icon">HI</span>

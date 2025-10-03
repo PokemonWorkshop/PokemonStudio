@@ -98,7 +98,7 @@ export const EventCommands = ({ category, setSelectedCommandCategory, research }
       </div>
       <div className="commands">
         {commands.map((command) => (
-          <EventCommand key={command} title={t(`event_command_${command}`)} />
+          <EventCommand key={command} command={command} title={t(`event_command_${command}`)} />
         ))}
       </div>
     </EventCommandsContainer>
