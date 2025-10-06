@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { ClearInput } from '../inputs';
-import { EventCommandCategories, STUDIO_EVENT_COMMAND_CATEGORY_LIST, type StudioEventCommandCategory } from './EventCommandCategories';
+import { EventCommandCategories } from './EventCommandCategories';
 import { EventCommands } from './EventCommands';
 import { useTranslation } from 'react-i18next';
 import { EditorContainer } from '../editor/EditorContainer';
+import { STUDIO_EVENT_COMMAND_CATEGORY_LIST, StudioEventCommandCategory } from '@modelEntities/event';
 
 const EventCommandsEditorContainer = styled(EditorContainer)`
   position: unset;

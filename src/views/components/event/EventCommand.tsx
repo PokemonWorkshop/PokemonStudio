@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useEventDnD } from './EventDnDContext';
 import { useTranslation } from 'react-i18next';
 import HelperIcon from '@assets/icons/global/error2.svg';
+import PlusIcon from '@assets/icons/global/plus-icon.svg';
 
 const EventCommandContainer = styled.div`
   display: flex;
@@ -29,6 +30,9 @@ const EventCommandContainer = styled.div`
       display: flex;
       align-items: center;
       justify-content: center;
+      height: 24px;
+      width: 24px;
+      color: rgb(149, 89, 208);
     }
 
     .helper-icon {
@@ -49,6 +53,16 @@ const EventCommandContainer = styled.div`
   }
 `;
 
+// TODO: update icons
+const IconsFromCommand: Record<string, JSX.Element> = {
+  call_event: <PlusIcon />,
+  add_condition: <PlusIcon />,
+  insert_loop: <PlusIcon />,
+  stop_event_execution: <PlusIcon />,
+  add_jump_another_command: <PlusIcon />,
+  show_message: <PlusIcon />,
+};
+
 type EventCommandProps = {
   command: string;
   hasHelper?: boolean;
@@ -66,7 +80,7 @@ export const EventCommand = ({ command, hasHelper }: EventCommandProps) => {
   return (
     <EventCommandContainer draggable onDragStart={(event) => onDragStart(event, command)}>
       <div className="header">
-        <span className="command-icon">CI</span>
+        <span className="command-icon">{IconsFromCommand[command]}</span>
         {hasHelper && (
           <span className="helper-icon" data-tooltip={t(`event_command_${command}_helper`)}>
             <HelperIcon />
