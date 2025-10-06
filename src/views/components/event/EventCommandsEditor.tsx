@@ -63,7 +63,7 @@ export const EventCommandsEditor = () => {
       <div className="head">
         <div className="title">
           <h2>{t('instructions')}</h2>
-          <span>Icon</span>
+          {/*<span>Icon</span>*/}
         </div>
         <ClearInput
           value={research}

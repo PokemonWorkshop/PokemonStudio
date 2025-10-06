@@ -15,7 +15,7 @@ const EventCommandCategoryContainer = styled.div.attrs<EventCommandCategoryConta
   flex-direction: column;
   box-sizing: border-box;
   padding: 8px;
-  //gap: 8px;
+  gap: 8px;
   height: 100px;
   justify-content: space-between;
   align-items: center;
@@ -55,7 +55,7 @@ const EventCommandCategoryContainer = styled.div.attrs<EventCommandCategoryConta
     box-shadow: 0px 1px 1px -0.5px rgba(0, 0, 0, 0.05), 0px 3px 3px -1.5px rgba(0, 0, 0, 0.05);
 
     .icon {
-      background-color: #2571c9;
+      background-color: rgb(37, 113, 201);
     }
   }
 `;
