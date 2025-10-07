@@ -1415,7 +1415,7 @@
   "language_default": "Langue ({{prefix}})",
   "import_file": "Importer un fichier",
   "create_new_file": "Créer le nouveau fichier",
-  "search_text": "Rechercher un texte…",
+  "search_text": "Rechercher un texte ou un ID…",
   "import_texts": "Importer des textes",
   "add_a_text": "Ajouter un texte",
   "clear_all": "Tout effacer",
