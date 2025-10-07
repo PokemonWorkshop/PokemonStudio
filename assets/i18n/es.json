@@ -1419,7 +1419,7 @@
   "language_default": "Langue ({{prefix}})",
   "import_file": "Importar un archivo",
   "create_new_file": "Crear el nuevo archivo",
-  "search_text": "Buscar un texto...",
+  "search_text": "Buscar un texto o ID...",
   "import_texts": "Importar textos",
   "add_a_text": "Añadir un texto",
   "clear_all": "Eliminar todo",
