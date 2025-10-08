@@ -1,28 +1,46 @@
 import { spawn } from 'child_process';
 import path from 'path';
 import { generateGameLinuxFileContent, generateGameMacFileContent, generatePSDKBatFileContent } from '@services/generatePSDKBatFileContent';
-import { writeFileSync, existsSync, readFileSync, chmodSync } from 'fs';
+import { writeFileSync, existsSync, readFileSync, chmodSync, unlinkSync } from 'fs';
 import { getPSDKBinariesPath } from '@services/getPSDKVersion';
+import { tmpdir } from 'os';
 import log from 'electron-log';
 
-export const getSpawnArgs = (projectPath: string, ...args: string[]): [string, string[]] => {
+const hasSpecialChars = (str: string) => /[&^%]/.test(str);
+
+export const getSpawnArgs = (projectPath: string, ...args: string[]): [string, string[], string | null] => {
   if (process.platform === 'win32') {
-    return ['cmd.exe', ['/c', `"${projectPath}/psdk.bat" ${args.join(' ')}`]];
+    const batPath = path.join(projectPath, 'psdk.bat');
+    const argsStr = args.join(' ');
+
+    // If special characters are detected, use temporary file approach
+    if (hasSpecialChars(batPath)) {
+      const tempBatPath = path.join(tmpdir(), `psdk_launcher_${Date.now()}.bat`);
+
+      const tempBatContent = `@echo off
+cd /d "${projectPath}"
+call "${batPath}" ${argsStr}`;
+
+      writeFileSync(tempBatPath, tempBatContent);
+      return ['cmd.exe', ['/c', `"${tempBatPath}"`], tempBatPath];
+    } else {
+      // Normal path without special characters
+      return ['cmd.exe', ['/c', `"${batPath}" ${argsStr}`], null];
+    }
   } else if (process.platform === 'linux') {
     const linuxArgs = ['-e', `"${projectPath.replaceAll(' ', '\\ ')}/game-linux.sh ${args.join(' ')}"`];
     if (existsSync('/usr/bin/gnome-terminal')) {
-      return ['gnome-terminal', linuxArgs];
+      return ['gnome-terminal', linuxArgs, null];
     }
     if (existsSync('/usr/bin/konsole')) {
-      return ['konsole', linuxArgs];
+      return ['konsole', linuxArgs, null];
     }
     log.info('No terminal found. The PSDK console will not be displayed.');
-    return ['./game-linux.sh', args];
+    return ['./game-linux.sh', args, null];
   } else if (process.platform === 'darwin') {
-    // TODO: figure out how to display the console :v
-    return ['./game-mac.sh', args];
+    return ['./game-mac.sh', args, null];
   } else {
-    return ['./game.rb', args];
+    return ['./game.rb', args, null];
   }
 };
 
@@ -31,6 +49,7 @@ const bootLoadFilename = () => {
   if (process.platform === 'linux') return 'game-linux.sh';
   return 'psdk.bat';
 };
+
 const generateBootLoadContent = (projectPath: string) => {
   if (process.platform === 'darwin') return generateGameMacFileContent(projectPath);
   if (process.platform === 'linux') return generateGameLinuxFileContent(projectPath);
@@ -62,11 +81,37 @@ const canLaunchPSDK = () => {
   return false;
 };
 
+const cleanUpTempFile = (tempFile: string) => {
+  try {
+    if (existsSync(tempFile)) {
+      unlinkSync(tempFile);
+      log.info('Cleaned up temp launcher:', tempFile);
+    }
+  } catch (err) {
+    log.error('Failed to delete temp launcher:', err);
+  }
+};
+
 export const startPSDK = (projectPath: string) => {
   if (!canLaunchPSDK()) return;
 
   RMXP2StudioSafetyNet(projectPath);
-  const childProcess = spawn(...getSpawnArgs(projectPath), { cwd: projectPath, shell: true, detached: true, stdio: 'ignore' });
+  const [command, spawnArgs, tempFile] = getSpawnArgs(projectPath);
+
+  const childProcess = spawn(command, spawnArgs, {
+    cwd: projectPath,
+    shell: true,
+    detached: true,
+    stdio: 'ignore',
+  });
+
+  // Clean up temp file after process starts (if one was created)
+  if (tempFile) {
+    childProcess.on('spawn', () => {
+      setTimeout(() => cleanUpTempFile(tempFile), 1000);
+    });
+  }
+
   childProcess.unref();
 };
 
@@ -74,7 +119,20 @@ const startPSDKWithArgs = (projectPath: string, ...args: string[]) => {
   if (!canLaunchPSDK()) return;
 
   RMXP2StudioSafetyNet(projectPath);
-  const childProcess = spawn(...getSpawnArgs(projectPath, ...args), { cwd: projectPath, shell: true, detached: true, stdio: 'ignore' });
+  const [command, spawnArgs, tempFile] = getSpawnArgs(projectPath, ...args);
+
+  const childProcess = spawn(command, spawnArgs, {
+    cwd: projectPath,
+    shell: true,
+    detached: true,
+    stdio: 'ignore',
+  });
+  // Clean up temp file after process starts (if one was created)
+  if (tempFile) {
+    childProcess.on('spawn', () => {
+      setTimeout(() => cleanUpTempFile(tempFile), 1000);
+    });
+  }
   childProcess.unref();
 };
 
