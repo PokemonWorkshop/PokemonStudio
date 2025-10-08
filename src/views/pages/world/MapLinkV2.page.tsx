@@ -34,7 +34,11 @@ const MapLinkV2Page = () => {
             </ReactFlowProvider>
           ) : (
             <MapLinkNoMap>
-              <DeleteButtonWithIcon onClick={() => dialogsRef.current?.openDialog('deletion', true)}>{t('delete_this_maplink')}</DeleteButtonWithIcon>
+              {mapLink && (
+                <DeleteButtonWithIcon onClick={() => dialogsRef.current?.openDialog('deletion', true)}>
+                  {t('delete_this_maplink')}
+                </DeleteButtonWithIcon>
+              )}
             </MapLinkNoMap>
           )}
         </>

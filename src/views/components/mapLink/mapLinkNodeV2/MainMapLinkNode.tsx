@@ -3,11 +3,12 @@ import type { StudioMap } from '@modelEntities/map';
 import type { StudioMapLink, StudioMapLinkCardinal } from '@modelEntities/mapLink';
 import { getMapOverviewPath } from '@utils/resourcePath';
 import { useStore } from '@xyflow/react';
-import { SecondaryButtonWithPlusIcon } from '../../buttons';
+import { PrimaryButton } from '@components/buttons';
 import type { MapLinkDialogsRef } from '../editors/MapLinkEditorOverlay';
 import { getMapSizeStyle } from '@utils/MapLinkUtils';
+import PlusIcon from '@assets/icons/global/plus-icon.svg';
 import styled from 'styled-components';
-import React from 'react';
+import React, { CSSProperties } from 'react';
 
 type MainMapLinkNodeProps = {
   data: {
@@ -25,7 +26,7 @@ type MapLinkNodeContainer = {
   zoom: number;
 };
 
-const MapLinkAddMapNodeButton = styled(SecondaryButtonWithPlusIcon)`
+const MapLinkAddMapNodeButtonContainer = styled(PrimaryButton)`
   position: absolute;
   border-radius: 8px;
   width: 96px;
@@ -38,6 +39,19 @@ const MapLinkAddMapNodeButton = styled(SecondaryButtonWithPlusIcon)`
     height: 36px;
   }
 `;
+
+type MapLinkAddMapNodeButtonProps = {
+  style: CSSProperties;
+  onClick: () => void;
+};
+
+const MapLinkAddMapNodeButton = ({ style, onClick }: MapLinkAddMapNodeButtonProps) => {
+  return (
+    <MapLinkAddMapNodeButtonContainer style={style} onClick={onClick}>
+      <PlusIcon />
+    </MapLinkAddMapNodeButtonContainer>
+  );
+};
 
 const MainMapLinkNodeContainer = styled.div<MapLinkNodeContainer>`
   display: inline-block;
@@ -58,7 +72,7 @@ const MainMapLinkNodeContainer = styled.div<MapLinkNodeContainer>`
     pointer-events: none;
   }
 
-  ${MapLinkAddMapNodeButton} {
+  ${MapLinkAddMapNodeButtonContainer} {
     display: ${({ selected }) => (selected ? 'flex' : 'none')};
   }
 `;

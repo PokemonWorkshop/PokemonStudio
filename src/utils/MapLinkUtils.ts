@@ -29,9 +29,11 @@ export const getValidMaps = (zones: ProjectData['zones']) =>
     .filter((zone) => zone.isFlyAllowed && !zone.isWarpDisallowed)
     .flatMap((zone) => zone.maps);
 
-export const checkValidMaplink = (mapId: number, state: State) => {
+export const checkValidMaplink = (mapLink: StudioMapLink, state: State) => {
+  if (!mapLink) return false;
+
   const maps = Object.values(state.projectData.maps);
-  return maps.find((map) => map.id === mapId) ? true : false;
+  return !!maps.find((map) => map.id === mapLink.mapId);
 };
 
 const getMapSize = (map: StudioMap): MapSize => {

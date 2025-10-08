@@ -277,7 +277,7 @@ export const useMapLinkPage = () => {
   const { projectDataValues: mapLinks, selectedDataIdentifier: dbSymbol, state } = useProjectDataReadonly('mapLinks', 'mapLink');
   const { projectDataValues: maps } = useProjectDataReadonly('maps', 'map');
   const mapLink = mapLinks[dbSymbol];
-  const isValidMaplink = useMemo(() => checkValidMaplink(mapLink.mapId, state), [mapLink, state]);
+  const isValidMaplink = useMemo(() => checkValidMaplink(mapLink, state), [mapLink, state]);
   const hasNoMapLinkAvailable = useMemo(() => Object.keys(mapLinks).length === 0, [mapLinks]);
 
   const transformedMaps = useMemo(
