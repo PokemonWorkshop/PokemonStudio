@@ -83,7 +83,7 @@ const getCommands = (category: StudioEventCommandCategory, t: TFunction, researc
 
   return CommandsFromCategory[category]
     .map((command) => ({ command, title: t(`event_command_${command.commandType}`) }))
-    .filter(({ title }) => title.toLowerCase().startsWith(research))
+    .filter(({ title }) => title.toLowerCase().indexOf(research) !== -1)
     .map(({ command }) => command);
 };
 
