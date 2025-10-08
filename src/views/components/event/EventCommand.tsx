@@ -4,6 +4,7 @@ import { useEventDnD } from './EventDnDContext';
 import { useTranslation } from 'react-i18next';
 import HelperIcon from '@assets/icons/global/error2.svg';
 import PlusIcon from '@assets/icons/global/plus-icon.svg';
+import type { StudioEventCommand } from '@root/src/models/entities/event';
 
 const EventCommandContainer = styled.div`
   display: flex;
@@ -54,7 +55,7 @@ const EventCommandContainer = styled.div`
 `;
 
 // TODO: update icons
-const IconsFromCommand: Record<string, JSX.Element> = {
+const IconsFromCommand: Record<StudioEventCommand, JSX.Element> = {
   call_event: <PlusIcon />,
   add_condition: <PlusIcon />,
   insert_loop: <PlusIcon />,
@@ -64,7 +65,7 @@ const IconsFromCommand: Record<string, JSX.Element> = {
 };
 
 type EventCommandProps = {
-  command: string;
+  command: StudioEventCommand;
   hasHelper?: boolean;
 };
 
@@ -72,7 +73,7 @@ export const EventCommand = ({ command, hasHelper }: EventCommandProps) => {
   const { setType } = useEventDnD();
   const { t } = useTranslation();
 
-  const onDragStart = (event: DragEvent<HTMLDivElement>, nodeType?: string) => {
+  const onDragStart = (event: DragEvent<HTMLDivElement>, nodeType?: StudioEventCommand) => {
     setType(nodeType);
     event.dataTransfer.effectAllowed = 'move';
   };

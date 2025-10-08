@@ -1,6 +1,6 @@
 import BackIcon from '@assets/icons/global/back.svg';
 import { EventCommand } from './EventCommand';
-import type { StudioEventCommandCategory } from '@modelEntities/event';
+import type { StudioEventCommand, StudioEventCommandCategory } from '@modelEntities/event';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import styled from 'styled-components';
@@ -55,7 +55,7 @@ const EventCommandsContainer = styled.div`
 `;
 
 type EventCommandHelperType = {
-  commandType: string; // TODO: change string to better type
+  commandType: StudioEventCommand;
   helper?: boolean;
 };
 

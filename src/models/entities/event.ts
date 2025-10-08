@@ -119,3 +119,11 @@ export type MapEventLink = z.infer<typeof MAP_EVENT_LINK_VALIDATOR>;
 
 export const STUDIO_EVENT_COMMAND_CATEGORY_LIST = ['messages', 'player_interaction', 'flow_control', 'game_interfaces'] as const;
 export type StudioEventCommandCategory = (typeof STUDIO_EVENT_COMMAND_CATEGORY_LIST)[number];
+
+export type StudioEventCommand =
+  | 'add_condition'
+  | 'add_jump_another_command'
+  | 'call_event'
+  | 'insert_loop'
+  | 'show_message'
+  | 'stop_event_execution';

@@ -16,6 +16,7 @@ import styled from 'styled-components';
 import { EventCommandsEditor } from '@components/event/EventCommandsEditor';
 import { EventProvider, useEventDnD } from '@components/event/EventDnDContext';
 import { useTranslation } from 'react-i18next';
+import type { StudioEventCommand } from '@root/src/models/entities/event';
 
 // From example: https://reactflow.dev/examples/interaction/drag-and-drop
 
@@ -82,7 +83,7 @@ const EventFlow = () => {
     [screenToFlowPosition, type]
   );
 
-  const onDragStart = (event: DragEvent<HTMLDivElement>, nodeType: string) => {
+  const onDragStart = (event: DragEvent<HTMLDivElement>, nodeType: StudioEventCommand) => {
     setType(nodeType);
     event.dataTransfer.setData('text/plain', nodeType);
     event.dataTransfer.effectAllowed = 'move';
