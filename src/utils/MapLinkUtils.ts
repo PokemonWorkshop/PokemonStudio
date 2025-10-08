@@ -122,21 +122,14 @@ export const buildLinks = (mapLink: StudioMapLink, maps: Record<number, StudioMa
   ];
 };
 
-export const mapLinkMapOptions = (
-  defaultMapOptions: OldSelectOption[],
-  maps: ProjectData['maps'],
-  zones: ProjectData['zones']
-): SelectOption<string>[] => {
-  const validMaps = getValidMaps(zones);
-  return defaultMapOptions
-    .reduce<SelectOption<string>[]>((prev, mapOption) => {
-      const { value, label } = mapOption;
-      const id = maps[value]?.id;
-      if (id === undefined) return prev;
+export const mapLinkMapOptions = (defaultMapOptions: OldSelectOption[], maps: ProjectData['maps']): SelectOption<string>[] => {
+  return defaultMapOptions.reduce<SelectOption<string>[]>((prev, mapOption) => {
+    const { value, label } = mapOption;
+    const id = maps[value]?.id;
+    if (id === undefined) return prev;
 
-      return [...prev, { value: id.toString(), label }];
-    }, [])
-    .filter(({ value }) => validMaps.includes(Number(value)));
+    return [...prev, { value: id.toString(), label }];
+  }, []);
 };
 
 /**
