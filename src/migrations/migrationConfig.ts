@@ -164,7 +164,7 @@ export const MIGRATION_CONFIG: MigrateConfigType[] = [
   },
   {
     migration: addMissingMapLinks,
-    version: '2.6.1',
+    version: '2.7.0',
     message: 'add_missing_maplinks',
   },
 ];
