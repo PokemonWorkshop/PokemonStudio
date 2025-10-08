@@ -8,6 +8,7 @@ import { ClearButtonOnlyIcon } from '@components/buttons';
 import { useStore } from '@xyflow/react';
 import { getMapSizeStyle } from '@utils/MapLinkUtils';
 import { useTranslation } from 'react-i18next';
+import { useGetEntityNameText } from '@src/utils/ReadingProjectText';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -48,6 +49,10 @@ const MapLinkNodeContainer = styled.div<MapLinkNodeContainer>`
     color: ${({ theme }) => theme.colors.dangerBase};
   }
 
+  & .map-name {
+    display: none;
+  }
+
   &:hover {
     & .clear-button {
       position: absolute;
@@ -58,6 +63,22 @@ const MapLinkNodeContainer = styled.div<MapLinkNodeContainer>`
       width: 52px;
       scale: ${({ zoom }) => 1 / zoom};
       transform-origin: top right;
+    }
+
+    & .map-name {
+      position: absolute;
+      display: flex;
+      top: ${({ zoom }) => 4 / zoom}px;
+      left: ${({ zoom }) => 4 / zoom}px;
+      align-items: center;
+      justify-content: center;
+      padding: ${({ zoom }) => 8 / zoom}px;
+      ${({ theme }) => theme.fonts.titlesHeadline4};
+      font-size: ${({ zoom }) => 24 / zoom}px;
+      line-height: normal;
+      background-color: ${({ theme }) => theme.colors.dark20};
+      color: ${({ theme }) => theme.colors.text100};
+      border-radius: 8px;
     }
   }
 
@@ -74,6 +95,7 @@ const zoomSelector = (s: { transform: number[] }) => s.transform[2];
 
 export const MapLinkNode = ({ data: { mapLink, maps, cardinal, index, tileSize } }: MapLinkNodeProps) => {
   const updateMapLink = useUpdateMapLink(mapLink);
+  const getName = useGetEntityNameText();
   const currentZoom = useStore(zoomSelector);
   const { t } = useTranslation();
   const links = getLinksFromMapLink(mapLink, cardinal);
@@ -88,7 +110,10 @@ export const MapLinkNode = ({ data: { mapLink, maps, cardinal, index, tileSize }
   return (
     <MapLinkNodeContainer zoom={currentZoom} style={getMapSizeStyle(map, tileSize)}>
       {map ? (
-        <ResourceImage imagePathInProject={getMapOverviewPath(map.tiledFilename)} versionId={map.mtime} />
+        <>
+          <span className="map-name">{getName(map)}</span>
+          <ResourceImage imagePathInProject={getMapOverviewPath(map.tiledFilename)} versionId={map.mtime} />
+        </>
       ) : (
         <div className="map-deleted">{t('map_deleted')}</div>
       )}
