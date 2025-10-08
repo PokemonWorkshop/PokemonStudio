@@ -56,6 +56,18 @@ const EventFlow = () => {
   const onDragOver: DragEventHandler<HTMLDivElement> = useCallback((event) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';
+    const position = screenToFlowPosition({
+      x: event.clientX,
+      y: event.clientY,
+    });
+
+    const shadowNode = {
+      id: 'node-shadow',
+      type: 'default', // TODO: change type
+      position,
+      data: { label: 'shadow' },
+    };
+    setNodes((nds) => nds.filter((node) => node.id !== 'node-shadow').concat(shadowNode));
   }, []);
 
   const onDrop: DragEventHandler<HTMLDivElement> = useCallback(
@@ -78,7 +90,7 @@ const EventFlow = () => {
         data: { label: t(`event_command_${type}`) },
       };
 
-      setNodes((nds) => nds.concat(newNode));
+      setNodes((nds) => nds.filter((node) => node.id !== 'node-shadow').concat(newNode));
     },
     [screenToFlowPosition, type]
   );
