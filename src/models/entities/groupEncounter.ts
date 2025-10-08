@@ -13,6 +13,16 @@ export const IV_EV_VALIDATOR = z.object({
 });
 export type StudioIvEv = z.infer<typeof IV_EV_VALIDATOR>;
 
+export const CONTEST_STATS_VALIDATOR = z.object({
+  coolness: POSITIVE_OR_ZERO_INT.max(255),
+  beauty: POSITIVE_OR_ZERO_INT.max(255),
+  cuteness: POSITIVE_OR_ZERO_INT.max(255),
+  cleverness: POSITIVE_OR_ZERO_INT.max(255),
+  toughness: POSITIVE_OR_ZERO_INT.max(255),
+  sheen: POSITIVE_OR_ZERO_INT.max(255),
+});
+export type StudioContestStats = z.infer<typeof CONTEST_STATS_VALIDATOR>;
+
 const EXPAND_POKEMON_SETUP_VALIDATOR = z.discriminatedUnion('type', [
   z.object({ type: z.literal('givenName'), value: z.string() }),
   z.object({ type: z.literal('caughtWith'), value: DB_SYMBOL_VALIDATOR }),
@@ -20,6 +30,7 @@ const EXPAND_POKEMON_SETUP_VALIDATOR = z.discriminatedUnion('type', [
   z.object({ type: z.literal('nature'), value: z.string() }),
   z.object({ type: z.literal('ivs'), value: IV_EV_VALIDATOR }),
   z.object({ type: z.literal('evs'), value: IV_EV_VALIDATOR }),
+  z.object({ type: z.literal('contestConditions'), value: CONTEST_STATS_VALIDATOR }),
   z.object({ type: z.literal('itemHeld'), value: DB_SYMBOL_VALIDATOR }),
   z.object({ type: z.literal('ability'), value: DB_SYMBOL_VALIDATOR }),
   z.object({ type: z.literal('rareness'), value: POSITIVE_OR_ZERO_INT }),
@@ -70,6 +81,8 @@ export const createExpandPokemonSetup = (type: StudioExpandPokemonSetup['type'])
     case 'evs':
     case 'ivs':
       return { type: type, value: { hp: 0, atk: 0, dfe: 0, spd: 0, ats: 0, dfs: 0 } };
+    case 'contestConditions':
+      return { type: type, value: { coolness: 0, beauty: 0, cuteness: 0, cleverness: 0, toughness: 0, sheen: 0 } };
     case 'gender':
       return { type: type, value: -1 };
     case 'itemHeld':

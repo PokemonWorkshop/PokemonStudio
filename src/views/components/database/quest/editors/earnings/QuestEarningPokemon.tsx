@@ -6,7 +6,12 @@ import { usePokemonBattler } from '@components/pokemonBattler/editors/usePokemon
 import { SelectPokemonForm } from '@components/selects/SelectPokemonForm';
 import { InputNumber } from '@components/pokemonBattler/editors/InputNumber';
 import { SelectAbility, SelectNature } from '@components/selects';
-import { PokemonBattlerMoreInfoEditor, PokemonBattlerMoveEditor, PokemonBattlerStatsEditor } from '@components/pokemonBattler/editors';
+import {
+  PokemonBattlerMoreInfoEditor,
+  PokemonBattlerMoveEditor,
+  PokemonBattlerStatsEditor,
+  PokemonBattlerContestStatsEditor,
+} from '@components/pokemonBattler/editors';
 import { StudioQuestEarning } from '@modelEntities/quest';
 import React from 'react';
 
@@ -113,6 +118,7 @@ export const QuestEarningPokemon = ({ earning, earningCreature }: QuestEarningPo
               updateExpandPokemonSetup={updateExpandPokemonSetup}
               collapseByDefault={false}
             />
+            <PokemonBattlerContestStatsEditor expandPokemonSetup={expandPokemonSetup} updateExpandPokemonSetup={updateExpandPokemonSetup} />
           </InputContainer>
         </>
       )}

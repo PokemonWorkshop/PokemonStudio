@@ -1639,6 +1639,7 @@
   "cute": "Cute",
   "clever": "Clever",
   "tough": "Tough",
+  "sheen": "Sheen",
   "appeal": "Appeal",
   "jam": "Jam",
   "contest_combo_moves": "Moves completing a Combo",
@@ -1724,5 +1725,6 @@
   "bonus_first_tooltip": "Earns an Appeal bonus of 4 when used in first.",
   "bonus_last_tooltip": "Earns an Appeal bonus of 4 when used in last.",
   "bonus_same_condition_previous_tooltip": "Earns an Appeal bonus of 4 if the move is the same condition as the previous Pokémon's.",
-  "bonus_raised_condition_tooltip": "Earns an Appeal bonus of 2 per confidence level instead of the usual 1."
+  "bonus_raised_condition_tooltip": "Earns an Appeal bonus of 2 per confidence level instead of the usual 1.",
+  "contest_conditions_title": "Contest data"
 }

@@ -1,6 +1,6 @@
 import { StudioDisplayConfig, StudioSaveConfig, StudioSettingConfig, StudioTextConfig } from '@modelEntities/config';
 import { StudioCreatureForm } from '@modelEntities/creature';
-import { StudioExpandPokemonSetup, StudioGroupEncounter, StudioIvEv } from '@modelEntities/groupEncounter';
+import { StudioContestStats, StudioExpandPokemonSetup, StudioGroupEncounter, StudioIvEv } from '@modelEntities/groupEncounter';
 import { StudioItem } from '@modelEntities/item';
 import { StudioMove } from '@modelEntities/move';
 import { StudioTrainer } from '@modelEntities/trainer';
@@ -116,9 +116,17 @@ export const removeExpandPokemonSetup = (encounter: StudioGroupEncounter, type: 
 const removeExpandPokemonSetupWithCondition = (
   encounter: StudioGroupEncounter,
   type: StudioExpandPokemonSetup['type'],
-  condition: string | number
+  condition: string | number | StudioContestStats
 ) => {
   const index = encounter.expandPokemonSetup.findIndex((eps) => eps.type === type && eps.value === condition);
+  if (index !== -1) encounter.expandPokemonSetup.splice(index, 1);
+};
+
+// If all conditions have a zero value, don't include this ExpandPokemonSetup in the JSON
+const removeEmptyContestConditionFromExpandPokemonSetup = (encounter: StudioGroupEncounter) => {
+  const index = encounter.expandPokemonSetup.findIndex(
+    (eps) => eps.type === 'contestConditions' && !Object.values(eps.value).some((condition) => condition > 0)
+  );
   if (index !== -1) encounter.expandPokemonSetup.splice(index, 1);
 };
 
@@ -156,6 +164,15 @@ export const cleanExpandPokemonSetup = (encounter: StudioGroupEncounter, species
   removeExpandPokemonSetupWithCondition(encounter, 'gender', -1);
   removeExpandPokemonSetupWithCondition(encounter, 'givenName', '');
   removeExpandPokemonSetupWithCondition(encounter, 'rareness', -1);
+  removeEmptyContestConditionFromExpandPokemonSetup(encounter);
+  removeExpandPokemonSetupWithCondition(encounter, 'contestConditions', {
+    coolness: 0,
+    beauty: 0,
+    cuteness: 0,
+    cleverness: 0,
+    toughness: 0,
+    sheen: 0,
+  } as StudioContestStats);
   const specie = species[encounter.specie];
   if (specie) {
     removeExpandPokemonSetupWithCondition(encounter, 'givenName', getEntityNameText(specie, state));
