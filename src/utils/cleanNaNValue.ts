@@ -49,13 +49,13 @@ export const cleaningSettingsNaNValues = (v: StudioSettingConfig) => {
 export const cleaningTextNaNValues = (v: StudioTextConfig) => {
   v.fonts.ttfFiles.forEach((ttfFile) => {
     ttfFile.id = cleanNaNValue(ttfFile.id);
-    ttfFile.lineHeight = cleanNaNValue(ttfFile.lineHeight);
-    ttfFile.size = cleanNaNValue(ttfFile.size);
+    ttfFile.lineHeight = cleanNaNValue(ttfFile.lineHeight, 1);
+    ttfFile.size = cleanNaNValue(ttfFile.size, 1);
   });
   v.fonts.altSizes.forEach((altSize) => {
     altSize.id = cleanNaNValue(altSize.id);
-    altSize.lineHeight = cleanNaNValue(altSize.lineHeight);
-    altSize.size = cleanNaNValue(altSize.size);
+    altSize.lineHeight = cleanNaNValue(altSize.lineHeight, 1);
+    altSize.size = cleanNaNValue(altSize.size, 1);
   });
   Object.values(v.messages).forEach((message) => {
     message.lineCount = cleanNaNValue(message.lineCount);
