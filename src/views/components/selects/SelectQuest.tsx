@@ -20,7 +20,7 @@ export const SelectQuest = ({ dbSymbol, onChange, noLabel, undefValueOption, fil
     return questOptions;
   }, [questOptions, undefValueOption]);
 
-  const optionals = { deletedOption: t('quest_deleted'), filter };
+  const optionals = { deletedOption: t('quest_deleted'), noOptionLabel: t('no_quest_found'), filter };
 
   if (noLabel) return <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />;
 

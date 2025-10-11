@@ -51,7 +51,7 @@ export const SelectMaplink = ({ mapId, onChange, label, noneValue, noneValueIsEr
       onChange={onChange}
       value={getValue(options, mapId, t)}
       error={!allMaps.find((map) => map.id.toString() === mapId) && (noneValueIsError ? true : mapId !== '__undef__')}
-      noOptionsText={t('no_option')}
+      noOptionsText={t('no_map_found')}
       label={label}
     />
   ) : (
@@ -60,7 +60,7 @@ export const SelectMaplink = ({ mapId, onChange, label, noneValue, noneValueIsEr
       onChange={onChange}
       value={getValue(options, mapId, t)}
       error={!allMaps.find((map) => map.id.toString() === mapId) && (noneValueIsError ? true : mapId !== '__undef__')}
-      noOptionsText={t('no_option')}
+      noOptionsText={t('no_map_found')}
     />
   );
 };
