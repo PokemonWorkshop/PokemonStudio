@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 export const MapListContainer = styled.div`
   height: calc(100vh - 291px);
+  max-width: 320px;
 
   display: flex;
   flex-direction: column;
