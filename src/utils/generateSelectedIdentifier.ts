@@ -75,6 +75,17 @@ const getMapLinkIdentifier = (selectedFromStorage: SelectedDataIdentifier, preSt
   );
 };
 
+const getMapLinkIdentifierV2 = (selectedFromStorage: SelectedDataIdentifier, preState: PreGlobalState) => {
+  const identifier = selectedFromStorage.mapLink;
+  const mapLinks = Object.values(preState.projectData.mapLinks);
+
+  if (identifier === undefined) return mapLinks[0]?.dbSymbol || 'maplink_0';
+
+  if (isNaN(Number(identifier))) return identifier;
+
+  return mapLinks.find(({ mapId }) => mapId.toString() === identifier)?.dbSymbol || 'maplink_0';
+};
+
 const getTextInfoIdentifier = (selectedFromStorage: SelectedDataIdentifier, textInfos: PreGlobalState['textInfos']) => {
   const expectedTextInfosFileId = Number(selectedFromStorage.textInfo);
 
@@ -89,6 +100,7 @@ export const generateSelectedIdentifier = (preState: PreGlobalState): SelectedDa
   const validMaps = Object.values(projectData.zones)
     .filter((zone) => zone.isFlyAllowed && !zone.isWarpDisallowed)
     .flatMap((zone) => zone.maps);
+  const isRMXPMode = !preState.projectStudio.isTiledMode;
   return {
     pokemon: getSelectedIdentifier(preState, selectedFromStorage, 'pokemon', 'pokemon') || {
       specie: firstById(projectData.pokemon),
@@ -103,7 +115,7 @@ export const generateSelectedIdentifier = (preState: PreGlobalState): SelectedDa
     ability: getSelectedIdentifier(preState, selectedFromStorage, 'ability', 'abilities') || firstByNameUsingTextId(projectData.abilities, preState),
     group: getSelectedIdentifier(preState, selectedFromStorage, 'group', 'groups') || firstById(projectData.groups),
     dex: getSelectedIdentifier(preState, selectedFromStorage, 'dex', 'dex') || firstById(projectData.dex),
-    mapLink: getMapLinkIdentifier(selectedFromStorage, preState, validMaps),
+    mapLink: isRMXPMode ? getMapLinkIdentifier(selectedFromStorage, preState, validMaps) : getMapLinkIdentifierV2(selectedFromStorage, preState),
     textInfo: getTextInfoIdentifier(selectedFromStorage, preState.textInfos),
     map: getSelectedIdentifier(preState, selectedFromStorage, 'map', 'maps') || firstById(projectData.maps),
     nature: getSelectedIdentifier(preState, selectedFromStorage, 'nature', 'natures') || firstByName(projectData.natures, preState),

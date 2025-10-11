@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { NavigationDatabaseStyle } from '@components/database/navigation/NavigationDatabase/NavigationDatabaseStyle';
 import { NavigationDatabaseItem } from '@components/database/navigation/NavigationDatabaseItem';
 import { MapMenu } from './map';
+import { useProjectStudio } from '@root/src/hooks/useProjectStudio';
 import { useLocation } from 'react-router-dom/dist';
 import { EventMenu } from './event/EventMenu';
 
@@ -32,15 +33,16 @@ const WorldBuildingNavigationStyle = styled(NavigationDatabaseStyle)`
   gap: 16px;
 `;
 
-const routeLinks = {
-  events: '/world/events',
-  map: '/world/map',
-  maplink: '/world/maplink',
-};
-
 export const WorldNavigation = () => {
+  const { projectStudioValues } = useProjectStudio();
   const { t } = useTranslation();
   const location = useLocation();
+
+  const routeLinks = {
+    events: '/world/events',
+    map: '/world/map',
+    maplink: `/world/maplink${projectStudioValues.isTiledMode ? '2' : ''}`,
+  };
 
   const getMenuComponent = (pathname: string) => {
     switch (pathname) {

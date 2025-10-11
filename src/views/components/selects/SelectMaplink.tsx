@@ -1,12 +1,16 @@
 import React, { useMemo } from 'react';
-import { SelectOption, SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { SelectChangeEvent } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { SelectCustom, SelectCustomWithLabel } from '@components/SelectCustom';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
+import { useProjectMapLinks, useProjectMaps, useProjectZones } from '@src/hooks/useProjectData';
+import { SelectOption } from '@ds/Select/types';
+import { SelectContainerWithLabel } from './SelectContainerWithLabel';
+import { StudioDropDown } from '@components/StudioDropDown';
 
-const getValue = (options: SelectOption[], id: string, t: TFunction) => {
+const getValue = (options: SelectOption<string>[], id: string, t: TFunction) => {
   const option = options.find(({ value }) => value === id);
   return option || { value: '__undef__', label: t('map_deleted') };
 };
@@ -62,5 +66,51 @@ export const SelectMaplink = ({ mapId, onChange, label, noneValue, noneValueIsEr
       error={!allMaps.find((map) => map.id.toString() === mapId) && (noneValueIsError ? true : mapId !== '__undef__')}
       noOptionsText={t('no_option')}
     />
+  );
+};
+
+type SelectMapLink2Props = {
+  dbSymbol: string;
+  onChange: (dbSymbol: string) => void;
+  undefValueOption?: string;
+  noLabel?: boolean;
+};
+
+export const SelectMapLink2 = ({ dbSymbol, onChange, noLabel, undefValueOption }: SelectMapLink2Props) => {
+  const { projectDataValues: mapLinks } = useProjectMapLinks();
+  const { projectDataValues: maps } = useProjectMaps();
+  const { projectDataValues: zones } = useProjectZones();
+  const allMapLinks = useMemo(() => Object.values(mapLinks), [mapLinks]);
+  const allMaps = useMemo(() => Object.values(maps), [maps]);
+  const getMapName = useGetEntityNameText();
+  const { t } = useTranslation();
+
+  const getMapFromMapId = (mapId: number) => allMaps.find(({ id }) => id === mapId);
+
+  const mapLinkOptions = useMemo(() => {
+    return allMapLinks
+      .map(({ dbSymbol, mapId, id }) => {
+        const map = getMapFromMapId(mapId);
+        const mapName = map ? getMapName(map) : t('map_deleted');
+        return { value: dbSymbol, label: mapName, id };
+      })
+      .sort((a, b) => a.id - b.id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allMapLinks, zones]);
+
+  const options = useMemo(() => {
+    if (undefValueOption) return [{ value: '__undef__', label: undefValueOption }, ...mapLinkOptions];
+    return mapLinkOptions;
+  }, [mapLinkOptions, undefValueOption]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const optionals = useMemo(() => ({ deletedOption: t('maplink_deleted') }), []);
+
+  if (noLabel) return <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />;
+
+  return (
+    <SelectContainerWithLabel>
+      <span>{t('maplinks')}</span>
+      <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />
+    </SelectContainerWithLabel>
   );
 };
