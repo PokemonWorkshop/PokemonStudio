@@ -33,16 +33,16 @@ const WorldBuildingNavigationStyle = styled(NavigationDatabaseStyle)`
   gap: 16px;
 `;
 
-const routeLinks = {
-  events: '/world/events',
-  map: '/world/map',
-  maplink: '/world/maplink',
-};
-
 export const WorldNavigation = () => {
   const { projectStudioValues } = useProjectStudio();
   const { t } = useTranslation();
   const location = useLocation();
+
+  const routeLinks = {
+    events: '/world/events',
+    map: '/world/map',
+    maplink: `/world/maplink${projectStudioValues.isTiledMode ? '2' : ''}`,
+  };
 
   const getMenuComponent = (pathname: string) => {
     switch (pathname) {
@@ -59,10 +59,6 @@ export const WorldNavigation = () => {
   return (
     <WorldNavigationStyle>
       <WorldBuildingNavigationStyle>
-        <NavigationDatabaseGroup title={t('world_building')}>
-          <NavigationDatabaseItem path={`/world/maplink${projectStudioValues.isTiledMode ? '2' : ''}`} label={t('maplinks')} />
-          {/*<NavigationDatabaseItem path="/world/region" label={t('regions')} />*/}
-        </NavigationDatabaseGroup>
         <WorlMapsEventDiv $showBorder={location.pathname === routeLinks.map || location.pathname === routeLinks.maplink}>
           <NavigationDatabaseItem path={routeLinks.map} label={t('maps')} />
           <NavigationDatabaseItem path={routeLinks.events} label={t('events')} />
