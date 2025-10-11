@@ -7,7 +7,7 @@ import { PrimaryButton, SecondaryButton } from '@components/buttons';
 import { MapImportDialogsRef } from './editors/MapImport/MapImportOverlay';
 import styled from 'styled-components';
 
-const MapEmptyStateContainer = styled.div`
+export const MapEmptyStateContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;

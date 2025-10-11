@@ -56,6 +56,8 @@
   "heal": "Curación",
   "repel": "Repelente",
   "event": "Evento",
+  "events": "Events",
+  "no_event_found": "No event found",
   "spicy": "Picante",
   "dry": "Seco",
   "sweet": "Dulce",
@@ -123,6 +125,7 @@
   "types": "Tipos",
   "zones": "Zonas",
   "new_ability": "Nueva habilidad",
+  "new_event": "New event",
   "new_bestiary": "Nueva Pokédex",
   "new_group": "Nuevo grupo",
   "new_item": "Nuevo objeto",
@@ -609,6 +612,7 @@
   "checking_maps_message": "Modified maps have been detected.",
   "error_no_project_load": "Impossible to check if the maps have been modified if the project has not been loaded.",
   "map_research": "Find a map…",
+  "event_research": "Find an event…",
   "new_folder": "New folder",
   "duplicate": "Duplicate",
   "open_with_tiled": "Open with Tiled",
@@ -1415,7 +1419,7 @@
   "language_default": "Langue ({{prefix}})",
   "import_file": "Importar un archivo",
   "create_new_file": "Crear el nuevo archivo",
-  "search_text": "Buscar un texto...",
+  "search_text": "Buscar un texto o ID...",
   "import_texts": "Importar textos",
   "add_a_text": "Añadir un texto",
   "clear_all": "Eliminar todo",
@@ -1730,5 +1734,8 @@
   "add_the_map": "Add the map",
   "deletion_of_maplink": "Deletion of the map link {{mapLink}}",
   "deletion_message_maplink": "You are about to permanently delete the map link « {{mapLink}} ».",
-  "add_missing_maplinks": "Add the missing map links"
+  "add_missing_maplinks": "Add the missing map links",
+  "event_empty_state_title": "Event creation is coming with version 3 of Pokémon Studio!",
+  "event_empty_state_description_1": "You don't have events in Pokémon Studio yet. Version 3 will allow you to manage your events directly from the application, without having to use RPG Maker XP anymore, which will no longer be supported.",
+  "event_empty_state_description_2": "For more information, you can check the dedicated FAQ in the #❓・studio-v3-faq channel on the Pokémon Workshop Discord server."
 }

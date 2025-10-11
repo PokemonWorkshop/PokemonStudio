@@ -56,6 +56,8 @@
   "heal": "Soin",
   "repel": "Répulsif",
   "event": "Événement",
+  "events": "Événements",
+  "no_event_found": "Aucun événement",
   "spicy": "Épicé",
   "dry": "Sec",
   "sweet": "Sucré",
@@ -126,6 +128,7 @@
   "new_bestiary": "Nouveau Pokédex",
   "new_group": "Nouveau groupe",
   "new_item": "Nouvel objet",
+  "new_event": "Nouvel événement",
   "new_map": "Nouvelle carte",
   "new_move": "Nouvelle attaque",
   "new_nature": "Nouvelle nature",
@@ -609,6 +612,7 @@
   "checking_maps_message": "Des cartes modifiées ont été détectées.",
   "error_no_project_load": "Impossible de vérifier si les cartes ont été modifiées si le projet n'a pas été chargé.",
   "map_research": "Rechercher une carte…",
+  "event_research": "Rechercher un événement…",
   "new_folder": "Nouveau dossier",
   "duplicate": "Dupliquer",
   "open_with_tiled": "Ouvrir avec Tiled",
@@ -1415,7 +1419,7 @@
   "language_default": "Langue ({{prefix}})",
   "import_file": "Importer un fichier",
   "create_new_file": "Créer le nouveau fichier",
-  "search_text": "Rechercher un texte…",
+  "search_text": "Rechercher un texte ou un ID…",
   "import_texts": "Importer des textes",
   "add_a_text": "Ajouter un texte",
   "clear_all": "Tout effacer",
@@ -1730,5 +1734,8 @@
   "add_the_map": "Ajouter la carte",
   "deletion_of_maplink": "Suppression de la liaison de cartes {{mapLink}}",
   "deletion_message_maplink": "Vous êtes sur le point de supprimer définitivement la liaison de cartes « {{mapLink}} ».",
-  "add_missing_maplinks": "Ajout des liaisons de cartes manquantes"
+  "add_missing_maplinks": "Ajout des liaisons de cartes manquantes",
+  "event_empty_state_title": "La création des événements arrive avec la version 3 de Pokémon Studio !",
+  "event_empty_state_description_1": "Vous n'avez pas d'événement pour le moment sur Pokémon Studio. La version 3 vous permettra de gérer vos événements directement depuis l'application et non plus depuis RPG Maker XP, qui ne sera plus utilisable.",
+  "event_empty_state_description_2": "Pour plus d'informations, vous pouvez consulter la FAQ dédiée dans le salon #❓・studio-v3-faq sur le serveur Discord de Pokémon Workshop."
 }
