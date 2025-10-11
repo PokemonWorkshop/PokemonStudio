@@ -1728,5 +1728,8 @@
   "bonus_first_tooltip": "Gagne un bonus de 4 de Charme si utilisée en premier.",
   "bonus_last_tooltip": "Gagne un bonus de 4 de Charme si utilisée en dernier.",
   "bonus_same_condition_previous_tooltip": "Gagne un bonus de 4 de Charme si l'attaque est de la même condition que celle du Pokémon précédent.",
-  "bonus_raised_condition_tooltip": "Gagne un bonus de 2 de Charme par niveau de confiance au lieu de 1."
+  "bonus_raised_condition_tooltip": "Gagne un bonus de 2 de Charme par niveau de confiance au lieu de 1.",
+  "event_empty_state_title": "La création des événements arrive avec la version 3 de Pokémon Studio !",
+  "event_empty_state_description_1": "Vous n'avez pas d'événement pour le moment sur Pokémon Studio. La version 3 vous permettra de gérer vos événements directement depuis l'application et non plus depuis RPG Maker XP, qui ne sera plus utilisable.",
+  "event_empty_state_description_2": "Pour plus d'informations, vous pouvez consulter la FAQ dédiée dans le salon #❓・studio-v3-faq sur le serveur Discord de Pokémon Workshop."
 }

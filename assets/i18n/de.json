@@ -1728,5 +1728,8 @@
   "bonus_first_tooltip": "Earns an Appeal bonus of 4 when used in first.",
   "bonus_last_tooltip": "Earns an Appeal bonus of 4 when used in last.",
   "bonus_same_condition_previous_tooltip": "Earns an Appeal bonus of 4 if the move is the same condition as the previous Pokémon's.",
-  "bonus_raised_condition_tooltip": "Earns an Appeal bonus of 2 per confidence level instead of the usual 1."
+  "bonus_raised_condition_tooltip": "Earns an Appeal bonus of 2 per confidence level instead of the usual 1.",
+  "event_empty_state_title": "Event creation is coming with version 3 of Pokémon Studio!",
+  "event_empty_state_description_1": "You don't have events in Pokémon Studio yet. Version 3 will allow you to manage your events directly from the application, without having to use RPG Maker XP anymore, which will no longer be supported.",
+  "event_empty_state_description_2": "For more information, you can check the dedicated FAQ in the #❓・studio-v3-faq channel on the Pokémon Workshop Discord server."
 }
