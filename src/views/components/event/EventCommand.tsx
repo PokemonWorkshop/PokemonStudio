@@ -43,7 +43,7 @@ const EventCommandContainer = styled.div`
       color: ${({ theme }) => theme.colors.text400};
 
       svg {
-        pointer-events: all;
+        pointer-events: none;
       }
     }
   }
