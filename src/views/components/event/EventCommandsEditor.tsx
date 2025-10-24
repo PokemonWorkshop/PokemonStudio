@@ -45,6 +45,30 @@ const EventCommandsEditorContainer = styled(EditorContainer)`
     grid-template-columns: 1fr 1fr;
     grid-gap: 8px;
     padding: 8px 12px 8px 12px;
+    overflow-y: auto;
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      margin-bottom: 3px;
+      margin-top: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: ${({ theme }) => theme.colors.dark12};
+      opacity: 0.8;
+      box-sizing: border-box;
+      border: 1px solid ${({ theme }) => theme.colors.text500};
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: ${({ theme }) => theme.colors.dark15};
+      border-color: ${({ theme }) => theme.colors.text400};
+    }
   }
 `;
 

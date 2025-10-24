@@ -60,6 +60,10 @@ const EventCommandsContainer = styled.div.attrs((props) => ({ 'data-color': prop
       ${({ theme }) => theme.fonts.normalMedium}
     }
   }
+
+  .commands {
+    max-height: ${({ theme }) => `calc(${theme.calc.height} - 170px)`};
+  }
 `;
 
 type EventCommandsProps = {
