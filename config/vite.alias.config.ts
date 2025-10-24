@@ -1,7 +1,6 @@
 import { resolve } from 'path';
 
 export const alias = {
-  '@root': resolve(__dirname, '../'),
   '@components': resolve(__dirname, '../src/views/components'),
   '@ds': resolve(__dirname, '../src/designSystem'),
   '@pages': resolve(__dirname, '../src/views/pages'),
@@ -12,4 +11,5 @@ export const alias = {
   '@src': resolve(__dirname, '../src'),
   '@hooks': resolve(__dirname, '../src/hooks'),
   '@poc': resolve(__dirname, '../src/poc'),
+  '@root': resolve(__dirname, '../'),
 };
