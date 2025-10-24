@@ -128,12 +128,12 @@ export type StudioEventCommand =
   | 'show_message'
   | 'stop_event_execution';
 
-export type EventCommandHelperType = {
+export type EventCommandHelper = {
   commandType: StudioEventCommand;
   helper?: boolean;
 };
 
-export const COMMANDS_FROM_CATEGORY: Record<StudioEventCommandCategory, EventCommandHelperType[]> = {
+export const COMMANDS_FROM_CATEGORY: Record<StudioEventCommandCategory, EventCommandHelper[]> = {
   flow_control: [
     { commandType: 'call_event', helper: true },
     { commandType: 'add_condition' },
