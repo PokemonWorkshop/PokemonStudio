@@ -22,7 +22,7 @@ export const SelectMove = ({ dbSymbol, onChange, noLabel, undefValueOption }: Se
     return moveOptions;
   }, [moveOptions, undefValueOption]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const optionals = useMemo(() => ({ deletedOption: t('move_deleted') }), []);
+  const optionals = useMemo(() => ({ deletedOption: t('move_deleted'), noOptionLabel: t('no_move_found') }), []);
 
   if (noLabel) return <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />;
 

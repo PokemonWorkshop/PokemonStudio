@@ -20,7 +20,7 @@ export const SelectZone = ({ dbSymbol, onChange, noLabel, undefValueOption, filt
     return zoneOptions;
   }, [zoneOptions, undefValueOption]);
 
-  const optionals = { deletedOption: t('zone_deleted'), filter };
+  const optionals = { deletedOption: t('zone_deleted'), noOptionLabel: t('no_zone_found'), filter };
 
   if (noLabel) return <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />;
 

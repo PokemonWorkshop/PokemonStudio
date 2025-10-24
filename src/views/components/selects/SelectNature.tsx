@@ -81,14 +81,15 @@ export const SelectNature = ({ dbSymbol, onChange, noneValue, overwriteNoneValue
   const [state] = useGlobalState();
   const options = useMemo(() => {
     const natureOptions = getNatureOptions(state, t, hideStats || false);
-    return noneValue ? [{ value: '__undef__', label: overwriteNoneValue || t('no_option') }, ...natureOptions] : natureOptions;
+    return noneValue ? [{ value: '__undef__', label: overwriteNoneValue || t('no_nature_found') }, ...natureOptions] : natureOptions;
   }, [state, noneValue, overwriteNoneValue, hideStats, t]);
 
   return (
     <SelectCustom
       options={options}
       onChange={onChange}
-      value={options.find(({ value }) => value === dbSymbol) || { value: '__undef__', label: overwriteNoneValue || t('no_option') }}
+      value={options.find(({ value }) => value === dbSymbol) || { value: '__undef__', label: overwriteNoneValue || t('no_nature_found') }}
+      noOptionsText={t('no_nature_found')}
     />
   );
 };
