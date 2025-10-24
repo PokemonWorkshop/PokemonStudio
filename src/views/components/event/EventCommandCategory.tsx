@@ -1,16 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-import { StudioEventCommandCategory } from '@modelEntities/event';
+import type { StudioEventCommandCategory } from '@modelEntities/event';
 import PlusIcon from '@assets/icons/global/plus-icon.svg';
 import { useTranslation } from 'react-i18next';
 
-type EventCommandCategoryContainerProps = {
-  color: string;
-};
-
-const EventCommandCategoryContainer = styled.div.attrs<EventCommandCategoryContainerProps>((props) => ({
-  'data-color': props.color,
-}))<EventCommandCategoryContainerProps>`
+const EventCommandCategoryContainer = styled.div.attrs((props) => ({ 'data-color': props.color }))`
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -61,7 +55,7 @@ const EventCommandCategoryContainer = styled.div.attrs<EventCommandCategoryConta
 `;
 
 // TODO: Update icons and colors
-const IconsFromCategory: Record<StudioEventCommandCategory, { icon: JSX.Element; color: string }> = {
+export const IconsFromCategory: Record<StudioEventCommandCategory, { icon: JSX.Element; color: string }> = {
   flow_control: { icon: <PlusIcon />, color: 'violet' },
   game_interfaces: { icon: <PlusIcon />, color: 'violet' },
   messages: { icon: <PlusIcon />, color: 'violet' },

@@ -1,12 +1,13 @@
 import BackIcon from '@assets/icons/global/back.svg';
 import { EventCommand } from './EventCommand';
-import type { StudioEventCommand, StudioEventCommandCategory } from '@modelEntities/event';
+import { COMMANDS_FROM_CATEGORY, StudioEventCommandCategory } from '@modelEntities/event';
+import { IconsFromCategory } from './EventCommandCategory';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import styled from 'styled-components';
 import React, { useMemo } from 'react';
 
-const EventCommandsContainer = styled.div`
+const EventCommandsContainer = styled.div.attrs((props) => ({ 'data-color': props.color }))`
   .category-header {
     display: flex;
     flex-direction: row;
@@ -14,8 +15,15 @@ const EventCommandsContainer = styled.div`
     padding: 16px 12px;
     gap: 4px;
     box-sizing: border-box;
-    background: linear-gradient(180deg, rgb(39, 27, 53) 0%, rgba(39, 27, 53, 0) 50%);
     align-items: center;
+
+    &[data-color='violet'] {
+      background: linear-gradient(180deg, rgb(39, 27, 53) 0%, rgba(39, 27, 53, 0) 50%);
+    }
+
+    &[data-color='blue'] {
+      background: linear-gradient(180deg, rgb(9, 36, 56) 0%, rgba(9, 36, 56, 0) 50%);
+    }
 
     .back-icon {
       display: flex;
@@ -54,34 +62,16 @@ const EventCommandsContainer = styled.div`
   }
 `;
 
-type EventCommandHelperType = {
-  commandType: StudioEventCommand;
-  helper?: boolean;
-};
-
 type EventCommandsProps = {
   category: StudioEventCommandCategory;
   setSelectedCommandCategory: (category: StudioEventCommandCategory | undefined) => void;
   research?: string;
 };
 
-const CommandsFromCategory: Record<StudioEventCommandCategory, EventCommandHelperType[]> = {
-  flow_control: [
-    { commandType: 'call_event', helper: true },
-    { commandType: 'add_condition' },
-    { commandType: 'insert_loop' },
-    { commandType: 'stop_event_execution' },
-    { commandType: 'add_jump_another_command' },
-  ],
-  game_interfaces: [],
-  messages: [{ commandType: 'show_message' }],
-  player_interaction: [],
-};
-
 const getCommands = (category: StudioEventCommandCategory, t: TFunction, research?: string) => {
-  if (!research) return CommandsFromCategory[category];
+  if (!research) return COMMANDS_FROM_CATEGORY[category];
 
-  return CommandsFromCategory[category]
+  return COMMANDS_FROM_CATEGORY[category]
     .map((command) => ({ command, title: t(`event_command_${command.commandType}`) }))
     .filter(({ title }) => title.toLowerCase().indexOf(research) !== -1)
     .map(({ command }) => command);
@@ -97,7 +87,7 @@ export const EventCommands = ({ category, setSelectedCommandCategory, research }
     <></>
   ) : (
     <EventCommandsContainer>
-      <div className="category-header">
+      <div className="category-header" data-color={IconsFromCategory[category].color}>
         {!research && (
           <span className="back-icon" onClick={() => setSelectedCommandCategory(undefined)}>
             <BackIcon />
