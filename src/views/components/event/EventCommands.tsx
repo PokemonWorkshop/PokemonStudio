@@ -1,6 +1,7 @@
 import BackIcon from '@assets/icons/global/back.svg';
 import { EventCommand } from './EventCommand';
-import { COMMANDS_FROM_CATEGORY, StudioEventCommandCategory } from '@modelEntities/event';
+import { StudioEventCommandCategory } from '@modelEntities/event/category';
+import { COMMANDS_FROM_CATEGORY } from '@modelEntities/event/command';
 import { IconsFromCategory } from './EventCommandCategory';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';

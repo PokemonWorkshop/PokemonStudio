@@ -4,7 +4,7 @@ import { useEventDnD } from './EventDnDContext';
 import { useTranslation } from 'react-i18next';
 import HelperIcon from '@assets/icons/global/error2.svg';
 import PlusIcon from '@assets/icons/global/plus-icon.svg';
-import type { StudioEventCommand } from '@root/src/models/entities/event';
+import type { StudioEventCommand } from '@root/src/models/entities/event/command';
 
 const EventCommandContainer = styled.div`
   display: flex;

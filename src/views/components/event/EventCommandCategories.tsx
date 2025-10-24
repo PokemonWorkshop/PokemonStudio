@@ -1,6 +1,6 @@
 import React from 'react';
 import { EventCommandCategory } from './EventCommandCategory';
-import { STUDIO_EVENT_COMMAND_CATEGORY_LIST, StudioEventCommandCategory } from '@modelEntities/event';
+import { STUDIO_EVENT_COMMAND_CATEGORY_LIST, StudioEventCommandCategory } from '@root/src/models/entities/event/category';
 
 type EventCommandsCategoryProps = {
   setSelectedCommandCategory: (commandCategory: StudioEventCommandCategory) => void;

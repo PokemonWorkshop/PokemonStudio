@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import type { StudioEventCommandCategory } from '@modelEntities/event';
+import type { StudioEventCommandCategory } from '@modelEntities/event/category';
 import PlusIcon from '@assets/icons/global/plus-icon.svg';
 import { useTranslation } from 'react-i18next';
 

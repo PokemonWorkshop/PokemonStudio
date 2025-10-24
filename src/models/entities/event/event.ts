@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { DB_SYMBOL_VALIDATOR } from './dbSymbol';
-import { POSITIVE_OR_ZERO_INT } from './common';
+import { DB_SYMBOL_VALIDATOR } from '../dbSymbol';
+import { POSITIVE_OR_ZERO_INT } from '../common';
 
 const COMMAND_LIST_ID_VALIDATOR = z.string().brand('CommandListId');
 export type CommandListId = z.infer<typeof COMMAND_LIST_ID_VALIDATOR>;
@@ -116,32 +116,3 @@ export const MAP_EVENT_LINK_VALIDATOR = z.object({
   position: COORDINATE_VALIDATOR,
 });
 export type MapEventLink = z.infer<typeof MAP_EVENT_LINK_VALIDATOR>;
-
-export const STUDIO_EVENT_COMMAND_CATEGORY_LIST = ['messages', 'player_interaction', 'flow_control', 'game_interfaces'] as const;
-export type StudioEventCommandCategory = (typeof STUDIO_EVENT_COMMAND_CATEGORY_LIST)[number];
-
-export type StudioEventCommand =
-  | 'add_condition'
-  | 'add_jump_another_command'
-  | 'call_event'
-  | 'insert_loop'
-  | 'show_message'
-  | 'stop_event_execution';
-
-export type EventCommandHelper = {
-  commandType: StudioEventCommand;
-  helper?: boolean;
-};
-
-export const COMMANDS_FROM_CATEGORY: Record<StudioEventCommandCategory, EventCommandHelper[]> = {
-  flow_control: [
-    { commandType: 'call_event', helper: true },
-    { commandType: 'add_condition' },
-    { commandType: 'insert_loop' },
-    { commandType: 'stop_event_execution' },
-    { commandType: 'add_jump_another_command' },
-  ],
-  game_interfaces: [],
-  messages: [{ commandType: 'show_message' }],
-  player_interaction: [],
-};

@@ -16,7 +16,7 @@ import styled from 'styled-components';
 import { EventCommandsEditor } from '@components/event/EventCommandsEditor';
 import { EventProvider, useEventDnD } from '@components/event/EventDnDContext';
 import { useTranslation } from 'react-i18next';
-import type { StudioEventCommand } from '@root/src/models/entities/event';
+import { StudioEventCommand } from '@modelEntities/event/command';
 
 // From example: https://reactflow.dev/examples/interaction/drag-and-drop
 

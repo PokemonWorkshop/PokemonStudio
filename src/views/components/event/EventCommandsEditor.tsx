@@ -5,7 +5,7 @@ import { EventCommandCategories } from './EventCommandCategories';
 import { EventCommands } from './EventCommands';
 import { useTranslation } from 'react-i18next';
 import { EditorContainer } from '../editor/EditorContainer';
-import { STUDIO_EVENT_COMMAND_CATEGORY_LIST, StudioEventCommandCategory } from '@modelEntities/event';
+import { STUDIO_EVENT_COMMAND_CATEGORY_LIST, StudioEventCommandCategory } from '@root/src/models/entities/event/category';
 
 const EventCommandsEditorContainer = styled(EditorContainer)`
   position: unset;

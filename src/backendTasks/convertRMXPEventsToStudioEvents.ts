@@ -1,7 +1,7 @@
 import { StudioMap } from '@modelEntities/map';
 import { readRMXPEvents, RMXPEvent } from './readRMXPEvents';
 import { DbSymbol } from '@modelEntities/dbSymbol';
-import type { Appearance, CommandListId, CustomEvent, EventAppearance, EventTrigger, LinkParameter, MapEventLink } from '@modelEntities/event';
+import type { Appearance, CommandListId, CustomEvent, EventAppearance, EventTrigger, LinkParameter, MapEventLink } from '@modelEntities/event/event';
 import log from 'electron-log';
 import { findFirstAvailableId } from '@utils/ModelUtils';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';

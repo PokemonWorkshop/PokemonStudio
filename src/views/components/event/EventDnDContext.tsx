@@ -1,4 +1,4 @@
-import type { StudioEventCommand } from '@root/src/models/entities/event';
+import type { StudioEventCommand } from '@root/src/models/entities/event/command';
 import React, { createContext, ReactNode, useContext, useState } from 'react';
 
 type EventDnD = {
