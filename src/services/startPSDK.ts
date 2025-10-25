@@ -9,14 +9,16 @@ export const getSpawnArgs = (projectPath: string, ...args: string[]): [string, s
   if (process.platform === 'win32') {
     return ['cmd.exe', ['/c', 'psdk.bat', ...args]];
   } else if (process.platform === 'linux') {
-    const linuxArgs = ['-e', `./game-linux.sh ${args.join(' ')}`];
     if (existsSync('/usr/bin/gnome-terminal')) {
-      return ['gnome-terminal', linuxArgs];
+      return ['gnome-terminal', ['--', './game-linux.sh', ...args]];
     }
     if (existsSync('/usr/bin/konsole')) {
-      return ['konsole', linuxArgs];
+      return ['konsole', ['-e', './game-linux.sh', ...args]];
     }
-    log.info('No terminal found. The PSDK console will not be displayed.');
+    if (existsSync('/usr/bin/xterm')) {
+      return ['xterm', ['-e', `bash -c "./game-linux.sh ${args.join(' ')}; exec bash"`]];
+    }
+    log.warn('No terminal found. The PSDK console will not be displayed.');
     return ['./game-linux.sh', args];
   } else if (process.platform === 'darwin') {
     return ['./game-mac.sh', args];
