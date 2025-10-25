@@ -1,5 +1,4 @@
-import React from 'react';
-import { ReactNode, useEffect } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 
 type TooltipContextProps = {
   children: ReactNode;
@@ -14,7 +13,7 @@ const isTargetElementShowingTooltip = (target: EventTarget | null): target is HT
   if ('tooltipHidden' in dataset) return false;
   if (('tooltip' in dataset && dataset.tooltip !== undefined) || ('tooltipId' in dataset && dataset.tooltipId !== undefined)) return true;
   if ('tooltipResponsive' in dataset && dataset.tooltipResponsive !== undefined) return target.innerText !== dataset.tooltipResponsive;
-  if (target.offsetWidth >= target.scrollWidth) return false;
+  if (target.offsetWidth >= target.scrollWidth && target.offsetHeight >= target.scrollHeight) return false;
 
   const styles = target.computedStyleMap();
   const overflow = styles.get('text-overflow');

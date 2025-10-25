@@ -49,8 +49,13 @@ const EventCommandContainer = styled.div`
   }
 
   .title {
+    display: -webkit-box;
     ${({ theme }) => theme.fonts.normalMedium}
     color: ${({ theme }) => theme.colors.text100};
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
   }
 `;
 
