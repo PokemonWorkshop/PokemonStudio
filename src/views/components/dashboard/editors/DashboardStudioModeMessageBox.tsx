@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useLoaderRef } from '@utils/loaderContext';
-import { PrimaryButton, SecondaryButton } from '@components/buttons';
+import { PrimaryButton } from '@components/buttons';
 import { useProjectStudio } from '@hooks/useProjectStudio';
 import { useTranslation } from 'react-i18next';
 import { useProjectLoad } from '@hooks/useProjectLoad';
-import { showNotification } from '@utils/showNotification';
 import {
   MessageBoxActionContainer,
+  MessageBoxCancelLink,
   MessageBoxContainer,
   MessageBoxIconContainer,
   MessageBoxTextContainer,
@@ -14,6 +14,7 @@ import {
 } from '@components/MessageBoxContainer';
 import theme from '@src/AppTheme';
 import { BaseIcon } from '@components/icons/BaseIcon';
+import { useProjectSave } from '@hooks/useProjectSave';
 
 type DashboardStudioModeMessageBoxState = 'select_mode' | 'save' | 'reload_project';
 
@@ -23,23 +24,26 @@ type DashboardStudioModeMessageBoxProps = {
 
 export const DashboardStudioModeMessageBox = ({ closeDialog }: DashboardStudioModeMessageBoxProps) => {
   const loaderRef = useLoaderRef();
+  const { save } = useProjectSave();
   const projectLoad = useProjectLoad();
   const [state, setState] = useState<DashboardStudioModeMessageBoxState>('select_mode');
   const [mode, setMode] = useState<'tiled' | 'rmxp' | undefined>(undefined);
-  const { projectStudioValues: projectStudio, state: globalState } = useProjectStudio();
+  const { projectStudioValues: projectStudio, setProjectStudioValues: setProjectStudio, state: globalState } = useProjectStudio();
   const { t } = useTranslation();
 
   useEffect(() => {
     switch (state) {
       case 'select_mode':
-        if (mode) return setState('save');
+        if (mode) {
+          setProjectStudio({ ...projectStudio, isTiledMode: mode === 'tiled' });
+          setState('save');
+        }
         return;
       case 'save':
-        return window.api.writeProjectMetadata(
-          { path: globalState.projectPath!, metaData: JSON.stringify({ ...projectStudio, isTiledMode: mode === 'tiled' }, null, 2) },
+        return save(
           () => setState('reload_project'),
           ({ errorMessage }) => {
-            showNotification('danger', t('saving_project_error'), errorMessage);
+            loaderRef.current.setError('saving_project_error', errorMessage);
             closeDialog();
           }
         );
@@ -73,7 +77,9 @@ export const DashboardStudioModeMessageBox = ({ closeDialog }: DashboardStudioMo
         </p>
       </MessageBoxTextContainer>
       <MessageBoxActionContainer>
-        <SecondaryButton onClick={() => setMode('rmxp')}>{t('button_use_rmxp')}</SecondaryButton>
+        <MessageBoxCancelLink onClick={() => (projectStudio.isTiledMode === null ? setMode('rmxp') : closeDialog())}>
+          {t('cancel')}
+        </MessageBoxCancelLink>
         <PrimaryButton onClick={() => setMode('tiled')}>{t('button_use_tiled')}</PrimaryButton>
       </MessageBoxActionContainer>
     </MessageBoxContainer>

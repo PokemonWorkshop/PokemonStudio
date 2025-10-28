@@ -298,7 +298,6 @@
   "title_studio_mode_message_box": "Choosing the software to create your maps",
   "message_studio_mode_message_box": "When creating your game, do you want to use Tiled or RPG Maker XP to create your maps?",
   "warning_message": "You can switch to Tiled later. Make a backup of your project before choosing any option.",
-  "button_use_rmxp": "Use RPG Maker XP",
   "button_use_tiled": "Use Tiled",
   "create_playable_version": "Create a playable version",
   "intro_image": "Splash screen",
@@ -1738,7 +1737,5 @@
   "add_missing_maplinks": "Add the missing map links",
   "event_empty_state_title": "Event creation is coming with version 3 of Pokémon Studio!",
   "event_empty_state_description_1": "You don't have events in Pokémon Studio yet. Version 3 will allow you to manage your events directly from the application, without having to use RPG Maker XP anymore, which will no longer be supported.",
-  "event_empty_state_description_2": "For more information, you can check the dedicated FAQ in the #❓・studio-v3-faq channel on the Pokémon Workshop Discord server.",
-  "end_rmxp_support_message_box": "Support for RPG Maker XP as a map creation tool will end in an upcoming update. The use of Tiled will become mandatory, and your project will be migrated. Would you like to start using Tiled now?",
-  "end_rmxp_support_warning_message": "Make a backup of your project before choosing any option."
+  "event_empty_state_description_2": "For more information, you can check the dedicated FAQ in the #❓・studio-v3-faq channel on the Pokémon Workshop Discord server."
 }
