@@ -125,10 +125,10 @@
   "types": "Types",
   "zones": "Zones",
   "new_ability": "Nouveau talent",
+  "new_event": "Nouvel événement",
   "new_bestiary": "Nouveau Pokédex",
   "new_group": "Nouveau groupe",
   "new_item": "Nouvel objet",
-  "new_event": "Nouvel événement",
   "new_map": "Nouvelle carte",
   "new_move": "Nouvelle attaque",
   "new_nature": "Nouvelle nature",
@@ -1738,5 +1738,7 @@
   "add_missing_maplinks": "Ajout des liaisons de cartes manquantes",
   "event_empty_state_title": "La création des événements arrive avec la version 3 de Pokémon Studio !",
   "event_empty_state_description_1": "Vous n'avez pas d'événement pour le moment sur Pokémon Studio. La version 3 vous permettra de gérer vos événements directement depuis l'application et non plus depuis RPG Maker XP, qui ne sera plus utilisable.",
-  "event_empty_state_description_2": "Pour plus d'informations, vous pouvez consulter la FAQ dédiée dans le salon #❓・studio-v3-faq sur le serveur Discord de Pokémon Workshop."
+  "event_empty_state_description_2": "Pour plus d'informations, vous pouvez consulter la FAQ dédiée dans le salon #❓・studio-v3-faq sur le serveur Discord de Pokémon Workshop.",
+  "end_rmxp_support_message_box": "Le support de RPG Maker XP en tant qu'outil de création de carte sera arrêté dans une prochaine mise à jour. L’utilisation de Tiled deviendra obligatoire et votre projet sera migré. Souhaitez-vous utiliser Tiled dès maintenant ?",
+  "end_rmxp_support_warning_message": "Pensez à créer un backup de votre projet avant de lancer cette action."
 }

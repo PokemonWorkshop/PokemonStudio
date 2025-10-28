@@ -1738,5 +1738,7 @@
   "add_missing_maplinks": "Add the missing map links",
   "event_empty_state_title": "Event creation is coming with version 3 of Pokémon Studio!",
   "event_empty_state_description_1": "You don't have events in Pokémon Studio yet. Version 3 will allow you to manage your events directly from the application, without having to use RPG Maker XP anymore, which will no longer be supported.",
-  "event_empty_state_description_2": "For more information, you can check the dedicated FAQ in the #❓・studio-v3-faq channel on the Pokémon Workshop Discord server."
+  "event_empty_state_description_2": "For more information, you can check the dedicated FAQ in the #❓・studio-v3-faq channel on the Pokémon Workshop Discord server.",
+  "end_rmxp_support_message_box": "Support for RPG Maker XP as a map creation tool will end in an upcoming update. The use of Tiled will become mandatory, and your project will be migrated. Would you like to start using Tiled now?",
+  "end_rmxp_support_warning_message": "Make a backup of your project before choosing any option."
 }
