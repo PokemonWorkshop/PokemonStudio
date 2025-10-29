@@ -29,12 +29,12 @@ const EventCommandCategoryContainer = styled.div.attrs((props) => ({ 'data-color
 
   .title {
     display: -webkit-box;
-    ${({ theme }) => theme.fonts.normalMedium}
+    ${({ theme }) => theme.fonts.normalSmall}
     color: ${({ theme }) => theme.colors.text100};
     text-align: center;
     overflow: hidden;
     text-overflow: ellipsis;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
   }
 
