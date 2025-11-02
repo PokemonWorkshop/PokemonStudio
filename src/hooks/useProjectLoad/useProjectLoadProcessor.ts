@@ -259,6 +259,7 @@ export const useProjectLoadProcessor = () => {
         return toAsyncProcess(() => {
           loaderRef.current.setProgress(0, 0, t('loading_project_opening'));
           binding.current.onSuccess({});
+          window.dispatchEvent(new CustomEvent('project-opened'));
           setState(DEFAULT_PROCESS_STATE);
         });
       },

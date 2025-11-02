@@ -77,7 +77,7 @@ export const DashboardStudioModeMessageBox = ({ closeDialog }: DashboardStudioMo
         </p>
       </MessageBoxTextContainer>
       <MessageBoxActionContainer>
-        <MessageBoxCancelLink onClick={() => (projectStudio.isTiledMode === null ? setMode('rmxp') : closeDialog())}>
+        <MessageBoxCancelLink onClick={() => (projectStudio?.isTiledMode === null ? setMode('rmxp') : closeDialog())}>
           {t('cancel')}
         </MessageBoxCancelLink>
         <PrimaryButton onClick={() => setMode('tiled')}>{t('button_use_tiled')}</PrimaryButton>
