@@ -97,11 +97,7 @@ export const EndSupportRMXPMapsBanner = () => {
   };
 
   useEffect(() => {
-    const listener = () => {
-      if (projectStudio?.isTiledMode) return;
-
-      updateBannerVisibility('visible');
-    };
+    const listener = () => updateBannerVisibility(projectStudio?.isTiledMode ? 'hidden' : 'visible');
 
     window.addEventListener('project-opened', listener);
     return () => window.removeEventListener('project-opened', listener);
