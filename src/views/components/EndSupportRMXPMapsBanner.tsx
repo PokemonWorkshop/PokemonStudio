@@ -7,11 +7,16 @@ import React, { useEffect, useRef } from 'react';
 import { useDialogsRef } from '@root/src/hooks/useDialogsRef';
 import { DashboardEditorAndDeletionKeys, DashboardEditorOverlay } from './dashboard/editors/DashboardEditorOverlay';
 import { useProjectStudio } from '@root/src/hooks/useProjectStudio';
+import { useLocation } from 'react-router';
 
-export const EndSupportRMXPMapsBannerContainer = styled.div`
+type EndSupportRMXPMapsBannerContainerProps = {
+  fixPosition: number;
+};
+
+export const EndSupportRMXPMapsBannerContainer = styled.div<EndSupportRMXPMapsBannerContainerProps>`
   position: absolute;
   bottom: 24px;
-  left: calc(50% + 32px);
+  left: calc(50% + 32px + ${({ fixPosition }) => `${fixPosition / 2}px`});
   transform: translate(-50%, 0);
   display: grid;
   grid-template-columns: 20px auto 93px 32px;
@@ -28,10 +33,10 @@ export const EndSupportRMXPMapsBannerContainer = styled.div`
   box-sizing: border-box;
   user-select: none;
   visibility: hidden;
-  z-index: 100;
+  z-index: 98;
 
   @media ${({ theme }) => theme.breakpoints.smallScreen} {
-    width: 512px;
+    width: 504px;
     height: 108px;
   }
 
@@ -76,11 +81,19 @@ export const EndSupportRMXPMapsBanner = () => {
   const dialogsRef = useDialogsRef<DashboardEditorAndDeletionKeys>();
   const bannerRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
+  const location = useLocation();
 
   const updateBannerVisibility = (v: 'hidden' | 'visible') => {
     if (!bannerRef.current) return;
 
     bannerRef.current.style.visibility = v;
+  };
+
+  const fixPosition = () => {
+    if (location.pathname.match(/^\/(dashboard\/|database|poc|settings)/)) return 216;
+    if (location.pathname.startsWith('/world')) return 318;
+
+    return 0;
   };
 
   useEffect(() => {
@@ -96,12 +109,11 @@ export const EndSupportRMXPMapsBanner = () => {
 
   return (
     <>
-      <EndSupportRMXPMapsBannerContainer ref={bannerRef}>
+      <EndSupportRMXPMapsBannerContainer ref={bannerRef} fixPosition={fixPosition()}>
         <div className="info-icon">
           <IconInfo />
         </div>
-        Le support de RPG Maker XP en tant qu'outil de création de vos cartes sera arrêté dans une prochaine mise à jour et l'utilisation de Tiled
-        sera obligatoire.
+        {t('end_of_rmxp_support')}
         <WarningButton onClick={() => dialogsRef.current?.openDialog('studio_mode_message_box', true)}>{t('button_use_tiled')}</WarningButton>
         <div className="close-icon" onClick={() => updateBannerVisibility('hidden')}>
           <IconClose />

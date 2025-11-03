@@ -1737,5 +1737,6 @@
   "add_missing_maplinks": "Ajout des liaisons de cartes manquantes",
   "event_empty_state_title": "La création des événements arrive avec la version 3 de Pokémon Studio !",
   "event_empty_state_description_1": "Vous n'avez pas d'événement pour le moment sur Pokémon Studio. La version 3 vous permettra de gérer vos événements directement depuis l'application et non plus depuis RPG Maker XP, qui ne sera plus utilisable.",
-  "event_empty_state_description_2": "Pour plus d'informations, vous pouvez consulter la FAQ dédiée dans le salon #❓・studio-v3-faq sur le serveur Discord de Pokémon Workshop."
+  "event_empty_state_description_2": "Pour plus d'informations, vous pouvez consulter la FAQ dédiée dans le salon #❓・studio-v3-faq sur le serveur Discord de Pokémon Workshop.",
+  "end_of_rmxp_support": "Le support de RPG Maker XP en tant qu'outil de création de vos cartes sera arrêté dans une prochaine mise à jour et l'utilisation de Tiled sera obligatoire."
 }
