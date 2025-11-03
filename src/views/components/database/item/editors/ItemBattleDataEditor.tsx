@@ -52,7 +52,7 @@ export const ItemBattleDataEditor = forwardRef<EditorHandlingClose>((_, ref) => 
           </InputWithTopLabelContainer>
           <InputWithLeftLabelContainer>
             <Label htmlFor="value">{t('value')}</Label>
-            <Input type="number" defaultValue={item.count} ref={countRef} min="0" max="99" />
+            <Input type="number" defaultValue={item.count} ref={countRef} min="-99" max="99" />
           </InputWithLeftLabelContainer>
         </InputContainer>
       )}
