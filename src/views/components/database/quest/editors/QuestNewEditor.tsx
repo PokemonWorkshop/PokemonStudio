@@ -73,7 +73,7 @@ export const QuestNewEditor = forwardRef<EditorHandlingClose, QuestNewEditorProp
     if (importing && selectedQuest !== '__undef__') {
       newQuest = importQuestData(newQuest, quests[selectedQuest], quests);
 
-      //Copy custom objectives texts
+      // Copy custom objectives texts
       let objectiveCpt = 0;
       newQuest.objectives.forEach((objective) => {
         if (objective.objectiveMethodName === 'objective_custom') {

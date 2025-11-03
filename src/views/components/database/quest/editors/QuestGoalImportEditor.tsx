@@ -9,6 +9,9 @@ import { useQuestPage } from '@src/hooks/usePage';
 import { useUpdateQuest } from './useUpdateQuest';
 import styled from 'styled-components';
 import React, { forwardRef, useMemo, useRef, useState } from 'react';
+import { QUEST_CUSTOM_OBJECTIVE_TEXT_ID, updateIndexSpeakToBeatNpc } from '@root/src/models/entities/quest';
+import { importQuestObjectivesData } from '@root/src/utils/importEntityDataUtils';
+import { useSetProjectText, useGetProjectText } from '@root/src/utils/ReadingProjectText';
 
 const GoalImportInfo = styled.div`
   ${({ theme }) => theme.fonts.normalRegular};
@@ -30,6 +33,8 @@ type QuestGoalImportEditorProps = {
 export const QuestGoalImportEditor = forwardRef<EditorHandlingClose, QuestGoalImportEditorProps>(({ closeDialog }, ref) => {
   const { t } = useTranslation();
   const { quests, quest } = useQuestPage();
+  const setText = useSetProjectText();
+  const getText = useGetProjectText();
   const updateQuest = useUpdateQuest(quest);
   const firstDbSymbol = useMemo(
     () =>
@@ -47,8 +52,27 @@ export const QuestGoalImportEditor = forwardRef<EditorHandlingClose, QuestGoalIm
   const onClickImport = () => {
     if (!overrideRef.current) return;
 
-    if (overrideRef.current.checked) updateQuest({ objectives: cloneEntity(quests[selectedQuest].objectives) });
-    else updateQuest({ objectives: [...quest.objectives, ...cloneEntity(quests[selectedQuest].objectives)] });
+    const objectives = overrideRef.current.checked
+      ? cloneEntity(quests[selectedQuest].objectives)
+      : [...quest.objectives, ...cloneEntity(quests[selectedQuest].objectives)];
+
+    const updatedQuest = importQuestObjectivesData(quest, objectives, quests);
+
+    // Copy custom objectives texts
+    let objectiveCpt = 0;
+    updatedQuest.objectives.forEach((objective) => {
+      if (objective.objectiveMethodName === 'objective_custom') {
+        setText(
+          QUEST_CUSTOM_OBJECTIVE_TEXT_ID,
+          objective.objectiveMethodArgs[1] as number,
+          getText(QUEST_CUSTOM_OBJECTIVE_TEXT_ID, objectives[objectiveCpt].objectiveMethodArgs[1] as number)
+        );
+      }
+      objectiveCpt++;
+    });
+
+    updateIndexSpeakToBeatNpc(updatedQuest.objectives);
+    updateQuest(updatedQuest);
     closeDialog();
   };
 

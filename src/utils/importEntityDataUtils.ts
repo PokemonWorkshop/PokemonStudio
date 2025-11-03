@@ -5,9 +5,8 @@ import { cloneEntity } from './cloneEntity';
 import { findFirstAvailableFormTextId, findFirstAvailableCustomObjectiveTextId } from './ModelUtils';
 import { ProjectData } from '@src/GlobalStateProvider';
 import { StudioItem } from '@modelEntities/item';
-import { StudioQuest } from '@modelEntities/quest';
+import { StudioQuest, StudioQuestObjective } from '@modelEntities/quest';
 import { StudioGroup } from '@modelEntities/group';
-import { object } from 'zod/dist/types';
 
 export const importTrainerData = (trainer: StudioTrainer, dataToImport: StudioTrainer): StudioTrainer => {
   const cloneData = cloneEntity(dataToImport);
@@ -49,9 +48,9 @@ export const importCreatureData = (creature: StudioCreature, dataToImport: Studi
   const newAllPokemon = {
     ...allPokemon,
     [newCreature.dbSymbol]: newCreature,
-  }; //To avoid getting same text IDs for other forms
+  }; // To avoid getting same text IDs for other forms
 
-  //Update form text IDs
+  // Update form text IDs
   newCreature.forms.slice(1).forEach((form) => {
     const formTextIdName = findFirstAvailableFormTextId(newAllPokemon, 0, 'name');
     const formTextIdDescription = findFirstAvailableFormTextId(newAllPokemon, 0, 'description');
@@ -85,7 +84,34 @@ export const importQuestData = (quest: StudioQuest, dataToImport: StudioQuest, a
   const newAllQuests = {
     ...allQuests,
     [newQuest.dbSymbol]: newQuest,
-  }; //To avoid getting same text IDs for custom objectives
+  }; // To avoid getting same text IDs for custom objectives
+
+  newQuest.objectives.forEach((objective) => {
+    if (objective.objectiveMethodName === 'objective_custom') {
+      const customTextId = findFirstAvailableCustomObjectiveTextId(newAllQuests, 0);
+      objective.objectiveMethodArgs[1] = customTextId;
+    }
+  });
+
+  return newQuest;
+};
+
+export const importQuestObjectivesData = (
+  quest: StudioQuest,
+  dataToImport: StudioQuestObjective[],
+  allQuests: ProjectData['quests']
+): StudioQuest => {
+  const cloneData = cloneEntity(dataToImport);
+
+  const newQuest = {
+    ...quest,
+    objectives: cloneData,
+  };
+
+  const newAllQuests = {
+    ...allQuests,
+    [newQuest.dbSymbol]: newQuest,
+  }; // To avoid getting same text IDs for custom objectives
 
   newQuest.objectives.forEach((objective) => {
     if (objective.objectiveMethodName === 'objective_custom') {
