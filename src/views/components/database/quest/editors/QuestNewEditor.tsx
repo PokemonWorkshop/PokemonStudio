@@ -4,8 +4,14 @@ import { TFunction } from 'i18next';
 import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
 import { useProjectQuests } from '@hooks/useProjectData';
 import { DarkButton, PrimaryButton } from '@components/buttons';
-import { QUEST_CATEGORIES, QUEST_DESCRIPTION_TEXT_ID, QUEST_NAME_TEXT_ID, QUEST_RESOLUTIONS } from '@modelEntities/quest';
-import { useSetProjectText } from '@utils/ReadingProjectText';
+import {
+  QUEST_CATEGORIES,
+  QUEST_CUSTOM_OBJECTIVE_TEXT_ID,
+  QUEST_DESCRIPTION_TEXT_ID,
+  QUEST_NAME_TEXT_ID,
+  QUEST_RESOLUTIONS,
+} from '@modelEntities/quest';
+import { useGetProjectText, useSetProjectText } from '@utils/ReadingProjectText';
 import { createQuest } from '@utils/entityCreation';
 import { TooltipWrapper } from '@ds/Tooltip';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
@@ -47,6 +53,7 @@ export const QuestNewEditor = forwardRef<EditorHandlingClose, QuestNewEditorProp
   const { projectDataValues: quests, setProjectDataValues: setQuest } = useProjectQuests();
   const { t } = useTranslation();
   const setText = useSetProjectText();
+  const getText = useGetProjectText();
   const categoryOptions = useMemo(() => questCategoryEntries(t), [t]);
   const resolutionOptions = useMemo(() => questResolutionEntries(t), [t]);
   const [name, setName] = useState(''); // We can't use a ref because of the button behavior
@@ -64,7 +71,20 @@ export const QuestNewEditor = forwardRef<EditorHandlingClose, QuestNewEditorProp
     let newQuest = createQuest(quests, categoryRef.current === 'primary', 'default');
 
     if (importing && selectedQuest !== '__undef__') {
-      newQuest = importQuestData(newQuest, quests[selectedQuest]);
+      newQuest = importQuestData(newQuest, quests[selectedQuest], quests);
+
+      //Copy custom objectives texts
+      let objectiveCpt = 0;
+      newQuest.objectives.forEach((objective) => {
+        if (objective.objectiveMethodName === 'objective_custom') {
+          setText(
+            QUEST_CUSTOM_OBJECTIVE_TEXT_ID,
+            objective.objectiveMethodArgs[1] as number,
+            getText(QUEST_CUSTOM_OBJECTIVE_TEXT_ID, quests[selectedQuest].objectives[objectiveCpt].objectiveMethodArgs[1] as number)
+          );
+        }
+        objectiveCpt++;
+      });
     }
 
     setText(QUEST_NAME_TEXT_ID, newQuest.id, name);

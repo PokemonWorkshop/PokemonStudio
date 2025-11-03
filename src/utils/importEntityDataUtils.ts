@@ -2,11 +2,12 @@ import { StudioTrainer } from '@modelEntities/trainer';
 import { StudioMove } from '@modelEntities/move';
 import { StudioCreature } from '@modelEntities/creature';
 import { cloneEntity } from './cloneEntity';
-import { findFirstAvailableFormTextId } from './ModelUtils';
+import { findFirstAvailableFormTextId, findFirstAvailableCustomObjectiveTextId } from './ModelUtils';
 import { ProjectData } from '@src/GlobalStateProvider';
 import { StudioItem } from '@modelEntities/item';
 import { StudioQuest } from '@modelEntities/quest';
 import { StudioGroup } from '@modelEntities/group';
+import { object } from 'zod/dist/types';
 
 export const importTrainerData = (trainer: StudioTrainer, dataToImport: StudioTrainer): StudioTrainer => {
   const cloneData = cloneEntity(dataToImport);
@@ -71,15 +72,29 @@ export const importItemData = (item: StudioItem, dataToImport: StudioItem): Stud
   };
 };
 
-export const importQuestData = (quest: StudioQuest, dataToImport: StudioQuest): StudioQuest => {
+export const importQuestData = (quest: StudioQuest, dataToImport: StudioQuest, allQuests: ProjectData['quests']): StudioQuest => {
   const cloneData = cloneEntity(dataToImport);
 
-  return {
-    ...cloneData,
-    id: quest.id,
-    dbSymbol: quest.dbSymbol,
-    isPrimary: quest.isPrimary,
+  const newQuest = {
+    ...quest,
+    resolution: cloneData.resolution,
+    objectives: cloneData.objectives,
+    earnings: cloneData.earnings,
   };
+
+  const newAllQuests = {
+    ...allQuests,
+    [newQuest.dbSymbol]: newQuest,
+  }; //To avoid getting same text IDs for custom objectives
+
+  newQuest.objectives.forEach((objective) => {
+    if (objective.objectiveMethodName === 'objective_custom') {
+      const customTextId = findFirstAvailableCustomObjectiveTextId(newAllQuests, 0);
+      objective.objectiveMethodArgs[1] = customTextId;
+    }
+  });
+
+  return newQuest;
 };
 
 export const importGroupData = (group: StudioGroup, dataToImport: StudioGroup): StudioGroup => {
