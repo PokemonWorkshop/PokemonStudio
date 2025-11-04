@@ -2,12 +2,12 @@ import { WarningButton } from './buttons';
 import { useTranslation } from 'react-i18next';
 import IconInfo from '@assets/icons/notification/info.svg';
 import IconClose from '@assets/icons/global/clear-icon.svg';
-import styled from 'styled-components';
-import React, { useEffect, useRef } from 'react';
 import { useDialogsRef } from '@root/src/hooks/useDialogsRef';
 import { DashboardEditorAndDeletionKeys, DashboardEditorOverlay } from './dashboard/editors/DashboardEditorOverlay';
-import { useProjectStudio } from '@root/src/hooks/useProjectStudio';
 import { useLocation } from 'react-router';
+import styled from 'styled-components';
+import React, { useEffect, useRef } from 'react';
+import { StudioProject } from '@root/src/models/entities/project';
 
 type EndSupportRMXPMapsBannerContainerProps = {
   fixPosition: number;
@@ -77,16 +77,15 @@ export const EndSupportRMXPMapsBannerContainer = styled.div<EndSupportRMXPMapsBa
 `;
 
 export const EndSupportRMXPMapsBanner = () => {
-  const { projectStudioValues: projectStudio } = useProjectStudio();
   const dialogsRef = useDialogsRef<DashboardEditorAndDeletionKeys>();
   const bannerRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
   const location = useLocation();
 
-  const updateBannerVisibility = (v: 'hidden' | 'visible') => {
+  const updateBannerVisibility = (visibility: 'hidden' | 'visible') => {
     if (!bannerRef.current) return;
 
-    bannerRef.current.style.visibility = v;
+    bannerRef.current.style.visibility = visibility;
   };
 
   const fixPosition = () => {
@@ -97,11 +96,15 @@ export const EndSupportRMXPMapsBanner = () => {
   };
 
   useEffect(() => {
-    const listener = () => updateBannerVisibility(projectStudio?.isTiledMode ? 'hidden' : 'visible');
+    const listener = (e: Event) => {
+      const event = e as CustomEvent<{ projectStudio: StudioProject }>;
+      const projectStudio = event.detail.projectStudio;
+      updateBannerVisibility(projectStudio?.isTiledMode ? 'hidden' : 'visible');
+    };
 
     window.addEventListener('project-opened', listener);
     return () => window.removeEventListener('project-opened', listener);
-  }, [projectStudio]);
+  }, []);
 
   return (
     <>
