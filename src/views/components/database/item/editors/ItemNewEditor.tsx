@@ -31,6 +31,7 @@ import { SelectItem } from '@components/selects';
 import { importItemData } from '@utils/importEntityDataUtils';
 import { OptionSourceKey } from '@src/hooks/useSelectOptions';
 import { useNavigate } from 'react-router-dom';
+import { ItemCategoryText } from './ItemCategoryText';
 
 const itemCategoryEntries = (t: TFunction) =>
   StudioItemCategories.map((category) => ({ value: category, label: t(`${category}`) })).sort((a, b) => a.label.localeCompare(b.label));
@@ -68,17 +69,6 @@ const CATEGORY_TO_OPTION = {
   repel: 'itemRepel',
   stone: 'itemStone',
   tech: 'itemTech',
-};
-
-const ITEM_CATEGORY_DESCRIPTIONS: Record<StudioItemCategory, string> = {
-  ball: 'item_category_description_ball',
-  event: 'item_category_description_event',
-  fleeing: 'item_category_description_fleeing',
-  generic: 'item_category_description_generic',
-  heal: 'item_category_description_heal',
-  repel: 'item_category_description_repel',
-  stone: 'item_category_description_stone',
-  tech: 'item_category_description_tech',
 };
 
 export const ItemNewEditor = forwardRef<EditorHandlingClose, ItemNewEditorProps>(({ from, closeDialog }, ref) => {
@@ -190,17 +180,7 @@ export const ItemNewEditor = forwardRef<EditorHandlingClose, ItemNewEditorProps>
         <InputWithTopLabelContainer>
           <Label htmlFor="category">{t('category')}</Label>
           <SelectCustomSimple id="select-category" options={options} onChange={setItemCategory as (v: string) => void} value={itemCategory} />
-          {itemCategory && (
-            <p
-              style={{
-                margin: '8px 0 0 0',
-                color: 'var(--text-400)',
-                fontSize: '14px',
-              }}
-            >
-              {t(ITEM_CATEGORY_DESCRIPTIONS[itemCategory])}
-            </p>
-          )}
+          <ItemCategoryText itemCategory={itemCategory} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="dbSymbol" required>
