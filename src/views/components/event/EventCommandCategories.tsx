@@ -8,10 +8,10 @@ type EventCommandsCategoryProps = {
 
 export const EventCommandCategories = ({ setSelectedCommandCategory }: EventCommandsCategoryProps) => {
   return (
-    <>
+    <div className="categories">
       {STUDIO_EVENT_COMMAND_CATEGORY_LIST.map((category) => (
         <EventCommandCategory key={category} category={category} onClick={() => setSelectedCommandCategory(category)} />
       ))}
-    </>
+    </div>
   );
 };

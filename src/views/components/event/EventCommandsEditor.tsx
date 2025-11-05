@@ -40,11 +40,8 @@ const EventCommandsEditorContainer = styled(EditorContainer)`
     }
   }
 
+  .categories,
   .commands {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-gap: 8px;
-    padding: 8px 12px 8px 12px;
     overflow-y: auto;
 
     ::-webkit-scrollbar {
@@ -69,6 +66,13 @@ const EventCommandsEditorContainer = styled(EditorContainer)`
       background-color: ${({ theme }) => theme.colors.dark15};
       border-color: ${({ theme }) => theme.colors.text400};
     }
+  }
+
+  .categories {
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    gap: 4px;
   }
 `;
 
@@ -105,9 +109,7 @@ export const EventCommandsEditor = () => {
       ) : selectedCommandCategory ? (
         <EventCommands category={selectedCommandCategory} setSelectedCommandCategory={setSelectedCommandCategory} />
       ) : (
-        <div className="commands">
-          <EventCommandCategories setSelectedCommandCategory={setSelectedCommandCategory} />
-        </div>
+        <EventCommandCategories setSelectedCommandCategory={setSelectedCommandCategory} />
       )}
     </EventCommandsEditorContainer>
   );

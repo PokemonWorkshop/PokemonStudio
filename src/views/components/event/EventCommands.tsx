@@ -2,7 +2,7 @@ import BackIcon from '@assets/icons/global/back.svg';
 import { EventCommand } from './EventCommand';
 import { StudioEventCommandCategory } from '@modelEntities/event/category';
 import { COMMANDS_FROM_CATEGORY } from '@modelEntities/event/command';
-import { IconsFromCategory } from './EventCommandCategory';
+import { EventCategoryIcon, IconsFromCategory } from './EventCategoryIcon';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import styled from 'styled-components';
@@ -14,7 +14,7 @@ const EventCommandsContainer = styled.div.attrs((props) => ({ 'data-color': prop
     flex-direction: row;
     align-items: center;
     padding: 16px 12px;
-    gap: 4px;
+    gap: 8px;
     box-sizing: border-box;
     align-items: center;
 
@@ -41,9 +41,9 @@ const EventCommandsContainer = styled.div.attrs((props) => ({ 'data-color': prop
       }
     }
 
-    h2 {
-      margin: 0;
-      color: ${({ theme }) => theme.colors.text100} !important;
+    .category-title {
+      ${({ theme }) => theme.fonts.normalMedium}
+      color: ${({ theme }) => theme.colors.text100};
     }
 
     .count {
@@ -63,6 +63,10 @@ const EventCommandsContainer = styled.div.attrs((props) => ({ 'data-color': prop
   }
 
   .commands {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 8px;
+    padding: 8px 12px 8px 12px;
     max-height: ${({ theme }) => `calc(${theme.calc.height} - 170px)`};
   }
 `;
@@ -98,7 +102,8 @@ export const EventCommands = ({ category, setSelectedCommandCategory, research }
             <BackIcon />
           </span>
         )}
-        <h2>{t(`event_category_${category}`)}</h2>
+        <EventCategoryIcon category={category} size="s" />
+        <span className="category-title">{t(`event_category_${category}`)}</span>
         <span className="count">{commandsCount}</span>
       </div>
       <div className="commands">
