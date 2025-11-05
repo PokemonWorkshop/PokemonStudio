@@ -18,6 +18,7 @@ import {
   ITEM_PLURAL_NAME_TEXT_ID,
   mutateItemInto,
   StudioItemCategories,
+  StudioItemCategory,
 } from '@modelEntities/item';
 import { createItem } from '@utils/entityCreation';
 import { useDialogsRef } from '@hooks/useDialogsRef';
@@ -25,8 +26,20 @@ import { useItemPage } from '@hooks/usePage';
 import { ItemTranslationOverlay, TranslationEditorTitle } from './ItemTranslationOverlay';
 import { cloneEntity } from '@utils/cloneEntity';
 
+
 const itemCategoryEntries = (t: TFunction) =>
   StudioItemCategories.map((category) => ({ value: category, label: t(`${category}`) })).sort((a, b) => a.label.localeCompare(b.label));
+
+const ITEM_CATEGORY_DESCRIPTIONS: Record<StudioItemCategory, string> = {
+  ball: 'item_category_description_ball',
+  event: 'item_category_description_event',
+  fleeing: 'item_category_description_fleeing',
+  generic: 'item_category_description_generic',
+  heal: 'item_category_description_heal',
+  repel: 'item_category_description_repel',
+  stone: 'item_category_description_stone',
+  tech: 'item_category_description_tech',
+};
 
 export const ItemFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { currentItem: item, currentItemName } = useItemPage();
@@ -132,6 +145,17 @@ export const ItemFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
             value={itemCategory}
             noTooltip
           />
+          {itemCategory && (
+            <p
+              style={{
+                margin: '8px 0 0 0',
+                color: 'var(--text-400)',
+                fontSize: '14px',
+              }}
+            >
+              {t(ITEM_CATEGORY_DESCRIPTIONS[itemCategory])}
+            </p>
+          )}
         </InputWithTopLabelContainer>
       </InputContainer>
       {/* todo look why this is wrong */}

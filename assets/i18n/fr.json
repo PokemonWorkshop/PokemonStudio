@@ -1737,5 +1737,13 @@
   "add_missing_maplinks": "Ajout des liaisons de cartes manquantes",
   "event_empty_state_title": "La création des événements arrive avec la version 3 de Pokémon Studio !",
   "event_empty_state_description_1": "Vous n'avez pas d'événement pour le moment sur Pokémon Studio. La version 3 vous permettra de gérer vos événements directement depuis l'application et non plus depuis RPG Maker XP, qui ne sera plus utilisable.",
-  "event_empty_state_description_2": "Pour plus d'informations, vous pouvez consulter la FAQ dédiée dans le salon #❓・studio-v3-faq sur le serveur Discord de Pokémon Workshop."
+  "event_empty_state_description_2": "Pour plus d'informations, vous pouvez consulter la FAQ dédiée dans le salon #❓・studio-v3-faq sur le serveur Discord de Pokémon Workshop.",
+  "item_category_description_ball": "Les Balles sont utilisées pour capturer des Pokémon sauvages.",
+  "item_category_description_event": "Les objets d'événement sont des objets rares utilisés pour progresser dans l'histoire du jeu ou déclencher des événements spécifiques.",
+  "item_category_description_fleeing": "Les objets de fuite sont utilisés pour s'échapper rapidement des combats contre des Pokémon sauvages.",
+  "item_category_description_generic": "Les objets génériques sont des objets divers qui n'entrent pas dans les autres catégories.",
+  "item_category_description_heal": "Les objets de soin sont utilisés pour restaurer les points de vie ou les conditions d'un Pokémon.",
+  "item_category_description_repel": "Les objets répulsifs sont utilisés pour éloigner les Pokémon sauvages.",
+  "item_category_description_stone": "Les pierres évolutives sont utilisées pour faire évoluer certains Pokémon.",
+  "item_category_description_tech": "Les CT et CS sont des objets qui enseignent de nouvelles capacités aux Pokémon."
 }

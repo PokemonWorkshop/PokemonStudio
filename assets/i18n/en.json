@@ -1737,5 +1737,13 @@
   "add_missing_maplinks": "Add the missing map links",
   "event_empty_state_title": "Event creation is coming with version 3 of Pokémon Studio!",
   "event_empty_state_description_1": "You don't have events in Pokémon Studio yet. Version 3 will allow you to manage your events directly from the application, without having to use RPG Maker XP anymore, which will no longer be supported.",
-  "event_empty_state_description_2": "For more information, you can check the dedicated FAQ in the #❓・studio-v3-faq channel on the Pokémon Workshop Discord server."
+  "event_empty_state_description_2": "For more information, you can check the dedicated FAQ in the #❓・studio-v3-faq channel on the Pokémon Workshop Discord server.",
+  "item_category_description_ball": "Balls are used to catch Pokémon.",
+  "item_category_description_event": "Event items are key items that are essential for progressing through the game's story or completing specific quests.",
+  "item_category_description_fleeing": "Fleeing items are used to escape from wild Pokémon encounters or battles.",
+  "item_category_description_generic": "Wide range of useful tools and consumables.",
+  "item_category_description_heal": "Healing items are used to restore a Pokémon's health or cure status conditions.",
+  "item_category_description_repel": "Repel items are used to prevent wild Pokémon encounters.",
+  "item_category_description_stone": "Evolution stones are special items that can trigger the evolution of certain Pokémon species when used on them.",
+  "item_category_description_tech": "TMs are used to teach Pokémon new moves."
 }
