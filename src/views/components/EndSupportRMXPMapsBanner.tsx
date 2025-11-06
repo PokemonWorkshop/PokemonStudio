@@ -72,7 +72,7 @@ export const EndSupportRMXPMapsBannerContainer = styled.div<EndSupportRMXPMapsBa
     padding: 0px 12px;
     height: 32px;
     ${({ theme }) => theme.fonts.normalSmall};
-    //font-weight: 500;
+    font-weight: 500;
   }
 `;
 
