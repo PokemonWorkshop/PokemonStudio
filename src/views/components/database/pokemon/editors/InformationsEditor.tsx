@@ -3,9 +3,7 @@ import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/
 import { InputWithTopLabelContainer } from '@components/inputs';
 import { useDialogsRef } from '@hooks/useDialogsRef';
 import { useCreaturePage } from '@hooks/usePage';
-import React, { forwardRef, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 import { CreatureTranslationOverlay, TranslationEditorTitle } from './CreatureTranslationOverlay';
 import { useUpdateForm } from './useUpdateForm';
 import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
@@ -15,12 +13,7 @@ import { TranslatableTextFields, TranslatableTextFieldsRef } from './Information
 import { TranslatableFormTextFields } from './InformationEditor/TranslatableFormTextFields';
 import { INFORMATION_EDITOR_SCHEMA } from './InformationEditor/InformationEditorSchema';
 import { TypeFields } from './InformationEditor/TypeFields';
-
-const OffsetInfo = styled.div`
-  ${({ theme }) => theme.fonts.normalSmall};
-  color: ${({ theme }) => theme.colors.text400};
-  user-select: none;
-`;
+import React, { forwardRef, useRef } from 'react';
 
 export const InformationsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { t } = useTranslation();
@@ -66,7 +59,7 @@ export const InformationsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
         <TypeFields form={form} defaults={defaults} />
         <InputWithTopLabelContainer>
           <Input name="frontOffsetY" label={t('offset')} labelLeft onInput={onInputTouched} />
-          <OffsetInfo>{t('offset_info_creature')}</OffsetInfo>
+          <span className="helper">{t('offset_info_creature')}</span>
         </InputWithTopLabelContainer>
       </InputFormContainer>
       <CreatureTranslationOverlay creature={creature} form={form} onClose={onTranslationOverlayClose} ref={dialogsRef} />

@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import { Input } from './Input';
-import { SelectContainer } from '@ds/Select/SelectContainer';
 
 export const InputWithLeftLabelContainer = styled.div`
   display: flex;
@@ -11,5 +10,11 @@ export const InputWithLeftLabelContainer = styled.div`
 
   & > ${Input}, & > div > ${Input}, & > div > input {
     width: 80px;
+  }
+
+  .helper {
+    ${({ theme }) => theme.fonts.normalSmall};
+    color: ${({ theme }) => theme.colors.text400};
+    user-select: none;
   }
 `;
