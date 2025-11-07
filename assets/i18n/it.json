@@ -178,6 +178,7 @@
   "no_quest_found": "Nessuna missione trovata",
   "no_trainer_found": "Nessun allenatore trovato",
   "no_type_found": "Nessun tipo trovato",
+  "no_nature_found": "No nature found",
   "no_zone_found": "Nessuna zona trovata",
   "no_result_found": "Nessun risultato trovato",
   "example_ability": "Ex: Erbaiuto",
@@ -295,9 +296,8 @@
   "appearance": "Aspetto",
   "config": "Configurazioni",
   "title_studio_mode_message_box": "Choosing the software to create your maps",
-  "message_studio_mode_message_box": "When creating your game, do you want to use Tiled or RPG Maker XP to create your maps?",
-  "warning_message": "You can switch to Tiled later. Make a backup of your project before choosing any option.",
-  "button_use_rmxp": "Use RPG Maker XP",
+  "message_studio_mode_message_box": "Support for RPG Maker XP as a map creation tool will end in an upcoming update. The use of Tiled will become mandatory, and your project will be migrated. Would you like to start using Tiled now?",
+  "warning_message": "Make a backup of your project before choosing any option.",
   "button_use_tiled": "Use Tiled",
   "create_playable_version": "Create a playable version",
   "intro_image": "Splash screen",
@@ -1745,5 +1745,6 @@
   "item_category_description_heal": "Healing items are used to restore a Pokémon's health or cure status conditions.",
   "item_category_description_repel": "Repel items are used to prevent wild Pokémon encounters.",
   "item_category_description_stone": "Evolution stones are special items that can trigger the evolution of certain Pokémon species when used on them.",
-  "item_category_description_tech": "TMs are used to teach Pokémon new moves."
+  "item_category_description_tech": "TMs are used to teach Pokémon new moves.",
+  "end_of_rmxp_support": "Support for RPG Maker XP as a map creation tool will end in an upcoming update, and the use of Tiled will become mandatory."
 }

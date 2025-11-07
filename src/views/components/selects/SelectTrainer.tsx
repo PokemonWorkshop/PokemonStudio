@@ -20,7 +20,7 @@ export const SelectTrainer = ({ dbSymbol, onChange, noLabel, undefValueOption, f
     return trainerOptions;
   }, [trainerOptions, undefValueOption]);
 
-  const optionals = { deletedOption: t('trainer_deleted'), filter };
+  const optionals = { deletedOption: t('trainer_deleted'), noOptionLabel: t('no_trainer_found'), filter };
 
   if (noLabel) return <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />;
 

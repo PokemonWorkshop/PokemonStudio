@@ -19,7 +19,7 @@ export const SelectText = ({ fileId, onChange, noLabel, undefValueOption }: Sele
     return textInfosOption;
   }, [textInfosOption, undefValueOption]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const optionals = useMemo(() => ({ deletedOption: t('texts_deleted') }), []);
+  const optionals = useMemo(() => ({ deletedOption: t('texts_deleted'), noOptionLabel: t('no_file_found') }), []);
 
   if (noLabel) return <StudioDropDown value={fileId} options={options} onChange={onChange} optionals={optionals} />;
 
