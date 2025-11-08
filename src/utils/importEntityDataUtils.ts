@@ -81,17 +81,7 @@ export const importQuestData = (quest: StudioQuest, dataToImport: StudioQuest, a
     earnings: cloneData.earnings,
   };
 
-  const newAllQuests = {
-    ...allQuests,
-    [newQuest.dbSymbol]: newQuest,
-  }; // To avoid getting same text IDs for custom objectives
-
-  newQuest.objectives.forEach((objective) => {
-    if (objective.objectiveMethodName === 'objective_custom') {
-      const customTextId = findFirstAvailableCustomObjectiveTextId(newAllQuests, 0);
-      objective.objectiveMethodArgs[1] = customTextId;
-    }
-  });
+  redetermineCustomGoalsId(newQuest, allQuests);
 
   return newQuest;
 };
@@ -108,19 +98,23 @@ export const importQuestObjectivesData = (
     objectives: cloneData,
   };
 
+  redetermineCustomGoalsId(newQuest, allQuests);
+
+  return newQuest;
+};
+
+const redetermineCustomGoalsId = (quest: StudioQuest, allQuests: ProjectData['quests']) => {
   const newAllQuests = {
     ...allQuests,
-    [newQuest.dbSymbol]: newQuest,
+    [quest.dbSymbol]: quest,
   }; // To avoid getting same text IDs for custom objectives
 
-  newQuest.objectives.forEach((objective) => {
+  quest.objectives.forEach((objective) => {
     if (objective.objectiveMethodName === 'objective_custom') {
       const customTextId = findFirstAvailableCustomObjectiveTextId(newAllQuests, 0);
       objective.objectiveMethodArgs[1] = customTextId;
     }
   });
-
-  return newQuest;
 };
 
 export const importGroupData = (group: StudioGroup, dataToImport: StudioGroup): StudioGroup => {
