@@ -1535,7 +1535,7 @@
   "battle_camera_3d": "Usar la cámara 3D en combate",
   "add_battle_camera_3D_to_settings": "Añadir la cámara 3D de batalla en los ajustes",
   "handle_tech_list": "Gestión técnica de objetos",
-  "tech_list": "Lista de objetos técnicos"
+  "tech_list": "Lista de objetos técnicos",
   "dashboard_save": "Guardar",
   "migrate_groups_for_3v3_battle_mode": "Migrate groups to support 3v3 combat mode",
   "add_mega_evolution_parameter_to_items": "Adding Mega Evolution parameter to items",
