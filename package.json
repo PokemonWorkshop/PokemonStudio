@@ -56,6 +56,14 @@
     },
     "nl": {
       "suffix": "Nederlands",
+      "active": true
+    },
+    "zh_Hans": {
+      "suffix": "Chinese Simplified, 简体中文",
+      "active": false
+    },
+    "zh_Hant": {
+      "suffix": "Chinese Traditional, 繁體中文",
       "active": false
     }
   },
