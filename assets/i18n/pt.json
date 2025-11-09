@@ -160,7 +160,7 @@
   "deletion_message_move": "Você vai remover permanentemente o movimento « {{move}} ».",
   "deletion_message_nature": "Você vai remover permanentemente a natureza « {{nature}} ».",
   "deletion_message_type": "Você vai remover permanentemente o tipo « {{type}} ».",
-  "deletion_message_zone": "Você está no ponto de eliminar definitivamente o zona « {{zone}} »",
+  "deletion_message_zone": "Você vai remover permanentemente a zona « {{zone}} »",
   "deletion_message_texts_file": "Você vai remover permanentemente o arquivo de textos « {{name}} ».",
   "no_ability_found": "Nenhuma habilidade encontrada",
   "no_bestiary_found": "Nenhuma Pokédex encontrada",
