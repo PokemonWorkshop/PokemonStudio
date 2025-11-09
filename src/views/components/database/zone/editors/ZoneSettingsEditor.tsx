@@ -14,6 +14,7 @@ import type { StudioZone, StudioZoneForcedWeather } from '@modelEntities/zone';
 import { padStr } from '@utils/PadStr';
 import { cloneEntity } from '@utils/cloneEntity';
 import { ProjectData } from '@src/GlobalStateProvider';
+import { cleanNaNValue } from '@root/src/utils/cleanNaNValue';
 
 const InputMapsListContainer = styled(InputWithTopLabelContainer)`
   gap: 16px;
@@ -115,7 +116,7 @@ export const ZoneSettingsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
 
     updateZone({
       forcedWeather,
-      panelId: panelIdRef.current.valueAsNumber,
+      panelId: cleanNaNValue(panelIdRef.current.valueAsNumber, 0),
       maps,
     });
   };

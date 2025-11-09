@@ -181,7 +181,7 @@ const RenderEditMove = ({
             [pokemonIdentifier.specie]: editMove(index, movePool, currentEditedPokemon, selected.value),
           });
         }}
-        noOptionsText={t('no_option')}
+        noOptionsText={t('no_move_found')}
         value={{ value: learnableMove.move, label: move ? getMoveName(move) : t('move_deleted') }}
         error={
           (occurrences.find((occ) => occ.move.dbSymbol === learnableMove.move && occ.move.level === learnableMove.level)?.occurrence || 1) > 1 ||

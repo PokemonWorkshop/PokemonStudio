@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { SecondaryButton } from './buttons';
+import { SelectContainer } from '@ds/Select/SelectContainer';
 
 export const ControlBar = styled.div`
   display: grid;
@@ -27,5 +28,11 @@ export const ControlBarButtonContainer = styled.div`
 export const ControlBarLabelContainer = styled.div`
   display: flex;
   gap: 12px;
+  align-items: center;
   width: max-content;
+  ${({ theme }) => theme.fonts.normalRegular}
+
+  ${SelectContainer} {
+    width: 240px;
+  }
 `;

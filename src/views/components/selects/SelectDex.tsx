@@ -22,7 +22,7 @@ export const SelectDex = ({ dbSymbol, onChange, noLabel, noneValue, undefValueOp
     return dexOptions;
   }, [dexOptions, undefValueOption, noneValue]);
 
-  const optionals = { deletedOption: t('bestiary_deleted'), filter };
+  const optionals = { deletedOption: t('bestiary_deleted'), noOptionLabel: t('no_bestiary_found'), filter };
 
   if (noLabel) return <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />;
 

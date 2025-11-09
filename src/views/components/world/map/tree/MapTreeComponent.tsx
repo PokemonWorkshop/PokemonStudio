@@ -30,7 +30,6 @@ import { convertMapInfoToTree } from '@utils/MapInfoUtils';
 import {
   getMapTreeCountChildren,
   getMapTreeSourceDepth,
-  mapTreeComputeMaxWidth,
   mapTreeConvertItemToMapInfoValue,
   mapTreeConvertTreeToMapInfo,
   renderDropBox,
@@ -149,7 +148,7 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
     return isFolder ? getFolderName({ klass: item.data.klass, textId: item.data.textId }) : mapName(item.data.mapDbSymbol);
   };
 
-  const renderItem = ({ item, depth, onExpand, onCollapse, provided, snapshot }: RenderItemParams) => {
+  const renderItem = ({ item, onExpand, onCollapse, provided, snapshot }: RenderItemParams) => {
     const isFolder = item.data.klass === 'MapInfoFolder';
     const countChildren = isFolder ? getMapTreeCountChildren(tree, item) : undefined;
     const isDeleted = item.data.klass === 'MapInfoMap' && !maps[item.data.mapDbSymbol];
@@ -185,8 +184,6 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
       <div ref={provided.innerRef} {...provided.draggableProps} key={item.id}>
         <TreeItemContainer
           isCurrent={!isFolder && item.data?.mapDbSymbol === currentMap}
-          maxWidth={mapTreeComputeMaxWidth(isFolder ? depth + 1 : depth, isFolder, false)}
-          maxWidthWhenHover={mapTreeComputeMaxWidth(isFolder ? depth + 1 : depth, isFolder, true)}
           hasChildren={!!countChildren}
           disableHover={!!canRename}
           isUnderOpenFolder={isUnderOpenFolder}
@@ -281,19 +278,26 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
     setMapInfo(mapTreeConvertTreeToMapInfo(newTree.items));
   };
 
+  // Check if there are no maps in the tree (only root folder exists)
+  const hasNoMaps = tree.items['0'] && tree.items['0'].children.length === 0;
+
   return (
     <MapListContainer>
-      <Tree
-        ref={treeRef}
-        tree={tree}
-        renderItem={renderItem}
-        onExpand={onExpand}
-        onCollapse={onCollapse}
-        onDragEnd={onDragEnd}
-        offsetPerLevel={26}
-        isDragEnabled={!isRMXPMode}
-        isNestingEnabled
-      />
+      {hasNoMaps ? (
+        <div className="no-maps">{t('no_map_found')}</div>
+      ) : (
+        <Tree
+          ref={treeRef}
+          tree={tree}
+          renderItem={renderItem}
+          onExpand={onExpand}
+          onCollapse={onCollapse}
+          onDragEnd={onDragEnd}
+          offsetPerLevel={26}
+          isDragEnabled={!isRMXPMode}
+          isNestingEnabled
+        />
+      )}
       {mapInfoSelected &&
         renderContextMenu(
           <MapTreeContextMenu

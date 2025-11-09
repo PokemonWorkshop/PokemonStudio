@@ -29,7 +29,8 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
   const setText = useSetProjectText();
   const texts = useMemo(() => getTextList(textInfo.fileId), [getTextList, textInfo.fileId]);
   const textsFiltered = useMemo(
-    () => (research === '' ? texts : texts.filter((text) => text.dialog.toLowerCase().indexOf(research) !== -1)),
+    () =>
+      research === '' ? texts : texts.filter((text) => text.dialog.toLowerCase().indexOf(research) !== -1 || text.textId.toString() === research),
     [texts, research]
   );
   const listRef = useRef<List>(null);

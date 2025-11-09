@@ -71,7 +71,7 @@ export type ProjectLoadStateObject =
       currentPSDKVersion: PSDKVersion;
       lastPSDKVersion: PSDKVersion;
     }
-  | { state: 'openProject' };
+  | { state: 'openProject'; preState: PreGlobalState };
 export type ProjectLoadFunctionBinding = {
   onSuccess: ProjectLoadSuccessCallback;
   onFailure: ProjectLoadFailureCallback;
