@@ -14,6 +14,8 @@ import { useSetProjectText } from '@utils/ReadingProjectText';
 import { SeparatorGreyLine } from '@components/separators/SeparatorGreyLine';
 import { MapTree } from './tree/MapTree';
 import { addNewMapInfo } from '@utils/MapInfoUtils';
+import { useMapPage } from '@root/src/hooks/usePage';
+import { MapUpdate } from './MapUpdate';
 
 const MapMenuContainer = styled(NavigationDatabaseStyle)`
   ${NavigationDatabaseGroupStyle} {
@@ -40,6 +42,7 @@ const MapSubMenuContainer = styled.div`
 export const MapMenu = () => {
   const dialogsRef = useDialogsRef<MapEditorAndDeletionKeys>();
   const { mapInfo, isRMXPMode, setMapInfo } = useMapInfo();
+  const { hasMapModified } = useMapPage();
   const setText = useSetProjectText();
   const { t } = useTranslation();
 
@@ -63,6 +66,7 @@ export const MapMenu = () => {
           </div>
           <SeparatorGreyLine />
           <MapTree />
+          {hasMapModified && <MapUpdate />}
         </MapSubMenuContainer>
       </NavigationDatabaseGroup>
       <MapEditorOverlay ref={dialogsRef} />

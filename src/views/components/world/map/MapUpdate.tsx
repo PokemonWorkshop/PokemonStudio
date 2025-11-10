@@ -2,18 +2,28 @@ import React from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { BaseButtonStyle, WarningButton } from '@components/buttons';
-import { DataBlockContainer } from '@components/database/dataBlocks';
 import { useMapUpdate } from '@hooks/useMapUpdate';
 import { showNotification } from '@utils/showNotification';
 import { useLoaderRef } from '@utils/loaderContext';
 import { getSetting } from '@utils/settings';
 import { TooltipWrapper } from '@ds/Tooltip';
+import theme from '@root/src/AppTheme';
 
 export const MapUpdateContainer = styled.div`
+  position: fixed;
+  bottom: 16px;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
   gap: 24px;
+  padding: 24px;
+  border-radius: 8px;
+  max-width: 240px;
+  background-color: ${theme.colors.warningSoft};
+  border-color: ${theme.colors.warningSoft};
+  border: 1px solid ${theme.colors.warningSoft};
+  backdrop-filter: blur(12px);
 
   // TODO: Remove h2 rule from global style & remove '!important' from here!
   h2 {
@@ -60,18 +70,16 @@ export const MapUpdate = () => {
   };
 
   return (
-    <DataBlockContainer size="full" color="warning" data-disabled="true">
-      <MapUpdateContainer>
-        <div>
-          <h2>{t('update_maps')}</h2>
-          <span className="message">{t('update_maps_message')}</span>
-        </div>
-        <TooltipWrapper data-tooltip={disabledUpdate ? t('map_process_disabled') : undefined}>
-          <WarningButton onClick={handleUpdate} disabled={disabledUpdate}>
-            {t('update_maps_button')}
-          </WarningButton>
-        </TooltipWrapper>
-      </MapUpdateContainer>
-    </DataBlockContainer>
+    <MapUpdateContainer>
+      <div>
+        <h2>{t('update_maps')}</h2>
+        <span className="message">{t('update_maps_message')}</span>
+      </div>
+      <TooltipWrapper data-tooltip={disabledUpdate ? t('map_process_disabled') : undefined}>
+        <WarningButton onClick={handleUpdate} disabled={disabledUpdate}>
+          {t('update_maps_button')}
+        </WarningButton>
+      </TooltipWrapper>
+    </MapUpdateContainer>
   );
 };
