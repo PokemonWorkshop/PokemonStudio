@@ -8,6 +8,7 @@
   "kana": "Japonais",
   "pt": "Portugais",
   "zh": "Chinois",
+  "nl": "Néerlandais",
   "error": "Erreur",
   "import": "Importer",
   "importation": "Importation",
@@ -1746,5 +1747,7 @@
   "item_category_description_repel": "Les objets répulsifs sont utilisés pour éloigner les Pokémon sauvages.",
   "item_category_description_stone": "Les pierres évolutives sont utilisées pour faire évoluer certains Pokémon.",
   "item_category_description_tech": "Les CT et CS sont des objets qui enseignent de nouvelles capacités aux Pokémon.",
-  "end_of_rmxp_support": "Le support de RPG Maker XP en tant qu'outil de création de vos cartes sera arrêté dans une prochaine mise à jour et l'utilisation de Tiled sera obligatoire."
+  "end_of_rmxp_support": "Le support de RPG Maker XP en tant qu'outil de création de vos cartes sera arrêté dans une prochaine mise à jour et l'utilisation de Tiled sera obligatoire.",
+  "edit_map_links": "Éditer les cartes liées",
+  "map_links_to_map": "Liaisons de la carte {{map}}"
 }

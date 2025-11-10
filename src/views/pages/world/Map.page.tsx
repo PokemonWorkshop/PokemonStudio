@@ -16,6 +16,7 @@ import theme from '@src/AppTheme';
 import { useOpenTiled } from '@hooks/useOpenTiled';
 import { MapImportEditorTitle, MapImportOverlay } from '@components/world/map/editors/MapImport/MapImportOverlay';
 import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';
+import { useNavigateMapLink } from '@hooks/useNavigateMapLink';
 
 export const MapPageStyle = styled.div`
   display: flex;
@@ -30,8 +31,9 @@ export const MapPageStyle = styled.div`
 export const MapPage = () => {
   const dialogsRef = useDialogsRef<MapEditorAndDeletionKeys>();
   const dialogsMapImportRef = useDialogsRef<MapImportEditorTitle>();
-  const { map, hasMap, hasMapModified, isRMXPMode, disabledOpenTiled } = useMapPage();
+  const { map, mapName, hasMap, hasMapModified, isRMXPMode, disabledOpenTiled } = useMapPage();
   const openTiled = useOpenTiled();
+  const navigateMapLink = useNavigateMapLink();
   const { t } = useTranslation();
 
   return (
@@ -60,6 +62,12 @@ export const MapPage = () => {
                 <SecondaryButton onClick={() => openTiled(map.tiledFilename, dialogsRef)} disabled={disabledOpenTiled}>
                   <BaseIcon icon="mapPadded" size="s" color={disabledOpenTiled ? theme.colors.text700 : theme.colors.primaryBase} />
                   <span>{t('open_with_tiled')}</span>
+                </SecondaryButton>
+              </DataBlockWithAction>
+              <DataBlockWithAction size="full" title={t('map_links_to_map', { map: mapName })}>
+                <SecondaryButton onClick={() => navigateMapLink(map)}>
+                  <BaseIcon icon="mapLink" size="s" color={theme.colors.primaryBase} />
+                  <span>{t('edit_map_links')}</span>
                 </SecondaryButton>
               </DataBlockWithAction>
             </DataBlockWrapper>

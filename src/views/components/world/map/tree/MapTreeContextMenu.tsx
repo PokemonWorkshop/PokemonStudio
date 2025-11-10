@@ -4,6 +4,7 @@ import CopyIcon from '@assets/icons/global/copy.svg';
 import DeleteIcon from '@assets/icons/global/delete-icon.svg';
 import EditIcon from '@assets/icons/global/edit-icon.svg';
 import MapPaddedIcon from '@assets/icons/global/map-padded.svg';
+import MapLinkIcon from '@assets/icons/global/map-link.svg';
 import { MapDialogsRef } from '../editors/MapEditorOverlay';
 import { useMapInfo } from '@hooks/useMapInfo';
 import { mapInfoDuplicateMap, mapInfoRemoveFolder } from '@utils/MapInfoUtils';
@@ -14,6 +15,7 @@ import { useGetEntityDescriptionText, useGetEntityNameText, useSetProjectText } 
 import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID } from '@modelEntities/map';
 import { useOpenTiled } from '@hooks/useOpenTiled';
 import { createMapLinkFromMainMapId } from '@utils/MapLinkUtils';
+import { useNavigateMapLink } from '@hooks/useNavigateMapLink';
 
 type MapTreeContextMenuProps = {
   mapInfoValue: StudioMapInfoValue;
@@ -31,6 +33,7 @@ export const MapTreeContextMenu = ({ mapInfoValue, isDeleted, enableRename, dial
   const getName = useGetEntityNameText();
   const getDescription = useGetEntityDescriptionText();
   const openTiled = useOpenTiled();
+  const navigateMapLink = useNavigateMapLink();
   const hideTiledOption = mapInfoValue.data.klass === 'MapInfoMap' ? !maps[mapInfoValue.data.mapDbSymbol]?.tiledFilename : true || isDeleted;
 
   const isFolder = mapInfoValue.data.klass === 'MapInfoFolder';
@@ -73,6 +76,13 @@ export const MapTreeContextMenu = ({ mapInfoValue, isDeleted, enableRename, dial
     if (tiledFilename) openTiled(tiledFilename, dialogsRef);
   };
 
+  const onClickEditMapLinks = () => {
+    if (mapInfoValue.data.klass !== 'MapInfoMap' || isDeleted) return;
+
+    const map = maps[mapInfoValue.data.mapDbSymbol];
+    navigateMapLink(map);
+  };
+
   return (
     <>
       {!isDeleted && (
@@ -97,6 +107,14 @@ export const MapTreeContextMenu = ({ mapInfoValue, isDeleted, enableRename, dial
             <MapPaddedIcon />
           </span>
           {t('open_with_tiled')}
+        </div>
+      )}
+      {!isFolder && !isDeleted && (
+        <div onClick={onClickEditMapLinks}>
+          <span className="icon">
+            <MapLinkIcon />
+          </span>
+          {t('edit_map_links')}
         </div>
       )}
       <div className="delete" onClick={onClickDelete}>

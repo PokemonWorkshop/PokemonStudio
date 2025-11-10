@@ -1,6 +1,5 @@
 import { DeleteButtonWithIcon } from '@components/buttons';
-import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
-import { MapLinkControlBarV2, MapLinkNoMap } from '@components/mapLink';
+import { MapLinkNoMap } from '@components/mapLink';
 import { MapLinkEditorAndDeletionKeys, MapLinkEditorOverlay } from '@components/mapLink/editors/MapLinkEditorOverlay';
 import { ReactFlowMapLinkV2 } from '@components/mapLink/ReactFlowMapLinkV2';
 import { ReactFlowProvider } from '@xyflow/react';
@@ -17,7 +16,7 @@ const MapLinkV2Page = () => {
   const [cardinal, setCardinal] = useState<StudioMapLinkCardinal>('east');
 
   return (
-    <DatabasePageStyle>
+    <>
       {hasNoMapLinkAvailable ? (
         <>
           <div />
@@ -27,7 +26,6 @@ const MapLinkV2Page = () => {
         </>
       ) : (
         <>
-          <MapLinkControlBarV2 dialogsRef={dialogsRef} />
           {isValidMaplink ? (
             <ReactFlowProvider>
               <ReactFlowMapLinkV2 mapLink={mapLink} maps={maps} dialogsRef={dialogsRef} setCardinal={setCardinal} />
@@ -44,7 +42,7 @@ const MapLinkV2Page = () => {
         </>
       )}
       <MapLinkEditorOverlay ref={dialogsRef} cardinal={cardinal} />
-    </DatabasePageStyle>
+    </>
   );
 };
 
