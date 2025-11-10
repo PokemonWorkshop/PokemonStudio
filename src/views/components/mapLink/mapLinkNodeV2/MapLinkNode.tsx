@@ -112,7 +112,7 @@ export const MapLinkNode = ({ data: { mapLink, maps, cardinal, index, tileSize }
       {map ? (
         <>
           <span className="map-name">{getName(map)}</span>
-          <ResourceImage imagePathInProject={getMapOverviewPath(map.tiledFilename)} versionId={map.mtime} />
+          <ResourceImage imagePathInProject={getMapOverviewPath(map.tiledFilename)} versionId={map.mtime} fallback="graphics/pictures/black" />
         </>
       ) : (
         <div className="map-deleted">{t('map_deleted')}</div>

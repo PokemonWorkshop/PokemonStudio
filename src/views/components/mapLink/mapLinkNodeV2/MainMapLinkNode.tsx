@@ -97,7 +97,7 @@ export const MainMapLinkNode = ({ data, selected }: MainMapLinkNodeProps) => {
       <MapLinkAddMapNodeButton style={{ right: '-192px', top: '50%', transform: 'translateY(-50%)' }} onClick={() => onClickAddMap('east')} />
       <MapLinkAddMapNodeButton style={{ bottom: '-192px', left: '50%', transform: 'translateX(-50%)' }} onClick={() => onClickAddMap('south')} />
       <MapLinkAddMapNodeButton style={{ left: '-192px', top: '50%', transform: 'translateY(-50%)' }} onClick={() => onClickAddMap('west')} />
-      <ResourceImage imagePathInProject={getMapOverviewPath(map.tiledFilename)} versionId={map.mtime} />
+      <ResourceImage imagePathInProject={getMapOverviewPath(map.tiledFilename)} versionId={map.mtime} fallback="graphics/pictures/black" />
     </MainMapLinkNodeContainer>
   );
 };
