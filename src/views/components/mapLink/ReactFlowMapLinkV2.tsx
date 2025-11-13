@@ -127,40 +127,37 @@ export const ReactFlowMapLinkV2 = ({ mapLink, maps, setCardinal, dialogsRef }: R
       if (!mainNode || !reactFlowRef.current) return;
 
       const minMaxNodes: MinMaxNodesType = { minNodeX: mainNode, maxNodeX: mainNode, minNodeY: mainNode, maxNodeY: mainNode };
-
       const mainCenter = {
         x: mainNode.position.x + (mainNode.measured?.width ?? 0) / 2,
         y: mainNode.position.y + (mainNode.measured?.height ?? 0) / 2,
       };
 
       allNodes.forEach((n) => {
-        minMaxNodes.minNodeX = minMaxNodes.minNodeX ? (n.position.x < minMaxNodes.minNodeX.position.x ? n : minMaxNodes.minNodeX) : n;
-        minMaxNodes.maxNodeX = minMaxNodes.maxNodeX
-          ? n.position.x + (n.measured?.width ?? 0) > minMaxNodes.maxNodeX.position.x + (minMaxNodes.maxNodeX.measured?.width ?? 0)
+        minMaxNodes.minNodeX = n.position.x < minMaxNodes.minNodeX.position.x ? n : minMaxNodes.minNodeX;
+        minMaxNodes.maxNodeX =
+          n.position.x + (n.measured?.width ?? 0) > minMaxNodes.maxNodeX.position.x + (minMaxNodes.maxNodeX.measured?.width ?? 0)
             ? n
-            : minMaxNodes.maxNodeX
-          : n;
-        minMaxNodes.minNodeY = minMaxNodes.minNodeY ? (n.position.y < minMaxNodes.minNodeY.position.y ? n : minMaxNodes.minNodeY) : n;
-        minMaxNodes.maxNodeY = minMaxNodes.maxNodeY
-          ? n.position.y + (n.measured?.height ?? 0) > minMaxNodes.maxNodeY.position.y + (minMaxNodes.maxNodeY.measured?.height ?? 0)
+            : minMaxNodes.maxNodeX;
+        minMaxNodes.minNodeY = n.position.y < minMaxNodes.minNodeY.position.y ? n : minMaxNodes.minNodeY;
+        minMaxNodes.maxNodeY =
+          n.position.y + (n.measured?.height ?? 0) > minMaxNodes.maxNodeY.position.y + (minMaxNodes.maxNodeY.measured?.height ?? 0)
             ? n
-            : minMaxNodes.maxNodeY
-          : n;
+            : minMaxNodes.maxNodeY;
       });
 
       const maxNodeX = minMaxNodes.maxNodeX;
       const maxNodeY = minMaxNodes.maxNodeY;
-      const left = Math.abs(minMaxNodes.minNodeX?.position.x ?? 0);
+      const left = Math.abs(minMaxNodes.minNodeX.position.x);
       const right = Math.abs(
-        maxNodeX?.position.x ?? 0 < (mainNode.measured?.width ?? 0)
-          ? (maxNodeX?.measured?.width ?? 0) - (mainNode.measured?.width ?? 0) + (maxNodeX?.position.x ?? 0)
-          : (maxNodeX?.position.x ?? 0) - (mainNode.measured?.width ?? 0) + (maxNodeX?.measured?.width ?? 0)
+        maxNodeX.position.x < (mainNode.measured?.width ?? 0)
+          ? (maxNodeX.measured?.width ?? 0) - (mainNode.measured?.width ?? 0) + maxNodeX.position.x
+          : maxNodeX.position.x - (mainNode.measured?.width ?? 0) + (maxNodeX?.measured?.width ?? 0)
       );
-      const top = Math.abs(minMaxNodes.minNodeY?.position.y ?? 0);
+      const top = Math.abs(minMaxNodes.minNodeY.position.y);
       const bottom = Math.abs(
-        maxNodeY?.position.y ?? 0 < (mainNode.measured?.height ?? 0)
-          ? (maxNodeY?.measured?.height ?? 0) - (mainNode.measured?.height ?? 0) + (maxNodeY?.position.y ?? 0)
-          : (maxNodeY?.position.y ?? 0) - (mainNode.measured?.height ?? 0) + (maxNodeY?.measured?.height ?? 0)
+        maxNodeY.position.y ?? 0 < (mainNode.measured?.height ?? 0)
+          ? (maxNodeY.measured?.height ?? 0) - (mainNode.measured?.height ?? 0) + maxNodeY.position.y
+          : maxNodeY.position.y - (mainNode.measured?.height ?? 0) + (maxNodeY?.measured?.height ?? 0)
       );
 
       const widthBounds = Math.max(left, right) * 2 + (mainNode.measured?.width ?? 0);
