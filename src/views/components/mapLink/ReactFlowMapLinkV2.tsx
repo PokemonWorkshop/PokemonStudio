@@ -18,11 +18,13 @@ import { useUpdateMapLink } from './editors';
 import { cloneEntity } from '@utils/cloneEntity';
 import type { MapLinkDialogsRef } from './editors/MapLinkEditorOverlay';
 import { useProjectMapLinks } from '@hooks/useProjectData';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 const TILE_SIZE = 32;
 
 type UpdateOffsetType = { cardinal: StudioMapLinkCardinal; newPosition: Node['position']; index: number };
+
+type MinMaxNodesType = { minNodeX: Node; maxNodeX: Node; minNodeY: Node; maxNodeY: Node };
 
 type ReactFlowMapLinkProps = {
   mapLink: StudioMapLink;
@@ -33,6 +35,7 @@ type ReactFlowMapLinkProps = {
 
 export const ReactFlowMapLinkV2 = ({ mapLink, maps, setCardinal, dialogsRef }: ReactFlowMapLinkProps) => {
   const reactFlowInstance = useReactFlow();
+  const reactFlowRef = useRef<HTMLDivElement>(null);
   const [nodes, setNodes] = useNodesState<MapLinkNodeType>([
     initMainMapLinkNode(mapLink, maps, TILE_SIZE, setCardinal, dialogsRef),
     ...buildLinks(mapLink, maps, TILE_SIZE),
@@ -117,7 +120,63 @@ export const ReactFlowMapLinkV2 = ({ mapLink, maps, setCardinal, dialogsRef }: R
     reactFlowInstance.setViewport({ x: 0, y: -10000, zoom: 1 });
 
     // it's necessary to wait that reactFlowInstance has the new nodes and edges to do a correct fitView
-    const timer = setTimeout(() => reactFlowInstance.fitView(), 50);
+    const timer = setTimeout(() => {
+      const rf = reactFlowInstance;
+      const allNodes = rf.getNodes();
+      const mainNode = allNodes.find((n) => n.id === 'main-map-link-node');
+      if (!mainNode || !reactFlowRef.current) return;
+
+      const minMaxNodes: MinMaxNodesType = { minNodeX: mainNode, maxNodeX: mainNode, minNodeY: mainNode, maxNodeY: mainNode };
+
+      const mainCenter = {
+        x: mainNode.position.x + (mainNode.measured?.width ?? 0) / 2,
+        y: mainNode.position.y + (mainNode.measured?.height ?? 0) / 2,
+      };
+
+      allNodes.forEach((n) => {
+        minMaxNodes.minNodeX = minMaxNodes.minNodeX ? (n.position.x < minMaxNodes.minNodeX.position.x ? n : minMaxNodes.minNodeX) : n;
+        minMaxNodes.maxNodeX = minMaxNodes.maxNodeX
+          ? n.position.x + (n.measured?.width ?? 0) > minMaxNodes.maxNodeX.position.x + (minMaxNodes.maxNodeX.measured?.width ?? 0)
+            ? n
+            : minMaxNodes.maxNodeX
+          : n;
+        minMaxNodes.minNodeY = minMaxNodes.minNodeY ? (n.position.y < minMaxNodes.minNodeY.position.y ? n : minMaxNodes.minNodeY) : n;
+        minMaxNodes.maxNodeY = minMaxNodes.maxNodeY
+          ? n.position.y + (n.measured?.height ?? 0) > minMaxNodes.maxNodeY.position.y + (minMaxNodes.maxNodeY.measured?.height ?? 0)
+            ? n
+            : minMaxNodes.maxNodeY
+          : n;
+      });
+
+      const maxNodeX = minMaxNodes.maxNodeX;
+      const maxNodeY = minMaxNodes.maxNodeY;
+      const left = Math.abs(minMaxNodes.minNodeX?.position.x ?? 0);
+      const right = Math.abs(
+        maxNodeX?.position.x ?? 0 < (mainNode.measured?.width ?? 0)
+          ? (maxNodeX?.measured?.width ?? 0) - (mainNode.measured?.width ?? 0) + (maxNodeX?.position.x ?? 0)
+          : (maxNodeX?.position.x ?? 0) - (mainNode.measured?.width ?? 0) + (maxNodeX?.measured?.width ?? 0)
+      );
+      const top = Math.abs(minMaxNodes.minNodeY?.position.y ?? 0);
+      const bottom = Math.abs(
+        maxNodeY?.position.y ?? 0 < (mainNode.measured?.height ?? 0)
+          ? (maxNodeY?.measured?.height ?? 0) - (mainNode.measured?.height ?? 0) + (maxNodeY?.position.y ?? 0)
+          : (maxNodeY?.position.y ?? 0) - (mainNode.measured?.height ?? 0) + (maxNodeY?.measured?.height ?? 0)
+      );
+
+      const widthBounds = Math.max(left, right) * 2 + (mainNode.measured?.width ?? 0);
+      const heightBounds = Math.max(top, bottom) * 2 + (mainNode.measured?.height ?? 0);
+
+      const { clientWidth: width, clientHeight: height } = reactFlowRef.current;
+      const zoomX = width / widthBounds;
+      const zoomY = height / heightBounds;
+      const zoom = Math.min(zoomX, zoomY) * 0.95;
+
+      rf.setViewport({
+        x: width / 2 - mainCenter.x * zoom,
+        y: height / 2 - mainCenter.y * zoom,
+        zoom,
+      });
+    }, 50);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mapLink.id]);
@@ -129,6 +188,7 @@ export const ReactFlowMapLinkV2 = ({ mapLink, maps, setCardinal, dialogsRef }: R
 
   return (
     <ReactFlow
+      ref={reactFlowRef}
       nodes={nodes}
       nodeTypes={nodeTypes}
       onNodesChange={onNodesChange}
@@ -136,7 +196,6 @@ export const ReactFlowMapLinkV2 = ({ mapLink, maps, setCardinal, dialogsRef }: R
       snapGrid={[TILE_SIZE, TILE_SIZE]}
       nodesDraggable={true}
       nodesConnectable={false}
-      fitView
       style={{
         zIndex: 1,
       }}
