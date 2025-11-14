@@ -21,39 +21,45 @@ type MainMapLinkNodeProps = {
   selected: boolean;
 };
 
-type MapLinkNodeContainer = {
+type MapLinkNodeContainerProps = {
   selected: boolean;
   zoom: number;
 };
 
-const MapLinkAddMapNodeButtonContainer = styled(PrimaryButton)`
+type MapLinkAddMapNodeButtonContainerProps = {
+  zoom: number;
+};
+
+const MapLinkAddMapNodeButtonContainer = styled(PrimaryButton)<MapLinkAddMapNodeButtonContainerProps>`
   position: absolute;
   border-radius: 8px;
-  width: 96px;
-  height: 96px;
+  width: ${({ zoom }) => 40 / zoom}px;
+  height: ${({ zoom }) => 40 / zoom}px;
+  border-radius: ${({ zoom }) => 8 / zoom}px;
   padding: 0;
   gap: 0;
 
   & svg {
-    width: 36px;
-    height: 36px;
+    width: ${({ zoom }) => 12 / zoom}px;
+    height: auto;
   }
 `;
 
 type MapLinkAddMapNodeButtonProps = {
   style: CSSProperties;
+  zoom: number;
   onClick: () => void;
 };
 
-const MapLinkAddMapNodeButton = ({ style, onClick }: MapLinkAddMapNodeButtonProps) => {
+const MapLinkAddMapNodeButton = ({ style, zoom, onClick }: MapLinkAddMapNodeButtonProps) => {
   return (
-    <MapLinkAddMapNodeButtonContainer style={style} onClick={onClick}>
+    <MapLinkAddMapNodeButtonContainer style={style} zoom={zoom} onClick={onClick}>
       <PlusIcon />
     </MapLinkAddMapNodeButtonContainer>
   );
 };
 
-const MainMapLinkNodeContainer = styled.div<MapLinkNodeContainer>`
+const MainMapLinkNodeContainer = styled.div<MapLinkNodeContainerProps>`
   display: inline-block;
   position: relative;
   // Maps can be completely transparent, so we set the background color so that they are visible.
@@ -82,6 +88,7 @@ const zoomSelector = (s: { transform: number[] }) => s.transform[2];
 export const MainMapLinkNode = ({ data, selected }: MainMapLinkNodeProps) => {
   const currentZoom = useStore(zoomSelector);
   const map = data.maps[data.mapLink.mapId];
+  const position = -64 / currentZoom;
 
   const onClickAddMap = (cardinal: StudioMapLinkCardinal) => {
     const { dialogsRef, setCardinal } = data;
@@ -93,10 +100,26 @@ export const MainMapLinkNode = ({ data, selected }: MainMapLinkNodeProps) => {
 
   return (
     <MainMapLinkNodeContainer selected={selected} zoom={currentZoom} style={getMapSizeStyle(map, data.tileSize)}>
-      <MapLinkAddMapNodeButton style={{ top: '-192px', left: '50%', transform: 'translateX(-50%)' }} onClick={() => onClickAddMap('north')} />
-      <MapLinkAddMapNodeButton style={{ right: '-192px', top: '50%', transform: 'translateY(-50%)' }} onClick={() => onClickAddMap('east')} />
-      <MapLinkAddMapNodeButton style={{ bottom: '-192px', left: '50%', transform: 'translateX(-50%)' }} onClick={() => onClickAddMap('south')} />
-      <MapLinkAddMapNodeButton style={{ left: '-192px', top: '50%', transform: 'translateY(-50%)' }} onClick={() => onClickAddMap('west')} />
+      <MapLinkAddMapNodeButton
+        style={{ top: `${position}px`, left: '50%', transform: 'translateX(-50%)' }}
+        zoom={currentZoom}
+        onClick={() => onClickAddMap('north')}
+      />
+      <MapLinkAddMapNodeButton
+        style={{ right: `${position}px`, top: '50%', transform: 'translateY(-50%)' }}
+        zoom={currentZoom}
+        onClick={() => onClickAddMap('east')}
+      />
+      <MapLinkAddMapNodeButton
+        style={{ bottom: `${position}px`, left: '50%', transform: 'translateX(-50%)' }}
+        zoom={currentZoom}
+        onClick={() => onClickAddMap('south')}
+      />
+      <MapLinkAddMapNodeButton
+        style={{ left: `${position}px`, top: '50%', transform: 'translateY(-50%)' }}
+        zoom={currentZoom}
+        onClick={() => onClickAddMap('west')}
+      />
       <ResourceImage imagePathInProject={getMapOverviewPath(map.tiledFilename)} versionId={map.mtime} fallback="graphics/pictures/black" />
     </MainMapLinkNodeContainer>
   );
