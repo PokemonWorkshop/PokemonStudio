@@ -116,6 +116,7 @@ export const ReactFlowMapLinkV2 = ({ mapLink, maps, setCardinal, dialogsRef }: R
 
     const reverseMapLink = Object.values(allMapLinks).find((mapLink) => mapLink.mapId === links[index].mapId);
     if (!reverseMapLink) return;
+    if (reverseMapLink.id === mapLink.id) return;
 
     const oppositeCardinal = getOppositeCardinal(cardinal);
     const reverseMapLinkEdited = cloneEntity(reverseMapLink);
@@ -177,7 +178,10 @@ export const ReactFlowMapLinkV2 = ({ mapLink, maps, setCardinal, dialogsRef }: R
     reactFlowInstance.setViewport({ x: 0, y: -10000, zoom: 1 });
 
     // it's necessary to wait that reactFlowInstance has the new nodes and edges to do a correct fitView
-    const timer = setTimeout(onFitView, 50);
+    const timer = setTimeout(() => {
+      onFitView();
+      setNodes((nds) => applyNodeChanges([{ id: 'main-map-link-node', type: 'select', selected: true }], nds));
+    }, 50);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mapLink.id]);
