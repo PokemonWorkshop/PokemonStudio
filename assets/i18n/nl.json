@@ -1749,5 +1749,5 @@
   "item_category_description_tech": "TMs are used to teach Pokémon new moves.",
   "end_of_rmxp_support": "Support for RPG Maker XP as a map creation tool will end in an upcoming update, and the use of Tiled will become mandatory.",
   "edit_map_links": "Edit map links",
-  "map_links_to_map": "Link map {{map}}"
+  "map_links_to_map": "Link map"
 }

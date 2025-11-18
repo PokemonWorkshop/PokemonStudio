@@ -109,13 +109,10 @@ export const useTranslationPage = (positionLanguage?: number) => {
 
 export const useMapPage = () => {
   const { projectDataValues: maps, selectedDataIdentifier: dbSymbol, state } = useProjectDataReadonly('maps', 'map');
-  const { t } = useTranslation();
   const map = maps[dbSymbol];
-  const mapName = map ? getEntityNameText(map, state) : t('map_deleted');
 
   return {
     map,
-    mapName,
     hasMap: dbSymbol !== '__undef__',
     hasMapModified: state.mapsModified.length !== 0,
     isRMXPMode: !state.projectStudio.isTiledMode,

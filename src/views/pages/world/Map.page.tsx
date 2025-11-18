@@ -31,7 +31,7 @@ export const MapPageStyle = styled.div`
 export const MapPage = () => {
   const dialogsRef = useDialogsRef<MapEditorAndDeletionKeys>();
   const dialogsMapImportRef = useDialogsRef<MapImportEditorTitle>();
-  const { map, mapName, hasMap, hasMapModified, isRMXPMode, disabledOpenTiled } = useMapPage();
+  const { map, hasMap, hasMapModified, isRMXPMode, disabledOpenTiled } = useMapPage();
   const openTiled = useOpenTiled();
   const navigateMapLink = useNavigateMapLink();
   const { t } = useTranslation();
@@ -64,7 +64,7 @@ export const MapPage = () => {
                   <span>{t('open_with_tiled')}</span>
                 </SecondaryButton>
               </DataBlockWithAction>
-              <DataBlockWithAction size="full" title={t('map_links_to_map', { map: mapName })}>
+              <DataBlockWithAction size="full" title={t('map_links_to_map')}>
                 <SecondaryButton onClick={() => navigateMapLink(map)}>
                   <BaseIcon icon="mapLink" size="s" color={theme.colors.primaryBase} />
                   <span>{t('edit_map_links')}</span>
