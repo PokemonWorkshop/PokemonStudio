@@ -50,7 +50,7 @@ export const ReactFlowOverview = ({ map, version }: ReactFlowOverviewProps) => {
       nodesDraggable={true}
       nodesConnectable={false}
       deleteKeyCode={null}
-      minZoom={0.15}
+      minZoom={0.12}
       maxZoom={1}
     >
       <Background gap={16} variant={BackgroundVariant.Dots} />

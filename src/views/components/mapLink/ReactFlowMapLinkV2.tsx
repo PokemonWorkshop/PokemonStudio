@@ -22,6 +22,7 @@ import { FitViewButton } from '@components/buttons';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 const TILE_SIZE = 32;
+const MIN_ZOOM = 0.12;
 
 type UpdateOffsetType = { cardinal: StudioMapLinkCardinal; newPosition: Node['position']; index: number };
 
@@ -93,7 +94,7 @@ export const ReactFlowMapLinkV2 = ({ mapLink, maps, setCardinal, dialogsRef }: R
     const zoomX = width / widthBounds;
     const zoomY = height / heightBounds;
     const padding = 0.83;
-    const zoom = Math.min(zoomX, zoomY) * padding;
+    const zoom = Math.max(Math.min(zoomX, zoomY) * padding, MIN_ZOOM);
 
     rf.setViewport({
       x: width / 2 - mainCenter.x * zoom,
@@ -204,7 +205,7 @@ export const ReactFlowMapLinkV2 = ({ mapLink, maps, setCardinal, dialogsRef }: R
       style={{
         zIndex: 1,
       }}
-      minZoom={0.15}
+      minZoom={MIN_ZOOM}
       maxZoom={1}
       deleteKeyCode={null}
     >

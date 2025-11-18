@@ -59,26 +59,30 @@ const MapLinkNodeContainer = styled.div<MapLinkNodeContainer>`
       display: flex;
       top: ${({ zoom }) => 4 / zoom}px;
       right: ${({ zoom }) => 4 / zoom}px;
-      height: 50px;
-      width: 52px;
+      height: 40px;
+      width: 40px;
       scale: ${({ zoom }) => 1 / zoom};
       transform-origin: top right;
     }
 
     & .map-name {
       position: absolute;
-      display: flex;
+      display: block;
+      box-sizing: border-box;
       top: ${({ zoom }) => 4 / zoom}px;
       left: ${({ zoom }) => 4 / zoom}px;
-      align-items: center;
-      justify-content: center;
+      max-width: 64%;
+      height: ${({ zoom }) => 40 / zoom}px;
       padding: ${({ zoom }) => 8 / zoom}px;
-      ${({ theme }) => theme.fonts.titlesHeadline4};
-      font-size: ${({ zoom }) => 24 / zoom}px;
-      line-height: normal;
+      ${({ theme }) => theme.fonts.normalMedium};
+      font-size: ${({ zoom }) => 14 / zoom}px;
+      line-height: ${({ zoom }) => 24 / zoom}px;
       background-color: ${({ theme }) => theme.colors.dark20};
       color: ${({ theme }) => theme.colors.text100};
-      border-radius: 8px;
+      border-radius: ${({ zoom }) => 8 / zoom}px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
     }
   }
 
