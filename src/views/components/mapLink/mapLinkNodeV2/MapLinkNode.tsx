@@ -5,10 +5,12 @@ import { getMapOverviewPath } from '@utils/resourcePath';
 import { cloneEntity } from '@utils/cloneEntity';
 import { useUpdateMapLink } from '../editors';
 import { ClearButtonOnlyIcon } from '@components/buttons';
-import { useStore } from '@xyflow/react';
+import { useKeyPress, useStore } from '@xyflow/react';
 import { getMapSizeStyle } from '@utils/MapLinkUtils';
 import { useTranslation } from 'react-i18next';
 import { useGetEntityNameText } from '@src/utils/ReadingProjectText';
+import { CONTROL } from '@hooks/useKeyPress';
+import { useShortcutNavigation } from '@hooks/useShortcutNavigation';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -84,6 +86,10 @@ const MapLinkNodeContainer = styled.div<MapLinkNodeContainer>`
       white-space: nowrap;
       overflow: hidden;
     }
+
+    & .map-name.clickable {
+      text-decoration: underline;
+    }
   }
 
   &:hover::after {
@@ -101,6 +107,8 @@ export const MapLinkNode = ({ data: { mapLink, maps, cardinal, index, tileSize }
   const updateMapLink = useUpdateMapLink(mapLink);
   const getName = useGetEntityNameText();
   const currentZoom = useStore(zoomSelector);
+  const isClickable = useKeyPress(CONTROL);
+  const shortcutNavigation = useShortcutNavigation('maps', 'map', '/world/map');
   const { t } = useTranslation();
   const links = getLinksFromMapLink(mapLink, cardinal);
   const map = maps[links[index].mapId];
@@ -115,7 +123,9 @@ export const MapLinkNode = ({ data: { mapLink, maps, cardinal, index, tileSize }
     <MapLinkNodeContainer zoom={currentZoom} style={getMapSizeStyle(map, tileSize)}>
       {map ? (
         <>
-          <span className="map-name">{getName(map)}</span>
+          <span className={`map-name ${isClickable ? 'clickable' : undefined}`} onClick={() => isClickable && shortcutNavigation(map.dbSymbol)}>
+            {getName(map)}
+          </span>
           <ResourceImage imagePathInProject={getMapOverviewPath(map.tiledFilename)} versionId={map.mtime} fallback="graphics/pictures/black" />
         </>
       ) : (
