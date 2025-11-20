@@ -2,7 +2,7 @@ import { ResourceImage } from '@components/ResourceImage';
 import type { StudioMap } from '@modelEntities/map';
 import type { StudioMapLink, StudioMapLinkCardinal } from '@modelEntities/mapLink';
 import { getMapOverviewPath } from '@utils/resourcePath';
-import { useStore } from '@xyflow/react';
+import { Node, useStore } from '@xyflow/react';
 import { PrimaryButton } from '@components/buttons';
 import type { MapLinkDialogsRef } from '../editors/MapLinkEditorOverlay';
 import { getMapSizeStyle } from '@utils/MapLinkUtils';
@@ -10,7 +10,7 @@ import PlusIcon from '@assets/icons/global/plus-icon.svg';
 import styled from 'styled-components';
 import React, { CSSProperties } from 'react';
 
-type MainMapLinkNodeProps = {
+type MainMapLinkNodeProps = Node & {
   data: {
     mapLink: StudioMapLink;
     maps: Record<number, StudioMap>;
@@ -18,7 +18,6 @@ type MainMapLinkNodeProps = {
     setCardinal: (cardinal: StudioMapLinkCardinal) => void;
     dialogsRef?: MapLinkDialogsRef;
   };
-  selected: boolean;
 };
 
 type MapLinkNodeContainerProps = {
@@ -99,7 +98,7 @@ export const MainMapLinkNode = ({ data, selected }: MainMapLinkNodeProps) => {
   };
 
   return (
-    <MainMapLinkNodeContainer selected={selected} zoom={currentZoom} style={getMapSizeStyle(map, data.tileSize)}>
+    <MainMapLinkNodeContainer selected={!!selected} zoom={currentZoom} style={getMapSizeStyle(map, data.tileSize)}>
       <MapLinkAddMapNodeButton
         style={{ top: `${position}px`, left: '50%', transform: 'translateX(-50%)' }}
         zoom={currentZoom}

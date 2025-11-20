@@ -5,7 +5,7 @@ import { getMapOverviewPath } from '@utils/resourcePath';
 import { cloneEntity } from '@utils/cloneEntity';
 import { useUpdateMapLink } from '../editors';
 import { ClearButtonOnlyIcon } from '@components/buttons';
-import { useKeyPress, useStore } from '@xyflow/react';
+import { Node, useKeyPress, useStore } from '@xyflow/react';
 import { getMapSizeStyle } from '@utils/MapLinkUtils';
 import { useTranslation } from 'react-i18next';
 import { useGetEntityNameText } from '@src/utils/ReadingProjectText';
@@ -15,10 +15,11 @@ import React from 'react';
 import styled from 'styled-components';
 
 type MapLinkNodeContainer = {
+  dragging?: boolean;
   zoom: number;
 };
 
-type MapLinkNodeProps = {
+type MapLinkNodeProps = Node & {
   data: {
     mapLink: StudioMapLink;
     maps: Record<number, StudioMap>;
@@ -58,7 +59,7 @@ const MapLinkNodeContainer = styled.div<MapLinkNodeContainer>`
   &:hover {
     & .clear-button {
       position: absolute;
-      display: flex;
+      display: ${({ dragging }) => (dragging ? 'none' : 'flex')};
       top: ${({ zoom }) => 4 / zoom}px;
       right: ${({ zoom }) => 4 / zoom}px;
       height: 40px;
@@ -69,7 +70,7 @@ const MapLinkNodeContainer = styled.div<MapLinkNodeContainer>`
 
     & .map-name {
       position: absolute;
-      display: block;
+      display: ${({ dragging }) => (dragging ? 'none' : 'block')};
       box-sizing: border-box;
       top: ${({ zoom }) => 4 / zoom}px;
       left: ${({ zoom }) => 4 / zoom}px;
@@ -103,7 +104,7 @@ const MapLinkNodeContainer = styled.div<MapLinkNodeContainer>`
 
 const zoomSelector = (s: { transform: number[] }) => s.transform[2];
 
-export const MapLinkNode = ({ data: { mapLink, maps, cardinal, index, tileSize } }: MapLinkNodeProps) => {
+export const MapLinkNode = ({ data: { mapLink, maps, cardinal, index, tileSize }, dragging }: MapLinkNodeProps) => {
   const updateMapLink = useUpdateMapLink(mapLink);
   const getName = useGetEntityNameText();
   const currentZoom = useStore(zoomSelector);
@@ -120,7 +121,7 @@ export const MapLinkNode = ({ data: { mapLink, maps, cardinal, index, tileSize }
   };
 
   return (
-    <MapLinkNodeContainer zoom={currentZoom} style={getMapSizeStyle(map, tileSize)}>
+    <MapLinkNodeContainer dragging={dragging} style={getMapSizeStyle(map, tileSize)} zoom={currentZoom}>
       {map ? (
         <>
           <span className={`map-name ${isClickable ? 'clickable' : undefined}`} onClick={() => isClickable && shortcutNavigation(map.dbSymbol)}>
