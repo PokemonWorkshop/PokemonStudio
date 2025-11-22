@@ -2,7 +2,7 @@ import { ResourceImage } from '@components/ResourceImage';
 import type { StudioMap } from '@modelEntities/map';
 import type { StudioMapLink, StudioMapLinkCardinal } from '@modelEntities/mapLink';
 import { getMapOverviewPath } from '@utils/resourcePath';
-import { Node, useStore } from '@xyflow/react';
+import { useStore } from '@xyflow/react';
 import { PrimaryButton } from '@components/buttons';
 import type { MapLinkDialogsRef } from '../editors/MapLinkEditorOverlay';
 import { getMapSizeStyle } from '@utils/MapLinkUtils';
@@ -10,7 +10,7 @@ import PlusIcon from '@assets/icons/global/plus-icon.svg';
 import styled from 'styled-components';
 import React, { CSSProperties } from 'react';
 
-type MainMapLinkNodeProps = Node & {
+type MainMapLinkNodeProps = {
   data: {
     mapLink: StudioMapLink;
     maps: Record<number, StudioMap>;
@@ -18,6 +18,7 @@ type MainMapLinkNodeProps = Node & {
     setCardinal: (cardinal: StudioMapLinkCardinal) => void;
     dialogsRef?: MapLinkDialogsRef;
   };
+  selected?: boolean;
 };
 
 type MapLinkNodeContainerProps = {

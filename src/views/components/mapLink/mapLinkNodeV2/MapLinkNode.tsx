@@ -5,7 +5,7 @@ import { getMapOverviewPath } from '@utils/resourcePath';
 import { cloneEntity } from '@utils/cloneEntity';
 import { useUpdateMapLink } from '../editors';
 import { ClearButtonOnlyIcon } from '@components/buttons';
-import { Node, useKeyPress, useStore } from '@xyflow/react';
+import { useKeyPress, useStore } from '@xyflow/react';
 import { getMapSizeStyle } from '@utils/MapLinkUtils';
 import { useTranslation } from 'react-i18next';
 import { useGetEntityNameText } from '@src/utils/ReadingProjectText';
@@ -19,7 +19,7 @@ type MapLinkNodeContainer = {
   zoom: number;
 };
 
-type MapLinkNodeProps = Node & {
+type MapLinkNodeProps = {
   data: {
     mapLink: StudioMapLink;
     maps: Record<number, StudioMap>;
@@ -27,6 +27,7 @@ type MapLinkNodeProps = Node & {
     index: number;
     tileSize: number;
   };
+  dragging?: boolean;
 };
 
 const MapLinkNodeContainer = styled.div<MapLinkNodeContainer>`
