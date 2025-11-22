@@ -1,31 +1,35 @@
 import {
   addEdge,
+  applyNodeChanges,
   Background,
   Connection,
   Controls,
   Edge,
+  Node,
   ReactFlow,
   ReactFlowProvider,
   useEdgesState,
   useNodesState,
   useReactFlow,
 } from '@xyflow/react';
-import React, { DragEvent, DragEventHandler, useCallback, useRef } from 'react';
+import React, { DragEvent, DragEventHandler, useCallback, useMemo, useRef } from 'react';
 import styled from 'styled-components';
 
 import { EventCommandsEditor } from '@components/event/EventCommandsEditor';
 import { EventProvider, useEventDnD } from '@components/event/EventDnDContext';
-import { useTranslation } from 'react-i18next';
 import { StudioEventCommand } from '@modelEntities/event/command';
+import { BasicNode } from '../nodeEditor/BasicNode';
+import { EventDialogsRef, EventEditorAndDeletionKeys, EventEditorOverlay } from '../nodeEditor/EventEditorOverlay';
+import { useDialogsRef } from '@src/hooks/useDialogsRef';
 
 // From example: https://reactflow.dev/examples/interaction/drag-and-drop
 
-type NodeEvent = {
-  id: string;
-  type: string;
-  data: { label: string };
-  position: { x: number; y: number };
+type NodeData = {
+  dialogsRef?: EventDialogsRef;
+  commandType: StudioEventCommand;
 };
+
+type NodeEvent = Node<NodeData, StudioEventCommand>;
 
 const EventEditorContainer = styled.div`
   display: flex;
@@ -47,16 +51,27 @@ const EventFlow = () => {
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState<NodeEvent>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
+  const nodeTypes = useMemo(
+    () => ({
+      add_condition: BasicNode,
+      add_jump_another_command: BasicNode,
+      call_event: BasicNode,
+      insert_loop: BasicNode,
+      show_message: BasicNode,
+      stop_event_execution: BasicNode,
+    }),
+    []
+  );
   const { screenToFlowPosition } = useReactFlow();
   const { type, setType } = useEventDnD();
-  const { t } = useTranslation();
+  const dialogsRef = useDialogsRef<EventEditorAndDeletionKeys>();
 
   const onConnect = useCallback((params: Connection) => setEdges((eds) => addEdge(params, eds)), []);
 
   const onDragOver: DragEventHandler<HTMLDivElement> = useCallback((event) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';
-    const position = screenToFlowPosition({
+    /*const position = screenToFlowPosition({
       x: event.clientX,
       y: event.clientY,
     });
@@ -67,7 +82,7 @@ const EventFlow = () => {
       position,
       data: { label: 'shadow' },
     };
-    setNodes((nds) => nds.filter((node) => node.id !== 'node-shadow').concat(shadowNode));
+    setNodes((nds) => nds.filter((node) => node.id !== 'node-shadow').concat(shadowNode));*/
   }, []);
 
   const onDrop: DragEventHandler<HTMLDivElement> = useCallback(
@@ -83,14 +98,16 @@ const EventFlow = () => {
         x: event.clientX,
         y: event.clientY,
       });
-      const newNode = {
+      const newNode: NodeEvent = {
         id: getId(),
-        type: 'default', // TODO: use the type of the command
+        type,
         position,
-        data: { label: t(`event_command_${type}`) },
+        data: { commandType: type, dialogsRef },
       };
 
-      setNodes((nds) => nds.filter((node) => node.id !== 'node-shadow').concat(newNode));
+      setNodes((nds) => applyNodeChanges([{ type: 'add', item: newNode }], nds));
+
+      //setNodes((nds) => nds.filter((node) => node.id !== 'node-shadow').concat(newNode));
     },
     [screenToFlowPosition, type]
   );
@@ -107,6 +124,7 @@ const EventFlow = () => {
         <ReactFlow
           nodes={nodes}
           edges={edges}
+          nodeTypes={nodeTypes}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
@@ -120,6 +138,7 @@ const EventFlow = () => {
         </ReactFlow>
       </div>
       <EventCommandsEditor />
+      <EventEditorOverlay ref={dialogsRef} />
     </EventEditorContainer>
   );
 };
