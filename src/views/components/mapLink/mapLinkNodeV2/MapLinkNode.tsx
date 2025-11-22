@@ -10,7 +10,7 @@ import { getMapSizeStyle } from '@utils/MapLinkUtils';
 import { useTranslation } from 'react-i18next';
 import { useGetEntityNameText } from '@src/utils/ReadingProjectText';
 import { CONTROL } from '@hooks/useKeyPress';
-import { useShortcutNavigation } from '@hooks/useShortcutNavigation';
+import { useNavigateMapLink } from '@hooks/useNavigateMapLink';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -91,6 +91,7 @@ const MapLinkNodeContainer = styled.div<MapLinkNodeContainer>`
 
     & .map-name.clickable {
       text-decoration: underline;
+      cursor: pointer;
     }
   }
 
@@ -110,7 +111,7 @@ export const MapLinkNode = ({ data: { mapLink, maps, cardinal, index, tileSize }
   const getName = useGetEntityNameText();
   const currentZoom = useStore(zoomSelector);
   const isClickable = useKeyPress(CONTROL);
-  const shortcutNavigation = useShortcutNavigation('maps', 'map', '/world/map');
+  const navigateMapLink = useNavigateMapLink();
   const { t } = useTranslation();
   const links = getLinksFromMapLink(mapLink, cardinal);
   const map = maps[links[index].mapId];
@@ -125,7 +126,7 @@ export const MapLinkNode = ({ data: { mapLink, maps, cardinal, index, tileSize }
     <MapLinkNodeContainer dragging={dragging} style={getMapSizeStyle(map, tileSize)} zoom={currentZoom}>
       {map ? (
         <>
-          <span className={`map-name ${isClickable ? 'clickable' : undefined}`} onClick={() => isClickable && shortcutNavigation(map.dbSymbol)}>
+          <span className={`map-name ${isClickable ? 'clickable' : undefined}`} onClick={() => isClickable && navigateMapLink(map)}>
             {getName(map)}
           </span>
           <ResourceImage imagePathInProject={getMapOverviewPath(map.tiledFilename)} versionId={map.mtime} fallback="graphics/pictures/black" />
