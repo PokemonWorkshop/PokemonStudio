@@ -37,11 +37,13 @@ export const WorldNavigation = () => {
   const { projectStudioValues } = useProjectStudio();
   const { t } = useTranslation();
   const location = useLocation();
+  const isTiledMode = projectStudioValues.isTiledMode;
+  const isMapPage = !!location.pathname.match(/^\/world\/(map|overview|maplink)/);
 
   const routeLinks = {
     events: '/world/events',
     map: '/world/map',
-    maplink: `/world/maplink${projectStudioValues.isTiledMode ? '2' : ''}`,
+    maplink: `/world/maplink${isTiledMode ? '2' : ''}`,
   };
 
   const getMenuComponent = (pathname: string) => {
@@ -59,11 +61,11 @@ export const WorldNavigation = () => {
   return (
     <WorldNavigationStyle>
       <WorldBuildingNavigationStyle>
-        <WorlMapsEventDiv $showBorder={location.pathname === routeLinks.map || location.pathname === routeLinks.maplink}>
-          <NavigationDatabaseItem path={routeLinks.map} label={t('maps')} />
+        <WorlMapsEventDiv $showBorder={(location.pathname === routeLinks.map || location.pathname === routeLinks.maplink) && !isTiledMode}>
+          <NavigationDatabaseItem path={routeLinks.map} label={t('maps')} activeForced={isMapPage} />
           <NavigationDatabaseItem path={routeLinks.events} label={t('events')} />
         </WorlMapsEventDiv>
-        {(location.pathname === routeLinks.map || location.pathname === routeLinks.maplink) && (
+        {(location.pathname === routeLinks.map || location.pathname === routeLinks.maplink) && !isTiledMode && (
           <NavigationDatabaseItem path={routeLinks.maplink} label={t('maplinks')} />
         )}
       </WorldBuildingNavigationStyle>

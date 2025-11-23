@@ -4,12 +4,13 @@ import { NavigationDatabaseItemStyle, StyledNavLink } from './NavigationDatabase
 interface NavigationDatabaseItemProps {
   path: string;
   label: string;
+  activeForced?: boolean;
 }
 
 export const NavigationDatabaseItem = (props: NavigationDatabaseItemProps) => {
-  const { path, label } = props;
+  const { path, label, activeForced } = props;
   return (
-    <StyledNavLink to={path}>
+    <StyledNavLink to={path} data-active-forced={activeForced}>
       <NavigationDatabaseItemStyle>{label}</NavigationDatabaseItemStyle>
     </StyledNavLink>
   );

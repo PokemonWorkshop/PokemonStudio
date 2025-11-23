@@ -19,4 +19,9 @@ export const StyledNavLink = styled(NavLink)`
     background-color: ${({ theme }) => theme.colors.dark19};
     color: ${({ theme }) => theme.colors.text100};
   }
+
+  &[data-active-forced='true'] > div {
+    background-color: ${({ theme }) => theme.colors.dark19};
+    color: ${({ theme }) => theme.colors.text100};
+  }
 `;
