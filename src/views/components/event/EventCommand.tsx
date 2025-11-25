@@ -1,6 +1,6 @@
 import React, { DragEvent } from 'react';
 import styled from 'styled-components';
-import { useEventDnD } from './EventDnDContext';
+import { useEventContext } from './EventContext';
 import { useTranslation } from 'react-i18next';
 import HelperIcon from '@assets/icons/global/error2.svg';
 import PlusIcon from '@assets/icons/global/plus-icon.svg';
@@ -75,7 +75,7 @@ type EventCommandProps = {
 };
 
 export const EventCommand = ({ command, hasHelper }: EventCommandProps) => {
-  const { setType } = useEventDnD();
+  const { setType } = useEventContext();
   const { t } = useTranslation();
 
   const onDragStart = (event: DragEvent<HTMLDivElement>, nodeType?: StudioEventCommand) => {

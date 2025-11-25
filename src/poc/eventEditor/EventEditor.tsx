@@ -6,27 +6,30 @@ import {
   Controls,
   Edge,
   Node,
+  OnNodesChange,
   ReactFlow,
   ReactFlowProvider,
   useEdgesState,
   useNodesState,
   useReactFlow,
 } from '@xyflow/react';
-import React, { DragEvent, DragEventHandler, useCallback, useMemo, useRef } from 'react';
+import React, { DragEvent, DragEventHandler, useCallback, useEffect, useMemo, useRef } from 'react';
 import styled from 'styled-components';
 
 import { EventCommandsEditor } from '@components/event/EventCommandsEditor';
-import { EventProvider, useEventDnD } from '@components/event/EventDnDContext';
+import { EventProvider, useEventContext } from '@components/event/EventContext';
 import { StudioEventCommand } from '@modelEntities/event/command';
 import { BasicNode } from '../nodeEditor/BasicNode';
 import { EventDialogsRef, EventEditorAndDeletionKeys, EventEditorOverlay } from '../nodeEditor/EventEditorOverlay';
 import { useDialogsRef } from '@src/hooks/useDialogsRef';
+import { useGlobalState } from '@src/GlobalStateProvider';
 
 // From example: https://reactflow.dev/examples/interaction/drag-and-drop
 
 type NodeData = {
   dialogsRef?: EventDialogsRef;
   commandType: StudioEventCommand;
+  textVersion: number;
 };
 
 type NodeEvent = Node<NodeData, StudioEventCommand>;
@@ -48,8 +51,9 @@ let id = 0;
 const getId = () => `dndnode_${id++}`;
 
 const EventFlow = () => {
+  const reactFlowInstance = useReactFlow();
   const reactFlowWrapper = useRef(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState<NodeEvent>([]);
+  const [nodes, setNodes] = useNodesState<NodeEvent>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const nodeTypes = useMemo(
     () => ({
@@ -63,8 +67,9 @@ const EventFlow = () => {
     []
   );
   const { screenToFlowPosition } = useReactFlow();
-  const { type, setType } = useEventDnD();
+  const { currentEditedNode, type, setCurrentEditedNode, setType } = useEventContext();
   const dialogsRef = useDialogsRef<EventEditorAndDeletionKeys>();
+  const [state, setState] = useGlobalState();
 
   const onConnect = useCallback((params: Connection) => setEdges((eds) => addEdge(params, eds)), []);
 
@@ -94,6 +99,7 @@ const EventFlow = () => {
         return;
       }
 
+      const textVersion = state.textVersion + 1;
       const position = screenToFlowPosition({
         x: event.clientX,
         y: event.clientY,
@@ -102,14 +108,15 @@ const EventFlow = () => {
         id: getId(),
         type,
         position,
-        data: { commandType: type, dialogsRef },
+        data: { commandType: type, dialogsRef, textVersion },
       };
 
       setNodes((nds) => applyNodeChanges([{ type: 'add', item: newNode }], nds));
+      setState((s) => ({ ...s, textVersion: textVersion }));
 
       //setNodes((nds) => nds.filter((node) => node.id !== 'node-shadow').concat(newNode));
     },
-    [screenToFlowPosition, type]
+    [screenToFlowPosition, type, state]
   );
 
   const onDragStart = (event: DragEvent<HTMLDivElement>, nodeType: StudioEventCommand) => {
@@ -117,6 +124,39 @@ const EventFlow = () => {
     event.dataTransfer.setData('text/plain', nodeType);
     event.dataTransfer.effectAllowed = 'move';
   };
+
+  const onNodesChange: OnNodesChange<NodeEvent> = useCallback(
+    (changes) => {
+      let textVersion = state.textVersion;
+      setNodes((nds) => {
+        const updatedChanges = changes.map((change) => {
+          if (change.type !== 'remove') return change;
+
+          textVersion--;
+          return change;
+        });
+        return applyNodeChanges(updatedChanges, nds);
+      });
+      setState((s) => ({ ...s, textVersion }));
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [state]
+  );
+
+  useEffect(() => {
+    if (!currentEditedNode) return;
+
+    const nodeEdited = reactFlowInstance.getNode(currentEditedNode) as NodeEvent;
+    if (!nodeEdited) return;
+
+    setNodes((nds) =>
+      applyNodeChanges(
+        [{ id: nodeEdited.id, type: 'replace', item: { ...nodeEdited, data: { ...nodeEdited.data, textVersion: state.textVersion } } }],
+        nds
+      )
+    );
+    setCurrentEditedNode(undefined);
+  }, [state.textVersion]);
 
   return (
     <EventEditorContainer>
