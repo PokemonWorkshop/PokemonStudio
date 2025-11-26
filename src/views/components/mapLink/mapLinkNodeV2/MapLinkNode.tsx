@@ -1,7 +1,7 @@
 import { ResourceImage } from '@components/ResourceImage';
 import type { StudioMap } from '@modelEntities/map';
 import { getLinksFromMapLink, type StudioMapLink, type StudioMapLinkCardinal } from '@modelEntities/mapLink';
-import { getMapOverviewPath } from '@utils/resourcePath';
+import { getMapOverviewPath } from '@utils/path';
 import { cloneEntity } from '@utils/cloneEntity';
 import { useUpdateMapLink } from '../editors';
 import { ClearButtonOnlyIcon } from '@components/buttons';

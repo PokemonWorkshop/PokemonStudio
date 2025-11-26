@@ -161,3 +161,5 @@ export const trainerResourcePath = (trainer: StudioTrainer, resource: TrainerRes
 
   return '';
 };
+
+export const getMapOverviewPath = (tiledFilename: string) => `Data/Tiled/Overviews/${tiledFilename}.png`;
