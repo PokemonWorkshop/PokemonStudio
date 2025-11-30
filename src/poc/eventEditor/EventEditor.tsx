@@ -5,6 +5,7 @@ import {
   Connection,
   Controls,
   Edge,
+  getOutgoers,
   Node,
   OnNodesChange,
   ReactFlow,
@@ -48,7 +49,7 @@ const EventEditorContainer = styled.div`
 `;
 
 let id = 0;
-const getId = () => `dndnode_${id++}`;
+const getId = () => `eventnode_${id++}`;
 
 const EventFlow = () => {
   const reactFlowInstance = useReactFlow();
@@ -143,6 +144,32 @@ const EventFlow = () => {
     [state]
   );
 
+  // Documentation: https://reactflow.dev/examples/interaction/prevent-cycles
+  const isValidConnection = useCallback(
+    (connection: Edge | Connection) => {
+      // we are using getNodes and getEdges helpers here
+      // to make sure we create isValidConnection function only once
+      const nodes = reactFlowInstance.getNodes() as NodeEvent[];
+      const edges = reactFlowInstance.getEdges();
+      const target = nodes.find((node) => node.id === connection.target);
+      if (!target) return false;
+
+      const hasCycle = (node: NodeEvent, visited = new Set()) => {
+        if (visited.has(node.id)) return false;
+
+        visited.add(node.id);
+        for (const outgoer of getOutgoers(node, nodes, edges)) {
+          if (outgoer.id === connection.source) return true;
+          if (hasCycle(outgoer, visited)) return true;
+        }
+      };
+
+      if (target.id === connection.source) return false;
+      return !hasCycle(target);
+    },
+    [reactFlowInstance.getNodes, reactFlowInstance.getEdges]
+  );
+
   useEffect(() => {
     if (!currentEditedNode) return;
 
@@ -171,6 +198,7 @@ const EventFlow = () => {
           onDrop={onDrop}
           onDragStart={onDragStart as DragEventHandler<HTMLDivElement>}
           onDragOver={onDragOver}
+          isValidConnection={isValidConnection}
           fitView
         >
           <Controls position="bottom-right" />
