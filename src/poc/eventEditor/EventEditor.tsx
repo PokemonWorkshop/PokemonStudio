@@ -24,6 +24,7 @@ import { BasicNode } from '../nodeEditor/BasicNode';
 import { EventDialogsRef, EventEditorAndDeletionKeys, EventEditorOverlay } from '../nodeEditor/EventEditorOverlay';
 import { useDialogsRef } from '@src/hooks/useDialogsRef';
 import { useGlobalState } from '@src/GlobalStateProvider';
+import { ShadowNode } from '../nodeEditor/ShadowNode';
 
 // From example: https://reactflow.dev/examples/interaction/drag-and-drop
 
@@ -34,6 +35,7 @@ type NodeData = {
 };
 
 type NodeEvent = Node<NodeData, StudioEventCommand>;
+type NodeShadow = Node;
 
 const EventEditorContainer = styled.div`
   display: flex;
@@ -54,7 +56,9 @@ const getId = () => `eventnode_${id++}`;
 const EventFlow = () => {
   const reactFlowInstance = useReactFlow();
   const reactFlowWrapper = useRef(null);
-  const [nodes, setNodes] = useNodesState<NodeEvent>([]);
+  const [nodes, setNodes] = useNodesState<NodeEvent | NodeShadow>([
+    { id: 'node-shadow', type: 'shadow_node', position: { x: 0, y: 0 }, data: {}, hidden: true },
+  ]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const nodeTypes = useMemo(
     () => ({
@@ -64,6 +68,7 @@ const EventFlow = () => {
       insert_loop: BasicNode,
       show_message: BasicNode,
       stop_event_execution: BasicNode,
+      shadow_node: ShadowNode,
     }),
     []
   );
@@ -77,18 +82,18 @@ const EventFlow = () => {
   const onDragOver: DragEventHandler<HTMLDivElement> = useCallback((event) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';
-    /*const position = screenToFlowPosition({
-      x: event.clientX,
-      y: event.clientY,
+    const position = screenToFlowPosition({
+      x: event.clientX + 8,
+      y: event.clientY + 8,
     });
 
-    const shadowNode = {
+    const shadowNode: NodeShadow = {
       id: 'node-shadow',
-      type: 'default', // TODO: change type
+      type: 'shadow_node',
+      data: {},
       position,
-      data: { label: 'shadow' },
     };
-    setNodes((nds) => nds.filter((node) => node.id !== 'node-shadow').concat(shadowNode));*/
+    setNodes((nds) => applyNodeChanges([{ type: 'replace', id: 'node-shadow', item: shadowNode }], nds));
   }, []);
 
   const onDrop: DragEventHandler<HTMLDivElement> = useCallback(
@@ -102,8 +107,8 @@ const EventFlow = () => {
 
       const textVersion = state.textVersion + 1;
       const position = screenToFlowPosition({
-        x: event.clientX,
-        y: event.clientY,
+        x: event.clientX + 8,
+        y: event.clientY + 8,
       });
       const newNode: NodeEvent = {
         id: getId(),
@@ -111,11 +116,18 @@ const EventFlow = () => {
         position,
         data: { commandType: type, dialogsRef, textVersion },
       };
+      const shadowNode = reactFlowInstance.getNode('node-shadow') as NodeShadow;
 
-      setNodes((nds) => applyNodeChanges([{ type: 'add', item: newNode }], nds));
+      setNodes((nds) =>
+        applyNodeChanges(
+          [
+            { type: 'add', item: newNode },
+            { type: 'replace', id: 'node-shadow', item: { ...shadowNode, hidden: true } },
+          ],
+          nds
+        )
+      );
       setState((s) => ({ ...s, textVersion: textVersion }));
-
-      //setNodes((nds) => nds.filter((node) => node.id !== 'node-shadow').concat(newNode));
     },
     [screenToFlowPosition, type, state]
   );
@@ -126,7 +138,15 @@ const EventFlow = () => {
     event.dataTransfer.effectAllowed = 'move';
   };
 
-  const onNodesChange: OnNodesChange<NodeEvent> = useCallback(
+  const onDragLeave = () => {
+    // TODO: improve the drag leave detection to ignore nodes that are already present
+    const shadowNode = reactFlowInstance.getNode('node-shadow') as NodeShadow;
+    if (shadowNode.hidden) return;
+
+    setNodes((nds) => applyNodeChanges([{ type: 'replace', id: 'node-shadow', item: { ...shadowNode, hidden: true } }], nds));
+  };
+
+  const onNodesChange: OnNodesChange<NodeEvent | NodeShadow> = useCallback(
     (changes) => {
       let textVersion = state.textVersion;
       setNodes((nds) => {
@@ -198,6 +218,7 @@ const EventFlow = () => {
           onDrop={onDrop}
           onDragStart={onDragStart as DragEventHandler<HTMLDivElement>}
           onDragOver={onDragOver}
+          onDragLeave={onDragLeave}
           isValidConnection={isValidConnection}
           fitView
         >
