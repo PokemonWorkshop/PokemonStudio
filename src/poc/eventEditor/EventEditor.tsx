@@ -14,7 +14,7 @@ import {
   useNodesState,
   useReactFlow,
 } from '@xyflow/react';
-import React, { DragEvent, DragEventHandler, useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { DragEvent, DragEventHandler, useCallback, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 
 import { EventCommandsEditor } from '@components/event/EventCommandsEditor';
@@ -51,13 +51,12 @@ const EventEditorContainer = styled.div`
 `;
 
 let id = 0;
-const getId = () => `eventnode_${id++}`;
+const getId = () => `event_node_${id++}`;
 
 const EventFlow = () => {
   const reactFlowInstance = useReactFlow();
-  const reactFlowWrapper = useRef(null);
   const [nodes, setNodes] = useNodesState<NodeEvent | NodeShadow>([
-    { id: 'node-shadow', type: 'shadow_node', position: { x: 0, y: 0 }, data: {}, hidden: true },
+    { id: 'shadow_node', type: 'shadow_node', position: { x: 0, y: 0 }, data: {}, hidden: true },
   ]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const nodeTypes = useMemo(
@@ -87,13 +86,8 @@ const EventFlow = () => {
       y: event.clientY + 8,
     });
 
-    const shadowNode: NodeShadow = {
-      id: 'node-shadow',
-      type: 'shadow_node',
-      data: {},
-      position,
-    };
-    setNodes((nds) => applyNodeChanges([{ type: 'replace', id: 'node-shadow', item: shadowNode }], nds));
+    const shadowNode: NodeShadow = reactFlowInstance.getNode('shadow_node') as NodeShadow;
+    setNodes((nds) => applyNodeChanges([{ type: 'replace', id: 'shadow_node', item: { ...shadowNode, position, hidden: false } }], nds));
   }, []);
 
   const onDrop: DragEventHandler<HTMLDivElement> = useCallback(
@@ -116,13 +110,13 @@ const EventFlow = () => {
         position,
         data: { commandType: type, dialogsRef, textVersion },
       };
-      const shadowNode = reactFlowInstance.getNode('node-shadow') as NodeShadow;
+      const shadowNode = reactFlowInstance.getNode('shadow_node') as NodeShadow;
 
       setNodes((nds) =>
         applyNodeChanges(
           [
             { type: 'add', item: newNode },
-            { type: 'replace', id: 'node-shadow', item: { ...shadowNode, hidden: true } },
+            { type: 'replace', id: 'shadow_node', item: { ...shadowNode, hidden: true } },
           ],
           nds
         )
@@ -140,10 +134,10 @@ const EventFlow = () => {
 
   const onDragLeave = () => {
     // TODO: improve the drag leave detection to ignore nodes that are already present
-    const shadowNode = reactFlowInstance.getNode('node-shadow') as NodeShadow;
+    const shadowNode = reactFlowInstance.getNode('shadow_node') as NodeShadow;
     if (shadowNode.hidden) return;
 
-    setNodes((nds) => applyNodeChanges([{ type: 'replace', id: 'node-shadow', item: { ...shadowNode, hidden: true } }], nds));
+    setNodes((nds) => applyNodeChanges([{ type: 'replace', id: 'shadow_node', item: { ...shadowNode, hidden: true } }], nds));
   };
 
   const onNodesChange: OnNodesChange<NodeEvent | NodeShadow> = useCallback(
@@ -207,7 +201,7 @@ const EventFlow = () => {
 
   return (
     <EventEditorContainer>
-      <div className="eventflow" ref={reactFlowWrapper}>
+      <div className="eventflow">
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -220,7 +214,6 @@ const EventFlow = () => {
           onDragOver={onDragOver}
           onDragLeave={onDragLeave}
           isValidConnection={isValidConnection}
-          fitView
         >
           <Controls position="bottom-right" />
           <Background />
