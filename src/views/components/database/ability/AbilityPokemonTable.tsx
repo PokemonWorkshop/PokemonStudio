@@ -9,7 +9,7 @@ import { getNameType } from '@utils/getNameType';
 import { ResourceImage } from '@components/ResourceImage';
 import { StudioAbility } from '@modelEntities/ability';
 import { StudioCreature, StudioCreatureForm } from '@modelEntities/creature';
-import { pokemonIconPath } from '@utils/resourcePath';
+import { pokemonIconPath } from '@utils/path';
 import { useGetEntityNameText, useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
 import { CONTROL, useKeyPress } from '@hooks/useKeyPress';
 import { usePokemonShortcutNavigation, useShortcutNavigation } from '@hooks/useShortcutNavigation';

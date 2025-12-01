@@ -1,7 +1,7 @@
 import { ResourceImage } from '@components/ResourceImage';
 import type { StudioMap } from '@modelEntities/map';
 import type { StudioMapLink, StudioMapLinkCardinal } from '@modelEntities/mapLink';
-import { getMapOverviewPath } from '@utils/resourcePath';
+import { getMapOverviewPath } from '@utils/path';
 import { useStore } from '@xyflow/react';
 import { PrimaryButton } from '@components/buttons';
 import type { MapLinkDialogsRef } from '../editors/MapLinkEditorOverlay';
