@@ -8,6 +8,7 @@
   "kana": "日语",
   "pt": "葡萄牙语",
   "zh": "简体中文",
+  "nl": "Dutch",
   "error": "错误",
   "import": "导入",
   "importation": "导入",
@@ -1746,5 +1747,7 @@
   "item_category_description_repel": "Repel items are used to prevent wild Pokémon encounters.",
   "item_category_description_stone": "Evolution stones are special items that can trigger the evolution of certain Pokémon species when used on them.",
   "item_category_description_tech": "TMs are used to teach Pokémon new moves.",
-  "end_of_rmxp_support": "Support for RPG Maker XP as a map creation tool will end in an upcoming update, and the use of Tiled will become mandatory."
+  "end_of_rmxp_support": "Support for RPG Maker XP as a map creation tool will end in an upcoming update, and the use of Tiled will become mandatory.",
+  "edit_map_links": "Edit map links",
+  "map_links_to_map": "Link map"
 }
