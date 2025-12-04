@@ -245,7 +245,7 @@
   "default_option_label_trainer": "De otro entrenador",
   "battler_import_info_group": "Puedes importar Pokémon desde otro grupo.",
   "battler_import_info_trainer": "Puedes importar Pokémon desde otro entrenador.",
-  "condition_with_number": "Condición #{{número}}",
+  "condition_with_number": "Condición #{{number}}",
   "update_sdk": "Pokémon SDK Update",
   "no_file_found": "Archivo no encontrado",
   "import_item": "Importar objetos",
