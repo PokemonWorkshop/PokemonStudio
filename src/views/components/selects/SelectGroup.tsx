@@ -20,7 +20,7 @@ export const SelectGroup = ({ dbSymbol, onChange, noLabel, undefValueOption, fil
     return groupOptions;
   }, [groupOptions, undefValueOption]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const optionals = { deletedOption: t('group_deleted'), filter };
+  const optionals = { deletedOption: t('group_deleted'), noOptionLabel: t('no_group_found'), filter };
 
   if (noLabel) return <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />;
 

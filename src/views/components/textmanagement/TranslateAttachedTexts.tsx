@@ -6,8 +6,8 @@ import { Input } from '@components/inputs';
 import styled from 'styled-components';
 import { LanguageContext } from '@pages/texts/Translation.page';
 
-import { ReactComponent as LeftIcon } from '@assets/icons/global/left-icon.svg';
-import { ReactComponent as RightIcon } from '@assets/icons/global/right-icon.svg';
+import LeftIcon from '@assets/icons/global/left-icon.svg';
+import RightIcon from '@assets/icons/global/right-icon.svg';
 
 export const DataTextWrapper = styled(DataBlockWrapper)`
   width: 1024px;

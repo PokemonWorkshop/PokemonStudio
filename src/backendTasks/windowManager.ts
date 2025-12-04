@@ -8,18 +8,13 @@
 import { BrowserWindow, BrowserWindowConstructorOptions, IpcMainEvent, IpcMainInvokeEvent, app, ipcMain } from 'electron';
 import { join } from 'path';
 
-/**
- * Declared constants for Webpack entries and resource paths
- */
-
-declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
-declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
-
-const mainWindowWebpackEntry = MAIN_WINDOW_WEBPACK_ENTRY;
-const mainWindowPreloadWebpackEntry = MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY;
+const mainWindowViteDevServerUrl = MAIN_WINDOW_VITE_DEV_SERVER_URL;
+const mainWindowViteName = MAIN_WINDOW_VITE_NAME;
 
 const RESOURCES_PATH = app.isPackaged ? join(process.resourcesPath, 'assets') : join(__dirname, '../../assets');
 const getAssetPath = (...paths: string[]): string => join(RESOURCES_PATH, ...paths);
+
+export const mainWindowFilePath = join(__dirname, `../renderer/${mainWindowViteName}/index.html`);
 
 /**
  * TypeScript union type to allow both number and string
@@ -100,7 +95,8 @@ class WindowManager {
           window.minimize();
           break;
         case 'maximize':
-          window.isMaximized() ? window.unmaximize() : window.maximize();
+          if (window.isMaximized()) window.unmaximize();
+          else window.maximize();
           break;
         case 'restore':
           window.restore();
@@ -223,8 +219,9 @@ class WindowManager {
       autoHideMenuBar: process.platform === 'linux',
       webPreferences: {
         contextIsolation: true,
-        preload: mainWindowPreloadWebpackEntry,
+        preload: join(__dirname, 'preload.js'),
       },
+      backgroundColor: 'rgb(29, 28, 34)',
     };
 
     const icon = getAssetPath(typeof options.icon === 'string' ? options.icon : 'icon.png');
@@ -247,7 +244,11 @@ class WindowManager {
     } else if (windowOptions.file) {
       newWindow.loadFile(windowOptions.file);
     } else {
-      newWindow.loadURL(mainWindowWebpackEntry);
+      if (mainWindowViteDevServerUrl) {
+        newWindow.loadURL(mainWindowViteDevServerUrl);
+      } else {
+        newWindow.loadFile(mainWindowFilePath);
+      }
     }
 
     if (options.isMain) {
@@ -325,4 +326,4 @@ class WindowManager {
 
 // Export the singleton instance of WindowManager
 export default WindowManager.getInstance();
-export { mainWindowWebpackEntry, mainWindowPreloadWebpackEntry };
+export { mainWindowViteName, mainWindowViteDevServerUrl };

@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 type MapTreeContainerProps = {
   hideMapTree: boolean;
+  isTiledMode: boolean;
 };
 
 export const MapTreeContainer = styled.div<MapTreeContainerProps>`
@@ -12,6 +13,7 @@ export const MapTreeContainer = styled.div<MapTreeContainerProps>`
   .tree-scrollbar {
     overflow-y: scroll;
     margin-right: -9px;
+    height: calc(100vh - ${({ isTiledMode }) => (isTiledMode ? '253px' : '313px')});
     display: ${({ hideMapTree }) => (hideMapTree ? 'none' : 'block')};
 
     ::-webkit-scrollbar {
@@ -47,8 +49,6 @@ export const MapTreeContainer = styled.div<MapTreeContainerProps>`
 type MapTreeItemWrapperContainerProps = {
   isCurrent?: boolean;
   hasChildren: boolean;
-  maxWidth: number;
-  maxWidthWhenHover: number;
   disableHover?: boolean;
   isUnderOpenFolder: boolean;
 };
@@ -67,13 +67,16 @@ export const TreeItemContainer = styled.div<MapTreeItemWrapperContainerProps>`
   margin: ${({ isUnderOpenFolder }) => (isUnderOpenFolder ? '12px 0 4px 0' : '4px 0')};
   cursor: default !important;
   ${({ theme }) => theme.fonts.normalRegular}
+  width: 100%;
+  max-width: 100%;
 
   .name {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     ${({ theme }) => theme.fonts.normalRegular}
-    max-width: ${({ maxWidth }) => `${maxWidth}px`};
+    flex: 1;
+    min-width: 0;
   }
 
   .error {
@@ -81,22 +84,20 @@ export const TreeItemContainer = styled.div<MapTreeItemWrapperContainerProps>`
   }
 
   .input-map {
-    max-width: ${({ maxWidth }) => `${maxWidth}px`};
+    flex: 1;
+    min-width: 0;
     height: 31px;
   }
 
   .input-folder {
-    max-width: ${({ maxWidth }) => `${maxWidth}px`};
+    flex: 1;
+    min-width: 0;
     height: 31px;
   }
 
   :hover {
     background-color: ${({ theme }) => theme.colors.dark18};
     cursor: auto;
-
-    .name {
-      max-width: ${({ maxWidthWhenHover }) => `${maxWidthWhenHover}px`};
-    }
   }
 
   .left-icons {
@@ -126,6 +127,8 @@ export const TreeItemContainer = styled.div<MapTreeItemWrapperContainerProps>`
     flex-direction: row;
     gap: 8px;
     align-items: center;
+    flex: 1;
+    min-width: 0;
   }
 
   .collapse-button {
@@ -151,6 +154,7 @@ export const TreeItemContainer = styled.div<MapTreeItemWrapperContainerProps>`
     border-radius: 4px;
     background-color: ${({ theme }) => theme.colors.primarySoft};
     color: ${({ theme }) => theme.colors.primaryBase};
+    flex-shrink: 0;
   }
 
   ${({ theme, disableHover }) =>
@@ -165,6 +169,7 @@ export const TreeItemContainer = styled.div<MapTreeItemWrapperContainerProps>`
 
   .actions {
     display: none;
+    flex-shrink: 0;
 
     .icon-plus {
       :hover {
@@ -187,16 +192,6 @@ export const TreeItemContainer = styled.div<MapTreeItemWrapperContainerProps>`
       display: flex;
       align-items: center;
       gap: 4px;
-    }
-    .title.map {
-      .name {
-        max-width: ${({ maxWidthWhenHover }) => `${maxWidthWhenHover}px`};
-      }
-    }
-    .title.folder {
-      .name {
-        max-width: ${({ hasChildren }) => (hasChildren ? '122px' : '146px')};
-      }
     }
   }
 `;

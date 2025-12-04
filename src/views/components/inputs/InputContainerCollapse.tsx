@@ -1,8 +1,8 @@
 import React, { FunctionComponent, ReactNode, useState } from 'react';
 import styled from 'styled-components';
-import { ReactComponent as UpIcon } from '@assets/icons/global/up-icon.svg';
-import { ReactComponent as DownIcon } from '@assets/icons/global/down-icon.svg';
-import { ReactComponent as DeleteIcon } from '@assets/icons/global/delete-icon.svg';
+import UpIcon from '@assets/icons/global/up-icon.svg';
+import DownIcon from '@assets/icons/global/down-icon.svg';
+import DeleteIcon from '@assets/icons/global/delete-icon.svg';
 
 type CollapseGroupTitleStyleProps = {
   title: string;
@@ -92,7 +92,7 @@ type CollapseGroupChildrenProps = {
 };
 
 const CollapseGroupChildren = styled.div<CollapseGroupChildrenProps>`
-  display: flex;
+  display: ${({ collapse }) => (collapse ? 'flex' : 'none')};
   flex-direction: column;
   gap: ${({ gap }) => gap || '12px'};
   margin-bottom: ${({ collapse, noMargin }) => (collapse && !noMargin ? '16px' : '0')};
@@ -125,11 +125,9 @@ export const InputGroupCollapse: FunctionComponent<InputGroupCollapseProps> = ({
   return (
     <InputGroupCollapseContainer>
       <CollapseGroupTitle title={title} collapse={collapse} onClick={onClickedCollapse} onDelete={onDelete} />
-      {collapse && (
-        <CollapseGroupChildren gap={gap} noMargin={noMargin || false} collapse={collapse}>
-          {children}
-        </CollapseGroupChildren>
-      )}
+      <CollapseGroupChildren gap={gap} noMargin={noMargin || false} collapse={collapse}>
+        {children}
+      </CollapseGroupChildren>
     </InputGroupCollapseContainer>
   );
 };

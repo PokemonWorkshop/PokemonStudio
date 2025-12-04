@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDialogsRef } from '@hooks/useDialogsRef';
 import { MoveEditorAndDeletionKeys, MoveEditorOverlay } from '@components/database/move/editors/MoveEditorOverlay';
 import { useMovePage } from '@hooks/usePage';
+import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';
 
 export const MovePage = () => {
   const dialogsRef = useDialogsRef<MoveEditorAndDeletionKeys>();
@@ -22,6 +23,15 @@ export const MovePage = () => {
       <MoveControlBar dialogsRef={dialogsRef} />
       <PageContainerStyle>
         <PageDataConstrainerStyle>
+          <DataBlockWrapper>
+            <DatabaseTabsBar
+              currentTabIndex={0}
+              tabs={[
+                { label: t('general_data'), path: '/database/moves' },
+                { label: t('contest_data'), path: '/database/moves/contest' },
+              ]}
+            />
+          </DataBlockWrapper>
           <DataBlockWrapper>
             <MoveFrame move={move} dialogsRef={dialogsRef} />
             <MoveData move={move} dialogsRef={dialogsRef} />

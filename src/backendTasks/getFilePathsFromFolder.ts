@@ -1,9 +1,9 @@
-import fs from 'fs';
 import log from 'electron-log';
-import { defineBackendServiceFunction } from './defineBackendServiceFunction';
+import fs from 'fs';
 import path from 'path';
+import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 
-export type GetFilePathsFromFolderInput = { folderPath: string; extensions?: string[]; isRecursive?: boolean };
+export type GetFilePathsFromFolderInput = { folderPath: string; extensions?: string[]; isRecursive?: boolean; isFileNameOnly?: boolean };
 export type GetFilePathsFromFolderOutput = { filePaths: string[] };
 
 const promiseReadFolder = async (folderPath: string): Promise<string[]> => {
@@ -59,7 +59,9 @@ const getFilePathsFromFolder = async (payload: GetFilePathsFromFolderInput): Pro
   const filesWithoutFolder = files.filter((files) => files !== '__FOLDER__');
   if (payload.extensions !== undefined) {
     const filesFiltered = filesWithoutFolder.filter((file) => payload.extensions?.includes(path.extname(file).toLowerCase()));
-    log.info('get-file-paths-from-folder/success');
+    if (payload.isFileNameOnly) {
+      return { filePaths: filesFiltered.map((file) => path.basename(file)) };
+    }
     return { filePaths: filesFiltered };
   }
 

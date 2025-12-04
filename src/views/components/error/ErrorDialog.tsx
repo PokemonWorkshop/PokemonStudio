@@ -4,7 +4,7 @@ import theme from '@src/AppTheme';
 import { useTranslation } from 'react-i18next';
 import { DeletionContainer } from '@components/deletion/DeletionContainer';
 import { DarkButton, SecondaryButton } from '@components/buttons';
-import { ReactComponent as ErrorIcon } from '@assets/icons/global/error.svg';
+import ErrorIcon from '@assets/icons/global/error.svg';
 import { useOpenStudioLogsFolder } from '@hooks/useOpenStudioLogsFolder';
 
 const TitleWithIconContainer = styled.div`

@@ -30,7 +30,7 @@ export const SelectPokemonForm = ({ dbSymbol, form, onChange, noLabel, breakpoin
     return formOptions;
   }, [dbSymbol, undefValueOption, getCreatureFormName, state]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const optionals = useMemo(() => ({ deletedOption: t('form_deleted') }), []);
+  const optionals = useMemo(() => ({ deletedOption: t('form_deleted'), noOptionLabel: t('no_option_form') }), []);
 
   if (noLabel) return <StudioDropDown value={form.toString()} options={options} onChange={onChange} optionals={optionals} />;
 

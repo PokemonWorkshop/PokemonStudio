@@ -3,12 +3,12 @@ import { SecondaryNoBackground } from '@components/buttons';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import styled from 'styled-components';
-import { ReactComponent as DeleteIcon } from '@assets/icons/global/delete-icon.svg';
+import DeleteIcon from '@assets/icons/global/delete-icon.svg';
 import { SelectCustomSimple } from '@components/SelectCustom';
 import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
 import { InputNumber } from './InputNumber';
 import { SelectType } from '@components/selects';
-import { ReactComponent as PlusIcon } from '@assets/icons/global/plus-icon2.svg';
+import PlusIcon from '@assets/icons/global/plus-icon2.svg';
 import { SelectNature2 } from '@components/selects/SelectNature';
 import {
   CREATURE_QUEST_CONDITIONS,

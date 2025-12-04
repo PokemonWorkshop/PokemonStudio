@@ -24,6 +24,7 @@ import { useDialogsRef } from '@hooks/useDialogsRef';
 import { useItemPage } from '@hooks/usePage';
 import { ItemTranslationOverlay, TranslationEditorTitle } from './ItemTranslationOverlay';
 import { cloneEntity } from '@utils/cloneEntity';
+import { ItemCategoryText } from './ItemCategoryText';
 
 const itemCategoryEntries = (t: TFunction) =>
   StudioItemCategories.map((category) => ({ value: category, label: t(`${category}`) })).sort((a, b) => a.label.localeCompare(b.label));
@@ -132,6 +133,7 @@ export const ItemFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
             value={itemCategory}
             noTooltip
           />
+          <ItemCategoryText itemCategory={itemCategory} />
         </InputWithTopLabelContainer>
       </InputContainer>
       {/* todo look why this is wrong */}

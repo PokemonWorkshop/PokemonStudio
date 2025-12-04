@@ -8,8 +8,8 @@ import { ButtonRightContainer, DataBlockEditorContainer } from '@components/edit
 import { SeparatorGreyLine } from '@components/separators/SeparatorGreyLine';
 import { MultiLineInput } from '@components/inputs';
 import { DarkButton } from '@components/buttons';
-import { ReactComponent as TranslateIcon } from '@assets/icons/global/translate.svg';
-import { ReactComponent as CopyIcon } from '@assets/icons/global/copy.svg';
+import TranslateIcon from '@assets/icons/global/translate.svg';
+import CopyIcon from '@assets/icons/global/copy.svg';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { SavingTextMap } from '@utils/SavingUtils';
 import { useTextInfosReadonly } from '@hooks/useTextInfos';
@@ -67,11 +67,20 @@ const DataBlockTextTranslate = ({ isDefault, languageTitle, textFromFileByIndex,
   const [textTranslate, setTextTranslate] = useState<string>(textFromFileByIndex);
   const [numberOfTextTranslated, setNumberOfTextTranslated] = useState(calculateTranslatedTexts(allTextsFromFile, languageContext.language.index));
   const percentage: number = cleanNaNValue((numberOfTextTranslated / (allTextsFromFile.length - 1)) * 100);
+  const [previousFileId, setPreviousFileId] = useState<number>(currentTextInfo.fileId);
 
   useEffect(() => {
     setTextTranslate(textFromFileByIndex);
+    resetPositionLanguage();
     setNumberOfTextTranslated(calculateTranslatedTexts(allTextsFromFile, languageContext.language.index));
   }, [textFromFileByIndex]);
+
+  const resetPositionLanguage = () => {
+    if (previousFileId !== currentTextInfo.fileId) {
+      languageContext.setPositionLanguage(1);
+      setPreviousFileId(currentTextInfo.fileId);
+    }
+  };
 
   const saveText = (copyText?: string) => {
     setState((currentState) => {

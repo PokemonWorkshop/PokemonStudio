@@ -110,8 +110,10 @@ export const PokemonNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
 
     setCreature({ [dbSymbol]: newCreature }, { pokemon: { specie: dbSymbol, form: 0 } });
     const editedDex = cloneEntity(dex.national);
-    editedDex.creatures.push({ dbSymbol, form: 0 });
-    setDex({ [editedDex.dbSymbol]: editedDex });
+    if (!editedDex.creatures.find(({ dbSymbol }) => dbSymbol === newCreature.dbSymbol)) {
+      editedDex.creatures.push({ dbSymbol, form: 0 });
+      setDex({ [editedDex.dbSymbol]: editedDex });
+    }
     setEvolutionIndex(0);
     closeDialog();
   };

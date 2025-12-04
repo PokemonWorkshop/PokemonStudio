@@ -9,7 +9,7 @@ const buildImageSrc = (imagePathInProject: string, projectPath: string, versionI
   imageUrl.searchParams.append('projectPath', projectPath);
   imageUrl.searchParams.append('type', 'image');
   if (versionId) imageUrl.searchParams.append('versionId', versionId.toString());
-  if (fallback) imageUrl.searchParams.append('fallbacks', fallback);
+  if (fallback) imageUrl.searchParams.append('fallback', fallback);
   return imageUrl.toString();
 };
 

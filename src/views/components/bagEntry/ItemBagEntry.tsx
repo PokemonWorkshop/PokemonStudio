@@ -7,13 +7,12 @@ import { ClearButtonOnlyIcon } from '@components/buttons';
 import { useTranslation } from 'react-i18next';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
 import { itemIconPath } from '@utils/path';
-import { StudioTrainerBagEntry } from '@modelEntities/trainer';
+import { StudioTrainer, StudioTrainerBagEntry } from '@modelEntities/trainer';
 import { ResourceImage } from '@components/ResourceImage';
 import { useShortcutNavigation } from '@hooks/useShortcutNavigation';
 import { CONTROL, useKeyPress } from '@hooks/useKeyPress';
 import type { BagEntryDialogsRef, BagEntryFrom } from './editors/BagEntryEditorOverlay';
 import { assertUnreachable } from '@utils/assertUnreachable';
-import { useTrainerPage } from '@hooks/usePage';
 import { useUpdateTrainer } from '@components/database/trainer/editors/useUpdateTrainer';
 import { cloneEntity } from '@utils/cloneEntity';
 
@@ -22,6 +21,7 @@ type ItemBagEntryProps = {
   bagEntry: StudioTrainerBagEntry;
   from: BagEntryFrom;
   index: number;
+  trainer: StudioTrainer;
   setIndex: Dispatch<React.SetStateAction<number>>;
 };
 
@@ -79,11 +79,10 @@ const ItemBagEntryHeader = styled.div`
   }
 `;
 
-export const ItemBagEntry = ({ dialogsRef, bagEntry, from, index, setIndex }: ItemBagEntryProps) => {
+export const ItemBagEntry = ({ dialogsRef, bagEntry, from, index, trainer, setIndex }: ItemBagEntryProps) => {
   const { projectDataValues: items } = useProjectItems();
   const getItemName = useGetEntityNameText();
   const item = items[bagEntry.dbSymbol];
-  const { trainer } = useTrainerPage();
   const updateTrainer = useUpdateTrainer(trainer);
   const { t } = useTranslation();
   const isClickable: boolean = useKeyPress(CONTROL);

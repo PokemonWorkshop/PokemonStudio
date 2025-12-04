@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReactComponent as PlusIcon } from '@assets/icons/global/plus-icon.svg';
+import PlusIcon from '@assets/icons/global/plus-icon.svg';
 import { SecondaryButton } from './GenericButtons';
 import styled from 'styled-components';
 

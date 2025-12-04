@@ -1,8 +1,8 @@
 import { StudioExpandPokemonSetup, StudioGroupEncounter, StudioIvEv } from '@modelEntities/groupEncounter';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 
-import { Teams, PokemonSet } from '@pkmn/sim';
-import { StatsTable } from '@pkmn/types';
+import { Teams } from '@pkmn/sim';
+import type { PokemonSet, StatsTable } from '@pkmn/types';
 
 const splitIntoTeams = (data: string): string[] => {
   return data
@@ -77,7 +77,7 @@ const buildExpandPokemonSetup = (set: PokemonSet, from: string) => {
 };
 
 const extractBaseName = (name: string): string => {
-  const exceptions = ['Ho-Oh', 'Porygon-Z'];
+  const exceptions = ['Ho-Oh', 'Porygon-Z', 'Jangmo-o', 'Hakamo-o', 'Kommo-o', 'Chi-Yu', 'Ting-Lu', 'Wo-Chien', 'Chien-Pao'];
   if (exceptions.includes(name)) return name;
 
   const index = name.indexOf('-');
@@ -86,7 +86,12 @@ const extractBaseName = (name: string): string => {
   return name.substring(0, index);
 };
 
-const convertToDbSymbol = (str: string | undefined): DbSymbol => str?.toLowerCase().replace(/[\s-]+/g, '_') as DbSymbol;
+const convertToDbSymbol = (str: string | undefined): DbSymbol =>
+  str
+    ?.toLowerCase()
+    .normalize('NFD') // Remove accents
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[\s-’'\\.:]+/g, '_') as DbSymbol;
 
 const convertGender = (gender: string): 0 | 1 | 2 | -1 => {
   switch (gender) {

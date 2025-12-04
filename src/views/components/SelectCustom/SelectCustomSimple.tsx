@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { ReactComponent as DownIcon } from '@assets/icons/global/down-icon.svg';
+import DownIcon from '@assets/icons/global/down-icon.svg';
 
 type ScrollableViewProps = {
   height: number;

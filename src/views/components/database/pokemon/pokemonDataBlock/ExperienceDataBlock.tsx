@@ -6,7 +6,7 @@ import { PokemonDataProps } from '../PokemonDataPropsInterface';
 export const ExperienceDataBlock = ({ pokemonWithForm, dialogsRef }: PokemonDataProps) => {
   const { form } = pokemonWithForm;
   const { t } = useTranslation();
-  const curveTypes = [t('fast'), t('normal'), t('slow'), t('parabolic'), t('erratic'), t('fluctuating')];
+  const curveTypes = [t('fast'), t('normal_experience_curve'), t('slow'), t('parabolic'), t('erratic'), t('fluctuating')];
 
   return (
     <DataBlockWithTitle size="fourth" title={t('experience')} onClick={() => dialogsRef.current?.openDialog('exp')}>

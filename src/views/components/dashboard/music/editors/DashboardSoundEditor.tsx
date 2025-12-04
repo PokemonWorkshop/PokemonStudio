@@ -1,0 +1,65 @@
+import { Editor } from '@components/editor';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { InputFormContainer } from '@components/inputs/InputContainer';
+import { AUDIO_VALIDATOR, AudioFile } from '@modelEntities/common';
+import { useDialogsRef } from '@src/hooks/useDialogsRef';
+import { useInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
+import { useConfigSoundDesign } from '@src/hooks/useProjectConfig';
+import { useZodForm } from '@src/hooks/useZodForm';
+import React, { forwardRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useUpdateConfigMusic } from '../ressoures/useUpdateConfigSound';
+import type { SoundEffect } from './SoundEditorOverlay';
+
+const SOUND_EDITOR_SCHEMA = AUDIO_VALIDATOR.pick({
+  volume: true,
+  pitch: true,
+});
+
+type DashbordSoundEditorProps = {
+  audioFile: (AudioFile & SoundEffect) | undefined;
+};
+
+export const DashboardSoundEditor = forwardRef<EditorHandlingClose, DashbordSoundEditorProps>(({ audioFile }, ref) => {
+  const { t } = useTranslation();
+  const dialogsRef = useDialogsRef();
+  const { canClose, getFormData, onInputTouched, defaults, formRef } = useZodForm(SOUND_EDITOR_SCHEMA, audioFile);
+  const { EmbeddedUnitInput } = useInputAttrsWithLabel(SOUND_EDITOR_SCHEMA, defaults);
+  const { projectConfigValues: soundDesign } = useConfigSoundDesign();
+  const { onResourceUpdate } = useUpdateConfigMusic(soundDesign);
+
+  const getTitle = () => {
+    if (!audioFile) return t('sound_effect');
+
+    return t(`${audioFile.translateKey ?? audioFile.key}`);
+  };
+
+  const canCloseEditor = () => {
+    if (dialogsRef.current?.currentDialog) return false;
+    return canClose();
+  };
+
+  const onClose = () => {
+    if (!canClose()) return;
+    const result = getFormData().data;
+
+    if (result && audioFile?.key) {
+      onResourceUpdate(result, audioFile.key, audioFile.located);
+    }
+    return result;
+  };
+
+  useEditorHandlingClose(ref, onClose, canCloseEditor);
+
+  return (
+    <Editor type="edit" title={getTitle()}>
+      {audioFile && (
+        <InputFormContainer ref={formRef}>
+          <EmbeddedUnitInput name="volume" unit="%" label={t('volume_ingame')} labelLeft onInput={onInputTouched} />
+          <EmbeddedUnitInput name="pitch" unit="%" label={t('tempo_ingame')} labelLeft onInput={onInputTouched} />
+        </InputFormContainer>
+      )}
+    </Editor>
+  );
+});
+DashboardSoundEditor.displayName = 'DashboardSoundEditor';

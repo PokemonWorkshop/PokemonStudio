@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { LoggerInput } from '@components/inputs';
 import { DarkButton } from '@components/buttons';
 import type { StudioCompilation } from './CompilationDialogSchema';
-import { ReactComponent as SuccessIcon } from '@assets/icons/global/success-onboarding.svg';
+import SuccessIcon from '@assets/icons/global/success-onboarding.svg';
 import { useShowItemInFolder } from '@src/hooks/useShowItemInFolder';
 import { join } from '@utils/path';
 import { showNotification } from '@utils/showNotification';

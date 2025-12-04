@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { MapDialogsRef } from '../map/editors/MapEditorOverlay';
 import { useOpenTiled } from '@hooks/useOpenTiled';
 import { StudioMap } from '@modelEntities/map';
-import { getMapOverviewPath } from '@utils/resourcePath';
+import { getMapOverviewPath } from '@utils/path';
 import { getSetting } from '@utils/settings';
 
 const MapOverviewNodeContainer = styled.div`

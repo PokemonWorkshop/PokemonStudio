@@ -1,18 +1,21 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ReactComponent as CopyIcon } from '@assets/icons/global/copy.svg';
-import { ReactComponent as DeleteIcon } from '@assets/icons/global/delete-icon.svg';
-import { ReactComponent as EditIcon } from '@assets/icons/global/edit-icon.svg';
-import { ReactComponent as MapPaddedIcon } from '@assets/icons/global/map-padded.svg';
+import CopyIcon from '@assets/icons/global/copy.svg';
+import DeleteIcon from '@assets/icons/global/delete-icon.svg';
+import EditIcon from '@assets/icons/global/edit-icon.svg';
+import MapPaddedIcon from '@assets/icons/global/map-padded.svg';
+import MapLinkIcon from '@assets/icons/global/map-link.svg';
 import { MapDialogsRef } from '../editors/MapEditorOverlay';
 import { useMapInfo } from '@hooks/useMapInfo';
 import { mapInfoDuplicateMap, mapInfoRemoveFolder } from '@utils/MapInfoUtils';
 import { StudioMapInfoFolder, StudioMapInfoMap, StudioMapInfoValue } from '@modelEntities/mapInfo';
-import { useProjectMaps } from '@hooks/useProjectData';
+import { useProjectMapLinks, useProjectMaps } from '@hooks/useProjectData';
 import { createMapInfo, duplicateMap } from '@utils/entityCreation';
 import { useGetEntityDescriptionText, useGetEntityNameText, useSetProjectText } from '@utils/ReadingProjectText';
 import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID } from '@modelEntities/map';
 import { useOpenTiled } from '@hooks/useOpenTiled';
+import { createMapLinkFromMainMapId } from '@utils/MapLinkUtils';
+import { useNavigateMapLink } from '@hooks/useNavigateMapLink';
 
 type MapTreeContextMenuProps = {
   mapInfoValue: StudioMapInfoValue;
@@ -25,10 +28,12 @@ export const MapTreeContextMenu = ({ mapInfoValue, isDeleted, enableRename, dial
   const { t } = useTranslation();
   const { mapInfo, setMapInfo } = useMapInfo();
   const { projectDataValues: maps, setProjectDataValues: setMap } = useProjectMaps();
+  const { projectDataValues: mapLinks, setProjectDataValues: setMapLink } = useProjectMapLinks();
   const setText = useSetProjectText();
   const getName = useGetEntityNameText();
   const getDescription = useGetEntityDescriptionText();
   const openTiled = useOpenTiled();
+  const navigateMapLink = useNavigateMapLink();
   const hideTiledOption = mapInfoValue.data.klass === 'MapInfoMap' ? !maps[mapInfoValue.data.mapDbSymbol]?.tiledFilename : true || isDeleted;
 
   const isFolder = mapInfoValue.data.klass === 'MapInfoFolder';
@@ -56,6 +61,8 @@ export const MapTreeContextMenu = ({ mapInfoValue, isDeleted, enableRename, dial
       parentId: mapInfoValue.data.parentId,
     }) as StudioMapInfoMap;
     const newMapInfo = mapInfoDuplicateMap(mapInfo, mapInfoValue.data.mapDbSymbol, newMapInfoMap);
+    const mapLink = createMapLinkFromMainMapId(mapLinks, newMap.id);
+    setMapLink({ [mapLink.dbSymbol]: mapLink });
     setText(MAP_NAME_TEXT_ID, newMap.id, t('map_copy_name', { name: getName(mapToDuplicate) }));
     setText(MAP_DESCRIPTION_TEXT_ID, newMap.id, getDescription(mapToDuplicate));
     setMap({ [dbSymbol]: newMap }, { map: dbSymbol });
@@ -66,7 +73,14 @@ export const MapTreeContextMenu = ({ mapInfoValue, isDeleted, enableRename, dial
     if (mapInfoValue.data.klass !== 'MapInfoMap' || isDeleted) return;
 
     const tiledFilename = maps[mapInfoValue.data.mapDbSymbol]?.tiledFilename;
-    tiledFilename && openTiled(tiledFilename, dialogsRef);
+    if (tiledFilename) openTiled(tiledFilename, dialogsRef);
+  };
+
+  const onClickEditMapLinks = () => {
+    if (mapInfoValue.data.klass !== 'MapInfoMap' || isDeleted) return;
+
+    const map = maps[mapInfoValue.data.mapDbSymbol];
+    navigateMapLink(map);
   };
 
   return (
@@ -93,6 +107,14 @@ export const MapTreeContextMenu = ({ mapInfoValue, isDeleted, enableRename, dial
             <MapPaddedIcon />
           </span>
           {t('open_with_tiled')}
+        </div>
+      )}
+      {!isFolder && !isDeleted && (
+        <div onClick={onClickEditMapLinks}>
+          <span className="icon">
+            <MapLinkIcon />
+          </span>
+          {t('edit_map_links')}
         </div>
       )}
       <div className="delete" onClick={onClickDelete}>

@@ -2,7 +2,7 @@ import React, { forwardRef } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { DataGroupGrid } from './ZoneTableStyle';
-import { ReactComponent as DragIcon } from '@assets/icons/global/drag.svg';
+import DragIcon from '@assets/icons/global/drag.svg';
 import { DeleteButtonOnlyIcon, EditButtonOnlyIcon } from '@components/buttons';
 import { EditButtonOnlyIconContainer } from '@components/buttons/EditButtonOnlyIcon';
 import theme from '@src/AppTheme';

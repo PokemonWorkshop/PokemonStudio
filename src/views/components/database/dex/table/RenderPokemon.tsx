@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import theme from '@src/AppTheme';
 import { useTranslation } from 'react-i18next';
 import { DataPokemonGrid } from './DexPokemonListTableStyle';
-import { ReactComponent as DragIcon } from '@assets/icons/global/drag.svg';
+import DragIcon from '@assets/icons/global/drag.svg';
 import { DarkButton, DarkButtonImportResponsive, DeleteButtonOnlyIcon, EditButtonOnlyIcon } from '@components/buttons';
 import { EditButtonOnlyIconContainer } from '@components/buttons/EditButtonOnlyIcon';
 import { DraggableProvided } from '@hello-pangea/dnd';
