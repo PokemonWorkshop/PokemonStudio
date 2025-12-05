@@ -3,7 +3,7 @@ import { MoveCategory, TypeCategory } from '@components/categories';
 import { CopyIdentifier } from '@components/Copy';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { getNameType } from '@utils/getNameType';
-import { useGetEntityDescriptionText, useGetEntityNameText } from '@utils/ReadingProjectText';
+import { useGetEntityDescriptionText, useGetEntityNameText, useGetMoveContestDescriptionText } from '@utils/ReadingProjectText';
 import { useTranslation } from 'react-i18next';
 import {
   DataBlockContainer,
@@ -16,20 +16,23 @@ import {
 import { StudioMove } from '@modelEntities/move';
 import { MoveDialogsRef } from './editors/MoveEditorOverlay';
 import { padStr } from '@utils/PadStr';
+import { MoveCondition } from '@components/categories/MoveCondition';
 
 type MoveFrameProps = {
   move: StudioMove;
   dialogsRef: MoveDialogsRef;
+  contest?: boolean;
 };
 
-export const MoveFrame = ({ move, dialogsRef }: MoveFrameProps) => {
+export const MoveFrame = ({ move, dialogsRef, contest = false }: MoveFrameProps) => {
   const [state] = useGlobalState();
   const getMoveName = useGetEntityNameText();
   const getMoveDescription = useGetEntityDescriptionText();
+  const getMoveContestDescription = useGetMoveContestDescriptionText();
   const { t } = useTranslation();
 
   return (
-    <DataBlockContainer size="full" onClick={() => dialogsRef?.current?.openDialog('frame')}>
+    <DataBlockContainer size="full" onClick={() => dialogsRef?.current?.openDialog(contest ? 'frame_contest' : 'frame')}>
       <DataGrid columns="minmax(min-content, 1024px)">
         <DataInfoContainer>
           <DataInfoContainerHeader>
@@ -40,12 +43,18 @@ export const MoveFrame = ({ move, dialogsRef }: MoveFrameProps) => {
               </h1>
               <CopyIdentifier dataToCopy={move.dbSymbol} />
             </DataInfoContainerHeaderTitle>
-            <DataInfoContainerHeaderBadges>
-              <TypeCategory type={move.type}>{getNameType(state.projectData.types, move.type, state)}</TypeCategory>
-              <MoveCategory category={move.category}>{t(move.category)}</MoveCategory>
-            </DataInfoContainerHeaderBadges>
+            {contest ? (
+              <DataInfoContainerHeaderBadges>
+                <MoveCondition condition={move.condition}>{t(move.condition)}</MoveCondition>
+              </DataInfoContainerHeaderBadges>
+            ) : (
+              <DataInfoContainerHeaderBadges>
+                <TypeCategory type={move.type}>{getNameType(state.projectData.types, move.type, state)}</TypeCategory>
+                <MoveCategory category={move.category}>{t(move.category)}</MoveCategory>
+              </DataInfoContainerHeaderBadges>
+            )}
           </DataInfoContainerHeader>
-          <p>{getMoveDescription(move)}</p>
+          <p>{contest ? getMoveContestDescription(move) : getMoveDescription(move)}</p>
         </DataInfoContainer>
       </DataGrid>
     </DataBlockContainer>

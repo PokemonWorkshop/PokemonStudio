@@ -12,7 +12,7 @@ import {
   BrandingTitle,
   ProjectCardContainer,
 } from '@components/home';
-import { ReactComponent as StudioIcon } from '@assets/icons/global/StudioIcon.svg';
+import StudioIcon from '@assets/icons/global/StudioIcon.svg';
 import { RecentProjectContainer } from '@components/home/ActionContainer';
 import { HomeEditorAndDeletionKeys, HomeEditorOverlay } from '@components/home/editors/HomeEditorOverlay';
 import { deleteProjectToList, getProjectList, updateProjectPath } from '@utils/projectList';

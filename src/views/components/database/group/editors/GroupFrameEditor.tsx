@@ -12,7 +12,6 @@ import {
   getSwitchValue,
   GroupActivationsMap,
   StudioGroupActivationType,
-  GroupBattleTypes,
   GroupVariationsMap,
   updateActivation,
   GroupToolMap,
@@ -23,7 +22,14 @@ import {
 } from '@utils/GroupUtils';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 import { useGetEntityNameText, useSetProjectText } from '@utils/ReadingProjectText';
-import { GROUP_NAME_TEXT_ID, GROUP_SYSTEM_TAGS, StudioGroupSystemTag, StudioGroupTool } from '@modelEntities/group';
+import {
+  GROUP_NAME_TEXT_ID,
+  GROUP_SYSTEM_TAGS,
+  GROUP_VS_TYPE_CATEGORIES,
+  StudioGroupSystemTag,
+  StudioGroupTool,
+  StudioGroupVsType,
+} from '@modelEntities/group';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { useGroupPage } from '@hooks/usePage';
 import { useUpdateGroup } from './useUpdateGroup';
@@ -32,7 +38,7 @@ import { GroupTranslationEditorTitle, GroupTranslationOverlay } from './GroupTra
 import { TextInputError } from '@components/inputs/Input';
 
 const groupActivationEntries = (t: TFunction) => GroupActivationsMap.map((option) => ({ value: option.value, label: t(option.label as never) }));
-const groupBattleTypeEntries = (t: TFunction) => GroupBattleTypes.map((type) => ({ value: type, label: t(type) }));
+const groupBattleTypeEntries = (t: TFunction) => GROUP_VS_TYPE_CATEGORIES.map((type) => ({ value: type, label: t(type) }));
 const systemTagsEntries = (t: TFunction) => [...GROUP_SYSTEM_TAGS, 'custom' as const].map((tag) => ({ value: tag, label: t(tag) }));
 const groupVariationEntries = (t: TFunction) => GroupVariationsMap.map((variation) => ({ value: variation.value, label: t(variation.label) }));
 const groupToolEntries = (t: TFunction) => GroupToolMap.map((option) => ({ value: option.value, label: t(option.label) }));
@@ -52,7 +58,7 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const nameRef = useRef<HTMLInputElement>(null);
   const stepsAverageRef = useRef<HTMLInputElement>(null);
   const [activation, setActivation] = useState<StudioGroupActivationType>(getActivationValue(group));
-  const [battleType, setBattleType] = useState<(typeof battleTypeOptions)[number]['value']>(group.isDoubleBattle ? 'double' : 'simple');
+  const [battleType, setBattleType] = useState<StudioGroupVsType>(group.vsType);
   const [systemTag, setSystemTag] = useState<StudioGroupSystemTag>(getCustomEnvironment(group.systemTag) ?? 'RegularGround');
   const [variation, setVariation] = useState(group.terrainTag.toString());
   const [tool, setTool] = useState(group.tool || 'none');
@@ -80,11 +86,10 @@ export const GroupFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
 
     const customConditions = defineRelationCustomCondition(updateActivation(activation, group, switchValue));
     const newTool = tool === 'none' ? null : (tool as StudioGroupTool);
-    const isDoubleBattle = battleType === 'double';
     const stepsAverage = isNaN(stepsAverageRef.current.valueAsNumber) ? group.stepsAverage : stepsAverageRef.current.valueAsNumber;
     const newSystemTag = isCustomEnvironment ? setCustomEnvironment(systemTag) : systemTag;
 
-    updateGroup({ customConditions, systemTag: newSystemTag, tool: newTool, terrainTag: Number(variation), isDoubleBattle, stepsAverage });
+    updateGroup({ customConditions, systemTag: newSystemTag, tool: newTool, terrainTag: Number(variation), vsType: battleType, stepsAverage });
     saveTexts();
   };
   useEditorHandlingClose(ref, onClose, canClose);

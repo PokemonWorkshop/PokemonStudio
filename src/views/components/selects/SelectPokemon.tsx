@@ -32,7 +32,7 @@ export const SelectPokemon = ({ dbSymbol, onChange, breakpoint, noLabel, undefVa
     return creatureOptions;
   }, [creatureOptions, undefValueOption]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const optionals = useMemo(() => ({ deletedOption: t('creature_deleted') }), []);
+  const optionals = useMemo(() => ({ deletedOption: t('creature_deleted'), noOptionLabel: t('no_creature_found') }), []);
 
   if (noLabel) return <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />;
 

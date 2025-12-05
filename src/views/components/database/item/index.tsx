@@ -8,3 +8,5 @@ export { ItemHealData } from './ItemHealData';
 export { ItemParametersData } from './ItemParametersData';
 export { ItemProgressData } from './ItemProgressData';
 export { ItemTechData } from './ItemTechData';
+export { ItemBerriesData } from './ItemBerriesData';
+export { ItemCookingData } from './ItemCookingData';

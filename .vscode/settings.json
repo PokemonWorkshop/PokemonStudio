@@ -27,5 +27,7 @@
   },
   "cSpell.words": ["movepool", "Pokedex", "unmaximize"],
   "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "i18n-ally.localesPaths": ["assets/i18n", "out/Pokémon Studio-win32-x64/locales", "src/views/components/dashboard/language"],
+  "i18n-ally.keystyle": "nested"
 }

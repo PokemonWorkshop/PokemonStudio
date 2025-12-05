@@ -77,3 +77,5 @@ export const useConfigTexts = () => useProjectConfig('texts_config');
 export type UseConfigTextsReturnType = ReturnType<typeof useConfigTexts>;
 export const useConfigGameOptions = () => useProjectConfig('game_options_config');
 export type UseConfigGameOptionsReturnType = ReturnType<typeof useConfigGameOptions>;
+export const useConfigSoundDesign = () => useProjectConfig('sound_design_config');
+export type UseConfigSoundDesignReturnType = ReturnType<typeof useConfigSoundDesign>;

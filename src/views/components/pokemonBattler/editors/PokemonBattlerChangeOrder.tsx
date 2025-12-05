@@ -19,7 +19,7 @@ import { useTrainerPage } from '@src/hooks/usePage';
 import { useProjectPokemon } from '@src/hooks/useProjectData';
 import { cloneEntity } from '@utils/cloneEntity';
 import { getEntityNameText } from '@utils/ReadingProjectText';
-import { ReactComponent as DragIcon } from '@assets/icons/global/drag.svg';
+import DragIcon from '@assets/icons/global/drag.svg';
 import React, { forwardRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';

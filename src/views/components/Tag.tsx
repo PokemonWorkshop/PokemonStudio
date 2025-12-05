@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
-import { ReactComponent as ClearIcon } from '@assets/icons/global/clear-tag-icon.svg';
+import ClearIcon from '@assets/icons/global/clear-tag-icon.svg';
 
 export const Tag = styled.span`
   display: flex;

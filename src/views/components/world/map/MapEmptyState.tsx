@@ -1,13 +1,13 @@
 import React from 'react';
 import { PageEmptyState } from '@components/pages';
 import { useTranslation } from 'react-i18next';
-import { ReactComponent as MapIcon } from '@assets/icons/navigation/map-icon.svg';
+import MapIcon from '@assets/icons/navigation/map-icon.svg';
 import { MapDialogsRef } from './editors/MapEditorOverlay';
 import { PrimaryButton, SecondaryButton } from '@components/buttons';
 import { MapImportDialogsRef } from './editors/MapImport/MapImportOverlay';
 import styled from 'styled-components';
 
-const MapEmptyStateContainer = styled.div`
+export const MapEmptyStateContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;

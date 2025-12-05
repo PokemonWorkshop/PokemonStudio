@@ -6,7 +6,7 @@ import { DarkButton } from '@components/buttons';
 import { TooltipWrapper } from '@ds/Tooltip';
 import { DEFAULT_GAME_OPTIONS, DefaultGameOptions } from '@modelEntities/config';
 import { DragDropContext, Draggable, DraggableProvided, DraggableStateSnapshot, DropResult, Droppable, DroppableProvided } from '@hello-pangea/dnd';
-import { ReactComponent as DragIcon } from '@assets/icons/global/drag.svg';
+import DragIcon from '@assets/icons/global/drag.svg';
 
 type RenderOptionActiveProps = {
   index: number;

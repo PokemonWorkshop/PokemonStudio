@@ -180,7 +180,7 @@ const RenderEditMove = ({
             [pokemonIdentifier.specie]: editMove(index, moveSet, currentEditedPokemon, selected.value),
           });
         }}
-        noOptionsText={t('no_option')}
+        noOptionsText={t('no_move_found')}
         value={value}
         error={(occurrences.find((occ) => occ.dbSymbol === learnableMove.move)?.occurrence || 1) > 1 || !move}
       />

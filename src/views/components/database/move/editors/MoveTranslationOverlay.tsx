@@ -1,10 +1,10 @@
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
 import { TranslationEditorWithCloseHandling } from '@components/editor/TranslationEditorWithCloseHandling';
-import { MOVE_DESCRIPTION_TEXT_ID, MOVE_NAME_TEXT_ID, StudioMove } from '@modelEntities/move';
+import { MOVE_DESCRIPTION_TEXT_ID, MOVE_CONTEST_DESCRIPTION_TEXT_ID, MOVE_NAME_TEXT_ID, StudioMove } from '@modelEntities/move';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import React from 'react';
 
-export type TranslationEditorTitle = 'translation_name' | 'translation_description';
+export type TranslationEditorTitle = 'translation_name' | 'translation_description' | 'translation_contest_description';
 
 type Props = {
   onClose: () => void;
@@ -27,6 +27,19 @@ export const MoveTranslationOverlay = defineEditorOverlay<TranslationEditorTitle
             fileId={dialogToShow === 'translation_description' ? MOVE_DESCRIPTION_TEXT_ID : MOVE_NAME_TEXT_ID}
             textIndex={move.id}
             isMultiline={dialogToShow === 'translation_description'}
+            closeDialog={closeDialog}
+            onClose={onClose}
+            ref={handleCloseRef}
+          />
+        );
+      case 'translation_contest_description':
+        return (
+          <TranslationEditorWithCloseHandling
+            title={dialogToShow}
+            nameTextId={MOVE_NAME_TEXT_ID}
+            fileId={MOVE_CONTEST_DESCRIPTION_TEXT_ID}
+            textIndex={move.id}
+            isMultiline={true}
             closeDialog={closeDialog}
             onClose={onClose}
             ref={handleCloseRef}

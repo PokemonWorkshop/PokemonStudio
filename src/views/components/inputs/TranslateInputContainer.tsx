@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
-import { ReactComponent as TranslateIcon } from '@assets/icons/global/translate.svg';
+import TranslateIcon from '@assets/icons/global/translate.svg';
 
 const TranslateInputContainerStyle = styled.div`
   display: flex;

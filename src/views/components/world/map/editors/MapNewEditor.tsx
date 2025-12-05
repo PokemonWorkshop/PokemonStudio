@@ -11,7 +11,7 @@ import {
   MultiLineInput,
   PaddedInputContainer,
 } from '@components/inputs';
-import { useProjectMaps } from '@hooks/useProjectData';
+import { useProjectMapLinks, useProjectMaps } from '@hooks/useProjectData';
 import styled from 'styled-components';
 import { DarkButton, PrimaryButton, SecondaryButton } from '@components/buttons';
 import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID } from '@modelEntities/map';
@@ -35,6 +35,7 @@ import { useMapCopy } from '@hooks/useMapCopy';
 import { useLoaderRef } from '@utils/loaderContext';
 import { TextInputError } from '@components/inputs/Input';
 import { TooltipWrapper } from '@ds/Tooltip';
+import { createMapLinkFromMainMapId } from '@utils/MapLinkUtils';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -50,6 +51,7 @@ type MapNewEditorProps = {
 
 export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>(({ closeDialog, mapInfoParent }, ref) => {
   const { projectDataValues: maps, setProjectDataValues: setMap, state } = useProjectMaps();
+  const { projectDataValues: mapLinks, setProjectDataValues: setMapLink } = useProjectMapLinks();
   const { mapInfo, setMapInfo } = useMapInfo();
   const updateMapModified = useUpdateMapModified();
   const { t } = useTranslation();
@@ -87,6 +89,9 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
       mapModifiedUpdated.push(dbSymbol);
       updateMapModified(mapModifiedUpdated);
     }
+
+    const mapLink = createMapLinkFromMainMapId(mapLinks, newMap.id);
+    setMapLink({ [mapLink.dbSymbol]: mapLink });
 
     setText(MAP_NAME_TEXT_ID, newMap.id, name);
     setText(MAP_DESCRIPTION_TEXT_ID, newMap.id, descriptionRef.current.value);

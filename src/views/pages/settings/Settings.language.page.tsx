@@ -3,16 +3,15 @@ import { useTranslation } from 'react-i18next';
 import { PageEditor, PageTemplate } from '@components/pages';
 import { Label, RadioInput } from '@components/inputs';
 import styled from 'styled-components';
+import { languages } from '@root/package.json';
 
-const STUDIO_LANGUAGES = ['de', 'es', 'en', 'fr', 'it', 'pt'] as const;
-const STUDIO_LANGUAGE_NAMES = {
-  en: 'English, US',
-  fr: 'Français, FR',
-  es: 'Español',
-  it: 'Italiano',
-  de: 'Deutsch',
-  pt: 'Português',
-};
+const STUDIO_LANGUAGES = Object.keys(languages).filter(
+  (lang) => (languages as Record<string, { active: boolean }>)[lang]?.active !== false
+) as readonly string[];
+
+const STUDIO_LANGUAGE_NAMES: { [key: string]: string } = Object.fromEntries(
+  Object.keys(languages).map((lang) => [lang, (languages as Record<string, { suffix: string }>)[lang].suffix])
+);
 
 const LanguageListContainer = styled.div`
   display: flex;

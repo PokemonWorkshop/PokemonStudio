@@ -1,8 +1,8 @@
 import React, { ReactNode, useState } from 'react';
 import styled from 'styled-components';
 import { DataBlockContainer, DataBlockContainerProps } from './DataBlockContainer';
-import { ReactComponent as UpIcon } from '@assets/icons/global/up-icon.svg';
-import { ReactComponent as DownIcon } from '@assets/icons/global/down-icon.svg';
+import UpIcon from '@assets/icons/global/up-icon.svg';
+import DownIcon from '@assets/icons/global/down-icon.svg';
 import { Pagination, PaginationProps } from '@components/Pagination';
 
 export type DataBlockWithTitleProps = {

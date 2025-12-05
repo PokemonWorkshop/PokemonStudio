@@ -25,6 +25,7 @@ export const RMXP_MAP_VALIDATOR = z.object({
   name: z.string(),
 });
 
+export const MAP_LINK_CARDINAL_VALIDATOR = z.union([z.literal('north'), z.literal('east'), z.literal('south'), z.literal('west')]);
 export const MAP_LINK_CARDINAL_LIST = ['north', 'east', 'south', 'west'] as const;
 export type StudioMapLinkCardinal = (typeof MAP_LINK_CARDINAL_LIST)[number];
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { AutoSizer, List } from 'react-virtualized';
-import { ReactComponent as DownIcon } from '@assets/icons/global/down-icon.svg';
+import DownIcon from '@assets/icons/global/down-icon.svg';
 import { Input } from './inputs';
 import { useTranslation } from 'react-i18next';
 import { normalize } from '@utils/normalize';

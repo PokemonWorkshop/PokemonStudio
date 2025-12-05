@@ -47,8 +47,8 @@ const PageEmptyStateContainer = styled.div`
 type PageEmptyStateProps = {
   title: string;
   icon: ReactNode;
-  description: string;
-  children: ReactNode;
+  description: ReactNode;
+  children?: ReactNode;
 };
 
 export const PageEmptyState = ({ title, icon, description, children }: PageEmptyStateProps) => {

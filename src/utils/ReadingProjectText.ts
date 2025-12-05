@@ -9,7 +9,7 @@ import {
 import { StudioDex } from '@modelEntities/dex';
 import { GROUP_NAME_TEXT_ID } from '@modelEntities/group';
 import { ITEM_DESCRIPTION_TEXT_ID, ITEM_NAME_TEXT_ID, ITEM_PLURAL_NAME_TEXT_ID, ITEM_POCKET_NAME_TEXT_ID, StudioItem } from '@modelEntities/item';
-import { MOVE_DESCRIPTION_TEXT_ID, MOVE_NAME_TEXT_ID } from '@modelEntities/move';
+import { MOVE_CONTEST_DESCRIPTION_TEXT_ID, MOVE_DESCRIPTION_TEXT_ID, MOVE_NAME_TEXT_ID, StudioMove } from '@modelEntities/move';
 import { QUEST_DESCRIPTION_TEXT_ID, QUEST_NAME_TEXT_ID } from '@modelEntities/quest';
 import { TRAINER_NAME_TEXT_ID } from '@modelEntities/trainer';
 import { TYPE_NAME_TEXT_ID } from '@modelEntities/type';
@@ -391,4 +391,10 @@ export const useGetCreatureFormDescriptionText = () => {
   const getEntityText = useGetProjectText();
 
   return (form: StudioCreatureForm) => getEntityText(CREATURE_FORM_DESCRIPTION_TEXT_ID, form.formTextId.description);
+};
+
+export const useGetMoveContestDescriptionText = () => {
+  const getEntityText = useGetProjectText();
+
+  return (move: StudioMove) => getEntityText(MOVE_CONTEST_DESCRIPTION_TEXT_ID, move.id);
 };

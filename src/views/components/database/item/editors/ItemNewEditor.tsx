@@ -31,6 +31,7 @@ import { SelectItem } from '@components/selects';
 import { importItemData } from '@utils/importEntityDataUtils';
 import { OptionSourceKey } from '@src/hooks/useSelectOptions';
 import { useNavigate } from 'react-router-dom';
+import { ItemCategoryText } from './ItemCategoryText';
 
 const itemCategoryEntries = (t: TFunction) =>
   StudioItemCategories.map((category) => ({ value: category, label: t(`${category}`) })).sort((a, b) => a.label.localeCompare(b.label));
@@ -179,6 +180,7 @@ export const ItemNewEditor = forwardRef<EditorHandlingClose, ItemNewEditorProps>
         <InputWithTopLabelContainer>
           <Label htmlFor="category">{t('category')}</Label>
           <SelectCustomSimple id="select-category" options={options} onChange={setItemCategory as (v: string) => void} value={itemCategory} />
+          <ItemCategoryText itemCategory={itemCategory} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="dbSymbol" required>

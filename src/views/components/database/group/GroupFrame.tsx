@@ -60,7 +60,7 @@ export const GroupFrame = ({ group, dialogsRef }: GroupFrameProps) => {
           </DataInfoContainerHeaderTitle>
           <GroupSubInfoContainer>
             <DataFieldsetField label={t('activation')} data={t(getActivationLabel(group) as never)} disabled={false} />
-            <DataFieldsetField label={t('battle_type')} data={group.isDoubleBattle ? t('double') : t('simple')} disabled={false} />
+            <DataFieldsetField label={t('battle_type')} data={t(group.vsType)} disabled={false} />
             <DataFieldsetFieldWithChild label={t('environment')}>
               <EnvironmentContainer>
                 <span>{isCustomEnvironment(group.systemTag) ? t('custom') : t(group.systemTag as StudioGroupDefaultSystemTag)}</span>

@@ -9,6 +9,8 @@ import { parseJSON } from '@utils/json/parse';
 
 const PRE_MIGRATION_GROUP_VALIDATOR = GROUP_VALIDATOR.extend({
   tool: GROUP_TOOL_VALIDATOR.or(z.literal('HeadButt')),
+  isDoubleBattle: z.boolean().default(false),
+  isHordeBattle: z.boolean().default(false),
 });
 type StudioGroupDataBeforeMigration = z.infer<typeof PRE_MIGRATION_GROUP_VALIDATOR>;
 

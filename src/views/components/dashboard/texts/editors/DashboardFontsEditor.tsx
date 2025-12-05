@@ -1,8 +1,11 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Editor, useRefreshUI } from '@components/editor';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
+import { Select } from '@ds/Select';
+import { SelectOption } from '@ds/Select/types';
 import { StudioTextConfig, StudioTextTtfFileConfig } from '@modelEntities/config';
+import { useGlobalState } from '@src/GlobalStateProvider';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 type DashbordFontsEditorProps = {
   texts: StudioTextConfig;
@@ -14,6 +17,31 @@ export const DashboardFontsEditor = ({ texts, index, isAlternative }: DashbordFo
   const ttfFileOrAltSize = isAlternative ? texts.fonts.altSizes[index] : texts.fonts.ttfFiles[index];
   const { t } = useTranslation();
   const refreshUI = useRefreshUI();
+  const [fontOptions, setFontOptions] = useState<SelectOption<string>[]>([]);
+  const [state] = useGlobalState();
+
+  useEffect(() => {
+    if (isAlternative) return;
+
+    window.api.getFilePathsFromFolder(
+      {
+        folderPath: `${state.projectPath}/Fonts/`,
+        extensions: ['.ttf'],
+        isRecursive: false,
+        isFileNameOnly: true,
+      },
+      (filePaths) => {
+        const options = filePaths.filePaths.map((font) => ({
+          value: font.replace('.ttf', ''),
+          label: font,
+        }));
+        setFontOptions(options);
+      },
+      (error) => {
+        console.error('Error fetching fonts:', error);
+      }
+    );
+  }, [state.projectPath, isAlternative]);
 
   return (
     <Editor type="edit" title={isAlternative ? t('alt_sizes') : t('fonts')}>
@@ -33,10 +61,10 @@ export const DashboardFontsEditor = ({ texts, index, isAlternative }: DashbordFo
             <Label htmlFor="name" required>
               {t('font_name')}
             </Label>
-            <Input
-              type="text"
+            <Select
+              options={fontOptions}
               value={(ttfFileOrAltSize as StudioTextTtfFileConfig).name}
-              onChange={(event) => refreshUI(((ttfFileOrAltSize as StudioTextTtfFileConfig).name = event.target.value))}
+              onChange={(event) => refreshUI(((ttfFileOrAltSize as StudioTextTtfFileConfig).name = event))}
               placeholder="PokemonDS"
             />
           </InputWithTopLabelContainer>
@@ -45,6 +73,9 @@ export const DashboardFontsEditor = ({ texts, index, isAlternative }: DashbordFo
           <Label htmlFor="size">{t('size')}</Label>
           <Input
             name="size"
+            defaultValue="1"
+            min="1"
+            max="999"
             type="number"
             value={isNaN(ttfFileOrAltSize.size) ? '' : ttfFileOrAltSize.size}
             onChange={(event) => refreshUI((ttfFileOrAltSize.size = parseInt(event.target.value)))}
@@ -56,9 +87,12 @@ export const DashboardFontsEditor = ({ texts, index, isAlternative }: DashbordFo
           <Input
             name="line-height"
             type="number"
+            min="1"
+            max="999"
+            defaultValue="1"
             value={isNaN(ttfFileOrAltSize.lineHeight) ? '' : ttfFileOrAltSize.lineHeight}
             onChange={(event) => refreshUI((ttfFileOrAltSize.lineHeight = parseInt(event.target.value)))}
-            onBlur={() => refreshUI((ttfFileOrAltSize.lineHeight = isNaN(ttfFileOrAltSize.lineHeight) ? 0 : ttfFileOrAltSize.lineHeight))}
+            onBlur={() => refreshUI((ttfFileOrAltSize.lineHeight = isNaN(ttfFileOrAltSize.lineHeight) ? 1 : ttfFileOrAltSize.lineHeight))}
           />
         </InputWithLeftLabelContainer>
       </InputContainer>

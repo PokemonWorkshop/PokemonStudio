@@ -8,7 +8,7 @@ import { DarkButton, ClearButtonWithIcon, SecondaryButtonWithPlusIconResponsive 
 import { ClearInput } from '@components/inputs';
 import { DataTextGrid, DataTextList, DataTextListTable, TableEmpty, TitleContainer } from './TextListStyle';
 import { padStr } from '@utils/PadStr';
-import { ReactComponent as TranslationIcon } from '@assets/icons/global/translate.svg';
+import TranslationIcon from '@assets/icons/global/translate.svg';
 import { useGetTextList, useSetProjectText } from '@utils/ReadingProjectText';
 import { useTextPage } from '@hooks/usePage';
 
@@ -29,7 +29,8 @@ export const TextList = ({ dialogsRef, disabledTranslation }: TextListProps) => 
   const setText = useSetProjectText();
   const texts = useMemo(() => getTextList(textInfo.fileId), [getTextList, textInfo.fileId]);
   const textsFiltered = useMemo(
-    () => (research === '' ? texts : texts.filter((text) => text.dialog.toLowerCase().indexOf(research) !== -1)),
+    () =>
+      research === '' ? texts : texts.filter((text) => text.dialog.toLowerCase().indexOf(research) !== -1 || text.textId.toString() === research),
     [texts, research]
   );
   const listRef = useRef<List>(null);

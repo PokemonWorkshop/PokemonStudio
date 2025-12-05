@@ -23,7 +23,7 @@ export const SelectType = ({ dbSymbol, onChange, noLabel, noneValue, undefValueO
     return typeOptions;
   }, [undefValueOption, typeOptions, noneValue, t]);
 
-  const optionals = { deletedOption: t('type_deleted'), filter };
+  const optionals = { deletedOption: t('type_deleted'), noOptionLabel: t('no_type_found'), filter };
 
   if (noLabel) return <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />;
 

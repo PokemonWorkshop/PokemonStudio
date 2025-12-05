@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ReactComponent as SuccessIcon } from '@assets/icons/global/success-onboarding.svg';
+import SuccessIcon from '@assets/icons/global/success-onboarding.svg';
 import { BaseButtonStyle, DarkButton, InfoButton } from '@components/buttons';
 import { OnboardingType } from '@utils/onboarding';
 

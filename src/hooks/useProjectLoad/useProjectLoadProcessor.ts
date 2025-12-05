@@ -252,13 +252,14 @@ export const useProjectLoadProcessor = () => {
             lastEdit: new Date(),
           });
           updateProjectStudio(state.preState.projectPath, state.preState.projectStudio);
-          setState({ state: 'openProject' });
+          setState({ state: 'openProject', preState: state.preState });
         });
       },
-      openProject: (_, setState) => {
+      openProject: (state, setState) => {
         return toAsyncProcess(() => {
           loaderRef.current.setProgress(0, 0, t('loading_project_opening'));
           binding.current.onSuccess({});
+          window.dispatchEvent(new CustomEvent('project-opened', { detail: { projectStudio: state.preState.projectStudio } }));
           setState(DEFAULT_PROCESS_STATE);
         });
       },
