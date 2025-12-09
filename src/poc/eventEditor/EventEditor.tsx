@@ -14,17 +14,16 @@ import {
   useNodesState,
   useReactFlow,
 } from '@xyflow/react';
-import React, { DragEvent, DragEventHandler, useCallback, useEffect, useMemo } from 'react';
-import styled from 'styled-components';
-
 import { EventCommandsEditor } from '@components/event/EventCommandsEditor';
 import { EventProvider, useEventContext } from '@components/event/EventContext';
 import { StudioEventCommand } from '@modelEntities/event/command';
-import { BasicNode } from '../nodeEditor/BasicNode';
 import { EventDialogsRef, EventEditorAndDeletionKeys, EventEditorOverlay } from '../nodeEditor/EventEditorOverlay';
 import { useDialogsRef } from '@src/hooks/useDialogsRef';
 import { useGlobalState } from '@src/GlobalStateProvider';
-import { ShadowNode } from '../nodeEditor/ShadowNode';
+import { CommandNodes } from './CommandNodes';
+
+import React, { DragEvent, DragEventHandler, useCallback, useEffect, useMemo } from 'react';
+import styled from 'styled-components';
 
 // From example: https://reactflow.dev/examples/interaction/drag-and-drop
 
@@ -59,18 +58,7 @@ const EventFlow = () => {
     { id: 'shadow_node', type: 'shadow_node', position: { x: 0, y: 0 }, data: {}, hidden: true },
   ]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
-  const nodeTypes = useMemo(
-    () => ({
-      add_condition: BasicNode,
-      add_jump_another_command: BasicNode,
-      call_event: BasicNode,
-      insert_loop: BasicNode,
-      show_message: BasicNode,
-      stop_event_execution: BasicNode,
-      shadow_node: ShadowNode,
-    }),
-    []
-  );
+  const nodeTypes = useMemo(() => CommandNodes, []);
   const { screenToFlowPosition } = useReactFlow();
   const { currentEditedNode, type, setCurrentEditedNode, setType } = useEventContext();
   const dialogsRef = useDialogsRef<EventEditorAndDeletionKeys>();

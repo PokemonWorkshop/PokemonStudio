@@ -7,7 +7,7 @@ import { CONTROL, useKeyPress } from '@hooks/useKeyPress';
 import { useEventContext } from '@components/event/EventContext';
 import { Handle, Position } from '@xyflow/react';
 
-type BasicNodeProps = {
+export type BasicNodeProps = {
   id: string;
   data: {
     dialogsRef?: EventDialogsRef;

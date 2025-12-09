@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { useEventContext } from './EventContext';
 import { useTranslation } from 'react-i18next';
 import HelperIcon from '@assets/icons/global/error2.svg';
-import PlusIcon from '@assets/icons/global/plus-icon.svg';
-import type { StudioEventCommand } from '@root/src/models/entities/event/command';
+import type { StudioEventCommand } from '@modelEntities/event/command';
+import { IconsFromCommand } from './EventCommandIcon';
 
 const EventCommandContainer = styled.div`
   display: flex;
@@ -58,16 +58,6 @@ const EventCommandContainer = styled.div`
     -webkit-box-orient: vertical;
   }
 `;
-
-// TODO: update icons
-const IconsFromCommand: Record<StudioEventCommand, JSX.Element> = {
-  call_event: <PlusIcon />,
-  add_condition: <PlusIcon />,
-  insert_loop: <PlusIcon />,
-  stop_event_execution: <PlusIcon />,
-  add_jump_another_command: <PlusIcon />,
-  show_message: <PlusIcon />,
-};
 
 type EventCommandProps = {
   command: StudioEventCommand;
