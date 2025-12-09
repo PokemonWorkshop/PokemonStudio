@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { DB_SYMBOL_VALIDATOR } from './dbSymbol';
-import { POSITIVE_OR_ZERO_INT } from './common';
+import { DB_SYMBOL_VALIDATOR } from '../dbSymbol';
+import { POSITIVE_OR_ZERO_INT } from '../common';
 
 const COMMAND_LIST_ID_VALIDATOR = z.string().brand('CommandListId');
 export type CommandListId = z.infer<typeof COMMAND_LIST_ID_VALIDATOR>;

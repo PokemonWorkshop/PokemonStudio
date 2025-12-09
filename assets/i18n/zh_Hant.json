@@ -68,7 +68,7 @@
   "maplinks": "地圖連接",
   "offset": "偏移量",
   "musics": "音樂",
-  "action_back": "Back",
+  "action_back": "返回",
   "close": "關閉",
   "stats": "能力值",
   "statistics": "能力",
@@ -1749,5 +1749,17 @@
   "item_category_description_tech": "TMs are used to teach Pokémon new moves.",
   "end_of_rmxp_support": "Support for RPG Maker XP as a map creation tool will end in an upcoming update, and the use of Tiled will become mandatory.",
   "edit_map_links": "Edit map links",
-  "map_links_to_map": "Link map"
+  "map_links_to_map": "Link map",
+  "instructions": "Instructions",
+  "event_category_messages": "Messages",
+  "event_category_player_interaction": "Player Interaction",
+  "event_category_flow_control": "Flow Control",
+  "event_category_game_interfaces": "Game Interfaces",
+  "event_command_call_event": "Call an Event",
+  "event_command_add_condition": "Add a Condition",
+  "event_command_insert_loop": "Insert a Loop",
+  "event_command_stop_event_execution": "Stop Event Execution",
+  "event_command_add_jump_another_command": "Add a Jump to another command",
+  "event_command_show_message": "Show a message",
+  "event_command_call_event_helper": "Helper for the call event command"
 }

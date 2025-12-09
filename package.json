@@ -65,6 +65,10 @@
     "zh_Hant": {
       "suffix": "Chinese Traditional, 繁體中文",
       "active": false
+    },
+    "ja": {
+      "suffix": "Japanese",
+      "active": false
     }
   },
   "scripts": {
