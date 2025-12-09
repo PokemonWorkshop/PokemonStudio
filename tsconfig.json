@@ -15,7 +15,6 @@
     "jsx": "react",
     "paths": {
       "*": ["node_modules/*"],
-      "@root/*": ["*"],
       "@components/*": ["src/views/components/*"],
       "@ds/*": ["src/designSystem/*"],
       "@pages/*": ["src/views/pages/*"],
@@ -26,6 +25,7 @@
       "@src/*": ["src/*"],
       "@hooks/*": ["src/hooks/*"],
       "@poc/*": ["src/poc/*"],
+      "@root/*": ["*"],
       "react": ["./node_modules/@types/react"]
     }
   },
