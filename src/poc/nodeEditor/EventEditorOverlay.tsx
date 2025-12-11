@@ -18,7 +18,7 @@ export const EventEditorOverlay = defineEditorOverlay<EventEditorAndDeletionKeys
     switch (dialogToShow) {
       case 'show_message':
       case 'narrator_settings':
-      case 'additional_options_message':
+      case 'manage_message_box':
       case 'show_choice':
       case 'wait_key_press':
       case 'record_key_press':
@@ -49,14 +49,14 @@ export const EventEditorOverlay = defineEditorOverlay<EventEditorAndDeletionKeys
       case 'start_wild_encounter':
       case 'start_scripted_battle':
       case 'manage_random_encounters':
-      case 'manage_items':
-      case 'manage_money':
+      case 'manage_player_items':
+      case 'manage_player_money':
       case 'manage_dex':
       case 'set_active_dex':
       case 'give_badge':
       case 'manage_access_save_menu':
       case 'open_save_menu':
-      case 'enable_autosave':
+      case 'manage_autosave':
       case 'force_autosave':
       case 'force_save':
       case 'open_scene':
@@ -69,8 +69,8 @@ export const EventEditorOverlay = defineEditorOverlay<EventEditorAndDeletionKeys
       case 'start_quest':
       case 'display_hidden_objective':
       case 'validate_quest_objectives':
-      case 'check_quest_completion':
-      case 'distribute_quest_rewards':
+      case 'display_quest_progress':
+      case 'complete_quest':
       case 'play_sound':
       case 'stop_current_sound':
       case 'change_default_sound':
@@ -82,7 +82,7 @@ export const EventEditorOverlay = defineEditorOverlay<EventEditorAndDeletionKeys
       case 'display_screen_animation':
       case 'display_emotion':
       case 'manage_image':
-      case 'move_camera':
+      case 'manage_camera':
       case 'manage_dynamic_light':
       case 'change_weather':
       case 'manage_map_fog':

@@ -4,7 +4,7 @@ import { z } from 'zod';
 export const EVENT_COMMAND_VALIDATOR = z.union([
   z.literal('show_message'),
   z.literal('narrator_settings'),
-  z.literal('additional_options_message'),
+  z.literal('manage_message_box'),
   z.literal('show_choice'),
   z.literal('wait_key_press'),
   z.literal('record_key_press'),
@@ -24,25 +24,25 @@ export const EVENT_COMMAND_VALIDATOR = z.union([
   z.literal('teleport_event'),
   z.literal('teleport_player'),
   z.literal('wait_move_completion'),
-  z.literal('manage_event_reappearance'), // change the wording for manage_event_life ?
+  z.literal('manage_event_reappearance'),
   z.literal('manage_path_finding'),
   z.literal('manage_follow_me'),
   z.literal('manage_variables'),
   z.literal('manage_event_variables'),
   z.literal('manage_timer'),
-  z.literal('change_character_name'), // useless ??
+  z.literal('change_character_name'),
   z.literal('start_trainer_battle'),
   z.literal('start_wild_encounter'),
   z.literal('start_scripted_battle'),
   z.literal('manage_random_encounters'),
-  z.literal('manage_items'),
-  z.literal('manage_money'),
+  z.literal('manage_player_items'),
+  z.literal('manage_player_money'),
   z.literal('manage_dex'),
   z.literal('set_active_dex'),
   z.literal('give_badge'),
   z.literal('manage_access_save_menu'),
   z.literal('open_save_menu'),
-  z.literal('enable_autosave'),
+  z.literal('manage_autosave'),
   z.literal('force_autosave'),
   z.literal('force_save'),
   z.literal('open_scene'),
@@ -55,8 +55,8 @@ export const EVENT_COMMAND_VALIDATOR = z.union([
   z.literal('start_quest'),
   z.literal('display_hidden_objective'),
   z.literal('validate_quest_objectives'),
-  z.literal('check_quest_completion'),
-  z.literal('distribute_quest_rewards'),
+  z.literal('display_quest_progress'),
+  z.literal('complete_quest'),
   z.literal('play_sound'),
   z.literal('stop_current_sound'),
   z.literal('change_default_sound'),
@@ -67,8 +67,8 @@ export const EVENT_COMMAND_VALIDATOR = z.union([
   z.literal('display_animation'),
   z.literal('display_screen_animation'),
   z.literal('display_emotion'),
-  z.literal('manage_image'), // Display / Erase an image
-  z.literal('move_camera'),
+  z.literal('manage_image'),
+  z.literal('manage_camera'),
   z.literal('manage_dynamic_light'),
   z.literal('change_weather'),
   z.literal('manage_map_fog'),
@@ -79,17 +79,17 @@ export const EVENT_COMMAND_VALIDATOR = z.union([
 
 export type StudioEventCommand = z.infer<typeof EVENT_COMMAND_VALIDATOR>;
 
-export type EventCommandHelper = {
+export type EventCommandForCategory = {
   commandType: StudioEventCommand;
   helper?: boolean;
   enabled?: boolean;
 };
 
-export const COMMANDS_FROM_CATEGORY: Record<StudioEventCommandCategory, EventCommandHelper[]> = {
+export const COMMANDS_FROM_CATEGORY: Record<StudioEventCommandCategory, EventCommandForCategory[]> = {
   messages: [
     { commandType: 'show_message', enabled: true },
     { commandType: 'narrator_settings' },
-    { commandType: 'additional_options_message' },
+    { commandType: 'manage_message_box' },
     { commandType: 'show_choice' },
   ],
   player_interactions: [
@@ -132,8 +132,8 @@ export const COMMANDS_FROM_CATEGORY: Record<StudioEventCommandCategory, EventCom
     { commandType: 'manage_random_encounters' },
   ],
   inventory: [
-    { commandType: 'manage_items' },
-    { commandType: 'manage_money' },
+    { commandType: 'manage_player_items' },
+    { commandType: 'manage_player_money' },
     { commandType: 'manage_dex' },
     { commandType: 'set_active_dex' },
     { commandType: 'give_badge' },
@@ -141,7 +141,7 @@ export const COMMANDS_FROM_CATEGORY: Record<StudioEventCommandCategory, EventCom
   save: [
     { commandType: 'manage_access_save_menu' },
     { commandType: 'open_save_menu' },
-    { commandType: 'enable_autosave' },
+    { commandType: 'manage_autosave' },
     { commandType: 'force_autosave' },
     { commandType: 'force_save' },
   ],
@@ -158,8 +158,8 @@ export const COMMANDS_FROM_CATEGORY: Record<StudioEventCommandCategory, EventCom
     { commandType: 'start_quest' },
     { commandType: 'display_hidden_objective' },
     { commandType: 'validate_quest_objectives' },
-    { commandType: 'check_quest_completion' },
-    { commandType: 'distribute_quest_rewards', helper: true },
+    { commandType: 'display_quest_progress' },
+    { commandType: 'complete_quest', helper: true },
   ],
   audio: [
     { commandType: 'play_sound' },
@@ -175,7 +175,7 @@ export const COMMANDS_FROM_CATEGORY: Record<StudioEventCommandCategory, EventCom
     { commandType: 'display_screen_animation' },
     { commandType: 'display_emotion' },
     { commandType: 'manage_image' },
-    { commandType: 'move_camera' },
+    { commandType: 'manage_camera' },
     { commandType: 'manage_dynamic_light' },
   ],
   visual_environment: [
