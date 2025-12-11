@@ -6,8 +6,8 @@ Pokémon Studio is a standalone software allowing people to create their monster
 - editing game settings,
 - editing and translating game texts,
 - updating [Pokémon SDK](https://gitlab.com/pokemonsdk/pokemonsdk) (game engine & starter kit),
-- managing maps and map links from Tiled (coming with 2.0 version),
-- manage events (coming with 3.0 version).
+- managing maps and map links from Tiled to PSDK format through a dedicated converter called [ts-tiled-converter](https://github.com/NuriYuri/ts-tiled-converter),
+- manage events (coming with [version 3.0](https://github.com/PokemonWorkshop/PokemonStudio/wiki/V3-Doc-Product-Vision)).
 
 [![Weblate translation status](https://hosted.weblate.org/widget/pokemon-studio/svg-badge.svg)](https://hosted.weblate.org/engage/pokemon-studio/?utm_source=widget)
 
@@ -28,8 +28,9 @@ If you plan on using, modifying or doing anything related to Pokémon Studio. Yo
 
 You'll need to **install NodeJS** first: https://nodejs.org/en/download
 
-We recommend using [NVM](https://github.com/nvm-sh/nvm) (MacOS/Linux) or [Volta](https://volta.sh/) (Windows) to manage easely your NodeJS version.
-We use the version **20** of NodeJS.
+We recommend using [NVM](https://github.com/nvm-sh/nvm) (MacOS/Linux) or [Volta](https://volta.sh/) (Windows) to manage easily your NodeJS version.
+
+NodeJS version 22.17.0 is required
 
 ### Cloning and installation
 
