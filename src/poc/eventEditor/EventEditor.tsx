@@ -25,6 +25,8 @@ import { CommandNodes } from './CommandNodes';
 import React, { DragEvent, DragEventHandler, useCallback, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 
+/* eslint-disable react-hooks/exhaustive-deps */
+
 // From example: https://reactflow.dev/examples/interaction/drag-and-drop
 
 type NodeData = {
@@ -130,18 +132,14 @@ const EventFlow = () => {
 
   const onNodesChange: OnNodesChange<NodeEvent | NodeShadow> = useCallback(
     (changes) => {
-      let textVersion = state.textVersion;
       setNodes((nds) => {
         const updatedChanges = changes.map((change) => {
-          if (change.type !== 'remove') return change;
+          if (change.type === 'remove') setState((s) => ({ ...s, textVersion: s.textVersion - 1 }));
 
-          textVersion--;
           return change;
         });
         return applyNodeChanges(updatedChanges, nds);
       });
-      setState((s) => ({ ...s, textVersion }));
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
     [state]
   );
@@ -222,3 +220,5 @@ export const EventEditor = () => {
     </ReactFlowProvider>
   );
 };
+
+/* eslint-enable react-hooks/exhaustive-deps */
