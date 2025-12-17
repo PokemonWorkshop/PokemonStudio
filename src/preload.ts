@@ -80,6 +80,7 @@ contextBridge.exposeInMainWorld('api', {
     on: (listener) => ipcRenderer.on('request-update-downloaded', listener),
     removeListener: (listener) => ipcRenderer.removeListener('request-update-downloaded', listener),
   },
+  relaunch: () => ipcRenderer.send('studio-relaunch'),
   checkUpdate: () => ipcRenderer.send('studio-check-update'),
   getAppVersion: () => ipcRenderer.invoke('get-app-version'),
   getPSDKBinariesPath: () => ipcRenderer.invoke('get-psdk-binaries-path'),
@@ -199,6 +200,7 @@ declare global {
       toggleMaximizeMode: () => void;
       close: () => void;
       safeClose: (shouldForceQuit: boolean) => void;
+      relaunch: () => void;
       updatePSDK: (
         currentVersion: number,
         onStatusUpdate: (current: number, total: number, version: PSDKVersion) => void,

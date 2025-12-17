@@ -153,6 +153,10 @@ app.on('will-quit', (event) => {
 ipcMain.handle('get-psdk-binaries-path', () => getPSDKBinariesPath());
 ipcMain.handle('get-psdk-version', () => getPSDKVersion());
 ipcMain.handle('get-app-version', () => app.getVersion());
+ipcMain.on('studio-relaunch', () => {
+  app.relaunch();
+  app.quit();
+});
 ipcMain.once('studio-check-update', () => app.isPackaged && autoUpdater.checkForUpdates());
 ipcMain.on('get-last-psdk-version', getLastPSDKVersion);
 ipcMain.on('update-psdk', updatePSDK);
