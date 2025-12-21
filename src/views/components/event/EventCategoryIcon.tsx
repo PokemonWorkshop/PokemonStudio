@@ -41,7 +41,17 @@ export const IconsFromCategory: Record<StudioEventCommandCategory, { icon: JSX.E
   flow_control: { icon: <PlusIcon />, color: 'violet' },
   game_interfaces: { icon: <PlusIcon />, color: 'violet' },
   messages: { icon: <PlusIcon />, color: 'violet' },
-  player_interaction: { icon: <PlusIcon />, color: 'blue' },
+  player_interactions: { icon: <PlusIcon />, color: 'blue' },
+  movement: { icon: <PlusIcon />, color: 'violet' },
+  game_data: { icon: <PlusIcon />, color: 'violet' },
+  battles: { icon: <PlusIcon />, color: 'violet' },
+  inventory: { icon: <PlusIcon />, color: 'violet' },
+  save: { icon: <PlusIcon />, color: 'violet' },
+  quests: { icon: <PlusIcon />, color: 'violet' },
+  audio: { icon: <PlusIcon />, color: 'violet' },
+  visual_effects: { icon: <PlusIcon />, color: 'violet' },
+  visual_environment: { icon: <PlusIcon />, color: 'violet' },
+  scripting: { icon: <PlusIcon />, color: 'violet' },
 };
 
 type EventCategoryIconProps = {
