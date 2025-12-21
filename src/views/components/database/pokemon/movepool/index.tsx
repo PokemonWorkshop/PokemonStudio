@@ -1,4 +1,3 @@
-export { MovepoolEditor } from './MovepoolEditor';
 export { MovepoolImport } from './MovepoolImport';
 export { MovepoolLevelLearnableTable } from './MovepoolLevelLearnableTable';
 export { MovepoolTable } from './MovepoolTable';
