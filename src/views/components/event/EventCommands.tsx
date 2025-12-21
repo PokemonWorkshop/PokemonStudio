@@ -78,9 +78,10 @@ type EventCommandsProps = {
 };
 
 const getCommands = (category: StudioEventCommandCategory, t: TFunction, research?: string) => {
-  if (!research) return COMMANDS_FROM_CATEGORY[category];
+  const commandsAvailable = COMMANDS_FROM_CATEGORY[category].filter(({ enabled }) => enabled);
+  if (!research) return commandsAvailable;
 
-  return COMMANDS_FROM_CATEGORY[category]
+  return commandsAvailable
     .map((command) => ({ command, title: t(`event_command_${command.commandType}`) }))
     .filter(({ title }) => title.toLowerCase().indexOf(research) !== -1)
     .map(({ command }) => command);
