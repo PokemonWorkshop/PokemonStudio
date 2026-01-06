@@ -119,5 +119,6 @@ export const generateSelectedIdentifier = (preState: PreGlobalState): SelectedDa
     textInfo: getTextInfoIdentifier(selectedFromStorage, preState.textInfos),
     map: getSelectedIdentifier(preState, selectedFromStorage, 'map', 'maps') || firstById(projectData.maps),
     nature: getSelectedIdentifier(preState, selectedFromStorage, 'nature', 'natures') || firstByName(projectData.natures, preState),
+    event: getSelectedIdentifier(preState, selectedFromStorage, 'event', 'events') || firstById(projectData.events),
   };
 };

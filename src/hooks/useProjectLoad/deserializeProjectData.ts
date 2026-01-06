@@ -11,6 +11,7 @@ import { TRAINER_VALIDATOR } from '@modelEntities/trainer';
 import { TYPE_VALIDATOR } from '@modelEntities/type';
 import { ZONE_VALIDATOR } from '@modelEntities/zone';
 import { NATURE_VALIDATOR } from '@modelEntities/nature';
+import { EVENT_VALIDATOR } from '@modelEntities/event/event';
 import type { ProjectData } from '@src/GlobalStateProvider';
 import { zodDataToEntries } from '@utils/SerializationUtils';
 import { countZodDiscriminatedDataIntegrityFailure, countZodDataIntegrityFailure } from './helpers';
@@ -33,6 +34,7 @@ export const deserializeProjectData = (state: Extract<ProjectLoadStateObject, { 
     mapLinks: zodDataToEntries(countZodDataIntegrityFailure(state.projectData.maplinks, MAP_LINK_VALIDATOR, integrityFailureCount)),
     maps: zodDataToEntries(countZodDataIntegrityFailure(state.projectData.maps, MAP_VALIDATOR, integrityFailureCount)),
     natures: zodDataToEntries(countZodDataIntegrityFailure(state.projectData.natures, NATURE_VALIDATOR, integrityFailureCount)),
+    events: zodDataToEntries(countZodDataIntegrityFailure(state.projectData.events, EVENT_VALIDATOR, integrityFailureCount)),
   };
 
   return { integrityFailureCount: integrityFailureCount.count, projectText, projectData };

@@ -239,3 +239,5 @@ export const useProjectMaps = () => useProjectData('maps', 'map');
 export type UseProjectMapsReturnType = ReturnType<typeof useProjectMaps>;
 export const useProjectNatures = () => useProjectData('natures', 'nature');
 export type UseProjectNaturesReturnType = ReturnType<typeof useProjectNatures>;
+export const useProjectEvents = () => useProjectData('events', 'event');
+export type UseProjectEventReturnType = ReturnType<typeof useProjectEvents>;

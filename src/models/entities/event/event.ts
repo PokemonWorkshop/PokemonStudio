@@ -117,4 +117,7 @@ export const MAP_EVENT_LINK_VALIDATOR = z.object({
 });
 export type MapEventLink = z.infer<typeof MAP_EVENT_LINK_VALIDATOR>;
 
-export type StudioEvent = z.infer<typeof CUSTOM_EVENT_VALIDATOR>;
+export const EVENT_VALIDATOR = CUSTOM_EVENT_VALIDATOR;
+export type StudioEvent = z.infer<typeof EVENT_VALIDATOR>;
+
+export const EVENT_NAME_TEXT_ID = 200005;

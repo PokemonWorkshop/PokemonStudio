@@ -23,6 +23,7 @@ import { addBerryAndCookingDataToItems } from './addBerryAndCookingDataToItems';
 import { addSoundDesignConfig } from './addSoundDesignConfig';
 import { addMoveContestData } from './addMoveContestData';
 import { addMissingMapLinks } from './addMissingMapLinks';
+import { baseForEvents } from './baseForEvents';
 
 type MigrateConfigType = {
   migration: MigrationTask;
@@ -166,5 +167,10 @@ export const MIGRATION_CONFIG: MigrateConfigType[] = [
     migration: addMissingMapLinks,
     version: '2.7.0',
     message: 'add_missing_maplinks',
+  },
+  {
+    migration: baseForEvents,
+    version: '2.8.1',
+    message: 'add_base_for_events',
   },
 ];

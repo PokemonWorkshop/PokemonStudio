@@ -26,6 +26,7 @@ const projectDataKeys = [
   'zones',
   'maps',
   'natures',
+  'events',
 ] as const;
 type ProjectDataFromBackEndKey = (typeof projectDataKeys)[number];
 export type FilenameWithData = { filename: string; data: string };
