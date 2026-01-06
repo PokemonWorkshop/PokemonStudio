@@ -116,3 +116,5 @@ export const MAP_EVENT_LINK_VALIDATOR = z.object({
   position: COORDINATE_VALIDATOR,
 });
 export type MapEventLink = z.infer<typeof MAP_EVENT_LINK_VALIDATOR>;
+
+export type StudioEvent = z.infer<typeof CUSTOM_EVENT_VALIDATOR>;

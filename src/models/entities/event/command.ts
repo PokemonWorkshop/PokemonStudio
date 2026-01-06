@@ -186,3 +186,12 @@ export const COMMANDS_FROM_CATEGORY: Record<StudioEventCommandCategory, EventCom
   ],
   scripting: [{ commandType: 'insert_script', enabled: true }],
 };
+
+export const EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR = z.object({
+  comment: z.string(),
+  script: z.string(),
+});
+
+export type StudioEventCommandInsertScript = z.infer<typeof EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR>;
+
+export type StudioEventCommandData = unknown;

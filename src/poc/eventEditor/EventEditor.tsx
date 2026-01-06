@@ -24,6 +24,7 @@ import { CommandNodes } from './CommandNodes';
 
 import React, { DragEvent, DragEventHandler, useCallback, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
+import { EventCommandCreation } from '@utils/eventCommandCreation';
 
 /* eslint-disable react-hooks/exhaustive-deps */
 
@@ -32,7 +33,7 @@ import styled from 'styled-components';
 type NodeData = {
   dialogsRef?: EventDialogsRef;
   commandType: StudioEventCommand;
-  textVersion: number;
+  commandData: unknown;
 };
 
 type NodeEvent = Node<NodeData, StudioEventCommand>;
@@ -89,7 +90,7 @@ const EventFlow = () => {
         return;
       }
 
-      const textVersion = state.textVersion + 1;
+      const commandData = EventCommandCreation[type] || { textVersion: state.textVersion };
       const position = screenToFlowPosition({
         x: event.clientX + 8,
         y: event.clientY + 8,
@@ -98,7 +99,7 @@ const EventFlow = () => {
         id: getId(),
         type,
         position,
-        data: { commandType: type, dialogsRef, textVersion },
+        data: { commandType: type, dialogsRef, commandData },
       };
       const shadowNode = reactFlowInstance.getNode('shadow_node') as NodeShadow;
 
@@ -111,7 +112,7 @@ const EventFlow = () => {
           nds
         )
       );
-      setState((s) => ({ ...s, textVersion: textVersion }));
+      setState((s) => ({ ...s, textVersion: state.textVersion + 1 }));
     },
     [screenToFlowPosition, type, state]
   );
