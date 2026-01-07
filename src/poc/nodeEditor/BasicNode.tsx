@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CONTROL, useKeyPress } from '@hooks/useKeyPress';
 import { useEventContext } from '@components/event/EventContext';
@@ -19,11 +19,12 @@ const BasicNodeContainer = styled.div`
   }
 `;
 
-export const BasicNode = ({ id, data: { dialogsRef, commandType, commandData }, selected }: EventNodeProps) => {
+export const BasicNode = ({ id, data: { dialogsRef, command }, selected }: EventNodeProps) => {
   const { setCurrentEditedNode } = useEventContext();
   const { t } = useTranslation();
   const isControlPressed = useKeyPress(CONTROL);
-  const textVersion = (commandData as { textVersion: number }).textVersion;
+  const date = useMemo(() => new Date().toLocaleString(), []);
+  const commandType = command.commandType;
 
   return (
     <>
@@ -40,7 +41,7 @@ export const BasicNode = ({ id, data: { dialogsRef, commandType, commandData }, 
         data-selected={selected}
       >
         {t(`event_command_${commandType}`)}
-        <span>{textVersion}</span>
+        <span>{date}</span>
       </BasicNodeContainer>
     </>
   );

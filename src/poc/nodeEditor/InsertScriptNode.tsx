@@ -21,11 +21,11 @@ const BasicNodeContainer = styled.div`
   }
 `;
 
-export const InsertScriptNode = ({ id, data: { dialogsRef, commandType, commandData }, selected }: EventNodeProps) => {
+export const InsertScriptNode = ({ id, data: { dialogsRef, command }, selected }: EventNodeProps) => {
   const { setCurrentEditedNode } = useEventContext();
   const { t } = useTranslation();
   const isControlPressed = useKeyPress(CONTROL);
-  const data = commandData as StudioEventCommandInsertScript;
+  const { commandType, comment, script } = command as StudioEventCommandInsertScript;
 
   return (
     <>
@@ -41,9 +41,9 @@ export const InsertScriptNode = ({ id, data: { dialogsRef, commandType, commandD
         data-selected={selected}
       >
         {t(`event_command_${commandType}`)}
-        <span>Comment: {data.comment}</span>
+        <span>Comment: {comment}</span>
         <span>Insert script:</span>
-        <MultiLineInput defaultValue={data.script} readOnly />
+        <MultiLineInput defaultValue={script} readOnly />
       </BasicNodeContainer>
     </>
   );

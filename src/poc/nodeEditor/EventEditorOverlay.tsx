@@ -3,9 +3,9 @@ import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import { DialogRefData } from '@hooks/useDialogsRef';
 import { BasicEditor } from './BasicEditor';
-import { StudioEventCommand } from '@modelEntities/event/command';
+import { StudioEventCommandType } from '@modelEntities/event/command';
 
-export type EventEditorAndDeletionKeys = StudioEventCommand;
+export type EventEditorAndDeletionKeys = StudioEventCommandType;
 export type EventDialogsRef = React.RefObject<DialogRefData<EventEditorAndDeletionKeys>>;
 
 /**

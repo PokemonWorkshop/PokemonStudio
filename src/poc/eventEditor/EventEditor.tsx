@@ -16,7 +16,7 @@ import {
 } from '@xyflow/react';
 import { EventCommandsEditor } from '@components/event/EventCommandsEditor';
 import { EventProvider, useEventContext } from '@components/event/EventContext';
-import { StudioEventCommand } from '@modelEntities/event/command';
+import type { StudioEventCommand, StudioEventCommandType } from '@modelEntities/event/command';
 import { EventDialogsRef, EventEditorAndDeletionKeys, EventEditorOverlay } from '../nodeEditor/EventEditorOverlay';
 import { useDialogsRef } from '@src/hooks/useDialogsRef';
 import { useGlobalState } from '@src/GlobalStateProvider';
@@ -32,11 +32,10 @@ import { EventCommandCreation } from '@utils/eventCommandCreation';
 
 type NodeData = {
   dialogsRef?: EventDialogsRef;
-  commandType: StudioEventCommand;
-  commandData: unknown;
+  command: StudioEventCommand;
 };
 
-type NodeEvent = Node<NodeData, StudioEventCommand>;
+type NodeEvent = Node<NodeData, StudioEventCommandType>;
 type NodeShadow = Node;
 
 const EventEditorContainer = styled.div`
@@ -53,7 +52,7 @@ const EventEditorContainer = styled.div`
 `;
 
 let id = 0;
-const getId = () => `event_node_${id++}`;
+const getId = () => `command_${id++}`;
 
 const EventFlow = () => {
   const reactFlowInstance = useReactFlow();
@@ -90,7 +89,7 @@ const EventFlow = () => {
         return;
       }
 
-      const commandData = EventCommandCreation[type] || { textVersion: state.textVersion };
+      const command = EventCommandCreation[type];
       const position = screenToFlowPosition({
         x: event.clientX + 8,
         y: event.clientY + 8,
@@ -99,7 +98,7 @@ const EventFlow = () => {
         id: getId(),
         type,
         position,
-        data: { commandType: type, dialogsRef, commandData },
+        data: { dialogsRef, command: { commandType: type, ...command } as StudioEventCommand },
       };
       const shadowNode = reactFlowInstance.getNode('shadow_node') as NodeShadow;
 
@@ -117,7 +116,7 @@ const EventFlow = () => {
     [screenToFlowPosition, type, state]
   );
 
-  const onDragStart = (event: DragEvent<HTMLDivElement>, nodeType: StudioEventCommand) => {
+  const onDragStart = (event: DragEvent<HTMLDivElement>, nodeType: StudioEventCommandType) => {
     setType(nodeType);
     event.dataTransfer.setData('text/plain', nodeType);
     event.dataTransfer.effectAllowed = 'move';
