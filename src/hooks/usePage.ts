@@ -296,3 +296,16 @@ export const useMapLinkPage = () => {
     state,
   };
 };
+
+export const useEventPage = () => {
+  const { projectDataValues: events, selectedDataIdentifier: eventSeleted, state } = useProjectDataReadonly('events', 'event');
+  const event = events[eventSeleted];
+  const eventName = getEntityNameText(event, state);
+
+  return {
+    events,
+    event,
+    eventName,
+    state,
+  };
+};
