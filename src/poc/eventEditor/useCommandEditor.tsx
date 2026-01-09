@@ -10,7 +10,7 @@ export const useCommandEditor = (event: StudioEvent, defaultCommandId?: CommandL
   if (!command) throw new Error(`${commandId} doesn't exist in the event ${event.dbSymbol}`);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { commandType: _, ...commandData } = command;
+  const { commandType, studioData, ...commandData } = command;
 
   return {
     commandId,

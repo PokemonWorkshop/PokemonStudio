@@ -41,6 +41,9 @@ type NodeData = {
 
 type NodeEvent = Node<NodeData, StudioEventCommandType>;
 type NodeShadow = Node;
+type ChangeToApplyEventsType =
+  | { type: 'remove'; commandId: CommandListId }
+  | { type: 'position'; commandId: CommandListId; position: { x: number; y: number } };
 
 const EventEditorContainer = styled.div`
   display: flex;
@@ -69,7 +72,7 @@ const initCommandNodes = (event: StudioEvent, dialogsRef?: EventDialogsRef) => {
   return Object.entries(event.commandLists).map(([id, command]) => ({
     id,
     type: command?.commandType,
-    position: { x: 0, y: 0 },
+    position: { x: command?.studioData.x || 0, y: command?.studioData.y || 0 },
     data: { dialogsRef, command },
   }));
 };
@@ -138,7 +141,7 @@ const EventFlow = () => {
       updateEvent({
         commandLists: {
           ...studioEvent.commandLists,
-          [id as CommandListId]: { commandType: type, ...command },
+          [id as CommandListId]: { commandType: type, studioData: { ...position }, ...command },
         },
       });
     },
@@ -161,18 +164,30 @@ const EventFlow = () => {
 
   const onNodesChange: OnNodesChange<NodeEvent | NodeShadow> = useCallback(
     (changes) => {
+      const changesToApplyEvents: ChangeToApplyEventsType[] = [];
       setNodes((nds) => {
         const updatedChanges = changes.map((change) => {
-          if (change.type === 'remove') {
-            const commandListsEdited = cloneEntity(studioEvent.commandLists);
-            delete commandListsEdited[change.id as CommandListId];
-            updateEvent({ commandLists: commandListsEdited });
+          if (change.type === 'remove') changesToApplyEvents.push({ type: 'remove', commandId: change.id as CommandListId });
+          if (change.type === 'position' && !change.dragging && change.position) {
+            changesToApplyEvents.push({ type: 'position', commandId: change.id as CommandListId, position: change.position });
           }
-
           return change;
         });
         return applyNodeChanges(updatedChanges, nds);
       });
+      if (changesToApplyEvents.length === 0) return;
+
+      const commandListsEdited = cloneEntity(studioEvent.commandLists);
+      changesToApplyEvents.forEach((change) => {
+        if (change.type === 'remove') delete commandListsEdited[change.commandId];
+        if (change.type === 'position') {
+          const command = commandListsEdited[change.commandId];
+          if (!command) return;
+
+          commandListsEdited[change.commandId] = { ...command, studioData: { ...command.studioData, ...change.position } };
+        }
+      });
+      updateEvent({ commandLists: commandListsEdited });
     },
     [studioEvent]
   );
@@ -234,6 +249,7 @@ const EventFlow = () => {
           onDragOver={onDragOver}
           onDragLeave={onDragLeave}
           isValidConnection={isValidConnection}
+          fitView
         >
           <Controls position="bottom-right" />
           <Background />

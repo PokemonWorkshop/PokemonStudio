@@ -1,10 +1,17 @@
 import type { StudioEventCommandCategory } from './category';
 import { z } from 'zod';
 
+// TODO: change for z.number().int() if we use snapToGrid in the event editor
+const EVENT_COMMAND_STUDIO_DATA_VALIDATOR = z.object({
+  x: z.number(),
+  y: z.number(),
+});
+
 export const EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR = z.object({
   commandType: z.literal('insert_script'),
   comment: z.string(),
   script: z.string(),
+  studioData: EVENT_COMMAND_STUDIO_DATA_VALIDATOR,
 });
 
 export type StudioEventCommandInsertScript = z.infer<typeof EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR>;
@@ -12,6 +19,7 @@ export type StudioEventCommandInsertScript = z.infer<typeof EVENT_COMMAND_INSERT
 const GENERIC_COMMAND = <T extends string>(commandType: T) =>
   z.object({
     commandType: z.literal(commandType),
+    studioData: EVENT_COMMAND_STUDIO_DATA_VALIDATOR,
   });
 
 export const EVENT_COMMAND_VALIDATOR = z.discriminatedUnion('commandType', [
