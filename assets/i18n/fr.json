@@ -1840,6 +1840,8 @@
   "event_command_insert_script": "Insérer un script",
   "event_command_complete_quest_helper": "Valide la complétion d'une quête, distribue ses récompenses et annonce sa fin",
   "add_base_for_events": "Ajout des éléments de base pour les événements",
-  "event_editor_comment_input": "Commentaire",
-  "event_editor_script_input": "Script"
+  "event_command_editor_comment_input": "Comment",
+  "event_command_editor_script_input": "Script",
+  "event_command_node_comment": "Commentaire:",
+  "event_command_node_insert_script": "Script:"
 }

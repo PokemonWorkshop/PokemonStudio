@@ -33,8 +33,8 @@ export const InsertScriptEditor = forwardRef<EditorHandlingClose, EventEditorPro
   return (
     <Editor type="edit" title={t(`event_command_insert_script`)}>
       <InputFormContainer ref={formRef}>
-        <Input name="comment" label={t(`event_editor_comment_input`)} />
-        <MultiLineInput name="script" label={t(`event_editor_script_input`)} />
+        <Input name="comment" label={t(`event_command_editor_comment_input`)} />
+        <MultiLineInput name="script" label={t(`event_command_editor_script_input`)} />
       </InputFormContainer>
     </Editor>
   );
