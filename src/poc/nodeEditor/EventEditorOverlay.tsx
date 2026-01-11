@@ -3,9 +3,9 @@ import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import { DialogRefData } from '@hooks/useDialogsRef';
 import { BasicEditor } from './BasicEditor';
-import { StudioEventCommandType } from '@modelEntities/event/command';
+import type { CommandId, StudioEventCommandType } from '@modelEntities/event/command';
 import { InsertScriptEditor } from './InsertScriptEditor';
-import type { CommandListId, StudioEvent } from '@modelEntities/event/event';
+import type { StudioEvent } from '@modelEntities/event/event';
 
 export type EventEditorAndDeletionKeys = StudioEventCommandType;
 export type EventDialogsRef = React.RefObject<DialogRefData<EventEditorAndDeletionKeys>>;
@@ -14,7 +14,7 @@ export type EventDialogsRef = React.RefObject<DialogRefData<EventEditorAndDeleti
  * Editor overlay for the events.
  * This component uses the generic editor overlay to show the components based on what's called from dialogsRef.
  */
-export const EventEditorOverlay = defineEditorOverlay<EventEditorAndDeletionKeys, { commandId?: CommandListId; event: StudioEvent }>(
+export const EventEditorOverlay = defineEditorOverlay<EventEditorAndDeletionKeys, { commandId?: CommandId; event: StudioEvent }>(
   'eventEditorOverlay',
   (dialogToShow, handleCloseRef, closeDialog, { commandId, event }) => {
     switch (dialogToShow) {

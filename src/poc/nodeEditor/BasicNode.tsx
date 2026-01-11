@@ -24,7 +24,7 @@ export const BasicNode = ({ id, data: { dialogsRef, command }, selected }: Event
   const { t } = useTranslation();
   const isControlPressed = useKeyPress(CONTROL);
   const date = useMemo(() => new Date().toLocaleString(), []);
-  const commandType = command.commandType;
+  const commandType = command.type;
 
   return (
     <>

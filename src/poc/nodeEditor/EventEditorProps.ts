@@ -1,6 +1,7 @@
-import type { CommandListId, StudioEvent } from '@modelEntities/event/event';
+import type { CommandId } from '@modelEntities/event/command';
+import type { StudioEvent } from '@modelEntities/event/event';
 
 export type EventEditorProps = {
-  commandId?: CommandListId;
+  commandId?: CommandId;
   event: StudioEvent;
 };

@@ -25,7 +25,7 @@ export const InsertScriptNode = ({ id, data: { dialogsRef, command }, selected }
   const { setCurrentEditedNode } = useEventContext();
   const { t } = useTranslation();
   const isControlPressed = useKeyPress(CONTROL);
-  const { commandType, comment, script } = command as StudioEventCommandInsertScript;
+  const { type: commandType, comment, script } = command as StudioEventCommandInsertScript;
 
   return (
     <>

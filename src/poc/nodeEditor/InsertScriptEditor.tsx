@@ -24,9 +24,9 @@ export const InsertScriptEditor = forwardRef<EditorHandlingClose, EventEditorPro
     const result = canClose() && getFormData();
     if (!result || !result.success) return;
 
-    const commandListsEdited = cloneEntity(event.commandLists);
-    commandListsEdited[commandId] = { ...commandListsEdited[commandId], ...result.data } as StudioEventCommandInsertScript;
-    updateEvent({ commandLists: commandListsEdited });
+    const commandsEdited = cloneEntity(event.commands);
+    commandsEdited[commandId] = { ...commandsEdited[commandId], ...result.data } as StudioEventCommandInsertScript;
+    updateEvent({ commands: commandsEdited });
   };
   useEditorHandlingClose(ref, onClose, canClose);
 

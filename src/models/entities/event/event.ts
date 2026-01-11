@@ -1,10 +1,7 @@
 import { z } from 'zod';
 import { DB_SYMBOL_VALIDATOR } from '../dbSymbol';
 import { POSITIVE_OR_ZERO_INT } from '../common';
-import { EVENT_COMMAND_VALIDATOR } from './command';
-
-const COMMAND_LIST_ID_VALIDATOR = z.string().brand('CommandListId');
-export type CommandListId = z.infer<typeof COMMAND_LIST_ID_VALIDATOR>;
+import { COMMAND_ID_VALIDATOR, EVENT_COMMAND_VALIDATOR } from './command';
 
 const TEMPLATE_PARAMETER_NAME_VALIDATOR = z.string().brand('TemplateParameterName');
 
@@ -50,14 +47,14 @@ export type EventTrigger = z.infer<typeof EVENT_TRIGGER_TYPE_VALIDATOR>;
 const EVENT_TRIGGER_VALIDATOR = z.object({
   type: EVENT_TRIGGER_TYPE_VALIDATOR,
   conditions: z.array(TRIGGER_CONDITION_VALIDATOR),
-  commandListId: COMMAND_LIST_ID_VALIDATOR,
+  commandId: COMMAND_ID_VALIDATOR,
 });
 
 export const CUSTOM_EVENT_VALIDATOR = z.object({
   dbSymbol: DB_SYMBOL_VALIDATOR,
   id: POSITIVE_OR_ZERO_INT,
   type: z.literal('custom'),
-  commandLists: z.record(COMMAND_LIST_ID_VALIDATOR, EVENT_COMMAND_VALIDATOR),
+  commands: z.record(COMMAND_ID_VALIDATOR, EVENT_COMMAND_VALIDATOR),
   triggers: z.array(EVENT_TRIGGER_VALIDATOR),
 });
 export type CustomEvent = z.infer<typeof CUSTOM_EVENT_VALIDATOR>;
@@ -65,7 +62,7 @@ export type CustomEvent = z.infer<typeof CUSTOM_EVENT_VALIDATOR>;
 export const TEMPLATE_EVENT_VALIDATOR = z.object({
   dbSymbol: DB_SYMBOL_VALIDATOR,
   type: z.literal('template'),
-  commandLists: z.record(COMMAND_LIST_ID_VALIDATOR, EVENT_COMMAND_VALIDATOR),
+  commands: z.record(COMMAND_ID_VALIDATOR, EVENT_COMMAND_VALIDATOR),
   triggers: z.array(EVENT_TRIGGER_VALIDATOR),
   defaultLinkParameters: LINK_PARAMETER_VALIDATOR.partial(),
   allowLinkParameterChange: z.boolean(),

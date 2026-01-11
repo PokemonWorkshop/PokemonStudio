@@ -1,28 +1,44 @@
 import type { StudioEventCommandCategory } from './category';
 import { z } from 'zod';
 
+export const COMMAND_ID_VALIDATOR = z.string().brand('CommandId');
+export type CommandId = z.infer<typeof COMMAND_ID_VALIDATOR>;
+
+export const COMMAND_CONNECTION_ID_VALIDATOR = z.string().brand('ConnectionId');
+export type ConnectionId = z.infer<typeof COMMAND_CONNECTION_ID_VALIDATOR>;
+
 // TODO: change for z.number().int() if we use snapToGrid in the event editor
 const EVENT_COMMAND_STUDIO_DATA_VALIDATOR = z.object({
   x: z.number(),
   y: z.number(),
 });
 
+export const EVENT_COMMAND_CONNECTION_VALIDATOR = z.object({
+  sourceHandle: z.string(),
+  target: COMMAND_ID_VALIDATOR,
+  targetHandle: z.string(),
+});
+
+export type StudioEventCommandConnection = z.infer<typeof EVENT_COMMAND_CONNECTION_VALIDATOR>;
+
 export const EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR = z.object({
-  commandType: z.literal('insert_script'),
+  type: z.literal('insert_script'),
   comment: z.string(),
   script: z.string(),
+  connections: z.record(COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_CONNECTION_VALIDATOR),
   studioData: EVENT_COMMAND_STUDIO_DATA_VALIDATOR,
 });
 
 export type StudioEventCommandInsertScript = z.infer<typeof EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR>;
 
-const GENERIC_COMMAND = <T extends string>(commandType: T) =>
+const GENERIC_COMMAND = <T extends string>(type: T) =>
   z.object({
-    commandType: z.literal(commandType),
+    type: z.literal(type),
+    connections: z.record(COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_CONNECTION_VALIDATOR),
     studioData: EVENT_COMMAND_STUDIO_DATA_VALIDATOR,
   });
 
-export const EVENT_COMMAND_VALIDATOR = z.discriminatedUnion('commandType', [
+export const EVENT_COMMAND_VALIDATOR = z.discriminatedUnion('type', [
   GENERIC_COMMAND('show_message'),
   GENERIC_COMMAND('narrator_settings'),
   GENERIC_COMMAND('manage_message_box'),
@@ -99,7 +115,7 @@ export const EVENT_COMMAND_VALIDATOR = z.discriminatedUnion('commandType', [
 ]);
 
 export type StudioEventCommand = z.infer<typeof EVENT_COMMAND_VALIDATOR>;
-export type StudioEventCommandType = z.infer<typeof EVENT_COMMAND_VALIDATOR>['commandType'];
+export type StudioEventCommandType = z.infer<typeof EVENT_COMMAND_VALIDATOR>['type'];
 
 export type EventCommandForCategory = {
   commandType: StudioEventCommandType;
@@ -208,5 +224,3 @@ export const COMMANDS_FROM_CATEGORY: Record<StudioEventCommandCategory, EventCom
   ],
   scripting: [{ commandType: 'insert_script', enabled: true }],
 };
-
-export type StudioEventCommandData = unknown;
