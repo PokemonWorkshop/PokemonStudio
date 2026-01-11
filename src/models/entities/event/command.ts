@@ -23,8 +23,8 @@ export type StudioEventCommandConnection = z.infer<typeof EVENT_COMMAND_CONNECTI
 
 export const EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR = z.object({
   type: z.literal('insert_script'),
-  comment: z.string(),
-  script: z.string(),
+  comment: z.string().default(''),
+  script: z.string().default(''),
   connections: z.record(COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_CONNECTION_VALIDATOR),
   studioData: EVENT_COMMAND_STUDIO_DATA_VALIDATOR,
 });
