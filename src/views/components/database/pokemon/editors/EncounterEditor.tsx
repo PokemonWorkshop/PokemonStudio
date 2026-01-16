@@ -41,14 +41,14 @@ export const EncounterEditor = forwardRef<EditorHandlingClose>((_, ref) => {
       if (femaleRate === 100) {
         res = {
           ...res,
-          iconF: res.iconF === undefined || res.iconF === '' ? res.icon : res.iconF,
-          iconShinyF: res.iconShinyF === undefined || res.iconShinyF === '' ? res.iconShiny : res.iconShinyF,
-          frontF: res.frontF === undefined || res.frontF === '' ? res.front : res.frontF,
-          frontShinyF: res.frontShinyF === undefined || res.frontShinyF === '' ? res.frontShiny : res.frontShinyF,
-          backF: res.backF === undefined || res.backF === '' ? res.back : res.backF,
-          backShinyF: res.backShinyF === undefined || res.backShinyF === '' ? res.backShiny : res.backShinyF,
-          characterF: res.characterF === undefined || res.characterF === '' ? res.character : res.characterF,
-          characterShinyF: res.characterShinyF === undefined || res.characterShinyF === '' ? res.characterShiny : res.characterShinyF,
+          iconF: res.icon || res.iconF,
+          iconShinyF: res.iconShiny || res.iconShinyF,
+          frontF: res.front || res.frontF,
+          frontShinyF: res.frontShiny || res.frontShinyF,
+          backF: res.back || res.backF,
+          backShinyF: res.backShiny || res.backShinyF,
+          characterF: res.character || res.characterF,
+          characterShinyF: res.characterShiny || res.characterShinyF,
         };
       }
 
