@@ -42,10 +42,9 @@ export const InsertScriptNode = ({ id, data: { dialogsRef, command }, selected }
       >
         {t(`event_command_${commandType}`)}
         <span>
-          {t(`event_command_node_comment`)}
-          {comment}
+          {t(`event_command_comment`)}:{comment}
         </span>
-        <span>{t(`event_command_node_insert_script`)}</span>
+        <span>{t(`event_command_script`)}</span>
         <MultiLineInput value={script} readOnly />
       </BasicNodeContainer>
     </>
