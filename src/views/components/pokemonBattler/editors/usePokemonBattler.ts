@@ -17,16 +17,16 @@ type RecordExpandPokemonSetupValue = number | string | DbSymbol | DbSymbol[] | S
 export type RecordExpandPokemonSetup = Record<StudioExpandPokemonSetup['type'], RecordExpandPokemonSetupValue>;
 
 const createOptionalExpandPokemonSetup = (encounter: StudioGroupEncounter) => {
-  const keys = ['ability', 'nature', 'givenName', 'itemHeld', 'givenName', 'gender', 'caughtWith', 'rareness', 'ivs', 'evs', 'moves'] as const;
+  const keys = ['ability', 'nature', 'itemHeld', 'givenName', 'gender', 'caughtWith', 'rareness', 'ivs', 'evs', 'moves'] as const;
   keys.forEach(
-    (key) => encounter.expandPokemonSetup.find((setup) => setup.type === key) || encounter.expandPokemonSetup.push(createExpandPokemonSetup(key))
+    (key) => encounter.expandPokemonSetup.find((setup) => setup.type === key) || encounter.expandPokemonSetup.push(createExpandPokemonSetup(key)),
   );
 };
 
 const createRecordExpandPokemonSetup = (
   encounter: StudioGroupEncounter,
   creatures: ProjectData['pokemon'],
-  getEntityName: ReturnType<typeof useGetEntityNameText>
+  getEntityName: ReturnType<typeof useGetEntityNameText>,
 ): RecordExpandPokemonSetup => {
   createOptionalExpandPokemonSetup(encounter);
   const { expandPokemonSetup } = encounter;
@@ -139,7 +139,7 @@ export const usePokemonBattler = ({ action, currentBattler, from }: Props) => {
     () =>
       !creatureUnavailable &&
       (creatures[encounter.specie].forms.length > 1 || !creatures[encounter.specie].forms.find((form) => form.form === encounter.form)),
-    [creatures, encounter, creatureUnavailable]
+    [creatures, encounter, creatureUnavailable],
   );
 
   const updateExpandPokemonSetup = (updates: Partial<RecordExpandPokemonSetup>) => {
@@ -255,17 +255,21 @@ export const usePokemonBattler = ({ action, currentBattler, from }: Props) => {
     const rareness = expandPokemonSetup.rareness as number;
     if (isNaN(rareness) || notBetween(rareness, 0, 255)) return false;
 
-    stats.forEach((stat) => {
+    const isInvalidEvs = stats.some((stat) => {
       const evs = expandPokemonSetup.evs as StudioIvEv;
       const value = evs[stat];
-      if (isNaN(value) || notBetween(value, 0, 9999)) return false;
-    });
+      if (isNaN(value) || notBetween(value, 0, 9999)) return true;
 
-    stats.forEach((stat) => {
+      return false;
+    });
+    const isInvalidIvs = stats.some((stat) => {
       const ivs = expandPokemonSetup.ivs as StudioIvEv;
       const value = ivs[stat];
-      if (isNaN(value) || notBetween(value, 0, 9999)) return false;
+      if (isNaN(value) || notBetween(value, 0, 9999)) return true;
+
+      return false;
     });
+    if (isInvalidEvs || isInvalidIvs) return false;
 
     return true;
   };
@@ -293,14 +297,19 @@ export const usePokemonBattler = ({ action, currentBattler, from }: Props) => {
 
     if (notBetween(expandPokemonSetup.rareness as number, 0, 255)) return false;
 
-    stats.forEach((stat) => {
+    const isInvalidEVs = stats.some((stat) => {
       const evs = expandPokemonSetup.evs as StudioIvEv;
-      if (notBetween(evs[stat], 0, 9999)) return false;
+      if (notBetween(evs[stat], 0, 9999)) return true;
+
+      return false;
     });
-    stats.forEach((stat) => {
+    const isInvalidIvs = stats.some((stat) => {
       const ivs = expandPokemonSetup.ivs as StudioIvEv;
-      if (notBetween(ivs[stat], 0, 9999)) return false;
+      if (notBetween(ivs[stat], 0, 9999)) return true;
+
+      return false;
     });
+    if (isInvalidEVs || isInvalidIvs) return false;
 
     return true;
   };
