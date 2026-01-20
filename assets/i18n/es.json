@@ -1427,7 +1427,7 @@
   "no_langues": "Ningún idioma disponible",
   "no_text": "No hay texto en este archivo de textos",
   "clearing_texts": "Borrando textos",
-  "clearing_texts_message": "\"Estás a punto de borrar permanentemente los textos del archivo de textos « {{name}} » para el idioma actual.",
+  "clearing_texts_message": "\"Estás a punto de borrar permanentemente los textos del archivo de textos « {{name}} » para el idioma « {{language}} ».",
   "importation_info": "Puedes importar textos de otro archivo.",
   "import_texts_file": "Importar textos de archivo",
   "text_info_generic": "Textos #",
