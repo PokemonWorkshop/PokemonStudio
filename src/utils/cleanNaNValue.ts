@@ -7,7 +7,6 @@ import { StudioTrainer } from '@modelEntities/trainer';
 import { StudioZone } from '@modelEntities/zone';
 import { StudioGroup } from '@modelEntities/group';
 import { ProjectData, State } from '@src/GlobalStateProvider';
-import { getEntityNameText } from './ReadingProjectText';
 import { PokemonBattlerFrom } from '@components/pokemonBattler/editors/PokemonBattlerEditorOverlay';
 import { assertUnreachable } from './assertUnreachable';
 
@@ -116,7 +115,7 @@ export const removeExpandPokemonSetup = (encounter: StudioGroupEncounter, type: 
 const removeExpandPokemonSetupWithCondition = (
   encounter: StudioGroupEncounter,
   type: StudioExpandPokemonSetup['type'],
-  condition: string | number
+  condition: string | number,
 ) => {
   const index = encounter.expandPokemonSetup.findIndex((eps) => eps.type === type && eps.value === condition);
   if (index !== -1) encounter.expandPokemonSetup.splice(index, 1);
@@ -158,7 +157,6 @@ export const cleanExpandPokemonSetup = (encounter: StudioGroupEncounter, species
   removeExpandPokemonSetupWithCondition(encounter, 'rareness', -1);
   const specie = species[encounter.specie];
   if (specie) {
-    removeExpandPokemonSetupWithCondition(encounter, 'givenName', getEntityNameText(specie, state));
     const form = specie.forms.find((f) => f.form === encounter.form);
     if (form) removeExpandPokemonSetupWithCondition(encounter, 'rareness', form.catchRate);
   }
