@@ -29,6 +29,8 @@ import { StudioEvent } from '@modelEntities/event/event';
 import { findFirstAvailableId } from '@utils/ModelUtils';
 import { useUpdateEvent } from './useUpdateEvent';
 import { cloneEntity } from '@utils/cloneEntity';
+import { useGlobalState } from '@src/GlobalStateProvider';
+import { useTranslation } from 'react-i18next';
 
 /* eslint-disable react-hooks/exhaustive-deps */
 
@@ -133,7 +135,7 @@ const EventFlow = () => {
         },
       });
     },
-    [studioEvent]
+    [studioEvent],
   );
 
   const onDragOver: DragEventHandler<HTMLDivElement> = useCallback((event) => {
@@ -177,8 +179,8 @@ const EventFlow = () => {
             { type: 'add', item: newNode },
             { type: 'replace', id: 'shadow_node', item: { ...shadowNode, hidden: true } },
           ],
-          nds
-        )
+          nds,
+        ),
       );
 
       updateEvent({
@@ -188,7 +190,7 @@ const EventFlow = () => {
         },
       });
     },
-    [screenToFlowPosition, type, studioEvent]
+    [screenToFlowPosition, type, studioEvent],
   );
 
   const onDragStart = (event: DragEvent<HTMLDivElement>, nodeType: StudioEventCommandType) => {
@@ -228,7 +230,7 @@ const EventFlow = () => {
       });
       updateEvent({ commands: commandsEdited });
     },
-    [studioEvent]
+    [studioEvent],
   );
 
   const onDelete = useCallback(
@@ -244,7 +246,7 @@ const EventFlow = () => {
       updateEvent({ commands: commandsEdited });
       return params;
     },
-    [studioEvent]
+    [studioEvent],
   );
 
   // Documentation: https://reactflow.dev/examples/interaction/prevent-cycles
@@ -270,7 +272,7 @@ const EventFlow = () => {
       if (target.id === connection.source) return false;
       return !hasCycle(target);
     },
-    [reactFlowInstance.getNodes, reactFlowInstance.getEdges]
+    [reactFlowInstance.getNodes, reactFlowInstance.getEdges],
   );
 
   useEffect(() => {
@@ -283,8 +285,8 @@ const EventFlow = () => {
     setNodes((nds) =>
       applyNodeChanges(
         [{ id: nodeEdited.id, type: 'replace', item: { ...nodeEdited, data: { ...nodeEdited.data, command: studioEvent.commands[commandId] } } }],
-        nds
-      )
+        nds,
+      ),
     );
     setCurrentEditedNode(undefined);
   }, [studioEvent.commands]);
@@ -318,12 +320,18 @@ const EventFlow = () => {
 };
 
 export const EventEditor = () => {
-  return (
+  const { t } = useTranslation();
+  const [state] = useGlobalState();
+  const hasEventAvailable = useMemo(() => Object.keys(state.projectData.events).length > 0, [state.projectData.events]);
+
+  return hasEventAvailable ? (
     <ReactFlowProvider>
       <EventProvider>
         <EventFlow />
       </EventProvider>
     </ReactFlowProvider>
+  ) : (
+    <div>{t('no_event_found')}</div>
   );
 };
 

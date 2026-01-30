@@ -40,7 +40,7 @@ export const readProjectFolder = async (projectPath: string, key: ProjectDataFro
   const entries = fs.readdirSync(folderName).filter((f) => {
     return f.endsWith('.json');
   });
-  if (entries.length === 0 && key !== 'maps') {
+  if (entries.length === 0 && key !== 'maps' && key !== 'events') {
     throw new Error(`Missing data in ${key}`);
   }
 
@@ -50,7 +50,7 @@ export const readProjectFolder = async (projectPath: string, key: ProjectDataFro
     const prevData = await prev;
     // Reading data
     const batchData = await Promise.allSettled(
-      curr.map(async (filename) => ({ filename, data: await fsPromises.readFile(path.join(folderName, filename), { encoding: 'utf-8' }) }))
+      curr.map(async (filename) => ({ filename, data: await fsPromises.readFile(path.join(folderName, filename), { encoding: 'utf-8' }) })),
     );
     // Checking result
     const successfulData = batchData.map((v) => v.status === 'fulfilled' && v.value).filter((v): v is FilenameWithData => v !== false);
@@ -74,13 +74,16 @@ const readProjectData = async (payload: ReadProjectDataInput, event: IpcMainEven
   const textInfos: StudioTextInfo[] = parseJSON(textInfosJson, 'text_info.json');
   const mapInfoJson = await fsPromises.readFile(path.join(payload.path, 'Data/Studio', 'map_info.json'), { encoding: 'utf-8' });
   const mapInfo: StudioMapInfo = parseJSON(mapInfoJson, 'map_info.json');
-  const projectData = await projectDataKeys.reduce(async (prev, curr, index) => {
-    const prevData = await prev;
-    log.info('read-project-data/progress', curr);
-    sendProgress(event, channels, { step: index + 1, total: projectDataKeys.length, stepText: curr });
-    const filenameData = await readProjectFolder(payload.path, curr);
-    return { ...prevData, [curr]: filenameData };
-  }, Promise.resolve({ textInfos, mapInfo } as ProjectDataFromBackEnd));
+  const projectData = await projectDataKeys.reduce(
+    async (prev, curr, index) => {
+      const prevData = await prev;
+      log.info('read-project-data/progress', curr);
+      sendProgress(event, channels, { step: index + 1, total: projectDataKeys.length, stepText: curr });
+      const filenameData = await readProjectFolder(payload.path, curr);
+      return { ...prevData, [curr]: filenameData };
+    },
+    Promise.resolve({ textInfos, mapInfo } as ProjectDataFromBackEnd),
+  );
 
   // Store the loaded maps so the converter will know which maps changed
   setLoadedMaps(projectData.maps.map((m) => m.data));
