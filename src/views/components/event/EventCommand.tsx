@@ -6,6 +6,22 @@ import HelperIcon from '@assets/icons/global/error2.svg';
 import type { StudioEventCommand } from '@modelEntities/event/command';
 import { IconsFromCommand } from './EventCommandIcon';
 
+const CommandIconContainer = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  width: 24px;
+
+  &[data-color='violet'] {
+    color: rgb(149, 89, 208);
+  }
+
+  &[data-color='blue'] {
+    color: rgb(37, 113, 201);
+  }
+`;
+
 const EventCommandContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -26,15 +42,6 @@ const EventCommandContainer = styled.div`
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-
-    .command-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 24px;
-      width: 24px;
-      color: rgb(149, 89, 208);
-    }
 
     .helper-icon {
       display: flex;
@@ -62,9 +69,10 @@ const EventCommandContainer = styled.div`
 type EventCommandProps = {
   command: StudioEventCommand;
   hasHelper?: boolean;
+  color: string;
 };
 
-export const EventCommand = ({ command, hasHelper }: EventCommandProps) => {
+export const EventCommand = ({ command, hasHelper, color }: EventCommandProps) => {
   const { setType } = useEventContext();
   const { t } = useTranslation();
 
@@ -76,7 +84,7 @@ export const EventCommand = ({ command, hasHelper }: EventCommandProps) => {
   return (
     <EventCommandContainer draggable onDragStart={(event) => onDragStart(event, command)}>
       <div className="header">
-        <span className="command-icon">{IconsFromCommand[command]}</span>
+        <CommandIconContainer data-color={color}>{IconsFromCommand[command]}</CommandIconContainer>
         {hasHelper && (
           <span className="helper-icon" data-tooltip={t(`event_command_${command}_helper`)}>
             <HelperIcon />
