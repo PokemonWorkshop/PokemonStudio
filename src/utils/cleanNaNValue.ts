@@ -7,7 +7,6 @@ import { StudioTrainer } from '@modelEntities/trainer';
 import { StudioZone } from '@modelEntities/zone';
 import { StudioGroup } from '@modelEntities/group';
 import { ProjectData, State } from '@src/GlobalStateProvider';
-import { getEntityNameText } from './ReadingProjectText';
 import { PokemonBattlerFrom } from '@components/pokemonBattler/editors/PokemonBattlerEditorOverlay';
 import { assertUnreachable } from './assertUnreachable';
 
@@ -167,7 +166,6 @@ export const cleanExpandPokemonSetup = (encounter: StudioGroupEncounter, species
   removeEmptyContestConditionFromExpandPokemonSetup(encounter);
   const specie = species[encounter.specie];
   if (specie) {
-    removeExpandPokemonSetupWithCondition(encounter, 'givenName', getEntityNameText(specie, state));
     const form = specie.forms.find((f) => f.form === encounter.form);
     if (form) removeExpandPokemonSetupWithCondition(encounter, 'rareness', form.catchRate);
   }

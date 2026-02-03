@@ -1,5 +1,6 @@
+import { useUpdateGroup } from '@components/database/group/editors/useUpdateGroup';
+import { useUpdateTrainer } from '@components/database/trainer/editors/useUpdateTrainer';
 import { useGroupPage, useQuestPage, useTrainerPage } from '@hooks/usePage';
-import { CurrentBattlerType, PokemonBattlerFrom } from './PokemonBattlerEditorOverlay';
 import { useProjectPokemon } from '@hooks/useProjectData';
 import { useEffect, useMemo, useState } from 'react';
 import {
@@ -9,15 +10,14 @@ import {
   StudioIvEv,
   createExpandPokemonSetup,
 } from '@modelEntities/groupEncounter';
+import { DbSymbol } from '@modelEntities/dbSymbol';
+import { ProjectData } from '@src/GlobalStateProvider';
+import { assertUnreachable } from '@utils/assertUnreachable';
+import { cleanExpandPokemonSetup } from '@utils/cleanNaNValue';
 import { cloneEntity } from '@utils/cloneEntity';
 import { createEncounter } from '@utils/entityCreation';
-import { assertUnreachable } from '@utils/assertUnreachable';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
-import { DbSymbol } from '@modelEntities/dbSymbol';
-import { cleanExpandPokemonSetup } from '@utils/cleanNaNValue';
-import { useUpdateTrainer } from '@components/database/trainer/editors/useUpdateTrainer';
-import { useUpdateGroup } from '@components/database/group/editors/useUpdateGroup';
-import { ProjectData } from '@src/GlobalStateProvider';
+import { CurrentBattlerType, PokemonBattlerFrom } from './PokemonBattlerEditorOverlay';
 
 type RecordExpandPokemonSetupValue = number | string | DbSymbol | DbSymbol[] | StudioIvEv | StudioContestStats;
 export type RecordExpandPokemonSetup = Record<StudioExpandPokemonSetup['type'], RecordExpandPokemonSetupValue>;
@@ -29,21 +29,17 @@ const createOptionalExpandPokemonSetup = (encounter: StudioGroupEncounter) => {
   );
 };
 
-const createRecordExpandPokemonSetup = (
-  encounter: StudioGroupEncounter,
-  creatures: ProjectData['pokemon'],
-  getEntityName: ReturnType<typeof useGetEntityNameText>,
-): RecordExpandPokemonSetup => {
+const createRecordExpandPokemonSetup = (encounter: StudioGroupEncounter, creatures: ProjectData['pokemon']): RecordExpandPokemonSetup => {
   createOptionalExpandPokemonSetup(encounter);
   const { expandPokemonSetup } = encounter;
   const record = expandPokemonSetup.reduce((acc, obj) => {
     acc[obj.type] = obj.value;
     return acc;
   }, {} as RecordExpandPokemonSetup);
-  // Update rareness and given name
+  // Update rareness
   const specie = creatures[encounter.specie];
   record.rareness = record.rareness === -1 ? specie?.forms.find((form) => form.form === encounter.form)?.catchRate || 0 : record.rareness;
-  record.givenName ||= specie ? getEntityName(specie) : '???';
+  record.givenName ||= '';
   return record;
 };
 
@@ -118,21 +114,21 @@ export const usePokemonBattler = ({ action, currentBattler, from }: Props) => {
     if (action === 'edit') {
       switch (from) {
         case 'group':
-          return createRecordExpandPokemonSetup(cloneEntity(group.encounters[currentBattler.index]), creatures, getEntityName);
+          return createRecordExpandPokemonSetup(cloneEntity(group.encounters[currentBattler.index]), creatures);
         case 'trainer':
-          return createRecordExpandPokemonSetup(cloneEntity(trainer.party[currentBattler.index]), creatures, getEntityName);
+          return createRecordExpandPokemonSetup(cloneEntity(trainer.party[currentBattler.index]), creatures);
         case 'quest_earning': {
           const isEarningPokemonOrEgg = ['earning_pokemon', 'earning_egg'].includes(quest.earnings[currentBattler.index].earningMethodName);
           if (!isEarningPokemonOrEgg) break;
 
           const encounter = quest.earnings[currentBattler.index].earningArgs[0] as StudioGroupEncounter;
-          return createRecordExpandPokemonSetup(cloneEntity(encounter), creatures, getEntityName);
+          return createRecordExpandPokemonSetup(cloneEntity(encounter), creatures);
         }
         default:
           assertUnreachable(from);
       }
     }
-    const record = createRecordExpandPokemonSetup(createEncounter(from === 'group'), creatures, getEntityName);
+    const record = createRecordExpandPokemonSetup(createEncounter(from === 'group'), creatures);
     if (from !== 'group') record.originalTrainerName = getEntityName(trainer);
     return record;
   };
@@ -164,9 +160,8 @@ export const usePokemonBattler = ({ action, currentBattler, from }: Props) => {
     };
     if (updatedEncounter.specie !== encounter.specie) {
       updatedEncounter.form = 0;
-      const updatedGivenName = creatures[updatedEncounter.specie] ? getEntityName(creatures[updatedEncounter.specie]) : '???';
       const updatedRareness = creatures[updatedEncounter.specie]?.forms.find((form) => form.form === updatedEncounter.form)?.catchRate || 0;
-      updateExpandPokemonSetup({ givenName: updatedGivenName, rareness: updatedRareness });
+      updateExpandPokemonSetup({ rareness: updatedRareness });
     }
     setEncounter(updatedEncounter);
   };

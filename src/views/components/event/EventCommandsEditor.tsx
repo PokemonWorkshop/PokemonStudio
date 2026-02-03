@@ -100,17 +100,19 @@ export const EventCommandsEditor = () => {
           placeholder={t('search')}
         />
       </div>
-      {research ? (
-        <>
-          {STUDIO_EVENT_COMMAND_CATEGORY_LIST.map((category) => (
-            <EventCommands key={category} category={category} research={research} setSelectedCommandCategory={setSelectedCommandCategory} />
-          ))}
-        </>
-      ) : selectedCommandCategory ? (
-        <EventCommands category={selectedCommandCategory} setSelectedCommandCategory={setSelectedCommandCategory} />
-      ) : (
-        <EventCommandCategories setSelectedCommandCategory={setSelectedCommandCategory} />
-      )}
+      <div className="categories">
+        {research ? (
+          <>
+            {STUDIO_EVENT_COMMAND_CATEGORY_LIST.map((category) => (
+              <EventCommands key={category} category={category} research={research} setSelectedCommandCategory={setSelectedCommandCategory} />
+            ))}
+          </>
+        ) : selectedCommandCategory ? (
+          <EventCommands category={selectedCommandCategory} setSelectedCommandCategory={setSelectedCommandCategory} />
+        ) : (
+          <EventCommandCategories setSelectedCommandCategory={setSelectedCommandCategory} />
+        )}
+      </div>
     </EventCommandsEditorContainer>
   );
 };

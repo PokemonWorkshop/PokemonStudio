@@ -109,7 +109,7 @@ export const EventCommands = ({ category, setSelectedCommandCategory, research }
       </div>
       <div className="commands">
         {commands.map(({ commandType, helper }) => (
-          <EventCommand key={commandType} command={commandType} hasHelper={helper} />
+          <EventCommand key={commandType} command={commandType} hasHelper={helper} color={IconsFromCategory[category].color} />
         ))}
       </div>
     </EventCommandsContainer>
