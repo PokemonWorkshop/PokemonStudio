@@ -9,7 +9,7 @@ export { SelectTrainer } from './SelectTrainer';
 export { SelectType } from './SelectType';
 export { SelectZone } from './SelectZone';
 export { SelectDex } from './SelectDex';
-export { SelectMaplink } from './SelectMaplink';
+export { SelectMaplink, SelectMapLink2 } from './SelectMaplink';
 export { SelectText } from './SelectText';
 export { SelectMap } from './SelectMap';
 export { SelectItemBall } from './SelectItemBall';

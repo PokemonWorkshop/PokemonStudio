@@ -1,6 +1,7 @@
 import { Deletion } from '@components/deletion';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { getEntityNameTextUsingTextId, useGetTextList, useSetProjectText } from '@utils/ReadingProjectText';
+import { getLanguageDisplayText } from '@utils/getLanguageDisplayText';
 import { useTextInfos } from '@hooks/useTextInfos';
 import React, { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +14,7 @@ type TextListClearProps = {
  * Component responsive of asking the user if they really want to clear the texts before doing so.
  */
 export const TextListClear = forwardRef<EditorHandlingClose, TextListClearProps>(({ closeDialog }, ref) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { currentTextInfo: currentTextInfo, state } = useTextInfos();
   const getTextList = useGetTextList();
   const setText = useSetProjectText();
@@ -23,13 +24,15 @@ export const TextListClear = forwardRef<EditorHandlingClose, TextListClearProps>
     closeDialog();
   };
 
+  const language = getLanguageDisplayText(state.projectConfig.language_config.defaultLanguage, t, i18n);
+
   // This component can be cancelled under no conditions and don't need to handle anything for the close behavior
   useEditorHandlingClose(ref);
 
   return (
     <Deletion
       title={t('clearing_texts')}
-      message={t('clearing_texts_message', { name: getEntityNameTextUsingTextId(currentTextInfo, state) })}
+      message={t('clearing_texts_message', { name: getEntityNameTextUsingTextId(currentTextInfo, state), language: language })}
       icon="clear"
       onClickDelete={onClickClear}
       onClose={closeDialog}

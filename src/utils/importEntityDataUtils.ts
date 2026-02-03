@@ -2,10 +2,10 @@ import { StudioTrainer } from '@modelEntities/trainer';
 import { StudioMove } from '@modelEntities/move';
 import { StudioCreature } from '@modelEntities/creature';
 import { cloneEntity } from './cloneEntity';
-import { findFirstAvailableFormTextId } from './ModelUtils';
+import { findFirstAvailableFormTextId, findFirstAvailableCustomObjectiveTextId } from './ModelUtils';
 import { ProjectData } from '@src/GlobalStateProvider';
 import { StudioItem } from '@modelEntities/item';
-import { StudioQuest } from '@modelEntities/quest';
+import { StudioQuest, StudioQuestObjective } from '@modelEntities/quest';
 import { StudioGroup } from '@modelEntities/group';
 
 export const importTrainerData = (trainer: StudioTrainer, dataToImport: StudioTrainer): StudioTrainer => {
@@ -48,9 +48,9 @@ export const importCreatureData = (creature: StudioCreature, dataToImport: Studi
   const newAllPokemon = {
     ...allPokemon,
     [newCreature.dbSymbol]: newCreature,
-  }; //To avoid getting same text IDs for other forms
+  }; // To avoid getting same text IDs for other forms
 
-  //Update form text IDs
+  // Update form text IDs
   newCreature.forms.slice(1).forEach((form) => {
     const formTextIdName = findFirstAvailableFormTextId(newAllPokemon, 0, 'name');
     const formTextIdDescription = findFirstAvailableFormTextId(newAllPokemon, 0, 'description');
@@ -71,15 +71,50 @@ export const importItemData = (item: StudioItem, dataToImport: StudioItem): Stud
   };
 };
 
-export const importQuestData = (quest: StudioQuest, dataToImport: StudioQuest): StudioQuest => {
+export const importQuestData = (quest: StudioQuest, dataToImport: StudioQuest, allQuests: ProjectData['quests']): StudioQuest => {
   const cloneData = cloneEntity(dataToImport);
 
-  return {
-    ...cloneData,
-    id: quest.id,
-    dbSymbol: quest.dbSymbol,
-    isPrimary: quest.isPrimary,
+  const newQuest = {
+    ...quest,
+    resolution: cloneData.resolution,
+    objectives: cloneData.objectives,
+    earnings: cloneData.earnings,
   };
+
+  redetermineCustomGoalsId(newQuest, allQuests);
+
+  return newQuest;
+};
+
+export const importQuestObjectivesData = (
+  quest: StudioQuest,
+  dataToImport: StudioQuestObjective[],
+  allQuests: ProjectData['quests']
+): StudioQuest => {
+  const cloneData = cloneEntity(dataToImport);
+
+  const newQuest = {
+    ...quest,
+    objectives: cloneData,
+  };
+
+  redetermineCustomGoalsId(newQuest, allQuests);
+
+  return newQuest;
+};
+
+const redetermineCustomGoalsId = (quest: StudioQuest, allQuests: ProjectData['quests']) => {
+  const newAllQuests = {
+    ...allQuests,
+    [quest.dbSymbol]: quest,
+  }; // To avoid getting same text IDs for custom objectives
+
+  quest.objectives.forEach((objective) => {
+    if (objective.objectiveMethodName === 'objective_custom') {
+      const customTextId = findFirstAvailableCustomObjectiveTextId(newAllQuests, 0);
+      objective.objectiveMethodArgs[1] = customTextId;
+    }
+  });
 };
 
 export const importGroupData = (group: StudioGroup, dataToImport: StudioGroup): StudioGroup => {

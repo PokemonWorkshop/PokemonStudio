@@ -12,16 +12,17 @@ import type { StudioDex } from '@modelEntities/dex';
 import type { StudioType } from '@modelEntities/type';
 import type { StudioItem } from '@modelEntities/item';
 import type { StudioNature } from '@modelEntities/nature';
+import type { StudioMap } from '@modelEntities/map';
 import { Language } from '@pages/texts/Translation.page';
 import { useGlobalState } from '@src/GlobalStateProvider';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getMapOverviewPath } from '@utils/resourcePath';
+import { join, getMapOverviewPath } from '@utils/path';
 import { showNotification } from '@utils/showNotification';
-import { join } from '@utils/path';
 import { useGeneratingMapOverview } from './useGeneratingMapOverview';
 import { useLoaderRef } from '@utils/loaderContext';
 import { getSetting } from '@utils/settings';
+import { checkValidMaplink } from '@utils/MapLinkUtils';
 
 export const useAbilityPage = () => {
   const { projectDataValues: abilities, selectedDataIdentifier: dbSymbol, state } = useProjectDataReadonly('abilities', 'ability');
@@ -267,6 +268,31 @@ export const useZonePage = () => {
     zoneName,
     groups,
     cannotDelete: Object.keys(zones).length <= 1,
+    state,
+  };
+};
+
+export const useMapLinkPage = () => {
+  const { projectDataValues: mapLinks, selectedDataIdentifier: dbSymbol, state } = useProjectDataReadonly('mapLinks', 'mapLink');
+  const { projectDataValues: maps } = useProjectDataReadonly('maps', 'map');
+  const mapLink = mapLinks[dbSymbol];
+  const isValidMaplink = useMemo(() => checkValidMaplink(mapLink, state), [mapLink, state]);
+  const hasNoMapLinkAvailable = useMemo(() => Object.keys(mapLinks).length === 0, [mapLinks]);
+
+  const transformedMaps = useMemo(
+    () =>
+      Object.values(maps).reduce<Record<number, StudioMap>>((acc, map) => {
+        acc[map.id] = map;
+        return acc;
+      }, {}),
+    [maps]
+  );
+
+  return {
+    mapLink,
+    maps: transformedMaps,
+    isValidMaplink,
+    hasNoMapLinkAvailable,
     state,
   };
 };

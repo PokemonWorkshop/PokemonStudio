@@ -13,3 +13,4 @@ export { FolderButtonOnlyIcon } from './FolderButtonOnlyIcon';
 export { ClearButtonWithIcon } from './ClearButtonWithIcon';
 export { WorldButton } from './WorldButton';
 export { NewFolderButtonOnlyIcon } from './NewFolderButtonOnlyIcon';
+export { FitViewButton } from './FitViewButton';

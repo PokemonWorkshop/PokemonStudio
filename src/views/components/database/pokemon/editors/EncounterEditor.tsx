@@ -36,7 +36,23 @@ export const EncounterEditor = forwardRef<EditorHandlingClose>((_, ref) => {
       const { isGenderLess, ...data } = result.data;
       const femaleRate = isGenderLess ? -1 : data.femaleRate;
       const hasFemale = femaleRate <= 0 || femaleRate === 100 ? femaleRate === 100 : form.resources.hasFemale;
-      updateForm({ ...data, femaleRate, resources: { ...form.resources, hasFemale } });
+      let res = { ...form.resources, hasFemale };
+
+      if (femaleRate === 100) {
+        res = {
+          ...res,
+          iconF: res.icon || res.iconF,
+          iconShinyF: res.iconShiny || res.iconShinyF,
+          frontF: res.front || res.frontF,
+          frontShinyF: res.frontShiny || res.frontShinyF,
+          backF: res.back || res.backF,
+          backShinyF: res.backShiny || res.backShinyF,
+          characterF: res.character || res.characterF,
+          characterShinyF: res.characterShiny || res.characterShinyF,
+        };
+      }
+
+      updateForm({ ...data, femaleRate, resources: res });
     }
   };
   useEditorHandlingClose(ref, onClose, canClose);

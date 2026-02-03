@@ -19,7 +19,7 @@ export const SelectMap = ({ dbSymbol, onChange, noLabel, undefValueOption }: Sel
     return mapOption;
   }, [mapOption, undefValueOption]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const optionals = useMemo(() => ({ deletedOption: t('map_deleted') }), []);
+  const optionals = useMemo(() => ({ deletedOption: t('map_deleted'), noOptionLabel: t('no_map_found') }), []);
 
   if (noLabel) return <StudioDropDown value={dbSymbol} options={options} onChange={onChange} optionals={optionals} />;
 
