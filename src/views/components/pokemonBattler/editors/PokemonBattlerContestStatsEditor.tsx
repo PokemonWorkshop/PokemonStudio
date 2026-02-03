@@ -13,7 +13,7 @@ type PokemonBattlerContestStatsEditorProps = {
 
 export const PokemonBattlerContestStatsEditor = ({ expandPokemonSetup, updateExpandPokemonSetup }: PokemonBattlerContestStatsEditorProps) => {
   const { t } = useTranslation();
-  const conditions = useMemo(() => expandPokemonSetup.contestConditions as StudioContestStats, [expandPokemonSetup]);
+  const conditions = useMemo(() => expandPokemonSetup.conditions as StudioContestStats, [expandPokemonSetup]);
   const conditionsRef = useRef<(HTMLInputElement | null | undefined)[]>([]);
 
   return (
@@ -26,7 +26,7 @@ export const PokemonBattlerContestStatsEditor = ({ expandPokemonSetup, updateExp
             min={0}
             max={255}
             defaultValue={conditions.coolness}
-            onChange={(value) => updateExpandPokemonSetup({ ['contestConditions']: { ...conditions, coolness: value } })}
+            onChange={(value) => updateExpandPokemonSetup({ ['conditions']: { ...conditions, coolness: value } })}
             ref={(ref) => (conditionsRef.current[0] = ref)}
           />
         </InputWithLeftLabelContainer>
@@ -37,7 +37,7 @@ export const PokemonBattlerContestStatsEditor = ({ expandPokemonSetup, updateExp
             min={0}
             max={255}
             defaultValue={conditions.beauty}
-            onChange={(value) => updateExpandPokemonSetup({ ['contestConditions']: { ...conditions, beauty: value } })}
+            onChange={(value) => updateExpandPokemonSetup({ ['conditions']: { ...conditions, beauty: value } })}
             ref={(ref) => (conditionsRef.current[1] = ref)}
           />
         </InputWithLeftLabelContainer>
@@ -48,7 +48,7 @@ export const PokemonBattlerContestStatsEditor = ({ expandPokemonSetup, updateExp
             min={0}
             max={255}
             defaultValue={conditions.cuteness}
-            onChange={(value) => updateExpandPokemonSetup({ ['contestConditions']: { ...conditions, cuteness: value } })}
+            onChange={(value) => updateExpandPokemonSetup({ ['conditions']: { ...conditions, cuteness: value } })}
             ref={(ref) => (conditionsRef.current[2] = ref)}
           />
         </InputWithLeftLabelContainer>
@@ -59,7 +59,7 @@ export const PokemonBattlerContestStatsEditor = ({ expandPokemonSetup, updateExp
             min={0}
             max={255}
             defaultValue={conditions.cleverness}
-            onChange={(value) => updateExpandPokemonSetup({ ['contestConditions']: { ...conditions, cleverness: value } })}
+            onChange={(value) => updateExpandPokemonSetup({ ['conditions']: { ...conditions, cleverness: value } })}
             ref={(ref) => (conditionsRef.current[3] = ref)}
           />
         </InputWithLeftLabelContainer>
@@ -70,7 +70,7 @@ export const PokemonBattlerContestStatsEditor = ({ expandPokemonSetup, updateExp
             min={0}
             max={255}
             defaultValue={conditions.toughness}
-            onChange={(value) => updateExpandPokemonSetup({ ['contestConditions']: { ...conditions, toughness: value } })}
+            onChange={(value) => updateExpandPokemonSetup({ ['conditions']: { ...conditions, toughness: value } })}
             ref={(ref) => (conditionsRef.current[4] = ref)}
           />
         </InputWithLeftLabelContainer>
@@ -81,7 +81,7 @@ export const PokemonBattlerContestStatsEditor = ({ expandPokemonSetup, updateExp
             min={0}
             max={255}
             defaultValue={conditions.sheen}
-            onChange={(value) => updateExpandPokemonSetup({ ['contestConditions']: { ...conditions, sheen: value } })}
+            onChange={(value) => updateExpandPokemonSetup({ ['conditions']: { ...conditions, sheen: value } })}
             ref={(ref) => (conditionsRef.current[5] = ref)}
           />
         </InputWithLeftLabelContainer>

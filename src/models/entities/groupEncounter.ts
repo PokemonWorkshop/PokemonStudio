@@ -30,7 +30,7 @@ const EXPAND_POKEMON_SETUP_VALIDATOR = z.discriminatedUnion('type', [
   z.object({ type: z.literal('nature'), value: z.string() }),
   z.object({ type: z.literal('ivs'), value: IV_EV_VALIDATOR }),
   z.object({ type: z.literal('evs'), value: IV_EV_VALIDATOR }),
-  z.object({ type: z.literal('contestConditions'), value: CONTEST_STATS_VALIDATOR }),
+  z.object({ type: z.literal('conditions'), value: CONTEST_STATS_VALIDATOR }),
   z.object({ type: z.literal('itemHeld'), value: DB_SYMBOL_VALIDATOR }),
   z.object({ type: z.literal('ability'), value: DB_SYMBOL_VALIDATOR }),
   z.object({ type: z.literal('rareness'), value: POSITIVE_OR_ZERO_INT }),
@@ -81,7 +81,7 @@ export const createExpandPokemonSetup = (type: StudioExpandPokemonSetup['type'])
     case 'evs':
     case 'ivs':
       return { type: type, value: { hp: 0, atk: 0, dfe: 0, spd: 0, ats: 0, dfs: 0 } };
-    case 'contestConditions':
+    case 'conditions':
       return { type: type, value: { coolness: 0, beauty: 0, cuteness: 0, cleverness: 0, toughness: 0, sheen: 0 } };
     case 'gender':
       return { type: type, value: -1 };
