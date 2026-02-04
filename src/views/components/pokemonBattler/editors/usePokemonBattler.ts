@@ -330,7 +330,7 @@ export const usePokemonBattler = ({ action, currentBattler, from }: Props) => {
     const isInvalidConditions = conditions.some((condition) => {
       const conditions = expandPokemonSetup.conditions as StudioContestStats;
       const value = conditions[condition];
-      if (isNaN(value) || notBetween(value, 0, 255)) return true;
+      if (notBetween(value, 0, 255)) return true;
 
       return false;
     });
