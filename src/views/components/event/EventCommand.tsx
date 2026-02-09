@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useEventContext } from './EventContext';
 import { useTranslation } from 'react-i18next';
 import HelperIcon from '@assets/icons/global/error2.svg';
-import type { StudioEventCommand } from '@modelEntities/event/command';
+import type { StudioEventCommandType } from '@modelEntities/event/command';
 import { IconsFromCommand } from './EventCommandIcon';
 
 const CommandIconContainer = styled.span`
@@ -67,7 +67,7 @@ const EventCommandContainer = styled.div`
 `;
 
 type EventCommandProps = {
-  command: StudioEventCommand;
+  command: StudioEventCommandType;
   hasHelper?: boolean;
   color: string;
 };
@@ -76,7 +76,7 @@ export const EventCommand = ({ command, hasHelper, color }: EventCommandProps) =
   const { setType } = useEventContext();
   const { t } = useTranslation();
 
-  const onDragStart = (event: DragEvent<HTMLDivElement>, nodeType?: StudioEventCommand) => {
+  const onDragStart = (event: DragEvent<HTMLDivElement>, nodeType?: StudioEventCommandType) => {
     setType(nodeType);
     event.dataTransfer.effectAllowed = 'move';
   };

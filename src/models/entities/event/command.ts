@@ -1,86 +1,124 @@
 import type { StudioEventCommandCategory } from './category';
 import { z } from 'zod';
 
-export const EVENT_COMMAND_VALIDATOR = z.union([
-  z.literal('show_message'),
-  z.literal('narrator_settings'),
-  z.literal('manage_message_box'),
-  z.literal('show_choice'),
-  z.literal('wait_key_press'),
-  z.literal('record_key_press'),
-  z.literal('input_creature_name'),
-  z.literal('input_character_name'),
-  z.literal('ask_player_for_number'),
-  z.literal('create_loop'),
-  z.literal('exit_loop'),
-  z.literal('manage_conditions'),
-  z.literal('go_to'),
-  z.literal('wait_for_set_time'),
-  z.literal('stop_event_execution'),
-  z.literal('call_event'),
-  z.literal('trigger_event'),
-  z.literal('change_event_parameters'),
-  z.literal('move_event'),
-  z.literal('teleport_event'),
-  z.literal('teleport_player'),
-  z.literal('wait_move_completion'),
-  z.literal('manage_event_reappearance'),
-  z.literal('manage_path_finding'),
-  z.literal('manage_follow_me'),
-  z.literal('manage_variables'),
-  z.literal('manage_event_variables'),
-  z.literal('manage_timer'),
-  z.literal('change_character_name'),
-  z.literal('start_trainer_battle'),
-  z.literal('start_wild_encounter'),
-  z.literal('start_scripted_battle'),
-  z.literal('manage_random_encounters'),
-  z.literal('manage_player_items'),
-  z.literal('manage_player_money'),
-  z.literal('manage_dex'),
-  z.literal('set_active_dex'),
-  z.literal('give_badge'),
-  z.literal('manage_access_save_menu'),
-  z.literal('open_save_menu'),
-  z.literal('manage_autosave'),
-  z.literal('force_autosave'),
-  z.literal('force_save'),
-  z.literal('open_scene'),
-  z.literal('open_shop'),
-  z.literal('open_custom_scene'),
-  z.literal('manage_access_main_menu'),
-  z.literal('trigger_game_over'),
-  z.literal('return_to_title_screen'),
-  z.literal('open_creature_shop'),
-  z.literal('start_quest'),
-  z.literal('display_hidden_objective'),
-  z.literal('validate_quest_objectives'),
-  z.literal('display_quest_progress'),
-  z.literal('complete_quest'),
-  z.literal('play_sound'),
-  z.literal('stop_current_sound'),
-  z.literal('change_default_sound'),
-  z.literal('memorize_background_sounds'),
-  z.literal('restore_background_sounds'),
-  z.literal('play_creature_cry'),
-  z.literal('change_screen_tone'),
-  z.literal('display_animation'),
-  z.literal('display_screen_animation'),
-  z.literal('display_emotion'),
-  z.literal('manage_image'),
-  z.literal('manage_camera'),
-  z.literal('manage_dynamic_light'),
-  z.literal('change_weather'),
-  z.literal('manage_map_fog'),
-  z.literal('manage_map_panorama'),
-  z.literal('change_battle_background'),
-  z.literal('insert_script'),
+export const COMMAND_ID_VALIDATOR = z.string().brand('CommandId');
+export type CommandId = z.infer<typeof COMMAND_ID_VALIDATOR>;
+
+export const COMMAND_CONNECTION_ID_VALIDATOR = z.string().brand('ConnectionId');
+export type ConnectionId = z.infer<typeof COMMAND_CONNECTION_ID_VALIDATOR>;
+
+// TODO: change for z.number().int() if we use snapToGrid in the event editor
+const EVENT_COMMAND_STUDIO_DATA_VALIDATOR = z.object({
+  x: z.number(),
+  y: z.number(),
+});
+
+export const EVENT_COMMAND_CONNECTION_VALIDATOR = z.object({
+  sourceHandle: z.string(),
+  target: COMMAND_ID_VALIDATOR,
+  targetHandle: z.string(),
+});
+
+export type StudioEventCommandConnection = z.infer<typeof EVENT_COMMAND_CONNECTION_VALIDATOR>;
+
+export const EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR = z.object({
+  type: z.literal('insert_script'),
+  comment: z.string().default(''),
+  script: z.string().default(''),
+  connections: z.record(COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_CONNECTION_VALIDATOR),
+  studioData: EVENT_COMMAND_STUDIO_DATA_VALIDATOR,
+});
+
+export type StudioEventCommandInsertScript = z.infer<typeof EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR>;
+
+const GENERIC_COMMAND = <T extends string>(type: T) =>
+  z.object({
+    type: z.literal(type),
+    connections: z.record(COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_CONNECTION_VALIDATOR),
+    studioData: EVENT_COMMAND_STUDIO_DATA_VALIDATOR,
+  });
+
+export const EVENT_COMMAND_VALIDATOR = z.discriminatedUnion('type', [
+  GENERIC_COMMAND('show_message'),
+  GENERIC_COMMAND('narrator_settings'),
+  GENERIC_COMMAND('manage_message_box'),
+  GENERIC_COMMAND('show_choice'),
+  GENERIC_COMMAND('wait_key_press'),
+  GENERIC_COMMAND('record_key_press'),
+  GENERIC_COMMAND('input_creature_name'),
+  GENERIC_COMMAND('input_character_name'),
+  GENERIC_COMMAND('ask_player_for_number'),
+  GENERIC_COMMAND('create_loop'),
+  GENERIC_COMMAND('exit_loop'),
+  GENERIC_COMMAND('manage_conditions'),
+  GENERIC_COMMAND('go_to'),
+  GENERIC_COMMAND('wait_for_set_time'),
+  GENERIC_COMMAND('stop_event_execution'),
+  GENERIC_COMMAND('call_event'),
+  GENERIC_COMMAND('trigger_event'),
+  GENERIC_COMMAND('change_event_parameters'),
+  GENERIC_COMMAND('move_event'),
+  GENERIC_COMMAND('teleport_event'),
+  GENERIC_COMMAND('teleport_player'),
+  GENERIC_COMMAND('wait_move_completion'),
+  GENERIC_COMMAND('manage_event_reappearance'),
+  GENERIC_COMMAND('manage_path_finding'),
+  GENERIC_COMMAND('manage_follow_me'),
+  GENERIC_COMMAND('manage_variables'),
+  GENERIC_COMMAND('manage_event_variables'),
+  GENERIC_COMMAND('manage_timer'),
+  GENERIC_COMMAND('change_character_name'),
+  GENERIC_COMMAND('start_trainer_battle'),
+  GENERIC_COMMAND('start_wild_encounter'),
+  GENERIC_COMMAND('start_scripted_battle'),
+  GENERIC_COMMAND('manage_random_encounters'),
+  GENERIC_COMMAND('manage_player_items'),
+  GENERIC_COMMAND('manage_player_money'),
+  GENERIC_COMMAND('manage_dex'),
+  GENERIC_COMMAND('set_active_dex'),
+  GENERIC_COMMAND('give_badge'),
+  GENERIC_COMMAND('manage_access_save_menu'),
+  GENERIC_COMMAND('open_save_menu'),
+  GENERIC_COMMAND('manage_autosave'),
+  GENERIC_COMMAND('force_autosave'),
+  GENERIC_COMMAND('force_save'),
+  GENERIC_COMMAND('open_scene'),
+  GENERIC_COMMAND('open_shop'),
+  GENERIC_COMMAND('open_custom_scene'),
+  GENERIC_COMMAND('manage_access_main_menu'),
+  GENERIC_COMMAND('trigger_game_over'),
+  GENERIC_COMMAND('return_to_title_screen'),
+  GENERIC_COMMAND('open_creature_shop'),
+  GENERIC_COMMAND('start_quest'),
+  GENERIC_COMMAND('display_hidden_objective'),
+  GENERIC_COMMAND('validate_quest_objectives'),
+  GENERIC_COMMAND('display_quest_progress'),
+  GENERIC_COMMAND('complete_quest'),
+  GENERIC_COMMAND('play_sound'),
+  GENERIC_COMMAND('stop_current_sound'),
+  GENERIC_COMMAND('change_default_sound'),
+  GENERIC_COMMAND('memorize_background_sounds'),
+  GENERIC_COMMAND('restore_background_sounds'),
+  GENERIC_COMMAND('play_creature_cry'),
+  GENERIC_COMMAND('change_screen_tone'),
+  GENERIC_COMMAND('display_animation'),
+  GENERIC_COMMAND('display_screen_animation'),
+  GENERIC_COMMAND('display_emotion'),
+  GENERIC_COMMAND('manage_image'),
+  GENERIC_COMMAND('manage_camera'),
+  GENERIC_COMMAND('manage_dynamic_light'),
+  GENERIC_COMMAND('change_weather'),
+  GENERIC_COMMAND('manage_map_fog'),
+  GENERIC_COMMAND('manage_map_panorama'),
+  GENERIC_COMMAND('change_battle_background'),
+  EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR,
 ]);
 
 export type StudioEventCommand = z.infer<typeof EVENT_COMMAND_VALIDATOR>;
+export type StudioEventCommandType = z.infer<typeof EVENT_COMMAND_VALIDATOR>['type'];
 
 export type EventCommandForCategory = {
-  commandType: StudioEventCommand;
+  commandType: StudioEventCommandType;
   helper?: boolean;
   enabled?: boolean;
 };

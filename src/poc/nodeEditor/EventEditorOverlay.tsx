@@ -3,18 +3,20 @@ import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import { DialogRefData } from '@hooks/useDialogsRef';
 import { BasicEditor } from './BasicEditor';
-import { StudioEventCommand } from '@modelEntities/event/command';
+import type { CommandId, StudioEventCommandType } from '@modelEntities/event/command';
+import { InsertScriptEditor } from './InsertScriptEditor';
+import type { StudioEvent } from '@modelEntities/event/event';
 
-export type EventEditorAndDeletionKeys = StudioEventCommand;
+export type EventEditorAndDeletionKeys = StudioEventCommandType;
 export type EventDialogsRef = React.RefObject<DialogRefData<EventEditorAndDeletionKeys>>;
 
 /**
  * Editor overlay for the events.
  * This component uses the generic editor overlay to show the components based on what's called from dialogsRef.
  */
-export const EventEditorOverlay = defineEditorOverlay<EventEditorAndDeletionKeys>(
+export const EventEditorOverlay = defineEditorOverlay<EventEditorAndDeletionKeys, { commandId?: CommandId; event: StudioEvent }>(
   'eventEditorOverlay',
-  (dialogToShow, handleCloseRef, closeDialog) => {
+  (dialogToShow, handleCloseRef, closeDialog, { commandId, event }) => {
     switch (dialogToShow) {
       case 'show_message':
       case 'narrator_settings':
@@ -88,8 +90,9 @@ export const EventEditorOverlay = defineEditorOverlay<EventEditorAndDeletionKeys
       case 'manage_map_fog':
       case 'manage_map_panorama':
       case 'change_battle_background':
-      case 'insert_script':
         return <BasicEditor ref={handleCloseRef} />;
+      case 'insert_script':
+        return <InsertScriptEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       default:
         return assertUnreachable(dialogToShow);
     }

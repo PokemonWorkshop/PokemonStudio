@@ -1838,5 +1838,8 @@
   "event_command_manage_map_panorama": "Manage map panorama",
   "event_command_change_battle_background": "Change battle background",
   "event_command_insert_script": "Insert a script",
-  "event_command_complete_quest_helper": "Validates quest completion, distributes rewards and announces its end"
+  "event_command_complete_quest_helper": "Validates quest completion, distributes rewards and announces its end",
+  "add_base_for_events": "Adding basic elements for events",
+  "event_command_comment": "Comment",
+  "event_command_script": "Script"
 }

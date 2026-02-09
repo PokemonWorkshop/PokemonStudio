@@ -1,8 +1,10 @@
-import { StudioEventCommand } from '@modelEntities/event/command';
-import { BasicNode, BasicNodeProps } from '../nodeEditor/BasicNode';
+import type { StudioEventCommandType } from '@modelEntities/event/command';
+import type { EventNodeProps } from '../nodeEditor/EventNodeProps';
+import { BasicNode } from '../nodeEditor/BasicNode';
 import { ShadowNode } from '../nodeEditor/ShadowNode';
+import { InsertScriptNode } from '../nodeEditor/InsertScriptNode';
 
-export const CommandNodes: Record<StudioEventCommand | 'shadow_node', (props: BasicNodeProps) => JSX.Element> = {
+export const CommandNodes: Record<StudioEventCommandType | 'shadow_node', (props: EventNodeProps) => JSX.Element> = {
   show_message: BasicNode,
   narrator_settings: BasicNode,
   manage_message_box: BasicNode,
@@ -75,6 +77,6 @@ export const CommandNodes: Record<StudioEventCommand | 'shadow_node', (props: Ba
   manage_map_fog: BasicNode,
   manage_map_panorama: BasicNode,
   change_battle_background: BasicNode,
-  insert_script: BasicNode,
+  insert_script: InsertScriptNode,
   shadow_node: ShadowNode,
 };
