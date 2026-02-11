@@ -9,14 +9,16 @@ import { IconsFromCommand } from '@components/event/EventCommandIcon';
 const CommandNodeContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 320px;
+  box-sizing: border-box;
   padding: 2px 2px 0px;
+  width: 320px;
   isolation: isolate;
   border-radius: 16px;
-  background: linear-gradient(180deg, rgba(26, 41, 78, 1) 0%, rgba(37, 38, 42, 1) 48px);
+  background-color: #25262a;
+  background: linear-gradient(180deg, #1a294e 0%, #25262a 60px);
 
   &[data-selected='true'] {
-    border: 2px solid red;
+    outline: 1px solid #2b4c9f;
   }
 
   header {
@@ -54,14 +56,15 @@ const CommandNodeContainer = styled.div`
   }
 
   .container {
-    background: linear-gradient(180deg, rgba(43, 76, 159, 1) 0%, rgba(37, 38, 42, 1) 48px);
-    //background: linear-gradient(180deg, rgba(255, 76, 159, 1) 0%, rgba(255, 38, 42, 1) 48px);
-    border-radius: 14px 14px 0px 0px;
+    padding: 1px;
+    &[data-selected='false'] {
+      background: linear-gradient(180deg, #2b4c9f 0%, #25262a 60px);
+    }
+    border-radius: 14px;
   }
 
   .content {
     background-color: #1c1d20;
-    /* Shadow/M-BorderSubtle */
     box-shadow:
       0px 3px 1px -2px rgba(0, 0, 0, 0.06),
       0px 2px 3px rgba(0, 0, 0, 0.05),
@@ -69,20 +72,6 @@ const CommandNodeContainer = styled.div`
       0px 12px 16px -6px rgba(0, 0, 0, 0.04),
       0px 0px 0px 1px rgba(202, 211, 241, 0.13);
     border-radius: 13px;
-
-    /*border-width: 1px 1px 0px 1px;
-    border-style: solid;
-    border-color: #2b4c9f;
-    border-radius: 14px 14px 0px 0px;*/
-
-    //background: linear-gradient(180deg, #2b4c9f, 0%, rgba(26, 41, 78, 1), 80%);
-    //border-image: linear-gradient(180deg, rgba(43, 76, 159, 1) 0%, rgba(37, 38, 42, 1) 48px);
-
-    /*border-style: solid;
-    border-image: linear-gradient(180deg, rgba(43, 76, 159, 1) 0%, rgba(37, 38, 42, 1) 48px);*/
-    /*border: 4px solid;
-    border-image: linear-gradient(45deg, #ff6a00, #ee0979) 1;
-    border-radius: 16px;*/
   }
 `;
 
@@ -110,7 +99,7 @@ export const CommandNode = ({ commandType, commentCount, dialogsRef, hasError, n
         dialogsRef?.current?.openDialog(commandType);
       }}
     >
-      <div className="container">
+      <div className="container" data-selected={selected}>
         <div className="content">
           <header>
             {IconsFromCommand[commandType]}
