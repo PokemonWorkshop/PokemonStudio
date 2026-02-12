@@ -45,6 +45,8 @@ type NodeEvent = Node<NodeData, StudioEventCommandType>;
 type NodeShadow = Node;
 type ChangeToApplyEventsType = { type: 'position'; commandId: CommandId; position: { x: number; y: number } };
 
+const GRID_SIZE = 32;
+
 const EventEditorContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -308,9 +310,11 @@ const EventFlow = () => {
           onDragLeave={onDragLeave}
           isValidConnection={isValidConnection}
           fitView
+          snapToGrid
+          snapGrid={[GRID_SIZE, GRID_SIZE]}
         >
           <Controls position="bottom-right" />
-          <Background />
+          <Background gap={GRID_SIZE} offset={GRID_SIZE} />
         </ReactFlow>
       </div>
       <EventCommandsEditor />
