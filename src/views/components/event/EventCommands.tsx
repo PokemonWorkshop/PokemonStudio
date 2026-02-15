@@ -2,7 +2,7 @@ import BackIcon from '@assets/icons/global/back.svg';
 import { EventCommand } from './EventCommand';
 import { StudioEventCommandCategory } from '@modelEntities/event/category';
 import { COMMANDS_FROM_CATEGORY } from '@modelEntities/event/command';
-import { EventCategoryIcon, IconsFromCategory } from './EventCategoryIcon';
+import { EventIcon, IconsFromCategory } from './EventIcon';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import styled from 'styled-components';
@@ -78,7 +78,8 @@ type EventCommandsProps = {
 };
 
 const getCommands = (category: StudioEventCommandCategory, t: TFunction, research?: string) => {
-  const commandsAvailable = COMMANDS_FROM_CATEGORY[category].filter(({ enabled }) => enabled);
+  const isDev = window.api.isDev;
+  const commandsAvailable = isDev ? COMMANDS_FROM_CATEGORY[category] : COMMANDS_FROM_CATEGORY[category].filter(({ enabled }) => enabled);
   if (!research) return commandsAvailable;
 
   return commandsAvailable
@@ -103,13 +104,13 @@ export const EventCommands = ({ category, setSelectedCommandCategory, research }
             <BackIcon />
           </span>
         )}
-        <EventCategoryIcon category={category} size="s" />
+        <EventIcon icon={{ type: 'category', category }} size="s" />
         <span className="category-title">{t(`event_category_${category}`)}</span>
         <span className="count">{commandsCount}</span>
       </div>
       <div className="commands">
         {commands.map(({ commandType, helper }) => (
-          <EventCommand key={commandType} command={commandType} hasHelper={helper} color={IconsFromCategory[category].color} />
+          <EventCommand key={commandType} command={commandType} hasHelper={helper} />
         ))}
       </div>
     </EventCommandsContainer>

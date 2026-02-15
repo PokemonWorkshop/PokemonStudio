@@ -4,9 +4,13 @@ import React, { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { EventDialogsRef } from './EventEditorOverlay';
-import { IconsFromCommand } from '@components/event/EventCommandIcon';
+import { EventIcon, EventIconColor, IconsFromCommand } from '@components/event/EventIcon';
 
-const CommandNodeContainer = styled.div`
+type CommandNodeContainerProps = {
+  color: EventIconColor;
+};
+
+const CommandNodeContainer = styled.div<CommandNodeContainerProps>`
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -92,7 +96,7 @@ export const CommandNode = ({ commandType, commentCount, dialogsRef, hasError, n
 
   return (
     <CommandNodeContainer
-      color={undefined}
+      color={IconsFromCommand[commandType].color}
       data-selected={selected}
       onDoubleClick={() => {
         setCurrentEditedNode(nodeId);
@@ -102,7 +106,7 @@ export const CommandNode = ({ commandType, commentCount, dialogsRef, hasError, n
       <div className="container" data-selected={selected}>
         <div className="content">
           <header>
-            {IconsFromCommand[commandType]}
+            <EventIcon icon={{ type: 'command', command: commandType }} />
             <span className="title">{t(`event_command_${commandType}`)}</span>
           </header>
           <div className="body">{children}</div>
