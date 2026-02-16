@@ -1,6 +1,6 @@
 import { SecondaryButton } from '@components/buttons';
 import { DashboardControlBar, DashboardFrame } from '@components/dashboard';
-import { DashboardPokedexChart } from '@components/dashboard/DashboardPokedexChart';
+import { DashboardPokedexChart } from '@components/dashboard/pokedexChart/DashboardPokedexChart';
 import { DashboardEditorAndDeletionKeys, DashboardEditorOverlay } from '@components/dashboard/editors/DashboardEditorOverlay';
 import { DataBlockWithAction, DataBlockWrapper } from '@components/database/dataBlocks';
 import { Onboarding } from '@components/onboarding/Onboarding';
