@@ -291,6 +291,7 @@
   "failed_to_copy": "Échec de la copie ❌",
   "copy_code": "Copier le code",
   "project_settings": "Paramètres du projet",
+  "pokedex_types_chart": "Répartition des types du Pokédex",
   "change_project_settings": "Modifier les paramètres du projet",
   "general_settings": "Paramètres généraux",
   "options": "Options du jeu",
