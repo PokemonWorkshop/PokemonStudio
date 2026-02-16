@@ -211,14 +211,19 @@ const RenderEditMove = ({
       <Input
         type="number"
         min="1"
+        max="999"
         value={currentLevel}
         onChange={(e) => {
           const value = Number(e.target.value);
+          if (!value) setCurrentLevel(0);
           if (value >= 1) setCurrentLevel(value);
         }}
         onBlur={() => {
           if (currentLevel !== learnableMove.level) {
             onEditLevel(currentLevel, index);
+          }
+          if (currentLevel === 0) {
+            setCurrentLevel(1);
           }
         }}
       />
@@ -512,11 +517,17 @@ export const MovepoolLevelLearnableTable = ({ importation }: MovePoolLevelProps)
             type="number"
             name="level"
             min="1"
+            max="999"
             value={levelToAdd}
             onChange={(event) => {
               const newValue = Number(event.target.value);
-              if (newValue < 1) return event.preventDefault();
-              setLevelToAdd(newValue);
+              if (!newValue) setLevelToAdd(0);
+              if (newValue >= 1) setLevelToAdd(newValue);
+            }}
+            onBlur={() => {
+              if (levelToAdd === 0) {
+                setLevelToAdd(1);
+              }
             }}
             placeholder={t('level')}
           />

@@ -191,13 +191,27 @@ export const MovepoolMultiple = forwardRef<EditorHandlingClose, MovepoolMultiple
                         <Input
                           type="number"
                           min="1"
-                          value={moveLevels[move] || 1}
+                          max="999"
+                          value={moveLevels[move]}
                           onChange={(e) => {
                             const value = Number(e.target.value);
+                            if (!value)
+                              setMoveLevels((prev) => ({
+                                ...prev,
+                                [move]: 0,
+                              }));
                             if (value >= 1) {
                               setMoveLevels((prev) => ({
                                 ...prev,
                                 [move]: value,
+                              }));
+                            }
+                          }}
+                          onBlur={() => {
+                            if (moveLevels[move] === 0) {
+                              setMoveLevels((prev) => ({
+                                ...prev,
+                                [move]: 1,
                               }));
                             }
                           }}
