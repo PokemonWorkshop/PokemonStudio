@@ -4,13 +4,10 @@ import React, { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { EventDialogsRef } from './EventEditorOverlay';
-import { EventIcon, EventIconColor, IconsFromCommand } from '@components/event/EventIcon';
+import { EventIcon, IconsFromCommand } from '@components/event/EventIcon';
+import { Handle, Position } from '@xyflow/react';
 
-type CommandNodeContainerProps = {
-  color: EventIconColor;
-};
-
-const CommandNodeContainer = styled.div<CommandNodeContainerProps>`
+const CommandNodeContainer = styled.div`
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -79,6 +76,46 @@ const CommandNodeContainer = styled.div<CommandNodeContainerProps>`
   }
 `;
 
+type CustomHandleContainerProps = {
+  position: 'left' | 'right';
+};
+
+const CustomHandleContainer = styled.div<CustomHandleContainerProps>`
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  top: 16px;
+
+  .icon {
+    display: none;
+  }
+
+  .react-flow__handle {
+    background: #202225;
+    border: 1px solid #383a40;
+    box-shadow: 0px 0px 0px 2px #181819;
+    border-radius: 100%;
+    left: ${({ position }) => (position === 'left' ? '-9px' : '320px')};
+    cursor: pointer;
+
+    &:hover {
+      box-sizing: border-box;
+      width: 16px;
+      height: 16px;
+      left: ${({ position }) => (position === 'left' ? '-11px' : '313px')};
+
+      background: #202245;
+      border: 1px solid #31327a;
+      box-shadow: none;
+      border-radius: 100%;
+
+      .icon {
+        display: block;
+      }
+    }
+  }
+`;
+
 type CommandNodeProps = {
   commandType: StudioEventCommandType;
   commentCount: number;
@@ -93,29 +130,38 @@ export const CommandNode = ({ commandType, commentCount, dialogsRef, hasError, n
   const { setCurrentEditedNode } = useEventContext();
   const { t } = useTranslation();
   const deployFooter = hasError || commentCount > 0;
+  const color = IconsFromCommand[commandType].color;
 
   return (
-    <CommandNodeContainer
-      color={IconsFromCommand[commandType].color}
-      data-selected={selected}
-      onDoubleClick={() => {
-        setCurrentEditedNode(nodeId);
-        dialogsRef?.current?.openDialog(commandType);
-      }}
-    >
-      <div className="container" data-selected={selected}>
-        <div className="content">
-          <header>
-            <EventIcon icon={{ type: 'command', command: commandType }} />
-            <span className="title">{t(`event_command_${commandType}`)}</span>
-          </header>
-          <div className="body">{children}</div>
+    <>
+      <CustomHandleContainer position="left" data-color={color}>
+        <Handle type="target" position={Position.Left} id="Tleft_default" />
+      </CustomHandleContainer>
+      <CustomHandleContainer position="right" data-color={color}>
+        <Handle type="source" position={Position.Right} id="Sright_default" />
+      </CustomHandleContainer>
+      <CommandNodeContainer
+        data-color={color}
+        data-selected={selected}
+        onDoubleClick={() => {
+          setCurrentEditedNode(nodeId);
+          dialogsRef?.current?.openDialog(commandType);
+        }}
+      >
+        <div className="container" data-selected={selected}>
+          <div className="content">
+            <header>
+              <EventIcon icon={{ type: 'command', command: commandType }} />
+              <span className="title">{t(`event_command_${commandType}`)}</span>
+            </header>
+            <div className="body">{children}</div>
+          </div>
         </div>
-      </div>
-      <footer style={{ height: deployFooter ? '24px' : '8px' }}>
-        {hasError && <span className="status">Données invalides</span>}
-        {commentCount > 0 && <span className="actions">{commentCount}</span>}
-      </footer>
-    </CommandNodeContainer>
+        <footer style={{ height: deployFooter ? '24px' : '8px' }}>
+          {hasError && <span className="status">Données invalides</span>}
+          {commentCount > 0 && <span className="actions">{commentCount}</span>}
+        </footer>
+      </CommandNodeContainer>
+    </>
   );
 };

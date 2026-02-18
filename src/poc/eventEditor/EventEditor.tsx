@@ -144,8 +144,8 @@ const EventFlow = () => {
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';
     const position = screenToFlowPosition({
-      x: event.clientX + 8,
-      y: event.clientY + 8,
+      x: event.clientX - 160,
+      y: event.clientY + 32,
     });
 
     const shadowNode: NodeShadow = reactFlowInstance.getNode('shadow_node') as NodeShadow;
@@ -164,8 +164,8 @@ const EventFlow = () => {
       const command = EventCommandCreation[type];
       const id = getId(studioEvent);
       const position = screenToFlowPosition({
-        x: event.clientX + 8,
-        y: event.clientY + 8,
+        x: event.clientX - 160,
+        y: event.clientY + 32,
       });
       const newNode: NodeEvent = {
         id,
