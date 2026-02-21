@@ -33,6 +33,7 @@ const MovesToAdd = styled.div`
   gap: 8px;
   color: ${({ theme }) => theme.colors.primaryBase};
   ${({ theme }) => theme.fonts.normalRegular};
+  user-select: none;
 
   ::after {
     content: '';
@@ -47,6 +48,7 @@ const MovesAdded = styled.div`
   gap: 8px;
   justify-content: space-between;
   align-items: center;
+  user-select: none;
 
   div {
     display: flex;
@@ -77,6 +79,19 @@ const MovesAdded = styled.div`
   .delete-button {
     opacity: 0;
     transition: opacity 0.2s;
+  }
+
+  .move {
+    padding: 4px;
+    ${({ theme }) => theme.fonts.normalRegular};
+
+    span {
+      color: ${({ theme }) => theme.colors.text100};
+      width: 102px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-wrap: nowrap;
+    }
   }
 
   &:hover .delete-button {
@@ -181,9 +196,9 @@ export const MovepoolMultiple = forwardRef<EditorHandlingClose, MovepoolMultiple
                 </MovesToAdd>
                 {selectedMoves.map((move) => (
                   <MovesAdded key={move}>
-                    <div style={{ padding: '4px' }}>
-                      {moves.find((m) => m.value === move)?.label || move}
-                      <DeleteButtonOnlyIcon size="s" onClick={() => removeAddedOne(move)} />
+                    <div className="move">
+                      <span>{moves.find((m) => m.value === move)?.label || move}</span>
+                      <DeleteButtonOnlyIcon size="s" className="delete-button" onClick={() => removeAddedOne(move)} />
                     </div>
                     {hasLevel && (
                       <>
