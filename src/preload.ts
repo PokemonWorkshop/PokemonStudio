@@ -3,6 +3,7 @@
 import { ipcRenderer, contextBridge, webFrame, IpcRendererEvent, webUtils } from 'electron';
 import { BackendTaskWithGenericError, BackendTaskWithGenericErrorAndNoProgress, GenericBackendProgress, defineBackendTask } from '@utils/BackendTask';
 import type { PSDKVersion } from '@services/getPSDKVersion';
+import nodePath from 'path';
 import type { StudioShortcut } from '@hooks/useShortcuts';
 import type { ChooseProjectFileToOpenInput } from './backendTasks/chooseProjectFileToOpen';
 import type { ConfigureNewProjectInput } from './backendTasks/configureNewProject';
@@ -51,6 +52,11 @@ import type { ReadRMXPEventInput, ReadRMXPEventOutput } from './backendTasks/rea
 import type { RMXPEventsToStudioEventsInput, RMXPEventsToStudioEventsOutput } from './backendTasks/convertRMXPEventsToStudioEvents';
 
 contextBridge.exposeInMainWorld('api', {
+  path: {
+    join: (...segments: string[]) => nodePath.join(...segments),
+    basename: (filePath: string, ext?: string) => nodePath.basename(filePath, ext),
+    dirname: (filePath: string) => nodePath.dirname(filePath),
+  },
   isDev: process.env.NODE_ENV === 'development',
   clearCache: () => webFrame.clearCache(),
   md5: (value) => ipcRenderer.sendSync('get-md5-hash', value),
@@ -168,6 +174,11 @@ type AnyObj = Record<string, never>;
 declare global {
   interface Window {
     api: {
+      path: {
+        join: (...segments: string[]) => string;
+        basename: (filePath: string, ext?: string) => string;
+        dirname: (filePath: string) => string;
+      };
       isDev: boolean;
       clearCache: () => void;
       md5: (value: string) => string;

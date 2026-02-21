@@ -3,53 +3,22 @@ import { assertUnreachable } from './assertUnreachable';
 import { StudioTrainer } from '@modelEntities/trainer';
 
 export const join = (...strs: string[]): string => {
-  return strs.reduce((previousValue, str, index) => {
-    const newStr = str
-      .replaceAll('\\', '/')
-      .split('/')
-      .filter((s) => s !== '')
-      .join('/');
-    if (index === 0 && !strs[0].startsWith('/')) return newStr;
-    return [previousValue, newStr].join('/');
-  }, '');
+  return window.api.path.join(...strs).replaceAll('\\', '/');
 };
 
 export const basename = (str: string | undefined, stripExtension?: string): string => {
-  if (!str) {
-    return '';
-  }
-
-  let finalStr: string | undefined = str;
-
-  if (stripExtension) {
-    // result example: /\.png$/i
-    const regex = new RegExp(`\\${stripExtension}$`, 'i');
-    finalStr = str.replace(regex, '');
-  }
-
-  finalStr = finalStr.replaceAll('\\', '/').split('/').pop();
-
-  if (finalStr) {
-    return finalStr;
-  }
-
-  return str;
+  if (!str) return '';
+  return window.api.path.basename(str, stripExtension);
 };
 
 export const stripExtension = (str: string | undefined): string => {
-  if (!str) {
-    return '';
-  }
-
+  if (!str) return '';
   return str.substring(0, str.lastIndexOf('.'));
 };
 
 export const dirname = (str: string | undefined): string => {
   if (!str) return '';
-
-  const strSplited = str.replaceAll('\\', '/').split('/');
-  strSplited.pop();
-  return strSplited.join('/');
+  return window.api.path.dirname(str).replaceAll('\\', '/');
 };
 
 export type CreatureFormResourcesFemalePath =
