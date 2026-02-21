@@ -42,9 +42,30 @@ const copyTmxFile = async (tiledMap: { path: string }, mapsFolderPath: string, t
   tiledMap.path = path.relative(mapsFolderPath, destPath).replaceAll('\\', '/').replaceAll('.tmx', '');
 };
 
+const resolveTilesetSourcePath = (tilesetPath: string, tiledSrcPath: string, mapPath: string): string => {
+  if (path.isAbsolute(tilesetPath)) return tilesetPath;
+  return path.join(path.dirname(path.join(tiledSrcPath, mapPath)), tilesetPath);
+};
+
 const copyTsxFile = async (tiledMap: MapToImport, tilesetsFolderPath: string, tiledSrcPath: string) => {
   const tileMetadata = tiledMap.tileMetadata;
   if (!tileMetadata) return;
+
+  // Validate all tileset source files exist before copying
+  const missingTilesets: string[] = [];
+  for (const tileset of tileMetadata.tilesets) {
+    const destPath = path.join(tilesetsFolderPath, path.basename(tileset.source));
+    if (!fs.existsSync(destPath)) {
+      const sourcePath = resolveTilesetSourcePath(tileset.source, tiledSrcPath, tiledMap.path);
+      if (!fs.existsSync(sourcePath)) {
+        missingTilesets.push(tileset.source);
+      }
+    }
+  }
+  if (missingTilesets.length > 0) {
+    const mapName = path.basename(tiledMap.path);
+    throw new Error(`Missing tileset(s) for map "${mapName}": ${missingTilesets.join(', ')}`);
+  }
 
   return tileMetadata.tilesets.reduce(async (lastPromise, tileset) => {
     await lastPromise;
@@ -53,20 +74,37 @@ const copyTsxFile = async (tiledMap: MapToImport, tilesetsFolderPath: string, ti
     const filename = path.basename(tilesetPath);
     const destPath = path.join(tilesetsFolderPath, filename);
     if (!fs.existsSync(destPath)) {
-      if (path.isAbsolute(tilesetPath)) {
-        await fsPromises.copyFile(tilesetPath, destPath);
-      } else {
-        const absolutePath = path.join(path.dirname(path.join(tiledSrcPath, tiledMap.path)), tilesetPath);
-        await fsPromises.copyFile(absolutePath, destPath);
-      }
+      const sourcePath = resolveTilesetSourcePath(tilesetPath, tiledSrcPath, tiledMap.path);
+      await fsPromises.copyFile(sourcePath, destPath);
     }
     tileset.source = path.join('../Tilesets', filename).replaceAll('\\', '/');
   }, Promise.resolve());
 };
 
+const resolveAssetSourcePath = (assetPath: string, tiledSrcPath: string): string => {
+  if (path.isAbsolute(assetPath)) return assetPath;
+  return path.join(tiledSrcPath, assetPath);
+};
+
 const copyAssetFile = async (tiledMap: MapToImport, assetsFolderPath: string, tiledSrcPath: string) => {
   const tmxFilePath = `${path.join(tiledSrcPath, tiledMap.path)}.tmx`;
   const resources = getResources(tmxFilePath);
+
+  // Validate all asset source files exist before copying
+  const missingAssets: string[] = [];
+  for (const asset of resources.assetSources) {
+    const destPath = path.join(assetsFolderPath, path.basename(asset.pathIncludingMapDirname));
+    if (!fs.existsSync(destPath)) {
+      const sourcePath = resolveAssetSourcePath(asset.pathIncludingMapDirname, tiledSrcPath);
+      if (!fs.existsSync(sourcePath)) {
+        missingAssets.push(asset.pathIncludingMapDirname);
+      }
+    }
+  }
+  if (missingAssets.length > 0) {
+    const mapName = path.basename(tiledMap.path);
+    throw new Error(`Missing asset(s) for map "${mapName}": ${missingAssets.join(', ')}`);
+  }
 
   return resources.assetSources.reduce(async (lastPromise, asset) => {
     await lastPromise;
@@ -76,12 +114,8 @@ const copyAssetFile = async (tiledMap: MapToImport, assetsFolderPath: string, ti
     const destPath = path.join(assetsFolderPath, basename);
     if (fs.existsSync(destPath)) return;
 
-    if (path.isAbsolute(assetPath)) {
-      await fsPromises.copyFile(assetPath, destPath);
-    } else {
-      const absolutePath = path.join(tiledSrcPath, assetPath);
-      await fsPromises.copyFile(absolutePath, destPath);
-    }
+    const sourcePath = resolveAssetSourcePath(assetPath, tiledSrcPath);
+    await fsPromises.copyFile(sourcePath, destPath);
   }, Promise.resolve());
 };
 
