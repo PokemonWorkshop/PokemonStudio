@@ -1,7 +1,7 @@
 import React, { forwardRef, useMemo } from 'react';
 import { Editor } from '@components/editor';
 import { useTranslation } from 'react-i18next';
-import { MOVE_BATTLE_STAGE_MOD_LIST, StudioBattleStageMod, StudioMove } from '@modelEntities/move';
+import { StudioMove } from '@modelEntities/move';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { useMovePage } from '@hooks/usePage';
 import { useUpdateMove } from './useUpdateMove';
@@ -10,15 +10,11 @@ import { cloneEntity } from '@utils/cloneEntity';
 import { STATISTIC_EDITOR_SCHEMA } from './MoveStatisticsEditor/StatisticEditorSchema';
 import { BattleStageModEditor } from './MoveStatisticsEditor/BattleStageModEditor';
 import { InputFormContainer } from '@components/inputs/InputContainer';
+import { moveBattleStageToUI, uiToMoveBattleStage } from '@utils/MoveUtils';
 
 const initBattleStageMods = (move: StudioMove): StudioMove => {
-  const battleStagsMods = MOVE_BATTLE_STAGE_MOD_LIST.reduce<StudioBattleStageMod[]>((prev, stageMod) => {
-    const modificator = move.battleStageMod.find(({ battleStage }) => battleStage === stageMod)?.modificator;
-    prev.push({ battleStage: stageMod, modificator: modificator ?? 0 });
-    return prev;
-  }, []);
   const moveWithBattleStageMods = cloneEntity(move);
-  moveWithBattleStageMods.battleStageMod = battleStagsMods;
+  moveWithBattleStageMods.battleStageMod = moveBattleStageToUI(move);
   return moveWithBattleStageMods;
 };
 
@@ -32,8 +28,7 @@ export const MoveStatisticsEditor = forwardRef<EditorHandlingClose>((_, ref) => 
   const onClose = () => {
     const result = canClose() && getFormData();
     if (result && result.success) {
-      const battleStageMods = result.data.battleStageMod.filter(({ modificator }) => modificator !== 0);
-      updateMove({ battleStageMod: battleStageMods });
+      updateMove({ battleStageMod: uiToMoveBattleStage(result.data.battleStageMod) });
     }
   };
 

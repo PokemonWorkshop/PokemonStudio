@@ -1,8 +1,9 @@
-import React from 'react';
-import { getBattleStageModModificator, StudioMove, StudioMoveBattleStage } from '@modelEntities/move';
+import React, { useMemo } from 'react';
+import { StudioMove, StudioMoveBattleStage } from '@modelEntities/move';
 import { useTranslation } from 'react-i18next';
 import { DataBlockWithTitle, DataFieldgroup, DataFieldgroupField, DataGrid } from '../dataBlocks';
 import { MoveDialogsRef } from './editors/MoveEditorOverlay';
+import { moveBattleStageToUI } from '@utils/MoveUtils';
 
 type MoveStatisticsProps = {
   move: StudioMove;
@@ -11,9 +12,10 @@ type MoveStatisticsProps = {
 
 export const MoveStatistics = ({ move, dialogsRef }: MoveStatisticsProps) => {
   const { t } = useTranslation();
+  const battleStageUI = useMemo(() => moveBattleStageToUI(move), [move]);
 
   const getStatistic = (stageType: StudioMoveBattleStage) => {
-    const modificator = getBattleStageModModificator(move, stageType);
+    const modificator = battleStageUI.find(({ battleStage }) => battleStage === stageType)?.modificator ?? 0;
     if (modificator > 0) return `+${modificator}`;
     return modificator;
   };
