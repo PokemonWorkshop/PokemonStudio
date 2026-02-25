@@ -337,21 +337,27 @@ export const MovepoolLevelLearnableTable = ({ importation }: MovePoolLevelProps)
     specie: pokemonIdentifier.specie,
     form: pokemonIdentifier.form,
   });
+  const justResetRef = useRef(false);
 
   useEffect(() => {
     const hasChanged = previousPokemonRef.current.specie !== pokemonIdentifier.specie || previousPokemonRef.current.form !== pokemonIdentifier.form;
 
-    if (hasChanged && latestAdded.length > 0) {
-      setLatestAdded([]);
-      previousPokemonRef.current = {
-        specie: pokemonIdentifier.specie,
-        form: pokemonIdentifier.form,
-      };
+    if (hasChanged) {
+      previousPokemonRef.current = { specie: pokemonIdentifier.specie, form: pokemonIdentifier.form };
+      if (latestAdded.length > 0) {
+        justResetRef.current = true;
+        setLatestAdded([]);
+      }
       return;
     }
 
-    // Ne mettre à jour le moveSet que si on est sur le même Pokémon && qu'aucun move n'ait été ajouté
-    if (!hasChanged && latestAdded.length > 0) {
+    // [FIX] Si on vient juste de resetter (latestAdded passe à []), ne pas synchro
+    if (justResetRef.current) {
+      justResetRef.current = false;
+      return;
+    }
+
+    if (latestAdded.length > 0) {
       const index = currentEditedPokemon.forms.findIndex((form) => form.form === pokemonIdentifier.form);
       const clonedPokemon = cloneEntity(pokemon[pokemonIdentifier.specie]);
       const currentEditedForm = clonedPokemon.forms[index === -1 ? 0 : index];
@@ -361,14 +367,10 @@ export const MovepoolLevelLearnableTable = ({ importation }: MovePoolLevelProps)
       currentEditedForm.moveSet = [...allLevelMoves, ...otherMoves];
 
       setPokemon({ [pokemonIdentifier.specie]: clonedPokemon });
-      // Mettre à jour la référence à la fin
-      previousPokemonRef.current = {
-        specie: pokemonIdentifier.specie,
-        form: pokemonIdentifier.form,
-      };
+      previousPokemonRef.current = { specie: pokemonIdentifier.specie, form: pokemonIdentifier.form };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [latestAdded, movePoolData.length, pokemonIdentifier.specie, pokemonIdentifier.form]);
+  }, [latestAdded, pokemonIdentifier.specie, pokemonIdentifier.form]);
 
   // Système de highlight - déclenché quand latestAdded change
   useEffect(() => {

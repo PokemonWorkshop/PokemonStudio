@@ -304,6 +304,10 @@ export const MovepoolTable = ({ movepoolType, importation, disabledImport, disab
   };
 
   useEffect(() => {
+    setSelectedToAdd(moveNotSelectedOptions[0] ?? null);
+  }, [movepoolType]);
+
+  useEffect(() => {
     const listener = () => setLatestAdded([]);
     window.addEventListener('project-saved', listener);
     return () => window.removeEventListener('project-saved', listener);
@@ -474,7 +478,7 @@ export const MovepoolTable = ({ movepoolType, importation, disabledImport, disab
                         moves={moves}
                         types={types}
                         movepoolType={movepoolType}
-                        moveOptions={moveNotSelectedOptions}
+                        moveOptions={moveOptions}
                         error={isError}
                         onEdit={(move, i) => handleEditMove(move, i)}
                         onDelete={(i) => handleDeleteMove(i)}
