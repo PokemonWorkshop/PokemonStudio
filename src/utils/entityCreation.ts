@@ -31,7 +31,7 @@ import type { StudioNature } from '@modelEntities/nature';
 import { mapInfoFindFirstAvailableId, mapInfoFindFirstAvailableTextId } from './MapInfoUtils';
 import { cloneEntity } from './cloneEntity';
 import { CommandId, StudioEventCommand } from '../models/entities/event/command';
-import { CustomEvent } from '../models/entities/event/event';
+import { CustomEvent, StudioEvent } from '../models/entities/event/event';
 
 /**
  * Create a new ability with default values
@@ -615,10 +615,11 @@ export const createNature = (allNatures: ProjectData['natures'], dbSymbol: DbSym
   };
 };
 
-export const createEvent = (dbSymbol: DbSymbol, id: number): CustomEvent => {
+export const createEvent = (dbSymbol: DbSymbol, id: number, klass?: 'Event' | 'EventFolder'): StudioEvent => {
   return {
     dbSymbol,
     id,
+    klass: klass ? klass : 'Event',
     type: 'custom',
     triggers: [],
     commands: {} as Record<CommandId, StudioEventCommand>,

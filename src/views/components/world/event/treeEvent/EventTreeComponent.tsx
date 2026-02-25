@@ -23,7 +23,7 @@ import { EventTreeContextMenu } from './EventTreeContextMenu';
 import { convertEventToTree } from '@utils/events/EventUtils';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { MapListContainer, TreeItemContainer } from '../../map/tree/style';
-import { EVENT_NAME_TEXT_ID, StudioEventTreeValue } from '../../../../../models/entities/event/event';
+import { EVENT_NAME_TEXT_ID, StudioEvent, StudioEventTreeValue } from '../../../../../models/entities/event/event';
 import { EventEditorAndDeletionKeys, EventTreeEditorOverlay } from '../editors/EventEditorOverlay';
 import { searchIsUnderOpenFolder } from '../../../tree/Tree/Tree-utils';
 import DotIcon from '@assets/icons/global/dot.svg';
@@ -33,8 +33,32 @@ type EventTreeComponentProps = {
   treeScrollbarRef: RefObject<HTMLDivElement>;
 };
 
+const convertTreeToEvents = (treeData: Record<string | number, TreeItem>) => {
+  const result: Record<string, StudioEvent> = {};
+
+  const traverse = (itemId: string | number) => {
+    const item = treeData[itemId];
+    if (!item) return;
+
+    if (item.data?.klass === 'Event') {
+      result[item.data.dbSymbol] = item.data;
+    }
+
+    item.children.forEach((childId) => traverse(childId));
+  };
+
+  traverse(0);
+
+  return result;
+};
+
 export const EventTreeComponent = ({ treeScrollbarRef }: EventTreeComponentProps) => {
-  const { selectedDataIdentifier: currentEvent, setSelectedDataIdentifier: setEvent, projectDataValues: events } = useProjectEvents();
+  const {
+    selectedDataIdentifier: currentEvent,
+    setSelectedDataIdentifier: setEvent,
+    projectDataValues: events,
+    setProjectDataValues: setAllEvents,
+  } = useProjectEvents();
   const setText = useSetProjectText();
   const getEventName = useGetEntityNameText();
   const navigate = useNavigate();
@@ -54,8 +78,6 @@ export const EventTreeComponent = ({ treeScrollbarRef }: EventTreeComponentProps
       setShouldScroll(true);
     }
     setTree(convertEventToTree(events));
-    console.log(tree);
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [events]);
 
@@ -229,12 +251,13 @@ export const EventTreeComponent = ({ treeScrollbarRef }: EventTreeComponentProps
 
     // We can only drop a folder in the root
     const currentItem = tree.items[tree.items[source.parentId].children[source.index]];
-    if (currentItem.data?.klass === 'MapInfoFolder' && destination.parentId !== 0) return;
+    if (currentItem.data?.klass === 'EventFolder' && destination.parentId !== 0) return;
 
-    // We can only drop a map if the depth < 5
+    // We can only drop a event if the depth < 1
     const destinationDepth = getTreeDestinationDepth(tree, destination);
     const sourceDepth = getTreeSourceDepth(tree, currentItem);
-    if (destinationDepth + sourceDepth > 4) return;
+
+    if (destinationDepth + sourceDepth > 2) return;
 
     const newTree = moveItemOnTree(tree, source, destination);
 
@@ -252,6 +275,11 @@ export const EventTreeComponent = ({ treeScrollbarRef }: EventTreeComponentProps
     }
 
     setTree(newTree);
+    // console.log('save order', newTree.items, events, convertTreeToEvents(newTree.items));
+
+    // const ev = newTree.items as unknown as StudioEvent;
+    // setEvent({ event: ev });
+    setAllEvents(convertTreeToEvents(newTree.items));
   };
 
   // Check if there are no maps in the tree (only root folder exists)
@@ -270,6 +298,8 @@ export const EventTreeComponent = ({ treeScrollbarRef }: EventTreeComponentProps
           onCollapse={onCollapse}
           onDragEnd={onDragEnd}
           offsetPerLevel={26}
+          // TODO: Drag
+          isDragEnabled={false}
           isNestingEnabled
         />
       )}
