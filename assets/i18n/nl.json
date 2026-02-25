@@ -157,6 +157,7 @@
   "deletion_of_ability": "Verwijdering van talent {{ability}}",
   "deletion_of_item": "Verwijdering van item {{item}}",
   "deletion_of_map": "Verwijdering van map {{map}}",
+  "deletion_of_event": "Deletion of the event {{event}}",
   "deletion_of_move": "Verwijdering van aanval {{move}}",
   "deletion_of_nature": "Verwijdering van natuur {{nature}}",
   "deletion_of_type": "Verwijdering van type {{type}}",
@@ -164,6 +165,7 @@
   "deletion_message_ability": "Je staat op het punt om de ability « {{ability}} » permanent te verwijderen.",
   "deletion_message_item": "Je staat op het punt om de item « {{item}} » permanent te verwijderen.",
   "deletion_message_map": "Je staat op het punt om de map « {{map}} » permanent te verwijderen. Mappen gelinked met de map « {{map}} » worden ook verwijderd.",
+  "deletion_message_event": "You are about to permanently delete the event « {{event}} ». Command linked to the event « {{event}} » will also be deleted.",
   "deletion_message_move": "Je staat op het punt om de aanval « {{move}} » permanent te verwijderen.",
   "deletion_message_nature": "Je staat op het punt om de natuur « {{nature}} » permanent te verwijderen.",
   "deletion_message_type": "Je staat op het punt om de type {{type}} permanent te verwijderen.",
@@ -196,6 +198,7 @@
   "example_type": "Bijv: Normaal",
   "example_zone": "Bijv: Pallet Town",
   "example_texts_file": "Bijv: Naam van wezen",
+  "example_event": "Ex: Heal trainer creatures",
   "example_description_ability": "Beschrijving van talent",
   "example_description_item": "Beschrijving van item",
   "example_description_map": "Beschrijving van de map",
@@ -211,6 +214,7 @@
   "example_db_symbol_nature": "Bijv: vastbesloten",
   "example_db_symbol_creature": "Bijv: missingno",
   "example_db_symbol_type": "Bijv: normaal",
+  "example_db_symbol_event": "Ex: event_X",
   "map_deleted": "Map verwijderd",
   "nature_deleted": "Natuur verwijderd",
   "project_version": "Versie van project",
@@ -1845,5 +1849,6 @@
   "event_command_complete_quest_helper": "Validates quest completion, distributes rewards and announces its end",
   "add_base_for_events": "Adding basic elements for events",
   "event_command_comment": "Comment",
-  "event_command_script": "Script"
+  "event_command_script": "Script",
+  "create_event": "Add event"
 }

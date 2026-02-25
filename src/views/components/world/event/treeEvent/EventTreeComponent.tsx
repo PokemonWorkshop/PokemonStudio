@@ -13,63 +13,51 @@ import FolderIcon from '@assets/icons/global/folder.svg';
 import FolderOpenIcon from '@assets/icons/global/folder_open.svg';
 import LeftIcon from '@assets/icons/global/left-icon.svg';
 import PlusIcon from '@assets/icons/global/plus-icon.svg';
-import DotIcon from '@assets/icons/global/dot.svg';
-import { MAP_INFO_FOLDER_NAME_TEXT_ID, StudioMapInfoValue } from '@modelEntities/mapInfo';
-import { useProjectMaps } from '@hooks/useProjectData';
-import { useGetEntityNameText, useGetEntityNameTextUsingTextId, useSetProjectText } from '@utils/ReadingProjectText';
-import { DbSymbol } from '@modelEntities/dbSymbol';
+import { useProjectEvents } from '@hooks/useProjectData';
+import { useGetEntityNameText, useSetProjectText } from '@utils/ReadingProjectText';
 import { useTranslation } from 'react-i18next';
 import { Input } from '@components/inputs';
-import { MAP_NAME_TEXT_ID } from '@modelEntities/map';
 import { useContextMenu } from '@hooks/useContextMenu';
-import { MapEditorAndDeletionKeys, MapEditorOverlay } from '../editors/MapEditorOverlay';
 import { useDialogsRef } from '@hooks/useDialogsRef';
-import { MapTreeContextMenu } from './MapTreeContextMenu';
-import { useMapInfo } from '@hooks/useMapInfo';
-import { convertMapInfoToTree } from '@utils/MapInfoUtils';
-import {
-  getMapTreeCountChildren,
-  getTreeSourceDepth,
-  mapTreeConvertItemToMapInfoValue,
-  mapTreeConvertTreeToMapInfo,
-  renderDropBox,
-  getTreeDestinationDepth,
-  getMapTreeItemDepth,
-} from '@utils/MapTreeUtils';
-import { MapListContainer, TreeItemContainer } from './style';
+import { EventTreeContextMenu } from './EventTreeContextMenu';
+import { convertEventToTree } from '@utils/events/EventUtils';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { MapListContainer, TreeItemContainer } from '../../map/tree/style';
+import { EVENT_NAME_TEXT_ID, StudioEventTreeValue } from '../../../../../models/entities/event/event';
+import { EventEditorAndDeletionKeys, EventTreeEditorOverlay } from '../editors/EventEditorOverlay';
 import { searchIsUnderOpenFolder } from '../../../tree/Tree/Tree-utils';
+import DotIcon from '@assets/icons/global/dot.svg';
+import { getMapTreeCountChildren, getTreeDestinationDepth, getTreeSourceDepth, renderDropBox } from '../../../../../utils/MapTreeUtils';
 
-type MapTreeComponentProps = {
+type EventTreeComponentProps = {
   treeScrollbarRef: RefObject<HTMLDivElement>;
 };
 
-export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) => {
-  const { mapInfo, isRMXPMode, setMapInfo, setPartialMapInfo } = useMapInfo();
-  const { selectedDataIdentifier: currentMap, setSelectedDataIdentifier: setCurrentMap, projectDataValues: maps } = useProjectMaps();
+export const EventTreeComponent = ({ treeScrollbarRef }: EventTreeComponentProps) => {
+  const { selectedDataIdentifier: currentEvent, setSelectedDataIdentifier: setEvent, projectDataValues: events } = useProjectEvents();
   const setText = useSetProjectText();
-  const getMapName = useGetEntityNameText();
-  const getFolderName = useGetEntityNameTextUsingTextId();
+  const getEventName = useGetEntityNameText();
   const navigate = useNavigate();
   const location = useLocation();
   const { buildOnClick, renderContextMenu } = useContextMenu();
   const { t } = useTranslation();
-  const [tree, setTree] = useState<TreeData>(convertMapInfoToTree(mapInfo));
+  const [tree, setTree] = useState<TreeData>(convertEventToTree(events));
   const [canRename, setCanRename] = useState<ItemId>();
-  const [mapInfoSelected, setMapInfoSelected] = useState<StudioMapInfoValue>();
+  const [eventSelected, setEventSelected] = useState<StudioEventTreeValue>();
   const [shouldScroll, setShouldScroll] = useState<boolean>(false);
   const treeRef = useRef<Tree>(null);
   const renameRef = useRef<HTMLInputElement>(null);
-  const dialogsRef = useDialogsRef<MapEditorAndDeletionKeys>();
+  const dialogsRef = useDialogsRef<EventEditorAndDeletionKeys>();
 
   useEffect(() => {
-    // Check if an item has added and is in the root children
-    if (mapInfo['0'].children.length > tree.items['0'].children.length && Object.keys(mapInfo).length > Object.keys(tree.items).length) {
+    if (tree.items[0] && Object.keys(events).length > tree.items[0].children.length) {
       setShouldScroll(true);
     }
-    setTree(convertMapInfoToTree(mapInfo));
+    setTree(convertEventToTree(events));
+    console.log(tree);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mapInfo]);
+  }, [events]);
 
   useEffect(() => {
     if (shouldScroll && treeScrollbarRef.current) {
@@ -86,13 +74,11 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
   const onExpand = (itemId: ItemId) => {
     const newTree = mutateTree(tree, itemId, { isExpanded: true });
     setTree(newTree);
-    setPartialMapInfo(mapTreeConvertItemToMapInfoValue(newTree.items[itemId]), itemId.toString());
   };
 
   const onCollapse = (itemId: ItemId) => {
     const newTree = mutateTree(tree, itemId, { isExpanded: false });
     setTree(newTree);
-    setPartialMapInfo(mapTreeConvertItemToMapInfoValue(newTree.items[itemId]), itemId.toString());
   };
 
   const getIcon = (item: TreeItem, onExpand: (itemId: string) => void, onCollapse: (itemId: string) => void) => {
@@ -120,7 +106,7 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
               <LeftIcon />
             </span>
           )
-        ) : item.data?.klass === 'MapInfoFolder' ? (
+        ) : item.data?.klass === 'Event' ? (
           <span className="icon">
             <span className="point-icon" />
           </span>
@@ -129,31 +115,28 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
             <span className="point-icon" />
           </span>
         )}
-        {item.data?.klass === 'MapInfoFolder' && <span className="icon">{item.isExpanded ? <FolderOpenIcon /> : <FolderIcon />}</span>}
+        {item.data?.klass === 'EventFolder' && <span className="icon">{item.isExpanded ? <FolderOpenIcon /> : <FolderIcon />}</span>}
       </div>
     );
   };
 
-  const mapName = (mapDbSymbol: DbSymbol) => {
-    const map = maps[mapDbSymbol];
-    if (!map) return t('map_deleted');
-
-    return getMapName(map);
-  };
-
   const getName = (item: TreeItem) => {
-    if (!item.data) return '';
+    if (!item.id) return '';
 
-    const isFolder = item.data.klass === 'MapInfoFolder';
-    return isFolder ? getFolderName({ klass: item.data.klass, textId: item.data.textId }) : mapName(item.data.mapDbSymbol);
+    if (typeof item.data.id === 'number') {
+      return getEventName({ klass: 'Event', id: item.data.id });
+    }
+
+    return item.data.id;
   };
 
   const renderItem = ({ item, onExpand, onCollapse, provided, snapshot }: RenderItemParams) => {
-    const isFolder = item.data.klass === 'MapInfoFolder';
-    const countChildren = isFolder ? getMapTreeCountChildren(tree, item) : undefined;
-    const isDeleted = item.data.klass === 'MapInfoMap' && !maps[item.data.mapDbSymbol];
-    const currentDepth = getMapTreeItemDepth(tree, item);
-    const isUnderOpenFolder = searchIsUnderOpenFolder(tree, item, 'MapInfoMap');
+    const isEvent = item.data?.klass === 'Event';
+    const isFolder = item.data?.klass === 'EventFolder';
+
+    const countChildren = isEvent ? getMapTreeCountChildren(tree, item) : undefined;
+    const isDeleted = item.data.klass === 'MapInfoMap' && !events[item.data.mapDbSymbol];
+    const isUnderOpenFolder = searchIsUnderOpenFolder(tree, item, 'EventFolder');
 
     renderDropBox(snapshot.combineWith, treeRef);
 
@@ -161,11 +144,8 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
       if (!renameRef.current) return setCanRename(undefined);
       const value = renameRef.current.value === '' ? renameRef.current.defaultValue : renameRef.current.value;
 
-      if (isFolder) {
-        setText(MAP_INFO_FOLDER_NAME_TEXT_ID, item.data.textId, value);
-      } else {
-        const map = maps[item.data.mapDbSymbol];
-        setText(MAP_NAME_TEXT_ID, map.id, value);
+      if (isEvent) {
+        setText(EVENT_NAME_TEXT_ID, item.data.id, value);
       }
       setCanRename(undefined);
     };
@@ -173,9 +153,8 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
     const openMenu = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
       event.preventDefault();
       event.stopPropagation();
-      if (isRMXPMode) return;
 
-      setMapInfoSelected(mapInfo[item.id]);
+      setEventSelected(item);
       // timeout to wait that the mapinfo selected has been taken into account
       setTimeout(() => buildOnClick(event, true));
     };
@@ -183,24 +162,24 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
     return (
       <div ref={provided.innerRef} {...provided.draggableProps} key={item.id}>
         <TreeItemContainer
-          isCurrent={!isFolder && item.data?.mapDbSymbol === currentMap}
+          isCurrent={!isEvent && item.data?.dbSymbol === currentEvent}
           hasChildren={!!countChildren}
           disableHover={!!canRename}
           isUnderOpenFolder={isUnderOpenFolder}
-          className={currentMap === item.data.mapDbSymbol ? 'map-selected' : 'map'}
+          className={currentEvent === item.data.dbSymbol ? 'map-selected' : 'map'}
           onClick={() => {
             if (item.id !== canRename) {
               renameRef.current?.blur();
             }
-            if (!item.data.mapDbSymbol || isFolder) return;
+            if (!item.data.dbSymbol || isFolder) return;
             if (isDeleted) return;
 
-            setCurrentMap({ map: item.data.mapDbSymbol });
-            const targetMap = maps[item.data.mapDbSymbol];
-            if (!targetMap?.tiledFilename && location.pathname === '/world/overview') {
-              return navigate('/world/map');
+            setEvent({ event: item.data.dbSymbol });
+            const targetEvent = events[item.data.dbSymbol];
+            if (!targetEvent?.id && location.pathname === '/events/overview') {
+              return navigate('/event');
             }
-            if (location.pathname !== '/world/map' && location.pathname !== '/world/overview') navigate('/world/map');
+            if (location.pathname !== '/world/events' && location.pathname !== '/world/overview') navigate('/world/events');
           }}
           onContextMenu={openMenu}
           {...provided.dragHandleProps}
@@ -223,17 +202,15 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
           {isFolder && !!countChildren && <span className="count-children">{countChildren}</span>}
           {!canRename && (
             <div className="actions">
-              {!isRMXPMode && (
-                <span className="icon icon-dot" onClick={openMenu}>
-                  <DotIcon />
-                </span>
-              )}
-              {!isDeleted && !isRMXPMode && currentDepth <= 3 && (
+              <span className="icon icon-dot" onClick={openMenu}>
+                <DotIcon />
+              </span>
+              {!isDeleted && eventSelected?.data.klass === 'EventFolder' && (
                 <span
                   className="icon icon-plus"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setMapInfoSelected(mapInfo[item.id]);
+                    setEventSelected(tree.items[item.id]);
                     dialogsRef.current?.openDialog('new');
                   }}
                 >
@@ -275,16 +252,15 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
     }
 
     setTree(newTree);
-    setMapInfo(mapTreeConvertTreeToMapInfo(newTree.items));
   };
 
   // Check if there are no maps in the tree (only root folder exists)
-  const hasNoMaps = tree.items['0'] && tree.items['0'].children.length === 0;
+  const hasNoEvent = tree.items[0] && tree.items[0].children.length === 0;
 
   return (
     <MapListContainer>
-      {hasNoMaps ? (
-        <div className="no-maps">{t('no_map_found')}</div>
+      {hasNoEvent ? (
+        <div className="no-maps">{t('no_event_found')}</div>
       ) : (
         <Tree
           ref={treeRef}
@@ -294,20 +270,19 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
           onCollapse={onCollapse}
           onDragEnd={onDragEnd}
           offsetPerLevel={26}
-          isDragEnabled={!isRMXPMode}
           isNestingEnabled
         />
       )}
-      {mapInfoSelected &&
+      {eventSelected &&
         renderContextMenu(
-          <MapTreeContextMenu
-            mapInfoValue={mapInfoSelected}
-            isDeleted={mapInfoSelected.data.klass === 'MapInfoMap' && !maps[mapInfoSelected.data.mapDbSymbol]}
-            enableRename={() => setCanRename(mapInfoSelected.id)}
+          <EventTreeContextMenu
+            eventValue={eventSelected}
+            isDeleted={eventSelected.data.klass === 'Event' && !events[eventSelected.data.dbSymbol]}
+            enableRename={() => setCanRename(eventSelected.id)}
             dialogsRef={dialogsRef}
           />,
         )}
-      <MapEditorOverlay mapInfoValue={mapInfoSelected} ref={dialogsRef} />
+      <EventTreeEditorOverlay eventValue={eventSelected} ref={dialogsRef} />
     </MapListContainer>
   );
 };

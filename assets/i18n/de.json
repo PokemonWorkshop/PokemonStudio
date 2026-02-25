@@ -157,6 +157,7 @@
   "deletion_of_ability": "Löschung von {{ability}}",
   "deletion_of_item": "Löschung des Items: {{item}}",
   "deletion_of_map": "Löschung der Karte {{map}}",
+  "deletion_of_event": "Deletion of the event {{event}}",
   "deletion_of_move": "Löschung von {{move}}",
   "deletion_of_nature": "Löschung des Wesen's {{nature}}",
   "deletion_of_type": "Löschen des Typ's {{type}}",
@@ -164,6 +165,7 @@
   "deletion_message_ability": "Du bist dabei, « {{ability}} » dauerhaft zu löschen.",
   "deletion_message_item": "Du bist dabei, den Eintrag « {item}} » endgültig zu löschen.",
   "deletion_message_map": "Du bist dabei, die Karte « {{map}} » endgültig zu löschen. Karten, die mit der Karte « {{map}} » verknüpft sind, werden ebenfalls gelöscht.",
+  "deletion_message_event": "You are about to permanently delete the event « {{event}} ». Command linked to the event « {{event}} » will also be deleted.",
   "deletion_message_move": "Du bist dabei, « {{move}} » endgültig zu löschen.",
   "deletion_message_nature": "Du bist dabei, « {{nature}} » endgültig zu löschen.",
   "deletion_message_type": "Du bist dabei, den Typ « {{type}} » endgültig zu löschen.",
@@ -196,6 +198,7 @@
   "example_type": "Bsp: Normal",
   "example_zone": "Bsp: Pallet Town",
   "example_texts_file": "Bsp: Name der Kreatur",
+  "example_event": "Ex: Heal trainer creatures",
   "example_description_ability": "Beschreibung der Fähigkeit",
   "example_description_item": "Beschreibung des Items",
   "example_description_map": "Beschreibung der Karte",
@@ -211,6 +214,7 @@
   "example_db_symbol_nature": "Bsp: adamant",
   "example_db_symbol_creature": "Bsp: missingno",
   "example_db_symbol_type": "Bsp: normal",
+  "example_db_symbol_event": "Ex: event_X",
   "map_deleted": "Karte gelöscht",
   "nature_deleted": "Wesen gelöscht",
   "project_version": "Projektversion",
@@ -1845,5 +1849,6 @@
   "event_command_complete_quest_helper": "Validates quest completion, distributes rewards and announces its end",
   "add_base_for_events": "Adding basic elements for events",
   "event_command_comment": "Comment",
-  "event_command_script": "Script"
+  "event_command_script": "Script",
+  "create_event": "Add event"
 }

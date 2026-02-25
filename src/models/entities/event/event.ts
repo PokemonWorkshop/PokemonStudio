@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { DB_SYMBOL_VALIDATOR } from '../dbSymbol';
 import { POSITIVE_OR_ZERO_INT } from '../common';
 import { COMMAND_ID_VALIDATOR, EVENT_COMMAND_VALIDATOR } from './command';
+import { TreeItem } from '../../../views/components/tree';
 
 const TEMPLATE_PARAMETER_NAME_VALIDATOR = z.string().brand('TemplateParameterName');
 
@@ -118,8 +119,17 @@ export const EVENT_VALIDATOR = z.intersection(
   z.object({
     klass: z.literal('Event'),
   }),
-  CUSTOM_EVENT_VALIDATOR
+  CUSTOM_EVENT_VALIDATOR,
 );
 export type StudioEvent = z.infer<typeof EVENT_VALIDATOR>;
 
 export const EVENT_NAME_TEXT_ID = 200005;
+
+export type StudioEventTreeItemData =
+  | { klass: 'EventRoot' }
+  | { klass: 'EventFolder'; dbSymbol: string; commandId: string }
+  | { klass: 'Event'; dbSymbol: string };
+
+export type StudioEventTreeValue = TreeItem & {
+  data?: StudioEventTreeItemData;
+};
