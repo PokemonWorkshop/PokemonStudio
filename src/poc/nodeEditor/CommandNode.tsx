@@ -1,11 +1,12 @@
 import { useEventContext } from '@components/event/EventContext';
 import type { StudioEventCommandType } from '@modelEntities/event/command';
-import React, { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 import { EventDialogsRef } from './EventEditorOverlay';
 import { EventIcon, IconsFromCommand } from '@components/event/EventIcon';
 import { Handle, Position } from '@xyflow/react';
+import PlusIcon from '@assets/icons/global/plus-icon.svg';
+import React, { ReactNode } from 'react';
+import styled from 'styled-components';
 
 const CommandNodeContainer = styled.div`
   display: flex;
@@ -85,9 +86,28 @@ const CustomHandleContainer = styled.div<CustomHandleContainerProps>`
   width: 8px;
   height: 8px;
   top: 16px;
+  left: ${({ position }) => (position === 'left' ? '-9px' : '320px')};
 
   .icon {
+    position: relative;
     display: none;
+    color: ${({ theme }) => theme.colors.text400};
+    pointer-events: none;
+
+    svg {
+      width: 10px;
+      height: 10px;
+    }
+  }
+
+  .point {
+    position: relative;
+    display: none;
+    background-color: ${({ theme }) => theme.colors.text400};
+    pointer-events: none;
+    border-radius: 100%;
+    width: 8px;
+    height: 8px;
   }
 
   .react-flow__handle {
@@ -95,23 +115,62 @@ const CustomHandleContainer = styled.div<CustomHandleContainerProps>`
     border: 1px solid #383a40;
     box-shadow: 0px 0px 0px 2px #181819;
     border-radius: 100%;
-    left: ${({ position }) => (position === 'left' ? '-9px' : '320px')};
     cursor: pointer;
+  }
 
-    &:hover {
-      box-sizing: border-box;
-      width: 16px;
-      height: 16px;
-      left: ${({ position }) => (position === 'left' ? '-11px' : '313px')};
+  .react-flow__handle.connectionindicator:hover {
+    display: flex;
+    box-sizing: border-box;
+    width: 16px;
+    height: 16px;
+    align-items: center;
+    justify-content: center;
 
-      background: #202245;
-      border: 1px solid #31327a;
-      box-shadow: none;
-      border-radius: 100%;
+    background: #202225;
+    border: 1px solid #383a40;
+    box-shadow: 0 -1px 0 0 #2b4c9f; // TODO: color should be dynamic
+    border-radius: 100%;
 
-      .icon {
-        display: block;
-      }
+    .icon {
+      display: block;
+    }
+  }
+
+  .react-flow__handle.connectingfrom,
+  .react-flow__handle.connectingto {
+    display: flex;
+    background: none;
+    width: 12px;
+    height: 12px;
+    border: 2px solid #383a40;
+    box-shadow: none;
+    align-items: center;
+    justify-content: center;
+
+    .point {
+      display: block;
+    }
+  }
+
+  .react-flow__handle.connectingfrom.connectionindicator:hover,
+  .react-flow__handle.connectingto.connectionindicator:hover {
+    background: inherit;
+    box-shadow: none;
+
+    .icon {
+      display: none;
+    }
+  }
+
+  .react-flow__handle.connectingfrom.connectionindicator:hover {
+    border: 2px solid #383a40;
+  }
+
+  .react-flow__handle.connectingto.connectionindicator {
+    border: 2px solid #2b4c9f; // TODO: color should be dynamic
+
+    .point {
+      background-color: #2b4c9f; // TODO: color should be dynamic
     }
   }
 `;
@@ -135,10 +194,20 @@ export const CommandNode = ({ commandType, commentCount, dialogsRef, hasError, n
   return (
     <>
       <CustomHandleContainer position="left" data-color={color}>
-        <Handle type="target" position={Position.Left} id="Tleft_default" />
+        <Handle type="target" position={Position.Left} id="Tleft_default">
+          <span className="icon">
+            <PlusIcon />
+          </span>
+          <span className="point" />
+        </Handle>
       </CustomHandleContainer>
       <CustomHandleContainer position="right" data-color={color}>
-        <Handle type="source" position={Position.Right} id="Sright_default" />
+        <Handle type="source" position={Position.Right} id="Sright_default">
+          <span className="icon">
+            <PlusIcon />
+          </span>
+          <span className="point" />
+        </Handle>
       </CustomHandleContainer>
       <CommandNodeContainer
         data-color={color}
