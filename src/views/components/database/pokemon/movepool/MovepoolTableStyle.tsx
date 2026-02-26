@@ -1,14 +1,43 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { DataGrid } from '@components/database/dataBlocks';
 
 export const DataMoveTable = styled.div`
   display: flex;
   flex-direction: column;
-
   .header:first-child {
-    padding: 0 0 12px 0;
+    padding: 0 0 12px 4px;
     margin-bottom: 4px;
     border-bottom: solid 1px ${({ theme }) => theme.colors.dark18};
+  }
+`;
+
+export const ScrollableContent = styled.div`
+  height: 100vh;
+  max-height: calc(100vh - 505px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    margin: 4px 0;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: ${(props) => props.theme.colors.dark12};
+    opacity: 0.8;
+    box-sizing: border-box;
+    border: 1px solid ${(props) => props.theme.colors.text500};
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: ${(props) => props.theme.colors.dark15};
+    border: 1px solid ${(props) => props.theme.colors.text400};
   }
 `;
 
@@ -59,6 +88,52 @@ export const NoMoveFound = styled.div`
 export const RenderMoveContainer = styled(DataMoveGrid)`
   box-sizing: border-box;
   height: 48px;
-  padding: 0 4px 0 8px;
-  margin: 0 -4px 0 -8px;
+  padding: 0 4px 0 4px;
+  margin: 0 -4px 0 0;
+`;
+
+export const AddMoveContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+`;
+
+export const LastAddedMovesContainer = styled.div`
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  margin-top: 8px;
+
+  .last-added-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    padding-left: 4px;
+
+    color: ${({ theme }) => theme.colors.primaryBase};
+    ${({ theme }) => theme.fonts.normalRegular};
+  }
+
+  .last-added-header::after {
+    content: '';
+    flex: 1;
+    border-top: 1px solid ${({ theme }) => theme.colors.dark18};
+  }
+`;
+
+const highlightAnimation = keyframes`
+  0%, 50%, 100% {
+    background-color: transparent;
+  }
+  25%, 75% {
+    background-color: var(--highlight-color);
+  }
+`;
+
+export const HighlightWrapper = styled.div<{ shouldHighlight: boolean }>`
+  --highlight-color: ${({ theme }) => theme.colors.primaryBase};
+
+  border-radius: 8px;
+  animation: ${({ shouldHighlight }) => (shouldHighlight ? highlightAnimation : 'none')} 2s ease-in-out;
 `;

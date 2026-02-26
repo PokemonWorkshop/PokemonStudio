@@ -1,4 +1,4 @@
-import { Input, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
+import { Input, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, MultiLineInput, Toggle } from '@components/inputs';
 import { z } from 'zod';
 import { inputAttrs } from '@utils/inputAttrs';
 import React, { useMemo } from 'react';
@@ -67,6 +67,24 @@ export const useInputAttrsWithLabel = <T extends z.ZodRawShape>(schema: z.ZodObj
           <InputWithTopLabelContainer>
             <Label>{label}</Label>
             <EmbeddedUnitInput lang="en" {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />
+          </InputWithTopLabelContainer>
+        );
+      },
+      MultiLineInput: ({ name, schemaKey, label, labelLeft, ...props }: ReactPropsWithLabel<typeof Input>) => {
+        if (!label) return <MultiLineInput {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />;
+
+        if (labelLeft)
+          return (
+            <InputWithLeftLabelContainer>
+              <Label>{label}</Label>
+              <MultiLineInput {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />
+            </InputWithLeftLabelContainer>
+          );
+
+        return (
+          <InputWithTopLabelContainer>
+            <Label>{label}</Label>
+            <MultiLineInput {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />
           </InputWithTopLabelContainer>
         );
       },

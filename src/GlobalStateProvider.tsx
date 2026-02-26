@@ -33,6 +33,7 @@ import type { StudioMap } from '@modelEntities/map';
 import type { DbSymbol } from '@modelEntities/dbSymbol';
 import type { StudioMapInfo } from '@modelEntities/mapInfo';
 import type { StudioNature } from '@modelEntities/nature';
+import type { StudioEvent } from '@modelEntities/event/event';
 
 export interface ProjectData {
   items: {
@@ -73,6 +74,9 @@ export interface ProjectData {
   };
   natures: {
     [nature: string]: StudioNature;
+  };
+  events: {
+    [event: string]: StudioEvent;
   };
 }
 
@@ -128,6 +132,7 @@ export type SelectedDataIdentifier = {
   map: string;
   textInfo: number;
   nature: string;
+  event: string;
 };
 
 export interface State {
@@ -171,6 +176,7 @@ const initialState = {
     map: 'map001',
     textInfo: 0,
     nature: 'adamant',
+    event: 'event_0',
   },
   savingData: new SavingMap(),
   savingConfig: new SavingConfigMap(),

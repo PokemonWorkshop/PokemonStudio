@@ -3,11 +3,11 @@ import { Deletion } from '@components/deletion';
 import { useProjectMoves, useProjectPokemon } from '@hooks/useProjectData';
 import { ProjectData } from '@src/GlobalStateProvider';
 import { useTranslation } from 'react-i18next';
-import { MovepoolType } from './MovepoolEditor';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
 import { cloneEntity } from '@utils/cloneEntity';
 import { getMoveKlass } from './MovepoolTable';
 import { DbSymbol } from '@modelEntities/dbSymbol';
+import { MovepoolType } from '@pages/database/Pokemon.Movepool.page';
 
 type MovepoolDeletionProps = {
   type: MovepoolType;
