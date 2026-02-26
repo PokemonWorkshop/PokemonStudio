@@ -49,6 +49,10 @@ export const PageDataConstrainerStyle = styled.div`
   max-width: 1024px;
 `;
 
+export const PageMovepoolContainerStyle = styled(PageDataConstrainerStyle)`
+  width: 100%;
+`;
+
 export const PageResourceContainerStyle = styled(PageContainerStyle)`
   @media ${(props) => props.theme.breakpoints.smallScreen} {
     margin: 0;

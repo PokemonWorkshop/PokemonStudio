@@ -42,6 +42,12 @@ export const SelectElement = styled(Select)<SelectElementType>`
     box-sizing: border-box;
     border-radius: 8px;
     box-shadow: none;
+
+    @media ${({ theme }) => theme.breakpoints.dataBox422} {
+      min-width: 160px;
+      max-width: 240px;
+      width: 100%;
+    }
   }
 
   .react-select__control:hover {
