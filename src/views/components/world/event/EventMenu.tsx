@@ -8,12 +8,12 @@ import { NavigationDatabaseGroupStyle } from '@components/database/navigation/Na
 import { useDialogsRef } from '@hooks/useDialogsRef';
 import { SeparatorGreyLine } from '@components/separators/SeparatorGreyLine';
 import { DbSymbol } from '../../../../models/entities/dbSymbol';
-import { EVENT_NAME_TEXT_ID } from '../../../../models/entities/event/event';
 import { useSetProjectText } from '../../../../utils/ReadingProjectText';
 import { EventTree } from './EventTree';
 import { EventEditorAndDeletionKeys, EventTreeEditorOverlay } from './editors/EventEditorOverlay';
-import { createEvent } from '../../../../utils/entityCreation';
-import { useProjectEvents } from '../../../../hooks/useProjectData';
+import { useEventTree } from '../../../../hooks/useEventTree';
+import { EVENT_FOLDER_NAME_TEXT_ID } from '../../../../models/entities/event/event-tree';
+import { addNewEventTreeFolder } from '../../../../utils/events/EventUtils';
 
 const EventMenuContainer = styled(NavigationDatabaseStyle)`
   ${NavigationDatabaseGroupStyle} {
@@ -41,15 +41,24 @@ export const EventMenu = () => {
   const dialogsRef = useDialogsRef<EventEditorAndDeletionKeys>();
   const setText = useSetProjectText();
   const { t } = useTranslation();
-  const { projectDataValues: events, setProjectDataValues: setEvent } = useProjectEvents();
-  const eventIndex = Object.values(events).filter((e) => e.klass === 'EventFolder').length ?? 0;
+  const { eventTree, setEventTree } = useEventTree();
 
   const handleNewFolder = () => {
-    const dbSymbol = `event_folder_${eventIndex}` as DbSymbol;
-    const newEvent = createEvent(dbSymbol as DbSymbol, 1, 'EventFolder');
+    let index = 0;
+    while (eventTree[`event_folder_${index}`]) index++;
+    const dbSymbol = `event_folder_${index}` as DbSymbol;
+    const textId = index;
 
-    setText(EVENT_NAME_TEXT_ID, newEvent.id, t('new_folder'));
-    setEvent({ [dbSymbol]: { ...newEvent, klass: 'EventFolder' } }, { event: dbSymbol });
+    setText(EVENT_FOLDER_NAME_TEXT_ID, textId, t('new_folder'));
+    setEventTree(
+      addNewEventTreeFolder(eventTree, {
+        id: dbSymbol,
+        children: [],
+        hasChildren: false,
+        isExpanded: true,
+        data: { klass: 'EventFolder', dbSymbol, id: textId },
+      })
+    );
   };
 
   // TODO: Remove isDev condition once events tree is finished.
@@ -61,7 +70,7 @@ export const EventMenu = () => {
             <SecondaryButtonWithPlusIcon className="new" onClick={() => dialogsRef.current?.openDialog('new')} disabled={!window.api.isDev}>
               {t('new_event')}
             </SecondaryButtonWithPlusIcon>
-            <NewFolderButtonOnlyIcon onClick={handleNewFolder} data-tooltip={t('new_folder')} disabled={true || !window.api.isDev} />
+            <NewFolderButtonOnlyIcon onClick={handleNewFolder} data-tooltip={t('new_folder')} disabled={!window.api.isDev} />
           </div>
           <SeparatorGreyLine />
           <EventTree />

@@ -1,165 +1,131 @@
-import { DbSymbol } from '@modelEntities/dbSymbol';
-import { StudioMapInfo, StudioMapInfoFolder, StudioMapInfoMap, StudioMapInfoValue } from '@modelEntities/mapInfo';
-import { cloneEntity } from '../cloneEntity';
 import { StudioEvent } from '../../models/entities/event/event';
+import { StudioEventTree, StudioEventTreeFolder, StudioEventTreeValue } from '../../models/entities/event/event-tree';
+import { DbSymbol } from '../../models/entities/dbSymbol';
 import { ItemId, TreeData, TreeItem } from '../../views/components/tree';
+import { cloneEntity } from '../cloneEntity';
 
-const removeMapInfoChildren = (mapInfo: StudioMapInfo, id: number) => {
-  const values = Object.values(mapInfo);
-  const mapInfoValue = values.find((mi) => mi.children.includes(id));
-  if (!mapInfoValue) return;
+export const convertEventTreeToTree = (eventTree: StudioEventTree): TreeData => {
+  const items: Record<ItemId, TreeItem> = {};
 
-  mapInfoValue.children = mapInfoValue.children.filter((childId) => childId !== id);
-  mapInfoValue.hasChildren = mapInfoValue.children.length > 0;
+  Object.entries(eventTree).forEach(([key, treeValue]) => {
+    items[key === '0' ? 0 : key] = {
+      id: key === '0' ? 0 : key,
+      children: treeValue.children as string[],
+      hasChildren: (treeValue.children?.length ?? 0) > 0,
+      isExpanded: treeValue.isExpanded ?? true,
+      data: treeValue.data,
+    };
+  });
+
+  return { rootId: 0, items };
 };
 
-const getMapInfoChildrenId = (mapInfo: StudioMapInfo, mapInfoValue: StudioMapInfoValue): number[] => {
-  if (mapInfoValue.children.length === 0) return [];
+export const convertTreeToEventTree = (treeData: Record<string | number, TreeItem>): StudioEventTree => {
+  const result: StudioEventTree = {};
 
-  const children: number[] = [...mapInfoValue.children];
-  mapInfoValue.children.forEach((id) => {
-    children.push(...getMapInfoChildrenId(mapInfo, mapInfo[id.toString()]));
+  const traverse = (itemId: string | number) => {
+    const item = treeData[itemId];
+    if (!item) return;
+
+    const key = String(itemId);
+    result[key] = {
+      id: item.id as number | string,
+      children: item.children as string[],
+      hasChildren: (item.children?.length ?? 0) > 0,
+      isExpanded: item.isExpanded ?? false,
+      data: item.data,
+    } as StudioEventTreeValue;
+
+    item.children.forEach((childId) => traverse(childId));
+  };
+
+  traverse(0);
+  return result;
+};
+
+export const addNewEventToEventTree = (eventTree: StudioEventTree, dbSymbol: DbSymbol, eventId: number, parentDbSymbol?: DbSymbol): StudioEventTree => {
+  const cloned = cloneEntity(eventTree);
+  const parentKey = parentDbSymbol ?? '0';
+  const parent = cloned[parentKey];
+  if (!parent) return cloned;
+  (parent.children as string[]).push(dbSymbol);
+  parent.hasChildren = true;
+  if (parentDbSymbol) parent.isExpanded = true;
+  return {
+    ...cloned,
+    [parentKey]: parent,
+    [dbSymbol]: {
+      id: dbSymbol,
+      children: [],
+      hasChildren: false,
+      isExpanded: false,
+      data: { klass: 'Event', dbSymbol, id: eventId },
+    },
+  };
+};
+
+export const addNewEventTreeFolder = (eventTree: StudioEventTree, newFolder: StudioEventTreeFolder): StudioEventTree => {
+  const cloned = cloneEntity(eventTree);
+  const root = cloned['0'];
+  root.children.push(newFolder.data.dbSymbol);
+  root.hasChildren = true;
+  return {
+    ...cloned,
+    ['0']: root,
+    [newFolder.data.dbSymbol]: newFolder,
+  };
+};
+
+const removeEventTreeItemFromParent = (eventTree: StudioEventTree, dbSymbol: string) => {
+  const parent = Object.values(eventTree).find((item) => (item.children as string[]).includes(dbSymbol));
+  if (!parent) return;
+  parent.children = (parent.children as string[]).filter((id) => id !== dbSymbol) as typeof parent.children;
+  parent.hasChildren = parent.children.length > 0;
+};
+
+export const getEventTreeChildrenDbSymbols = (eventTree: StudioEventTree, item: StudioEventTreeValue): string[] => {
+  if (item.children.length === 0) return [];
+  const children = [...(item.children as string[])];
+  (item.children as string[]).forEach((childDbSymbol) => {
+    const child = eventTree[childDbSymbol];
+    if (child) children.push(...getEventTreeChildrenDbSymbols(eventTree, child));
   });
   return children;
 };
 
-export const findMapInfoMap = (mapInfo: StudioMapInfo, mapDbSymbol: DbSymbol): StudioMapInfoMap | undefined => {
-  const values = Object.values(mapInfo);
-  const mapInfoMap = values.find((mi) => mi.data.klass === 'MapInfoMap' && mi.data.mapDbSymbol === mapDbSymbol);
-  return mapInfoMap as StudioMapInfoMap | undefined;
+export const removeEventTreeItem = (eventTree: StudioEventTree, dbSymbol: string): StudioEventTree => {
+  const item = eventTree[dbSymbol];
+  if (!item) return eventTree;
+  const keysToRemove = [dbSymbol, ...getEventTreeChildrenDbSymbols(eventTree, item)];
+  const cloned = cloneEntity(eventTree);
+  keysToRemove.forEach((key) => delete cloned[key]);
+  removeEventTreeItemFromParent(cloned, dbSymbol);
+  return cloned;
 };
 
-export const mapInfoFindFirstAvailableId = (mapInfo: StudioMapInfo): number => {
-  const keys = Object.keys(mapInfo).map((key) => Number(key));
-  if (keys.length === 0) return 0;
-
-  const idSet = keys.sort((a, b) => a - b);
-  if (idSet[0] > 0) return 0;
-
-  const holeIndex = idSet.findIndex((id, index) => id !== index);
-  if (holeIndex === -1) return idSet[idSet.length - 1] + 1;
-
-  return idSet[holeIndex - 1] + 1;
-};
-
-export const mapInfoFindFirstAvailableTextId = (mapInfo: StudioMapInfo): number => {
-  if (Object.keys(mapInfo).length === 0) return 0;
-
-  const idSet = Object.values(mapInfo)
-    .filter((mi) => mi.data.klass === 'MapInfoFolder')
-    .map((folder) => (folder as StudioMapInfoFolder).data.textId)
-    .sort((a, b) => a - b);
-
-  if (idSet[0] === undefined || idSet[0] > 0) return 0;
-
-  const holeIndex = idSet.findIndex((id, index) => id !== index);
-  if (holeIndex === -1) return idSet[idSet.length - 1] + 1;
-
-  return idSet[holeIndex - 1] + 1;
-};
-
-export const mapInfoRemoveMap = (mapInfo: StudioMapInfo, mapDbSymbol: DbSymbol): StudioMapInfo => {
-  const mapInfoMap = findMapInfoMap(mapInfo, mapDbSymbol);
-  if (!mapInfoMap) return mapInfo;
-
-  const keys = [mapInfoMap.id, ...getMapInfoChildrenId(mapInfo, mapInfoMap)];
-  const mapInfoCloned = cloneEntity(mapInfo);
-  keys.forEach((key) => delete mapInfoCloned[key.toString()]);
-  removeMapInfoChildren(mapInfoCloned, mapInfoMap.id);
-  return mapInfoCloned;
-};
-
-export const mapInfoRemoveFolder = (mapInfo: StudioMapInfo, mapInfoFolder: StudioMapInfoFolder): StudioMapInfo => {
-  const mapInfoValue = mapInfo[mapInfoFolder.id.toString()];
-  if (!mapInfoValue) return mapInfo;
-
-  const keys = [mapInfoValue.id, ...getMapInfoChildrenId(mapInfo, mapInfoValue)];
-  const mapInfoCloned = cloneEntity(mapInfo);
-  keys.forEach((key) => delete mapInfoCloned[key.toString()]);
-  removeMapInfoChildren(mapInfoCloned, mapInfoValue.id);
-  return mapInfoCloned;
-};
-
-export const mapInfoDuplicateMap = (mapInfo: StudioMapInfo, originalMapDbSymbol: DbSymbol, newMapInfoMap: StudioMapInfoMap): StudioMapInfo => {
-  const mapInfoMap = findMapInfoMap(mapInfo, originalMapDbSymbol);
-  if (!mapInfoMap) return mapInfo;
-
-  const mapInfoWithChildren = Object.values(mapInfo).find((mi) => mi.children.includes(mapInfoMap.id));
-  if (!mapInfoWithChildren) return mapInfo;
-
-  const newMapInfo = addNewMapInfo(mapInfo, newMapInfoMap, true);
-  const index = mapInfoWithChildren.children.findIndex((id) => id === mapInfoMap.id);
-  newMapInfo[mapInfoWithChildren.id].children.splice(index + 1, 0, newMapInfoMap.id);
-  return newMapInfo;
-};
-
-export const mapInfoGetMapsFromMapInfoValue = (mapInfo: StudioMapInfo, mapInfoValue: StudioMapInfoValue): DbSymbol[] => {
-  const children = getMapInfoChildrenId(mapInfo, mapInfoValue);
-
-  return Object.values(mapInfo)
-    .filter((mi) => children.includes(mi.id) && mi.data.klass === 'MapInfoMap')
-    .map((mi) => (mi as StudioMapInfoMap).data.mapDbSymbol);
-};
-
-export const mapInfoGetMapsFromMapDbSymbol = (mapInfo: StudioMapInfo, mapDbSymbol: DbSymbol): DbSymbol[] => {
-  const mapInfoMap = findMapInfoMap(mapInfo, mapDbSymbol);
-  if (!mapInfoMap) return [];
-
-  return mapInfoGetMapsFromMapInfoValue(mapInfo, mapInfoMap);
-};
-
-export const mapInfoNewMapWithParent = (mapInfo: StudioMapInfo, parentId: number, newMapInfoMap: StudioMapInfoMap) => {
-  if (!mapInfo[parentId.toString()]) return mapInfo;
-
-  const newMapInfo = addNewMapInfo(mapInfo, newMapInfoMap, true);
-  const newMapInfoValue = newMapInfo[parentId.toString()];
-  newMapInfoValue.children.push(newMapInfoMap.id);
-  newMapInfoValue.hasChildren = true;
-  newMapInfoValue.isExpanded = true;
-
-  return newMapInfo;
-};
-
-export const addNewMapInfo = (mapInfo: StudioMapInfo, newMapInfo: StudioMapInfoValue, notRoot?: true) => {
-  const mapInfoCloned = cloneEntity(mapInfo);
-  if (notRoot) {
-    return {
-      ...mapInfoCloned,
-      [newMapInfo.id.toString()]: newMapInfo,
-    };
+export const convertEventToTree = (events: Record<string, StudioEvent>, eventTree: StudioEventTree | undefined): TreeData => {
+  // Si on a déjà un eventTree, on l'utilise directement
+  if (eventTree && Object.keys(eventTree).length > 1) {
+    return convertEventTreeToTree(eventTree);
   }
 
-  const root = mapInfoCloned['0'];
-  root.children.push(newMapInfo.id);
-  root.hasChildren = true;
-  return {
-    ...mapInfoCloned,
-    ['0']: root,
-    [newMapInfo.id.toString()]: newMapInfo,
-  };
-};
-
-export const convertEventToTree = (events: Record<string, StudioEvent>): TreeData => {
+  // Fallback : construction depuis events
   const items: Record<ItemId, TreeItem> = {
     0: {
       id: 0,
       children: Object.keys(events),
       hasChildren: Object.keys(events).length > 0,
       isExpanded: true,
-      data: {
-        klass: 'EventRoot',
-      },
+      data: { klass: 'EventRoot' },
     },
   };
 
   Object.entries(events).forEach(([dbSymbol, event]) => {
-    // Use EventFolder in klass and make a loop to bring event inside
-    // Nœud event
     items[dbSymbol] = {
       id: dbSymbol,
       hasChildren: false,
       isExpanded: false,
-      data: event,
+      data: { klass: 'Event', dbSymbol, id: event.id },
       children: [],
     };
   });

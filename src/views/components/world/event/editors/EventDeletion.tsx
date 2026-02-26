@@ -1,8 +1,10 @@
 import { Deletion } from '@components/deletion';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { DbSymbol } from '@modelEntities/dbSymbol';
-import { useGetEntityNameText } from '@utils/ReadingProjectText';
+import { useGetEntityNameText, useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
 import { useProjectEvents } from '@hooks/useProjectData';
+import { useEventTree } from '@hooks/useEventTree';
+import { getEventTreeChildrenDbSymbols, removeEventTreeItem } from '@utils/events/EventUtils';
 import React, { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -12,22 +14,42 @@ type EventDeletionProps = {
 };
 
 /**
- * Component responsive of asking the user if they really want to delete the map before doing so.
+ * Component responsible for asking the user if they really want to delete the event or folder before doing so.
  */
 export const EventDeletion = forwardRef<EditorHandlingClose, EventDeletionProps>(({ closeDialog, dbSymbol }, ref) => {
   const { t } = useTranslation();
   const { projectDataValues: events, selectedDataIdentifier: currentDbSymbol, removeProjectDataValue: deleteEvent } = useProjectEvents();
-  const currentEvent = events[dbSymbol || currentDbSymbol];
+  const { eventTree, setEventTree } = useEventTree();
   const getEventName = useGetEntityNameText();
-  const eventName = getEventName({ klass: 'Event', id: currentEvent?.id });
+  const getFolderName = useGetEntityNameTextUsingTextId();
+
+  const eventTreeItem = eventTree[dbSymbol || currentDbSymbol];
+  const isFolder = eventTreeItem?.data.klass === 'EventFolder';
+
+  const entityName = isFolder
+    ? getFolderName({ klass: 'EventFolder', textId: (eventTreeItem.data as { klass: 'EventFolder'; dbSymbol: DbSymbol; id: number }).id })
+    : getEventName({ klass: 'Event', id: events[dbSymbol || currentDbSymbol]?.id });
 
   const onClickDelete = () => {
     if (!dbSymbol) return;
-    const firstDbSymbol = Object.entries(events)
-      .map(([value, event]) => ({ value, index: event.id }))
-      .filter((d) => d.value !== dbSymbol)
-      .sort((a, b) => a.index - b.index)[0].value;
-    deleteEvent(dbSymbol, { event: firstDbSymbol });
+
+    if (isFolder) {
+      const childDbSymbols = getEventTreeChildrenDbSymbols(eventTree, eventTreeItem);
+      const fallbackDbSymbol = Object.keys(events).find((k) => !childDbSymbols.includes(k)) as DbSymbol | undefined;
+      childDbSymbols.forEach((childDbSymbol) => {
+        if (events[childDbSymbol] && fallbackDbSymbol) {
+          deleteEvent(childDbSymbol as DbSymbol, { event: fallbackDbSymbol });
+        }
+      });
+    } else {
+      const firstDbSymbol = Object.entries(events)
+        .map(([value, event]) => ({ value, index: event.id }))
+        .filter((d) => d.value !== dbSymbol)
+        .sort((a, b) => a.index - b.index)[0]?.value as DbSymbol | undefined;
+      if (firstDbSymbol) deleteEvent(dbSymbol, { event: firstDbSymbol });
+    }
+
+    setEventTree(removeEventTreeItem(eventTree, dbSymbol));
     closeDialog();
   };
 
@@ -35,8 +57,8 @@ export const EventDeletion = forwardRef<EditorHandlingClose, EventDeletionProps>
 
   return (
     <Deletion
-      title={t('deletion_of_event', { event: eventName })}
-      message={t('deletion_message_event', { event: eventName })}
+      title={isFolder ? t('deletion_of_folder', { folder: entityName }) : t('deletion_of_event', { event: entityName })}
+      message={isFolder ? t('deletion_message_folder', { folder: entityName }) : t('deletion_message_event', { event: entityName })}
       onClickDelete={onClickDelete}
       onClose={closeDialog}
     />

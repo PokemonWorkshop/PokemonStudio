@@ -2,8 +2,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import DeleteIcon from '@assets/icons/global/delete-icon.svg';
 import EditIcon from '@assets/icons/global/edit-icon.svg';
-import { StudioEventTreeValue } from '../../../../../models/entities/event/event';
 import { EventDialogsRef } from '../editors/EventEditorOverlay';
+import { StudioEventTreeValue } from '../../../../../models/entities/event/event-tree';
 
 type EventTreeContextMenuProps = {
   eventValue: StudioEventTreeValue;
@@ -15,12 +15,11 @@ type EventTreeContextMenuProps = {
 export const EventTreeContextMenu = ({ eventValue: eventValue, isDeleted, enableRename, dialogsRef }: EventTreeContextMenuProps) => {
   const { t } = useTranslation();
 
-  const isFolder = eventValue.data.klass === 'EventFolder';
+  const isFolder = eventValue.data?.klass === 'EventFolder';
 
   const onClickDelete = () => {
     if (isFolder) {
       dialogsRef?.current?.openDialog('deletion_folder', true);
-      return;
     } else {
       dialogsRef?.current?.openDialog('deletion_event', true);
     }

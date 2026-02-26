@@ -615,11 +615,11 @@ export const createNature = (allNatures: ProjectData['natures'], dbSymbol: DbSym
   };
 };
 
-export const createEvent = (dbSymbol: DbSymbol, id: number, klass?: 'Event' | 'EventFolder'): StudioEvent => {
+export const createEvent = (dbSymbol: DbSymbol, id: number): StudioEvent => {
   return {
     dbSymbol,
     id,
-    klass: klass ? klass : 'Event',
+    klass: 'Event',
     type: 'custom',
     triggers: [],
     commands: {} as Record<CommandId, StudioEventCommand>,

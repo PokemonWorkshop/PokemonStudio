@@ -117,20 +117,10 @@ export type MapEventLink = z.infer<typeof MAP_EVENT_LINK_VALIDATOR>;
 
 export const EVENT_VALIDATOR = z.intersection(
   z.object({
-    klass: z.enum(['Event', 'EventFolder']),
+    klass: z.literal('Event'),
   }),
   CUSTOM_EVENT_VALIDATOR,
 );
 export type StudioEvent = z.infer<typeof EVENT_VALIDATOR>;
 
 export const EVENT_NAME_TEXT_ID = 200005;
-export const EVENT_FOLDER_NAME_TEXT_ID = 200006;
-
-export type StudioEventTreeItemData =
-  | { klass: 'EventRoot' }
-  | { klass: 'EventFolder'; dbSymbol: string }
-  | { klass: 'Event'; dbSymbol: string; commandId: string };
-
-export type StudioEventTreeValue = TreeItem & {
-  data?: StudioEventTreeItemData;
-};

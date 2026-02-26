@@ -12,6 +12,8 @@ import { TooltipWrapper } from '@ds/Tooltip';
 import { InputFormContainer } from '@components/inputs/InputContainer';
 import { EVENT_NAME_TEXT_ID } from '../../../../../models/entities/event/event';
 import { createEvent } from '../../../../../utils/entityCreation';
+import { useEventTree } from '@hooks/useEventTree';
+import { addNewEventToEventTree } from '@utils/events/EventUtils';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -26,6 +28,7 @@ type EventNewEditorProps = {
 
 export const EventNewEditor = forwardRef<EditorHandlingClose, EventNewEditorProps>(({ closeDialog }, ref) => {
   const { projectDataValues: events, setProjectDataValues: setEvent } = useProjectEvents();
+  const { eventTree, setEventTree } = useEventTree();
   const { t } = useTranslation();
   const setText = useSetProjectText();
   const eventIndex = Object.keys(events).length ?? 0;
@@ -40,6 +43,7 @@ export const EventNewEditor = forwardRef<EditorHandlingClose, EventNewEditorProp
     const newEvent = createEvent(dbSymbol, eventIndex);
     setText(EVENT_NAME_TEXT_ID, newEvent.id, name);
     setEvent({ [dbSymbol]: { ...newEvent, klass: 'Event' } }, { event: dbSymbol });
+    setEventTree(addNewEventToEventTree(eventTree, dbSymbol, eventIndex));
     closeDialog();
   };
 

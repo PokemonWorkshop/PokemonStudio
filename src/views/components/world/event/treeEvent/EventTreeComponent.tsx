@@ -14,42 +14,26 @@ import FolderOpenIcon from '@assets/icons/global/folder_open.svg';
 import LeftIcon from '@assets/icons/global/left-icon.svg';
 import PlusIcon from '@assets/icons/global/plus-icon.svg';
 import { useProjectEvents } from '@hooks/useProjectData';
-import { useGetEntityNameText, useSetProjectText } from '@utils/ReadingProjectText';
+import { useGetEntityNameText, useGetEntityNameTextUsingTextId, useSetProjectText } from '@utils/ReadingProjectText';
 import { useTranslation } from 'react-i18next';
 import { Input } from '@components/inputs';
 import { useContextMenu } from '@hooks/useContextMenu';
 import { useDialogsRef } from '@hooks/useDialogsRef';
 import { EventTreeContextMenu } from './EventTreeContextMenu';
-import { convertEventToTree } from '@utils/events/EventUtils';
+import { convertEventToTree, convertTreeToEventTree } from '@utils/events/EventUtils';
+import { useEventTree } from '@hooks/useEventTree';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { MapListContainer, TreeItemContainer } from '../../map/tree/style';
-import { EVENT_NAME_TEXT_ID, StudioEvent, StudioEventTreeValue } from '../../../../../models/entities/event/event';
+import { EVENT_NAME_TEXT_ID } from '../../../../../models/entities/event/event';
+import { EVENT_FOLDER_NAME_TEXT_ID } from '../../../../../models/entities/event/event-tree';
 import { EventEditorAndDeletionKeys, EventTreeEditorOverlay } from '../editors/EventEditorOverlay';
 import { searchIsUnderOpenFolder } from '../../../tree/Tree/Tree-utils';
 import DotIcon from '@assets/icons/global/dot.svg';
 import { getMapTreeCountChildren, getTreeDestinationDepth, getTreeSourceDepth, renderDropBox } from '../../../../../utils/MapTreeUtils';
+import { StudioEventTreeItem, StudioEventTreeValue } from '../../../../../models/entities/event/event-tree';
 
 type EventTreeComponentProps = {
   treeScrollbarRef: RefObject<HTMLDivElement>;
-};
-
-const convertTreeToEvents = (treeData: Record<string | number, TreeItem>) => {
-  const result: Record<string, StudioEvent> = {};
-
-  const traverse = (itemId: string | number) => {
-    const item = treeData[itemId];
-    if (!item) return;
-
-    if (item.data?.klass === 'Event') {
-      result[item.data.dbSymbol] = item.data;
-    }
-
-    item.children.forEach((childId) => traverse(childId));
-  };
-
-  traverse(0);
-
-  return result;
 };
 
 export const EventTreeComponent = ({ treeScrollbarRef }: EventTreeComponentProps) => {
@@ -57,29 +41,36 @@ export const EventTreeComponent = ({ treeScrollbarRef }: EventTreeComponentProps
     selectedDataIdentifier: currentEvent,
     setSelectedDataIdentifier: setEvent,
     projectDataValues: events,
-    setProjectDataValues: setAllEvents,
   } = useProjectEvents();
+  const { eventTree, setEventTree } = useEventTree();
   const setText = useSetProjectText();
   const getEventName = useGetEntityNameText();
+  const getFolderName = useGetEntityNameTextUsingTextId();
   const navigate = useNavigate();
   const location = useLocation();
   const { buildOnClick, renderContextMenu } = useContextMenu();
   const { t } = useTranslation();
-  const [tree, setTree] = useState<TreeData>(convertEventToTree(events));
+  const [tree, setTree] = useState<TreeData>(convertEventToTree(events, eventTree));
+
   const [canRename, setCanRename] = useState<ItemId>();
   const [eventSelected, setEventSelected] = useState<StudioEventTreeValue>();
   const [shouldScroll, setShouldScroll] = useState<boolean>(false);
   const treeRef = useRef<Tree>(null);
   const renameRef = useRef<HTMLInputElement>(null);
+  const isDraggingRef = useRef(false);
   const dialogsRef = useDialogsRef<EventEditorAndDeletionKeys>();
 
   useEffect(() => {
-    if (tree.items[0] && Object.keys(events).length > tree.items[0].children.length) {
+    if (isDraggingRef.current) {
+      isDraggingRef.current = false;
+      return;
+    }
+    if (eventTree && Object.keys(eventTree).length > Object.keys(tree.items).length) {
       setShouldScroll(true);
     }
-    setTree(convertEventToTree(events));
+    setTree(convertEventToTree(events, eventTree));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [events]);
+  }, [eventTree]);
 
   useEffect(() => {
     if (shouldScroll && treeScrollbarRef.current) {
@@ -145,19 +136,23 @@ export const EventTreeComponent = ({ treeScrollbarRef }: EventTreeComponentProps
   const getName = (item: TreeItem) => {
     if (!item.id) return '';
 
-    if (typeof item.data.id === 'number') {
+    if (item.data?.klass === 'EventFolder') {
+      return getFolderName({ klass: 'EventFolder', textId: item.data.id });
+    }
+
+    if (typeof item.data?.id === 'number') {
       return getEventName({ klass: 'Event', id: item.data.id });
     }
 
-    return item.data.id;
+    return String(item.data?.id ?? '');
   };
 
   const renderItem = ({ item, onExpand, onCollapse, provided, snapshot }: RenderItemParams) => {
     const isEvent = item.data?.klass === 'Event';
     const isFolder = item.data?.klass === 'EventFolder';
 
-    const countChildren = isEvent ? getMapTreeCountChildren(tree, item) : undefined;
-    const isDeleted = item.data.klass === 'MapInfoMap' && !events[item.data.mapDbSymbol];
+    const countChildren = isFolder ? getMapTreeCountChildren(tree, item) : undefined;
+    const isDeleted = item.data.klass === 'Event' && !events[item.data.dbSymbol];
     const isUnderOpenFolder = searchIsUnderOpenFolder(tree, item, 'EventFolder');
 
     renderDropBox(snapshot.combineWith, treeRef);
@@ -168,6 +163,8 @@ export const EventTreeComponent = ({ treeScrollbarRef }: EventTreeComponentProps
 
       if (isEvent) {
         setText(EVENT_NAME_TEXT_ID, item.data.id, value);
+      } else if (isFolder) {
+        setText(EVENT_FOLDER_NAME_TEXT_ID, item.data.id, value);
       }
       setCanRename(undefined);
     };
@@ -176,7 +173,7 @@ export const EventTreeComponent = ({ treeScrollbarRef }: EventTreeComponentProps
       event.preventDefault();
       event.stopPropagation();
 
-      setEventSelected(item);
+      setEventSelected(item as unknown as StudioEventTreeValue);
       // timeout to wait that the mapinfo selected has been taken into account
       setTimeout(() => buildOnClick(event, true));
     };
@@ -227,12 +224,12 @@ export const EventTreeComponent = ({ treeScrollbarRef }: EventTreeComponentProps
               <span className="icon icon-dot" onClick={openMenu}>
                 <DotIcon />
               </span>
-              {!isDeleted && eventSelected?.data.klass === 'EventFolder' && (
+              {!isDeleted && eventSelected?.data?.klass === 'EventFolder' && (
                 <span
                   className="icon icon-plus"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setEventSelected(tree.items[item.id]);
+                    setEventSelected(tree.items[item.id] as unknown as StudioEventTreeValue);
                     dialogsRef.current?.openDialog('new');
                   }}
                 >
@@ -253,33 +250,25 @@ export const EventTreeComponent = ({ treeScrollbarRef }: EventTreeComponentProps
     const currentItem = tree.items[tree.items[source.parentId].children[source.index]];
     if (currentItem.data?.klass === 'EventFolder' && destination.parentId !== 0) return;
 
-    // We can only drop a event if the depth < 1
-    const destinationDepth = getTreeDestinationDepth(tree, destination);
-    const sourceDepth = getTreeSourceDepth(tree, currentItem);
+    const destinationParent = tree.items[destination.parentId];
+    if (destinationParent && destinationParent.data?.klass === 'Event') return;
 
-    if (destinationDepth + sourceDepth > 2) return;
+    // Folders are already root-only (checked above), skip depth check for them
+    if (currentItem.data?.klass !== 'EventFolder') {
+      const destinationDepth = getTreeDestinationDepth(tree, destination);
+      const sourceDepth = getTreeSourceDepth(tree, currentItem);
+      if (destinationDepth + sourceDepth > 2) return;
+    }
 
     const newTree = moveItemOnTree(tree, source, destination);
 
-    // Update parentId in the item dropped
     if (destination.parentId !== undefined) {
-      const parent = newTree.items[destination.parentId];
-      // If the index doesn't exist, the item is drop at the end of the list, so it is the last children
-      const index = destination.index === undefined ? parent.children.length - 1 : destination.index;
-      const childId = parent.children[index];
-      const treeItem = newTree.items[childId];
-      if (treeItem.data?.klass === 'MapInfoMap') {
-        treeItem.data.parentId = Number(destination.parentId);
-      }
-      parent.isExpanded = true;
+      newTree.items[destination.parentId].isExpanded = true;
     }
 
+    isDraggingRef.current = true;
     setTree(newTree);
-    // console.log('save order', newTree.items, events, convertTreeToEvents(newTree.items));
-
-    // const ev = newTree.items as unknown as StudioEvent;
-    // setEvent({ event: ev });
-    setAllEvents(convertTreeToEvents(newTree.items));
+    setEventTree(convertTreeToEventTree(newTree.items));
   };
 
   // Check if there are no maps in the tree (only root folder exists)
@@ -298,8 +287,7 @@ export const EventTreeComponent = ({ treeScrollbarRef }: EventTreeComponentProps
           onCollapse={onCollapse}
           onDragEnd={onDragEnd}
           offsetPerLevel={26}
-          // TODO: Drag
-          isDragEnabled={false}
+          isDragEnabled={true}
           isNestingEnabled
         />
       )}
@@ -307,7 +295,7 @@ export const EventTreeComponent = ({ treeScrollbarRef }: EventTreeComponentProps
         renderContextMenu(
           <EventTreeContextMenu
             eventValue={eventSelected}
-            isDeleted={eventSelected.data.klass === 'Event' && !events[eventSelected.data.dbSymbol]}
+            isDeleted={eventSelected.data?.klass === 'Event' && !events[eventSelected.data?.dbSymbol]}
             enableRename={() => setCanRename(eventSelected.id)}
             dialogsRef={dialogsRef}
           />,

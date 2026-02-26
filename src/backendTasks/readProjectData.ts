@@ -8,6 +8,8 @@ import { StudioTextInfo } from '@modelEntities/textInfo';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import { ChannelNames, sendProgress } from '@utils/BackendTask';
 import { StudioMapInfo } from '@modelEntities/mapInfo';
+import { DEFAULT_EVENT_TREE } from '@modelEntities/event/event-tree';
+import type { StudioEventTree } from '@modelEntities/event/event-tree';
 import { setLoadedMaps } from './studioMapToRMXPConversionFacilitator';
 import { parseJSON } from '@utils/json/parse';
 
@@ -30,7 +32,11 @@ const projectDataKeys = [
 ] as const;
 type ProjectDataFromBackEndKey = (typeof projectDataKeys)[number];
 export type FilenameWithData = { filename: string; data: string };
-export type ProjectDataFromBackEnd = Record<ProjectDataFromBackEndKey, FilenameWithData[]> & { textInfos: StudioTextInfo[]; mapInfo: StudioMapInfo };
+export type ProjectDataFromBackEnd = Record<ProjectDataFromBackEndKey, FilenameWithData[]> & {
+  textInfos: StudioTextInfo[];
+  mapInfo: StudioMapInfo;
+  eventTree: StudioEventTree;
+};
 
 export const readProjectFolder = async (projectPath: string, key: ProjectDataFromBackEndKey): Promise<FilenameWithData[]> => {
   const folderName = path.join(projectPath, 'Data/Studio', key);
@@ -74,6 +80,13 @@ const readProjectData = async (payload: ReadProjectDataInput, event: IpcMainEven
   const textInfos: StudioTextInfo[] = parseJSON(textInfosJson, 'text_info.json');
   const mapInfoJson = await fsPromises.readFile(path.join(payload.path, 'Data/Studio', 'map_info.json'), { encoding: 'utf-8' });
   const mapInfo: StudioMapInfo = parseJSON(mapInfoJson, 'map_info.json');
+  let eventTree: StudioEventTree = DEFAULT_EVENT_TREE;
+  try {
+    const eventTreeJson = await fsPromises.readFile(path.join(payload.path, 'Data/Studio', 'event_tree.json'), { encoding: 'utf-8' });
+    eventTree = parseJSON(eventTreeJson, 'event_tree.json');
+  } catch {
+    // File doesn't exist yet (new feature), keep DEFAULT_EVENT_TREE
+  }
   const projectData = await projectDataKeys.reduce(
     async (prev, curr, index) => {
       const prevData = await prev;
@@ -82,7 +95,7 @@ const readProjectData = async (payload: ReadProjectDataInput, event: IpcMainEven
       const filenameData = await readProjectFolder(payload.path, curr);
       return { ...prevData, [curr]: filenameData };
     },
-    Promise.resolve({ textInfos, mapInfo } as ProjectDataFromBackEnd),
+    Promise.resolve({ textInfos, mapInfo, eventTree } as ProjectDataFromBackEnd),
   );
 
   // Store the loaded maps so the converter will know which maps changed
