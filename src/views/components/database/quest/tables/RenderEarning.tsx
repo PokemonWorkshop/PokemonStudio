@@ -99,7 +99,7 @@ export const RenderEarning = ({ earning, onClickEdit, onClickDelete }: RenderEar
       <span onClick={isClickable ? () => shortcutToTheRightPlace() : undefined} className={isClickable ? 'clickable' : undefined}>
         {earningText}
       </span>
-      <EarningCategory category={categoryEarning[earning.earningMethodName]}>{t(categoryEarning[earning.earningMethodName])}</EarningCategory>
+      <EarningCategory category={categoryEarning[earning.earningMethodName]}>{t(earning.earningMethodName)}</EarningCategory>
       <div className="buttons">
         <EditButtonOnlyIcon size="s" color={theme.colors.primaryBase} onClick={onClickEdit} />
         <DeleteButtonOnlyIcon size="s" onClick={onClickDelete} />
