@@ -26,7 +26,7 @@ export const QuestGoalObtainItem = ({ objective, refs, checkIsValid }: QuestGoal
         />
       </InputWithLeftLabelContainer>
       <InputWithLeftLabelContainer>
-        <Label htmlFor="hidden-by-default">{t('database_quests:hidden_default')}</Label>
+        <Label htmlFor="hidden-by-default">{t('hidden_default')}</Label>
         <Toggle
           ref={refs.hiddenByDefaultRef}
           name="hidden-by-default"
