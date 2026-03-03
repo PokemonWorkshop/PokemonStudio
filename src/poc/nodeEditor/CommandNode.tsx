@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { EventDialogsRef } from './EventEditorOverlay';
 import { EventIcon, IconsFromCommand } from '@components/event/EventIcon';
 import { Handle, Position } from '@xyflow/react';
+import { useHandleConnectionState } from './useHandleConnectionState';
 import PlusIcon from '@assets/icons/global/plus-icon.svg';
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
@@ -118,6 +119,47 @@ const CustomHandleContainer = styled.div<CustomHandleContainerProps>`
     cursor: pointer;
   }
 
+  &[data-connected='true'] {
+    .react-flow__handle {
+      display: flex;
+      background: none;
+      width: 8px;
+      height: 8px;
+      border: 1px solid #383a40;
+      box-shadow: none;
+      align-items: center;
+      justify-content: center;
+
+      .point {
+        display: block;
+        width: 6px;
+        height: 6px;
+      }
+    }
+
+    .react-flow__handle.connectionindicator:hover {
+      display: flex;
+      box-sizing: unset;
+      background: none;
+      width: 8px;
+      height: 8px;
+      border: 2px solid #383a40;
+      box-shadow: none;
+      align-items: center;
+      justify-content: center;
+
+      .point {
+        display: block;
+        width: 6px;
+        height: 6px;
+      }
+
+      .icon {
+        display: none;
+      }
+    }
+  }
+
   .react-flow__handle.connectionindicator:hover {
     display: flex;
     box-sizing: border-box;
@@ -187,13 +229,14 @@ type CommandNodeProps = {
 
 export const CommandNode = ({ commandType, commentCount, dialogsRef, hasError, nodeId, selected, children }: CommandNodeProps) => {
   const { setCurrentEditedNode } = useEventContext();
+  const { handleLeftIsConnected, handleRightIsConnected } = useHandleConnectionState(nodeId);
   const { t } = useTranslation();
   const deployFooter = hasError || commentCount > 0;
   const color = IconsFromCommand[commandType].color;
 
   return (
     <>
-      <CustomHandleContainer position="left" data-color={color}>
+      <CustomHandleContainer position="left" data-color={color} data-connected={handleLeftIsConnected}>
         <Handle type="target" position={Position.Left} id="Tleft_default">
           <span className="icon">
             <PlusIcon />
@@ -201,7 +244,7 @@ export const CommandNode = ({ commandType, commentCount, dialogsRef, hasError, n
           <span className="point" />
         </Handle>
       </CustomHandleContainer>
-      <CustomHandleContainer position="right" data-color={color}>
+      <CustomHandleContainer position="right" data-color={color} data-connected={handleRightIsConnected}>
         <Handle type="source" position={Position.Right} id="Sright_default">
           <span className="icon">
             <PlusIcon />
