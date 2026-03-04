@@ -31,13 +31,13 @@ export const EventNewEditor = forwardRef<EditorHandlingClose, EventNewEditorProp
   const { eventTree, setEventTree } = useEventTree();
   const { t } = useTranslation();
   const setText = useSetProjectText();
-  const eventIndex = Object.keys(events).length ?? 0;
   const [name, setName] = useState(``); // We use a state because synchronizing dbSymbol is easier with a state
 
   useEditorHandlingClose(ref);
 
   const onClickNew = () => {
     if (!name) return;
+    const eventIndex = Object.keys(events).length + 1;
 
     const dbSymbol = `event_${eventIndex}` as DbSymbol;
     const newEvent = createEvent(dbSymbol, eventIndex);
