@@ -30,7 +30,7 @@ import { EventEditorAndDeletionKeys, EventTreeEditorOverlay } from '../editors/E
 import { searchIsUnderOpenFolder } from '../../../tree/Tree/Tree-utils';
 import DotIcon from '@assets/icons/global/dot.svg';
 import { getMapTreeCountChildren, getTreeDestinationDepth, getTreeSourceDepth, renderDropBox } from '../../../../../utils/MapTreeUtils';
-import { StudioEventTreeItem, StudioEventTreeValue } from '../../../../../models/entities/event/event-tree';
+import { StudioEventTreeValue } from '../../../../../models/entities/event/event-tree';
 
 type EventTreeComponentProps = {
   treeScrollbarRef: RefObject<HTMLDivElement>;
@@ -185,7 +185,7 @@ export const EventTreeComponent = ({ treeScrollbarRef }: EventTreeComponentProps
           hasChildren={!!countChildren}
           disableHover={!!canRename}
           isUnderOpenFolder={isUnderOpenFolder}
-          className={currentEvent === item.data.dbSymbol ? 'map-selected' : 'map'}
+          className={currentEvent === item.data.dbSymbol ? 'item-selected' : 'map'}
           onClick={() => {
             if (item.id !== canRename) {
               renameRef.current?.blur();
@@ -198,6 +198,7 @@ export const EventTreeComponent = ({ treeScrollbarRef }: EventTreeComponentProps
             if (!targetEvent?.id && location.pathname === '/events/overview') {
               return navigate('/event');
             }
+            // TODO: Replace when navigated with the event POC
             if (location.pathname !== '/world/events' && location.pathname !== '/world/overview') navigate('/world/events');
           }}
           onContextMenu={openMenu}
@@ -212,7 +213,7 @@ export const EventTreeComponent = ({ treeScrollbarRef }: EventTreeComponentProps
                 placeholder={getName(item)}
                 onBlur={handleRename}
                 onKeyDown={(event) => event.key === 'Enter' && renameRef.current?.blur()}
-                className={isFolder ? 'input-folder' : 'input-map'}
+                className={isFolder ? 'input-tree-folder' : 'input-tree'}
               />
             ) : (
               <span className={`name ${isDeleted ? 'error' : ''}`}>{getName(item)}</span>
@@ -277,7 +278,7 @@ export const EventTreeComponent = ({ treeScrollbarRef }: EventTreeComponentProps
   return (
     <MapListContainer>
       {hasNoEvent ? (
-        <div className="no-maps">{t('no_event_found')}</div>
+        <div className="no-item-tree">{t('no_event_found')}</div>
       ) : (
         <Tree
           ref={treeRef}

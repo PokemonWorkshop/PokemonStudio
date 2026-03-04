@@ -32,8 +32,8 @@ export const EventFolderDeletion = forwardRef<EditorHandlingClose, EventFolderDe
     const childDbSymbols = getEventTreeChildrenDbSymbols(eventTree, folderTreeItem);
     const fallbackDbSymbol = Object.keys(events).find((k) => !childDbSymbols.includes(k)) as DbSymbol | undefined;
     childDbSymbols.forEach((childDbSymbol) => {
-      if (events[childDbSymbol] && fallbackDbSymbol) {
-        deleteEvent(childDbSymbol as DbSymbol, { event: fallbackDbSymbol });
+      if (events[childDbSymbol]) {
+        deleteEvent(childDbSymbol as DbSymbol, { event: fallbackDbSymbol ?? ('__undef__' as DbSymbol) });
       }
     });
 

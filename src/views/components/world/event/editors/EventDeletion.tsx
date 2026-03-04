@@ -46,7 +46,7 @@ export const EventDeletion = forwardRef<EditorHandlingClose, EventDeletionProps>
         .map(([value, event]) => ({ value, index: event.id }))
         .filter((d) => d.value !== dbSymbol)
         .sort((a, b) => a.index - b.index)[0]?.value as DbSymbol | undefined;
-      if (firstDbSymbol) deleteEvent(dbSymbol, { event: firstDbSymbol });
+      deleteEvent(dbSymbol, { event: firstDbSymbol ?? ('__undef__' as DbSymbol) });
     }
 
     setEventTree(removeEventTreeItem(eventTree, dbSymbol));

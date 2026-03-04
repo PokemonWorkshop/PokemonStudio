@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const MapListContainer = styled.div`
+export const TreeListContainer = styled.div`
   height: calc(100vh - 291px);
   max-width: 320px;
 
@@ -9,14 +9,14 @@ export const MapListContainer = styled.div`
   gap: 4px;
   padding-right: 3px;
 
-  .map,
-  .map-selected {
+  .item-tree,
+  .item-selected {
     :hover {
       background-color: ${({ theme }) => theme.colors.dark20};
     }
   }
 
-  .map-selected {
+  .item-selected {
     background-color: ${({ theme }) => theme.colors.dark20};
     :hover {
       background-color: ${({ theme }) => theme.colors.dark20};
@@ -41,10 +41,10 @@ export const MapListContainer = styled.div`
       background-color: ${({ theme }) => theme.colors.dark15};
       border-color: ${({ theme }) => theme.colors.text400};
     }
-    .no-maps {
-      ${({ theme }) => theme.fonts.normalRegular}
-      color: ${({ theme }) => theme.colors.text400};
-      padding: 9.5px 15px;
-    }
+  }
+  .no-item-tree {
+    ${({ theme }) => theme.fonts.normalRegular}
+    color: ${({ theme }) => theme.colors.text400};
+    padding: 9.5px 15px;
   }
 `;

@@ -187,7 +187,7 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
           hasChildren={!!countChildren}
           disableHover={!!canRename}
           isUnderOpenFolder={isUnderOpenFolder}
-          className={currentMap === item.data.mapDbSymbol ? 'map-selected' : 'map'}
+          className={currentMap === item.data.mapDbSymbol ? 'item-selected' : 'item-tree'}
           onClick={() => {
             if (item.id !== canRename) {
               renameRef.current?.blur();
@@ -214,7 +214,7 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
                 placeholder={getName(item)}
                 onBlur={handleRename}
                 onKeyDown={(event) => event.key === 'Enter' && renameRef.current?.blur()}
-                className={isFolder ? 'input-folder' : 'input-map'}
+                className={isFolder ? 'input-tree-folder' : 'input-tree'}
               />
             ) : (
               <span className={`name ${isDeleted ? 'error' : ''}`}>{getName(item)}</span>
@@ -284,7 +284,7 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
   return (
     <MapListContainer>
       {hasNoMaps ? (
-        <div className="no-maps">{t('no_map_found')}</div>
+        <div className="no-item-tree">{t('no_map_found')}</div>
       ) : (
         <Tree
           ref={treeRef}
