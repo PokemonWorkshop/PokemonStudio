@@ -87,7 +87,7 @@ const CustomHandleContainer = styled.div<CustomHandleContainerProps>`
   width: 8px;
   height: 8px;
   top: 16px;
-  left: ${({ position }) => (position === 'left' ? '-9px' : '320px')};
+  left: ${({ position }) => (position === 'left' ? '-9px' : '321px')};
 
   .icon {
     position: relative;
@@ -237,7 +237,7 @@ export const CommandNode = ({ commandType, commentCount, dialogsRef, hasError, n
   return (
     <>
       <CustomHandleContainer position="left" data-color={color} data-connected={handleLeftIsConnected}>
-        <Handle type="target" position={Position.Left} id="Tleft_default">
+        <Handle type="target" position={Position.Left} id="Tleft_default" isConnectable={!handleLeftIsConnected}>
           <span className="icon">
             <PlusIcon />
           </span>
@@ -245,7 +245,7 @@ export const CommandNode = ({ commandType, commentCount, dialogsRef, hasError, n
         </Handle>
       </CustomHandleContainer>
       <CustomHandleContainer position="right" data-color={color} data-connected={handleRightIsConnected}>
-        <Handle type="source" position={Position.Right} id="Sright_default">
+        <Handle type="source" position={Position.Right} id="Sright_default" isConnectable={!handleRightIsConnected}>
           <span className="icon">
             <PlusIcon />
           </span>

@@ -31,6 +31,7 @@ import { useUpdateEvent } from './useUpdateEvent';
 import { cloneEntity } from '@utils/cloneEntity';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useTranslation } from 'react-i18next';
+import { CustomConnectionLineStyle, edgeTypes } from './CustomEdge';
 
 /* eslint-disable react-hooks/exhaustive-deps */
 
@@ -300,6 +301,7 @@ const EventFlow = () => {
           nodes={nodes}
           edges={edges}
           nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
@@ -309,6 +311,7 @@ const EventFlow = () => {
           onDragOver={onDragOver}
           onDragLeave={onDragLeave}
           isValidConnection={isValidConnection}
+          connectionLineStyle={CustomConnectionLineStyle}
           fitView
           snapToGrid
           snapGrid={[GRID_SIZE, GRID_SIZE]}
