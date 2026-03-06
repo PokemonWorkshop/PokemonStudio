@@ -6,6 +6,7 @@ export type EventNodeProps = {
   data: {
     dialogsRef?: EventDialogsRef;
     command: StudioEventCommand;
+    comments: string[];
   };
   selected?: boolean;
 };

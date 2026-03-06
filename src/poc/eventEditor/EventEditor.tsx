@@ -40,6 +40,7 @@ import { CustomConnectionLineStyle, edgeTypes } from './CustomEdge';
 type NodeData = {
   dialogsRef?: EventDialogsRef;
   command: StudioEventCommand;
+  comments: string[];
 };
 
 type NodeEvent = Node<NodeData, StudioEventCommandType>;
@@ -76,7 +77,7 @@ const initCommandNodes = (event: StudioEvent, dialogsRef?: EventDialogsRef) => {
     id,
     type: command?.type,
     position: { x: command?.studioData.x || 0, y: command?.studioData.y || 0 },
-    data: { dialogsRef, command },
+    data: { dialogsRef, command, comments: command?.studioData.comments },
   }));
 };
 
@@ -172,7 +173,7 @@ const EventFlow = () => {
         id,
         type,
         position,
-        data: { dialogsRef, command: { type, ...command } as StudioEventCommand },
+        data: { dialogsRef, command: { type, ...command } as StudioEventCommand, comments: [] },
       };
       const shadowNode = reactFlowInstance.getNode('shadow_node') as NodeShadow;
 
@@ -189,7 +190,7 @@ const EventFlow = () => {
       updateEvent({
         commands: {
           ...studioEvent.commands,
-          [id as CommandId]: { type, connections: {}, studioData: { ...position }, ...command },
+          [id as CommandId]: { type, connections: {}, studioData: { ...position, comments: [] }, ...command },
         },
       });
     },

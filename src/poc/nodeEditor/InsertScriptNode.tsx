@@ -5,13 +5,9 @@ import { InputWithTopLabelContainer, MultiLineInput } from '@components/inputs';
 import { EventNodeProps } from './EventNodeProps';
 import { CommandNode } from './CommandNode';
 
-export const InsertScriptNode = ({ id, data: { dialogsRef, command }, selected }: EventNodeProps) => {
+export const InsertScriptNode = ({ id, data: { dialogsRef, command, comments }, selected }: EventNodeProps) => {
   const { t } = useTranslation();
-  const {
-    type: commandType,
-    script,
-    studioData: { comments },
-  } = command as StudioEventCommandInsertScript;
+  const { type: commandType, script } = command as StudioEventCommandInsertScript;
 
   return (
     <>
