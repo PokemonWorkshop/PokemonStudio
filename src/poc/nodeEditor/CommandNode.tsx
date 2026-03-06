@@ -6,8 +6,11 @@ import { EventIcon, IconsFromCommand } from '@components/event/EventIcon';
 import { Handle, Position } from '@xyflow/react';
 import { useHandleConnectionState } from './useHandleConnectionState';
 import PlusIcon from '@assets/icons/global/plus-icon.svg';
+import InfoIcon from '@assets/icons/notification/info.svg';
+import NoteIcon from '@assets/icons/global/note.svg';
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
+import { Input, MultiLineInput } from '@components/inputs';
 
 const CommandNodeContainer = styled.div`
   display: flex;
@@ -19,6 +22,7 @@ const CommandNodeContainer = styled.div`
   border-radius: 16px;
   background-color: #25262a;
   background: linear-gradient(180deg, #1a294e 0%, #25262a 60px);
+  ${({ theme }) => theme.fonts.normalMedium}
 
   &[data-selected='true'] {
     outline: 1px solid #2b4c9f;
@@ -29,7 +33,7 @@ const CommandNodeContainer = styled.div`
     flex-direction: row;
     align-items: center;
     padding: 4px 10px;
-    gap: 8px;
+    gap: 4px;
 
     .title {
       color: ${({ theme }) => theme.colors.text100};
@@ -39,8 +43,8 @@ const CommandNodeContainer = styled.div`
   .body {
     display: flex;
     flex-direction: column;
-    padding: 0px 4px 4px;
-    gap: 8px; // sur figma il n'y a pas de gap mais des padding
+    padding: 8px;
+    gap: 12px;
   }
 
   footer {
@@ -52,9 +56,54 @@ const CommandNodeContainer = styled.div`
     gap: 8px;
 
     .status {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      box-sizing: border-box;
+      padding: 0px 4px;
+      height: 20px;
+      gap: 2px;
+
+      background-color: #33181f;
+      border: 0.5px solid #4f1d28;
+      border-radius: 4px;
+
+      .label {
+        color: #f25c71;
+      }
+
+      .icon {
+        color: #d43f56;
+        width: 16px;
+        height: 16px;
+      }
     }
 
     .actions {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      height: 24px;
+
+      .comments {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        padding: 0px 6px;
+        gap: 2px;
+        border-radius: 8px;
+
+        .icon {
+          color: #6c707b;
+        }
+
+        .count {
+          color: #b4b7c1;
+        }
+      }
     }
   }
 
@@ -75,6 +124,22 @@ const CommandNodeContainer = styled.div`
       0px 12px 16px -6px rgba(0, 0, 0, 0.04),
       0px 0px 0px 1px rgba(202, 211, 241, 0.13);
     border-radius: 13px;
+
+    ${Input},
+    ${MultiLineInput} {
+      background-color: rgba(255, 255, 255, 0.0001);
+      /* Shadow/XS-BorderSubtle */
+      box-shadow:
+        0px 3px 1px -2px rgba(38, 47, 56, 0.06),
+        0px 2px 3px rgba(38, 47, 56, 0.05),
+        0px 0px 0px 1px rgba(202, 211, 241, 0.13);
+      border-radius: 8px;
+      height: 30px;
+    }
+
+    ${MultiLineInput} {
+      height: 76px;
+    }
   }
 `;
 
@@ -270,8 +335,20 @@ export const CommandNode = ({ commandType, commentCount, dialogsRef, hasError, n
           </div>
         </div>
         <footer style={{ height: deployFooter ? '24px' : '8px' }}>
-          {hasError && <span className="status">Données invalides</span>}
-          {commentCount > 0 && <span className="actions">{commentCount}</span>}
+          {hasError && (
+            <div className="status">
+              <InfoIcon className="icon" />
+              <span className="label">{t('invalid_data')}</span>
+            </div>
+          )}
+          <div className="actions">
+            {commentCount > 0 && (
+              <div className="comments">
+                <NoteIcon className="icon" />
+                <span className="count">{commentCount}</span>
+              </div>
+            )}
+          </div>
         </footer>
       </CommandNodeContainer>
     </>
