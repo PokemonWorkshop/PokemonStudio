@@ -11,7 +11,7 @@ import { useInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
 import { useCommandEditor } from '../eventEditor/useCommandEditor';
 import React, { forwardRef } from 'react';
 
-const INSERT_SCRIPT_EDITOR_SCHEMA = EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR.pick({ comment: true, script: true });
+const INSERT_SCRIPT_EDITOR_SCHEMA = EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR.pick({ script: true });
 
 export const InsertScriptEditor = forwardRef<EditorHandlingClose, EventEditorProps>(({ commandId: defaultCommandId, event }, ref) => {
   const { commandId, command } = useCommandEditor(event, defaultCommandId);

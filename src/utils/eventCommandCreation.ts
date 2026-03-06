@@ -1,6 +1,6 @@
 import type { StudioEventCommandType, StudioEventCommand } from '@modelEntities/event/command';
 
-const insertScriptCommand = { comment: '', script: '' };
+const insertScriptCommand = { script: '' };
 
 export const EventCommandCreation: Record<StudioEventCommandType, Omit<StudioEventCommand, 'type' | 'connections' | 'studioData'>> = {
   show_message: {},
