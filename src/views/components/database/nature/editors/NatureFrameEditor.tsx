@@ -38,7 +38,7 @@ export const NatureFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
 
   return (
     <Editor type="edit" title={t('information')}>
-      <InputFormContainer ref={formRef}>
+      <InputFormContainer ref={formRef} onSubmit={(e) => e.preventDefault()}>
         <TranslatableTextFields ref={tTFR} handleTranslateClick={handleTranslateClick} nature={nature} natureName={natureName} />
       </InputFormContainer>
       <NatureTranslationOverlay nature={nature} onClose={onTranslationOverlayClose} ref={dialogsRef} />
