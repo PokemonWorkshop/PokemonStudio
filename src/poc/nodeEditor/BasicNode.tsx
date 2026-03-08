@@ -1,4 +1,3 @@
-import { Handle, Position } from '@xyflow/react';
 import { EventNodeProps } from './EventNodeProps';
 import { CommandNode } from './CommandNode';
 import React, { useMemo } from 'react';
@@ -9,8 +8,8 @@ export const BasicNode = ({ id, data: { dialogsRef, command }, selected }: Event
 
   return (
     <>
-      <Handle type="source" position={Position.Right} id="Sright2" style={{ top: '75%' }} />
-      <CommandNode commandType={commandType} commentCount={0} dialogsRef={dialogsRef} hasError={false} nodeId={id} selected={selected}>
+      {/*<Handle type="source" position={Position.Right} id="Sright2" style={{ top: '75%' }} />*/}
+      <CommandNode commandType={commandType} commentCount={2} dialogsRef={dialogsRef} hasError={true} nodeId={id} selected={selected}>
         <span>{date}</span>
       </CommandNode>
     </>

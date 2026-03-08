@@ -17,7 +17,7 @@ export const InsertScriptEditor = forwardRef<EditorHandlingClose, EventEditorPro
   const { commandId, command } = useCommandEditor(event, defaultCommandId);
   const updateEvent = useUpdateEvent(event);
   const { canClose, getFormData, defaults, formRef } = useZodForm(INSERT_SCRIPT_EDITOR_SCHEMA, command);
-  const { Input, MultiLineInput } = useInputAttrsWithLabel(INSERT_SCRIPT_EDITOR_SCHEMA, defaults);
+  const { MultiLineInput } = useInputAttrsWithLabel(INSERT_SCRIPT_EDITOR_SCHEMA, defaults);
   const { t } = useTranslation();
 
   const onClose = () => {
@@ -33,7 +33,6 @@ export const InsertScriptEditor = forwardRef<EditorHandlingClose, EventEditorPro
   return (
     <Editor type="edit" title={t(`event_command_insert_script`)}>
       <InputFormContainer ref={formRef}>
-        <Input name="comment" label={t(`event_command_comment`)} />
         <MultiLineInput name="script" label={t(`event_command_script`)} />
       </InputFormContainer>
     </Editor>
