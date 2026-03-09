@@ -14,7 +14,7 @@ export const InsertScriptNode = ({ id, data: { dialogsRef, command, comments }, 
     <CommandNode commandType={commandType} commentCount={comments.length} dialogsRef={dialogsRef} nodeId={id} selected={selected}>
       <InputWithTopLabelContainer>
         <span>{t(`event_command_script`)}</span>
-        <NodeMultiLineInput defaultValue={script} />
+        <NodeMultiLineInput value={script} readOnly />
       </InputWithTopLabelContainer>
     </CommandNode>
   );

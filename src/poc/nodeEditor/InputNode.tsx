@@ -18,7 +18,9 @@ const NodeInputContainer = styled(Input)`
 
 const NodeMultiLineInputContainer = styled(MultiLineInput)`
   ${sharedInputStyles}
-  height: 76px;
+  field-sizing: unset;
+  resize: vertical;
+  min-height: 76px;
 `;
 
 const stopPropagation = (e: React.MouseEvent) => e.stopPropagation();

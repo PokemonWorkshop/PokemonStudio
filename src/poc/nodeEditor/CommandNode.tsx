@@ -23,6 +23,7 @@ const CommandNodeContainer = styled.div`
   background-color: #25262a;
   background: linear-gradient(180deg, #1a294e 0%, #25262a 60px);
   ${({ theme }) => theme.fonts.normalMedium}
+  color: #b4b7c1;
 
   &[data-selected='true'] {
     outline: 1px solid #2b4c9f;
@@ -43,7 +44,7 @@ const CommandNodeContainer = styled.div`
   .body {
     display: flex;
     flex-direction: column;
-    padding: 8px;
+    padding: 10px;
     gap: 12px;
   }
 
