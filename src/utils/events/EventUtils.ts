@@ -1,5 +1,5 @@
 import { StudioEvent } from '../../models/entities/event/event';
-import { StudioEventTree, StudioEventTreeFolder, StudioEventTreeValue } from '../../models/entities/event/event-tree';
+import { DEFAULT_EVENT_TREE, StudioEventTree, StudioEventTreeFolder, StudioEventTreeValue } from '../../models/entities/event/event-tree';
 import { DbSymbol } from '../../models/entities/dbSymbol';
 import { ItemId, TreeData, TreeItem } from '../../views/components/tree';
 import { cloneEntity } from '../cloneEntity';
@@ -43,7 +43,12 @@ export const convertTreeToEventTree = (treeData: Record<string | number, TreeIte
   return result;
 };
 
-export const addNewEventToEventTree = (eventTree: StudioEventTree, dbSymbol: DbSymbol, eventId: number, parentDbSymbol?: DbSymbol): StudioEventTree => {
+export const addNewEventToEventTree = (
+  eventTree: StudioEventTree,
+  dbSymbol: DbSymbol,
+  eventId: number,
+  parentDbSymbol?: DbSymbol,
+): StudioEventTree => {
   const cloned = cloneEntity(eventTree);
   const parentKey = parentDbSymbol ?? '0';
   const parent = cloned[parentKey];
@@ -104,31 +109,10 @@ export const removeEventTreeItem = (eventTree: StudioEventTree, dbSymbol: string
 };
 
 export const convertEventToTree = (events: Record<string, StudioEvent>, eventTree: StudioEventTree | undefined): TreeData => {
-  // Si on a déjà un eventTree, on l'utilise directement
+  // If we got an event Tree, use it
   if (eventTree && Object.keys(eventTree).length > 1) {
     return convertEventTreeToTree(eventTree);
   }
-
-  // Fallback : construction depuis events
-  const items: Record<ItemId, TreeItem> = {
-    0: {
-      id: 0,
-      children: Object.keys(events),
-      hasChildren: Object.keys(events).length > 0,
-      isExpanded: true,
-      data: { klass: 'EventRoot' },
-    },
-  };
-
-  Object.entries(events).forEach(([dbSymbol, event]) => {
-    items[dbSymbol] = {
-      id: dbSymbol,
-      hasChildren: false,
-      isExpanded: false,
-      data: { klass: 'Event', dbSymbol, id: event.id },
-      children: [],
-    };
-  });
-
-  return { rootId: 0, items };
+  //  If not, build a new one
+  return { rootId: 0, items: DEFAULT_EVENT_TREE };
 };
