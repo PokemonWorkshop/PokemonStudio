@@ -3,10 +3,9 @@ import type { StudioEventCommandType } from '@modelEntities/event/command';
 import { useTranslation } from 'react-i18next';
 import { EventDialogsRef } from './EventEditorOverlay';
 import { EventIcon, IconsFromCommand } from '@components/event/EventIcon';
-import { Handle, Position } from '@xyflow/react';
+import { Position } from '@xyflow/react';
 import { useHandleConnectionState } from './useHandleConnectionState';
-import { CustomHandleContainer } from './CustomHandleContainer';
-import PlusIcon from '@assets/icons/global/plus-icon.svg';
+import { CustomHandle } from './CustomHandle';
 import InfoIcon from '@assets/icons/notification/info.svg';
 import NoteIcon from '@assets/icons/global/note.svg';
 import React, { ReactNode } from 'react';
@@ -144,29 +143,17 @@ type CommandNodeProps = {
 
 export const CommandNode = ({ commandType, commentCount, dialogsRef, hasError, nodeId, selected, children }: CommandNodeProps) => {
   const { setCurrentEditedNode } = useEventContext();
-  const { handleLeftIsConnected, handleRightIsConnected } = useHandleConnectionState(nodeId);
+  const { isHandleConnected } = useHandleConnectionState(nodeId);
   const { t } = useTranslation();
   const deployFooter = hasError || commentCount > 0;
   const color = IconsFromCommand[commandType].color;
+  const handleLeftIsConnected = isHandleConnected('Tleft_default', 'target');
+  const handleRightIsConnected = isHandleConnected('Sright_default', 'source');
 
   return (
     <>
-      <CustomHandleContainer position="left" data-color={color} data-connected={handleLeftIsConnected}>
-        <Handle type="target" position={Position.Left} id="Tleft_default" isConnectable={!handleLeftIsConnected}>
-          <span className="icon">
-            <PlusIcon />
-          </span>
-          <span className="point" />
-        </Handle>
-      </CustomHandleContainer>
-      <CustomHandleContainer position="right" data-color={color} data-connected={handleRightIsConnected}>
-        <Handle type="source" position={Position.Right} id="Sright_default" isConnectable={!handleRightIsConnected}>
-          <span className="icon">
-            <PlusIcon />
-          </span>
-          <span className="point" />
-        </Handle>
-      </CustomHandleContainer>
+      <CustomHandle color={color} handleIsConnected={handleLeftIsConnected} id="Tleft_default" position={Position.Left} type="target" />
+      <CustomHandle color={color} handleIsConnected={handleRightIsConnected} id="Sright_default" position={Position.Right} type="source" />
       <CommandNodeContainer
         data-color={color}
         data-selected={selected}

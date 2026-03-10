@@ -1,10 +1,14 @@
+import { EventIconColor } from '@components/event/EventIcon';
+import { Handle, HandleType, Position } from '@xyflow/react';
+import PlusIcon from '@assets/icons/global/plus-icon.svg';
+import React from 'react';
 import styled from 'styled-components';
 
 type CustomHandleContainerProps = {
-  position: 'left' | 'right';
+  position: Position;
 };
 
-export const CustomHandleContainer = styled.div<CustomHandleContainerProps>`
+const CustomHandleContainer = styled.div<CustomHandleContainerProps>`
   position: absolute;
   width: 8px;
   height: 8px;
@@ -138,3 +142,26 @@ export const CustomHandleContainer = styled.div<CustomHandleContainerProps>`
     }
   }
 `;
+
+type CustomHandleProps = {
+  color: EventIconColor;
+  handleIsConnected: boolean;
+  position: Position;
+  type: HandleType;
+  id?: string | null | undefined;
+  hasUnlimitedConnection?: boolean;
+  style?: React.CSSProperties;
+};
+
+export const CustomHandle = ({ color, handleIsConnected, id, position, type, style }: CustomHandleProps) => {
+  return (
+    <CustomHandleContainer position={position} data-color={color} data-connected={handleIsConnected} style={style}>
+      <Handle type={type} position={position} id={id} isConnectable={position == Position.Left || !handleIsConnected}>
+        <span className="icon">
+          <PlusIcon />
+        </span>
+        <span className="point" />
+      </Handle>
+    </CustomHandleContainer>
+  );
+};

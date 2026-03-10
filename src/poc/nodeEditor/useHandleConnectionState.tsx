@@ -3,7 +3,6 @@ import { useCallback } from 'react';
 
 // Slight structural equality on relevant edges to prevent useless renderer
 const edgesEquality = (prev: Edge[], next: Edge[]) => {
-  if (prev.length !== next.length) return false;
   return prev.every(
     (e, i) =>
       e.source === next[i].source &&
@@ -13,16 +12,31 @@ const edgesEquality = (prev: Edge[], next: Edge[]) => {
   );
 };
 
-// TODO: Improve this hooks to manage more handles
 export const useHandleConnectionState = (nodeId: string) => {
   const selectNodeEdges = useCallback(
-    (store: ReactFlowState) => store.edges.filter((edge) => edge.source === nodeId || edge.target === nodeId),
+    (store: ReactFlowState) => ({
+      edges: store.edges.filter((edge) => edge.source === nodeId || edge.target === nodeId),
+      handles: store.nodeLookup.get(nodeId)?.internals?.handleBounds,
+    }),
     [nodeId],
   );
 
-  const nodeEdges = useStore(selectNodeEdges, edgesEquality);
-  const handleLeftIsConnected = nodeEdges.some(({ target, targetHandle }) => target === nodeId && targetHandle === 'Tleft_default');
-  const handleRightIsConnected = nodeEdges.some(({ source, sourceHandle }) => source === nodeId && sourceHandle === 'Sright_default');
+  const { edges, handles } = useStore(selectNodeEdges, (prev, next) => {
+    if (prev.edges.length !== next.edges.length) return false;
+    if (prev.handles?.source?.length !== next.handles?.source?.length) return false;
+    if (prev.handles?.target?.length !== next.handles?.target?.length) return false;
+    return edgesEquality(prev.edges, next.edges);
+  });
 
-  return { handleLeftIsConnected, handleRightIsConnected };
+  const isHandleConnected = useCallback(
+    (handleId: string, type: 'source' | 'target') => {
+      if (type === 'target') {
+        return edges.some(({ target, targetHandle }) => target === nodeId && targetHandle === handleId);
+      }
+      return edges.some(({ source, sourceHandle }) => source === nodeId && sourceHandle === handleId);
+    },
+    [edges, nodeId],
+  );
+
+  return { isHandleConnected, handles };
 };
