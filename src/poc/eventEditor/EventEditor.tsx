@@ -59,6 +59,7 @@ const EventEditorContainer = styled.div`
   .eventflow {
     width: 100%;
     height: 100%;
+    background-color: rgb(17, 18, 19);
   }
 `;
 
@@ -318,7 +319,7 @@ const EventFlow = () => {
           snapGrid={[GRID_SIZE, GRID_SIZE]}
         >
           <Controls position="bottom-right" />
-          <Background gap={GRID_SIZE} offset={GRID_SIZE} />
+          <Background gap={GRID_SIZE} offset={GRID_SIZE} color="#6c707b" />
         </ReactFlow>
       </div>
       <EventCommandsEditor />
