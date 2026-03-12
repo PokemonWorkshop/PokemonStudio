@@ -4,7 +4,7 @@ import { assertUnreachable } from '@utils/assertUnreachable';
 import { DialogRefData } from '@hooks/useDialogsRef';
 import { EventNewEditor } from './EventNewEditor';
 import { EventDeletion } from './EventDeletion';
-import { StudioEventTreeValue } from '../../../../../models/entities/event/event-tree';
+import { StudioEventTreeFolder, StudioEventTreeValue } from '../../../../../models/entities/event/event-tree';
 import { EventFolderDeletion } from './EventFolderDeletion';
 
 export type EventEditorAndDeletionKeys = 'new' | 'deletion_event' | 'deletion_folder';
@@ -23,7 +23,13 @@ export const EventTreeEditorOverlay = defineEditorOverlay<EventEditorAndDeletion
   (dialogToShow, handleCloseRef, closeDialog, { eventValue }) => {
     switch (dialogToShow) {
       case 'new':
-        return <EventNewEditor closeDialog={closeDialog} ref={handleCloseRef} />;
+        return (
+          <EventNewEditor
+            closeDialog={closeDialog}
+            ref={handleCloseRef}
+            eventParent={eventValue?.data.klass === 'EventFolder' ? (eventValue as StudioEventTreeFolder) : undefined}
+          />
+        );
 
       case 'deletion_event':
         return (

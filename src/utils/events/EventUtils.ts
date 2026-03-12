@@ -116,3 +116,13 @@ export const convertEventToTree = (events: Record<string, StudioEvent>, eventTre
   //  If not, build a new one
   return { rootId: 0, items: DEFAULT_EVENT_TREE };
 };
+
+export const findEventHasFolder = (eventTree: StudioEventTree, eventDbSymbol: DbSymbol): StudioEventTreeFolder | undefined => {
+  const values = Object.values(eventTree) as StudioEventTreeValue[];
+  const eventEntry = values.find((entry) => entry.data.klass === 'Event' && entry.data.dbSymbol === eventDbSymbol);
+  if (!eventEntry) return undefined;
+
+  return values.find(
+    (entry): entry is StudioEventTreeFolder => entry.data.klass === 'EventFolder' && entry.children.includes(eventEntry.id as DbSymbol)
+  );
+};

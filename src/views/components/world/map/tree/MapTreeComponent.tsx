@@ -233,7 +233,8 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
                   className="icon icon-plus"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setMapInfoSelected(mapInfo[item.id]);
+                    const parentId = item.data?.klass === 'MapInfoMap' && item.data.parentId !== 0 ? item.data.parentId : item.id;
+                    setMapInfoSelected(mapInfo[parentId]);
                     dialogsRef.current?.openDialog('new');
                   }}
                 >

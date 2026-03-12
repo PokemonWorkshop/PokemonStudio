@@ -11,6 +11,7 @@ import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/
 import { TooltipWrapper } from '@ds/Tooltip';
 import { InputFormContainer } from '@components/inputs/InputContainer';
 import { EVENT_NAME_TEXT_ID } from '../../../../../models/entities/event/event';
+import { DEFAULT_EVENT_TREE, StudioEventTreeFolder } from '../../../../../models/entities/event/event-tree';
 import { createEvent } from '../../../../../utils/entityCreation';
 import { useEventTree } from '@hooks/useEventTree';
 import { addNewEventToEventTree } from '@utils/events/EventUtils';
@@ -24,9 +25,10 @@ const ButtonContainer = styled.div`
 
 type EventNewEditorProps = {
   closeDialog: () => void;
+  eventParent?: StudioEventTreeFolder;
 };
 
-export const EventNewEditor = forwardRef<EditorHandlingClose, EventNewEditorProps>(({ closeDialog }, ref) => {
+export const EventNewEditor = forwardRef<EditorHandlingClose, EventNewEditorProps>(({ closeDialog, eventParent }, ref) => {
   const { projectDataValues: events, setProjectDataValues: setEvent } = useProjectEvents();
   const { eventTree, setEventTree } = useEventTree();
   const { t } = useTranslation();
@@ -41,9 +43,14 @@ export const EventNewEditor = forwardRef<EditorHandlingClose, EventNewEditorProp
 
     const dbSymbol = `event_${eventIndex}` as DbSymbol;
     const newEvent = createEvent(dbSymbol, eventIndex);
+    const currentEventTree = eventTree ?? DEFAULT_EVENT_TREE;
+    if (eventParent) {
+      setEventTree(addNewEventToEventTree(currentEventTree, dbSymbol, eventIndex, eventParent.data.dbSymbol));
+    } else {
+      setEventTree(addNewEventToEventTree(currentEventTree, dbSymbol, eventIndex));
+    }
     setText(EVENT_NAME_TEXT_ID, newEvent.id, name);
     setEvent({ [dbSymbol]: { ...newEvent, klass: 'Event' } }, { event: dbSymbol });
-    setEventTree(addNewEventToEventTree(eventTree, dbSymbol, eventIndex));
     closeDialog();
   };
 

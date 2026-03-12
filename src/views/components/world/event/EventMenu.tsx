@@ -13,7 +13,8 @@ import { EventTree } from './EventTree';
 import { EventEditorAndDeletionKeys, EventTreeEditorOverlay } from './editors/EventEditorOverlay';
 import { useEventTree } from '../../../../hooks/useEventTree';
 import { EVENT_FOLDER_NAME_TEXT_ID } from '../../../../models/entities/event/event-tree';
-import { addNewEventTreeFolder } from '../../../../utils/events/EventUtils';
+import { addNewEventTreeFolder, findEventHasFolder } from '../../../../utils/events/EventUtils';
+import { useProjectEvents } from '../../../../hooks/useProjectData';
 
 const EventMenuContainer = styled(NavigationDatabaseStyle)`
   ${NavigationDatabaseGroupStyle} {
@@ -42,6 +43,9 @@ export const EventMenu = () => {
   const setText = useSetProjectText();
   const { t } = useTranslation();
   const { eventTree, setEventTree } = useEventTree();
+  const { selectedDataIdentifier: currentEvent } = useProjectEvents();
+
+  const currentFolderInfo = currentEvent ? findEventHasFolder(eventTree, currentEvent as DbSymbol) : undefined;
 
   const handleNewFolder = () => {
     let index = 0;
@@ -57,7 +61,7 @@ export const EventMenu = () => {
         hasChildren: false,
         isExpanded: true,
         data: { klass: 'EventFolder', dbSymbol, id: textId },
-      })
+      }),
     );
   };
 
@@ -76,7 +80,7 @@ export const EventMenu = () => {
           <EventTree />
         </EventSubMenuContainer>
       </NavigationDatabaseGroup>
-      <EventTreeEditorOverlay ref={dialogsRef} />
+      <EventTreeEditorOverlay ref={dialogsRef} eventValue={currentFolderInfo} />
     </EventMenuContainer>
   );
 };
