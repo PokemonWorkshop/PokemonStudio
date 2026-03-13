@@ -205,10 +205,8 @@ export const defineEditorOverlay = <Keys extends string, Props extends Record<st
           if (currentAction !== dialogActionRef.current) return;
           setCurrentDialog(undefined);
         });
-      } else {
-        if (currentAction === dialogActionRef.current) {
-          setCurrentDialog(undefined);
-        }
+      } else if (currentAction === dialogActionRef.current) {
+        setCurrentDialog(undefined);
       }
     };
 
