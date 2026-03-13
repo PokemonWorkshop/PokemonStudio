@@ -28,6 +28,10 @@ const CommandNodeContainer = styled.div`
     outline: 1px solid #2b4c9f;
   }
 
+  .react-flow__node:focus-visible & {
+    outline: 1px solid #2b4c9f;
+  }
+
   header {
     display: flex;
     flex-direction: row;

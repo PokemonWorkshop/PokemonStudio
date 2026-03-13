@@ -60,6 +60,10 @@ const EventEditorContainer = styled.div`
     width: 100%;
     height: 100%;
     background-color: rgb(17, 18, 19);
+
+    .react-flow__pane:has(.react-flow__connectionline) {
+      cursor: grabbing;
+    }
   }
 `;
 

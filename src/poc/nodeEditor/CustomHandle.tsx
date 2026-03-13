@@ -30,7 +30,7 @@ const CustomHandleContainer = styled.div<CustomHandleContainerProps>`
   .point {
     position: relative;
     display: none;
-    background-color: ${({ theme }) => theme.colors.text400};
+    background-color: #6c707b;
     pointer-events: none;
     border-radius: 100%;
     width: 8px;
@@ -60,6 +60,7 @@ const CustomHandleContainer = styled.div<CustomHandleContainerProps>`
         display: block;
         width: 6px;
         height: 6px;
+        background-color: #4f525b;
       }
     }
 
@@ -118,6 +119,14 @@ const CustomHandleContainer = styled.div<CustomHandleContainerProps>`
     .point {
       display: block;
     }
+  }
+
+  .react-flow__handle.connectingto {
+    cursor: not-allowed;
+  }
+
+  .react-flow__handle.valid {
+    cursor: grabbing;
   }
 
   .react-flow__handle.connectingfrom.connectionindicator:hover,

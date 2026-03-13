@@ -1,4 +1,3 @@
-import theme from '@src/AppTheme';
 import { BaseEdge, EdgeProps, getBezierPath } from '@xyflow/react';
 import React from 'react';
 
@@ -12,7 +11,7 @@ const CustomEdge = ({ id, selected, sourceX, sourceY, targetX, targetY, sourcePo
       markerEnd={markerEnd}
       style={{
         ...style,
-        stroke: selected ? theme.colors.text400 : '#383a40',
+        stroke: selected ? '#4f525b' : '#383a40',
         strokeWidth: selected ? 2 : 1,
       }}
     />
@@ -20,4 +19,4 @@ const CustomEdge = ({ id, selected, sourceX, sourceY, targetX, targetY, sourcePo
 };
 
 export const edgeTypes = { default: CustomEdge };
-export const CustomConnectionLineStyle = { stroke: theme.colors.text400, strokeWidth: 1 };
+export const CustomConnectionLineStyle = { stroke: '#4f525b', strokeWidth: 1, cursor: 'grabbing' };
