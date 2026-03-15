@@ -97,7 +97,6 @@ const CustomHandleContainer = styled.div<CustomHandleContainerProps>`
 
     background: #202225;
     border: 1px solid #383a40;
-    box-shadow: 0 -1px 0 0 #2b4c9f; // TODO: color should be dynamic
     border-radius: 100%;
 
     .icon {
