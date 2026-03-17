@@ -254,7 +254,7 @@ const EventFlow = ({ studioEvent }: EventFlowProps) => {
   );
 
   const onBeforeDelete = useCallback(async () => {
-    return document.querySelector('#dialogs')?.textContent ? false : true;
+    return !document.querySelector('#dialogs')?.textContent;
   }, [dialogsRef]);
 
   const onDelete = useCallback(
