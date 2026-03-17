@@ -16,14 +16,21 @@ import {
 } from '@xyflow/react';
 import { EventCommandsEditor } from '@components/event/EventCommandsEditor';
 import { EventProvider, useEventContext } from '@components/event/EventContext';
-import { StudioEventCommand } from '@modelEntities/event/command';
+import type { CommandId, ConnectionId, StudioEventCommand, StudioEventCommandConnection, StudioEventCommandType } from '@modelEntities/event/command';
 import { EventDialogsRef, EventEditorAndDeletionKeys, EventEditorOverlay } from '../nodeEditor/EventEditorOverlay';
 import { useDialogsRef } from '@src/hooks/useDialogsRef';
-import { useGlobalState } from '@src/GlobalStateProvider';
 import { CommandNodes } from './CommandNodes';
 
 import React, { DragEvent, DragEventHandler, useCallback, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
+import { EventCommandCreation } from '@utils/eventCommandCreation';
+import { useEventPage } from '@src/hooks/usePage';
+import { StudioEvent } from '@modelEntities/event/event';
+import { findFirstAvailableId } from '@utils/ModelUtils';
+import { useUpdateEvent } from './useUpdateEvent';
+import { cloneEntity } from '@utils/cloneEntity';
+import { useGlobalState } from '@src/GlobalStateProvider';
+import { useTranslation } from 'react-i18next';
 
 /* eslint-disable react-hooks/exhaustive-deps */
 
@@ -31,12 +38,12 @@ import styled from 'styled-components';
 
 type NodeData = {
   dialogsRef?: EventDialogsRef;
-  commandType: StudioEventCommand;
-  textVersion: number;
+  command: StudioEventCommand;
 };
 
-type NodeEvent = Node<NodeData, StudioEventCommand>;
+type NodeEvent = Node<NodeData, StudioEventCommandType>;
 type NodeShadow = Node;
+type ChangeToApplyEventsType = { type: 'position'; commandId: CommandId; position: { x: number; y: number } };
 
 const EventEditorContainer = styled.div`
   display: flex;
@@ -51,22 +58,85 @@ const EventEditorContainer = styled.div`
   }
 `;
 
-let id = 0;
-const getId = () => `event_node_${id++}`;
+const getId = (event: StudioEvent) => {
+  const keys = Object.keys(event.commands).map((key) => key.replace('command_', ''));
+  const record = keys.reduce<Record<string, { id: number }>>((acc, key) => {
+    acc[key] = { id: Number(key) };
+    return acc;
+  }, {});
+  const id = findFirstAvailableId(record, 0);
+  return `command_${id}`;
+};
+
+const initCommandNodes = (event: StudioEvent, dialogsRef?: EventDialogsRef) => {
+  return Object.entries(event.commands).map(([id, command]) => ({
+    id,
+    type: command?.type,
+    position: { x: command?.studioData.x || 0, y: command?.studioData.y || 0 },
+    data: { dialogsRef, command },
+  }));
+};
+
+const buildEdges = (commandId: CommandId, connections: Partial<Record<ConnectionId, StudioEventCommandConnection>>) => {
+  return Object.entries(connections).reduce<Edge[]>((prev, [id, connection]) => {
+    if (!connection) return prev;
+
+    return [
+      ...prev,
+      {
+        id: `xy-edge__${id}`,
+        ...connection,
+        source: commandId,
+        selected: false,
+      },
+    ];
+  }, []);
+};
+
+const initEdges = (event: StudioEvent) => {
+  return Object.entries(event.commands).reduce<Edge[]>((prev, [id, command]) => {
+    if (!command || !command.connections) return prev;
+
+    return [...prev, ...buildEdges(id as CommandId, command.connections)];
+  }, []);
+};
 
 const EventFlow = () => {
+  const { event: studioEvent } = useEventPage();
+  const dialogsRef = useDialogsRef<EventEditorAndDeletionKeys>();
   const reactFlowInstance = useReactFlow();
   const [nodes, setNodes] = useNodesState<NodeEvent | NodeShadow>([
     { id: 'shadow_node', type: 'shadow_node', position: { x: 0, y: 0 }, data: {}, hidden: true },
+    ...initCommandNodes(studioEvent, dialogsRef),
   ]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(initEdges(studioEvent));
   const nodeTypes = useMemo(() => CommandNodes, []);
   const { screenToFlowPosition } = useReactFlow();
   const { currentEditedNode, type, setCurrentEditedNode, setType } = useEventContext();
-  const dialogsRef = useDialogsRef<EventEditorAndDeletionKeys>();
-  const [state, setState] = useGlobalState();
+  const updateEvent = useUpdateEvent(studioEvent);
 
-  const onConnect = useCallback((params: Connection) => setEdges((eds) => addEdge(params, eds)), []);
+  const onConnect = useCallback(
+    (connection: Connection) => {
+      const { source, sourceHandle, target, targetHandle } = connection;
+      if (!sourceHandle || !targetHandle) return;
+
+      const connectionId = `${source}${sourceHandle}-${target}${targetHandle}` as ConnectionId;
+      setEdges((eds) => addEdge(connection, eds));
+
+      const command = cloneEntity(studioEvent.commands[source as CommandId]);
+      if (!command) return;
+
+      command.connections[connectionId] = { sourceHandle, target: target as CommandId, targetHandle };
+
+      updateEvent({
+        commands: {
+          ...studioEvent.commands,
+          [source]: command,
+        },
+      });
+    },
+    [studioEvent],
+  );
 
   const onDragOver: DragEventHandler<HTMLDivElement> = useCallback((event) => {
     event.preventDefault();
@@ -89,16 +159,17 @@ const EventFlow = () => {
         return;
       }
 
-      const textVersion = state.textVersion + 1;
+      const command = EventCommandCreation[type];
+      const id = getId(studioEvent);
       const position = screenToFlowPosition({
         x: event.clientX + 8,
         y: event.clientY + 8,
       });
       const newNode: NodeEvent = {
-        id: getId(),
+        id,
         type,
         position,
-        data: { commandType: type, dialogsRef, textVersion },
+        data: { dialogsRef, command: { type, ...command } as StudioEventCommand },
       };
       const shadowNode = reactFlowInstance.getNode('shadow_node') as NodeShadow;
 
@@ -108,15 +179,21 @@ const EventFlow = () => {
             { type: 'add', item: newNode },
             { type: 'replace', id: 'shadow_node', item: { ...shadowNode, hidden: true } },
           ],
-          nds
-        )
+          nds,
+        ),
       );
-      setState((s) => ({ ...s, textVersion: textVersion }));
+
+      updateEvent({
+        commands: {
+          ...studioEvent.commands,
+          [id as CommandId]: { type, connections: {}, studioData: { ...position }, ...command },
+        },
+      });
     },
-    [screenToFlowPosition, type, state]
+    [screenToFlowPosition, type, studioEvent],
   );
 
-  const onDragStart = (event: DragEvent<HTMLDivElement>, nodeType: StudioEventCommand) => {
+  const onDragStart = (event: DragEvent<HTMLDivElement>, nodeType: StudioEventCommandType) => {
     setType(nodeType);
     event.dataTransfer.setData('text/plain', nodeType);
     event.dataTransfer.effectAllowed = 'move';
@@ -132,16 +209,44 @@ const EventFlow = () => {
 
   const onNodesChange: OnNodesChange<NodeEvent | NodeShadow> = useCallback(
     (changes) => {
-      setNodes((nds) => {
-        const updatedChanges = changes.map((change) => {
-          if (change.type === 'remove') setState((s) => ({ ...s, textVersion: s.textVersion - 1 }));
-
-          return change;
-        });
-        return applyNodeChanges(updatedChanges, nds);
+      const changesToApplyEvents: ChangeToApplyEventsType[] = [];
+      changes.forEach((change) => {
+        if (change.type === 'position' && !change.dragging && change.position) {
+          changesToApplyEvents.push({ type: 'position', commandId: change.id as CommandId, position: change.position });
+        }
+        return change;
       });
+      setNodes((nds) => applyNodeChanges(changes, nds));
+      if (changesToApplyEvents.length === 0) return;
+
+      const commandsEdited = cloneEntity(studioEvent.commands);
+      changesToApplyEvents.forEach((change) => {
+        if (change.type === 'position') {
+          const command = commandsEdited[change.commandId];
+          if (!command) return;
+
+          commandsEdited[change.commandId] = { ...command, studioData: { ...command.studioData, ...change.position } };
+        }
+      });
+      updateEvent({ commands: commandsEdited });
     },
-    [state]
+    [studioEvent],
+  );
+
+  const onDelete = useCallback(
+    (params: { nodes: (NodeEvent | NodeShadow)[]; edges: Edge[] }) => {
+      const commandsEdited = cloneEntity(studioEvent.commands);
+      params.nodes.forEach((node) => delete commandsEdited[node.id as CommandId]);
+      params.edges.forEach(({ id, source: commandId }) => {
+        const command = commandsEdited[commandId as CommandId];
+        if (!command) return;
+
+        delete command.connections[id.replace('xy-edge__', '') as ConnectionId];
+      });
+      updateEvent({ commands: commandsEdited });
+      return params;
+    },
+    [studioEvent],
   );
 
   // Documentation: https://reactflow.dev/examples/interaction/prevent-cycles
@@ -167,7 +272,7 @@ const EventFlow = () => {
       if (target.id === connection.source) return false;
       return !hasCycle(target);
     },
-    [reactFlowInstance.getNodes, reactFlowInstance.getEdges]
+    [reactFlowInstance.getNodes, reactFlowInstance.getEdges],
   );
 
   useEffect(() => {
@@ -176,14 +281,15 @@ const EventFlow = () => {
     const nodeEdited = reactFlowInstance.getNode(currentEditedNode) as NodeEvent;
     if (!nodeEdited) return;
 
+    const commandId = nodeEdited.id as CommandId;
     setNodes((nds) =>
       applyNodeChanges(
-        [{ id: nodeEdited.id, type: 'replace', item: { ...nodeEdited, data: { ...nodeEdited.data, textVersion: state.textVersion } } }],
-        nds
-      )
+        [{ id: nodeEdited.id, type: 'replace', item: { ...nodeEdited, data: { ...nodeEdited.data, command: studioEvent.commands[commandId] } } }],
+        nds,
+      ),
     );
     setCurrentEditedNode(undefined);
-  }, [state.textVersion]);
+  }, [studioEvent.commands]);
 
   return (
     <EventEditorContainer>
@@ -195,29 +301,37 @@ const EventFlow = () => {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
+          onDelete={onDelete}
           onDrop={onDrop}
           onDragStart={onDragStart as DragEventHandler<HTMLDivElement>}
           onDragOver={onDragOver}
           onDragLeave={onDragLeave}
           isValidConnection={isValidConnection}
+          fitView
         >
           <Controls position="bottom-right" />
           <Background />
         </ReactFlow>
       </div>
       <EventCommandsEditor />
-      <EventEditorOverlay ref={dialogsRef} />
+      <EventEditorOverlay ref={dialogsRef} commandId={currentEditedNode as CommandId | undefined} event={studioEvent} />
     </EventEditorContainer>
   );
 };
 
 export const EventEditor = () => {
-  return (
+  const { t } = useTranslation();
+  const [state] = useGlobalState();
+  const hasEventAvailable = useMemo(() => Object.keys(state.projectData.events).length > 0, [state.projectData.events]);
+
+  return hasEventAvailable ? (
     <ReactFlowProvider>
       <EventProvider>
         <EventFlow />
       </EventProvider>
     </ReactFlowProvider>
+  ) : (
+    <div>{t('no_event_found')}</div>
   );
 };
 

@@ -16,6 +16,7 @@ import { DEX_DEFAULT_NAME_TEXT_ID } from '@modelEntities/dex';
 import { MAP_NAME_TEXT_ID } from '@modelEntities/map';
 import { TRAINER_CLASS_TEXT_ID, TRAINER_NAME_TEXT_ID } from '@modelEntities/trainer';
 import { buildCreaturesListByDexOrder } from '@utils/buildCreaturesListByDexOrder';
+import { EVENT_NAME_TEXT_ID } from '@modelEntities/event/event';
 
 // Note: Regexp to search all options in the code: (\{ value:|\{ label:)
 
@@ -44,6 +45,7 @@ const OPTION_SOURCE_KEYS = [
   'textInfos',
   'maps',
   'trainers',
+  'events',
 ] as const;
 export type OptionSourceKey = (typeof OPTION_SOURCE_KEYS)[number];
 // Record holding all the options in the order they should appear on the select
@@ -71,6 +73,7 @@ const OptionSources: Record<OptionSourceKey, SelectOption[]> = {
   textInfos: [],
   maps: [],
   trainers: [],
+  events: [],
 };
 
 const TEXT_SOURCE_KEYS = [
@@ -87,6 +90,7 @@ const TEXT_SOURCE_KEYS = [
   'textInfos',
   'maps',
   'trainers',
+  'events',
 ] as const;
 type TextSourceKey = (typeof TEXT_SOURCE_KEYS)[number];
 // Record holding the mapping from option source to text source
@@ -114,6 +118,7 @@ const OptionToTextKey: Record<OptionSourceKey, TextSourceKey> = {
   textInfos: 'textInfos',
   maps: 'maps',
   trainers: 'trainers',
+  events: 'events',
 };
 // Record holding all the optionSource groups
 const OptionSourceGroups: Record<TextSourceKey, OptionSourceKey[]> = {
@@ -130,6 +135,7 @@ const OptionSourceGroups: Record<TextSourceKey, OptionSourceKey[]> = {
   textInfos: ['textInfos'],
   maps: ['maps'],
   trainers: ['trainers'],
+  events: ['events'],
 };
 // Record holding all the file ids for the required text sources
 const TextFileIds: Record<TextSourceKey, number[]> = {
@@ -146,6 +152,7 @@ const TextFileIds: Record<TextSourceKey, number[]> = {
   textInfos: [TEXT_INFO_NAME_TEXT_ID],
   maps: [MAP_NAME_TEXT_ID],
   trainers: [TRAINER_CLASS_TEXT_ID, TRAINER_NAME_TEXT_ID],
+  events: [EVENT_NAME_TEXT_ID],
 };
 // Record holding the link between fileId and textSource
 const TextFileIdsToSource: Record<number, TextSourceKey> = {};
@@ -169,6 +176,7 @@ const TextSources: Record<TextSourceKey, SelectOption[]> = {
   textInfos: [],
   maps: [],
   trainers: [],
+  events: [],
 };
 
 const getTextSource = (projectText: Parameters<typeof getText>[0], fileId: number, index: number, originalObjects: SelectOption[]) => {
@@ -371,6 +379,10 @@ const buildSelectOptionsFromKey = (key: OptionSourceKey, state: State) => {
         .map((data) => adjustSelectOptionValue(originalObjects[data.id] || cloneEntity(originalObjects[0]), data.dbSymbol));
     case 'trainers':
       return Object.values(state.projectData.trainers)
+        .sort((a, b) => a.id - b.id)
+        .map((data) => adjustSelectOptionValue(originalObjects[data.id] || cloneEntity(originalObjects[0]), data.dbSymbol));
+    case 'events':
+      return Object.values(state.projectData.events)
         .sort((a, b) => a.id - b.id)
         .map((data) => adjustSelectOptionValue(originalObjects[data.id] || cloneEntity(originalObjects[0]), data.dbSymbol));
     default:

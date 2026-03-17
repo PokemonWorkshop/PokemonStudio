@@ -112,7 +112,7 @@ const closeDialogWithAnimation = (dialog: HTMLDialogElement, backdrop: HTMLDivEl
   animation.onfinish = () => {
     dialog.classList.remove('open');
     backdrop.classList.remove('open');
-    dialog.close();
+    if (dialog.open) dialog.close();
     onFinish();
     dialog.removeEventListener('cancel', onDialogCancel);
 
@@ -185,11 +185,29 @@ export const defineEditorOverlay = <Keys extends string, Props extends Record<st
     const [currentDialog, setCurrentDialog] = useState<Keys | undefined>(undefined);
     const [isCenter, setIsCenter] = useState(false);
     const backdropRef = useRef<HTMLDivElement>(null);
+    const dialogActionRef = useRef<number>(0);
+    const openDialogTimeoutRef = useRef<number | null>(null);
+
+    // Invalidate previous open/close actions and cancel any pending delayed open
+    const prepareDialogAction = () => {
+      if (openDialogTimeoutRef.current !== null) {
+        window.clearTimeout(openDialogTimeoutRef.current);
+        openDialogTimeoutRef.current = null;
+      }
+      return ++dialogActionRef.current;
+    };
 
     const closeDialog = () => {
+      const currentAction = prepareDialogAction();
       handleCloseRef.current?.onClose();
-      if (dialogRef.current && backdropRef.current)
-        closeDialogWithAnimation(dialogRef.current, backdropRef.current, isCenter, () => setCurrentDialog(undefined));
+      if (dialogRef.current && backdropRef.current) {
+        closeDialogWithAnimation(dialogRef.current, backdropRef.current, isCenter, () => {
+          if (currentAction !== dialogActionRef.current) return;
+          setCurrentDialog(undefined);
+        });
+      } else if (currentAction === dialogActionRef.current) {
+        setCurrentDialog(undefined);
+      }
     };
 
     const currentlyRenderedDialog = useMemo(() => {
@@ -207,16 +225,28 @@ export const defineEditorOverlay = <Keys extends string, Props extends Record<st
     };
 
     const openDialog = (name: Keys, isCenterDialog?: boolean) => {
+      const currentAction = prepareDialogAction();
       setIsCenter(isCenterDialog || false);
       setCurrentDialog(name);
-      // Without tick, if the dialog change between center and right, the dialog is not displayed correctly
-      setTimeout(() => {
+      openDialogTimeoutRef.current = window.setTimeout(() => {
+        openDialogTimeoutRef.current = null;
+        if (currentAction !== dialogActionRef.current) return;
         if (dialogRef.current && backdropRef.current) openDialogWithAnimation(dialogRef.current, backdropRef.current, isCenterDialog || false);
       }, 0);
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useImperativeHandle(ref, () => ({ closeDialog, openDialog: openDialog, currentDialog }), [currentDialog]);
+
+    // Cleanup any pending delayed open when the component unmounts
+    useEffect(() => {
+      return () => {
+        if (openDialogTimeoutRef.current !== null) {
+          window.clearTimeout(openDialogTimeoutRef.current);
+          openDialogTimeoutRef.current = null;
+        }
+      };
+    }, []);
 
     // Handle user pressing the escape key
     useEffect(() => {

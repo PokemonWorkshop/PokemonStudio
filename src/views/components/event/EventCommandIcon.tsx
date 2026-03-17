@@ -1,8 +1,8 @@
 import PlusIcon from '@assets/icons/global/plus-icon.svg';
-import type { StudioEventCommand } from '@modelEntities/event/command';
+import type { StudioEventCommandType } from '@modelEntities/event/command';
 import React from 'react';
 
-export const IconsFromCommand: Record<StudioEventCommand, JSX.Element> = {
+export const IconsFromCommand: Record<StudioEventCommandType, JSX.Element> = {
   show_message: <PlusIcon />,
   narrator_settings: <PlusIcon />,
   manage_message_box: <PlusIcon />,

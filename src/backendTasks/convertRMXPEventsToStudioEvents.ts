@@ -1,7 +1,8 @@
 import { StudioMap } from '@modelEntities/map';
 import { readRMXPEvents, RMXPEvent } from './readRMXPEvents';
 import { DbSymbol } from '@modelEntities/dbSymbol';
-import type { Appearance, CommandListId, CustomEvent, EventAppearance, EventTrigger, LinkParameter, MapEventLink } from '@modelEntities/event/event';
+import type { Appearance, CustomEvent, EventAppearance, EventTrigger, LinkParameter, MapEventLink } from '@modelEntities/event/event';
+import type { CommandId, StudioEventCommand } from '@modelEntities/event/command';
 import log from 'electron-log';
 import { findFirstAvailableId } from '@utils/ModelUtils';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
@@ -146,7 +147,7 @@ const getEventTriggers = (rmxpEvent: RMXPEvent): CustomEvent['triggers'] => {
   return rmxpEvent.pages.map(({ trigger, condition }) => ({
     type: RMXP_TRIGGER_TO_STUDIO_TRIGGER[trigger],
     conditions: [], // TODO: convert rmxp condition to studio condition
-    commandListId: '' as CommandListId, // TODO: replace '' by ??
+    commandId: '' as CommandId, // TODO: replace '' by ??
   }));
 };
 
@@ -156,7 +157,7 @@ const createCustomEvent = (rmxpEvent: RMXPEvent, eventIdentifier: PartialStudioE
     id: eventIdentifier.id,
     type: 'custom',
     triggers: getEventTriggers(rmxpEvent),
-    commandLists: { '': [] } as Record<CommandListId, []>, // TODO: implement command lists
+    commands: {} as Record<CommandId, StudioEventCommand>, // TODO: implement command lists
   };
 };
 
