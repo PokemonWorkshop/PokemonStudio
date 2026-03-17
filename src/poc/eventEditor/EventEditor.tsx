@@ -253,6 +253,10 @@ const EventFlow = ({ studioEvent }: EventFlowProps) => {
     [studioEvent],
   );
 
+  const onBeforeDelete = useCallback(async () => {
+    return document.querySelector('#dialogs')?.textContent ? false : true;
+  }, [dialogsRef]);
+
   const onDelete = useCallback(
     (params: { nodes: (NodeEvent | NodeShadow)[]; edges: Edge[] }) => {
       const commandsEdited = cloneEntity(studioEvent.commands);
@@ -323,6 +327,7 @@ const EventFlow = ({ studioEvent }: EventFlowProps) => {
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           onDelete={onDelete}
+          onBeforeDelete={onBeforeDelete}
           onDrop={onDrop}
           onDragStart={onDragStart as DragEventHandler<HTMLDivElement>}
           onDragOver={onDragOver}
