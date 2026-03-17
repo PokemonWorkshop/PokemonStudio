@@ -116,6 +116,7 @@ export const EVENT_COMMAND_VALIDATOR = z.discriminatedUnion('type', [
 
 export type StudioEventCommand = z.infer<typeof EVENT_COMMAND_VALIDATOR>;
 export type StudioEventCommandType = z.infer<typeof EVENT_COMMAND_VALIDATOR>['type'];
+export type StudioEventCommandData<T> = Omit<T, 'connections' | 'studioData'>;
 
 export type EventCommandForCategory = {
   commandType: StudioEventCommandType;

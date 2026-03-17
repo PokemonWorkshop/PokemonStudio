@@ -25,10 +25,10 @@ const NodeMultiLineInputContainer = styled(MultiLineInput)`
 
 const stopPropagation = (e: React.MouseEvent) => e.stopPropagation();
 
-export const NodeInput = ({ className, ...props }: React.ComponentProps<typeof NodeInputContainer>) => (
+export const NodeInput = ({ className, ...props }: React.ComponentProps<typeof Input>) => (
   <NodeInputContainer {...props} className={`nodrag ${className ?? ''}`.trim()} onClick={stopPropagation} onDoubleClick={stopPropagation} />
 );
 
-export const NodeMultiLineInput = ({ className, ...props }: React.ComponentProps<typeof NodeMultiLineInputContainer>) => (
+export const NodeMultiLineInput = ({ className, ...props }: React.ComponentProps<typeof MultiLineInput>) => (
   <NodeMultiLineInputContainer {...props} className={`nodrag ${className ?? ''}`.trim()} onClick={stopPropagation} onDoubleClick={stopPropagation} />
 );

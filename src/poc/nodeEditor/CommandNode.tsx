@@ -1,4 +1,4 @@
-import { useEventContext } from '@components/event/EventContext';
+import { useEventActions } from '@components/event/EventContext';
 import type { StudioEventCommandType } from '@modelEntities/event/command';
 import { useTranslation } from 'react-i18next';
 import { EventDialogsRef } from './EventEditorOverlay';
@@ -146,7 +146,7 @@ type CommandNodeProps = {
 };
 
 export const CommandNode = ({ commandType, commentCount, dialogsRef, hasError, nodeId, selected, children }: CommandNodeProps) => {
-  const { setCurrentEditedNode } = useEventContext();
+  const { setCurrentEditedNode } = useEventActions();
   const { isHandleConnected } = useHandleConnectionState(nodeId);
   const { t } = useTranslation();
   const deployFooter = hasError || commentCount > 0;

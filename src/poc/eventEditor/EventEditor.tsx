@@ -16,7 +16,14 @@ import {
 } from '@xyflow/react';
 import { EventCommandsEditor } from '@components/event/EventCommandsEditor';
 import { EventProvider, useEventContext } from '@components/event/EventContext';
-import type { CommandId, ConnectionId, StudioEventCommand, StudioEventCommandConnection, StudioEventCommandType } from '@modelEntities/event/command';
+import type {
+  CommandId,
+  ConnectionId,
+  StudioEventCommand,
+  StudioEventCommandConnection,
+  StudioEventCommandData,
+  StudioEventCommandType,
+} from '@modelEntities/event/command';
 import { EventDialogsRef, EventEditorAndDeletionKeys, EventEditorOverlay } from '../nodeEditor/EventEditorOverlay';
 import { useDialogsRef } from '@src/hooks/useDialogsRef';
 import { CommandNodes } from './CommandNodes';
@@ -39,7 +46,7 @@ import { CustomConnectionLineStyle, edgeTypes } from './CustomEdge';
 
 type NodeData = {
   dialogsRef?: EventDialogsRef;
-  command: StudioEventCommand;
+  command: StudioEventCommandData<StudioEventCommand>;
   comments: string[];
 };
 
@@ -110,8 +117,11 @@ const initEdges = (event: StudioEvent) => {
   }, []);
 };
 
-const EventFlow = () => {
-  const { event: studioEvent } = useEventPage();
+type EventFlowProps = {
+  studioEvent: StudioEvent;
+};
+
+const EventFlow = ({ studioEvent }: EventFlowProps) => {
   const dialogsRef = useDialogsRef<EventEditorAndDeletionKeys>();
   const reactFlowInstance = useReactFlow();
   const [nodes, setNodes] = useNodesState<NodeEvent | NodeShadow>([
@@ -148,6 +158,7 @@ const EventFlow = () => {
   );
 
   const onDragOver: DragEventHandler<HTMLDivElement> = useCallback((event) => {
+    // TODO: check that the drag comes from the event commands
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';
     const position = screenToFlowPosition({
@@ -178,7 +189,7 @@ const EventFlow = () => {
         id,
         type,
         position,
-        data: { dialogsRef, command: { type, ...command } as StudioEventCommand, comments: [] },
+        data: { dialogsRef, command: { type, ...command } as StudioEventCommandData<StudioEventCommand>, comments: [] },
       };
       const shadowNode = reactFlowInstance.getNode('shadow_node') as NodeShadow;
 
@@ -333,14 +344,15 @@ const EventFlow = () => {
 };
 
 export const EventEditor = () => {
+  const { event } = useEventPage();
   const { t } = useTranslation();
   const [state] = useGlobalState();
   const hasEventAvailable = useMemo(() => Object.keys(state.projectData.events).length > 0, [state.projectData.events]);
 
   return hasEventAvailable ? (
     <ReactFlowProvider>
-      <EventProvider>
-        <EventFlow />
+      <EventProvider event={event}>
+        <EventFlow studioEvent={event} />
       </EventProvider>
     </ReactFlowProvider>
   ) : (
