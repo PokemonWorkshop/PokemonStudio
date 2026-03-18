@@ -15,6 +15,7 @@ import { DEFAULT_EVENT_TREE, StudioEventTreeFolder } from '../../../../../models
 import { createEvent } from '../../../../../utils/entityCreation';
 import { useEventTree } from '@hooks/useEventTree';
 import { addNewEventToEventTree } from '@utils/events/EventUtils';
+import { findFirstAvailableId } from '@utils/ModelUtils';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -39,7 +40,7 @@ export const EventNewEditor = forwardRef<EditorHandlingClose, EventNewEditorProp
 
   const onClickNew = () => {
     if (!name) return;
-    const eventIndex = Object.keys(events).length + 1;
+    const eventIndex = findFirstAvailableId(events, 1);
 
     const dbSymbol = `event_${eventIndex}` as DbSymbol;
     const newEvent = createEvent(dbSymbol, eventIndex);
