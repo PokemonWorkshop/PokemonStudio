@@ -59,7 +59,7 @@ export const EventMenu = () => {
         id: dbSymbol,
         children: [],
         hasChildren: false,
-        isExpanded: true,
+        isExpanded: false,
         data: { klass: 'EventFolder', dbSymbol, id: textId },
       }),
     );
