@@ -222,7 +222,7 @@ export const EventTreeComponent = ({ treeScrollbarRef }: EventTreeComponentProps
               <span className="icon icon-dot" onClick={openMenu}>
                 <DotIcon />
               </span>
-              {!isDeleted && eventSelected?.data?.klass === 'EventFolder' && (
+              {!isDeleted && isFolder && (
                 <span
                   className="icon icon-plus"
                   onClick={(e) => {
