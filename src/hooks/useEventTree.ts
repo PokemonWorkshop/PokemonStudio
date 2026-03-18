@@ -29,7 +29,7 @@ export const useEventTree = () => {
           ...eventTree,
           [id]: newEventTreeValue,
         },
-        savingMapInfo: true,
+        savingEventTree: true,
       }));
     } else {
       setState((currentState) => ({
