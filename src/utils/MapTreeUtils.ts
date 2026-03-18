@@ -19,14 +19,14 @@ export const getMapTreeCountChildren = (tree: TreeData, item: TreeItem): number 
   return count;
 };
 
-export const getMapTreeSourceDepth = (tree: TreeData, item: TreeItem): number => {
+export const getTreeSourceDepth = (tree: TreeData, item: TreeItem): number => {
   if (item.children.length === 0) return 1;
 
-  const childrenDepths = item.children.map((id) => getMapTreeSourceDepth(tree, tree.items[id]));
+  const childrenDepths = item.children.map((id) => getTreeSourceDepth(tree, tree.items[id]));
   return 1 + Math.max(...childrenDepths);
 };
 
-export const getMapTreeDestinationDepth = (tree: TreeData, destination: TreeDestinationPosition): number => {
+export const getTreeDestinationDepth = (tree: TreeData, destination: TreeDestinationPosition): number => {
   if (destination.parentId === 0) return 1;
 
   return getMapTreeItemDepth(tree, tree.items[destination.parentId]);
@@ -66,17 +66,6 @@ export const renderDropBox = (targetId: string | null | undefined, treeRef: Reac
       firstChild.style.outline = 'inherit';
     });
   }
-};
-
-export const searchIsUnderOpenFolder = (tree: TreeData, item: TreeItem) => {
-  if (item.data.klass === 'MapInfoMap' && item.data.parentId !== 0) return false;
-
-  const rootItem = tree.items['0'];
-  const index = rootItem.children.findIndex((itemId) => itemId === item.id);
-  if (index === 0) return false;
-
-  const previousId = rootItem.children[index - 1];
-  return tree.items[previousId].isExpanded || false;
 };
 
 /*

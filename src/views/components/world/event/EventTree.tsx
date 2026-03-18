@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { emitScrollContextMenu } from '@hooks/useContextMenu';
 import { MapTreeContainer } from '../map/tree/style';
 import styled from 'styled-components';
+import { EventTreeComponent } from './treeEvent/EventTreeComponent';
+import { EventList } from './treeEvent/EventList';
 
 const EventTreeContainer = styled(MapTreeContainer)`
   .no-event {
@@ -11,19 +13,15 @@ const EventTreeContainer = styled(MapTreeContainer)`
     color: ${({ theme }) => theme.colors.text400};
     padding: 9.5px 15px;
   }
-
-  .tree-scrollbar {
-    display: none; // Remove this when implement the event tree
-  }
 `;
 
 export const EventTree = () => {
-  const [research, setResearch] = useState('');
   const { t } = useTranslation();
+  const [research, setResearch] = useState('');
   const treeScrollbarRef = useRef<HTMLDivElement>(null);
 
   return (
-    <EventTreeContainer hideMapTree={research !== ''}>
+    <EventTreeContainer isTiledMode={true} hideMapTree={research !== ''}>
       <ClearInput
         value={research}
         onChange={(event) => setResearch(event.target.value)}
@@ -31,11 +29,10 @@ export const EventTree = () => {
         placeholder={t('event_research')}
         className="research-input"
       />
+      {research !== '' && <EventList research={research} />}
       <div className="tree-scrollbar" onScroll={emitScrollContextMenu} ref={treeScrollbarRef}>
-        <div className="tree"></div>
+        <EventTreeComponent treeScrollbarRef={treeScrollbarRef} />
       </div>
-      {/* TODO: integrate no event in the future tree like map tree */}
-      <span className="no-event">{t('no_event_found')}</span>
     </EventTreeContainer>
   );
 };

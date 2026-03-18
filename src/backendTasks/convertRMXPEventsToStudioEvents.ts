@@ -198,5 +198,5 @@ const convertRMXPEventsToStudioEventsBackendService = async (payload: RMXPEvents
 
 export const registerConvertRMXPEventsToStudioEvents = defineBackendServiceFunction(
   'convert-rmxp-events-to-studio-events',
-  convertRMXPEventsToStudioEventsBackendService
+  convertRMXPEventsToStudioEventsBackendService,
 );

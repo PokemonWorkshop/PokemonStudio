@@ -1,14 +1,14 @@
 import { DragState } from './Tree-types';
 import { getTreePosition } from '../utils/tree';
 import { getDestinationPath, getSourcePath } from '../utils/flat-tree';
-import { Path, TreeSourcePosition, TreeDestinationPosition, TreeData, FlattenedTree } from '../types';
+import { Path, TreeSourcePosition, TreeDestinationPosition, TreeData, FlattenedTree, TreeItem } from '../types';
 
 /* Translates a drag&drop movement from an index based position to a relative (parent, index) position */
 export const calculateFinalDropPositions = (
   tree: TreeData,
   flattenedTree: FlattenedTree,
   dragState: DragState,
-  horizontalLevel: number
+  horizontalLevel: number,
 ): {
   sourcePosition: TreeSourcePosition;
   destinationPosition?: TreeDestinationPosition;
@@ -35,4 +35,15 @@ export const calculateFinalDropPositions = (
     ...getTreePosition(tree, destinationPath),
   };
   return { sourcePosition, destinationPosition };
+};
+
+export const searchIsUnderOpenFolder = (tree: TreeData, item: TreeItem, klass: 'MapInfoMap' | 'EventFolder') => {
+  if (item.data.klass === klass && item.data.parentId !== 0) return false;
+
+  const rootItem = tree.items['0'];
+  const index = rootItem.children.findIndex((itemId) => itemId === item.id);
+  if (index === 0) return false;
+
+  const previousId = rootItem.children[index - 1];
+  return tree.items[previousId]?.isExpanded || false;
 };

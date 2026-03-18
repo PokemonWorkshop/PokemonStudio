@@ -30,6 +30,8 @@ import type { StudioMapInfo, StudioMapInfoMap } from '@modelEntities/mapInfo';
 import type { StudioNature } from '@modelEntities/nature';
 import { mapInfoFindFirstAvailableId, mapInfoFindFirstAvailableTextId } from './MapInfoUtils';
 import { cloneEntity } from './cloneEntity';
+import { CommandId, StudioEventCommand } from '../models/entities/event/command';
+import { CustomEvent, StudioEvent } from '../models/entities/event/event';
 
 /**
  * Create a new ability with default values
@@ -161,7 +163,7 @@ export const createCreatureForm = (
   allPokemon: ProjectData['pokemon'],
   form: StudioCreatureForm,
   types: { type1: DbSymbol; type2: DbSymbol },
-  newFormId: number
+  newFormId: number,
 ) => {
   const formTextIdName = findFirstAvailableFormTextId(allPokemon, 0, 'name');
   const formTextIdDescription = findFirstAvailableFormTextId(allPokemon, 0, 'description');
@@ -240,7 +242,7 @@ export const createMove = (
   dbSymbol: DbSymbol,
   type: DbSymbol,
   category: StudioMoveCategory,
-  condition: StudioMoveCondition
+  condition: StudioMoveCondition,
 ): StudioMove => {
   const id = findFirstAvailableId(allMoves, 1);
   return {
@@ -300,7 +302,7 @@ export const createGroup = (
   tool: StudioGroupTool,
   vsType: StudioGroupVsType,
   customCondition: StudioCustomGroupCondition | undefined,
-  stepsAverage: number
+  stepsAverage: number,
 ): StudioGroup => ({
   klass: 'Group',
   id,
@@ -336,7 +338,7 @@ export const createTrainer = (
   ai: number,
   vsType: StudioTrainerVsType,
   battleId: number,
-  baseMoney: number
+  baseMoney: number,
 ): StudioTrainer => {
   const id = findFirstAvailableId(allTrainers, 0);
   const dbSymbol = `trainer_${id}` as DbSymbol;
@@ -542,7 +544,7 @@ export const createMap = (
   tiledFilename: string,
   bgm: StudioMapAudio,
   bgs: StudioMapAudio,
-  excludeIds?: number[]
+  excludeIds?: number[],
 ): StudioMap => {
   const id = findFirstAvailableId(allMaps, 1, excludeIds);
   const dbSymbol = `map${padStr(id, 3)}` as DbSymbol;
@@ -610,5 +612,16 @@ export const createNature = (allNatures: ProjectData['natures'], dbSymbol: DbSym
       liked: 'none',
       disliked: 'none',
     },
+  };
+};
+
+export const createEvent = (dbSymbol: DbSymbol, id: number): StudioEvent => {
+  return {
+    dbSymbol,
+    id,
+    klass: 'Event',
+    type: 'custom',
+    triggers: [],
+    commands: {} as Record<CommandId, StudioEventCommand>,
   };
 };

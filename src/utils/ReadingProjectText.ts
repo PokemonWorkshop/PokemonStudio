@@ -25,6 +25,7 @@ import { cloneEntity } from './cloneEntity';
 import { NATURE_NAME_TEXT_ID } from '@modelEntities/nature';
 import { useEffect } from 'react';
 import { EVENT_NAME_TEXT_ID } from '@modelEntities/event/event';
+import { EVENT_FOLDER_NAME_TEXT_ID } from '@modelEntities/event/event-tree';
 
 type KeyProjectText = keyof ProjectText;
 
@@ -225,6 +226,7 @@ const ENTITY_TO_NAME_TEXT = {
   MapInfoFolder: MAP_INFO_FOLDER_NAME_TEXT_ID,
   Nature: NATURE_NAME_TEXT_ID,
   Event: EVENT_NAME_TEXT_ID,
+  EventFolder: EVENT_FOLDER_NAME_TEXT_ID,
 };
 
 // TODO: All entities must accept undefined! (due to getting entity from state unsafely) => returns empty string and let UI manage it
@@ -239,7 +241,7 @@ export const useGetEntityNameText = () => {
 export const useGetEntityNameTextUsingTextId = () => {
   const getEntityText = useGetProjectText();
 
-  return (entity: { klass: 'Ability' | 'Type' | 'TextInfo' | 'MapInfoFolder'; textId: number }) =>
+  return (entity: { klass: 'Ability' | 'Type' | 'TextInfo' | 'MapInfoFolder' | 'EventFolder'; textId: number }) =>
     getEntityText(ENTITY_TO_NAME_TEXT[entity.klass], entity.textId);
 };
 

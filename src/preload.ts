@@ -29,6 +29,7 @@ import type { WriteProjectMetadataInput } from './backendTasks/writeProjectMetad
 import type { GetStudioVersionOutput } from './backendTasks/getStudioVersion';
 import type { ConvertTMXInput } from './backendTasks/convertTiledMapToTileMetadata';
 import type { SaveMapInfoInput } from './backendTasks/saveMapInfo';
+import type { SaveEventTreeInput } from './backendTasks/saveEventTree';
 import type { StartupStudioFileOutput } from './backendTasks/startupStudioFile';
 import type { GetFilePathsFromFolderInput, GetFilePathsFromFolderOutput } from './backendTasks/getFilePathsFromFolder';
 import type { CopyTiledFilesInput, CopyTiledFilesOutput } from './backendTasks/copyTiledFiles';
@@ -141,6 +142,7 @@ contextBridge.exposeInMainWorld('api', {
   checkMapsModified: defineBackendTask(ipcRenderer, 'check-maps-modified'),
   convertTiledMapToTileMetadata: defineBackendTask(ipcRenderer, 'convertTiledMapToTileMetadata'),
   saveMapInfo: defineBackendTask(ipcRenderer, 'save-map-info'),
+  saveEventTree: defineBackendTask(ipcRenderer, 'save-event-tree'),
   startupStudioFile: defineBackendTask(ipcRenderer, 'startup-studio-file'),
   getFilePathsFromFolder: defineBackendTask(ipcRenderer, 'get-file-paths-from-folder'),
   copyTiledFiles: defineBackendTask(ipcRenderer, 'copy-tiled-files'),
@@ -236,6 +238,7 @@ declare global {
       checkMapsModified: BackendTaskWithGenericErrorAndNoProgress<CheckMapModifiedInput, CheckMapModifiedOutput>;
       convertTiledMapToTileMetadata: BackendTaskWithGenericErrorAndNoProgress<ConvertTMXInput, ConvertTMXOutput>;
       saveMapInfo: BackendTaskWithGenericErrorAndNoProgress<SaveMapInfoInput, AnyObj>;
+      saveEventTree: BackendTaskWithGenericErrorAndNoProgress<SaveEventTreeInput, AnyObj>;
       startupStudioFile: BackendTaskWithGenericErrorAndNoProgress<AnyObj, StartupStudioFileOutput>;
       getFilePathsFromFolder: BackendTaskWithGenericErrorAndNoProgress<GetFilePathsFromFolderInput, GetFilePathsFromFolderOutput>;
       copyTiledFiles: BackendTaskWithGenericErrorAndNoProgress<CopyTiledFilesInput, CopyTiledFilesOutput>;

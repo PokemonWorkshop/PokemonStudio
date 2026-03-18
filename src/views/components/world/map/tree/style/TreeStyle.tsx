@@ -1,11 +1,11 @@
 import styled from 'styled-components';
 
-type MapTreeContainerProps = {
+type TreeContainerProps = {
   hideMapTree: boolean;
   isTiledMode: boolean;
 };
 
-export const MapTreeContainer = styled.div<MapTreeContainerProps>`
+export const TreeContainer = styled.div<TreeContainerProps>`
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -83,13 +83,13 @@ export const TreeItemContainer = styled.div<MapTreeItemWrapperContainerProps>`
     color: ${({ theme }) => theme.colors.dangerBase};
   }
 
-  .input-map {
+  .input-tree {
     flex: 1;
     min-width: 0;
     height: 31px;
   }
 
-  .input-folder {
+  .input-tree-folder {
     flex: 1;
     min-width: 0;
     height: 31px;

@@ -13,9 +13,11 @@ import { MAP_INFO_FOLDER_NAME_TEXT_ID, StudioMapInfoFolder } from '@modelEntitie
 import { useSetProjectText } from '@utils/ReadingProjectText';
 import { SeparatorGreyLine } from '@components/separators/SeparatorGreyLine';
 import { MapTree } from './tree/MapTree';
-import { addNewMapInfo } from '@utils/MapInfoUtils';
+import { addNewMapInfo, findMapInfoMap } from '@utils/MapInfoUtils';
 import { useMapPage } from '@root/src/hooks/usePage';
 import { MapUpdate } from './MapUpdate';
+import { useProjectMaps } from '@hooks/useProjectData';
+import { DbSymbol } from '../../../../models/entities/dbSymbol';
 
 const MapMenuContainer = styled(NavigationDatabaseStyle)`
   ${NavigationDatabaseGroupStyle} {
@@ -42,9 +44,13 @@ const MapSubMenuContainer = styled.div`
 export const MapMenu = () => {
   const dialogsRef = useDialogsRef<MapEditorAndDeletionKeys>();
   const { mapInfo, isRMXPMode, setMapInfo } = useMapInfo();
+  const { selectedDataIdentifier: currentMap } = useProjectMaps();
   const { hasMapModified } = useMapPage();
   const setText = useSetProjectText();
   const { t } = useTranslation();
+
+  const currentMapInfo = currentMap ? findMapInfoMap(mapInfo, currentMap as DbSymbol) : undefined;
+  const currentFolderInfo = currentMapInfo?.data.parentId && currentMapInfo.data.parentId !== 0 ? mapInfo[currentMapInfo.data.parentId] : undefined;
 
   const handleNewFolder = () => {
     const newFolder = createMapInfo(mapInfo, { klass: 'MapInfoFolder' }) as StudioMapInfoFolder;
@@ -69,7 +75,7 @@ export const MapMenu = () => {
           {hasMapModified && <MapUpdate />}
         </MapSubMenuContainer>
       </NavigationDatabaseGroup>
-      <MapEditorOverlay ref={dialogsRef} />
+      <MapEditorOverlay ref={dialogsRef} mapInfoValue={currentFolderInfo} />
     </MapMenuContainer>
   );
 };
