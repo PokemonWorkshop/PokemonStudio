@@ -218,6 +218,7 @@
   "example_db_symbol_type": "Ex: normal",
   "example_db_symbol_event": "Ex: event_X",
   "map_deleted": "地圖已被刪除",
+  "event_deleted": "Event deleted",
   "nature_deleted": "性格已被刪除",
   "project_version": "專案版本",
   "fields_asterisk_required": "有星號的欄位必須填寫。",

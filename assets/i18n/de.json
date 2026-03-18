@@ -218,6 +218,7 @@
   "example_db_symbol_type": "Bsp: normal",
   "example_db_symbol_event": "Ex: event_X",
   "map_deleted": "Karte gelöscht",
+  "event_deleted": "Event deleted",
   "nature_deleted": "Wesen gelöscht",
   "project_version": "Projektversion",
   "fields_asterisk_required": "Mit einem Sternchen versehene Felder sind erforderlich.",
