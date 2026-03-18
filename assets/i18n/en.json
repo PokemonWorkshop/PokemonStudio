@@ -218,6 +218,7 @@
   "example_db_symbol_type": "Ex: normal",
   "example_db_symbol_event": "Ex: event_X",
   "map_deleted": "Map deleted",
+  "event_deleted": "Event deleted",
   "nature_deleted": "Nature deleted",
   "project_version": "Project version",
   "fields_asterisk_required": "Fields with an asterisk are required.",
