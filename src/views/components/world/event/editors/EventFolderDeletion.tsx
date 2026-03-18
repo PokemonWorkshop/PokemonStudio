@@ -5,7 +5,7 @@ import { useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
 import { useProjectEvents } from '@hooks/useProjectData';
 import { useEventTree } from '@hooks/useEventTree';
 import { getEventTreeChildrenDbSymbols, removeEventTreeItem } from '@utils/events/EventUtils';
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type EventFolderDeletionProps = {
@@ -24,7 +24,11 @@ export const EventFolderDeletion = forwardRef<EditorHandlingClose, EventFolderDe
   const getFolderName = useGetEntityNameTextUsingTextId();
 
   const folderTreeItem = dbSymbol ? eventTree[dbSymbol] : undefined;
-  const folderName = folderTreeItem?.data.klass === 'EventFolder' ? getFolderName({ klass: 'EventFolder', textId: folderTreeItem.data.id }) : '';
+  const folderName = useMemo(
+    () => (folderTreeItem?.data.klass === 'EventFolder' ? getFolderName({ klass: 'EventFolder', textId: folderTreeItem.data.id }) : ''),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
 
   const onClickDelete = () => {
     if (!dbSymbol || !folderTreeItem) return;
