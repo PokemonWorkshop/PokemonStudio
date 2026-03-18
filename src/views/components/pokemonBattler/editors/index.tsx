@@ -5,4 +5,5 @@ export { PokemonBattlerEditor } from './PokemonBattlerEditor';
 export { PokemonBattlerChangeOrder } from './PokemonBattlerChangeOrder';
 export { PokemonBattlerMoveEditor } from './PokemonBattlerMoveEditor';
 export { PokemonBattlerStatsEditor } from './PokemonBattlerStatsEditor';
+export { PokemonBattlerContestStatsEditor } from './PokemonBattlerContestStatsEditor';
 export { PokemonBattlerMoreInfoEditor } from './PokemonBattlerMoreInfoEditor';

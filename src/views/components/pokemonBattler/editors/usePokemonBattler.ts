@@ -2,22 +2,28 @@ import { useUpdateGroup } from '@components/database/group/editors/useUpdateGrou
 import { useUpdateTrainer } from '@components/database/trainer/editors/useUpdateTrainer';
 import { useGroupPage, useQuestPage, useTrainerPage } from '@hooks/usePage';
 import { useProjectPokemon } from '@hooks/useProjectData';
+import { useEffect, useMemo, useState } from 'react';
+import {
+  StudioContestStats,
+  StudioExpandPokemonSetup,
+  StudioGroupEncounter,
+  StudioIvEv,
+  createExpandPokemonSetup,
+} from '@modelEntities/groupEncounter';
 import { DbSymbol } from '@modelEntities/dbSymbol';
-import { StudioExpandPokemonSetup, StudioGroupEncounter, StudioIvEv, createExpandPokemonSetup } from '@modelEntities/groupEncounter';
 import { ProjectData } from '@src/GlobalStateProvider';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import { cleanExpandPokemonSetup } from '@utils/cleanNaNValue';
 import { cloneEntity } from '@utils/cloneEntity';
 import { createEncounter } from '@utils/entityCreation';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
-import { useEffect, useMemo, useState } from 'react';
 import { CurrentBattlerType, PokemonBattlerFrom } from './PokemonBattlerEditorOverlay';
 
-type RecordExpandPokemonSetupValue = number | string | DbSymbol | DbSymbol[] | StudioIvEv;
+type RecordExpandPokemonSetupValue = number | string | DbSymbol | DbSymbol[] | StudioIvEv | StudioContestStats;
 export type RecordExpandPokemonSetup = Record<StudioExpandPokemonSetup['type'], RecordExpandPokemonSetupValue>;
 
 const createOptionalExpandPokemonSetup = (encounter: StudioGroupEncounter) => {
-  const keys = ['ability', 'nature', 'itemHeld', 'givenName', 'gender', 'caughtWith', 'rareness', 'ivs', 'evs', 'moves'] as const;
+  const keys = ['ability', 'nature', 'itemHeld', 'givenName', 'gender', 'caughtWith', 'rareness', 'ivs', 'evs', 'conditions', 'moves'] as const;
   keys.forEach(
     (key) => encounter.expandPokemonSetup.find((setup) => setup.type === key) || encounter.expandPokemonSetup.push(createExpandPokemonSetup(key)),
   );
@@ -50,6 +56,7 @@ const cleanNullValue = (value: number, replaceBy?: number) => {
   return value === null || isNaN(value) ? replaceBy || 0 : value;
 };
 const stats = ['hp', 'atk', 'dfe', 'ats', 'dfs', 'spd'] as const;
+const conditions = ['coolness', 'beauty', 'cuteness', 'cleverness', 'toughness', 'sheen'] as const;
 
 export type PartialStudioGroupEncounter = Omit<StudioGroupEncounter, 'expandPokemonSetup'>;
 
@@ -178,6 +185,7 @@ export const usePokemonBattler = ({ action, currentBattler, from }: Props) => {
       expandPokemonSetupCleaned.rareness = cleanNullValue(expandPokemonSetupCleaned.rareness as number, defaultExpandPokemonSetup.rareness as number);
       const defaultEvs = defaultExpandPokemonSetup.evs as StudioIvEv;
       const defaultIvs = defaultExpandPokemonSetup.ivs as StudioIvEv;
+      const defaultConditions = defaultExpandPokemonSetup.conditions as StudioContestStats;
       stats.forEach((stat) => {
         const evs = expandPokemonSetupCleaned.evs as StudioIvEv;
         evs[stat] = cleanNullValue(evs[stat], defaultEvs[stat]);
@@ -185,6 +193,10 @@ export const usePokemonBattler = ({ action, currentBattler, from }: Props) => {
       stats.forEach((stat) => {
         const ivs = expandPokemonSetupCleaned.ivs as StudioIvEv;
         ivs[stat] = cleanNullValue(ivs[stat], defaultIvs[stat]);
+      });
+      conditions.forEach((condition) => {
+        const conditions = expandPokemonSetupCleaned.conditions as StudioContestStats;
+        conditions[condition] = cleanNullValue(conditions[condition], defaultConditions[condition]);
       });
     }
     const newEncounter = { ...cloneEntity(encounterCleaned), expandPokemonSetup: buildExpandPokemonSetup(cloneEntity(expandPokemonSetupCleaned)) };
@@ -257,6 +269,7 @@ export const usePokemonBattler = ({ action, currentBattler, from }: Props) => {
 
       return false;
     });
+
     const isInvalidIvs = stats.some((stat) => {
       const ivs = expandPokemonSetup.ivs as StudioIvEv;
       const value = ivs[stat];
@@ -264,7 +277,16 @@ export const usePokemonBattler = ({ action, currentBattler, from }: Props) => {
 
       return false;
     });
-    if (isInvalidEvs || isInvalidIvs) return false;
+
+    const isInvalidConditions = conditions.some((condition) => {
+      const conditions = expandPokemonSetup.conditions as StudioContestStats;
+      const value = conditions[condition];
+      if (isNaN(value) || notBetween(value, 0, 255)) return true;
+
+      return false;
+    });
+
+    if (isInvalidEvs || isInvalidIvs || isInvalidConditions) return false;
 
     return true;
   };
@@ -304,7 +326,16 @@ export const usePokemonBattler = ({ action, currentBattler, from }: Props) => {
 
       return false;
     });
-    if (isInvalidEVs || isInvalidIvs) return false;
+
+    const isInvalidConditions = conditions.some((condition) => {
+      const conditions = expandPokemonSetup.conditions as StudioContestStats;
+      const value = conditions[condition];
+      if (notBetween(value, 0, 255)) return true;
+
+      return false;
+    });
+
+    if (isInvalidEVs || isInvalidIvs || isInvalidConditions) return false;
 
     return true;
   };

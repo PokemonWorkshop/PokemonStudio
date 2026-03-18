@@ -121,6 +121,14 @@ const removeExpandPokemonSetupWithCondition = (
   if (index !== -1) encounter.expandPokemonSetup.splice(index, 1);
 };
 
+// If all conditions have a zero value, don't include this ExpandPokemonSetup in the JSON
+const removeEmptyContestConditionFromExpandPokemonSetup = (encounter: StudioGroupEncounter) => {
+  const index = encounter.expandPokemonSetup.findIndex(
+    (eps) => eps.type === 'conditions' && !Object.values(eps.value).some((condition) => condition > 0),
+  );
+  if (index !== -1) encounter.expandPokemonSetup.splice(index, 1);
+};
+
 const cleanNanValueEncounter = (encounter: StudioGroupEncounter) => {
   if (encounter.shinySetup.kind === 'rate') encounter.shinySetup.rate = cleanNaNValue(encounter.shinySetup.rate, 0);
   cleanNaNValue(encounter.randomEncounterChance, 1);
@@ -155,6 +163,7 @@ export const cleanExpandPokemonSetup = (encounter: StudioGroupEncounter, species
   removeExpandPokemonSetupWithCondition(encounter, 'gender', -1);
   removeExpandPokemonSetupWithCondition(encounter, 'givenName', '');
   removeExpandPokemonSetupWithCondition(encounter, 'rareness', -1);
+  removeEmptyContestConditionFromExpandPokemonSetup(encounter);
   const specie = species[encounter.specie];
   if (specie) {
     const form = specie.forms.find((f) => f.form === encounter.form);
