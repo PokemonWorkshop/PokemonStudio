@@ -20,29 +20,24 @@ import { Input } from '@components/inputs';
 import { useContextMenu } from '@hooks/useContextMenu';
 import { useDialogsRef } from '@hooks/useDialogsRef';
 import { EventTreeContextMenu } from './EventTreeContextMenu';
-import { convertEventToTree, convertTreeToEventTree } from '@utils/events/EventUtils';
+import { convertEventToTree, convertTreeToEventTree, eventTreeConvertItemToEventTreeValue } from '@utils/events/EventUtils';
 import { useEventTree } from '@hooks/useEventTree';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { MapListContainer, TreeItemContainer } from '../../map/tree/style';
-import { EVENT_NAME_TEXT_ID } from '../../../../../models/entities/event/event';
-import { EVENT_FOLDER_NAME_TEXT_ID } from '../../../../../models/entities/event/event-tree';
+import { EVENT_NAME_TEXT_ID } from '@modelEntities/event/event';
+import { EVENT_FOLDER_NAME_TEXT_ID, StudioEventTreeValue } from '@modelEntities/event/event-tree';
 import { EventEditorAndDeletionKeys, EventTreeEditorOverlay } from '../editors/EventEditorOverlay';
 import { searchIsUnderOpenFolder } from '../../../tree/Tree/Tree-utils';
 import DotIcon from '@assets/icons/global/dot.svg';
 import { getMapTreeCountChildren, getTreeDestinationDepth, getTreeSourceDepth, renderDropBox } from '../../../../../utils/MapTreeUtils';
-import { StudioEventTreeValue } from '../../../../../models/entities/event/event-tree';
 
 type EventTreeComponentProps = {
   treeScrollbarRef: RefObject<HTMLDivElement>;
 };
 
 export const EventTreeComponent = ({ treeScrollbarRef }: EventTreeComponentProps) => {
-  const {
-    selectedDataIdentifier: currentEvent,
-    setSelectedDataIdentifier: setEvent,
-    projectDataValues: events,
-  } = useProjectEvents();
-  const { eventTree, setEventTree } = useEventTree();
+  const { selectedDataIdentifier: currentEvent, setSelectedDataIdentifier: setEvent, projectDataValues: events } = useProjectEvents();
+  const { eventTree, setEventTree, setPartialEventTree } = useEventTree();
   const setText = useSetProjectText();
   const getEventName = useGetEntityNameText();
   const getFolderName = useGetEntityNameTextUsingTextId();
@@ -87,11 +82,13 @@ export const EventTreeComponent = ({ treeScrollbarRef }: EventTreeComponentProps
   const onExpand = (itemId: ItemId) => {
     const newTree = mutateTree(tree, itemId, { isExpanded: true });
     setTree(newTree);
+    setPartialEventTree(eventTreeConvertItemToEventTreeValue(newTree.items[itemId]), itemId.toString());
   };
 
   const onCollapse = (itemId: ItemId) => {
     const newTree = mutateTree(tree, itemId, { isExpanded: false });
     setTree(newTree);
+    setPartialEventTree(eventTreeConvertItemToEventTreeValue(newTree.items[itemId]), itemId.toString());
   };
 
   const getIcon = (item: TreeItem, onExpand: (itemId: string) => void, onCollapse: (itemId: string) => void) => {

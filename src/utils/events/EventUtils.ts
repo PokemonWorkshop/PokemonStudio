@@ -123,6 +123,16 @@ export const findEventHasFolder = (eventTree: StudioEventTree, eventDbSymbol: Db
   if (!eventEntry) return undefined;
 
   return values.find(
-    (entry): entry is StudioEventTreeFolder => entry.data.klass === 'EventFolder' && entry.children.includes(eventEntry.id as DbSymbol)
+    (entry): entry is StudioEventTreeFolder => entry.data.klass === 'EventFolder' && entry.children.includes(eventEntry.id as DbSymbol),
   );
+};
+
+/* The tree does not change the structure of the TreeItem, whose data is provided by the eventTree.
+ * This means that the data present in the input also exists in the output.
+ * The ItemId can be an Integer or a String, but this has no effect on the eventTree.
+ * So "conversions" are safe.
+ */
+
+export const eventTreeConvertItemToEventTreeValue = (item: TreeItem) => {
+  return item as unknown as StudioEventTreeValue;
 };

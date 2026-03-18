@@ -1,5 +1,5 @@
 import { useGlobalState } from '@src/GlobalStateProvider';
-import { StudioEventTree } from '@modelEntities/event/event-tree';
+import { StudioEventTree, StudioEventTreeValue } from '@modelEntities/event/event-tree';
 
 export const useEventTree = () => {
   const [state, setState] = useGlobalState();
@@ -20,9 +20,32 @@ export const useEventTree = () => {
     }
   };
 
+  const setPartialEventTree = (newEventTreeValue: StudioEventTreeValue, id: keyof StudioEventTree) => {
+    const currentEventTreeValue = eventTree[id];
+    if (JSON.stringify(currentEventTreeValue) !== JSON.stringify(newEventTreeValue)) {
+      setState((currentState) => ({
+        ...currentState,
+        eventTree: {
+          ...eventTree,
+          [id]: newEventTreeValue,
+        },
+        savingMapInfo: true,
+      }));
+    } else {
+      setState((currentState) => ({
+        ...currentState,
+        eventTree: {
+          ...eventTree,
+          [id]: newEventTreeValue,
+        },
+      }));
+    }
+  };
+
   return {
     eventTree,
     setEventTree,
+    setPartialEventTree,
   };
 };
 

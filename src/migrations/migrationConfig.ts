@@ -176,7 +176,7 @@ export const MIGRATION_CONFIG: MigrateConfigType[] = [
   },
   {
     migration: addCsvForEventFolders,
-    version: '2.9.2',
+    version: '2.9.1',
     message: 'add_csv_for_event_folders',
   },
 ];
