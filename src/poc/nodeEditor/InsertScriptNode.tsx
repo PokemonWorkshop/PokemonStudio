@@ -1,52 +1,40 @@
-import styled from 'styled-components';
-import React from 'react';
 import { useTranslation } from 'react-i18next';
-import type { StudioEventCommandInsertScript } from '@modelEntities/event/command';
-import { CONTROL, useKeyPress } from '@hooks/useKeyPress';
-import { useEventContext } from '@components/event/EventContext';
-import { Handle, Position } from '@xyflow/react';
-import { MultiLineInput } from '@components/inputs';
+import { EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR, StudioEventCommandData, type StudioEventCommandInsertScript } from '@modelEntities/event/command';
 import { EventNodeProps } from './EventNodeProps';
+import { useCommandNode } from './useCommandNode';
+import { useZodForm } from '@src/hooks/useZodForm';
+import { useNodeInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
+import { InputFormContainer } from '@components/inputs/InputContainer';
+import React, { useEffect } from 'react';
 
-const BasicNodeContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 320px;
-  height: 240px;
-  background-color: white;
-  border-radius: 8px;
+const INSERT_SCRIPT_EDITOR_SCHEMA = EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR.pick({ script: true });
 
-  &[data-selected='true'] {
-    border: 2px solid red;
-  }
-`;
-
-export const InsertScriptNode = ({ id, data: { dialogsRef, command }, selected }: EventNodeProps) => {
-  const { setCurrentEditedNode } = useEventContext();
+export const InsertScriptNode = ({ id, data: { dialogsRef, command, comments }, selected }: EventNodeProps) => {
+  const { CommandNode, updateCommand } = useCommandNode<StudioEventCommandInsertScript>(id);
+  const { type: commandType, ...commandData } = command as StudioEventCommandData<StudioEventCommandInsertScript>;
+  const { canClose, getFormData, reload, defaults, formRef } = useZodForm(INSERT_SCRIPT_EDITOR_SCHEMA, commandData);
+  const { MultiLineInput } = useNodeInputAttrsWithLabel(INSERT_SCRIPT_EDITOR_SCHEMA, defaults);
   const { t } = useTranslation();
-  const isControlPressed = useKeyPress(CONTROL);
-  const { type: commandType, comment, script } = command as StudioEventCommandInsertScript;
+  const date = new Date().toLocaleString();
+
+  const onBlur = () => {
+    const result = canClose() && getFormData();
+    if (!result || !result.success) return;
+
+    updateCommand(result.data);
+  };
+
+  useEffect(() => {
+    reload(commandData);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [command]);
 
   return (
-    <>
-      <Handle type="target" position={Position.Left} id="Tleft" />
-      <Handle type="source" position={Position.Right} id="Sright" />
-      <BasicNodeContainer
-        onClick={() => {
-          if (isControlPressed) return;
-
-          setCurrentEditedNode(id);
-          dialogsRef?.current?.openDialog(commandType);
-        }}
-        data-selected={selected}
-      >
-        {t(`event_command_${commandType}`)}
-        <span>
-          {t(`event_command_comment`)}:{comment}
-        </span>
-        <span>{t(`event_command_script`)}</span>
-        <MultiLineInput value={script} readOnly />
-      </BasicNodeContainer>
-    </>
+    <CommandNode commandType={commandType} commentCount={comments.length} dialogsRef={dialogsRef} nodeId={id} selected={selected}>
+      <span>{date}</span>
+      <InputFormContainer ref={formRef} onBlur={onBlur}>
+        <MultiLineInput name="script" label={t(`event_command_script`)} className="nodrag" />
+      </InputFormContainer>
+    </CommandNode>
   );
 };

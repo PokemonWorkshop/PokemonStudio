@@ -16,7 +16,14 @@ import {
 } from '@xyflow/react';
 import { EventCommandsEditor } from '@components/event/EventCommandsEditor';
 import { EventProvider, useEventContext } from '@components/event/EventContext';
-import type { CommandId, ConnectionId, StudioEventCommand, StudioEventCommandConnection, StudioEventCommandType } from '@modelEntities/event/command';
+import type {
+  CommandId,
+  ConnectionId,
+  StudioEventCommand,
+  StudioEventCommandConnection,
+  StudioEventCommandData,
+  StudioEventCommandType,
+} from '@modelEntities/event/command';
 import { EventDialogsRef, EventEditorAndDeletionKeys, EventEditorOverlay } from '../nodeEditor/EventEditorOverlay';
 import { useDialogsRef } from '@src/hooks/useDialogsRef';
 import { CommandNodes } from './CommandNodes';
@@ -31,6 +38,7 @@ import { useUpdateEvent } from './useUpdateEvent';
 import { cloneEntity } from '@utils/cloneEntity';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useTranslation } from 'react-i18next';
+import { CustomConnectionLineStyle, edgeTypes } from './CustomEdge';
 
 /* eslint-disable react-hooks/exhaustive-deps */
 
@@ -38,12 +46,15 @@ import { useTranslation } from 'react-i18next';
 
 type NodeData = {
   dialogsRef?: EventDialogsRef;
-  command: StudioEventCommand;
+  command: StudioEventCommandData<StudioEventCommand>;
+  comments: string[];
 };
 
 type NodeEvent = Node<NodeData, StudioEventCommandType>;
 type NodeShadow = Node;
 type ChangeToApplyEventsType = { type: 'position'; commandId: CommandId; position: { x: number; y: number } };
+
+const GRID_SIZE = 32;
 
 const EventEditorContainer = styled.div`
   display: flex;
@@ -55,6 +66,11 @@ const EventEditorContainer = styled.div`
   .eventflow {
     width: 100%;
     height: 100%;
+    background-color: rgb(17, 18, 19);
+
+    .react-flow__pane:has(.react-flow__connectionline) {
+      cursor: grabbing;
+    }
   }
 `;
 
@@ -73,7 +89,7 @@ const initCommandNodes = (event: StudioEvent, dialogsRef?: EventDialogsRef) => {
     id,
     type: command?.type,
     position: { x: command?.studioData.x || 0, y: command?.studioData.y || 0 },
-    data: { dialogsRef, command },
+    data: { dialogsRef, command, comments: command?.studioData.comments },
   }));
 };
 
@@ -101,8 +117,11 @@ const initEdges = (event: StudioEvent) => {
   }, []);
 };
 
-const EventFlow = () => {
-  const { event: studioEvent } = useEventPage();
+type EventFlowProps = {
+  studioEvent: StudioEvent;
+};
+
+const EventFlow = ({ studioEvent }: EventFlowProps) => {
   const dialogsRef = useDialogsRef<EventEditorAndDeletionKeys>();
   const reactFlowInstance = useReactFlow();
   const [nodes, setNodes] = useNodesState<NodeEvent | NodeShadow>([
@@ -139,11 +158,12 @@ const EventFlow = () => {
   );
 
   const onDragOver: DragEventHandler<HTMLDivElement> = useCallback((event) => {
+    // TODO: check that the drag comes from the event commands
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';
     const position = screenToFlowPosition({
-      x: event.clientX + 8,
-      y: event.clientY + 8,
+      x: event.clientX - 160,
+      y: event.clientY + 32,
     });
 
     const shadowNode: NodeShadow = reactFlowInstance.getNode('shadow_node') as NodeShadow;
@@ -162,14 +182,14 @@ const EventFlow = () => {
       const command = EventCommandCreation[type];
       const id = getId(studioEvent);
       const position = screenToFlowPosition({
-        x: event.clientX + 8,
-        y: event.clientY + 8,
+        x: event.clientX - 160,
+        y: event.clientY + 32,
       });
       const newNode: NodeEvent = {
         id,
         type,
         position,
-        data: { dialogsRef, command: { type, ...command } as StudioEventCommand },
+        data: { dialogsRef, command: { type, ...command } as StudioEventCommandData<StudioEventCommand>, comments: [] },
       };
       const shadowNode = reactFlowInstance.getNode('shadow_node') as NodeShadow;
 
@@ -186,7 +206,7 @@ const EventFlow = () => {
       updateEvent({
         commands: {
           ...studioEvent.commands,
-          [id as CommandId]: { type, connections: {}, studioData: { ...position }, ...command },
+          [id as CommandId]: { type, connections: {}, studioData: { ...position, comments: [] }, ...command },
         },
       });
     },
@@ -232,6 +252,10 @@ const EventFlow = () => {
     },
     [studioEvent],
   );
+
+  const onBeforeDelete = useCallback(async () => {
+    return !document.querySelector('#dialogs')?.textContent;
+  }, [dialogsRef]);
 
   const onDelete = useCallback(
     (params: { nodes: (NodeEvent | NodeShadow)[]; edges: Edge[] }) => {
@@ -298,19 +322,24 @@ const EventFlow = () => {
           nodes={nodes}
           edges={edges}
           nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           onDelete={onDelete}
+          onBeforeDelete={onBeforeDelete}
           onDrop={onDrop}
           onDragStart={onDragStart as DragEventHandler<HTMLDivElement>}
           onDragOver={onDragOver}
           onDragLeave={onDragLeave}
           isValidConnection={isValidConnection}
+          connectionLineStyle={CustomConnectionLineStyle}
           fitView
+          snapToGrid
+          snapGrid={[GRID_SIZE, GRID_SIZE]}
         >
           <Controls position="bottom-right" />
-          <Background />
+          <Background gap={GRID_SIZE} offset={GRID_SIZE} color="#6c707b" />
         </ReactFlow>
       </div>
       <EventCommandsEditor />
@@ -320,14 +349,15 @@ const EventFlow = () => {
 };
 
 export const EventEditor = () => {
+  const { event } = useEventPage();
   const { t } = useTranslation();
   const [state] = useGlobalState();
   const hasEventAvailable = useMemo(() => Object.keys(state.projectData.events).length > 0, [state.projectData.events]);
 
   return hasEventAvailable ? (
     <ReactFlowProvider>
-      <EventProvider>
-        <EventFlow />
+      <EventProvider event={event}>
+        <EventFlow studioEvent={event} />
       </EventProvider>
     </ReactFlowProvider>
   ) : (

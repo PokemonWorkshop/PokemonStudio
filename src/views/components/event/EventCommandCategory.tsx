@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import type { StudioEventCommandCategory } from '@modelEntities/event/category';
 import { useTranslation } from 'react-i18next';
-import { EventCategoryIcon, EventCategoryIconContainer } from './EventCategoryIcon';
+import { EventIcon, EventCategoryIconContainer } from './EventIcon';
 
 const EventCommandCategoryContainer = styled.div.attrs((props) => ({ 'data-color': props.color }))`
   display: flex;
@@ -42,7 +42,7 @@ export const EventCommandCategory = ({ category, onClick }: EventCommandCategory
 
   return (
     <EventCommandCategoryContainer onClick={onClick}>
-      <EventCategoryIcon category={category} size="m" />
+      <EventIcon icon={{ type: 'category', category }} size="m" />
       <span className="title">{t(`event_category_${category}`)}</span>
     </EventCommandCategoryContainer>
   );

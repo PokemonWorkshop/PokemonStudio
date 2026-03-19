@@ -9,9 +9,10 @@ const ShadowNodeContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 320px;
-  height: 240px;
+  height: 160px;
   background-color: black;
-  border-radius: 8px;
+  border-radius: 16px;
+  opacity: 0.5;
 `;
 
 export const ShadowNode = ({ id }: ShadowNodeProps) => {

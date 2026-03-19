@@ -1857,5 +1857,6 @@
   "add_csv_for_event_folders": "Adding the CSV file for event folder names",
   "event_command_comment": "Comment",
   "event_command_script": "Script",
-  "create_event": "Add event"
+  "create_event": "Add event",
+  "invalid_data": "Invalid data"
 }
