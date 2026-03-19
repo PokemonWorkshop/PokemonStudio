@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR, StudioEventCommandData, type StudioEventCommandInsertScript } from '@modelEntities/event/command';
 import { EventNodeProps } from './EventNodeProps';
-import { useCommandNode } from './useCommandNode';
+import { useCommandNode } from '../hooks/useCommandNode';
 import { useZodForm } from '@src/hooks/useZodForm';
 import { useNodeInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
 import { InputFormContainer } from '@components/inputs/InputContainer';
@@ -9,7 +9,7 @@ import React, { useEffect } from 'react';
 
 const INSERT_SCRIPT_EDITOR_SCHEMA = EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR.pick({ script: true });
 
-export const InsertScriptNode = ({ id, data: { dialogsRef, command, comments }, selected }: EventNodeProps) => {
+export const InsertScriptCommand = ({ id, data: { dialogsRef, command, comments }, selected }: EventNodeProps) => {
   const { CommandNode, updateCommand } = useCommandNode<StudioEventCommandInsertScript>(id);
   const { type: commandType, ...commandData } = command as StudioEventCommandData<StudioEventCommandInsertScript>;
   const { canClose, getFormData, reload, defaults, formRef } = useZodForm(INSERT_SCRIPT_EDITOR_SCHEMA, commandData);

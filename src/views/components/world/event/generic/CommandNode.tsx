@@ -1,11 +1,11 @@
-import { useEventActions } from '@components/event/EventContext';
+import { useEventActions } from '@components/world/event/generic/EventContext';
 import type { StudioEventCommandType } from '@modelEntities/event/command';
 import { useTranslation } from 'react-i18next';
-import { EventDialogsRef } from './EventEditorOverlay';
-import { EventIcon, IconsFromCommand } from '@components/event/EventIcon';
+import { EventDialogsRef } from '../commands/editors/EventEditorOverlay';
+import { EventIcon, IconsFromCommand } from '@components/world/event/generic/EventIcon';
 import { Position } from '@xyflow/react';
-import { useHandleConnectionState } from './useHandleConnectionState';
-import { CustomHandle } from './CustomHandle';
+import { useHandleConnectionState } from '@components/world/event/hooks/useHandleConnectionState';
+import { CustomHandle } from '@components/world/event/generic/CustomHandle';
 import InfoIcon from '@assets/icons/notification/info.svg';
 import NoteIcon from '@assets/icons/global/note.svg';
 import React, { ReactNode } from 'react';

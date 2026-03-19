@@ -1,14 +1,14 @@
 import BackIcon from '@assets/icons/global/back.svg';
-import { EventCommand } from './EventCommand';
+import { CommandLibraryCard } from './CommandLibraryCard';
 import { StudioEventCommandCategory } from '@modelEntities/event/category';
 import { COMMANDS_FROM_CATEGORY } from '@modelEntities/event/command';
-import { EventIcon, IconsFromCategory } from './EventIcon';
+import { EventIcon, IconsFromCategory } from '../generic/EventIcon';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import styled from 'styled-components';
 import React, { useMemo } from 'react';
 
-const EventCommandsContainer = styled.div.attrs((props) => ({ 'data-color': props.color }))`
+const CommandLibraryBlockContainer = styled.div.attrs((props) => ({ 'data-color': props.color }))`
   .category-header {
     display: flex;
     flex-direction: row;
@@ -71,7 +71,7 @@ const EventCommandsContainer = styled.div.attrs((props) => ({ 'data-color': prop
   }
 `;
 
-type EventCommandsProps = {
+type CommandLibraryBlockProps = {
   category: StudioEventCommandCategory;
   setSelectedCommandCategory: (category: StudioEventCommandCategory | undefined) => void;
   research?: string;
@@ -88,7 +88,7 @@ const getCommands = (category: StudioEventCommandCategory, t: TFunction, researc
     .map(({ command }) => command);
 };
 
-export const EventCommands = ({ category, setSelectedCommandCategory, research }: EventCommandsProps) => {
+export const CommandLibraryBlock = ({ category, setSelectedCommandCategory, research }: CommandLibraryBlockProps) => {
   const { t } = useTranslation();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const commands = useMemo(() => getCommands(category, t, research), [category, research]);
@@ -97,7 +97,7 @@ export const EventCommands = ({ category, setSelectedCommandCategory, research }
   return research && commandsCount === 0 ? (
     <></>
   ) : (
-    <EventCommandsContainer>
+    <CommandLibraryBlockContainer>
       <div className="category-header" data-color={IconsFromCategory[category].color}>
         {!research && (
           <span className="back-icon" onClick={() => setSelectedCommandCategory(undefined)}>
@@ -110,9 +110,9 @@ export const EventCommands = ({ category, setSelectedCommandCategory, research }
       </div>
       <div className="commands">
         {commands.map(({ commandType, helper }) => (
-          <EventCommand key={commandType} command={commandType} hasHelper={helper} />
+          <CommandLibraryCard key={commandType} command={commandType} hasHelper={helper} />
         ))}
       </div>
-    </EventCommandsContainer>
+    </CommandLibraryBlockContainer>
   );
 };

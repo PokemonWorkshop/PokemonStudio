@@ -1,7 +1,7 @@
 import type { CommandId, StudioEventCommand } from '@modelEntities/event/command';
 import type { StudioEvent } from '@modelEntities/event/event';
 import { useMemo } from 'react';
-import { useCommandNode } from '../nodeEditor/useCommandNode';
+import { useCommandNode } from './useCommandNode';
 
 export const useCommandEditor = <T extends StudioEventCommand>(event: StudioEvent, defaultCommandId?: CommandId) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps

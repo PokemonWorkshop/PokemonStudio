@@ -1,6 +1,6 @@
-import { StudioEvent } from '@modelEntities/event/event';
-import type { StudioEventCommandType } from '@root/src/models/entities/event/command';
-import { useUpdateEvent } from '@src/poc/eventEditor/useUpdateEvent';
+import type { StudioEvent } from '@modelEntities/event/event';
+import type { StudioEventCommandType } from '@modelEntities/event/command';
+import { useUpdateEvent } from '../hooks/useUpdateEvent';
 import React, { createContext, ReactNode, useContext, useMemo, useState } from 'react';
 
 type EventActionsContextType = {

@@ -1,5 +1,5 @@
-import { useEventActions } from '@components/event/EventContext';
-import { CommandNode } from './CommandNode';
+import { useEventActions } from '@components/world/event/generic/EventContext';
+import { CommandNode } from '../generic/CommandNode';
 import { CommandId, StudioEventCommand } from '@modelEntities/event/command';
 import { cloneEntity } from '@utils/cloneEntity';
 import { useCallback } from 'react';

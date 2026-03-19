@@ -2,9 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import type { StudioEventCommandCategory } from '@modelEntities/event/category';
 import { useTranslation } from 'react-i18next';
-import { EventIcon, EventCategoryIconContainer } from './EventIcon';
+import { EventIcon, EventCategoryIconContainer } from '../generic/EventIcon';
 
-const EventCommandCategoryContainer = styled.div.attrs((props) => ({ 'data-color': props.color }))`
+const CommandLibraryCategoryContainer = styled.div.attrs((props) => ({ 'data-color': props.color }))`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -32,18 +32,18 @@ const EventCommandCategoryContainer = styled.div.attrs((props) => ({ 'data-color
   }
 `;
 
-type EventCommandCategoryProps = {
+type CommandLibraryCategoryProps = {
   category: StudioEventCommandCategory;
   onClick: () => void;
 };
 
-export const EventCommandCategory = ({ category, onClick }: EventCommandCategoryProps) => {
+export const CommandLibraryCategory = ({ category, onClick }: CommandLibraryCategoryProps) => {
   const { t } = useTranslation();
 
   return (
-    <EventCommandCategoryContainer onClick={onClick}>
+    <CommandLibraryCategoryContainer onClick={onClick}>
       <EventIcon icon={{ type: 'category', category }} size="m" />
       <span className="title">{t(`event_category_${category}`)}</span>
-    </EventCommandCategoryContainer>
+    </CommandLibraryCategoryContainer>
   );
 };

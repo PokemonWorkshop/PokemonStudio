@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { ClearInput } from '../inputs';
-import { EventCommandCategories } from './EventCommandCategories';
-import { EventCommands } from './EventCommands';
+import { ClearInput } from '@components/inputs';
+import { CommandLibraryCategories } from './CommandLibraryCategories';
+import { CommandLibraryBlock } from './CommandLibraryBlock';
 import { useTranslation } from 'react-i18next';
-import { EditorContainer } from '../editor/EditorContainer';
+import { EditorContainer } from '@components/editor/EditorContainer';
 import { STUDIO_EVENT_COMMAND_CATEGORY_LIST, StudioEventCommandCategory } from '@root/src/models/entities/event/category';
 
-const EventCommandsEditorContainer = styled(EditorContainer)`
+const CommandLibraryContainer = styled(EditorContainer)`
   position: unset;
   display: flex;
   flex-direction: column;
@@ -76,7 +76,7 @@ const EventCommandsEditorContainer = styled(EditorContainer)`
   }
 `;
 
-export const EventCommandsEditor = () => {
+export const CommandLibrary = () => {
   const [selectedCommandCategory, setSelectedCommandCategory] = useState<StudioEventCommandCategory | undefined>(undefined);
   const [research, setResearch] = useState<string>('');
   const { t } = useTranslation();
@@ -87,7 +87,7 @@ export const EventCommandsEditor = () => {
   };
 
   return (
-    <EventCommandsEditorContainer>
+    <CommandLibraryContainer>
       <div className="head">
         <div className="title">
           <h2>{t('instructions')}</h2>
@@ -104,15 +104,15 @@ export const EventCommandsEditor = () => {
         {research ? (
           <>
             {STUDIO_EVENT_COMMAND_CATEGORY_LIST.map((category) => (
-              <EventCommands key={category} category={category} research={research} setSelectedCommandCategory={setSelectedCommandCategory} />
+              <CommandLibraryBlock key={category} category={category} research={research} setSelectedCommandCategory={setSelectedCommandCategory} />
             ))}
           </>
         ) : selectedCommandCategory ? (
-          <EventCommands category={selectedCommandCategory} setSelectedCommandCategory={setSelectedCommandCategory} />
+          <CommandLibraryBlock category={selectedCommandCategory} setSelectedCommandCategory={setSelectedCommandCategory} />
         ) : (
-          <EventCommandCategories setSelectedCommandCategory={setSelectedCommandCategory} />
+          <CommandLibraryCategories setSelectedCommandCategory={setSelectedCommandCategory} />
         )}
       </div>
-    </EventCommandsEditorContainer>
+    </CommandLibraryContainer>
   );
 };

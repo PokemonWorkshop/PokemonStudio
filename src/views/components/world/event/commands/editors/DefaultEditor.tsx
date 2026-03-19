@@ -3,7 +3,7 @@ import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/
 import { useGlobalState } from '@src/GlobalStateProvider';
 import React, { forwardRef } from 'react';
 
-export const BasicEditor = forwardRef<EditorHandlingClose>((_, ref) => {
+export const DefaultEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const [, setState] = useGlobalState();
   const canClose = () => true;
 
@@ -20,4 +20,4 @@ export const BasicEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   );
 });
 
-BasicEditor.displayName = 'BasicEditor';
+DefaultEditor.displayName = 'DefaultEditor';

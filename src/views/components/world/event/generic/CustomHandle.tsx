@@ -1,4 +1,4 @@
-import { EventIconColor } from '@components/event/EventIcon';
+import { EventIconColor } from './EventIcon';
 import { Handle, HandleType, Position } from '@xyflow/react';
 import PlusIcon from '@assets/icons/global/plus-icon.svg';
 import React from 'react';

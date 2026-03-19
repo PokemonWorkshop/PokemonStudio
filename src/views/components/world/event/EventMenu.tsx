@@ -9,7 +9,7 @@ import { useDialogsRef } from '@hooks/useDialogsRef';
 import { SeparatorGreyLine } from '@components/separators/SeparatorGreyLine';
 import { DbSymbol } from '../../../../models/entities/dbSymbol';
 import { useSetProjectText } from '../../../../utils/ReadingProjectText';
-import { EventTree } from './EventTree';
+import { EventTree } from './treeEvent/EventTree';
 import { EventEditorAndDeletionKeys, EventTreeEditorOverlay } from './editors/EventEditorOverlay';
 import { useEventTree } from '../../../../hooks/useEventTree';
 import { EVENT_FOLDER_NAME_TEXT_ID } from '../../../../models/entities/event/event-tree';

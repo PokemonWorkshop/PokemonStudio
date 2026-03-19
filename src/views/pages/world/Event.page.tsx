@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { EventEmptyState } from '../../components/world/map/event/EventEmptyState';
 import { PageContainerStyle } from '../database/PageContainerStyle';
 import React from 'react';
+import { EventEditor } from '@components/world/event/EventEditor';
 
 export const EventPageStyle = styled.div`
   display: flex;
@@ -14,7 +15,10 @@ export const EventPageStyle = styled.div`
 `;
 
 export const EventPage = () => {
-  return (
+  const isDev = window.api.isDev;
+  return isDev ? (
+    <EventEditor />
+  ) : (
     <EventPageStyle>
       <EventEmptyState />
     </EventPageStyle>

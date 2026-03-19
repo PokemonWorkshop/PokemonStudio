@@ -14,8 +14,8 @@ import {
   useNodesState,
   useReactFlow,
 } from '@xyflow/react';
-import { EventCommandsEditor } from '@components/event/EventCommandsEditor';
-import { EventProvider, useEventContext } from '@components/event/EventContext';
+import { CommandLibrary } from '@components/world/event/commandLibrary/CommandLibrary';
+import { EventProvider, useEventContext } from '@components/world/event/generic/EventContext';
 import type {
   CommandId,
   ConnectionId,
@@ -24,21 +24,20 @@ import type {
   StudioEventCommandData,
   StudioEventCommandType,
 } from '@modelEntities/event/command';
-import { EventDialogsRef, EventEditorAndDeletionKeys, EventEditorOverlay } from '../nodeEditor/EventEditorOverlay';
+import { EventDialogsRef, EventEditorAndDeletionKeys, EventEditorOverlay } from './commands/editors/EventEditorOverlay';
 import { useDialogsRef } from '@src/hooks/useDialogsRef';
-import { CommandNodes } from './CommandNodes';
-
-import React, { DragEvent, DragEventHandler, useCallback, useEffect, useMemo } from 'react';
-import styled from 'styled-components';
+import { CommandToNodes } from './generic/CommandToNodes';
 import { EventCommandCreation } from '@utils/eventCommandCreation';
 import { useEventPage } from '@src/hooks/usePage';
 import { StudioEvent } from '@modelEntities/event/event';
 import { findFirstAvailableId } from '@utils/ModelUtils';
-import { useUpdateEvent } from './useUpdateEvent';
+import { useUpdateEvent } from './hooks/useUpdateEvent';
 import { cloneEntity } from '@utils/cloneEntity';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useTranslation } from 'react-i18next';
-import { CustomConnectionLineStyle, edgeTypes } from './CustomEdge';
+import { CustomConnectionLineStyle, edgeTypes } from './generic/CustomEdge';
+import styled from 'styled-components';
+import React, { DragEvent, DragEventHandler, useCallback, useEffect, useMemo } from 'react';
 
 /* eslint-disable react-hooks/exhaustive-deps */
 
@@ -129,7 +128,7 @@ const EventFlow = ({ studioEvent }: EventFlowProps) => {
     ...initCommandNodes(studioEvent, dialogsRef),
   ]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(initEdges(studioEvent));
-  const nodeTypes = useMemo(() => CommandNodes, []);
+  const nodeTypes = useMemo(() => CommandToNodes, []);
   const { screenToFlowPosition } = useReactFlow();
   const { currentEditedNode, type, setCurrentEditedNode, setType } = useEventContext();
   const updateEvent = useUpdateEvent(studioEvent);
@@ -315,6 +314,20 @@ const EventFlow = ({ studioEvent }: EventFlowProps) => {
     setCurrentEditedNode(undefined);
   }, [studioEvent.commands]);
 
+  useEffect(() => {
+    setNodes([
+      { id: 'shadow_node', type: 'shadow_node', position: { x: 0, y: 0 }, data: {}, hidden: true },
+      ...initCommandNodes(studioEvent, dialogsRef),
+    ]);
+    setEdges(initEdges(studioEvent));
+    setCurrentEditedNode(undefined);
+    // it's necessary to wait that reactFlowInstance has the new nodes and edges to do a correct fitView
+    const timer = setTimeout(() => {
+      reactFlowInstance.fitView();
+    }, 80);
+    return () => clearTimeout(timer);
+  }, [studioEvent.dbSymbol]);
+
   return (
     <EventEditorContainer>
       <div className="eventflow">
@@ -342,7 +355,7 @@ const EventFlow = ({ studioEvent }: EventFlowProps) => {
           <Background gap={GRID_SIZE} offset={GRID_SIZE} color="#6c707b" />
         </ReactFlow>
       </div>
-      <EventCommandsEditor />
+      <CommandLibrary />
       <EventEditorOverlay ref={dialogsRef} commandId={currentEditedNode as CommandId | undefined} event={studioEvent} />
     </EventEditorContainer>
   );
