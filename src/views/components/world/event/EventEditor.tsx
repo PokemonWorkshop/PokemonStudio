@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { CustomConnectionLineStyle, edgeTypes } from './common/CustomEdge';
 import { useEventFlow } from './hooks/useEventFlow';
 import styled from 'styled-components';
-import React, { DragEventHandler, useMemo, useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 
 const GRID_SIZE = 32;
 
@@ -47,7 +47,6 @@ const EventFlow = ({ event }: EventFlowProps) => {
     nodes,
     edges,
     onConnect,
-    onDragStart,
     onDragOver,
     onDragLeave,
     onDrop,
@@ -73,7 +72,6 @@ const EventFlow = ({ event }: EventFlowProps) => {
           onDelete={onDelete}
           onBeforeDelete={onBeforeDelete}
           onDrop={onDrop}
-          onDragStart={onDragStart as DragEventHandler<HTMLDivElement>}
           onDragOver={onDragOver}
           onDragLeave={onDragLeave}
           isValidConnection={isValidConnection}

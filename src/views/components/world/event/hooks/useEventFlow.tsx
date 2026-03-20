@@ -24,7 +24,7 @@ import {
   reactFlowEdgeToStudioConnection,
 } from '@utils/events/EventUtils';
 import { useEventContext } from '../common/EventContext';
-import { DragEvent, DragEventHandler, RefObject, useCallback, useEffect } from 'react';
+import { DragEventHandler, RefObject, useCallback, useEffect } from 'react';
 
 const SHADOW_NODE_ID = 'shadow_node';
 
@@ -72,32 +72,30 @@ export const useEventFlow = (event: StudioEvent, eventFlowRef?: RefObject<HTMLDi
     [event],
   );
 
-  const onDragStart = (event: DragEvent<HTMLDivElement>, nodeType: StudioEventCommandType) => {
-    setType(nodeType);
-    event.dataTransfer.setData('text/plain', nodeType);
-    event.dataTransfer.effectAllowed = 'move';
-  };
+  const onDragOver: DragEventHandler<HTMLDivElement> = useCallback(
+    (event) => {
+      if (!type) return;
 
-  const onDragOver: DragEventHandler<HTMLDivElement> = useCallback((event) => {
-    // TODO: check that the drag comes from the event commands
-    event.preventDefault();
-    event.dataTransfer.dropEffect = 'move';
-    const position = reactFlowInstance.screenToFlowPosition({
-      x: event.clientX - 160,
-      y: event.clientY + 32,
-    });
+      event.preventDefault();
+      event.dataTransfer.dropEffect = 'move';
+      const position = reactFlowInstance.screenToFlowPosition({
+        x: event.clientX - 160,
+        y: event.clientY + 32,
+      });
 
-    const shadowNode: NodeShadow = reactFlowInstance.getNode(SHADOW_NODE_ID) as NodeShadow;
-    setNodes((nds) => applyNodeChanges([{ type: 'replace', id: SHADOW_NODE_ID, item: { ...shadowNode, position, hidden: false } }], nds));
+      const shadowNode: NodeShadow = reactFlowInstance.getNode(SHADOW_NODE_ID) as NodeShadow;
+      setNodes((nds) => applyNodeChanges([{ type: 'replace', id: SHADOW_NODE_ID, item: { ...shadowNode, position, hidden: false } }], nds));
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    [type],
+  );
 
   const onDragLeave = () => {
-    // TODO: improve the drag leave detection to ignore nodes that are already present
     const shadowNode = reactFlowInstance.getNode(SHADOW_NODE_ID) as NodeShadow;
     if (shadowNode.hidden) return;
 
     setNodes((nds) => applyNodeChanges([{ type: 'replace', id: SHADOW_NODE_ID, item: { ...shadowNode, hidden: true } }], nds));
+    setType(undefined);
   };
 
   const onDrop: DragEventHandler<HTMLDivElement> = useCallback(
@@ -105,9 +103,7 @@ export const useEventFlow = (event: StudioEvent, eventFlowRef?: RefObject<HTMLDi
       eventDrop.preventDefault();
 
       // check if the dropped element is valid
-      if (!type) {
-        return;
-      }
+      if (!type) return;
 
       const command = EventCommandCreation[type];
       const id = getCommandId(event);
@@ -132,6 +128,7 @@ export const useEventFlow = (event: StudioEvent, eventFlowRef?: RefObject<HTMLDi
           nds,
         ),
       );
+      setType(undefined);
 
       updateEvent({
         commands: {
@@ -264,7 +261,6 @@ export const useEventFlow = (event: StudioEvent, eventFlowRef?: RefObject<HTMLDi
     nodes,
     edges,
     onConnect,
-    onDragStart,
     onDragOver,
     onDragLeave,
     onDrop,
