@@ -20,8 +20,8 @@ import { Input } from '@components/inputs';
 import { useContextMenu } from '@hooks/useContextMenu';
 import { useDialogsRef } from '@hooks/useDialogsRef';
 import { EventTreeContextMenu } from './EventTreeContextMenu';
-import { convertEventToTree, convertTreeToEventTree, eventTreeConvertItemToEventTreeValue } from '@utils/events/EventUtils';
-import { useEventTree } from '@hooks/useEventTree';
+import { convertEventToTree, convertTreeToEventTree, eventTreeConvertItemToEventTreeValue } from '@utils/events/EventTreeUtils';
+import { useEventTree } from '@components/world/event/hooks/useEventTree';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { MapListContainer, TreeItemContainer } from '../../map/tree/style';
 import { EVENT_NAME_TEXT_ID } from '@modelEntities/event/event';
@@ -29,7 +29,7 @@ import { EVENT_FOLDER_NAME_TEXT_ID, StudioEventTreeValue } from '@modelEntities/
 import { EventEditorAndDeletionKeys, EventTreeEditorOverlay } from '../editors/EventEditorOverlay';
 import { searchIsUnderOpenFolder } from '../../../tree/Tree/Tree-utils';
 import DotIcon from '@assets/icons/global/dot.svg';
-import { getMapTreeCountChildren, getTreeDestinationDepth, getTreeSourceDepth, renderDropBox } from '../../../../../utils/MapTreeUtils';
+import { getMapTreeCountChildren, getTreeDestinationDepth, getTreeSourceDepth, renderDropBox } from '@utils/MapTreeUtils';
 
 type EventTreeComponentProps = {
   treeScrollbarRef: RefObject<HTMLDivElement>;

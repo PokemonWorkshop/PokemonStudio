@@ -1,11 +1,11 @@
-import { useEventActions } from '@components/world/event/generic/EventContext';
+import { useEventActions } from '@components/world/event/common/EventContext';
 import type { StudioEventCommandType } from '@modelEntities/event/command';
 import { useTranslation } from 'react-i18next';
-import { EventDialogsRef } from '../commands/editors/EventEditorOverlay';
-import { EventIcon, IconsFromCommand } from '@components/world/event/generic/EventIcon';
+import { CommandDialogsRef } from '../commands/editors/CommandEditorOverlay';
+import { EventIcon, IconsFromCommand } from '@components/world/event/common/EventIcon';
 import { Position } from '@xyflow/react';
 import { useHandleConnectionState } from '@components/world/event/hooks/useHandleConnectionState';
-import { CustomHandle } from '@components/world/event/generic/CustomHandle';
+import { CustomHandle } from '@components/world/event/common/CustomHandle';
 import InfoIcon from '@assets/icons/notification/info.svg';
 import NoteIcon from '@assets/icons/global/note.svg';
 import React, { ReactNode } from 'react';
@@ -138,7 +138,7 @@ const CommandNodeContainer = styled.div`
 type CommandNodeProps = {
   commandType: StudioEventCommandType;
   commentCount: number;
-  dialogsRef?: EventDialogsRef;
+  dialogsRef?: CommandDialogsRef;
   hasError?: boolean;
   nodeId: string;
   selected?: boolean;

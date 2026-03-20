@@ -7,14 +7,14 @@ import type { CommandId, StudioEventCommandType } from '@modelEntities/event/com
 import { InsertScriptEditor } from './InsertScriptEditor';
 import type { StudioEvent } from '@modelEntities/event/event';
 
-export type EventEditorAndDeletionKeys = StudioEventCommandType;
-export type EventDialogsRef = React.RefObject<DialogRefData<EventEditorAndDeletionKeys>>;
+export type CommandEditorAndDeletionKeys = StudioEventCommandType;
+export type CommandDialogsRef = React.RefObject<DialogRefData<CommandEditorAndDeletionKeys>>;
 
 /**
- * Editor overlay for the events.
+ * Editor overlay for the commands.
  * This component uses the generic editor overlay to show the components based on what's called from dialogsRef.
  */
-export const EventEditorOverlay = defineEditorOverlay<EventEditorAndDeletionKeys, { commandId?: CommandId; event: StudioEvent }>(
+export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletionKeys, { commandId?: CommandId; event: StudioEvent }>(
   'eventEditorOverlay',
   (dialogToShow, handleCloseRef, closeDialog, { commandId, event }) => {
     switch (dialogToShow) {

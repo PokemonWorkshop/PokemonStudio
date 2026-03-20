@@ -10,11 +10,11 @@ import { useSetProjectText } from '@utils/ReadingProjectText';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { TooltipWrapper } from '@ds/Tooltip';
 import { InputFormContainer } from '@components/inputs/InputContainer';
-import { EVENT_NAME_TEXT_ID } from '../../../../../models/entities/event/event';
-import { DEFAULT_EVENT_TREE, StudioEventTreeFolder } from '../../../../../models/entities/event/event-tree';
-import { createEvent } from '../../../../../utils/entityCreation';
-import { useEventTree } from '@hooks/useEventTree';
-import { addNewEventToEventTree } from '@utils/events/EventUtils';
+import { EVENT_NAME_TEXT_ID } from '@modelEntities/event/event';
+import { DEFAULT_EVENT_TREE, StudioEventTreeFolder } from '@modelEntities/event/event-tree';
+import { createEvent } from '@utils/entityCreation';
+import { useEventTree } from '@components/world/event/hooks/useEventTree';
+import { addNewEventToEventTree } from '@utils/events/EventTreeUtils';
 import { findFirstAvailableId } from '@utils/ModelUtils';
 
 const ButtonContainer = styled.div`

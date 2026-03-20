@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { ClearInput } from '@components/inputs';
+import { NodeClearInput } from '@components/inputs';
 import { CommandLibraryCategories } from './CommandLibraryCategories';
 import { CommandLibraryBlock } from './CommandLibraryBlock';
 import { useTranslation } from 'react-i18next';
@@ -93,7 +93,7 @@ export const CommandLibrary = () => {
           <h2>{t('instructions')}</h2>
           {/*<span>Icon</span>*/}
         </div>
-        <ClearInput
+        <NodeClearInput
           value={research}
           onChange={(event) => setResearch(event.target.value.toLowerCase())}
           onClear={onClear}

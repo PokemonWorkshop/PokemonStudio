@@ -1,10 +1,10 @@
 import { Deletion } from '@components/deletion';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { DbSymbol } from '@modelEntities/dbSymbol';
-import { useGetEntityNameText, useGetEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
 import { useProjectEvents } from '@hooks/useProjectData';
-import { useEventTree } from '@hooks/useEventTree';
-import { getEventTreeChildrenDbSymbols, removeEventTreeItem } from '@utils/events/EventUtils';
+import { useEventTree } from '@components/world/event/hooks/useEventTree';
+import { removeEventTreeItem } from '@utils/events/EventTreeUtils';
 import React, { forwardRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 

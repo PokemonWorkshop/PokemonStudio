@@ -1,6 +1,8 @@
 import { Input, MultiLineInput } from '@components/inputs';
+import { ClearInputContainer, ClearInputProps, useClearInput } from './ClearInput';
+import ClearIcon from '@assets/icons/global/clear-tag-icon.svg';
 import styled, { css } from 'styled-components';
-import React from 'react';
+import React, { forwardRef } from 'react';
 
 const sharedInputStyles = css`
   background-color: rgba(255, 255, 255, 0.0001);
@@ -13,7 +15,7 @@ const sharedInputStyles = css`
 
 const NodeInputContainer = styled(Input)`
   ${sharedInputStyles}
-  height: 30px;
+  height: 32px;
 `;
 
 const NodeMultiLineInputContainer = styled(MultiLineInput)`
@@ -32,3 +34,15 @@ export const NodeInput = ({ className, ...props }: React.ComponentProps<typeof I
 export const NodeMultiLineInput = ({ className, ...props }: React.ComponentProps<typeof MultiLineInput>) => (
   <NodeMultiLineInputContainer {...props} className={`nodrag ${className ?? ''}`.trim()} onClick={stopPropagation} onDoubleClick={stopPropagation} />
 );
+
+export const NodeClearInput = forwardRef<HTMLInputElement, ClearInputProps>((props, ref) => {
+  const { inputProps, isIconShown, onChange, handleClear } = useClearInput(props, ref);
+
+  return (
+    <ClearInputContainer>
+      <NodeInput {...inputProps} ref={ref} onChange={onChange} />
+      {isIconShown && <ClearIcon onClick={handleClear} />}
+    </ClearInputContainer>
+  );
+});
+NodeClearInput.displayName = 'NodeClearInput';

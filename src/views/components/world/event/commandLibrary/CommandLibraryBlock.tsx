@@ -2,7 +2,7 @@ import BackIcon from '@assets/icons/global/back.svg';
 import { CommandLibraryCard } from './CommandLibraryCard';
 import { StudioEventCommandCategory } from '@modelEntities/event/category';
 import { COMMANDS_FROM_CATEGORY } from '@modelEntities/event/command';
-import { EventIcon, IconsFromCategory } from '../generic/EventIcon';
+import { EventIcon, IconsFromCategory } from '../common/EventIcon';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import styled from 'styled-components';

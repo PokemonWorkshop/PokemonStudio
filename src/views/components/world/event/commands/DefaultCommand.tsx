@@ -1,12 +1,12 @@
-import { EventNodeProps } from './EventNodeProps';
+import { CommandNodeProps } from './CommandNodeProps';
 import { useHandleConnectionState } from '../hooks/useHandleConnectionState';
-import { IconsFromCommand } from '../generic/EventIcon';
-import { CommandNode } from '../generic/CommandNode';
-import { CustomHandle } from '../generic/CustomHandle';
+import { IconsFromCommand } from '../common/EventIcon';
+import { CommandNode } from '../common/CommandNode';
+import { CustomHandle } from '../common/CustomHandle';
 import { Position } from '@xyflow/react';
 import React from 'react';
 
-export const DefaultCommand = ({ id, data: { dialogsRef, command }, selected }: EventNodeProps) => {
+export const DefaultCommand = ({ id, data: { dialogsRef, command }, selected }: CommandNodeProps) => {
   //const date = useMemo(() => new Date().toLocaleString(), []);
   const date = new Date().toLocaleString();
   const { isHandleConnected } = useHandleConnectionState(id);

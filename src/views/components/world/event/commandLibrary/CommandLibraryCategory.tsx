@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import type { StudioEventCommandCategory } from '@modelEntities/event/category';
 import { useTranslation } from 'react-i18next';
-import { EventIcon, EventCategoryIconContainer } from '../generic/EventIcon';
+import { EventIcon, EventCategoryIconContainer } from '../common/EventIcon';
 
 const CommandLibraryCategoryContainer = styled.div.attrs((props) => ({ 'data-color': props.color }))`
   display: flex;

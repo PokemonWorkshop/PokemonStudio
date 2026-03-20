@@ -1,10 +1,10 @@
 import React, { DragEvent } from 'react';
 import styled from 'styled-components';
-import { useEventContext } from '../generic/EventContext';
+import { useEventContext } from '../common/EventContext';
 import { useTranslation } from 'react-i18next';
 import HelperIcon from '@assets/icons/global/error2.svg';
 import type { StudioEventCommandType } from '@modelEntities/event/command';
-import { EventIcon } from '../generic/EventIcon';
+import { EventIcon } from '../common/EventIcon';
 
 const CommandLibraryCardContainer = styled.div`
   display: flex;

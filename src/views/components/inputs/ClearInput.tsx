@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Input } from '.';
 import ClearIcon from '@assets/icons/global/clear-tag-icon.svg';
 
-const ClearInputContainer = styled.div`
+export const ClearInputContainer = styled.div`
   display: inline-block;
   position: relative;
 
@@ -35,11 +35,7 @@ const ClearInputContainer = styled.div`
   }
 `;
 
-type ClearInputProps = InputHTMLAttributes<HTMLInputElement> & {
-  onClear: () => void;
-};
-
-export const ClearInput = forwardRef<HTMLInputElement, ClearInputProps>((props, ref) => {
+export const useClearInput = (props: ClearInputProps, ref: React.ForwardedRef<HTMLInputElement>) => {
   const { onClear, ...inputProps } = props;
   const [isIconShown, setIsIconShown] = useState(props.value === undefined ? !!props.defaultValue : !!props.value);
 
@@ -58,6 +54,20 @@ export const ClearInput = forwardRef<HTMLInputElement, ClearInputProps>((props, 
     }
   };
 
+  return {
+    inputProps,
+    isIconShown,
+    onChange,
+    handleClear,
+  };
+};
+
+export type ClearInputProps = InputHTMLAttributes<HTMLInputElement> & {
+  onClear: () => void;
+};
+
+export const ClearInput = forwardRef<HTMLInputElement, ClearInputProps>((props, ref) => {
+  const { inputProps, isIconShown, onChange, handleClear } = useClearInput(props, ref);
   return (
     <ClearInputContainer>
       <Input {...inputProps} ref={ref} onChange={onChange} />
