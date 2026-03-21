@@ -236,7 +236,8 @@ export const useEventFlow = (event: StudioEvent, eventFlowRef?: RefObject<HTMLDi
 
   useEffect(() => {
     // reset states
-    setNodes([{ id: 'shadow_node', type: 'shadow_node', position: { x: 0, y: 0 }, data: {}, hidden: true }, ...initCommandNodes(event, dialogsRef)]);
+    const commands = initCommandNodes(event, dialogsRef);
+    setNodes([{ id: 'shadow_node', type: 'shadow_node', position: { x: 0, y: 0 }, data: {}, hidden: true }, ...commands]);
     setEdges(initEdges(event));
     setCurrentEditedNode(undefined);
     // hide the flow
@@ -246,7 +247,8 @@ export const useEventFlow = (event: StudioEvent, eventFlowRef?: RefObject<HTMLDi
     }
     // it's necessary to wait that reactFlowInstance has the new nodes and edges to do a correct fitView and show the flow
     const timer = setTimeout(() => {
-      reactFlowInstance.fitView();
+      if (commands.length > 0) reactFlowInstance.fitView();
+      else reactFlowInstance.zoomTo(1);
       if (eventFlowRef?.current) {
         eventFlowRef.current.style.opacity = '1';
         eventFlowRef.current.style.pointerEvents = 'auto';

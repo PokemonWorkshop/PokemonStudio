@@ -26,7 +26,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { MapListContainer, TreeItemContainer } from '../../map/tree/style';
 import { EVENT_NAME_TEXT_ID } from '@modelEntities/event/event';
 import { EVENT_FOLDER_NAME_TEXT_ID, StudioEventTreeValue } from '@modelEntities/event/event-tree';
-import { EventEditorAndDeletionKeys, EventTreeEditorOverlay } from '../editors/EventEditorOverlay';
+import { EventEditorAndDeletionKeys, EventEditorOverlay } from '../editors/EventEditorOverlay';
 import { searchIsUnderOpenFolder } from '../../../tree/Tree/Tree-utils';
 import DotIcon from '@assets/icons/global/dot.svg';
 import { getMapTreeCountChildren, getTreeDestinationDepth, getTreeSourceDepth, renderDropBox } from '@utils/MapTreeUtils';
@@ -298,7 +298,7 @@ export const EventTreeComponent = ({ treeScrollbarRef }: EventTreeComponentProps
             dialogsRef={dialogsRef}
           />,
         )}
-      <EventTreeEditorOverlay eventValue={eventSelected} ref={dialogsRef} />
+      <EventEditorOverlay eventValue={eventSelected} ref={dialogsRef} />
     </MapListContainer>
   );
 };

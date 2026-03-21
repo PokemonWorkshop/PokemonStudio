@@ -5,10 +5,7 @@ import type { CommandId } from '@modelEntities/event/command';
 import { CommandEditorAndDeletionKeys, CommandEditorOverlay } from './commands/editors/CommandEditorOverlay';
 import { useDialogsRef } from '@src/hooks/useDialogsRef';
 import { CommandToNodes } from './common/CommandToNodes';
-import { useEventPage } from '@src/hooks/usePage';
 import { StudioEvent } from '@modelEntities/event/event';
-import { useGlobalState } from '@src/GlobalStateProvider';
-import { useTranslation } from 'react-i18next';
 import { CustomConnectionLineStyle, edgeTypes } from './common/CustomEdge';
 import { useEventFlow } from './hooks/useEventFlow';
 import styled from 'styled-components';
@@ -90,21 +87,16 @@ const EventFlow = ({ event }: EventFlowProps) => {
   );
 };
 
-export const EventEditor = () => {
-  const { event } = useEventPage();
-  const { t } = useTranslation();
-  const [state] = useGlobalState();
-  const hasEventAvailable = useMemo(() => Object.keys(state.projectData.events).length > 0, [state.projectData.events]);
+type EventEditorProps = {
+  event: StudioEvent;
+};
 
-  return hasEventAvailable ? (
+export const EventEditor = ({ event }: EventEditorProps) => {
+  return (
     <ReactFlowProvider>
       <EventProvider event={event}>
         <EventFlow event={event} />
       </EventProvider>
     </ReactFlowProvider>
-  ) : (
-    <div>{t('no_event_found')}</div>
   );
 };
-
-/* eslint-enable react-hooks/exhaustive-deps */

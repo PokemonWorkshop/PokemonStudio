@@ -3,7 +3,7 @@ import { PageEmptyState } from '@components/pages';
 import { useTranslation } from 'react-i18next';
 import MapIcon from '@assets/icons/navigation/map-icon.svg';
 
-export const EventEmptyState = () => {
+export const EventV3Placeholder = () => {
   const { t } = useTranslation();
 
   return (
@@ -19,6 +19,5 @@ export const EventEmptyState = () => {
         </>
       }
     />
-   
   );
 };

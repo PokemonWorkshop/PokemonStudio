@@ -1,8 +1,12 @@
-import styled from 'styled-components';
-import { EventEmptyState } from '../../components/world/map/event/EventEmptyState';
+import { EventEmptyState } from '@components/world/event/common/EventEmptyState';
 import { PageContainerStyle } from '../database/PageContainerStyle';
-import React from 'react';
 import { EventEditor } from '@components/world/event/EventEditor';
+import { useEventPage } from '@src/hooks/usePage';
+import { useDialogsRef } from '@src/hooks/useDialogsRef';
+import { EventEditorAndDeletionKeys, EventEditorOverlay } from '@components/world/event/editors/EventEditorOverlay';
+import { EventV3Placeholder } from '@components/world/event/common/EventV3Placeholder';
+import styled from 'styled-components';
+import React from 'react';
 
 export const EventPageStyle = styled.div`
   display: flex;
@@ -15,12 +19,22 @@ export const EventPageStyle = styled.div`
 `;
 
 export const EventPage = () => {
+  const { event, hasEventAvailable } = useEventPage();
+  const dialogsRef = useDialogsRef<EventEditorAndDeletionKeys>();
   const isDev = window.api.isDev;
+
   return isDev ? (
-    <EventEditor />
+    hasEventAvailable ? (
+      <EventEditor event={event} />
+    ) : (
+      <EventPageStyle>
+        <EventEmptyState dialogsRef={dialogsRef} />
+        <EventEditorOverlay ref={dialogsRef} />
+      </EventPageStyle>
+    )
   ) : (
     <EventPageStyle>
-      <EventEmptyState />
+      <EventV3Placeholder />
     </EventPageStyle>
   );
 };
