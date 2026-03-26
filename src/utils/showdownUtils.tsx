@@ -109,9 +109,9 @@ const formatStats = (stats: StatsTable, defaultValue: number): StudioIvEv => {
     hp: stats?.hp ?? defaultValue,
     atk: stats?.atk ?? defaultValue,
     dfe: stats?.def ?? defaultValue,
-    spd: stats?.spd ?? defaultValue,
+    spd: stats?.spe ?? defaultValue,
     ats: stats?.spa ?? defaultValue,
-    dfs: stats?.spe ?? defaultValue,
+    dfs: stats?.spd ?? defaultValue,
   };
 };
 
