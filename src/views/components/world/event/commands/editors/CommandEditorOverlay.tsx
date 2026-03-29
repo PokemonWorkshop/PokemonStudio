@@ -2,19 +2,19 @@ import React from 'react';
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import { DialogRefData } from '@hooks/useDialogsRef';
-import { BasicEditor } from './BasicEditor';
+import { DefaultEditor } from './DefaultEditor';
 import type { CommandId, StudioEventCommandType } from '@modelEntities/event/command';
 import { InsertScriptEditor } from './InsertScriptEditor';
 import type { StudioEvent } from '@modelEntities/event/event';
 
-export type EventEditorAndDeletionKeys = StudioEventCommandType;
-export type EventDialogsRef = React.RefObject<DialogRefData<EventEditorAndDeletionKeys>>;
+export type CommandEditorAndDeletionKeys = StudioEventCommandType;
+export type CommandDialogsRef = React.RefObject<DialogRefData<CommandEditorAndDeletionKeys>>;
 
 /**
- * Editor overlay for the events.
+ * Editor overlay for the commands.
  * This component uses the generic editor overlay to show the components based on what's called from dialogsRef.
  */
-export const EventEditorOverlay = defineEditorOverlay<EventEditorAndDeletionKeys, { commandId?: CommandId; event: StudioEvent }>(
+export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletionKeys, { commandId?: CommandId; event: StudioEvent }>(
   'eventEditorOverlay',
   (dialogToShow, handleCloseRef, closeDialog, { commandId, event }) => {
     switch (dialogToShow) {
@@ -90,11 +90,11 @@ export const EventEditorOverlay = defineEditorOverlay<EventEditorAndDeletionKeys
       case 'manage_map_fog':
       case 'manage_map_panorama':
       case 'change_battle_background':
-        return <BasicEditor ref={handleCloseRef} />;
+        return <DefaultEditor ref={handleCloseRef} />;
       case 'insert_script':
         return <InsertScriptEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       default:
         return assertUnreachable(dialogToShow);
     }
-  }
+  },
 );

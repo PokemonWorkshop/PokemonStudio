@@ -1858,5 +1858,7 @@
   "event_command_comment": "Commentaire",
   "event_command_script": "Script",
   "create_event": "Ajouter un évènement",
-  "invalid_data": "Données invalides"
+  "invalid_data": "Données invalides",
+  "event_title_empty_state": "Commencez à créer un événement !",
+  "event_description_empty_state": "Vous n'avez pas encore d'événement. Vous pouvez créer un nouvel événement ou importer des événements existants."
 }

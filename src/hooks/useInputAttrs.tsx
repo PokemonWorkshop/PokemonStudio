@@ -1,10 +1,18 @@
-import { Input, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, MultiLineInput, Toggle } from '@components/inputs';
+import {
+  Input,
+  InputWithLeftLabelContainer,
+  InputWithTopLabelContainer,
+  Label,
+  MultiLineInput,
+  NodeInput,
+  NodeMultiLineInput,
+  Toggle,
+} from '@components/inputs';
 import { z } from 'zod';
 import { inputAttrs } from '@utils/inputAttrs';
 import React, { useMemo } from 'react';
 import { Select } from '@ds/Select';
 import { EmbeddedUnitInput } from '@components/inputs/EmbeddedUnitInput';
-import { NodeInput, NodeMultiLineInput } from '@src/poc/nodeEditor/NodeInput';
 
 type WithSchemaKeyAndName = {
   name: string;

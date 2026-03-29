@@ -6,7 +6,7 @@ import { EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR, StudioEventCommandInsertScript }
 import { useZodForm } from '@src/hooks/useZodForm';
 import { InputFormContainer } from '@components/inputs/InputContainer';
 import { useInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
-import { useCommandEditor } from '../eventEditor/useCommandEditor';
+import { useCommandEditor } from '../../hooks/useCommandEditor';
 import React, { forwardRef } from 'react';
 
 const INSERT_SCRIPT_EDITOR_SCHEMA = EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR.pick({ script: true });

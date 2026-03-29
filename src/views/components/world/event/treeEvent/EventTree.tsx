@@ -2,10 +2,10 @@ import React, { useRef, useState } from 'react';
 import { ClearInput } from '@components/inputs';
 import { useTranslation } from 'react-i18next';
 import { emitScrollContextMenu } from '@hooks/useContextMenu';
-import { MapTreeContainer } from '../map/tree/style';
+import { MapTreeContainer } from '../../map/tree/style';
 import styled from 'styled-components';
-import { EventTreeComponent } from './treeEvent/EventTreeComponent';
-import { EventList } from './treeEvent/EventList';
+import { EventTreeComponent } from './EventTreeComponent';
+import { EventList } from './EventList';
 
 const EventTreeContainer = styled(MapTreeContainer)`
   .no-event {

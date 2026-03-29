@@ -4,7 +4,6 @@ import { PageWithMenu, PageWithMenuProps } from '@components/pages';
 import { NavigationDatabaseStyle } from '@components/database/navigation/NavigationDatabase/NavigationDatabaseStyle';
 import { NavigationDatabaseGroup } from '@components/database/navigation/NavigationDatabaseGroup';
 import { NavigationDatabaseItem } from '@components/database/navigation/NavigationDatabaseItem';
-import { EventEditor } from './eventEditor/EventEditor';
 import { PocHomePage } from './PocHomePage';
 import { ConvertEventsPage } from './ConvertEventsPage';
 
@@ -12,7 +11,6 @@ const PocNavigation = () => {
   return (
     <NavigationDatabaseStyle>
       <NavigationDatabaseGroup title="Events">
-        <NavigationDatabaseItem path="/poc/events/eventeditor" label="Event Editor" />
         <NavigationDatabaseItem path="/poc/events/convertevents" label="Convert events" />
       </NavigationDatabaseGroup>
       <NavigationDatabaseGroup title="Navigation">
@@ -37,14 +35,6 @@ const PocRouterComponent = () => {
           </PocPageWithMenu>
         }
         index
-      />
-      <Route
-        path="/events/eventeditor"
-        element={
-          <PocPageWithMenu>
-            <EventEditor />
-          </PocPageWithMenu>
-        }
       />
       <Route
         path="/events/convertevents"

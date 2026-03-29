@@ -1,12 +1,12 @@
 import React, { DragEvent } from 'react';
 import styled from 'styled-components';
-import { useEventContext } from './EventContext';
+import { useEventContext } from '../common/EventContext';
 import { useTranslation } from 'react-i18next';
 import HelperIcon from '@assets/icons/global/error2.svg';
 import type { StudioEventCommandType } from '@modelEntities/event/command';
-import { EventIcon } from './EventIcon';
+import { EventIcon } from '../common/EventIcon';
 
-const EventCommandContainer = styled.div`
+const CommandLibraryCardContainer = styled.div`
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -52,12 +52,12 @@ const EventCommandContainer = styled.div`
   }
 `;
 
-type EventCommandProps = {
+type CommandLibraryCardProps = {
   command: StudioEventCommandType;
   hasHelper?: boolean;
 };
 
-export const EventCommand = ({ command, hasHelper }: EventCommandProps) => {
+export const CommandLibraryCard = ({ command, hasHelper }: CommandLibraryCardProps) => {
   const { setType } = useEventContext();
   const { t } = useTranslation();
 
@@ -67,7 +67,7 @@ export const EventCommand = ({ command, hasHelper }: EventCommandProps) => {
   };
 
   return (
-    <EventCommandContainer draggable onDragStart={(event) => onDragStart(event, command)}>
+    <CommandLibraryCardContainer draggable onDragStart={(event) => onDragStart(event, command)}>
       <div className="header">
         <EventIcon icon={{ type: 'command', command }} />
         {hasHelper && (
@@ -77,6 +77,6 @@ export const EventCommand = ({ command, hasHelper }: EventCommandProps) => {
         )}
       </div>
       <span className="title">{t(`event_command_${command}`)}</span>
-    </EventCommandContainer>
+    </CommandLibraryCardContainer>
   );
 };

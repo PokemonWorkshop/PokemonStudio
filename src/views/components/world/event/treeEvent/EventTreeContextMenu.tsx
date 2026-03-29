@@ -4,8 +4,8 @@ import DeleteIcon from '@assets/icons/global/delete-icon.svg';
 import EditIcon from '@assets/icons/global/edit-icon.svg';
 import { EventDialogsRef } from '../editors/EventEditorOverlay';
 import { StudioEventTreeValue } from '@modelEntities/event/event-tree';
-import { useEventTree } from '@src/hooks/useEventTree';
-import { removeEventTreeItem } from '@utils/events/EventUtils';
+import { useEventTree } from '@components/world/event/hooks/useEventTree';
+import { removeEventTreeItem } from '@utils/events/EventTreeUtils';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 
 type EventTreeContextMenuProps = {
