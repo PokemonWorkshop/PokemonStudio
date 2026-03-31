@@ -50,6 +50,62 @@ const theme: DefaultTheme = {
     text500: 'rgba(101, 101, 114, 1)',
     text600: 'rgba(75, 75, 88, 1)',
     text700: 'rgba(66, 66, 77, 1)',
+
+    silverDark6: '#272c31',
+    silverDark9: '#4a545d',
+    silverDark11: '#63788e',
+
+    goldDark6: '#2f2b25',
+    goldDark9: '#595146',
+    goldDark11: '#85735B',
+
+    bronzeDark6: '#302A27',
+    bronzeDark9: '#5C4F4A',
+    bronzeDark11: '#8D7063',
+
+    topazDark6: '#3D2416',
+    topazDark9: '#7D3F17',
+    topazDark11: '#BA5D1D',
+
+    vermillionDark6: '#422018',
+    vermillionDark9: '#88341F',
+    vermillionDark11: '#CC4B2B',
+
+    magentaDark6: '#3F1E35',
+    magentaDark9: '#7D3168',
+    magentaDark11: '#BD4A9D',
+
+    amethystDark6: '#342147',
+    amethystDark9: '#663693',
+    amethystDark11: '#9559D0',
+
+    lavenderDark6: '#2B244B',
+    lavenderDark9: '#543D9E',
+    lavenderDark11: '#7E61E0',
+
+    cobaltDark6: '#1A294E',
+    cobaltDark9: '#2B4C9F',
+    cobaltDark11: '#4370E2',
+
+    ceruleanDark6: '#082E49',
+    ceruleanDark9: '#02578B',
+    ceruleanDark11: '#087CC2',
+
+    cyanDark6: '#04313C',
+    cyanDark9: '#005C71',
+    cyanDark11: '#0A819D',
+
+    celadonDark6: '#073234',
+    celadonDark9: '#005F5F',
+    celadonDark11: '#00857F',
+
+    peridotDark6: '#1A321B',
+    peridotDark9: '#325F34',
+    peridotDark11: '#458449',
+
+    oliveDark6: '#233014',
+    oliveDark9: '#435C26',
+    oliveDark11: '#5D8035',
   },
   fonts: {
     titlesStudio: `

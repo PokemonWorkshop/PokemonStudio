@@ -2,7 +2,7 @@ import { useEventActions } from '@components/world/event/common/EventContext';
 import type { StudioEventCommandType } from '@modelEntities/event/command';
 import { useTranslation } from 'react-i18next';
 import { CommandDialogsRef } from '../commands/editors/CommandEditorOverlay';
-import { EventIcon, IconsFromCommand } from '@components/world/event/common/EventIcon';
+import { EventIcon, IconsFromCommand, EventIconColor } from '@components/world/event/common/EventIcon';
 import { Position } from '@xyflow/react';
 import { useHandleConnectionState } from '@components/world/event/hooks/useHandleConnectionState';
 import { CustomHandle } from '@components/world/event/common/CustomHandle';
@@ -11,7 +11,7 @@ import NoteIcon from '@assets/icons/global/note.svg';
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 
-const CommandNodeContainer = styled.div`
+const CommandNodeContainer = styled.div<{ color: EventIconColor }>`
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -20,16 +20,16 @@ const CommandNodeContainer = styled.div`
   isolation: isolate;
   border-radius: 16px;
   background-color: #25262a;
-  background: linear-gradient(180deg, #1a294e 0%, #25262a 60px);
+  background: linear-gradient(180deg, ${({ theme, color }) => theme.colors[`${color}6`]} 0%, #25262a 60px);
   ${({ theme }) => theme.fonts.normalMedium}
   color: #b4b7c1;
 
   &[data-selected='true'] {
-    outline: 1px solid #2b4c9f;
+    outline: 1px solid ${({ theme, color }) => theme.colors[`${color}9`]};
   }
 
   .react-flow__node:focus-visible & {
-    outline: 1px solid #2b4c9f;
+    outline: 1px solid ${({ theme, color }) => theme.colors[`${color}9`]};
   }
 
   header {
@@ -118,7 +118,7 @@ const CommandNodeContainer = styled.div`
   .container {
     padding: 1px;
     &[data-selected='false'] {
-      background: linear-gradient(180deg, #2b4c9f 0%, #25262a 60px);
+      background: linear-gradient(180deg, ${({ theme, color }) => theme.colors[`${color}9`]} 0%, #25262a 60px);
     }
     border-radius: 14px;
   }
@@ -159,7 +159,7 @@ export const CommandNode = ({ commandType, commentCount, dialogsRef, hasError, n
       <CustomHandle color={color} handleIsConnected={handleLeftIsConnected} id="Tleft_default" position={Position.Left} type="target" />
       <CustomHandle color={color} handleIsConnected={handleRightIsConnected} id="Sright_default" position={Position.Right} type="source" />
       <CommandNodeContainer
-        data-color={color}
+        color={color}
         data-selected={selected}
         onDoubleClick={() => {
           setCurrentEditedNode(nodeId);

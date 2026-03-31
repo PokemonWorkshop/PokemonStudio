@@ -6,6 +6,7 @@ import styled from 'styled-components';
 
 type CustomHandleContainerProps = {
   position: Position;
+  color: EventIconColor;
 };
 
 const CustomHandleContainer = styled.div<CustomHandleContainerProps>`
@@ -143,10 +144,10 @@ const CustomHandleContainer = styled.div<CustomHandleContainerProps>`
   }
 
   .react-flow__handle.connectingto.connectionindicator {
-    border: 2px solid #2b4c9f; // TODO: color should be dynamic
+    border: 2px solid ${({ theme, color }) => theme.colors[`${color}9`]};
 
     .point {
-      background-color: #2b4c9f; // TODO: color should be dynamic
+      background-color: ${({ theme, color }) => theme.colors[`${color}9`]};
     }
   }
 `;
@@ -163,7 +164,7 @@ type CustomHandleProps = {
 
 export const CustomHandle = ({ color, handleIsConnected, id, position, type, style }: CustomHandleProps) => {
   return (
-    <CustomHandleContainer position={position} data-color={color} data-connected={handleIsConnected} style={style}>
+    <CustomHandleContainer position={position} color={color} data-connected={handleIsConnected} style={style}>
       <Handle type={type} position={position} id={id} isConnectable={position == Position.Left || !handleIsConnected}>
         <span className="icon">
           <PlusIcon />
