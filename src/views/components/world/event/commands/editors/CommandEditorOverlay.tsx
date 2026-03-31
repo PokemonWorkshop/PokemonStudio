@@ -15,7 +15,7 @@ export type CommandDialogsRef = React.RefObject<DialogRefData<CommandEditorAndDe
  * This component uses the generic editor overlay to show the components based on what's called from dialogsRef.
  */
 export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletionKeys, { commandId?: CommandId; event: StudioEvent }>(
-  'eventEditorOverlay',
+  'CommandEditorOverlay',
   (dialogToShow, handleCloseRef, closeDialog, { commandId, event }) => {
     switch (dialogToShow) {
       case 'show_message':

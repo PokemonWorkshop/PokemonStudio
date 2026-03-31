@@ -82,13 +82,13 @@
     "lint": "eslint --ext .ts,.tsx ."
   },
   "devDependencies": {
-    "@electron-forge/cli": "^7.8.1",
-    "@electron-forge/maker-deb": "^7.8.1",
-    "@electron-forge/maker-rpm": "^7.8.1",
-    "@electron-forge/maker-squirrel": "^7.8.1",
-    "@electron-forge/maker-zip": "^7.8.1",
-    "@electron-forge/plugin-vite": "^7.8.1",
-    "@reforged/maker-appimage": "^5.0.0",
+    "@electron-forge/cli": "^7.11.1",
+    "@electron-forge/maker-deb": "^7.11.1",
+    "@electron-forge/maker-rpm": "^7.11.1",
+    "@electron-forge/maker-squirrel": "^7.11.1",
+    "@electron-forge/maker-zip": "^7.11.1",
+    "@electron-forge/plugin-vite": "^7.11.1",
+    "@reforged/maker-appimage": "^5.2.0",
     "@types/lodash.groupby": "^4.6.9",
     "@types/lodash.uniq": "^4.5.9",
     "@types/react": "^18.3.7",
@@ -102,9 +102,9 @@
     "@typescript-eslint/parser": "^8.6.0",
     "@vercel/webpack-asset-relocator-loader": "1.7.3",
     "@vitejs/plugin-react": "^4.5.0",
-    "app-builder-lib": "^25.0.5",
+    "app-builder-lib": "^26.8.1",
     "css-loader": "^7.1.2",
-    "electron": "^37.2.0",
+    "electron": "^41.1.0",
     "eslint": "^8.57.1",
     "eslint-import-resolver-typescript": "^3.6.3",
     "eslint-plugin-import": "^2.30.0",
@@ -122,7 +122,7 @@
     "vite-plugin-svgr": "^4.3.0"
   },
   "dependencies": {
-    "@electron-forge/publisher-github": "^7.8.1",
+    "@electron-forge/publisher-github": "^7.11.1",
     "@hello-pangea/dnd": "^17.0.0",
     "@pkmn/sim": "^0.9.35",
     "@xyflow/react": "^12.10.0",
@@ -148,7 +148,7 @@
     "run-script-os": "^1.1.6",
     "styled-components": "^5.3.11",
     "ts-marshal": "^0.0.11",
-    "ts-tiled-converter": "^0.0.9",
+    "ts-tiled-converter": "^0.0.11",
     "zod": "^3.23.8"
   },
   "build": {

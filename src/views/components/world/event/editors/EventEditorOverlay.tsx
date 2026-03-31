@@ -19,7 +19,7 @@ type Props = {
  * This component uses the generic editor overlay to show the components based on what's called from dialogsRef.
  */
 export const EventEditorOverlay = defineEditorOverlay<EventEditorAndDeletionKeys, Props>(
-  'MapEditorOverlay',
+  'EventEditorOverlay',
   (dialogToShow, handleCloseRef, closeDialog, { eventValue }) => {
     switch (dialogToShow) {
       case 'new':
