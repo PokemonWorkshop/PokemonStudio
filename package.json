@@ -147,7 +147,7 @@
     "run-script-os": "^1.1.6",
     "styled-components": "^5.3.11",
     "ts-marshal": "^0.0.11",
-    "ts-tiled-converter": "^0.0.11",
+    "ts-tiled-converter": "^0.0.12",
     "zod": "^3.23.8"
   },
   "build": {
