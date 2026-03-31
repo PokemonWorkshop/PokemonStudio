@@ -9,6 +9,7 @@
   "javascript.validate.enable": false,
   "javascript.format.enable": false,
   "typescript.format.enable": false,
+  "typescript.preferences.importModuleSpecifier": "non-relative",
 
   "search.exclude": {
     ".git": true,
@@ -28,6 +29,9 @@
   "cSpell.words": ["movepool", "Pokedex", "unmaximize"],
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
   "i18n-ally.localesPaths": ["assets/i18n", "out/Pokémon Studio-win32-x64/locales", "src/views/components/dashboard/language"],
   "i18n-ally.keystyle": "nested"
 }
