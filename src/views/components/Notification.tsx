@@ -1,10 +1,47 @@
 import React, { ReactNode } from 'react';
-import styled from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import SuccessIcon from '@assets/icons/notification/success.svg';
 import DangerIcon from '@assets/icons/notification/danger.svg';
 import InfoIcon from '@assets/icons/notification/info.svg';
 import WarningIcon from '@assets/icons/notification/warning.svg';
 import { assertUnreachable } from '@utils/assertUnreachable';
+
+const fadeIn = keyframes`
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+`;
+
+const slideOutDown = keyframes`
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+`;
+
+type NotificationWrapperProps = {
+  visible: boolean;
+};
+
+export const NotificationWrapper = styled.div<NotificationWrapperProps>`
+  animation: ${({ visible }) =>
+    visible
+      ? css`
+          ${fadeIn} 0.3s ease forwards
+        `
+      : css`
+          ${slideOutDown} 0.4s ease forwards
+        `};
+`;
 
 const NotificationContainer = styled.div`
   display: grid;
@@ -16,7 +53,6 @@ const NotificationContainer = styled.div`
   border-radius: 4px;
   backdrop-filter: blur(24px);
   ${({ theme }) => theme.fonts.normalMedium}
-  margin-bottom: ${({ theme }) => theme.calc.titleBarHeight};
 
   & .icon {
     grid-area: icon;

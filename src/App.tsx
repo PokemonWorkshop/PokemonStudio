@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReactNotifications } from 'react-notifications-component';
+import { Toaster } from 'react-hot-toast';
 import { MemoryRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import GlobalStyle from './AppGlobalStyle';
@@ -53,7 +53,7 @@ const App = () => {
               </Routes>
             </MemoryRouter>
             <Loader />
-            <ReactNotifications />
+            <Toaster position="bottom-right" />
           </ThemeProvider>
         </LoaderContextProvider>
       </GlobalStateProvider>

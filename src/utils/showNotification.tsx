@@ -1,6 +1,6 @@
-import { Notification } from '@components/Notification';
+import { Notification, NotificationWrapper } from '@components/Notification';
+import { toast } from 'react-hot-toast';
 import React from 'react';
-import { Store } from 'react-notifications-component';
 
 type NotificationType = 'success' | 'danger' | 'info' | 'warning';
 
@@ -10,12 +10,12 @@ type NotificationType = 'success' | 'danger' | 'info' | 'warning';
  *   <Component onClick={() => showNotification('success', 'onClick', 'You successfully triggered onClick')} />
  */
 export const showNotification = (type: NotificationType, title: string, message: string) => {
-  Store.addNotification({
-    content: <Notification type={type} title={title} message={message} />,
-    container: 'bottom-right',
-    insert: 'bottom',
-    dismiss: {
-      duration: 5000,
-    },
-  });
+  toast.custom(
+    (t) => (
+      <NotificationWrapper visible={t.visible}>
+        <Notification type={type} title={title} message={message} />
+      </NotificationWrapper>
+    ),
+    { duration: 5000 },
+  );
 };
