@@ -55,7 +55,7 @@ export const EventCategoryIconContainer = styled.div.attrs<EventIconContainerPro
     min-width: 24px;
 
     svg {
-      width: 10px;
+      width: 16px;
       height: auto;
     }
   }
@@ -65,8 +65,8 @@ export const EventCommandIconContainer = styled.span<EventIconContainerProps>`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 24px;
-  width: 24px;
+  height: 20px;
+  width: 20px;
   color: ${({ theme, color }) => theme.colors[`${color}11`]};
 `;
 

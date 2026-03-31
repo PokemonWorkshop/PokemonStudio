@@ -20,7 +20,12 @@ const CommandNodeContainer = styled.div<{ color: EventIconColor }>`
   isolation: isolate;
   border-radius: 16px;
   background-color: #25262a;
-  background: linear-gradient(180deg, ${({ theme, color }) => theme.colors[`${color}6`]} 0%, #25262a 60px);
+  background: linear-gradient(
+    180deg,
+    ${({ theme, color }) => theme.colors[`${color}6`]} 0%,
+    ${({ theme, color }) => theme.colors[`${color}6`]} 32px,
+    #25262a 56px
+  );
   ${({ theme }) => theme.fonts.normalMedium}
   color: #b4b7c1;
 
@@ -36,8 +41,9 @@ const CommandNodeContainer = styled.div<{ color: EventIconColor }>`
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding: 4px 10px;
-    gap: 4px;
+    padding: 0px 10px;
+    height: 40px;
+    gap: 8px;
 
     .title {
       color: ${({ theme }) => theme.colors.text100};
@@ -58,6 +64,10 @@ const CommandNodeContainer = styled.div<{ color: EventIconColor }>`
     align-items: center;
     padding: 0px 6px;
     gap: 8px;
+
+    .badge {
+      padding-left: 2px;
+    }
 
     .status {
       display: flex;
@@ -118,7 +128,12 @@ const CommandNodeContainer = styled.div<{ color: EventIconColor }>`
   .container {
     padding: 1px;
     &[data-selected='false'] {
-      background: linear-gradient(180deg, ${({ theme, color }) => theme.colors[`${color}9`]} 0%, #25262a 60px);
+      background: linear-gradient(
+        180deg,
+        ${({ theme, color }) => theme.colors[`${color}9`]} 0%,
+        ${({ theme, color }) => theme.colors[`${color}9`]} 32px,
+        #25262a 56px
+      );
     }
     border-radius: 14px;
   }
@@ -177,9 +192,11 @@ export const CommandNode = ({ commandType, commentCount, dialogsRef, hasError, n
         </div>
         <footer style={{ height: deployFooter ? '24px' : '8px' }}>
           {hasError ? (
-            <div className="status">
-              <InfoIcon className="icon" />
-              <span className="label">{t('invalid_data')}</span>
+            <div className="badge">
+              <div className="status">
+                <InfoIcon className="icon" />
+                <span className="label">{t('invalid_data')}</span>
+              </div>
             </div>
           ) : (
             <div />
