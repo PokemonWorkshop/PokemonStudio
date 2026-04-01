@@ -1,15 +1,15 @@
-import { alias } from './vite.alias.config';
-import { defineConfig } from 'vite';
-import path from 'path';
 import react from '@vitejs/plugin-react';
-import svgr from 'vite-plugin-svgr';
+import path from 'path';
+import { defineConfig } from 'vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
+import svgr from 'vite-plugin-svgr';
+import { alias } from './vite.alias.config';
 
 export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        index: process.env.NODE_ENV === 'production' ? path.resolve(__dirname, '../src/renderer/index.html') : path.resolve(__dirname, 'index.html'),
+        index: path.resolve(__dirname, '../src/renderer/index.html'),
       },
       output: {
         dir: '.vite/renderer/main_window',
@@ -23,7 +23,7 @@ export default defineConfig({
       targets: [
         {
           src: ['../../assets/fonts'],
-          dest: path.resolve(__dirname, '../.vite/renderer/assets'),
+          dest: path.resolve(__dirname, '../.vite/renderer'),
         },
       ],
     }),
