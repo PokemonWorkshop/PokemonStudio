@@ -15,7 +15,7 @@ export const DayNightInput = ({ state, inputRefs }: EvolutionConditionEditorInpu
       { value: '2', label: t('evolution_value_dayNight_morning') } as const,
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [],
   );
 
   useEffect(() => {
@@ -35,7 +35,13 @@ export const DayNightInput = ({ state, inputRefs }: EvolutionConditionEditorInpu
           setValue(value);
         }}
       />
-      <input type="hidden" ref={(ref) => (inputRefs.current.dayNight = ref)} defaultValue={value} />
+      <input
+        type="hidden"
+        ref={(ref) => {
+          inputRefs.current.dayNight = ref;
+        }}
+        defaultValue={value}
+      />
     </InputWithTopLabelContainer>
   );
 };

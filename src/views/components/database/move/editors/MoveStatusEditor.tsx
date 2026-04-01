@@ -1,17 +1,17 @@
-import React, { forwardRef, useMemo } from 'react';
 import { Editor } from '@components/editor';
-import { useTranslation } from 'react-i18next';
-import { StudioMove, StudioMoveStatus } from '@modelEntities/move';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useMovePage } from '@hooks/usePage';
-import { useUpdateMove } from './useUpdateMove';
-import { useZodForm } from '@hooks/useZodForm';
+import { Label } from '@components/inputs';
 import { InputFormContainer } from '@components/inputs/InputContainer';
+import { useMovePage } from '@hooks/usePage';
+import { useZodForm } from '@hooks/useZodForm';
+import { StudioMove, StudioMoveStatus } from '@modelEntities/move';
 import { cloneEntity } from '@utils/cloneEntity';
+import React, { forwardRef, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { STATUS_EDITOR_SCHEMA } from './MoveStatusEditor/StatusEditorSchema';
 import { StatusesEditor } from './MoveStatusEditor/StatusesEditor';
-import { Label } from '@components/inputs';
 import { useMoveStatus } from './MoveStatusEditor/useMoveStatus';
+import { useUpdateMove } from './useUpdateMove';
 
 const initMoveStatus = (move: StudioMove) => {
   const moveWithStatus = cloneEntity(move);
@@ -82,7 +82,7 @@ export const MoveStatusEditor = forwardRef<EditorHandlingClose>((_, ref) => {
 
   useEditorHandlingClose(ref, onClose, canClose);
 
-  const onTouched = (event: React.FormEvent<HTMLInputElement>, index: number) => {
+  const onTouched = (event: React.InputEvent<HTMLInputElement>, index: number) => {
     const value = Number(event.currentTarget.value);
     const moveStatus = cleanMoveStatus(cloneEntity(getRawFormData().moveStatus as StudioMoveStatus[]));
     moveStatus[index].luckRate = isNaN(value) ? 0 : value;

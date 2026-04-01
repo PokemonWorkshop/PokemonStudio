@@ -14,7 +14,7 @@ export const GenderInput = ({ state, inputRefs }: EvolutionConditionEditorInput)
       { value: '0', label: t('evolution_value_gender_unknown') } as const,
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [],
   );
 
   useEffect(() => {
@@ -34,7 +34,13 @@ export const GenderInput = ({ state, inputRefs }: EvolutionConditionEditorInput)
           setValue(value);
         }}
       />
-      <input type="hidden" ref={(ref) => (inputRefs.current.gender = ref)} defaultValue={value} />
+      <input
+        type="hidden"
+        ref={(ref) => {
+          inputRefs.current.gender = ref;
+        }}
+        defaultValue={value}
+      />
     </InputWithTopLabelContainer>
   );
 };

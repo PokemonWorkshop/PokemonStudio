@@ -1,20 +1,20 @@
-import React, { forwardRef, useMemo, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
-import styled from 'styled-components';
 import { Editor } from '@components/editor';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { TextInputError } from '@components/inputs/Input';
 import { TagWithDeletion, TagWithDeletionContainer } from '@components/Tag';
 import { Select } from '@ds/Select';
-import { useZonePage } from '@src/hooks/usePage';
-import { useUpdateZone } from './useUpdateZone';
 import type { StudioZone, StudioZoneForcedWeather } from '@modelEntities/zone';
-import { padStr } from '@utils/PadStr';
-import { cloneEntity } from '@utils/cloneEntity';
-import { ProjectData } from '@src/GlobalStateProvider';
 import { cleanNaNValue } from '@root/src/utils/cleanNaNValue';
+import { ProjectData } from '@src/GlobalStateProvider';
+import { useZonePage } from '@src/hooks/usePage';
+import { cloneEntity } from '@utils/cloneEntity';
+import { padStr } from '@utils/PadStr';
+import { TFunction } from 'i18next';
+import React, { forwardRef, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+import { useUpdateZone } from './useUpdateZone';
 
 const InputMapsListContainer = styled(InputWithTopLabelContainer)`
   gap: 16px;
@@ -59,7 +59,7 @@ const mapsAlreadyAssignedInZones = (zonesData: ProjectData['zones'], currentZone
 
       maps.push(...zone.maps);
       return maps;
-    }, [])
+    }, []),
   );
   return Array.from(maps.values());
 };
@@ -68,7 +68,7 @@ export const ZoneSettingsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { t } = useTranslation();
   const { zone, state } = useZonePage();
   const updateZone = useUpdateZone(zone);
-  const forcedWeatherRef = useRef<string | undefined>();
+  const forcedWeatherRef = useRef<string | undefined>(undefined);
   const panelIdRef = useRef<HTMLInputElement>(null);
   const weatherOptions = useMemo(() => weatherCategoryEntries(t), [t]);
   // eslint-disable-next-line react-hooks/exhaustive-deps

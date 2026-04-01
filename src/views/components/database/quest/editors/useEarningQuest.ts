@@ -20,7 +20,7 @@ export const useEarningQuest = ({ action, earningIndex, initialEarning }: Earnin
   const earningCreature = usePokemonBattler({ action, currentBattler: { index: earningIndex, kind: undefined }, from: 'quest_earning' });
   const [earning, setEarning] = useState(initializeEarning(initialEarning));
   const [isValid, setIsValid] = useState<boolean>(true);
-  const entityRef = useRef<DbSymbol | undefined>();
+  const entityRef = useRef<DbSymbol | undefined>(undefined);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const checkIsValid = () => {

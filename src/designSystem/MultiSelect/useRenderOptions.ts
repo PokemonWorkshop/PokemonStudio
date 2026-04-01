@@ -1,14 +1,14 @@
-import { useState, useImperativeHandle, RefObject, useEffect, useCallback } from 'react';
-import type { RenderOptionRef, MultiSelectOption } from './types';
-import { findOptionIndices } from './utils';
+import { RefObject, useCallback, useEffect, useImperativeHandle, useState } from 'react';
 import type { List } from 'react-virtualized/dist/es/List';
+import type { MultiSelectOption, RenderOptionRef } from './types';
+import { findOptionIndices } from './utils';
 
 export type ValueType = string;
 export type RenderOptionsProps<Value extends ValueType, ChooseValue extends Value> = {
   onSelectValue: (value: Value) => void;
-  utils: RefObject<RenderOptionRef<Value, ChooseValue>>;
-  popover: RefObject<HTMLDivElement>;
-  listRef: RefObject<List>;
+  utils: RefObject<RenderOptionRef<Value, ChooseValue> | null>;
+  popover: RefObject<HTMLDivElement | null>;
+  listRef: RefObject<List | null>;
   currentValues: Value[] | ChooseValue[];
 };
 
@@ -43,7 +43,7 @@ export const useRenderOptions = <Value extends ValueType, ChooseValue extends Va
         }
       }
     },
-    [options, selectedIndex]
+    [options, selectedIndex],
   );
 
   useEffect(() => {
@@ -97,7 +97,7 @@ export const useRenderOptions = <Value extends ValueType, ChooseValue extends Va
         }
       },
     }),
-    [setOptions, options, onSelectValue, selectedIndex, listRef, currentValues]
+    [setOptions, options, onSelectValue, selectedIndex, listRef, currentValues],
   );
 
   return { options, selectedIndex, setSelectedIndex, handleKeyDown, handleMouseEnter };

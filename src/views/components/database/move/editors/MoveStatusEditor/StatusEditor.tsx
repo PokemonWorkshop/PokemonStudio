@@ -1,13 +1,13 @@
-import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
-import { STATUS_EDITOR_SCHEMA } from './StatusEditorSchema';
+import { Input, InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
+import { TextInputError } from '@components/inputs/Input';
 import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { Select } from '@ds/Select';
+import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
+import { MOVE_STATUS_CUSTOM, MOVE_STATUS_CUSTOM_VALIDATOR, StudioMoveStatusList } from '@modelEntities/move';
+import { isCustomStatus } from '@utils/MoveUtils';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Input, InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
-import { MOVE_STATUS_CUSTOM, MOVE_STATUS_CUSTOM_VALIDATOR, StudioMoveStatusList } from '@modelEntities/move';
-import { Select } from '@ds/Select';
-import { TextInputError } from '@components/inputs/Input';
-import { isCustomStatus } from '@utils/MoveUtils';
+import { STATUS_EDITOR_SCHEMA } from './StatusEditorSchema';
 
 const shouldInputShow = (statuses: StudioMoveStatusList[], index: number) => {
   // Must have selected a status for current index
@@ -37,7 +37,7 @@ const getStatus = (rawData: unknown, defaults: unknown): string => {
 type StatusEditorProps = {
   index: number;
   options: SelectOption[];
-  onTouched: (event: React.FormEvent<HTMLInputElement>, index: number) => void;
+  onTouched: (event: React.InputEvent<HTMLInputElement>, index: number) => void;
   getRawFormData: () => Record<string, unknown>;
   defaults: Record<string, unknown>;
   statuses: StudioMoveStatusList[];
@@ -63,7 +63,7 @@ export const StatusEditor = ({
   const divInputRef = useRef<HTMLDivElement>(null);
   const [isCustom, setIsCustom] = useState(isCustomStatus(String(defaults[`moveStatus.${index}.status`])));
   const [defaultCustomInputValue, setDefaultCustomInputValue] = useState<string | undefined>(
-    String(defaults[`moveStatus.${index}.status`]).replace(/^Custom_/, '') || undefined
+    String(defaults[`moveStatus.${index}.status`]).replace(/^Custom_/, '') || undefined,
   );
 
   const status = getStatus(getRawFormData()[`moveStatus.${index}.status`], defaults[`moveStatus.${index}.status`]);

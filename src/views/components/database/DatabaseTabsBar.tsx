@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
 type DatabaseTabsBarContainerProps = {
   $autoWidth?: boolean;
@@ -162,7 +162,9 @@ export const DatabaseTabsBar = ({ currentTabIndex, tabs, onClick, autoWidth }: D
       {tabs.map((tab, index) => (
         <React.Fragment key={`database-tab-${index}`}>
           <TabContainer
-            ref={(el) => (tabsRef.current[index] = el)}
+            ref={(el) => {
+              tabsRef.current[index] = el;
+            }}
             className={currentTabIndex === index ? 'current-tab' : undefined}
             onClick={() => handleTabClick(index, tab)}
             onKeyDown={(e) => handleKeyDown(e, index, tab)}

@@ -1,13 +1,13 @@
 import { useInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
 import React, { useRef } from 'react';
-import { ENCOUNTER_EDITOR_SCHEMA } from './EncounterEditorSchema';
 import { useTranslation } from 'react-i18next';
+import { ENCOUNTER_EDITOR_SCHEMA } from './EncounterEditorSchema';
 
 type GenderEditorProps = {
   getRawFormData: () => Record<string, unknown>;
-  onTouched: React.FormEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+  onTouched: React.InputEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   defaults: Record<string, unknown>;
-  formRef: React.RefObject<HTMLFormElement>;
+  formRef: React.RefObject<HTMLFormElement | null>;
 };
 
 export const GenderEditor = ({ getRawFormData, onTouched, defaults, formRef }: GenderEditorProps) => {

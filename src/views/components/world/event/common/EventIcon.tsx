@@ -1,7 +1,7 @@
 import PlusIcon from '@assets/icons/global/plus-icon.svg';
 import type { StudioEventCommandCategory } from '@modelEntities/event/category';
 import type { StudioEventCommandType } from '@modelEntities/event/command';
-import React from 'react';
+import React, { JSX } from 'react';
 import styled from 'styled-components';
 
 export type EventIconColor = 'blue' | 'violet';

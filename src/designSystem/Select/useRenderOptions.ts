@@ -1,13 +1,13 @@
-import { useState, useImperativeHandle, RefObject } from 'react';
+import { RefObject, useImperativeHandle, useState } from 'react';
+import type { List } from 'react-virtualized/dist/es/List';
 import type { RenderOptionRef, SelectOption } from './types';
 import { findOptionIndexOrZero } from './utils';
-import type { List } from 'react-virtualized/dist/es/List';
 
 export type RenderOptionsProps<Value extends string, ChooseValue extends string> = {
   onSelectValue: (value: Value) => void;
-  utils: RefObject<RenderOptionRef<Value, ChooseValue>>;
-  popover: RefObject<HTMLDivElement>;
-  listRef: RefObject<List>;
+  utils: RefObject<RenderOptionRef<Value, ChooseValue> | null>;
+  popover: RefObject<HTMLDivElement | null>;
+  listRef: RefObject<List | null>;
 };
 
 export const useRenderOptions = <Value extends string, ChooseValue extends string>({
@@ -52,7 +52,7 @@ export const useRenderOptions = <Value extends string, ChooseValue extends strin
       },
       pickHighlighted: () => options && onSelectValue(options[highlightIndex].value),
     }),
-    [setHighlightIndex, options, onSelectValue, highlightIndex]
+    [setHighlightIndex, options, onSelectValue, highlightIndex],
   );
 
   return { options, highlightIndex, currentValue };
