@@ -1,17 +1,17 @@
-import React from 'react';
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
 import { DialogRefData } from '@hooks/useDialogsRef';
 import { assertUnreachable } from '@utils/assertUnreachable';
+import React from 'react';
 import {
-  ZoneNewEditor,
+  ZoneAddGroupEditor,
+  ZoneDeletion,
+  ZoneEditGroupEditor,
   ZoneFrameEditor,
+  ZoneGroupImportEditor,
+  ZoneGroupsDeletion,
+  ZoneNewEditor,
   ZoneSettingsEditor,
   ZoneTravelEditor,
-  ZoneAddGroupEditor,
-  ZoneEditGroupEditor,
-  ZoneGroupImportEditor,
-  ZoneDeletion,
-  ZoneGroupsDeletion,
 } from '.';
 
 export type ZoneEditorAndDeletionKeys =
@@ -24,7 +24,7 @@ export type ZoneEditorAndDeletionKeys =
   | 'importGroup'
   | 'deleteZone'
   | 'deleteGroupsZone';
-export type ZoneDialogsRef = React.RefObject<DialogRefData<ZoneEditorAndDeletionKeys>>;
+export type ZoneDialogsRef = React.RefObject<DialogRefData<ZoneEditorAndDeletionKeys> | null>;
 
 /**
  * Editor overlay for the zones.
@@ -55,5 +55,5 @@ export const ZoneEditorOverlay = defineEditorOverlay<ZoneEditorAndDeletionKeys, 
       default:
         assertUnreachable(dialogToShow);
     }
-  }
+  },
 );

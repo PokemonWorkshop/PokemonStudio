@@ -1,19 +1,19 @@
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
-import { assertUnreachable } from '@utils/assertUnreachable';
 import { DialogRefData } from '@hooks/useDialogsRef';
+import { assertUnreachable } from '@utils/assertUnreachable';
 import React from 'react';
 import { AbilityEditor } from './AbilityEditor';
 import { BreedingEditor } from './BreedingEditor';
 import { CreatureDeletion } from './CreatureDeletion';
 import { CreatureFormDeletion } from './CreatureFormDeletion';
 import { EncounterEditor } from './EncounterEditor';
+import { EvolutionEditor } from './EvolutionEditor';
 import { ExperienceEditor } from './ExperienceEditor';
 import { InformationsEditor } from './InformationsEditor';
 import { PokedexEditor } from './PokedexEditor';
 import { PokemonFormNewEditor } from './PokemonFormNewEditor';
 import { PokemonNewEditor } from './PokemonNewEditor';
 import { StatEditor } from './StatsEditor';
-import { EvolutionEditor } from './EvolutionEditor';
 
 export type PokemonEditorAndDeletionKeys =
   | 'information'
@@ -28,7 +28,7 @@ export type PokemonEditorAndDeletionKeys =
   | 'newForm'
   | 'deletion'
   | 'deleteForm';
-export type PokemonDialogRef = React.RefObject<DialogRefData<PokemonEditorAndDeletionKeys>>;
+export type PokemonDialogRef = React.RefObject<DialogRefData<PokemonEditorAndDeletionKeys> | null>;
 
 export const PokemonEditorOverlay = defineEditorOverlay<
   PokemonEditorAndDeletionKeys,

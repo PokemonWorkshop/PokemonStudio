@@ -1,17 +1,17 @@
-import React from 'react';
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
-import { assertUnreachable } from '@utils/assertUnreachable';
 import { DialogRefData } from '@hooks/useDialogsRef';
-import { MapFrameEditor } from './MapFrameEditor';
+import { StudioMapInfoFolder, StudioMapInfoValue } from '@modelEntities/mapInfo';
+import { assertUnreachable } from '@utils/assertUnreachable';
+import React from 'react';
 import { MapDeletion } from './MapDeletion';
+import { MapFolderDeletion } from './MapFolderDeletion';
+import { MapFrameEditor } from './MapFrameEditor';
 import { MapMusicsEditor } from './MapMusicsEditor';
 import { MapNewEditor } from './MapNewEditor';
-import { MapFolderDeletion } from './MapFolderDeletion';
-import { StudioMapInfoFolder, StudioMapInfoValue } from '@modelEntities/mapInfo';
 import { MapOpenTiledError } from './MapOpenTiledError';
 
 export type MapEditorAndDeletionKeys = 'new' | 'frame' | 'musics' | 'deletion' | 'deletion_folder' | 'open_tiled_error';
-export type MapDialogsRef = React.RefObject<DialogRefData<MapEditorAndDeletionKeys>>;
+export type MapDialogsRef = React.RefObject<DialogRefData<MapEditorAndDeletionKeys> | null>;
 
 type Props = {
   mapInfoValue?: StudioMapInfoValue;
@@ -46,5 +46,5 @@ export const MapEditorOverlay = defineEditorOverlay<MapEditorAndDeletionKeys, Pr
       default:
         return assertUnreachable(dialogToShow);
     }
-  }
+  },
 );

@@ -1,12 +1,12 @@
-import React from 'react';
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
-import { assertUnreachable } from '@utils/assertUnreachable';
 import type { DialogRefData } from '@hooks/useDialogsRef';
+import { assertUnreachable } from '@utils/assertUnreachable';
+import React from 'react';
 import { BagEntryEditor, BagEntryImport } from '.';
 
 export type BagEntryAction = 'edit' | 'creation';
 export type BagEntryEditorAndDeletionKeys = 'new' | 'edit' | 'import';
-export type BagEntryDialogsRef = React.RefObject<DialogRefData<BagEntryEditorAndDeletionKeys>>;
+export type BagEntryDialogsRef = React.RefObject<DialogRefData<BagEntryEditorAndDeletionKeys> | null>;
 export type BagEntryFrom = 'trainer';
 type BagEntryEditorOverlayProps = {
   index: number;
@@ -30,5 +30,5 @@ export const BagEntryEditorOverlay = defineEditorOverlay<BagEntryEditorAndDeleti
       default:
         return assertUnreachable(dialogToShow);
     }
-  }
+  },
 );

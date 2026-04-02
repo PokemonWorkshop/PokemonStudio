@@ -1,11 +1,11 @@
-import React from 'react';
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
-import { assertUnreachable } from '@utils/assertUnreachable';
 import { DialogRefData } from '@hooks/useDialogsRef';
+import { assertUnreachable } from '@utils/assertUnreachable';
+import React from 'react';
 import { NatureDeletion, NatureFlavorsEditor, NatureFrameEditor, NatureNewEditor, NatureStatsEditor } from '.';
 
 export type NatureEditorAndDeletionKeys = 'new' | 'frame' | 'stats' | 'flavors' | 'deletion';
-export type NatureDialogsRef = React.RefObject<DialogRefData<NatureEditorAndDeletionKeys>>;
+export type NatureDialogsRef = React.RefObject<DialogRefData<NatureEditorAndDeletionKeys> | null>;
 
 /**
  * Editor overlay for the natures.
@@ -28,5 +28,5 @@ export const NatureEditorOverlay = defineEditorOverlay<NatureEditorAndDeletionKe
       default:
         return assertUnreachable(dialogToShow);
     }
-  }
+  },
 );

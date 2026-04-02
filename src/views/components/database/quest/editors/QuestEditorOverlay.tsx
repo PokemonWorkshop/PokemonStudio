@@ -1,7 +1,7 @@
-import React from 'react';
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
-import { assertUnreachable } from '@utils/assertUnreachable';
 import type { DialogRefData } from '@hooks/useDialogsRef';
+import { assertUnreachable } from '@utils/assertUnreachable';
+import React from 'react';
 import {
   QuestDeletion,
   QuestEarningEditor,
@@ -26,7 +26,7 @@ export type QuestEditorAndDeletionKeys =
   | 'earning_import'
   | 'goal_deletion'
   | 'earning_deletion';
-export type QuestDialogsRef = React.RefObject<DialogRefData<QuestEditorAndDeletionKeys>>;
+export type QuestDialogsRef = React.RefObject<DialogRefData<QuestEditorAndDeletionKeys> | null>;
 
 /**
  * Editor overlay for the quests.

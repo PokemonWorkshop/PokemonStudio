@@ -1,11 +1,11 @@
-import React from 'react';
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
-import { assertUnreachable } from '@utils/assertUnreachable';
 import type { DialogRefData } from '@hooks/useDialogsRef';
+import { assertUnreachable } from '@utils/assertUnreachable';
+import React from 'react';
 import { PokemonBattlerChangeOrder, PokemonBattlerDeletion, PokemonBattlerEditor, PokemonBattlerImport } from '.';
 
 export type PokemonBattlerEditorAndDeletionKeys = 'new' | 'edit' | 'import' | 'change_order' | 'deletion';
-export type PokemonBattlerDialogsRef = React.RefObject<DialogRefData<PokemonBattlerEditorAndDeletionKeys>>;
+export type PokemonBattlerDialogsRef = React.RefObject<DialogRefData<PokemonBattlerEditorAndDeletionKeys> | null>;
 export type PokemonBattlerFrom = 'trainer' | 'group' | 'quest_earning';
 export type PokemonPropertyType = 'default' | 'evs' | 'moves';
 export type CurrentBattlerType = {
@@ -47,5 +47,5 @@ export const PokemonBattlerEditorOverlay = defineEditorOverlay<PokemonBattlerEdi
       default:
         return assertUnreachable(dialogToShow);
     }
-  }
+  },
 );

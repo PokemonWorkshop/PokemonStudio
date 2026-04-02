@@ -1,14 +1,14 @@
-import React from 'react';
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
-import { assertUnreachable } from '@utils/assertUnreachable';
 import { DialogRefData } from '@hooks/useDialogsRef';
-import { DefaultEditor } from './DefaultEditor';
 import type { CommandId, StudioEventCommandType } from '@modelEntities/event/command';
-import { InsertScriptEditor } from './InsertScriptEditor';
 import type { StudioEvent } from '@modelEntities/event/event';
+import { assertUnreachable } from '@utils/assertUnreachable';
+import React from 'react';
+import { DefaultEditor } from './DefaultEditor';
+import { InsertScriptEditor } from './InsertScriptEditor';
 
 export type CommandEditorAndDeletionKeys = StudioEventCommandType;
-export type CommandDialogsRef = React.RefObject<DialogRefData<CommandEditorAndDeletionKeys>>;
+export type CommandDialogsRef = React.RefObject<DialogRefData<CommandEditorAndDeletionKeys> | null>;
 
 /**
  * Editor overlay for the commands.

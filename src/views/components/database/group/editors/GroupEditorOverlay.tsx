@@ -1,12 +1,12 @@
-import React from 'react';
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
-import { assertUnreachable } from '@utils/assertUnreachable';
 import { DialogRefData } from '@hooks/useDialogsRef';
+import { assertUnreachable } from '@utils/assertUnreachable';
+import React from 'react';
 import { GroupFrameEditor, GroupNewEditor } from '.';
 import { GroupDeletion } from './GroupDeletion';
 
 export type GroupEditorAndDeletionKeys = 'new' | 'frame' | 'deletion';
-export type GroupDialogsRef = React.RefObject<DialogRefData<GroupEditorAndDeletionKeys>>;
+export type GroupDialogsRef = React.RefObject<DialogRefData<GroupEditorAndDeletionKeys> | null>;
 
 /**
  * Editor overlay for the groups.
@@ -25,5 +25,5 @@ export const GroupEditorOverlay = defineEditorOverlay<GroupEditorAndDeletionKeys
       default:
         return assertUnreachable(dialogToShow);
     }
-  }
+  },
 );
