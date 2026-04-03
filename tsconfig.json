@@ -29,5 +29,5 @@
       "@root/*": ["*"]
     }
   },
-  "include": ["src/**/*", "forge.config.ts", "updater_i18n.js", "*.d.ts", "config/vite.alias.config.ts"]
+  "include": ["src/**/*", "*.d.ts", "forge.config.ts", "updater_i18n.js", "eslint.config.mjs", "config/vite.alias.config.ts"]
 }

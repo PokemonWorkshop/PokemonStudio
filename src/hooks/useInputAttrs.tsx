@@ -8,17 +8,18 @@ import {
   NodeMultiLineInput,
   Toggle,
 } from '@components/inputs';
-import { z } from 'zod';
+import { EmbeddedUnitInput } from '@components/inputs/EmbeddedUnitInput';
+import { Select } from '@ds/Select';
 import { inputAttrs } from '@utils/inputAttrs';
 import React, { useMemo } from 'react';
-import { Select } from '@ds/Select';
-import { EmbeddedUnitInput } from '@components/inputs/EmbeddedUnitInput';
+import { z } from 'zod';
 
 type WithSchemaKeyAndName = {
   name: string;
   schemaKey?: string;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ReactProps<T extends (...args: any) => any> = Omit<Parameters<T>[0], 'name'> & WithSchemaKeyAndName;
 
 export const useInputAttrs = <T extends z.ZodRawShape>(schema: z.ZodObject<T>, defaults?: Record<string, unknown>) => {
@@ -37,6 +38,7 @@ export const useInputAttrs = <T extends z.ZodRawShape>(schema: z.ZodObject<T>, d
   );
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ReactPropsWithLabel<T extends (...args: any) => any> = Omit<Parameters<T>[0], 'name'> &
   WithSchemaKeyAndName & { label?: string; labelLeft?: boolean };
 

@@ -89,6 +89,7 @@
     "@electron-forge/maker-zip": "^7.11.1",
     "@electron-forge/plugin-vite": "^7.11.1",
     "@electron-forge/publisher-github": "^7.11.1",
+    "@eslint/compat": "^2.0.3",
     "@reforged/maker-appimage": "^5.2.0",
     "@types/lodash.groupby": "^4.6.9",
     "@types/lodash.uniq": "^4.5.9",
