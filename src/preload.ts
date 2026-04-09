@@ -33,9 +33,6 @@ import type { SaveEventTreeInput } from './backendTasks/saveEventTree';
 import type { StartupStudioFileOutput } from './backendTasks/startupStudioFile';
 import type { GetFilePathsFromFolderInput, GetFilePathsFromFolderOutput } from './backendTasks/getFilePathsFromFolder';
 import type { CopyTiledFilesInput, CopyTiledFilesOutput } from './backendTasks/copyTiledFiles';
-import type { RMXP2StudioMapsSyncInput } from './backendTasks/RMXP2StudioMapsSync';
-import type { ReadRMXPMapInfoInput, ReadRMXPMapInfoOutput } from './backendTasks/readRMXPMapInfo';
-import type { ReadRMXPMapInput, ReadRMXPMapOutput } from './backendTasks/readRMXPMap';
 import type { SaveRMXPMapInfoInput } from './backendTasks/saveRMXPMapInfo';
 import type { OpenTiledPayload } from './backendTasks/openTiled';
 import type { DownloadFileInput } from './backendTasks/downloadFile';
@@ -107,9 +104,6 @@ contextBridge.exposeInMainWorld('api', {
   startPSDKDebug: (projectPath: string) => {
     ipcRenderer.send('start-psdk-debug', projectPath);
   },
-  startPSDKTags: (projectPath: string) => {
-    ipcRenderer.send('start-psdk-tags', projectPath);
-  },
   startPSDKWorldmap: (projectPath: string) => {
     ipcRenderer.send('start-psdk-worldmap', projectPath);
   },
@@ -146,11 +140,8 @@ contextBridge.exposeInMainWorld('api', {
   startupStudioFile: defineBackendTask(ipcRenderer, 'startup-studio-file'),
   getFilePathsFromFolder: defineBackendTask(ipcRenderer, 'get-file-paths-from-folder'),
   copyTiledFiles: defineBackendTask(ipcRenderer, 'copy-tiled-files'),
-  RMXP2StudioMapsSync: defineBackendTask(ipcRenderer, 'rmxp-to-studio-maps-sync'),
-  readRMXPMapInfo: defineBackendTask(ipcRenderer, 'read-rmxp-map-info'),
-  readRMXPMap: defineBackendTask(ipcRenderer, 'read-rmxp-map'),
-  readMaps: defineBackendTask(ipcRenderer, 'read-maps'),
   saveRMXPMapInfo: defineBackendTask(ipcRenderer, 'save-rmxp-map-info'),
+  readMaps: defineBackendTask(ipcRenderer, 'read-maps'),
   openTiled: defineBackendTask(ipcRenderer, 'open-tiled'),
   downloadFile: defineBackendTask(ipcRenderer, 'download-file'),
   requestJson: defineBackendTask(ipcRenderer, 'request-json'),
@@ -207,7 +198,6 @@ declare global {
       unregisterPSDKUpdateEvents: () => void;
       startPSDK: (projectPath: string) => void;
       startPSDKDebug: (projectPath: string) => void;
-      startPSDKTags: (projectPath: string) => void;
       startPSDKWorldmap: (projectPath: string) => void;
       platform: string;
       externalWindow: (link: string) => void;
@@ -242,11 +232,8 @@ declare global {
       startupStudioFile: BackendTaskWithGenericErrorAndNoProgress<AnyObj, StartupStudioFileOutput>;
       getFilePathsFromFolder: BackendTaskWithGenericErrorAndNoProgress<GetFilePathsFromFolderInput, GetFilePathsFromFolderOutput>;
       copyTiledFiles: BackendTaskWithGenericErrorAndNoProgress<CopyTiledFilesInput, CopyTiledFilesOutput>;
-      RMXP2StudioMapsSync: BackendTaskWithGenericErrorAndNoProgress<RMXP2StudioMapsSyncInput, AnyObj>;
-      readRMXPMapInfo: BackendTaskWithGenericErrorAndNoProgress<ReadRMXPMapInfoInput, ReadRMXPMapInfoOutput>;
-      readRMXPMap: BackendTaskWithGenericErrorAndNoProgress<ReadRMXPMapInput, ReadRMXPMapOutput>;
-      readMaps: BackendTaskWithGenericErrorAndNoProgress<ReadMapsInput, ReadMapsOutput>;
       saveRMXPMapInfo: BackendTaskWithGenericErrorAndNoProgress<SaveRMXPMapInfoInput, AnyObj>;
+      readMaps: BackendTaskWithGenericErrorAndNoProgress<ReadMapsInput, ReadMapsOutput>;
       openTiled: BackendTaskWithGenericErrorAndNoProgress<OpenTiledPayload, AnyObj>;
       downloadFile: BackendTaskWithGenericError<DownloadFileInput, AnyObj, GenericBackendProgress>;
       requestJson: BackendTaskWithGenericErrorAndNoProgress<RequestJsonInput, RequestJsonOutput>;

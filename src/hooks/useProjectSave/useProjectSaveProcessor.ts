@@ -92,9 +92,8 @@ export const useProjectSaveProcessor = () => {
       },
       saveRMXPMapInfo: (state, setState) => {
         loaderRef.current.setProgress(6, STEPS_TOTAL, t('saving_rmxp_map_info'));
-        if (!globalState.savingMapInfo || globalState.projectStudio.isTiledMode !== true) {
-          return toAsyncProcess(() => setState({ ...state, state: 'saveEventTree' }));
-        }
+        if (!globalState.savingMapInfo) return toAsyncProcess(() => setState({ ...state, state: 'saveEventTree' }));
+
         return window.api.saveRMXPMapInfo(
           {
             projectPath: state.projectPath,
@@ -145,7 +144,7 @@ export const useProjectSaveProcessor = () => {
         });
       },
       resetSaving: (_, setState) => {
-        loaderRef.current.setProgress(10, STEPS_TOTAL, t('saving_reset'));
+        loaderRef.current.setProgress(9, STEPS_TOTAL, t('saving_reset'));
         return toAsyncProcess(() => {
           setGlobalState({
             ...globalState,

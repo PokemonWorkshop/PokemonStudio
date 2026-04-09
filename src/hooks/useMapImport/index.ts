@@ -1,4 +1,4 @@
-import type { MapImportFailureCallback, MapImportSuccessCallback, RMXPMapInfo } from './types';
+import type { MapImportFailureCallback, MapImportSuccessCallback } from './types';
 import { DEFAULT_PROCESS_STATE, useProcess } from '@hooks/useProcess';
 import { useMapImportProcessor } from './useMapImportProcessor';
 import type { MapImportFiles } from '@components/world/map/editors/MapImport/MapImportType';
@@ -8,7 +8,7 @@ export const useMapImport = () => {
   const setState = useProcess(processors, DEFAULT_PROCESS_STATE);
 
   return (
-    payload: { filesToImport: MapImportFiles[]; tiledFilesSrcPath: string; rmxpMapInfo: RMXPMapInfo[]; copyMode?: boolean },
+    payload: { filesToImport: MapImportFiles[]; tiledFilesSrcPath: string; copyMode?: boolean },
     onSuccess: MapImportSuccessCallback,
     onFailure: MapImportFailureCallback
   ) => {
@@ -17,7 +17,6 @@ export const useMapImport = () => {
       state: 'import',
       filesToImport: payload.filesToImport,
       tiledFilesSrcPath: payload.tiledFilesSrcPath,
-      rmxpMapInfo: payload.rmxpMapInfo,
       copyMode: payload.copyMode || false,
     });
   };

@@ -7,7 +7,6 @@ import { AutoSizer, List } from 'react-virtualized';
 import { Input } from '@components/inputs';
 import { cloneEntity } from '@utils/cloneEntity';
 import ErrorIcon from '@assets/icons/global/error2.svg';
-import { DropDownOption, StudioDropDown } from '@components/StudioDropDown';
 
 const MapImportListContainer = styled.div`
   ${({ theme }) => theme.fonts.normalRegular}
@@ -123,12 +122,10 @@ const MapLineContainer = styled.div<MapLineContainerProps>`
 
 type MapImportListType = {
   files: MapImportFiles[];
-  mapInfoOptions: DropDownOption[];
-  mapIdsUsed: number[];
   setFiles: Dispatch<SetStateAction<MapImportFiles[]>>;
 };
 
-export const MapImportList = ({ files, mapInfoOptions, mapIdsUsed, setFiles }: MapImportListType) => {
+export const MapImportList = ({ files, setFiles }: MapImportListType) => {
   const { t } = useTranslation();
 
   const allFilesChecked = (checked: boolean) => {
@@ -147,12 +144,6 @@ export const MapImportList = ({ files, mapInfoOptions, mapIdsUsed, setFiles }: M
     setFiles(filesCloned);
   };
 
-  const handleMapId = (value: string, index: number) => {
-    const filesCloned = cloneEntity(files);
-    filesCloned[index].mapId = value === 'new' ? undefined : Number(value);
-    setFiles(filesCloned);
-  };
-
   return (
     <MapImportListContainer>
       <div className="header">
@@ -161,7 +152,6 @@ export const MapImportList = ({ files, mapInfoOptions, mapIdsUsed, setFiles }: M
           <span>{t('file')}</span>
         </div>
         <span>{t('map_name')}</span>
-        <span>{t('map_in_rmxp')}</span>
       </div>
       <div className="list">
         <AutoSizer>
@@ -190,12 +180,6 @@ export const MapImportList = ({ files, mapInfoOptions, mapIdsUsed, setFiles }: M
                         </div>
                       </div>
                       <Input value={file.mapName} onChange={(event) => handleMapName(event.target.value, index)} />
-                      <StudioDropDown
-                        value={file.mapId === undefined ? 'new' : `${file.mapId}`}
-                        options={mapInfoOptions}
-                        onChange={(value) => handleMapId(value, index)}
-                        optionals={{ filter: (value) => file.mapId === Number(value) || !mapIdsUsed.includes(Number(value)) }}
-                      />
                     </MapLineContainer>
                   );
                 }}

@@ -48,7 +48,7 @@ const generateBootLoadContent = (projectPath: string) => {
   return generatePSDKBatFileContent();
 };
 
-export const RMXP2StudioSafetyNet = (projectPath: string) => {
+const ensureBootLoadFile = (projectPath: string) => {
   const psdkBatPath = path.join(projectPath, bootLoadFilename());
   const psdkBatContent = generateBootLoadContent(projectPath);
   const realPsdkBatContent = existsSync(psdkBatPath) && readFileSync(psdkBatPath).toString('utf-8');
@@ -87,7 +87,7 @@ const childProcessFn = (projectPath: string, command: string, spawnArgs: string[
 export const startPSDK = (projectPath: string) => {
   if (!canLaunchPSDK()) return;
 
-  RMXP2StudioSafetyNet(projectPath);
+  ensureBootLoadFile(projectPath);
 
   const studioPath = process.cwd();
   try {
@@ -104,7 +104,7 @@ export const startPSDK = (projectPath: string) => {
 const startPSDKWithArgs = (projectPath: string, ...args: string[]) => {
   if (!canLaunchPSDK()) return;
 
-  RMXP2StudioSafetyNet(projectPath);
+  ensureBootLoadFile(projectPath);
 
   const studioPath = process.cwd();
   try {
@@ -119,5 +119,4 @@ const startPSDKWithArgs = (projectPath: string, ...args: string[]) => {
 };
 
 export const startPSDKDebug = (projectPath: string) => startPSDKWithArgs(projectPath, 'debug');
-export const startPSDKTags = (projectPath: string) => startPSDKWithArgs(projectPath, '--tags');
 export const startPSDKWorldmap = (projectPath: string) => startPSDKWithArgs(projectPath, '--worldmap');

@@ -7,7 +7,6 @@ import { getPSDKBinariesPath } from '@services/getPSDKVersion';
 import { INFO_CONFIG_VALIDATOR } from '@modelEntities/config';
 import { parseJSON } from '@utils/json/parse';
 import { PROJECT_VALIDATOR } from '@modelEntities/project';
-import { RMXP2StudioSafetyNet } from '@services/startPSDK';
 import windowManager from './windowManager';
 import { existsSync } from 'fs';
 import fsPromise from 'fs/promises';
@@ -28,7 +27,6 @@ const BUFFER_LIMIT = 10; // The data is send to the front-end when the loggerBuf
 let progression = 0;
 
 const getSpawnArgs = (rubyPath: string, projectPath: string, ...args: string[]): [string, string[]] => {
-  RMXP2StudioSafetyNet(projectPath);
   if (process.platform === 'win32') {
     const gamePath = path.join(projectPath, 'Game.rb');
     return [path.join(rubyPath, 'rubyw.exe'), ['--disable=gems,rubyopt,did_you_mean', gamePath, ...args]];
