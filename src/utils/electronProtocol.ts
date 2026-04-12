@@ -1,9 +1,9 @@
+import { getAppRootPath } from '@src/backendTasks/getAppRootPath';
 import { app, protocol } from 'electron';
 import electronIsDev from 'electron-is-dev';
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
 import querystring from 'querystring';
-import { getAppRootPath } from '@src/backendTasks/getAppRootPath';
 
 const FALLBACK_IMAGE = path.join(getAppRootPath(), 'placeholder.svg');
 
@@ -52,7 +52,7 @@ export const registerElectronProtocolWhenAppRead = () => {
   // Create static files protocol
   protocol.registerFileProtocol('static', (request, callback) => {
     const fileUrl = request.url.replace('static://', '');
-    const filePath = path.join(app.getAppPath(), electronIsDev ? '' : '.vite/renderer', fileUrl);
+    const filePath = path.join(app.getAppPath(), electronIsDev ? '' : '.vite/renderer/main_window', fileUrl);
     callback({ path: filePath, headers: { 'Access-Control-Allow-Origin': '*' } });
   });
 };

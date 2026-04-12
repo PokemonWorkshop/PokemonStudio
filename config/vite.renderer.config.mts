@@ -23,7 +23,7 @@ export default defineConfig({
       targets: [
         {
           src: ['../../assets/fonts'],
-          dest: path.resolve(__dirname, '../.vite/renderer'),
+          dest: path.resolve(__dirname, '../.vite/renderer/main_window'),
         },
       ],
     }),
