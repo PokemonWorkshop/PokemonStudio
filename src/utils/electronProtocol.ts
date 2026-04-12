@@ -52,7 +52,7 @@ export const registerElectronProtocolWhenAppRead = () => {
   // Create static files protocol
   protocol.registerFileProtocol('static', (request, callback) => {
     const fileUrl = request.url.replace('static://', '');
-    const filePath = path.join(app.getAppPath(), electronIsDev ? '' : '.vite/renderer/main_window', fileUrl);
+    const filePath = path.join(app.getAppPath(), electronIsDev ? '' : '.vite/renderer', fileUrl);
     callback({ path: filePath, headers: { 'Access-Control-Allow-Origin': '*' } });
   });
 };
