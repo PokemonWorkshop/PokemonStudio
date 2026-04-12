@@ -9,7 +9,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        index: process.env.NODE_ENV === 'production' ? path.resolve(__dirname, '../src/renderer/index.html') : path.resolve(__dirname, 'index.html'),
+        index: path.resolve(__dirname, '../src/renderer/index.html'),
       },
       output: {
         dir: '.vite/renderer/main_window',
