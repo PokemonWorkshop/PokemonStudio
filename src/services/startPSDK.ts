@@ -28,8 +28,8 @@ export const getSpawnArgs = (projectPath: string, ...args: string[]): [string, s
         `tell application "Terminal"
           do script "cd '${projectPath}' && ./game-mac.sh ${args.join(' ')}"
           activate
-        end tell`
-      ]
+        end tell`,
+      ],
     ];
   } else {
     return ['./game.rb', args];
@@ -73,6 +73,17 @@ const canLaunchPSDK = () => {
   return false;
 };
 
+const childProcessFn = (projectPath: string, command: string, spawnArgs: string[]) => {
+  const isMac = process.platform === 'darwin';
+  const childProcess = spawn(command, spawnArgs, {
+    cwd: projectPath,
+    shell: !isMac,
+    detached: !isMac,
+    stdio: isMac ? 'inherit' : 'ignore',
+  });
+  if (!isMac) childProcess.unref();
+};
+
 export const startPSDK = (projectPath: string) => {
   if (!canLaunchPSDK()) return;
 
@@ -84,16 +95,7 @@ export const startPSDK = (projectPath: string) => {
 
     const [command, spawnArgs] = getSpawnArgs(projectPath);
 
-    const isMac = process.platform === 'darwin';
-
-    const childProcess = spawn(command, spawnArgs, {
-      cwd: projectPath,
-      shell: !isMac,
-      detached: !isMac,
-      stdio: isMac ? 'inherit' : 'ignore',
-    });
-
-    if (!isMac) childProcess.unref();
+    childProcessFn(projectPath, command, spawnArgs);
   } finally {
     process.chdir(studioPath);
   }
@@ -110,16 +112,7 @@ const startPSDKWithArgs = (projectPath: string, ...args: string[]) => {
 
     const [command, spawnArgs] = getSpawnArgs(projectPath, ...args);
 
-    const isMac = process.platform === 'darwin';
-
-    const childProcess = spawn(command, spawnArgs, {
-      cwd: projectPath,
-      shell: !isMac,
-      detached: !isMac,
-      stdio: isMac ? 'inherit' : 'ignore',
-    });
-
-    if (!isMac) childProcess.unref();
+    childProcessFn(projectPath, command, spawnArgs);
   } finally {
     process.chdir(studioPath);
   }
