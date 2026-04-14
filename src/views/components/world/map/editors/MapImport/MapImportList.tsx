@@ -156,7 +156,7 @@ export const MapImportList = ({ files, mapInfoOptions, mapIdsUsed, setFiles }: M
   return (
     <MapImportListContainer>
       <div className="header">
-        <div className="map">
+        <div className="item-tree">
           <Checkbox checked={!files.some((file) => !file.shouldBeImport)} onChange={(event) => allFilesChecked(event.target.checked)} />
           <span>{t('file')}</span>
         </div>
@@ -178,7 +178,7 @@ export const MapImportList = ({ files, mapInfoOptions, mapIdsUsed, setFiles }: M
                   const hasError = file.error !== undefined;
                   return (
                     <MapLineContainer key={key} style={{ ...style, height: '48px' }} checked={file.shouldBeImport} hasError={hasError}>
-                      <div className="map">
+                      <div className="item-tree">
                         <Checkbox checked={file.shouldBeImport} onChange={(event) => handleFileChecked(event.target.checked, index)} />
                         <div className="filename-icon">
                           <span className={`filename${hasError ? '-with-error' : ''}`}>{file.filename}</span>

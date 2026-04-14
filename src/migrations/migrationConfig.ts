@@ -24,6 +24,7 @@ import { addSoundDesignConfig } from './addSoundDesignConfig';
 import { addMoveContestData } from './addMoveContestData';
 import { addMissingMapLinks } from './addMissingMapLinks';
 import { baseForEvents } from './baseForEvents';
+import { addCsvForEventFolders } from './addCsvForEventFolders';
 
 type MigrateConfigType = {
   migration: MigrationTask;
@@ -172,5 +173,10 @@ export const MIGRATION_CONFIG: MigrateConfigType[] = [
     migration: baseForEvents,
     version: '2.8.1',
     message: 'add_base_for_events',
+  },
+  {
+    migration: addCsvForEventFolders,
+    version: '2.9.1',
+    message: 'add_csv_for_event_folders',
   },
 ];

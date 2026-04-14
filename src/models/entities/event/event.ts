@@ -118,7 +118,7 @@ export const EVENT_VALIDATOR = z.intersection(
   z.object({
     klass: z.literal('Event'),
   }),
-  CUSTOM_EVENT_VALIDATOR
+  CUSTOM_EVENT_VALIDATOR,
 );
 export type StudioEvent = z.infer<typeof EVENT_VALIDATOR>;
 

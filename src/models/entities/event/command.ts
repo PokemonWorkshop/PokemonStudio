@@ -11,6 +11,7 @@ export type ConnectionId = z.infer<typeof COMMAND_CONNECTION_ID_VALIDATOR>;
 const EVENT_COMMAND_STUDIO_DATA_VALIDATOR = z.object({
   x: z.number(),
   y: z.number(),
+  comments: z.array(z.string()),
 });
 
 export const EVENT_COMMAND_CONNECTION_VALIDATOR = z.object({
@@ -23,7 +24,6 @@ export type StudioEventCommandConnection = z.infer<typeof EVENT_COMMAND_CONNECTI
 
 export const EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR = z.object({
   type: z.literal('insert_script'),
-  comment: z.string().default(''),
   script: z.string().default(''),
   connections: z.record(COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_CONNECTION_VALIDATOR),
   studioData: EVENT_COMMAND_STUDIO_DATA_VALIDATOR,
@@ -116,6 +116,7 @@ export const EVENT_COMMAND_VALIDATOR = z.discriminatedUnion('type', [
 
 export type StudioEventCommand = z.infer<typeof EVENT_COMMAND_VALIDATOR>;
 export type StudioEventCommandType = z.infer<typeof EVENT_COMMAND_VALIDATOR>['type'];
+export type StudioEventCommandData<T> = Omit<T, 'connections' | 'studioData'>;
 
 export type EventCommandForCategory = {
   commandType: StudioEventCommandType;

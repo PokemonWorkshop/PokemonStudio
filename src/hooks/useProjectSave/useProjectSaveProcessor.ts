@@ -16,7 +16,7 @@ const DEFAULT_BINDING: ProjectSaveFunctionBinding = {
   onSuccess: () => {},
 };
 
-const STEPS_TOTAL = 9;
+const STEPS_TOTAL = 10;
 
 export const useProjectSaveProcessor = () => {
   const [globalState, setGlobalState] = useGlobalState();
@@ -33,7 +33,8 @@ export const useProjectSaveProcessor = () => {
     globalState.savingText.map.size > 0 ||
     globalState.savingProjectStudio ||
     globalState.savingTextInfos ||
-    globalState.savingMapInfo;
+    globalState.savingMapInfo ||
+    globalState.savingEventTree;
 
   const binding = useRef<ProjectSaveFunctionBinding>(DEFAULT_BINDING);
   const processors: SpecialStateProcessors<ProjectSaveStateObject> = useMemo(
@@ -92,7 +93,7 @@ export const useProjectSaveProcessor = () => {
       saveRMXPMapInfo: (state, setState) => {
         loaderRef.current.setProgress(6, STEPS_TOTAL, t('saving_rmxp_map_info'));
         if (!globalState.savingMapInfo || globalState.projectStudio.isTiledMode !== true) {
-          return toAsyncProcess(() => setState({ ...state, state: 'updateStudioFile' }));
+          return toAsyncProcess(() => setState({ ...state, state: 'saveEventTree' }));
         }
         return window.api.saveRMXPMapInfo(
           {
@@ -106,12 +107,22 @@ export const useProjectSaveProcessor = () => {
               })),
             ),
           },
+          () => setState({ ...state, state: 'saveEventTree' }),
+          handleFailure(setState, binding),
+        );
+      },
+      saveEventTree: (state, setState) => {
+        loaderRef.current.setProgress(7, STEPS_TOTAL, t('saving_event_tree'));
+        if (!globalState.savingEventTree) return toAsyncProcess(() => setState({ ...state, state: 'updateStudioFile' }));
+
+        return window.api.saveEventTree(
+          { projectPath: state.projectPath, eventTree: JSON.stringify(globalState.eventTree, null, 2) },
           () => setState({ ...state, state: 'updateStudioFile' }),
           handleFailure(setState, binding),
         );
       },
       updateStudioFile: (state, setState) => {
-        loaderRef.current.setProgress(7, STEPS_TOTAL, t('saving_studio_file'));
+        loaderRef.current.setProgress(8, STEPS_TOTAL, t('saving_studio_file'));
         if (!globalState.savingProjectStudio) return toAsyncProcess(() => setState({ ...state, state: 'updateProjectList' }));
 
         return window.api.projectStudioFile(
@@ -121,7 +132,7 @@ export const useProjectSaveProcessor = () => {
         );
       },
       updateProjectList: (state, setState) => {
-        loaderRef.current.setProgress(8, STEPS_TOTAL, t('saving_update_project_list'));
+        loaderRef.current.setProgress(9, STEPS_TOTAL, t('saving_update_project_list'));
         return toAsyncProcess(() => {
           updateProjectEditDate(state.projectPath);
           updateProjectStudioLocalStorage(state.projectPath, globalState.projectStudio);
@@ -134,7 +145,7 @@ export const useProjectSaveProcessor = () => {
         });
       },
       resetSaving: (_, setState) => {
-        loaderRef.current.setProgress(9, STEPS_TOTAL, t('saving_reset'));
+        loaderRef.current.setProgress(10, STEPS_TOTAL, t('saving_reset'));
         return toAsyncProcess(() => {
           setGlobalState({
             ...globalState,
@@ -145,6 +156,7 @@ export const useProjectSaveProcessor = () => {
             savingLanguage: [],
             savingTextInfos: false,
             savingMapInfo: false,
+            savingEventTree: false,
             textVersion: 0,
           });
           binding.current.onSuccess({});
@@ -154,7 +166,15 @@ export const useProjectSaveProcessor = () => {
       },
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [globalState, globalState.textVersion, globalState.textInfos, globalState.mapInfo, globalState.projectStudio, globalState.mapsModified],
+    [
+      globalState,
+      globalState.textVersion,
+      globalState.textInfos,
+      globalState.mapInfo,
+      globalState.eventTree,
+      globalState.projectStudio,
+      globalState.mapsModified,
+    ],
   );
 
   return { isDataToSave, isMapsToSave, processors, binding, state: globalState };

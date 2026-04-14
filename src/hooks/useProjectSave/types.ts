@@ -6,6 +6,7 @@ export type ProjectSaveStateObject =
   | { state: 'saveTextInfo'; projectPath: string }
   | { state: 'saveMapInfo'; projectPath: string }
   | { state: 'saveRMXPMapInfo'; projectPath: string }
+  | { state: 'saveEventTree'; projectPath: string }
   | { state: 'updateStudioFile'; projectPath: string }
   | { state: 'updateProjectList'; projectPath: string }
   | { state: 'resetSaving' };

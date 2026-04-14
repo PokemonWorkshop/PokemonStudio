@@ -17,6 +17,7 @@ export type PreGlobalState = Omit<
   | 'savingLanguage'
   | 'savingTextInfos'
   | 'savingMapInfo'
+  | 'savingEventTree'
   | 'mapsModified'
 > & { projectPath: string };
 export type ProjectLoadFailureCallback = (error: { errorMessage: string }) => void;

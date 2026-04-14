@@ -20,3 +20,4 @@ export { DropInputFolder } from './DropInputFolder';
 export { DropInput } from './DropInput';
 export { LoggerInput } from './Input';
 export { RadioInput } from './RadioInput';
+export { NodeClearInput, NodeInput, NodeMultiLineInput } from './NodeInput';

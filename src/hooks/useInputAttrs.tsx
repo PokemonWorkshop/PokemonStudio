@@ -1,4 +1,13 @@
-import { Input, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, MultiLineInput, Toggle } from '@components/inputs';
+import {
+  Input,
+  InputWithLeftLabelContainer,
+  InputWithTopLabelContainer,
+  Label,
+  MultiLineInput,
+  NodeInput,
+  NodeMultiLineInput,
+  Toggle,
+} from '@components/inputs';
 import { z } from 'zod';
 import { inputAttrs } from '@utils/inputAttrs';
 import React, { useMemo } from 'react';
@@ -24,7 +33,7 @@ export const useInputAttrs = <T extends z.ZodRawShape>(schema: z.ZodObject<T>, d
         return <Select {...attrs} {...props} />;
       },
     }),
-    [schema, defaults]
+    [schema, defaults],
   );
 };
 
@@ -120,6 +129,50 @@ export const useInputAttrsWithLabel = <T extends z.ZodRawShape>(schema: z.ZodObj
         );
       },
     }),
-    [schema, defaults]
+    [schema, defaults],
+  );
+};
+
+export const useNodeInputAttrsWithLabel = <T extends z.ZodRawShape>(schema: z.ZodObject<T>, defaults?: Record<string, unknown>) => {
+  return useMemo(
+    () => ({
+      Input: ({ name, schemaKey, label, labelLeft, ...props }: ReactPropsWithLabel<typeof Input>) => {
+        if (!label) return <NodeInput {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />;
+
+        if (labelLeft)
+          return (
+            <InputWithLeftLabelContainer>
+              <Label>{label}</Label>
+              <NodeInput {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />
+            </InputWithLeftLabelContainer>
+          );
+
+        return (
+          <InputWithTopLabelContainer>
+            <Label>{label}</Label>
+            <NodeInput {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />
+          </InputWithTopLabelContainer>
+        );
+      },
+      MultiLineInput: ({ name, schemaKey, label, labelLeft, ...props }: ReactPropsWithLabel<typeof Input>) => {
+        if (!label) return <NodeMultiLineInput {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />;
+
+        if (labelLeft)
+          return (
+            <InputWithLeftLabelContainer>
+              <Label>{label}</Label>
+              <NodeMultiLineInput {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />
+            </InputWithLeftLabelContainer>
+          );
+
+        return (
+          <InputWithTopLabelContainer>
+            <Label>{label}</Label>
+            <NodeMultiLineInput {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />
+          </InputWithTopLabelContainer>
+        );
+      },
+    }),
+    [schema, defaults],
   );
 };

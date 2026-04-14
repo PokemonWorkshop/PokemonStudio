@@ -29,16 +29,16 @@ import { useMapInfo } from '@hooks/useMapInfo';
 import { convertMapInfoToTree } from '@utils/MapInfoUtils';
 import {
   getMapTreeCountChildren,
-  getMapTreeSourceDepth,
+  getTreeSourceDepth,
   mapTreeConvertItemToMapInfoValue,
   mapTreeConvertTreeToMapInfo,
   renderDropBox,
-  getMapTreeDestinationDepth,
+  getTreeDestinationDepth,
   getMapTreeItemDepth,
-  searchIsUnderOpenFolder,
 } from '@utils/MapTreeUtils';
 import { MapListContainer, TreeItemContainer } from './style';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { searchIsUnderOpenFolder } from '../../../tree/Tree/Tree-utils';
 
 type MapTreeComponentProps = {
   treeScrollbarRef: RefObject<HTMLDivElement>;
@@ -153,7 +153,7 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
     const countChildren = isFolder ? getMapTreeCountChildren(tree, item) : undefined;
     const isDeleted = item.data.klass === 'MapInfoMap' && !maps[item.data.mapDbSymbol];
     const currentDepth = getMapTreeItemDepth(tree, item);
-    const isUnderOpenFolder = searchIsUnderOpenFolder(tree, item);
+    const isUnderOpenFolder = searchIsUnderOpenFolder(tree, item, 'MapInfoMap');
 
     renderDropBox(snapshot.combineWith, treeRef);
 
@@ -187,7 +187,7 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
           hasChildren={!!countChildren}
           disableHover={!!canRename}
           isUnderOpenFolder={isUnderOpenFolder}
-          className={currentMap === item.data.mapDbSymbol ? 'map-selected' : 'map'}
+          className={currentMap === item.data.mapDbSymbol ? 'item-selected' : 'item-tree'}
           onClick={() => {
             if (item.id !== canRename) {
               renameRef.current?.blur();
@@ -214,7 +214,7 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
                 placeholder={getName(item)}
                 onBlur={handleRename}
                 onKeyDown={(event) => event.key === 'Enter' && renameRef.current?.blur()}
-                className={isFolder ? 'input-folder' : 'input-map'}
+                className={isFolder ? 'input-tree-folder' : 'input-tree'}
               />
             ) : (
               <span className={`name ${isDeleted ? 'error' : ''}`}>{getName(item)}</span>
@@ -233,7 +233,8 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
                   className="icon icon-plus"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setMapInfoSelected(mapInfo[item.id]);
+                    const parentId = item.data?.klass === 'MapInfoMap' && item.data.parentId !== 0 ? item.data.parentId : item.id;
+                    setMapInfoSelected(mapInfo[parentId]);
                     dialogsRef.current?.openDialog('new');
                   }}
                 >
@@ -255,8 +256,8 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
     if (currentItem.data?.klass === 'MapInfoFolder' && destination.parentId !== 0) return;
 
     // We can only drop a map if the depth < 5
-    const destinationDepth = getMapTreeDestinationDepth(tree, destination);
-    const sourceDepth = getMapTreeSourceDepth(tree, currentItem);
+    const destinationDepth = getTreeDestinationDepth(tree, destination);
+    const sourceDepth = getTreeSourceDepth(tree, currentItem);
     if (destinationDepth + sourceDepth > 4) return;
 
     const newTree = moveItemOnTree(tree, source, destination);
@@ -284,7 +285,7 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
   return (
     <MapListContainer>
       {hasNoMaps ? (
-        <div className="no-maps">{t('no_map_found')}</div>
+        <div className="no-item-tree">{t('no_map_found')}</div>
       ) : (
         <Tree
           ref={treeRef}
@@ -305,7 +306,7 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
             isDeleted={mapInfoSelected.data.klass === 'MapInfoMap' && !maps[mapInfoSelected.data.mapDbSymbol]}
             enableRename={() => setCanRename(mapInfoSelected.id)}
             dialogsRef={dialogsRef}
-          />
+          />,
         )}
       <MapEditorOverlay mapInfoValue={mapInfoSelected} ref={dialogsRef} />
     </MapListContainer>

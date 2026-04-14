@@ -34,6 +34,7 @@ import type { DbSymbol } from '@modelEntities/dbSymbol';
 import type { StudioMapInfo } from '@modelEntities/mapInfo';
 import type { StudioNature } from '@modelEntities/nature';
 import type { StudioEvent } from '@modelEntities/event/event';
+import { DEFAULT_EVENT_TREE, type StudioEventTree } from '@modelEntities/event/event-tree';
 
 export interface ProjectData {
   items: {
@@ -151,9 +152,11 @@ export interface State {
   textInfos: StudioTextInfo[];
   textVersion: number;
   mapInfo: StudioMapInfo;
+  eventTree: StudioEventTree;
   savingLanguage: string[];
   savingTextInfos: boolean;
   savingMapInfo: boolean;
+  savingEventTree: boolean;
   mapsModified: DbSymbol[];
 }
 
@@ -183,10 +186,12 @@ const initialState = {
   savingText: new SavingTextMap(),
   textInfos: [] as StudioTextInfo[],
   mapInfo: {} as StudioMapInfo,
+  eventTree: DEFAULT_EVENT_TREE,
   savingProjectStudio: false,
   savingLanguage: [] as string[],
   savingTextInfos: false,
   savingMapInfo: false,
+  savingEventTree: false,
   textVersion: 0,
   mapsModified: [] as DbSymbol[],
 };

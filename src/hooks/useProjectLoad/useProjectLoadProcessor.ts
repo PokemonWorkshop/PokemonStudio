@@ -172,6 +172,7 @@ export const useProjectLoadProcessor = () => {
                   textInfos: state.projectData.textInfos,
                   textVersion: 0,
                   mapInfo: state.projectData.mapInfo,
+                  eventTree: state.projectData.eventTree,
                 },
               });
             }
@@ -241,6 +242,7 @@ export const useProjectLoadProcessor = () => {
             savingLanguage: [],
             savingTextInfos: false,
             savingMapInfo: false,
+            savingEventTree: false,
             mapsModified: state.mapsModified,
           };
           setGlobalState(globalState);

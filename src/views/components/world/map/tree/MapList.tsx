@@ -31,7 +31,7 @@ const MapListContainer = styled.div`
     }
 
     .map,
-    .map-selected {
+    .item-selected {
       display: flex;
       height: 35px;
       padding: 0px 8px;
@@ -69,7 +69,7 @@ const MapListContainer = styled.div`
       }
     }
 
-    .map-selected {
+    .item-selected {
       background-color: ${({ theme }) => theme.colors.dark20};
 
       :hover {
@@ -78,7 +78,7 @@ const MapListContainer = styled.div`
     }
   }
 
-  .no-maps {
+  .no-item-tree {
     ${({ theme }) => theme.fonts.normalRegular}
     color: ${({ theme }) => theme.colors.text400};
     padding: 9.5px 15px;
@@ -118,7 +118,7 @@ export const MapList = ({ research }: MapListProps) => {
                   const option = optionsFiltered[index];
                   return (
                     <div
-                      className={currentMap === option.value ? 'map-selected' : 'map'}
+                      className={currentMap === option.value ? 'item-selected' : 'item-tree'}
                       key={`${option.value}-${key}`}
                       onClick={() => setCurrentMap({ map: option.value })}
                       style={{ ...style, width: '236px', height: '35px' }}
@@ -136,7 +136,7 @@ export const MapList = ({ research }: MapListProps) => {
           }}
         </AutoSizer>
       ) : (
-        <div className="no-maps">{t('no_map_found')}</div>
+        <div className="no-item-tree">{t('no_map_found')}</div>
       )}
     </MapListContainer>
   );

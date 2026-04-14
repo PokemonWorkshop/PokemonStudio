@@ -87,7 +87,7 @@ export const useTranslationPage = (positionLanguage?: number) => {
       .filter((element) => element.value.indexOf('index') === -1 && element.value.indexOf('Index') === -1)
       .filter(({ value }) => state.projectStudio.languagesTranslation.find(({ code }) => code === value));
   const defaultLanguageIndexFromFile: Language = allLanguageByIndex.find(
-    (li) => li.value === state.projectConfig.language_config.defaultLanguage
+    (li) => li.value === state.projectConfig.language_config.defaultLanguage,
   ) ?? { value: 'en', index: 0 };
   const languageByIndexFiltered = allLanguageByIndex.filter((language) => {
     if (language.value === defaultLanguageIndexFromFile.value) return;
@@ -205,7 +205,7 @@ export const useOverviewPage = () => {
       ({ errorMessage }) => {
         showNotification('danger', t('map_overview'), errorMessage);
         setState('unavailable');
-      }
+      },
     );
   };
 
@@ -217,7 +217,7 @@ export const useOverviewPage = () => {
         setVersion((v) => v + 1);
         setState('available');
       },
-      ({ errorMessage }) => loaderRef.current.setError('updating_maps_error', errorMessage, true)
+      ({ errorMessage }) => loaderRef.current.setError('updating_maps_error', errorMessage, true),
     );
   };
 
@@ -285,7 +285,7 @@ export const useMapLinkPage = () => {
         acc[map.id] = map;
         return acc;
       }, {}),
-    [maps]
+    [maps],
   );
 
   return {
@@ -300,12 +300,12 @@ export const useMapLinkPage = () => {
 export const useEventPage = () => {
   const { projectDataValues: events, selectedDataIdentifier: eventSeleted, state } = useProjectDataReadonly('events', 'event');
   const event = events[eventSeleted];
-  const eventName = getEntityNameText(event, state);
+  const hasEventAvailable = useMemo(() => Object.keys(events).length > 0, [events]);
 
   return {
     events,
     event,
-    eventName,
+    hasEventAvailable,
     state,
   };
 };

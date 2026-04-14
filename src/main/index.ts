@@ -38,6 +38,7 @@ import { registerOpenStudioLogsFolder } from '@src/backendTasks/openStudioLogsFo
 import { registerCheckMapsModified } from '@src/backendTasks/checkMapsModified';
 import { registerConvertTiledMapToTileMetadata } from '@src/backendTasks/convertTiledMapToTileMetadata';
 import { registerSaveMapInfo } from '@src/backendTasks/saveMapInfo';
+import { registerSaveEventTree } from '@src/backendTasks/saveEventTree';
 import { registerStartupStudioFile, startupFiles } from '@src/backendTasks/startupStudioFile';
 import { registerGetFilePathsFromFolder } from '@src/backendTasks/getFilePathsFromFolder';
 import { registerCopyTiledFiles } from '@src/backendTasks/copyTiledFiles';
@@ -186,6 +187,7 @@ registerOpenStudioLogsFolder(ipcMain);
 registerCheckMapsModified(ipcMain);
 registerConvertTiledMapToTileMetadata(ipcMain);
 registerSaveMapInfo(ipcMain);
+registerSaveEventTree(ipcMain);
 registerStartupStudioFile(ipcMain);
 registerGetFilePathsFromFolder(ipcMain);
 registerCopyTiledFiles(ipcMain);
