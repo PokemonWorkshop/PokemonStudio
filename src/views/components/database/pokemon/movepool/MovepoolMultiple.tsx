@@ -202,7 +202,7 @@ export const MovepoolMultiple = forwardRef<EditorHandlingClose, MovepoolMultiple
                     </div>
                     {hasLevel && (
                       <>
-                        <span>nv.</span>
+                        <span>{t('level_shortened')}</span>
                         <Input
                           type="number"
                           min="1"

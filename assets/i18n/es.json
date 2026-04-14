@@ -97,6 +97,7 @@
   "special_defense": "Defensa Especial",
   "speed": "Velocidad",
   "level": "Nivel",
+  "level_shortened": "lv.",
   "event_exploration": "Exploración",
   "POISONED": "Veneno",
   "PARALYZED": "Parálisis",

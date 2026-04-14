@@ -97,6 +97,7 @@
   "special_defense": "特防",
   "speed": "素早さ",
   "level": "レベル",
+  "level_shortened": "lv.",
   "event_exploration": "探検",
   "POISONED": "どく",
   "PARALYZED": "マヒ",

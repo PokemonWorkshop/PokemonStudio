@@ -97,6 +97,7 @@
   "special_defense": "Speciale defensie",
   "speed": "Snelheid",
   "level": "Niveau",
+  "level_shortened": "lv.",
   "event_exploration": "Verkenning",
   "POISONED": "Vergiftiging",
   "PARALYZED": "Verlamming",
