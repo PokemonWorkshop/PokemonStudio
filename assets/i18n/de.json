@@ -97,6 +97,7 @@
   "special_defense": "Spezial-Verteidigung",
   "speed": "Initiative",
   "level": "Level",
+  "level_shortened": "lv.",
   "event_exploration": "Exploration",
   "POISONED": "Gift",
   "PARALYZED": "Paralyse",

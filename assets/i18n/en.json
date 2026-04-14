@@ -97,6 +97,7 @@
   "special_defense": "Special defense",
   "speed": "Speed",
   "level": "Level",
+  "level_shortened": "lv.",
   "event_exploration": "Exploration",
   "POISONED": "Poison",
   "PARALYZED": "Paralysis",

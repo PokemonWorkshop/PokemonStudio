@@ -97,6 +97,7 @@
   "special_defense": "特防",
   "speed": "速度",
   "level": "等級",
+  "level_shortened": "lv.",
   "event_exploration": "探索",
   "POISONED": "中毒",
   "PARALYZED": "麻痺",
