@@ -11,20 +11,21 @@ type CustomHandleContainerProps = {
 
 const CustomHandleContainer = styled.div<CustomHandleContainerProps>`
   position: absolute;
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   top: 16px;
-  left: ${({ position }) => (position === 'left' ? '-9px' : '321px')};
+  left: ${({ position }) => (position === 'left' ? '-9px' : '319px')};
 
   .icon {
     position: relative;
     display: none;
-    color: ${({ theme }) => theme.colors.text400};
+    color: #6c707b;
     pointer-events: none;
+    top: -1px;
 
     svg {
-      width: 10px;
-      height: 10px;
+      width: 8px;
+      height: 8px;
     }
   }
 
@@ -43,6 +44,8 @@ const CustomHandleContainer = styled.div<CustomHandleContainerProps>`
     border: 1px solid #383a40;
     box-shadow: 0px 0px 0px 2px #181819;
     border-radius: 100%;
+    width: 8px;
+    height: 8px;
     cursor: pointer;
   }
 
@@ -50,8 +53,8 @@ const CustomHandleContainer = styled.div<CustomHandleContainerProps>`
     .react-flow__handle {
       display: flex;
       background: none;
-      width: 8px;
-      height: 8px;
+      width: 10px;
+      height: 10px;
       border: 1px solid #383a40;
       box-shadow: none;
       align-items: center;
@@ -59,8 +62,8 @@ const CustomHandleContainer = styled.div<CustomHandleContainerProps>`
 
       .point {
         display: block;
-        width: 6px;
-        height: 6px;
+        width: 8px;
+        height: 8px;
         background-color: #4f525b;
       }
     }
@@ -69,8 +72,8 @@ const CustomHandleContainer = styled.div<CustomHandleContainerProps>`
       display: flex;
       box-sizing: unset;
       background: none;
-      width: 8px;
-      height: 8px;
+      width: 10px;
+      height: 10px;
       border: 2px solid #383a40;
       box-shadow: none;
       align-items: center;
@@ -78,8 +81,8 @@ const CustomHandleContainer = styled.div<CustomHandleContainerProps>`
 
       .point {
         display: block;
-        width: 6px;
-        height: 6px;
+        width: 8px;
+        height: 8px;
       }
 
       .icon {
@@ -99,6 +102,7 @@ const CustomHandleContainer = styled.div<CustomHandleContainerProps>`
     background: #202225;
     border: 1px solid #383a40;
     border-radius: 100%;
+    box-shadow: none;
 
     .icon {
       display: block;
