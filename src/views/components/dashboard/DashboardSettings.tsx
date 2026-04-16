@@ -115,6 +115,28 @@ export const DashboardSettings = () => {
             }}
           />
         </InputWithLeftLabelContainer>
+        <InputWithLeftLabelContainer>
+          <Label>{t('summary_page_contest')}</Label>
+          <Toggle
+            name="summary_page_contest"
+            checked={settings.showContestSummaryPage}
+            onChange={(event) => {
+              currentEditedSettings.showContestSummaryPage = event.target.checked;
+              setSettings(currentEditedSettings);
+            }}
+          />
+        </InputWithLeftLabelContainer>
+        <InputWithLeftLabelContainer>
+          <Label>{t('summary_page_ribbons')}</Label>
+          <Toggle
+            name="summary_page_ribbons"
+            checked={settings.showRibbonsSummaryPage}
+            onChange={(event) => {
+              currentEditedSettings.showRibbonsSummaryPage = event.target.checked;
+              setSettings(currentEditedSettings);
+            }}
+          />
+        </InputWithLeftLabelContainer>
       </InputContainer>
     </PageEditor>
   );
