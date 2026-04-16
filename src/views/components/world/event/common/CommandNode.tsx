@@ -19,7 +19,6 @@ const CommandNodeContainer = styled.div<{ color: EventIconColor }>`
   width: 320px;
   isolation: isolate;
   border-radius: 16px;
-  background-color: #25262a;
   background: linear-gradient(
     180deg,
     ${({ theme, color }) => theme.colors[`${color}6`]} 0%,
