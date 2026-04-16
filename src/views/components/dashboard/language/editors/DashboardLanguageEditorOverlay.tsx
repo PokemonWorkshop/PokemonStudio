@@ -1,12 +1,12 @@
-import React from 'react';
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
-import { assertUnreachable } from '@utils/assertUnreachable';
 import { DialogRefData } from '@hooks/useDialogsRef';
+import { assertUnreachable } from '@utils/assertUnreachable';
+import React from 'react';
 import { DashboardLanguageEditor, DashboardLanguageNewEditor } from '.';
 import type { EditLanguage } from './DashboardLanguageEditor';
 
 export type DashboardLanguageEditorAndDeletionKeys = 'new' | 'edit';
-export type DashboardLanguageDialogsRef = React.RefObject<DialogRefData<DashboardLanguageEditorAndDeletionKeys>>;
+export type DashboardLanguageDialogsRef = React.RefObject<DialogRefData<DashboardLanguageEditorAndDeletionKeys> | null>;
 
 type Props = {
   editLanguage: EditLanguage;
@@ -27,5 +27,5 @@ export const DashboardLanguageEditorOverlay = defineEditorOverlay<DashboardLangu
       default:
         return assertUnreachable(dialogToShow);
     }
-  }
+  },
 );

@@ -1,12 +1,12 @@
-import React from 'react';
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
-import { assertUnreachable } from '@utils/assertUnreachable';
 import { DialogRefData } from '@hooks/useDialogsRef';
-import { MapLinkAddMapEditor, MapLinkDeletion } from '.';
 import type { StudioMapLinkCardinal } from '@src/models/entities/mapLink';
+import { assertUnreachable } from '@utils/assertUnreachable';
+import React from 'react';
+import { MapLinkAddMapEditor, MapLinkDeletion } from '.';
 
 export type MapLinkEditorAndDeletionKeys = 'add_map' | 'deletion';
-export type MapLinkDialogsRef = React.RefObject<DialogRefData<MapLinkEditorAndDeletionKeys>>;
+export type MapLinkDialogsRef = React.RefObject<DialogRefData<MapLinkEditorAndDeletionKeys> | null>;
 
 /**
  * Editor overlay for the mapLinks.

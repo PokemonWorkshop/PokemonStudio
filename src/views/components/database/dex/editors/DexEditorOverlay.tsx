@@ -1,12 +1,12 @@
-import React from 'react';
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
-import { assertUnreachable } from '@utils/assertUnreachable';
 import { DialogRefData } from '@hooks/useDialogsRef';
-import { DexNewEditor, DexDeletion, DexFrameEditor, DexPokemonListAddEditor, DexPokemonListEditEditor, DexPokemonListImportEditor } from '.';
+import { assertUnreachable } from '@utils/assertUnreachable';
+import React from 'react';
+import { DexDeletion, DexFrameEditor, DexNewEditor, DexPokemonListAddEditor, DexPokemonListEditEditor, DexPokemonListImportEditor } from '.';
 import { DexResetNationalPopUp } from '../DexResetNationalPopUp';
 
 export type DexEditorAndDeletionKeys = 'new' | 'frame' | 'add_pokemon' | 'edit' | 'import' | 'deletion_dex' | 'deletion_list' | 'reset';
-export type DexDialogsRef = React.RefObject<DialogRefData<DexEditorAndDeletionKeys>>;
+export type DexDialogsRef = React.RefObject<DialogRefData<DexEditorAndDeletionKeys> | null>;
 
 /**
  * Editor overlay for the dex.

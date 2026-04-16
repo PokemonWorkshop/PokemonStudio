@@ -1,47 +1,47 @@
-import React, { RefObject, useEffect, useRef, useState } from 'react';
-import Tree, {
-  mutateTree,
-  moveItemOnTree,
-  RenderItemParams,
-  TreeItem,
-  TreeData,
-  ItemId,
-  TreeSourcePosition,
-  TreeDestinationPosition,
-} from '@components/tree';
+import DotIcon from '@assets/icons/global/dot.svg';
 import FolderIcon from '@assets/icons/global/folder.svg';
 import FolderOpenIcon from '@assets/icons/global/folder_open.svg';
 import LeftIcon from '@assets/icons/global/left-icon.svg';
 import PlusIcon from '@assets/icons/global/plus-icon.svg';
-import DotIcon from '@assets/icons/global/dot.svg';
-import { MAP_INFO_FOLDER_NAME_TEXT_ID, StudioMapInfoValue } from '@modelEntities/mapInfo';
-import { useProjectMaps } from '@hooks/useProjectData';
-import { useGetEntityNameText, useGetEntityNameTextUsingTextId, useSetProjectText } from '@utils/ReadingProjectText';
-import { DbSymbol } from '@modelEntities/dbSymbol';
-import { useTranslation } from 'react-i18next';
 import { Input } from '@components/inputs';
-import { MAP_NAME_TEXT_ID } from '@modelEntities/map';
+import Tree, {
+  ItemId,
+  moveItemOnTree,
+  mutateTree,
+  RenderItemParams,
+  TreeData,
+  TreeDestinationPosition,
+  TreeItem,
+  TreeSourcePosition,
+} from '@components/tree';
 import { useContextMenu } from '@hooks/useContextMenu';
-import { MapEditorAndDeletionKeys, MapEditorOverlay } from '../editors/MapEditorOverlay';
 import { useDialogsRef } from '@hooks/useDialogsRef';
-import { MapTreeContextMenu } from './MapTreeContextMenu';
 import { useMapInfo } from '@hooks/useMapInfo';
+import { useProjectMaps } from '@hooks/useProjectData';
+import { DbSymbol } from '@modelEntities/dbSymbol';
+import { MAP_NAME_TEXT_ID } from '@modelEntities/map';
+import { MAP_INFO_FOLDER_NAME_TEXT_ID, StudioMapInfoValue } from '@modelEntities/mapInfo';
 import { convertMapInfoToTree } from '@utils/MapInfoUtils';
 import {
   getMapTreeCountChildren,
+  getMapTreeItemDepth,
+  getTreeDestinationDepth,
   getTreeSourceDepth,
   mapTreeConvertItemToMapInfoValue,
   mapTreeConvertTreeToMapInfo,
   renderDropBox,
-  getTreeDestinationDepth,
-  getMapTreeItemDepth,
 } from '@utils/MapTreeUtils';
-import { MapListContainer, TreeItemContainer } from './style';
+import { useGetEntityNameText, useGetEntityNameTextUsingTextId, useSetProjectText } from '@utils/ReadingProjectText';
+import React, { RefObject, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { searchIsUnderOpenFolder } from '../../../tree/Tree/Tree-utils';
+import { MapEditorAndDeletionKeys, MapEditorOverlay } from '../editors/MapEditorOverlay';
+import { MapTreeContextMenu } from './MapTreeContextMenu';
+import { MapListContainer, TreeItemContainer } from './style';
 
 type MapTreeComponentProps = {
-  treeScrollbarRef: RefObject<HTMLDivElement>;
+  treeScrollbarRef: RefObject<HTMLDivElement | null>;
 };
 
 export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) => {

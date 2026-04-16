@@ -1,6 +1,14 @@
 import { CommandId, StudioEventCommand, StudioEventCommandData, StudioEventCommandType } from '@modelEntities/event/command';
 import { StudioEvent } from '@modelEntities/event/event';
 import { cloneEntity } from '@utils/cloneEntity';
+import { EventCommandCreation } from '@utils/eventCommandCreation';
+import {
+  getCommandId,
+  initCommandNodes,
+  initEdges,
+  reactFlowConnectionToStudioConnection,
+  reactFlowEdgeToStudioConnection,
+} from '@utils/events/EventUtils';
 import {
   addEdge,
   applyNodeChanges,
@@ -13,18 +21,10 @@ import {
   useNodesState,
   useReactFlow,
 } from '@xyflow/react';
-import { useUpdateEvent } from './useUpdateEvent';
-import { CommandDialogsRef } from '../commands/editors/CommandEditorOverlay';
-import { EventCommandCreation } from '@utils/eventCommandCreation';
-import {
-  getCommandId,
-  initCommandNodes,
-  initEdges,
-  reactFlowConnectionToStudioConnection,
-  reactFlowEdgeToStudioConnection,
-} from '@utils/events/EventUtils';
-import { useEventContext } from '../common/EventContext';
 import { DragEventHandler, RefObject, useCallback, useEffect } from 'react';
+import { CommandDialogsRef } from '../commands/editors/CommandEditorOverlay';
+import { useEventContext } from '../common/EventContext';
+import { useUpdateEvent } from './useUpdateEvent';
 
 const SHADOW_NODE_ID = 'shadow_node';
 
@@ -38,7 +38,7 @@ type NodeEvent = Node<NodeData, StudioEventCommandType>;
 type NodeShadow = Node;
 type ChangeToApplyEventsType = { type: 'position'; commandId: CommandId; position: { x: number; y: number } };
 
-export const useEventFlow = (event: StudioEvent, eventFlowRef?: RefObject<HTMLDivElement>, dialogsRef?: CommandDialogsRef) => {
+export const useEventFlow = (event: StudioEvent, eventFlowRef?: RefObject<HTMLDivElement | null>, dialogsRef?: CommandDialogsRef) => {
   const { currentEditedNode, type, setCurrentEditedNode, setType } = useEventContext();
   const reactFlowInstance = useReactFlow();
   const [nodes, setNodes] = useNodesState<NodeEvent | NodeShadow>([

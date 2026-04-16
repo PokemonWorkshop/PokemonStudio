@@ -1,10 +1,10 @@
-import React, { useMemo, useRef } from 'react';
 import { InputWithLeftLabelContainer, Label, PaddedInputContainer } from '@components/inputs';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
-import { useTranslation } from 'react-i18next';
-import { RecordExpandPokemonSetup } from './usePokemonBattler';
 import { StudioIvEv } from '@modelEntities/groupEncounter';
+import React, { useMemo, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { InputNumberStats } from './InputNumber';
+import { RecordExpandPokemonSetup } from './usePokemonBattler';
 
 type StatsType = 'ivs' | 'evs';
 
@@ -34,7 +34,9 @@ export const PokemonBattlerStatsEditor = ({
             name="hp"
             defaultValue={stats.hp}
             onChange={(value) => updateExpandPokemonSetup({ [type]: { ...stats, hp: value } })}
-            ref={(ref) => (statsRef.current[0] = ref)}
+            ref={(ref) => {
+              statsRef.current[0] = ref;
+            }}
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
@@ -43,7 +45,9 @@ export const PokemonBattlerStatsEditor = ({
             name="attack"
             defaultValue={stats.atk}
             onChange={(value) => updateExpandPokemonSetup({ [type]: { ...stats, atk: value } })}
-            ref={(ref) => (statsRef.current[1] = ref)}
+            ref={(ref) => {
+              statsRef.current[1] = ref;
+            }}
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
@@ -52,7 +56,9 @@ export const PokemonBattlerStatsEditor = ({
             name="defense"
             defaultValue={stats.dfe}
             onChange={(value) => updateExpandPokemonSetup({ [type]: { ...stats, dfe: value } })}
-            ref={(ref) => (statsRef.current[2] = ref)}
+            ref={(ref) => {
+              statsRef.current[2] = ref;
+            }}
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
@@ -61,7 +67,9 @@ export const PokemonBattlerStatsEditor = ({
             name="special_attack"
             defaultValue={stats.ats}
             onChange={(value) => updateExpandPokemonSetup({ [type]: { ...stats, ats: value } })}
-            ref={(ref) => (statsRef.current[3] = ref)}
+            ref={(ref) => {
+              statsRef.current[3] = ref;
+            }}
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
@@ -70,7 +78,9 @@ export const PokemonBattlerStatsEditor = ({
             name="special-defense"
             defaultValue={stats.dfs}
             onChange={(value) => updateExpandPokemonSetup({ [type]: { ...stats, dfs: value } })}
-            ref={(ref) => (statsRef.current[4] = ref)}
+            ref={(ref) => {
+              statsRef.current[4] = ref;
+            }}
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
@@ -79,7 +89,9 @@ export const PokemonBattlerStatsEditor = ({
             name="speed"
             defaultValue={stats.spd}
             onChange={(value) => updateExpandPokemonSetup({ [type]: { ...stats, spd: value } })}
-            ref={(ref) => (statsRef.current[5] = ref)}
+            ref={(ref) => {
+              statsRef.current[5] = ref;
+            }}
           />
         </InputWithLeftLabelContainer>
       </PaddedInputContainer>

@@ -1,6 +1,6 @@
-import React, { ReactNode, MouseEvent, useState, useEffect, useRef, RefObject } from 'react';
-import styled from 'styled-components';
+import React, { MouseEvent, ReactNode, RefObject, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import styled from 'styled-components';
 
 const ContextMenuContainer = styled.div`
   visibility: hidden;
@@ -69,7 +69,7 @@ const computePosition = <U extends HTMLElement>(e: MouseEvent<U>, height: number
   }
 };
 
-const closeOtherContextMenu = (ref: RefObject<HTMLDivElement>) => {
+const closeOtherContextMenu = (ref: RefObject<HTMLDivElement | null>) => {
   const event = new CustomEvent('close-other-context-menu', { detail: ref });
   window.dispatchEvent(event);
 };
@@ -128,7 +128,7 @@ export const useContextMenu = <U extends HTMLElement>() => {
         <ContextMenuContainer style={contextMenuStyles} ref={contextMenuRef}>
           {children}
         </ContextMenuContainer>,
-        document.querySelector('#context-menu') || document.createElement('div')
+        document.querySelector('#context-menu') || document.createElement('div'),
       ),
   };
 };

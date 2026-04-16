@@ -1,11 +1,11 @@
-import React from 'react';
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
-import { assertUnreachable } from '@utils/assertUnreachable';
 import { DialogRefData } from '@hooks/useDialogsRef';
+import { assertUnreachable } from '@utils/assertUnreachable';
+import React from 'react';
 import { TypeDeletionEditor, TypeFrameEditor, TypeNewEditor } from '.';
 
 export type TypeEditorAndDeletionKeys = 'newType' | 'newTable' | 'frame' | 'deletion';
-export type TypeDialogsRef = React.RefObject<DialogRefData<TypeEditorAndDeletionKeys>>;
+export type TypeDialogsRef = React.RefObject<DialogRefData<TypeEditorAndDeletionKeys> | null>;
 
 /**
  * Editor overlay for the Types.

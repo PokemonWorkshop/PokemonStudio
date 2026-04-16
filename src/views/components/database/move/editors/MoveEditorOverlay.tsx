@@ -1,20 +1,20 @@
-import React from 'react';
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
-import { assertUnreachable } from '@utils/assertUnreachable';
 import { DialogRefData } from '@hooks/useDialogsRef';
+import { assertUnreachable } from '@utils/assertUnreachable';
+import React from 'react';
 import {
   MoveCharacteristicsEditor,
-  MoveDataEditor,
+  MoveComboMovesImportEditor,
+  MoveContestEffectsEditor,
   MoveDataContestEditor,
+  MoveDataEditor,
   MoveDeletion,
-  MoveFrameEditor,
   MoveFrameContestEditor,
+  MoveFrameEditor,
   MoveNewEditor,
   MoveParametersEditor,
   MoveStatisticsEditor,
   MoveStatusEditor,
-  MoveComboMovesImportEditor,
-  MoveContestEffectsEditor,
 } from '.';
 import { MoveComboNewEditor } from './MoveComboNewEditor';
 
@@ -33,7 +33,7 @@ export type MoveEditorAndDeletionKeys =
   | 'combo_moves_import'
   | 'deletion'
   | 'combo_move_deletion';
-export type MoveDialogsRef = React.RefObject<DialogRefData<MoveEditorAndDeletionKeys>>;
+export type MoveDialogsRef = React.RefObject<DialogRefData<MoveEditorAndDeletionKeys> | null>;
 
 /**
  * Editor overlay for the moves.

@@ -1,4 +1,4 @@
-import { InputWithLeftLabelContainer, Input, InputWithTopLabelContainer, Label } from '@components/inputs';
+import { Input, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { TextInputError } from '@components/inputs/Input';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -51,7 +51,9 @@ export const NumberInput = ({ state, inputRefs, type, min, max, label }: NumberI
           min={min}
           max={max}
           step={1}
-          ref={(ref) => (inputRefs.current[type] = ref)}
+          ref={(ref) => {
+            inputRefs.current[type] = ref;
+          }}
           defaultValue={value?.toString()}
           onChange={onInputChange}
           required

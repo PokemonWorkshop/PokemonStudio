@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { StatusEditor } from './StatusEditor';
 
 type StatusesEditorProps = {
-  onTouched: (event: React.FormEvent<HTMLInputElement>, index: number) => void;
+  onTouched: (event: React.InputEvent<HTMLInputElement>, index: number) => void;
   defaults: Record<string, unknown>;
   statuses: StudioMoveStatusList[];
   chances: number[];

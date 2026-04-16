@@ -1,12 +1,12 @@
-import React from 'react';
-import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
-import { assertUnreachable } from '@utils/assertUnreachable';
-import { DialogRefData } from '@hooks/useDialogsRef';
-import { DashboardStudioModeMessageBox } from './DashboardStudioModeMessageBox';
 import { CompilationDialog } from '@components/compilation/CompilationDialog';
+import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
+import { DialogRefData } from '@hooks/useDialogsRef';
+import { assertUnreachable } from '@utils/assertUnreachable';
+import React from 'react';
+import { DashboardStudioModeMessageBox } from './DashboardStudioModeMessageBox';
 
 export type DashboardEditorAndDeletionKeys = 'studio_mode_message_box' | 'create_playable_game';
-export type DashboardDialogsRef = React.RefObject<DialogRefData<DashboardEditorAndDeletionKeys>>;
+export type DashboardDialogsRef = React.RefObject<DialogRefData<DashboardEditorAndDeletionKeys> | null>;
 
 /**
  * Editor overlay for the dashboard.
@@ -23,5 +23,5 @@ export const DashboardEditorOverlay = defineEditorOverlay<DashboardEditorAndDele
       default:
         return assertUnreachable(dialogToShow);
     }
-  }
+  },
 );

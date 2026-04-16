@@ -1,9 +1,9 @@
+import { getAppRootPath } from '@src/backendTasks/getAppRootPath';
 import { app, protocol } from 'electron';
 import electronIsDev from 'electron-is-dev';
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
 import querystring from 'querystring';
-import { getAppRootPath } from '@src/backendTasks/getAppRootPath';
 
 const FALLBACK_IMAGE = path.join(getAppRootPath(), 'placeholder.svg');
 

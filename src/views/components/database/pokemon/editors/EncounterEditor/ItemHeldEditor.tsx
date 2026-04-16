@@ -15,9 +15,9 @@ type ItemHeldEditorProps = {
   index: number;
   options: SelectOption[];
   getRawFormData: () => Record<string, unknown>;
-  onTouched: React.FormEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+  onTouched: React.InputEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   defaults: Record<string, unknown>;
-  formRef: React.RefObject<HTMLFormElement>;
+  formRef: React.RefObject<HTMLFormElement | null>;
 };
 
 export const ItemHeldEditor = ({ index, options, getRawFormData, onTouched, defaults, formRef }: ItemHeldEditorProps) => {

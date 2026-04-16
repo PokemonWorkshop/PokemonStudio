@@ -1,8 +1,8 @@
 import { Input, InputWithTopLabelContainer, Label } from '@components/inputs';
-import { EvolutionConditionEditorInput } from './InputProps';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { EvolutionConditionEditorInput } from './InputProps';
 
 const EvolutionInfo = styled.p`
   ${({ theme }) => theme.fonts.normalSmall};
@@ -37,7 +37,13 @@ export const TextInput = ({ type, state, inputRefs, evolutionInfo }: TextInputPr
   return (
     <InputWithTopLabelContainer>
       <Label>{t(`evolution_value_${type}`)}</Label>
-      <Input type="text" defaultValue={state.defaults[type]?.toString()} ref={(ref) => (inputRefs.current[type] = ref)} />
+      <Input
+        type="text"
+        defaultValue={state.defaults[type]?.toString()}
+        ref={(ref) => {
+          inputRefs.current[type] = ref;
+        }}
+      />
       {evolutionInfo && <EvolutionInfo>{evolutionInfo}</EvolutionInfo>}
     </InputWithTopLabelContainer>
   );

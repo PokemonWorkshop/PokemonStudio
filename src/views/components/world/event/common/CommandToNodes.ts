@@ -1,8 +1,9 @@
 import type { StudioEventCommandType } from '@modelEntities/event/command';
+import { JSX } from 'react';
 import type { CommandNodeProps } from '../commands/CommandNodeProps';
 import { DefaultCommand } from '../commands/DefaultCommand';
-import { ShadowNode } from './ShadowNode';
 import { InsertScriptCommand } from '../commands/InsertScriptCommand';
+import { ShadowNode } from './ShadowNode';
 
 export const CommandToNodes: Record<StudioEventCommandType | 'shadow_node', (props: CommandNodeProps) => JSX.Element> = {
   show_message: DefaultCommand,

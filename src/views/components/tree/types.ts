@@ -5,6 +5,7 @@ export interface TreeData {
   items: Record<ItemId, TreeItem>;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type TreeItemData = any;
 
 export type TreeItem = {

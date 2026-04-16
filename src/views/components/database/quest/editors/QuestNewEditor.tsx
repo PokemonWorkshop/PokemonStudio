@@ -1,9 +1,12 @@
-import { Editor } from '@components/editor';
-import { useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
-import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
-import { useProjectQuests } from '@hooks/useProjectData';
 import { DarkButton, PrimaryButton } from '@components/buttons';
+import { Editor } from '@components/editor';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
+import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
+import { SelectQuest } from '@components/selects';
+import { Select } from '@ds/Select';
+import { TooltipWrapper } from '@ds/Tooltip';
+import { useProjectQuests } from '@hooks/useProjectData';
 import {
   QUEST_CATEGORIES,
   QUEST_CUSTOM_OBJECTIVE_TEXT_ID,
@@ -13,14 +16,11 @@ import {
 } from '@modelEntities/quest';
 import { useGetProjectText, useSetProjectText } from '@utils/ReadingProjectText';
 import { createQuest } from '@utils/entityCreation';
-import { TooltipWrapper } from '@ds/Tooltip';
-import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import styled from 'styled-components';
-import React, { forwardRef, useMemo, useRef, useState } from 'react';
-import { Select } from '@ds/Select';
-import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
-import { SelectQuest } from '@components/selects';
 import { importQuestData } from '@utils/importEntityDataUtils';
+import { TFunction } from 'i18next';
+import React, { forwardRef, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 const questCategoryEntries = (t: TFunction) => QUEST_CATEGORIES.map((category) => ({ value: category, label: t(category) }));
 
@@ -58,7 +58,7 @@ export const QuestNewEditor = forwardRef<EditorHandlingClose, QuestNewEditorProp
   const resolutionOptions = useMemo(() => questResolutionEntries(t), [t]);
   const [name, setName] = useState(''); // We can't use a ref because of the button behavior
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
-  const categoryRef = useRef<string | undefined>();
+  const categoryRef = useRef<string | undefined>(undefined);
   //const resolutionRef = useRef<string | undefined>();
   const [selectedQuest, setSelectedQuest] = useState('__undef__');
   const [importing, setImporting] = useState(false);
@@ -80,7 +80,7 @@ export const QuestNewEditor = forwardRef<EditorHandlingClose, QuestNewEditorProp
           setText(
             QUEST_CUSTOM_OBJECTIVE_TEXT_ID,
             objective.objectiveMethodArgs[1] as number,
-            getText(QUEST_CUSTOM_OBJECTIVE_TEXT_ID, quests[selectedQuest].objectives[objectiveCpt].objectiveMethodArgs[1] as number)
+            getText(QUEST_CUSTOM_OBJECTIVE_TEXT_ID, quests[selectedQuest].objectives[objectiveCpt].objectiveMethodArgs[1] as number),
           );
         }
         objectiveCpt++;

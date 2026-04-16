@@ -1,7 +1,7 @@
+import Tree from '@components/tree';
 import type { ItemId, TreeData, TreeDestinationPosition, TreeItem } from '@components/tree/types';
 import { StudioMapInfo, StudioMapInfoValue } from '@modelEntities/mapInfo';
 import theme from '@src/AppTheme';
-import Tree from '@components/tree';
 
 export const getMapTreeItemDepth = (tree: TreeData, item: TreeItem): number => {
   if (item.data.parentId === undefined || item.data.parentId === 0) return 1;
@@ -46,7 +46,7 @@ export const mapTreeComputeMaxWidth = (depth: number, isFolder = false, hovered 
   return 185 - indentationWidth * depth;
 };
 
-export const renderDropBox = (targetId: string | null | undefined, treeRef: React.RefObject<Tree>) => {
+export const renderDropBox = (targetId: string | null | undefined, treeRef: React.RefObject<Tree | null>) => {
   if (!treeRef.current) return;
 
   if (targetId) {

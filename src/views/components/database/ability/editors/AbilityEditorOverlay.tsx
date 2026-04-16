@@ -1,13 +1,13 @@
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
-import { assertUnreachable } from '@utils/assertUnreachable';
 import { DialogRefData } from '@hooks/useDialogsRef';
+import { assertUnreachable } from '@utils/assertUnreachable';
 import React from 'react';
 import { AbilityDeletion } from './AbilityDeletion';
 import { AbilityFrameEditor } from './AbilityFrameEditor';
 import { AbilityNewEditor } from './AbilityNewEditor';
 
 export type AbilityEditorAndDeletionKeys = 'new' | 'frame' | 'deletion';
-export type AbilityDialogsRef = React.RefObject<DialogRefData<AbilityEditorAndDeletionKeys>>;
+export type AbilityDialogsRef = React.RefObject<DialogRefData<AbilityEditorAndDeletionKeys> | null>;
 
 /**
  * Editor overlay for the abilities.
@@ -26,5 +26,5 @@ export const AbilityEditorOverlay = defineEditorOverlay<AbilityEditorAndDeletion
       default:
         return assertUnreachable(dialogToShow);
     }
-  }
+  },
 );

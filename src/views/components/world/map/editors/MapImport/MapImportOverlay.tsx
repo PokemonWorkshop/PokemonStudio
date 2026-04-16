@@ -1,11 +1,11 @@
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
+import { DialogRefData } from '@hooks/useDialogsRef';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import React from 'react';
 import { MapImport } from './MapImport';
-import { DialogRefData } from '@hooks/useDialogsRef';
 
 export type MapImportEditorTitle = 'import';
-export type MapImportDialogsRef = React.RefObject<DialogRefData<MapImportEditorTitle>>;
+export type MapImportDialogsRef = React.RefObject<DialogRefData<MapImportEditorTitle> | null>;
 
 type MapImportOverlayProps = {
   closeParentDialog: () => void;
@@ -28,5 +28,5 @@ export const MapImportOverlay = defineEditorOverlay<MapImportEditorTitle, MapImp
       default:
         return assertUnreachable(dialogToShow);
     }
-  }
+  },
 );

@@ -14,6 +14,7 @@
     "resolveJsonModule": true,
     "jsx": "react",
     "paths": {
+      "react": ["./node_modules/@types/react"],
       "*": ["node_modules/*"],
       "@components/*": ["src/views/components/*"],
       "@ds/*": ["src/designSystem/*"],
@@ -21,13 +22,12 @@
       "@modelEntities/*": ["src/models/entities/*"],
       "@services/*": ["src/services/*"],
       "@utils/*": ["src/utils/*"],
-      "@assets/*": ["assets/*"],
-      "@src/*": ["src/*"],
       "@hooks/*": ["src/hooks/*"],
       "@poc/*": ["src/poc/*"],
-      "@root/*": ["*"],
-      "react": ["./node_modules/@types/react"]
+      "@src/*": ["src/*"],
+      "@assets/*": ["assets/*"],
+      "@root/*": ["*"]
     }
   },
-  "include": ["src/**/*", "config/**/*", "forge.config.ts", "updater_i18n.js", "*.d.ts"]
+  "include": ["src/**/*", "*.d.ts", "forge.config.ts", "updater_i18n.js", "eslint.config.mjs", "config/vite.alias.config.ts"]
 }

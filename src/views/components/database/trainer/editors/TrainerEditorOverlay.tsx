@@ -1,11 +1,11 @@
-import React from 'react';
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
-import { assertUnreachable } from '@utils/assertUnreachable';
 import type { DialogRefData } from '@hooks/useDialogsRef';
-import { TrainerDialogEditor, TrainerFrameEditor, TrainerNewEditor, TrainerDeletion } from '.';
+import { assertUnreachable } from '@utils/assertUnreachable';
+import React from 'react';
+import { TrainerDeletion, TrainerDialogEditor, TrainerFrameEditor, TrainerNewEditor } from '.';
 
 export type TrainerEditorAndDeletionKeys = 'new' | 'frame' | 'dialog' | 'deletion';
-export type TrainerDialogsRef = React.RefObject<DialogRefData<TrainerEditorAndDeletionKeys>>;
+export type TrainerDialogsRef = React.RefObject<DialogRefData<TrainerEditorAndDeletionKeys> | null>;
 
 /**
  * Editor overlay for the trainers.
@@ -26,5 +26,5 @@ export const TrainerEditorOverlay = defineEditorOverlay<TrainerEditorAndDeletion
       default:
         return assertUnreachable(dialogToShow);
     }
-  }
+  },
 );

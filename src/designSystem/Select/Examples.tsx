@@ -3,13 +3,13 @@ import { Editor } from '@components/editor';
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
-import { assertUnreachable } from '@utils/assertUnreachable';
-import { useDialogsRef } from '@hooks/useDialogsRef';
-import React, { FormEventHandler, forwardRef, useMemo, useRef, useState } from 'react';
-import { Select } from './Select';
 import { SelectContainerWithLabel } from '@components/selects/SelectContainerWithLabel';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import { useZodForm } from '@hooks/useZodForm';
+import { assertUnreachable } from '@utils/assertUnreachable';
+import React, { FormEventHandler, forwardRef, useMemo, useRef, useState } from 'react';
 import { z } from 'zod';
+import { Select } from './Select';
 
 export const SelectEditorOverlay = defineEditorOverlay<'dialog', {}>('SelectExampleOverlay', (dialogToShow, handleCloseRef, closeDialog, props) => {
   switch (dialogToShow) {
@@ -90,8 +90,8 @@ const ControlledSelects = () => {
 };
 
 const UncontrolledSelects = () => {
-  const ref1 = useRef<string | undefined>();
-  const ref2 = useRef<string | undefined>();
+  const ref1 = useRef<string | undefined>(undefined);
+  const ref2 = useRef<string | undefined>(undefined);
   const bigOptions = Array.from({ length: 2000 }, (_, i) => ({ value: `value_${i}`, label: `Option ${i}` }));
 
   return (
@@ -162,7 +162,7 @@ const FORM_SCHEMA = z.object({
         b: z.string(),
         c: z.array(z.number().int()),
       }),
-    ])
+    ]),
   ),
 });
 

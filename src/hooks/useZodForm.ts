@@ -1,6 +1,6 @@
-import { useMemo, type RefObject, useState, useRef, FormEventHandler, useCallback } from 'react';
-import { z } from 'zod';
 import { isStringPositiveInteger } from '@utils/isStringPositiveInteger';
+import { InputEventHandler, useCallback, useMemo, useRef, useState, type RefObject } from 'react';
+import { z } from 'zod';
 
 type OpaqueObject = Record<string, unknown> | unknown[];
 type PossibleInput = HTMLInputElement | HTMLTextAreaElement;
@@ -51,7 +51,7 @@ const insertElementDataIntoObjectFromSubName = (element: PossibleInput, object: 
 
 type FixtureBeforeValidationFunction = (object: Record<string, unknown>) => Record<string, unknown>;
 
-const getFormData = (formRef: RefObject<HTMLFormElement>, fixturesBeforeValidation?: FixtureBeforeValidationFunction) => {
+const getFormData = (formRef: RefObject<HTMLFormElement | null>, fixturesBeforeValidation?: FixtureBeforeValidationFunction) => {
   if (!formRef.current) return {} as Record<string, unknown>;
 
   const rootObject = {};
@@ -98,7 +98,7 @@ const flattenZodObject = <T extends z.ZodRawShape>(
 
 const buildCanClose =
   <T extends z.ZodRawShape>(
-    formRef: RefObject<HTMLFormElement>,
+    formRef: RefObject<HTMLFormElement | null>,
     schema: z.ZodObject<T>,
     getRawFormData: () => Record<string, unknown>,
     defaults: Record<string, string | undefined>,
@@ -123,7 +123,7 @@ const buildCanClose =
   };
 
 const formData = <T extends z.ZodRawShape>(
-  formRef: RefObject<HTMLFormElement>,
+  formRef: RefObject<HTMLFormElement | null>,
   schema: z.ZodObject<T>,
   inputDefaults?: Partial<z.infer<typeof schema>>,
   fixturesBeforeValidation?: (objectToValidate: z.infer<typeof schema>) => z.infer<typeof schema>,
@@ -158,7 +158,7 @@ export const useZodForm = <T extends z.ZodRawShape>(
     touchedInputValidity.current[inputName] = { validity: isValid, value };
     setIsValid(isValid && schema.safeParse(d.getRawFormData()).success);
   };
-  const onInputTouched: FormEventHandler<HTMLInputElement | HTMLTextAreaElement> = ({ currentTarget }) => {
+  const onInputTouched: InputEventHandler<HTMLInputElement | HTMLTextAreaElement> = ({ currentTarget }) => {
     onTouched(currentTarget.name, currentTarget.validity.valid, currentTarget.value);
   };
   const reload = useCallback((newDefaults: Partial<z.infer<typeof schema>>) => {

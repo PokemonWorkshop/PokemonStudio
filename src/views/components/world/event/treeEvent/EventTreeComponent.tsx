@@ -1,38 +1,38 @@
-import React, { RefObject, useEffect, useRef, useState } from 'react';
-import Tree, {
-  mutateTree,
-  moveItemOnTree,
-  RenderItemParams,
-  TreeItem,
-  TreeData,
-  ItemId,
-  TreeSourcePosition,
-  TreeDestinationPosition,
-} from '@components/tree';
+import DotIcon from '@assets/icons/global/dot.svg';
 import FolderIcon from '@assets/icons/global/folder.svg';
 import FolderOpenIcon from '@assets/icons/global/folder_open.svg';
 import LeftIcon from '@assets/icons/global/left-icon.svg';
 import PlusIcon from '@assets/icons/global/plus-icon.svg';
-import { useProjectEvents } from '@hooks/useProjectData';
-import { useGetEntityNameText, useGetEntityNameTextUsingTextId, useSetProjectText } from '@utils/ReadingProjectText';
-import { useTranslation } from 'react-i18next';
 import { Input } from '@components/inputs';
+import Tree, {
+  ItemId,
+  moveItemOnTree,
+  mutateTree,
+  RenderItemParams,
+  TreeData,
+  TreeDestinationPosition,
+  TreeItem,
+  TreeSourcePosition,
+} from '@components/tree';
+import { useEventTree } from '@components/world/event/hooks/useEventTree';
 import { useContextMenu } from '@hooks/useContextMenu';
 import { useDialogsRef } from '@hooks/useDialogsRef';
-import { EventTreeContextMenu } from './EventTreeContextMenu';
-import { convertEventToTree, convertTreeToEventTree, eventTreeConvertItemToEventTreeValue } from '@utils/events/EventTreeUtils';
-import { useEventTree } from '@components/world/event/hooks/useEventTree';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { MapListContainer, TreeItemContainer } from '../../map/tree/style';
+import { useProjectEvents } from '@hooks/useProjectData';
 import { EVENT_NAME_TEXT_ID } from '@modelEntities/event/event';
 import { EVENT_FOLDER_NAME_TEXT_ID, StudioEventTreeValue } from '@modelEntities/event/event-tree';
-import { EventEditorAndDeletionKeys, EventEditorOverlay } from '../editors/EventEditorOverlay';
-import { searchIsUnderOpenFolder } from '../../../tree/Tree/Tree-utils';
-import DotIcon from '@assets/icons/global/dot.svg';
+import { convertEventToTree, convertTreeToEventTree, eventTreeConvertItemToEventTreeValue } from '@utils/events/EventTreeUtils';
 import { getMapTreeCountChildren, getTreeDestinationDepth, getTreeSourceDepth, renderDropBox } from '@utils/MapTreeUtils';
+import { useGetEntityNameText, useGetEntityNameTextUsingTextId, useSetProjectText } from '@utils/ReadingProjectText';
+import React, { RefObject, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { searchIsUnderOpenFolder } from '../../../tree/Tree/Tree-utils';
+import { MapListContainer, TreeItemContainer } from '../../map/tree/style';
+import { EventEditorAndDeletionKeys, EventEditorOverlay } from '../editors/EventEditorOverlay';
+import { EventTreeContextMenu } from './EventTreeContextMenu';
 
 type EventTreeComponentProps = {
-  treeScrollbarRef: RefObject<HTMLDivElement>;
+  treeScrollbarRef: RefObject<HTMLDivElement | null>;
 };
 
 export const EventTreeComponent = ({ treeScrollbarRef }: EventTreeComponentProps) => {

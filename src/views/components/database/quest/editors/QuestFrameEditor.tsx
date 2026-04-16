@@ -1,17 +1,17 @@
 import { Editor } from '@components/editor';
-import { useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
-import { useGetProjectText, useSetProjectText } from '@utils/ReadingProjectText';
-import { QUEST_CATEGORIES, QUEST_DESCRIPTION_TEXT_ID, QUEST_NAME_TEXT_ID, QUEST_RESOLUTIONS } from '@modelEntities/quest';
-import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useQuestPage } from '@src/hooks/usePage';
-import { useUpdateQuest } from './useUpdateQuest';
-import { useDialogsRef } from '@src/hooks/useDialogsRef';
-import { QuestTranslationEditorTitle, QuestTranslationOverlay } from './QuestTranslationOverlay';
 import { Select } from '@ds/Select';
+import { QUEST_CATEGORIES, QUEST_DESCRIPTION_TEXT_ID, QUEST_NAME_TEXT_ID, QUEST_RESOLUTIONS } from '@modelEntities/quest';
+import { useDialogsRef } from '@src/hooks/useDialogsRef';
+import { useQuestPage } from '@src/hooks/usePage';
+import { useGetProjectText, useSetProjectText } from '@utils/ReadingProjectText';
+import { TFunction } from 'i18next';
 import React, { forwardRef, useMemo, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { QuestTranslationEditorTitle, QuestTranslationOverlay } from './QuestTranslationOverlay';
+import { useUpdateQuest } from './useUpdateQuest';
 
 const questCategoryEntries = (t: TFunction) => QUEST_CATEGORIES.map((category) => ({ value: category, label: t(category) }));
 
@@ -28,7 +28,7 @@ export const QuestFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const resolutionOptions = useMemo(() => questResolutionEntries(t), [t]);
   const nameRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
-  const categoryRef = useRef<string | undefined>();
+  const categoryRef = useRef<string | undefined>(undefined);
   // const resolutionRef = useRef<string | undefined>();
 
   const saveTexts = () => {

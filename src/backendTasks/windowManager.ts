@@ -203,13 +203,13 @@ class WindowManager {
       url?: string;
       file?: string;
     },
-    events: { [key: string]: (...args: unknown[]) => void } = {}
+    events: { [key: string]: (...args: unknown[]) => void } = {},
   ): BrowserWindow {
     if (!options.name) throw new Error("The 'name' property is required.");
     if (this.getWindow(options.name)) throw new Error(`Window with name '${options.name}' already exists.`);
 
     const defaultOptions: BrowserWindowConstructorOptions = {
-      show: false,
+      show: process.platform === 'linux',
       width: 1280,
       height: 720,
       minWidth: 960,
@@ -326,4 +326,4 @@ class WindowManager {
 
 // Export the singleton instance of WindowManager
 export default WindowManager.getInstance();
-export { mainWindowViteName, mainWindowViteDevServerUrl };
+export { mainWindowViteDevServerUrl, mainWindowViteName };

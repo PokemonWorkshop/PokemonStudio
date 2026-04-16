@@ -1,30 +1,29 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useTranslationPage } from '@hooks/usePage';
-import { DataBlockWrapper, DataInfoContainerHeaderTitle } from '@components/database/dataBlocks';
-import styled from 'styled-components';
-import { LanguageContext } from '@pages/texts/Translation.page';
-import { ButtonRightContainer, DataBlockEditorContainer } from '@components/editor/DataBlockEditorStyle';
-import { SeparatorGreyLine } from '@components/separators/SeparatorGreyLine';
-import { MultiLineInput } from '@components/inputs';
-import { DarkButton } from '@components/buttons';
-import TranslateIcon from '@assets/icons/global/translate.svg';
 import CopyIcon from '@assets/icons/global/copy.svg';
-import { useGlobalState } from '@src/GlobalStateProvider';
-import { SavingTextMap } from '@utils/SavingUtils';
-import { useTextInfosReadonly } from '@hooks/useTextInfos';
-import { getProjectTextChange } from '@hooks/updateProjectText';
+import { DarkButton } from '@components/buttons';
+import { DataBlockWrapper, DataInfoContainerHeaderTitle } from '@components/database/dataBlocks';
+import { ButtonRightContainer, DataBlockEditorContainer } from '@components/editor/DataBlockEditorStyle';
+import { MultiLineInput } from '@components/inputs';
 import { ProgressBar } from '@components/progress-bar/ProgressBar';
+import { SeparatorGreyLine } from '@components/separators/SeparatorGreyLine';
+import { getProjectTextChange } from '@hooks/updateProjectText';
 import { CONTROL } from '@hooks/useKeyPress';
+import { useTranslationPage } from '@hooks/usePage';
+import { useTextInfosReadonly } from '@hooks/useTextInfos';
+import { LanguageContext } from '@pages/texts/Translation.page';
+import { useGlobalState } from '@src/GlobalStateProvider';
 import { cleanNaNValue } from '@utils/cleanNaNValue';
 import { getLanguageDisplayText } from '@utils/getLanguageDisplayText';
+import { SavingTextMap } from '@utils/SavingUtils';
+import React, { useContext, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 const UNTRANSLATED_TEXT_REG = /^$|^NewText$|^\[~[^\]]+\]$/;
 
 const calculateTranslatedTexts = (allTextsFromFile: string[][], index: number) => {
   const untranslatedTextCount = allTextsFromFile.reduce(
     (count, line) => (!line || typeof line[index] !== 'string' || line[index].match(UNTRANSLATED_TEXT_REG) ? count + 1 : count),
-    0
+    0,
   );
   return allTextsFromFile.length - 1 - untranslatedTextCount;
 };
@@ -69,18 +68,18 @@ const DataBlockTextTranslate = ({ isDefault, languageTitle, textFromFileByIndex,
   const percentage: number = cleanNaNValue((numberOfTextTranslated / (allTextsFromFile.length - 1)) * 100);
   const [previousFileId, setPreviousFileId] = useState<number>(currentTextInfo.fileId);
 
-  useEffect(() => {
-    setTextTranslate(textFromFileByIndex);
-    resetPositionLanguage();
-    setNumberOfTextTranslated(calculateTranslatedTexts(allTextsFromFile, languageContext.language.index));
-  }, [textFromFileByIndex]);
-
   const resetPositionLanguage = () => {
     if (previousFileId !== currentTextInfo.fileId) {
       languageContext.setPositionLanguage(1);
       setPreviousFileId(currentTextInfo.fileId);
     }
   };
+
+  useEffect(() => {
+    setTextTranslate(textFromFileByIndex);
+    resetPositionLanguage();
+    setNumberOfTextTranslated(calculateTranslatedTexts(allTextsFromFile, languageContext.language.index));
+  }, [textFromFileByIndex]);
 
   const saveText = (copyText?: string) => {
     setState((currentState) => {
@@ -92,7 +91,7 @@ const DataBlockTextTranslate = ({ isDefault, languageTitle, textFromFileByIndex,
         languageContext.positionLanguage - 1,
         currentTextInfo.fileId,
         copyText ? copyText : textTranslate,
-        currentState.projectText
+        currentState.projectText,
       );
       return {
         ...currentState,
@@ -165,7 +164,7 @@ export const TranslateTarget = () => {
   const { t, i18n } = useTranslation();
   const languageContext = useContext(LanguageContext);
   const { defaultLanguage, currentTextFromFile, allTextsFromFile, defaultLanguageIndexFromFile } = useTranslationPage(
-    languageContext.positionLanguage
+    languageContext.positionLanguage,
   );
 
   const defaultLanguageToDisplay = getLanguageDisplayText(defaultLanguage, t, i18n);

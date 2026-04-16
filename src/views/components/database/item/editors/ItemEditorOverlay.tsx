@@ -1,21 +1,21 @@
-import React from 'react';
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
-import { assertUnreachable } from '@utils/assertUnreachable';
 import { DialogRefData } from '@hooks/useDialogsRef';
+import { assertUnreachable } from '@utils/assertUnreachable';
+import React from 'react';
 import {
-  ItemNewEditor,
-  ItemFrameEditor,
-  ItemGenericDataEditor,
-  ItemParametersDataEditor,
-  ItemTechDataEditor,
-  ItemExplorationDataEditor,
   ItemBattleDataEditor,
-  ItemCatchDataEditor,
-  ItemHealDataEditor,
-  ItemProgressDataEditor,
   ItemBerriesDataEditor,
+  ItemCatchDataEditor,
   ItemCookingDataEditor,
   ItemDeletion,
+  ItemExplorationDataEditor,
+  ItemFrameEditor,
+  ItemGenericDataEditor,
+  ItemHealDataEditor,
+  ItemNewEditor,
+  ItemParametersDataEditor,
+  ItemProgressDataEditor,
+  ItemTechDataEditor,
 } from '.';
 
 export type ItemEditorAndDeletionKeys =
@@ -33,7 +33,7 @@ export type ItemEditorAndDeletionKeys =
   | 'berries'
   | 'cooking'
   | 'deletion';
-export type ItemDialogsRef = React.RefObject<DialogRefData<ItemEditorAndDeletionKeys>>;
+export type ItemDialogsRef = React.RefObject<DialogRefData<ItemEditorAndDeletionKeys> | null>;
 
 /**
  * Editor overlay for the Items.

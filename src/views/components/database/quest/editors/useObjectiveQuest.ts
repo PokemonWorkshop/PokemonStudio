@@ -19,7 +19,7 @@ export const useObjectiveQuest = (initialObjective?: StudioQuestObjective) => {
   const [isValid, setIsValid] = useState<boolean>(false);
   const { projectConfigValues: settings } = useConfigSettings();
   const setText = useSetProjectText();
-  const entityRef = useRef<DbSymbol | undefined>();
+  const entityRef = useRef<DbSymbol | undefined>(undefined);
   const nameRef = useRef<HTMLInputElement>(null);
   const valueRef = useRef<HTMLInputElement>(null);
   const hiddenByDefaultRef = useRef<HTMLInputElement>(null);

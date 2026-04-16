@@ -1,13 +1,13 @@
-import React from 'react';
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
-import { assertUnreachable } from '@utils/assertUnreachable';
 import { DialogRefData } from '@hooks/useDialogsRef';
-import { TextDeletion } from './TextDeletion';
+import { assertUnreachable } from '@utils/assertUnreachable';
+import React from 'react';
 import { TextFrameEditor, TextImportEditor, TextNewEditor } from '.';
+import { TextDeletion } from './TextDeletion';
 import { TextListClear } from './TextListClear';
 
 export type TextEditorAndDeletionKeys = 'new' | 'frame' | 'import' | 'deletion' | 'clear';
-export type TextDialogsRef = React.RefObject<DialogRefData<TextEditorAndDeletionKeys>>;
+export type TextDialogsRef = React.RefObject<DialogRefData<TextEditorAndDeletionKeys> | null>;
 
 /**
  * Editor overlay for the texts managements.
