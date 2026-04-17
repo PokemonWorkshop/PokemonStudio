@@ -26,6 +26,7 @@ const CommandLibraryContainer = styled(EditorContainer)`
     padding: 12px;
     gap: 8px;
     border-bottom: 1px solid rgb(46, 48, 54);
+    margin-bottom: -8px;
 
     .title {
       display: flex;
