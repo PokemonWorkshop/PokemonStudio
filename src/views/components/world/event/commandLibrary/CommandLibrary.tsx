@@ -25,6 +25,7 @@ const CommandLibraryContainer = styled(EditorContainer)`
     flex-direction: column;
     padding: 12px;
     gap: 8px;
+    border-bottom: 1px solid rgb(46, 48, 54);
 
     .title {
       display: flex;
