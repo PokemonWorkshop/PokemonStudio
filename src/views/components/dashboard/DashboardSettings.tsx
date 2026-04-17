@@ -53,91 +53,98 @@ export const DashboardSettings = () => {
   };
 
   return (
-    <PageEditor editorTitle={t('settings')} title={t('general')}>
-      <InputWithLeftLabelContainer>
-        <Label htmlFor="max-level">{t('max_creature_level')}</Label>
-        <Input
-          type="number"
-          name="max-level"
-          min="1"
-          max="9999"
-          value={isNaN(maxLevel) ? '' : maxLevel}
-          onChange={onChangeMaxLevel}
-          onBlur={onBlurMaxLevel}
-          placeholder="100"
-        />
-      </InputWithLeftLabelContainer>
-      <InputWithLeftLabelContainer>
-        <Label>{t('evolution_form')}</Label>
-        <Toggle
-          name="evolution_form"
-          checked={settings.isAlwaysUseForm0ForEvolution}
-          onChange={(event) => {
-            currentEditedSettings.isAlwaysUseForm0ForEvolution = event.target.checked;
-            setSettings(currentEditedSettings);
-          }}
-        />
-      </InputWithLeftLabelContainer>
-      <InputWithLeftLabelContainer>
-        <Label>{t('evolution_form_no_data')}</Label>
-        <Toggle
-          name="evolution_form_no_data"
-          checked={settings.isUseForm0WhenNoEvolutionData}
-          onChange={(event) => {
-            currentEditedSettings.isUseForm0WhenNoEvolutionData = event.target.checked;
-            setSettings(currentEditedSettings);
-          }}
-        />
-      </InputWithLeftLabelContainer>
-      <InputContainer size="s">
+    <>
+      <PageEditor editorTitle={t('settings')} title={t('general')}>
         <InputWithLeftLabelContainer>
-          <Label htmlFor="max-bag-item-count">{t('max_bag_item_count')}</Label>
+          <Label htmlFor="max-level">{t('max_creature_level')}</Label>
           <Input
             type="number"
-            name="max-bag-item-count"
-            min="0"
+            name="max-level"
+            min="1"
             max="9999"
-            value={isNaN(maxItemCount) ? '' : maxItemCount}
-            onChange={onChangeMaxBagItemCount}
-            onBlur={onBlurMaxBagItemCount}
-            placeholder="99"
+            value={isNaN(maxLevel) ? '' : maxLevel}
+            onChange={onChangeMaxLevel}
+            onBlur={onBlurMaxLevel}
+            placeholder="100"
           />
         </InputWithLeftLabelContainer>
-        <UnlimitedItemsInfoContainer>{t('unlimited_items')}</UnlimitedItemsInfoContainer>
         <InputWithLeftLabelContainer>
-          <Label>{t('battle_camera_3d')}</Label>
+          <Label>{t('evolution_form')}</Label>
           <Toggle
-            name="battle_camera_3d"
-            checked={settings.isUseBattleCamera3d}
+            name="evolution_form"
+            checked={settings.isAlwaysUseForm0ForEvolution}
             onChange={(event) => {
-              currentEditedSettings.isUseBattleCamera3d = event.target.checked;
+              currentEditedSettings.isAlwaysUseForm0ForEvolution = event.target.checked;
               setSettings(currentEditedSettings);
             }}
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>
-          <Label>{t('summary_page_contest')}</Label>
+          <Label>{t('evolution_form_no_data')}</Label>
           <Toggle
-            name="summary_page_contest"
-            checked={settings.showContestSummaryPage}
+            name="evolution_form_no_data"
+            checked={settings.isUseForm0WhenNoEvolutionData}
             onChange={(event) => {
-              currentEditedSettings.showContestSummaryPage = event.target.checked;
+              currentEditedSettings.isUseForm0WhenNoEvolutionData = event.target.checked;
               setSettings(currentEditedSettings);
             }}
           />
         </InputWithLeftLabelContainer>
-        <InputWithLeftLabelContainer>
-          <Label>{t('summary_page_ribbons')}</Label>
-          <Toggle
-            name="summary_page_ribbons"
-            checked={settings.showRibbonsSummaryPage}
-            onChange={(event) => {
-              currentEditedSettings.showRibbonsSummaryPage = event.target.checked;
-              setSettings(currentEditedSettings);
-            }}
-          />
-        </InputWithLeftLabelContainer>
-      </InputContainer>
-    </PageEditor>
+        <InputContainer size="s">
+          <InputWithLeftLabelContainer>
+            <Label htmlFor="max-bag-item-count">{t('max_bag_item_count')}</Label>
+            <Input
+              type="number"
+              name="max-bag-item-count"
+              min="0"
+              max="9999"
+              value={isNaN(maxItemCount) ? '' : maxItemCount}
+              onChange={onChangeMaxBagItemCount}
+              onBlur={onBlurMaxBagItemCount}
+              placeholder="99"
+            />
+          </InputWithLeftLabelContainer>
+          <UnlimitedItemsInfoContainer>{t('unlimited_items')}</UnlimitedItemsInfoContainer>
+        </InputContainer>
+      </PageEditor>
+
+      <PageEditor editorTitle={t('settings')} title={t('interfaces')}>
+        <InputContainer>
+          <InputWithLeftLabelContainer>
+            <Label>{t('battle_camera_3d')}</Label>
+            <Toggle
+              name="battle_camera_3d"
+              checked={settings.isUseBattleCamera3d}
+              onChange={(event) => {
+                currentEditedSettings.isUseBattleCamera3d = event.target.checked;
+                setSettings(currentEditedSettings);
+              }}
+            />
+          </InputWithLeftLabelContainer>
+          <InputWithLeftLabelContainer>
+            <Label>{t('summary_page_contest')}</Label>
+            <Toggle
+              name="summary_page_contest"
+              checked={settings.showContestSummaryPage}
+              onChange={(event) => {
+                currentEditedSettings.showContestSummaryPage = event.target.checked;
+                setSettings(currentEditedSettings);
+              }}
+            />
+          </InputWithLeftLabelContainer>
+          <InputWithLeftLabelContainer>
+            <Label>{t('summary_page_ribbons')}</Label>
+            <Toggle
+              name="summary_page_ribbons"
+              checked={settings.showRibbonsSummaryPage}
+              onChange={(event) => {
+                currentEditedSettings.showRibbonsSummaryPage = event.target.checked;
+                setSettings(currentEditedSettings);
+              }}
+            />
+          </InputWithLeftLabelContainer>
+        </InputContainer>
+      </PageEditor>
+    </>
   );
 };
