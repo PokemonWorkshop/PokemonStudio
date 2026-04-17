@@ -18,8 +18,8 @@ export const addSummaryPagesOptionsToSettings = async (_: IpcMainEvent, projectP
 
   const newSettingsFile: StudioSettingConfig = {
     ...settingsFileParsed.data,
-    showContestSummaryPage: false,
-    showRibbonsSummaryPage: false,
+    showContestSummaryPage: true,
+    showRibbonsSummaryPage: true,
   };
   await fsPromise.writeFile(settingsFilePath, JSON.stringify(newSettingsFile, null, 2));
 };
