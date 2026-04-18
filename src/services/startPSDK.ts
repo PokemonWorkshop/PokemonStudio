@@ -21,7 +21,16 @@ export const getSpawnArgs = (projectPath: string, ...args: string[]): [string, s
     log.warn('No terminal found. The PSDK console will not be displayed.');
     return ['./game-linux.sh', args];
   } else if (process.platform === 'darwin') {
-    return ['./game-mac.sh', args];
+    return [
+      'osascript',
+      [
+        '-e',
+        `tell application "Terminal"
+          do script "cd '${projectPath}' && ./game-mac.sh ${args.join(' ')}"
+          activate
+        end tell`,
+      ],
+    ];
   } else {
     return ['./game.rb', args];
   }
@@ -64,6 +73,17 @@ const canLaunchPSDK = () => {
   return false;
 };
 
+const childProcessFn = (projectPath: string, command: string, spawnArgs: string[]) => {
+  const isMac = process.platform === 'darwin';
+  const childProcess = spawn(command, spawnArgs, {
+    cwd: projectPath,
+    shell: !isMac,
+    detached: !isMac,
+    stdio: isMac ? 'inherit' : 'ignore',
+  });
+  if (!isMac) childProcess.unref();
+};
+
 export const startPSDK = (projectPath: string) => {
   if (!canLaunchPSDK()) return;
 
@@ -75,14 +95,7 @@ export const startPSDK = (projectPath: string) => {
 
     const [command, spawnArgs] = getSpawnArgs(projectPath);
 
-    const childProcess = spawn(command, spawnArgs, {
-      cwd: projectPath,
-      shell: true,
-      detached: true,
-      stdio: 'ignore',
-    });
-
-    childProcess.unref();
+    childProcessFn(projectPath, command, spawnArgs);
   } finally {
     process.chdir(studioPath);
   }
@@ -99,14 +112,7 @@ const startPSDKWithArgs = (projectPath: string, ...args: string[]) => {
 
     const [command, spawnArgs] = getSpawnArgs(projectPath, ...args);
 
-    const childProcess = spawn(command, spawnArgs, {
-      cwd: projectPath,
-      shell: true,
-      detached: true,
-      stdio: 'ignore',
-    });
-
-    childProcess.unref();
+    childProcessFn(projectPath, command, spawnArgs);
   } finally {
     process.chdir(studioPath);
   }
