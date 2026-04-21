@@ -2,29 +2,32 @@ import BackIcon from '@assets/icons/global/back.svg';
 import { CommandLibraryCard } from './CommandLibraryCard';
 import { StudioEventCommandCategory } from '@modelEntities/event/category';
 import { COMMANDS_FROM_CATEGORY } from '@modelEntities/event/command';
-import { EventIcon, IconsFromCategory } from '../common/EventIcon';
+import { EventIcon, EventIconColor, IconsFromCategory } from '../common/EventIcon';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import styled from 'styled-components';
 import React, { useMemo } from 'react';
 
-const CommandLibraryBlockContainer = styled.div.attrs((props) => ({ 'data-color': props.color }))`
+type CommandLibraryBlockContainer = {
+  color: EventIconColor;
+  isResearch: boolean;
+};
+
+const CommandLibraryBlockContainer = styled.div<CommandLibraryBlockContainer>`
   .category-header {
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding: 16px 12px;
+    padding: 16px 12px 16px ${({ isResearch }) => (isResearch ? '20px' : '12px')};
     gap: 8px;
     box-sizing: border-box;
     align-items: center;
-
-    &[data-color='violet'] {
-      background: linear-gradient(180deg, rgb(39, 27, 53) 0%, rgba(39, 27, 53, 0) 50%);
-    }
-
-    &[data-color='blue'] {
-      background: linear-gradient(180deg, rgb(9, 36, 56) 0%, rgba(9, 36, 56, 0) 50%);
-    }
+    background: linear-gradient(
+      180deg,
+      ${({ theme, color }) => theme.colors[`${color}6`]} 0%,
+      ${({ theme, color }) => theme.colors[`${color}6`]}00 50%
+    );
+    margin: 0 -8px;
 
     .back-icon {
       display: flex;
@@ -97,8 +100,8 @@ export const CommandLibraryBlock = ({ category, setSelectedCommandCategory, rese
   return research && commandsCount === 0 ? (
     <></>
   ) : (
-    <CommandLibraryBlockContainer>
-      <div className="category-header" data-color={IconsFromCategory[category].color}>
+    <CommandLibraryBlockContainer color={IconsFromCategory[category].color} isResearch={!!research}>
+      <div className="category-header">
         {!research && (
           <span className="back-icon" onClick={() => setSelectedCommandCategory(undefined)}>
             <BackIcon />
