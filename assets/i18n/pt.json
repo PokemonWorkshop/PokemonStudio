@@ -637,9 +637,9 @@
   "map_name": "Nome do mapa",
   "import_selected_map_singular": "Importar o mapa selecionado",
   "import_selected_map_plural": "Importar {{amount}} mapas selecionados",
-  "searching_files": "Procurando arquivos para importar..",
+  "searching_files": "Procurando arquivos para importar...",
   "no_files_found": "Nenhum arquivo encontrado",
-  "reading_data_tiled_files": "Lendo dados de mapas do Tiled",
+  "reading_data_tiled_files": "Lendo dados de mapas do Tiled...",
   "copy_tiled_files": "Copie os mapas do Tiled para a pasta do projeto",
   "add_missing_rmxp_maps": "Adição de mapas ausentes do RPG Maker XP",
   "create_new_maps": "Criando novos mapas",
@@ -661,7 +661,7 @@
   "map_overview_not_found": "A visão geral do mapa não pôde ser encontrada.",
   "map_overview_generate": "Gerar visão geral do mapa",
   "map_overview_generating": "Gerando visão geral do mapa",
-  "map_overviews_generating": "Gerando visões gerais do mapa",
+  "map_overviews_generating": "Gerando visões gerais do mapa...",
   "map_process_disabled": "O caminho de instalação do Tiled deve ser especificado nas configurações do aplicativo.",
   "power": "Poder",
   "accuracy": "Precisão",
@@ -1861,5 +1861,7 @@
   "create_event": "Add event",
   "invalid_data": "Invalid data",
   "event_title_empty_state": "Start creating an event!",
-  "event_description_empty_state": "You don't have any event yet. You can create a new event or import existing ones."
+  "event_description_empty_state": "You don't have any event yet. You can create a new event or import existing ones.",
+  "full_map_dialog_message": "You can update all the maps in your project.\nThis process may take several minutes, depending on the number of maps in your project.",
+  "full_map_dialog_success": "All maps have been successfully updated."
 }

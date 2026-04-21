@@ -95,8 +95,7 @@ export const useMapUpdateProcessor = () => {
         return toAsyncProcess(() => {
           loaderRef.current.setProgress(3, 3, t('update_maps'));
           const selectedMap = globalState.selectedDataIdentifier.map;
-          mapsToUpdate.forEach((mapToUpdate, index) => {
-            loaderRef.current.setProgress(3, 3, `${t('update_maps')} (${index + 1}/${mapsToUpdate.length})`);
+          mapsToUpdate.forEach((mapToUpdate) => {
             const mapUpdate = { ...maps[mapToUpdate.dbSymbol], ...mapToUpdate, sha1: mapToUpdate.sha1 as Sha1 };
             setMap({ [mapUpdate.dbSymbol]: mapUpdate }, { map: selectedMap });
           });

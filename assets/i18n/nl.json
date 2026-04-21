@@ -639,7 +639,7 @@
   "import_selected_map_plural": "Importeer {{amount}} kaarten",
   "searching_files": "Zoeken voor bestanden om te importeren...",
   "no_files_found": "Geen bestand gevonden",
-  "reading_data_tiled_files": "De data aan het lezen van de Tiled kaarten",
+  "reading_data_tiled_files": "De data aan het lezen van de Tiled kaarten...",
   "copy_tiled_files": "Kopieer de Tiled mappen naar het project folder",
   "add_missing_rmxp_maps": "Toevoeging van ontbrekende RPG Maker XP-mappen",
   "create_new_maps": "Nieuwe mappen maken",
@@ -660,8 +660,8 @@
   "map_overview": "Kaartoverzicht",
   "map_overview_not_found": "Het overzicht van de map kon niet gevonden worden.",
   "map_overview_generate": "Genereer map overzicht",
-  "map_overview_generating": "map overzicht aan het genereren",
-  "map_overviews_generating": "map overzicht aan het genereren",
+  "map_overview_generating": "Map overzicht aan het genereren",
+  "map_overviews_generating": "Map overzicht aan het genereren...",
   "map_process_disabled": "Tiled Installatie pad moet gespecificeerd worden in de applicatie instellingen.",
   "power": "Kracht",
   "accuracy": "Nauwkeurigheid",
@@ -1861,5 +1861,7 @@
   "create_event": "Add event",
   "invalid_data": "Invalid data",
   "event_title_empty_state": "Start creating an event!",
-  "event_description_empty_state": "You don't have any event yet. You can create a new event or import existing ones."
+  "event_description_empty_state": "You don't have any event yet. You can create a new event or import existing ones.",
+  "full_map_dialog_message": "You can update all the maps in your project.\nThis process may take several minutes, depending on the number of maps in your project.",
+  "full_map_dialog_success": "All maps have been successfully updated."
 }

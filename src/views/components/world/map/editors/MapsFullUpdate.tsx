@@ -32,7 +32,7 @@ export const MapsFullUpdate = ({ ref, closeDialog }: MapsFullUpdateProps) => {
       { type: 'full' },
       () => {
         // we wait the end of the close dialog animation to show the success
-        setTimeout(() => loaderRef.current.setSuccess('update_maps', 'Toutes les cartes ont été mises à jour avec succès.'), 200);
+        setTimeout(() => loaderRef.current.setSuccess('update_maps', t('full_map_dialog_success')), 200);
         closeDialog();
       },
       (error, genericError) => {
@@ -61,15 +61,12 @@ export const MapsFullUpdate = ({ ref, closeDialog }: MapsFullUpdateProps) => {
         <h3>{t('update_maps')}</h3>
       </MessageBoxTitleIconContainer>
       <MessageBoxTextContainer>
-        <p>
-          Vous pouvez mettre à jour toutes les cartes de votre projet. <br /> Cette opération peut prendre plusieurs minutes selon le nombre de cartes
-          de votre projet.
-        </p>
+        <p>{t('full_map_dialog_message')}</p>
       </MessageBoxTextContainer>
       <MessageBoxActionContainer>
         <MessageBoxCancelLink onClick={closeDialog}>{t('close')}</MessageBoxCancelLink>
         <PrimaryButton onClick={handleUpdate} disabled={disabledUpdate}>
-          Mettre à jour
+          {t('update')}
         </PrimaryButton>
       </MessageBoxActionContainer>
     </MessageBoxContainer>
