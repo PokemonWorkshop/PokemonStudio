@@ -1,10 +1,10 @@
-import React, { ReactNode } from 'react';
-import styled, { css, keyframes } from 'styled-components';
-import SuccessIcon from '@assets/icons/notification/success.svg';
 import DangerIcon from '@assets/icons/notification/danger.svg';
 import InfoIcon from '@assets/icons/notification/info.svg';
+import SuccessIcon from '@assets/icons/notification/success.svg';
 import WarningIcon from '@assets/icons/notification/warning.svg';
 import { assertUnreachable } from '@utils/assertUnreachable';
+import React, { ReactNode } from 'react';
+import styled, { css, keyframes } from 'styled-components';
 
 const fadeIn = keyframes`
   from {
@@ -49,6 +49,8 @@ const NotificationContainer = styled.div`
   grid-template-columns: 40px auto;
   row-gap: 4px;
   column-gap: 16px;
+  width: 480px;
+  box-sizing: border-box;
   padding: 16px;
   border-radius: 4px;
   backdrop-filter: blur(24px);
