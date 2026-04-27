@@ -1,13 +1,13 @@
+import { PokemonBattlerFrom } from '@components/pokemonBattler/editors/PokemonBattlerEditorOverlay';
 import { StudioDisplayConfig, StudioSaveConfig, StudioSettingConfig, StudioTextConfig } from '@modelEntities/config';
 import { StudioCreatureForm } from '@modelEntities/creature';
+import { StudioGroup } from '@modelEntities/group';
 import { StudioExpandPokemonSetup, StudioGroupEncounter, StudioIvEv } from '@modelEntities/groupEncounter';
 import { StudioItem } from '@modelEntities/item';
 import { StudioMove } from '@modelEntities/move';
 import { StudioTrainer } from '@modelEntities/trainer';
 import { StudioZone } from '@modelEntities/zone';
-import { StudioGroup } from '@modelEntities/group';
 import { ProjectData, State } from '@src/GlobalStateProvider';
-import { PokemonBattlerFrom } from '@components/pokemonBattler/editors/PokemonBattlerEditorOverlay';
 import { assertUnreachable } from './assertUnreachable';
 
 /**
@@ -43,6 +43,7 @@ export const cleaningSaveNaNValues = (v: StudioSaveConfig) => {
 export const cleaningSettingsNaNValues = (v: StudioSettingConfig) => {
   v.pokemonMaxLevel = cleanNaNValue(v.pokemonMaxLevel, 100);
   v.maxBagItemCount = cleanNaNValue(v.maxBagItemCount);
+  v.baseStatMaxValue = cleanNaNValue(v.baseStatMaxValue, 999);
 };
 
 export const cleaningTextNaNValues = (v: StudioTextConfig) => {

@@ -1,31 +1,32 @@
 import type { MigrationTask } from '@src/backendTasks/migrateData';
-import { migrateMapLinks } from './migrateMapLinks';
-import { linkResourcesToCreatures } from './linkResourcesToCreatures';
-import { migrateHeadbutt } from './migrateHeadbutt';
-import { fixBeMethodMoveSelfStatus } from './fixBeMethodMoveSelfStatus';
-import { migrationV2 } from './migrationV2';
 import { addAvailableLanguagesForTranslation } from './addAvailableLanguagesForTranslation';
-import { addVolumeAndPitchInMaps } from './addVolumeAndPitchInMaps';
-import { generatingMapOverviews } from './generatingMapOverviews';
-import { addOtherLanguages } from './addOtherLanguages';
-import { fixCreatureValuesAfterZodChange } from './fixCreatureValuesAfterZodChange';
-import { addFormNamesDescriptions } from './addFormNamesDescriptions';
-import { migrateNaturesToEntities } from './migrateNaturesToEntities';
-import { migrateUndefinedBreedingGroupToUnknown } from './migrateUndefinedBreedingGroupToUnknown';
-import { addTrainerAdditionalDialogs } from './addTrainerAdditionalDialogs';
-import { migrateQuestsEarnings } from './migrateQuestsEarnings';
+import { addBaseStatMaxValueToSettings } from './addBaseStatMaxValueToSettings';
+import { addBattleCamera3dToSettings } from './addBattleCamera3dToSettings';
+import { addBerryAndCookingDataToItems } from './addBerryAndCookingDataToItems';
+import { addCsvForEventFolders } from './addCsvForEventFolders';
 import { addCsvForQuestsCustomObjectives } from './addCsvForQuestsCustomObjectives';
 import { addEggInCreatureResources } from './addEggInCreatureResources';
-import { addBattleCamera3dToSettings } from './addBattleCamera3dToSettings';
-import { migrateGroupsFor3v3BattleMode } from './migrateGroupsFor3v3BattleMode';
+import { addFormNamesDescriptions } from './addFormNamesDescriptions';
 import { addMegaEvolutionParameterToItems } from './addMegaEvolutionParameterToItems';
-import { addBerryAndCookingDataToItems } from './addBerryAndCookingDataToItems';
-import { addSoundDesignConfig } from './addSoundDesignConfig';
-import { addMoveContestData } from './addMoveContestData';
 import { addMissingMapLinks } from './addMissingMapLinks';
-import { baseForEvents } from './baseForEvents';
-import { addCsvForEventFolders } from './addCsvForEventFolders';
+import { addMoveContestData } from './addMoveContestData';
+import { addOtherLanguages } from './addOtherLanguages';
+import { addSoundDesignConfig } from './addSoundDesignConfig';
 import { addSummaryPagesOptionsToSettings } from './addSummaryPagesOptionsToSettings';
+import { addTrainerAdditionalDialogs } from './addTrainerAdditionalDialogs';
+import { addVolumeAndPitchInMaps } from './addVolumeAndPitchInMaps';
+import { baseForEvents } from './baseForEvents';
+import { fixBeMethodMoveSelfStatus } from './fixBeMethodMoveSelfStatus';
+import { fixCreatureValuesAfterZodChange } from './fixCreatureValuesAfterZodChange';
+import { generatingMapOverviews } from './generatingMapOverviews';
+import { linkResourcesToCreatures } from './linkResourcesToCreatures';
+import { migrateGroupsFor3v3BattleMode } from './migrateGroupsFor3v3BattleMode';
+import { migrateHeadbutt } from './migrateHeadbutt';
+import { migrateMapLinks } from './migrateMapLinks';
+import { migrateNaturesToEntities } from './migrateNaturesToEntities';
+import { migrateQuestsEarnings } from './migrateQuestsEarnings';
+import { migrateUndefinedBreedingGroupToUnknown } from './migrateUndefinedBreedingGroupToUnknown';
+import { migrationV2 } from './migrationV2';
 
 type MigrateConfigType = {
   migration: MigrationTask;
@@ -184,5 +185,10 @@ export const MIGRATION_CONFIG: MigrateConfigType[] = [
     migration: addSummaryPagesOptionsToSettings,
     version: '2.9.1',
     message: 'add_summary_pages_options_to_settings',
+  },
+  {
+    migration: addBaseStatMaxValueToSettings,
+    version: '2.9.2',
+    message: 'add_base_stat_max_value_to_settings',
   },
 ];

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { POSITIVE_OR_ZERO_INT, POSITIVE_INT, POSITIVE_OR_ZERO_FLOAT } from './common';
+import { POSITIVE_INT, POSITIVE_OR_ZERO_FLOAT, POSITIVE_OR_ZERO_INT } from './common';
 import { DB_SYMBOL_VALIDATOR } from './dbSymbol';
 
 export const ITEM_HELD_VALIDATOR = z.object({
@@ -111,12 +111,12 @@ export const CREATURE_FORM_VALIDATOR = z.object({
   weight: POSITIVE_OR_ZERO_FLOAT.min(0.01).max(9999.99).step(0.01),
   type1: DB_SYMBOL_VALIDATOR,
   type2: DB_SYMBOL_VALIDATOR,
-  baseHp: POSITIVE_INT.max(255),
-  baseAtk: POSITIVE_INT.max(255),
-  baseDfe: POSITIVE_INT.max(255),
-  baseSpd: POSITIVE_INT.max(255),
-  baseAts: POSITIVE_INT.max(255),
-  baseDfs: POSITIVE_INT.max(255),
+  baseHp: POSITIVE_INT.max(9999),
+  baseAtk: POSITIVE_INT.max(9999),
+  baseDfe: POSITIVE_INT.max(9999),
+  baseSpd: POSITIVE_INT.max(9999),
+  baseAts: POSITIVE_INT.max(9999),
+  baseDfs: POSITIVE_INT.max(9999),
   evHp: POSITIVE_OR_ZERO_INT.max(255),
   evAtk: POSITIVE_OR_ZERO_INT.max(255),
   evDfe: POSITIVE_OR_ZERO_INT.max(255),
