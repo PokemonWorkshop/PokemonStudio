@@ -188,7 +188,7 @@ export const MIGRATION_CONFIG: MigrateConfigType[] = [
   },
   {
     migration: addBaseStatMaxValueToSettings,
-    version: '2.9.2',
+    version: '2.9.1',
     message: 'add_base_stat_max_value_to_settings',
   },
 ];

@@ -1865,7 +1865,7 @@
   "invalid_data": "Données invalides",
   "event_title_empty_state": "Commencez à créer un événement !",
   "event_description_empty_state": "Vous n'avez pas encore d'événement. Vous pouvez créer un nouvel événement ou importer des événements existants.",
-  "max_base_stat_value": "Max base stat value",
-  "base_stat_recommended_limit_warning": "Setting base stats above 255 may affect game balance or compatibility with existing data.",
-  "add_base_stat_max_value_to_settings": "Adding the max base stat value to project settings"
+  "max_base_stat_value": "Valeur maximum d'une statistique de base",
+  "base_stat_recommended_limit_warning": "Configurer une statistique avec une valeur supérieure à 255 peut affecter l'équilibrage du jeu ou provoquer des conflits avec les données existantes.",
+  "add_base_stat_max_value_to_settings": "Ajout du paramètre de statistique de base maximum aux paramètres du projet"
 }
