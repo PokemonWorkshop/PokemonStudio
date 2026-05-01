@@ -176,8 +176,8 @@ export const defineEditorOverlay = <Keys extends string, Props extends Record<st
     dialogToShow: Keys,
     handleCloseRef: ReturnType<typeof useEditorHandlingCloseRef>,
     closeDialog: () => void,
-    props: PropsWithoutRef<Props>
-  ) => ReactNode
+    props: PropsWithoutRef<Props>,
+  ) => ReactNode,
 ) => {
   const reactComponent = forwardRef<DialogRefData<Keys>, Props>((props, ref) => {
     const dialogRef = useRef<HTMLDialogElement>(null);
@@ -186,14 +186,10 @@ export const defineEditorOverlay = <Keys extends string, Props extends Record<st
     const [isCenter, setIsCenter] = useState(false);
     const backdropRef = useRef<HTMLDivElement>(null);
     const dialogActionRef = useRef<number>(0);
-    const openDialogTimeoutRef = useRef<number | null>(null);
+    const pendingOpenRef = useRef<{ isCenterDialog: boolean } | null>(null);
 
     // Invalidate previous open/close actions and cancel any pending delayed open
     const prepareDialogAction = () => {
-      if (openDialogTimeoutRef.current !== null) {
-        window.clearTimeout(openDialogTimeoutRef.current);
-        openDialogTimeoutRef.current = null;
-      }
       return ++dialogActionRef.current;
     };
 
@@ -225,28 +221,24 @@ export const defineEditorOverlay = <Keys extends string, Props extends Record<st
     };
 
     const openDialog = (name: Keys, isCenterDialog?: boolean) => {
-      const currentAction = prepareDialogAction();
+      prepareDialogAction();
       setIsCenter(isCenterDialog || false);
       setCurrentDialog(name);
-      openDialogTimeoutRef.current = window.setTimeout(() => {
-        openDialogTimeoutRef.current = null;
-        if (currentAction !== dialogActionRef.current) return;
-        if (dialogRef.current && backdropRef.current) openDialogWithAnimation(dialogRef.current, backdropRef.current, isCenterDialog || false);
-      }, 0);
+      pendingOpenRef.current = { isCenterDialog: isCenterDialog || false };
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useImperativeHandle(ref, () => ({ closeDialog, openDialog: openDialog, currentDialog }), [currentDialog]);
 
-    // Cleanup any pending delayed open when the component unmounts
     useEffect(() => {
-      return () => {
-        if (openDialogTimeoutRef.current !== null) {
-          window.clearTimeout(openDialogTimeoutRef.current);
-          openDialogTimeoutRef.current = null;
-        }
-      };
-    }, []);
+      if (!currentDialog || !pendingOpenRef.current) return;
+      const { isCenterDialog } = pendingOpenRef.current;
+      pendingOpenRef.current = null;
+
+      if (dialogRef.current && backdropRef.current) {
+        openDialogWithAnimation(dialogRef.current, backdropRef.current, isCenterDialog);
+      }
+    }, [currentDialog]);
 
     // Handle user pressing the escape key
     useEffect(() => {
@@ -384,7 +376,7 @@ export const defineEditorOverlay = <Keys extends string, Props extends Record<st
           ></div>
         </DialogContainer>
       </>,
-      document.querySelector('#dialogs') || document.createElement('div')
+      document.querySelector('#dialogs') || document.createElement('div'),
     );
   });
   reactComponent.displayName = displayName;
