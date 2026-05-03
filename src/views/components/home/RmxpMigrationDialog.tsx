@@ -54,10 +54,10 @@ export const RmxpMigrationDialog = ({ onContinue, closeDialog }: RmxpMigrationDi
           <MessageBoxCancelLink style={{ width: 'auto' }} onClick={() => closeDialog()}>
             {t('close')}
           </MessageBoxCancelLink>
-          <PrimaryButton style={{ width: 'auto' }} onClick={() => window.api.externalWindow(getRmxpMigrationGuideUrl(i18n.language))}>
+          <SecondaryButton style={{ width: 'auto' }} onClick={() => window.api.externalWindow(getRmxpMigrationGuideUrl(i18n.language))}>
             {t('rmxp_migration_dialog_learn_more')}
-          </PrimaryButton>
-          <SecondaryButton
+          </SecondaryButton>
+          <PrimaryButton
             style={{ width: 'auto' }}
             onClick={() => {
               closeDialog();
@@ -65,7 +65,7 @@ export const RmxpMigrationDialog = ({ onContinue, closeDialog }: RmxpMigrationDi
             }}
           >
             {t('button_use_tiled')}
-          </SecondaryButton>
+          </PrimaryButton>
         </MessageBoxActionContainer>
       </MessageBoxContainer>
     </OverlayContainer>
