@@ -1,16 +1,18 @@
 import { EditorWithCollapse } from '@components/editor/Editor';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { InputFormContainer } from '@components/inputs/InputContainer';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import { Tag } from '@components/Tag';
-import { useCreaturePage } from '@hooks/usePage';
-import styled from 'styled-components';
-import React, { forwardRef, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useUpdateForm } from './useUpdateForm';
-import { CREATURE_FORM_VALIDATOR } from '@modelEntities/creature';
 import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
+import { useCreaturePage } from '@hooks/usePage';
 import { useZodForm } from '@hooks/useZodForm';
-import { InputFormContainer } from '@components/inputs/InputContainer';
+import { POSITIVE_INT } from '@modelEntities/common';
+import { CREATURE_FORM_VALIDATOR } from '@modelEntities/creature';
+import { useConfigSettings } from '@src/hooks/useProjectConfig';
+import React, { forwardRef, useMemo, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+import { useUpdateForm } from './useUpdateForm';
 
 const TotalBaseContainer = styled.div`
   display: flex;
@@ -32,26 +34,36 @@ const TotalBaseContainer = styled.div`
 `;
 
 const getStat = (stat: string, defaults: Record<string, unknown>, formData: Record<string, unknown>) => {
-  return Number(formData[stat] ? formData[stat] : defaults[stat] ?? 0);
+  return Number(formData[stat] ? formData[stat] : (defaults[stat] ?? 0));
 };
 const calculateTotal = (defaults: Record<string, unknown>, getRawFormData: () => Record<string, unknown>) => {
   const formData = getRawFormData();
   return ['baseHp', 'baseAtk', 'baseDfe', 'baseAts', 'baseDfs', 'baseSpd'].reduce((prev, stat) => prev + getStat(stat, defaults, formData), 0);
 };
 
-const STATS_EDITOR_SCHEMA = CREATURE_FORM_VALIDATOR.pick({
-  ...{ baseHp: true, baseAtk: true, baseDfe: true, baseAts: true, baseDfs: true, baseSpd: true },
-  ...{ evHp: true, evAtk: true, evDfe: true, evAts: true, evDfs: true, evSpd: true },
-});
-
 export const StatEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { t } = useTranslation();
   const { creature, form } = useCreaturePage();
   const updateForm = useUpdateForm(creature, form);
   const totalRef = useRef<HTMLSpanElement>(null);
+  const { projectConfigValues: settings } = useConfigSettings();
+  const STATS_EDITOR_SCHEMA = useMemo(
+    () =>
+      CREATURE_FORM_VALIDATOR.pick({
+        ...{ baseHp: true, baseAtk: true, baseDfe: true, baseAts: true, baseDfs: true, baseSpd: true },
+        ...{ evHp: true, evAtk: true, evDfe: true, evAts: true, evDfs: true, evSpd: true },
+      }).extend({
+        baseHp: POSITIVE_INT.max(settings.baseStatMaxValue),
+        baseAtk: POSITIVE_INT.max(settings.baseStatMaxValue),
+        baseDfe: POSITIVE_INT.max(settings.baseStatMaxValue),
+        baseAts: POSITIVE_INT.max(settings.baseStatMaxValue),
+        baseDfs: POSITIVE_INT.max(settings.baseStatMaxValue),
+        baseSpd: POSITIVE_INT.max(settings.baseStatMaxValue),
+      }),
+    [settings.baseStatMaxValue],
+  );
   const { canClose, getFormData, onInputTouched, defaults, getRawFormData, formRef } = useZodForm(STATS_EDITOR_SCHEMA, form);
   const { Input } = useInputAttrsWithLabel(STATS_EDITOR_SCHEMA, defaults);
-
   const handleBaseStatChange = () => {
     if (totalRef.current) totalRef.current.innerText = `${calculateTotal(defaults, getRawFormData)}`;
   };
