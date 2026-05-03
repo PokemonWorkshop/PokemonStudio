@@ -1866,6 +1866,5 @@
   "event_title_empty_state": "Start creating an event!",
   "event_description_empty_state": "You don't have any event yet. You can create a new event or import existing ones.",
   "max_base_stat_value": "Max base stat value",
-  "base_stat_recommended_limit_warning": "Setting base stats above 255 may affect game balance or compatibility with existing data.",
   "add_base_stat_max_value_to_settings": "Adding the max base stat value to project settings"
 }

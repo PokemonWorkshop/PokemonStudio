@@ -9,7 +9,7 @@ import { useZodForm } from '@hooks/useZodForm';
 import { POSITIVE_INT } from '@modelEntities/common';
 import { CREATURE_FORM_VALIDATOR } from '@modelEntities/creature';
 import { useConfigSettings } from '@src/hooks/useProjectConfig';
-import React, { forwardRef, useMemo, useRef, useState } from 'react';
+import React, { forwardRef, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useUpdateForm } from './useUpdateForm';
@@ -33,18 +33,6 @@ const TotalBaseContainer = styled.div`
   }
 `;
 
-const RecommendedWarning = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 8px 12px;
-  ${({ theme }) => theme.fonts.normalRegular}
-  background-color: ${({ theme }) => theme.colors.warningSoft};
-  border: 1px solid ${({ theme }) => theme.colors.warningSoft};
-  border-radius: 8px;
-  color: ${({ theme }) => theme.colors.warningBase};
-  box-sizing: border-box;
-`;
-
 const getStat = (stat: string, defaults: Record<string, unknown>, formData: Record<string, unknown>) => {
   return Number(formData[stat] ? formData[stat] : (defaults[stat] ?? 0));
 };
@@ -58,8 +46,6 @@ export const StatEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { creature, form } = useCreaturePage();
   const updateForm = useUpdateForm(creature, form);
   const totalRef = useRef<HTMLSpanElement>(null);
-  const isAboveRecommended = (data: Record<string, unknown>) =>
-    ['baseHp', 'baseAtk', 'baseDfe', 'baseAts', 'baseDfs', 'baseSpd'].some((k) => Number(data[k] ?? 0) > 255);
   const { projectConfigValues: settings } = useConfigSettings();
   const STATS_EDITOR_SCHEMA = useMemo(
     () =>
@@ -78,10 +64,8 @@ export const StatEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   );
   const { canClose, getFormData, onInputTouched, defaults, getRawFormData, formRef } = useZodForm(STATS_EDITOR_SCHEMA, form);
   const { Input } = useInputAttrsWithLabel(STATS_EDITOR_SCHEMA, defaults);
-  const [showRecommendedWarning, setShowRecommendedWarning] = useState(isAboveRecommended(defaults));
   const handleBaseStatChange = () => {
     if (totalRef.current) totalRef.current.innerText = `${calculateTotal(defaults, getRawFormData)}`;
-    setShowRecommendedWarning(isAboveRecommended(getRawFormData()));
   };
 
   const onClose = () => {
@@ -94,7 +78,6 @@ export const StatEditor = forwardRef<EditorHandlingClose>((_, ref) => {
     <EditorWithCollapse type="edit" title={t('stats')}>
       <InputFormContainer ref={formRef} size="s">
         <InputGroupCollapse title={t('base_stats')} collapseByDefault>
-          {showRecommendedWarning && <RecommendedWarning>{t('base_stat_recommended_limit_warning')}</RecommendedWarning>}
           <Input name="baseHp" label={t('hp')} labelLeft onInput={onInputTouched} onChange={handleBaseStatChange} />
           <Input name="baseAtk" label={t('attack')} labelLeft onInput={onInputTouched} onChange={handleBaseStatChange} />
           <Input name="baseDfe" label={t('defense')} labelLeft onInput={onInputTouched} onChange={handleBaseStatChange} />
