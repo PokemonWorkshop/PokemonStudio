@@ -1,5 +1,5 @@
-import React, { createContext, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { editorOverlayHidden } from '@components/editor/EditorOverlayV2';
+import React, { createContext, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 
 type LoaderTitle =
   | 'creating_project'
@@ -19,7 +19,7 @@ type LoaderErrorTitle =
   | 'importing_tiled_maps_error'
   | 'updating_maps_error'
   | 'compilation_project_error';
-type LoaderSuccessTitle = 'importing_tiled_maps_success';
+type LoaderSuccessTitle = 'importing_tiled_maps_success' | 'update_maps';
 
 type LoaderState = {
   thingInProgress: LoaderTitle;

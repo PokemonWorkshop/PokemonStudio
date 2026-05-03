@@ -639,7 +639,7 @@
   "import_selected_map_plural": "Importar {{amount}} mapas seleccionados",
   "searching_files": "Buscando los archivos a importar...",
   "no_files_found": "Archivo no encontrado",
-  "reading_data_tiled_files": "Leyendo los datos de los mapas de Tiled",
+  "reading_data_tiled_files": "Leyendo los datos de los mapas de Tiled...",
   "copy_tiled_files": "Copiar los mapas de Tiled al directorio del proyecto",
   "add_missing_rmxp_maps": "Añadir los mapas faltantes de RPG Maker XP.",
   "create_new_maps": "Crear nuevos mapas",
@@ -661,7 +661,7 @@
   "map_overview_not_found": "The map overview could not be found.",
   "map_overview_generate": "Generate map overview",
   "map_overview_generating": "Generating map overview",
-  "map_overviews_generating": "Generating map overviews",
+  "map_overviews_generating": "Generating map overviews...",
   "map_process_disabled": "Tiled installation path must be specified in the application settings.",
   "power": "Potencia",
   "accuracy": "Precisión",
@@ -1866,5 +1866,7 @@
   "event_title_empty_state": "Start creating an event!",
   "event_description_empty_state": "You don't have any event yet. You can create a new event or import existing ones.",
   "max_base_stat_value": "Max base stat value",
-  "add_base_stat_max_value_to_settings": "Adding the max base stat value to project settings"
+  "add_base_stat_max_value_to_settings": "Adding the max base stat value to project settings",
+  "full_map_dialog_message": "You can update all the maps in your project.\nThis process may take several minutes, depending on the number of maps in your project.",
+  "full_map_dialog_success": "All maps have been successfully updated."
 }
