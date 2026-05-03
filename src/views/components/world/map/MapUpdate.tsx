@@ -1,13 +1,13 @@
-import React from 'react';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
 import { BaseButtonStyle, WarningButton } from '@components/buttons';
+import { TooltipWrapper } from '@ds/Tooltip';
 import { useMapUpdate } from '@hooks/useMapUpdate';
-import { showNotification } from '@utils/showNotification';
+import theme from '@root/src/AppTheme';
 import { useLoaderRef } from '@utils/loaderContext';
 import { getSetting } from '@utils/settings';
-import { TooltipWrapper } from '@ds/Tooltip';
-import theme from '@root/src/AppTheme';
+import { showNotification } from '@utils/showNotification';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 export const MapUpdateContainer = styled.div`
   position: fixed;
@@ -54,6 +54,7 @@ export const MapUpdate = () => {
 
   const handleUpdate = async () => {
     mapUpdate(
+      { type: 'auto_detection' },
       () => {
         loaderRef.current.close();
         showNotification('success', t('update_maps'), t('update_maps_success'));
@@ -65,7 +66,7 @@ export const MapUpdate = () => {
         } else {
           loaderRef.current.setError('updating_maps_error', genericError || t('update_maps_error_generic'), true);
         }
-      }
+      },
     );
   };
 

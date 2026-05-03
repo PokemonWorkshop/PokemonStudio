@@ -639,7 +639,7 @@
   "import_selected_map_plural": "Import selected {{amount}} maps",
   "searching_files": "Searching for files to import..",
   "no_files_found": "No file found",
-  "reading_data_tiled_files": "Reading data from Tiled maps",
+  "reading_data_tiled_files": "Reading data from Tiled maps...",
   "copy_tiled_files": "Copy the Tiled maps to the project folder",
   "add_missing_rmxp_maps": "Addition of missing RPG Maker XP maps",
   "create_new_maps": "Creating new maps",
@@ -661,7 +661,7 @@
   "map_overview_not_found": "The map overview could not be found.",
   "map_overview_generate": "Generate map overview",
   "map_overview_generating": "Generating map overview",
-  "map_overviews_generating": "Generating map overviews",
+  "map_overviews_generating": "Generating map overviews...",
   "map_process_disabled": "Tiled installation path must be specified in the application settings.",
   "power": "Power",
   "accuracy": "Accuracy",
@@ -1864,5 +1864,7 @@
   "create_event": "Add event",
   "invalid_data": "Invalid data",
   "event_title_empty_state": "Start creating an event!",
-  "event_description_empty_state": "You don't have any event yet. You can create a new event or import existing ones."
+  "event_description_empty_state": "You don't have any event yet. You can create a new event or import existing ones.",
+  "full_map_dialog_message": "You can update all the maps in your project.\nThis process may take several minutes, depending on the number of maps in your project.",
+  "full_map_dialog_success": "All maps have been successfully updated."
 }

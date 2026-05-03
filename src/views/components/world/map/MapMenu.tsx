@@ -1,23 +1,24 @@
-import React from 'react';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
+import { NewFolderButtonOnlyIcon, SecondaryButtonWithPlusIcon } from '@components/buttons';
+import { UpdateMapButton } from '@components/buttons/UpdateMapButton';
 import { NavigationDatabaseStyle } from '@components/database/navigation/NavigationDatabase/NavigationDatabaseStyle';
 import { NavigationDatabaseGroup } from '@components/database/navigation/NavigationDatabaseGroup';
-import { NewFolderButtonOnlyIcon, SecondaryButtonWithPlusIcon } from '@components/buttons';
 import { NavigationDatabaseGroupStyle } from '@components/database/navigation/NavigationDatabaseGroup/NavigationDatabaseGroupStyle';
-import { useDialogsRef } from '@hooks/useDialogsRef';
-import { MapEditorAndDeletionKeys, MapEditorOverlay } from './editors/MapEditorOverlay';
-import { useMapInfo } from '@hooks/useMapInfo';
-import { createMapInfo } from '@utils/entityCreation';
-import { MAP_INFO_FOLDER_NAME_TEXT_ID, StudioMapInfoFolder } from '@modelEntities/mapInfo';
-import { useSetProjectText } from '@utils/ReadingProjectText';
 import { SeparatorGreyLine } from '@components/separators/SeparatorGreyLine';
-import { MapTree } from './tree/MapTree';
-import { addNewMapInfo, findMapInfoMap } from '@utils/MapInfoUtils';
-import { useMapPage } from '@root/src/hooks/usePage';
-import { MapUpdate } from './MapUpdate';
+import { useDialogsRef } from '@hooks/useDialogsRef';
+import { useMapInfo } from '@hooks/useMapInfo';
 import { useProjectMaps } from '@hooks/useProjectData';
+import { MAP_INFO_FOLDER_NAME_TEXT_ID, StudioMapInfoFolder } from '@modelEntities/mapInfo';
+import { useMapPage } from '@root/src/hooks/usePage';
+import { createMapInfo } from '@utils/entityCreation';
+import { addNewMapInfo, findMapInfoMap } from '@utils/MapInfoUtils';
+import { useSetProjectText } from '@utils/ReadingProjectText';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 import { DbSymbol } from '../../../../models/entities/dbSymbol';
+import { MapEditorAndDeletionKeys, MapEditorOverlay } from './editors/MapEditorOverlay';
+import { MapUpdate } from './MapUpdate';
+import { MapTree } from './tree/MapTree';
 
 const MapMenuContainer = styled(NavigationDatabaseStyle)`
   ${NavigationDatabaseGroupStyle} {
@@ -69,6 +70,11 @@ export const MapMenu = () => {
               {t('new_map')}
             </SecondaryButtonWithPlusIcon>
             <NewFolderButtonOnlyIcon onClick={handleNewFolder} data-tooltip={t('new_folder')} disabled={isRMXPMode} />
+            <UpdateMapButton
+              onClick={() => dialogsRef.current?.openDialog('full_update', true)}
+              data-tooltip={t('update_maps')}
+              disabled={isRMXPMode}
+            />
           </div>
           <SeparatorGreyLine />
           <MapTree />
