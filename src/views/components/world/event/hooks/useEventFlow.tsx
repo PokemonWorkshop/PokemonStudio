@@ -95,7 +95,6 @@ export const useEventFlow = (event: StudioEvent, eventFlowRef?: RefObject<HTMLDi
     if (shadowNode.hidden) return;
 
     setNodes((nds) => applyNodeChanges([{ type: 'replace', id: SHADOW_NODE_ID, item: { ...shadowNode, hidden: true } }], nds));
-    setType(undefined);
   };
 
   const onDrop: DragEventHandler<HTMLDivElement> = useCallback(

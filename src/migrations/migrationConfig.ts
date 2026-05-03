@@ -25,6 +25,7 @@ import { addMoveContestData } from './addMoveContestData';
 import { addMissingMapLinks } from './addMissingMapLinks';
 import { baseForEvents } from './baseForEvents';
 import { addCsvForEventFolders } from './addCsvForEventFolders';
+import { addSummaryPagesOptionsToSettings } from './addSummaryPagesOptionsToSettings';
 
 type MigrateConfigType = {
   migration: MigrationTask;
@@ -178,5 +179,10 @@ export const MIGRATION_CONFIG: MigrateConfigType[] = [
     migration: addCsvForEventFolders,
     version: '2.9.1',
     message: 'add_csv_for_event_folders',
+  },
+  {
+    migration: addSummaryPagesOptionsToSettings,
+    version: '2.9.1',
+    message: 'add_summary_pages_options_to_settings',
   },
 ];

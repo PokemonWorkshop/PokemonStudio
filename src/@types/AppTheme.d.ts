@@ -44,6 +44,62 @@ interface Colors {
   text500: string;
   text600: string;
   text700: string;
+
+  silverDark6: string;
+  silverDark9: string;
+  silverDark11: string;
+
+  goldDark6: string;
+  goldDark9: string;
+  goldDark11: string;
+
+  bronzeDark6: string;
+  bronzeDark9: string;
+  bronzeDark11: string;
+
+  topazDark6: string;
+  topazDark9: string;
+  topazDark11: string;
+
+  vermillionDark6: string;
+  vermillionDark9: string;
+  vermillionDark11: string;
+
+  magentaDark6: string;
+  magentaDark9: string;
+  magentaDark11: string;
+
+  amethystDark6: string;
+  amethystDark9: string;
+  amethystDark11: string;
+
+  lavenderDark6: string;
+  lavenderDark9: string;
+  lavenderDark11: string;
+
+  cobaltDark6: string;
+  cobaltDark9: string;
+  cobaltDark11: string;
+
+  ceruleanDark6: string;
+  ceruleanDark9: string;
+  ceruleanDark11: string;
+
+  cyanDark6: string;
+  cyanDark9: string;
+  cyanDark11: string;
+
+  celadonDark6: string;
+  celadonDark9: string;
+  celadonDark11: string;
+
+  peridotDark6: string;
+  peridotDark9: string;
+  peridotDark11: string;
+
+  oliveDark6: string;
+  oliveDark9: string;
+  oliveDark11: string;
 }
 
 interface Fonts {

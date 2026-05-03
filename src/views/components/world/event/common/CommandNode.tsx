@@ -2,7 +2,7 @@ import { useEventActions } from '@components/world/event/common/EventContext';
 import type { StudioEventCommandType } from '@modelEntities/event/command';
 import { useTranslation } from 'react-i18next';
 import { CommandDialogsRef } from '../commands/editors/CommandEditorOverlay';
-import { EventIcon, IconsFromCommand } from '@components/world/event/common/EventIcon';
+import { EventIcon, IconsFromCommand, EventIconColor } from '@components/world/event/common/EventIcon';
 import { Position } from '@xyflow/react';
 import { useHandleConnectionState } from '@components/world/event/hooks/useHandleConnectionState';
 import { CustomHandle } from '@components/world/event/common/CustomHandle';
@@ -11,7 +11,7 @@ import NoteIcon from '@assets/icons/global/note.svg';
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 
-const CommandNodeContainer = styled.div`
+const CommandNodeContainer = styled.div<{ color: EventIconColor }>`
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -19,25 +19,30 @@ const CommandNodeContainer = styled.div`
   width: 320px;
   isolation: isolate;
   border-radius: 16px;
-  background-color: #25262a;
-  background: linear-gradient(180deg, #1a294e 0%, #25262a 60px);
+  background: linear-gradient(
+    180deg,
+    ${({ theme, color }) => theme.colors[`${color}6`]} 0%,
+    ${({ theme, color }) => theme.colors[`${color}6`]} 32px,
+    #25262a 56px
+  );
   ${({ theme }) => theme.fonts.normalMedium}
   color: #b4b7c1;
 
   &[data-selected='true'] {
-    outline: 1px solid #2b4c9f;
+    outline: 1px solid ${({ theme, color }) => theme.colors[`${color}9`]};
   }
 
   .react-flow__node:focus-visible & {
-    outline: 1px solid #2b4c9f;
+    outline: 1px solid ${({ theme, color }) => theme.colors[`${color}9`]};
   }
 
   header {
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding: 4px 10px;
-    gap: 4px;
+    padding: 0px 10px;
+    height: 40px;
+    gap: 8px;
 
     .title {
       color: ${({ theme }) => theme.colors.text100};
@@ -58,6 +63,10 @@ const CommandNodeContainer = styled.div`
     align-items: center;
     padding: 0px 6px;
     gap: 8px;
+
+    .badge {
+      padding-left: 2px;
+    }
 
     .status {
       display: flex;
@@ -118,7 +127,12 @@ const CommandNodeContainer = styled.div`
   .container {
     padding: 1px;
     &[data-selected='false'] {
-      background: linear-gradient(180deg, #2b4c9f 0%, #25262a 60px);
+      background: linear-gradient(
+        180deg,
+        ${({ theme, color }) => theme.colors[`${color}9`]} 0%,
+        ${({ theme, color }) => theme.colors[`${color}9`]} 32px,
+        #25262a 56px
+      );
     }
     border-radius: 14px;
   }
@@ -159,7 +173,7 @@ export const CommandNode = ({ commandType, commentCount, dialogsRef, hasError, n
       <CustomHandle color={color} handleIsConnected={handleLeftIsConnected} id="Tleft_default" position={Position.Left} type="target" />
       <CustomHandle color={color} handleIsConnected={handleRightIsConnected} id="Sright_default" position={Position.Right} type="source" />
       <CommandNodeContainer
-        data-color={color}
+        color={color}
         data-selected={selected}
         onDoubleClick={() => {
           setCurrentEditedNode(nodeId);
@@ -177,9 +191,11 @@ export const CommandNode = ({ commandType, commentCount, dialogsRef, hasError, n
         </div>
         <footer style={{ height: deployFooter ? '24px' : '8px' }}>
           {hasError ? (
-            <div className="status">
-              <InfoIcon className="icon" />
-              <span className="label">{t('invalid_data')}</span>
+            <div className="badge">
+              <div className="status">
+                <InfoIcon className="icon" />
+                <span className="label">{t('invalid_data')}</span>
+              </div>
             </div>
           ) : (
             <div />

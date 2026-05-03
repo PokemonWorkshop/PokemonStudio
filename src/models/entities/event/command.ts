@@ -145,7 +145,7 @@ export const COMMANDS_FROM_CATEGORY: Record<StudioEventCommandCategory, EventCom
     { commandType: 'go_to' },
     { commandType: 'wait_for_set_time' },
     { commandType: 'stop_event_execution' },
-    { commandType: 'call_event', helper: true },
+    { commandType: 'call_event' },
     { commandType: 'trigger_event' },
   ],
   movement: [
