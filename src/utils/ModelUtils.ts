@@ -8,7 +8,7 @@ import { ProjectData } from '@src/GlobalStateProvider';
  * @returns The text id
  */
 export const findFirstAvailableTextId = (
-  allData: ProjectData['abilities'] | ProjectData['types'] | StudioTextInfo[] | StudioTrainerAdditionalDialogs[]
+  allData: ProjectData['abilities'] | ProjectData['types'] | StudioTextInfo[] | StudioTrainerAdditionalDialogs[],
 ) => {
   const textIdSet = Object.values(allData)
     .map(({ textId }) => textId) // Fetch all ids
@@ -108,4 +108,21 @@ export const findFirstAvailableCustomObjectiveTextId = (allQuests: ProjectData['
   if (holeIndex === -1) return textIdSet[textIdSet.length - 1] + 1;
 
   return textIdSet[holeIndex - 1] + 1;
+};
+
+export const findFirstAvailableCsvFileId = (allData: Record<string, { csvFileId: number }>, startId: number) => {
+  const values = Object.values(allData);
+  if (values.length === 0) return startId;
+
+  const idSet = values
+    .map(({ csvFileId }) => csvFileId) // Fetch all csvFileIds
+    .filter((id, index, array) => index === array.indexOf(id)) // reject all duplicates
+    .sort((a, b) => a - b); // sort id by ascending order
+  // Since ids are ordered, if the first isn't the startId that means we need to fill the beginning of the list ;)
+  if (idSet[0] > startId) return startId;
+
+  const holeIndex = idSet.findIndex((id, index) => id !== index + startId);
+  if (holeIndex === -1) return idSet[idSet.length - 1] + 1;
+
+  return idSet[holeIndex - 1] + 1;
 };
