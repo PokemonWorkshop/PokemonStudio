@@ -1,13 +1,13 @@
 import { Editor } from '@components/editor';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useTranslation } from 'react-i18next';
-import { EventEditorProps } from './EventEditorProps';
-import { EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR, StudioEventCommandInsertScript } from '@modelEntities/event/command';
-import { useZodForm } from '@src/hooks/useZodForm';
 import { InputFormContainer } from '@components/inputs/InputContainer';
+import { EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR, StudioEventCommandInsertScript } from '@modelEntities/event/command';
 import { useInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
-import { useCommandEditor } from '../../hooks/useCommandEditor';
+import { useZodForm } from '@src/hooks/useZodForm';
 import React, { forwardRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useCommandEditor } from '../../hooks/useCommandEditor';
+import { EventEditorProps } from './EventEditorProps';
 
 const INSERT_SCRIPT_EDITOR_SCHEMA = EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR.pick({ script: true });
 

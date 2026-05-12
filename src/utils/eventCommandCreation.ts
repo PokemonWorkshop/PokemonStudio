@@ -1,9 +1,22 @@
-import type { StudioEventCommandType, StudioEventCommand, StudioEventCommandData } from '@modelEntities/event/command';
+import type { StudioEventCommand, StudioEventCommandData, StudioEventCommandType } from '@modelEntities/event/command';
 
+const showMessageCommand = {
+  message: '',
+  allowSkipping: false,
+  narrator: '',
+  nameColor: '#000000',
+  showMessageBox: true,
+  messageBoxPosition: 'bottom',
+  messageBoxAppearance: '',
+  lookAtThisEvent: false,
+  lookToOtherEvent: '__undef__',
+  minimap: '',
+  mugshots: [],
+};
 const insertScriptCommand = { script: '' };
 
 export const EventCommandCreation: Record<StudioEventCommandType, Omit<StudioEventCommandData<StudioEventCommand>, 'type'>> = {
-  show_message: {},
+  show_message: showMessageCommand,
   narrator_settings: {},
   manage_message_box: {},
   show_choice: {},

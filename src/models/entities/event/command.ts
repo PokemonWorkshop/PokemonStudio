@@ -1,5 +1,5 @@
-import type { StudioEventCommandCategory } from './category';
 import { z } from 'zod';
+import type { StudioEventCommandCategory } from './category';
 
 export const COMMAND_ID_VALIDATOR = z.string().brand('CommandId');
 export type CommandId = z.infer<typeof COMMAND_ID_VALIDATOR>;
@@ -7,10 +7,9 @@ export type CommandId = z.infer<typeof COMMAND_ID_VALIDATOR>;
 export const COMMAND_CONNECTION_ID_VALIDATOR = z.string().brand('ConnectionId');
 export type ConnectionId = z.infer<typeof COMMAND_CONNECTION_ID_VALIDATOR>;
 
-// TODO: change for z.number().int() if we use snapToGrid in the event editor
 const EVENT_COMMAND_STUDIO_DATA_VALIDATOR = z.object({
-  x: z.number(),
-  y: z.number(),
+  x: z.number().int(),
+  y: z.number().int(),
   comments: z.array(z.string()),
 });
 
@@ -22,6 +21,42 @@ export const EVENT_COMMAND_CONNECTION_VALIDATOR = z.object({
 
 export type StudioEventCommandConnection = z.infer<typeof EVENT_COMMAND_CONNECTION_VALIDATOR>;
 
+//#region Messages
+
+export const MESSAGE_BOX_POSITION_VALIDATOR = z.union([z.literal('top'), z.literal('middle'), z.literal('bottom')]);
+export type StudioMessageBoxPosition = z.infer<typeof MESSAGE_BOX_POSITION_VALIDATOR>;
+
+export const MUGSHOT_VALIDATOR = z.object({
+  image: z.string().default(''),
+  isMirrored: z.boolean().default(false),
+  position: z.number().int().default(0),
+  opacity: z.number().int().default(100),
+});
+export type StudioMugshot = z.infer<typeof MUGSHOT_VALIDATOR>;
+
+export const EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR = z.object({
+  type: z.literal('show_message'),
+  message: z.string().default(''),
+  allowSkipping: z.boolean().default(false),
+  narrator: z.string().default(''),
+  nameColor: z.string().default('#000000'),
+  showMessageBox: z.boolean().default(true),
+  messageBoxPosition: MESSAGE_BOX_POSITION_VALIDATOR.default('bottom'),
+  messageBoxAppearance: z.string().default(''),
+  lookAtThisEvent: z.boolean().default(false),
+  lookToOtherEvent: z.string().default('__undef__'),
+  minimap: z.string().default(''),
+  mugshots: z.array(MUGSHOT_VALIDATOR).default([]),
+  connections: z.record(COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_CONNECTION_VALIDATOR),
+  studioData: EVENT_COMMAND_STUDIO_DATA_VALIDATOR,
+});
+
+export type StudioEventCommandShowMessage = z.infer<typeof EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR>;
+
+//#endregion
+
+//#region Scripting
+
 export const EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR = z.object({
   type: z.literal('insert_script'),
   script: z.string().default(''),
@@ -31,6 +66,8 @@ export const EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR = z.object({
 
 export type StudioEventCommandInsertScript = z.infer<typeof EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR>;
 
+//#endregion
+
 const GENERIC_COMMAND = <T extends string>(type: T) =>
   z.object({
     type: z.literal(type),
@@ -39,7 +76,7 @@ const GENERIC_COMMAND = <T extends string>(type: T) =>
   });
 
 export const EVENT_COMMAND_VALIDATOR = z.discriminatedUnion('type', [
-  GENERIC_COMMAND('show_message'),
+  EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR,
   GENERIC_COMMAND('narrator_settings'),
   GENERIC_COMMAND('manage_message_box'),
   GENERIC_COMMAND('show_choice'),
