@@ -46,7 +46,7 @@ export const EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR = z.object({
   lookAtThisEvent: z.boolean().default(false),
   lookToOtherEvent: z.string().default('__undef__'),
   minimap: z.string().default(''),
-  mugshots: z.array(MUGSHOT_VALIDATOR).default([]),
+  portraits: z.array(MUGSHOT_VALIDATOR).default([]),
   connections: z.record(COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_CONNECTION_VALIDATOR),
   studioData: EVENT_COMMAND_STUDIO_DATA_VALIDATOR,
 });

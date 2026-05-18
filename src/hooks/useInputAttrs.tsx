@@ -1,5 +1,6 @@
 import {
   Input,
+  InputWithColorLabelContainer,
   InputWithLeftLabelContainer,
   InputWithTopLabelContainer,
   Label,
@@ -49,12 +50,21 @@ export const useInputAttrsWithLabel = <T extends z.ZodRawShape>(schema: z.ZodObj
         if (!label) return <Input {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />;
 
         if (labelLeft)
-          return (
-            <InputWithLeftLabelContainer>
-              <Label>{label}</Label>
-              <Input {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />
-            </InputWithLeftLabelContainer>
-          );
+          if (props.type === 'color') {
+            return (
+              <InputWithColorLabelContainer>
+                <Label>{label}</Label>
+                <Input {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />
+              </InputWithColorLabelContainer>
+            );
+          } else {
+            return (
+              <InputWithLeftLabelContainer>
+                <Label>{label}</Label>
+                <Input {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />
+              </InputWithLeftLabelContainer>
+            );
+          }
 
         return (
           <InputWithTopLabelContainer>

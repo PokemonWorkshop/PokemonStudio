@@ -11,7 +11,7 @@ const showMessageCommand = {
   lookAtThisEvent: false,
   lookToOtherEvent: '__undef__',
   minimap: '',
-  mugshots: [],
+  portraits: [],
 };
 const insertScriptCommand = { script: '' };
 
