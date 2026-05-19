@@ -9,10 +9,12 @@ import {
   NodeMultiLineInput,
   Toggle,
 } from '@components/inputs';
+import { DropInput } from '@components/inputs/DropInput';
 import { EmbeddedUnitInput } from '@components/inputs/EmbeddedUnitInput';
 import { Select } from '@ds/Select';
 import { inputAttrs } from '@utils/inputAttrs';
-import React, { useMemo } from 'react';
+import { basename } from '@utils/path';
+import React, { useMemo, useRef } from 'react';
 import { z } from 'zod';
 
 type WithSchemaKeyAndName = {
@@ -22,6 +24,46 @@ type WithSchemaKeyAndName = {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ReactProps<T extends (...args: any) => any> = Omit<Parameters<T>[0], 'name'> & WithSchemaKeyAndName;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ReactPropsWithLabel<T extends (...args: any) => any> = Omit<Parameters<T>[0], 'name'> &
+  WithSchemaKeyAndName & { label?: string; labelLeft?: boolean };
+
+const createDropInputField = <T extends z.ZodRawShape>(schema: z.ZodObject<T>, defaults?: Record<string, unknown>) => {
+  const DropInputField = ({
+    name,
+    schemaKey,
+    label,
+    filename,
+    ...props
+  }: Omit<ReactPropsWithLabel<typeof DropInput>, 'onFileChoosen'> & { filename: string }) => {
+    const { type, ...attrs } = inputAttrs(schema, name, defaults, schemaKey);
+    const inputRef = useRef<HTMLInputElement | null>(null);
+
+    const onFileChoosen = (filePath: string) => {
+      if (!inputRef?.current) return;
+
+      inputRef.current.value = basename(filePath, '.png'); // TODO: should depends to extensions
+    };
+
+    const inner = (
+      <>
+        <input ref={inputRef} {...attrs} style={{ display: 'none' }} />
+        <DropInput onFileChoosen={onFileChoosen} name={filename} {...props} />
+      </>
+    );
+
+    if (!label) return inner;
+
+    return (
+      <InputWithTopLabelContainer>
+        <Label>{label}</Label>
+        {inner}
+      </InputWithTopLabelContainer>
+    );
+  };
+  return DropInputField;
+};
 
 export const useInputAttrs = <T extends z.ZodRawShape>(schema: z.ZodObject<T>, defaults?: Record<string, unknown>) => {
   return useMemo(
@@ -38,10 +80,6 @@ export const useInputAttrs = <T extends z.ZodRawShape>(schema: z.ZodObject<T>, d
     [schema, defaults],
   );
 };
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ReactPropsWithLabel<T extends (...args: any) => any> = Omit<Parameters<T>[0], 'name'> &
-  WithSchemaKeyAndName & { label?: string; labelLeft?: boolean };
 
 export const useInputAttrsWithLabel = <T extends z.ZodRawShape>(schema: z.ZodObject<T>, defaults?: Record<string, unknown>) => {
   return useMemo(
@@ -140,6 +178,7 @@ export const useInputAttrsWithLabel = <T extends z.ZodRawShape>(schema: z.ZodObj
           </InputWithLeftLabelContainer>
         );
       },
+      DropInput: createDropInputField(schema, defaults),
     }),
     [schema, defaults],
   );
