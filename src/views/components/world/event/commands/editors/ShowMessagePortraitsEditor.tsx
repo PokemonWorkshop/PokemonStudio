@@ -73,7 +73,7 @@ export const ShowMessagePortraitsEditor = forwardRef<EditorHandlingClose, EventE
               <DeleteIcon onClick={removePortrait(index)} />
             </TitleContainer>
             <PaddedInputContainer>
-              <Toggle name={`portraits.${index}.isMirrored`} label={t('event_command_is_mirrored')} />
+              <Toggle name={`portraits.${index}.isMirrored`} label={t('event_command_is_mirrored')} defaultChecked={portrait.isMirrored} />
               <InputContainer size="xxs">
                 <EmbeddedUnitInput
                   name={`portraits.${index}.position`}
