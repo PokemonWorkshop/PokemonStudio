@@ -43,7 +43,7 @@ const createDropInputField = <T extends z.ZodRawShape>(schema: z.ZodObject<T>, d
     const onFileChoosen = (filePath: string) => {
       if (!inputRef?.current) return;
 
-      inputRef.current.value = basename(filePath, '.png'); // TODO: should depends to extensions
+      inputRef.current.value = basename(filePath.split('.')[0]);
     };
 
     const inner = (
