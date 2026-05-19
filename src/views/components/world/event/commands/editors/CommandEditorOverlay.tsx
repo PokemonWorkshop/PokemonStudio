@@ -6,7 +6,8 @@ import { assertUnreachable } from '@utils/assertUnreachable';
 import React from 'react';
 import { DefaultEditor } from './DefaultEditor';
 import { InsertScriptEditor } from './InsertScriptEditor';
-import { ShowMessageEditor } from './ShowMessageEditor';
+//import { ShowMessageEditor } from './ShowMessageEditor';
+import { ShowMessagePortraitsEditor } from './ShowMessagePortraitsEditor';
 
 export type CommandEditorAndDeletionKeys = StudioEventCommandType;
 export type CommandDialogsRef = React.RefObject<DialogRefData<CommandEditorAndDeletionKeys> | null>;
@@ -20,7 +21,8 @@ export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletion
   (dialogToShow, handleCloseRef, closeDialog, { commandId, event }) => {
     switch (dialogToShow) {
       case 'show_message':
-        return <ShowMessageEditor commandId={commandId} event={event} ref={handleCloseRef} />;
+        //return <ShowMessageEditor commandId={commandId} event={event} ref={handleCloseRef} />;
+        return <ShowMessagePortraitsEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'narrator_settings':
       case 'manage_message_box':
       case 'show_choice':

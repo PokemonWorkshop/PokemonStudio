@@ -26,13 +26,13 @@ export type StudioEventCommandConnection = z.infer<typeof EVENT_COMMAND_CONNECTI
 export const MESSAGE_BOX_POSITION_VALIDATOR = z.union([z.literal('top'), z.literal('middle'), z.literal('bottom')]);
 export type StudioMessageBoxPosition = z.infer<typeof MESSAGE_BOX_POSITION_VALIDATOR>;
 
-export const MUGSHOT_VALIDATOR = z.object({
+export const PORTRAIT_VALIDATOR = z.object({
   image: z.string().default(''),
   isMirrored: z.boolean().default(false),
   position: z.number().int().default(0),
   opacity: z.number().int().default(100),
 });
-export type StudioMugshot = z.infer<typeof MUGSHOT_VALIDATOR>;
+export type StudioPortrait = z.infer<typeof PORTRAIT_VALIDATOR>;
 
 export const EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR = z.object({
   type: z.literal('show_message'),
@@ -46,7 +46,7 @@ export const EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR = z.object({
   lookAtThisEvent: z.boolean().default(false),
   lookToOtherEvent: z.string().default('__undef__'),
   minimap: z.string().default(''),
-  portraits: z.array(MUGSHOT_VALIDATOR).default([]),
+  portraits: z.array(PORTRAIT_VALIDATOR).default([]),
   connections: z.record(COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_CONNECTION_VALIDATOR),
   studioData: EVENT_COMMAND_STUDIO_DATA_VALIDATOR,
 });
