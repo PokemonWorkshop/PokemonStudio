@@ -34,7 +34,7 @@ const InfoContainer = styled.span`
 export const ShowMessageEditor = forwardRef<EditorHandlingClose, EventEditorProps>(({ commandId: defaultCommandId, event }, ref) => {
   const { command, updateCommand } = useCommandEditor<StudioEventCommandShowMessage>(event, defaultCommandId);
   const { canClose, getFormData, defaults, formRef } = useZodForm(SHOW_MESSAGE_EDITOR_SCHEMA, command);
-  const { DropInput, Input, MultiLineInput, Toggle, Select } = useInputAttrsWithLabel(SHOW_MESSAGE_EDITOR_SCHEMA, defaults);
+  const { Input, MultiLineInput, ResourceInput, Toggle, Select } = useInputAttrsWithLabel(SHOW_MESSAGE_EDITOR_SCHEMA, defaults);
   const { t } = useTranslation();
   const [color, setColor] = useState<string>(command.nameColor);
   const messageBoxOptions = useMemo(
@@ -86,11 +86,12 @@ export const ShowMessageEditor = forwardRef<EditorHandlingClose, EventEditorProp
         <InputGroupCollapse title={t('event_command_message_box')} collapseByDefault gap="24px" noMargin>
           <Toggle name="showMessageBox" label={t('event_command_show_message_box')} />
           <Select name="messageBoxPosition" label={t('event_command_message_box_position')} options={messageBoxOptions} />
-          <DropInput
+          <ResourceInput
             name="messageBoxAppearance"
             label={t('event_command_message_box_appearance')}
             extensions={['png']}
             filename={t('event_command_message_box_appearance')}
+            destFolderToCopy="graphics/battlers"
           />
         </InputGroupCollapse>
         <InputGroupCollapse title={t('event_command_other_options')} collapseByDefault gap="24px" noMargin>
@@ -99,7 +100,13 @@ export const ShowMessageEditor = forwardRef<EditorHandlingClose, EventEditorProp
             <InfoContainer>{t('event_command_look_at_this_event_info')}</InfoContainer>
           </InputContainer>
           <Select name="lookToOtherEvent" label={t('event_command_look_to_other_event')} options={lookToEventOptions} />
-          <DropInput name="minimap" label={t('event_command_minimap')} extensions={['png']} filename={t('event_command_minimap')} />
+          <ResourceInput
+            name="minimap"
+            label={t('event_command_minimap')}
+            extensions={['png']}
+            filename={t('event_command_minimap')}
+            destFolderToCopy="graphics/battlers"
+          />
         </InputGroupCollapse>
       </InputFormContainer>
     </EditorWithCollapse>

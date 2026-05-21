@@ -49,7 +49,7 @@ export const ShowMessagePortraitsEditor = forwardRef<EditorHandlingClose, EventE
   const nextKey = useRef(command.portraits.length);
   const [portraits, setPortraits] = useState(() => command.portraits.map((data, i) => ({ data, key: i })));
   const { canClose, getFormData, defaults, formRef } = useZodForm(SHOW_MESSAGE_EDITOR_SCHEMA, command);
-  const { EmbeddedUnitInput, Toggle } = useInputAttrsWithLabel(SHOW_MESSAGE_EDITOR_SCHEMA, defaults);
+  const { EmbeddedUnitInput, ResourceInput, Toggle } = useInputAttrsWithLabel(SHOW_MESSAGE_EDITOR_SCHEMA, defaults);
   const { t } = useTranslation();
 
   const addPortrait = () => setPortraits((prev) => [...prev, { data: PORTRAIT_VALIDATOR.parse({}), key: nextKey.current++ }]);
@@ -73,6 +73,13 @@ export const ShowMessagePortraitsEditor = forwardRef<EditorHandlingClose, EventE
               <DeleteIcon onClick={removePortrait(index)} />
             </TitleContainer>
             <PaddedInputContainer>
+              <ResourceInput
+                name={`portraits.${index}.image`}
+                label={t('image')}
+                extensions={['png']}
+                filename={t('image')}
+                destFolderToCopy="graphics/battlers"
+              />
               <Toggle name={`portraits.${index}.isMirrored`} label={t('event_command_is_mirrored')} defaultChecked={portrait.isMirrored} />
               <InputContainer size="xxs">
                 <EmbeddedUnitInput

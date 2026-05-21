@@ -1,4 +1,5 @@
 import {
+  FileInput,
   Input,
   InputWithColorLabelContainer,
   InputWithLeftLabelContainer,
@@ -14,7 +15,7 @@ import { EmbeddedUnitInput } from '@components/inputs/EmbeddedUnitInput';
 import { Select } from '@ds/Select';
 import { inputAttrs } from '@utils/inputAttrs';
 import { basename } from '@utils/path';
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { z } from 'zod';
 
 type WithSchemaKeyAndName = {
@@ -29,40 +30,44 @@ type ReactProps<T extends (...args: any) => any> = Omit<Parameters<T>[0], 'name'
 type ReactPropsWithLabel<T extends (...args: any) => any> = Omit<Parameters<T>[0], 'name'> &
   WithSchemaKeyAndName & { label?: string; labelLeft?: boolean };
 
-const createDropInputField = <T extends z.ZodRawShape>(schema: z.ZodObject<T>, defaults?: Record<string, unknown>) => {
-  const DropInputField = ({
-    name,
-    schemaKey,
-    label,
-    filename,
-    ...props
-  }: Omit<ReactPropsWithLabel<typeof DropInput>, 'onFileChoosen'> & { filename: string }) => {
+type ResourceInputFieldProps = Omit<ReactProps<typeof FileInput>, 'onFileChoosen' | 'onFileClear' | 'filePath'> & {
+  filename: string;
+};
+
+const createResourceInputField = <T extends z.ZodRawShape>(schema: z.ZodObject<T>, defaults?: Record<string, unknown>) => {
+  const ResourceInputField = ({ name, schemaKey, filename, ...props }: ResourceInputFieldProps) => {
     const { type, ...attrs } = inputAttrs(schema, name, defaults, schemaKey);
     const inputRef = useRef<HTMLInputElement | null>(null);
+    const [value, setValue] = useState((defaults?.[name] as string) ?? '');
+    const filePath = value ? `${props.destFolderToCopy}/${value}` : '';
 
     const onFileChoosen = (filePath: string) => {
+      const newValue = basename(filePath);
       if (!inputRef?.current) return;
 
-      inputRef.current.value = basename(filePath.split('.')[0]);
+      inputRef.current.value = newValue;
+      setValue(newValue);
     };
 
-    const inner = (
-      <>
-        <input ref={inputRef} {...attrs} style={{ display: 'none' }} />
-        <DropInput onFileChoosen={onFileChoosen} name={filename} {...props} />
-      </>
-    );
+    const onFileClear = () => {
+      if (!inputRef?.current) return;
 
-    if (!label) return inner;
+      inputRef.current.value = '';
+      setValue('');
+    };
 
     return (
-      <InputWithTopLabelContainer>
-        <Label>{label}</Label>
-        {inner}
-      </InputWithTopLabelContainer>
+      <>
+        <input ref={inputRef} {...attrs} style={{ display: 'none' }} />
+        {value ? (
+          <FileInput onFileChoosen={onFileChoosen} onFileClear={onFileClear} filePath={filePath} name={filename} {...props} />
+        ) : (
+          <DropInput onFileChoosen={onFileChoosen} name={filename} {...props} />
+        )}
+      </>
     );
   };
-  return DropInputField;
+  return ResourceInputField;
 };
 
 export const useInputAttrs = <T extends z.ZodRawShape>(schema: z.ZodObject<T>, defaults?: Record<string, unknown>) => {
@@ -72,9 +77,21 @@ export const useInputAttrs = <T extends z.ZodRawShape>(schema: z.ZodObject<T>, d
       EmbeddedUnitInput: ({ name, schemaKey, ...props }: ReactProps<typeof EmbeddedUnitInput>) => (
         <EmbeddedUnitInput lang="en" {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />
       ),
+      MultiLineInput: ({ name, schemaKey, ...props }: ReactProps<typeof Input>) => (
+        <MultiLineInput {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />
+      ),
       Select: ({ name, schemaKey, ...props }: ReactProps<typeof Select>) => {
         const { type, ...attrs } = inputAttrs(schema, name, defaults, schemaKey);
         return <Select {...attrs} {...props} />;
+      },
+      Toggle: ({ name, schemaKey, ...props }: ReactProps<typeof Toggle>) => {
+        const { type, required, ...attrs } = inputAttrs(schema, name, defaults, schemaKey);
+        const defaultChecked = attrs.defaultValue === 'true';
+        return <Toggle {...attrs} {...props} defaultChecked={props.defaultChecked ?? defaultChecked} />;
+      },
+      ResourceInput: ({ ...props }: ResourceInputFieldProps) => {
+        const ResourceInputField = useMemo(() => createResourceInputField(schema, defaults), []);
+        return <ResourceInputField {...props} />;
       },
     }),
     [schema, defaults],
@@ -178,7 +195,17 @@ export const useInputAttrsWithLabel = <T extends z.ZodRawShape>(schema: z.ZodObj
           </InputWithLeftLabelContainer>
         );
       },
-      DropInput: createDropInputField(schema, defaults),
+      ResourceInput: ({ label, ...props }: ResourceInputFieldProps & { label?: string }) => {
+        const ResourceInputField = useMemo(() => createResourceInputField(schema, defaults), []);
+        if (!label) return <ResourceInputField {...props} />;
+
+        return (
+          <InputWithTopLabelContainer>
+            <Label>{label}</Label>
+            <ResourceInputField {...props} />
+          </InputWithTopLabelContainer>
+        );
+      },
     }),
     [schema, defaults],
   );
