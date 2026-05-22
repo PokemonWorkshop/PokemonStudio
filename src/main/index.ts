@@ -1,61 +1,61 @@
 /* eslint global-require: off, no-console: off */
 
-import crypto from 'crypto';
-import path from 'path';
-import { app, BrowserWindow, ipcMain, shell } from 'electron';
-import log, { FileTransport, PathVariables } from 'electron-log';
-import MenuBuilder from './menu';
+import { registerCheckDownloadNewProject } from '@src/backendTasks/checkDownloadNewProject';
+import { registerCheckMapsModified } from '@src/backendTasks/checkMapsModified';
+import { registerConvertRMXPEventsToStudioEvents } from '@src/backendTasks/convertRMXPEventsToStudioEvents';
+import { registerConvertTiledMapToTileMetadata } from '@src/backendTasks/convertTiledMapToTileMetadata';
+import { registerCopyTiledFiles } from '@src/backendTasks/copyTiledFiles';
+import { registerDownloadFile } from '@src/backendTasks/downloadFile';
+import { registerGeneratingMapOverview } from '@src/backendTasks/generatingMapOverview';
+import { registerGetCompilationConfig } from '@src/backendTasks/getCompilationConfig';
+import { registerGetFilePathsFromFolder } from '@src/backendTasks/getFilePathsFromFolder';
+import { registerOpenCompilationWindow } from '@src/backendTasks/openCompilationWindow';
+import { registerOpenStudioLogsFolder } from '@src/backendTasks/openStudioLogsFolder';
+import { registerOpenTiled } from '@src/backendTasks/openTiled';
+import { registerReadCsvFile } from '@src/backendTasks/readCsvFile';
+import { registerReadMaps } from '@src/backendTasks/readMaps';
+import { registerReadRMXPEvents } from '@src/backendTasks/readRMXPEvents';
+import { registerRequestJson } from '@src/backendTasks/requestJson';
+import { registerSaveCompilationLogs } from '@src/backendTasks/saveCompilationLogs';
+import { registerSaveEventTree } from '@src/backendTasks/saveEventTree';
+import { registerSaveMapInfo } from '@src/backendTasks/saveMapInfo';
+import { registerSaveRMXPMapInfo } from '@src/backendTasks/saveRMXPMapInfo';
+import { registerSaveTextInfos } from '@src/backendTasks/saveTextInfos';
+import { registerStartCompilation } from '@src/backendTasks/startCompilation';
+import { registerStartupStudioFile, startupFiles } from '@src/backendTasks/startupStudioFile';
+import { registerSynchronizeLanguage } from '@src/backendTasks/synchronizeLanguage';
+import { registerUpdateTextInfos } from '@src/backendTasks/updateTextInfos';
 import windowManager from '@src/backendTasks/windowManager';
-import { autoUpdater } from 'electron-updater';
-import { getPSDKBinariesPath, getPSDKVersion } from '../services/getPSDKVersion';
-import { getLastPSDKVersion } from '../services/getLastPSDKVersion';
-import { updatePSDK } from '../services/updatePSDK';
-import { startPSDK, startPSDKDebug, startPSDKWorldmap } from '../services/startPSDK';
 import { registerElectronProtocolWhenAppRead } from '@utils/electronProtocol';
-import { registerGetStudioVersion } from '../backendTasks/getStudioVersion';
+import crypto from 'crypto';
+import { app, BrowserWindow, ipcMain, protocol, shell } from 'electron';
+import log, { FileTransport, PathVariables } from 'electron-log';
+import { autoUpdater } from 'electron-updater';
+import path from 'path';
+import { registerChooseFile } from '../backendTasks/chooseFile';
+import { registerChooseFolder } from '../backendTasks/chooseFolder';
 import { registerChooseProjectFileToOpen } from '../backendTasks/chooseProjectFileToOpen';
-import { registerWriteProjectMetadata } from '../backendTasks/writeProjectMetadata';
-import { registerReadProjectMetadata } from '../backendTasks/readProjectMetadata';
+import { registerConfigureNewProject } from '../backendTasks/configureNewProject';
+import { registerCopyFile } from '../backendTasks/copyFile';
+import { registerExtractNewProject } from '../backendTasks/extractNewProject';
+import { registerFileExists } from '../backendTasks/fileExists';
+import { registerGetStudioVersion } from '../backendTasks/getStudioVersion';
+import { registerMigrateData } from '../backendTasks/migrateData';
+import { registerProjectStudioFile } from '../backendTasks/projectStudioFile';
 import { registerReadProjectConfigs } from '../backendTasks/readProjectConfigs';
 import { registerReadProjectData } from '../backendTasks/readProjectData';
+import { registerReadProjectMetadata } from '../backendTasks/readProjectMetadata';
 import { registerReadProjectTexts } from '../backendTasks/readProjectTexts';
-import { registerMigrateData } from '../backendTasks/migrateData';
-import { registerFileExists } from '../backendTasks/fileExists';
-import { registerChooseFolder } from '../backendTasks/chooseFolder';
-import { registerExtractNewProject } from '../backendTasks/extractNewProject';
-import { registerConfigureNewProject } from '../backendTasks/configureNewProject';
-import { registerSaveProjectData } from '../backendTasks/saveProjectData';
 import { registerSaveProjectConfigs } from '../backendTasks/saveProjectConfigs';
+import { registerSaveProjectData } from '../backendTasks/saveProjectData';
 import { registerSaveProjectTexts } from '../backendTasks/saveProjectTexts';
-import { registerProjectStudioFile } from '../backendTasks/projectStudioFile';
-import { registerChooseFile } from '../backendTasks/chooseFile';
 import { registerShowItemInFolder } from '../backendTasks/showFileInFolder';
-import { registerCopyFile } from '../backendTasks/copyFile';
-import { registerUpdateTextInfos } from '@src/backendTasks/updateTextInfos';
-import { registerSaveTextInfos } from '@src/backendTasks/saveTextInfos';
-import { registerReadCsvFile } from '@src/backendTasks/readCsvFile';
-import { registerOpenStudioLogsFolder } from '@src/backendTasks/openStudioLogsFolder';
-import { registerCheckMapsModified } from '@src/backendTasks/checkMapsModified';
-import { registerConvertTiledMapToTileMetadata } from '@src/backendTasks/convertTiledMapToTileMetadata';
-import { registerSaveMapInfo } from '@src/backendTasks/saveMapInfo';
-import { registerSaveEventTree } from '@src/backendTasks/saveEventTree';
-import { registerStartupStudioFile, startupFiles } from '@src/backendTasks/startupStudioFile';
-import { registerGetFilePathsFromFolder } from '@src/backendTasks/getFilePathsFromFolder';
-import { registerCopyTiledFiles } from '@src/backendTasks/copyTiledFiles';
-import { registerSaveRMXPMapInfo } from '@src/backendTasks/saveRMXPMapInfo';
-import { registerReadMaps } from '@src/backendTasks/readMaps';
-import { registerOpenTiled } from '@src/backendTasks/openTiled';
-import { registerDownloadFile } from '@src/backendTasks/downloadFile';
-import { registerRequestJson } from '@src/backendTasks/requestJson';
-import { registerCheckDownloadNewProject } from '@src/backendTasks/checkDownloadNewProject';
-import { registerGeneratingMapOverview } from '@src/backendTasks/generatingMapOverview';
-import { registerOpenCompilationWindow } from '@src/backendTasks/openCompilationWindow';
-import { registerGetCompilationConfig } from '@src/backendTasks/getCompilationConfig';
-import { registerStartCompilation } from '@src/backendTasks/startCompilation';
-import { registerSaveCompilationLogs } from '@src/backendTasks/saveCompilationLogs';
-import { registerSynchronizeLanguage } from '@src/backendTasks/synchronizeLanguage';
-import { registerReadRMXPEvents } from '@src/backendTasks/readRMXPEvents';
-import { registerConvertRMXPEventsToStudioEvents } from '@src/backendTasks/convertRMXPEventsToStudioEvents';
+import { registerWriteProjectMetadata } from '../backendTasks/writeProjectMetadata';
+import { getLastPSDKVersion } from '../services/getLastPSDKVersion';
+import { getPSDKBinariesPath, getPSDKVersion } from '../services/getPSDKVersion';
+import { startPSDK, startPSDKDebug, startPSDKWorldmap } from '../services/startPSDK';
+import { updatePSDK } from '../services/updatePSDK';
+import MenuBuilder from './menu';
 
 // This allows TypeScript to pick up the magic constants that's auto-generated by Forge's Webpack
 // plugin that tells the Electron app where to look for the Webpack-bundled app code (depending on
@@ -70,6 +70,18 @@ const resolvePathFn = (vars: PathVariables) => {
 const rendererLog = log.create({ logId: 'renderer' });
 const fileTransport: FileTransport = <FileTransport>rendererLog.transports.file;
 fileTransport.resolvePathFn = resolvePathFn;
+
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: 'static',
+    privileges: {
+      secure: false,
+      standard: false,
+      corsEnabled: true,
+      supportFetchAPI: false,
+    },
+  },
+]);
 
 const createWindow = async () => {
   registerElectronProtocolWhenAppRead();
