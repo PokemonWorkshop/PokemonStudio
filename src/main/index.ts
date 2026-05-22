@@ -75,8 +75,8 @@ protocol.registerSchemesAsPrivileged([
   {
     scheme: 'static',
     privileges: {
-      secure: false,
-      standard: false,
+      secure: true,
+      standard: true,
       corsEnabled: true,
       supportFetchAPI: false,
     },
