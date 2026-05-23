@@ -15,11 +15,11 @@ const config: ForgeConfig = {
   },
   rebuildConfig: {},
   makers: [
-    new MakerNSIS({}, ['win32']),
+    new MakerNSIS({}),
     new MakerZIP({}, ['darwin']),
-    new MakerRpm({ options: { icon: './assets/icon.png' } }, ['linux']),
-    new MakerDeb({ options: { icon: './assets/icon.png' } }, ['linux']),
-    new MakerAppImage({ options: { icon: './assets/icon.png' } }, ['linux']),
+    new MakerRpm({ options: { icon: './assets/icon.png' } }),
+    new MakerDeb({ options: { icon: './assets/icon.png' } }),
+    new MakerAppImage({ options: { icon: './assets/icon.png' } }),
   ],
   publishers: [
     {

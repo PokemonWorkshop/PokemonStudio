@@ -28,7 +28,7 @@ import { registerUpdateTextInfos } from '@src/backendTasks/updateTextInfos';
 import windowManager from '@src/backendTasks/windowManager';
 import { registerElectronProtocolWhenAppRead } from '@utils/electronProtocol';
 import crypto from 'crypto';
-import { app, BrowserWindow, ipcMain, protocol, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import log, { FileTransport, PathVariables } from 'electron-log';
 import { autoUpdater } from 'electron-updater';
 import path from 'path';
@@ -70,18 +70,6 @@ const resolvePathFn = (vars: PathVariables) => {
 const rendererLog = log.create({ logId: 'renderer' });
 const fileTransport: FileTransport = <FileTransport>rendererLog.transports.file;
 fileTransport.resolvePathFn = resolvePathFn;
-
-protocol.registerSchemesAsPrivileged([
-  {
-    scheme: 'static',
-    privileges: {
-      secure: true,
-      standard: true,
-      corsEnabled: true,
-      supportFetchAPI: false,
-    },
-  },
-]);
 
 const createWindow = async () => {
   registerElectronProtocolWhenAppRead();
