@@ -1,7 +1,7 @@
 import { DarkButtonEditResponsive, DarkButtonQuestionMarkResponsive } from '@components/buttons/DarkButtonWithPlusIcon';
 import { EditorWithCollapse } from '@components/editor';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { InputWithTopLabelContainer, Label, Input as TranslateInput, MultiLineInput as TranslateMultiLineInput } from '@components/inputs';
+import { InputWithTopLabelContainer, Label, MultiLineInput, Input as TranslateInput } from '@components/inputs';
 import { InputContainer, InputFormContainer, PaddedInputContainer } from '@components/inputs/InputContainer';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
@@ -32,6 +32,10 @@ const SHOW_MESSAGE_EDITOR_SCHEMA = EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR.pick({
 const InfoContainer = styled.span`
   ${({ theme }) => theme.fonts.normalSmall}
   color: ${({ theme }) => theme.colors.text400};
+`;
+
+const TranslateMultiLineInput = styled(MultiLineInput)`
+  min-height: 76px;
 `;
 
 export const ShowMessageEditor = forwardRef<EditorHandlingClose, EventEditorProps>(({ commandId: defaultCommandId, event }, ref) => {
