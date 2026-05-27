@@ -4,8 +4,7 @@ import { findFirstAvailableTextIdEvent } from './ModelUtils';
 
 const createShowMessageCommand = (event: StudioEvent) => {
   const { messageId, narratorId } = findFirstAvailableTextIdEvent(event, 0);
-
-  const showMessageCommand = {
+  return {
     message: messageId,
     allowSkipping: false,
     narrator: narratorId,
@@ -18,13 +17,11 @@ const createShowMessageCommand = (event: StudioEvent) => {
     minimap: '',
     portraits: [],
   };
-  return showMessageCommand;
 };
+
 const insertScriptCommand = () => ({ script: '' });
 
-const dummy = () => {
-  return {};
-};
+const dummy = () => ({});
 
 export const EventCommandCreation: Record<StudioEventCommandType, (event: StudioEvent) => Omit<StudioEventCommandData<StudioEventCommand>, 'type'>> =
   {
