@@ -1227,6 +1227,8 @@
   "translation_form_name": "Form name of {{name}}",
   "translation_form_description": "Form description of {{name}}",
   "translation_custom_objective": "Custom objective",
+  "translation_message": "Message",
+  "translation_narrator": "Narrator",
   "dismiss": "Negeer",
   "logs": "Access the logs",
   "version_current_version_editor": "Version {{current_version_editor}}",

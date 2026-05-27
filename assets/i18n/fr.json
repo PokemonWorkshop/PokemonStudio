@@ -1227,6 +1227,8 @@
   "translation_form_name": "Nom de la forme de {{name}}",
   "translation_form_description": "Description de la forme de {{name}}",
   "translation_custom_objective": "Objectif personnalisé",
+  "translation_message": "Message",
+  "translation_narrator": "Narrateur",
   "dismiss": "Fermer",
   "logs": "Accéder aux logs",
   "version_current_version_editor": "Version {{current_version_editor}}",

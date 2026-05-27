@@ -1,3 +1,4 @@
+import { POSITIVE_OR_ZERO_INT } from '@modelEntities/common';
 import { z } from 'zod';
 import type { StudioEventCommandCategory } from './category';
 
@@ -36,9 +37,9 @@ export type StudioPortrait = z.infer<typeof PORTRAIT_VALIDATOR>;
 
 export const EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR = z.object({
   type: z.literal('show_message'),
-  message: z.string().default(''),
+  message: POSITIVE_OR_ZERO_INT,
   allowSkipping: z.boolean().default(false),
-  narrator: z.string().default(''),
+  narrator: POSITIVE_OR_ZERO_INT,
   nameColor: z.string().default('#000000'),
   showMessageBox: z.boolean().default(true),
   messageBoxPosition: MESSAGE_BOX_POSITION_VALIDATOR.default('bottom'),

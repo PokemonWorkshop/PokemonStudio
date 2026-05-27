@@ -1,17 +1,17 @@
+import ClearIcon from '@assets/icons/global/clear-tag-icon.svg';
 import { DarkButton } from '@components/buttons';
+import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
+import { SecondaryTag } from '@components/Tag';
+import { getProjectMultiLanguageTextChange } from '@hooks/updateProjectText';
+import { useGlobalState } from '@src/GlobalStateProvider';
+import { getText, useGetProjectText } from '@utils/ReadingProjectText';
+import { SavingTextMap } from '@utils/SavingUtils';
 import React, { forwardRef, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { EditorTitle } from './Editor';
 import { EditorContainer } from './EditorContainer';
-import ClearIcon from '@assets/icons/global/clear-tag-icon.svg';
-import { useGlobalState } from '@src/GlobalStateProvider';
-import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
-import { SecondaryTag } from '@components/Tag';
-import { getText, useGetProjectText } from '@utils/ReadingProjectText';
 import { EditorHandlingClose, useEditorHandlingClose } from './useHandleCloseEditor';
-import { getProjectMultiLanguageTextChange } from '@hooks/updateProjectText';
-import { SavingTextMap } from '@utils/SavingUtils';
 
 const TranslationEditorContainer = styled(EditorContainer)`
   position: absolute;
@@ -83,6 +83,8 @@ export type TranslationEditorTitle =
   | 'translation_additional_dialog'
   | 'translation_form_name'
   | 'translation_form_description'
+  | 'translation_message'
+  | 'translation_narrator'
   | 'translation_custom_objective';
 
 type InputRefsType = Record<string, HTMLInputElement | HTMLTextAreaElement | null>;
@@ -111,11 +113,11 @@ const TranslationEditor = ({ title, name, textId, fileId, onClose, isMultiline, 
       state.projectStudio.languagesTranslation
         .map<[string, number]>(({ code }, index) => [code, index])
         .filter(([code]) => code !== defaultLanguageCode),
-    [state.projectStudio.languagesTranslation, defaultLanguageCode]
+    [state.projectStudio.languagesTranslation, defaultLanguageCode],
   );
   const defaultLanguageName = useMemo(
     () => state.projectStudio.languagesTranslation.find(({ code }) => code === defaultLanguageCode)?.name || '???',
-    [defaultLanguageCode, state.projectStudio.languagesTranslation]
+    [defaultLanguageCode, state.projectStudio.languagesTranslation],
   );
 
   return (
@@ -195,8 +197,8 @@ export const TranslationEditorWithCloseHandling = forwardRef<EditorHandlingClose
               { texts, languages: projectStudio.languagesTranslation, defaultLanguage: projectConfig.language_config.defaultLanguage },
               fileId,
               textIndex,
-              language
-            ) !== textChanged
+              language,
+            ) !== textChanged,
         );
         if (!hasChanged) {
           return currentState;
@@ -227,6 +229,6 @@ export const TranslationEditorWithCloseHandling = forwardRef<EditorHandlingClose
         inputRefs={inputRefs}
       />
     );
-  }
+  },
 );
 TranslationEditorWithCloseHandling.displayName = 'TranslationEditorWithCloseHandling';
