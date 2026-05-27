@@ -1,3 +1,4 @@
+import { StudioEvent } from '@modelEntities/event/event';
 import { StudioTextInfo } from '@modelEntities/textInfo';
 import { StudioTrainerAdditionalDialogs } from '@modelEntities/trainer';
 import { ProjectData } from '@src/GlobalStateProvider';
@@ -125,4 +126,22 @@ export const findFirstAvailableCsvFileId = (allData: Record<string, { csvFileId:
   if (holeIndex === -1) return idSet[idSet.length - 1] + 1;
 
   return idSet[holeIndex - 1] + 1;
+};
+
+export const findFirstAvailableTextIdEvent = (event: StudioEvent, startId: number) => {
+  const commands = Object.values(event.commands).filter((command) => !!command);
+  if (commands.length === 0) return { messageId: startId, narratorId: startId + 1 };
+
+  const idSet = commands
+    .filter((command) => command.type === 'show_message')
+    .reduce<number[]>((prev, { message, narrator }) => [...prev, Number(message), Number(narrator)], []) // TODO: remove Number cast
+    .filter((id, index, array) => index === array.indexOf(id)) // reject all duplicates
+    .sort((a, b) => a - b); // sort id by ascending order
+  // Since ids are ordered, if the first isn't the startId that means we need to fill the beginning of the list ;)
+  if (idSet[0] > startId && idSet[1] > startId + 1) return { messageId: startId, narratorId: startId + 1 };
+
+  const holeIndex = idSet.findIndex((id, index) => id !== index + startId);
+  if (holeIndex === -1) return { messageId: idSet[idSet.length - 1] + 1, narratorId: idSet[idSet.length - 1] + 2 };
+
+  return { messageId: idSet[holeIndex - 1] + 1, narratorId: idSet[holeIndex - 1] + 2 };
 };
