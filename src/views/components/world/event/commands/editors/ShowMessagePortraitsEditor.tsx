@@ -16,6 +16,7 @@ import { EventEditorProps } from './EventEditorProps';
 const InfoContainer = styled.span`
   ${({ theme }) => theme.fonts.normalSmall}
   color: ${({ theme }) => theme.colors.text400};
+  user-select: none;
 `;
 
 const TitleContainer = styled.div`
@@ -59,7 +60,7 @@ export const ShowMessagePortraitsEditor = forwardRef<EditorHandlingClose, EventE
     const result = canClose() && getFormData();
     if (!result || !result.success) return;
 
-    updateCommand(result.data);
+    updateCommand({ portraits: result.data.portraits });
   };
   useEditorHandlingClose(ref, onClose, canClose);
 

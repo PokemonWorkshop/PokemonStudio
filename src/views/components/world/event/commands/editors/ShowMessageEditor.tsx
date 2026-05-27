@@ -3,6 +3,7 @@ import { EditorWithCollapse } from '@components/editor';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { InputContainer, InputFormContainer, PaddedInputContainer } from '@components/inputs/InputContainer';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
+import { useDialogsRef } from '@hooks/useDialogsRef';
 import { EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR, StudioEventCommandShowMessage } from '@modelEntities/event/command';
 import { useInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
 import { useZodForm } from '@src/hooks/useZodForm';
@@ -11,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useCommandEditor } from '../../hooks/useCommandEditor';
 import { EventEditorProps } from './EventEditorProps';
+import { ShowMessageEditorTitle, ShowMessageOverlay } from './ShowMessageOverlay';
 
 const SHOW_MESSAGE_EDITOR_SCHEMA = EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR.pick({
   message: true,
@@ -32,9 +34,10 @@ const InfoContainer = styled.span`
 `;
 
 export const ShowMessageEditor = forwardRef<EditorHandlingClose, EventEditorProps>(({ commandId: defaultCommandId, event }, ref) => {
-  const { command, updateCommand } = useCommandEditor<StudioEventCommandShowMessage>(event, defaultCommandId);
+  const { command, commandId, updateCommand } = useCommandEditor<StudioEventCommandShowMessage>(event, defaultCommandId);
   const { canClose, getFormData, defaults, formRef } = useZodForm(SHOW_MESSAGE_EDITOR_SCHEMA, command);
   const { Input, MultiLineInput, ResourceInput, Toggle, Select } = useInputAttrsWithLabel(SHOW_MESSAGE_EDITOR_SCHEMA, defaults);
+  const dialogsRef = useDialogsRef<ShowMessageEditorTitle>();
   const { t } = useTranslation();
   const [color, setColor] = useState<string>(command.nameColor);
   const messageBoxOptions = useMemo(
@@ -52,13 +55,22 @@ export const ShowMessageEditor = forwardRef<EditorHandlingClose, EventEditorProp
     [],
   );
 
+  const canCloseEditor = () => {
+    if (dialogsRef.current?.currentDialog) return false;
+    return canClose();
+  };
+
   const onClose = () => {
     const result = canClose() && getFormData();
     if (!result || !result.success) return;
 
-    updateCommand(result.data);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { portraits, ...data } = result.data;
+    updateCommand(data);
   };
-  useEditorHandlingClose(ref, onClose, canClose);
+  useEditorHandlingClose(ref, onClose, canCloseEditor);
+
+  const onShowMessageOverlayClose = () => {};
 
   return (
     <EditorWithCollapse type="edit" title={t(`event_command_show_message`)}>
@@ -70,7 +82,9 @@ export const ShowMessageEditor = forwardRef<EditorHandlingClose, EventEditorProp
           </InputContainer>
           <Toggle name="allowSkipping" label={t('event_command_allow_skipping')} />
         </PaddedInputContainer>
-        <DarkButtonEditResponsive>{t('event_command_edit_portraits')}</DarkButtonEditResponsive>
+        <DarkButtonEditResponsive onClick={() => dialogsRef.current?.openDialog('portraits')}>
+          {t('event_command_edit_portraits')}
+        </DarkButtonEditResponsive>
         <InputGroupCollapse title={t('event_command_narrator')} collapseByDefault gap="24px" noMargin>
           <Input name="narrator" label={t('event_command_narrator_name')} placeholder={t('event_command_narrator_placeholder')} />
           <Input
@@ -109,6 +123,7 @@ export const ShowMessageEditor = forwardRef<EditorHandlingClose, EventEditorProp
           />
         </InputGroupCollapse>
       </InputFormContainer>
+      <ShowMessageOverlay commandId={commandId} event={event} onClose={onShowMessageOverlayClose} ref={dialogsRef} />
     </EditorWithCollapse>
   );
 });
