@@ -4,7 +4,7 @@ import { TranslateInputContainer } from '@components/inputs/TranslateInputContai
 import { useDialogsRef } from '@hooks/useDialogsRef';
 import { CommandId, StudioEventCommandData, StudioEventCommandShowMessage } from '@modelEntities/event/command';
 import { useGetProjectText, useSetProjectText } from '@utils/ReadingProjectText';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 import { useEventData } from '../common/EventContext';
@@ -43,6 +43,13 @@ export const ShowMessageCommand = ({ id, data: { dialogsRef: commandDialogsRef, 
   const messageRef = useRef<HTMLTextAreaElement>(null);
   const narratorRef = useRef<HTMLInputElement>(null);
   const dialogsRef = useDialogsRef<ShowMessageEditorTitle>();
+  const narratorText = event ? getText(event.csvFileId, showMessageCommand.narrator) : '';
+  const messageText = event ? getText(event.csvFileId, showMessageCommand.message) : '';
+
+  useEffect(() => {
+    if (narratorRef.current) narratorRef.current.value = narratorText;
+    if (messageRef.current) messageRef.current.value = messageText;
+  }, [narratorText, messageText]);
 
   const handleTranslateMessageClick = () => {
     if (!messageRef.current || !event) return;
@@ -81,7 +88,7 @@ export const ShowMessageCommand = ({ id, data: { dialogsRef: commandDialogsRef, 
             <TranslateInputContainer onTranslateClick={handleTranslateNarratorClick}>
               <TranslateInput
                 name="narrator"
-                defaultValue={event ? getText(event.csvFileId, showMessageCommand.narrator) : ''}
+                defaultValue={narratorText}
                 placeholder={t('event_command_narrator_placeholder')}
                 ref={narratorRef}
                 className="nodrag"
@@ -93,7 +100,7 @@ export const ShowMessageCommand = ({ id, data: { dialogsRef: commandDialogsRef, 
             <TranslateInputContainer onTranslateClick={handleTranslateMessageClick}>
               <TranslateMultiLineInput
                 name="message"
-                defaultValue={event ? getText(event.csvFileId, showMessageCommand.message) : ''}
+                defaultValue={messageText}
                 placeholder={t('event_command_message_placeholder')}
                 ref={messageRef}
                 className="nodrag"
