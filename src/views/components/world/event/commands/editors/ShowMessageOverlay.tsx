@@ -11,7 +11,8 @@ export type ShowMessageEditorTitle = 'portraits' | 'translation_message' | 'tran
 type Props = {
   onClose: () => void;
   command: Omit<StudioEventCommandShowMessage, 'type' | 'connections' | 'studioData'>;
-  event: StudioEvent;
+  csvFileId: number;
+  event?: StudioEvent;
   commandId?: CommandId;
 };
 
@@ -20,17 +21,20 @@ type Props = {
  */
 export const ShowMessageOverlay = defineEditorOverlay<ShowMessageEditorTitle, Props>(
   'ShowMessageOverlay',
-  (dialogToShow, handleCloseRef, closeDialog, { onClose, commandId, command, event }) => {
+  (dialogToShow, handleCloseRef, closeDialog, { onClose, commandId, command, csvFileId, event }) => {
     switch (dialogToShow) {
-      case 'portraits':
+      case 'portraits': {
+        if (!event) throw new Error('The event should be defined to call the portraits editor.');
+
         return <ShowMessagePortraitsEditor commandId={commandId} event={event} ref={handleCloseRef} />;
+      }
       case 'translation_message':
       case 'translation_narrator':
         return (
           <TranslationEditorWithCloseHandling
             title={dialogToShow}
-            nameTextId={event.csvFileId}
-            fileId={event.csvFileId}
+            nameTextId={csvFileId}
+            fileId={csvFileId}
             textIndex={dialogToShow === 'translation_message' ? command.message : command.narrator}
             isMultiline={dialogToShow === 'translation_message'}
             closeDialog={closeDialog}

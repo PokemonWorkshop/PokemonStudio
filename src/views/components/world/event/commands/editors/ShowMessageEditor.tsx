@@ -176,7 +176,14 @@ export const ShowMessageEditor = forwardRef<EditorHandlingClose, EventEditorProp
           />
         </InputGroupCollapse>
       </InputFormContainer>
-      <ShowMessageOverlay commandId={commandId} command={command} event={event} onClose={onShowMessageOverlayClose} ref={dialogsRef} />
+      <ShowMessageOverlay
+        commandId={commandId}
+        command={command}
+        csvFileId={event.csvFileId}
+        event={event}
+        onClose={onShowMessageOverlayClose}
+        ref={dialogsRef}
+      />
     </EditorWithCollapse>
   );
 });

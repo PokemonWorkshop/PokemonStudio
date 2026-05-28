@@ -39,6 +39,7 @@ type NodeData = {
   dialogsRef?: CommandDialogsRef;
   command: StudioEventCommandData<StudioEventCommand>;
   comments: string[];
+  csvFileId: number;
 };
 
 type NodeEvent = Node<NodeData, StudioEventCommandType>;
@@ -122,7 +123,7 @@ export const useEventFlow = (event: StudioEvent, eventFlowRef?: RefObject<HTMLDi
         id,
         type,
         position,
-        data: { dialogsRef, command: { type, ...command } as StudioEventCommandData<StudioEventCommand>, comments: [] },
+        data: { dialogsRef, command: { type, ...command } as StudioEventCommandData<StudioEventCommand>, comments: [], csvFileId: event.csvFileId },
       };
       const shadowNode = reactFlowInstance.getNode(SHADOW_NODE_ID) as NodeShadow;
 
