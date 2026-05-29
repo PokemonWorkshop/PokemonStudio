@@ -9,7 +9,7 @@ import { SavingTextMap } from '@utils/SavingUtils';
 import React, { forwardRef, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { EditorTitle } from './Editor';
+import { EditorTitle, EditorTitleContainer } from './Editor';
 import { EditorContainer } from './EditorContainer';
 import { EditorHandlingClose, useEditorHandlingClose } from './useHandleCloseEditor';
 
@@ -29,31 +29,6 @@ const TranslationEditorContainer = styled(EditorContainer)`
       color: ${({ theme }) => theme.colors.primaryBase};
     }
   }
-`;
-
-const TranslateEditorTitleContainer = styled.div`
-  display: flex;
-  gap: 8px;
-  justify-content: space-between;
-
-  ${DarkButton} {
-    padding: 0;
-    min-width: 32px;
-    height: 32px;
-  }
-
-  ${EditorTitle} {
-    padding: 0;
-
-    & > h3 {
-      padding: 0;
-      border: none;
-    }
-  }
-
-  padding: 0 0 12px 0;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.dark20};
-  margin-bottom: 16px;
 `;
 
 type TranslationInputProps = {
@@ -122,7 +97,7 @@ const TranslationEditor = ({ title, name, textId, fileId, onClose, isMultiline, 
 
   return (
     <TranslationEditorContainer>
-      <TranslateEditorTitleContainer>
+      <EditorTitleContainer>
         <EditorTitle>
           <p>{t('translation')}</p>
           <h3>{t(title, { name })}</h3>
@@ -130,7 +105,7 @@ const TranslationEditor = ({ title, name, textId, fileId, onClose, isMultiline, 
         <DarkButton onClick={onClose}>
           <ClearIcon />
         </DarkButton>
-      </TranslateEditorTitleContainer>
+      </EditorTitleContainer>
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor={defaultLanguageCode}>
