@@ -1,7 +1,7 @@
 import DeleteIcon from '@assets/icons/global/delete-icon.svg';
 import PlusIcon from '@assets/icons/global/plus-icon.svg';
 import { SecondaryNoBackground } from '@components/buttons';
-import { Editor } from '@components/editor';
+import { EditorWithCollapse } from '@components/editor';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { InputContainer, InputFormContainer, PaddedInputContainer } from '@components/inputs/InputContainer';
 import { EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR, PORTRAIT_VALIDATOR, StudioEventCommandShowMessage } from '@modelEntities/event/command';
@@ -68,7 +68,7 @@ export const ShowMessagePortraitsEditor = forwardRef<EditorHandlingClose, ShowMe
     useEditorHandlingClose(ref, onClose, canClose);
 
     return (
-      <Editor type="edit" title={t(`event_command_portrait_title`)} onClose={closeDialog}>
+      <EditorWithCollapse type="edit" title={t(`event_command_portrait_title`)} onClose={closeDialog}>
         <InputFormContainer ref={formRef} size="m">
           {portraits.map(({ key, data: portrait }, index) => (
             <React.Fragment key={key}>
@@ -104,7 +104,7 @@ export const ShowMessagePortraitsEditor = forwardRef<EditorHandlingClose, ShowMe
             <span>{t('event_command_add_portrait')}</span>
           </SecondaryNoBackground>
         </InputFormContainer>
-      </Editor>
+      </EditorWithCollapse>
     );
   },
 );
