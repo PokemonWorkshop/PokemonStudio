@@ -92,6 +92,7 @@ export const ShowMessageCommand = ({ id, data: { dialogsRef: commandDialogsRef, 
                 placeholder={t('event_command_narrator_placeholder')}
                 ref={narratorRef}
                 className="nodrag"
+                onDoubleClick={(e) => e.stopPropagation()}
               />
             </TranslateInputContainer>
           </InputWithTopLabelContainer>
@@ -104,6 +105,7 @@ export const ShowMessageCommand = ({ id, data: { dialogsRef: commandDialogsRef, 
                 placeholder={t('event_command_message_placeholder')}
                 ref={messageRef}
                 className="nodrag"
+                onDoubleClick={(e) => e.stopPropagation()}
               />
             </TranslateInputContainer>
           </InputWithTopLabelContainer>

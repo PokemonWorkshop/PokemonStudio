@@ -65,12 +65,12 @@ export const ShowMessagePortraitsEditor = forwardRef<EditorHandlingClose, EventE
   useEditorHandlingClose(ref, onClose, canClose);
 
   return (
-    <Editor type="edit" title={t(`event_command_show_message`)}>
+    <Editor type="edit" title={t(`event_command_portrait_title`)}>
       <InputFormContainer ref={formRef} size="m">
         {portraits.map(({ key, data: portrait }, index) => (
           <React.Fragment key={key}>
             <TitleContainer>
-              <span>{t('event_command_portait', { index: index + 1 })}</span>
+              <span>{t('event_command_portrait', { index: index + 1 })}</span>
               <DeleteIcon onClick={removePortrait(index)} />
             </TitleContainer>
             <PaddedInputContainer>

@@ -1,4 +1,4 @@
-import { DarkButtonEditResponsive, DarkButtonQuestionMarkResponsive } from '@components/buttons/DarkButtonWithPlusIcon';
+import { DarkButtonEditResponsive } from '@components/buttons/DarkButtonWithPlusIcon';
 import { EditorWithCollapse } from '@components/editor';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { InputWithTopLabelContainer, Label, MultiLineInput, Input as TranslateInput } from '@components/inputs';
@@ -118,7 +118,7 @@ export const ShowMessageEditor = forwardRef<EditorHandlingClose, EventEditorProp
                 />
               </TranslateInputContainer>
             </InputWithTopLabelContainer>
-            <DarkButtonQuestionMarkResponsive>{t('event_command_format_options')}</DarkButtonQuestionMarkResponsive>
+            {/* <DarkButtonQuestionMarkResponsive>{t('event_command_format_options')}</DarkButtonQuestionMarkResponsive> */}
           </InputContainer>
           <Toggle name="allowSkipping" label={t('event_command_allow_skipping')} />
         </PaddedInputContainer>
@@ -163,7 +163,7 @@ export const ShowMessageEditor = forwardRef<EditorHandlingClose, EventEditorProp
             <Toggle name="lookAtThisEvent" label={t('event_command_look_at_this_event')} />
             <InfoContainer>{t('event_command_look_at_this_event_info')}</InfoContainer>
           </InputContainer>
-          <Select name="lookToOtherEvent" label={t('event_command_look_to_other_event')} options={lookToEventOptions} />
+          <Select name="lookToOtherEvent" label={t('event_command_look_to_other_event')} options={lookToEventOptions} disabled />
           <ResourceInput
             name="minimap"
             label={t('event_command_minimap')}
