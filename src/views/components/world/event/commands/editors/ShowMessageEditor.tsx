@@ -146,7 +146,7 @@ export const ShowMessageEditor = forwardRef<EditorHandlingClose, EventEditorProp
             label={t('event_command_name_color')}
             labelLeft={true}
             defaultValue={color}
-            onBlur={(e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) => setColor(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) => setColor(e.target.value)}
             placeholder={t('event_command_name_color_placeholder')}
           />
         </InputGroupCollapse>
