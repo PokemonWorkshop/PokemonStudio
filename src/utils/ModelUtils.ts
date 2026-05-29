@@ -129,12 +129,11 @@ export const findFirstAvailableCsvFileId = (allData: Record<string, { csvFileId:
 };
 
 export const findFirstAvailableTextIdEvent = (event: StudioEvent, startId: number) => {
-  const commands = Object.values(event.commands).filter((command) => !!command);
+  const commands = Object.values(event.commands).filter((command) => !!command && command.type === 'show_message');
   if (commands.length === 0) return { messageId: startId, narratorId: startId + 1 };
 
   const idSet = commands
-    .filter((command) => command.type === 'show_message')
-    .reduce<number[]>((prev, { message, narrator }) => [...prev, Number(message), Number(narrator)], []) // TODO: remove Number cast
+    .reduce<number[]>((prev, { message, narrator }) => [...prev, message, narrator], [])
     .filter((id, index, array) => index === array.indexOf(id)) // reject all duplicates
     .sort((a, b) => a - b); // sort id by ascending order
   // Since ids are ordered, if the first isn't the startId that means we need to fill the beginning of the list ;)

@@ -7,7 +7,6 @@ import { useGetProjectText, useSetProjectText } from '@utils/ReadingProjectText'
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
-import { useEventData } from '../common/EventContext';
 import { useCommandNode } from '../hooks/useCommandNode';
 import { CommandNodeProps } from './CommandNodeProps';
 import { ShowMessageEditorTitle, ShowMessageOverlay } from './editors/ShowMessageOverlay';
@@ -32,19 +31,20 @@ const TranslateMultiLineInput = styled(MultiLineInput)`
   min-height: 76px;
 `;
 
-export const ShowMessageCommand = ({ id, data: { dialogsRef: commandDialogsRef, command, comments }, selected }: CommandNodeProps) => {
+export const ShowMessageCommand = ({ id, data: { dialogsRef: commandDialogsRef, command, comments, csvFileId }, selected }: CommandNodeProps) => {
   const { CommandNode } = useCommandNode<StudioEventCommandShowMessage>(id);
   const { type: commandType } = command as StudioEventCommandData<StudioEventCommandShowMessage>;
   const showMessageCommand = command as StudioEventCommandData<StudioEventCommandShowMessage>;
-  const { event } = useEventData();
+  // We use the texts from the GlobalState, so updating the text of a ShowMessage command refreshes all ShowMessage commands in the event.
+  // This results in a loss of optimization, but the application's design does not allow for any other approach.
   const getText = useGetProjectText();
   const setText = useSetProjectText();
   const { t } = useTranslation();
   const messageRef = useRef<HTMLTextAreaElement>(null);
   const narratorRef = useRef<HTMLInputElement>(null);
   const dialogsRef = useDialogsRef<ShowMessageEditorTitle>();
-  const narratorText = event ? getText(event.csvFileId, showMessageCommand.narrator) : '';
-  const messageText = event ? getText(event.csvFileId, showMessageCommand.message) : '';
+  const narratorText = getText(csvFileId, showMessageCommand.narrator);
+  const messageText = getText(csvFileId, showMessageCommand.message);
 
   useEffect(() => {
     if (narratorRef.current) narratorRef.current.value = narratorText;
@@ -52,24 +52,24 @@ export const ShowMessageCommand = ({ id, data: { dialogsRef: commandDialogsRef, 
   }, [narratorText, messageText]);
 
   const handleTranslateMessageClick = () => {
-    if (!messageRef.current || !event) return;
+    if (!messageRef.current) return;
 
-    setText(event.csvFileId, showMessageCommand.message, messageRef.current.value);
+    setText(csvFileId, showMessageCommand.message, messageRef.current.value);
     setTimeout(() => dialogsRef.current?.openDialog('translation_message'), 0);
   };
 
   const handleTranslateNarratorClick = () => {
-    if (!narratorRef.current || !event) return;
+    if (!narratorRef.current) return;
 
-    setText(event.csvFileId, showMessageCommand.narrator, narratorRef.current.value);
+    setText(csvFileId, showMessageCommand.narrator, narratorRef.current.value);
     setTimeout(() => dialogsRef.current?.openDialog('translation_narrator'), 0);
   };
 
   const onBlur = () => {
-    if (!event || !messageRef.current || !narratorRef.current) return;
+    if (!messageRef.current || !narratorRef.current) return;
 
-    setText(event.csvFileId, showMessageCommand.narrator, narratorRef.current.value);
-    setText(event.csvFileId, showMessageCommand.message, messageRef.current.value);
+    setText(csvFileId, showMessageCommand.narrator, narratorRef.current.value);
+    setText(csvFileId, showMessageCommand.message, messageRef.current.value);
   };
 
   const onShowMessageOverlayClose = () => {
@@ -111,15 +111,13 @@ export const ShowMessageCommand = ({ id, data: { dialogsRef: commandDialogsRef, 
           </InputWithTopLabelContainer>
         </InputFormContainer>
       </CommandNode>
-      {event && (
-        <ShowMessageOverlay
-          commandId={id as CommandId}
-          command={showMessageCommand}
-          event={event}
-          onClose={onShowMessageOverlayClose}
-          ref={dialogsRef}
-        />
-      )}
+      <ShowMessageOverlay
+        commandId={id as CommandId}
+        command={showMessageCommand}
+        csvFileId={csvFileId}
+        onClose={onShowMessageOverlayClose}
+        ref={dialogsRef}
+      />
     </>
   );
 };

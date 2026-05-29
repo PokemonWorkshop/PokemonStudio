@@ -10,9 +10,10 @@ export type ShowMessageEditorTitle = 'portraits' | 'translation_message' | 'tran
 
 type Props = {
   onClose: () => void;
+  command: Omit<StudioEventCommandShowMessage, 'type' | 'connections' | 'studioData'>;
+  csvFileId: number;
+  event?: StudioEvent;
   commandId?: CommandId;
-  command: Partial<StudioEventCommandShowMessage>;
-  event: StudioEvent;
 };
 
 /**
@@ -20,31 +21,22 @@ type Props = {
  */
 export const ShowMessageOverlay = defineEditorOverlay<ShowMessageEditorTitle, Props>(
   'ShowMessageOverlay',
-  (dialogToShow, handleCloseRef, closeDialog, { onClose, commandId, command, event }) => {
+  (dialogToShow, handleCloseRef, closeDialog, { onClose, commandId, command, csvFileId, event }) => {
     switch (dialogToShow) {
-      case 'portraits':
+      case 'portraits': {
+        if (!event) throw new Error('The event should be defined to call the portraits editor.');
+
         return <ShowMessagePortraitsEditor commandId={commandId} event={event} ref={handleCloseRef} />;
+      }
       case 'translation_message':
-        return (
-          <TranslationEditorWithCloseHandling
-            title={dialogToShow}
-            nameTextId={event.csvFileId}
-            fileId={event.csvFileId}
-            textIndex={command.message!}
-            isMultiline={true}
-            closeDialog={closeDialog}
-            onClose={onClose}
-            ref={handleCloseRef}
-          />
-        );
       case 'translation_narrator':
         return (
           <TranslationEditorWithCloseHandling
             title={dialogToShow}
-            nameTextId={event.csvFileId}
-            fileId={event.csvFileId}
-            textIndex={command.narrator!}
-            isMultiline={false}
+            nameTextId={csvFileId}
+            fileId={csvFileId}
+            textIndex={dialogToShow === 'translation_message' ? command.message : command.narrator}
+            isMultiline={dialogToShow === 'translation_message'}
             closeDialog={closeDialog}
             onClose={onClose}
             ref={handleCloseRef}

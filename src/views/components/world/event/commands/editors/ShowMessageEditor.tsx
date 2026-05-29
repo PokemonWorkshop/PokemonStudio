@@ -34,7 +34,7 @@ const InfoContainer = styled.span`
   color: ${({ theme }) => theme.colors.text400};
 `;
 
-const TranslateMultiLineInput = styled(MultiLineInput)`
+const MessageMultiLineInput = styled(MultiLineInput)`
   min-height: 76px;
 `;
 
@@ -73,12 +73,14 @@ export const ShowMessageEditor = forwardRef<EditorHandlingClose, EventEditorProp
 
   const handleTranslateNarratorClick = () => {
     if (!narratorRef.current) return;
+
     setText(event.csvFileId, command.narrator, narratorRef.current.value);
     setTimeout(() => dialogsRef.current?.openDialog('translation_narrator'), 0);
   };
 
   const canCloseEditor = () => {
     if (dialogsRef.current?.currentDialog) return false;
+
     return canClose();
   };
 
@@ -98,6 +100,7 @@ export const ShowMessageEditor = forwardRef<EditorHandlingClose, EventEditorProp
 
   const onShowMessageOverlayClose = () => {
     if (!messageRef.current || !narratorRef.current) return;
+
     messageRef.current.value = messageRef.current.defaultValue;
     narratorRef.current.value = narratorRef.current.defaultValue;
   };
@@ -110,7 +113,7 @@ export const ShowMessageEditor = forwardRef<EditorHandlingClose, EventEditorProp
             <InputWithTopLabelContainer>
               <Label htmlFor="message">{t('event_command_message')}</Label>
               <TranslateInputContainer onTranslateClick={handleTranslateMessageClick}>
-                <TranslateMultiLineInput
+                <MessageMultiLineInput
                   name="message"
                   defaultValue={getText(event.csvFileId, command.message)}
                   placeholder={t('event_command_message_placeholder')}
@@ -173,7 +176,14 @@ export const ShowMessageEditor = forwardRef<EditorHandlingClose, EventEditorProp
           />
         </InputGroupCollapse>
       </InputFormContainer>
-      <ShowMessageOverlay commandId={commandId} command={command} event={event} onClose={onShowMessageOverlayClose} ref={dialogsRef} />
+      <ShowMessageOverlay
+        commandId={commandId}
+        command={command}
+        csvFileId={event.csvFileId}
+        event={event}
+        onClose={onShowMessageOverlayClose}
+        ref={dialogsRef}
+      />
     </EditorWithCollapse>
   );
 });

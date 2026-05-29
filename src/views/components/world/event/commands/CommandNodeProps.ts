@@ -7,6 +7,7 @@ export type CommandNodeProps = {
     dialogsRef?: CommandDialogsRef;
     command: StudioEventCommandData<StudioEventCommand>;
     comments: string[];
+    csvFileId: number;
   };
   selected?: boolean;
 };
