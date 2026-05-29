@@ -26,7 +26,7 @@ export const ShowMessageOverlay = defineEditorOverlay<ShowMessageEditorTitle, Pr
       case 'portraits': {
         if (!event) throw new Error('The event should be defined to call the portraits editor.');
 
-        return <ShowMessagePortraitsEditor commandId={commandId} event={event} ref={handleCloseRef} />;
+        return <ShowMessagePortraitsEditor commandId={commandId} event={event} closeDialog={closeDialog} ref={handleCloseRef} />;
       }
       case 'translation_message':
       case 'translation_narrator':
