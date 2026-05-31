@@ -150,7 +150,7 @@ export const ShowMessageEditor = forwardRef<EditorHandlingClose, EventEditorProp
             placeholder={t('event_command_name_color_placeholder')}
           />
         </InputGroupCollapse>
-        <InputGroupCollapse title={t('event_command_message_box')} collapseByDefault gap="24px" noMargin>
+        <InputGroupCollapse title={t('event_command_message_box')} gap="24px" noMargin>
           <Toggle name="showMessageBox" label={t('event_command_show_message_box')} />
           <Select name="messageBoxPosition" label={t('event_command_message_box_position')} options={messageBoxOptions} />
           <ResourceInput
@@ -161,7 +161,7 @@ export const ShowMessageEditor = forwardRef<EditorHandlingClose, EventEditorProp
             destFolderToCopy="graphics/battlers"
           />
         </InputGroupCollapse>
-        <InputGroupCollapse title={t('event_command_other_options')} collapseByDefault gap="24px" noMargin>
+        <InputGroupCollapse title={t('event_command_other_options')} gap="24px" noMargin>
           <InputContainer size="xxs">
             <Toggle name="lookAtThisEvent" label={t('event_command_look_at_this_event')} />
             <InfoContainer>{t('event_command_look_at_this_event_info')}</InfoContainer>
