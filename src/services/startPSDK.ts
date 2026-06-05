@@ -1,9 +1,9 @@
-import { spawn } from 'child_process';
-import path from 'path';
 import { generateGameLinuxFileContent, generateGameMacFileContent, generatePSDKBatFileContent } from '@services/generatePSDKBatFileContent';
-import { writeFileSync, existsSync, readFileSync, chmodSync } from 'fs';
 import { getPSDKBinariesPath } from '@services/getPSDKVersion';
+import { spawn } from 'child_process';
 import log from 'electron-log';
+import { chmodSync, existsSync, readFileSync, writeFileSync } from 'fs';
+import path from 'path';
 
 export const getSpawnArgs = (projectPath: string, ...args: string[]): [string, string[]] => {
   if (process.platform === 'win32') {
@@ -48,12 +48,12 @@ const generateBootLoadContent = (projectPath: string) => {
   return generatePSDKBatFileContent();
 };
 
-const ensureBootLoadFile = (projectPath: string) => {
+export const ensureBootLoadFile = (projectPath: string) => {
   const psdkBatPath = path.join(projectPath, bootLoadFilename());
   const psdkBatContent = generateBootLoadContent(projectPath);
   const realPsdkBatContent = existsSync(psdkBatPath) && readFileSync(psdkBatPath).toString('utf-8');
   if (realPsdkBatContent !== psdkBatContent) writeFileSync(psdkBatPath, psdkBatContent);
-  // eslint-disable-next-line no-octal
+
   if (process.platform !== 'win32') chmodSync(psdkBatPath, 0o755);
 
   const gameRbPath = path.join(projectPath, 'Game.rb');
