@@ -158,7 +158,7 @@ export const ShowMessageEditor = forwardRef<EditorHandlingClose, EventEditorProp
             label={t('event_command_message_box_appearance')}
             extensions={['png']}
             filename={t('event_command_message_box_appearance')}
-            destFolderToCopy="graphics/battlers"
+            destFolderToCopy="graphics/windowskins"
           />
         </InputGroupCollapse>
         <InputGroupCollapse title={t('event_command_other_options')} gap="24px" noMargin>
@@ -172,7 +172,7 @@ export const ShowMessageEditor = forwardRef<EditorHandlingClose, EventEditorProp
             label={t('event_command_minimap')}
             extensions={['png']}
             filename={t('event_command_minimap')}
-            destFolderToCopy="graphics/battlers"
+            destFolderToCopy="graphics/pictures/city"
           />
         </InputGroupCollapse>
       </InputFormContainer>
