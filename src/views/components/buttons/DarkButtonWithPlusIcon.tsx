@@ -1,9 +1,11 @@
-import React from 'react';
-import PlusIcon from '@assets/icons/global/plus-icon.svg';
+import EditIcon from '@assets/icons/global/edit-icon.svg';
 import ImportIcon from '@assets/icons/global/import-icon.svg';
+import PlusIcon from '@assets/icons/global/plus-icon.svg';
+import QuestionMarkIcon from '@assets/icons/global/question-mark-icon.svg';
 import ReOrderIcon from '@assets/icons/global/reorder.svg';
-import { SecondaryButton, DarkButton } from './GenericButtons';
+import React from 'react';
 import styled from 'styled-components';
+import { DarkButton, SecondaryButton } from './GenericButtons';
 
 type DarkButtonWithPlusIconProps = Omit<Parameters<typeof SecondaryButton>[0], 'theme'>;
 
@@ -58,4 +60,18 @@ export const DarkButtonReOrderResponsive = ({ children, disabled, breakpoint, ..
     <ReOrderIcon />
     <span>{children}</span>
   </DarkButtonIconResponsiveContainer>
+);
+
+export const DarkButtonEditResponsive = ({ children, disabled, ...props }: DarkButtonWithPlusIconResponsiveProps) => (
+  <DarkButton disabled={disabled} {...props}>
+    <EditIcon />
+    <span>{children}</span>
+  </DarkButton>
+);
+
+export const DarkButtonQuestionMarkResponsive = ({ children, disabled, ...props }: DarkButtonWithPlusIconResponsiveProps) => (
+  <DarkButton disabled={disabled} {...props}>
+    <QuestionMarkIcon />
+    <span>{children}</span>
+  </DarkButton>
 );

@@ -1,11 +1,11 @@
-import { useTranslation } from 'react-i18next';
-import { EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR, StudioEventCommandData, type StudioEventCommandInsertScript } from '@modelEntities/event/command';
-import { CommandNodeProps } from './CommandNodeProps';
-import { useCommandNode } from '../hooks/useCommandNode';
-import { useZodForm } from '@src/hooks/useZodForm';
-import { useNodeInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
 import { InputFormContainer } from '@components/inputs/InputContainer';
+import { EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR, StudioEventCommandData, StudioEventCommandInsertScript } from '@modelEntities/event/command';
+import { useNodeInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
+import { useZodForm } from '@src/hooks/useZodForm';
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useCommandNode } from '../hooks/useCommandNode';
+import { CommandNodeProps } from './CommandNodeProps';
 
 const INSERT_SCRIPT_EDITOR_SCHEMA = EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR.pick({ script: true });
 

@@ -1,17 +1,17 @@
+import ClearIcon from '@assets/icons/global/clear-tag-icon.svg';
 import { DarkButton } from '@components/buttons';
+import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
+import { SecondaryTag } from '@components/Tag';
+import { getProjectMultiLanguageTextChange } from '@hooks/updateProjectText';
+import { useGlobalState } from '@src/GlobalStateProvider';
+import { getText, useGetProjectText } from '@utils/ReadingProjectText';
+import { SavingTextMap } from '@utils/SavingUtils';
 import React, { forwardRef, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { EditorTitle } from './Editor';
+import { EditorTitle, EditorTitleContainer } from './Editor';
 import { EditorContainer } from './EditorContainer';
-import ClearIcon from '@assets/icons/global/clear-tag-icon.svg';
-import { useGlobalState } from '@src/GlobalStateProvider';
-import { Input, InputContainer, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
-import { SecondaryTag } from '@components/Tag';
-import { getText, useGetProjectText } from '@utils/ReadingProjectText';
 import { EditorHandlingClose, useEditorHandlingClose } from './useHandleCloseEditor';
-import { getProjectMultiLanguageTextChange } from '@hooks/updateProjectText';
-import { SavingTextMap } from '@utils/SavingUtils';
 
 const TranslationEditorContainer = styled(EditorContainer)`
   position: absolute;
@@ -29,31 +29,6 @@ const TranslationEditorContainer = styled(EditorContainer)`
       color: ${({ theme }) => theme.colors.primaryBase};
     }
   }
-`;
-
-const TranslateEditorTitleContainer = styled.div`
-  display: flex;
-  gap: 8px;
-  justify-content: space-between;
-
-  ${DarkButton} {
-    padding: 0;
-    min-width: 32px;
-    height: 32px;
-  }
-
-  ${EditorTitle} {
-    padding: 0;
-
-    & > h3 {
-      padding: 0;
-      border: none;
-    }
-  }
-
-  padding: 0 0 12px 0;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.dark20};
-  margin-bottom: 16px;
 `;
 
 type TranslationInputProps = {
@@ -83,6 +58,8 @@ export type TranslationEditorTitle =
   | 'translation_additional_dialog'
   | 'translation_form_name'
   | 'translation_form_description'
+  | 'translation_message'
+  | 'translation_narrator'
   | 'translation_custom_objective';
 
 type InputRefsType = Record<string, HTMLInputElement | HTMLTextAreaElement | null>;
@@ -111,16 +88,16 @@ const TranslationEditor = ({ title, name, textId, fileId, onClose, isMultiline, 
       state.projectStudio.languagesTranslation
         .map<[string, number]>(({ code }, index) => [code, index])
         .filter(([code]) => code !== defaultLanguageCode),
-    [state.projectStudio.languagesTranslation, defaultLanguageCode]
+    [state.projectStudio.languagesTranslation, defaultLanguageCode],
   );
   const defaultLanguageName = useMemo(
     () => state.projectStudio.languagesTranslation.find(({ code }) => code === defaultLanguageCode)?.name || '???',
-    [defaultLanguageCode, state.projectStudio.languagesTranslation]
+    [defaultLanguageCode, state.projectStudio.languagesTranslation],
   );
 
   return (
     <TranslationEditorContainer>
-      <TranslateEditorTitleContainer>
+      <EditorTitleContainer>
         <EditorTitle>
           <p>{t('translation')}</p>
           <h3>{t(title, { name })}</h3>
@@ -128,7 +105,7 @@ const TranslationEditor = ({ title, name, textId, fileId, onClose, isMultiline, 
         <DarkButton onClick={onClose}>
           <ClearIcon />
         </DarkButton>
-      </TranslateEditorTitleContainer>
+      </EditorTitleContainer>
       <InputContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor={defaultLanguageCode}>
@@ -195,8 +172,8 @@ export const TranslationEditorWithCloseHandling = forwardRef<EditorHandlingClose
               { texts, languages: projectStudio.languagesTranslation, defaultLanguage: projectConfig.language_config.defaultLanguage },
               fileId,
               textIndex,
-              language
-            ) !== textChanged
+              language,
+            ) !== textChanged,
         );
         if (!hasChanged) {
           return currentState;
@@ -227,6 +204,6 @@ export const TranslationEditorWithCloseHandling = forwardRef<EditorHandlingClose
         inputRefs={inputRefs}
       />
     );
-  }
+  },
 );
 TranslationEditorWithCloseHandling.displayName = 'TranslationEditorWithCloseHandling';

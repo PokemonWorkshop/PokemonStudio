@@ -1,15 +1,17 @@
-import { useEventActions } from '@components/world/event/common/EventContext';
-import type { StudioEventCommandType } from '@modelEntities/event/command';
-import { useTranslation } from 'react-i18next';
-import { CommandDialogsRef } from '../commands/editors/CommandEditorOverlay';
-import { EventIcon, IconsFromCommand, EventIconColor } from '@components/world/event/common/EventIcon';
-import { Position } from '@xyflow/react';
-import { useHandleConnectionState } from '@components/world/event/hooks/useHandleConnectionState';
-import { CustomHandle } from '@components/world/event/common/CustomHandle';
-import InfoIcon from '@assets/icons/notification/info.svg';
 import NoteIcon from '@assets/icons/global/note.svg';
+import InfoIcon from '@assets/icons/notification/info.svg';
+import { InputWithLeftLabelContainer, InputWithTopLabelContainer } from '@components/inputs';
+import { InputFormContainer } from '@components/inputs/InputContainer';
+import { CustomHandle } from '@components/world/event/common/CustomHandle';
+import { useEventActions } from '@components/world/event/common/EventContext';
+import { EventIcon, EventIconColor, IconsFromCommand } from '@components/world/event/common/EventIcon';
+import { useHandleConnectionState } from '@components/world/event/hooks/useHandleConnectionState';
+import type { StudioEventCommandType } from '@modelEntities/event/command';
+import { Position } from '@xyflow/react';
 import React, { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { CommandDialogsRef } from '../commands/editors/CommandEditorOverlay';
 
 const CommandNodeContainer = styled.div<{ color: EventIconColor }>`
   display: flex;
@@ -52,8 +54,16 @@ const CommandNodeContainer = styled.div<{ color: EventIconColor }>`
   .body {
     display: flex;
     flex-direction: column;
-    padding: 10px;
-    gap: 12px;
+    padding: 0px 4px 4px 4px;
+
+    ${InputFormContainer} {
+      gap: 0;
+    }
+
+    ${InputWithTopLabelContainer},
+    ${InputWithLeftLabelContainer} {
+      padding: 6px;
+    }
   }
 
   footer {

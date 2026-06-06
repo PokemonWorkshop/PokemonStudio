@@ -17,6 +17,7 @@ export const useCommandEditor = <T extends StudioEventCommand>(event: StudioEven
 
   return {
     command: commandData as Omit<T, 'type' | 'connections' | 'studioData'>,
+    commandId,
     updateCommand,
   };
 };
