@@ -44,6 +44,7 @@ export const cleaningSettingsNaNValues = (v: StudioSettingConfig) => {
   v.pokemonMaxLevel = cleanNaNValue(v.pokemonMaxLevel, 100);
   v.maxBagItemCount = cleanNaNValue(v.maxBagItemCount);
   v.baseStatMaxValue = cleanNaNValue(v.baseStatMaxValue, 999);
+  v.trainerPartyMaxSize = cleanNaNValue(v.trainerPartyMaxSize, 6);
 };
 
 export const cleaningTextNaNValues = (v: StudioTextConfig) => {

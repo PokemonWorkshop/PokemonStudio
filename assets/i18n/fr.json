@@ -1094,7 +1094,7 @@
   "scripted_dialog": "Dialogue scénarisé",
   "new_dialog": "Nouveau dialogue",
   "available_future_release": "Disponible dans une prochaine version",
-  "party_length_limit": "Un dresseur ne peut pas avoir plus de 6 Pokémon.",
+  "party_length_limit": "Un dresseur ne peut pas avoir plus de {{max}} Pokémon.",
   "battlers": "Battlers",
   "battle_sprite": "Battle sprite",
   "artwork_full": "Artwork - Full",
@@ -1900,5 +1900,7 @@
   "max_base_stat_value": "Valeur maximum d'une statistique de base",
   "add_base_stat_max_value_to_settings": "Ajout du paramètre de statistique de base maximum aux paramètres du projet",
   "full_map_dialog_message": "Vous pouvez mettre à jour toutes les cartes de votre projet.\nCette opération peut prendre plusieurs minutes selon le nombre de cartes de votre projet.",
-  "full_map_dialog_success": "Toutes les cartes ont été mises à jour avec succès."
+  "full_map_dialog_success": "Toutes les cartes ont été mises à jour avec succès.",
+  "max_trainer_party_size": "Nombre maximum de créatures dans l'équipe d'un dresseur",
+  "add_trainer_party_max_size_to_settings": "Ajout de la taille maximale de l'équipe d'un dresseur aux paramètres du projet"
 }

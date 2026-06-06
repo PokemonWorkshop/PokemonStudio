@@ -1094,7 +1094,7 @@
   "scripted_dialog": "Diálogo cenarizado",
   "new_dialog": "Novo diálogo",
   "available_future_release": "Disponível numa proxima versão",
-  "party_length_limit": "Um treinador não pode ter mais de 6 Pokémon.",
+  "party_length_limit": "Um treinador não pode ter mais de {{max}} Pokémon.",
   "battlers": "Lutadores",
   "battle_sprite": "Sprite de batalha",
   "artwork_full": "Arte - Completa",
@@ -1900,5 +1900,7 @@
   "max_base_stat_value": "Max base stat value",
   "add_base_stat_max_value_to_settings": "Adding the max base stat value to project settings",
   "full_map_dialog_message": "You can update all the maps in your project.\nThis process may take several minutes, depending on the number of maps in your project.",
-  "full_map_dialog_success": "All maps have been successfully updated."
+  "full_map_dialog_success": "All maps have been successfully updated.",
+  "max_trainer_party_size": "Max trainer party size",
+  "add_trainer_party_max_size_to_settings": "Add trainer party max size to settings"
 }

@@ -14,6 +14,7 @@ import { addOtherLanguages } from './addOtherLanguages';
 import { addSoundDesignConfig } from './addSoundDesignConfig';
 import { addSummaryPagesOptionsToSettings } from './addSummaryPagesOptionsToSettings';
 import { addTrainerAdditionalDialogs } from './addTrainerAdditionalDialogs';
+import { addTrainerPartyMaxSizeToSettings } from './addTrainerPartyMaxSizeToSettings';
 import { addVolumeAndPitchInMaps } from './addVolumeAndPitchInMaps';
 import { baseForEvents } from './baseForEvents';
 import { fixBeMethodMoveSelfStatus } from './fixBeMethodMoveSelfStatus';
@@ -190,5 +191,10 @@ export const MIGRATION_CONFIG: MigrateConfigType[] = [
     migration: addBaseStatMaxValueToSettings,
     version: '2.9.1',
     message: 'add_base_stat_max_value_to_settings',
+  },
+  {
+    migration: addTrainerPartyMaxSizeToSettings,
+    version: '2.9.1',
+    message: 'add_trainer_party_max_size_to_settings',
   },
 ];
