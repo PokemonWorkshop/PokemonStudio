@@ -1,5 +1,6 @@
 import type { StudioEventCommand, StudioEventCommandData, StudioEventCommandType } from '@modelEntities/event/command';
 import { StudioEvent } from '@modelEntities/event/event';
+import { createWaitMovementCompletionCommand } from '../models/entities/event/waitCommand/waitMovementCompletion';
 import { findFirstAvailablePriorityEvent, findFirstAvailableTextIdEvent } from './ModelUtils';
 
 const createShowMessageCommand = (event: StudioEvent) => {
@@ -51,7 +52,7 @@ export const EventCommandCreation: Record<StudioEventCommandType, (event: Studio
     move_event: dummy,
     teleport_event: dummy,
     teleport_player: dummy,
-    wait_move_completion: dummy,
+    wait_move_completion: createWaitMovementCompletionCommand,
     manage_event_reappearance: dummy,
     manage_path_finding: dummy,
     manage_follow_me: dummy,

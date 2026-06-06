@@ -17,5 +17,3 @@ export const EVENT_COMMAND_CONNECTION_VALIDATOR = z.object({
   target: COMMAND_ID_VALIDATOR,
   targetHandle: z.string(),
 });
-
-export type StudioEventCommandConnection = z.infer<typeof EVENT_COMMAND_CONNECTION_VALIDATOR>;

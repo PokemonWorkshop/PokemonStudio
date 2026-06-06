@@ -148,7 +148,7 @@ export const useZodForm = <T extends z.ZodRawShape>(
 ) => {
   const formRef = useRef<HTMLFormElement>(null);
   const touchedInputValidity = useRef<TouchedInputValidity>({});
-  const d = useMemo(() => formData(formRef, schema, defaults, fixturesBeforeValidation), [schema]);
+  const d = useMemo(() => formData(formRef, schema, defaults, fixturesBeforeValidation), [schema, defaults]);
   const [isValid, setIsValid] = useState(d.defaultValid);
 
   const onTouched = (inputName: string, isValid: boolean, value: string) => {

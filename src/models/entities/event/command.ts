@@ -3,6 +3,9 @@ import { z } from 'zod';
 import type { StudioEventCommandCategory } from './category';
 import { EVENT_COMMAND_START_VALIDATOR } from './commands/start';
 import { COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_CONNECTION_VALIDATOR, EVENT_COMMAND_STUDIO_DATA_VALIDATOR } from './globalCommand';
+import { EVENT_COMMAND_WAIT_MOVEMENT_COMPLETION_VALIDATOR } from './waitCommand/waitMovementCompletion';
+
+export type StudioEventCommandConnection = z.infer<typeof EVENT_COMMAND_CONNECTION_VALIDATOR>;
 
 //#region Messages
 
@@ -80,7 +83,7 @@ export const EVENT_COMMAND_VALIDATOR = z.discriminatedUnion('type', [
   GENERIC_COMMAND('move_event'),
   GENERIC_COMMAND('teleport_event'),
   GENERIC_COMMAND('teleport_player'),
-  GENERIC_COMMAND('wait_move_completion'),
+  EVENT_COMMAND_WAIT_MOVEMENT_COMPLETION_VALIDATOR,
   GENERIC_COMMAND('manage_event_reappearance'),
   GENERIC_COMMAND('manage_path_finding'),
   GENERIC_COMMAND('manage_follow_me'),

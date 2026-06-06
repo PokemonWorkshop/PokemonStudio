@@ -1,7 +1,7 @@
+import React, { MouseEventHandler } from 'react';
 import List, { ListRowProps } from 'react-virtualized/dist/es/List';
 import { SelectOption } from './types';
 import { RenderOptionsProps, useRenderOptions } from './useRenderOptions';
-import React, { MouseEventHandler } from 'react';
 
 const CLASSES = ['option', 'option highlighted', 'option current', 'option highlighted current'];
 

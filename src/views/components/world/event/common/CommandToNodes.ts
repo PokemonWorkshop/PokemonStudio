@@ -3,6 +3,7 @@ import { JSX } from 'react';
 import type { CommandNodeProps } from '../commands/CommandNodeProps';
 import { DefaultCommand } from '../commands/DefaultCommand';
 import { InsertScriptCommand } from '../commands/InsertScriptCommand';
+import { WaitMovementCompletionCommand } from '../commands/nodes/movementCommands/WaitMovementCompletion';
 import { ShowMessageCommand } from '../commands/ShowMessageCommand';
 import { StartCommand } from '../commands/StartCommand';
 import { ShadowNode } from './ShadowNode';
@@ -29,7 +30,7 @@ export const CommandToNodes: Record<StudioEventCommandType | 'shadow_node', (pro
   move_event: DefaultCommand,
   teleport_event: DefaultCommand,
   teleport_player: DefaultCommand,
-  wait_move_completion: DefaultCommand,
+  wait_move_completion: WaitMovementCompletionCommand,
   manage_event_reappearance: DefaultCommand,
   manage_path_finding: DefaultCommand,
   manage_follow_me: DefaultCommand,
