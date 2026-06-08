@@ -1,52 +1,54 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
-import { ipcRenderer, contextBridge, webFrame, IpcRendererEvent, webUtils } from 'electron';
-import { BackendTaskWithGenericError, BackendTaskWithGenericErrorAndNoProgress, GenericBackendProgress, defineBackendTask } from '@utils/BackendTask';
-import type { PSDKVersion } from '@services/getPSDKVersion';
 import type { StudioShortcut } from '@hooks/useShortcuts';
-import type { ChooseProjectFileToOpenInput } from './backendTasks/chooseProjectFileToOpen';
-import type { ConfigureNewProjectInput } from './backendTasks/configureNewProject';
-import type { CopyFileInput } from './backendTasks/copyFile';
-import type { ProjectConfigsFromBackEnd, ReadProjectConfigsInput } from './backendTasks/readProjectConfigs';
-import type { ProjectDataFromBackEnd, ReadProjectDataInput } from './backendTasks/readProjectData';
-import type { CheckMapModifiedInput, CheckMapModifiedOutput } from './backendTasks/checkMapsModified';
-import type { ProjectText } from './GlobalStateProvider';
+import type { PSDKVersion } from '@services/getPSDKVersion';
+import { BackendTaskWithGenericError, BackendTaskWithGenericErrorAndNoProgress, GenericBackendProgress, defineBackendTask } from '@utils/BackendTask';
 import type { LogRendererType } from '@utils/logRenderer';
 import * as logRenderer from '@utils/logRenderer';
-import type { SaveTextInfosInput } from './backendTasks/saveTextInfos';
-import type { ReadCsvFileInput } from './backendTasks/readCsvFile';
-import type { UpdateTextInfosInput } from './backendTasks/updateTextInfos';
-import type { ShowItemInFolderInput } from './backendTasks/showFileInFolder';
-import type { ChooseFileInput, ChooseFileOutput } from './backendTasks/chooseFile';
-import type { ProjectStudioFileInput, ProjectStudioFileOutput } from './backendTasks/projectStudioFile';
-import type { SaveProjectTextsInput } from './backendTasks/saveProjectTexts';
-import type { SaveProjectConfigInput } from './backendTasks/saveProjectConfigs';
-import type { ExtractNewProjectInput } from './backendTasks/extractNewProject';
-import type { MigrateDataInput, MigrateDataOutput } from './backendTasks/migrateData';
-import type { ReadProjectTextInput } from './backendTasks/readProjectTexts';
-import type { ReadProjectMetadataInput, ReadProjectMetadataOutput } from './backendTasks/readProjectMetadata';
-import type { WriteProjectMetadataInput } from './backendTasks/writeProjectMetadata';
-import type { GetStudioVersionOutput } from './backendTasks/getStudioVersion';
-import type { ConvertTMXInput } from './backendTasks/convertTiledMapToTileMetadata';
-import type { SaveMapInfoInput } from './backendTasks/saveMapInfo';
-import type { SaveEventTreeInput } from './backendTasks/saveEventTree';
-import type { StartupStudioFileOutput } from './backendTasks/startupStudioFile';
-import type { GetFilePathsFromFolderInput, GetFilePathsFromFolderOutput } from './backendTasks/getFilePathsFromFolder';
-import type { CopyTiledFilesInput, CopyTiledFilesOutput } from './backendTasks/copyTiledFiles';
-import type { SaveRMXPMapInfoInput } from './backendTasks/saveRMXPMapInfo';
-import type { OpenTiledPayload } from './backendTasks/openTiled';
-import type { DownloadFileInput } from './backendTasks/downloadFile';
-import type { RequestJsonInput, RequestJsonOutput } from './backendTasks/requestJson';
+import { IpcRendererEvent, contextBridge, ipcRenderer, webFrame, webUtils } from 'electron';
 import type { CheckDownloadNewProjectInput, CheckDownloadNewProjectOutput } from './backendTasks/checkDownloadNewProject';
+import type { CheckMapModifiedInput, CheckMapModifiedOutput } from './backendTasks/checkMapsModified';
+import type { ChooseFileInput, ChooseFileOutput } from './backendTasks/chooseFile';
+import type { ChooseProjectFileToOpenInput } from './backendTasks/chooseProjectFileToOpen';
+import type { ConfigureNewProjectInput } from './backendTasks/configureNewProject';
+import type { RMXPEventsToStudioEventsInput, RMXPEventsToStudioEventsOutput } from './backendTasks/convertRMXPEventsToStudioEvents';
+import type { ConvertTMXInput } from './backendTasks/convertTiledMapToTileMetadata';
+import type { CopyFileInput } from './backendTasks/copyFile';
+import type { CopyTiledFilesInput, CopyTiledFilesOutput } from './backendTasks/copyTiledFiles';
+import type { DownloadFileInput } from './backendTasks/downloadFile';
+import type { ExtractNewProjectInput } from './backendTasks/extractNewProject';
 import type { FileExistsInput, FileExistsOutput } from './backendTasks/fileExists';
 import type { GeneratingMapOverviewInput } from './backendTasks/generatingMapOverview';
-import type { OpenCompilationWindowInput } from './backendTasks/openCompilationWindow';
 import type { GetCompilationConfigOutput } from './backendTasks/getCompilationConfig';
-import type { StartCompilationInput, StartCompilationOutput } from './backendTasks/startCompilation';
-import type { SaveCompilationLogsInput } from './backendTasks/saveCompilationLogs';
-import type { SynchronizeLanguageInput } from './backendTasks/synchronizeLanguage';
+import type { GetFilePathsFromFolderInput, GetFilePathsFromFolderOutput } from './backendTasks/getFilePathsFromFolder';
+import type { GetStudioVersionOutput } from './backendTasks/getStudioVersion';
+import type { MigrateDataInput, MigrateDataOutput } from './backendTasks/migrateData';
+import type { OpenCompilationWindowInput } from './backendTasks/openCompilationWindow';
+import type { OpenTiledPayload } from './backendTasks/openTiled';
+import type { ProjectStudioFileInput, ProjectStudioFileOutput } from './backendTasks/projectStudioFile';
+import type { ReadCsvFileInput } from './backendTasks/readCsvFile';
+import type { ProjectConfigsFromBackEnd, ReadProjectConfigsInput } from './backendTasks/readProjectConfigs';
+import type { ProjectDataFromBackEnd, ReadProjectDataInput } from './backendTasks/readProjectData';
+import type { ReadProjectMetadataInput, ReadProjectMetadataOutput } from './backendTasks/readProjectMetadata';
+import type { ReadProjectTextInput } from './backendTasks/readProjectTexts';
 import type { ReadRMXPEventInput, ReadRMXPEventOutput } from './backendTasks/readRMXPEvents';
-import type { RMXPEventsToStudioEventsInput, RMXPEventsToStudioEventsOutput } from './backendTasks/convertRMXPEventsToStudioEvents';
+import type { ReadRMXPMapInput, ReadRMXPMapOutput } from './backendTasks/readRMXPMap';
+import type { ReadRMXPMapInfoInput, ReadRMXPMapInfoOutput } from './backendTasks/readRMXPMapInfo';
+import type { RequestJsonInput, RequestJsonOutput } from './backendTasks/requestJson';
+import type { SaveCompilationLogsInput } from './backendTasks/saveCompilationLogs';
+import type { SaveEventTreeInput } from './backendTasks/saveEventTree';
+import type { SaveMapInfoInput } from './backendTasks/saveMapInfo';
+import type { SaveProjectConfigInput } from './backendTasks/saveProjectConfigs';
+import type { SaveProjectTextsInput } from './backendTasks/saveProjectTexts';
+import type { SaveRMXPMapInfoInput } from './backendTasks/saveRMXPMapInfo';
+import type { SaveTextInfosInput } from './backendTasks/saveTextInfos';
+import type { ShowItemInFolderInput } from './backendTasks/showFileInFolder';
+import type { StartCompilationInput, StartCompilationOutput } from './backendTasks/startCompilation';
+import type { StartupStudioFileOutput } from './backendTasks/startupStudioFile';
+import type { SynchronizeLanguageInput } from './backendTasks/synchronizeLanguage';
+import type { UpdateTextInfosInput } from './backendTasks/updateTextInfos';
+import type { WriteProjectMetadataInput } from './backendTasks/writeProjectMetadata';
+import type { ProjectText } from './GlobalStateProvider';
 
 contextBridge.exposeInMainWorld('api', {
   isDev: process.env.NODE_ENV === 'development',
@@ -140,6 +142,8 @@ contextBridge.exposeInMainWorld('api', {
   startupStudioFile: defineBackendTask(ipcRenderer, 'startup-studio-file'),
   getFilePathsFromFolder: defineBackendTask(ipcRenderer, 'get-file-paths-from-folder'),
   copyTiledFiles: defineBackendTask(ipcRenderer, 'copy-tiled-files'),
+  readRMXPMapInfo: defineBackendTask(ipcRenderer, 'read-rmxp-map-info'),
+  readRMXPMap: defineBackendTask(ipcRenderer, 'read-rmxp-map'),
   saveRMXPMapInfo: defineBackendTask(ipcRenderer, 'save-rmxp-map-info'),
   readMaps: defineBackendTask(ipcRenderer, 'read-maps'),
   openTiled: defineBackendTask(ipcRenderer, 'open-tiled'),
@@ -193,7 +197,7 @@ declare global {
       updatePSDK: (
         currentVersion: number,
         onStatusUpdate: (current: number, total: number, version: PSDKVersion) => void,
-        onDone: (success: boolean) => void
+        onDone: (success: boolean) => void,
       ) => void;
       unregisterPSDKUpdateEvents: () => void;
       startPSDK: (projectPath: string) => void;
@@ -232,6 +236,8 @@ declare global {
       startupStudioFile: BackendTaskWithGenericErrorAndNoProgress<AnyObj, StartupStudioFileOutput>;
       getFilePathsFromFolder: BackendTaskWithGenericErrorAndNoProgress<GetFilePathsFromFolderInput, GetFilePathsFromFolderOutput>;
       copyTiledFiles: BackendTaskWithGenericErrorAndNoProgress<CopyTiledFilesInput, CopyTiledFilesOutput>;
+      readRMXPMapInfo: BackendTaskWithGenericErrorAndNoProgress<ReadRMXPMapInfoInput, ReadRMXPMapInfoOutput>;
+      readRMXPMap: BackendTaskWithGenericErrorAndNoProgress<ReadRMXPMapInput, ReadRMXPMapOutput>;
       saveRMXPMapInfo: BackendTaskWithGenericErrorAndNoProgress<SaveRMXPMapInfoInput, AnyObj>;
       readMaps: BackendTaskWithGenericErrorAndNoProgress<ReadMapsInput, ReadMapsOutput>;
       openTiled: BackendTaskWithGenericErrorAndNoProgress<OpenTiledPayload, AnyObj>;

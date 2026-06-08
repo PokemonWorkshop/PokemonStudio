@@ -1,12 +1,13 @@
-import React, { Dispatch, SetStateAction } from 'react';
-import { MapImportFiles } from './MapImportType';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
-import { Checkbox } from '@components/Checkbox';
-import { AutoSizer, List } from 'react-virtualized';
-import { Input } from '@components/inputs';
-import { cloneEntity } from '@utils/cloneEntity';
 import ErrorIcon from '@assets/icons/global/error2.svg';
+import { Checkbox } from '@components/Checkbox';
+import { Input } from '@components/inputs';
+import { DropDownOption, StudioDropDown } from '@components/StudioDropDown';
+import { cloneEntity } from '@utils/cloneEntity';
+import React, { Dispatch, SetStateAction } from 'react';
+import { useTranslation } from 'react-i18next';
+import { AutoSizer, List } from 'react-virtualized';
+import styled from 'styled-components';
+import { MapImportFiles } from './MapImportType';
 
 const MapImportListContainer = styled.div`
   ${({ theme }) => theme.fonts.normalRegular}
@@ -122,10 +123,12 @@ const MapLineContainer = styled.div<MapLineContainerProps>`
 
 type MapImportListType = {
   files: MapImportFiles[];
+  mapInfoOptions: DropDownOption[];
+  mapIdsUsed: number[];
   setFiles: Dispatch<SetStateAction<MapImportFiles[]>>;
 };
 
-export const MapImportList = ({ files, setFiles }: MapImportListType) => {
+export const MapImportList = ({ files, mapInfoOptions, mapIdsUsed, setFiles }: MapImportListType) => {
   const { t } = useTranslation();
 
   const allFilesChecked = (checked: boolean) => {
@@ -144,14 +147,21 @@ export const MapImportList = ({ files, setFiles }: MapImportListType) => {
     setFiles(filesCloned);
   };
 
+  const handleMapId = (value: string, index: number) => {
+    const filesCloned = cloneEntity(files);
+    filesCloned[index].mapId = value === 'new' ? undefined : Number(value);
+    setFiles(filesCloned);
+  };
+
   return (
     <MapImportListContainer>
       <div className="header">
-        <div className="item-tree">
+        <div className="map">
           <Checkbox checked={!files.some((file) => !file.shouldBeImport)} onChange={(event) => allFilesChecked(event.target.checked)} />
           <span>{t('file')}</span>
         </div>
         <span>{t('map_name')}</span>
+        <span>{t('map_in_rmxp')}</span>
       </div>
       <div className="list">
         <AutoSizer>
@@ -168,7 +178,7 @@ export const MapImportList = ({ files, setFiles }: MapImportListType) => {
                   const hasError = file.error !== undefined;
                   return (
                     <MapLineContainer key={key} style={{ ...style, height: '48px' }} checked={file.shouldBeImport} hasError={hasError}>
-                      <div className="item-tree">
+                      <div className="map">
                         <Checkbox checked={file.shouldBeImport} onChange={(event) => handleFileChecked(event.target.checked, index)} />
                         <div className="filename-icon">
                           <span className={`filename${hasError ? '-with-error' : ''}`}>{file.filename}</span>
@@ -180,6 +190,12 @@ export const MapImportList = ({ files, setFiles }: MapImportListType) => {
                         </div>
                       </div>
                       <Input value={file.mapName} onChange={(event) => handleMapName(event.target.value, index)} />
+                      <StudioDropDown
+                        value={file.mapId === undefined ? 'new' : `${file.mapId}`}
+                        options={mapInfoOptions}
+                        onChange={(value) => handleMapId(value, index)}
+                        optionals={{ filter: (value) => file.mapId === Number(value) || !mapIdsUsed.includes(Number(value)) }}
+                      />
                     </MapLineContainer>
                   );
                 }}
