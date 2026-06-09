@@ -5,13 +5,18 @@ import CopyIcon from '@assets/icons/global/copy.svg';
 import { DarkButton } from './buttons';
 
 export const CopyStyle = styled.button`
-  padding: 0px;
+  padding: 8px;
+  min-width: 32px;
+  min-height: 32px;
   background: none;
   color: inherit;
   border: none;
   font: inherit;
   cursor: pointer;
   outline: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   & svg {
     color: ${({ theme }) => theme.colors.text400};
