@@ -294,7 +294,7 @@
   "save_logs_success": "Die Protokolldatei wurde im Ordner logs in Ihrem Projektverzeichnis gespeichert.",
   "save_logs_title_failure": "Speichern von Protokollen fehlgeschlagen",
   "save_logs_failure": "Beim Speichern der Protokolldatei ist ein Fehler aufgetreten.",
-  "identifier_message": "Kennung kopieren",
+  "identifier_message": "Kennung kopieren ({{shortcut}})",
   "copied": "Kopiert! ✅",
   "failed_to_copy": "Kopieren fehlgeschlagen ❌",
   "copy_code": "Kopieren des Codes",
