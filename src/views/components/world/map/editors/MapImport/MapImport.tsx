@@ -117,7 +117,7 @@ export const MapImport = ({ closeDialog, closeParentDialog }: MapImportProps) =>
                 shouldBeImport: false,
               })),
             );
-            setState('select_files');
+            setState('load_rmxp_map_info');
           },
           ({ errorMessage }) => {
             showNotification('danger', t('import_tiled_maps'), errorMessage);
