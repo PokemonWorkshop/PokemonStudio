@@ -1,7 +1,7 @@
 import ErrorIcon from '@assets/icons/global/error2.svg';
 import { Checkbox } from '@components/Checkbox';
 import { Input } from '@components/inputs';
-import { StudioDropDown } from '@components/StudioDropDown';
+import { Select } from '@ds/Select';
 import { useSelectOptions } from '@hooks/useSelectOptions';
 import { cloneEntity } from '@utils/cloneEntity';
 import React, { Dispatch, SetStateAction, useMemo } from 'react';
@@ -16,7 +16,7 @@ const MapImportListContainer = styled.div`
 
   .header {
     display: grid;
-    grid-template-columns: 252px 240px auto;
+    grid-template-columns: 252px 214px auto;
     column-gap: 32px;
     color: ${({ theme }) => theme.colors.text400};
     padding-bottom: 12px;
@@ -69,6 +69,10 @@ const MapImportListContainer = styled.div`
     margin-right: -12px;
 
     & .scrollable-view {
+      & .ReactVirtualized__Grid__innerScrollContainer {
+        overflow: visible !important; // fix the overflow to show the select options
+      }
+
       ::-webkit-scrollbar {
         width: 8px;
         height: 8px;
@@ -191,7 +195,7 @@ export const MapImportList = ({ files, setFiles }: MapImportListType) => {
                           )}
                         </div>
                       </div>
-                      <StudioDropDown
+                      <Select
                         value={file.dbSymbol === undefined ? 'new' : `${file.dbSymbol}`}
                         options={options}
                         onChange={(value) => handleMapId(value, index)}
