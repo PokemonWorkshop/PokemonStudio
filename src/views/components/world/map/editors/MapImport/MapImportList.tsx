@@ -2,6 +2,7 @@ import ErrorIcon from '@assets/icons/global/error2.svg';
 import { Checkbox } from '@components/Checkbox';
 import { Input } from '@components/inputs';
 import { Select } from '@ds/Select';
+import { SelectContainer } from '@ds/Select/SelectContainer';
 import { useSelectOptions } from '@hooks/useSelectOptions';
 import { cloneEntity } from '@utils/cloneEntity';
 import React, { Dispatch, SetStateAction, useMemo } from 'react';
@@ -16,7 +17,7 @@ const MapImportListContainer = styled.div`
 
   .header {
     display: grid;
-    grid-template-columns: 252px 214px auto;
+    grid-template-columns: 252px 192px auto;
     column-gap: 32px;
     color: ${({ theme }) => theme.colors.text400};
     padding-bottom: 12px;
@@ -67,6 +68,10 @@ const MapImportListContainer = styled.div`
     height: 474px;
     margin-left: -8px;
     margin-right: -12px;
+
+    ${SelectContainer} {
+      width: 240px;
+    }
 
     & .scrollable-view {
       & .ReactVirtualized__Grid__innerScrollContainer {
@@ -195,12 +200,12 @@ export const MapImportList = ({ files, setFiles }: MapImportListType) => {
                           )}
                         </div>
                       </div>
+                      <Input value={file.mapName} onChange={(event) => handleMapName(event.target.value, index)} />
                       <Select
                         value={file.dbSymbol === undefined ? 'new' : `${file.dbSymbol}`}
                         options={options}
                         onChange={(value) => handleMapId(value, index)}
                       />
-                      <Input value={file.mapName} onChange={(event) => handleMapName(event.target.value, index)} disabled={!!file.dbSymbol} />
                     </MapLineContainer>
                   );
                 }}

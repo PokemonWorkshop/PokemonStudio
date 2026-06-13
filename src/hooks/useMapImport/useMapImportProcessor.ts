@@ -148,6 +148,7 @@ export const useMapImportProcessor = () => {
             updateMap.sha1 = mapToImport.sha1 as Sha1;
             updateMap.tileMetadata = mapToImport.tileMetadata;
             const dbSymbol = updateMap.dbSymbol;
+            setText(MAP_NAME_TEXT_ID, updateMap.id, mapToImport.mapName);
             setMap({ [dbSymbol]: updateMap }, { map: dbSymbol });
           } else {
             const newMap = createMap(maps, 30, mapToImport.path, { name: '', volume: 100, pitch: 100 }, { name: '', volume: 100, pitch: 100 });
