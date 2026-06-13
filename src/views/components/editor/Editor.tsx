@@ -52,7 +52,8 @@ type EditorProps = {
     | 'addition'
     | 'text'
     | 'reorganization'
-    | 'combo_moves';
+    | 'combo_moves'
+    | 'assigning';
   title: string;
   children: ReactNode;
 };
