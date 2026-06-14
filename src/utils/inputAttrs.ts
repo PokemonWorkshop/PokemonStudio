@@ -10,7 +10,7 @@ type InputProps = Pick<
 export const inputAttrsSingle = (
   singleAttributeValidator: z.ZodFirstPartySchemaTypes,
   name: string,
-  defaults?: Record<string, unknown>
+  defaults?: Record<string, unknown>,
 ): InputProps => {
   if (singleAttributeValidator instanceof z.ZodBranded) {
     return inputAttrsSingle(singleAttributeValidator.unwrap(), name, defaults);
@@ -88,20 +88,27 @@ export const inputAttrsSingle = (
   return attributes;
 };
 
+const unwrapValidator = (validator: z.ZodFirstPartySchemaTypes): z.ZodFirstPartySchemaTypes => {
+  if (validator instanceof z.ZodDefault) return unwrapValidator(validator._def.innerType as z.ZodFirstPartySchemaTypes);
+  if (validator instanceof z.ZodOptional) return unwrapValidator(validator._def.innerType as z.ZodFirstPartySchemaTypes);
+  if (validator instanceof z.ZodNullable) return unwrapValidator(validator._def.innerType as z.ZodFirstPartySchemaTypes);
+  return validator;
+};
+
 const getValidatorFromSchema = <T extends z.ZodRawShape>(schema: z.ZodObject<T>, schemaKey: string) => {
   const keys = schemaKey.split('.');
   let validator: z.ZodFirstPartySchemaTypes = schema;
   for (const key of keys) {
+    const unwrapped = unwrapValidator(validator);
     if (isStringPositiveInteger(key)) {
-      if (validator instanceof z.ZodArray) {
-        const newValidator = validator._def.type as z.ZodFirstPartySchemaTypes;
-        validator = newValidator;
+      if (unwrapped instanceof z.ZodArray) {
+        validator = unwrapped._def.type as z.ZodFirstPartySchemaTypes;
       } else {
         throw new Error('Cannot have extract type from non array object with numeric key');
       }
     } else {
-      if (validator instanceof z.ZodObject) {
-        validator = validator.shape[key];
+      if (unwrapped instanceof z.ZodObject) {
+        validator = unwrapped.shape[key];
         if (!validator) throw new Error(`Failed to extract ${key} from schema (${schemaKey})`);
       } else {
         throw new Error('Expect simple Zod object with string key, consider giving a non-opaque schema with a schemaKey instead.');

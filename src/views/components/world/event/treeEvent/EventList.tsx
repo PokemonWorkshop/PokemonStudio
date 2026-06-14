@@ -1,14 +1,13 @@
-import { useSelectOptions } from '@hooks/useSelectOptions';
-import { AutoSizer, List } from 'react-virtualized';
-import React, { useMemo } from 'react';
-import styled from 'styled-components';
-import { useProjectEvents } from '@hooks/useProjectData';
-import { useTranslation } from 'react-i18next';
 import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
+import { useProjectEvents } from '@hooks/useProjectData';
+import { useSelectOptions } from '@hooks/useSelectOptions';
+import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { AutoSizer, List } from 'react-virtualized';
+import styled from 'styled-components';
 
 const EventListContainer = styled.div`
   height: calc(100vh - 291px);
-  margin-right: -9px;
   margin-top: 4px;
 
   & .scrollable-view {
@@ -121,7 +120,7 @@ export const EventList = ({ research }: EventListProps) => {
                       className={currentEvent === option.value ? 'event-selected' : 'event'}
                       key={`${option.value}-${key}`}
                       onClick={() => setCurrentEvent({ event: option.value })}
-                      style={{ ...style, width: '236px', height: '35px' }}
+                      style={{ ...style, height: '35px' }}
                     >
                       <span className="icon">
                         <span className="point-icon" />

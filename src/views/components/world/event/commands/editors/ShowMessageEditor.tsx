@@ -1,0 +1,191 @@
+import { DarkButtonEditResponsive } from '@components/buttons/DarkButtonWithPlusIcon';
+import { EditorWithCollapse } from '@components/editor';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { InputWithTopLabelContainer, Label, MultiLineInput, Input as TranslateInput } from '@components/inputs';
+import { InputContainer, InputFormContainer, PaddedInputContainer } from '@components/inputs/InputContainer';
+import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
+import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
+import { useDialogsRef } from '@hooks/useDialogsRef';
+import { EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR, StudioEventCommandShowMessage } from '@modelEntities/event/command';
+import { useInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
+import { useZodForm } from '@src/hooks/useZodForm';
+import { useGetProjectText, useSetProjectText } from '@utils/ReadingProjectText';
+import React, { forwardRef, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+import { useCommandEditor } from '../../hooks/useCommandEditor';
+import { EventEditorProps } from './EventEditorProps';
+import { ShowMessageEditorTitle, ShowMessageOverlay } from './ShowMessageOverlay';
+
+const SHOW_MESSAGE_EDITOR_SCHEMA = EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR.pick({
+  allowSkipping: true,
+  nameColor: true,
+  showMessageBox: true,
+  messageBoxPosition: true,
+  messageBoxAppearance: true,
+  lookAtThisEvent: true,
+  lookToOtherEvent: true,
+  minimap: true,
+  portraits: true,
+});
+
+const InfoContainer = styled.span`
+  ${({ theme }) => theme.fonts.normalSmall}
+  color: ${({ theme }) => theme.colors.text400};
+`;
+
+const MessageMultiLineInput = styled(MultiLineInput)`
+  min-height: 76px;
+`;
+
+export const ShowMessageEditor = forwardRef<EditorHandlingClose, EventEditorProps>(({ commandId: defaultCommandId, event }, ref) => {
+  const { command, commandId, updateCommand } = useCommandEditor<StudioEventCommandShowMessage>(event, defaultCommandId);
+  const { canClose, getFormData, defaults, formRef } = useZodForm(SHOW_MESSAGE_EDITOR_SCHEMA, command);
+  const { Input, ResourceInput, Toggle, Select } = useInputAttrsWithLabel(SHOW_MESSAGE_EDITOR_SCHEMA, defaults);
+  const dialogsRef = useDialogsRef<ShowMessageEditorTitle>();
+  const messageRef = useRef<HTMLTextAreaElement>(null);
+  const narratorRef = useRef<HTMLInputElement>(null);
+  const { t } = useTranslation();
+  const getText = useGetProjectText();
+  const setText = useSetProjectText();
+  const [color, setColor] = useState<string>(command.nameColor);
+  const messageBoxOptions = useMemo(
+    () => [
+      { value: 'bottom', label: t('bottom') },
+      { value: 'middle', label: t('middle') },
+      { value: 'top', label: t('top') },
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+  const lookToEventOptions = useMemo(
+    () => [{ value: '__undef__', label: t('none') }],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
+  const handleTranslateMessageClick = () => {
+    if (!messageRef.current) return;
+
+    setText(event.csvFileId, command.message, messageRef.current.value);
+    setTimeout(() => dialogsRef.current?.openDialog('translation_message'), 0);
+  };
+
+  const handleTranslateNarratorClick = () => {
+    if (!narratorRef.current) return;
+
+    setText(event.csvFileId, command.narrator, narratorRef.current.value);
+    setTimeout(() => dialogsRef.current?.openDialog('translation_narrator'), 0);
+  };
+
+  const canCloseEditor = () => {
+    if (dialogsRef.current?.currentDialog) return false;
+
+    return canClose();
+  };
+
+  const onClose = () => {
+    const result = canClose() && getFormData();
+    if (!result || !result.success) return;
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { portraits, ...data } = result.data;
+    updateCommand(data);
+
+    if (!messageRef.current || !narratorRef.current) return;
+    setText(event.csvFileId, command.narrator, narratorRef.current.value);
+    setText(event.csvFileId, command.message, messageRef.current.value);
+  };
+  useEditorHandlingClose(ref, onClose, canCloseEditor);
+
+  const onShowMessageOverlayClose = () => {
+    if (!messageRef.current || !narratorRef.current) return;
+
+    messageRef.current.value = messageRef.current.defaultValue;
+    narratorRef.current.value = narratorRef.current.defaultValue;
+  };
+
+  return (
+    <EditorWithCollapse type="edit" title={t(`event_command_show_message`)}>
+      <InputFormContainer ref={formRef} size="m">
+        <PaddedInputContainer>
+          <InputContainer size="xxs">
+            <InputWithTopLabelContainer>
+              <Label htmlFor="message">{t('event_command_message')}</Label>
+              <TranslateInputContainer onTranslateClick={handleTranslateMessageClick}>
+                <MessageMultiLineInput
+                  name="message"
+                  defaultValue={getText(event.csvFileId, command.message)}
+                  placeholder={t('event_command_message_placeholder')}
+                  ref={messageRef}
+                />
+              </TranslateInputContainer>
+            </InputWithTopLabelContainer>
+            {/* <DarkButtonQuestionMarkResponsive>{t('event_command_format_options')}</DarkButtonQuestionMarkResponsive> */}
+          </InputContainer>
+          <Toggle name="allowSkipping" label={t('event_command_allow_skipping')} />
+        </PaddedInputContainer>
+        <DarkButtonEditResponsive onClick={() => dialogsRef.current?.openDialog('portraits')}>
+          {t('event_command_edit_portraits')}
+        </DarkButtonEditResponsive>
+        <InputGroupCollapse title={t('event_command_narrator')} collapseByDefault gap="24px" noMargin>
+          <InputWithTopLabelContainer>
+            <Label htmlFor="narrator">{t('event_command_narrator_name')}</Label>
+            <TranslateInputContainer onTranslateClick={handleTranslateNarratorClick}>
+              <TranslateInput
+                name="narrator"
+                defaultValue={getText(event.csvFileId, command.narrator)}
+                placeholder={t('event_command_narrator_placeholder')}
+                ref={narratorRef}
+              />
+            </TranslateInputContainer>
+          </InputWithTopLabelContainer>
+          <Input
+            type="color"
+            name="nameColor"
+            label={t('event_command_name_color')}
+            labelLeft={true}
+            defaultValue={color}
+            onChange={(e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) => setColor(e.target.value)}
+            placeholder={t('event_command_name_color_placeholder')}
+          />
+        </InputGroupCollapse>
+        <InputGroupCollapse title={t('event_command_message_box')} gap="24px" noMargin>
+          <Toggle name="showMessageBox" label={t('event_command_show_message_box')} />
+          <Select name="messageBoxPosition" label={t('event_command_message_box_position')} options={messageBoxOptions} />
+          <ResourceInput
+            name="messageBoxAppearance"
+            label={t('event_command_message_box_appearance')}
+            extensions={['png']}
+            filename={t('event_command_message_box_appearance')}
+            destFolderToCopy="graphics/windowskins"
+          />
+        </InputGroupCollapse>
+        <InputGroupCollapse title={t('event_command_other_options')} gap="24px" noMargin>
+          <InputContainer size="xxs">
+            <Toggle name="lookAtThisEvent" label={t('event_command_look_at_this_event')} />
+            <InfoContainer>{t('event_command_look_at_this_event_info')}</InfoContainer>
+          </InputContainer>
+          <Select name="lookToOtherEvent" label={t('event_command_look_to_other_event')} options={lookToEventOptions} disabled />
+          <ResourceInput
+            name="minimap"
+            label={t('event_command_minimap')}
+            extensions={['png']}
+            filename={t('event_command_minimap')}
+            destFolderToCopy="graphics/pictures/city"
+          />
+        </InputGroupCollapse>
+      </InputFormContainer>
+      <ShowMessageOverlay
+        commandId={commandId}
+        command={command}
+        csvFileId={event.csvFileId}
+        event={event}
+        onClose={onShowMessageOverlayClose}
+        ref={dialogsRef}
+      />
+    </EditorWithCollapse>
+  );
+});
+
+ShowMessageEditor.displayName = 'ShowMessageEditor';

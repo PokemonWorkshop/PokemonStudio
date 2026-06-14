@@ -9,6 +9,7 @@ const PRE_MIGRATION_SETTINGS_CONFIG_VALIDATOR = SETTINGS_CONFIG_VALIDATOR.omit({
   showContestSummaryPage: true,
   showRibbonsSummaryPage: true,
   baseStatMaxValue: true,
+  trainerPartyMaxSize: true,
 });
 
 export const addSummaryPagesOptionsToSettings = async (_: IpcMainEvent, projectPath: string) => {
@@ -20,7 +21,7 @@ export const addSummaryPagesOptionsToSettings = async (_: IpcMainEvent, projectP
   const settingsFileParsed = PRE_MIGRATION_SETTINGS_CONFIG_VALIDATOR.safeParse(parseJSON(settingsFile, 'settings_config.json'));
   if (!settingsFileParsed.success) throw new Error('Fail to parse settings_config.json file');
 
-  const newSettingsFile: Omit<StudioSettingConfig, 'baseStatMaxValue'> = {
+  const newSettingsFile: Omit<StudioSettingConfig, 'baseStatMaxValue' | 'trainerPartyMaxSize'> = {
     ...settingsFileParsed.data,
     showContestSummaryPage: true,
     showRibbonsSummaryPage: true,

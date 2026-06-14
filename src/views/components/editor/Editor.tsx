@@ -1,3 +1,5 @@
+import ClearIcon from '@assets/icons/global/clear-tag-icon.svg';
+import { DarkButton } from '@components/buttons';
 import { PaginationWithTitle, PaginationWithTitleProps } from '@components/PaginationWithTitle';
 import React, { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -38,6 +40,31 @@ export const EditorTitle = styled.div`
   }
 `;
 
+export const EditorTitleContainer = styled.div`
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+
+  ${DarkButton} {
+    padding: 0;
+    min-width: 32px;
+    height: 32px;
+  }
+
+  ${EditorTitle} {
+    padding: 0;
+
+    & > h3 {
+      padding: 0;
+      border: none;
+    }
+  }
+
+  padding: 0 0 12px 0;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.dark20};
+  margin-bottom: 16px;
+`;
+
 type EditorProps = {
   type:
     | 'edit'
@@ -56,31 +83,46 @@ type EditorProps = {
     | 'assigning';
   title: string;
   children: ReactNode;
+  onClose?: () => void;
 };
 
-export const Editor = ({ type, title, children }: EditorProps) => {
+export const Editor = ({ type, title, children, onClose }: EditorProps) => {
   const { t } = useTranslation();
 
   return (
     <EditorContainer>
-      <EditorTitle>
-        <p>{t(type)}</p>
-        <h3>{title}</h3>
-      </EditorTitle>
+      <EditorTitleContainer>
+        <EditorTitle>
+          <p>{t(type)}</p>
+          <h3>{title}</h3>
+        </EditorTitle>
+        {onClose && (
+          <DarkButton onClick={onClose}>
+            <ClearIcon />
+          </DarkButton>
+        )}
+      </EditorTitleContainer>
       {children}
     </EditorContainer>
   );
 };
 
-export const EditorWithCollapse = ({ type, title, children }: EditorProps) => {
+export const EditorWithCollapse = ({ type, title, children, onClose }: EditorProps) => {
   const { t } = useTranslation();
 
   return (
     <EditorWithCollapseContainer>
-      <EditorTitle>
-        <p>{t(type)}</p>
-        <h3>{title}</h3>
-      </EditorTitle>
+      <EditorTitleContainer>
+        <EditorTitle>
+          <p>{t(type)}</p>
+          <h3>{title}</h3>
+        </EditorTitle>
+        {onClose && (
+          <DarkButton onClick={onClose}>
+            <ClearIcon />
+          </DarkButton>
+        )}
+      </EditorTitleContainer>
       {children}
     </EditorWithCollapseContainer>
   );
@@ -88,7 +130,7 @@ export const EditorWithCollapse = ({ type, title, children }: EditorProps) => {
 
 type EditorWithPaginationProps = {
   paginationProps?: PaginationWithTitleProps;
-} & EditorProps;
+} & Omit<EditorProps, 'onClose'>;
 
 export const EditorWithPagination = ({ type, title, children, paginationProps }: EditorWithPaginationProps) => {
   const { t } = useTranslation();

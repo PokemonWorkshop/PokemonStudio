@@ -1,13 +1,21 @@
-import { StudioMap } from '@modelEntities/map';
-import { readRMXPEvents, RMXPEvent } from './readRMXPEvents';
 import { DbSymbol } from '@modelEntities/dbSymbol';
-import type { Appearance, CustomEvent, EventAppearance, EventTrigger, LinkParameter, MapEventLink } from '@modelEntities/event/event';
 import type { CommandId, StudioEventCommand } from '@modelEntities/event/command';
+import {
+  EVENT_START_CSV_FILE_ID,
+  type Appearance,
+  type CustomEvent,
+  type EventAppearance,
+  type EventTrigger,
+  type LinkParameter,
+  type MapEventLink,
+} from '@modelEntities/event/event';
+import { StudioMap } from '@modelEntities/map';
+import { findFirstAvailableCsvFileId, findFirstAvailableId } from '@utils/ModelUtils';
 import log from 'electron-log';
-import { findFirstAvailableId } from '@utils/ModelUtils';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
+import { readRMXPEvents, RMXPEvent } from './readRMXPEvents';
 
-type PartialStudioEvent = { dbSymbol: DbSymbol; id: number };
+type PartialStudioEvent = { dbSymbol: DbSymbol; id: number; csvFileId: number };
 export type RMXPEventsToStudioEventsInput = { projectPath: string; map: string; events: PartialStudioEvent[] };
 export type RMXPEventsToStudioEventsOutput = {};
 //export type RMXPEventsToStudioEventsOutput = { map: StudioMap, events: PartialStudioEvent[], newStudioEvents: unknown[]}
@@ -127,8 +135,9 @@ const createLinkParameters = (rmxpEvent: RMXPEvent, pageIndex: number): LinkPara
 
 const createNewEventLink = (events: Record<string, PartialStudioEvent>, rmxpEvent: RMXPEvent): MapEventLink => {
   const id = findFirstAvailableId(events, 0);
+  const csvFileId = findFirstAvailableCsvFileId(events, EVENT_START_CSV_FILE_ID);
   const dbSymbol = `event_${id}` as DbSymbol;
-  events[dbSymbol] = { dbSymbol, id };
+  events[dbSymbol] = { dbSymbol, id, csvFileId };
 
   return {
     conditions: [], // TODO:
@@ -151,10 +160,12 @@ const getEventTriggers = (rmxpEvent: RMXPEvent): CustomEvent['triggers'] => {
   }));
 };
 
-const createCustomEvent = (rmxpEvent: RMXPEvent, eventIdentifier: PartialStudioEvent): CustomEvent => {
+const createCustomEvent = (events: Record<string, PartialStudioEvent>, rmxpEvent: RMXPEvent, eventIdentifier: PartialStudioEvent): CustomEvent => {
+  const csvFileId = findFirstAvailableCsvFileId(events, EVENT_START_CSV_FILE_ID);
   return {
     dbSymbol: eventIdentifier.dbSymbol,
     id: eventIdentifier.id,
+    csvFileId,
     type: 'custom',
     triggers: getEventTriggers(rmxpEvent),
     commands: {} as Record<CommandId, StudioEventCommand>, // TODO: implement command lists
@@ -174,7 +185,7 @@ export const convertRMXPEventsToStudioEvents = async (payload: RMXPEventsToStudi
     const newEventLink = createNewEventLink(events, rmxpEvent);
     newEventLinks.push(newEventLink);
 
-    const newCustomEvent = createCustomEvent(rmxpEvent, events[newEventLink.eventDbSymbol]);
+    const newCustomEvent = createCustomEvent(events, rmxpEvent, events[newEventLink.eventDbSymbol]);
     newStudioEvents.push(newCustomEvent);
   }, Promise.resolve());
 

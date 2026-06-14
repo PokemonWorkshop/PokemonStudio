@@ -53,6 +53,7 @@ const EVENT_TRIGGER_VALIDATOR = z.object({
 export const CUSTOM_EVENT_VALIDATOR = z.object({
   dbSymbol: DB_SYMBOL_VALIDATOR,
   id: POSITIVE_OR_ZERO_INT,
+  csvFileId: POSITIVE_OR_ZERO_INT,
   type: z.literal('custom'),
   commands: z.record(COMMAND_ID_VALIDATOR, EVENT_COMMAND_VALIDATOR),
   triggers: z.array(EVENT_TRIGGER_VALIDATOR),
@@ -118,3 +119,4 @@ export const EVENT_VALIDATOR = CUSTOM_EVENT_VALIDATOR.extend({ klass: z.literal(
 export type StudioEvent = z.infer<typeof EVENT_VALIDATOR>;
 
 export const EVENT_NAME_TEXT_ID = 200005;
+export const EVENT_START_CSV_FILE_ID = 500000;

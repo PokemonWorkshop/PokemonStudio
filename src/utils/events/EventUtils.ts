@@ -31,7 +31,7 @@ export const initCommandNodes = (event: StudioEvent, dialogsRef?: CommandDialogs
     id,
     type: command?.type,
     position: { x: command?.studioData.x || 0, y: command?.studioData.y || 0 },
-    data: { dialogsRef, command, comments: command?.studioData.comments },
+    data: { dialogsRef, command, comments: command?.studioData.comments, csvFileId: event.csvFileId },
   }));
 };
 
