@@ -45,7 +45,7 @@ type MapTreeComponentProps = {
 };
 
 export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) => {
-  const { mapInfo, isRMXPMode, setMapInfo, setPartialMapInfo } = useMapInfo();
+  const { mapInfo, setMapInfo, setPartialMapInfo } = useMapInfo();
   const { selectedDataIdentifier: currentMap, setSelectedDataIdentifier: setCurrentMap, projectDataValues: maps } = useProjectMaps();
   const setText = useSetProjectText();
   const getMapName = useGetEntityNameText();
@@ -173,8 +173,6 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
     const openMenu = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
       event.preventDefault();
       event.stopPropagation();
-      if (isRMXPMode) return;
-
       setMapInfoSelected(mapInfo[item.id]);
       // timeout to wait that the mapinfo selected has been taken into account
       setTimeout(() => buildOnClick(event, true));
@@ -223,12 +221,10 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
           {isFolder && !!countChildren && <span className="count-children">{countChildren}</span>}
           {!canRename && (
             <div className="actions">
-              {!isRMXPMode && (
-                <span className="icon icon-dot" onClick={openMenu}>
-                  <DotIcon />
-                </span>
-              )}
-              {!isDeleted && !isRMXPMode && currentDepth <= 3 && (
+              <span className="icon icon-dot" onClick={openMenu}>
+                <DotIcon />
+              </span>
+              {!isDeleted && currentDepth <= 3 && (
                 <span
                   className="icon icon-plus"
                   onClick={(e) => {
@@ -295,7 +291,7 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
           onCollapse={onCollapse}
           onDragEnd={onDragEnd}
           offsetPerLevel={26}
-          isDragEnabled={!isRMXPMode}
+          isDragEnabled={true}
           isNestingEnabled
         />
       )}

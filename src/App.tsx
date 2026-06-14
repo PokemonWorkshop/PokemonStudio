@@ -22,7 +22,6 @@ import './i18n';
 import DesignSystemRouterComponent from '@ds/DesignSystem.router';
 import PocRouterComponent from '@poc/Poc.router';
 import { TooltipContext } from '@ds/Tooltip/TooltipContext';
-import { EndSupportRMXPMapsBanner } from './views/components/EndSupportRMXPMapsBanner';
 
 const App = () => {
   return (
@@ -34,7 +33,6 @@ const App = () => {
             <UnsavedWarningModal />
             <MemoryRouter>
               <NavigationBarComponent />
-              <EndSupportRMXPMapsBanner />
               <Routes>
                 <Route path="/home" element={<HomePage />} />
                 <Route path="/dashboard/*" element={<DashboardRouter />} />

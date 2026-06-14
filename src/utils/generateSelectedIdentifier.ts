@@ -61,21 +61,7 @@ const getSelectedIdentifier = <T extends keyof SelectedDataIdentifier>(
   return undefined;
 };
 
-const getMapLinkIdentifier = (selectedFromStorage: SelectedDataIdentifier, preState: PreGlobalState, validMaps: number[]) => {
-  const expectedMapId = Number(selectedFromStorage.mapLink);
-  const maps = Object.values(preState.projectData.maps);
-
-  if (maps.find(({ id }) => id === expectedMapId)) return expectedMapId.toString();
-
-  return (
-    maps
-      .filter(({ id }) => validMaps.includes(id))
-      .sort((a, b) => a.id - b.id)[0]
-      ?.id.toString() || '__undef__'
-  );
-};
-
-const getMapLinkIdentifierV2 = (selectedFromStorage: SelectedDataIdentifier, preState: PreGlobalState) => {
+const getMapLinkIdentifierV2 =(selectedFromStorage: SelectedDataIdentifier, preState: PreGlobalState) => {
   const identifier = selectedFromStorage.mapLink;
   const mapLinks = Object.values(preState.projectData.mapLinks);
 
@@ -97,10 +83,6 @@ const getTextInfoIdentifier = (selectedFromStorage: SelectedDataIdentifier, text
 export const generateSelectedIdentifier = (preState: PreGlobalState): SelectedDataIdentifier => {
   const projectData = preState.projectData;
   const selectedFromStorage = getSelectedIdentifierFromStorage(preState);
-  const validMaps = Object.values(projectData.zones)
-    .filter((zone) => zone.isFlyAllowed && !zone.isWarpDisallowed)
-    .flatMap((zone) => zone.maps);
-  const isRMXPMode = !preState.projectStudio.isTiledMode;
   return {
     pokemon: getSelectedIdentifier(preState, selectedFromStorage, 'pokemon', 'pokemon') || {
       specie: firstById(projectData.pokemon),
@@ -115,7 +97,7 @@ export const generateSelectedIdentifier = (preState: PreGlobalState): SelectedDa
     ability: getSelectedIdentifier(preState, selectedFromStorage, 'ability', 'abilities') || firstByNameUsingTextId(projectData.abilities, preState),
     group: getSelectedIdentifier(preState, selectedFromStorage, 'group', 'groups') || firstById(projectData.groups),
     dex: getSelectedIdentifier(preState, selectedFromStorage, 'dex', 'dex') || firstById(projectData.dex),
-    mapLink: isRMXPMode ? getMapLinkIdentifier(selectedFromStorage, preState, validMaps) : getMapLinkIdentifierV2(selectedFromStorage, preState),
+    mapLink: getMapLinkIdentifierV2(selectedFromStorage, preState),
     textInfo: getTextInfoIdentifier(selectedFromStorage, preState.textInfos),
     map: getSelectedIdentifier(preState, selectedFromStorage, 'map', 'maps') || firstById(projectData.maps),
     nature: getSelectedIdentifier(preState, selectedFromStorage, 'nature', 'natures') || firstByName(projectData.natures, preState),
