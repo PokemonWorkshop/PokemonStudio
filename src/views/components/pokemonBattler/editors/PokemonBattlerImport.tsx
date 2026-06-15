@@ -90,7 +90,8 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
   const updateTrainer = useUpdateTrainer(trainer);
   const currentTrainer = useMemo(() => (trainer ? cloneEntity(trainer) : null), [trainer]);
   const updateGroup = useUpdateGroup(group);
-  const maxPartySize = settings.trainerPartyMaxSize;
+  // Used only to compute the visual-error threshold below — no longer a hard gate.
+  const overflowThreshold = Math.max(6, settings.trainerPartyMaxSize);
 
   const [selectedEntity, setSelectedEntity] = useState(getFirstDbSymbol(from, groups, trainers, group, currentTrainer));
   const [showdownEncounter, setShowdownEncounter] = useState<StudioGroupEncounter[]>([]);
@@ -104,9 +105,9 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
     if (!currentTrainer) return incomingLength;
     return currentTrainer.party.length + incomingLength;
   };
-  const isWithinTrainerPartyLimit = (incomingLength: number, overrideFlag: boolean) => {
-    if (isGroup) return true;
-    return getPartyLengthAfterImport(incomingLength, overrideFlag) <= maxPartySize;
+  const wouldExceedVisualLimit = (incomingLength: number, overrideFlag: boolean) => {
+    if (isGroup) return false;
+    return getPartyLengthAfterImport(incomingLength, overrideFlag) > overflowThreshold;
   };
 
   const dropDownOptions = [
@@ -122,44 +123,45 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
     if (convertedTeam.length === 0) {
       setShowdownEncounter([]);
       return setError(t('error_message'));
-    } else if (!isWithinTrainerPartyLimit(convertedTeam.length, override)) {
-      setError(t('party_length_limit', { max: maxPartySize }));
-    } else {
-      setError('');
     }
 
+    setError('');
     setShowdownEncounter(convertedTeam);
   };
 
   const handleImportTypeChange = (type: string) => {
     setDropDownSelection(type);
-    if (type === 'default' && !isGroup) {
-      const lengthPartyToImport = trainers[selectedEntity].party.length;
-      setError(isWithinTrainerPartyLimit(lengthPartyToImport, override) ? '' : t('party_length_limit', { max: maxPartySize }));
-    } else {
-      setError('');
+    setError('');
+    if (type !== 'default' || isGroup) {
       setShowdownEncounter([]);
     }
   };
 
-  const canImport = (overrideFlag: boolean) => {
+  const canImport = () => {
     if (isGroup) return true;
     if (!currentTrainer) return false;
 
     if (dropDownSelection === 'showdown') {
-      return showdownEncounter.length > 0 && isWithinTrainerPartyLimit(showdownEncounter.length, overrideFlag);
+      return showdownEncounter.length > 0;
     }
 
-    return isWithinTrainerPartyLimit(trainers[selectedEntity].party.length, overrideFlag);
+    return true;
   };
 
   const handleSetOverride = (newValue: boolean) => {
     setOverride(newValue);
-    setError(canImport(newValue) ? '' : t('party_length_limit', { max: maxPartySize }));
+  };
+
+  const getOverflowNotice = () => {
+    if (isGroup) return undefined;
+    const incoming = dropDownSelection === 'showdown' ? showdownEncounter.length : trainers[selectedEntity]?.party.length ?? 0;
+    if (incoming === 0) return undefined;
+    if (!wouldExceedVisualLimit(incoming, override)) return undefined;
+    return t('trainer_party_overflow_import_notice', { threshold: overflowThreshold });
   };
 
   const onClickImport = () => {
-    if (!canImport(override)) return;
+    if (!canImport()) return;
 
     const handleImport = (entityType: string, newEntities: StudioGroupEncounter[]) => {
       const updateFunction = entityType === 'group' ? updateGroup : updateTrainer;
@@ -233,11 +235,14 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
           <Label htmlFor="override">{t('replace_battlers')}</Label>
           <Toggle name="override" checked={override} onChange={(event) => handleSetOverride(event.target.checked)} />
         </InputWithLeftLabelContainer>
+        {getOverflowNotice() && (
+          <Label>
+            <span>{getOverflowNotice()}</span>
+          </Label>
+        )}
         <ButtonContainer>
-          <TooltipWrapper
-            data-tooltip={dropDownSelection === 'default' && !canImport(override) ? t('party_length_limit', { max: maxPartySize }) : undefined}
-          >
-            <PrimaryButton onClick={onClickImport} disabled={!canImport(override)}>
+          <TooltipWrapper data-tooltip={dropDownSelection === 'default' && !canImport() ? t('error_message') : undefined}>
+            <PrimaryButton onClick={onClickImport} disabled={!canImport()}>
               {t('to_import')}
             </PrimaryButton>
           </TooltipWrapper>

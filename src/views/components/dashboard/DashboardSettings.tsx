@@ -58,13 +58,13 @@ export const DashboardSettings = () => {
 
   const onChangeTrainerPartyMaxSize = (event: React.ChangeEvent<HTMLInputElement>) => {
     const trainerPartyMaxSize = parseInt(event.target.value);
-    if (trainerPartyMaxSize < 1 || trainerPartyMaxSize > 99) return event.preventDefault();
+    if (trainerPartyMaxSize < 1 || trainerPartyMaxSize > 999) return event.preventDefault();
     setTrainerPartyMaxSize(trainerPartyMaxSize);
   };
 
   const onBlurTrainerPartyMaxSize = (event: React.ChangeEvent<HTMLInputElement>) => {
     const trainerPartyMaxSize = parseInt(event.target.value);
-    if (trainerPartyMaxSize < 1 || trainerPartyMaxSize > 99) return event.preventDefault();
+    if (trainerPartyMaxSize < 1 || trainerPartyMaxSize > 999) return event.preventDefault();
     currentEditedSettings.trainerPartyMaxSize = trainerPartyMaxSize;
     updateSettingsConfig();
   };
@@ -117,7 +117,7 @@ export const DashboardSettings = () => {
             type="number"
             name="max-trainer-party-size"
             min="1"
-            max="99"
+            max="999"
             value={isNaN(trainerPartyMaxSize) ? '' : trainerPartyMaxSize}
             onChange={onChangeTrainerPartyMaxSize}
             onBlur={onBlurTrainerPartyMaxSize}

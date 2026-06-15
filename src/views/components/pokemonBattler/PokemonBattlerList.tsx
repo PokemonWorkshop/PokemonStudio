@@ -14,6 +14,13 @@ import { useConfigSettings } from '@hooks/useProjectConfig';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import { PokemonBattlerEditorOverlay } from './editors';
 import type { CurrentBattlerType, PokemonBattlerEditorAndDeletionKeys, PokemonBattlerFrom } from './editors/PokemonBattlerEditorOverlay';
+import { TrainerPartyOverflowOverlay, type TrainerPartyOverflowKeys } from './editors/TrainerPartyOverflowOverlay';
+import { isTrainerPartyOverflowWarningDismissed } from './editors/TrainerPartyOverflowWarning';
+
+// PSDK's canonical battle UI renders up to 6 creatures per side. Above this, custom UI may
+// be required. Projects that have raised `trainerPartyMaxSize` are assumed to have such UI,
+// so the warning kicks in only past the larger of those two values.
+const PSDK_DEFAULT_PARTY_VISUAL_LIMIT = 6;
 
 type PokemonBattlerListProps = {
   title: string;
@@ -67,10 +74,20 @@ export const PokemonBattlerListGrid = styled.div`
 
 export const PokemonBattlerList = ({ title, encounters, disabledImport, from }: PokemonBattlerListProps) => {
   const dialogsRef = useDialogsRef<PokemonBattlerEditorAndDeletionKeys>();
+  const overflowDialogsRef = useDialogsRef<TrainerPartyOverflowKeys>();
   const { t } = useTranslation();
   const { trainer } = useTrainerPage();
   const { projectConfigValues: settings } = useConfigSettings();
   const [currentBattler, setCurrentBattler] = useState<CurrentBattlerType>({ index: 0, kind: undefined });
+
+  const overflowThreshold = Math.max(PSDK_DEFAULT_PARTY_VISUAL_LIMIT, settings.trainerPartyMaxSize);
+  const handleAddCreatureClick = () => {
+    if (from === 'trainer' && trainer.party.length >= overflowThreshold && !isTrainerPartyOverflowWarningDismissed()) {
+      overflowDialogsRef.current?.openDialog('overflow_warning', true);
+      return;
+    }
+    dialogsRef.current?.openDialog('new');
+  };
 
   const importText = () => {
     switch (from) {
@@ -110,11 +127,7 @@ export const PokemonBattlerList = ({ title, encounters, disabledImport, from }: 
           >
             {importText()}
           </DarkButtonImportResponsive>
-          <SecondaryButtonWithPlusIconResponsive
-            onClick={() => dialogsRef.current?.openDialog('new')}
-            data-tooltip-responsive={t('add_creature')}
-            disabled={from === 'trainer' && trainer.party.length >= settings.trainerPartyMaxSize}
-          >
+          <SecondaryButtonWithPlusIconResponsive onClick={handleAddCreatureClick} data-tooltip-responsive={t('add_creature')}>
             {t('add_creature')}
           </SecondaryButtonWithPlusIconResponsive>
         </div>
@@ -136,6 +149,11 @@ export const PokemonBattlerList = ({ title, encounters, disabledImport, from }: 
         </PokemonBattlerListGrid>
       )}
       <PokemonBattlerEditorOverlay ref={dialogsRef} currentBattler={currentBattler} from={from} />
+      <TrainerPartyOverflowOverlay
+        ref={overflowDialogsRef}
+        threshold={overflowThreshold}
+        onConfirm={() => dialogsRef.current?.openDialog('new')}
+      />
     </PokemonBattlerListComponent>
   );
 };

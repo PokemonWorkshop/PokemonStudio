@@ -106,7 +106,7 @@ export const SETTINGS_CONFIG_VALIDATOR = z.object({
   showContestSummaryPage: z.boolean(),
   showRibbonsSummaryPage: z.boolean(),
   baseStatMaxValue: POSITIVE_INT.max(9999).default(999),
-  trainerPartyMaxSize: POSITIVE_INT.max(99).default(6),
+  trainerPartyMaxSize: POSITIVE_INT.max(999).default(6),
 });
 export type StudioSettingConfig = z.infer<typeof SETTINGS_CONFIG_VALIDATOR>;
 
