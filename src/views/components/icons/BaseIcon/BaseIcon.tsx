@@ -15,6 +15,7 @@ import DashboardIcon from '@assets/icons/navigation/dashboard-icon.svg';
 import Database from '@assets/icons/navigation/database-icon.svg';
 import HelpIcon from '@assets/icons/navigation/help-icon.svg';
 import MapIcon from '@assets/icons/navigation/map-icon.svg';
+import OnlineIcon from '@assets/icons/navigation/online-icon.svg';
 import PocIcon from '@assets/icons/navigation/poc-icon.svg';
 import SaveIcon from '@assets/icons/navigation/save-icon.svg';
 import SettingsIcon from '@assets/icons/navigation/settings-icon.svg';
@@ -47,7 +48,8 @@ export type IconName =
   | 'poc'
   | 'tune'
   | 'mapLink'
-  | 'updateMap';
+  | 'updateMap'
+  | 'online';
 
 const iconNameToIcon: Record<IconName, typeof TopIcon> = {
   top: TopIcon,
@@ -72,6 +74,7 @@ const iconNameToIcon: Record<IconName, typeof TopIcon> = {
   tune: TuneIcon,
   mapLink: MapLinkIcon,
   updateMap: UpdateMapIcon,
+  online: OnlineIcon,
 };
 
 type Size = 's' | 'm' | 'l';

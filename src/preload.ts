@@ -35,6 +35,7 @@ import type { ReadRMXPEventInput, ReadRMXPEventOutput } from './backendTasks/rea
 import type { ReadRMXPMapInput, ReadRMXPMapOutput } from './backendTasks/readRMXPMap';
 import type { ReadRMXPMapInfoInput, ReadRMXPMapInfoOutput } from './backendTasks/readRMXPMapInfo';
 import type { RequestJsonInput, RequestJsonOutput } from './backendTasks/requestJson';
+import type { OnlineHttpRequestInput, OnlineHttpRequestOutput } from './backendTasks/onlineHttpRequest';
 import type { SaveCompilationLogsInput } from './backendTasks/saveCompilationLogs';
 import type { SaveEventTreeInput } from './backendTasks/saveEventTree';
 import type { SaveMapInfoInput } from './backendTasks/saveMapInfo';
@@ -149,6 +150,7 @@ contextBridge.exposeInMainWorld('api', {
   openTiled: defineBackendTask(ipcRenderer, 'open-tiled'),
   downloadFile: defineBackendTask(ipcRenderer, 'download-file'),
   requestJson: defineBackendTask(ipcRenderer, 'request-json'),
+  onlineHttpRequest: defineBackendTask(ipcRenderer, 'online-http-request'),
   checkDownloadNewProject: defineBackendTask(ipcRenderer, 'check-download-new-project'),
   generatingMapOverview: defineBackendTask(ipcRenderer, 'generating-map-overview'),
   openCompilationWindow: defineBackendTask(ipcRenderer, 'open-compilation-window'),
@@ -243,6 +245,7 @@ declare global {
       openTiled: BackendTaskWithGenericErrorAndNoProgress<OpenTiledPayload, AnyObj>;
       downloadFile: BackendTaskWithGenericError<DownloadFileInput, AnyObj, GenericBackendProgress>;
       requestJson: BackendTaskWithGenericErrorAndNoProgress<RequestJsonInput, RequestJsonOutput>;
+      onlineHttpRequest: BackendTaskWithGenericErrorAndNoProgress<OnlineHttpRequestInput, OnlineHttpRequestOutput>;
       checkDownloadNewProject: BackendTaskWithGenericErrorAndNoProgress<CheckDownloadNewProjectInput, CheckDownloadNewProjectOutput>;
       generatingMapOverview: BackendTaskWithGenericErrorAndNoProgress<GeneratingMapOverviewInput, AnyObj>;
       openCompilationWindow: BackendTaskWithGenericErrorAndNoProgress<OpenCompilationWindowInput, AnyObj>;

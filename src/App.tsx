@@ -17,6 +17,7 @@ import { LoaderContextProvider } from '@utils/loaderContext';
 import { UnsavedWarningModal } from '@components/modals/UnsavedWarningModal';
 import WorldRouter from '@pages/world/World.Router.page';
 import SettingsRouter from '@pages/settings/Settings.Router.page';
+import OnlineRouter from '@pages/online/Online.Router.page';
 
 import './i18n';
 import DesignSystemRouterComponent from '@ds/DesignSystem.router';
@@ -43,6 +44,7 @@ const App = () => {
                 <Route path="/code" />
                 <Route path="/help" />
                 <Route path="/settings/*" element={<SettingsRouter />} />
+                <Route path="/online/*" element={<OnlineRouter />} />
                 <Route path="/account" />
                 <Route path="/designSystem/*" element={<DesignSystemRouterComponent />} />
                 <Route path="/compilation" element={<CompilationPage />} />
