@@ -1866,6 +1866,7 @@
   "event_command_change_battle_background": "Changer le fond de combat",
   "event_command_insert_script": "Insérer un script",
   "event_command_complete_quest_helper": "Valide la complétion d'une quête, distribue ses récompenses et annonce sa fin",
+  "event_command_start": "Start",
   "add_base_for_events": "Ajout des éléments de base pour les événements",
   "add_csv_for_event_folders": "Ajout du fichier CSV pour les noms de dossiers d'événements",
   "event_command_comment": "Commentaire",
@@ -1935,5 +1936,7 @@
   "shortcut_toggle_fullscreen": "Afficher en plein écran",
   "shortcut_minimize_window": "Réduire la fenêtre",
   "shortcut_open_devtools": "Afficher les Developer Tools",
-  "app_settings": "Parametres de L'appli"
+  "app_settings": "Paramètres de l'application",
+  "event_command_trigger": "Déclencheur",
+  "event_command_priority": "Priorité"
 }

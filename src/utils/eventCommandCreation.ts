@@ -21,6 +21,8 @@ const createShowMessageCommand = (event: StudioEvent) => {
 
 const insertScriptCommand = () => ({ script: '' });
 
+const startCommand = () => ({ trigger: 'key_press', priority: 1 });
+
 const dummy = () => ({});
 
 export const EventCommandCreation: Record<StudioEventCommandType, (event: StudioEvent) => Omit<StudioEventCommandData<StudioEventCommand>, 'type'>> =
@@ -98,4 +100,5 @@ export const EventCommandCreation: Record<StudioEventCommandType, (event: Studio
     manage_map_panorama: dummy,
     change_battle_background: dummy,
     insert_script: insertScriptCommand,
+    start: startCommand,
   };

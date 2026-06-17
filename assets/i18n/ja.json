@@ -1866,6 +1866,7 @@
   "event_command_change_battle_background": "Change battle background",
   "event_command_insert_script": "Insert a script",
   "event_command_complete_quest_helper": "Validates quest completion, distributes rewards and announces its end",
+  "event_command_start": "Start",
   "add_base_for_events": "Adding basic elements for events",
   "add_csv_for_event_folders": "Adding the CSV file for event folder names",
   "event_command_comment": "Comment",
@@ -1935,5 +1936,7 @@
   "shortcut_toggle_fullscreen": "Toggle Fullscreen",
   "shortcut_minimize_window": "Minimize Window",
   "shortcut_open_devtools": "Open Developer Tools",
-  "app_settings": "App Settings"
+  "app_settings": "App Settings",
+  "event_command_trigger": "Trigger",
+  "event_command_priority": "Priority"
 }

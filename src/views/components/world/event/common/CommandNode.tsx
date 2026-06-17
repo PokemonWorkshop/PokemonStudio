@@ -159,17 +159,37 @@ const CommandNodeContainer = styled.div<{ color: EventIconColor }>`
   }
 `;
 
+const showDefaultHandles = (position: 'left' | 'right', defaultHandles?: DefaultHandles) => {
+  if (!defaultHandles) return true;
+
+  return defaultHandles[position];
+};
+
+type DefaultHandles = { left: boolean; right: boolean };
+
 type CommandNodeProps = {
   commandType: StudioEventCommandType;
   commentCount: number;
+  nodeId: string;
+  children: ReactNode;
   dialogsRef?: CommandDialogsRef;
   hasError?: boolean;
-  nodeId: string;
   selected?: boolean;
-  children: ReactNode;
+  footerChildren?: ReactNode;
+  defaultHandles?: DefaultHandles;
 };
 
-export const CommandNode = ({ commandType, commentCount, dialogsRef, hasError, nodeId, selected, children }: CommandNodeProps) => {
+export const CommandNode = ({
+  commandType,
+  commentCount,
+  dialogsRef,
+  hasError,
+  nodeId,
+  selected,
+  defaultHandles,
+  children,
+  footerChildren,
+}: CommandNodeProps) => {
   const { setCurrentEditedNode } = useEventActions();
   const { isHandleConnected } = useHandleConnectionState(nodeId);
   const { t } = useTranslation();
@@ -180,8 +200,12 @@ export const CommandNode = ({ commandType, commentCount, dialogsRef, hasError, n
 
   return (
     <>
-      <CustomHandle color={color} handleIsConnected={handleLeftIsConnected} id="Tleft_default" position={Position.Left} type="target" />
-      <CustomHandle color={color} handleIsConnected={handleRightIsConnected} id="Sright_default" position={Position.Right} type="source" />
+      {showDefaultHandles('left', defaultHandles) && (
+        <CustomHandle color={color} handleIsConnected={handleLeftIsConnected} id="Tleft_default" position={Position.Left} type="target" />
+      )}
+      {showDefaultHandles('right', defaultHandles) && (
+        <CustomHandle color={color} handleIsConnected={handleRightIsConnected} id="Sright_default" position={Position.Right} type="source" />
+      )}
       <CommandNodeContainer
         color={color}
         data-selected={selected}
@@ -211,6 +235,7 @@ export const CommandNode = ({ commandType, commentCount, dialogsRef, hasError, n
             <div />
           )}
           <div className="actions">
+            {footerChildren}
             {commentCount > 0 && (
               <div className="comments nodrag" onClick={(e) => e.stopPropagation()} onDoubleClick={(e) => e.stopPropagation()}>
                 <NoteIcon className="icon" />
