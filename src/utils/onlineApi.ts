@@ -77,8 +77,10 @@ export type GiftCreature = {
   level: number;
   shiny?: boolean;
   form?: number;
-  gender?: string;
-  nature?: string;
+  // Server validation requires numeric ids; UI state may still hold strings
+  // briefly before the save boundary converts. The union accommodates both.
+  gender?: number | string;
+  nature?: number | string;
   ability?: number | string;
   loyalty?: number;
   stats?: [number, number, number, number, number, number];
@@ -114,6 +116,41 @@ export type CreateGiftBody = {
 
 export const createMysteryGift = (body: CreateGiftBody) =>
   request('POST', '/api/v1/mystery-gift/admin/create', { adminKey: true }, body);
+
+/**
+ * Soft-deletes the gift on the server (sets `isActive: false`); the document
+ * is preserved. Players can no longer see or claim it. The `giftId` is taken
+ * from the create response (`gift-<random>`) and is what gets recorded in the
+ * session cache.
+ */
+export const deleteMysteryGift = (giftId: string) =>
+  request('DELETE', `/api/v1/mystery-gift/admin/${encodeURIComponent(giftId)}`, { adminKey: true });
+
+/**
+ * Admin "list all" — returns every gift the server has, active or not,
+ * including code-type and disabled ones. Full admin view (includes
+ * `claimedBy` and `allowedClaimers`). This replaces the player-scoped list
+ * as the source of truth for the Mystery Gift management UI.
+ */
+export const listAllMysteryGifts = () =>
+  request('GET', '/api/v1/mystery-gift/admin', { adminKey: true });
+
+/** Admin single-gift detail — useful for prefilling an edit form. */
+export const getMysteryGift = (giftId: string) =>
+  request('GET', `/api/v1/mystery-gift/admin/${encodeURIComponent(giftId)}`, { adminKey: true });
+
+/**
+ * Partial admin edit. Any field of `CreateGiftBody` may be sent; additionally
+ * `active: boolean` maps to the model's `isActive` so the same endpoint flips
+ * a gift between enabled / disabled without going through DELETE.
+ */
+export type UpdateGiftBody = Partial<CreateGiftBody> & { active?: boolean };
+
+export const updateMysteryGift = (giftId: string, body: UpdateGiftBody) =>
+  request('PATCH', `/api/v1/mystery-gift/admin/${encodeURIComponent(giftId)}`, { adminKey: true }, body);
+
+/** Convenience: flip `isActive` back to true for a previously soft-deleted gift. */
+export const enableMysteryGift = (giftId: string) => updateMysteryGift(giftId, { active: true });
 
 // ─── Mystery Gift — player ─────────────────────────────────────────────────
 

@@ -58,3 +58,7 @@ export const isOnlineBasicallyConfigured = (cfg: OnlineConfig = getOnlineConfig(
 /** True when admin routes are usable. */
 export const isOnlineAdminConfigured = (cfg: OnlineConfig = getOnlineConfig()): boolean =>
   Boolean(cfg.baseUrl && cfg.adminKey);
+
+/** True when player-scoped routes (list gifts, GTS, friends…) are usable. */
+export const isOnlinePlayerConfigured = (cfg: OnlineConfig = getOnlineConfig()): boolean =>
+  Boolean(cfg.baseUrl && cfg.apiKey && cfg.playerId);
