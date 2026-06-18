@@ -38,6 +38,31 @@ Object.keys(context).forEach((key) => {
 });
 
 /**
+ * Fork-only translations.
+ *
+ * Custom features added on this fork drop a single `i18n.json` into their
+ * folder under `src/custom/<FeatureName>/`. The file is shaped as
+ * `{ [locale]: { [key]: value } }` so one JSON owns every locale for that
+ * feature. We glob those files here and merge them on top of the upstream
+ * translations — keeping fork keys out of `assets/i18n/en.json` means
+ * upstream's en.json never conflicts with ours on merge, and per-feature
+ * isolation means feature branches don't collide with each other either.
+ *
+ * Missing locales fall through to whichever locales the fork file does
+ * provide; fallbackLng = 'en' covers the gap when even that's missing.
+ */
+type ForkBundle = Record<string, Record<string, string>>;
+const forkContext = import.meta.glob<{ default: ForkBundle }>('./custom/**/i18n.json', { eager: true });
+
+Object.values(forkContext).forEach(({ default: bundle }) => {
+  Object.entries(bundle).forEach(([lang, keys]) => {
+    if (!activeLanguages.includes(lang)) return;
+    if (!resources[lang]) resources[lang] = { translation: {} };
+    Object.assign(resources[lang].translation, keys);
+  });
+});
+
+/**
  * Configuration options for internationalization (i18n) initialization.
  *
  * @property {object} interpolation - Configuration for string interpolation.
