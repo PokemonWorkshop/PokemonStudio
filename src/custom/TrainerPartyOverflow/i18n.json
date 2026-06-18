@@ -1,0 +1,14 @@
+{
+  "en": {
+    "trainer_party_overflow_title": "Going beyond {{threshold}} Pokémon",
+    "trainer_party_overflow_text": "PSDK has no hard limit on party size, but the default battle UI only renders {{threshold}} creatures. Going beyond this may cause visual errors in battle unless your project ships a UI that supports more.",
+    "trainer_party_overflow_add_anyway": "Add anyway",
+    "trainer_party_overflow_import_notice": "After import this trainer will have more than {{threshold}} Pokémon. This may cause visual errors in battle unless your project has a UI that supports it."
+  },
+  "fr": {
+    "trainer_party_overflow_title": "Au-delà de {{threshold}} Pokémon",
+    "trainer_party_overflow_text": "PSDK n'impose aucune limite stricte à la taille d'une équipe, mais l'interface de combat par défaut n'affiche que {{threshold}} créatures. Au-delà, des problèmes d'affichage peuvent apparaître en combat, à moins que votre projet n'utilise une interface adaptée.",
+    "trainer_party_overflow_add_anyway": "Ajouter quand même",
+    "trainer_party_overflow_import_notice": "Après l'import, ce dresseur aura plus de {{threshold}} Pokémon. Cela peut provoquer des problèmes d'affichage en combat, à moins que votre projet n'utilise une interface adaptée."
+  }
+}
