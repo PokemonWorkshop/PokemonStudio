@@ -1938,5 +1938,12 @@
   "shortcut_open_devtools": "Open Developer Tools",
   "app_settings": "App Settings",
   "event_command_trigger": "Trigger",
-  "event_command_priority": "Priority"
+  "event_command_priority": "Priority",
+  "event_command_trigger_key_press": "Key action",
+  "event_command_trigger_contact": "Contact",
+  "event_command_trigger_overlap": "Overlap",
+  "event_command_trigger_before_transition": "Before Any Transition",
+  "event_command_trigger_called": "Called",
+  "event_command_trigger_parallel": "Runs in Parallel",
+  "event_command_trigger_cinematic": "Cutscene"
 }

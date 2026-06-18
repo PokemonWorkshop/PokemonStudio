@@ -1938,5 +1938,12 @@
   "shortcut_open_devtools": "Afficher les Developer Tools",
   "app_settings": "Paramètres de l'application",
   "event_command_trigger": "Déclencheur",
-  "event_command_priority": "Priorité"
+  "event_command_priority": "Priorité",
+  "event_command_trigger_key_press": "Action d'une touche",
+  "event_command_trigger_contact": "Contact",
+  "event_command_trigger_overlap": "Chevauchement",
+  "event_command_trigger_before_transition": "Avant toute transition",
+  "event_command_trigger_called": "Appelé",
+  "event_command_trigger_parallel": "Parallèle",
+  "event_command_trigger_cinematic": "Cinématique"
 }

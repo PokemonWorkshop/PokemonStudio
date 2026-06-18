@@ -1,12 +1,14 @@
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
 import { DialogRefData } from '@hooks/useDialogsRef';
-import type { CommandId, StudioEventCommandType } from '@modelEntities/event/command';
+import type { StudioEventCommandType } from '@modelEntities/event/command';
 import type { StudioEvent } from '@modelEntities/event/event';
+import type { CommandId } from '@modelEntities/event/globalCommand';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import React from 'react';
 import { DefaultEditor } from './DefaultEditor';
 import { InsertScriptEditor } from './InsertScriptEditor';
 import { ShowMessageEditor } from './ShowMessageEditor';
+import { StartEditor } from './StartEditor';
 
 export type CommandEditorAndDeletionKeys = StudioEventCommandType;
 export type CommandDialogsRef = React.RefObject<DialogRefData<CommandEditorAndDeletionKeys> | null>;
@@ -95,6 +97,8 @@ export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletion
         return <DefaultEditor ref={handleCloseRef} />;
       case 'insert_script':
         return <InsertScriptEditor commandId={commandId} event={event} ref={handleCloseRef} />;
+      case 'start':
+        return <StartEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       default:
         return assertUnreachable(dialogToShow);
     }

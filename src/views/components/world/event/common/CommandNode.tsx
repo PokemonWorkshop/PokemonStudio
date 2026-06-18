@@ -128,6 +128,7 @@ const CommandNodeContainer = styled.div<{ color: EventIconColor }>`
         }
 
         .count {
+          padding: 0px 2px;
           color: #b4b7c1;
         }
       }
@@ -193,7 +194,7 @@ export const CommandNode = ({
   const { setCurrentEditedNode } = useEventActions();
   const { isHandleConnected } = useHandleConnectionState(nodeId);
   const { t } = useTranslation();
-  const deployFooter = hasError || commentCount > 0;
+  const deployFooter = hasError || commentCount > 0 || !!footerChildren;
   const color = IconsFromCommand[commandType].color;
   const handleLeftIsConnected = isHandleConnected('Tleft_default', 'target');
   const handleRightIsConnected = isHandleConnected('Sright_default', 'source');
