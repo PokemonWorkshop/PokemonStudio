@@ -63,7 +63,7 @@ export const OnlineSettingsPage = () => {
           <Label>{t('online_base_url')}</Label>
           <Input
             type="text"
-            placeholder="http://50.21.190.201:3000"
+            placeholder="http://203.0.113.5:3000"
             value={config.baseUrl}
             onChange={(e) => update('baseUrl', e.target.value)}
           />
