@@ -5,18 +5,20 @@ import { DialogRefData } from '@hooks/useDialogsRef';
 import { CreateMysteryGiftEditor } from './CreateMysteryGiftEditor';
 import type { GiftDetailed } from './GiftDetailsView';
 
-export type MysteryGiftEditorKeys = 'create' | 'edit';
+export type MysteryGiftEditorKeys = 'create' | 'edit' | 'duplicate';
 export type MysteryGiftDialogsRef = React.RefObject<DialogRefData<MysteryGiftEditorKeys> | null>;
 
 type Props = {
   onCreated: () => void;
   /** Set by the page before opening the 'edit' dialog. The editor pre-fills from this. */
   editingGift?: GiftDetailed;
+  /** Set by the page before opening the 'duplicate' dialog. Source gift for the copy. */
+  duplicateFrom?: GiftDetailed;
 };
 
 export const MysteryGiftEditorOverlay = defineEditorOverlay<MysteryGiftEditorKeys, Props>(
   'MysteryGiftEditorOverlay',
-  (dialogToShow, handleCloseRef, closeDialog, { onCreated, editingGift }) => {
+  (dialogToShow, handleCloseRef, closeDialog, { onCreated, editingGift, duplicateFrom }) => {
     switch (dialogToShow) {
       case 'create':
         return <CreateMysteryGiftEditor ref={handleCloseRef} closeDialog={closeDialog} onCreated={onCreated} />;
@@ -27,6 +29,15 @@ export const MysteryGiftEditorOverlay = defineEditorOverlay<MysteryGiftEditorKey
             closeDialog={closeDialog}
             onCreated={onCreated}
             editingGift={editingGift}
+          />
+        );
+      case 'duplicate':
+        return (
+          <CreateMysteryGiftEditor
+            ref={handleCloseRef}
+            closeDialog={closeDialog}
+            onCreated={onCreated}
+            duplicateFrom={duplicateFrom}
           />
         );
       default:

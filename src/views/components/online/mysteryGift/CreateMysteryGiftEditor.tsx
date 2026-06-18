@@ -157,10 +157,12 @@ export const CreateMysteryGiftEditor = forwardRef<EditorHandlingClose, Props>(
     // Server requires a code whenever type is 'code'. Catch client-side so the
     // user doesn't have to read the server's structured error.
     if (type === 'code' && !code.trim()) return t('online_gift_error_code_required');
-    // Server requires content on create, but explicitly allows clearing all
-    // arrays during a partial edit ("admin may clear out items/creatures/eggs
-    // progressively"). Only enforce on create to match.
-    if (!isEdit && items.length === 0 && creatures.length === 0 && eggs.length === 0)
+    // A gift must always contain at least one item/creature/egg, even in edit
+    // mode. (The server's PATCH would technically accept omitted arrays, but
+    // since we send arrays only when non-empty, "save with all empty" would
+    // submit a no-op body — the gift would appear unchanged and confuse the
+    // user. Blocking empty payloads outright is the clearer UX.)
+    if (items.length === 0 && creatures.length === 0 && eggs.length === 0)
       return t('online_gift_error_empty_payload');
     if (!alwaysAvailable) {
       if (!validFrom || !validTo) return t('online_gift_error_date_range');
@@ -308,7 +310,7 @@ export const CreateMysteryGiftEditor = forwardRef<EditorHandlingClose, Props>(
               <HelpText>
                 {[
                   ...creatures.map((c) => `Lv${c.level} ${c.id}`),
-                  ...eggs.map((e) => `Egg: ${e.id}`)
+                  ...eggs.map((e) => `Egg: ${e.id}`),
                 ].join(', ')}
               </HelpText>
             )}

@@ -136,6 +136,8 @@ export const OnlineMysteryGiftPage = () => {
   // The gift currently being edited (handed to MysteryGiftEditorOverlay as a prop).
   // null = create mode when the editor opens.
   const [editingGift, setEditingGift] = useState<GiftDetailed | null>(null);
+  // Source gift for the Duplicate flow — pre-populates a brand-new gift form.
+  const [duplicateSource, setDuplicateSource] = useState<GiftDetailed | null>(null);
 
   const fetchGifts = useCallback(async () => {
     if (!isOnlineAdminConfigured()) {
@@ -208,6 +210,16 @@ export const OnlineMysteryGiftPage = () => {
     }
     setEditingGift(gift);
     dialogsRef.current?.openDialog('edit');
+  };
+
+  const handleDuplicateClick = (gift: GiftDetailed) => {
+    if (!isOnlineAdminConfigured()) {
+      setAdminReady(false);
+      return;
+    }
+    setEditingGift(null);
+    setDuplicateSource(gift);
+    dialogsRef.current?.openDialog('duplicate');
   };
 
   const handleDelete = (gift: GiftDetailed) => {
@@ -306,6 +318,7 @@ export const OnlineMysteryGiftPage = () => {
         title={t('online_active_gifts')}
         editorTitle={t('online_mystery_gift')}
         add={{ label: t('online_create_gift'), onClick: handleCreateClick }}
+        canCollapse
       >
         <Toolbar>
           <DarkButton onClick={fetchGifts} disabled={isLoading || !adminReady}>
@@ -325,6 +338,9 @@ export const OnlineMysteryGiftPage = () => {
                     <EditButton onClick={() => handleEditClick(g)} disabled={mutatingId === g.giftId}>
                       {t('online_gift_edit')}
                     </EditButton>
+                    <EditButton onClick={() => handleDuplicateClick(g)} disabled={mutatingId === g.giftId}>
+                      {t('online_gift_duplicate')}
+                    </EditButton>
                     <DangerButton onClick={() => handleDelete(g)} disabled={mutatingId === g.giftId}>
                       {mutatingId === g.giftId ? t('online_gift_deleting') : t('online_gift_delete')}
                     </DangerButton>
@@ -338,7 +354,7 @@ export const OnlineMysteryGiftPage = () => {
       </PageEditor>
 
       {listState.status === 'ok' && disabledGifts.length > 0 && (
-        <PageEditor title={t('online_disabled_gifts')} editorTitle={t('online_mystery_gift')}>
+        <PageEditor title={t('online_disabled_gifts')} editorTitle={t('online_mystery_gift')} canCollapse>
           <GiftList>
             {disabledGifts.map((g) => (
               <GiftDetailsView
@@ -348,6 +364,9 @@ export const OnlineMysteryGiftPage = () => {
                   <>
                     <EditButton onClick={() => handleEditClick(g)} disabled={mutatingId === g.giftId}>
                       {t('online_gift_edit')}
+                    </EditButton>
+                    <EditButton onClick={() => handleDuplicateClick(g)} disabled={mutatingId === g.giftId}>
+                      {t('online_gift_duplicate')}
                     </EditButton>
                     <SuccessButton onClick={() => handleEnable(g)} disabled={mutatingId === g.giftId}>
                       {mutatingId === g.giftId ? t('online_gift_enabling') : t('online_gift_enable')}
@@ -361,7 +380,12 @@ export const OnlineMysteryGiftPage = () => {
         </PageEditor>
       )}
 
-      <MysteryGiftEditorOverlay ref={dialogsRef} onCreated={fetchGifts} editingGift={editingGift ?? undefined} />
+      <MysteryGiftEditorOverlay
+        ref={dialogsRef}
+        onCreated={fetchGifts}
+        editingGift={editingGift ?? undefined}
+        duplicateFrom={duplicateSource ?? undefined}
+      />
       <DeleteGiftOverlay ref={deleteDialogsRef} title={pendingDelete?.title ?? ''} onConfirm={performDelete} />
     </PageTemplate>
   );
