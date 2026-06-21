@@ -164,3 +164,35 @@ export const SelectContainer = styled.div`
     }
   }
 `;
+
+export const NodeSelectContainer = styled(SelectContainer)`
+  & svg {
+    &.disabled {
+      color: #4f525b;
+    }
+  }
+
+  & input {
+    background-color: #202225;
+    border: 1px solid #383a40;
+
+    &:disabled {
+      cursor: not-allowed;
+      filter: opacity(100%);
+      color: #4f525b;
+      border: 1px solid #25262a;
+      background-color: rgb(192, 193, 227, 0.03);
+    }
+  }
+
+  &:has(.visible) {
+    & input {
+      background-color: #202225; // TODO: set the right color
+    }
+  }
+
+  & > .select-popover {
+    background-color: #202225;
+    border: 1px solid #383a40;
+  }
+`;
