@@ -941,6 +941,7 @@
   "new_form": "Neue Form",
   "create_form": "Hinzufügen der Form",
   "form_type": "Typ der Form",
+  "inherit_movepool": "Inherit movepool",
   "classic": "Klassisch",
   "mega-evolution": "Megaentwicklung",
   "error_classic_form": "Du kannst keine klassischen Forme mehr erstellen.",

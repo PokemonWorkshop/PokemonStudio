@@ -170,10 +170,15 @@ export const createCreatureForm = (
   form: StudioCreatureForm,
   types: { type1: DbSymbol; type2: DbSymbol },
   newFormId: number,
+  inheritMoveSet = true,
 ) => {
   const formTextIdName = findFirstAvailableFormTextId(allPokemon, 0, 'name');
   const formTextIdDescription = findFirstAvailableFormTextId(allPokemon, 0, 'description');
-  return cloneEntity({ ...form, ...types, form: newFormId, formTextId: { name: formTextIdName, description: formTextIdDescription } });
+  const newForm = cloneEntity({ ...form, ...types, form: newFormId, formTextId: { name: formTextIdName, description: formTextIdDescription } });
+
+  if (!inheritMoveSet) newForm.moveSet = [];
+
+  return newForm;
 };
 
 /**

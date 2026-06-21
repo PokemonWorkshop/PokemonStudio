@@ -941,6 +941,7 @@
   "new_form": "Nieuwe vorm",
   "create_form": "Add the form",
   "form_type": "Type of form",
+  "inherit_movepool": "Inherit movepool",
   "classic": "Klassiek",
   "mega-evolution": "Mega Evolution",
   "error_classic_form": "You can no longer create a classic form.",
