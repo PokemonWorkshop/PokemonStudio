@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageEditor, PageTemplate } from '@components/pages';
-import { InputWithLeftLabelContainer, Label, Toggle, InputWithTopLabelContainer, DropInput, FileInput } from '@components/inputs';
-import { useProjectStudio } from '@hooks/useProjectStudio';
+import { InputWithTopLabelContainer, Label, DropInput, FileInput } from '@components/inputs';
 import styled from 'styled-components';
 import { Link } from '@components/Link';
 import LinkStyle from '@components/Link/LinkStyle';
 import { getSetting, updateSettings } from '@utils/settings';
-import { SettingsEditorAndDeletionKeys, SettingsEditorOverlay } from '@components/settings/editors/SettingsEditorOverlay';
-import { useDialogsRef } from '@hooks/useDialogsRef';
 import { basename } from '@utils/path';
 import { showNotification } from '@utils/showNotification';
 
@@ -24,9 +21,7 @@ const DownloadMessageContainer = styled.div`
 `;
 
 export const SettingsMapsPage = () => {
-  const { projectStudioValues: projectStudio } = useProjectStudio();
   const [tiledPath, setTiledPath] = useState(getSetting('tiledPath'));
-  const dialogsRef = useDialogsRef<SettingsEditorAndDeletionKeys>();
   const { t } = useTranslation();
   const isWin32 = window.api.platform === 'win32';
 
@@ -48,42 +43,27 @@ export const SettingsMapsPage = () => {
   return (
     <PageTemplate title={t('map_management')} size="default">
       <PageEditor title="Tiled" editorTitle={t('map_management')}>
-        <InputWithLeftLabelContainer>
-          <Label>{t('use_tiled')}</Label>
-          <Toggle
-            name="use_tiled"
-            checked={projectStudio.isTiledMode || false}
-            onChange={(event) => {
-              event.preventDefault();
-              dialogsRef.current?.openDialog('use_tiled_message_box', true);
-            }}
-            disabled={projectStudio.isTiledMode || false}
-          />
-        </InputWithLeftLabelContainer>
-        {projectStudio.isTiledMode && (
-          <InputWithTopLabelContainer>
-            <Label>{t('tiled_path')}</Label>
-            {tiledPath ? (
-              <FileInput
-                filePath={tiledPath}
-                name={isWin32 ? t('tiled_exe') : 'Tiled'}
-                extensions={isWin32 ? ['exe'] : ['*']}
-                onFileChoosen={handleFileChoosen}
-                onFileClear={handleFileClear}
-                isAbsolutePath
-                showFullPath
-                noIcon
-              />
-            ) : (
-              <DropInput name={isWin32 ? t('tiled_exe') : 'Tiled'} extensions={isWin32 ? ['exe'] : ['*']} onFileChoosen={handleFileChoosen} />
-            )}
-            <DownloadMessageContainer>
-              {t('download_message')}
-              <Link external href="https://www.mapeditor.org" text={t('official_website')} />
-            </DownloadMessageContainer>
-          </InputWithTopLabelContainer>
-        )}
-        <SettingsEditorOverlay ref={dialogsRef} />
+        <InputWithTopLabelContainer>
+          <Label>{t('tiled_path')}</Label>
+          {tiledPath ? (
+            <FileInput
+              filePath={tiledPath}
+              name={isWin32 ? t('tiled_exe') : 'Tiled'}
+              extensions={isWin32 ? ['exe'] : ['*']}
+              onFileChoosen={handleFileChoosen}
+              onFileClear={handleFileClear}
+              isAbsolutePath
+              showFullPath
+              noIcon
+            />
+          ) : (
+            <DropInput name={isWin32 ? t('tiled_exe') : 'Tiled'} extensions={isWin32 ? ['exe'] : ['*']} onFileChoosen={handleFileChoosen} />
+          )}
+          <DownloadMessageContainer>
+            {t('download_message')}
+            <Link external href="https://www.mapeditor.org" text={t('official_website')} />
+          </DownloadMessageContainer>
+        </InputWithTopLabelContainer>
       </PageEditor>
     </PageTemplate>
   );

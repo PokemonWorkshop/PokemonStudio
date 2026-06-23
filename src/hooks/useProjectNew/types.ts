@@ -3,7 +3,7 @@ import type { LatestNewProject } from '@src/backendTasks/checkDownloadNewProject
 
 export const DefaultLanguages = ['en', 'fr', 'it', 'de', 'es', 'ko', 'kana'] as const;
 export type DefaultLanguageType = (typeof DefaultLanguages)[number];
-export type NewProjectData = Omit<StudioProject, 'studioVersion' | 'iconPath' | 'isTiledMode'> & {
+export type NewProjectData = Omit<StudioProject, 'studioVersion' | 'iconPath'> & {
   icon?: string;
   defaultLanguage: DefaultLanguageType;
   multiLanguage: boolean;

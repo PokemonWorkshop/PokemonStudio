@@ -21,7 +21,7 @@ export const EventTree = () => {
   const treeScrollbarRef = useRef<HTMLDivElement>(null);
 
   return (
-    <EventTreeContainer isTiledMode={true} hideMapTree={research !== ''}>
+    <EventTreeContainer hideMapTree={research !== ''}>
       <ClearInput
         value={research}
         onChange={(event) => setResearch(event.target.value)}

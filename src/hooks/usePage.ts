@@ -114,8 +114,7 @@ export const useMapPage = () => {
     map,
     hasMap: dbSymbol !== '__undef__',
     hasMapModified: state.mapsModified.length !== 0,
-    isRMXPMode: !state.projectStudio.isTiledMode,
-    disabledOpenTiled: !state.projectStudio.isTiledMode || !map?.tiledFilename,
+    disabledOpenTiled: !map?.tiledFilename,
     state,
   };
 };

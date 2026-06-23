@@ -1,6 +1,6 @@
 import { BaseIcon } from '@components/icons/BaseIcon';
 import { ActiveContainer } from '@components/ActiveContainer';
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
@@ -12,6 +12,7 @@ import { Project } from '@utils/projectList';
 import { ResourceImage } from '@components/ResourceImage';
 import { useShowItemInFolder } from '@hooks/useShowItemInFolder';
 import { join } from '@utils/path';
+import { RmxpMigrationDialog } from './RmxpMigrationDialog';
 
 const ProjectCardContainer = styled(ActiveContainer)`
   position: relative;
@@ -103,6 +104,8 @@ export const ProjectCard = ({ project, onDeleteProjectToList, onUpdateProjectLis
   const projectLoad = useProjectLoad();
   const navigate = useNavigate();
   const showItemInFolder = useShowItemInFolder();
+  const continueRef = useRef<(() => void) | null>(null);
+  const [showRmxpDialog, setShowRmxpDialog] = useState(false);
 
   const handleChangeFileClick = () => {
     return window.api.chooseProjectFileToOpen(
@@ -133,7 +136,11 @@ export const ProjectCard = ({ project, onDeleteProjectToList, onUpdateProjectLis
           loaderRef.current.setError('loading_project_error', errorMessage);
         }
       },
-      (count) => loaderRef.current.setError('loading_project_error', t('integrity_message', { count }), true)
+      (count) => loaderRef.current.setError('loading_project_error', t('integrity_message', { count }), true),
+      (onContinue) => {
+        continueRef.current = onContinue;
+        setShowRmxpDialog(true);
+      },
     );
   };
 
@@ -150,28 +157,38 @@ export const ProjectCard = ({ project, onDeleteProjectToList, onUpdateProjectLis
     );
   };
 
-  return project ? (
-    <ProjectCardContainer onClick={handleClick}>
-      {project.projectStudio.iconPath ? (
-        <ResourceImage imagePathInProject={project.projectStudio.iconPath} projectPath={project.projectPath} />
-      ) : (
-        <BaseIcon icon="top" size="m" color="" />
+  return (
+    <>
+      {showRmxpDialog && (
+        <RmxpMigrationDialog
+          onContinue={() => continueRef.current?.()}
+          closeDialog={() => setShowRmxpDialog(false)}
+        />
       )}
-      <h2>{project.projectStudio.title}</h2>
-      <p>
-        {t('last_edit', {
-          date: project.lastEdit.toLocaleDateString(),
-        })}
-      </p>
-      <Code>{`/${project.projectPath.replaceAll('\\', '/').split('/').splice(-1)[0]}`}</Code>
-      <button className="folder-button">
-        <FolderButtonOnlyIcon onClick={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => onClickFolder(project.projectPath, event)} />
-      </button>
-      <button className="clear-button">
-        <ClearButtonOnlyIcon onClick={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => onDeleteProjectToList(event, project.projectPath)} />
-      </button>
-    </ProjectCardContainer>
-  ) : (
-    <ProjectCardContainer data-disabled="true" />
+      {project ? (
+        <ProjectCardContainer onClick={handleClick}>
+          {project.projectStudio.iconPath ? (
+            <ResourceImage imagePathInProject={project.projectStudio.iconPath} projectPath={project.projectPath} />
+          ) : (
+            <BaseIcon icon="top" size="m" color="" />
+          )}
+          <h2>{project.projectStudio.title}</h2>
+          <p>
+            {t('last_edit', {
+              date: project.lastEdit.toLocaleDateString(),
+            })}
+          </p>
+          <Code>{`/${project.projectPath.replaceAll('\\', '/').split('/').splice(-1)[0]}`}</Code>
+          <button className="folder-button">
+            <FolderButtonOnlyIcon onClick={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => onClickFolder(project.projectPath, event)} />
+          </button>
+          <button className="clear-button">
+            <ClearButtonOnlyIcon onClick={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => onDeleteProjectToList(event, project.projectPath)} />
+          </button>
+        </ProjectCardContainer>
+      ) : (
+        <ProjectCardContainer data-disabled="true" />
+      )}
+    </>
   );
 };
