@@ -294,7 +294,7 @@
   "save_logs_success": "Le fichier de logs a été sauvegardé dans le dossier logs du répertoire de votre projet.",
   "save_logs_title_failure": "Échec lors de l'enregistrement des logs",
   "save_logs_failure": "Une erreur est survenue pendant la sauvegarde du fichier de logs.",
-  "identifier_message": "Copier l'identifiant",
+  "identifier_message": "Copier l'identifiant ({{shortcut}})",
   "copied": "Copié ! ✅",
   "failed_to_copy": "Échec de la copie ❌",
   "copy_code": "Copier le code",

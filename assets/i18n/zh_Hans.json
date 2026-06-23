@@ -294,7 +294,7 @@
   "save_logs_success": "日志已被存储于该项目的日志文件夹中。",
   "save_logs_title_failure": "保存日志失败",
   "save_logs_failure": "保存日志时出现错误。",
-  "identifier_message": "复制标识符",
+  "identifier_message": "复制标识符 ({{shortcut}})",
   "copied": "已复制！ ✅",
   "failed_to_copy": "复制失败 ❌",
   "copy_code": "复制代码",

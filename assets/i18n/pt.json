@@ -294,7 +294,7 @@
   "save_logs_success": "O arquivo de log foi salvo na pasta de logs no diretório do seu projeto.",
   "save_logs_title_failure": "Falha ao salvar os registros",
   "save_logs_failure": "Ocorreu um erro ao salvar o arquivo de log.",
-  "identifier_message": "Copiar o identificante",
+  "identifier_message": "Copiar o identificante ({{shortcut}})",
   "copied": "Copiado ! ✅",
   "failed_to_copy": "Falhou ao copiar ❌",
   "copy_code": "Copiar o código",
