@@ -1,21 +1,21 @@
+import { toAsyncProcess } from '@hooks/Helper';
+import { useDefaultTextInfoTranslation } from '@hooks/useDefaultTextInfoTranslation';
+import { DEFAULT_PROCESS_STATE, PROCESS_DONE_STATE, SpecialStateProcessors } from '@hooks/useProcess';
+import { buildSelectOptionsFromScratch, buildSelectOptionsTextSourcesFromScratch } from '@hooks/useSelectOptions';
+import { PROJECT_VALIDATOR, PROJECT_VERSION_VALIDATOR, StudioProject } from '@modelEntities/project';
 import { useGlobalState } from '@src/GlobalStateProvider';
+import i18n from '@src/i18n';
+import { SavingConfigMap, SavingMap, SavingTextMap } from '@utils/SavingUtils';
+import { generateSelectedIdentifier } from '@utils/generateSelectedIdentifier';
 import { useLoaderRef } from '@utils/loaderContext';
+import { addProjectToList, updateProjectStudio } from '@utils/projectList';
+import { getSetting, getSettings } from '@utils/settings';
 import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { ProjectLoadFunctionBinding, ProjectLoadStateObject } from './types';
-import { DEFAULT_PROCESS_STATE, PROCESS_DONE_STATE, SpecialStateProcessors } from '@hooks/useProcess';
-import { toAsyncProcess } from '@hooks/Helper';
-import { fail, handleFailure } from './helpers';
-import { PROJECT_VALIDATOR, PROJECT_VERSION_VALIDATOR, StudioProject } from '@modelEntities/project';
-import { useDefaultTextInfoTranslation } from '@hooks/useDefaultTextInfoTranslation';
-import i18n from '@src/i18n';
-import { SavingMap, SavingConfigMap, SavingTextMap } from '@utils/SavingUtils';
-import { generateSelectedIdentifier } from '@utils/generateSelectedIdentifier';
-import { addProjectToList, updateProjectStudio } from '@utils/projectList';
-import { buildSelectOptionsTextSourcesFromScratch, buildSelectOptionsFromScratch } from '@hooks/useSelectOptions';
-import { deserializeProjectData } from './deserializeProjectData';
 import { deserializeProjectConfig } from './deserializeProjectConfig';
-import { getSetting, getSettings } from '@utils/settings';
+import { deserializeProjectData } from './deserializeProjectData';
+import { fail, handleFailure } from './helpers';
+import type { ProjectLoadFunctionBinding, ProjectLoadStateObject } from './types';
 
 const DEFAULT_BINDING: ProjectLoadFunctionBinding = {
   onFailure: () => {},
@@ -33,6 +33,7 @@ export const useProjectLoadProcessor = () => {
   const { t } = useTranslation();
   const binding = useRef<ProjectLoadFunctionBinding>(DEFAULT_BINDING);
   const processors: SpecialStateProcessors<ProjectLoadStateObject> = useMemo(
+    // eslint-disable-next-line react-hooks/preserve-manual-memoization
     () => ({
       ...PROCESS_DONE_STATE,
       choosingProjectFile: (_, setState) => {
@@ -103,7 +104,7 @@ export const useProjectLoadProcessor = () => {
                 return handleFailure(setState, binding)({ errorMessage: t('failed_deserialize') });
               }
               setState({ ...state, state: 'updateTextInfos', projectMetaData: projectMetaData.data });
-            } else if (projectVersion.data.studioVersion.localeCompare(state.studioVersion) === 1) {
+            } else if (projectVersion.data.studioVersion.localeCompare(state.studioVersion, undefined, { numeric: true }) === 1) {
               handleFailure(setState, binding)({ errorMessage: t('error_project_version') });
             } else {
               setState({ ...state, state: 'migrateProjectData', projectVersion: projectVersion.data.studioVersion });
