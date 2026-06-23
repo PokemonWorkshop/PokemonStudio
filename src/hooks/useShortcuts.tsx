@@ -11,17 +11,18 @@ const STUDIO_CTRL_SHORTCUTS = {
 const STUDIO_CTRL_SHIFT_SHORTCUTS = {
   db_previous_variant: ['ArrowLeft', 'Left'],
   db_next_variant: ['ArrowRight', 'Right'],
+  db_copy_identifier: ['KeyC'],
 } as const;
 
 export type StudioShortcut = keyof typeof STUDIO_CTRL_SHORTCUTS | keyof typeof STUDIO_CTRL_SHIFT_SHORTCUTS;
 export type StudioShortcutActions = Partial<Record<StudioShortcut, () => void>>;
 
 const KEY_TO_STUDIO_CTRL_SHORTCUT = Object.fromEntries(
-  Object.entries(STUDIO_CTRL_SHORTCUTS).flatMap(([studioShortcut, keys]) => keys.map((key) => [key, studioShortcut as StudioShortcut]))
+  Object.entries(STUDIO_CTRL_SHORTCUTS).flatMap(([studioShortcut, keys]) => keys.map((key) => [key, studioShortcut as StudioShortcut])),
 );
 
 const KEY_TO_STUDIO_CTRL_SHIFT_SHORTCUT = Object.fromEntries(
-  Object.entries(STUDIO_CTRL_SHIFT_SHORTCUTS).flatMap(([studioShortcut, keys]) => keys.map((key) => [key, studioShortcut as StudioShortcut]))
+  Object.entries(STUDIO_CTRL_SHIFT_SHORTCUTS).flatMap(([studioShortcut, keys]) => keys.map((key) => [key, studioShortcut as StudioShortcut])),
 );
 
 export const useShortcut = (shortcutActions: StudioShortcutActions) => {
