@@ -1,7 +1,9 @@
 import React from 'react';
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import MapLinkPage from '@pages/world/MapLink.page';
-import { WorldNavigation } from '@components/world/WorldNavigation';
+// Fork: wrap Studio's WorldNavigation in a collapsible rail so the map
+// editor canvas can reclaim horizontal space. See [[project-studio-fork]].
+import { CollapsibleWorldNav as WorldNavigation } from '@src/custom/MapEditor/CollapsibleWorldNav';
 import { MapPage } from '@pages/world/Map.page';
 import { RouterPageStyle } from '@components/pages';
 import { OverviewPage } from '@pages/world/Overview.page';

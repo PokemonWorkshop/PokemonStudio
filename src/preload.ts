@@ -27,6 +27,8 @@ import type { OpenCompilationWindowInput } from './backendTasks/openCompilationW
 import type { OpenTiledPayload } from './backendTasks/openTiled';
 import type { ProjectStudioFileInput, ProjectStudioFileOutput } from './backendTasks/projectStudioFile';
 import type { ReadCsvFileInput } from './backendTasks/readCsvFile';
+import type { ReadMapAndAssetsInput, ReadMapAndAssetsOutput } from './backendTasks/readMapAndAssets';
+import type { ReadMapBytesInput, ReadMapBytesOutput } from './backendTasks/readMapBytes';
 import type { ProjectConfigsFromBackEnd, ReadProjectConfigsInput } from './backendTasks/readProjectConfigs';
 import type { ProjectDataFromBackEnd, ReadProjectDataInput } from './backendTasks/readProjectData';
 import type { ReadProjectMetadataInput, ReadProjectMetadataOutput } from './backendTasks/readProjectMetadata';
@@ -39,6 +41,11 @@ import type { OnlineHttpRequestInput, OnlineHttpRequestOutput } from './backendT
 import type { SaveCompilationLogsInput } from './backendTasks/saveCompilationLogs';
 import type { SaveEventTreeInput } from './backendTasks/saveEventTree';
 import type { SaveMapInfoInput } from './backendTasks/saveMapInfo';
+import type { WriteMapBytesInput, WriteMapBytesOutput } from './backendTasks/writeMapBytes';
+import type { CreateTilesetFromImageInput, CreateTilesetFromImageOutput } from './backendTasks/createTilesetFromImage';
+import type { ReadTilesetBytesInput, ReadTilesetBytesOutput } from './backendTasks/readTilesetBytes';
+import type { WriteTilesetBytesInput, WriteTilesetBytesOutput } from './backendTasks/writeTilesetBytes';
+import type { ReadTilesetImageBytesInput, ReadTilesetImageBytesOutput } from './backendTasks/readTilesetImageBytes';
 import type { SaveProjectConfigInput } from './backendTasks/saveProjectConfigs';
 import type { SaveProjectTextsInput } from './backendTasks/saveProjectTexts';
 import type { SaveRMXPMapInfoInput } from './backendTasks/saveRMXPMapInfo';
@@ -136,9 +143,16 @@ contextBridge.exposeInMainWorld('api', {
   updateTextInfos: defineBackendTask(ipcRenderer, 'update-text-infos'),
   saveTextInfos: defineBackendTask(ipcRenderer, 'save-text-infos'),
   readCsvFile: defineBackendTask(ipcRenderer, 'read-csv-file'),
+  readMapAndAssets: defineBackendTask(ipcRenderer, 'read-map-and-assets'),
+  readMapBytes: defineBackendTask(ipcRenderer, 'read-map-bytes'),
   checkMapsModified: defineBackendTask(ipcRenderer, 'check-maps-modified'),
   convertTiledMapToTileMetadata: defineBackendTask(ipcRenderer, 'convertTiledMapToTileMetadata'),
   saveMapInfo: defineBackendTask(ipcRenderer, 'save-map-info'),
+  writeMapBytes: defineBackendTask(ipcRenderer, 'write-map-bytes'),
+  createTilesetFromImage: defineBackendTask(ipcRenderer, 'create-tileset-from-image'),
+  readTilesetBytes: defineBackendTask(ipcRenderer, 'read-tileset-bytes'),
+  writeTilesetBytes: defineBackendTask(ipcRenderer, 'write-tileset-bytes'),
+  readTilesetImageBytes: defineBackendTask(ipcRenderer, 'read-tileset-image-bytes'),
   saveEventTree: defineBackendTask(ipcRenderer, 'save-event-tree'),
   startupStudioFile: defineBackendTask(ipcRenderer, 'startup-studio-file'),
   getFilePathsFromFolder: defineBackendTask(ipcRenderer, 'get-file-paths-from-folder'),
@@ -231,9 +245,16 @@ declare global {
       updateTextInfos: BackendTaskWithGenericErrorAndNoProgress<UpdateTextInfosInput, AnyObj>;
       saveTextInfos: BackendTaskWithGenericErrorAndNoProgress<SaveTextInfosInput, AnyObj>;
       readCsvFile: BackendTaskWithGenericError<ReadCsvFileInput, ProjectText, GenericBackendProgress>;
+      readMapAndAssets: BackendTaskWithGenericErrorAndNoProgress<ReadMapAndAssetsInput, ReadMapAndAssetsOutput>;
+      readMapBytes: BackendTaskWithGenericErrorAndNoProgress<ReadMapBytesInput, ReadMapBytesOutput>;
       checkMapsModified: BackendTaskWithGenericErrorAndNoProgress<CheckMapModifiedInput, CheckMapModifiedOutput>;
       convertTiledMapToTileMetadata: BackendTaskWithGenericErrorAndNoProgress<ConvertTMXInput, ConvertTMXOutput>;
       saveMapInfo: BackendTaskWithGenericErrorAndNoProgress<SaveMapInfoInput, AnyObj>;
+      writeMapBytes: BackendTaskWithGenericErrorAndNoProgress<WriteMapBytesInput, WriteMapBytesOutput>;
+      createTilesetFromImage: BackendTaskWithGenericErrorAndNoProgress<CreateTilesetFromImageInput, CreateTilesetFromImageOutput>;
+      readTilesetBytes: BackendTaskWithGenericErrorAndNoProgress<ReadTilesetBytesInput, ReadTilesetBytesOutput>;
+      writeTilesetBytes: BackendTaskWithGenericErrorAndNoProgress<WriteTilesetBytesInput, WriteTilesetBytesOutput>;
+      readTilesetImageBytes: BackendTaskWithGenericErrorAndNoProgress<ReadTilesetImageBytesInput, ReadTilesetImageBytesOutput>;
       saveEventTree: BackendTaskWithGenericErrorAndNoProgress<SaveEventTreeInput, AnyObj>;
       startupStudioFile: BackendTaskWithGenericErrorAndNoProgress<AnyObj, StartupStudioFileOutput>;
       getFilePathsFromFolder: BackendTaskWithGenericErrorAndNoProgress<GetFilePathsFromFolderInput, GetFilePathsFromFolderOutput>;

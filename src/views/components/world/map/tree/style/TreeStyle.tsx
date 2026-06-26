@@ -166,6 +166,21 @@ export const TreeItemContainer = styled.div<MapTreeItemWrapperContainerProps>`
         }
       }`}
 
+  .modified-indicator {
+    flex-shrink: 0;
+    width: 10px;
+    height: 10px;
+    margin: 0 6px;
+    border-radius: 50%;
+    background-color: ${({ theme }) => theme.colors.warningBase};
+    box-shadow: 0 0 0 2px ${({ theme }) => theme.colors.warningSoft};
+    cursor: pointer;
+
+    &:hover {
+      filter: brightness(1.15);
+    }
+  }
+
   .actions {
     display: none;
     flex-shrink: 0;

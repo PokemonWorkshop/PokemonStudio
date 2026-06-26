@@ -17,6 +17,12 @@ import { useOpenTiled } from '@hooks/useOpenTiled';
 import { MapImportEditorTitle, MapImportOverlay } from '@components/world/map/editors/MapImport/MapImportOverlay';
 import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';
 import { useNavigateMapLink } from '@hooks/useNavigateMapLink';
+import { useGlobalState } from '@src/GlobalStateProvider';
+import { useMapUpdate } from '@hooks/useMapUpdate';
+import { useLoaderRef } from '@utils/loaderContext';
+import { getSetting } from '@utils/settings';
+import { showNotification } from '@utils/showNotification';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 
 export const MapPageStyle = styled.div`
   display: flex;
@@ -35,6 +41,30 @@ export const MapPage = () => {
   const openTiled = useOpenTiled();
   const navigateMapLink = useNavigateMapLink();
   const { t } = useTranslation();
+  const [globalState] = useGlobalState();
+  const mapUpdate = useMapUpdate();
+  const loaderRef = useLoaderRef();
+  const isModified = hasMap && globalState.mapsModified.includes(map.dbSymbol);
+  const tiledPathMissing = !getSetting('tiledPath');
+
+  const handleUpdateThisMap = () => {
+    if (!hasMap || tiledPathMissing) return;
+    mapUpdate(
+      { type: 'auto_detection', subsetDbSymbols: [map.dbSymbol as DbSymbol] },
+      () => {
+        loaderRef.current.close();
+        showNotification('success', t('update_maps'), t('update_maps_success'));
+      },
+      (error, genericError) => {
+        if (error.length !== 0) {
+          error.forEach((err) => window.api.log.error(`[Map update] ${err.filename}.tmx:`, err.errorMessage));
+          loaderRef.current.setError('updating_maps_error', t('update_maps_error_convert'), true);
+        } else {
+          loaderRef.current.setError('updating_maps_error', genericError || t('update_maps_error_generic'), true);
+        }
+      },
+    );
+  };
 
   return (
     <MapPageStyle>
@@ -52,7 +82,14 @@ export const MapPage = () => {
               />
             </DataBlockWrapper>
             <DataBlockWrapper>
-              <MapFrame map={map} dialogsRef={dialogsRef} disabled={false} />
+              <MapFrame
+                map={map}
+                dialogsRef={dialogsRef}
+                disabled={false}
+                isModified={!!isModified}
+                onUpdateMap={handleUpdateThisMap}
+                updateDisabled={tiledPathMissing}
+              />
               <MapMusics map={map} dialogsRef={dialogsRef} disabled={false} />
             </DataBlockWrapper>
             <DataBlockWrapper>

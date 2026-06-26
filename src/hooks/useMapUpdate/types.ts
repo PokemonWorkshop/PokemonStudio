@@ -10,7 +10,7 @@ export type MapUpdateFailureCallback = (error: MapUpdateError[], genericError?: 
 export type MapUpdateSuccessCallback = (payload: Record<string, never>) => void;
 export type MapUpdateStateObject =
   | { state: 'done' }
-  | { state: 'convert'; type: MapUpdateType }
+  | { state: 'convert'; type: MapUpdateType; subsetDbSymbols?: DbSymbol[] }
   | { state: 'generatingOverviews'; mapsToUpdate: MapToUpdate[] }
   | { state: 'updateMap'; mapsToUpdate: MapToUpdate[] };
 export type MapUpdateFunctionBinding = {
