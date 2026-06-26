@@ -27,9 +27,9 @@ export const useMapUpdateProcessor = () => {
   const processors: SpecialStateProcessors<MapUpdateStateObject> = useMemo(
     () => ({
       ...PROCESS_DONE_STATE,
-      convert: ({ type }, setState) => {
+      convert: ({ type, subsetDbSymbols }, setState) => {
         loaderRef.current.open('updating_maps', 1, 3, t('reading_data_tiled_files'));
-        const tmxFiles = getTmxList(maps, globalState.mapsModified, type);
+        const tmxFiles = getTmxList(maps, globalState.mapsModified, type, subsetDbSymbols);
         const tiledMetadata: ConvertTMXOutput[] = [];
         const filesLength = tmxFiles.length;
 
@@ -99,7 +99,15 @@ export const useMapUpdateProcessor = () => {
             const mapUpdate = { ...maps[mapToUpdate.dbSymbol], ...mapToUpdate, sha1: mapToUpdate.sha1 as Sha1 };
             setMap({ [mapUpdate.dbSymbol]: mapUpdate }, { map: selectedMap });
           });
-          setGlobalState((state) => ({ ...state, mapsModified: [] }));
+          // Remove only the maps we actually updated from the modified list.
+          // For full / auto_detection this still ends up clearing the list
+          // (since we processed every modified map), but for single-map
+          // updates from the per-row dot we leave the rest flagged.
+          const updatedSymbols = new Set(mapsToUpdate.map((m) => m.dbSymbol));
+          setGlobalState((state) => ({
+            ...state,
+            mapsModified: state.mapsModified.filter((s) => !updatedSymbols.has(s)),
+          }));
           binding.current.onSuccess({});
           return setState(DEFAULT_PROCESS_STATE);
         });

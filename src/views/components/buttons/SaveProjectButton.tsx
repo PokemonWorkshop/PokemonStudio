@@ -10,6 +10,7 @@ import { useLoaderRef } from '@utils/loaderContext';
 import { StudioShortcutActions, useShortcut } from '@hooks/useShortcuts';
 import { useDialogsRef } from '@hooks/useDialogsRef';
 import { SaveEditorAndDeletionKeys, SaveEditorOverlay } from '@components/save/SaveEditorOverlay';
+import { getSaveShortcutOverride } from '@hooks/saveShortcutOverride';
 
 const SaveProjectButtonContainer = styled(BaseButtonStyle)`
   display: inline-block;
@@ -74,7 +75,18 @@ export const SaveProjectButton = () => {
     // No shortcut if an editor is opened and no data to save
     const isShortcutEnabled = () => !document.querySelector('#dialogs')?.textContent && isDataToSave;
     return {
-      save: () => isShortcutEnabled() && handleSave(),
+      save: () => {
+        // Fork-specific: the map editor route claims Ctrl+S while mounted so
+        // it can save just the map (not the whole project). When claimed,
+        // skip the project-save path entirely — even the dialog warning —
+        // and run the override.
+        const override = getSaveShortcutOverride();
+        if (override) {
+          override();
+          return;
+        }
+        if (isShortcutEnabled()) handleSave();
+      },
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [save, isDataToSave]);

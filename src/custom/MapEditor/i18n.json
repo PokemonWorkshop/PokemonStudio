@@ -1,0 +1,15 @@
+{
+  "en": {
+    "width": "Width",
+    "map_size": "Map size",
+    "map_size_from_tiled": "Map size comes from the imported .tmx file.",
+    "tilesets": "Tilesets",
+    "search_tileset": "Search a tileset…",
+    "no_tileset_match": "No tileset matches your search.",
+    "create": "Create"
+  },
+  "fr": {
+    "search_tileset": "Rechercher un tileset…",
+    "no_tileset_match": "Aucun tileset ne correspond à votre recherche."
+  }
+}

@@ -12,8 +12,20 @@ export const fail = (binding: RefObject<MapUpdateFunctionBinding>, mapUpdateErro
   binding.current.onFailure(mapUpdateError, genericError);
 };
 
-export const getTmxList = (maps: ProjectData['maps'], mapsModified: DbSymbol[], type: MapUpdateType): MapUpdateFiles[] => {
+export const getTmxList = (
+  maps: ProjectData['maps'],
+  mapsModified: DbSymbol[],
+  type: MapUpdateType,
+  subsetDbSymbols?: DbSymbol[],
+): MapUpdateFiles[] => {
   const allMaps = Object.values(maps);
+  // Explicit subset (e.g. user clicked the per-map "update this" dot) takes
+  // precedence over `type` — the caller already chose exactly which maps to
+  // touch and we shouldn't second-guess that.
+  if (subsetDbSymbols && subsetDbSymbols.length > 0) {
+    const wanted = new Set(subsetDbSymbols);
+    return allMaps.filter((map) => wanted.has(map.dbSymbol)).map(({ dbSymbol, tiledFilename }) => ({ dbSymbol, filename: tiledFilename }));
+  }
   if (type === 'full') return allMaps.map(({ dbSymbol, tiledFilename }) => ({ dbSymbol, filename: tiledFilename }));
 
   return allMaps.filter((map) => mapsModified.includes(map.dbSymbol)).map(({ dbSymbol, tiledFilename }) => ({ dbSymbol, filename: tiledFilename }));
