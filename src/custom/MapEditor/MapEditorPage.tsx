@@ -57,10 +57,19 @@ const TopBar = styled.div`
   flex-direction: column;
   gap: 12px;
   flex-shrink: 0;
-  /* Center the breadcrumb + Data/Map tabs row horizontally (matches the
-     standard Studio overview layout). Children that need full width
-     (e.g. the toolbar) override with align-self: stretch. */
-  & > :first-child { align-self: center; }
+`;
+
+/* True-center wrapper for the Data/Map tab strip. We deliberately
+   bypass Studio's DataBlockWrapper here — it has a media-query padding
+   rule (`padding: 0 calc(50% - half/2)`) that pulls content into a
+   "readable column" position which is fine for data forms but lands
+   the tabs off-center on the wide map editor layout. A plain flex row
+   with justify-content: center pins them to the page's true horizontal
+   center regardless of viewport width. */
+const TabsCenterShell = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
 `;
 
 const Toolbar = styled.div`
@@ -1786,8 +1795,10 @@ export const MapEditorPage = () => {
   return (
     <PageStyle>
       <TopBar>
-        <DataBlockWrapper>
-          <MapBreadcrumb />
+        {/* Breadcrumb stays in its natural row (Studio convention puts
+            it top-left). The tabs go in their own row, true-centered. */}
+        <MapBreadcrumb />
+        <TabsCenterShell>
           <DatabaseTabsBar
             currentTabIndex={1}
             tabs={[
@@ -1795,7 +1806,7 @@ export const MapEditorPage = () => {
               { label: t('map'), path: '/world/overview', disabled: !canRender },
             ]}
           />
-        </DataBlockWrapper>
+        </TabsCenterShell>
         <Toolbar>
           {/* Authoring tools, grouped into a single rounded pill. Shape +
               Select collapse multiple sub-tools into split-button
