@@ -1518,14 +1518,94 @@ export const MapEditorPage = () => {
    * layer for `toBridgePath` to resolve. Bridge does the take/insert
    * shift accounting internally.
    */
-  const onMoveLayerToPath = useCallback(async (from: number, dstParent: number[], dstIdx: number) => {
+  const onMoveLayerToPath = useCallback(async (from: number | number[], dstParent: number[], dstIdx: number) => {
     if (!canvasRef.current) return;
-    const fromPath = toBridgePath(from);
-    if (!fromPath) return;
-    if (!snapshotBefore('move layer')) return;
-    if (!canvasRef.current.moveLayerToPath?.(fromPath, dstParent, dstIdx)) return;
+    const fromIdxs = Array.isArray(from) ? [...from] : [from];
+    if (fromIdxs.length === 0) return;
+    const cur = loadedRef.current;
+    if (!cur) return;
+    // Both the SOURCE layers AND the DESTINATION folder shift each time
+    // the bridge mutates. So we identify everything by NAME up front —
+    // names are stable across tree rearrangements — and re-resolve to
+    // a fresh bridge path on every iteration. dstParent === [] means
+    // top-level (no name); for that case we keep using []. For nested
+    // folders we capture the folder's name and find its current path
+    // each pass; libtiled crashes destinations otherwise (silently takes
+    // source layers and drops them when the insert target is no longer
+    // a group, which is what was eating the z=0 folder + its children).
+    // Preserve relative panel order. The panel renders siblings reversed
+    // at every depth (highest child idx = top), so:
+    //   - We process sources in ASCENDING flat-idx (panel BOTTOM first).
+    //   - Each move targets an EXPLICIT child idx: baseDst + iteration N.
+    //     That way the i-th processed source lands at exactly position
+    //     baseDst + i, regardless of whether libtiled inserts-and-shifts
+    //     or appends. After N moves, children at [baseDst .. baseDst+N-1]
+    //     are the sources in panel-bottom-to-top order.
+    //   - The panel's reverse-render then shows the panel-top source at
+    //     the visual top of the destination block, panel-bottom at the
+    //     visual bottom. Result: identical relative ordering before and
+    //     after the move.
+    fromIdxs.sort((a, b) => a - b);
+    const sourceNames = fromIdxs
+      .map((i) => cur.json.layers[i]?.name)
+      .filter((n): n is string => typeof n === 'string');
+    if (sourceNames.length === 0) return;
+    const dstParentName: string | null = (() => {
+      if (dstParent.length === 0) return null;
+      const parentLayer = cur.json.layers.find((l) => {
+        const p = l.bridgePath;
+        return Array.isArray(p) && p.length === dstParent.length && p.every((seg, i) => seg === dstParent[i]);
+      });
+      return parentLayer?.name ?? null;
+    })();
+    const resolveDstParent = (): number[] | null => {
+      if (dstParentName === null) return [];
+      const latest = loadedRef.current;
+      if (!latest) return null;
+      const parent = latest.json.layers.find((l) => l.name === dstParentName && l.type === 'group');
+      return parent?.bridgePath ?? null;
+    };
+    if (!snapshotBefore(sourceNames.length === 1 ? 'move layer' : `move ${sourceNames.length} layers`)) return;
+    let placedCount = 0;
+    for (const name of sourceNames) {
+      const latest = loadedRef.current;
+      if (!latest) break;
+      const layer = latest.json.layers.find((l) => l.name === name);
+      const srcPath = layer?.bridgePath;
+      if (!srcPath) {
+        console.warn('[layer] could not resolve current src path for', name, '— skipping');
+        continue;
+      }
+      const freshDst = resolveDstParent();
+      if (freshDst === null) {
+        console.warn('[layer] dst folder', dstParentName, 'vanished — skipping', name);
+        continue;
+      }
+      // Per-iteration dstIdx: each source goes to baseDst + i so they
+      // occupy positions [baseDst .. baseDst+N-1] in iteration order,
+      // independent of libtiled's per-call shift behavior. Important
+      // edge case: when the source we're moving is in the SAME parent
+      // as the destination AND its current child idx is < (baseDst +
+      // placedCount), the take shifts the target position down by one
+      // — so we subtract one to compensate.
+      let perIterDst = dstIdx + placedCount;
+      const srcParent = srcPath.slice(0, -1);
+      const sameParent = srcParent.length === freshDst.length
+        && srcParent.every((seg, i) => seg === freshDst[i]);
+      if (sameParent && srcPath[srcPath.length - 1] < perIterDst) {
+        perIterDst -= 1;
+      }
+      if (!canvasRef.current.moveLayerToPath?.(srcPath, freshDst, perIterDst)) {
+        console.warn('[layer] moveLayerToPath failed for', name);
+        continue;
+      }
+      placedCount++;
+      // Refresh JS state so the next iteration's lookups are current.
+      // Doesn't commit history — the final applyStructuralEdit does.
+      canvasRef.current.rebuildScene?.();
+    }
     await applyStructuralEdit();
-  }, [applyStructuralEdit, toBridgePath, snapshotBefore]);
+  }, [applyStructuralEdit, snapshotBefore]);
 
   /**
    * Drag a layer onto a folder row — moves it INSIDE the folder (appended
@@ -1791,8 +1871,23 @@ export const MapEditorPage = () => {
                     state={loaded}
                     activeLayer={activeLayer}
                     selectedLayers={selectedLayers}
-                    onSelectLayer={(idx, additive) => {
-                      if (additive) {
+                    onSelectLayer={(idx, additive, range) => {
+                      if (range && loaded) {
+                        // Shift+click — replace selection with every tile
+                        // layer between the current active (anchor) and
+                        // `idx`, inclusive. We walk the flat layer list
+                        // because that's the order the panel renders;
+                        // group rows are skipped so the range stays a
+                        // selectable set. Active layer doesn't move on a
+                        // range pick (matches Tiled / file explorers).
+                        const lo = Math.min(activeLayer, idx);
+                        const hi = Math.max(activeLayer, idx);
+                        const range: number[] = [];
+                        for (let i = lo; i <= hi; i++) {
+                          if (loaded.json.layers[i]?.type === 'tilelayer') range.push(i);
+                        }
+                        if (range.length > 0) setSelectedLayers(range);
+                      } else if (additive) {
                         // Ctrl/Cmd+click — toggle this layer's membership in
                         // the multi-select. Active layer is always selected,
                         // so toggling it off is a no-op (its selection state
