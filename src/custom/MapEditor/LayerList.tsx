@@ -249,7 +249,12 @@ type Props = {
   state: LoadedState;
   activeLayer: number;
   selectedLayers: number[];
-  onSelectLayer: (idx: number, additive: boolean) => void;
+  /** Click handler. `additive` = Ctrl/Cmd (toggle membership);
+   *  `range` = Shift (replace selection with a contiguous range from the
+   *  current anchor — typically `activeLayer` — up to / down to `idx`,
+   *  filtered to tile layers). The two flags are mutually exclusive at
+   *  the call site; if both arrive true, range wins. */
+  onSelectLayer: (idx: number, additive: boolean, range?: boolean) => void;
   layerVisibility: Record<number, boolean>;
   onToggleVisibility: (idx: number) => void;
   onCollapse?: () => void;
@@ -271,7 +276,11 @@ type Props = {
    * miss or fall into the wrong parent). MapEditorPage hands this
    * straight to the bridge's `moveLayerToPath`.
    */
-  onMoveLayerToPath?: (from: number, dstParent: number[], dstIdx: number) => void;
+  /** Move one or more layers into a parent at a specific child index.
+   *  When `from` is an array of length > 1, the caller must move every
+   *  source layer to the destination as a single undoable batch. Used
+   *  by multi-drag after a Shift/Ctrl-built selection. */
+  onMoveLayerToPath?: (from: number | number[], dstParent: number[], dstIdx: number) => void;
   /** New: drag a layer onto a folder row to move it INSIDE the folder. */
   onMoveLayerIntoGroup?: (from: number, groupIdx: number) => void;
   /** New: change a layer's opacity (0..1). LayerList renders the slider. */
@@ -509,7 +518,23 @@ export const LayerList: React.FC<Props> = ({
       const isDescendant = targetPath.length > sourcePath.length
         && sourcePath.every((seg, i) => seg === targetPath[i]);
       if (isDescendant) return;
-      onMoveLayerIntoGroup?.(from, idx);
+      // Multi-drag: when the dragged row is part of a multi-selection,
+      // move ALL selected tile layers into this folder. We route through
+      // onMoveLayerToPath (which is array-aware) instead of the legacy
+      // single-source onMoveLayerIntoGroup so the whole batch lands as
+      // one undoable action. Drop target = end of the folder's children
+      // (top of the visual list, matching the per-folder "+" placement).
+      const movingMulti = selectedSet.has(from) && selectedLayers.length > 1;
+      if (movingMulti && onMoveLayerToPath) {
+        const childCount = state.json.layers.filter((l) => {
+          const p = l.bridgePath;
+          return p && p.length === targetPath.length + 1
+            && targetPath.every((seg, i) => p[i] === seg);
+        }).length;
+        onMoveLayerToPath(selectedLayers, targetPath, childCount);
+      } else {
+        onMoveLayerIntoGroup?.(from, idx);
+      }
       return;
     }
     // Sibling drop: derive the destination from the TARGET's bridge
@@ -533,7 +558,12 @@ export const LayerList: React.FC<Props> = ({
       && fromPath[fromPath.length - 1] === dstIdx;
     if (samePosition) return;
     if (onMoveLayerToPath) {
-      onMoveLayerToPath(from, dstParent, dstIdx);
+      // Multi-drag: if the dragged row is part of the current selection
+      // and that selection covers more than one layer, move ALL selected
+      // tile layers to the destination as a single batch. Otherwise just
+      // move the dragged one.
+      const movingMulti = selectedSet.has(from) && selectedLayers.length > 1;
+      onMoveLayerToPath(movingMulti ? selectedLayers : from, dstParent, dstIdx);
     } else {
       // Fallback for callers that haven't wired the new path-based
       // callback yet. The old behavior worked for top-level rows.
@@ -644,7 +674,7 @@ export const LayerList: React.FC<Props> = ({
               onClick={(e) => {
                 if (isEditing) return;
                 if (isGroup) { toggleFolder(path); return; }
-                if (isTile) onSelectLayer(idx, e.ctrlKey || e.metaKey);
+                if (isTile) onSelectLayer(idx, e.ctrlKey || e.metaKey, e.shiftKey);
               }}
               onContextMenu={openMenu(idx)}
               onDragStart={onRowDragStart(idx)}
