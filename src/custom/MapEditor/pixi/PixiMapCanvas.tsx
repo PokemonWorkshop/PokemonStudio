@@ -1004,6 +1004,32 @@ export const PixiMapCanvas = forwardRef<MapCanvasHandle, PixiMapCanvasProps>(
         if (pl.type !== 'tilelayer') continue;
         if (Array.isArray(pl.data)) prevDataByName.set(pl.name, pl.data);
       }
+      // Build bridge→corrected firstgid translation. wasm.toJson emits cell
+      // gids using the bridge's internal firstgids (recomputed sequential
+      // from the broken libtiled tilecounts), but state.tilesets keeps the
+      // corrected firstgids carried forward from prev (so renderer math
+      // matches the .tmx override applied at initial load). For carried
+      // layers the cells are already in corrected namespace and need no
+      // translation, but when we fall back to wasm data (new layer or
+      // RESIZED layer where carried.length !== expected) the cells are in
+      // bridge namespace — translate them or every higher-firstgid tileset
+      // (buildings, water, …) renders as the wrong tileset, leaving the
+      // map mostly blank. This was the visual corruption after Resize Map.
+      const bridgeFgs = recomputed.map((ts) => ts.firstgid);
+      const correctedFgs = recomputed.map((_, i) => prev.tilesets[i]?.firstgid ?? bridgeFgs[i]);
+      const needsTranslation = bridgeFgs.some((fg, i) => fg !== correctedFgs[i]);
+      const FLIP_MASK = 0xE0000000 >>> 0;
+      const GID_MASK = 0x1FFFFFFF;
+      const translateGid = (g: number): number => {
+        const bare = g & GID_MASK;
+        if (bare === 0) return 0;
+        let i = bridgeFgs.length - 1;
+        while (i >= 0 && bridgeFgs[i] > bare) i--;
+        if (i < 0) return g;
+        const localId = bare - bridgeFgs[i];
+        const newBare = correctedFgs[i] + localId;
+        return ((g & FLIP_MASK) | newBare) >>> 0;
+      };
       for (const layer of flatLayers) {
         if (layer.type !== 'tilelayer') continue;
         // Fall back to map dims when libtiled omits per-layer width/height
@@ -1016,6 +1042,8 @@ export const PixiMapCanvas = forwardRef<MapCanvasHandle, PixiMapCanvasProps>(
           layer.data = carried;
         } else if (!Array.isArray(layer.data) || layer.data.length !== expected) {
           layer.data = new Array(expected).fill(0);
+        } else if (needsTranslation) {
+          layer.data = (layer.data as number[]).map(translateGid);
         }
       }
       const json: TmjMap = { ...rawMap, tilesets: tilesetsMerged, layers: flatLayers };
