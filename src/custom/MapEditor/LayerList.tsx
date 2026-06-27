@@ -312,22 +312,24 @@ export const LayerList: React.FC<Props> = ({
     return next;
   });
 
-  // Scroll the active layer's row into view whenever it changes — covers
-  // Ctrl+right-click jump-to-layer from the canvas, the "land on new
-  // layer" effect after add-layer, and stamp-recall layer restoration.
-  // Also auto-expands any collapsed ancestor folders so the row is
-  // actually visible to scroll to. Skips re-collapsing the user's
-  // folders when the active layer is already visible.
-  const activeLayerForEffect = activeLayer; // capture for the deps array
+  // Auto-expand ancestor folders + scroll the active layer's row into
+  // view, but ONLY when the active layer itself changes — covers
+  // Ctrl+right-click jump-to-layer, post-add jump, stamp recall. We
+  // explicitly do NOT re-fire when collapsedFolders changes, otherwise
+  // the user could never collapse a folder that contains the active
+  // layer (the auto-expand would immediately re-open it).
+  //
+  // Previous-active ref guards against the deps array picking up
+  // state.json.layers (which references a new object on every load /
+  // structural rebuild) and re-triggering the expand for the same
+  // active layer.
+  const prevActiveLayerRef = useRef<number>(activeLayer);
   useEffect(() => {
-    const target = state.json.layers[activeLayerForEffect];
+    if (prevActiveLayerRef.current === activeLayer) return;
+    prevActiveLayerRef.current = activeLayer;
+    const target = state.json.layers[activeLayer];
     if (!target || target.type !== 'tilelayer') return;
     const path = target.bridgePath ?? [];
-    // Expand every ancestor folder if collapsed (parent paths are
-    // prefixes of `path`). Updates state synchronously — the row ref
-    // becomes valid in the next render, where the effect re-runs and
-    // scrolls. The deps array picks up collapsedFolders so the scroll
-    // happens after the expand commit.
     setCollapsedFolders((prev) => {
       let changed = false;
       const next = new Set(prev);
@@ -337,13 +339,9 @@ export const LayerList: React.FC<Props> = ({
       }
       return changed ? next : prev;
     });
-    const row = rowRefs.current.get(activeLayerForEffect);
-    if (row) {
-      // "nearest" so we don't jump the panel when the row is already
-      // on-screen — only scrolls when it genuinely isn't visible.
-      row.scrollIntoView({ block: 'nearest', behavior: 'auto' });
-    }
-  }, [activeLayerForEffect, state.json.layers, collapsedFolders]);
+    const row = rowRefs.current.get(activeLayer);
+    if (row) row.scrollIntoView({ block: 'nearest', behavior: 'auto' });
+  }, [activeLayer, state.json.layers]);
 
   // Build the visible row list: walk the flat layer array; skip children
   // of collapsed folders. (Flatten was already done in the renderer; here
@@ -486,11 +484,23 @@ export const LayerList: React.FC<Props> = ({
     const rect = row.getBoundingClientRect();
     const layer = state.json.layers[idx];
     const dy = e.clientY - rect.top;
-    // Three zones on group rows so the user can drop INSIDE the folder:
-    // top 25% = above, middle 50% = inside, bottom 25% = below.
-    // Leaf rows keep 50/50 above/below.
+    // Three zones on group rows so the user can drop a TILE LAYER
+    // INSIDE the folder: top 25% = above, middle 50% = inside, bottom
+    // 25% = below. Leaf rows + folder-dragging-onto-folder both use a
+    // simple 50/50 above/below split.
+    //
+    // Why folder-onto-folder skips inside: rearranging top-level folder
+    // ordering (e.g. moving z=2 above z=1) is the common case, and the
+    // narrow 25% slivers made it nearly impossible to land — most
+    // attempted moves landed in the middle zone and got interpreted as
+    // "nest this folder INTO that folder" instead, which looked like
+    // "the move did nothing" since the dragged folder went somewhere
+    // unexpected. Folder nesting is still possible by dragging into the
+    // folder via tile-layer rows beneath it, or via the context menu.
+    const srcLayer = drag ? state.json.layers[drag.fromIdx] : null;
+    const draggingFolder = srcLayer?.type === 'group';
     let zone: 'above' | 'inside' | 'below';
-    if (layer?.type === 'group') {
+    if (layer?.type === 'group' && !draggingFolder) {
       if (dy < rect.height * 0.25) zone = 'above';
       else if (dy > rect.height * 0.75) zone = 'below';
       else zone = 'inside';

@@ -101,11 +101,13 @@ const PreviewBox = styled.div`
 `;
 
 const PreviewScroll = styled.div`
-  /* When the zoomed canvas exceeds the visible box, scrollbars let the
-     user pan around. max-height matches the auto-fit size so the dialog
-     doesn't grow vertically as you zoom in. */
-  max-width: 100%;
-  max-height: ${({ theme: _t }) => '300px'};
+  /* Fixed dimensions injected at mount via inline style — width/height
+     match the canvas's natural size at 1× zoom so the box is just big
+     enough for the "fit" view. Zooming above 1× makes the canvas
+     overflow + scroll inside the constant-size box; zooming below 1×
+     centers the smaller canvas with padding. Either way the dialog
+     height never changes from zoom.
+     (Background + centering live here; size comes from inline style.) */
   overflow: auto;
   display: flex;
   justify-content: center;
@@ -168,7 +170,11 @@ const Btn = styled.button<{ $primary?: boolean }>`
   }
 `;
 
-const PREVIEW_MAX = 280;
+// Preview canvas's longer axis in CSS pixels at 1× zoom. Must fit
+// inside the modal's content area (modal width 560 − 2×24 padding =
+// 512 usable). 540 leaves a small margin so a scrollbar appearance
+// doesn't push content past the modal edge.
+const PREVIEW_MAX = 542;
 const GID_MASK = 0x1fffffff;
 
 type Props = {
@@ -186,8 +192,81 @@ export const ResizeMapDialog: React.FC<Props> = ({
 }) => {
   const [w, setW] = useState(currentWidth);
   const [h, setH] = useState(currentHeight);
-  const [ox, setOx] = useState(0);
-  const [oy, setOy] = useState(0);
+  const [ox, setOxRaw] = useState(0);
+  const [oy, setOyRaw] = useState(0);
+  // When OFF (default), drags + offset inputs are clamped so the
+  // existing map content always covers (or fits inside) the new bounds
+  // — no accidental empty borders. When ON, the user can drag content
+  // anywhere, including off-canvas (useful for cropping a specific
+  // region or adding empty borders intentionally).
+  //
+  // A ref mirror is required because the drag-handler useEffect below
+  // only depends on `scale`, so its captured setOx/setOy never refresh
+  // when the toggle flips. Reading the ref inside clampOffset keeps
+  // clampOffset stable AND always-current.
+  const [allowBeyondBounds, setAllowBeyondBounds] = useState(false);
+  const allowBeyondBoundsRef = useRef(allowBeyondBounds);
+  useEffect(() => { allowBeyondBoundsRef.current = allowBeyondBounds; }, [allowBeyondBounds]);
+  // Per-axis clamp: when allowBeyondBounds is false, the offset is
+  // bounded so the new-bounds box stays fully overlapped with content.
+  //   newSize > oldSize: content fits inside bounds → offset in [0, newSize - oldSize]
+  //   newSize < oldSize: bounds fits inside content → offset in [newSize - oldSize, 0]
+  //   newSize == oldSize: nothing to enforce — let the user drag freely
+  //     (the dialog still works as a "shift everything" tool when bounds
+  //     don't change; whatever spills off one side gets cropped, the
+  //     other side becomes empty — user's call).
+  // When allowBeyondBounds is true we let the value through untouched.
+  const clampOffset = useCallback((value: number, oldSize: number, newSize: number): number => {
+    if (allowBeyondBoundsRef.current) return value;
+    // Strict "no empty borders" clamp. The valid offset range is the
+    // intersection of "content covers new bounds" and "new bounds fit
+    // inside content" — whichever applies for the relative size.
+    //
+    //   newSize >= oldSize: content fits inside bounds → offset in [0, newSize - oldSize]
+    //   newSize <  oldSize: bounds fit inside content → offset in [newSize - oldSize, 0]
+    //
+    // Same-size case collapses to [0, 0] — no drag possible with the
+    // toggle off, which is the correct interpretation: ANY shift in
+    // same-size would put part of the content outside the bounds. The
+    // toggle exists precisely to opt out of that.
+    if (newSize >= oldSize) {
+      const max = newSize - oldSize;
+      return Math.max(0, Math.min(value, max));
+    }
+    const min = newSize - oldSize; // negative
+    return Math.max(min, Math.min(value, 0));
+  }, []);
+  // Mirror w/h in refs so setOx/setOy can stay stable callbacks (no
+  // deps on w/h). The drag-handler useEffect only re-runs on `scale`
+  // change, so it captures setOx/setOy ONCE — if those callbacks had
+  // w/h in their closure, every resize would freeze the drag with the
+  // OLD bounds. Refs sidestep that: clampOffset's bounds come from
+  // wRef.current at call time, always current.
+  const wRef = useRef(w);
+  const hRef = useRef(h);
+  useEffect(() => { wRef.current = w; }, [w]);
+  useEffect(() => { hRef.current = h; }, [h]);
+  const setOx = useCallback((value: number | ((prev: number) => number)) => {
+    setOxRaw((prev) => {
+      const next = typeof value === 'function' ? value(prev) : value;
+      return clampOffset(next, currentWidth, wRef.current);
+    });
+  }, [clampOffset, currentWidth]);
+  const setOy = useCallback((value: number | ((prev: number) => number)) => {
+    setOyRaw((prev) => {
+      const next = typeof value === 'function' ? value(prev) : value;
+      return clampOffset(next, currentHeight, hRef.current);
+    });
+  }, [clampOffset, currentHeight]);
+  // Re-clamp when bounds or the toggle change so offsets don't sit out
+  // of range after the user resizes or flips the toggle off. (The
+  // clampOffset callback itself is stable now — it reads the toggle via
+  // ref — so we also depend on `allowBeyondBounds` directly to force
+  // this effect to fire when the user toggles it off.)
+  useEffect(() => {
+    setOxRaw((v) => clampOffset(v, currentWidth, w));
+    setOyRaw((v) => clampOffset(v, currentHeight, h));
+  }, [w, h, currentWidth, currentHeight, clampOffset, allowBeyondBounds]);
   const firstFieldRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { firstFieldRef.current?.focus(); firstFieldRef.current?.select(); }, []);
@@ -202,9 +281,19 @@ export const ResizeMapDialog: React.FC<Props> = ({
   // bounds — the source pixels don't change while the dialog is open).
   const mapThumb = useMemo(() => buildMapThumbnail(loaded), [loaded]);
 
-  // Outer canvas dimensions adapt to whichever is bigger: the current map,
-  // the new map, or the offset spillover. We size the preview area so the
-  // union fits, then scale to PREVIEW_MAX while preserving aspect ratio.
+  // Pinned view rectangle (in tile coords). Computed ONCE so the canvas
+  // dimensions never change as the user resizes / drags — the preview
+  // is a stationary window, the new-bounds outline + content rectangle
+  // move INSIDE it. Sized to roughly 2× the current map in each axis,
+  // centered on the map, so moderate growth + shifts stay in view.
+  const viewRect = useMemo(() => ({
+    x: -Math.floor(currentWidth / 2),
+    y: -Math.floor(currentHeight / 2),
+    width: currentWidth * 2,
+    height: currentHeight * 2,
+  }), [currentWidth, currentHeight]);
+  // Live union (used only for clip + grid bounds — never affects canvas
+  // dimensions, which use the pinned viewRect above).
   const unionRect = useMemo(() => {
     const minX = Math.min(0, ox);
     const minY = Math.min(0, oy);
@@ -217,11 +306,23 @@ export const ResizeMapDialog: React.FC<Props> = ({
     };
   }, [w, h, ox, oy, currentWidth, currentHeight]);
 
-  // Auto-fit scale (so the preview always opens at "see-the-whole-map" zoom).
+  // Auto-fit scale — pinned at dialog open and never recomputed. Tiled
+  // works the same way: the preview holds a fixed camera while the user
+  // adjusts size + offset, so the new-bounds outline visibly grows /
+  // shrinks / slides INSIDE a stable view rather than the whole image
+  // re-fitting on every keystroke.
+  //
+  // The pinned scale leaves comfortable headroom for moderate growth:
+  // we size to fit DOUBLE the current map's largest axis. Pushing well
+  // past that just scrolls; the user can still zoom in/out manually
+  // (zoomMul below).
   const baseScale = useMemo(() => {
-    const s = PREVIEW_MAX / Math.max(unionRect.width, unionRect.height);
+    const seed = Math.max(currentWidth, currentHeight) * 2;
+    const s = PREVIEW_MAX / Math.max(1, seed);
     return Math.max(0.1, Math.min(s, 24));
-  }, [unionRect]);
+    // Deliberately empty deps — compute once, then leave alone.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   // User zoom multiplier on top of baseScale. Clamped wide enough to let
   // the user inspect single tiles on big maps without going absurd.
   const ZOOM_STEPS = [0.5, 0.75, 1, 1.5, 2, 3, 5, 8, 12, 20];
@@ -246,8 +347,12 @@ export const ResizeMapDialog: React.FC<Props> = ({
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const cw = Math.ceil(unionRect.width * scale);
-    const ch = Math.ceil(unionRect.height * scale);
+    // Canvas size is fixed at the pinned viewRect — never changes as
+    // the user adjusts size or drags. The dialog stays a constant size;
+    // only the contents (new-bounds outline + dashed content rect) move
+    // inside this stationary window.
+    const cw = Math.ceil(viewRect.width * scale);
+    const ch = Math.ceil(viewRect.height * scale);
     canvas.width = cw;
     canvas.height = ch;
     const ctx = canvas.getContext('2d');
@@ -255,9 +360,9 @@ export const ResizeMapDialog: React.FC<Props> = ({
     ctx.imageSmoothingEnabled = false;
     ctx.clearRect(0, 0, cw, ch);
 
-    // Translate origin so unionRect.x/y → canvas (0, 0).
-    const tx = -unionRect.x * scale;
-    const ty = -unionRect.y * scale;
+    // Translate origin so viewRect.x/y → canvas (0, 0).
+    const tx = -viewRect.x * scale;
+    const ty = -viewRect.y * scale;
 
     // 1. New bounds — gray fill so the user sees the "empty canvas" they'd
     //    end up with after the resize.
@@ -291,13 +396,13 @@ export const ResizeMapDialog: React.FC<Props> = ({
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.18)';
       ctx.lineWidth = 1;
       ctx.beginPath();
-      for (let gx = 0; gx <= unionRect.width; gx++) {
-        const px = Math.floor(tx + (unionRect.x + gx) * scale) + 0.5;
+      for (let gx = 0; gx <= viewRect.width; gx++) {
+        const px = Math.floor(tx + (viewRect.x + gx) * scale) + 0.5;
         ctx.moveTo(px, 0);
         ctx.lineTo(px, ch);
       }
-      for (let gy = 0; gy <= unionRect.height; gy++) {
-        const py = Math.floor(ty + (unionRect.y + gy) * scale) + 0.5;
+      for (let gy = 0; gy <= viewRect.height; gy++) {
+        const py = Math.floor(ty + (viewRect.y + gy) * scale) + 0.5;
         ctx.moveTo(0, py);
         ctx.lineTo(cw, py);
       }
@@ -320,7 +425,7 @@ export const ResizeMapDialog: React.FC<Props> = ({
     ctx.strokeStyle = '#ffd000';
     ctx.lineWidth = 2;
     ctx.strokeRect(tx + 0.5, ty + 0.5, w * scale - 1, h * scale - 1);
-  }, [w, h, ox, oy, currentWidth, currentHeight, mapThumb, scale, unionRect, showGrid]);
+  }, [w, h, ox, oy, currentWidth, currentHeight, mapThumb, scale, viewRect, showGrid]);
 
   // --- drag-to-offset ----------------------------------------------------
 
@@ -380,7 +485,17 @@ export const ResizeMapDialog: React.FC<Props> = ({
           Cells outside the yellow new-bounds box are dropped.
         </Hint>
         <PreviewBox>
-          <PreviewScroll>
+          {/* Box size = canvas dims at 1× zoom = viewRect × baseScale.
+              Pinned at mount via the same memos that pin the view; the
+              box itself never resizes when the user zooms or drags. */}
+          <PreviewScroll style={{
+            width: Math.ceil(viewRect.width * baseScale),
+            height: Math.ceil(viewRect.height * baseScale),
+            // Safety cap so even a future PREVIEW_MAX change can't push
+            // the box past the modal's usable interior. The modal is
+            // width:560 + padding:48 → 512 of usable width.
+            maxWidth: '100%',
+          }}>
             <PreviewCanvas
               ref={canvasRef}
               onMouseDown={onCanvasMouseDown}
@@ -446,6 +561,17 @@ export const ResizeMapDialog: React.FC<Props> = ({
             />
           </Field>
         </Grid>
+        <label style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 6, cursor: 'pointer' }}>
+          <input
+            type="checkbox"
+            checked={allowBeyondBounds}
+            onChange={(e) => setAllowBeyondBounds(e.target.checked)}
+          />
+          <span>Allow content beyond new bounds</span>
+          <span style={{ opacity: 0.6, marginLeft: 4 }} title="When off, drags + offset inputs are clamped so existing content stays inside the new bounds box. Turn on if you want to intentionally crop or add empty borders.">
+            ⓘ
+          </span>
+        </label>
         <Buttons>
           {(ox !== 0 || oy !== 0) && <Btn onClick={resetOffset}>Reset offset</Btn>}
           <Btn onClick={onCancel}>Cancel</Btn>

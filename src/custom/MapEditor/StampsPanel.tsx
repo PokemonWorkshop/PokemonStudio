@@ -25,6 +25,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import type { Brush, BrushCell, BrushLayer, LoadedState, LoadedTileset } from './mapEditorTypes';
+import { StampThumbnailEditor } from './StampThumbnailEditor';
 
 // ----- types ---------------------------------------------------------------
 
@@ -62,6 +63,20 @@ export type Stamp = {
    * existing onAddTileset flow.
    */
   tilesetRefs?: Record<string, string>;
+  /**
+   * Layer-visibility filter for the THUMBNAIL only — never affects
+   * paint. Layer names listed here are drawn; layers NOT listed are
+   * hidden in the preview. Use to hide a noisy overlay layer that
+   * makes the rest of the stamp hard to read in the panel. Undefined =
+   * "show all layers" (default render).
+   */
+  thumbnailLayers?: string[];
+  /**
+   * Sub-rectangle of the stamp (in CELL coords, top-left origin) shown
+   * in the thumbnail. Lets the user crop the preview down to the most
+   * recognizable part of a tall/wide stamp. Undefined = full stamp.
+   */
+  thumbnailCrop?: { x: number; y: number; width: number; height: number };
   /** When the stamp was last saved (epoch ms). For ordering in the UI. */
   updatedAt: number;
 };
@@ -296,6 +311,10 @@ const renderStampThumbnail = (
   stamp: Stamp,
   tilesets: LoadedTileset[],
   phantoms: Map<string, PhantomTileset>,
+  /** Optional override: ignore stamp.thumbnailLayers/Crop and render
+   *  the full stamp + all layers. Used by the thumbnail editor to show
+   *  a clean canvas the user can crop / toggle layers on. */
+  overrideFull = false,
 ) => {
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
@@ -307,6 +326,30 @@ const renderStampThumbnail = (
     if (real?.bitmap) return real;
     return phantoms.get(key);
   };
+  // Determine which stamp-layers contribute to this render. Default
+  // (or override) = all of them; otherwise honor the saved set.
+  const allLayerNames = stamp.layerNames ?? [];
+  const visibleLayerSet: Set<string> | null = (!overrideFull && stamp.thumbnailLayers)
+    ? new Set(stamp.thumbnailLayers)
+    : null;
+  const layerNameOf = (idx: number): string | undefined => allLayerNames[idx];
+  const isLayerVisible = (idx: number): boolean => {
+    if (!visibleLayerSet) return true;
+    const name = layerNameOf(idx);
+    return name === undefined ? true : visibleLayerSet.has(name);
+  };
+  // Crop bounds (in cell coords). If thumbnailCrop is set + valid,
+  // restrict iteration; else use the whole stamp. The drawn area is
+  // measured from the crop's top-left so the cropped region fills the
+  // thumbnail rather than appearing offset.
+  const crop = (!overrideFull && stamp.thumbnailCrop) ? stamp.thumbnailCrop : null;
+  const startX = crop ? Math.max(0, crop.x) : 0;
+  const startY = crop ? Math.max(0, crop.y) : 0;
+  const endX = crop ? Math.min(stamp.width, crop.x + crop.width) : stamp.width;
+  const endY = crop ? Math.min(stamp.height, crop.y + crop.height) : stamp.height;
+  const cellsW = Math.max(1, endX - startX);
+  const cellsH = Math.max(1, endY - startY);
+
   // Pick a representative tile size from the first usable cell — most
   // brushes are single-tileset and uniform-size; in mixed cases we just
   // use the first cell's tileset metrics. Falls back to 32×32 when even
@@ -316,8 +359,8 @@ const renderStampThumbnail = (
   const tw = ts?.tilewidth ?? 32;
   const th = ts?.tileheight ?? 32;
 
-  const pxW = stamp.width * tw;
-  const pxH = stamp.height * th;
+  const pxW = cellsW * tw;
+  const pxH = cellsH * th;
   const scale = Math.max(1, Math.floor(Math.min(THUMB_MAX_PX / pxW, THUMB_MAX_PX / pxH))) || 1;
   const w = Math.min(THUMB_MAX_PX, Math.max(tw * scale, pxW * scale));
   const h = Math.min(THUMB_MAX_PX, Math.max(th * scale, pxH * scale));
@@ -326,28 +369,45 @@ const renderStampThumbnail = (
   ctx.imageSmoothingEnabled = false;
   ctx.clearRect(0, 0, w, h);
 
-  // Center the rendered cells within the bounded thumbnail.
-  const renderW = stamp.width * tw * scale;
-  const renderH = stamp.height * th * scale;
+  // Center the cropped region within the bounded thumbnail.
+  const renderW = cellsW * tw * scale;
+  const renderH = cellsH * th * scale;
   const offX = Math.floor((w - renderW) / 2);
   const offY = Math.floor((h - renderH) / 2);
 
-  for (let y = 0; y < stamp.height; y++) {
-    for (let x = 0; x < stamp.width; x++) {
-      const cell = stamp.cells[y * stamp.width + x];
-      if (!cell) continue;
-      const cellTs = lookup(cell.tilesetKey);
-      if (!cellTs || !cellTs.bitmap) continue;
-      const cols = Math.max(1, Math.floor(cellTs.bitmap.width / cellTs.tilewidth));
-      const sx = (cell.tileId % cols) * cellTs.tilewidth;
-      const sy = Math.floor(cell.tileId / cols) * cellTs.tileheight;
-      ctx.drawImage(
-        cellTs.bitmap,
-        sx, sy, cellTs.tilewidth, cellTs.tileheight,
-        offX + x * tw * scale, offY + y * th * scale, tw * scale, th * scale,
-      );
+  // Composite the stamp layers in painter order: extras FIRST (bottom-
+  // to-top of stack), anchor cells LAST = on top. The stamp's "anchor"
+  // is whichever layer was active when the user saved — typically the
+  // layer they care most about identifying the stamp by. Drawing it
+  // last guarantees its tiles win in the thumbnail, matching how PSDK
+  // maps tend to be authored: overlay layers like `passages` /
+  // `systemtags` sit above the visual layers, and active-when-saving
+  // generally tracks the user's focus on the topmost layer.
+  const drawGrid = (cells: StampCell[]) => {
+    for (let y = startY; y < endY; y++) {
+      for (let x = startX; x < endX; x++) {
+        const cell = cells[y * stamp.width + x];
+        if (!cell) continue;
+        const cellTs = lookup(cell.tilesetKey);
+        if (!cellTs || !cellTs.bitmap) continue;
+        const cols = Math.max(1, Math.floor(cellTs.bitmap.width / cellTs.tilewidth));
+        const sx = (cell.tileId % cols) * cellTs.tilewidth;
+        const sy = Math.floor(cell.tileId / cols) * cellTs.tileheight;
+        ctx.drawImage(
+          cellTs.bitmap,
+          sx, sy, cellTs.tilewidth, cellTs.tileheight,
+          offX + (x - startX) * tw * scale, offY + (y - startY) * th * scale, tw * scale, th * scale,
+        );
+      }
+    }
+  };
+  if (stamp.extraLayers) {
+    for (let i = 0; i < stamp.extraLayers.length; i++) {
+      if (!isLayerVisible(i + 1)) continue;
+      drawGrid(stamp.extraLayers[i].cells);
     }
   }
+  if (isLayerVisible(0)) drawGrid(stamp.cells);
 };
 
 // ----- styled --------------------------------------------------------------
@@ -482,6 +542,17 @@ const DeleteBtn = styled.button`
   border-radius: 4px;
   &:hover { background: ${({ theme }) => theme.colors.dangerBase}; color: ${({ theme }) => theme.colors.text100}; }
 `;
+// Same look as DeleteBtn but neutral-color hover — used for "Edit
+// thumbnail" so the destructive (red) state stays unique to delete.
+const EditBtn = styled.button`
+  background: transparent;
+  border: none;
+  color: ${({ theme }) => theme.colors.text400};
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  &:hover { background: ${({ theme }) => theme.colors.dark18}; color: ${({ theme }) => theme.colors.text100}; }
+`;
 
 // Inline warning shown on rows whose stamp references tilesets/layers
 // the current map doesn't have. The Import button next to it performs
@@ -550,6 +621,8 @@ export const StampsPanel: React.FC<Props> = ({
   // new stamp's id immediately after Save so the user can name it without
   // a modal (`window.prompt` is blocked in Electron's renderer).
   const [editingId, setEditingId] = useState<string | null>(null);
+  // When set, the thumbnail-editor modal opens for that stamp id.
+  const [thumbEditingId, setThumbEditingId] = useState<string | null>(null);
 
   const sorted = useMemo(
     () => [...stamps].sort((a, b) => b.updatedAt - a.updatedAt),
@@ -722,6 +795,14 @@ export const StampsPanel: React.FC<Props> = ({
 
   const onStartRename = useCallback((id: string) => setEditingId(id), []);
   const onCancelRename = useCallback(() => setEditingId(null), []);
+  const onEditThumbnail = useCallback((id: string) => setThumbEditingId(id), []);
+  const onSaveThumbnail = useCallback((patch: { thumbnailLayers?: string[]; thumbnailCrop?: Stamp['thumbnailCrop'] }) => {
+    setThumbEditingId((id) => {
+      if (!id) return null;
+      persist(stamps.map((s) => s.id === id ? { ...s, ...patch, updatedAt: Date.now() } : s));
+      return null;
+    });
+  }, [stamps, persist]);
   const onCommitRename = useCallback((id: string, name: string) => {
     const trimmed = name.trim();
     if (!trimmed) { setEditingId(null); return; }
@@ -762,10 +843,24 @@ export const StampsPanel: React.FC<Props> = ({
               onCommitRename={onCommitRename}
               onCancelRename={onCancelRename}
               onImportDeps={onImportStampDeps}
+              onEditThumbnail={onEditThumbnail}
             />
           ))
         )}
       </List>
+      {thumbEditingId && (() => {
+        const stamp = stamps.find((s) => s.id === thumbEditingId);
+        if (!stamp) return null;
+        return (
+          <StampThumbnailEditor
+            stamp={stamp}
+            tilesets={loaded?.tilesets ?? []}
+            phantoms={phantomsForRow}
+            onCancel={() => setThumbEditingId(null)}
+            onSave={onSaveThumbnail}
+          />
+        );
+      })()}
     </Panel>
   );
 };
@@ -791,11 +886,13 @@ type RowProps = {
   onCommitRename: (id: string, name: string) => void;
   onImportDeps?: (stamp: Stamp) => void | Promise<void>;
   onCancelRename: () => void;
+  /** Open the thumbnail-edit modal for this stamp. */
+  onEditThumbnail?: (id: string) => void;
 };
 
 const StampRow: React.FC<RowProps> = ({
   stamp, tilesets, phantoms, missingDeps, active, editing,
-  onPick, onDelete, onStartRename, onCommitRename, onCancelRename, onImportDeps,
+  onPick, onDelete, onStartRename, onCommitRename, onCancelRename, onImportDeps, onEditThumbnail,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   useEffect(() => {
@@ -871,6 +968,13 @@ const StampRow: React.FC<RowProps> = ({
           </MissingDepsBox>
         )}
       </RowMain>
+      {onEditThumbnail && (
+        <EditBtn
+          onClick={(e) => { e.stopPropagation(); onEditThumbnail(stamp.id); }}
+          title="Edit thumbnail (crop + per-layer visibility)"
+          aria-label="Edit thumbnail"
+        >✎</EditBtn>
+      )}
       <DeleteBtn onClick={(e) => onDelete(stamp.id, e)} title="Delete stamp">✕</DeleteBtn>
     </Row>
   );

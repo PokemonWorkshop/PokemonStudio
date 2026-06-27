@@ -1029,7 +1029,12 @@ export const MapEditorPage = () => {
           e.preventDefault();
           clipboardBrushRef.current = b;
           setSelectedBrush(b);
-          if (key === 'x') canvasRef.current.eraseTileSelection?.();
+          if (key === 'x') {
+            canvasRef.current.eraseTileSelection?.();
+            // Cut just put a brush in the user's hand — switch to the
+            // paint tool so the next click pastes it, matching Tiled.
+            setTool('stamp');
+          }
           return;
         }
         if (key === 'v') {
@@ -1592,18 +1597,15 @@ export const MapEditorPage = () => {
       }
       // Per-iteration dstIdx: each source goes to baseDst + i so they
       // occupy positions [baseDst .. baseDst+N-1] in iteration order,
-      // independent of libtiled's per-call shift behavior. Important
-      // edge case: when the source we're moving is in the SAME parent
-      // as the destination AND its current child idx is < (baseDst +
-      // placedCount), the take shifts the target position down by one
-      // — so we subtract one to compensate.
-      let perIterDst = dstIdx + placedCount;
-      const srcParent = srcPath.slice(0, -1);
-      const sameParent = srcParent.length === freshDst.length
-        && srcParent.every((seg, i) => seg === freshDst[i]);
-      if (sameParent && srcPath[srcPath.length - 1] < perIterDst) {
-        perIterDst -= 1;
-      }
+      // independent of libtiled's per-call shift behavior.
+      //
+      // NO same-parent compensation here: the C++ bridge already does
+      // `if (sameParent && srcLeafIdx < dstIdx) dstIdx--` inside
+      // tiled_move_layer_to_path. Adding the same adjustment on the JS
+      // side decremented twice — every same-parent reorder landed one
+      // position short of where the user dropped (e.g. dragging a
+      // folder up always required overshooting by one row).
+      const perIterDst = dstIdx + placedCount;
       if (!canvasRef.current.moveLayerToPath?.(srcPath, freshDst, perIterDst)) {
         console.warn('[layer] moveLayerToPath failed for', name);
         continue;
