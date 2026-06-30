@@ -1015,7 +1015,15 @@ export const PixiMapCanvas = forwardRef<MapCanvasHandle, PixiMapCanvasProps>(
       // bridge namespace — translate them or every higher-firstgid tileset
       // (buildings, water, …) renders as the wrong tileset, leaving the
       // map mostly blank. This was the visual corruption after Resize Map.
-      const bridgeFgs = recomputed.map((ts) => ts.firstgid);
+      // CRITICAL: read bridge firstgids from rawMap.tilesets BEFORE
+      // recomputeFirstgids — that helper *replaces* non-monotonic bridge
+      // values with corrected ones (same logic as load-time), so
+      // recomputed[i].firstgid ends up equal to prev.tilesets[i].firstgid.
+      // Using it for bridgeFgs makes needsTranslation false and lets broken-
+      // namespace cells pass through untranslated. The bridge actually
+      // stamped the cell data in rawMap.tilesets's original (cumulative
+      // nextTileId) namespace, so we must use that here.
+      const bridgeFgs = rawMap.tilesets.map((ts) => ts.firstgid);
       const correctedFgs = recomputed.map((_, i) => prev.tilesets[i]?.firstgid ?? bridgeFgs[i]);
       const needsTranslation = bridgeFgs.some((fg, i) => fg !== correctedFgs[i]);
       const FLIP_MASK = 0xE0000000 >>> 0;
