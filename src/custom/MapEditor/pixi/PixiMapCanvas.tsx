@@ -2039,7 +2039,91 @@ export const PixiMapCanvas = forwardRef<MapCanvasHandle, PixiMapCanvasProps>(
     }, [applyBatch, onDirty, onHistoryChange]);
 
     useImperativeHandle(forwardedRef, () => ({
-      saveBytes: () => mapWasmRef.current?.save() ?? null,
+      saveBytes: () => {
+        const bytes = mapWasmRef.current?.save();
+        if (!bytes) return null;
+        // The wasm bridge serializes tilesets using its internal firstgids,
+        // which for tilesets loaded standalone (every fresh .tsx the bridge
+        // opened on its own) are all "1" — colliding. Our cell data lives
+        // in the CORRECTED firstgid namespace (see recomputeFirstgids +
+        // load-time .tmx override), so a saved file with firstgid="1" on
+        // every <tileset/> is internally inconsistent: Tiled (and our own
+        // reload) resolves gid 447 against tileset[0] tilecount=144 and
+        // either picks the wrong tileset or renders the red-X "missing
+        // tile" marker. Fix: rewrite <tileset ... firstgid="..."/>
+        // declarations in order to match state.tilesets's corrected gids.
+        const prev = loadedRef.current;
+        const ts = prev?.tilesets;
+        if (!prev || !ts || ts.length === 0) return bytes;
+        try {
+          let text = new TextDecoder('utf-8').decode(bytes);
+
+          // ---- 1. Rewrite <tileset firstgid="…"/> declarations -----------
+          let tsIdx = 0;
+          text = text.replace(/<tileset\b([^>]*?)firstgid="(\d+)"([^>]*?)\/?>/g, (m, pre, _fg, post) => {
+            const correct = ts[tsIdx]?.firstgid;
+            tsIdx++;
+            if (correct == null) return m;
+            return `<tileset${pre}firstgid="${correct}"${post}/>`;
+          });
+          if (tsIdx !== ts.length) {
+            console.warn(`[map-editor] saveBytes firstgid rewrite: matched ${tsIdx} <tileset> tags, expected ${ts.length} — leaving original bytes`);
+            return bytes;
+          }
+
+          // ---- 2. Replace every <data encoding="csv">…</data> block ------
+          // The bridge's MapWriter emits cell gids via libtiled's GidMapper
+          // (cumulative `nextTileId()` across tilesets). For .tsx files whose
+          // explicit `<tile>` slots fall short of the image-derived tilecount
+          // (PSDK's tilesets declare 0 explicit tiles for systemtags /
+          // terrain_tag / Umbra), nextTileId is 0 → every later tileset's
+          // firstGid collides at the same value → the GidMapper QMap
+          // overwrites earlier entries → emitted gids collapse to whichever
+          // tileset was inserted last for that firstGid, regardless of which
+          // tileset the cell actually references. That's how Umbra grass
+          // ends up saved as gid 8 (passages tile 7).
+          //
+          // Workaround: ignore wasm's CSV output entirely and serialize cell
+          // data from the JS mirror, which has held the canonical gids since
+          // load (.tmx-parsed) and every subsequent paint. The mirror lives
+          // on prev.json.layers (flattened); we walk the .tmx's <layer> tags
+          // in document order and zip them against the flattened JS list.
+          const jsLayers = prev.json.layers.filter((l) => l.type === 'tilelayer');
+          let layerOrdinal = 0;
+          let csvMismatch = false;
+          text = text.replace(
+            /(<layer\b[^>]*>[\s\S]*?<data\b[^>]*encoding="csv"[^>]*>)([\s\S]*?)(<\/data>)/g,
+            (full, openTag, _oldCsv, closeTag) => {
+              const jsLayer = jsLayers[layerOrdinal];
+              layerOrdinal++;
+              if (!jsLayer || !Array.isArray(jsLayer.data)) {
+                csvMismatch = true;
+                return full;
+              }
+              const w = jsLayer.width ?? prev.json.width;
+              const data = jsLayer.data as number[];
+              const rows: string[] = [];
+              for (let y = 0; y < Math.ceil(data.length / w); y++) {
+                const start = y * w;
+                const end = Math.min(start + w, data.length);
+                rows.push(data.slice(start, end).map((g) => (g >>> 0).toString()).join(','));
+              }
+              // Match libtiled's formatting: leading newline, row-per-line,
+              // trailing comma+newline on all but last row, newline after last.
+              const csv = '\n' + rows.join(',\n') + '\n';
+              return openTag + csv + closeTag;
+            },
+          );
+          if (csvMismatch || layerOrdinal !== jsLayers.length) {
+            console.warn(`[map-editor] saveBytes cell rewrite: matched ${layerOrdinal} <layer> blocks, expected ${jsLayers.length}${csvMismatch ? ' (also: missing JS mirror data)' : ''} — saved file may be inconsistent`);
+          }
+
+          return new TextEncoder().encode(text);
+        } catch (e) {
+          console.warn('[map-editor] saveBytes rewrite failed', e);
+          return bytes;
+        }
+      },
       redraw: () => { /* Pixi auto-renders; visibility/zoom effects handle prop changes */ },
       undo: doUndo,
       redo: doRedo,
