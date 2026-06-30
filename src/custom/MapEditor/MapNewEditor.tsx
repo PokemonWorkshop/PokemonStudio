@@ -266,15 +266,15 @@ const buildBlankTmx = (width: number, height: number, tilesets: TilesetEntry[]):
   // LayerList panel mirrors render-stack convention (later in file =
   // top of list). So we emit ground → mid → top → infos so that
   // `infos` ends up at the TOP of the panel as the user expects,
-  // sitting visually over the z=2 top layer.
+  // sitting visually over the z=3 top layer.
   const layerSkeleton = [
-    groupOpen('z=0'),
+    groupOpen('z=1'),
     tileLayer('ground'),
     ` </group>`,
-    groupOpen('z=1'),
+    groupOpen('z=2'),
     tileLayer('mid'),
     ` </group>`,
-    groupOpen('z=2'),
+    groupOpen('z=3'),
     tileLayer('top'),
     ` </group>`,
     // System / metadata group last (top of panel). Holds the four
