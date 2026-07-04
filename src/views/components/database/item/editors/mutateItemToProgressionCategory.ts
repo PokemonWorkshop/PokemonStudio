@@ -20,6 +20,7 @@ const itemKlassToProgressionCategory: Readonly<Record<StudioItem['klass'], Progr
   RateHealItem: 'unknown',
   RepelItem: 'unknown',
   StatBoostItem: 'unknown',
+  StatBoostAndHealItem: 'unknown',
   StatusConstantHealItem: 'unknown',
   StatusHealItem: 'unknown',
   StatusRateHealItem: 'unknown',

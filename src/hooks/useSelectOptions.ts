@@ -269,6 +269,7 @@ const HEAL_ITEM_KLASSES = [
   'PPIncreaseItem',
   'RateHealItem',
   'StatBoostItem',
+  'StatBoostAndHealItem',
   'StatusConstantHealItem',
   'StatusHealItem',
   'StatusRateHealItem',

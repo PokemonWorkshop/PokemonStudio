@@ -15,6 +15,7 @@ import { MultiSelect } from '@ds/MultiSelect';
 type ItemType = {
   hpCount?: number;
   hpRate?: number;
+  hpMode?: 'constant' | 'rate';
   ppCount?: number;
   isMax?: boolean;
   statusList?: string[];
@@ -31,12 +32,21 @@ const getFormHealData: (item: StudioItem) => ItemType = (item) => {
   return {
     hpCount: 'hpCount' in item ? item.hpCount : undefined,
     hpRate: 'hpRate' in item && !isNaN(item.hpRate) ? item.hpRate : undefined,
+    hpMode: 'hpMode' in item ? item.hpMode : undefined,
     ppCount: 'ppCount' in item && !isNaN(item.ppCount) ? item.ppCount : undefined,
     isMax: 'isMax' in item ? item.isMax : undefined,
     statusList: 'statusList' in item ? item.statusList : undefined,
     loyaltyMalus: 'loyaltyMalus' in item && !isNaN(item.loyaltyMalus) ? item.loyaltyMalus : undefined,
   };
 };
+
+// Fork: the StatBoostAndHealItem carries both hpCount and hpRate; `hpMode`
+// picks which one is live, and it may be negative (to damage). Other heal
+// items expose exactly one of the two by their klass, as before.
+const HP_MODE_OPTIONS = [
+  { value: 'constant', label: 'heal_hp_mode_constant' },
+  { value: 'rate', label: 'heal_hp_mode_rate' },
+] as const;
 
 export const ItemHealDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { currentItem } = useItemPage();
@@ -53,6 +63,11 @@ export const ItemHealDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const [klass, setKlass] = useState<string>(item.klass);
 
   const [healChanges, setHealChanges] = useState<ItemType>(getFormHealData(item));
+
+  // Fork: combined stat-boost + heal item — shows an HP mode selector and
+  // allows negative HP values (damage).
+  const isCombo = item.klass === 'StatBoostAndHealItem';
+  const hpModeOptions = useMemo(() => HP_MODE_OPTIONS.map((o) => ({ value: o.value, label: t(o.label) })), [t]);
 
   const handleClose = () => {
     const filteredFormData: ItemType = Object.entries(healChanges)
@@ -111,35 +126,49 @@ export const ItemHealDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
             }}
           />
         </InputWithTopLabelContainer>
-        {'hpCount' in item && (
+        {isCombo && (
+          <InputWithTopLabelContainer>
+            <Label htmlFor="hp-mode">{t('heal_hp_mode')}</Label>
+            <SelectCustomSimple
+              id="select-hp-mode"
+              options={hpModeOptions}
+              value={healChanges.hpMode ?? 'constant'}
+              onChange={(value) => setHealChanges((prev) => ({ ...prev, hpMode: value as 'constant' | 'rate' }))}
+              noTooltip
+            />
+          </InputWithTopLabelContainer>
+        )}
+        {'hpCount' in item && (!isCombo || healChanges.hpMode === 'constant') && (
           <InputWithLeftLabelContainer>
-            <Label htmlFor="value">{t('healed_hp')}</Label>
+            <Label htmlFor="value">{isCombo ? t('heal_hp_amount') : t('healed_hp')}</Label>
             <Input
               type="number"
               name="value"
-              min="0"
+              min={isCombo ? '-9999' : '0'}
               max="9999"
               value={healChanges.hpCount}
               onChange={(event) => {
                 const newValue: number = parseInt(event.target.value);
-                if (newValue < 0 || newValue > 9999) return event.preventDefault();
+                const lowerBound = isCombo ? -9999 : 0;
+                if (newValue < lowerBound || newValue > 9999) return event.preventDefault();
                 setHealChanges((prevFormData) => ({ ...prevFormData, hpCount: newValue }));
               }}
             />
           </InputWithLeftLabelContainer>
         )}
-        {'hpRate' in item && healChanges.hpRate !== undefined && (
+        {'hpRate' in item && healChanges.hpRate !== undefined && (!isCombo || healChanges.hpMode === 'rate') && (
           <InputWithLeftLabelContainer>
-            <Label htmlFor="value">{t('healed_hp')}</Label>
+            <Label htmlFor="value">{isCombo ? t('heal_hp_amount') : t('healed_hp')}</Label>
             <PercentInput
               type="number"
               name="value"
-              min="1"
+              min={isCombo ? '-100' : '1'}
               max="100"
               value={(healChanges.hpRate * 100).toFixed(0)}
               onChange={(event) => {
                 const newValue = parseInt(event.target.value);
-                if (newValue < 0 || newValue > 100) return event.preventDefault();
+                const lowerBound = isCombo ? -100 : 0;
+                if (newValue < lowerBound || newValue > 100) return event.preventDefault();
                 setHealChanges((prevFormData) => ({ ...prevFormData, hpRate: newValue / 100 }));
               }}
             />

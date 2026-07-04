@@ -10,7 +10,7 @@ type ItemBattleDataProps = { dialogsRef: ItemDialogsRef };
 export const ItemBattleData = ({ dialogsRef }: ItemBattleDataProps) => {
   const { currentItem: item } = useItemPage();
   const { t } = useTranslation();
-  const isStatBoostItem = item.klass === 'StatBoostItem';
+  const isStatBoostItem = item.klass === 'StatBoostItem' || item.klass === 'StatBoostAndHealItem';
   const isDisabled = LOCKED_ITEM_EDITOR[item.klass].includes('battle');
 
   return (
