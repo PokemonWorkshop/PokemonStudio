@@ -2,6 +2,7 @@ import {
   CommandId,
   StudioEventCommand,
   StudioEventCommandData,
+  StudioEventCommandShowChoice,
   StudioEventCommandShowMessage,
   StudioEventCommandType,
 } from '@modelEntities/event/command';
@@ -142,6 +143,13 @@ export const useEventFlow = (event: StudioEvent, eventFlowRef?: RefObject<HTMLDi
         const showMessageCommand = command as StudioEventCommandData<StudioEventCommandShowMessage>;
         setText(event.csvFileId, showMessageCommand.message, '');
         setText(event.csvFileId, showMessageCommand.narrator, '');
+      }
+
+      if (type === 'show_choice') {
+        const showChoiceCommand = command as StudioEventCommandData<StudioEventCommandShowChoice>;
+        setText(event.csvFileId, showChoiceCommand.message, '');
+        setText(event.csvFileId, showChoiceCommand.narrator, '');
+        setText(event.csvFileId, showChoiceCommand.choices[0], '');
       }
 
       updateEvent({

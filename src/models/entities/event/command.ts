@@ -22,7 +22,7 @@ export const EVENT_COMMAND_CONNECTION_VALIDATOR = z.object({
 
 export type StudioEventCommandConnection = z.infer<typeof EVENT_COMMAND_CONNECTION_VALIDATOR>;
 
-//#region Messages
+// #region Messages
 
 export const MESSAGE_BOX_POSITION_VALIDATOR = z.union([z.literal('top'), z.literal('middle'), z.literal('bottom')]);
 export type StudioMessageBoxPosition = z.infer<typeof MESSAGE_BOX_POSITION_VALIDATOR>;
@@ -54,9 +54,19 @@ export const EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR = z.object({
 
 export type StudioEventCommandShowMessage = z.infer<typeof EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR>;
 
-//#endregion
+export const EVENT_COMMAND_SHOW_CHOICE_VALIDATOR = EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR.extend({
+  type: z.literal('show_choice'),
+  withMessage: z.boolean().default(true),
+  choices: z.array(POSITIVE_OR_ZERO_INT),
+  defaultChoice: POSITIVE_OR_ZERO_INT,
+  resultVariable: POSITIVE_OR_ZERO_INT.default(26), // Variable TMP_1 in RMXP
+});
 
-//#region Scripting
+export type StudioEventCommandShowChoice = z.infer<typeof EVENT_COMMAND_SHOW_CHOICE_VALIDATOR>;
+
+// #endregion
+
+// #region Scripting
 
 export const EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR = z.object({
   type: z.literal('insert_script'),
@@ -67,7 +77,7 @@ export const EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR = z.object({
 
 export type StudioEventCommandInsertScript = z.infer<typeof EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR>;
 
-//#endregion
+// #endregion
 
 const GENERIC_COMMAND = <T extends string>(type: T) =>
   z.object({
@@ -80,7 +90,7 @@ export const EVENT_COMMAND_VALIDATOR = z.discriminatedUnion('type', [
   EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR,
   GENERIC_COMMAND('narrator_settings'),
   GENERIC_COMMAND('manage_message_box'),
-  GENERIC_COMMAND('show_choice'),
+  EVENT_COMMAND_SHOW_CHOICE_VALIDATOR,
   GENERIC_COMMAND('wait_key_press'),
   GENERIC_COMMAND('record_key_press'),
   GENERIC_COMMAND('input_creature_name'),

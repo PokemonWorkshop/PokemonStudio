@@ -3,6 +3,7 @@ import { JSX } from 'react';
 import type { CommandNodeProps } from '../commands/CommandNodeProps';
 import { DefaultCommand } from '../commands/DefaultCommand';
 import { InsertScriptCommand } from '../commands/InsertScriptCommand';
+import { ShowChoiceCommand } from '../commands/ShowChoiceCommand';
 import { ShowMessageCommand } from '../commands/ShowMessageCommand';
 import { ShadowNode } from './ShadowNode';
 
@@ -10,7 +11,7 @@ export const CommandToNodes: Record<StudioEventCommandType | 'shadow_node', (pro
   show_message: ShowMessageCommand,
   narrator_settings: DefaultCommand,
   manage_message_box: DefaultCommand,
-  show_choice: DefaultCommand,
+  show_choice: ShowChoiceCommand,
   wait_key_press: DefaultCommand,
   record_key_press: DefaultCommand,
   input_creature_name: DefaultCommand,

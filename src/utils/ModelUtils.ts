@@ -128,19 +128,40 @@ export const findFirstAvailableCsvFileId = (allData: Record<string, { csvFileId:
   return idSet[holeIndex - 1] + 1;
 };
 
-export const findFirstAvailableTextIdEvent = (event: StudioEvent, startId: number) => {
-  const commands = Object.values(event.commands).filter((command) => !!command && command.type === 'show_message');
-  if (commands.length === 0) return { messageId: startId, narratorId: startId + 1 };
+export const findFirstAvailableTextIdEvent = (event: StudioEvent, startId: number, excludeIds?: number[]) => {
+  const commands = Object.values(event.commands).filter(
+    (command) => !!command && (command.type === 'show_message' || command.type === 'show_choice'),
+  );
+  if (commands.length === 0) return startId;
 
   const idSet = commands
-    .reduce<number[]>((prev, { message, narrator }) => [...prev, message, narrator], [])
+    .reduce<number[]>((prev, command) => {
+      const ids = [...prev, command.message, command.narrator];
+      if (command.type === 'show_choice') {
+        command.choices.forEach((id) => ids.push(id));
+      }
+      return ids;
+    }, [])
+    .concat(excludeIds ?? [])
     .filter((id, index, array) => index === array.indexOf(id)) // reject all duplicates
-    .sort((a, b) => a - b); // sort id by ascending order
-  // Since ids are ordered, if the first isn't the startId that means we need to fill the beginning of the list ;)
-  if (idSet[0] > startId && idSet[1] > startId + 1) return { messageId: startId, narratorId: startId + 1 };
+    .sort((a, b) => a - b) // sort id by ascending order
+    .filter((id) => id >= startId); // only consider IDs at or above startId
+  // Since ids are ordered, if there's no id at startId that means we can use startId
+  if (idSet.length === 0 || idSet[0] > startId) return startId;
 
   const holeIndex = idSet.findIndex((id, index) => id !== index + startId);
-  if (holeIndex === -1) return { messageId: idSet[idSet.length - 1] + 1, narratorId: idSet[idSet.length - 1] + 2 };
+  if (holeIndex === -1) return idSet[idSet.length - 1] + 1;
 
-  return { messageId: idSet[holeIndex - 1] + 1, narratorId: idSet[holeIndex - 1] + 2 };
+  return idSet[holeIndex - 1] + 1;
+};
+
+export const findMultipleAvailableTextIdsEvent = (event: StudioEvent, startId: number, times: number, excludeIds?: number[]) => {
+  const ids = [];
+
+  while (ids.length < times) {
+    const id = findFirstAvailableTextIdEvent(event, startId + ids.length, [...ids, ...(excludeIds ?? [])]);
+    ids.push(id);
+  }
+
+  return ids;
 };
