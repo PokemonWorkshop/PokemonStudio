@@ -233,6 +233,8 @@ export const createItem = <K extends StudioItem['klass']>(klass: K, dbSymbol: Db
       return { repelCount: 1, ...itemDefaultValues } as Output;
     case 'StatBoostItem':
       return { count: 1, stat: 'ATK_STAGE', loyaltyMalus: 0, ...itemDefaultValues } as Output;
+    case 'StatBoostAndHealItem':
+      return { count: 1, stat: 'ATK_STAGE', hpMode: 'constant', hpCount: 20, hpRate: 0.5, loyaltyMalus: 0, ...itemDefaultValues } as Output;
     case 'StatusConstantHealItem':
       return { statusList: ['POISONED'] as StudioItemStatusCondition[], hpCount: 20, loyaltyMalus: 0, ...itemDefaultValues } as Output;
     case 'StatusHealItem':

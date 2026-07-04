@@ -118,6 +118,33 @@ export const EV_BOOST_ITEM_VALIDATOR = STAT_BOOST_ITEM_VALIDATOR.extend({
 });
 export type StudioEVBoostItem = z.infer<typeof EV_BOOST_ITEM_VALIDATOR>;
 
+/**
+ * Fork item type: changes a battle stat stage AND changes HP in one use.
+ * Stock PSDK forces either/or (StatBoostItem vs *HealItem); this combines both.
+ * Behaviour is provided by the hand-authored PSDK monkey patch
+ * `src/custom/StatBoostHealItem/psdk-patch/00050 StatBoostAndHealItem.rb`,
+ * which must be copied into the project's scripts/ folder. `hpMode` selects
+ * whether `hpCount` (flat) or `hpRate` (% of max HP) is used; both may be
+ * negative to damage instead of heal.
+ */
+export const STAT_BOOST_AND_HEAL_ITEM_VALIDATOR = HEALING_ITEM_VALIDATOR.extend({
+  klass: z.literal('StatBoostAndHealItem'),
+  stat: z.union([
+    z.literal('ATK_STAGE'),
+    z.literal('ATS_STAGE'),
+    z.literal('DFE_STAGE'),
+    z.literal('DFS_STAGE'),
+    z.literal('SPD_STAGE'),
+    z.literal('EVA_STAGE'),
+    z.literal('ACC_STAGE'),
+  ]),
+  count: z.number().finite(),
+  hpMode: z.union([z.literal('constant'), z.literal('rate')]),
+  hpCount: z.number().finite(),
+  hpRate: z.number().finite(),
+});
+export type StudioStatBoostAndHealItem = z.infer<typeof STAT_BOOST_AND_HEAL_ITEM_VALIDATOR>;
+
 export const EVENT_ITEM_VALIDATOR = UNKNOWN_ITEM_VALIDATOR.extend({
   klass: z.literal('EventItem'),
   eventId: POSITIVE_INT,
@@ -210,6 +237,7 @@ export const ITEM_VALIDATOR = z.discriminatedUnion('klass', [
   CONSTANT_HEALING_ITEM_VALIDATOR,
   STAT_BOOST_ITEM_VALIDATOR,
   EV_BOOST_ITEM_VALIDATOR,
+  STAT_BOOST_AND_HEAL_ITEM_VALIDATOR,
   EVENT_ITEM_VALIDATOR,
   FLEEING_ITEM_VALIDATOR,
   LEVEL_INCREASE_ITEM_VALIDATOR,
@@ -250,6 +278,8 @@ export const LOCKED_ITEM_EDITOR: Readonly<Record<StudioItem['klass'], Readonly<S
   RateHealItem: ['exploration', 'battle', 'progress', 'catch'] as const,
   RepelItem: ['battle', 'progress', 'heal', 'catch'] as const,
   StatBoostItem: ['exploration', 'progress', 'catch'] as const,
+  // Fork: shows both the Battle tab (stat stage) and the Heal tab (HP change).
+  StatBoostAndHealItem: ['exploration', 'progress', 'catch'] as const,
   StatusConstantHealItem: ['exploration', 'battle', 'progress', 'catch'] as const,
   StatusHealItem: ['exploration', 'battle', 'progress', 'catch'] as const,
   StatusRateHealItem: ['exploration', 'battle', 'progress', 'catch'] as const,
@@ -273,6 +303,7 @@ export const ITEM_CATEGORY: Readonly<Record<StudioItem['klass'], StudioItemCateg
   RateHealItem: 'heal',
   RepelItem: 'repel',
   StatBoostItem: 'heal',
+  StatBoostAndHealItem: 'heal',
   StatusConstantHealItem: 'heal',
   StatusHealItem: 'heal',
   StatusRateHealItem: 'heal',
@@ -335,6 +366,7 @@ export const mutateItemInto = <K extends StudioItem['klass']>(
   if ('count' in originItem && 'count' in newItem) newItem.count = originItem.count;
   if ('hpCount' in originItem && 'hpCount' in newItem) newItem.hpCount = originItem.hpCount;
   if ('hpRate' in originItem && 'hpRate' in newItem) newItem.hpRate = originItem.hpRate;
+  if ('hpMode' in originItem && 'hpMode' in newItem) newItem.hpMode = originItem.hpMode;
   if ('statusList' in originItem && 'statusList' in newItem) newItem.statusList = originItem.statusList;
 
   return newItem;

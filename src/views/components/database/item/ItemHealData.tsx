@@ -9,6 +9,11 @@ import { ItemDialogsRef } from './editors/ItemEditorOverlay';
 type ItemHealDataProps = { dialogsRef: ItemDialogsRef };
 
 const getHealValue = (t: TFunction, item: Extract<StudioItem, { loyaltyMalus: number }>): string => {
+  // Fork: combined stat-boost + heal item carries both hpCount and hpRate; show
+  // the one selected by hpMode. (Must come before the generic hpCount check.)
+  if (item.klass === 'StatBoostAndHealItem') {
+    return item.hpMode === 'rate' ? `${(item.hpRate * 100).toFixed(1)}%` : item.hpCount.toString();
+  }
   if ('hpCount' in item) {
     if ('statusList' in item) {
       return `${item.hpCount} & ${item.statusList.map((statusKey) => t(statusKey)).join(', ')}`;

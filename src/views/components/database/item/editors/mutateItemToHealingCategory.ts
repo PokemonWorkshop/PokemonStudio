@@ -8,6 +8,7 @@ export const HealingItemCategories = [
   'RateHealItem',
   'StatusRateHealItem',
   'StatBoostItem',
+  'StatBoostAndHealItem',
   'EVBoostItem',
   'LevelIncreaseItem',
   'ExpGiveItem',
