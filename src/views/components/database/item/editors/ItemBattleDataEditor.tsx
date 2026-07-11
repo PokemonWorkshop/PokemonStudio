@@ -17,7 +17,8 @@ export const ItemBattleDataEditor = forwardRef<EditorHandlingClose>((_, ref) => 
   const item: StudioStatBoostItem = cloneEntity(currentItem) as StudioStatBoostItem;
   const setItems = useUpdateItem(item);
   const { t } = useTranslation();
-  const isStatBoostItem: boolean = item.klass === 'StatBoostItem';
+  // Fork: StatBoostAndHealItem also carries a stat-stage boost, so it uses this tab.
+  const isStatBoostItem: boolean = item.klass === 'StatBoostItem' || item.klass === 'StatBoostAndHealItem';
   const statisticOptions = useMemo(() => stageBoost.map((stage) => ({ value: stage, label: t(stage) })), [t]);
 
   const countRef = useRef<HTMLInputElement>(null);

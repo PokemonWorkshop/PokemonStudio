@@ -1,0 +1,16 @@
+{
+  "en": {
+    "StatBoostAndHealItem": "Stat boost + HP",
+    "heal_hp_mode": "HP change mode",
+    "heal_hp_mode_constant": "Flat amount",
+    "heal_hp_mode_rate": "Percentage of max HP",
+    "heal_hp_amount": "HP change (negative damages)"
+  },
+  "fr": {
+    "StatBoostAndHealItem": "Boost de stat + PV",
+    "heal_hp_mode": "Mode de changement de PV",
+    "heal_hp_mode_constant": "Valeur fixe",
+    "heal_hp_mode_rate": "Pourcentage des PV max",
+    "heal_hp_amount": "Changement de PV (négatif = dégâts)"
+  }
+}
