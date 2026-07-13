@@ -106,6 +106,9 @@ contextBridge.exposeInMainWorld('api', {
   startPSDKDebug: (projectPath: string) => {
     ipcRenderer.send('start-psdk-debug', projectPath);
   },
+  startPSDKFastDebug: (projectPath: string) => {
+    ipcRenderer.send('start-psdk-fast-debug', projectPath);
+  },
   startPSDKWorldmap: (projectPath: string) => {
     ipcRenderer.send('start-psdk-worldmap', projectPath);
   },
