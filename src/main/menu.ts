@@ -87,7 +87,7 @@ export default class MenuBuilder {
           },
           {
             label: 'Fast Debug Mode',
-            accelerator: 'CmdOrCtrl+Shift+D',
+            accelerator: 'CmdOrCtrl+Shift+P',
             click: () => {
               this.mainWindow.webContents.send('request-shortcut', 'fast_debug');
             },
