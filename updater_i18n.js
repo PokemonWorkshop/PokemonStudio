@@ -70,7 +70,7 @@ try {
     }
 
     if (syncJson(baseJson, targetJson) || isNewFile) {
-      fs.writeFileSync(targetPath, JSON.stringify(targetJson, null, 2), 'utf-8');
+      fs.writeFileSync(targetPath, `${JSON.stringify(targetJson, null, 2)}\n`, 'utf-8');
       console.log(`✅ ${lang}.json ${isNewFile ? 'created' : 'updated'} (ACTIVE).`);
     } else {
       console.log(`✅ ${lang}.json is already up-to-date (ACTIVE).`);
@@ -89,7 +89,7 @@ try {
     }
 
     if (syncJson(baseJson, targetJson)) {
-      fs.writeFileSync(targetPath, JSON.stringify(targetJson, null, 2), 'utf-8');
+      fs.writeFileSync(targetPath, `${JSON.stringify(targetJson, null, 2)}\n`, 'utf-8');
       console.log(`📝 ${lang}.json updated (INACTIVE).`);
     }
   });
