@@ -1541,6 +1541,8 @@
   "quest_import_info": "Vous pouvez créer cette nouvelle quête en copiant les données d'une autre quête déjà existante.",
   "item_import_info": "Vous pouvez créer ce nouvel objet en copiant les données d'un autre objet déjà existant.",
   "trainer_import_info": "Vous pouvez créer ce nouveau dresseur en copiant les données d'un autre dresseur déjà existant.",
+  "preserve_text_data": "Copier les textes",
+  "preserve_text_data_info": "Copie également les textes et les traductions depuis l'entité de référence.",
   "hidden_default": "Masqué par défaut",
   "placeholder_select": "Sélectionner une option",
   "placeholder_select_all": "Tout sélectionner",
