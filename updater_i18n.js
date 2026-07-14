@@ -50,7 +50,13 @@ const i18nDir = './assets/i18n';
 const languages = require('./package.json').languages || {};
 
 try {
-  const baseJson = JSON.parse(fs.readFileSync(basePath, 'utf-8'));
+  const baseContent = fs.readFileSync(basePath, 'utf-8');
+  const baseJson = JSON.parse(baseContent);
+
+  const normalizedBaseContent = `${JSON.stringify(baseJson, null, 2)}\n`;
+  if (baseContent !== normalizedBaseContent) {
+    fs.writeFileSync(basePath, normalizedBaseContent, 'utf-8');
+  }
 
   const allLangs = Object.keys(languages);
   const activeLangs = allLangs.filter((lang) => languages[lang]['active']);
