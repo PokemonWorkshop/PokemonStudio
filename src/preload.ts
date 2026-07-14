@@ -205,6 +205,7 @@ declare global {
       unregisterPSDKUpdateEvents: () => void;
       startPSDK: (projectPath: string) => void;
       startPSDKDebug: (projectPath: string) => void;
+      startPSDKFastDebug: (projectPath: string) => void;
       startPSDKWorldmap: (projectPath: string) => void;
       platform: string;
       externalWindow: (link: string) => void;
