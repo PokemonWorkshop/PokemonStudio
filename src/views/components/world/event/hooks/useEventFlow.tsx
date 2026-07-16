@@ -1,11 +1,7 @@
-import {
-  CommandId,
-  StudioEventCommand,
-  StudioEventCommandData,
-  StudioEventCommandShowMessage,
-  StudioEventCommandType,
-} from '@modelEntities/event/command';
+import { StudioEventCommand, StudioEventCommandData, StudioEventCommandShowMessage, StudioEventCommandType } from '@modelEntities/event/command';
+import { StudioEventCommandStart } from '@modelEntities/event/commands/start';
 import { StudioEvent } from '@modelEntities/event/event';
+import { CommandId } from '@modelEntities/event/globalCommand';
 import { cloneEntity } from '@utils/cloneEntity';
 import { EventCommandCreation } from '@utils/eventCommandCreation';
 import {
@@ -231,6 +227,51 @@ export const useEventFlow = (event: StudioEvent, eventFlowRef?: RefObject<HTMLDi
     [reactFlowInstance.getNodes, reactFlowInstance.getEdges],
   );
 
+  const updateStartCommandPriorities = (currentNode: NodeEvent) => {
+    const dataCommand = currentNode.data.command;
+    if (dataCommand.type !== 'start') return;
+
+    const oldPriority = (dataCommand as StudioEventCommandData<StudioEventCommandStart>).priority;
+    const newPriority = (event.commands[currentNode.id as CommandId] as StudioEventCommandStart).priority;
+    if (oldPriority === newPriority) return;
+
+    const updatedCommands = { ...event.commands };
+
+    Object.entries(updatedCommands).forEach(([id, command]) => {
+      if (!command || command.type !== 'start') return;
+      if (id === currentNode.id) return;
+
+      const commandId = id as CommandId;
+      let needToBeUpdated = false;
+
+      if (newPriority < oldPriority) {
+        if (command.priority >= newPriority && command.priority < oldPriority) {
+          updatedCommands[commandId] = { ...command, priority: command.priority + 1 };
+          needToBeUpdated = true;
+        }
+      } else {
+        if (command.priority > oldPriority && command.priority <= newPriority) {
+          updatedCommands[commandId] = { ...command, priority: command.priority - 1 };
+          needToBeUpdated = true;
+        }
+      }
+
+      if (needToBeUpdated) {
+        const nodeEdited = reactFlowInstance.getNode(id) as NodeEvent;
+        if (!nodeEdited) return;
+
+        setNodes((nds) =>
+          applyNodeChanges(
+            [{ id, type: 'replace', item: { ...nodeEdited, data: { ...nodeEdited.data, command: updatedCommands[commandId] } } }],
+            nds,
+          ),
+        );
+      }
+    });
+
+    updateEvent({ commands: updatedCommands });
+  };
+
   useEffect(() => {
     if (!currentEditedNode) return;
 
@@ -244,6 +285,7 @@ export const useEventFlow = (event: StudioEvent, eventFlowRef?: RefObject<HTMLDi
         nds,
       ),
     );
+    updateStartCommandPriorities(nodeEdited);
     setCurrentEditedNode(undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [event.commands]);
