@@ -232,8 +232,8 @@ export const useEventFlow = (event: StudioEvent, eventFlowRef?: RefObject<HTMLDi
     if (dataCommand.type !== 'start') return;
 
     const oldPriority = (dataCommand as StudioEventCommandData<StudioEventCommandStart>).priority;
-    const newPriority = (event.commands[currentNode.id as CommandId] as StudioEventCommandStart).priority;
-    if (oldPriority === newPriority) return;
+    const newPriority = (event.commands[currentNode.id as CommandId] as StudioEventCommandStart)?.priority;
+    if (!newPriority || oldPriority === newPriority) return;
 
     const updatedCommands = { ...event.commands };
 

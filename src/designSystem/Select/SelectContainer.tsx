@@ -195,4 +195,20 @@ export const NodeSelectContainer = styled(SelectContainer)`
     background-color: #202225;
     border: 1px solid #383a40;
   }
+
+  // TODO: update colors
+  & .select-list {
+    & span:hover:not(.current) {
+      background-color: ${({ theme }) => theme.colors.dark22};
+    }
+
+    & span.highlighted:not(.current) {
+      background-color: ${({ theme }) => theme.colors.dark16};
+    }
+
+    & span.current {
+      color: ${({ theme }) => theme.colors.text100};
+      background: ${({ theme }) => theme.colors.dark23};
+    }
+  }
 `;
