@@ -29,11 +29,16 @@ import type { ProjectStudioFileInput, ProjectStudioFileOutput } from './backendT
 import type { ReadCsvFileInput } from './backendTasks/readCsvFile';
 import type { ReadMapAndAssetsInput, ReadMapAndAssetsOutput } from './backendTasks/readMapAndAssets';
 import type { ReadMapBytesInput, ReadMapBytesOutput } from './backendTasks/readMapBytes';
+import type { ReadAudioBytesInput, ReadAudioBytesOutput } from './backendTasks/readAudioBytes';
 import type { ProjectConfigsFromBackEnd, ReadProjectConfigsInput } from './backendTasks/readProjectConfigs';
 import type { ProjectDataFromBackEnd, ReadProjectDataInput } from './backendTasks/readProjectData';
 import type { ReadProjectMetadataInput, ReadProjectMetadataOutput } from './backendTasks/readProjectMetadata';
 import type { ReadProjectTextInput } from './backendTasks/readProjectTexts';
 import type { ReadRMXPEventInput, ReadRMXPEventOutput } from './backendTasks/readRMXPEvents';
+import type { WriteRMXPEventsInput, WriteRMXPEventsOutput } from './backendTasks/writeRMXPEvents';
+import type { ReadRMXPSwitchNamesInput, ReadRMXPSwitchNamesOutput } from './backendTasks/readRMXPSwitchNames';
+import type { ReadRMXPCommonEventNamesInput, ReadRMXPCommonEventNamesOutput } from './backendTasks/readRMXPCommonEventNames';
+import type { ChooseCharacterGraphicInput, ChooseCharacterGraphicOutput } from './backendTasks/chooseCharacterGraphic';
 import type { ReadRMXPMapInput, ReadRMXPMapOutput } from './backendTasks/readRMXPMap';
 import type { ReadRMXPMapInfoInput, ReadRMXPMapInfoOutput } from './backendTasks/readRMXPMapInfo';
 import type { RequestJsonInput, RequestJsonOutput } from './backendTasks/requestJson';
@@ -145,6 +150,7 @@ contextBridge.exposeInMainWorld('api', {
   readCsvFile: defineBackendTask(ipcRenderer, 'read-csv-file'),
   readMapAndAssets: defineBackendTask(ipcRenderer, 'read-map-and-assets'),
   readMapBytes: defineBackendTask(ipcRenderer, 'read-map-bytes'),
+  readAudioBytes: defineBackendTask(ipcRenderer, 'read-audio-bytes'),
   checkMapsModified: defineBackendTask(ipcRenderer, 'check-maps-modified'),
   convertTiledMapToTileMetadata: defineBackendTask(ipcRenderer, 'convertTiledMapToTileMetadata'),
   saveMapInfo: defineBackendTask(ipcRenderer, 'save-map-info'),
@@ -173,6 +179,10 @@ contextBridge.exposeInMainWorld('api', {
   saveCompilationLogs: defineBackendTask(ipcRenderer, 'save-compilation-logs'),
   synchronizeLanguage: defineBackendTask(ipcRenderer, 'synchronize-language'),
   readRMXPEvents: defineBackendTask(ipcRenderer, 'read-rmxp-events'),
+  writeRMXPEvents: defineBackendTask(ipcRenderer, 'write-rmxp-events'),
+  readRMXPSwitchNames: defineBackendTask(ipcRenderer, 'read-rmxp-switch-names'),
+  readRMXPCommonEventNames: defineBackendTask(ipcRenderer, 'read-rmxp-common-event-names'),
+  chooseCharacterGraphic: defineBackendTask(ipcRenderer, 'choose-character-graphic'),
   convertRMXPEventsToStudioEvents: defineBackendTask(ipcRenderer, 'convert-rmxp-events-to-studio-events'),
 });
 
@@ -247,6 +257,7 @@ declare global {
       readCsvFile: BackendTaskWithGenericError<ReadCsvFileInput, ProjectText, GenericBackendProgress>;
       readMapAndAssets: BackendTaskWithGenericErrorAndNoProgress<ReadMapAndAssetsInput, ReadMapAndAssetsOutput>;
       readMapBytes: BackendTaskWithGenericErrorAndNoProgress<ReadMapBytesInput, ReadMapBytesOutput>;
+      readAudioBytes: BackendTaskWithGenericErrorAndNoProgress<ReadAudioBytesInput, ReadAudioBytesOutput>;
       checkMapsModified: BackendTaskWithGenericErrorAndNoProgress<CheckMapModifiedInput, CheckMapModifiedOutput>;
       convertTiledMapToTileMetadata: BackendTaskWithGenericErrorAndNoProgress<ConvertTMXInput, ConvertTMXOutput>;
       saveMapInfo: BackendTaskWithGenericErrorAndNoProgress<SaveMapInfoInput, AnyObj>;
@@ -275,6 +286,10 @@ declare global {
       saveCompilationLogs: BackendTaskWithGenericErrorAndNoProgress<SaveCompilationLogsInput, AnyObj>;
       synchronizeLanguage: BackendTaskWithGenericErrorAndNoProgress<SynchronizeLanguageInput, AnyObj>;
       readRMXPEvents: BackendTaskWithGenericErrorAndNoProgress<ReadRMXPEventInput, ReadRMXPEventOutput>;
+      writeRMXPEvents: BackendTaskWithGenericErrorAndNoProgress<WriteRMXPEventsInput, WriteRMXPEventsOutput>;
+      readRMXPSwitchNames: BackendTaskWithGenericErrorAndNoProgress<ReadRMXPSwitchNamesInput, ReadRMXPSwitchNamesOutput>;
+      readRMXPCommonEventNames: BackendTaskWithGenericErrorAndNoProgress<ReadRMXPCommonEventNamesInput, ReadRMXPCommonEventNamesOutput>;
+      chooseCharacterGraphic: BackendTaskWithGenericErrorAndNoProgress<ChooseCharacterGraphicInput, ChooseCharacterGraphicOutput>;
       convertRMXPEventsToStudioEvents: BackendTaskWithGenericErrorAndNoProgress<RMXPEventsToStudioEventsInput, RMXPEventsToStudioEventsOutput>;
     };
   }

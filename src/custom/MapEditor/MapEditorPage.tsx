@@ -33,9 +33,13 @@ import { LayerList } from './LayerList';
 import { StampsPanel, stampToBrush, normalizeTilesetKey, type Stamp } from './StampsPanel';
 import { TilesetPalette } from './TilesetPalette';
 import { AddTilesetDialog } from './AddTilesetDialog';
+import { themedScrollbars } from './scrollbars';
 import { ResizeMapDialog } from './ResizeMapDialog';
 import { AnimationEditor } from './AnimationEditor';
 import { BulkAnimationEditor } from './BulkAnimationEditor';
+import { useMapEvents } from './events/useMapEvents';
+import { EventsOverlay } from './events/EventsOverlay';
+import { EventDialog } from './events/EventDialog';
 import { useProjectMaps } from '@hooks/useProjectData';
 import type { Sha1 } from '@modelEntities/sha1';
 import { PixiMapCanvas } from './pixi/PixiMapCanvas';
@@ -50,6 +54,7 @@ const PageStyle = styled.div`
   padding: 16px;
   gap: 12px;
   box-sizing: border-box;
+  ${themedScrollbars}
 `;
 
 const TopBar = styled.div`
@@ -402,6 +407,45 @@ const RightHud = styled.div`
   gap: 6px;
 `;
 
+const LeftHud = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+`;
+
+// Tiles/Events mode switch. Deliberately a two-option segmented control rather
+// than one toggle button: a lone button showing the CURRENT mode gives no hint
+// that the other mode exists, so Events mode went unnoticed unless you already
+// knew to press E. Showing both options up-front is the whole point.
+const ModeSwitch = styled.div`
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  padding: 2px;
+  background-color: ${({ theme }) => theme.colors.dark16};
+  border-radius: 6px;
+`;
+
+const ModeOption = styled.button<{ $active: boolean }>`
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+  ${({ theme }) => theme.fonts.normalSmall};
+  background-color: ${({ $active, theme }) => ($active ? theme.colors.primaryBase : 'transparent')};
+  color: ${({ $active, theme }) => ($active ? theme.colors.text100 : theme.colors.text400)};
+
+  &:hover {
+    background-color: ${({ $active, theme }) => ($active ? theme.colors.primaryBase : theme.colors.dark20)};
+    color: ${({ theme }) => theme.colors.text100};
+  }
+`;
+
 const CollapseRail = styled.button`
   all: unset;
   width: 24px;
@@ -606,6 +650,50 @@ export const MapEditorPage = () => {
 
   const canvasRef = useRef<MapCanvasHandle | null>(null);
   const [loaded, setLoaded] = useState<LoadedState | null>(null);
+  // --- Events mode (fork) ---------------------------------------------------
+  // RMXP events overlaid on the canvas. 'tiles' = normal painting (markers
+  // visible but click-through); 'events' = overlay owns the mouse.
+  const [editorMode, setEditorMode] = useState<'tiles' | 'events'>('tiles');
+  const [eventsVisible, setEventsVisible] = useState(true);
+  const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
+  const [openEventId, setOpenEventId] = useState<number | null>(null);
+  // The .tmx dimensions let the backend create Map###.rxdata for a map that has
+  // never been booted in PSDK, instead of refusing to save its events. Only pass
+  // them when `loaded` provably came from THIS map: the canvas loads async and is
+  // never remounted on a map switch, so `loaded` can still hold the previous
+  // map's .tmx (and stays there forever if this one fails to load). Passing those
+  // dimensions would bake the wrong size into the new map's file — a wrong answer
+  // where an error is the right one.
+  const loadedIsCurrentMap = !!loaded && !!map?.tiledFilename && loaded.tiledFilename === map.tiledFilename;
+  const mapEvents = useMapEvents(
+    projectPath,
+    map?.id,
+    loadedIsCurrentMap ? loaded.json.width : undefined,
+    loadedIsCurrentMap ? loaded.json.height : undefined,
+  );
+  const [eventsSaveError, setEventsSaveError] = useState<string | null>(null);
+  // NO auto-save by design: project files are only written when the user
+  // explicitly clicks "Save events" (dirty state shows the button).
+  // Mode/visibility shortcuts. Plain E is deliberately NOT the mode switch —
+  // it's the Erase tool (Tiled parity), and binding both to E fired the two
+  // together. Shift+E switches mode; Ctrl+E toggles event visibility.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return;
+      if (openEventId !== null) return;
+      if (e.key.toLowerCase() !== 'e') return;
+      if (e.ctrlKey || e.metaKey) {
+        e.preventDefault();
+        setEventsVisible((v) => !v);
+      } else if (e.shiftKey) {
+        e.preventDefault();
+        setEditorMode((m) => (m === 'tiles' ? 'events' : 'tiles'));
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [openEventId]);
   const [activeLayer, setActiveLayer] = useState<number>(0);
   // Layers a right-click pick should sample from. Always contains
   // activeLayer; Ctrl+click in LayerList toggles others in/out (Tiled-style
@@ -1070,7 +1158,9 @@ export const MapEditorPage = () => {
       }
 
       // Tool hotkeys (Tiled defaults where they exist; the rest match the
-      // first letter of the tool name).
+      // first letter of the tool name). These are tile-authoring tools, so
+      // they're inert in Events mode — and Shift+E belongs to the mode switch.
+      if (editorMode !== 'tiles' || e.shiftKey) return;
       switch (lower) {
         case 'b': setTool('stamp'); break;
         case 'e': setTool('erase'); break;
@@ -1257,9 +1347,15 @@ export const MapEditorPage = () => {
   }, [canRender, projectPath, map?.tiledFilename, snapshotBefore]);
 
   // Thin wrapper for the AddTileset dialog: closes the dialog + delegates.
-  const onAddTileset = useCallback(async (tsxFilename: string) => {
+  // Adds one or many. Only the FIRST records a snapshot, so the whole batch is
+  // one undo step (each addTilesetByFilename re-reads the current canvas bytes,
+  // so applying them in sequence composes correctly).
+  const onAddTileset = useCallback(async (tsxFilenames: string[]) => {
     setAddTilesetOpen(false);
-    await addTilesetByFilename(tsxFilename, { snapshot: true });
+    for (let i = 0; i < tsxFilenames.length; i++) {
+      const ok = await addTilesetByFilename(tsxFilenames[i], { snapshot: i === 0 });
+      if (!ok) break;
+    }
   }, [addTilesetByFilename]);
 
   /**
@@ -1957,22 +2053,68 @@ export const MapEditorPage = () => {
           />
           <CanvasArea>
             <HudRow>
-              <CoordsHud>
-                {loaded ? (
-                  <>
-                    <HudCell>{loaded.json.width} × {loaded.json.height}</HudCell>
-                    <HudSep>·</HudSep>
-                    <HudCell>{hoverCell ? `[${hoverCell.x}, ${hoverCell.y}]` : '[—, —]'}</HudCell>
-                    {selectionInfo && (
-                      <>
-                        <HudSep>·</HudSep>
-                        <HudCell>selected {selectionInfo.w} × {selectionInfo.h} @ [{selectionInfo.x}, {selectionInfo.y}]</HudCell>
-                      </>
-                    )}
-                  </>
-                ) : null}
-              </CoordsHud>
+              <LeftHud>
+                <ModeSwitch role="group" aria-label={t('me_events_mode_switch')}>
+                  <ModeOption
+                    $active={editorMode === 'tiles'}
+                    aria-pressed={editorMode === 'tiles'}
+                    onClick={() => setEditorMode('tiles')}
+                    title={`${t('me_events_mode_tiles_hint')} (E)`}
+                  >
+                    ▦ {t('me_events_mode_tiles')}
+                  </ModeOption>
+                  <ModeOption
+                    $active={editorMode === 'events'}
+                    aria-pressed={editorMode === 'events'}
+                    onClick={() => setEditorMode('events')}
+                    title={`${t('me_events_mode_events_hint')} (E)`}
+                  >
+                    ⚑ {t('me_events_mode_events')}
+                  </ModeOption>
+                </ModeSwitch>
+                <CoordsHud>
+                  {loaded ? (
+                    <>
+                      <HudCell>{loaded.json.width} × {loaded.json.height}</HudCell>
+                      <HudSep>·</HudSep>
+                      <HudCell>{hoverCell ? `[${hoverCell.x}, ${hoverCell.y}]` : '[—, —]'}</HudCell>
+                      {selectionInfo && (
+                        <>
+                          <HudSep>·</HudSep>
+                          <HudCell>selected {selectionInfo.w} × {selectionInfo.h} @ [{selectionInfo.x}, {selectionInfo.y}]</HudCell>
+                        </>
+                      )}
+                    </>
+                  ) : null}
+                </CoordsHud>
+              </LeftHud>
               <RightHud>
+                <SingleToolBtn
+                  $active={eventsVisible}
+                  onClick={() => setEventsVisible((v) => !v)}
+                  title={`${eventsVisible ? t('me_events_hide') : t('me_events_show')} (Ctrl+E)`}
+                >
+                  👁
+                </SingleToolBtn>
+                {mapEvents.skipped > 0 && (
+                  <SingleToolBtn
+                    $active={false}
+                    title={t('me_events_skipped_hint', { count: mapEvents.skipped })}
+                    style={{ color: '#e2a33a', cursor: 'default' }}
+                  >
+                    ⚠ {t('me_events_skipped', { count: mapEvents.skipped })}
+                  </SingleToolBtn>
+                )}
+                {(mapEvents.dirty || eventsSaveError) && (
+                  <SingleToolBtn
+                    $active={false}
+                    onClick={() => mapEvents.save().then((error) => setEventsSaveError(error))}
+                    title={eventsSaveError ? `${t('me_events_save_error')}: ${eventsSaveError}` : t('me_events_save_now')}
+                    style={eventsSaveError ? { color: '#e24b4a' } : undefined}
+                  >
+                    {eventsSaveError ? '⚠ ' : '● '}{t('me_events_save_now')}
+                  </SingleToolBtn>
+                )}
                 <SingleToolBtn $active={showGrid} onClick={() => setShowGrid((v) => !v)} title="Toggle grid (,)">
                   ⊞ Grid
                 </SingleToolBtn>
@@ -2002,7 +2144,10 @@ export const MapEditorPage = () => {
             tiledFilename={map.tiledFilename!}
             activeLayer={activeLayer}
             selectedLayers={selectedLayers}
-            selectedBrush={selectedBrush}
+            // Events mode paints no tiles, so don't ghost a brush under the
+            // cursor. `selectedBrush` state is untouched, so switching back to
+            // Tiles restores whatever was in hand.
+            selectedBrush={editorMode === 'tiles' ? selectedBrush : null}
             layerVisibility={layerVisibility}
             tool={tool}
             showGrid={showGrid}
@@ -2019,8 +2164,44 @@ export const MapEditorPage = () => {
             onJumpToLayer={(idx) => { setActiveLayer(idx); setSelectedLayers([idx]); }}
             onHoverCell={setHoverCell}
             onSelectionChange={setSelectionInfo}
+            eventsOverlay={
+              loaded ? (
+                <EventsOverlay
+                  events={mapEvents.events}
+                  tileSize={loaded.json.tilewidth * zoom}
+                  mode={editorMode}
+                  visible={eventsVisible}
+                  selectedId={selectedEventId}
+                  onSelect={setSelectedEventId}
+                  onOpen={setOpenEventId}
+                  onCreate={(x, y) => {
+                    const created = mapEvents.createEvent(x, y);
+                    setSelectedEventId(created.id);
+                    setOpenEventId(created.id);
+                  }}
+                  onMove={mapEvents.moveEvent}
+                />
+              ) : null
+            }
           />
           </CanvasArea>
+          {openEventId !== null && (() => {
+            const openEvent = mapEvents.events.find((e) => e.id === openEventId);
+            if (!openEvent) return null;
+            return (
+              <EventDialog
+                event={openEvent}
+                mapEvents={mapEvents.events}
+                onSave={mapEvents.updateEvent}
+                onDelete={(id) => {
+                  mapEvents.deleteEvent(id);
+                  setSelectedEventId(null);
+                }}
+                onClose={() => setOpenEventId(null)}
+                getMapSnapshot={() => canvasRef.current?.snapshotDataURL?.() ?? null}
+              />
+            );
+          })()}
           <ResizeHandle
             $hidden={rightCollapsed}
             onMouseDown={startColumnResize('right')}

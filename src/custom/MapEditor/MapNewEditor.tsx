@@ -42,6 +42,7 @@ import { cloneEntity } from '@utils/cloneEntity';
 import { createMap, createMapInfo } from '@utils/entityCreation';
 import { useLoaderRef } from '@utils/loaderContext';
 import { addNewMapInfo, mapInfoNewMapWithParent } from '@utils/MapInfoUtils';
+import { TilesetThumb } from './TilesetThumb';
 import { createMapLinkFromMainMapId } from '@utils/MapLinkUtils';
 import { basename } from '@utils/path';
 import { useSetProjectText } from '@utils/ReadingProjectText';
@@ -158,7 +159,9 @@ const AddTilesetPopup = styled.div`
 
 const AddTilesetOption = styled.button`
   all: unset;
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   width: 100%;
   box-sizing: border-box;
   padding: 6px 10px;
@@ -544,6 +547,9 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
           <TilesetListRow key={`${ts.required ? `req:${ts.role}` : `extra:${ts.tsxFilename}`}`}>
             <TilesetRowName>
               {ts.required && <RequiredStar>*</RequiredStar>}
+              {globalState.projectPath && ts.tsxFilename && (
+                <TilesetThumb projectPath={globalState.projectPath} tsxFilename={ts.tsxFilename} width={36} height={36} />
+              )}
               <span>{ts.role ?? ts.tsxFilename ?? 'unknown'}</span>
               {ts.required && !ts.tsxFilename && <MissingTag>not found</MissingTag>}
             </TilesetRowName>
@@ -583,7 +589,10 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
                       setPickerOpen(false);
                     }}
                   >
-                    {f}
+                    {globalState.projectPath && (
+                      <TilesetThumb projectPath={globalState.projectPath} tsxFilename={f} width={44} height={44} />
+                    )}
+                    <span>{f}</span>
                   </AddTilesetOption>
                 ))
               ) : (

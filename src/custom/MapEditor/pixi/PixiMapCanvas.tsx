@@ -543,10 +543,13 @@ const buildAnimIndex = (tilesets: LoadedTileset[]):
     const m = new Map<number, TmjAnimFrame[]>();
     for (const t of ts.tiles ?? []) {
       if (!t.animation || t.animation.length === 0) continue;
+      // Only the BASE tile (the one that carries the <animation>) animates.
+      // A frame's tileid is a separate static image the user can paint on its
+      // own; PSDK's converter agrees — is_tile_animated? keys only on base
+      // gids (tileId + offset), so a painted frame renders static in-game.
+      // Mapping frame ids here made neighbours of animated tiles wrongly
+      // animate (reported at "waterfall foam and below").
       if (!m.has(t.id)) m.set(t.id, t.animation);
-      for (const f of t.animation) {
-        if (!m.has(f.tileid)) m.set(f.tileid, t.animation);
-      }
     }
     out.set(idx, m);
   });
@@ -639,6 +642,11 @@ type PixiMapCanvasProps = {
     prev: { cells: Set<number>; layerIdx: number },
     next: { cells: Set<number>; layerIdx: number },
   ) => void;
+  /** Fork (Events mode): rendered INSIDE the position:relative PixiHost so
+   *  overlay content shares the canvas coordinate space and scrolls/zooms
+   *  with it. Pixi appends its canvas imperatively; React only reconciles
+   *  its own children, so the two coexist. */
+  eventsOverlay?: React.ReactNode;
 };
 
 export const PixiMapCanvas = forwardRef<MapCanvasHandle, PixiMapCanvasProps>(
@@ -647,7 +655,7 @@ export const PixiMapCanvas = forwardRef<MapCanvasHandle, PixiMapCanvasProps>(
       projectPath, tiledFilename, activeLayer, selectedLayers, selectedBrush, layerVisibility,
       tool, showGrid, zoom, onZoomChange, reloadKey,
       onDirty, onLoaded, onHistoryChange, onPaintCommit, onPickBrush, onJumpToLayer,
-      onHoverCell, onSelectionChange, onTileSelectionCommit, onBeforePaint,
+      onHoverCell, onSelectionChange, onTileSelectionCommit, onBeforePaint, eventsOverlay,
     } = props;
     const onBeforePaintRef = useRef(onBeforePaint);
     onBeforePaintRef.current = onBeforePaint;
@@ -1067,7 +1075,7 @@ export const PixiMapCanvas = forwardRef<MapCanvasHandle, PixiMapCanvasProps>(
         ...newLoadedTilesets.map((ts) => ts.tileheight),
       );
       const maxRowsUp = Math.max(0, Math.ceil(maxTileHeight / json.tileheight) - 1);
-      const state: LoadedState = { json, tilesets: newLoadedTilesets, maxRowsUp };
+      const state: LoadedState = { tiledFilename, json, tilesets: newLoadedTilesets, maxRowsUp };
       loadedRef.current = state;
 
       // Map dims may have changed (resize); update renderer + canvas
@@ -2047,6 +2055,34 @@ export const PixiMapCanvas = forwardRef<MapCanvasHandle, PixiMapCanvasProps>(
     }, [applyBatch, onDirty, onHistoryChange]);
 
     useImperativeHandle(forwardedRef, () => ({
+      // A PNG data URL of just the tile layers (rootRef — NOT the overlay
+      // container, so no grid/selection/event markers leak in), downscaled to
+      // keep the tone-preview's per-pixel pass cheap. Uses the renderer's
+      // extract (the drawing buffer isn't preserved, so reading app.canvas
+      // directly would come back blank). Best-effort: any failure → null, and
+      // the tone form falls back to its abstract swatches.
+      snapshotDataURL: () => {
+        const app = appRef.current;
+        const root = rootRef.current;
+        if (!app || !root) return null;
+        try {
+          const src = app.renderer.extract.canvas(root) as HTMLCanvasElement;
+          if (!src || !src.width || !src.height) return null;
+          const maxW = 640;
+          const scale = Math.min(1, maxW / src.width);
+          if (scale === 1) return typeof src.toDataURL === 'function' ? src.toDataURL('image/png') : null;
+          const off = document.createElement('canvas');
+          off.width = Math.max(1, Math.round(src.width * scale));
+          off.height = Math.max(1, Math.round(src.height * scale));
+          const ctx = off.getContext('2d');
+          if (!ctx) return null;
+          ctx.drawImage(src, 0, 0, off.width, off.height);
+          return off.toDataURL('image/png');
+        } catch (e) {
+          console.warn('[map-editor] snapshotDataURL failed', e);
+          return null;
+        }
+      },
       saveBytes: () => {
         const bytes = mapWasmRef.current?.save();
         if (!bytes) return null;
@@ -3663,7 +3699,7 @@ export const PixiMapCanvas = forwardRef<MapCanvasHandle, PixiMapCanvasProps>(
             json.tileheight, ...loadedTilesets.map((ts) => ts.tileheight),
           );
           const maxRowsUp = Math.max(0, Math.ceil(maxTileHeight / json.tileheight) - 1);
-          const state: LoadedState = { json, tilesets: loadedTilesets, maxRowsUp };
+          const state: LoadedState = { tiledFilename, json, tilesets: loadedTilesets, maxRowsUp };
           loadedRef.current = state;
           mapWasmRef.current = openedMap;
           openedMap = null;
@@ -4024,7 +4060,9 @@ export const PixiMapCanvas = forwardRef<MapCanvasHandle, PixiMapCanvasProps>(
             onContextMenu={onContextMenu}
             onMouseEnter={onCanvasMouseEnter}
             onMouseLeave={onCanvasMouseLeave}
-          />
+          >
+            {eventsOverlay}
+          </PixiHost>
         </ScrollHost>
       </Wrap>
     );

@@ -269,6 +269,13 @@ const transposeCcw = (cells: (BrushCell | null)[], w: number, h: number): (Brush
 };
 
 export type LoadedState = {
+  /**
+   * The .tmx this state was actually built from. Loading is async and the canvas
+   * isn't remounted on map switch, so `loaded` can still describe the PREVIOUS
+   * map — anything reading it as "the current map" (e.g. its dimensions) must
+   * first check this against the map it thinks it has.
+   */
+  tiledFilename: string;
   json: TmjMap;
   tilesets: LoadedTileset[];
   /**
@@ -289,6 +296,13 @@ export type HistoryEntry = { layerIdx: number; x: number; y: number; oldRaw: num
 export type MapCanvasHandle = {
   /** Serialize current edits back to .tmx bytes; returns null if not loaded. */
   saveBytes: () => Uint8Array | null;
+  /**
+   * A PNG data URL of the current rendered map (whole stage, metadata layers
+   * hidden as on screen), downscaled for cheap reuse. Returns null if the
+   * renderer can't produce one. Used by the event editor's tone-command
+   * preview to show a tint over the real map.
+   */
+  snapshotDataURL?: () => string | null;
   /** Force a full repaint (used after layer visibility toggles). */
   redraw: () => void;
   /** Revert the most recent paint. Returns true if anything was undone. */

@@ -23,6 +23,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { DarkButton, PrimaryButton } from '@components/buttons';
+import { TilesetThumb, TilesetPreviewZoom } from './TilesetThumb';
 
 const Backdrop = styled.div`
   position: fixed;
@@ -37,11 +38,58 @@ const Backdrop = styled.div`
 const Modal = styled.div`
   background-color: ${({ theme }) => theme.colors.dark16};
   border-radius: 8px;
-  width: min(560px, 90vw);
+  width: min(760px, 92vw);
   max-height: 85vh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+`;
+
+/** List column (left) + live preview column (right). */
+const Split = styled.div`
+  display: flex;
+  gap: 0;
+  min-height: 0;
+  flex: 1;
+`;
+
+const ListCol = styled.div`
+  flex: 1 1 55%;
+  min-width: 0;
+  overflow: auto;
+  padding: 8px 0;
+`;
+
+const PreviewCol = styled.div`
+  flex: 1 1 45%;
+  min-width: 0;
+  border-left: 1px solid ${({ theme }) => theme.colors.dark14};
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+`;
+
+const PreviewName = styled.div`
+  ${({ theme }) => theme.fonts.normalSmall};
+  color: ${({ theme }) => theme.colors.text100};
+  text-align: center;
+  word-break: break-all;
+`;
+
+const PreviewHint = styled.div`
+  ${({ theme }) => theme.fonts.normalSmall};
+  color: ${({ theme }) => theme.colors.text500};
+  text-align: center;
+  margin: auto 0;
+`;
+
+const SelectedCount = styled.span`
+  ${({ theme }) => theme.fonts.normalSmall};
+  color: ${({ theme }) => theme.colors.text500};
+  margin-right: auto;
+  align-self: center;
 `;
 
 const Header = styled.div`
@@ -53,8 +101,10 @@ const Header = styled.div`
 
 const Body = styled.div`
   flex: 1;
+  min-height: 0;
   overflow: auto;
-  padding: 8px 0;
+  display: flex;
+  flex-direction: column;
 `;
 
 const SearchInput = styled.input`
@@ -73,31 +123,83 @@ const SearchInput = styled.input`
   }
 `;
 
-const FileRow = styled.button<{ $selected: boolean; $disabled: boolean }>`
+/** Responsive grid of tileset cards. */
+const CardGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 8px;
+  padding: 12px 16px;
+`;
+
+const Card = styled.button<{ $selected: boolean; $disabled: boolean }>`
   all: unset;
-  display: block;
-  width: calc(100% - 32px);
-  margin: 0 16px;
-  padding: 8px 10px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px;
+  box-sizing: border-box;
+  border-radius: 8px;
   cursor: ${({ $disabled }) => ($disabled ? 'default' : 'pointer')};
-  color: ${({ $selected, $disabled, theme }) =>
-    $disabled ? theme.colors.text500 : $selected ? theme.colors.text100 : theme.colors.text400};
-  background-color: ${({ $selected, theme }) => ($selected ? theme.colors.dark23 : 'transparent')};
-  border-radius: 4px;
-  ${({ theme }) => theme.fonts.normalSmall};
+  opacity: ${({ $disabled }) => ($disabled ? 0.45 : 1)};
+  background-color: ${({ $selected, theme }) => ($selected ? theme.colors.dark23 : theme.colors.dark18)};
+  border: 2px solid ${({ $selected, theme }) => ($selected ? theme.colors.primaryBase : 'transparent')};
+  transition: border-color 0.1s, background-color 0.1s;
 
   &:hover {
-    background-color: ${({ $selected, $disabled, theme }) =>
-      $disabled ? 'transparent' : $selected ? theme.colors.dark23 : theme.colors.dark18};
+    border-color: ${({ $selected, $disabled, theme }) => ($disabled ? 'transparent' : $selected ? theme.colors.primaryBase : theme.colors.dark24)};
   }
 `;
 
-const FromImageRow = styled(FileRow)`
+const CardName = styled.span`
+  ${({ theme }) => theme.fonts.normalSmall};
+  color: ${({ theme }) => theme.colors.text100};
+  text-align: center;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const CardTag = styled.span`
+  ${({ theme }) => theme.fonts.normalSmall};
+  color: ${({ theme }) => theme.colors.text500};
+`;
+
+/** The check badge in a selected card's corner. */
+const CheckBadge = styled.span`
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: ${({ theme }) => theme.colors.primaryBase};
+  color: ${({ theme }) => theme.colors.text100};
+  font-size: 11px;
+  line-height: 1;
+`;
+
+/** Full-width call-to-action to create a tileset from an image file. */
+const FromImageCard = styled.button`
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 12px 16px 0;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
   color: ${({ theme }) => theme.colors.primaryBase};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.dark14};
-  margin-bottom: 6px;
-  padding-bottom: 10px;
-  border-radius: 4px 4px 0 0;
+  border: 1px dashed ${({ theme }) => theme.colors.dark24};
+  ${({ theme }) => theme.fonts.normalSmall};
+  &:hover { background-color: ${({ theme }) => theme.colors.dark18}; }
 `;
 
 const Empty = styled.div`
@@ -183,7 +285,8 @@ type Props = {
   /** Filenames (with `.tsx`) already referenced by the map — shown disabled. */
   alreadyAdded: Set<string>;
   onCancel: () => void;
-  onConfirm: (tsxFilename: string) => void;
+  /** One or more .tsx filenames to add, in list order. */
+  onConfirm: (tsxFilenames: string[]) => void;
 };
 
 type ImageDims = { width: number; height: number };
@@ -211,7 +314,10 @@ export const AddTilesetDialog: React.FC<Props> = ({
   projectPath, alreadyAdded, onCancel, onConfirm,
 }) => {
   const [files, setFiles] = useState<string[] | null>(null);
-  const [selected, setSelected] = useState<string | null>(null);
+  // Multi-select: the set of chosen .tsx filenames, plus the one whose image is
+  // currently previewed (the last row the user touched).
+  const [selected, setSelected] = useState<Set<string>>(() => new Set());
+  const [focused, setFocused] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [error, setError] = useState<string | null>(null);
 
@@ -300,12 +406,23 @@ export const AddTilesetDialog: React.FC<Props> = ({
         // Tiled expects lowercase hex w/o '#'.
         trans: useTrans ? transColor.replace('#', '').toLowerCase() : undefined,
       },
-      ({ tsxFilename }) => onConfirm(tsxFilename),
+      ({ tsxFilename }) => onConfirm([tsxFilename]),
       (e) => {
         setFormError(e.errorMessage);
         setSubmitting(false);
       },
     );
+  };
+
+  /** Toggle a tileset in the selection and preview it. */
+  const toggle = (entry: string) => {
+    setFocused(entry);
+    setSelected((cur) => {
+      const next = new Set(cur);
+      if (next.has(entry)) next.delete(entry);
+      else next.add(entry);
+      return next;
+    });
   };
 
   // Sub-form view ----------------------------------------------------------
@@ -393,40 +510,59 @@ export const AddTilesetDialog: React.FC<Props> = ({
           onChange={(e) => setSearch(e.target.value)}
         />
         <Body>
-          <FromImageRow
-            $selected={false}
-            $disabled={false}
-            onClick={onPickImage}
-            title="Pick a PNG/JPG and generate a new .tsx for it"
-          >
-            ＋ From tileset image…
-          </FromImageRow>
-          {!files && !error && <Empty>Reading Data/Tiled/Tilesets…</Empty>}
-          {error && <Empty>Error: {error}</Empty>}
-          {files && filtered.length === 0 && <Empty>No matching tilesets.</Empty>}
-          {filtered.map((entry) => {
-            const isAdded = alreadyAdded.has(entry);
-            return (
-              <FileRow
-                key={entry}
-                $selected={selected === entry}
-                $disabled={isAdded}
-                onClick={() => !isAdded && setSelected(entry)}
-                onDoubleClick={() => !isAdded && (setSelected(entry), onConfirm(entry))}
-                title={isAdded ? 'Already in this map' : entry}
-              >
-                {entry}{isAdded ? ' · already added' : ''}
-              </FileRow>
-            );
-          })}
+          <Split>
+            <ListCol>
+              <FromImageCard onClick={onPickImage} title="Pick a PNG/JPG and generate a new .tsx for it">
+                ＋ From tileset image…
+              </FromImageCard>
+              {!files && !error && <Empty>Reading Data/Tiled/Tilesets…</Empty>}
+              {error && <Empty>Error: {error}</Empty>}
+              {files && filtered.length === 0 && <Empty>No matching tilesets.</Empty>}
+              {files && filtered.length > 0 && (
+                <CardGrid>
+                  {filtered.map((entry) => {
+                    const isAdded = alreadyAdded.has(entry);
+                    const isSelected = selected.has(entry);
+                    return (
+                      <Card
+                        key={entry}
+                        $selected={isSelected}
+                        $disabled={isAdded}
+                        onClick={() => !isAdded && toggle(entry)}
+                        onDoubleClick={() => !isAdded && onConfirm([entry])}
+                        onMouseEnter={() => !isAdded && setFocused(entry)}
+                        title={isAdded ? 'Already in this map' : entry}
+                      >
+                        {isSelected && <CheckBadge>✓</CheckBadge>}
+                        <TilesetThumb projectPath={projectPath} tsxFilename={entry} width={94} height={94} />
+                        <CardName>{entry.replace(/\.tsx$/i, '')}</CardName>
+                        {isAdded && <CardTag>already added</CardTag>}
+                      </Card>
+                    );
+                  })}
+                </CardGrid>
+              )}
+            </ListCol>
+            <PreviewCol>
+              {focused ? (
+                <>
+                  <TilesetPreviewZoom projectPath={projectPath} tsxFilename={focused} height={300} />
+                  <PreviewName>{focused}</PreviewName>
+                </>
+              ) : (
+                <PreviewHint>Hover or select a tileset to preview it.</PreviewHint>
+              )}
+            </PreviewCol>
+          </Split>
         </Body>
         <Footer>
+          {selected.size > 0 && <SelectedCount>{selected.size} selected</SelectedCount>}
           <DarkButton onClick={onCancel}>Cancel</DarkButton>
           <PrimaryButton
-            onClick={() => selected && onConfirm(selected)}
-            disabled={!selected || alreadyAdded.has(selected)}
+            onClick={() => selected.size > 0 && onConfirm([...selected])}
+            disabled={selected.size === 0}
           >
-            Add tileset
+            {selected.size > 1 ? `Add ${selected.size} tilesets` : 'Add tileset'}
           </PrimaryButton>
         </Footer>
       </Modal>

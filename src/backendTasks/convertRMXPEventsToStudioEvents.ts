@@ -174,7 +174,10 @@ const createCustomEvent = (events: Record<string, PartialStudioEvent>, rmxpEvent
 
 export const convertRMXPEventsToStudioEvents = async (payload: RMXPEventsToStudioEventsInput): Promise<RMXPEventsToStudioEventsOutput> => {
   const map: StudioMap = JSON.parse(payload.map);
-  const rmxpEvents = await readRMXPEvents(payload.projectPath, map.id);
+  const { events: rmxpEvents, skipped } = await readRMXPEvents(payload.projectPath, map.id);
+  // This task never writes .rxdata, so a partial read can't corrupt anything —
+  // but the conversion would silently come out short, so say so.
+  if (skipped > 0) log.warn(`Map ${map.id}: ${skipped} event(s) could not be read and are missing from this conversion.`);
   const newStudioEvents: CustomEvent[] = [];
   const newEventLinks: MapEventLink[] = [];
   const events = Object.fromEntries(payload.events.map((event) => [event.dbSymbol, event]));

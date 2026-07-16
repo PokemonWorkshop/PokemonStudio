@@ -353,7 +353,7 @@ export const TilesetPalette: React.FC<Props> = ({ state, brush, onPickBrush, onA
             <AddBtn onClick={onAddTileset} title="Add a tileset reference to this map">+</AddBtn>
           )}
         </HeaderLeft>
-        <TilesetMeta>{ts?.name ?? '—'}{ts ? ` · firstgid ${ts.firstgid}` : ''}</TilesetMeta>
+        <TilesetMeta>{ts?.name ?? '—'}</TilesetMeta>
       </Header>
       <TabBar>
         {state.tilesets.map((t, i) => (
@@ -361,7 +361,7 @@ export const TilesetPalette: React.FC<Props> = ({ state, brush, onPickBrush, onA
             key={i}
             $active={i === activeIdx}
             onClick={() => setActiveIdx(i)}
-            title={`${t.name ?? '(unnamed)'} · firstgid ${t.firstgid}`}
+            title={t.name ?? '(unnamed)'}
           >
             {t.name ?? `#${i}`}
           </Tab>

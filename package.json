@@ -72,6 +72,7 @@
     }
   },
   "scripts": {
+    "postinstall": "patch-package",
     "i18n": "node updater_i18n",
     "start": "node updater_i18n && run-script-os",
     "start:win32": "chcp 65001 && electron-forge start",
@@ -110,6 +111,7 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
     "node-loader": "^2.1.0",
+    "patch-package": "^8.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
     "vite": "^8.0.8",
