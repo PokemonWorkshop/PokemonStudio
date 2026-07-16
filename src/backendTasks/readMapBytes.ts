@@ -41,7 +41,7 @@ export const registerReadMapBytes = defineBackendServiceFunction(
     // Slice into a fresh ArrayBuffer so the renderer gets a clean detached
     // buffer (the Node Buffer's underlying ArrayBuffer is shared with the
     // pool and would otherwise transfer extra bytes via IPC).
-    const arrayBuffer = buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
+    const arrayBuffer = buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) as ArrayBuffer;
     return { bytes: arrayBuffer, size: buf.byteLength };
   }
 );

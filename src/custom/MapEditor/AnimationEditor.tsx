@@ -565,7 +565,7 @@ export const AnimationEditor: React.FC<Props> = ({
       const serialized = new XMLSerializer().serializeToString(doc);
       const bytes = new TextEncoder().encode(serialized);
       window.api.writeTilesetBytes(
-        { projectPath, tsxFilename, bytes: bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) },
+        { projectPath, tsxFilename, bytes: bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer },
         () => { setBusy(false); onSaved(tsxFilename); },
         (e) => { setBusy(false); setError(e.errorMessage); },
       );
@@ -611,7 +611,7 @@ export const AnimationEditor: React.FC<Props> = ({
       const serialized = new XMLSerializer().serializeToString(doc);
       const bytes = new TextEncoder().encode(serialized);
       window.api.writeTilesetBytes(
-        { projectPath, tsxFilename, bytes: bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) },
+        { projectPath, tsxFilename, bytes: bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer },
         () => { setBusy(false); onSaved(tsxFilename); },
         (e) => { setBusy(false); setError(e.errorMessage); },
       );
@@ -714,7 +714,7 @@ export const AnimationEditor: React.FC<Props> = ({
                 show a no-op control. animatedTiles is the picker's set
                 of tile ids with <animation> elements; we check this
                 tile is in it. */}
-            {animatedTiles.has(baseTileId) && (
+            {animatedTileIds.has(baseTileId) && (
               <DarkButton
                 onClick={removeAnimation}
                 disabled={busy || !tsxFilename}

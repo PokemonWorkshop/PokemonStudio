@@ -69,7 +69,7 @@ const LayerCheckRow = styled.label`
   align-items: center;
   gap: 6px;
   ${({ theme }) => theme.fonts.normalSmall};
-  color: ${({ theme }) => theme.colors.text200};
+  color: ${({ theme }) => theme.colors.text400};
   cursor: pointer;
   &:hover { color: ${({ theme }) => theme.colors.text100}; }
 `;

@@ -39,7 +39,8 @@ export const registerReadTilesetBytes = defineBackendServiceFunction(
     // Slice the underlying ArrayBuffer to exactly the file's length —
     // Node's Buffer can carry a longer-than-needed ArrayBuffer.
     return {
-      bytes: buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength),
+      // Node Buffers are never SharedArrayBuffer-backed; cast to the concrete type.
+      bytes: buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) as ArrayBuffer,
       mtime: stat.mtime.getTime(),
     };
   },

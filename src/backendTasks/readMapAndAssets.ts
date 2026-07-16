@@ -43,7 +43,8 @@ export type ReadMapAndAssetsOutput = {
 const TILED_ROOT = 'Data/Tiled';
 
 const toArrayBuffer = (buf: Buffer): ArrayBuffer =>
-  buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
+  // Node Buffers are never SharedArrayBuffer-backed; the slice is a real ArrayBuffer.
+  buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) as ArrayBuffer;
 
 // Resolve `relPath` against `tiledRootAbs` and reject anything that escapes
 // out. Returns the absolute path or throws.

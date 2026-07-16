@@ -83,11 +83,19 @@ export type WriteRMXPEventsInput = {
    */
   skippedOnRead?: number;
   /**
-   * The map's size in tiles, from the .tmx the editor has open. Only needed when
-   * `Map###.rxdata` doesn't exist yet (a map authored in Studio and not booted in
-   * PSDK since) — see `buildBlankMap`.
+   * The map's size in tiles, from the .tmx the editor has open. A fast path for
+   * when `Map###.rxdata` doesn't exist yet (a map authored in Studio and not
+   * booted in PSDK since) — see `buildBlankMap`. If absent, the size is read
+   * straight from the `.tmx` via `tiledFilename` (the reliable source of truth).
    */
   mapSize?: { width: number; height: number };
+  /**
+   * The map's `.tmx` filename (no extension), e.g. "022 My Map". Used to read the
+   * map's real size from `Data/Tiled/Maps/<tiledFilename>.tmx` when synthesizing
+   * a blank `Map###.rxdata` and `mapSize` wasn't supplied. This makes saving
+   * events onto a brand-new map work without first booting the game.
+   */
+  tiledFilename?: string;
 };
 export type WriteRMXPEventsOutput = { ok: true };
 
@@ -446,6 +454,27 @@ const indexOriginalPages = (events: unknown): Map<string, { list: unknown; moveR
   return index;
 };
 
+/**
+ * Read a map's tile size straight from its `.tmx` root (`<map width height>`).
+ * The source of truth for a brand-new map's dimensions, used when synthesizing a
+ * blank `Map###.rxdata` and the renderer didn't hand us a `mapSize`. Returns
+ * undefined if the file is missing or the attributes can't be parsed.
+ */
+const readTmxSize = async (projectPath: string, tiledFilename: string): Promise<{ width: number; height: number } | undefined> => {
+  try {
+    const tmxPath = path.join(projectPath, 'Data', 'Tiled', 'Maps', `${tiledFilename}.tmx`);
+    const xml = await fsPromises.readFile(tmxPath, 'utf8');
+    const mapTag = xml.match(/<map\b[^>]*>/);
+    if (!mapTag) return undefined;
+    const width = Number(mapTag[0].match(/\bwidth="(\d+)"/)?.[1]);
+    const height = Number(mapTag[0].match(/\bheight="(\d+)"/)?.[1]);
+    if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) return undefined;
+    return { width, height };
+  } catch {
+    return undefined;
+  }
+};
+
 // Exported (like readRMXPEvents) so the write path can be exercised directly —
 // this is the one function in the codebase that can destroy a user's real maps.
 export const writeRMXPEvents = async (payload: WriteRMXPEventsInput): Promise<WriteRMXPEventsOutput> => {
@@ -471,9 +500,13 @@ export const writeRMXPEvents = async (payload: WriteRMXPEventsInput): Promise<Wr
       log.info('write-rmxp-events/nothing-to-write', { mapId: payload.mapId });
       return { ok: true };
     }
-    if (!payload.mapSize) throw `Map${padStr(payload.mapId, 3)}.rxdata doesn't exist yet and the map's size is unknown, so it can't be created.`;
-    log.info('write-rmxp-events/creating-blank-map', payload.mapSize);
-    mapObject = buildBlankMap(payload.mapSize.width, payload.mapSize.height);
+    // Size comes from the renderer's open .tmx (fast path) or, failing that, is
+    // read straight from the .tmx on disk — so eventing on a brand-new map and
+    // saving works without booting the game to generate the .rxdata first.
+    const size = payload.mapSize ?? (payload.tiledFilename ? await readTmxSize(payload.projectPath, payload.tiledFilename) : undefined);
+    if (!size) throw `Map${padStr(payload.mapId, 3)}.rxdata doesn't exist yet and the map's size is unknown, so it can't be created.`;
+    log.info('write-rmxp-events/creating-blank-map', size);
+    mapObject = buildBlankMap(size.width, size.height);
   }
   if (!isRecord(mapObject)) throw `Map${padStr(payload.mapId, 3)}.rxdata could not be prepared`;
 

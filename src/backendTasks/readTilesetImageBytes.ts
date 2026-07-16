@@ -35,7 +35,9 @@ export const registerReadTilesetImageBytes = defineBackendServiceFunction(
 
     const buf = await fs.promises.readFile(target);
     return {
-      bytes: buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength),
+      // A Node Buffer is never SharedArrayBuffer-backed, so this slice is always
+      // a real ArrayBuffer — the cast just satisfies the ArrayBufferLike types.
+      bytes: buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) as ArrayBuffer,
     };
   },
 );

@@ -46,7 +46,9 @@ const SpriteAnchor = styled.div`
 
 const NameTag = styled.div`
   position: absolute;
-  transform: translateY(-100%);
+  /* Centered horizontally over the tile (where the sprite is anchored) and
+     lifted to sit just above it. */
+  transform: translate(-50%, -100%);
   padding: 1px 6px;
   border-radius: 4px;
   background: ${({ theme }) => theme.colors.dark18};
@@ -187,7 +189,7 @@ export const EventsOverlay = ({ events, tileSize, mode, visible, selectedId, onS
               )}
             </Marker>
             {(hoveredId === event.id || selectedId === event.id) && (
-              <NameTag style={{ left: event.x * tileSize, top: event.y * tileSize - 2 }}>
+              <NameTag style={{ left: event.x * tileSize + tileSize / 2, top: event.y * tileSize - 2 }}>
                 {event.name} · {event.id}
               </NameTag>
             )}

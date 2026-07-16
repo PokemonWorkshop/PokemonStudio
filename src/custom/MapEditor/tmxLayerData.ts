@@ -284,7 +284,7 @@ export const enforceCsvLayerData = async (tmxBytes: ArrayBuffer): Promise<ArrayB
     // that so the on-disk file looks the same to other tools / diffs.
     const xmlDecl = '<?xml version="1.0" encoding="UTF-8"?>\n';
     const finalText = serialized.startsWith('<?xml') ? serialized : xmlDecl + serialized;
-    return new TextEncoder().encode(finalText).buffer;
+    return new TextEncoder().encode(finalText).buffer as ArrayBuffer;
   } catch (e) {
     console.warn('[map-editor] enforceCsvLayerData failed; saving original bytes', e);
     return tmxBytes;

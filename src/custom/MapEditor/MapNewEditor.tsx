@@ -47,6 +47,7 @@ import { createMapLinkFromMainMapId } from '@utils/MapLinkUtils';
 import { basename } from '@utils/path';
 import { useSetProjectText } from '@utils/ReadingProjectText';
 import React, { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
@@ -71,6 +72,14 @@ const HelperText = styled.div`
  * Background matches Studio's text inputs (dark20) so it reads as a
  * "data field" rather than a callout panel.
  */
+/** Positioning context for the floating hover preview (anchored to its left). */
+const TilesetSectionBody = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
 const TilesetList = styled.div`
   display: flex;
   flex-direction: column;
@@ -164,12 +173,44 @@ const AddTilesetOption = styled.button`
   gap: 8px;
   width: 100%;
   box-sizing: border-box;
-  padding: 6px 10px;
+  padding: 8px 10px;
   cursor: pointer;
   ${({ theme }) => theme.fonts.normalSmall};
   color: ${({ theme }) => theme.colors.text100};
   &:hover { background-color: ${({ theme }) => theme.colors.dark18}; }
   & + & { border-top: 1px solid ${({ theme }) => theme.colors.dark14}; }
+`;
+
+/**
+ * Floating image preview shown while a candidate is hovered — a small thumbnail
+ * per row is too tiny to read, so the whole tileset renders large here instead.
+ *
+ * `position: fixed` + a portal to document.body + a top-of-stack z-index so it
+ * is never clipped by the dialog's `overflow` or trapped in a lower stacking
+ * context. Positioned from the hovered row's screen rect (see `previewPos`).
+ */
+const HoverPreview = styled.div`
+  position: fixed;
+  z-index: 2147483000;
+  pointer-events: none;
+  padding: 8px;
+  background-color: ${({ theme }) => theme.colors.dark16};
+  border: 1px solid ${({ theme }) => theme.colors.dark14};
+  border-radius: 6px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+`;
+
+const HoverPreviewName = styled.span`
+  ${({ theme }) => theme.fonts.normalSmall};
+  color: ${({ theme }) => theme.colors.text100};
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const AddTilesetEmpty = styled.div`
@@ -338,6 +379,9 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
   // dropdown alone becomes painful to scan.
   const [tilesetSearch, setTilesetSearch] = useState('');
   const [pickerOpen, setPickerOpen] = useState(false);
+  // The tileset whose large image previews on hover, plus the screen rect of the
+  // row it's anchored to (so the portal-rendered preview can position itself).
+  const [hovered, setHovered] = useState<{ tsx: string; rect: DOMRect } | null>(null);
   const pickerWrapRef = useRef<HTMLDivElement>(null);
   // Click-outside closes the popup. Mounted only while open so we don't
   // hold the listener for the dialog's whole lifetime.
@@ -502,7 +546,7 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
       {
         projectPath: globalState.projectPath,
         tiledFilename: slug,
-        bytes: bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength),
+        bytes: bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer,
       },
       () => {
         setBusy(false);
@@ -542,66 +586,88 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
   const tilesetSection = (
     <InputWithTopLabelContainer>
       <Label>{t('tilesets')}</Label>
-      <TilesetList>
-        {tilesets.map((ts) => (
-          <TilesetListRow key={`${ts.required ? `req:${ts.role}` : `extra:${ts.tsxFilename}`}`}>
-            <TilesetRowName>
-              {ts.required && <RequiredStar>*</RequiredStar>}
-              {globalState.projectPath && ts.tsxFilename && (
-                <TilesetThumb projectPath={globalState.projectPath} tsxFilename={ts.tsxFilename} width={36} height={36} />
+      <TilesetSectionBody onMouseLeave={() => setHovered(null)}>
+        {/* Large image preview of the hovered tileset. Portaled to document.body
+            with position:fixed so it floats above EVERYTHING — never clipped by
+            the dialog's overflow or a lower stacking context. Positioned to the
+            left of the hovered row, flipping to the right if there's no room. */}
+        {globalState.projectPath && hovered && createPortal(
+          (() => {
+            const PREVIEW_W = 276;
+            const PREVIEW_H = 300;
+            const gap = 10;
+            let left = hovered.rect.left - PREVIEW_W - gap;
+            if (left < 8) left = Math.min(window.innerWidth - PREVIEW_W - 8, hovered.rect.right + gap);
+            const top = Math.max(8, Math.min(hovered.rect.top, window.innerHeight - PREVIEW_H - 8));
+            return (
+              <HoverPreview style={{ left, top }}>
+                <TilesetThumb projectPath={globalState.projectPath} tsxFilename={hovered.tsx} width={260} height={260} />
+                <HoverPreviewName>{hovered.tsx}</HoverPreviewName>
+              </HoverPreview>
+            );
+          })(),
+          document.body,
+        )}
+        <TilesetList>
+          {tilesets.map((ts) => (
+            <TilesetListRow
+              key={`${ts.required ? `req:${ts.role}` : `extra:${ts.tsxFilename}`}`}
+              onMouseEnter={(e) => ts.tsxFilename && setHovered({ tsx: ts.tsxFilename, rect: e.currentTarget.getBoundingClientRect() })}
+            >
+              <TilesetRowName>
+                {ts.required && <RequiredStar>*</RequiredStar>}
+                <span>{ts.role ?? ts.tsxFilename ?? 'unknown'}</span>
+                {ts.required && !ts.tsxFilename && <MissingTag>not found</MissingTag>}
+              </TilesetRowName>
+              {!ts.required && ts.tsxFilename && (
+                <TrashBtn
+                  title="Remove this tileset"
+                  onClick={() => removeExtraTileset(ts.tsxFilename!)}
+                  aria-label="Remove tileset"
+                >🗑</TrashBtn>
               )}
-              <span>{ts.role ?? ts.tsxFilename ?? 'unknown'}</span>
-              {ts.required && !ts.tsxFilename && <MissingTag>not found</MissingTag>}
-            </TilesetRowName>
-            {!ts.required && ts.tsxFilename && (
-              <TrashBtn
-                title="Remove this tileset"
-                onClick={() => removeExtraTileset(ts.tsxFilename!)}
-                aria-label="Remove tileset"
-              >🗑</TrashBtn>
+            </TilesetListRow>
+          ))}
+        </TilesetList>
+        {addCandidates.length > 0 && (
+          <AddTilesetWrap ref={pickerWrapRef}>
+            {/* Single combobox: the text input IS the search field AND
+                opens the candidate list. Typing filters; clicking a row
+                adds it + clears the input + closes the popup. */}
+            <Input
+              type="text"
+              name="tileset-search"
+              value={tilesetSearch}
+              placeholder={t('search_tileset')}
+              onFocus={() => setPickerOpen(true)}
+              onChange={(e) => { setTilesetSearch(e.target.value); setPickerOpen(true); }}
+            />
+            {pickerOpen && (
+              <AddTilesetPopup>
+                {filteredAddCandidates.length > 0 ? (
+                  filteredAddCandidates.map((f) => (
+                    <AddTilesetOption
+                      key={f}
+                      type="button"
+                      onMouseEnter={(e) => setHovered({ tsx: f, rect: e.currentTarget.getBoundingClientRect() })}
+                      onClick={() => {
+                        addExtraTileset(f);
+                        setTilesetSearch('');
+                        setPickerOpen(false);
+                        setHovered(null);
+                      }}
+                    >
+                      <span>{f}</span>
+                    </AddTilesetOption>
+                  ))
+                ) : (
+                  <AddTilesetEmpty>{t('no_tileset_match')}</AddTilesetEmpty>
+                )}
+              </AddTilesetPopup>
             )}
-          </TilesetListRow>
-        ))}
-      </TilesetList>
-      {addCandidates.length > 0 && (
-        <AddTilesetWrap ref={pickerWrapRef}>
-          {/* Single combobox: the text input IS the search field AND
-              opens the candidate list. Typing filters; clicking a row
-              adds it + clears the input + closes the popup. */}
-          <Input
-            type="text"
-            name="tileset-search"
-            value={tilesetSearch}
-            placeholder={t('search_tileset')}
-            onFocus={() => setPickerOpen(true)}
-            onChange={(e) => { setTilesetSearch(e.target.value); setPickerOpen(true); }}
-          />
-          {pickerOpen && (
-            <AddTilesetPopup>
-              {filteredAddCandidates.length > 0 ? (
-                filteredAddCandidates.map((f) => (
-                  <AddTilesetOption
-                    key={f}
-                    type="button"
-                    onClick={() => {
-                      addExtraTileset(f);
-                      setTilesetSearch('');
-                      setPickerOpen(false);
-                    }}
-                  >
-                    {globalState.projectPath && (
-                      <TilesetThumb projectPath={globalState.projectPath} tsxFilename={f} width={44} height={44} />
-                    )}
-                    <span>{f}</span>
-                  </AddTilesetOption>
-                ))
-              ) : (
-                <AddTilesetEmpty>{t('no_tileset_match')}</AddTilesetEmpty>
-              )}
-            </AddTilesetPopup>
-          )}
-        </AddTilesetWrap>
-      )}
+          </AddTilesetWrap>
+        )}
+      </TilesetSectionBody>
     </InputWithTopLabelContainer>
   );
 

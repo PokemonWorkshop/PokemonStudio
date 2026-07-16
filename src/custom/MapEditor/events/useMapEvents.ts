@@ -21,7 +21,7 @@ export type MapEventPage = WriteRMXPEventPage;
  * doesn't get one until PSDK's Tiled2Rxdata runs at game boot, and without a
  * size the backend can't synthesize the blank map to write the events into.
  */
-export const useMapEvents = (projectPath: string | null, mapId: number | undefined, mapWidth?: number, mapHeight?: number) => {
+export const useMapEvents = (projectPath: string | null, mapId: number | undefined, mapWidth?: number, mapHeight?: number, tiledFilename?: string) => {
   const [events, setEvents] = useState<MapEvent[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -158,7 +158,10 @@ export const useMapEvents = (projectPath: string | null, mapId: number | undefin
     const mapSize = mapWidth && mapHeight ? { width: mapWidth, height: mapHeight } : undefined;
     return new Promise((resolve) => {
       window.api.writeRMXPEvents(
-        { projectPath, mapId, events: payloadEvents, skippedOnRead: skipped, mapSize },
+        // `tiledFilename` lets the backend read the map size straight from the
+        // .tmx when `mapSize` is unavailable — so a brand-new map can be evented
+        // and saved (creating its .rxdata) without booting the game first.
+        { projectPath, mapId, events: payloadEvents, skippedOnRead: skipped, mapSize, tiledFilename },
         () => {
           setDirty(false);
           // Reload so provenance re-points at the freshly written file.
@@ -168,7 +171,7 @@ export const useMapEvents = (projectPath: string | null, mapId: number | undefin
         ({ errorMessage }) => resolve(errorMessage),
       );
     });
-  }, [projectPath, mapId, loadedMapId, events, skipped, mapWidth, mapHeight, reload]);
+  }, [projectPath, mapId, loadedMapId, events, skipped, mapWidth, mapHeight, tiledFilename, reload]);
 
   const updateEvent = useCallback((updated: MapEvent) => {
     setEvents((prev) => prev.map((e) => (e.id === updated.id ? updated : e)));

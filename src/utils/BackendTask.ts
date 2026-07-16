@@ -103,6 +103,10 @@ export type BackendTaskWithGenericErrorAndNoProgress<
   TaskOutputPayloadType extends Record<string, never>
 > = BackendTaskWithNoProgress<TaskInputPayloadType, TaskOutputPayloadType, { errorMessage: string }>;
 
+/** Monotonic per-call sequence so concurrent backend tasks never share a channel. */
+let backendTaskSeq = 0;
+const nextBackendTaskSeq = () => (backendTaskSeq = (backendTaskSeq + 1) % Number.MAX_SAFE_INTEGER);
+
 export const defineBackendTask = <
   TaskInputPayloadType extends Record<string, unknown>,
   TaskOutputPayloadType extends Record<string, unknown>,
@@ -118,10 +122,17 @@ export const defineBackendTask = <
     onFailure: (error: ErrorType) => void,
     onProgress?: (payload: ProgressPayloadType) => void
   ) => {
-    const now = Date.now();
-    const successChannelName = `${serviceName}/success-${now}`;
-    const failureChannelName = `${serviceName}/failure-${now}`;
-    const progressChannelName = `${serviceName}/progress-${now}`;
+    // `Date.now()` alone is NOT unique: several tasks fired in the same tick
+    // (e.g. a grid of tileset thumbnails all mounting on one render) collide on
+    // one channel, so `once` listeners pile up (the "MaxListenersExceeded"
+    // warning) and every colliding caller resolves with whichever response
+    // arrives first — the rest get the wrong payload or none. A per-call
+    // sequence makes each channel unique. Main just echoes the names back, so
+    // renderer-side uniqueness is sufficient.
+    const id = `${Date.now()}-${nextBackendTaskSeq()}`;
+    const successChannelName = `${serviceName}/success-${id}`;
+    const failureChannelName = `${serviceName}/failure-${id}`;
+    const progressChannelName = `${serviceName}/progress-${id}`;
     const cleanup = () => {
       ipcRenderer.removeAllListeners(successChannelName);
       ipcRenderer.removeAllListeners(failureChannelName);

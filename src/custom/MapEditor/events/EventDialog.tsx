@@ -127,6 +127,8 @@ type Props = {
   onClose: () => void;
   /** Capture a PNG data URL of the current map, for the tone command's on-map preview. */
   getMapSnapshot?: () => string | null;
+  /** The id of the map being edited — a new Transfer Player defaults to it. */
+  currentMapId?: number;
 };
 
 // Page clipboard lives at module scope so a page copied in one event can be
@@ -137,7 +139,7 @@ let pageClipboardShared: MapEventPage | null = null;
 // only plain-param chains (the editable set) are copyable.
 let commandClipboardShared: WorkingCommand[] | null = null;
 
-export const EventDialog = ({ event, mapEvents, onSave, onDelete, onClose, getMapSnapshot }: Props) => {
+export const EventDialog = ({ event, mapEvents, onSave, onDelete, onClose, getMapSnapshot, currentMapId }: Props) => {
   const { t } = useTranslation();
   const [{ projectPath, projectText, projectConfig, projectStudio }] = useGlobalState();
   const { draft, commitDraft, undo, redo, canUndo, canRedo } = useEventDraft(event);
@@ -528,6 +530,9 @@ export const EventDialog = ({ event, mapEvents, onSave, onDelete, onClose, getMa
     const form = emptyForm(kind, 'insert');
     // Jump-to-Label defaults to the first existing label in this list.
     if (kind === 'jump' && pageLabels.length > 0) form.text = pageLabels[0];
+    // A new Transfer Player defaults to the current map — the most common
+    // case is repositioning on the same map, and it's an easy change otherwise.
+    if (kind === 'transfer' && currentMapId && currentMapId > 0) form.transferMapId = currentMapId;
     setCmdSel2(null); // collapse any range selection when starting an insert
     setCmdPickerOpen(false);
     setCmdSearch('');

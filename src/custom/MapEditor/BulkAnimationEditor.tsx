@@ -566,7 +566,7 @@ export const BulkAnimationEditor: React.FC<Props> = ({
           const serialized = new XMLSerializer().serializeToString(doc);
           const outBytes = new TextEncoder().encode(serialized);
           window.api.writeTilesetBytes(
-            { projectPath, tsxFilename, bytes: outBytes.buffer.slice(outBytes.byteOffset, outBytes.byteOffset + outBytes.byteLength) },
+            { projectPath, tsxFilename, bytes: outBytes.buffer.slice(outBytes.byteOffset, outBytes.byteOffset + outBytes.byteLength) as ArrayBuffer },
             () => { setBusy(false); onSaved(tsxFilename); },
             (e) => { setBusy(false); setError(e.errorMessage); },
           );
@@ -626,7 +626,7 @@ export const BulkAnimationEditor: React.FC<Props> = ({
           const serialized = new XMLSerializer().serializeToString(doc);
           const outBytes = new TextEncoder().encode(serialized);
           window.api.writeTilesetBytes(
-            { projectPath, tsxFilename, bytes: outBytes.buffer.slice(outBytes.byteOffset, outBytes.byteOffset + outBytes.byteLength) },
+            { projectPath, tsxFilename, bytes: outBytes.buffer.slice(outBytes.byteOffset, outBytes.byteOffset + outBytes.byteLength) as ArrayBuffer },
             () => { setBusy(false); onSaved(tsxFilename); },
             (e) => { setBusy(false); setError(e.errorMessage); },
           );

@@ -47,6 +47,7 @@ import {
   type TmjMap,
   type TmjTileset,
   type TmjTilesetTile,
+  type Tool,
 } from '../mapEditorTypes';
 
 // --- gid bit math ---------------------------------------------------------
@@ -617,7 +618,11 @@ type PixiMapCanvasProps = {
   selectedLayers: number[];
   selectedBrush: Brush | null;
   layerVisibility: Record<number, boolean>;
-  tool: 'stamp' | 'erase' | 'fill' | 'rect' | 'ellipse' | 'wand' | 'sameTile';
+  // The shared Tool union — includes 'select' (and any future tools), which the
+  // component already handles (e.g. the `tool === 'select'` guards below). The
+  // old narrow literal here made the parent's `tool={tool}` assignment and those
+  // comparisons type-error even though the runtime logic was correct.
+  tool: Tool;
   showGrid: boolean;
   zoom: number;
   onZoomChange: (zoom: number) => void;
@@ -2065,7 +2070,27 @@ export const PixiMapCanvas = forwardRef<MapCanvasHandle, PixiMapCanvasProps>(
         const app = appRef.current;
         const root = rootRef.current;
         if (!app || !root) return null;
+        // Gameplay-metadata layers (passages / systemtags — incl. the bridge
+        // systemtag `systemtags_bridge1` — / terrain_tag) are authoring aids,
+        // never scenery, so they don't belong in a "what the player sees"
+        // preview. Match by name, exactly like the transfer-tile picker's
+        // isMetadataLayer, and note: the VISUAL `Bridge_*` layers are content
+        // and are intentionally NOT matched.
+        const isMetadataLayer = (name: string) => /passage|systemtag|terrain/i.test(name);
+        const hiddenForSnapshot: PIXI.Container[] = [];
+        const state = loadedRef.current;
+        if (state) {
+          state.json.layers.forEach((layer, li) => {
+            if (!isMetadataLayer(layer.name)) return;
+            const c = layerContainersRef.current.get(li);
+            if (c && c.visible) {
+              c.visible = false;
+              hiddenForSnapshot.push(c);
+            }
+          });
+        }
         try {
+          // extract renders on demand, so it reflects the visibility we just set.
           const src = app.renderer.extract.canvas(root) as HTMLCanvasElement;
           if (!src || !src.width || !src.height) return null;
           const maxW = 640;
@@ -2081,6 +2106,9 @@ export const PixiMapCanvas = forwardRef<MapCanvasHandle, PixiMapCanvasProps>(
         } catch (e) {
           console.warn('[map-editor] snapshotDataURL failed', e);
           return null;
+        } finally {
+          // Always restore — the on-screen map must look exactly as before.
+          hiddenForSnapshot.forEach((c) => (c.visible = true));
         }
       },
       saveBytes: () => {
@@ -2351,7 +2379,7 @@ export const PixiMapCanvas = forwardRef<MapCanvasHandle, PixiMapCanvasProps>(
         try {
           const next = await TiledModule.openMap(bytes);
           mapWasmRef.current = next;
-          try { old.close(); } catch { /* best effort */ }
+          try { old.dispose(); } catch { /* best effort */ }
           return rebuildSceneFromCurrentWasm();
         } catch (e) {
           console.error('[map-editor] replaceMapFromBytes failed', e);
@@ -2384,7 +2412,7 @@ export const PixiMapCanvas = forwardRef<MapCanvasHandle, PixiMapCanvasProps>(
             bytes: modifiedMapBytes.buffer.slice(
               modifiedMapBytes.byteOffset,
               modifiedMapBytes.byteOffset + modifiedMapBytes.byteLength,
-            ),
+            ) as ArrayBuffer,
           };
           const next = await TiledModule.openMapWithAssets(mapEntry, [
             { relPath: newTsx.relPath, bytes: newTsx.bytes },
@@ -2461,7 +2489,7 @@ export const PixiMapCanvas = forwardRef<MapCanvasHandle, PixiMapCanvasProps>(
           // Swap handle, pre-populate the renderer's tileset list + cache
           // at the new index so the upcoming rebuildScene finds them.
           mapWasmRef.current = next;
-          try { old.close(); } catch { /* best */ }
+          try { old.dispose(); } catch { /* best */ }
           prev.tilesets[newIdx] = { ...newTilesetMeta, bitmap: bmp, firstgid: safeFirstgid };
           tilesetCachesRef.current.set(newIdx, { bands, perTile: new Map() });
 

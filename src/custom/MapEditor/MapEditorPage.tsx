@@ -23,7 +23,7 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { DataBlockWrapper } from '@components/database/dataBlocks';
 import { DatabaseTabsBar } from '@components/database/DatabaseTabsBar';
-import { MapBreadcrumb } from '@components/world/map';
+import { MapBreadcrumbWithId } from './MapBreadcrumbWithId';
 import { useMapPage } from '@hooks/usePage';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { DarkButton, PrimaryButton } from '@components/buttons';
@@ -381,10 +381,23 @@ const CoordsHud = styled.div`
   color: ${({ theme }) => theme.colors.text400};
   font-variant-numeric: tabular-nums;
   min-height: 18px;
+  /* Let the HUD shrink and clip instead of shoving the grid/zoom buttons on the
+     right into a second line when the selection readout gets long. */
+  min-width: 0;
+  overflow: hidden;
 `;
 
 const HudCell = styled.span`
   white-space: nowrap;
+  flex-shrink: 0;
+`;
+
+/** The variable-length selection readout — truncates with "…" rather than growing. */
+const HudCellEllipsis = styled(HudCell)`
+  min-width: 0;
+  flex-shrink: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const HudSep = styled.span`
@@ -405,6 +418,8 @@ const RightHud = styled.div`
   display: flex;
   align-items: center;
   gap: 6px;
+  /* Never shrink the grid/zoom controls — the coordinate HUD yields instead. */
+  flex-shrink: 0;
 `;
 
 const LeftHud = styled.div`
@@ -425,6 +440,8 @@ const ModeSwitch = styled.div`
   padding: 2px;
   background-color: ${({ theme }) => theme.colors.dark16};
   border-radius: 6px;
+  /* The coordinate HUD beside it yields on tight widths, not this switch. */
+  flex-shrink: 0;
 `;
 
 const ModeOption = styled.button<{ $active: boolean }>`
@@ -546,7 +563,7 @@ const saveBytes = async (
   // same gids, just a different serialization. Falls back to `fixed` on
   // any parse failure.
   const csvBuf = await enforceCsvLayerData(
-    fixed.buffer.slice(fixed.byteOffset, fixed.byteOffset + fixed.byteLength),
+    fixed.buffer.slice(fixed.byteOffset, fixed.byteOffset + fixed.byteLength) as ArrayBuffer,
   );
   return new Promise((resolve, reject) => {
     window.api.writeMapBytes(
@@ -670,6 +687,10 @@ export const MapEditorPage = () => {
     map?.id,
     loadedIsCurrentMap ? loaded.json.width : undefined,
     loadedIsCurrentMap ? loaded.json.height : undefined,
+    // Fallback source of the map size for a not-yet-booted map: the backend
+    // reads Data/Tiled/Maps/<tiledFilename>.tmx when the loaded dimensions
+    // aren't available (e.g. the .tmx just changed and hasn't re-rendered).
+    map?.tiledFilename,
   );
   const [eventsSaveError, setEventsSaveError] = useState<string | null>(null);
   // NO auto-save by design: project files are only written when the user
@@ -1069,11 +1090,11 @@ export const MapEditorPage = () => {
   const onUndo = useCallback(() => {
     onUndoRef.current?.();
   }, []);
-  const onUndoRef = useRef<() => void>();
+  const onUndoRef = useRef<(() => void) | undefined>(undefined);
   const onRedo = useCallback(() => {
     onRedoRef.current?.();
   }, []);
-  const onRedoRef = useRef<() => void>();
+  const onRedoRef = useRef<(() => void) | undefined>(undefined);
 
   const zoomBy = useCallback((direction: 1 | -1) => {
     setZoom((cur) => {
@@ -1895,7 +1916,7 @@ export const MapEditorPage = () => {
       <TopBar>
         {/* Breadcrumb stays in its natural row (Studio convention puts
             it top-left). The tabs go in their own row, true-centered. */}
-        <MapBreadcrumb />
+        <MapBreadcrumbWithId />
         <TabsCenterShell>
           <DatabaseTabsBar
             currentTabIndex={1}
@@ -2081,7 +2102,7 @@ export const MapEditorPage = () => {
                       {selectionInfo && (
                         <>
                           <HudSep>·</HudSep>
-                          <HudCell>selected {selectionInfo.w} × {selectionInfo.h} @ [{selectionInfo.x}, {selectionInfo.y}]</HudCell>
+                          <HudCellEllipsis>selected {selectionInfo.w} × {selectionInfo.h} @ [{selectionInfo.x}, {selectionInfo.y}]</HudCellEllipsis>
                         </>
                       )}
                     </>
@@ -2199,6 +2220,7 @@ export const MapEditorPage = () => {
                 }}
                 onClose={() => setOpenEventId(null)}
                 getMapSnapshot={() => canvasRef.current?.snapshotDataURL?.() ?? null}
+                currentMapId={map?.id}
               />
             );
           })()}

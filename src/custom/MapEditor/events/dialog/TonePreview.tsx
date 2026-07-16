@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { ZoomPan } from '../../ZoomPan';
 
 /**
  * Fork-owned. Previews a screen/fog/picture tone (or a flash color) applied to a
@@ -19,19 +20,10 @@ import styled from 'styled-components';
  * abstract-swatch fallback.
  */
 
-const Frame = styled.div`
-  width: 100%;
-  border: 1px solid ${({ theme }) => theme.colors.dark14};
-  border-radius: 6px;
-  overflow: hidden;
-  background: ${({ theme }) => theme.colors.dark20};
-  line-height: 0;
-`;
-
 const Canvas = styled.canvas`
   display: block;
-  width: 100%;
-  height: auto;
+  max-width: 100%;
+  max-height: 100%;
   image-rendering: pixelated;
 `;
 
@@ -121,8 +113,8 @@ export const TonePreview: React.FC<Props> = ({ snapshotUrl, red, green, blue, fo
 
   if (!snapshotUrl) return null;
   return (
-    <Frame>
+    <ZoomPan height={220} resetKey={snapshotUrl}>
       <Canvas ref={canvasRef} />
-    </Frame>
+    </ZoomPan>
   );
 };

@@ -530,7 +530,6 @@ export const AddTilesetDialog: React.FC<Props> = ({
                         $disabled={isAdded}
                         onClick={() => !isAdded && toggle(entry)}
                         onDoubleClick={() => !isAdded && onConfirm([entry])}
-                        onMouseEnter={() => !isAdded && setFocused(entry)}
                         title={isAdded ? 'Already in this map' : entry}
                       >
                         {isSelected && <CheckBadge>✓</CheckBadge>}
