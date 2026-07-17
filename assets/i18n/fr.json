@@ -1918,5 +1918,19 @@
   "assigning_tiled_maps_success": "Cartes Tiled assignées avec succès",
   "assigning_tiled_maps_error": "Erreur lors de l'assignation des cartes Tiled",
   "max_trainer_party_size": "Nombre maximum de créatures dans l'équipe d'un dresseur",
-  "add_trainer_party_max_size_to_settings": "Ajout de la taille maximale de l'équipe d'un dresseur aux paramètres du projet"
+  "add_trainer_party_max_size_to_settings": "Ajout de la taille maximale de l'équipe d'un dresseur aux paramètres du projet",
+  "keyboard_shortcuts": "Raccourcis clavier",
+  "shortcut_category_default": "Raccourcis par défaut",
+  "shortcut_category_navigation": "Navigation",
+  "shortcut_category_miscellaneous": "Divers",
+  "shortcut_save_project": "Sauvegarder les modifications apportées au projet",
+  "shortcut_create_entry": "Créer un nouvel élément dans la base de données",
+  "shortcut_copy_id": "Copier l'identifiant d'une entrée de la base de données",
+  "shortcut_start_debug": "Démarrer le jeu en mode debug",
+  "shortcut_navigate_list": "Naviguer entre les éléments d'une liste",
+  "shortcut_navigate_secondary_list": "Naviguer entre les éléments d'une liste secondaire",
+  "shortcut_toggle_fullscreen": "Afficher en plein écran",
+  "shortcut_minimize_window": "Réduire la fenêtre",
+  "shortcut_open_devtools": "Afficher les Developer Tools",
+  "app_settings": "Parametres de L'appli"
 }
