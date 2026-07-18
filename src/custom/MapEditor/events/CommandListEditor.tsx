@@ -351,13 +351,13 @@ export const CommandListEditor = ({ list, setList, systemNames, mapEvents, subje
 
   const commandGroups: { key: string; kinds: CmdFormKind[] }[] = [
     { key: 'messages', kinds: ['text', 'comment'] },
-    { key: 'flow', kinds: ['choices', 'conditional', 'loop', 'break', 'label', 'jump', 'commonEvent'] },
-    { key: 'movement', kinds: ['moveRoute', 'waitMove', 'transfer'] },
-    { key: 'screen', kinds: ['tintScreen', 'screenFlash', 'changeFog', 'fogTone', 'showPicture', 'movePicture', 'erasePicture', 'pictureTone', 'screenShake', 'scrollMap', 'prepareTransition', 'executeTransition'] },
-    { key: 'game', kinds: ['changeGold', 'transparent', 'eraseEvent', 'menuAccess', 'returnToTitle'] },
+    { key: 'flow', kinds: ['choices', 'conditional', 'loop', 'break', 'label', 'jump', 'commonEvent', 'exitEvent'] },
+    { key: 'movement', kinds: ['moveRoute', 'waitMove', 'transfer', 'setEventLocation'] },
+    { key: 'screen', kinds: ['tintScreen', 'screenFlash', 'weather', 'changeFog', 'fogTone', 'changeFogOpacity', 'showPicture', 'movePicture', 'erasePicture', 'pictureTone', 'screenShake', 'scrollMap', 'prepareTransition', 'executeTransition'] },
+    { key: 'game', kinds: ['changeGold', 'transparent', 'eraseEvent', 'menuAccess', 'changeSaveAccess', 'changeEncounter', 'controlTimer', 'returnToTitle'] },
     { key: 'audio', kinds: ['playSe', 'playMe', 'playBgm', 'playBgs', 'fadeBgm', 'fadeBgs', 'stopSe', 'memorizeBgm', 'restoreBgm', 'battleBgm'] },
     { key: 'party', kinds: ['creature', 'item'] },
-    { key: 'data', kinds: ['switch', 'variable', 'selfSwitch'] },
+    { key: 'data', kinds: ['switch', 'variable', 'selfSwitch', 'inputNumber', 'buttonInput'] },
     { key: 'other', kinds: ['wait', 'script'] },
   ];
   const cmdName = (kind: CmdFormKind) => t(`me_events_cmd_${kind === 'selfSwitch' ? 'self_switch' : kind}`);
@@ -569,6 +569,7 @@ export const CommandListEditor = ({ list, setList, systemNames, mapEvents, subje
           getMapSnapshot={getMapSnapshot}
           mapWidthTiles={mapWidthTiles}
           mapHeightTiles={mapHeightTiles}
+          currentMapId={currentMapId}
           onEditCommonEvents={onEditCommonEvents}
         />
       )}
@@ -590,6 +591,8 @@ export const CommandListEditor = ({ list, setList, systemNames, mapEvents, subje
               </SmallSelect>
             </Row>
           }
+          mapEvents={mapEvents.map((e) => ({ id: e.id, name: stripNameTags(e.name) }))}
+          currentMap={projectMaps.find((m) => m.id === currentMapId)}
           onApply={(route) => submitMoveRoute({ ...cmdForm, moveRoute: route })}
           onClose={() => setCmdForm(null)}
         />

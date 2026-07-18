@@ -286,11 +286,48 @@ export const decodeMoveCommand = (cmd: RMXPMoveCommand, label: (key: string) => 
       const audio = p[0] as Record<string, unknown> | undefined;
       return `${name}: ${asStr(audio?.['@name'] ?? (audio as unknown as MoveAudio)?.name ?? '')}`;
     }
-    case 'script':
+    case 'script': {
+      // Fork: "Go to tile / event" are find_path(...) script steps — show them
+      // as their friendly command instead of the raw Ruby.
+      const goto = parseGotoScript(asStr(p[0]));
+      if (goto) {
+        if (goto.kind === 'tile') return `${label('goto_tile')}: (${goto.x}, ${goto.y})`;
+        if (goto.kind === 'player') return label('goto_player');
+        return `${label('goto_event')}: [${goto.eventId}]`;
+      }
       return `${name}: ${asStr(p[0])}`;
+    }
     default:
       return name;
   }
+};
+
+/**
+ * Fork: parse a move-route "Go to tile / event" step — a code-45 script move
+ * command whose body is a PSDK `find_path(to: …)` call. Returns null for any
+ * other script (which is shown verbatim).
+ */
+export type GotoTarget =
+  | { kind: 'tile'; x: number; y: number }
+  | { kind: 'player' }
+  | { kind: 'event'; eventId: number };
+const GOTO_TILE_RE = /^find_path\(to:\s*\[\s*(\d+)\s*,\s*(\d+)\s*\]\)$/;
+const GOTO_PLAYER_RE = /^find_path\(to:\s*\$game_player\)$/;
+const GOTO_EVENT_RE = /^find_path\(to:\s*\$game_map\.events\[\s*(\d+)\s*\]\)$/;
+export const parseGotoScript = (script: string): GotoTarget | null => {
+  const s = script.trim();
+  const tile = s.match(GOTO_TILE_RE);
+  if (tile) return { kind: 'tile', x: Number(tile[1]), y: Number(tile[2]) };
+  if (GOTO_PLAYER_RE.test(s)) return { kind: 'player' };
+  const ev = s.match(GOTO_EVENT_RE);
+  if (ev) return { kind: 'event', eventId: Number(ev[1]) };
+  return null;
+};
+/** Build the find_path script body for a Go-to target. */
+export const buildGotoScript = (target: GotoTarget): string => {
+  if (target.kind === 'tile') return `find_path(to: [${target.x}, ${target.y}])`;
+  if (target.kind === 'player') return 'find_path(to: $game_player)';
+  return `find_path(to: $game_map.events[${target.eventId}])`;
 };
 
 // --- event name tags (PSDK engine conventions) -----------------------------------
@@ -351,6 +388,10 @@ export const isChainEditable = (chain: CommandChain): boolean => {
     // Quick scalar/no-param commands.
     code === 208 || code === 116 || code === 125 || code === 354 ||
     code === 203 || code === 225 || code === 221 || code === 222 || code === 135 ||
+    // Weather / fog-opacity / event-location / timer / number & button input /
+    // save & encounter access / exit — all plain scalar params, no rich data.
+    code === 236 || code === 206 || code === 202 || code === 124 || code === 103 ||
+    code === 105 || code === 134 || code === 136 || code === 115 ||
     // Screen/Fog/Picture Color Tone + Screen Flash. Safe only because
     // readRMXPEvents decodes their Tone/Color buffer BY KEY into a plain object
     // and writeRMXPEvents packs an identical buffer back (buildRichColor).
@@ -709,9 +750,14 @@ export const decodeCommand = (
       // command_204 -> @parameters[0] selects what changes; [1] is the name.
       const target = ['Panorama', 'Fog', 'Battleback'][asNum(p[0])] ?? `type ${asNum(p[0])}`;
       const name = asStr(p[1]);
-      // Fog carries opacity at [3]; surface it so the list reads at a glance.
+      // Fog carries opacity at [3], blend at [4], and (fork extension) a static
+      // offset at [8]/[9]. Surface them so the list reads at a glance.
       if (asNum(p[0]) === 1) {
-        return { ...base, text: `Change Fog: ${name ? `"${name}"` : '(none)'}, opacity ${asNum(p[3])}` };
+        const blend = ['', ', add', ', subtract', ', multiply'][asNum(p[4])] ?? '';
+        const ox = asNum(p[8]);
+        const oy = asNum(p[9]);
+        const off = ox || oy ? `, offset (${ox}, ${oy})` : '';
+        return { ...base, text: `Change Fog: ${name ? `"${name}"` : '(none)'}, opacity ${asNum(p[3])}${blend}${off}` };
       }
       return { ...base, text: `Change Map Settings: ${target}${name ? ` "${name}"` : ''}` };
     }
@@ -750,8 +796,14 @@ export const decodeCommand = (
       return { ...base, text: `Change Picture Color Tone: [${asNum(p[0])}] (${toneStr(p[1], 'gray')}) over ${asNum(p[2])} frame(s)` };
     case 235:
       return { ...base, text: `Erase Picture: [${asNum(p[0])}]` };
-    case 236:
-      return { ...base, text: `Set Weather Effects: type ${asNum(p[0])}, power ${asNum(p[1])}` };
+    case 236: {
+      // PSDK visual weather (902 Overworld Weather.rb): 0 None … 5 Fog.
+      const wt = ['None', 'Rain', 'Sun', 'Sandstorm', 'Hail', 'Fog'][asNum(p[0])] ?? `type ${asNum(p[0])}`;
+      return { ...base, text: `Set Weather: ${wt}, power ${asNum(p[1])} over ${asNum(p[2])} frame(s)` };
+    }
+    case 206:
+      // command_206 -> start_fog_opacity_change(opacity, duration * 2).
+      return { ...base, text: `Change Fog Opacity: ${asNum(p[0])} over ${asNum(p[1])} frame(s)` };
     case 241:
       return { ...base, text: `Play BGM: "${asStr(audioName(p[0]))}"` };
     case 242:
@@ -776,6 +828,15 @@ export const decodeCommand = (
     case 135:
       // command_135: menu_disabled = (parameters[0] == 0). 0 = disable, 1 = enable.
       return { ...base, text: `Change Menu Access: ${asNum(p[0]) === 0 ? 'Disable' : 'Enable'}` };
+    case 134:
+      return { ...base, text: `Change Save Access: ${asNum(p[0]) === 0 ? 'Disable' : 'Enable'}` };
+    case 136:
+      return { ...base, text: `Change Encounter: ${asNum(p[0]) === 0 ? 'Disable' : 'Enable'}` };
+    case 124:
+      // command_124: [0 start (seconds), 1 stop].
+      return { ...base, text: asNum(p[0]) === 0 ? `Control Timer: Start ${asNum(p[1])}s` : 'Control Timer: Stop' };
+    case 105:
+      return { ...base, text: `Button Input Processing: variable [${asNum(p[0])}]` };
     case 303:
       // command_303 -> name input for $data_actors[@parameters[0]].
       return { ...base, text: `Name Input Processing: Actor [${asNum(p[0])}], ${asNum(p[1])} character(s)` };

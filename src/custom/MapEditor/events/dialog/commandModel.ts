@@ -21,7 +21,9 @@ export type CmdFormKind =
   | 'tintScreen' | 'fogTone' | 'pictureTone' | 'screenFlash'
   | 'transparent' | 'eraseEvent' | 'changeGold' | 'returnToTitle'
   | 'scrollMap' | 'screenShake' | 'prepareTransition' | 'executeTransition' | 'menuAccess'
-  | 'changeFog';
+  | 'changeFog' | 'changeFogOpacity' | 'weather'
+  | 'exitEvent' | 'setEventLocation' | 'controlTimer' | 'inputNumber' | 'buttonInput'
+  | 'changeSaveAccess' | 'changeEncounter';
 
 /** Audio-playing kinds → their RMXP code and the Audio/ folder to browse. */
 export const AUDIO_KINDS: Record<string, { code: number; folder: string }> = {
@@ -134,6 +136,31 @@ export type CmdForm = {
    */
   fogOx: number;
   fogOy: number;
+  /** Change Fog Opacity (206): target opacity + fade duration (frames). */
+  fogOpacityDuration: number;
+  /**
+   * Set Weather (236) → $game_screen.weather(type, power, duration). PSDK's
+   * visual types differ from vanilla RMXP: 0 None, 1 Rain, 2 Sun, 3 Sandstorm,
+   * 4 Hail, 5 Fog (see `902 Overworld Weather.rb`).
+   */
+  weatherType: number;
+  weatherPower: number;
+  weatherDuration: number;
+  /**
+   * Set Event Location (202): [target, appoint, x, y, direction]. target follows
+   * get_character — -1 Player, 0 This event, >0 event id. appoint 0 = direct
+   * (x,y), 1 = via variables (x,y are variable ids), 2 = swap with event x.
+   */
+  locTarget: number;
+  locAppoint: number;
+  locX: number;
+  locY: number;
+  locDirection: number; // 0 retain, else 2/4/6/8
+  /** Control Timer (124): op 0 = start (seconds), 1 = stop. */
+  timerOp: number;
+  timerSeconds: number;
+  /** Input Number (103): digit count (the variable id reuses `id`). */
+  numDigits: number;
   // Audio (Play BGM/BGS/ME/SE, Change Battle BGM)
   audioName: string;
   audioVolume: number;
@@ -200,7 +227,9 @@ const FORM_KIND_BY_CODE: Record<number, CmdFormKind> = {
   203: 'scrollMap', 225: 'screenShake', 221: 'prepareTransition', 222: 'executeTransition', 135: 'menuAccess',
   // 204 also drives Panorama/Battleback; formFromChain returns null for those
   // (target != 1) so only the Fog variant opens this editable form.
-  204: 'changeFog',
+  204: 'changeFog', 206: 'changeFogOpacity', 236: 'weather',
+  115: 'exitEvent', 202: 'setEventLocation', 124: 'controlTimer', 103: 'inputNumber', 105: 'buttonInput',
+  134: 'changeSaveAccess', 136: 'changeEncounter',
   241: 'playBgm', 245: 'playBgs', 249: 'playMe', 250: 'playSe', 132: 'battleBgm',
   242: 'fadeBgm', 246: 'fadeBgs', 251: 'stopSe', 247: 'memorizeBgm', 248: 'restoreBgm',
   // NOT 102/111: those edit their whole BLOCK, not a single chain, so they go
@@ -229,6 +258,12 @@ export const emptyForm = (kind: CmdFormKind, mode: 'insert' | 'edit'): CmdForm =
   toneRed: 0, toneGreen: 0, toneBlue: 0, toneGray: 0, toneDuration: 20,
   // RMXP's Change Fog defaults: opacity 64, normal blend, 200% zoom, no scroll.
   fogName: '__undef__', fogHue: 0, fogOpacity: 64, fogBlend: 0, fogZoom: 200, fogSx: 0, fogSy: 0, fogOx: 0, fogOy: 0,
+  fogOpacityDuration: 20,
+  // Weather defaults: rain, medium power, a 20-frame fade-in.
+  weatherType: 1, weatherPower: 5, weatherDuration: 20,
+  locTarget: 0, locAppoint: 0, locX: 0, locY: 0, locDirection: 0,
+  timerOp: 0, timerSeconds: 0,
+  numDigits: 4,
   // RMXP's audio defaults: full volume, normal pitch.
   audioName: '__undef__', audioVolume: 100, audioPitch: 100,
   // A FORCED route: @repeat off, or a following 210 waits forever. See createForcedMoveRoute.
@@ -321,6 +356,8 @@ export const buildCommandsFromForm = (form: CmdForm, indent: number): WorkingCom
     case 'eraseEvent':
       return [{ code: 116, indent, parameters: [] }];
     case 'changeGold':
+      // op 2 = "Set to value" — no RMXP command for it, so emit a script.
+      if (form.goldOp === 2) return buildTextChain(355, buildMoneyScript(form), indent);
       // command_125: operate_value(operation, operandType, operand).
       return [{ code: 125, indent, parameters: [form.goldOp, form.goldByVariable ? 1 : 0, form.goldValue] }];
     case 'returnToTitle':
@@ -351,6 +388,33 @@ export const buildCommandsFromForm = (form: CmdForm, indent: number): WorkingCom
       if (form.fogOx !== 0 || form.fogOy !== 0) fogParams.push(form.fogOx, form.fogOy);
       return [{ code: 204, indent, parameters: fogParams }];
     }
+    case 'changeFogOpacity':
+      // command_206: start_fog_opacity_change(opacity, duration * 2).
+      return [{ code: 206, indent, parameters: [clamp(form.fogOpacity, 0, 255), Math.max(0, form.fogOpacityDuration)] }];
+    case 'weather':
+      // command_236: $game_screen.weather(type, power, duration).
+      return [{ code: 236, indent, parameters: [form.weatherType, Math.max(0, form.weatherPower), Math.max(0, form.weatherDuration)] }];
+    case 'exitEvent':
+      // command_115: command_end — stop this event's interpreter.
+      return [{ code: 115, indent, parameters: [] }];
+    case 'setEventLocation':
+      // command_202: [target, appoint, x, y, direction].
+      return [{ code: 202, indent, parameters: [form.locTarget, form.locAppoint, form.locX, form.locY, form.locDirection] }];
+    case 'controlTimer':
+      // command_124: start = [0, seconds]; stop = [1, 0].
+      return [{ code: 124, indent, parameters: form.timerOp === 0 ? [0, Math.max(0, form.timerSeconds)] : [1, 0] }];
+    case 'inputNumber':
+      // command_103: [variable_id, digits].
+      return [{ code: 103, indent, parameters: [form.id, clamp(form.numDigits, 1, 9)] }];
+    case 'buttonInput':
+      // command_105: [variable_id].
+      return [{ code: 105, indent, parameters: [form.id] }];
+    case 'changeSaveAccess':
+      // command_134: save_disabled = (parameters[0] == 0). 0 = disable, 1 = enable.
+      return [{ code: 134, indent, parameters: [form.state] }];
+    case 'changeEncounter':
+      // command_136: encounter_disabled = (parameters[0] == 0). 0 = disable, 1 = enable.
+      return [{ code: 136, indent, parameters: [form.state] }];
     case 'moveRoute':
       return buildMoveRouteChain(form, indent);
     case 'waitMove':
@@ -688,6 +752,21 @@ const CREATURE_SPECIFIC_RE = /^add_specific_pokemon\(\{([\s\S]*)\}\)$/;
 /** Inverse of `rubyStr` for the single-quoted literals we emit. */
 const unRubyStr = (s: string): string => s.replace(/\\'/g, "'").replace(/\\\\/g, '\\');
 
+// Change Money → "Set" has no RMXP command (125 only gains/loses), so it's a
+// script call to PSDK's money setter. Constant or a variable's value.
+const buildMoneyScript = (form: CmdForm): string =>
+  `$pokemon_party.money = ${form.goldByVariable ? `$game_variables[${form.goldValue}]` : Math.max(0, form.goldValue)}`;
+const MONEY_SET_RE = /^\$pokemon_party\.money\s*=\s*(?:\$game_variables\[(\d+)\]|(\d+))$/;
+const moneyFormFromScript = (script: string): CmdForm | null => {
+  const m = script.match(MONEY_SET_RE);
+  if (!m) return null;
+  const form = emptyForm('changeGold', 'edit');
+  form.goldOp = 2; // Set
+  form.goldByVariable = m[1] !== undefined;
+  form.goldValue = Number(m[1] ?? m[2]);
+  return form;
+};
+
 const itemFormFromScript = (script: string): CmdForm | null => {
   const add = script.match(ITEM_ADD_RE);
   if (add) {
@@ -774,7 +853,7 @@ const creatureFormFromScript = (script: string): CmdForm | null => {
 /** A script command that's really an Add Item / Add Creature, or null. */
 const structuredScriptForm = (script: string): CmdForm | null => {
   const trimmed = script.trim();
-  return itemFormFromScript(trimmed) ?? creatureFormFromScript(trimmed) ?? waitFormFromScript(trimmed);
+  return itemFormFromScript(trimmed) ?? creatureFormFromScript(trimmed) ?? waitFormFromScript(trimmed) ?? moneyFormFromScript(trimmed);
 };
 
 export const formFromChain = (chain: { entries: WorkingCommand[] }, isCsvFile?: IsCsvFile): CmdForm | null => {
@@ -899,6 +978,29 @@ export const formFromChain = (chain: { entries: WorkingCommand[] }, isCsvFile?: 
     form.fogSy = num(p[7], 0);
     form.fogOx = num(p[8], 0);
     form.fogOy = num(p[9], 0);
+  } else if (kind === 'changeFogOpacity') {
+    form.fogOpacity = Number.isFinite(Number(p[0])) ? Number(p[0]) : 64;
+    form.fogOpacityDuration = Number.isFinite(Number(p[1])) ? Number(p[1]) : 20;
+  } else if (kind === 'weather') {
+    form.weatherType = Number(p[0]) || 0;
+    form.weatherPower = Number(p[1]) || 0;
+    form.weatherDuration = Number(p[2]) || 0;
+  } else if (kind === 'setEventLocation') {
+    form.locTarget = Number(p[0]) || 0;
+    form.locAppoint = Number(p[1]) || 0;
+    form.locX = Number(p[2]) || 0;
+    form.locY = Number(p[3]) || 0;
+    form.locDirection = Number(p[4]) || 0;
+  } else if (kind === 'controlTimer') {
+    form.timerOp = Number(p[0]) || 0;
+    form.timerSeconds = Number(p[1]) || 0;
+  } else if (kind === 'inputNumber') {
+    form.id = Number(p[0]) || 1;
+    form.numDigits = Number(p[1]) || 4;
+  } else if (kind === 'buttonInput') {
+    form.id = Number(p[0]) || 1;
+  } else if (kind === 'changeSaveAccess' || kind === 'changeEncounter') {
+    form.state = Number(p[0]) || 0;
   } else if (kind === 'executeTransition') {
     form.text = String(p[0] ?? '');
   } else if (isAudioKind(kind)) {

@@ -16,6 +16,7 @@ import { MapTilePicker } from './MapTilePicker';
 import { PicturePicker } from './PicturePicker';
 import { TonePreview } from './TonePreview';
 import { ShakePreview } from './ShakePreview';
+import { WeatherPreview } from './WeatherPreview';
 
 /**
  * Wrapper that keeps an @ds/Select popover fully visible inside the command form.
@@ -116,6 +117,8 @@ type Props = {
   /** Map size in tiles — frames the shake command's in-game preview. */
   mapWidthTiles?: number;
   mapHeightTiles?: number;
+  /** Id of the current map — used to pick a tile for Set Event Location. */
+  currentMapId?: number;
   /** When set, the Call Common Event form shows an "Edit common events" button. */
   onEditCommonEvents?: () => void;
 };
@@ -126,11 +129,13 @@ type Props = {
  * `setForm` and commits through `onSubmit` — the dialog shell owns where the
  * resulting command lands in the list.
  */
-export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, audioFiles, projectMaps, commonEvents, pictureFiles, mapEvents, resolveCsv, pageLabels, getMapSnapshot, mapWidthTiles, mapHeightTiles, onEditCommonEvents }: Props) => {
+export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, audioFiles, projectMaps, commonEvents, pictureFiles, mapEvents, resolveCsv, pageLabels, getMapSnapshot, mapWidthTiles, mapHeightTiles, currentMapId, onEditCommonEvents }: Props) => {
   const { t } = useTranslation();
   const [{ projectText, projectPath }] = useGlobalState();
   const [showTranslations, setShowTranslations] = useState(false);
   const [tilePickerOpen, setTilePickerOpen] = useState(false);
+  const [locPickerOpen, setLocPickerOpen] = useState(false);
+  const currentMap = projectMaps.find((m) => m.id === currentMapId);
   // Capture the map once when the form opens — it doesn't change while the
   // dialog is up, and the tone preview re-tints this same snapshot live.
   const [mapSnapshot] = useState<string | null>(() => getMapSnapshot?.() ?? null);
@@ -355,6 +360,7 @@ export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, au
           <SmallSelect value={form.goldOp} onChange={(e) => setForm({ ...form, goldOp: Number(e.target.value) })}>
             <option value={0}>{t('me_events_gold_increase')}</option>
             <option value={1}>{t('me_events_gold_decrease')}</option>
+            <option value={2}>{t('me_events_gold_set')}</option>
           </SmallSelect>
           <SmallSelect value={form.goldByVariable ? 1 : 0} onChange={(e) => setForm({ ...form, goldByVariable: e.target.value === '1' })}>
             <option value={0}>{t('me_events_cond_constant')}</option>
@@ -407,6 +413,146 @@ export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, au
             mapWidthTiles={mapWidthTiles}
             mapHeightTiles={mapHeightTiles}
           />
+        </Row>
+      )}
+      {form.kind === 'weather' && (
+        <>
+          <Row>
+            <Dim style={{ minWidth: 52 }}>{t('me_events_weather_type')}</Dim>
+            <SmallSelect value={form.weatherType} onChange={(e) => setForm({ ...form, weatherType: Number(e.target.value) })}>
+              <option value={0}>{t('me_events_weather_none')}</option>
+              <option value={1}>{t('me_events_weather_rain')}</option>
+              <option value={2}>{t('me_events_weather_sun')}</option>
+              <option value={3}>{t('me_events_weather_sandstorm')}</option>
+              <option value={4}>{t('me_events_weather_hail')}</option>
+              <option value={5}>{t('me_events_weather_fog')}</option>
+            </SmallSelect>
+            <Dim>{t('me_events_weather_power')}</Dim>
+            <SmallInput type="number" min={0} value={form.weatherPower} onChange={(e) => setForm({ ...form, weatherPower: Math.max(0, Number(e.target.value) || 0) })} />
+            <Dim>{t('me_events_weather_duration')}</Dim>
+            <SmallInput type="number" min={0} value={form.weatherDuration} onChange={(e) => setForm({ ...form, weatherDuration: Math.max(0, Number(e.target.value) || 0) })} />
+            <Dim>{t('me_events_pic_frames')}</Dim>
+          </Row>
+          <Row style={{ alignItems: 'flex-start' }}>
+            <Dim style={{ minWidth: 52, paddingTop: 4 }}>{t('me_events_weather_preview')}</Dim>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <WeatherPreview snapshotUrl={mapSnapshot} type={form.weatherType} power={form.weatherPower} />
+            </div>
+          </Row>
+        </>
+      )}
+      {form.kind === 'changeFogOpacity' && (
+        <Row>
+          <Dim>{t('me_events_fog_opacity')}</Dim>
+          <input type="range" min={0} max={255} value={form.fogOpacity} style={{ flex: 1, minWidth: 0 }} onChange={(e) => setForm({ ...form, fogOpacity: Number(e.target.value) })} />
+          <SmallInput type="number" min={0} max={255} value={form.fogOpacity} onChange={(e) => setForm({ ...form, fogOpacity: clamp(Number(e.target.value) || 0, 0, 255) })} />
+          <Dim>{t('me_events_tone_duration')}</Dim>
+          <SmallInput type="number" min={0} value={form.fogOpacityDuration} onChange={(e) => setForm({ ...form, fogOpacityDuration: Math.max(0, Number(e.target.value) || 0) })} />
+          <Dim>{t('me_events_pic_frames')}</Dim>
+        </Row>
+      )}
+      {(form.kind === 'changeSaveAccess' || form.kind === 'changeEncounter') && (
+        <Row>
+          <Dim>{form.kind === 'changeSaveAccess' ? t('me_events_save_access') : t('me_events_encounter')}</Dim>
+          <SmallSelect value={form.state} onChange={(e) => setForm({ ...form, state: Number(e.target.value) })}>
+            <option value={0}>{t('me_events_disable')}</option>
+            <option value={1}>{t('me_events_enable')}</option>
+          </SmallSelect>
+        </Row>
+      )}
+      {form.kind === 'controlTimer' && (
+        <Row>
+          <SmallSelect value={form.timerOp} onChange={(e) => setForm({ ...form, timerOp: Number(e.target.value) })}>
+            <option value={0}>{t('me_events_timer_start')}</option>
+            <option value={1}>{t('me_events_timer_stop')}</option>
+          </SmallSelect>
+          {form.timerOp === 0 && (
+            <>
+              <SmallInput type="number" min={0} value={form.timerSeconds} onChange={(e) => setForm({ ...form, timerSeconds: Math.max(0, Number(e.target.value) || 0) })} />
+              <Dim>{t('me_events_timer_seconds')}</Dim>
+            </>
+          )}
+        </Row>
+      )}
+      {form.kind === 'inputNumber' && (
+        <Row>
+          <Dim>{t('me_events_variable')}</Dim>
+          <NamePicker names={systemNames.variables} value={form.id} onChange={(v) => setForm({ ...form, id: v })} />
+          <Dim>{t('me_events_num_digits')}</Dim>
+          <SmallInput type="number" min={1} max={9} value={form.numDigits} onChange={(e) => setForm({ ...form, numDigits: clamp(Number(e.target.value) || 1, 1, 9) })} />
+        </Row>
+      )}
+      {form.kind === 'buttonInput' && (
+        <Row>
+          <Dim>{t('me_events_button_variable')}</Dim>
+          <NamePicker names={systemNames.variables} value={form.id} onChange={(v) => setForm({ ...form, id: v })} />
+        </Row>
+      )}
+      {form.kind === 'setEventLocation' && (
+        <>
+          <Row>
+            <Dim>{t('me_events_move_target')}</Dim>
+            <SmallSelect value={form.locTarget} onChange={(e) => setForm({ ...form, locTarget: Number(e.target.value) })}>
+              <option value={-1}>{t('me_events_move_target_player')}</option>
+              <option value={0}>{t('me_events_move_target_this')}</option>
+              {mapEvents.map((e) => (
+                <option key={e.id} value={e.id}>{`[${e.id}] ${e.name}`}</option>
+              ))}
+            </SmallSelect>
+            <Dim>{t('me_events_loc_appoint')}</Dim>
+            <SmallSelect value={form.locAppoint} onChange={(e) => setForm({ ...form, locAppoint: Number(e.target.value) })}>
+              <option value={0}>{t('me_events_loc_direct')}</option>
+              <option value={1}>{t('me_events_loc_variables')}</option>
+              <option value={2}>{t('me_events_loc_exchange')}</option>
+            </SmallSelect>
+          </Row>
+          <Row>
+            {form.locAppoint === 2 ? (
+              <>
+                <Dim>{t('me_events_loc_swap_with')}</Dim>
+                <SmallSelect value={form.locX} onChange={(e) => setForm({ ...form, locX: Number(e.target.value) })}>
+                  <option value={0}>{t('me_events_move_target_this')}</option>
+                  {mapEvents.map((e) => (
+                    <option key={e.id} value={e.id}>{`[${e.id}] ${e.name}`}</option>
+                  ))}
+                </SmallSelect>
+              </>
+            ) : form.locAppoint === 1 ? (
+              <>
+                <Dim>X</Dim>
+                <NamePicker names={systemNames.variables} value={form.locX} onChange={(v) => setForm({ ...form, locX: v })} />
+                <Dim>Y</Dim>
+                <NamePicker names={systemNames.variables} value={form.locY} onChange={(v) => setForm({ ...form, locY: v })} />
+              </>
+            ) : (
+              <>
+                <Dim>X</Dim>
+                <SmallInput type="number" min={0} value={form.locX} onChange={(e) => setForm({ ...form, locX: Math.max(0, Number(e.target.value) || 0) })} />
+                <Dim>Y</Dim>
+                <SmallInput type="number" min={0} value={form.locY} onChange={(e) => setForm({ ...form, locY: Math.max(0, Number(e.target.value) || 0) })} />
+                <OpBtn
+                  onClick={() => currentMap && setLocPickerOpen(true)}
+                  disabled={!currentMap}
+                  title={currentMap ? t('me_events_transfer_pick_hint') : t('me_events_transfer_pick_needs_map')}
+                >
+                  {t('me_events_transfer_pick')}
+                </OpBtn>
+              </>
+            )}
+            <Dim>{t('me_events_loc_direction')}</Dim>
+            <SmallSelect value={form.locDirection} onChange={(e) => setForm({ ...form, locDirection: Number(e.target.value) })}>
+              <option value={0}>{t('me_events_dir_retain')}</option>
+              <option value={8}>{t('me_events_dir_up')}</option>
+              <option value={2}>{t('me_events_dir_down')}</option>
+              <option value={4}>{t('me_events_dir_left')}</option>
+              <option value={6}>{t('me_events_dir_right')}</option>
+            </SmallSelect>
+          </Row>
+        </>
+      )}
+      {form.kind === 'exitEvent' && (
+        <Row>
+          <Dim>{t('me_events_hint_exitEvent')}</Dim>
         </Row>
       )}
       {(form.kind === 'tintScreen' || form.kind === 'fogTone' || form.kind === 'pictureTone' || form.kind === 'screenFlash') && (() => {
@@ -873,6 +1019,19 @@ export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, au
             setTilePickerOpen(false);
           }}
           onClose={() => setTilePickerOpen(false)}
+        />
+      )}
+      {locPickerOpen && currentMap && (
+        <MapTilePicker
+          tiledFilename={currentMap.tiledFilename}
+          mapName={`[${currentMap.id}] ${currentMap.name}`}
+          x={form.locX}
+          y={form.locY}
+          onConfirm={(locX, locY) => {
+            setForm({ ...form, locX, locY });
+            setLocPickerOpen(false);
+          }}
+          onClose={() => setLocPickerOpen(false)}
         />
       )}
     </FormArea>

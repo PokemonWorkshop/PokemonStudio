@@ -6,11 +6,14 @@ import {
   decodeMoveCommand,
   MOVE_COMMANDS,
   MOVE_COMMAND_BY_CODE,
+  buildGotoScript,
+  type GotoTarget,
   type MoveCmdKind,
   type MoveCommandSpec,
   type RMXPMoveRoute,
   type WorkingMoveCommand,
 } from '../rmxpEventUtils';
+import { MapTilePicker } from './MapTilePicker';
 import { BlockTitle, CheckLabel, Dim, FooterBtn, OpBtn, Row, Scrim, SmallInput, SmallSelect } from './styles';
 import { AudioPicker, type AudioFile } from './AudioPicker';
 import { NamePicker } from './fields';
@@ -234,11 +237,15 @@ type Props = {
   audioFiles: AudioFile[];
   /** Rendered above the route list — the Set Move Route target picker. */
   targetPicker?: React.ReactNode;
+  /** Fork: events on the current map — enables the "Go to event" step. */
+  mapEvents?: { id: number; name: string }[];
+  /** Fork: the current map — enables the "Go to tile" step (needs its .tmx). */
+  currentMap?: { id: number; name: string; tiledFilename: string };
   onApply: (route: RMXPMoveRoute) => void;
   onClose: () => void;
 };
 
-export const MoveRouteDialog = ({ route, subject, systemNames, audioFiles, targetPicker, onApply, onClose }: Props) => {
+export const MoveRouteDialog = ({ route, subject, systemNames, audioFiles, targetPicker, mapEvents, currentMap, onApply, onClose }: Props) => {
   const { t } = useTranslation();
   const [draft, setDraft] = useState<RMXPMoveRoute>(() => ({ ...route, list: [...route.list] }));
   const [sel, setSel] = useState<number | null>(null);
@@ -269,6 +276,16 @@ export const MoveRouteDialog = ({ route, subject, systemNames, audioFiles, targe
   const onPaletteClick = (spec: MoveCommandSpec) => {
     if (NEEDS_FORM.has(spec.kind)) return setPending(emptyPending(spec));
     append(spec, []);
+  };
+
+  // Fork: "Go to tile / event" are stored as a script (code 45) move step
+  // calling PSDK's find_path. Their own buttons rather than palette entries.
+  const [gotoTileOpen, setGotoTileOpen] = useState(false);
+  const [gotoEventId, setGotoEventId] = useState<number>(-1); // -1 = player
+  const [gotoEventOpen, setGotoEventOpen] = useState(false);
+  const scriptSpec = MOVE_COMMAND_BY_CODE.get(45);
+  const appendGoto = (target: GotoTarget) => {
+    if (scriptSpec) append(scriptSpec, [buildGotoScript(target)]);
   };
 
   const removeSelected = () => {
@@ -440,6 +457,30 @@ export const MoveRouteDialog = ({ route, subject, systemNames, audioFiles, targe
                 </Row>
               </ParamForm>
             ) : null}
+            {(currentMap || mapEvents) && (
+              <Row>
+                {currentMap && <OpBtn onClick={() => setGotoTileOpen(true)}>{t('me_move_goto_tile')}…</OpBtn>}
+                {mapEvents && <OpBtn onClick={() => { setGotoEventId(-1); setGotoEventOpen(true); }}>{t('me_move_goto_event')}…</OpBtn>}
+              </Row>
+            )}
+            {gotoEventOpen && (
+              <ParamForm>
+                <BlockTitle style={{ margin: 0 }}>{t('me_move_goto_event')}</BlockTitle>
+                <Row>
+                  <Dim>{t('me_events_move_target')}</Dim>
+                  <SmallSelect style={{ flex: 1 }} value={gotoEventId} onChange={(e) => setGotoEventId(Number(e.target.value))}>
+                    <option value={-1}>{t('me_events_move_target_player')}</option>
+                    {mapEvents?.map((ev) => (
+                      <option key={ev.id} value={ev.id}>{`[${ev.id}] ${ev.name}`}</option>
+                    ))}
+                  </SmallSelect>
+                </Row>
+                <Row>
+                  <OpBtn onClick={() => { appendGoto(gotoEventId === -1 ? { kind: 'player' } : { kind: 'event', eventId: gotoEventId }); setGotoEventOpen(false); }}>{t('me_events_ok')}</OpBtn>
+                  <OpBtn onClick={() => setGotoEventOpen(false)}>{t('me_events_cancel')}</OpBtn>
+                </Row>
+              </ParamForm>
+            )}
             <Palette>
               {columns.map((column, i) => (
                 <PaletteColumn key={i}>
@@ -461,6 +502,16 @@ export const MoveRouteDialog = ({ route, subject, systemNames, audioFiles, targe
           <FooterBtn onClick={onClose}>{t('me_events_cancel')}</FooterBtn>
         </Footer>
       </Dialog>
+      {gotoTileOpen && currentMap && (
+        <MapTilePicker
+          tiledFilename={currentMap.tiledFilename}
+          mapName={`[${currentMap.id}] ${currentMap.name}`}
+          x={0}
+          y={0}
+          onConfirm={(x, y) => { appendGoto({ kind: 'tile', x, y }); setGotoTileOpen(false); }}
+          onClose={() => setGotoTileOpen(false)}
+        />
+      )}
     </Scrim>
   );
 };

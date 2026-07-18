@@ -562,6 +562,7 @@ export const EventDialog = ({ event, mapEvents, onSave, onDelete, onClose, getMa
             subject={stripNameTags(draft.name)}
             systemNames={systemNames}
             audioFiles={audioFiles}
+            mapEvents={mapEvents.map((e) => ({ id: e.id, name: stripNameTags(e.name) }))}
             onApply={(route) => {
               patchPage({ moveRoute: route });
               setMoveRouteOpen(false);
