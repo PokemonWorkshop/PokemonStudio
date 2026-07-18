@@ -1541,6 +1541,8 @@
   "quest_import_info": "You can create this new quest by importing data from another existing quest.",
   "item_import_info": "You can create this new item by importing data from another existing item.",
   "trainer_import_info": "You can create this new trainer by importing data from another existing trainer.",
+  "preserve_text_data": "Copy texts",
+  "preserve_text_data_info": "Also copies the text and translations from the reference entity.",
   "hidden_default": "Hidden by default",
   "placeholder_select": "Select option",
   "placeholder_select_all": "Select all",
