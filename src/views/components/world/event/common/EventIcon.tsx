@@ -32,7 +32,8 @@ export type EventIconColor =
   | 'cyanDark'
   | 'celadonDark'
   | 'peridotDark'
-  | 'oliveDark';
+  | 'oliveDark'
+  | 'emeraldDark';
 type EventIconContainerProps = {
   color: EventIconColor;
   size?: 's' | 'm';
@@ -106,7 +107,7 @@ export const IconsFromCommand: Record<StudioEventCommandType, EventIconData> = {
   stop_event_execution: { icon: <FlowControlIcon />, color: 'magentaDark' },
   call_event: { icon: <FlowControlIcon />, color: 'magentaDark' },
   trigger_event: { icon: <FlowControlIcon />, color: 'magentaDark' },
-  start: { icon: <StartIcon />, color: 'celadonDark' }, // TODO: change color
+  start: { icon: <StartIcon />, color: 'emeraldDark' },
   change_event_parameters: { icon: <MovementIcon />, color: 'amethystDark' },
   move_event: { icon: <MovementIcon />, color: 'amethystDark' },
   teleport_event: { icon: <MovementIcon />, color: 'amethystDark' },

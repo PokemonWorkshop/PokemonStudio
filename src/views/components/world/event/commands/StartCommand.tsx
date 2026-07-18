@@ -26,7 +26,9 @@ const PriorityStartCommand = ({ priority, nodeId, dialogsRef }: PriorityStartCom
 
   return (
     <div className="comments nodrag" onClick={onClickPriority} onDoubleClick={(e) => e.stopPropagation()}>
-      <PriorityIcon className="icon" />
+      <div className="icon-container">
+        <PriorityIcon className="icon" />
+      </div>
       <span className="count">#{priority}</span>
     </div>
   );
@@ -56,6 +58,7 @@ export const StartCommand = ({ id, data: { dialogsRef, command, comments }, sele
     <CommandNode
       commandType={commandType}
       commentCount={comments.length}
+      dialogsRef={dialogsRef}
       nodeId={id}
       selected={selected}
       defaultHandles={{ left: false, right: true }}

@@ -167,6 +167,8 @@ export const SelectContainer = styled.div`
 
 export const NodeSelectContainer = styled(SelectContainer)`
   & svg {
+    top: calc((100% - 16px) / 2);
+
     &.disabled {
       color: #4f525b;
     }
@@ -175,6 +177,7 @@ export const NodeSelectContainer = styled(SelectContainer)`
   & input {
     background-color: #202225;
     border: 1px solid #383a40;
+    height: 30px;
 
     &:disabled {
       cursor: not-allowed;

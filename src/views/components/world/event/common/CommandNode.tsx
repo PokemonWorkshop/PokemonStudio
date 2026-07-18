@@ -123,6 +123,14 @@ const CommandNodeContainer = styled.div<{ color: EventIconColor }>`
           cursor: pointer;
         }
 
+        .icon-container {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 16px;
+          height: 16px;
+        }
+
         .icon {
           color: #6c707b;
         }
