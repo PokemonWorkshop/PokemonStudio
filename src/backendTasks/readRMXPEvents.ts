@@ -215,7 +215,7 @@ const isMoveRouteObject = (object: unknown): object is MoveRouteData =>
   Array.isArray(object['@list']) &&
   object['@list'].reduce<boolean>((prev, moveCommand) => prev && isMoveCommandObject(moveCommand), true);
 
-const isEventCommandObject = (object: unknown): object is EventCommandData =>
+export const isEventCommandObject = (object: unknown): object is EventCommandData =>
   isMarshalStandardObject(object) &&
   '@code' in object &&
   '@indent' in object &&
@@ -449,7 +449,9 @@ const buildEventParameters = (code: number, parameters: unknown[]): unknown[] =>
   return buildParameters(parameters);
 };
 
-const buildEventCommandList = (eventCommands: EventCommandData[]): RMXPEventCommand[] =>
+/** Decode a raw `@list` of RPG::EventCommand into the renderer shape (IPC-safe,
+ *  rich params keyed). Shared with the common-event reader. */
+export const buildEventCommandList = (eventCommands: EventCommandData[]): RMXPEventCommand[] =>
   eventCommands.map((eventCommand) => ({
     code: eventCommand['@code'],
     indent: eventCommand['@indent'],

@@ -1,0 +1,13 @@
+diff --git a/node_modules/ts-marshal/dist/dump/r_helpers.js b/node_modules/ts-marshal/dist/dump/r_helpers.js
+index 52da86e..5887d02 100644
+--- a/node_modules/ts-marshal/dist/dump/r_helpers.js
++++ b/node_modules/ts-marshal/dist/dump/r_helpers.js
+@@ -56,7 +56,7 @@ var w_long = function (context, long) {
+             break;
+         }
+         if (x == -1) {
+-            buff.writeUInt8(-i, 0);
++            buff.writeUInt8((256 - i) & 0xff, 0);
+             break;
+         }
+     }

@@ -87,14 +87,25 @@ type Props = {
   height?: number;
   /** Zoom/pan resets to 1×/centered whenever this changes. */
   resetKey?: unknown;
+  /**
+   * When set, a plain left-drag is delegated to the content (deltas in
+   * un-zoomed CSS px) instead of panning — e.g. dragging the fog to set its
+   * offset. Panning then moves to Shift+left-drag or middle-mouse-drag.
+   */
+  onDrag?: (dxCss: number, dyCss: number) => void;
   children: React.ReactNode;
 };
 
-export const ZoomPan: React.FC<Props> = ({ height = 300, resetKey, children }) => {
+type DragState = { mode: 'pan' | 'content'; x: number; y: number; px: number; py: number };
+
+export const ZoomPan: React.FC<Props> = ({ height = 300, resetKey, onDrag, children }) => {
   const [zoom, setZoom] = React.useState(1);
   const [pan, setPan] = React.useState({ x: 0, y: 0 });
-  const drag = React.useRef<{ x: number; y: number; px: number; py: number } | null>(null);
+  const drag = React.useRef<DragState | null>(null);
   const [panning, setPanning] = React.useState(false);
+  // Keep the latest onDrag without re-binding handlers.
+  const onDragRef = React.useRef(onDrag);
+  onDragRef.current = onDrag;
 
   React.useEffect(() => {
     setZoom(1);
@@ -116,14 +127,42 @@ export const ZoomPan: React.FC<Props> = ({ height = 300, resetKey, children }) =
   };
 
   const onPointerDown = (e: React.PointerEvent) => {
-    if (zoom <= 1) return;
-    drag.current = { x: e.clientX, y: e.clientY, px: pan.x, py: pan.y };
-    setPanning(true);
-    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+    // Pan is Shift+left-drag or middle-mouse-drag (only meaningful zoomed in).
+    const wantPan = e.button === 1 || (e.button === 0 && e.shiftKey);
+    if (wantPan) {
+      if (zoom <= 1) return;
+      e.preventDefault();
+      drag.current = { mode: 'pan', x: e.clientX, y: e.clientY, px: pan.x, py: pan.y };
+      setPanning(true);
+      (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+      return;
+    }
+    if (onDragRef.current && e.button === 0) {
+      // Plain left-drag → delegate to the content (e.g. fog offset).
+      drag.current = { mode: 'content', x: e.clientX, y: e.clientY, px: 0, py: 0 };
+      (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+      return;
+    }
+    // Legacy: with no content-drag handler, a plain left-drag pans.
+    if (!onDragRef.current && e.button === 0 && zoom > 1) {
+      drag.current = { mode: 'pan', x: e.clientX, y: e.clientY, px: pan.x, py: pan.y };
+      setPanning(true);
+      (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+    }
   };
   const onPointerMove = (e: React.PointerEvent) => {
-    if (!drag.current) return;
-    setPan({ x: drag.current.px + (e.clientX - drag.current.x), y: drag.current.py + (e.clientY - drag.current.y) });
+    const d = drag.current;
+    if (!d) return;
+    if (d.mode === 'pan') {
+      setPan({ x: d.px + (e.clientX - d.x), y: d.py + (e.clientY - d.y) });
+    } else {
+      // Content drag: report the incremental delta in un-zoomed CSS px.
+      const dx = e.clientX - d.x;
+      const dy = e.clientY - d.y;
+      d.x = e.clientX;
+      d.y = e.clientY;
+      onDragRef.current?.(dx / zoom, dy / zoom);
+    }
   };
   const onPointerUp = () => {
     drag.current = null;
@@ -133,14 +172,14 @@ export const ZoomPan: React.FC<Props> = ({ height = 300, resetKey, children }) =
   return (
     <Wrap>
       <Viewport
-        style={{ height }}
+        style={{ height, cursor: onDrag ? (panning ? 'grabbing' : 'move') : undefined }}
         $panning={panning}
         onWheel={onWheel}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
         onPointerLeave={onPointerUp}
-        title="Ctrl+scroll to zoom · drag to pan"
+        title={onDrag ? 'Drag to move · Shift-drag or middle-drag to pan · Ctrl+scroll to zoom' : 'Ctrl+scroll to zoom · drag to pan'}
       >
         <Content $z={zoom} $x={pan.x} $y={pan.y}>
           {children}

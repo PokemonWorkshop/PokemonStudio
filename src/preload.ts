@@ -38,6 +38,9 @@ import type { ReadRMXPEventInput, ReadRMXPEventOutput } from './backendTasks/rea
 import type { WriteRMXPEventsInput, WriteRMXPEventsOutput } from './backendTasks/writeRMXPEvents';
 import type { ReadRMXPSwitchNamesInput, ReadRMXPSwitchNamesOutput } from './backendTasks/readRMXPSwitchNames';
 import type { ReadRMXPCommonEventNamesInput, ReadRMXPCommonEventNamesOutput } from './backendTasks/readRMXPCommonEventNames';
+import type { ReadRMXPCommonEventsInput, ReadRMXPCommonEventsOutput } from './backendTasks/readRMXPCommonEvents';
+import type { WriteRMXPCommonEventsInput, WriteRMXPCommonEventsOutput } from './backendTasks/writeRMXPCommonEvents';
+import type { DeleteMapRxdataInput, DeleteMapRxdataOutput } from './backendTasks/deleteMapRxdata';
 import type { ChooseCharacterGraphicInput, ChooseCharacterGraphicOutput } from './backendTasks/chooseCharacterGraphic';
 import type { ReadRMXPMapInput, ReadRMXPMapOutput } from './backendTasks/readRMXPMap';
 import type { ReadRMXPMapInfoInput, ReadRMXPMapInfoOutput } from './backendTasks/readRMXPMapInfo';
@@ -182,6 +185,9 @@ contextBridge.exposeInMainWorld('api', {
   writeRMXPEvents: defineBackendTask(ipcRenderer, 'write-rmxp-events'),
   readRMXPSwitchNames: defineBackendTask(ipcRenderer, 'read-rmxp-switch-names'),
   readRMXPCommonEventNames: defineBackendTask(ipcRenderer, 'read-rmxp-common-event-names'),
+  readRMXPCommonEvents: defineBackendTask(ipcRenderer, 'read-rmxp-common-events'),
+  writeRMXPCommonEvents: defineBackendTask(ipcRenderer, 'write-rmxp-common-events'),
+  deleteMapRxdata: defineBackendTask(ipcRenderer, 'delete-map-rxdata'),
   chooseCharacterGraphic: defineBackendTask(ipcRenderer, 'choose-character-graphic'),
   convertRMXPEventsToStudioEvents: defineBackendTask(ipcRenderer, 'convert-rmxp-events-to-studio-events'),
 });
@@ -289,6 +295,9 @@ declare global {
       writeRMXPEvents: BackendTaskWithGenericErrorAndNoProgress<WriteRMXPEventsInput, WriteRMXPEventsOutput>;
       readRMXPSwitchNames: BackendTaskWithGenericErrorAndNoProgress<ReadRMXPSwitchNamesInput, ReadRMXPSwitchNamesOutput>;
       readRMXPCommonEventNames: BackendTaskWithGenericErrorAndNoProgress<ReadRMXPCommonEventNamesInput, ReadRMXPCommonEventNamesOutput>;
+      readRMXPCommonEvents: BackendTaskWithGenericErrorAndNoProgress<ReadRMXPCommonEventsInput, ReadRMXPCommonEventsOutput>;
+      writeRMXPCommonEvents: BackendTaskWithGenericErrorAndNoProgress<WriteRMXPCommonEventsInput, WriteRMXPCommonEventsOutput>;
+      deleteMapRxdata: BackendTaskWithGenericErrorAndNoProgress<DeleteMapRxdataInput, DeleteMapRxdataOutput>;
       chooseCharacterGraphic: BackendTaskWithGenericErrorAndNoProgress<ChooseCharacterGraphicInput, ChooseCharacterGraphicOutput>;
       convertRMXPEventsToStudioEvents: BackendTaskWithGenericErrorAndNoProgress<RMXPEventsToStudioEventsInput, RMXPEventsToStudioEventsOutput>;
     };

@@ -337,6 +337,9 @@ export const composeEventName = (visible: string, shadowless: boolean, z: number
 
 export const isChainEditable = (chain: CommandChain): boolean => {
   const code = chain.entries[0].code;
+  // 204 has an editable form ONLY for the Fog target (param[0] === 1); its
+  // Panorama/Battleback variants stay read-only, so don't offer Edit for them.
+  if (code === 204) return Number(chain.entries[0].parameters[0]) === 1;
   return (
     code === 101 || code === 108 || code === 355 || code === 106 || code === 121 || code === 123 || code === 122 || code === 118 || code === 119 ||
     // 209 owns its 509 continuation lines, so editing it rewrites the chain.
@@ -620,6 +623,20 @@ export const decodeCommand = (
       return { ...base, text: 'Break Loop' };
     case 115:
       return { ...base, text: 'Exit Event Processing' };
+    case 301:
+      // command_301 -> $data_troops[@parameters[0]]; [1] can escape, [2] can lose.
+      return {
+        ...base,
+        text: `Battle Processing: Troop [${asNum(p[0])}]${asNum(p[1]) ? ', can escape' : ''}${asNum(p[2]) ? ', can continue if lose' : ''}`,
+      };
+    case 601:
+      return { ...base, text: 'If Win' };
+    case 602:
+      return { ...base, text: 'If Escape' };
+    case 603:
+      return { ...base, text: 'If Lose' };
+    case 604:
+      return { ...base, text: 'Battle Processing: End' };
     case 116:
       return { ...base, text: 'Erase Event' };
     case 117: {
@@ -691,7 +708,12 @@ export const decodeCommand = (
     case 204: {
       // command_204 -> @parameters[0] selects what changes; [1] is the name.
       const target = ['Panorama', 'Fog', 'Battleback'][asNum(p[0])] ?? `type ${asNum(p[0])}`;
-      return { ...base, text: `Change Map Settings: ${target}${asStr(p[1]) ? ` "${asStr(p[1])}"` : ''}` };
+      const name = asStr(p[1]);
+      // Fog carries opacity at [3]; surface it so the list reads at a glance.
+      if (asNum(p[0]) === 1) {
+        return { ...base, text: `Change Fog: ${name ? `"${name}"` : '(none)'}, opacity ${asNum(p[3])}` };
+      }
+      return { ...base, text: `Change Map Settings: ${target}${name ? ` "${name}"` : ''}` };
     }
     case 205:
       // command_205 -> $game_map.start_fog_tone_change(@parameters[0], @parameters[1] * 2)

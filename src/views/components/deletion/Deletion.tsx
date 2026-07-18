@@ -26,9 +26,11 @@ type DeletionProps = {
   icon?: 'delete' | 'clear';
   onClickDelete: () => void;
   onClose: () => void;
+  /** Optional extra content (e.g. an opt-in checkbox) shown under the message. */
+  extra?: React.ReactNode;
 };
 
-export const Deletion = ({ title, message, icon, onClickDelete, onClose }: DeletionProps) => {
+export const Deletion = ({ title, message, icon, onClickDelete, onClose, extra }: DeletionProps) => {
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -55,6 +57,7 @@ export const Deletion = ({ title, message, icon, onClickDelete, onClose }: Delet
       <MessageBoxTextContainer>
         <p>{message}</p>
         <p className="red">{t('action_irreversible')}</p>
+        {extra}
       </MessageBoxTextContainer>
       <MessageBoxActionContainer>
         <MessageBoxCancelLink onClick={onClose}>{t('cancel')}</MessageBoxCancelLink>

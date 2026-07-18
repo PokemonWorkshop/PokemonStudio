@@ -40,6 +40,7 @@ import { BulkAnimationEditor } from './BulkAnimationEditor';
 import { useMapEvents } from './events/useMapEvents';
 import { EventsOverlay } from './events/EventsOverlay';
 import { EventDialog } from './events/EventDialog';
+import { ConfirmDeleteDialog } from './ConfirmDeleteDialog';
 import { useProjectMaps } from '@hooks/useProjectData';
 import type { Sha1 } from '@modelEntities/sha1';
 import { PixiMapCanvas } from './pixi/PixiMapCanvas';
@@ -285,6 +286,8 @@ const DEFAULT_LEFT = 220;
 const DEFAULT_RIGHT = 280;
 const COLUMNS_STORAGE_KEY = 'pokemonstudio.fork.mapEditor.columns';
 const LAYERS_RATIO_STORAGE_KEY = 'pokemonstudio.fork.mapEditor.layersRatio';
+// When '1', the Delete-key confirmation for layers/events is suppressed.
+const SKIP_DELETE_WARN_KEY = 'pokemonstudio.fork.mapEditor.skipDeleteWarn';
 // Fraction of the left sidebar's vertical space allocated to the LayerList
 // panel; the rest goes to StampsPanel. Clamped to [0.15, 0.85] so neither
 // panel collapses to nothing — at the extremes the user can still see the
@@ -674,6 +677,30 @@ export const MapEditorPage = () => {
   const [eventsVisible, setEventsVisible] = useState(true);
   const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
   const [openEventId, setOpenEventId] = useState<number | null>(null);
+  // Fork: track whether the user last clicked a layer row or an event marker,
+  // so the Delete key knows which one to remove. A ref (not state) — the
+  // keydown handler reads the latest value without re-subscribing.
+  const lastFocusRef = useRef<'layer' | 'event' | null>(null);
+  // Pending Delete-key confirmation (null = no dialog open).
+  const [deleteConfirm, setDeleteConfirm] = useState<
+    { kind: 'layer'; idxs: number[]; name: string } | { kind: 'event'; id: number; name: string } | null
+  >(null);
+  // "Don't ask again" preference for the Delete-key confirmation, persisted.
+  const [skipDeleteWarn, setSkipDeleteWarn] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(SKIP_DELETE_WARN_KEY) === '1';
+    } catch {
+      return false;
+    }
+  });
+  const persistSkipDeleteWarn = useCallback((value: boolean) => {
+    setSkipDeleteWarn(value);
+    try {
+      localStorage.setItem(SKIP_DELETE_WARN_KEY, value ? '1' : '0');
+    } catch {
+      /* ignored — preference is best-effort */
+    }
+  }, []);
   // The .tmx dimensions let the backend create Map###.rxdata for a map that has
   // never been booted in PSDK, instead of refusing to save its events. Only pass
   // them when `loaded` provably came from THIS map: the canvas loads async and is
@@ -744,6 +771,11 @@ export const MapEditorPage = () => {
   // by onApplyStamp when a stamp references layers that don't exist yet —
   // we create them, await the rebuild, and onLoaded picks up the names.
   const pendingStampSelectionRef = useRef<string[] | null>(null);
+  // Fork: a freshly-added layer/folder whose inline rename should open once
+  // the wasm rebuild lands. onLoaded resolves the name → flat index and
+  // hands it to LayerList via autoRenameLayerIdx.
+  const pendingRenameRef = useRef<string | null>(null);
+  const [autoRenameLayerIdx, setAutoRenameLayerIdx] = useState<number | null>(null);
   // Stamp queued for brush-construction after a structural rebuild — set
   // when onApplyStamp adds layers, consumed in onLoaded once the rebuild
   // lands so the brush is built against tilesets/layers that now exist.
@@ -1056,6 +1088,15 @@ export const MapEditorPage = () => {
         setActiveLayer(resolved[0]);
         setSelectedLayers(resolved);
       }
+    }
+    // Fork: a just-added layer/folder asked to be renamed immediately.
+    // Resolve its (unique) name to the new flat index now that the layer
+    // exists in the rebuilt state, then let LayerList open its rename.
+    if (pendingRenameRef.current) {
+      const renameName = pendingRenameRef.current;
+      pendingRenameRef.current = null;
+      const idx = state.json.layers.findIndex((l) => l.name === renameName);
+      if (idx >= 0) setAutoRenameLayerIdx(idx);
     }
     setDirty(false);
     historyPastRef.current = [];
@@ -1481,6 +1522,8 @@ export const MapEditorPage = () => {
     // same continuation ref the stamp-apply path already uses.
     const newName = `Tile Layer ${suffix}`;
     pendingStampSelectionRef.current = [newName];
+    // Fork: open the inline rename on the new layer once it lands.
+    pendingRenameRef.current = newName;
     await applyStructuralEdit();
   }, [loaded, applyStructuralEdit, snapshotBefore]);
 
@@ -1617,6 +1660,40 @@ export const MapEditorPage = () => {
     console.log('[layer-delete] rebuild complete');
   }, [loaded, activeLayer, applyStructuralEdit, toBridgePath, snapshotBefore]);
 
+  // Fork: delete several layers at once (multi-select + Delete). Removing by
+  // flat index is unsafe because each removal shifts the remaining indices,
+  // so we resolve every target to a bridge path from the CURRENT state up
+  // front, then remove highest-sibling-first — that ordering keeps the
+  // still-pending paths valid as siblings collapse. One snapshot, one rebuild,
+  // one undo entry. onLoaded re-clamps activeLayer/selection afterwards.
+  const onRemoveLayers = useCallback(async (indices: number[]) => {
+    if (!canvasRef.current || !loaded) return;
+    const targets = Array.from(new Set(indices)).filter((i) => loaded.json.layers[i]?.type === 'tilelayer');
+    if (targets.length === 0) return;
+    if (targets.length === 1) { await onRemoveLayer(targets[0]); return; }
+    const paths = targets.map((idx) => toBridgePath(idx)).filter((p): p is number[] => !!p);
+    if (paths.length === 0) return;
+    // Descending lexicographic order: within a parent, higher child indices
+    // go first; deeper paths before shallower. Selected layers are all leaf
+    // tile layers, so there's no ancestor/descendant overlap to worry about.
+    paths.sort((a, b) => {
+      const n = Math.max(a.length, b.length);
+      for (let i = 0; i < n; i++) {
+        const av = a[i] ?? -1;
+        const bv = b[i] ?? -1;
+        if (av !== bv) return bv - av;
+      }
+      return 0;
+    });
+    if (!snapshotBefore('delete layers')) return;
+    let anyRemoved = false;
+    for (const path of paths) {
+      if (canvasRef.current.removeLayerAtPath?.(path)) anyRemoved = true;
+    }
+    if (!anyRemoved) { pendingSnapshotRef.current = null; return; }
+    await applyStructuralEdit();
+  }, [loaded, toBridgePath, snapshotBefore, applyStructuralEdit, onRemoveLayer]);
+
   const onRenameLayer = useCallback(async (idx: number, name: string) => {
     if (!canvasRef.current) return;
     const path = toBridgePath(idx);
@@ -1625,6 +1702,56 @@ export const MapEditorPage = () => {
     if (!canvasRef.current.renameLayerAtPath?.(path, name)) return;
     await applyStructuralEdit();
   }, [applyStructuralEdit, toBridgePath, snapshotBefore]);
+
+  // Fork: Delete-key removal of the last-clicked layer or event. performDelete
+  // does the actual removal; the keydown handler below decides whether to
+  // prompt first (based on the persisted skip preference).
+  const performDelete = useCallback(
+    (target: { kind: 'layer'; idxs: number[] } | { kind: 'event'; id: number }) => {
+      if (target.kind === 'layer') {
+        if (target.idxs.length > 1) void onRemoveLayers(target.idxs);
+        else if (target.idxs.length === 1) void onRemoveLayer(target.idxs[0]);
+      } else {
+        mapEvents.deleteEvent(target.id);
+        setSelectedEventId(null);
+        lastFocusRef.current = null;
+      }
+    },
+    [onRemoveLayer, onRemoveLayers, mapEvents]
+  );
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Delete') return;
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      const target = e.target as HTMLElement | null;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return;
+      // Don't hijack Delete while another dialog owns the screen.
+      if (deleteConfirm || openEventId !== null) return;
+
+      const focus = lastFocusRef.current;
+      if (focus === 'event' && selectedEventId != null) {
+        const ev = mapEvents.events.find((x) => x.id === selectedEventId);
+        const name = ev?.name?.trim() || `Event ${selectedEventId}`;
+        e.preventDefault();
+        if (skipDeleteWarn) performDelete({ kind: 'event', id: selectedEventId });
+        else setDeleteConfirm({ kind: 'event', id: selectedEventId, name });
+      } else if (focus === 'layer' && loaded) {
+        // Delete every selected tile layer (multi-select); fall back to the
+        // active layer if the selection is somehow empty. System layers aren't
+        // selectable, so this only ever targets user tile layers.
+        const pool = selectedLayers.length > 0 ? selectedLayers : [activeLayer];
+        const idxs = Array.from(new Set(pool)).filter((i) => loaded.json.layers[i]?.type === 'tilelayer');
+        if (idxs.length === 0) return;
+        e.preventDefault();
+        const name = idxs.length === 1 ? loaded.json.layers[idxs[0]]?.name ?? 'layer' : `${idxs.length} layers`;
+        if (skipDeleteWarn) performDelete({ kind: 'layer', idxs });
+        else setDeleteConfirm({ kind: 'layer', idxs, name });
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [selectedEventId, activeLayer, selectedLayers, loaded, skipDeleteWarn, performDelete, openEventId, deleteConfirm, mapEvents.events]);
 
   const onMoveLayer = useCallback(async (from: number, to: number) => {
     if (!canvasRef.current) return;
@@ -1794,6 +1921,9 @@ export const MapEditorPage = () => {
     if (!snapshotBefore('new folder')) return;
     const newIdx = canvasRef.current.addGroupLayer?.(`Folder ${suffix}`) ?? -1;
     if (newIdx < 0) { pendingSnapshotRef.current = null; return; }
+    // Fork: open the inline rename on the new folder once it lands. (Don't
+    // touch the active layer — a folder isn't a paint target.)
+    pendingRenameRef.current = `Folder ${suffix}`;
     await applyStructuralEdit();
   }, [loaded, applyStructuralEdit, snapshotBefore]);
 
@@ -2001,7 +2131,11 @@ export const MapEditorPage = () => {
                     state={loaded}
                     activeLayer={activeLayer}
                     selectedLayers={selectedLayers}
+                    autoRenameIdx={autoRenameLayerIdx}
+                    onAutoRenameConsumed={() => setAutoRenameLayerIdx(null)}
                     onSelectLayer={(idx, additive, range) => {
+                      // Clicking a layer arms Delete to target the layer.
+                      lastFocusRef.current = 'layer';
                       if (range && loaded) {
                         // Shift+click — replace selection with every tile
                         // layer between the current active (anchor) and
@@ -2193,10 +2327,15 @@ export const MapEditorPage = () => {
                   mode={editorMode}
                   visible={eventsVisible}
                   selectedId={selectedEventId}
-                  onSelect={setSelectedEventId}
+                  onSelect={(id) => {
+                    // Clicking an event arms Delete to target the event.
+                    if (id != null) lastFocusRef.current = 'event';
+                    setSelectedEventId(id);
+                  }}
                   onOpen={setOpenEventId}
                   onCreate={(x, y) => {
                     const created = mapEvents.createEvent(x, y);
+                    lastFocusRef.current = 'event';
                     setSelectedEventId(created.id);
                     setOpenEventId(created.id);
                   }}
@@ -2221,9 +2360,56 @@ export const MapEditorPage = () => {
                 onClose={() => setOpenEventId(null)}
                 getMapSnapshot={() => canvasRef.current?.snapshotDataURL?.() ?? null}
                 currentMapId={map?.id}
+                mapWidthTiles={loaded?.json.width}
+                mapHeightTiles={loaded?.json.height}
               />
             );
           })()}
+          {deleteConfirm && (
+            <ConfirmDeleteDialog
+              title={
+                deleteConfirm.kind === 'event'
+                  ? 'Delete event?'
+                  : deleteConfirm.idxs.length > 1
+                    ? 'Delete layers?'
+                    : 'Delete layer?'
+              }
+              message={
+                deleteConfirm.kind === 'event' ? (
+                  <>
+                    Delete the event <b>{deleteConfirm.name}</b>?
+                  </>
+                ) : deleteConfirm.idxs.length > 1 ? (
+                  <>
+                    Delete <b>{deleteConfirm.name}</b> and everything drawn on them?
+                  </>
+                ) : (
+                  <>
+                    Delete the layer <b>{deleteConfirm.name}</b> and everything drawn on it?
+                  </>
+                )
+              }
+              confirmLabel={
+                deleteConfirm.kind === 'event'
+                  ? 'Delete event'
+                  : deleteConfirm.idxs.length > 1
+                    ? 'Delete layers'
+                    : 'Delete layer'
+              }
+              skipLabel="Don't ask me again"
+              skip={skipDeleteWarn}
+              onSkipChange={persistSkipDeleteWarn}
+              onConfirm={() => {
+                performDelete(
+                  deleteConfirm.kind === 'layer'
+                    ? { kind: 'layer', idxs: deleteConfirm.idxs }
+                    : { kind: 'event', id: deleteConfirm.id }
+                );
+                setDeleteConfirm(null);
+              }}
+              onCancel={() => setDeleteConfirm(null)}
+            />
+          )}
           <ResizeHandle
             $hidden={rightCollapsed}
             onMouseDown={startColumnResize('right')}

@@ -161,7 +161,7 @@ const buildBlankMap = (width: number, height: number): MarshalStdObject => ({
  * strip that method and crash with "bytes.copy is not a function". We never
  * mutate these leaves, so sharing the reference is safe.
  */
-const deepCloneMarshal = (value: unknown): unknown => {
+export const deepCloneMarshal = (value: unknown): unknown => {
   if (Array.isArray(value)) return value.map(deepCloneMarshal);
   if (value instanceof Map) {
     const out = new Map<unknown, unknown>();
@@ -191,8 +191,9 @@ const emptyMoveRoute = (): MarshalStdObject => ({
 
 const emptyCommandList = (): MarshalStdObject[] => [{ '@code': 0, '@indent': 0, '@parameters': [], __class: Symbol.for('RPG::EventCommand') }];
 
-/** Build a page's @list from the edit protocol (keep-references + fresh plain commands). */
-const buildEditedList = (editedList: EditedCommand[], carried: { list: unknown; moveRoute: unknown } | undefined): unknown[] => {
+/** Build a page's @list from the edit protocol (keep-references + fresh plain commands).
+ *  Exported so the common-event writer reuses the exact keep-protocol. */
+export const buildEditedList = (editedList: EditedCommand[], carried: { list: unknown; moveRoute: unknown } | undefined): unknown[] => {
   const originalList = carried && Array.isArray(carried.list) ? (carried.list as unknown[]) : [];
   const built = editedList.map((entry) => {
     if ('keep' in entry) {

@@ -15,39 +15,41 @@ import { AudioPicker, type AudioFile } from './AudioPicker';
 import { MapTilePicker } from './MapTilePicker';
 import { PicturePicker } from './PicturePicker';
 import { TonePreview } from './TonePreview';
+import { ShakePreview } from './ShakePreview';
 
 /**
- * Wrapper that owns the vertical direction of an @ds/Select popover inside the
- * command form.
+ * Wrapper that keeps an @ds/Select popover fully visible inside the command form.
  *
- * @ds/Select positions its `.select-popover` with INLINE `top`/`bottom` chosen
- * from `window.innerHeight`. But inside this dialog the real clip is the
- * scrollable body, not the window — and when the two disagree (which happens in
- * full-screen eventing, where the window is tall but the body panel is short)
- * @ds/Select opens the popover downward while our old CSS forced `bottom`, so
- * the popover ended up with BOTH edges pinned and stretched up over the fields
- * above it (level/shiny under the Nature select).
+ * @ds/Select renders its `.select-popover` `position: absolute` inside the field,
+ * so the dialog body's `overflow: hidden` CLIPS it — a dropdown near the bottom
+ * (or in a short full-screen panel) gets cut off. We can't just raise its
+ * z-index; absolute stays inside the clipping box.
  *
- * The fix: decide the direction from the body's free space (see
- * `decideDirection`) and force it here in BOTH directions with `!important`, so
- * @ds/Select's window-based inline styles can't fight it. `calc(100% + 7px)`
- * is the field's own height plus @ds/Select's own SELECT_SPACING, so it lines up
- * exactly with how the design system spaces the popover.
+ * Fix: pin the popover to the VIEWPORT with `position: fixed` (which no ancestor
+ * overflow can clip). This is safe ONLY because the event dialog has no
+ * transformed ancestor — an app-wide change to @ds/Select would break selects
+ * inside EditorOverlayV2 (which uses `transform`), so we scope it here. Left is
+ * pinned to the field; the vertical direction still yields to the body's free
+ * space so a bottom-of-panel select opens upward. Both are set on pointerdown
+ * (which precedes the focus that opens the popover) via CSS custom properties,
+ * so our `!important` rules override @ds/Select's own inline top/bottom.
  */
-const SelectFieldRoot = styled.div<{ $up: boolean }>`
+const SelectFieldRoot = styled.div`
   flex: 1;
   min-width: 0;
 
   & .select-popover {
-    ${({ $up }) =>
-      $up
-        ? 'top: auto !important; bottom: calc(100% + 7px) !important;'
-        : 'bottom: auto !important; top: calc(100% + 7px) !important;'}
+    position: fixed !important;
+    left: var(--pop-left, 0) !important;
+    top: var(--pop-top, auto) !important;
+    bottom: var(--pop-bottom, auto) !important;
+    z-index: 6000 !important;
   }
 `;
 
 /** @ds/Select's SELECT_CLEARANCE (195, max popover height) + SELECT_SPACING (7). */
 const DROPDOWN_SPACE = 202;
+const POPOVER_GAP = 7;
 
 /**
  * Move slots sit two-per-row so the creature form fits the panel at the default
@@ -63,21 +65,29 @@ const MoveGrid = styled.div`
 
 const SelectField = ({ children, title }: { children: React.ReactNode; title?: string }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const [up, setUp] = useState(false);
-  // Decide before the list becomes visible (pointerdown precedes the open click).
-  const decideDirection = () => {
+  // Runs before the list becomes visible (pointerdown precedes the focus that
+  // opens it): pin the popover to the field's current viewport rect and pick a
+  // direction from the dialog body's free space.
+  const position = () => {
     const el = ref.current;
     if (!el) return;
-    const clip = el.closest(`[${DIALOG_BODY_ATTR}]`);
-    if (!clip) return;
     const field = el.getBoundingClientRect();
-    const bounds = clip.getBoundingClientRect();
-    const below = bounds.bottom - field.bottom;
-    const above = field.top - bounds.top;
-    setUp(below < DROPDOWN_SPACE && above > below);
+    el.style.setProperty('--pop-left', `${field.left}px`);
+    const clip = el.closest(`[${DIALOG_BODY_ATTR}]`);
+    const bounds = clip?.getBoundingClientRect();
+    const below = bounds ? bounds.bottom - field.bottom : window.innerHeight - field.bottom;
+    const above = bounds ? field.top - bounds.top : field.top;
+    const openUp = below < DROPDOWN_SPACE && above > below;
+    if (openUp) {
+      el.style.setProperty('--pop-top', 'auto');
+      el.style.setProperty('--pop-bottom', `${window.innerHeight - field.top + POPOVER_GAP}px`);
+    } else {
+      el.style.setProperty('--pop-bottom', 'auto');
+      el.style.setProperty('--pop-top', `${field.bottom + POPOVER_GAP}px`);
+    }
   };
   return (
-    <SelectFieldRoot ref={ref} $up={up} title={title} onPointerDownCapture={decideDirection}>
+    <SelectFieldRoot ref={ref} title={title} onPointerDownCapture={position}>
       {children}
     </SelectFieldRoot>
   );
@@ -103,6 +113,11 @@ type Props = {
   pageLabels: string[];
   /** Capture a PNG data URL of the current map — used for the tone command's on-map preview. */
   getMapSnapshot?: () => string | null;
+  /** Map size in tiles — frames the shake command's in-game preview. */
+  mapWidthTiles?: number;
+  mapHeightTiles?: number;
+  /** When set, the Call Common Event form shows an "Edit common events" button. */
+  onEditCommonEvents?: () => void;
 };
 
 /**
@@ -111,9 +126,9 @@ type Props = {
  * `setForm` and commits through `onSubmit` — the dialog shell owns where the
  * resulting command lands in the list.
  */
-export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, audioFiles, projectMaps, commonEvents, pictureFiles, mapEvents, resolveCsv, pageLabels, getMapSnapshot }: Props) => {
+export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, audioFiles, projectMaps, commonEvents, pictureFiles, mapEvents, resolveCsv, pageLabels, getMapSnapshot, mapWidthTiles, mapHeightTiles, onEditCommonEvents }: Props) => {
   const { t } = useTranslation();
-  const [{ projectText }] = useGlobalState();
+  const [{ projectText, projectPath }] = useGlobalState();
   const [showTranslations, setShowTranslations] = useState(false);
   const [tilePickerOpen, setTilePickerOpen] = useState(false);
   // Capture the map once when the form opens — it doesn't change while the
@@ -380,6 +395,20 @@ export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, au
           <Dim>{t('me_events_pic_frames')}</Dim>
         </Row>
       )}
+      {form.kind === 'screenShake' && (
+        <Row style={{ alignItems: 'flex-start' }}>
+          <Dim style={{ minWidth: 52, paddingTop: 4 }}>{t('me_events_shake_preview')}</Dim>
+          <ShakePreview
+            snapshotUrl={mapSnapshot}
+            power={form.shakePower}
+            speed={form.shakeSpeed}
+            duration={form.shakeDuration}
+            projectPath={projectPath ?? undefined}
+            mapWidthTiles={mapWidthTiles}
+            mapHeightTiles={mapHeightTiles}
+          />
+        </Row>
+      )}
       {(form.kind === 'tintScreen' || form.kind === 'fogTone' || form.kind === 'pictureTone' || form.kind === 'screenFlash') && (() => {
         // A Flash is an additive color (0..255) blended by its strength; a Tone
         // shifts toward gray then adds its RGB (which may be negative to darken).
@@ -495,17 +524,24 @@ export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, au
         );
       })()}
       {form.kind === 'commonEvent' && (
-        <Row>
-          <Dim>{t('me_events_common_event')}</Dim>
-          <SmallSelect style={{ flex: 1 }} value={form.commonEventId} onChange={(e) => setForm({ ...form, commonEventId: Number(e.target.value) })}>
-            <option value={0}>{t('me_events_common_event_pick')}</option>
-            {commonEvents.map(({ id, name }) => (
-              // An unnamed common event is still real and callable — label it
-              // rather than showing a bare id with nothing after it.
-              <option key={id} value={id}>{`[${id}] ${name || t('me_events_common_event_unnamed')}`}</option>
-            ))}
-          </SmallSelect>
-        </Row>
+        <>
+          <Row>
+            <Dim>{t('me_events_common_event')}</Dim>
+            <SmallSelect style={{ flex: 1 }} value={form.commonEventId} onChange={(e) => setForm({ ...form, commonEventId: Number(e.target.value) })}>
+              <option value={0}>{t('me_events_common_event_pick')}</option>
+              {commonEvents.map(({ id, name }) => (
+                // An unnamed common event is still real and callable — label it
+                // rather than showing a bare id with nothing after it.
+                <option key={id} value={id}>{`[${id}] ${name || t('me_events_common_event_unnamed')}`}</option>
+              ))}
+            </SmallSelect>
+          </Row>
+          {onEditCommonEvents && (
+            <Row>
+              <OpBtn onClick={onEditCommonEvents}>{t('me_events_edit_common_events')}</OpBtn>
+            </Row>
+          )}
+        </>
       )}
       {form.kind === 'transfer' && (
         <>

@@ -71,9 +71,11 @@ type Props = {
   /** The BARE name chosen ('' = none). */
   value: string;
   onChange: (name: string) => void;
+  /** Subfolder under graphics/ the thumbnail resolves against. Default 'pictures'. */
+  folder?: string;
 };
 
-export const PicturePicker = ({ files, value, onChange }: Props) => {
+export const PicturePicker = ({ files, value, onChange, folder = 'pictures' }: Props) => {
   const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const filtered = useMemo(() => {
@@ -105,7 +107,7 @@ export const PicturePicker = ({ files, value, onChange }: Props) => {
           )}
         </List>
         <Thumb>
-          {value ? <ResourceImage imagePathInProject={`graphics/pictures/${value}`} /> : <Dim>{t('me_events_pic_none_selected')}</Dim>}
+          {value ? <ResourceImage imagePathInProject={`graphics/${folder}/${value}`} /> : <Dim>{t('me_events_pic_none_selected')}</Dim>}
         </Thumb>
       </Split>
     </>

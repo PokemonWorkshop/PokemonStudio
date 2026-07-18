@@ -285,6 +285,11 @@ type Props = {
   onMoveLayerIntoGroup?: (from: number, groupIdx: number) => void;
   /** New: change a layer's opacity (0..1). LayerList renders the slider. */
   onSetLayerOpacity?: (idx: number, opacity: number) => void;
+  /** Fork: when set to a flat layer index, LayerList immediately opens the
+   *  inline rename for that layer (used to auto-rename a freshly-added
+   *  layer/folder). Cleared via onAutoRenameConsumed once handled. */
+  autoRenameIdx?: number | null;
+  onAutoRenameConsumed?: () => void;
 };
 
 type ContextMenuState = { idx: number; x: number; y: number };
@@ -298,7 +303,7 @@ type DragState = {
 export const LayerList: React.FC<Props> = ({
   state, activeLayer, selectedLayers, onSelectLayer, layerVisibility, onToggleVisibility, onCollapse,
   onAddLayerToFolder, onAddGroup, onRemoveLayer, onRenameLayer, onMoveLayer, onMoveLayerToPath, onMoveLayerIntoGroup,
-  onSetLayerOpacity,
+  onSetLayerOpacity, autoRenameIdx, onAutoRenameConsumed,
 }) => {
   // Per-folder expand state, keyed by `bridgePath.join('.')`. Default-
   // expanded: a folder only collapses after the user explicitly clicks
@@ -461,6 +466,19 @@ export const LayerList: React.FC<Props> = ({
     setEditingName('');
   };
   const cancelRename = () => { setEditingIdx(null); setEditingName(''); };
+
+  // Fork: auto-open the inline rename when a new layer/folder is added, so
+  // the user can immediately type its name (the parent resolves the fresh
+  // flat index after the wasm rebuild lands, then hands it here).
+  useEffect(() => {
+    if (autoRenameIdx == null) return;
+    const layer = state.json.layers[autoRenameIdx];
+    if (layer && (layer.type === 'tilelayer' || layer.type === 'group')) {
+      beginRename(autoRenameIdx, layer.name);
+    }
+    onAutoRenameConsumed?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoRenameIdx]);
 
   // --- drag-drop -----------------------------------------------------------
 
@@ -722,6 +740,7 @@ export const LayerList: React.FC<Props> = ({
                   autoFocus
                   value={editingName}
                   onChange={(e) => setEditingName(e.target.value)}
+                  onFocus={(e) => e.currentTarget.select()}
                   onClick={(e) => e.stopPropagation()}
                   onBlur={commitRename}
                   onKeyDown={(e) => {

@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 import { AutoSizer, List } from 'react-virtualized';
 import DownIcon from '@assets/icons/global/down-icon.svg';
@@ -199,9 +200,30 @@ export const StudioDropDown = ({ value, options, onChange, optionals }: StudioDr
   const optionsList = useMemo(() => research(optionsFilter, entry), [optionsFilter, entry]);
   const currentOption = useMemo(() => getCurrentOption(optionsList, value), [optionsList, value]);
   const inputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  // Where the (portaled) menu is pinned in the viewport. Portaling to
+  // document.body means no ancestor `overflow` or `transform` can clip it — the
+  // menu was previously an absolutely-positioned child and got cut off inside
+  // scrollable/short dialogs (e.g. the event editor).
+  const [menuPos, setMenuPos] = useState<{ left: number; top: number; width: number } | null>(null);
   const { t } = useTranslation();
   const notOpenClass = currentOption ? undefined : 'error';
   const label = currentOption?.option.label || optionals?.deletedOption || '???';
+  const menuHeight = getHeight(optionsList, true);
+
+  useLayoutEffect(() => {
+    if (!isOpen) {
+      setMenuPos(null);
+      return;
+    }
+    const el = containerRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    // Open downward unless it would spill past the viewport bottom and there's
+    // room above — same "flip up when cramped" behaviour, now viewport-aware.
+    const openUp = r.bottom + 4 + menuHeight > window.innerHeight && r.top - menuHeight - 4 >= 0;
+    setMenuPos({ left: r.left, width: r.width, top: openUp ? r.top - menuHeight - 4 : r.bottom + 4 });
+  }, [isOpen, menuHeight]);
 
   const closeDropDown = () => {
     setIsOpen(false);
@@ -242,7 +264,7 @@ export const StudioDropDown = ({ value, options, onChange, optionals }: StudioDr
   };
 
   return (
-    <DropDownContainer className={isOpen ? 'open' : notOpenClass} onClick={onClick}>
+    <DropDownContainer ref={containerRef} className={isOpen ? 'open' : notOpenClass} onClick={onClick}>
       <Input
         ref={inputRef}
         className={notOpenClass}
@@ -252,40 +274,49 @@ export const StudioDropDown = ({ value, options, onChange, optionals }: StudioDr
         disabled={optionals?.disabledResearch}
       />
       <DownIcon />
-      <DropDownOptions height={getHeight(optionsList, isOpen)}>
-        {optionsList.length > 0 ? (
-          <AutoSizer>
-            {({ width, height }) => {
-              return (
-                <List
-                  className="scrollable-view"
-                  width={width}
-                  height={height}
-                  rowHeight={39}
-                  rowCount={optionsList.length}
-                  rowRenderer={({ key, index, style }) => {
-                    const option = optionsList[index];
-                    return (
-                      <span
-                        key={key}
-                        onClick={() => isOpen && onChange(option.value)}
-                        className={value === option.value ? 'current' : ''}
-                        style={{ ...style, height: '35px', width: 'calc(100% - 4px)' }}
-                      >
-                        {option.label}
-                      </span>
-                    );
-                  }}
-                  scrollToIndex={currentOption?.index}
-                  tabIndex={null}
-                />
-              );
-            }}
-          </AutoSizer>
-        ) : (
-          <span className="no-option">{optionals?.noOptionLabel || t('no_option')}</span>
+      {isOpen &&
+        menuPos &&
+        createPortal(
+          // Pinned to the viewport at the field's position so no ancestor clips it.
+          <DropDownOptions
+            height={menuHeight}
+            style={{ position: 'fixed', left: menuPos.left, top: menuPos.top, width: menuPos.width, visibility: 'visible', zIndex: 6000 }}
+          >
+            {optionsList.length > 0 ? (
+              <AutoSizer>
+                {({ width, height }) => {
+                  return (
+                    <List
+                      className="scrollable-view"
+                      width={width}
+                      height={height}
+                      rowHeight={39}
+                      rowCount={optionsList.length}
+                      rowRenderer={({ key, index, style }) => {
+                        const option = optionsList[index];
+                        return (
+                          <span
+                            key={key}
+                            onClick={() => isOpen && onChange(option.value)}
+                            className={value === option.value ? 'current' : ''}
+                            style={{ ...style, height: '35px', width: 'calc(100% - 4px)' }}
+                          >
+                            {option.label}
+                          </span>
+                        );
+                      }}
+                      scrollToIndex={currentOption?.index}
+                      tabIndex={null}
+                    />
+                  );
+                }}
+              </AutoSizer>
+            ) : (
+              <span className="no-option">{optionals?.noOptionLabel || t('no_option')}</span>
+            )}
+          </DropDownOptions>,
+          document.body,
         )}
-      </DropDownOptions>
     </DropDownContainer>
   );
 };

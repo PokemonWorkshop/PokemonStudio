@@ -15,6 +15,7 @@
     "jsx": "react",
     "paths": {
       "react": ["./node_modules/@types/react"],
+      "vite": ["./node_modules/vite/dist/node/index.d.ts"],
       "*": ["node_modules/*"],
       "@components/*": ["src/views/components/*"],
       "@ds/*": ["src/designSystem/*"],

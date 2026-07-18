@@ -20,7 +20,8 @@ export type CmdFormKind =
   | 'showPicture' | 'movePicture' | 'erasePicture'
   | 'tintScreen' | 'fogTone' | 'pictureTone' | 'screenFlash'
   | 'transparent' | 'eraseEvent' | 'changeGold' | 'returnToTitle'
-  | 'scrollMap' | 'screenShake' | 'prepareTransition' | 'executeTransition' | 'menuAccess';
+  | 'scrollMap' | 'screenShake' | 'prepareTransition' | 'executeTransition' | 'menuAccess'
+  | 'changeFog';
 
 /** Audio-playing kinds → their RMXP code and the Audio/ folder to browse. */
 export const AUDIO_KINDS: Record<string, { code: number; folder: string }> = {
@@ -113,6 +114,26 @@ export type CmdForm = {
   toneBlue: number;
   toneGray: number;
   toneDuration: number;
+  /**
+   * Change Fog graphic (204, target 1). Verified vs command_204 in
+   * `028 Interpreter_5.rb`: params [1..7] are name, hue, opacity, blend, zoom,
+   * sx, sy. `fogName` is the BARE name ('__undef__' = clear the fog). RMXP's
+   * dialog defaults: opacity 64, blend 0 (normal), zoom 200%, hue/scroll 0.
+   */
+  fogName: string;
+  fogHue: number; // 0..360
+  fogOpacity: number; // 0..255
+  fogBlend: number; // 0 normal, 1 add, 2 sub, 3 multiply (project's Plane patch)
+  fogZoom: number; // percent, 100 = 1x
+  fogSx: number; // horizontal auto-scroll speed
+  fogSy: number; // vertical auto-scroll speed
+  /**
+   * Static starting offset for the fog (project's fog_offset_x/oy). RMXP's 204
+   * has no slot for these, so we write them as extra params [8]/[9] — vanilla
+   * command_204 ignores extras, and a 2-line patch consumes them (see below).
+   */
+  fogOx: number;
+  fogOy: number;
   // Audio (Play BGM/BGS/ME/SE, Change Battle BGM)
   audioName: string;
   audioVolume: number;
@@ -177,6 +198,9 @@ const FORM_KIND_BY_CODE: Record<number, CmdFormKind> = {
   223: 'tintScreen', 205: 'fogTone', 234: 'pictureTone', 224: 'screenFlash',
   208: 'transparent', 116: 'eraseEvent', 125: 'changeGold', 354: 'returnToTitle',
   203: 'scrollMap', 225: 'screenShake', 221: 'prepareTransition', 222: 'executeTransition', 135: 'menuAccess',
+  // 204 also drives Panorama/Battleback; formFromChain returns null for those
+  // (target != 1) so only the Fog variant opens this editable form.
+  204: 'changeFog',
   241: 'playBgm', 245: 'playBgs', 249: 'playMe', 250: 'playSe', 132: 'battleBgm',
   242: 'fadeBgm', 246: 'fadeBgs', 251: 'stopSe', 247: 'memorizeBgm', 248: 'restoreBgm',
   // NOT 102/111: those edit their whole BLOCK, not a single chain, so they go
@@ -203,6 +227,8 @@ export const emptyForm = (kind: CmdFormKind, mode: 'insert' | 'edit'): CmdForm =
   shakePower: 5, shakeSpeed: 5, shakeDuration: 20,
   // A neutral (all-zero) tone over 20 frames — RMXP's "clear tint" default.
   toneRed: 0, toneGreen: 0, toneBlue: 0, toneGray: 0, toneDuration: 20,
+  // RMXP's Change Fog defaults: opacity 64, normal blend, 200% zoom, no scroll.
+  fogName: '__undef__', fogHue: 0, fogOpacity: 64, fogBlend: 0, fogZoom: 200, fogSx: 0, fogSy: 0, fogOx: 0, fogOy: 0,
   // RMXP's audio defaults: full volume, normal pitch.
   audioName: '__undef__', audioVolume: 100, audioPitch: 100,
   // A FORCED route: @repeat off, or a following 210 waits forever. See createForcedMoveRoute.
@@ -312,6 +338,19 @@ export const buildCommandsFromForm = (form: CmdForm, indent: number): WorkingCom
     case 'menuAccess':
       // command_135: menu_disabled = (parameters[0] == 0). 0 = disable, 1 = enable.
       return [{ code: 135, indent, parameters: [form.state] }];
+    case 'changeFog': {
+      // command_204 target 1 (Fog): [1, name, hue, opacity, blend, zoom, sx, sy].
+      // An empty name clears the fog. Everything else maps 1:1 to $game_map.fog_*.
+      const fogParams: unknown[] = [
+        1,
+        form.fogName === '__undef__' ? '' : form.fogName,
+        form.fogHue, form.fogOpacity, form.fogBlend, form.fogZoom, form.fogSx, form.fogSy,
+      ];
+      // Only append the offset params [8]/[9] when set, so offset-less fog
+      // commands stay byte-identical to RMXP's 8-param form.
+      if (form.fogOx !== 0 || form.fogOy !== 0) fogParams.push(form.fogOx, form.fogOy);
+      return [{ code: 204, indent, parameters: fogParams }];
+    }
     case 'moveRoute':
       return buildMoveRouteChain(form, indent);
     case 'waitMove':
@@ -843,6 +882,23 @@ export const formFromChain = (chain: { entries: WorkingCommand[] }, isCsvFile?: 
     form.shakePower = Number(p[0]) || 0;
     form.shakeSpeed = Number(p[1]) || 0;
     form.shakeDuration = Number(p[2]) || 0;
+  } else if (kind === 'changeFog') {
+    // 204 also encodes Panorama (0) / Battleback (2); those aren't editable
+    // here, so bail to the read-only raw view for anything but Fog.
+    if (Number(p[0]) !== 1) return null;
+    const num = (v: unknown, d: number): number => {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : d;
+    };
+    form.fogName = typeof p[1] === 'string' && p[1] ? p[1] : '__undef__';
+    form.fogHue = num(p[2], 0);
+    form.fogOpacity = num(p[3], 64);
+    form.fogBlend = num(p[4], 0);
+    form.fogZoom = num(p[5], 200);
+    form.fogSx = num(p[6], 0);
+    form.fogSy = num(p[7], 0);
+    form.fogOx = num(p[8], 0);
+    form.fogOy = num(p[9], 0);
   } else if (kind === 'executeTransition') {
     form.text = String(p[0] ?? '');
   } else if (isAudioKind(kind)) {
