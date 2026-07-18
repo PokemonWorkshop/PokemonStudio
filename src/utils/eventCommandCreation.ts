@@ -34,6 +34,7 @@ const createShowChoiceCommand = (event: StudioEvent) => {
     minimap: '',
     portraits: [],
     withMessage: true,
+    choicePosition: 'bottom',
     choices: [ids[2]],
     defaultChoice: 0,
     resultVariable: 26,

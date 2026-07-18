@@ -6,7 +6,7 @@ import { assertUnreachable } from '@utils/assertUnreachable';
 import React from 'react';
 import { DefaultEditor } from './DefaultEditor';
 import { InsertScriptEditor } from './InsertScriptEditor';
-//import { ShowChoiceEditor } from './ShowChoiceEditor';
+import { ShowChoiceEditor } from './ShowChoiceEditor';
 import { ShowMessageEditor } from './ShowMessageEditor';
 
 export type CommandEditorAndDeletionKeys = StudioEventCommandType;
@@ -24,7 +24,8 @@ export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletion
         return <ShowMessageEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'narrator_settings':
       case 'manage_message_box':
-      case 'show_choice': // return <ShowChoiceEditor commandId={commandId} event={event} ref={handleCloseRef} />;
+      case 'show_choice':
+        return <ShowChoiceEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'wait_key_press':
       case 'record_key_press':
       case 'input_creature_name':

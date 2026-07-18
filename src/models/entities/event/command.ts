@@ -54,9 +54,13 @@ export const EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR = z.object({
 
 export type StudioEventCommandShowMessage = z.infer<typeof EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR>;
 
+export const CHOICE_POSITION_VALIDATOR = z.union([z.literal('top'), z.literal('bottom')]);
+export type StudioChoicePosition = z.infer<typeof CHOICE_POSITION_VALIDATOR>;
+
 export const EVENT_COMMAND_SHOW_CHOICE_VALIDATOR = EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR.extend({
   type: z.literal('show_choice'),
   withMessage: z.boolean().default(true),
+  choicePosition: CHOICE_POSITION_VALIDATOR.default('bottom'),
   choices: z.array(POSITIVE_OR_ZERO_INT),
   defaultChoice: POSITIVE_OR_ZERO_INT,
   resultVariable: POSITIVE_OR_ZERO_INT.default(26), // Variable TMP_1 in RMXP
