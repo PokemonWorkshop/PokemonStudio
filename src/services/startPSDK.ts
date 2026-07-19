@@ -119,4 +119,5 @@ const startPSDKWithArgs = (projectPath: string, ...args: string[]) => {
 };
 
 export const startPSDKDebug = (projectPath: string) => startPSDKWithArgs(projectPath, 'debug');
+export const startPSDKFastDebug = (projectPath: string) => startPSDKWithArgs(projectPath, 'debug', 'skip_title');
 export const startPSDKWorldmap = (projectPath: string) => startPSDKWithArgs(projectPath, '--worldmap');

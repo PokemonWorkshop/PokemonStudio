@@ -1322,6 +1322,7 @@
   "test": "Testar o projeto",
   "play_release_mode": "Iniciar o jogo",
   "play_debug_mode": "Mode Debug",
+  "play_fast_debug_mode": "Fast Debug Mode",
   "play_tags_mode": "Editor de System Tag",
   "play_worldmap_mode": "Editor de World Maps",
   "not_available_yet": "Disponível numa proxima versão",
