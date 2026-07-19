@@ -262,9 +262,9 @@ export const Row = styled.div`
   &:last-child { margin-bottom: 0; }
 `;
 
-export const Dim = styled.span<{ $off?: boolean }>`
+export const Dim = styled.span<{ $off?: boolean; $wrap?: boolean }>`
   color: ${({ theme, $off }) => ($off ? theme.colors.text500 : theme.colors.text400)};
-  white-space: nowrap;
+  white-space: ${({ $wrap }) => ($wrap ? 'normal' : 'nowrap')};
 `;
 
 // --- small form controls -------------------------------------------------------

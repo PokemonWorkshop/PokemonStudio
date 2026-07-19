@@ -374,9 +374,12 @@ export const composeEventName = (visible: string, shadowless: boolean, z: number
 
 export const isChainEditable = (chain: CommandChain): boolean => {
   const code = chain.entries[0].code;
-  // 204 has an editable form ONLY for the Fog target (param[0] === 1); its
-  // Panorama/Battleback variants stay read-only, so don't offer Edit for them.
-  if (code === 204) return Number(chain.entries[0].parameters[0]) === 1;
+  // 204 = Change Map Settings — Panorama (0) / Fog (1) / Battleback (2) all have
+  // editable forms now; any other target stays read-only.
+  if (code === 204) {
+    const target = Number(chain.entries[0].parameters[0]);
+    return target === 0 || target === 1 || target === 2;
+  }
   return (
     code === 101 || code === 108 || code === 355 || code === 106 || code === 121 || code === 123 || code === 122 || code === 118 || code === 119 ||
     // 209 owns its 509 continuation lines, so editing it rewrites the chain.
@@ -389,9 +392,11 @@ export const isChainEditable = (chain: CommandChain): boolean => {
     code === 208 || code === 116 || code === 125 || code === 354 ||
     code === 203 || code === 225 || code === 221 || code === 222 || code === 135 ||
     // Weather / fog-opacity / event-location / timer / number & button input /
-    // save & encounter access / exit — all plain scalar params, no rich data.
+    // save & encounter access / exit / rotate picture — plain scalar params.
     code === 236 || code === 206 || code === 202 || code === 124 || code === 103 ||
-    code === 105 || code === 134 || code === 136 || code === 115 ||
+    code === 105 || code === 134 || code === 136 || code === 115 || code === 233 ||
+    // Scene calls / text options / windowskin — no-param or plain scalars.
+    code === 353 || code === 351 || code === 352 || code === 104 || code === 131 ||
     // Screen/Fog/Picture Color Tone + Screen Flash. Safe only because
     // readRMXPEvents decodes their Tone/Color buffer BY KEY into a plain object
     // and writeRMXPEvents packs an identical buffer back (buildRichColor).
@@ -399,7 +404,7 @@ export const isChainEditable = (chain: CommandChain): boolean => {
     // Audio. Only safe because readRMXPEvents reads their RPG::AudioFile BY KEY
     // and writeRMXPEvents marshals one back — authoring these while the reader
     // still flattened them positionally would have written a plain Ruby Array.
-    code === 241 || code === 245 || code === 249 || code === 250 || code === 132 ||
+    code === 241 || code === 245 || code === 249 || code === 250 || code === 132 || code === 133 ||
     code === 242 || code === 246 || code === 247 || code === 248 || code === 251
   );
 };
@@ -843,6 +848,18 @@ export const decodeCommand = (
     case 322:
       // command_322 -> actor.set_graphic(character_name, character_hue, battler_name, battler_hue)
       return { ...base, text: `Change Actor Graphic: Actor [${asNum(p[0])}], "${asStr(p[1])}"` };
+    case 351:
+      return { ...base, text: 'Call Menu Screen' };
+    case 352:
+      return { ...base, text: 'Call Save Screen' };
+    case 353:
+      return { ...base, text: 'Game Over' };
+    case 104:
+      return { ...base, text: `Change Text Options: ${['top', 'middle', 'bottom'][asNum(p[0])] ?? asNum(p[0])}, ${asNum(p[1]) === 0 ? 'normal' : 'dim'}` };
+    case 131:
+      return { ...base, text: `Change Windowskin: "${asStr(p[0])}"` };
+    case 133:
+      return { ...base, text: `Change Battle End ME: "${asStr(audioName(p[0]))}"` };
     case 354:
       return { ...base, text: 'Return to Title Screen' };
     case 355:

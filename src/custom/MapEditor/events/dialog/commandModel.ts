@@ -21,9 +21,11 @@ export type CmdFormKind =
   | 'tintScreen' | 'fogTone' | 'pictureTone' | 'screenFlash'
   | 'transparent' | 'eraseEvent' | 'changeGold' | 'returnToTitle'
   | 'scrollMap' | 'screenShake' | 'prepareTransition' | 'executeTransition' | 'menuAccess'
-  | 'changeFog' | 'changeFogOpacity' | 'weather'
+  | 'changeFog' | 'changeFogOpacity' | 'weather' | 'changePanorama' | 'changeBattleback' | 'rotatePicture'
   | 'exitEvent' | 'setEventLocation' | 'controlTimer' | 'inputNumber' | 'buttonInput'
-  | 'changeSaveAccess' | 'changeEncounter';
+  | 'changeSaveAccess' | 'changeEncounter' | 'trainerBattle' | 'wildBattle'
+  | 'gameOver' | 'callMenu' | 'callSave' | 'textOptions' | 'windowskin' | 'battleEndMe'
+  | 'healParty' | 'learnMove' | 'forgetMove' | 'selectParty';
 
 /** Audio-playing kinds → their RMXP code and the Audio/ folder to browse. */
 export const AUDIO_KINDS: Record<string, { code: number; folder: string }> = {
@@ -32,6 +34,9 @@ export const AUDIO_KINDS: Record<string, { code: number; folder: string }> = {
   playMe: { code: 249, folder: 'me' },
   playSe: { code: 250, folder: 'se' },
   battleBgm: { code: 132, folder: 'bgm' },
+  // Change Battle End ME (133) stores an RPG::AudioFile, exactly like an audio
+  // command, so it rides the same machinery. Victory jingles live in Audio/me.
+  battleEndMe: { code: 133, folder: 'me' },
 };
 
 /** PSDK stat order for IV/EV arrays: [hp, atk, dfe, spd, ats, dfs]. */
@@ -138,6 +143,32 @@ export type CmdForm = {
   fogOy: number;
   /** Change Fog Opacity (206): target opacity + fade duration (frames). */
   fogOpacityDuration: number;
+  /** Rotate Picture (233): degrees/frame added each tick (picture reuses picNumber). */
+  picRotateSpeed: number;
+  /** Change Map Settings → Panorama (204 target 0). */
+  panoramaName: string;
+  panoramaHue: number;
+  /** Change Map Settings → Battleback (204 target 2). */
+  battlebackName: string;
+  /**
+   * Start Trainer Battle → PSDK's start_trainer_battle(id, bgm:, troop_id:).
+   * troop 3 = Trainer, 4 = Gym Leader, 5 = Elite, 6 = Champion.
+   */
+  trainerId: number;
+  trainerBgm: string;
+  trainerTroop: number;
+  /** Change Text Options (104): message position 0 top/1 middle/2 bottom, frame 0 normal/1 dim. */
+  textPosition: number;
+  textFrame: number;
+  /** Change Windowskin (131): bare name in graphics/windowskins. */
+  windowskinName: string;
+  /**
+   * Learn / Forget Move: target a party Pokémon by variable (an index, e.g. from
+   * Select Party) or a literal slot; `moveSkill` is the move db_symbol.
+   */
+  moveByVar: boolean;
+  movePartyIndex: number;
+  moveSkill: string;
   /**
    * Set Weather (236) → $game_screen.weather(type, power, duration). PSDK's
    * visual types differ from vanilla RMXP: 0 None, 1 Rain, 2 Sun, 3 Sandstorm,
@@ -182,7 +213,7 @@ export type CmdForm = {
   condJoin: CondJoin;
   condElse: boolean;
   // Add Item (PSDK interpreter helpers → script command)
-  itemMode: 'add' | 'pick' | 'give';
+  itemMode: 'add' | 'pick' | 'give' | 'remove';
   itemSymbol: string;
   count: number;
   deleteEvent: boolean; // add/pick: delete this event after the item is taken
@@ -227,9 +258,12 @@ const FORM_KIND_BY_CODE: Record<number, CmdFormKind> = {
   203: 'scrollMap', 225: 'screenShake', 221: 'prepareTransition', 222: 'executeTransition', 135: 'menuAccess',
   // 204 also drives Panorama/Battleback; formFromChain returns null for those
   // (target != 1) so only the Fog variant opens this editable form.
-  204: 'changeFog', 206: 'changeFogOpacity', 236: 'weather',
+  // 204 is Panorama/Fog/Battleback by target [0]; formFromChain picks the exact
+  // kind. The map entry only needs to be truthy so 204 is recognised at all.
+  204: 'changeFog', 233: 'rotatePicture', 206: 'changeFogOpacity', 236: 'weather',
   115: 'exitEvent', 202: 'setEventLocation', 124: 'controlTimer', 103: 'inputNumber', 105: 'buttonInput',
   134: 'changeSaveAccess', 136: 'changeEncounter',
+  353: 'gameOver', 351: 'callMenu', 352: 'callSave', 104: 'textOptions', 131: 'windowskin', 133: 'battleEndMe',
   241: 'playBgm', 245: 'playBgs', 249: 'playMe', 250: 'playSe', 132: 'battleBgm',
   242: 'fadeBgm', 246: 'fadeBgs', 251: 'stopSe', 247: 'memorizeBgm', 248: 'restoreBgm',
   // NOT 102/111: those edit their whole BLOCK, not a single chain, so they go
@@ -264,6 +298,14 @@ export const emptyForm = (kind: CmdFormKind, mode: 'insert' | 'edit'): CmdForm =
   locTarget: 0, locAppoint: 0, locX: 0, locY: 0, locDirection: 0,
   timerOp: 0, timerSeconds: 0,
   numDigits: 4,
+  picRotateSpeed: 10,
+  panoramaName: '__undef__', panoramaHue: 0,
+  battlebackName: '__undef__',
+  // Trainer 5's a common demo id; troop 3 = standard Trainer battle.
+  trainerId: 1, trainerBgm: '__undef__', trainerTroop: 3,
+  textPosition: 2, textFrame: 0,
+  windowskinName: '__undef__',
+  moveByVar: true, movePartyIndex: 1, moveSkill: '__undef__',
   // RMXP's audio defaults: full volume, normal pitch.
   audioName: '__undef__', audioVolume: 100, audioPitch: 100,
   // A FORCED route: @repeat off, or a following 210 waits forever. See createForcedMoveRoute.
@@ -391,6 +433,19 @@ export const buildCommandsFromForm = (form: CmdForm, indent: number): WorkingCom
     case 'changeFogOpacity':
       // command_206: start_fog_opacity_change(opacity, duration * 2).
       return [{ code: 206, indent, parameters: [clamp(form.fogOpacity, 0, 255), Math.max(0, form.fogOpacityDuration)] }];
+    case 'changePanorama':
+      // command_204 target 0: [0, name, hue]. Empty name clears the panorama.
+      return [{ code: 204, indent, parameters: [0, form.panoramaName === '__undef__' ? '' : form.panoramaName, form.panoramaHue] }];
+    case 'changeBattleback':
+      // command_204 target 2: [2, name].
+      return [{ code: 204, indent, parameters: [2, form.battlebackName === '__undef__' ? '' : form.battlebackName] }];
+    case 'rotatePicture':
+      // command_233: pictures[n].rotate(speed). [number, speed].
+      return [{ code: 233, indent, parameters: [form.picNumber, form.picRotateSpeed] }];
+    case 'trainerBattle':
+      return buildTextChain(355, buildTrainerBattleScript(form), indent);
+    case 'wildBattle':
+      return buildTextChain(355, buildWildBattleScript(form), indent);
     case 'weather':
       // command_236: $game_screen.weather(type, power, duration).
       return [{ code: 236, indent, parameters: [form.weatherType, Math.max(0, form.weatherPower), Math.max(0, form.weatherDuration)] }];
@@ -426,6 +481,7 @@ export const buildCommandsFromForm = (form: CmdForm, indent: number): WorkingCom
     case 'playMe':
     case 'playSe':
     case 'battleBgm':
+    case 'battleEndMe':
       // The writer marshals this plain object into a real RPG::AudioFile.
       return [
         {
@@ -462,8 +518,35 @@ export const buildCommandsFromForm = (form: CmdForm, indent: number): WorkingCom
       return buildTextChain(355, buildItemScript(form), indent);
     case 'creature':
       return buildTextChain(355, buildCreatureScript(form), indent);
+    case 'gameOver':
+      return [{ code: 353, indent, parameters: [] }];
+    case 'callMenu':
+      return [{ code: 351, indent, parameters: [] }];
+    case 'callSave':
+      return [{ code: 352, indent, parameters: [] }];
+    case 'textOptions':
+      // command_104: [message_position (0/1/2), message_frame (0/1)].
+      return [{ code: 104, indent, parameters: [form.textPosition, form.textFrame] }];
+    case 'windowskin':
+      // command_131: [windowskin_name].
+      return [{ code: 131, indent, parameters: [form.windowskinName === '__undef__' ? '' : form.windowskinName] }];
+    case 'healParty':
+      return buildTextChain(355, '$pokemon_party.heal_party', indent);
+    case 'selectParty':
+      // call_party_menu(var) stores the chosen party index in the variable.
+      return buildTextChain(355, `call_party_menu(${form.id})`, indent);
+    case 'learnMove':
+      return buildTextChain(355, buildLearnMoveScript(form), indent);
+    case 'forgetMove':
+      return buildTextChain(355, buildForgetMoveScript(form), indent);
   }
 };
+
+/** The target Pokémon expression for learn/forget: a party index or a variable. */
+const moveTargetExpr = (form: CmdForm): string => (form.moveByVar ? `$game_variables[${form.movePartyIndex}]` : String(form.movePartyIndex));
+// skill_learn(index, :move) shows the move-teaching UI; forget_skill is silent.
+const buildLearnMoveScript = (form: CmdForm): string => `skill_learn(${moveTargetExpr(form)}, :${form.moveSkill})`;
+const buildForgetMoveScript = (form: CmdForm): string => `$actors[${moveTargetExpr(form)}].forget_skill(:${form.moveSkill})`;
 
 /**
  * A Set Move Route (209) and its 509 mirror lines.
@@ -545,6 +628,7 @@ const buildItemScript = (form: CmdForm): string => {
   const n = Math.max(1, form.count);
   const noDelete = !form.deleteEvent;
   if (form.itemMode === 'give') return `give_item(${sym}, ${n})`;
+  if (form.itemMode === 'remove') return `$bag.remove_item(${sym}, ${n})`;
   if (form.itemMode === 'pick') return noDelete ? `pick_item(${sym}, ${n}, true)` : `pick_item(${sym}, ${n})`;
   return noDelete ? `add_item(${sym}, true, count: ${n})` : `add_item(${sym}, count: ${n})`;
 };
@@ -592,7 +676,9 @@ export const canSubmitForm = (f: CmdForm): boolean => {
   if (f.kind === 'label' || f.kind === 'jump') return f.text.trim().length > 0;
   if (f.kind === 'choices') return f.choices.some((c) => choiceText(c).length > 0);
   if (f.kind === 'item') return f.itemSymbol !== '__undef__';
-  if (f.kind === 'creature') return f.species !== '__undef__';
+  if (f.kind === 'creature' || f.kind === 'wildBattle') return f.species !== '__undef__';
+  if (f.kind === 'learnMove' || f.kind === 'forgetMove') return f.moveSkill !== '__undef__';
+  if (f.kind === 'windowskin') return f.windowskinName !== '__undef__';
   // A branch needs at least one condition that can actually be built — an empty
   // script test contributes nothing and would silently vanish from the join.
   if (f.kind === 'conditional') return f.conds.some(isCondUsable);
@@ -746,6 +832,27 @@ export const rebuildConditionalBlock = (form: CmdForm, block: WorkingCommand[]):
 const ITEM_ADD_RE = /^add_item\(:(\w+)(?:,\s*(true))?\s*,\s*count:\s*(\d+)\)$/;
 const ITEM_PICK_RE = /^pick_item\(:(\w+),\s*(\d+)(?:,\s*(true))?\)$/;
 const ITEM_GIVE_RE = /^give_item\(:(\w+),\s*(\d+)\)$/;
+const ITEM_REMOVE_RE = /^\$bag\.remove_item\(:(\w+),\s*(\d+)\)$/;
+
+// Heal Party / Select Party / Learn / Forget Move — script-backed PSDK commands.
+const HEAL_PARTY_RE = /^\$pokemon_party\.heal_party$/;
+const SELECT_PARTY_RE = /^call_party_menu\((\d+)\)$/;
+const LEARN_MOVE_RE = /^skill_learn\((\$game_variables\[(\d+)\]|\d+),\s*:(\w+)\)$/;
+const FORGET_MOVE_RE = /^\$actors\[(\$game_variables\[(\d+)\]|\d+)\]\.forget_skill\(:(\w+)\)$/;
+const applyMoveTarget = (form: CmdForm, raw: string, varGroup: string | undefined) => {
+  if (varGroup !== undefined) { form.moveByVar = true; form.movePartyIndex = Number(varGroup); }
+  else { form.moveByVar = false; form.movePartyIndex = Number(raw); }
+};
+const gameplayFormFromScript = (script: string): CmdForm | null => {
+  if (HEAL_PARTY_RE.test(script)) return emptyForm('healParty', 'edit');
+  const sel = script.match(SELECT_PARTY_RE);
+  if (sel) { const f = emptyForm('selectParty', 'edit'); f.id = Number(sel[1]); return f; }
+  const learn = script.match(LEARN_MOVE_RE);
+  if (learn) { const f = emptyForm('learnMove', 'edit'); applyMoveTarget(f, learn[1], learn[2]); f.moveSkill = learn[3]; return f; }
+  const forget = script.match(FORGET_MOVE_RE);
+  if (forget) { const f = emptyForm('forgetMove', 'edit'); applyMoveTarget(f, forget[1], forget[2]); f.moveSkill = forget[3]; return f; }
+  return null;
+};
 const CREATURE_SIMPLE_RE = /^add_pokemon\(:(\w+),\s*(\d+)(?:,\s*(true))?\)$/;
 const CREATURE_SPECIFIC_RE = /^add_specific_pokemon\(\{([\s\S]*)\}\)$/;
 
@@ -756,6 +863,40 @@ const unRubyStr = (s: string): string => s.replace(/\\'/g, "'").replace(/\\\\/g,
 // script call to PSDK's money setter. Constant or a variable's value.
 const buildMoneyScript = (form: CmdForm): string =>
   `$pokemon_party.money = ${form.goldByVariable ? `$game_variables[${form.goldValue}]` : Math.max(0, form.goldValue)}`;
+// Start Trainer Battle → PSDK's start_trainer_battle. Only emit the optional
+// kwargs when they differ from the method defaults (bgm = engine default, troop
+// 3 = standard Trainer), so a plain battle stays `start_trainer_battle(id)`.
+const buildTrainerBattleScript = (form: CmdForm): string => {
+  const opts: string[] = [];
+  if (form.trainerBgm !== '__undef__' && form.trainerBgm) opts.push(`bgm: ${rubyStr(form.trainerBgm)}`);
+  if (form.trainerTroop !== 3) opts.push(`troop_id: ${form.trainerTroop}`);
+  return `start_trainer_battle(${form.trainerId}${opts.length ? `, ${opts.join(', ')}` : ''})`;
+};
+// Start Wild Battle → PSDK's call_battle_wild(:species, level[, shiny]).
+const buildWildBattleScript = (form: CmdForm): string =>
+  `call_battle_wild(:${form.species}, ${form.level}${form.shiny ? ', true' : ''})`;
+const WILD_BATTLE_RE = /^call_battle_wild\(:(\w+),\s*(\d+)(?:,\s*(true))?\)$/;
+const wildFormFromScript = (script: string): CmdForm | null => {
+  const m = script.match(WILD_BATTLE_RE);
+  if (!m) return null;
+  const form = emptyForm('wildBattle', 'edit');
+  form.species = m[1];
+  form.level = Number(m[2]);
+  form.shiny = m[3] === 'true';
+  return form;
+};
+
+const TRAINER_BATTLE_RE = /^start_trainer_battle\((\d+)(?:,\s*bgm:\s*'((?:[^'\\]|\\.)*)')?(?:,\s*troop_id:\s*(\d+))?\)$/;
+const trainerFormFromScript = (script: string): CmdForm | null => {
+  const m = script.match(TRAINER_BATTLE_RE);
+  if (!m) return null;
+  const form = emptyForm('trainerBattle', 'edit');
+  form.trainerId = Number(m[1]);
+  if (m[2] !== undefined) form.trainerBgm = unRubyStr(m[2]);
+  if (m[3] !== undefined) form.trainerTroop = Number(m[3]);
+  return form;
+};
+
 const MONEY_SET_RE = /^\$pokemon_party\.money\s*=\s*(?:\$game_variables\[(\d+)\]|(\d+))$/;
 const moneyFormFromScript = (script: string): CmdForm | null => {
   const m = script.match(MONEY_SET_RE);
@@ -792,6 +933,14 @@ const itemFormFromScript = (script: string): CmdForm | null => {
     form.itemMode = 'give';
     form.itemSymbol = give[1];
     form.count = Number(give[2]);
+    return form;
+  }
+  const remove = script.match(ITEM_REMOVE_RE);
+  if (remove) {
+    const form = emptyForm('item', 'edit');
+    form.itemMode = 'remove';
+    form.itemSymbol = remove[1];
+    form.count = Number(remove[2]);
     return form;
   }
   return null;
@@ -853,13 +1002,18 @@ const creatureFormFromScript = (script: string): CmdForm | null => {
 /** A script command that's really an Add Item / Add Creature, or null. */
 const structuredScriptForm = (script: string): CmdForm | null => {
   const trimmed = script.trim();
-  return itemFormFromScript(trimmed) ?? creatureFormFromScript(trimmed) ?? waitFormFromScript(trimmed) ?? moneyFormFromScript(trimmed);
+  return itemFormFromScript(trimmed) ?? creatureFormFromScript(trimmed) ?? waitFormFromScript(trimmed) ?? moneyFormFromScript(trimmed) ?? trainerFormFromScript(trimmed) ?? wildFormFromScript(trimmed) ?? gameplayFormFromScript(trimmed);
 };
 
 export const formFromChain = (chain: { entries: WorkingCommand[] }, isCsvFile?: IsCsvFile): CmdForm | null => {
   const head = chain.entries[0];
-  const kind = FORM_KIND_BY_CODE[head.code];
+  let kind = FORM_KIND_BY_CODE[head.code];
   if (!kind) return null;
+  // 204 is Panorama (0) / Fog (1) / Battleback (2) — resolve the exact kind.
+  if (head.code === 204) {
+    const target = Number(head.parameters[0]);
+    kind = target === 0 ? 'changePanorama' : target === 2 ? 'changeBattleback' : 'changeFog';
+  }
   const form = emptyForm(kind, 'edit');
   const p = head.parameters;
   if (kind === 'text' || kind === 'comment' || kind === 'script') {
@@ -962,9 +1116,6 @@ export const formFromChain = (chain: { entries: WorkingCommand[] }, isCsvFile?: 
     form.shakeSpeed = Number(p[1]) || 0;
     form.shakeDuration = Number(p[2]) || 0;
   } else if (kind === 'changeFog') {
-    // 204 also encodes Panorama (0) / Battleback (2); those aren't editable
-    // here, so bail to the read-only raw view for anything but Fog.
-    if (Number(p[0]) !== 1) return null;
     const num = (v: unknown, d: number): number => {
       const n = Number(v);
       return Number.isFinite(n) ? n : d;
@@ -978,6 +1129,14 @@ export const formFromChain = (chain: { entries: WorkingCommand[] }, isCsvFile?: 
     form.fogSy = num(p[7], 0);
     form.fogOx = num(p[8], 0);
     form.fogOy = num(p[9], 0);
+  } else if (kind === 'changePanorama') {
+    form.panoramaName = typeof p[1] === 'string' && p[1] ? p[1] : '__undef__';
+    form.panoramaHue = Number(p[2]) || 0;
+  } else if (kind === 'changeBattleback') {
+    form.battlebackName = typeof p[1] === 'string' && p[1] ? p[1] : '__undef__';
+  } else if (kind === 'rotatePicture') {
+    form.picNumber = Number.isFinite(Number(p[0])) ? Number(p[0]) : 1;
+    form.picRotateSpeed = Number(p[1]) || 0;
   } else if (kind === 'changeFogOpacity') {
     form.fogOpacity = Number.isFinite(Number(p[0])) ? Number(p[0]) : 64;
     form.fogOpacityDuration = Number.isFinite(Number(p[1])) ? Number(p[1]) : 20;
@@ -1001,6 +1160,11 @@ export const formFromChain = (chain: { entries: WorkingCommand[] }, isCsvFile?: 
     form.id = Number(p[0]) || 1;
   } else if (kind === 'changeSaveAccess' || kind === 'changeEncounter') {
     form.state = Number(p[0]) || 0;
+  } else if (kind === 'textOptions') {
+    form.textPosition = Number(p[0]) || 0;
+    form.textFrame = Number(p[1]) || 0;
+  } else if (kind === 'windowskin') {
+    form.windowskinName = typeof p[0] === 'string' && p[0] ? p[0] : '__undef__';
   } else if (kind === 'executeTransition') {
     form.text = String(p[0] ?? '');
   } else if (isAudioKind(kind)) {

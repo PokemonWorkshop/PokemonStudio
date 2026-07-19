@@ -17,6 +17,8 @@ import { PicturePicker } from './PicturePicker';
 import { TonePreview } from './TonePreview';
 import { ShakePreview } from './ShakePreview';
 import { WeatherPreview } from './WeatherPreview';
+import { TrainerBattlePreview } from './TrainerBattlePreview';
+import { WindowskinPreview } from './WindowskinPreview';
 
 /**
  * Wrapper that keeps an @ds/Select popover fully visible inside the command form.
@@ -108,6 +110,10 @@ type Props = {
   commonEvents: { id: number; name: string }[];
   /** Bare names in Graphics/Pictures, for Show Picture. */
   pictureFiles: string[];
+  /** Bare names in graphics/panoramas + graphics/battlebacks + graphics/windowskins. */
+  panoramaFiles: string[];
+  battlebackFiles: string[];
+  windowskinFiles: string[];
   /** Events on THIS map, for the per-event move wait. */
   mapEvents: { id: number; name: string }[];
   resolveCsv: (fileId: number, line: number) => string | undefined;
@@ -129,7 +135,7 @@ type Props = {
  * `setForm` and commits through `onSubmit` — the dialog shell owns where the
  * resulting command lands in the list.
  */
-export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, audioFiles, projectMaps, commonEvents, pictureFiles, mapEvents, resolveCsv, pageLabels, getMapSnapshot, mapWidthTiles, mapHeightTiles, currentMapId, onEditCommonEvents }: Props) => {
+export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, audioFiles, projectMaps, commonEvents, pictureFiles, panoramaFiles, battlebackFiles, windowskinFiles, mapEvents, resolveCsv, pageLabels, getMapSnapshot, mapWidthTiles, mapHeightTiles, currentMapId, onEditCommonEvents }: Props) => {
   const { t } = useTranslation();
   const [{ projectText, projectPath }] = useGlobalState();
   const [showTranslations, setShowTranslations] = useState(false);
@@ -450,6 +456,161 @@ export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, au
           <SmallInput type="number" min={0} value={form.fogOpacityDuration} onChange={(e) => setForm({ ...form, fogOpacityDuration: Math.max(0, Number(e.target.value) || 0) })} />
           <Dim>{t('me_events_pic_frames')}</Dim>
         </Row>
+      )}
+      {form.kind === 'changePanorama' && (
+        <>
+          <Row style={{ alignItems: 'flex-start' }}>
+            <Dim style={{ minWidth: 52, paddingTop: 4 }}>{t('me_events_panorama')}</Dim>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <PicturePicker
+                folder="panoramas"
+                files={panoramaFiles}
+                value={form.panoramaName === '__undef__' ? '' : form.panoramaName}
+                onChange={(name) => setForm({ ...form, panoramaName: name || '__undef__' })}
+              />
+            </div>
+          </Row>
+          <Row>
+            <Dim style={{ minWidth: 52 }}>{t('me_events_fog_hue')}</Dim>
+            <input type="range" min={0} max={360} value={form.panoramaHue} style={{ flex: 1, minWidth: 0 }} onChange={(e) => setForm({ ...form, panoramaHue: Number(e.target.value) })} />
+            <SmallInput type="number" min={0} max={360} value={form.panoramaHue} onChange={(e) => setForm({ ...form, panoramaHue: clamp(Number(e.target.value) || 0, 0, 360) })} />
+          </Row>
+        </>
+      )}
+      {form.kind === 'changeBattleback' && (
+        <Row style={{ alignItems: 'flex-start' }}>
+          <Dim style={{ minWidth: 52, paddingTop: 4 }}>{t('me_events_battleback')}</Dim>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <PicturePicker
+              folder="battlebacks"
+              files={battlebackFiles}
+              value={form.battlebackName === '__undef__' ? '' : form.battlebackName}
+              onChange={(name) => setForm({ ...form, battlebackName: name || '__undef__' })}
+            />
+          </div>
+        </Row>
+      )}
+      {form.kind === 'rotatePicture' && (
+        <Row>
+          <Dim>{t('me_events_pic_number')}</Dim>
+          <SmallInput type="number" min={1} max={50} value={form.picNumber} onChange={(e) => setForm({ ...form, picNumber: clamp(Number(e.target.value) || 1, 1, 50) })} />
+          <Dim>{t('me_events_rotate_speed')}</Dim>
+          <SmallInput type="number" value={form.picRotateSpeed} onChange={(e) => setForm({ ...form, picRotateSpeed: Number(e.target.value) || 0 })} />
+        </Row>
+      )}
+      {form.kind === 'trainerBattle' && (
+        <>
+          <Row>
+            <Dim>{t('me_events_trainer_id')}</Dim>
+            <SmallInput type="number" min={0} value={form.trainerId} onChange={(e) => setForm({ ...form, trainerId: Math.max(0, Number(e.target.value) || 0) })} />
+            <Dim>{t('me_events_trainer_troop')}</Dim>
+            <SmallSelect value={form.trainerTroop} onChange={(e) => setForm({ ...form, trainerTroop: Number(e.target.value) })}>
+              <option value={3}>{t('me_events_trainer_troop_trainer')}</option>
+              <option value={4}>{t('me_events_trainer_troop_gym')}</option>
+              <option value={5}>{t('me_events_trainer_troop_elite')}</option>
+              <option value={6}>{t('me_events_trainer_troop_champion')}</option>
+            </SmallSelect>
+          </Row>
+          <Row>
+            <Dim>{t('me_events_trainer_bgm')}</Dim>
+            <SmallSelect style={{ flex: 1 }} value={form.trainerBgm} onChange={(e) => setForm({ ...form, trainerBgm: e.target.value })}>
+              <option value="__undef__">{t('me_events_trainer_bgm_default')}</option>
+              {audioFiles.map((f) => (
+                <option key={f.name} value={f.name}>{f.name}</option>
+              ))}
+            </SmallSelect>
+          </Row>
+          <TrainerBattlePreview trainerId={form.trainerId} />
+          <Dim $wrap style={{ fontStyle: 'italic' }}>{t('me_events_trainer_hint')}</Dim>
+        </>
+      )}
+      {form.kind === 'wildBattle' && (
+        <>
+          <Row style={{ alignItems: 'flex-start' }}>
+            <Dim style={{ minWidth: 52, paddingTop: 4 }}>{t('me_events_species')}</Dim>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <SelectPokemon dbSymbol={form.species} noLabel undefValueOption={t('me_events_choose')} onChange={(v) => setForm({ ...form, species: v })} />
+            </div>
+          </Row>
+          <Row>
+            <Dim>{t('me_events_level')}</Dim>
+            <SmallInput type="number" min={1} max={100} value={form.level} onChange={(e) => setForm({ ...form, level: clamp(Number(e.target.value) || 1, 1, 100) })} />
+            <CheckLabel>
+              <input type="checkbox" checked={form.shiny} onChange={(e) => setForm({ ...form, shiny: e.target.checked })} />
+              {t('me_events_shiny')}
+            </CheckLabel>
+          </Row>
+        </>
+      )}
+      {(form.kind === 'gameOver' || form.kind === 'callMenu' || form.kind === 'callSave' || form.kind === 'healParty') && (
+        <Row>
+          <Dim $wrap>{t(`me_events_hint_${form.kind}`)}</Dim>
+        </Row>
+      )}
+      {form.kind === 'textOptions' && (
+        <Row>
+          <Dim>{t('me_events_text_position')}</Dim>
+          <SmallSelect value={form.textPosition} onChange={(e) => setForm({ ...form, textPosition: Number(e.target.value) })}>
+            <option value={0}>{t('me_events_text_pos_top')}</option>
+            <option value={1}>{t('me_events_text_pos_middle')}</option>
+            <option value={2}>{t('me_events_text_pos_bottom')}</option>
+          </SmallSelect>
+          <Dim>{t('me_events_text_frame')}</Dim>
+          <SmallSelect value={form.textFrame} onChange={(e) => setForm({ ...form, textFrame: Number(e.target.value) })}>
+            <option value={0}>{t('me_events_text_frame_normal')}</option>
+            <option value={1}>{t('me_events_text_frame_dim')}</option>
+          </SmallSelect>
+        </Row>
+      )}
+      {form.kind === 'windowskin' && (
+        <>
+          <Row style={{ alignItems: 'flex-start' }}>
+            <Dim style={{ minWidth: 52, paddingTop: 4 }}>{t('me_events_windowskin')}</Dim>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <PicturePicker
+                folder="windowskins"
+                files={windowskinFiles}
+                value={form.windowskinName === '__undef__' ? '' : form.windowskinName}
+                onChange={(name) => setForm({ ...form, windowskinName: name || '__undef__' })}
+              />
+            </div>
+          </Row>
+          <Row style={{ alignItems: 'flex-start' }}>
+            <Dim style={{ minWidth: 52, paddingTop: 4 }}>{t('me_events_windowskin_preview')}</Dim>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <WindowskinPreview name={form.windowskinName} />
+            </div>
+          </Row>
+        </>
+      )}
+      {form.kind === 'selectParty' && (
+        <Row>
+          <Dim>{t('me_events_select_party_store')}</Dim>
+          <NamePicker names={systemNames.variables} value={form.id} onChange={(v) => setForm({ ...form, id: v })} />
+        </Row>
+      )}
+      {(form.kind === 'learnMove' || form.kind === 'forgetMove') && (
+        <>
+          <Row>
+            <Dim>{t('me_events_move_pokemon')}</Dim>
+            <SmallSelect value={form.moveByVar ? 1 : 0} onChange={(e) => setForm({ ...form, moveByVar: e.target.value === '1' })}>
+              <option value={1}>{t('me_events_move_by_var')}</option>
+              <option value={0}>{t('me_events_move_by_slot')}</option>
+            </SmallSelect>
+            {form.moveByVar ? (
+              <NamePicker names={systemNames.variables} value={form.movePartyIndex} onChange={(v) => setForm({ ...form, movePartyIndex: v })} />
+            ) : (
+              <SmallInput type="number" min={0} max={5} value={form.movePartyIndex} onChange={(e) => setForm({ ...form, movePartyIndex: clamp(Number(e.target.value) || 0, 0, 5) })} />
+            )}
+          </Row>
+          <Row style={{ alignItems: 'flex-start' }}>
+            <Dim style={{ minWidth: 52, paddingTop: 4 }}>{t('me_events_move')}</Dim>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <SelectMove dbSymbol={form.moveSkill} noLabel undefValueOption={t('me_events_choose')} onChange={(v) => setForm({ ...form, moveSkill: v })} />
+            </div>
+          </Row>
+          <Dim $wrap style={{ fontStyle: 'italic' }}>{t('me_events_move_hint')}</Dim>
+        </>
       )}
       {(form.kind === 'changeSaveAccess' || form.kind === 'changeEncounter') && (
         <Row>
@@ -885,10 +1046,11 @@ export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, au
         <>
           <Row>
             <Dim style={{ minWidth: 64 }}>{t('me_events_item_mode')}</Dim>
-            <SmallSelect value={form.itemMode} onChange={(e) => setForm({ ...form, itemMode: e.target.value as 'add' | 'pick' | 'give' })}>
+            <SmallSelect value={form.itemMode} onChange={(e) => setForm({ ...form, itemMode: e.target.value as 'add' | 'pick' | 'give' | 'remove' })}>
               <option value="add">{t('me_events_item_add')}</option>
               <option value="pick">{t('me_events_item_pick')}</option>
               <option value="give">{t('me_events_item_give')}</option>
+              <option value="remove">{t('me_events_item_remove')}</option>
             </SmallSelect>
           </Row>
           <Row>
@@ -901,8 +1063,8 @@ export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, au
             <Dim style={{ minWidth: 64 }}>{t('me_events_count')}</Dim>
             <SmallInput type="number" min={1} value={form.count} onChange={(e) => setForm({ ...form, count: Math.max(1, Number(e.target.value) || 1) })} />
           </Row>
-          {/* give_item never deletes the event, so no toggle there. */}
-          {form.itemMode !== 'give' && (
+          {/* give_item / remove_item never delete the event, so no toggle there. */}
+          {(form.itemMode === 'add' || form.itemMode === 'pick') && (
             <Row>
               <CheckLabel title={t('me_events_delete_event_hint')}>
                 <input type="checkbox" checked={form.deleteEvent} onChange={(e) => setForm({ ...form, deleteEvent: e.target.checked })} />

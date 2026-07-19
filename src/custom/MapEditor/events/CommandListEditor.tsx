@@ -116,7 +116,7 @@ export const CommandListEditor = ({ list, setList, systemNames, mapEvents, subje
 
   // --- ancillary data ---------------------------------------------------------
   const [audioFiles, setAudioFiles] = useState<AudioFile[]>([]);
-  const audioFolder = cmdForm && isAudioKind(cmdForm.kind) ? AUDIO_KINDS[cmdForm.kind].folder : cmdForm?.kind === 'moveRoute' ? 'se' : null;
+  const audioFolder = cmdForm && isAudioKind(cmdForm.kind) ? AUDIO_KINDS[cmdForm.kind].folder : cmdForm?.kind === 'moveRoute' ? 'se' : cmdForm?.kind === 'trainerBattle' ? 'bgm' : null;
   useEffect(() => {
     if (!projectPath || !audioFolder) return;
     window.api.getFilePathsFromFolder(
@@ -161,6 +161,39 @@ export const CommandListEditor = ({ list, setList, systemNames, mapEvents, subje
       () => setFogFiles([]),
     );
   }, [projectPath, needsFogs]);
+
+  const [panoramaFiles, setPanoramaFiles] = useState<string[]>([]);
+  const needsPanoramas = cmdForm?.kind === 'changePanorama';
+  useEffect(() => {
+    if (!projectPath || !needsPanoramas) return;
+    window.api.getFilePathsFromFolder(
+      { folderPath: `${projectPath}/graphics/panoramas`, extensions: ['.png', '.gif', '.jpg', '.jpeg', '.bmp'], isFileNameOnly: true },
+      ({ filePaths }) => setPanoramaFiles(filePaths.map((f) => f.replace(/^.*[\\/]/, '').replace(/\.[^.]+$/, '')).sort((a, b) => a.localeCompare(b))),
+      () => setPanoramaFiles([]),
+    );
+  }, [projectPath, needsPanoramas]);
+
+  const [battlebackFiles, setBattlebackFiles] = useState<string[]>([]);
+  const needsBattlebacks = cmdForm?.kind === 'changeBattleback';
+  useEffect(() => {
+    if (!projectPath || !needsBattlebacks) return;
+    window.api.getFilePathsFromFolder(
+      { folderPath: `${projectPath}/graphics/battlebacks`, extensions: ['.png', '.gif', '.jpg', '.jpeg', '.bmp'], isFileNameOnly: true },
+      ({ filePaths }) => setBattlebackFiles(filePaths.map((f) => f.replace(/^.*[\\/]/, '').replace(/\.[^.]+$/, '')).sort((a, b) => a.localeCompare(b))),
+      () => setBattlebackFiles([]),
+    );
+  }, [projectPath, needsBattlebacks]);
+
+  const [windowskinFiles, setWindowskinFiles] = useState<string[]>([]);
+  const needsWindowskins = cmdForm?.kind === 'windowskin';
+  useEffect(() => {
+    if (!projectPath || !needsWindowskins) return;
+    window.api.getFilePathsFromFolder(
+      { folderPath: `${projectPath}/graphics/windowskins`, extensions: ['.png', '.gif', '.jpg', '.jpeg', '.bmp'], isFileNameOnly: true },
+      ({ filePaths }) => setWindowskinFiles(filePaths.map((f) => f.replace(/^.*[\\/]/, '').replace(/\.[^.]+$/, '')).sort((a, b) => a.localeCompare(b))),
+      () => setWindowskinFiles([]),
+    );
+  }, [projectPath, needsWindowskins]);
 
   const [commonEvents, setCommonEvents] = useState<{ id: number; name: string }[]>([]);
   useEffect(() => {
@@ -353,10 +386,10 @@ export const CommandListEditor = ({ list, setList, systemNames, mapEvents, subje
     { key: 'messages', kinds: ['text', 'comment'] },
     { key: 'flow', kinds: ['choices', 'conditional', 'loop', 'break', 'label', 'jump', 'commonEvent', 'exitEvent'] },
     { key: 'movement', kinds: ['moveRoute', 'waitMove', 'transfer', 'setEventLocation'] },
-    { key: 'screen', kinds: ['tintScreen', 'screenFlash', 'weather', 'changeFog', 'fogTone', 'changeFogOpacity', 'showPicture', 'movePicture', 'erasePicture', 'pictureTone', 'screenShake', 'scrollMap', 'prepareTransition', 'executeTransition'] },
-    { key: 'game', kinds: ['changeGold', 'transparent', 'eraseEvent', 'menuAccess', 'changeSaveAccess', 'changeEncounter', 'controlTimer', 'returnToTitle'] },
-    { key: 'audio', kinds: ['playSe', 'playMe', 'playBgm', 'playBgs', 'fadeBgm', 'fadeBgs', 'stopSe', 'memorizeBgm', 'restoreBgm', 'battleBgm'] },
-    { key: 'party', kinds: ['creature', 'item'] },
+    { key: 'screen', kinds: ['tintScreen', 'screenFlash', 'weather', 'changeFog', 'fogTone', 'changeFogOpacity', 'changePanorama', 'changeBattleback', 'showPicture', 'movePicture', 'rotatePicture', 'erasePicture', 'pictureTone', 'screenShake', 'scrollMap', 'prepareTransition', 'executeTransition'] },
+    { key: 'game', kinds: ['changeGold', 'transparent', 'eraseEvent', 'menuAccess', 'changeSaveAccess', 'changeEncounter', 'controlTimer', 'textOptions', 'windowskin', 'callMenu', 'callSave', 'gameOver', 'returnToTitle'] },
+    { key: 'audio', kinds: ['playSe', 'playMe', 'playBgm', 'playBgs', 'fadeBgm', 'fadeBgs', 'stopSe', 'memorizeBgm', 'restoreBgm', 'battleBgm', 'battleEndMe'] },
+    { key: 'party', kinds: ['creature', 'item', 'trainerBattle', 'wildBattle', 'healParty', 'learnMove', 'forgetMove', 'selectParty'] },
     { key: 'data', kinds: ['switch', 'variable', 'selfSwitch', 'inputNumber', 'buttonInput'] },
     { key: 'other', kinds: ['wait', 'script'] },
   ];
@@ -563,6 +596,9 @@ export const CommandListEditor = ({ list, setList, systemNames, mapEvents, subje
           projectMaps={projectMaps}
           commonEvents={commonEvents}
           pictureFiles={pictureFiles}
+          panoramaFiles={panoramaFiles}
+          battlebackFiles={battlebackFiles}
+          windowskinFiles={windowskinFiles}
           mapEvents={mapEvents.map((e) => ({ id: e.id, name: stripNameTags(e.name) }))}
           resolveCsv={resolveCsv}
           pageLabels={pageLabels}

@@ -146,7 +146,7 @@ export const ChangeFogDialog = ({ form, setForm, fogFiles, getMapSnapshot, onSub
               <Dim>{t('me_events_fog_oy')}</Dim>
               <SmallInput type="number" value={form.fogOy} onChange={(e) => setForm({ ...form, fogOy: Math.round(Number(e.target.value) || 0) })} />
             </Row>
-            <Dim style={{ fontStyle: 'italic' }}>{t('me_events_fog_offset_hint')}</Dim>
+            <Dim $wrap style={{ fontStyle: 'italic' }}>{t('me_events_fog_offset_hint')}</Dim>
           </Controls>
           <PreviewPane>
             <FogPreview
