@@ -1542,6 +1542,8 @@
   "quest_import_info": "Puoi creare questa nuova missione importando i dati di un'altra missione esistente.",
   "item_import_info": "Puoi creare questo nuovo strumento importando i dati di un altro strumento esistente.",
   "trainer_import_info": "Puoi creare questo nuovo allenatore importando i dati di un altro allenatore esistente.",
+  "preserve_text_data": "Copy texts",
+  "preserve_text_data_info": "Also copies the text and translations from the reference entity.",
   "hidden_default": "Hidden by default",
   "placeholder_select": "Select option",
   "placeholder_select_all": "Select all",
