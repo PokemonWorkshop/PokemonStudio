@@ -7,7 +7,7 @@ import { StudioEventCommandData } from '../../../../../../../models/entities/eve
 import {
   EVENT_COMMAND_WAIT_MOVEMENT_COMPLETION_VALIDATOR,
   StudioEventWaitMovementCompletion,
-} from '../../../../../../../models/entities/event/waitCommand/waitMovementCompletion';
+} from '../../../../../../../models/entities/event/movement/waitMovementCompletion';
 import { InputFormContainer } from '../../../../../inputs/InputContainer';
 import { useEventData } from '../../../common/EventContext';
 import { useCommandNode } from '../../../hooks/useCommandNode';
@@ -15,9 +15,9 @@ import { CommandNodeProps } from '../../CommandNodeProps';
 import { useSharedOptions } from '../../sharedSelectOptions';
 
 const WAIT_EDITOR_SCHEMA = EVENT_COMMAND_WAIT_MOVEMENT_COMPLETION_VALIDATOR.pick({
-  waitAllevent: true,
+  waitAllEvents: true,
 }).extend({
-  waitAllevent: z.enum(['all', 'some']),
+  waitAllEvents: z.enum(['all', 'some']),
   waitById: z.array(z.string()).optional(),
 });
 
@@ -30,7 +30,7 @@ export const WaitMovementCompletionCommand = ({ id, data: { dialogsRef, command,
   const commandDataForForm = useMemo(
     () => ({
       ...commandData,
-      waitAllevent: (commandData.waitAllevent ? 'all' : 'some') as 'all' | 'some',
+      waitAllEvents: (commandData.waitAllEvents ? 'all' : 'some') as 'all' | 'some',
     }),
     [commandData],
   );
@@ -39,7 +39,7 @@ export const WaitMovementCompletionCommand = ({ id, data: { dialogsRef, command,
   const { Select, MultiSelect } = useNodeInputAttrsWithLabel(WAIT_EDITOR_SCHEMA, defaults);
   const { t } = useTranslation();
 
-  const [waitEvent, setWaitEvent] = useState<string>(commandData.waitAllevent ? 'all' : 'some');
+  const [waitEvent, setWaitEvent] = useState<string>(commandData.waitAllEvents ? 'all' : 'some');
 
   const waitEventOptions = useMemo(() => {
     return [
@@ -62,11 +62,10 @@ export const WaitMovementCompletionCommand = ({ id, data: { dialogsRef, command,
   const onBlur = () => {
     const result = canClose() && getFormData();
     if (!result || !result.success) return;
-    console.log('save', result.data, getFormData);
 
     updateCommand({
       ...result.data,
-      waitAllevent: result.data.waitAllevent === 'all',
+      waitAllEvents: result.data.waitAllEvents === 'all',
     });
   };
 
@@ -78,23 +77,23 @@ export const WaitMovementCompletionCommand = ({ id, data: { dialogsRef, command,
 
     updateCommand({
       ...result.data,
-      waitAllevent: value === 'all',
+      waitAllEvents: value === 'all',
     });
   };
 
   useEffect(() => {
-    setWaitEvent(commandData.waitAllevent ? 'all' : 'some');
-  }, [commandData.waitAllevent]);
+    setWaitEvent(commandData.waitAllEvents ? 'all' : 'some');
+  }, [commandData.waitAllEvents]);
 
   return (
     <CommandNode commandType={commandType} commentCount={comments.length} dialogsRef={dialogsRef} nodeId={id} selected={selected}>
       <InputFormContainer ref={formRef} onBlur={onBlur} key={id}>
         <Select
-          name="waitAllevent"
+          name="waitAllEvents"
           label={t('event_command_wait_move_completion_select')}
           options={waitEventOptions}
           value={waitEvent}
-          className="nodrag"
+          className="nodrag nowheel"
           onChange={onWaitAllEventChange}
         />
 
@@ -104,7 +103,7 @@ export const WaitMovementCompletionCommand = ({ id, data: { dialogsRef, command,
             label={t('event_command_wait_move_completion_multiselect_label')}
             options={eventToWaitOptions}
             value={commandData.waitById}
-            className="nodrag"
+            className="nodrag nowheel"
           />
         )}
       </InputFormContainer>

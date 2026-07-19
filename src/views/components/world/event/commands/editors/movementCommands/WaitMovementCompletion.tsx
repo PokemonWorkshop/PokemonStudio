@@ -10,8 +10,8 @@ import z from 'zod';
 import {
   EVENT_COMMAND_WAIT_MOVEMENT_COMPLETION_VALIDATOR,
   StudioEventWaitMovementCompletion,
-} from '../../../../../../../models/entities/event/waitCommand/waitMovementCompletion';
-import { InputWithLeftLabelContainer, InputWithTopLabelContainer } from '../../../../../inputs';
+} from '../../../../../../../models/entities/event/movement/waitMovementCompletion';
+import { InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '../../../../../inputs';
 import { useCommandEditor } from '../../../hooks/useCommandEditor';
 import { useSharedOptions } from '../../sharedSelectOptions';
 import { EventEditorProps } from '../EventEditorProps';
@@ -25,7 +25,7 @@ const TimeoutInfo = styled.div`
 const WAIT_MOVEMENT_COMPLETION_EDITOR_SCHEMA = EVENT_COMMAND_WAIT_MOVEMENT_COMPLETION_VALIDATOR.pick({
   timeout: true,
 }).extend({
-  waitAllevent: z.enum(['all', 'some']),
+  waitAllEvents: z.enum(['all', 'some']),
   waitById: z.array(z.string()).optional(),
 });
 
@@ -34,17 +34,17 @@ export const WaitMovementCompletionEditor = forwardRef<EditorHandlingClose, Even
   const commandDataForForm = useMemo(
     () => ({
       ...command,
-      waitAllevent: (command.waitAllevent ? 'all' : 'some') as 'all' | 'some',
+      waitAllEvents: (command.waitAllEvents ? 'all' : 'some') as 'all' | 'some',
     }),
-    [command.waitAllevent, command.waitById, command.timeout],
+    [command.waitAllEvents, command.waitById, command.timeout],
   );
   const { globalStaticEvent } = useSharedOptions();
-  const { canClose, getFormData, defaults, formRef } = useZodForm(WAIT_MOVEMENT_COMPLETION_EDITOR_SCHEMA, commandDataForForm);
-  const { Input, Select, MultiSelect } = useInputAttrsWithLabel(WAIT_MOVEMENT_COMPLETION_EDITOR_SCHEMA, defaults);
+  const { canClose, getFormData, getRawFormData, defaults, formRef } = useZodForm(WAIT_MOVEMENT_COMPLETION_EDITOR_SCHEMA, commandDataForForm);
+  const { EmbeddedUnitInput, Select, MultiSelect } = useInputAttrsWithLabel(WAIT_MOVEMENT_COMPLETION_EDITOR_SCHEMA, defaults);
   const timeoutRef = useRef<HTMLInputElement>(null);
   const { t } = useTranslation();
 
-  const [waitEvent, setWaitEvent] = useState<string>(command.waitAllevent ? 'all' : 'some');
+  const [waitEvent, setWaitEvent] = useState<string>(command.waitAllEvents ? 'all' : 'some');
 
   const waitEventOptions = useMemo(
     () => [
@@ -66,22 +66,35 @@ export const WaitMovementCompletionEditor = forwardRef<EditorHandlingClose, Even
   );
 
   const onClose = () => {
+    const rawData = getRawFormData();
+    const waitById = (rawData.waitById as string[] | undefined) ?? [];
+    const waitByIdIsInvalid = waitEvent === 'some' && waitById.length === 0;
+    if (waitByIdIsInvalid) return;
+
     const result = canClose() && getFormData();
     if (!result || !result.success) return;
 
     updateCommand({
       ...result.data,
-      waitAllevent: waitEvent === 'all',
+      waitAllEvents: waitEvent === 'all',
       timeout: timeoutRef.current ? Number(timeoutRef.current.value) : result.data.timeout,
     });
   };
-  useEditorHandlingClose(ref, onClose, canClose);
+
+  const canCloseWithWaitById = () => {
+    const rawData = getRawFormData();
+    const waitById = (rawData.waitById as string[] | undefined) ?? [];
+    if (waitEvent === 'some' && waitById.length === 0) return false;
+
+    return canClose();
+  };
+  useEditorHandlingClose(ref, onClose, canCloseWithWaitById);
 
   return (
     <Editor type="edit" title={t('event_command_wait_move_completion')}>
       <InputFormContainer ref={formRef}>
         <Select
-          name="waitAllevent"
+          name="waitAllEvents"
           label={t('event_command_wait_move_completion_select')}
           options={waitEventOptions}
           value={waitEvent}
@@ -94,12 +107,14 @@ export const WaitMovementCompletionEditor = forwardRef<EditorHandlingClose, Even
             label={t('event_command_wait_move_completion_multiselect_label')}
             options={eventToWaitOptions}
             value={command.waitById}
+            required
           />
         )}
 
         <InputWithTopLabelContainer>
           <InputWithLeftLabelContainer>
-            <Input name="timeout" label={t('event_editor_wait_move_completion_timeout')} labelLeft defaultValue={command.timeout} ref={timeoutRef} />
+            <Label htmlFor="control-wait-time">{t('event_editor_wait_move_completion_timeout')}</Label>
+            <EmbeddedUnitInput name="timeout" unit="s" labelLeft defaultValue={command.timeout} ref={timeoutRef} />
           </InputWithLeftLabelContainer>
           <TimeoutInfo>{t('event_editor_wait_move_completion_timeout_info')}</TimeoutInfo>
         </InputWithTopLabelContainer>

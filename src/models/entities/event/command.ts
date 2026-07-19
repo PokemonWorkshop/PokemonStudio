@@ -3,7 +3,7 @@ import { z } from 'zod';
 import type { StudioEventCommandCategory } from './category';
 import { EVENT_COMMAND_START_VALIDATOR } from './commands/start';
 import { COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_CONNECTION_VALIDATOR, EVENT_COMMAND_STUDIO_DATA_VALIDATOR } from './globalCommand';
-import { EVENT_COMMAND_WAIT_MOVEMENT_COMPLETION_VALIDATOR } from './waitCommand/waitMovementCompletion';
+import { EVENT_COMMAND_WAIT_MOVEMENT_COMPLETION_VALIDATOR } from './movement/waitMovementCompletion';
 
 export type StudioEventCommandConnection = z.infer<typeof EVENT_COMMAND_CONNECTION_VALIDATOR>;
 

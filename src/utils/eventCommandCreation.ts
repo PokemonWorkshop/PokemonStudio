@@ -1,6 +1,6 @@
 import type { StudioEventCommand, StudioEventCommandData, StudioEventCommandType } from '@modelEntities/event/command';
 import { StudioEvent } from '@modelEntities/event/event';
-import { createWaitMovementCompletionCommand } from '../models/entities/event/waitCommand/waitMovementCompletion';
+import { createWaitMovementCompletionCommand } from '../models/entities/event/movement/waitMovementCompletion';
 import { findFirstAvailablePriorityEvent, findFirstAvailableTextIdEvent } from './ModelUtils';
 
 const createShowMessageCommand = (event: StudioEvent) => {

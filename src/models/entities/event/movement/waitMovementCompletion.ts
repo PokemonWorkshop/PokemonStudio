@@ -3,7 +3,7 @@ import { POSITIVE_OR_ZERO_INT } from '../../common';
 import { COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_CONNECTION_VALIDATOR, EVENT_COMMAND_STUDIO_DATA_VALIDATOR } from '../globalCommand';
 
 export const EVENT_COMMAND_WAIT_MOVEMENT_COMPLETION_VALIDATOR = z.object({
-  waitAllevent: z.boolean().default(false),
+  waitAllEvents: z.boolean().default(false),
   waitById: z.array(z.string()).default([]),
   timeout: POSITIVE_OR_ZERO_INT,
 
@@ -16,7 +16,7 @@ export type StudioEventWaitMovementCompletion = z.infer<typeof EVENT_COMMAND_WAI
 
 export const createWaitMovementCompletionCommand = () => {
   return {
-    waitAllevent: false,
+    waitAllEvents: false,
     waitById: [],
     timeout: 0,
   };
