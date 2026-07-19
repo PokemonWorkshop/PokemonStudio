@@ -87,6 +87,7 @@ export const IconsFromCategory: Record<StudioEventCommandCategory, EventIconData
   visual_effects: { icon: <VisualEffectsIcon />, color: 'celadonDark' },
   visual_environment: { icon: <VisualEnvironmentIcon />, color: 'oliveDark' },
   scripting: { icon: <ScriptingIcon />, color: 'goldDark' },
+  start: { icon: <StartIcon />, color: 'emeraldDark' },
 };
 
 export const IconsFromCommand: Record<StudioEventCommandType, EventIconData> = {

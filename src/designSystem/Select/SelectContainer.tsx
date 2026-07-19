@@ -166,6 +166,8 @@ export const SelectContainer = styled.div`
 `;
 
 export const NodeSelectContainer = styled(SelectContainer)`
+  height: 32px;
+
   & svg {
     top: calc((100% - 16px) / 2);
 
@@ -177,7 +179,7 @@ export const NodeSelectContainer = styled(SelectContainer)`
   & input {
     background-color: #202225;
     border: 1px solid #383a40;
-    height: 30px;
+    height: 32px;
 
     &:disabled {
       cursor: not-allowed;

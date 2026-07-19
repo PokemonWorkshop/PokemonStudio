@@ -160,7 +160,6 @@ export const COMMANDS_FROM_CATEGORY: Record<StudioEventCommandCategory, EventCom
     { commandType: 'ask_player_for_number' },
   ],
   flow_control: [
-    { commandType: 'start', enabled: true },
     { commandType: 'create_loop' },
     { commandType: 'exit_loop' },
     { commandType: 'manage_conditions' },
@@ -246,4 +245,5 @@ export const COMMANDS_FROM_CATEGORY: Record<StudioEventCommandCategory, EventCom
     { commandType: 'change_battle_background' },
   ],
   scripting: [{ commandType: 'insert_script', enabled: true }],
+  start: [{ commandType: 'start', enabled: true }],
 };

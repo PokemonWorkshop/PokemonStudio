@@ -1792,6 +1792,7 @@
   "event_category_visual_effects": "Visual effects",
   "event_category_visual_environment": "Visual environment",
   "event_category_scripting": "Scripting",
+  "event_category_start": "Start",
   "event_command_show_message": "Show a message",
   "event_command_narrator_settings": "Narrator settings",
   "event_command_manage_message_box": "Manage message box",
