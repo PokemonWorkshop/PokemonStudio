@@ -3,7 +3,7 @@ import { Editor } from '@components/editor';
 
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
+import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import { SelectCustomSimple, SelectCustomWithInput } from '@components/SelectCustom';
 import { SelectTrainer } from '@components/selects';
@@ -21,7 +21,7 @@ import {
   TRAINER_VICTORY_SENTENCE_TEXT_ID,
   TRAINER_VS_TYPE_CATEGORIES,
 } from '@modelEntities/trainer';
-import { useSetProjectText, useGetProjectText } from '@utils/ReadingProjectText';
+import { useSetProjectText, useGetProjectText, useCopyProjectText } from '@utils/ReadingProjectText';
 import { createTrainer } from '@utils/entityCreation';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { TooltipWrapper } from '@ds/Tooltip';
@@ -72,10 +72,42 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
   const [baseMoneyError, setBaseMoneyError] = useState<'value' | undefined>(undefined);
   const setText = useSetProjectText();
   const getText = useGetProjectText();
+  const copyText = useCopyProjectText();
   const [selectedTrainer, setSelectedTrainer] = useState('__undef__');
   const [importing, setImporting] = useState(false);
+  const [preserveTextData, setPreserveTextData] = useState(false);
 
   useEditorHandlingClose(ref);
+
+  const classLockedByImport = importing && selectedTrainer !== '__undef__' && preserveTextData;
+
+  const prefillFromTrainer = (dbSymbol: string) => {
+    if (dbSymbol === '__undef__') return;
+    const sourceTrainer = trainers[dbSymbol];
+    // Keep whatever the user already typed as the name; the class is always synced since it's locked while preserving
+    if (!name) setName(getText(TRAINER_NAME_TEXT_ID, sourceTrainer.id));
+    setTrainerClass(getText(TRAINER_CLASS_TEXT_ID, sourceTrainer.id));
+  };
+
+  const onTrainerToImportChange = (dbSymbol: string) => {
+    setSelectedTrainer(dbSymbol);
+    if (preserveTextData) prefillFromTrainer(dbSymbol);
+  };
+
+  const onPreserveTextDataChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const checked = event.currentTarget.checked;
+    setPreserveTextData(checked);
+    if (checked) prefillFromTrainer(selectedTrainer);
+  };
+
+  // Copies a text across every project language from an existing entity's row to the new trainer's row, then
+  // re-applies currentLanguageValue on top so the current language always reflects what's shown in the dialog
+  // (setText is called first to guarantee the destination row exists before copyText writes into it)
+  const preserveText = (fileId: number, srcId: number, destId: number, currentLanguageValue: string) => {
+    setText(fileId, destId, currentLanguageValue);
+    copyText({ fileId, textId: srcId + 1 }, { fileId, textId: destId + 1 });
+    setText(fileId, destId, currentLanguageValue);
+  };
 
   const onClickNew = () => {
     if (!baseMoneyRef.current || !battleIdRef.current) return;
@@ -83,17 +115,26 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
     let newTrainer = createTrainer(trainers, ai, vsType, battleIdRef.current.valueAsNumber, baseMoneyRef.current.valueAsNumber);
 
     if (importing && selectedTrainer !== '__undef__') {
-      setText(TRAINER_VICTORY_SENTENCE_TEXT_ID, newTrainer.id, getText(TRAINER_VICTORY_SENTENCE_TEXT_ID, trainers[selectedTrainer].id));
-      setText(TRAINER_DEFEAT_SENTENCE_TEXT_ID, newTrainer.id, getText(TRAINER_DEFEAT_SENTENCE_TEXT_ID, trainers[selectedTrainer].id));
+      const sourceTrainer = trainers[selectedTrainer];
+      if (preserveTextData) {
+        preserveText(TRAINER_VICTORY_SENTENCE_TEXT_ID, sourceTrainer.id, newTrainer.id, getText(TRAINER_VICTORY_SENTENCE_TEXT_ID, sourceTrainer.id));
+        preserveText(TRAINER_DEFEAT_SENTENCE_TEXT_ID, sourceTrainer.id, newTrainer.id, getText(TRAINER_DEFEAT_SENTENCE_TEXT_ID, sourceTrainer.id));
+        preserveText(TRAINER_CLASS_TEXT_ID, sourceTrainer.id, newTrainer.id, trainerClass);
+        preserveText(TRAINER_NAME_TEXT_ID, sourceTrainer.id, newTrainer.id, name);
+      } else {
+        setText(TRAINER_VICTORY_SENTENCE_TEXT_ID, newTrainer.id, getText(TRAINER_VICTORY_SENTENCE_TEXT_ID, sourceTrainer.id));
+        setText(TRAINER_DEFEAT_SENTENCE_TEXT_ID, newTrainer.id, getText(TRAINER_DEFEAT_SENTENCE_TEXT_ID, sourceTrainer.id));
+        setText(TRAINER_CLASS_TEXT_ID, newTrainer.id, trainerClass);
+        setText(TRAINER_NAME_TEXT_ID, newTrainer.id, name);
+      }
 
-      newTrainer = importTrainerData(newTrainer, trainers[selectedTrainer]);
+      newTrainer = importTrainerData(newTrainer, sourceTrainer);
     } else {
       setText(TRAINER_VICTORY_SENTENCE_TEXT_ID, newTrainer.id, '');
       setText(TRAINER_DEFEAT_SENTENCE_TEXT_ID, newTrainer.id, '');
+      setText(TRAINER_CLASS_TEXT_ID, newTrainer.id, trainerClass);
+      setText(TRAINER_NAME_TEXT_ID, newTrainer.id, name);
     }
-
-    setText(TRAINER_CLASS_TEXT_ID, newTrainer.id, trainerClass);
-    setText(TRAINER_NAME_TEXT_ID, newTrainer.id, name);
 
     setTrainer({ [newTrainer.dbSymbol]: newTrainer }, { trainer: newTrainer.dbSymbol });
     closeDialog();
@@ -131,7 +172,13 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
           <Label htmlFor="trainer-name" required>
             {t('trainer_name')}
           </Label>
-          <Input type="text" name="name" value={name} onChange={(event) => setName(event.target.value)} placeholder={t('example_trainer_name')} />
+          <Input
+            type="text"
+            name="name"
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            placeholder={t('example_trainer_name')}
+          />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="trainer-class" required>
@@ -143,6 +190,7 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
             value={trainerClass}
             onChange={(event) => setTrainerClass(event.target.value)}
             placeholder={t('example_trainer_class')}
+            disabled={classLockedByImport}
           />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
@@ -185,13 +233,17 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
           </ImportInfoContainer>
           <InputWithTopLabelContainer>
             <Label htmlFor="select-trainer-to-import">{t('import_data_from')}</Label>
-            <SelectTrainer
-              dbSymbol={selectedTrainer}
-              onChange={(dbSymbol) => setSelectedTrainer(dbSymbol)}
-              noLabel
-              undefValueOption={t('none_option')}
-            />
+            <SelectTrainer dbSymbol={selectedTrainer} onChange={onTrainerToImportChange} noLabel undefValueOption={t('none_option')} />
           </InputWithTopLabelContainer>
+          {selectedTrainer !== '__undef__' && (
+            <ImportInfoContainer>
+              <InputWithLeftLabelContainer>
+                <Label htmlFor="preserve-text-data">{t('preserve_text_data')}</Label>
+                <Toggle name="preserve-text-data" checked={preserveTextData} onChange={onPreserveTextDataChange} />
+              </InputWithLeftLabelContainer>
+              <ImportInfo>{t('preserve_text_data_info')}</ImportInfo>
+            </ImportInfoContainer>
+          )}
         </InputGroupCollapse>
         <ButtonContainer>
           <TooltipWrapper data-tooltip={checkDisabled() ? t('fields_asterisk_required') : undefined}>

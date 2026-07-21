@@ -85,6 +85,13 @@ export default class MenuBuilder {
               this.mainWindow.webContents.send('request-shortcut', 'play');
             },
           },
+          {
+            label: 'Fast Debug Mode',
+            accelerator: 'CmdOrCtrl+Shift+P',
+            click: () => {
+              this.mainWindow.webContents.send('request-shortcut', 'fast_debug');
+            },
+          },
           { type: 'separator' },
           {
             label: 'Quit',

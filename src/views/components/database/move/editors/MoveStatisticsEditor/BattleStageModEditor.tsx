@@ -14,8 +14,8 @@ export const BattleStageModEditor = ({ index, label, onTouched, defaults }: Batt
 
   return (
     <>
-      <Input name={`battleStageMod.${index}.battleStage`} style={{ display: 'none' }} />
-      <Input name={`battleStageMod.${index}.modificator`} label={label} labelLeft onInput={onTouched} />
+      <Input name={`battleStages.${index}.type`} style={{ display: 'none' }} />
+      <Input name={`battleStages.${index}.value`} label={label} labelLeft onInput={onTouched} />
     </>
   );
 };
