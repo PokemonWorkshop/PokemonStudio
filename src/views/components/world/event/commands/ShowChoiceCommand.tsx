@@ -41,7 +41,7 @@ export const ShowChoiceCommand = ({ id, data: { dialogsRef: commandDialogsRef, c
           </ChoiceLabelContainer>
         ))}
         <ChoiceLabelContainer key="cancel" isCancel={true}>
-          {t(t(`event_command_cancellation`))}
+          {t(`event_command_cancellation`)}
         </ChoiceLabelContainer>
       </CommandNode>
     </>

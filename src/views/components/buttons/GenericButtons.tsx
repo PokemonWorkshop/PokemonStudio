@@ -78,6 +78,26 @@ export const SecondaryNoBackground = styled(SecondaryButton)`
   }
 `;
 
+export const DeleteNoBackground = styled(BaseButtonStyle)`
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  color: ${({ theme }) => theme.colors.text500};
+  background-color: unset;
+
+  &:hover {
+    background-color: unset;
+  }
+
+  &:active {
+    background-color: unset;
+  }
+
+  &[data-disabled] {
+    background-color: unset;
+  }
+`;
+
 export const DarkButton = styled(BaseButtonStyle)`
   color: ${({ theme }) => theme.colors.text400};
   background-color: ${({ theme }) => theme.colors.dark20};

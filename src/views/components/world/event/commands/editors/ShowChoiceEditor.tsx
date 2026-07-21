@@ -1,14 +1,27 @@
-import { DarkButtonEditResponsive } from '@components/buttons/DarkButtonWithPlusIcon';
+import DeleteIcon from '@assets/icons/global/delete-icon.svg';
+import DragIcon from '@assets/icons/global/drag.svg';
+import PlusIcon from '@assets/icons/global/plus-icon.svg';
+import { DeleteNoBackground, SecondaryNoBackground } from '@components/buttons';
 import { EditorWithCollapse } from '@components/editor';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { InputWithTopLabelContainer, Label, MultiLineInput, Input as TranslateInput } from '@components/inputs';
-import { InputContainer, InputFormContainer, PaddedInputContainer } from '@components/inputs/InputContainer';
-import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
+import { Input, Label } from '@components/inputs';
+import { InputContainer, InputFormContainer } from '@components/inputs/InputContainer';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
+import {
+  DragDropContext,
+  Draggable,
+  DraggableProvided,
+  DraggableStateSnapshot,
+  DraggingStyle,
+  Droppable,
+  DroppableProvided,
+  DropResult,
+} from '@hello-pangea/dnd';
 import { useDialogsRef } from '@hooks/useDialogsRef';
 import { EVENT_COMMAND_SHOW_CHOICE_VALIDATOR, StudioEventCommandShowChoice } from '@modelEntities/event/command';
 import { useInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
 import { useZodForm } from '@src/hooks/useZodForm';
+import { findMultipleAvailableTextIdsEvent } from '@utils/ModelUtils';
 import { useGetProjectText, useSetProjectText } from '@utils/ReadingProjectText';
 import React, { forwardRef, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -18,65 +31,73 @@ import { EventEditorProps } from './EventEditorProps';
 import { ShowChoiceEditorTitle, ShowChoiceOverlay } from './ShowChoiceOverlay';
 
 const SHOW_CHOICE_EDITOR_SCHEMA = EVENT_COMMAND_SHOW_CHOICE_VALIDATOR.pick({
-  allowSkipping: true,
-  nameColor: true,
-  showMessageBox: true,
-  messageBoxPosition: true,
-  messageBoxAppearance: true,
-  lookAtThisEvent: true,
-  lookToOtherEvent: true,
-  minimap: true,
-  portraits: true,
+  choicePosition: true,
+  resultVariable: true,
 });
 
-const InfoContainer = styled.span`
-  ${({ theme }) => theme.fonts.normalSmall}
-  color: ${({ theme }) => theme.colors.text400};
+const ChoiceList = styled.div`
+  display: flex;
+  flex-direction: column;
+  user-select: none;
 `;
 
-const MessageMultiLineInput = styled(MultiLineInput)`
-  min-height: 76px;
+type ChoiceRowContainerProps = {
+  isDragging: boolean;
+};
+
+const ChoiceRowContainer = styled.div<ChoiceRowContainerProps>`
+  display: grid;
+  grid-template-columns: 18px 1fr 32px;
+  align-items: center;
+  gap: 6px;
+  box-sizing: border-box;
+  height: 40px;
+  padding: 0 8px;
+  margin: 0 -4px 8px -8px;
+  box-shadow: ${({ theme, isDragging }) => (isDragging ? `0 0 5px ${theme.colors.dark8}` : 'none')};
+  background-color: ${({ theme, isDragging }) => (isDragging ? theme.colors.dark14 : 'transparent')};
+  border-radius: ${({ isDragging }) => (isDragging ? '8px' : '0')};
+
+  & .drag {
+    color: ${({ theme }) => theme.colors.text700};
+    height: 18px;
+
+    :hover {
+      cursor: grab;
+    }
+  }
 `;
 
 export const ShowChoiceEditor = forwardRef<EditorHandlingClose, EventEditorProps>(({ commandId: defaultCommandId, event }, ref) => {
-  const { command, commandId, updateCommand } = useCommandEditor<StudioEventCommandShowChoice>(event, defaultCommandId);
-  const { canClose, getFormData, defaults, formRef } = useZodForm(SHOW_CHOICE_EDITOR_SCHEMA, command);
-  const { Input, ResourceInput, Toggle, Select } = useInputAttrsWithLabel(SHOW_CHOICE_EDITOR_SCHEMA, defaults);
+  const { command, updateCommand } = useCommandEditor<StudioEventCommandShowChoice>(event, defaultCommandId);
+  const { canClose, getFormData, defaults, formRef } = useZodForm(SHOW_CHOICE_EDITOR_SCHEMA, command, (data) => ({
+    ...data,
+    resultVariable: Number(data.resultVariable),
+  }));
+  const { Select } = useInputAttrsWithLabel(SHOW_CHOICE_EDITOR_SCHEMA, defaults);
   const dialogsRef = useDialogsRef<ShowChoiceEditorTitle>();
-  const messageRef = useRef<HTMLTextAreaElement>(null);
-  const narratorRef = useRef<HTMLInputElement>(null);
   const { t } = useTranslation();
   const getText = useGetProjectText();
   const setText = useSetProjectText();
-  const [color, setColor] = useState<string>(command.nameColor);
-  const messageBoxOptions = useMemo(
+  const [choices, setChoices] = useState<number[]>(() => [...command.choices]);
+  const [currentChoiceTextId, setCurrentChoiceTextId] = useState<number | undefined>(undefined);
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  // TODO: Fill with real data when variables are implemented
+  const variableOptions = useMemo(
+    () => [
+      { value: '26', label: 'VAR026: Temp_1' },
+      { value: '27', label: 'VAR027: Temp_2' },
+    ],
+    [],
+  );
+  const positionOptions = useMemo(
     () => [
       { value: 'bottom', label: t('bottom') },
-      { value: 'middle', label: t('middle') },
       { value: 'top', label: t('top') },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
-  const lookToEventOptions = useMemo(
-    () => [{ value: '__undef__', label: t('none') }],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  );
-
-  const handleTranslateMessageClick = () => {
-    if (!messageRef.current) return;
-
-    setText(event.csvFileId, command.message, messageRef.current.value);
-    setTimeout(() => dialogsRef.current?.openDialog('translation_message'), 0);
-  };
-
-  const handleTranslateNarratorClick = () => {
-    if (!narratorRef.current) return;
-
-    setText(event.csvFileId, command.narrator, narratorRef.current.value);
-    setTimeout(() => dialogsRef.current?.openDialog('translation_narrator'), 0);
-  };
 
   const canCloseEditor = () => {
     if (dialogsRef.current?.currentDialog) return false;
@@ -88,102 +109,117 @@ export const ShowChoiceEditor = forwardRef<EditorHandlingClose, EventEditorProps
     const result = canClose() && getFormData();
     if (!result || !result.success) return;
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { portraits, ...data } = result.data;
-    updateCommand(data);
-
-    if (!messageRef.current || !narratorRef.current) return;
-    setText(event.csvFileId, command.narrator, narratorRef.current.value);
-    setText(event.csvFileId, command.message, messageRef.current.value);
+    const data = result.data;
+    choices.forEach((textId, index) => {
+      const input = inputRefs.current[index];
+      if (input) setText(event.csvFileId, textId, input.value);
+    });
+    updateCommand({ ...data, choices });
   };
   useEditorHandlingClose(ref, onClose, canCloseEditor);
 
   const onShowChoiceOverlayClose = () => {
-    if (!messageRef.current || !narratorRef.current) return;
+    if (currentChoiceTextId === undefined) return;
+    const idx = choices.indexOf(currentChoiceTextId);
+    if (idx !== -1 && inputRefs.current[idx]) {
+      inputRefs.current[idx]!.value = inputRefs.current[idx]!.defaultValue;
+    }
+  };
 
-    messageRef.current.value = messageRef.current.defaultValue;
-    narratorRef.current.value = narratorRef.current.defaultValue;
+  const handleTranslateChoice = (textId: number, index: number) => () => {
+    const input = inputRefs.current[index];
+    if (input) setText(event.csvFileId, textId, input.value);
+    setCurrentChoiceTextId(textId);
+    setTimeout(() => dialogsRef.current?.openDialog('translation_choice'), 0);
+  };
+
+  const handleDeleteChoice = (index: number) => () => {
+    const updated = [...choices];
+    updated.splice(index, 1);
+    inputRefs.current.splice(index, 1);
+    setChoices(updated);
+  };
+
+  const handleAddChoice = () => {
+    const [newId] = findMultipleAvailableTextIdsEvent(event, 0, 1, choices);
+    setText(event.csvFileId, newId, '');
+    setChoices([...choices, newId]);
   };
 
   return (
     <EditorWithCollapse type="edit" title={t(`event_command_show_choice`)}>
       <InputFormContainer ref={formRef} size="m">
-        <PaddedInputContainer>
-          <InputContainer size="xxs">
-            <InputWithTopLabelContainer>
-              <Label htmlFor="message">{t('event_command_message')}</Label>
-              <TranslateInputContainer onTranslateClick={handleTranslateMessageClick}>
-                <MessageMultiLineInput
-                  name="message"
-                  defaultValue={getText(event.csvFileId, command.message)}
-                  placeholder={t('event_command_message_placeholder')}
-                  ref={messageRef}
-                />
-              </TranslateInputContainer>
-            </InputWithTopLabelContainer>
-            {/* <DarkButtonQuestionMarkResponsive>{t('event_command_format_options')}</DarkButtonQuestionMarkResponsive> */}
-          </InputContainer>
-          <Toggle name="allowSkipping" label={t('event_command_allow_skipping')} />
-        </PaddedInputContainer>
-        <DarkButtonEditResponsive onClick={() => dialogsRef.current?.openDialog('portraits')}>
-          {t('event_command_edit_portraits')}
-        </DarkButtonEditResponsive>
-        <InputGroupCollapse title={t('event_command_narrator')} collapseByDefault gap="24px" noMargin>
-          <InputWithTopLabelContainer>
-            <Label htmlFor="narrator">{t('event_command_narrator_name')}</Label>
-            <TranslateInputContainer onTranslateClick={handleTranslateNarratorClick}>
-              <TranslateInput
-                name="narrator"
-                defaultValue={getText(event.csvFileId, command.narrator)}
-                placeholder={t('event_command_narrator_placeholder')}
-                ref={narratorRef}
-              />
-            </TranslateInputContainer>
-          </InputWithTopLabelContainer>
-          <Input
-            type="color"
-            name="nameColor"
-            label={t('event_command_name_color')}
-            labelLeft={true}
-            defaultValue={color}
-            onChange={(e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) => setColor(e.target.value)}
-            placeholder={t('event_command_name_color_placeholder')}
-          />
-        </InputGroupCollapse>
-        <InputGroupCollapse title={t('event_command_message_box')} gap="24px" noMargin>
-          <Toggle name="showMessageBox" label={t('event_command_show_message_box')} />
-          <Select name="messageBoxPosition" label={t('event_command_message_box_position')} options={messageBoxOptions} />
-          <ResourceInput
-            name="messageBoxAppearance"
-            label={t('event_command_message_box_appearance')}
-            extensions={['png']}
-            filename={t('event_command_message_box_appearance')}
-            destFolderToCopy="graphics/windowskins"
-          />
-        </InputGroupCollapse>
-        <InputGroupCollapse title={t('event_command_other_options')} gap="24px" noMargin>
-          <InputContainer size="xxs">
-            <Toggle name="lookAtThisEvent" label={t('event_command_look_at_this_event')} />
-            <InfoContainer>{t('event_command_look_at_this_event_info')}</InfoContainer>
-          </InputContainer>
-          <Select name="lookToOtherEvent" label={t('event_command_look_to_other_event')} options={lookToEventOptions} disabled />
-          <ResourceInput
-            name="minimap"
-            label={t('event_command_minimap')}
-            extensions={['png']}
-            filename={t('event_command_minimap')}
-            destFolderToCopy="graphics/pictures/city"
-          />
-        </InputGroupCollapse>
+        <InputContainer size="xs">
+          <Label>{t('event_command_choices')}</Label>
+          <ChoiceList>
+            <DragDropContext
+              onDragEnd={(result: DropResult) => {
+                const srcIndex = result.source.index;
+                const destIndex = result.destination?.index;
+                if (destIndex === undefined) return;
+
+                const reordered = [...choices];
+                reordered.splice(destIndex, 0, reordered.splice(srcIndex, 1)[0]);
+                setChoices(reordered);
+              }}
+            >
+              <Droppable droppableId="droppable-show-choice-editor">
+                {(droppableProvided: DroppableProvided) => (
+                  <div ref={droppableProvided.innerRef} {...droppableProvided.droppableProps}>
+                    {choices.map((textId, index) => (
+                      <Draggable key={`choice-${textId}`} draggableId={`choice-${textId}`} index={index}>
+                        {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => {
+                          if (snapshot.isDragging) {
+                            if (!provided.draggableProps.style) return;
+
+                            const style = provided.draggableProps.style as DraggingStyle & { offsetLeft: number; offsetTop: number };
+                            style.left = style.offsetLeft;
+                            style.top = style.offsetTop;
+                          }
+                          return (
+                            <ChoiceRowContainer
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              style={{ ...provided.draggableProps.style }}
+                              isDragging={snapshot.isDragging}
+                            >
+                              <span className="drag" {...provided.dragHandleProps}>
+                                <DragIcon />
+                              </span>
+                              <TranslateInputContainer onTranslateClick={handleTranslateChoice(textId, index)}>
+                                <Input
+                                  type="text"
+                                  defaultValue={getText(event.csvFileId, textId)}
+                                  ref={(r) => {
+                                    inputRefs.current[index] = r;
+                                  }}
+                                />
+                              </TranslateInputContainer>
+                              <DeleteNoBackground disabled={choices.length <= 2} onClick={handleDeleteChoice(index)}>
+                                <DeleteIcon />
+                              </DeleteNoBackground>
+                            </ChoiceRowContainer>
+                          );
+                        }}
+                      </Draggable>
+                    ))}
+                    {droppableProvided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
+            <SecondaryNoBackground onClick={handleAddChoice}>
+              <PlusIcon />
+              {t('event_command_add_choice')}
+            </SecondaryNoBackground>
+          </ChoiceList>
+        </InputContainer>
+        <InputContainer size="s">
+          <Select name="resultVariable" label={t('event_command_result_variable')} options={variableOptions} />
+          <Select name="choicePosition" label={t('event_command_choice_position')} options={positionOptions} />
+        </InputContainer>
       </InputFormContainer>
-      <ShowChoiceOverlay
-        commandId={commandId}
-        command={command}
-        csvFileId={event.csvFileId}
-        event={event}
-        onClose={onShowChoiceOverlayClose}
-        ref={dialogsRef}
-      />
+      <ShowChoiceOverlay csvFileId={event.csvFileId} choiceIndex={currentChoiceTextId} onClose={onShowChoiceOverlayClose} ref={dialogsRef} />
     </EditorWithCollapse>
   );
 });
