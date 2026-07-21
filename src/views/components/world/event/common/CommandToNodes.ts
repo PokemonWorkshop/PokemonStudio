@@ -9,8 +9,6 @@ import { ShadowNode } from './ShadowNode';
 
 export const CommandToNodes: Record<StudioEventCommandType | 'shadow_node', (props: CommandNodeProps) => JSX.Element> = {
   show_message: ShowMessageCommand,
-  narrator_settings: DefaultCommand,
-  manage_message_box: DefaultCommand,
   show_choice: ShowChoiceCommand,
   wait_key_press: DefaultCommand,
   record_key_press: DefaultCommand,

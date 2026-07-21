@@ -22,8 +22,6 @@ export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletion
     switch (dialogToShow) {
       case 'show_message':
         return <ShowMessageEditor commandId={commandId} event={event} ref={handleCloseRef} />;
-      case 'narrator_settings':
-      case 'manage_message_box':
       case 'show_choice':
         return <ShowChoiceEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'wait_key_press':

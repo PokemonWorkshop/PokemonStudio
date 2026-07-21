@@ -30,6 +30,7 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import { DragEventHandler, RefObject, useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { CommandDialogsRef } from '../commands/editors/CommandEditorOverlay';
 import { useEventContext } from '../common/EventContext';
 import { useUpdateEvent } from './useUpdateEvent';
@@ -50,6 +51,7 @@ type ChangeToApplyEventsType = { type: 'position'; commandId: CommandId; positio
 export const useEventFlow = (event: StudioEvent, eventFlowRef?: RefObject<HTMLDivElement | null>, dialogsRef?: CommandDialogsRef) => {
   const { currentEditedNode, type, setCurrentEditedNode, setType } = useEventContext();
   const reactFlowInstance = useReactFlow();
+  const { t } = useTranslation();
   const [nodes, setNodes] = useNodesState<NodeEvent | NodeShadow>([
     { id: 'shadow_node', type: 'shadow_node', position: { x: 0, y: 0 }, data: {}, hidden: true },
     ...initCommandNodes(event, dialogsRef),
@@ -147,9 +149,8 @@ export const useEventFlow = (event: StudioEvent, eventFlowRef?: RefObject<HTMLDi
 
       if (type === 'show_choice') {
         const showChoiceCommand = command as StudioEventCommandData<StudioEventCommandShowChoice>;
-        setText(event.csvFileId, showChoiceCommand.message, '');
-        setText(event.csvFileId, showChoiceCommand.narrator, '');
-        setText(event.csvFileId, showChoiceCommand.choices[0], '');
+        setText(event.csvFileId, showChoiceCommand.choices[0], t(`event_command_yes`));
+        setText(event.csvFileId, showChoiceCommand.choices[1], t(`event_command_no`));
       }
 
       updateEvent({

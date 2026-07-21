@@ -136,7 +136,10 @@ export const findFirstAvailableTextIdEvent = (event: StudioEvent, startId: numbe
 
   const idSet = commands
     .reduce<number[]>((prev, command) => {
-      const ids = [...prev, command.message, command.narrator];
+      const ids = [...prev];
+      if (command.type === 'show_message') {
+        ids.push(command.message, command.narrator);
+      }
       if (command.type === 'show_choice') {
         command.choices.forEach((id) => ids.push(id));
       }

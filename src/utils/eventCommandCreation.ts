@@ -20,23 +20,10 @@ const createShowMessageCommand = (event: StudioEvent) => {
 };
 
 const createShowChoiceCommand = (event: StudioEvent) => {
-  const ids = findMultipleAvailableTextIdsEvent(event, 0, 3, []);
+  const ids = findMultipleAvailableTextIdsEvent(event, 0, 2, []);
   return {
-    message: ids[0],
-    allowSkipping: false,
-    narrator: ids[1],
-    nameColor: '#000000',
-    showMessageBox: true,
-    messageBoxPosition: 'bottom',
-    messageBoxAppearance: '',
-    lookAtThisEvent: false,
-    lookToOtherEvent: '__undef__',
-    minimap: '',
-    portraits: [],
-    withMessage: true,
+    choices: [ids[0], ids[1]],
     choicePosition: 'bottom',
-    choices: [ids[2]],
-    defaultChoice: 0,
     resultVariable: 26,
   };
 };
@@ -48,8 +35,6 @@ const dummy = () => ({});
 export const EventCommandCreation: Record<StudioEventCommandType, (event: StudioEvent) => Omit<StudioEventCommandData<StudioEventCommand>, 'type'>> =
   {
     show_message: createShowMessageCommand,
-    narrator_settings: dummy,
-    manage_message_box: dummy,
     show_choice: createShowChoiceCommand,
     wait_key_press: dummy,
     record_key_press: dummy,

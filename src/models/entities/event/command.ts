@@ -57,13 +57,13 @@ export type StudioEventCommandShowMessage = z.infer<typeof EVENT_COMMAND_SHOW_ME
 export const CHOICE_POSITION_VALIDATOR = z.union([z.literal('top'), z.literal('bottom')]);
 export type StudioChoicePosition = z.infer<typeof CHOICE_POSITION_VALIDATOR>;
 
-export const EVENT_COMMAND_SHOW_CHOICE_VALIDATOR = EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR.extend({
+export const EVENT_COMMAND_SHOW_CHOICE_VALIDATOR = z.object({
   type: z.literal('show_choice'),
-  withMessage: z.boolean().default(true),
-  choicePosition: CHOICE_POSITION_VALIDATOR.default('bottom'),
   choices: z.array(POSITIVE_OR_ZERO_INT),
-  defaultChoice: POSITIVE_OR_ZERO_INT,
+  choicePosition: CHOICE_POSITION_VALIDATOR.default('bottom'),
   resultVariable: POSITIVE_OR_ZERO_INT.default(26), // Variable TMP_1 in RMXP
+  connections: z.record(COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_CONNECTION_VALIDATOR),
+  studioData: EVENT_COMMAND_STUDIO_DATA_VALIDATOR,
 });
 
 export type StudioEventCommandShowChoice = z.infer<typeof EVENT_COMMAND_SHOW_CHOICE_VALIDATOR>;
@@ -92,8 +92,6 @@ const GENERIC_COMMAND = <T extends string>(type: T) =>
 
 export const EVENT_COMMAND_VALIDATOR = z.discriminatedUnion('type', [
   EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR,
-  GENERIC_COMMAND('narrator_settings'),
-  GENERIC_COMMAND('manage_message_box'),
   EVENT_COMMAND_SHOW_CHOICE_VALIDATOR,
   GENERIC_COMMAND('wait_key_press'),
   GENERIC_COMMAND('record_key_press'),
@@ -177,12 +175,7 @@ export type EventCommandForCategory = {
 };
 
 export const COMMANDS_FROM_CATEGORY: Record<StudioEventCommandCategory, EventCommandForCategory[]> = {
-  messages: [
-    { commandType: 'show_message', enabled: true },
-    { commandType: 'narrator_settings' },
-    { commandType: 'manage_message_box' },
-    { commandType: 'show_choice' },
-  ],
+  messages: [{ commandType: 'show_message', enabled: true }, { commandType: 'show_choice' }],
   player_interactions: [
     { commandType: 'wait_key_press' },
     { commandType: 'record_key_press' },

@@ -1,16 +1,16 @@
-import GameDataIcon from '@assets/icons/global/game-data-icon.svg';
-import ScriptingIcon from '@assets/icons/global/scripting-icon.svg';
-import SaveIcon from '@assets/icons/global/save-icon.svg';
-import GameInterfacesIcon from '@assets/icons/global/game-interfaces-icon.svg';
+import AudioIcon from '@assets/icons/global/audio-icon.svg';
 import BattlesIcon from '@assets/icons/global/battles-icon.svg';
 import FlowControlIcon from '@assets/icons/global/flow-control-icon.svg';
-import MovementIcon from '@assets/icons/global/movement-icon.svg';
+import GameDataIcon from '@assets/icons/global/game-data-icon.svg';
+import GameInterfacesIcon from '@assets/icons/global/game-interfaces-icon.svg';
 import InventoryIcon from '@assets/icons/global/inventory-icon.svg';
 import MessagesIcon from '@assets/icons/global/messages-icon.svg';
+import MovementIcon from '@assets/icons/global/movement-icon.svg';
 import PlayerInteractionsIcon from '@assets/icons/global/player-interactions-icon.svg';
-import AudioIcon from '@assets/icons/global/audio-icon.svg';
-import VisualEffectsIcon from '@assets/icons/global/visual-effects-icon.svg';
 import QuestsIcon from '@assets/icons/global/quests-icon.svg';
+import SaveIcon from '@assets/icons/global/save-icon.svg';
+import ScriptingIcon from '@assets/icons/global/scripting-icon.svg';
+import VisualEffectsIcon from '@assets/icons/global/visual-effects-icon.svg';
 import VisualEnvironmentIcon from '@assets/icons/global/visual-environment-icon.svg';
 import type { StudioEventCommandCategory } from '@modelEntities/event/category';
 import type { StudioEventCommandType } from '@modelEntities/event/command';
@@ -89,8 +89,6 @@ export const IconsFromCategory: Record<StudioEventCommandCategory, EventIconData
 
 export const IconsFromCommand: Record<StudioEventCommandType, EventIconData> = {
   show_message: { icon: <MessagesIcon />, color: 'cobaltDark' },
-  narrator_settings: { icon: <MessagesIcon />, color: 'cobaltDark' },
-  manage_message_box: { icon: <MessagesIcon />, color: 'cobaltDark' },
   show_choice: { icon: <MessagesIcon />, color: 'cobaltDark' },
   wait_key_press: { icon: <PlayerInteractionsIcon />, color: 'ceruleanDark' },
   record_key_press: { icon: <PlayerInteractionsIcon />, color: 'ceruleanDark' },
