@@ -169,7 +169,7 @@ export const NodeSelectContainer = styled(SelectContainer)`
   height: 32px;
 
   & svg {
-    top: calc((100% - 16px) / 2);
+    top: calc((100% - 9px) / 2);
 
     &.disabled {
       color: #4f525b;
