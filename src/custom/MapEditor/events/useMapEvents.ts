@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { WriteRMXPEvent, WriteRMXPEventPage } from '@src/backendTasks/writeRMXPEvents';
 import { createEmptyEvent, createEmptyPage, nextEventId } from './rmxpEventUtils';
 
@@ -21,7 +21,81 @@ export type MapEventPage = WriteRMXPEventPage;
  * doesn't get one until PSDK's Tiled2Rxdata runs at game boot, and without a
  * size the backend can't synthesize the blank map to write the events into.
  */
-export const useMapEvents = (projectPath: string | null, mapId: number | undefined, mapWidth?: number, mapHeight?: number, tiledFilename?: string) => {
+/**
+ * Convert working events into the backend's edit protocol.
+ *
+ * Standalone (not buried in `save`) so a map that ISN'T currently open can be
+ * written too — the multi-map save path holds parked events for other maps and
+ * needs the identical conversion. Diverging the two would mean parked maps get
+ * written by different rules than the live one.
+ */
+export const buildEventsWritePayload = (events: MapEvent[]) => {
+  return events.map((event) => ({
+    ...event,
+    pages: event.pages.map((page) => {
+      const list = page.list as (typeof page.list)[number][] & { __keep?: number }[];
+      const routeList = page.moveRoute.list as (typeof page.moveRoute.list)[number][] & { __keep?: number }[];
+      // A list/route still in its original order AND length is carried
+      // byte-faithfully by the backend — only ship an edit protocol when it
+      // changed. The length check matters: deleting only trailing entries
+      // also leaves a sequential __keep run, and without it that deletion
+      // would be silently thrown away on save.
+      const source = page.__source;
+      // An indent-only change (dragging a command into a branch) leaves both
+      // the order and the length intact, so `__keep === i` alone would call it
+      // untouched and silently throw the re-indent away — which un-nests the
+      // command and makes its branch run unconditionally.
+      const listUntouched =
+        !!source &&
+        list.length === source.listLength &&
+        list.every((cmd, i) => (cmd as { __keep?: number }).__keep === i && cmd.indent === source.listIndents?.[i]);
+      const routeUntouched =
+        !!source && routeList.length === source.routeLength && routeList.every((cmd, i) => (cmd as { __keep?: number }).__keep === i);
+      if (listUntouched && routeUntouched) return page;
+      return {
+        ...page,
+        ...(listUntouched
+          ? {}
+          : {
+              editedList: list.map((cmd) => {
+                const keep = (cmd as { __keep?: number }).__keep;
+                // A kept command still carries its CURRENT indent — it may have
+                // been re-indented while being carried verbatim otherwise.
+                return keep !== undefined
+                  ? { keep, indent: cmd.indent }
+                  : { code: cmd.code, indent: cmd.indent, parameters: cmd.parameters };
+              }),
+            }),
+        ...(routeUntouched
+          ? {}
+          : {
+              editedMoveRoute: {
+                repeat: page.moveRoute.isRepeat,
+                skippable: page.moveRoute.isSkippable,
+                list: routeList.map((cmd) => {
+                  const keep = (cmd as { __keep?: number }).__keep;
+                  return keep !== undefined ? { keep } : { code: cmd.code, parameters: cmd.parameters };
+                }),
+              },
+            }),
+      };
+    }),
+  }));
+};
+
+export const useMapEvents = (
+  projectPath: string | null,
+  mapId: number | undefined,
+  mapWidth?: number,
+  mapHeight?: number,
+  tiledFilename?: string,
+  /**
+   * Unsaved events parked from an earlier visit to this map. When it returns
+   * a list we adopt it instead of re-reading the .rxdata, so moving between
+   * maps keeps event edits in progress.
+   */
+  getSeedEvents?: (mapId: number) => MapEvent[] | undefined,
+) => {
   const [events, setEvents] = useState<MapEvent[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -36,8 +110,23 @@ export const useMapEvents = (projectPath: string | null, mapId: number | undefin
   // gap between the id changing and the fetch starting.
   const [loadedMapId, setLoadedMapId] = useState<number | null>(null);
 
+  // Read through a ref so reload's identity doesn't churn every render.
+  const getSeedRef = useRef(getSeedEvents);
+  getSeedRef.current = getSeedEvents;
+
   const reload = useCallback(() => {
     if (!projectPath || mapId === undefined) return;
+    // Parked edits win over the file — they're strictly newer.
+    const seeded = getSeedRef.current?.(mapId);
+    if (seeded) {
+      setEvents(seeded);
+      setSkipped(0);
+      setLoadedMapId(mapId);
+      setError(null);
+      setDirty(true);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     window.api.readRMXPEvents(
       { projectPath, mapId },
@@ -104,57 +193,7 @@ export const useMapEvents = (projectPath: string | null, mapId: number | undefin
     // Convert working command lists into the edit protocol. A page whose list
     // is exactly its original (sequential __keep from 0) omits editedList so
     // the backend does a pure byte-faithful carry.
-    const payloadEvents = events.map((event) => ({
-      ...event,
-      pages: event.pages.map((page) => {
-        const list = page.list as (typeof page.list)[number][] & { __keep?: number }[];
-        const routeList = page.moveRoute.list as (typeof page.moveRoute.list)[number][] & { __keep?: number }[];
-        // A list/route still in its original order AND length is carried
-        // byte-faithfully by the backend — only ship an edit protocol when it
-        // changed. The length check matters: deleting only trailing entries
-        // also leaves a sequential __keep run, and without it that deletion
-        // would be silently thrown away on save.
-        const source = page.__source;
-        // An indent-only change (dragging a command into a branch) leaves both
-        // the order and the length intact, so `__keep === i` alone would call it
-        // untouched and silently throw the re-indent away — which un-nests the
-        // command and makes its branch run unconditionally.
-        const listUntouched =
-          !!source &&
-          list.length === source.listLength &&
-          list.every((cmd, i) => (cmd as { __keep?: number }).__keep === i && cmd.indent === source.listIndents?.[i]);
-        const routeUntouched =
-          !!source && routeList.length === source.routeLength && routeList.every((cmd, i) => (cmd as { __keep?: number }).__keep === i);
-        if (listUntouched && routeUntouched) return page;
-        return {
-          ...page,
-          ...(listUntouched
-            ? {}
-            : {
-                editedList: list.map((cmd) => {
-                  const keep = (cmd as { __keep?: number }).__keep;
-                  // A kept command still carries its CURRENT indent — it may have
-                  // been re-indented while being carried verbatim otherwise.
-                  return keep !== undefined
-                    ? { keep, indent: cmd.indent }
-                    : { code: cmd.code, indent: cmd.indent, parameters: cmd.parameters };
-                }),
-              }),
-          ...(routeUntouched
-            ? {}
-            : {
-                editedMoveRoute: {
-                  repeat: page.moveRoute.isRepeat,
-                  skippable: page.moveRoute.isSkippable,
-                  list: routeList.map((cmd) => {
-                    const keep = (cmd as { __keep?: number }).__keep;
-                    return keep !== undefined ? { keep } : { code: cmd.code, parameters: cmd.parameters };
-                  }),
-                },
-              }),
-        };
-      }),
-    }));
+    const payloadEvents = buildEventsWritePayload(events);
     const mapSize = mapWidth && mapHeight ? { width: mapWidth, height: mapHeight } : undefined;
     return new Promise((resolve) => {
       window.api.writeRMXPEvents(
@@ -211,5 +250,5 @@ export const useMapEvents = (projectPath: string | null, mapId: number | undefin
     setDirty(true);
   }, []);
 
-  return { events, loading, error, dirty, skipped, reload, save, updateEvent, createEvent, deleteEvent, moveEvent, duplicateEvent, createEmptyPage };
+  return { events, loading, error, dirty, skipped, loadedMapId, reload, save, updateEvent, createEvent, deleteEvent, moveEvent, duplicateEvent, createEmptyPage };
 };

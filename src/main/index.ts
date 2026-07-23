@@ -25,6 +25,7 @@ import { registerReadRMXPSwitchNames } from '@src/backendTasks/readRMXPSwitchNam
 import { registerReadRMXPCommonEventNames } from '@src/backendTasks/readRMXPCommonEventNames';
 import { registerReadRMXPCommonEvents } from '@src/backendTasks/readRMXPCommonEvents';
 import { registerWriteRMXPCommonEvents } from '@src/backendTasks/writeRMXPCommonEvents';
+import { registerReadOverlayShader } from '@src/backendTasks/readOverlayShader';
 import { registerDeleteMapRxdata } from '@src/backendTasks/deleteMapRxdata';
 import { registerChooseCharacterGraphic } from '@src/backendTasks/chooseCharacterGraphic';
 import { registerRequestJson } from '@src/backendTasks/requestJson';
@@ -225,6 +226,7 @@ registerReadRMXPCommonEventNames(ipcMain);
 registerReadRMXPCommonEvents(ipcMain);
 registerWriteRMXPCommonEvents(ipcMain);
 registerDeleteMapRxdata(ipcMain);
+registerReadOverlayShader(ipcMain);
 registerChooseCharacterGraphic(ipcMain);
 registerCheckDownloadNewProject(ipcMain);
 registerGeneratingMapOverview(ipcMain);

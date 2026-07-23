@@ -34,6 +34,7 @@ const OPTION_SOURCE_KEYS = [
   'itemRepel',
   'itemTech',
   'itemHealing',
+  'itemBerry',
   'moves',
   'abilities',
   'dex',
@@ -62,6 +63,7 @@ const OptionSources: Record<OptionSourceKey, SelectOption[]> = {
   itemRepel: [],
   itemTech: [],
   itemHealing: [],
+  itemBerry: [],
   moves: [],
   abilities: [],
   dex: [],
@@ -107,6 +109,7 @@ const OptionToTextKey: Record<OptionSourceKey, TextSourceKey> = {
   itemRepel: 'items',
   itemTech: 'items',
   itemHealing: 'items',
+  itemBerry: 'items',
   moves: 'moves',
   abilities: 'abilities',
   dex: 'dex',
@@ -123,7 +126,7 @@ const OptionToTextKey: Record<OptionSourceKey, TextSourceKey> = {
 // Record holding all the optionSource groups
 const OptionSourceGroups: Record<TextSourceKey, OptionSourceKey[]> = {
   pocket: ['pocket'],
-  items: ['items', 'itemHeld', 'itemStone', 'itemGem', 'itemBall'],
+  items: ['items', 'itemHeld', 'itemStone', 'itemGem', 'itemBall', 'itemBerry'],
   moves: ['moves'],
   abilities: ['abilities'],
   dex: ['dex'],
@@ -290,6 +293,13 @@ const buildSelectOptionsFromKey = (key: OptionSourceKey, state: State) => {
     case 'itemHeld':
       return Object.values(state.projectData.items)
         .filter((data) => data.isHoldable)
+        .sort((a, b) => a.id - b.id)
+        .map((data) => adjustSelectOptionValue(originalObjects[data.id] || cloneEntity(originalObjects[0]), data.dbSymbol));
+    case 'itemBerry':
+      // Items flagged "is a berry" in the item editor — the same flag that
+      // drives berryData, so only these can back a berry tree.
+      return Object.values(state.projectData.items)
+        .filter((data) => data.isBerry)
         .sort((a, b) => a.id - b.id)
         .map((data) => adjustSelectOptionValue(originalObjects[data.id] || cloneEntity(originalObjects[0]), data.dbSymbol));
     case 'itemStone':

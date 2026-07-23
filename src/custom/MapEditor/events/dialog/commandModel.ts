@@ -1,5 +1,13 @@
 import { buildTextChain, createForcedMoveRoute, type RMXPMoveRoute, type WorkingCommand } from '../rmxpEventUtils';
 import { condParams, condsFromParams, emptyCond, isCondUsable, type CondEntry, type CondJoin } from '../conditions';
+import {
+  defaultOverlayParams,
+  OVERLAY_BLEND_MODES,
+  overlaySupports,
+  presetConfig,
+  type OverlayParam,
+  type OverlayParams,
+} from './overlayShader';
 
 export { emptyCond, isCondUsable, VAR_OPS, type CondEntry } from '../conditions';
 
@@ -25,7 +33,7 @@ export type CmdFormKind =
   | 'exitEvent' | 'setEventLocation' | 'controlTimer' | 'inputNumber' | 'buttonInput'
   | 'changeSaveAccess' | 'changeEncounter' | 'trainerBattle' | 'wildBattle'
   | 'gameOver' | 'callMenu' | 'callSave' | 'textOptions' | 'windowskin' | 'battleEndMe'
-  | 'healParty' | 'learnMove' | 'forgetMove' | 'selectParty';
+  | 'healParty' | 'learnMove' | 'forgetMove' | 'selectParty' | 'berryTree' | 'mapOverlay' | 'mapOverlaySet';
 
 /** Audio-playing kinds → their RMXP code and the Audio/ folder to browse. */
 export const AUDIO_KINDS: Record<string, { code: number; folder: string }> = {
@@ -170,6 +178,49 @@ export type CmdForm = {
   movePartyIndex: number;
   moveSkill: string;
   /**
+   * Create Berry Tree — the project's berry plugin `berry_tree(:berry, stage)`.
+   * The berry itself reuses `itemSymbol`. Stage 0 = just planted … 4 = ripe.
+   */
+  berryStage: number;
+  /**
+   * Set Map Overlay — PSDK's start_overlay/stop_overlay presets. 'none' stops
+   * the overlay. Everything after the preset is an attribute on the preset
+   * object (`003 Overlay Presets.rb`); which ones exist depends on the preset,
+   * see `presetConfig(preset).params`. We only emit what differs from the
+   * preset's own defaults, so a plain overlay stays a one-liner.
+   */
+  overlayPreset: string;
+  /** extra_texture_name — static_image / scroll only. */
+  overlayImage: string;
+  overlayOpacity: number;
+  /** Index into OVERLAY_BLEND_MODES. */
+  overlayBlendMode: number;
+  overlayDistFactor: number;
+  /** sample_color as Color.new(r, g, b, a) takes it: 0..255. */
+  overlaySampleColor: [number, number, number, number];
+  overlayDirectionX: number;
+  overlayDirectionY: number;
+  overlayMapAffix: boolean;
+  /** 0 keeps the project's characterTileZoom. */
+  overlayZoom: number;
+  /** 'default' emits nothing; the others call update_overlay_position. */
+  overlayPositionMode: 'default' | 'player' | 'coords';
+  overlayPositionX: number;
+  overlayPositionY: number;
+  overlayNoiseTexture: string;
+  overlayGradientTexture: string;
+  /**
+   * Adjust Map Overlay — the settings this command actually writes. The
+   * running preset isn't known when the event is authored, so the user ticks
+   * what to change and the rest is left alone.
+   */
+  overlaySetProps: OverlayParam[];
+  /**
+   * Adjust Map Overlay transition, in SECONDS. 0 applies the change at once;
+   * anything higher eases the numeric/colour settings over that time.
+   */
+  overlayDuration: number;
+  /**
    * Set Weather (236) → $game_screen.weather(type, power, duration). PSDK's
    * visual types differ from vanilla RMXP: 0 None, 1 Rain, 2 Sun, 3 Sandstorm,
    * 4 Hail, 5 Fog (see `902 Overworld Weather.rb`).
@@ -306,6 +357,13 @@ export const emptyForm = (kind: CmdFormKind, mode: 'insert' | 'edit'): CmdForm =
   textPosition: 2, textFrame: 0,
   windowskinName: '__undef__',
   moveByVar: true, movePartyIndex: 1, moveSkill: '__undef__',
+  // A ripe tree is what you usually want when placing one on a map.
+  berryStage: 4,
+  overlayPreset: 'fog', overlayImage: '__undef__', overlayOpacity: 1,
+  overlayBlendMode: 0, overlayDistFactor: 1.5, overlaySampleColor: [204, 204, 204, 255],
+  overlayDirectionX: 0, overlayDirectionY: 0, overlayMapAffix: false, overlayZoom: 0,
+  overlayPositionMode: 'default', overlayPositionX: 0, overlayPositionY: 0,
+  overlayNoiseTexture: '', overlayGradientTexture: '', overlaySetProps: ['opacity'], overlayDuration: 0,
   // RMXP's audio defaults: full volume, normal pitch.
   audioName: '__undef__', audioVolume: 100, audioPitch: 100,
   // A FORCED route: @repeat off, or a following 210 waits forever. See createForcedMoveRoute.
@@ -535,6 +593,12 @@ export const buildCommandsFromForm = (form: CmdForm, indent: number): WorkingCom
     case 'selectParty':
       // call_party_menu(var) stores the chosen party index in the variable.
       return buildTextChain(355, `call_party_menu(${form.id})`, indent);
+    case 'berryTree':
+      return buildTextChain(355, `berry_tree(:${form.itemSymbol}, ${clamp(form.berryStage, 0, 4)})`, indent);
+    case 'mapOverlay':
+      return buildTextChain(355, buildOverlayScript(form), indent);
+    case 'mapOverlaySet':
+      return buildTextChain(355, buildOverlayAdjustScript(form), indent);
     case 'learnMove':
       return buildTextChain(355, buildLearnMoveScript(form), indent);
     case 'forgetMove':
@@ -675,7 +739,7 @@ export const canSubmitForm = (f: CmdForm): boolean => {
   if (f.kind === 'showPicture') return f.picName !== '__undef__';
   if (f.kind === 'label' || f.kind === 'jump') return f.text.trim().length > 0;
   if (f.kind === 'choices') return f.choices.some((c) => choiceText(c).length > 0);
-  if (f.kind === 'item') return f.itemSymbol !== '__undef__';
+  if (f.kind === 'item' || f.kind === 'berryTree') return f.itemSymbol !== '__undef__';
   if (f.kind === 'creature' || f.kind === 'wildBattle') return f.species !== '__undef__';
   if (f.kind === 'learnMove' || f.kind === 'forgetMove') return f.moveSkill !== '__undef__';
   if (f.kind === 'windowskin') return f.windowskinName !== '__undef__';
@@ -843,8 +907,372 @@ const applyMoveTarget = (form: CmdForm, raw: string, varGroup: string | undefine
   if (varGroup !== undefined) { form.moveByVar = true; form.movePartyIndex = Number(varGroup); }
   else { form.moveByVar = false; form.movePartyIndex = Number(raw); }
 };
+/** Presets registered by PSDK's MapOverlay system (003 Overlay Presets.rb). */
+export const OVERLAY_PRESETS = ['static_image', 'scroll', 'water', 'fog', 'nausea', 'ripple', 'godrays'] as const;
+export const isImageOverlayPreset = (preset: string) => preset === 'static_image' || preset === 'scroll';
+
+/** Reset the tunable fields to the chosen preset's own defaults. */
+export const applyOverlayPresetDefaults = (form: CmdForm, preset: string): CmdForm => {
+  const cfg = presetConfig(preset);
+  return {
+    ...form,
+    overlayPreset: preset,
+    overlayBlendMode: cfg.blendMode,
+    overlayDistFactor: cfg.distFactor,
+    overlaySampleColor: [...cfg.sampleColor],
+    overlayDirectionX: cfg.direction1[0],
+    overlayDirectionY: cfg.direction1[1],
+    overlayMapAffix: false,
+    overlayZoom: 0,
+    overlayPositionMode: 'default',
+    overlayPositionX: 0,
+    overlayPositionY: 0,
+    overlayNoiseTexture: '',
+    overlayGradientTexture: '',
+  };
+};
+
+/** What the preview should render: preset defaults with the form applied. */
+export const overlayParamsFromForm = (form: CmdForm): OverlayParams => {
+  const preset = form.overlayPreset;
+  const params = defaultOverlayParams(preset);
+  const has = (p: Parameters<typeof overlaySupports>[1]) => overlaySupports(preset, p);
+  params.opacity = clamp(form.overlayOpacity, 0, 1);
+  params.blendMode = clamp(form.overlayBlendMode, 0, OVERLAY_BLEND_MODES.length - 1);
+  if (has('distFactor')) params.distFactor = form.overlayDistFactor;
+  if (has('sampleColor')) params.sampleColor = [...form.overlaySampleColor];
+  if (has('direction1')) params.direction1 = [form.overlayDirectionX, form.overlayDirectionY];
+  if (has('mapAffix')) params.mapAffix = form.overlayMapAffix;
+  if (has('zoom')) params.zoom = form.overlayZoom;
+  if (has('extraTexture') && form.overlayImage && form.overlayImage !== '__undef__') params.texture1Name = form.overlayImage;
+  if (has('noiseTexture') && form.overlayNoiseTexture) params.texture1Name = form.overlayNoiseTexture;
+  if (has('gradientTexture') && form.overlayGradientTexture) params.texture2Name = form.overlayGradientTexture;
+  if (has('position') && form.overlayPositionMode !== 'default') {
+    params.position = form.overlayPositionMode === 'player' ? 'player' : [form.overlayPositionX, form.overlayPositionY];
+  }
+  return params;
+};
+
+/**
+ * Wait (106) is stored in RMXP frames, and PSDK's `command_106` doubles the
+ * stored value before counting it down once per 60 FPS frame
+ * (`@wait_count = @parameters[0] * 2`). So ONE stored unit is 2 real frames —
+ * exactly 1/30 of a second. This is the same doubling Screen Shake uses.
+ */
+export const WAIT_UNITS_PER_SECOND = 30;
+export const waitFramesToSeconds = (frames: number) => frames / WAIT_UNITS_PER_SECOND;
+export const waitSecondsToFrames = (seconds: number) => Math.max(1, Math.round(seconds * WAIT_UNITS_PER_SECOND));
+
+/** Trim trailing zeros so 1.50 round-trips as 1.5 and 2.0 as 2.0 (not 2). */
+const rubyFloat = (n: number): string => (Number.isInteger(n) ? `${n}.0` : String(n));
+
+/**
+ * start_overlay only takes the preset name; everything else is assigned on the
+ * preset object it returns (`map_overlay` is aliased to current_overlay_preset
+ * in `160 Interpreter_Overlay.rb`). Kept on ONE script line (`;`-joined) so the
+ * command round-trips through a single 355 entry, and only non-default values
+ * are emitted so simple overlays stay readable.
+ */
+const buildOverlayScript = (form: CmdForm): string => {
+  const preset = form.overlayPreset;
+  if (preset === 'none') return 'stop_overlay';
+  const cfg = presetConfig(preset);
+  const has = (p: Parameters<typeof overlaySupports>[1]) => overlaySupports(preset, p);
+  const parts = [`start_overlay(:${preset})`];
+
+  if (has('extraTexture') && form.overlayImage && form.overlayImage !== '__undef__') {
+    parts.push(`map_overlay.extra_texture_name = ${rubyStr(form.overlayImage)}`);
+  }
+  if (has('noiseTexture') && form.overlayNoiseTexture && form.overlayNoiseTexture !== cfg.texture1?.defaultName) {
+    parts.push(`map_overlay.noise_texture_name = ${rubyStr(form.overlayNoiseTexture)}`);
+  }
+  if (has('gradientTexture') && form.overlayGradientTexture && form.overlayGradientTexture !== cfg.texture2?.defaultName) {
+    parts.push(`map_overlay.color_gradient_texture_name = ${rubyStr(form.overlayGradientTexture)}`);
+  }
+  const blend = clamp(form.overlayBlendMode, 0, OVERLAY_BLEND_MODES.length - 1);
+  if (blend !== cfg.blendMode) parts.push(`map_overlay.blend_mode = :${OVERLAY_BLEND_MODES[blend]}`);
+  if (form.overlayOpacity < 1) parts.push(`map_overlay.opacity = ${clamp(form.overlayOpacity, 0, 1)}`);
+  if (has('distFactor') && form.overlayDistFactor !== cfg.distFactor) {
+    parts.push(`map_overlay.distance_factor = ${rubyFloat(form.overlayDistFactor)}`);
+  }
+  if (has('sampleColor') && form.overlaySampleColor.some((v, i) => v !== cfg.sampleColor[i])) {
+    parts.push(`map_overlay.sample_color = Color.new(${form.overlaySampleColor.join(', ')})`);
+  }
+  if (has('direction1') && (form.overlayDirectionX !== cfg.direction1[0] || form.overlayDirectionY !== cfg.direction1[1])) {
+    parts.push(`map_overlay.direction1 = [${rubyFloat(form.overlayDirectionX)}, ${rubyFloat(form.overlayDirectionY)}]`);
+  }
+  if (has('mapAffix') && form.overlayMapAffix) parts.push('map_overlay.map_affix = true');
+  // zoom 0 is our "leave it alone" marker, not a value PSDK would accept.
+  if (has('zoom') && form.overlayZoom > 0) parts.push(`map_overlay.zoom = ${rubyFloat(form.overlayZoom)}`);
+  if (has('position') && form.overlayPositionMode !== 'default') {
+    const target = form.overlayPositionMode === 'player' ? ':game_player' : `[${form.overlayPositionX}, ${form.overlayPositionY}]`;
+    parts.push(`update_overlay_position(${target})`);
+  }
+  return parts.join('; ');
+};
+
+/**
+ * The `update_overlay` keyword for each tunable, matching the setter names on
+ * the preset classes in `003 Overlay Presets.rb`.
+ */
+const OVERLAY_SET_KEYS: Record<OverlayParam, string> = {
+  opacity: 'opacity',
+  blendMode: 'blend_mode',
+  distFactor: 'distance_factor',
+  sampleColor: 'sample_color',
+  direction1: 'direction1',
+  extraTexture: 'extra_texture_name',
+  noiseTexture: 'noise_texture_name',
+  gradientTexture: 'color_gradient_texture_name',
+  mapAffix: 'map_affix',
+  zoom: 'zoom',
+  position: 'position',
+};
+const OVERLAY_SET_PARAM_BY_KEY = Object.fromEntries(
+  Object.entries(OVERLAY_SET_KEYS).map(([param, key]) => [key, param as OverlayParam])
+) as Record<string, OverlayParam>;
+
+/** Every setting the Adjust command can offer, in the order the form shows them. */
+export const OVERLAY_SET_PARAMS = Object.keys(OVERLAY_SET_KEYS) as OverlayParam[];
+
+/** The Ruby literal for one setting's current value in the form. */
+const overlaySetValue = (form: CmdForm, param: OverlayParam): string => {
+  switch (param) {
+    case 'opacity': return String(clamp(form.overlayOpacity, 0, 1));
+    case 'blendMode': return `:${OVERLAY_BLEND_MODES[clamp(form.overlayBlendMode, 0, OVERLAY_BLEND_MODES.length - 1)]}`;
+    case 'distFactor': return rubyFloat(form.overlayDistFactor);
+    case 'sampleColor': return `Color.new(${form.overlaySampleColor.join(', ')})`;
+    case 'direction1': return `[${rubyFloat(form.overlayDirectionX)}, ${rubyFloat(form.overlayDirectionY)}]`;
+    case 'extraTexture': return rubyStr(form.overlayImage === '__undef__' ? '' : form.overlayImage);
+    case 'noiseTexture': return rubyStr(form.overlayNoiseTexture);
+    case 'gradientTexture': return rubyStr(form.overlayGradientTexture);
+    case 'mapAffix': return form.overlayMapAffix ? 'true' : 'false';
+    case 'zoom': return rubyFloat(form.overlayZoom);
+    case 'position':
+      return form.overlayPositionMode === 'player' ? ':game_player' : `[${form.overlayPositionX}, ${form.overlayPositionY}]`;
+  }
+};
+
+/**
+ * Adjust Map Overlay — retunes the overlay that is already running, without
+ * restarting it. `update_overlay` is the project's own helper (see
+ * `scripts/00003 MapOverlayPlugin.rb`): it no-ops when nothing is running and
+ * skips settings the active preset doesn't have, which matters because the
+ * preset isn't known at authoring time.
+ */
+const buildOverlayAdjustScript = (form: CmdForm): string => {
+  const parts = form.overlaySetProps
+    .filter((param) => OVERLAY_SET_KEYS[param])
+    .map((param) => `${OVERLAY_SET_KEYS[param]}: ${overlaySetValue(form, param)}`);
+  // 0 is the plugin's default, so only spell the transition out when there is one.
+  if (form.overlayDuration > 0) parts.push(`duration: ${rubyFloat(form.overlayDuration)}`);
+  return parts.length === 0 ? 'update_overlay' : `update_overlay(${parts.join(', ')})`;
+};
+
+const OVERLAY_ADJUST_RE = /^update_overlay(?:\((.*)\))?$/;
+/** Split `a: 1, b: [2, 3]` on the commas that are NOT inside brackets or parens. */
+const splitTopLevel = (source: string): string[] => {
+  const out: string[] = [];
+  let depth = 0;
+  let start = 0;
+  for (let i = 0; i < source.length; i += 1) {
+    const c = source[i];
+    if (c === '[' || c === '(') depth += 1;
+    else if (c === ']' || c === ')') depth -= 1;
+    else if (c === ',' && depth === 0) {
+      out.push(source.slice(start, i));
+      start = i + 1;
+    }
+  }
+  out.push(source.slice(start));
+  return out.map((v) => v.trim()).filter((v) => v.length > 0);
+};
+
+const overlayAdjustFormFromScript = (script: string): CmdForm | null => {
+  const match = script.match(OVERLAY_ADJUST_RE);
+  if (!match) return null;
+  const form = emptyForm('mapOverlaySet', 'edit');
+  form.overlaySetProps = [];
+  if (match[1] === undefined || match[1].trim() === '') return form;
+
+  for (const entry of splitTopLevel(match[1])) {
+    const sep = entry.indexOf(':');
+    if (sep < 0) return null;
+    const key = entry.slice(0, sep).trim();
+    const value = entry.slice(sep + 1).trim();
+    if (key === 'duration') {
+      if (!/^[\d.]+$/.test(value)) return null;
+      form.overlayDuration = Number(value);
+      continue;
+    }
+    const param = OVERLAY_SET_PARAM_BY_KEY[key];
+    if (!param) return null;
+    const str = value.match(RUBY_STRING_RE);
+    const pair = value.match(OVERLAY_PAIR_RE);
+    const color = value.match(OVERLAY_COLOR_RE);
+    switch (param) {
+      case 'opacity':
+        if (!/^[\d.]+$/.test(value)) return null;
+        form.overlayOpacity = Number(value);
+        break;
+      case 'blendMode': {
+        const index = OVERLAY_BLEND_MODES.indexOf(value.replace(/^:/, '') as (typeof OVERLAY_BLEND_MODES)[number]);
+        if (index < 0) return null;
+        form.overlayBlendMode = index;
+        break;
+      }
+      case 'distFactor':
+        if (!/^-?[\d.]+$/.test(value)) return null;
+        form.overlayDistFactor = Number(value);
+        break;
+      case 'sampleColor':
+        if (!color) return null;
+        form.overlaySampleColor = [Number(color[1]), Number(color[2]), Number(color[3]), color[4] === undefined ? 255 : Number(color[4])];
+        break;
+      case 'direction1':
+        if (!pair) return null;
+        form.overlayDirectionX = Number(pair[1]);
+        form.overlayDirectionY = Number(pair[2]);
+        break;
+      case 'extraTexture':
+        if (!str) return null;
+        form.overlayImage = unRubyStr(str[1]) || '__undef__';
+        break;
+      case 'noiseTexture':
+        if (!str) return null;
+        form.overlayNoiseTexture = unRubyStr(str[1]);
+        break;
+      case 'gradientTexture':
+        if (!str) return null;
+        form.overlayGradientTexture = unRubyStr(str[1]);
+        break;
+      case 'mapAffix':
+        if (value !== 'true' && value !== 'false') return null;
+        form.overlayMapAffix = value === 'true';
+        break;
+      case 'zoom':
+        if (!/^[\d.]+$/.test(value)) return null;
+        form.overlayZoom = Number(value);
+        break;
+      case 'position':
+        if (value === ':game_player') {
+          form.overlayPositionMode = 'player';
+        } else {
+          const coords = value.match(/^\[\s*(-?\d+)\s*,\s*(-?\d+)\s*\]$/);
+          if (!coords) return null;
+          form.overlayPositionMode = 'coords';
+          form.overlayPositionX = Number(coords[1]);
+          form.overlayPositionY = Number(coords[2]);
+        }
+        break;
+    }
+    form.overlaySetProps.push(param);
+  }
+  return form;
+};
+
+const OVERLAY_STOP_RE = /^stop_overlay$/;
+const OVERLAY_START_RE = /^start_overlay\(:(\w+)\)$/;
+const OVERLAY_ASSIGN_RE = /^map_overlay\.(\w+)\s*=\s*(.+)$/;
+const OVERLAY_POSITION_RE = /^update_overlay_position\(\s*(?::game_player|\[\s*(-?\d+)\s*,\s*(-?\d+)\s*\])\s*\)$/;
+const OVERLAY_COLOR_RE = /^Color\.new\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*(\d+)\s*)?\)$/;
+const OVERLAY_PAIR_RE = /^\[\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\]$/;
+const RUBY_STRING_RE = /^'((?:[^'\\]|\\.)*)'$/;
+
+/**
+ * Parse a `start_overlay(...)` script back into the form. Anything we don't
+ * recognise makes the whole thing unparseable on purpose: the command then
+ * stays a raw script entry rather than silently losing hand-written Ruby.
+ */
+const overlayFormFromScript = (script: string): CmdForm | null => {
+  const segments = script.split(';').map((s) => s.trim());
+  const start = segments[0].match(OVERLAY_START_RE);
+  if (!start) return null;
+  const preset = start[1];
+  if (!OVERLAY_PRESETS.includes(preset as (typeof OVERLAY_PRESETS)[number])) return null;
+  const form = applyOverlayPresetDefaults(emptyForm('mapOverlay', 'edit'), preset);
+  form.overlayOpacity = 1;
+
+  for (const segment of segments.slice(1)) {
+    const position = segment.match(OVERLAY_POSITION_RE);
+    if (position) {
+      if (position[1] === undefined) {
+        form.overlayPositionMode = 'player';
+      } else {
+        form.overlayPositionMode = 'coords';
+        form.overlayPositionX = Number(position[1]);
+        form.overlayPositionY = Number(position[2]);
+      }
+      continue;
+    }
+    const assign = segment.match(OVERLAY_ASSIGN_RE);
+    if (!assign) return null;
+    const [, attribute, rawValue] = assign;
+    const value = rawValue.trim();
+    const str = value.match(RUBY_STRING_RE);
+    const pair = value.match(OVERLAY_PAIR_RE);
+    const color = value.match(OVERLAY_COLOR_RE);
+    switch (attribute) {
+      case 'extra_texture_name':
+        if (!str) return null;
+        form.overlayImage = unRubyStr(str[1]);
+        break;
+      case 'noise_texture_name':
+        if (!str) return null;
+        form.overlayNoiseTexture = unRubyStr(str[1]);
+        break;
+      case 'color_gradient_texture_name':
+        if (!str) return null;
+        form.overlayGradientTexture = unRubyStr(str[1]);
+        break;
+      case 'blend_mode': {
+        const index = OVERLAY_BLEND_MODES.indexOf(value.replace(/^:/, '') as (typeof OVERLAY_BLEND_MODES)[number]);
+        if (index < 0) return null;
+        form.overlayBlendMode = index;
+        break;
+      }
+      case 'opacity':
+        if (!/^[\d.]+$/.test(value)) return null;
+        form.overlayOpacity = Number(value);
+        break;
+      case 'distance_factor':
+        if (!/^-?[\d.]+$/.test(value)) return null;
+        form.overlayDistFactor = Number(value);
+        break;
+      case 'sample_color':
+        if (!color) return null;
+        form.overlaySampleColor = [Number(color[1]), Number(color[2]), Number(color[3]), color[4] === undefined ? 255 : Number(color[4])];
+        break;
+      case 'direction1':
+        if (!pair) return null;
+        form.overlayDirectionX = Number(pair[1]);
+        form.overlayDirectionY = Number(pair[2]);
+        break;
+      case 'map_affix':
+        if (value !== 'true' && value !== 'false') return null;
+        form.overlayMapAffix = value === 'true';
+        break;
+      case 'zoom':
+        if (!/^[\d.]+$/.test(value)) return null;
+        form.overlayZoom = Number(value);
+        break;
+      default:
+        return null;
+    }
+  }
+  return form;
+};
+
+const BERRY_TREE_RE = /^berry_tree\(:(\w+),\s*(\d+)\)$/;
 const gameplayFormFromScript = (script: string): CmdForm | null => {
   if (HEAL_PARTY_RE.test(script)) return emptyForm('healParty', 'edit');
+  const berry = script.match(BERRY_TREE_RE);
+  if (berry) { const f = emptyForm('berryTree', 'edit'); f.itemSymbol = berry[1]; f.berryStage = Number(berry[2]); return f; }
+  if (OVERLAY_STOP_RE.test(script)) { const f = emptyForm('mapOverlay', 'edit'); f.overlayPreset = 'none'; return f; }
+  const overlayAdjust = overlayAdjustFormFromScript(script);
+  if (overlayAdjust) return overlayAdjust;
+  const overlay = overlayFormFromScript(script);
+  if (overlay) return overlay;
   const sel = script.match(SELECT_PARTY_RE);
   if (sel) { const f = emptyForm('selectParty', 'edit'); f.id = Number(sel[1]); return f; }
   const learn = script.match(LEARN_MOVE_RE);

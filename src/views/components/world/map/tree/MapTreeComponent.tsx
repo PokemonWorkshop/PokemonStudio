@@ -1,3 +1,5 @@
+import { useSyncExternalStore } from 'react';
+import { getPendingEdits, subscribePendingEdits } from '@src/custom/MapEditor/pendingEdits';
 import DotIcon from '@assets/icons/global/dot.svg';
 import FolderIcon from '@assets/icons/global/folder.svg';
 import FolderOpenIcon from '@assets/icons/global/folder_open.svg';
@@ -54,6 +56,8 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
   const { selectedDataIdentifier: currentMap, setSelectedDataIdentifier: setCurrentMap, projectDataValues: maps } = useProjectMaps();
   const [globalState] = useGlobalState();
   const mapsModified = globalState.mapsModified;
+  // Maps with edits held in memory but not yet written to disk.
+  const pendingEdits = useSyncExternalStore(subscribePendingEdits, getPendingEdits);
   const mapUpdate = useMapUpdate();
   const loaderRef = useLoaderRef();
   const setText = useSetProjectText();
@@ -186,6 +190,7 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
     const isUnderOpenFolder = searchIsUnderOpenFolder(tree, item, 'MapInfoMap');
     const itemDbSymbol = item.data?.klass === 'MapInfoMap' ? (item.data.mapDbSymbol as DbSymbol) : undefined;
     const isModified = !!itemDbSymbol && mapsModified.includes(itemDbSymbol);
+    const hasUnsaved = !!itemDbSymbol && pendingEdits.some((edit) => edit.dbSymbol === itemDbSymbol);
 
     renderDropBox(snapshot.combineWith, treeRef);
 
@@ -251,13 +256,15 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
             )}
           </div>
           {isFolder && !!countChildren && <span className="count-children">{countChildren}</span>}
-          {!canRename && isModified && itemDbSymbol && (
+          {!canRename && (isModified || hasUnsaved) && itemDbSymbol && (
             <span
               className="modified-indicator"
-              title={tiledPathMissing ? t('map_process_disabled') : t('update_maps')}
+              title={hasUnsaved ? t('map_unsaved_changes') : tiledPathMissing ? t('map_process_disabled') : t('update_maps')}
               onClick={(e) => {
                 e.stopPropagation();
-                updateSingleMap(itemDbSymbol);
+                // Unsaved in-memory edits aren't a re-process job — only the
+                // "modified on disk" case has something for Tiled to redo.
+                if (!hasUnsaved) updateSingleMap(itemDbSymbol);
               }}
             />
           )}

@@ -19,6 +19,25 @@ import { ShakePreview } from './ShakePreview';
 import { WeatherPreview } from './WeatherPreview';
 import { TrainerBattlePreview } from './TrainerBattlePreview';
 import { WindowskinPreview } from './WindowskinPreview';
+import { MapOverlayPreview } from './MapOverlayPreview';
+import {
+  OVERLAY_PRESETS,
+  OVERLAY_SET_PARAMS,
+  isImageOverlayPreset,
+  applyOverlayPresetDefaults,
+  overlayParamsFromForm,
+  waitFramesToSeconds,
+  waitSecondsToFrames,
+} from './commandModel';
+import { OVERLAY_BLEND_MODES, overlaySupports, presetConfig } from './overlayShader';
+
+const clampByte = (v: number) => Math.max(0, Math.min(255, Math.round(v)));
+/** `sample_color` is Color.new(r, g, b, a); <input type="color"> speaks hex. */
+const rgbToHex = (c: readonly number[]) => `#${c.slice(0, 3).map((v) => clampByte(v).toString(16).padStart(2, '0')).join('')}`;
+const hexToRgb = (hex: string): [number, number, number] => {
+  const n = parseInt(hex.replace('#', ''), 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+};
 
 /**
  * Wrapper that keeps an @ds/Select popover fully visible inside the command form.
@@ -114,6 +133,8 @@ type Props = {
   panoramaFiles: string[];
   battlebackFiles: string[];
   windowskinFiles: string[];
+  /** Bare names in graphics/fogs — the Map Overlay image presets use them. */
+  fogFiles: string[];
   /** Events on THIS map, for the per-event move wait. */
   mapEvents: { id: number; name: string }[];
   resolveCsv: (fileId: number, line: number) => string | undefined;
@@ -135,7 +156,7 @@ type Props = {
  * `setForm` and commits through `onSubmit` — the dialog shell owns where the
  * resulting command lands in the list.
  */
-export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, audioFiles, projectMaps, commonEvents, pictureFiles, panoramaFiles, battlebackFiles, windowskinFiles, mapEvents, resolveCsv, pageLabels, getMapSnapshot, mapWidthTiles, mapHeightTiles, currentMapId, onEditCommonEvents }: Props) => {
+export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, audioFiles, projectMaps, commonEvents, pictureFiles, panoramaFiles, battlebackFiles, windowskinFiles, fogFiles, mapEvents, resolveCsv, pageLabels, getMapSnapshot, mapWidthTiles, mapHeightTiles, currentMapId, onEditCommonEvents }: Props) => {
   const { t } = useTranslation();
   const [{ projectText, projectPath }] = useGlobalState();
   const [showTranslations, setShowTranslations] = useState(false);
@@ -202,6 +223,15 @@ export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, au
         <Row>
           <Dim>{t('me_events_cmd_wait_frames')}</Dim>
           <SmallInput type="number" min={1} value={form.amount} onChange={(e) => setForm({ ...form, amount: Number(e.target.value) || 1 })} autoFocus />
+          <Dim>{t('me_events_cmd_wait_seconds')}</Dim>
+          <SmallInput
+            type="number"
+            min={0}
+            step={0.1}
+            value={Number(waitFramesToSeconds(form.amount).toFixed(3))}
+            onChange={(e) => setForm({ ...form, amount: waitSecondsToFrames(Number(e.target.value) || 0) })}
+          />
+          <Dim $wrap title={t('me_events_cmd_wait_hint')}>{t('me_events_cmd_wait_note')}</Dim>
         </Row>
       )}
       {form.kind === 'switch' && (
@@ -581,6 +611,468 @@ export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, au
               <WindowskinPreview name={form.windowskinName} />
             </div>
           </Row>
+        </>
+      )}
+      {form.kind === 'mapOverlay' && (
+        <>
+          <Row>
+            <Dim style={{ minWidth: 52 }}>{t('me_events_overlay_preset')}</Dim>
+            <SmallSelect
+              value={form.overlayPreset}
+              onChange={(e) =>
+                setForm(e.target.value === 'none' ? { ...form, overlayPreset: 'none' } : applyOverlayPresetDefaults(form, e.target.value))
+              }
+            >
+              <option value="none">{t('me_events_overlay_none')}</option>
+              {OVERLAY_PRESETS.map((p) => (
+                <option key={p} value={p}>{t(`me_events_overlay_${p}`)}</option>
+              ))}
+            </SmallSelect>
+            {form.overlayPreset !== 'none' && (
+              <>
+                <Dim>{t('me_events_opacity')}</Dim>
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={Math.round(form.overlayOpacity * 100)}
+                  style={{ flex: 1, minWidth: 0 }}
+                  onChange={(e) => setForm({ ...form, overlayOpacity: Number(e.target.value) / 100 })}
+                />
+                <SmallInput
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={Math.round(form.overlayOpacity * 100)}
+                  onChange={(e) => setForm({ ...form, overlayOpacity: clamp(Number(e.target.value) || 0, 0, 100) / 100 })}
+                />
+              </>
+            )}
+          </Row>
+          {isImageOverlayPreset(form.overlayPreset) && (
+            <Row style={{ alignItems: 'flex-start' }}>
+              <Dim style={{ minWidth: 52, paddingTop: 4 }}>{t('me_events_overlay_image')}</Dim>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <PicturePicker
+                  folder="fogs"
+                  files={fogFiles}
+                  value={form.overlayImage === '__undef__' ? '' : form.overlayImage}
+                  onChange={(name) => setForm({ ...form, overlayImage: name || '__undef__' })}
+                />
+              </div>
+            </Row>
+          )}
+          {overlaySupports(form.overlayPreset, 'noiseTexture') && (
+            <Row>
+              <Dim style={{ minWidth: 52 }}>{t('me_events_overlay_noise')}</Dim>
+              <SmallSelect
+                style={{ flex: 1, minWidth: 0 }}
+                value={form.overlayNoiseTexture || presetConfig(form.overlayPreset).texture1?.defaultName || ''}
+                onChange={(e) => setForm({ ...form, overlayNoiseTexture: e.target.value })}
+              >
+                {fogFiles.map((f) => (<option key={f} value={f}>{f}</option>))}
+              </SmallSelect>
+              {overlaySupports(form.overlayPreset, 'gradientTexture') && (
+                <>
+                  <Dim>{t('me_events_overlay_gradient')}</Dim>
+                  <SmallSelect
+                    style={{ flex: 1, minWidth: 0 }}
+                    value={form.overlayGradientTexture || presetConfig(form.overlayPreset).texture2?.defaultName || ''}
+                    onChange={(e) => setForm({ ...form, overlayGradientTexture: e.target.value })}
+                  >
+                    {fogFiles.map((f) => (<option key={f} value={f}>{f}</option>))}
+                  </SmallSelect>
+                </>
+              )}
+            </Row>
+          )}
+          {form.overlayPreset !== 'none' && (
+            <Row>
+              <Dim style={{ minWidth: 52 }}>{t('me_events_overlay_blend')}</Dim>
+              <SmallSelect value={form.overlayBlendMode} onChange={(e) => setForm({ ...form, overlayBlendMode: Number(e.target.value) })}>
+                {OVERLAY_BLEND_MODES.map((mode, index) => (
+                  <option key={mode} value={index}>{t(`me_events_overlay_blend_${mode}`)}</option>
+                ))}
+              </SmallSelect>
+              {overlaySupports(form.overlayPreset, 'distFactor') && (
+                <>
+                  <Dim title={t('me_events_overlay_dist_hint')}>{t('me_events_overlay_dist')}</Dim>
+                  <input
+                    type="range"
+                    min={0}
+                    max={500}
+                    value={Math.round(form.overlayDistFactor * 100)}
+                    style={{ flex: 1, minWidth: 0 }}
+                    onChange={(e) => setForm({ ...form, overlayDistFactor: Number(e.target.value) / 100 })}
+                  />
+                  <SmallInput
+                    type="number"
+                    step={0.1}
+                    min={0}
+                    value={form.overlayDistFactor}
+                    onChange={(e) => setForm({ ...form, overlayDistFactor: Math.max(0, Number(e.target.value) || 0) })}
+                  />
+                </>
+              )}
+            </Row>
+          )}
+          {overlaySupports(form.overlayPreset, 'sampleColor') && (
+            <Row>
+              <Dim style={{ minWidth: 52 }}>{t('me_events_overlay_color')}</Dim>
+              <input
+                type="color"
+                value={rgbToHex(form.overlaySampleColor)}
+                style={{ width: 42, height: 24, padding: 0, background: 'none', border: 'none' }}
+                onChange={(e) => {
+                  const [r, g, b] = hexToRgb(e.target.value);
+                  setForm({ ...form, overlaySampleColor: [r, g, b, form.overlaySampleColor[3]] });
+                }}
+              />
+              <Dim>{t('me_events_overlay_color_alpha')}</Dim>
+              <input
+                type="range"
+                min={0}
+                max={255}
+                value={form.overlaySampleColor[3]}
+                style={{ flex: 1, minWidth: 0 }}
+                onChange={(e) => {
+                  const c = form.overlaySampleColor;
+                  setForm({ ...form, overlaySampleColor: [c[0], c[1], c[2], Number(e.target.value)] });
+                }}
+              />
+              <SmallInput
+                type="number"
+                min={0}
+                max={255}
+                value={form.overlaySampleColor[3]}
+                onChange={(e) => {
+                  const c = form.overlaySampleColor;
+                  setForm({ ...form, overlaySampleColor: [c[0], c[1], c[2], clamp(Number(e.target.value) || 0, 0, 255)] });
+                }}
+              />
+            </Row>
+          )}
+          {overlaySupports(form.overlayPreset, 'direction1') && (
+            <Row>
+              <Dim style={{ minWidth: 52 }} title={t('me_events_overlay_scroll_hint')}>{t('me_events_overlay_scroll_dir')}</Dim>
+              <Dim>X</Dim>
+              <SmallInput
+                type="number"
+                step={0.01}
+                value={form.overlayDirectionX}
+                onChange={(e) => setForm({ ...form, overlayDirectionX: Number(e.target.value) || 0 })}
+              />
+              <Dim>Y</Dim>
+              <SmallInput
+                type="number"
+                step={0.01}
+                value={form.overlayDirectionY}
+                onChange={(e) => setForm({ ...form, overlayDirectionY: Number(e.target.value) || 0 })}
+              />
+            </Row>
+          )}
+          {overlaySupports(form.overlayPreset, 'mapAffix') && (
+            <Row>
+              <Dim style={{ minWidth: 52 }} />
+              <CheckLabel title={t('me_events_overlay_affix_hint')}>
+                <input type="checkbox" checked={form.overlayMapAffix} onChange={(e) => setForm({ ...form, overlayMapAffix: e.target.checked })} />
+                {t('me_events_overlay_affix')}
+              </CheckLabel>
+              {form.overlayMapAffix && (
+                <>
+                  <Dim title={t('me_events_overlay_zoom_hint')}>{t('me_events_overlay_zoom')}</Dim>
+                  <SmallInput
+                    type="number"
+                    step={0.1}
+                    min={0}
+                    placeholder={t('me_events_overlay_zoom_default')}
+                    value={form.overlayZoom || ''}
+                    onChange={(e) => setForm({ ...form, overlayZoom: Math.max(0, Number(e.target.value) || 0) })}
+                  />
+                </>
+              )}
+            </Row>
+          )}
+          {overlaySupports(form.overlayPreset, 'position') && (
+            <Row>
+              <Dim style={{ minWidth: 52 }}>{t('me_events_overlay_position')}</Dim>
+              <SmallSelect
+                value={form.overlayPositionMode}
+                onChange={(e) => setForm({ ...form, overlayPositionMode: e.target.value as CmdForm['overlayPositionMode'] })}
+              >
+                <option value="default">{t('me_events_overlay_position_default')}</option>
+                <option value="player">{t('me_events_overlay_position_player')}</option>
+                <option value="coords">{t('me_events_overlay_position_coords')}</option>
+              </SmallSelect>
+              {form.overlayPositionMode === 'coords' && (
+                <>
+                  <Dim>X</Dim>
+                  <SmallInput
+                    type="number"
+                    value={form.overlayPositionX}
+                    onChange={(e) => setForm({ ...form, overlayPositionX: Math.round(Number(e.target.value) || 0) })}
+                  />
+                  <Dim>Y</Dim>
+                  <SmallInput
+                    type="number"
+                    value={form.overlayPositionY}
+                    onChange={(e) => setForm({ ...form, overlayPositionY: Math.round(Number(e.target.value) || 0) })}
+                  />
+                </>
+              )}
+            </Row>
+          )}
+          {form.overlayPreset !== 'none' && (
+            <Row style={{ alignItems: 'flex-start' }}>
+              <Dim style={{ minWidth: 52, paddingTop: 4 }}>{t('me_events_overlay_preview')}</Dim>
+              <MapOverlayPreview
+                snapshotUrl={mapSnapshot}
+                preset={form.overlayPreset}
+                params={overlayParamsFromForm(form)}
+                projectPath={projectPath ?? undefined}
+                mapWidthTiles={mapWidthTiles}
+                mapHeightTiles={mapHeightTiles}
+              />
+            </Row>
+          )}
+        </>
+      )}
+      {form.kind === 'mapOverlaySet' && (
+        <>
+          <Row style={{ alignItems: 'flex-start' }}>
+            <Dim style={{ minWidth: 52, paddingTop: 4 }}>{t('me_events_overlay_adjust_what')}</Dim>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 12px', flex: 1, minWidth: 0 }}>
+              {OVERLAY_SET_PARAMS.map((param) => (
+                <CheckLabel key={param}>
+                  <input
+                    type="checkbox"
+                    checked={form.overlaySetProps.includes(param)}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        overlaySetProps: e.target.checked
+                          ? [...form.overlaySetProps, param]
+                          : form.overlaySetProps.filter((v) => v !== param),
+                      })
+                    }
+                  />
+                  {t(`me_events_overlay_param_${param}`)}
+                </CheckLabel>
+              ))}
+            </div>
+          </Row>
+          {form.overlaySetProps.includes('opacity') && (
+            <Row>
+              <Dim style={{ minWidth: 52 }}>{t('me_events_opacity')}</Dim>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={Math.round(form.overlayOpacity * 100)}
+                style={{ flex: 1, minWidth: 0 }}
+                onChange={(e) => setForm({ ...form, overlayOpacity: Number(e.target.value) / 100 })}
+              />
+              <SmallInput
+                type="number"
+                min={0}
+                max={100}
+                value={Math.round(form.overlayOpacity * 100)}
+                onChange={(e) => setForm({ ...form, overlayOpacity: clamp(Number(e.target.value) || 0, 0, 100) / 100 })}
+              />
+            </Row>
+          )}
+          {(form.overlaySetProps.includes('blendMode') || form.overlaySetProps.includes('distFactor')) && (
+            <Row>
+              {form.overlaySetProps.includes('blendMode') && (
+                <>
+                  <Dim style={{ minWidth: 52 }}>{t('me_events_overlay_blend')}</Dim>
+                  <SmallSelect value={form.overlayBlendMode} onChange={(e) => setForm({ ...form, overlayBlendMode: Number(e.target.value) })}>
+                    {OVERLAY_BLEND_MODES.map((mode, index) => (
+                      <option key={mode} value={index}>{t(`me_events_overlay_blend_${mode}`)}</option>
+                    ))}
+                  </SmallSelect>
+                </>
+              )}
+              {form.overlaySetProps.includes('distFactor') && (
+                <>
+                  <Dim title={t('me_events_overlay_dist_hint')}>{t('me_events_overlay_dist')}</Dim>
+                  <input
+                    type="range"
+                    min={0}
+                    max={500}
+                    value={Math.round(form.overlayDistFactor * 100)}
+                    style={{ flex: 1, minWidth: 0 }}
+                    onChange={(e) => setForm({ ...form, overlayDistFactor: Number(e.target.value) / 100 })}
+                  />
+                  <SmallInput
+                    type="number"
+                    step={0.1}
+                    min={0}
+                    value={form.overlayDistFactor}
+                    onChange={(e) => setForm({ ...form, overlayDistFactor: Math.max(0, Number(e.target.value) || 0) })}
+                  />
+                </>
+              )}
+            </Row>
+          )}
+          {form.overlaySetProps.includes('sampleColor') && (
+            <Row>
+              <Dim style={{ minWidth: 52 }}>{t('me_events_overlay_color')}</Dim>
+              <input
+                type="color"
+                value={rgbToHex(form.overlaySampleColor)}
+                style={{ width: 42, height: 24, padding: 0, background: 'none', border: 'none' }}
+                onChange={(e) => {
+                  const [r, g, b] = hexToRgb(e.target.value);
+                  setForm({ ...form, overlaySampleColor: [r, g, b, form.overlaySampleColor[3]] });
+                }}
+              />
+              <Dim>{t('me_events_overlay_color_alpha')}</Dim>
+              <input
+                type="range"
+                min={0}
+                max={255}
+                value={form.overlaySampleColor[3]}
+                style={{ flex: 1, minWidth: 0 }}
+                onChange={(e) => {
+                  const c = form.overlaySampleColor;
+                  setForm({ ...form, overlaySampleColor: [c[0], c[1], c[2], Number(e.target.value)] });
+                }}
+              />
+              <SmallInput
+                type="number"
+                min={0}
+                max={255}
+                value={form.overlaySampleColor[3]}
+                onChange={(e) => {
+                  const c = form.overlaySampleColor;
+                  setForm({ ...form, overlaySampleColor: [c[0], c[1], c[2], clamp(Number(e.target.value) || 0, 0, 255)] });
+                }}
+              />
+            </Row>
+          )}
+          {form.overlaySetProps.includes('direction1') && (
+            <Row>
+              <Dim style={{ minWidth: 52 }} title={t('me_events_overlay_scroll_hint')}>{t('me_events_overlay_scroll_dir')}</Dim>
+              <Dim>X</Dim>
+              <SmallInput type="number" step={0.01} value={form.overlayDirectionX} onChange={(e) => setForm({ ...form, overlayDirectionX: Number(e.target.value) || 0 })} />
+              <Dim>Y</Dim>
+              <SmallInput type="number" step={0.01} value={form.overlayDirectionY} onChange={(e) => setForm({ ...form, overlayDirectionY: Number(e.target.value) || 0 })} />
+            </Row>
+          )}
+          {form.overlaySetProps.includes('extraTexture') && (
+            <Row style={{ alignItems: 'flex-start' }}>
+              <Dim style={{ minWidth: 52, paddingTop: 4 }}>{t('me_events_overlay_image')}</Dim>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <PicturePicker
+                  folder="fogs"
+                  files={fogFiles}
+                  value={form.overlayImage === '__undef__' ? '' : form.overlayImage}
+                  onChange={(name) => setForm({ ...form, overlayImage: name || '__undef__' })}
+                />
+              </div>
+            </Row>
+          )}
+          {(form.overlaySetProps.includes('noiseTexture') || form.overlaySetProps.includes('gradientTexture')) && (
+            <Row>
+              {form.overlaySetProps.includes('noiseTexture') && (
+                <>
+                  <Dim style={{ minWidth: 52 }}>{t('me_events_overlay_noise')}</Dim>
+                  <SmallSelect style={{ flex: 1, minWidth: 0 }} value={form.overlayNoiseTexture} onChange={(e) => setForm({ ...form, overlayNoiseTexture: e.target.value })}>
+                    <option value="">{t('me_events_choose')}</option>
+                    {fogFiles.map((f) => (<option key={f} value={f}>{f}</option>))}
+                  </SmallSelect>
+                </>
+              )}
+              {form.overlaySetProps.includes('gradientTexture') && (
+                <>
+                  <Dim>{t('me_events_overlay_gradient')}</Dim>
+                  <SmallSelect style={{ flex: 1, minWidth: 0 }} value={form.overlayGradientTexture} onChange={(e) => setForm({ ...form, overlayGradientTexture: e.target.value })}>
+                    <option value="">{t('me_events_choose')}</option>
+                    {fogFiles.map((f) => (<option key={f} value={f}>{f}</option>))}
+                  </SmallSelect>
+                </>
+              )}
+            </Row>
+          )}
+          {(form.overlaySetProps.includes('mapAffix') || form.overlaySetProps.includes('zoom')) && (
+            <Row>
+              {form.overlaySetProps.includes('mapAffix') && (
+                <CheckLabel title={t('me_events_overlay_affix_hint')}>
+                  <input type="checkbox" checked={form.overlayMapAffix} onChange={(e) => setForm({ ...form, overlayMapAffix: e.target.checked })} />
+                  {t('me_events_overlay_affix')}
+                </CheckLabel>
+              )}
+              {form.overlaySetProps.includes('zoom') && (
+                <>
+                  <Dim title={t('me_events_overlay_zoom_hint')}>{t('me_events_overlay_zoom')}</Dim>
+                  <SmallInput type="number" step={0.1} min={0} value={form.overlayZoom} onChange={(e) => setForm({ ...form, overlayZoom: Math.max(0, Number(e.target.value) || 0) })} />
+                </>
+              )}
+            </Row>
+          )}
+          {form.overlaySetProps.includes('position') && (
+            <Row>
+              <Dim style={{ minWidth: 52 }}>{t('me_events_overlay_position')}</Dim>
+              <SmallSelect
+                value={form.overlayPositionMode === 'default' ? 'player' : form.overlayPositionMode}
+                onChange={(e) => setForm({ ...form, overlayPositionMode: e.target.value as CmdForm['overlayPositionMode'] })}
+              >
+                <option value="player">{t('me_events_overlay_position_player')}</option>
+                <option value="coords">{t('me_events_overlay_position_coords')}</option>
+              </SmallSelect>
+              {form.overlayPositionMode === 'coords' && (
+                <>
+                  <Dim>X</Dim>
+                  <SmallInput type="number" value={form.overlayPositionX} onChange={(e) => setForm({ ...form, overlayPositionX: Math.round(Number(e.target.value) || 0) })} />
+                  <Dim>Y</Dim>
+                  <SmallInput type="number" value={form.overlayPositionY} onChange={(e) => setForm({ ...form, overlayPositionY: Math.round(Number(e.target.value) || 0) })} />
+                </>
+              )}
+            </Row>
+          )}
+          <Row>
+            <Dim style={{ minWidth: 52 }}>{t('me_events_overlay_transition')}</Dim>
+            <SmallInput
+              type="number"
+              min={0}
+              step={0.1}
+              value={form.overlayDuration}
+              onChange={(e) => setForm({ ...form, overlayDuration: Math.max(0, Number(e.target.value) || 0) })}
+            />
+            <Dim $wrap>{form.overlayDuration > 0 ? t('me_events_overlay_transition_over') : t('me_events_overlay_transition_instant')}</Dim>
+          </Row>
+          <Row>
+            <Dim style={{ minWidth: 52 }} />
+            <Dim $wrap>{t('me_events_overlay_adjust_hint')}</Dim>
+          </Row>
+        </>
+      )}
+      {form.kind === 'berryTree' && (
+        <>
+          <Row style={{ alignItems: 'flex-start' }}>
+            <Dim style={{ minWidth: 52, paddingTop: 4 }}>{t('me_events_berry')}</Dim>
+            <SelectField>
+              <SelectItem
+                dbSymbol={form.itemSymbol}
+                noLabel
+                klassFilter="itemBerry"
+                undefValueOption={t('me_events_choose')}
+                onChange={(v) => setForm({ ...form, itemSymbol: v })}
+              />
+            </SelectField>
+          </Row>
+          <Row>
+            <Dim>{t('me_events_berry_stage')}</Dim>
+            <SmallSelect value={form.berryStage} onChange={(e) => setForm({ ...form, berryStage: Number(e.target.value) })}>
+              <option value={0}>{t('me_events_berry_stage_0')}</option>
+              <option value={1}>{t('me_events_berry_stage_1')}</option>
+              <option value={2}>{t('me_events_berry_stage_2')}</option>
+              <option value={3}>{t('me_events_berry_stage_3')}</option>
+              <option value={4}>{t('me_events_berry_stage_4')}</option>
+            </SmallSelect>
+          </Row>
+          <Dim $wrap style={{ fontStyle: 'italic' }}>{t('me_events_berry_hint')}</Dim>
         </>
       )}
       {form.kind === 'selectParty' && (

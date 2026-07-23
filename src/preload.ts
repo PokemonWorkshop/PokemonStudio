@@ -40,6 +40,7 @@ import type { ReadRMXPSwitchNamesInput, ReadRMXPSwitchNamesOutput } from './back
 import type { ReadRMXPCommonEventNamesInput, ReadRMXPCommonEventNamesOutput } from './backendTasks/readRMXPCommonEventNames';
 import type { ReadRMXPCommonEventsInput, ReadRMXPCommonEventsOutput } from './backendTasks/readRMXPCommonEvents';
 import type { WriteRMXPCommonEventsInput, WriteRMXPCommonEventsOutput } from './backendTasks/writeRMXPCommonEvents';
+import type { ReadOverlayShaderInput, ReadOverlayShaderOutput } from './backendTasks/readOverlayShader';
 import type { DeleteMapRxdataInput, DeleteMapRxdataOutput } from './backendTasks/deleteMapRxdata';
 import type { ChooseCharacterGraphicInput, ChooseCharacterGraphicOutput } from './backendTasks/chooseCharacterGraphic';
 import type { ReadRMXPMapInput, ReadRMXPMapOutput } from './backendTasks/readRMXPMap';
@@ -188,6 +189,7 @@ contextBridge.exposeInMainWorld('api', {
   readRMXPCommonEvents: defineBackendTask(ipcRenderer, 'read-rmxp-common-events'),
   writeRMXPCommonEvents: defineBackendTask(ipcRenderer, 'write-rmxp-common-events'),
   deleteMapRxdata: defineBackendTask(ipcRenderer, 'delete-map-rxdata'),
+  readOverlayShader: defineBackendTask(ipcRenderer, 'read-overlay-shader'),
   chooseCharacterGraphic: defineBackendTask(ipcRenderer, 'choose-character-graphic'),
   convertRMXPEventsToStudioEvents: defineBackendTask(ipcRenderer, 'convert-rmxp-events-to-studio-events'),
 });
@@ -298,6 +300,7 @@ declare global {
       readRMXPCommonEvents: BackendTaskWithGenericErrorAndNoProgress<ReadRMXPCommonEventsInput, ReadRMXPCommonEventsOutput>;
       writeRMXPCommonEvents: BackendTaskWithGenericErrorAndNoProgress<WriteRMXPCommonEventsInput, WriteRMXPCommonEventsOutput>;
       deleteMapRxdata: BackendTaskWithGenericErrorAndNoProgress<DeleteMapRxdataInput, DeleteMapRxdataOutput>;
+      readOverlayShader: BackendTaskWithGenericErrorAndNoProgress<ReadOverlayShaderInput, ReadOverlayShaderOutput>;
       chooseCharacterGraphic: BackendTaskWithGenericErrorAndNoProgress<ChooseCharacterGraphicInput, ChooseCharacterGraphicOutput>;
       convertRMXPEventsToStudioEvents: BackendTaskWithGenericErrorAndNoProgress<RMXPEventsToStudioEventsInput, RMXPEventsToStudioEventsOutput>;
     };

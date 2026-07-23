@@ -152,7 +152,7 @@ export const CommandListEditor = ({ list, setList, systemNames, mapEvents, subje
   }, [projectPath, needsPictures]);
 
   const [fogFiles, setFogFiles] = useState<string[]>([]);
-  const needsFogs = cmdForm?.kind === 'changeFog';
+  const needsFogs = cmdForm?.kind === 'changeFog' || cmdForm?.kind === 'mapOverlay';
   useEffect(() => {
     if (!projectPath || !needsFogs) return;
     window.api.getFilePathsFromFolder(
@@ -386,10 +386,10 @@ export const CommandListEditor = ({ list, setList, systemNames, mapEvents, subje
     { key: 'messages', kinds: ['text', 'comment'] },
     { key: 'flow', kinds: ['choices', 'conditional', 'loop', 'break', 'label', 'jump', 'commonEvent', 'exitEvent'] },
     { key: 'movement', kinds: ['moveRoute', 'waitMove', 'transfer', 'setEventLocation'] },
-    { key: 'screen', kinds: ['tintScreen', 'screenFlash', 'weather', 'changeFog', 'fogTone', 'changeFogOpacity', 'changePanorama', 'changeBattleback', 'showPicture', 'movePicture', 'rotatePicture', 'erasePicture', 'pictureTone', 'screenShake', 'scrollMap', 'prepareTransition', 'executeTransition'] },
+    { key: 'screen', kinds: ['tintScreen', 'screenFlash', 'weather', 'changeFog', 'fogTone', 'changeFogOpacity', 'mapOverlay', 'mapOverlaySet', 'changePanorama', 'changeBattleback', 'showPicture', 'movePicture', 'rotatePicture', 'erasePicture', 'pictureTone', 'screenShake', 'scrollMap', 'prepareTransition', 'executeTransition'] },
     { key: 'game', kinds: ['changeGold', 'transparent', 'eraseEvent', 'menuAccess', 'changeSaveAccess', 'changeEncounter', 'controlTimer', 'textOptions', 'windowskin', 'callMenu', 'callSave', 'gameOver', 'returnToTitle'] },
     { key: 'audio', kinds: ['playSe', 'playMe', 'playBgm', 'playBgs', 'fadeBgm', 'fadeBgs', 'stopSe', 'memorizeBgm', 'restoreBgm', 'battleBgm', 'battleEndMe'] },
-    { key: 'party', kinds: ['creature', 'item', 'trainerBattle', 'wildBattle', 'healParty', 'learnMove', 'forgetMove', 'selectParty'] },
+    { key: 'party', kinds: ['creature', 'item', 'berryTree', 'trainerBattle', 'wildBattle', 'healParty', 'learnMove', 'forgetMove', 'selectParty'] },
     { key: 'data', kinds: ['switch', 'variable', 'selfSwitch', 'inputNumber', 'buttonInput'] },
     { key: 'other', kinds: ['wait', 'script'] },
   ];
@@ -599,6 +599,7 @@ export const CommandListEditor = ({ list, setList, systemNames, mapEvents, subje
           panoramaFiles={panoramaFiles}
           battlebackFiles={battlebackFiles}
           windowskinFiles={windowskinFiles}
+          fogFiles={fogFiles}
           mapEvents={mapEvents.map((e) => ({ id: e.id, name: stripNameTags(e.name) }))}
           resolveCsv={resolveCsv}
           pageLabels={pageLabels}

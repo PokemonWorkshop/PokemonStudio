@@ -1,5 +1,6 @@
 import styled from 'styled-components';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useSyncExternalStore } from 'react';
+import { useTranslation } from 'react-i18next';
 import theme from '@src/AppTheme';
 import { BaseIcon } from '@components/icons/BaseIcon';
 import SvgContainer from '@components/icons/BaseIcon/SvgContainer';
@@ -10,7 +11,81 @@ import { useLoaderRef } from '@utils/loaderContext';
 import { StudioShortcutActions, useShortcut } from '@hooks/useShortcuts';
 import { useDialogsRef } from '@hooks/useDialogsRef';
 import { SaveEditorAndDeletionKeys, SaveEditorOverlay } from '@components/save/SaveEditorOverlay';
-import { getSaveShortcutOverride } from '@hooks/saveShortcutOverride';
+import { getMapEditorSaveTargets, getSaveShortcutOverride, subscribeMapEditorSaveTargets } from '@hooks/saveShortcutOverride';
+import { clearAllPendingEdits, getPendingEdits, subscribePendingEdits } from '@src/custom/MapEditor/pendingEdits';
+import { ConfirmDeleteDialog } from '@src/custom/MapEditor/ConfirmDeleteDialog';
+
+/**
+ * Fork-owned split button. Clicking it still does "save all"; hovering opens a
+ * breakdown so you can write just one thing — mirroring how PlayButton exposes
+ * its release/debug/worldmap modes.
+ *
+ * "Save maps" and "Save events" act on the map open in the map editor (published
+ * through the saveShortcutOverride registry), so they're disabled anywhere else.
+ */
+
+const SaveMenuContainer = styled.div`
+  position: fixed;
+  left: 60px;
+  bottom: 16px;
+  width: 256px;
+  z-index: 100;
+  cursor: default;
+
+  & .save-menu {
+    width: 240px;
+    margin-left: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    box-sizing: border-box;
+    padding: 8px;
+    background-color: ${({ theme: t }) => t.colors.dark20};
+    border-radius: 8px;
+
+    & span.entry {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 8px 16px 8px 16px;
+      border-radius: 8px;
+      ${({ theme: t }) => t.fonts.normalRegular};
+      color: ${({ theme: t }) => t.colors.text400};
+      user-select: none;
+      cursor: pointer;
+
+      &:hover {
+        background-color: ${({ theme: t }) => t.colors.dark22};
+      }
+
+      &[data-disabled='true'] {
+        color: ${({ theme: t }) => t.colors.text600};
+        cursor: default;
+
+        &:hover {
+          background-color: transparent;
+        }
+      }
+    }
+
+    & hr {
+      border: none;
+      border-top: 1px solid ${({ theme: t }) => t.colors.dark22};
+      margin: 4px 8px;
+      width: calc(100% - 16px);
+    }
+  }
+`;
+
+/** Marks a menu entry that currently has something unsaved. */
+const PendingDot = styled.span`
+  width: 8px;
+  height: 8px;
+  border-radius: 100%;
+  flex: none;
+  background-color: ${({ theme: t }) => t.colors.dangerBase};
+`;
 
 const SaveProjectButtonContainer = styled(BaseButtonStyle)`
   display: inline-block;
@@ -36,6 +111,33 @@ const SaveProjectButtonContainer = styled(BaseButtonStyle)`
   }
 `;
 
+const SplitContainer = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  & span.triangle {
+    position: absolute;
+    display: inline-block;
+    bottom: 6px;
+    right: 4px;
+    height: 0;
+    width: 0;
+    border-bottom: 4px solid ${({ theme: t }) => t.colors.text600};
+    border-left: 4px solid transparent;
+    pointer-events: none;
+  }
+
+  &.open ${SaveMenuContainer} {
+    visibility: visible;
+    transition: visibility 0s ease-in 300ms;
+  }
+
+  ${SaveMenuContainer} {
+    visibility: hidden;
+  }
+`;
+
 const BadgeContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -58,6 +160,27 @@ export const SaveProjectButton = () => {
   const { isDataToSave, isMapsToSave, save } = useProjectSave();
   const loaderRef = useLoaderRef();
   const dialogsRef = useDialogsRef<SaveEditorAndDeletionKeys>();
+  const { t } = useTranslation();
+  const [isOpen, setIsOpen] = useState(false);
+  // The map editor publishes its save handles while it's mounted.
+  const mapTargets = useSyncExternalStore(subscribeMapEditorSaveTargets, getMapEditorSaveTargets);
+  // Map edits held in memory. They survive navigating between maps, but not
+  // quitting — so closing with any pending is the one moment work is lost.
+  const pendingEdits = useSyncExternalStore(subscribePendingEdits, getPendingEdits);
+  const [closeGuard, setCloseGuard] = useState(false);
+
+  React.useEffect(() => {
+    const onBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (getPendingEdits().length === 0) return;
+      // Electron cancels the close when returnValue is set; it shows no
+      // native prompt, so we raise our own instead.
+      e.preventDefault();
+      e.returnValue = '';
+      setCloseGuard(true);
+    };
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => window.removeEventListener('beforeunload', onBeforeUnload);
+  }, []);
 
   const handleSave = async () => {
     const skipMapWarning = localStorage.getItem('neverRemindMeMapModification') === 'true';
@@ -70,6 +193,26 @@ export const SaveProjectButton = () => {
     }
     dialogsRef.current?.openDialog('map_warning', true);
   };
+
+  /** Save all: the project pipeline plus whatever the open map has pending. */
+  const handleSaveAll = () => {
+    setIsOpen(false);
+    // Events first, then maps: writing events rewrites Data/Map###.rxdata, and
+    // PSDK skips converting a map whose .rxdata is newer than its .tmx. Saving
+    // the .tmx last keeps the source newest so the conversion still runs.
+    if (mapTargets?.eventsDirty) mapTargets.saveEvents();
+    if (mapTargets?.mapDirty) mapTargets.saveMap();
+    if (isDataToSave) void handleSave();
+  };
+
+  const runMenuAction = (enabled: boolean, action?: () => void) => {
+    if (!enabled || !action) return;
+    setIsOpen(false);
+    action();
+  };
+
+  const anythingToSave = isDataToSave || !!mapTargets?.mapDirty || !!mapTargets?.eventsDirty;
+  const outsideMapEditor = mapTargets ? undefined : t('save_map_editor_only');
 
   const shortcutMap = useMemo<StudioShortcutActions>(() => {
     // No shortcut if an editor is opened and no data to save
@@ -94,13 +237,76 @@ export const SaveProjectButton = () => {
 
   return (
     <>
-      <SaveProjectButtonContainer onClick={handleSave} disabled={!isDataToSave}>
-        <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="save" disabled={!isDataToSave} />
-        <BadgeContainer>
-          <Badge visible={isDataToSave} />
-        </BadgeContainer>
-      </SaveProjectButtonContainer>
+      <SplitContainer className={isOpen ? 'open' : undefined} onMouseLeave={() => setIsOpen(false)}>
+        <SaveProjectButtonContainer onMouseEnter={() => setIsOpen(true)} onClick={handleSaveAll} disabled={!anythingToSave}>
+          <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="save" disabled={!anythingToSave} />
+          <BadgeContainer>
+            <Badge visible={anythingToSave} />
+          </BadgeContainer>
+          <span className="triangle" />
+        </SaveProjectButtonContainer>
+        <SaveMenuContainer>
+          <div className="save-menu">
+            <span className="entry" data-disabled={!anythingToSave} onClick={handleSaveAll}>
+              {t('save_all')}
+              {anythingToSave && <PendingDot />}
+            </span>
+            <hr />
+            <span className="entry" data-disabled={!isDataToSave} onClick={() => runMenuAction(isDataToSave, () => void handleSave())}>
+              {t('save_data')}
+              {isDataToSave && <PendingDot />}
+            </span>
+            <span
+              className="entry"
+              data-disabled={!mapTargets?.mapDirty}
+              title={outsideMapEditor}
+              onClick={() => runMenuAction(!!mapTargets?.mapDirty, mapTargets?.saveMap)}
+            >
+              {t('save_maps')}
+              {mapTargets?.mapDirty && <PendingDot />}
+            </span>
+            <span
+              className="entry"
+              data-disabled={!mapTargets?.eventsDirty}
+              title={outsideMapEditor}
+              onClick={() => runMenuAction(!!mapTargets?.eventsDirty, mapTargets?.saveEvents)}
+            >
+              {t('save_events')}
+              {mapTargets?.eventsDirty && <PendingDot />}
+            </span>
+          </div>
+        </SaveMenuContainer>
+      </SplitContainer>
       <SaveEditorOverlay ref={dialogsRef} />
+      {closeGuard && (
+        <ConfirmDeleteDialog
+          title={t('unsaved_maps_title')}
+          message={
+            <>
+              {t('unsaved_maps_message')}
+              <ul style={{ margin: '8px 0 0', paddingLeft: 20 }}>
+                {pendingEdits.map((edit) => (
+                  <li key={edit.dbSymbol}>
+                    {edit.mapName}
+                    {edit.tiles && edit.events ? ` — ${t('unsaved_maps_both')}` : edit.events ? ` — ${t('unsaved_maps_events')}` : ` — ${t('unsaved_maps_tiles')}`}
+                  </li>
+                ))}
+              </ul>
+            </>
+          }
+          confirmLabel={t('unsaved_maps_discard')}
+          skipLabel=""
+          skip={false}
+          onSkipChange={() => undefined}
+          onConfirm={() => {
+            // Explicitly discarding — drop the parked work and let the close through.
+            clearAllPendingEdits();
+            setCloseGuard(false);
+            window.close();
+          }}
+          onCancel={() => setCloseGuard(false)}
+        />
+      )}
     </>
   );
 };

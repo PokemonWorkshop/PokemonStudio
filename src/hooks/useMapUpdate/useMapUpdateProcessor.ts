@@ -94,10 +94,14 @@ export const useMapUpdateProcessor = () => {
       updateMap: ({ mapsToUpdate }, setState) => {
         return toAsyncProcess(() => {
           loaderRef.current.setProgress(3, 3, t('update_maps'));
-          const selectedMap = globalState.selectedDataIdentifier.map;
           mapsToUpdate.forEach((mapToUpdate) => {
             const mapUpdate = { ...maps[mapToUpdate.dbSymbol], ...mapToUpdate, sha1: mapToUpdate.sha1 as Sha1 };
-            setMap({ [mapUpdate.dbSymbol]: mapUpdate }, { map: selectedMap });
+            // No selection argument on purpose: setMap preserves the current
+            // selection when none is passed. Passing one read from `globalState`
+            // captured in this memo (deps: [maps]) forced the user back to
+            // whatever map was selected when the memo was last built — which is
+            // stale as soon as they navigate without map data changing.
+            setMap({ [mapUpdate.dbSymbol]: mapUpdate });
           });
           // Remove only the maps we actually updated from the modified list.
           // For full / auto_detection this still ends up clearing the list

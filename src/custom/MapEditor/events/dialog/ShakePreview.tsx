@@ -1,6 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useResourceImageSrc } from '@components/ResourceImage';
+import { useProjectConfigReadonly } from '@hooks/useProjectConfig';
+import {
+  centerFromClick,
+  drawFramedMap,
+  drawPreviewCharacter,
+  displayTilePx,
+  frameGeometry,
+  loadPreviewCharacter,
+  savePreviewCharacter,
+  type FrameGeometry,
+} from './inGameFrame';
 
 /**
  * Fork-owned. Previews a Screen Shake (225) on a snapshot of the ACTUAL current
@@ -19,17 +30,12 @@ import { useResourceImageSrc } from '@components/ResourceImage';
  *
  * Two views, toggled by the user:
  *   • Full map — shakes the whole map snapshot.
- *   • In-game  — frames a PSDK screen (7×10 tiles) on a character and shakes
+ *   • In-game  — frames the game's screen (from Configs.display.game_resolution,
+ *                scaled by a whole number like window_scale) on a character and shakes
  *                that, i.e. what the player would actually see. Click to move
  *                the character; its sprite is a per-project setting picked from
  *                graphics/characters. Both views apply the identical shake.
  */
-
-// PSDK's default on-screen tile window.
-const SCREEN_TILES_W = 7;
-const SCREEN_TILES_H = 10;
-// Per-project setting: the preview character graphic (RMXP-style name).
-const CHAR_KEY = 'pokemonstudio.fork.mapEditor.previewCharacter';
 
 const Frame = styled.div`
   position: relative;
@@ -119,7 +125,10 @@ export const ShakePreview: React.FC<Props> = ({ snapshotUrl, power, speed, durat
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const snapImgRef = React.useRef<HTMLImageElement | null>(null);
   const charImgRef = React.useRef<HTMLImageElement | null>(null);
+  const { projectConfigValues: display } = useProjectConfigReadonly('display_config');
+  const displayTile = displayTilePx(display.tilemapSettings.tilemapClass);
   const [mode, setMode] = React.useState<'map' | 'ingame'>('map');
+  const geoRef = React.useRef<FrameGeometry>({ scale: 1, width: 1, height: 1, cssWidth: 1, cssHeight: 1, tilePx: 32 });
   const [center, setCenter] = React.useState<{ x: number; y: number } | null>(null);
   const [imgReady, setImgReady] = React.useState(false);
   const [charReady, setCharReady] = React.useState(false);
@@ -128,19 +137,14 @@ export const ShakePreview: React.FC<Props> = ({ snapshotUrl, power, speed, durat
   paramsRef.current = { power, speed, duration };
 
   // Per-project preview-character setting.
-  const [charName, setCharName] = React.useState<string>(() => {
-    try { return (projectPath && localStorage.getItem(`${CHAR_KEY}:${projectPath}`)) || ''; } catch { return ''; }
-  });
+  const [charName, setCharName] = React.useState<string>(() => loadPreviewCharacter(projectPath));
   const charUrl = useResourceImageSrc(`graphics/characters/${charName || '__none__'}`, undefined, undefined, projectPath || undefined);
 
   const pickCharacter = () => {
     if (!projectPath) return;
     window.api.chooseCharacterGraphic(
       { projectPath },
-      ({ name }) => {
-        setCharName(name);
-        try { localStorage.setItem(`${CHAR_KEY}:${projectPath}`, name); } catch { /* best-effort */ }
-      },
+      ({ name }) => { setCharName(name); savePreviewCharacter(projectPath, name); },
       () => { /* cancelled */ },
     );
   };
@@ -170,55 +174,34 @@ export const ShakePreview: React.FC<Props> = ({ snapshotUrl, power, speed, durat
     return () => { cancelled = true; };
   }, [charUrl, charName]);
 
-  // Screen-fit scale: how many CSS px one snapshot px becomes so that a
-  // SCREEN_TILES_W × SCREEN_TILES_H window fills the frame.
-  const frameScale = React.useCallback((img: HTMLImageElement, W: number, H: number) => {
-    const tpx = mapWidthTiles ? img.naturalWidth / mapWidthTiles : 32;
-    const tpy = mapHeightTiles ? img.naturalHeight / mapHeightTiles : 32;
-    return { scale: Math.min(W / (SCREEN_TILES_W * tpx), H / (SCREEN_TILES_H * tpy)), tpx, tpy };
-  }, [mapWidthTiles, mapHeightTiles]);
-
   const drawIngame = React.useCallback(() => {
     const cv = canvasRef.current;
     const fr = frameRef.current;
     if (!cv || !fr) return;
-    const W = Math.max(1, fr.clientWidth);
-    const H = Math.max(1, fr.clientHeight);
+    // Render the game's screen at a whole-number scale in device pixels and
+    // let CSS size it back down, so pixel art never gets resampled.
+    const geo = frameGeometry(display.gameResolution, displayTile, fr.clientWidth, fr.clientHeight, window.devicePixelRatio || 1);
+    geoRef.current = geo;
+    const { width: W, height: H } = geo;
     if (cv.width !== W) cv.width = W;
     if (cv.height !== H) cv.height = H;
+    cv.style.width = `${geo.cssWidth}px`;
+    cv.style.height = `${geo.cssHeight}px`;
     const ctx = cv.getContext('2d');
     if (!ctx) return;
     ctx.clearRect(0, 0, W, H);
     ctx.fillStyle = '#0d0f13';
     ctx.fillRect(0, 0, W, H);
 
+    // Shared with the Map Overlay preview so both frame the map identically
+    // (and both snap the character to a tile).
     const img = snapImgRef.current;
-    let tileScreen = 32;
-    if (img) {
-      const { scale, tpx } = frameScale(img, W, H);
-      tileScreen = tpx * scale;
-      const cx = center?.x ?? img.naturalWidth / 2;
-      const cy = center?.y ?? img.naturalHeight / 2;
-      ctx.imageSmoothingEnabled = false;
-      ctx.drawImage(img, W / 2 - cx * scale, H / 2 - cy * scale, img.naturalWidth * scale, img.naturalHeight * scale);
-    }
+    if (img) drawFramedMap(ctx, img, geo, center, mapWidthTiles, mapHeightTiles);
 
-    // Character at the frame centre (the camera follows it). No default graphic
-    // — if none is configured the frame just shows the map.
+    // No default graphic — if none is configured the frame just shows the map.
     const charImg = charImgRef.current;
-    if (charImg && charImg.naturalWidth > 0) {
-      // Assume an RMXP-style 4-frame × 4-direction sheet; use the top-left
-      // frame (down, first pattern). PSDK renders character graphics scaled up
-      // 2× (like the event markers on the map), so draw it two tiles wide.
-      const fw = charImg.naturalWidth / 4;
-      const fh = charImg.naturalHeight / 4;
-      const drawW = tileScreen * 2;
-      const drawH = drawW * (fh / fw);
-      const feetY = H / 2 + tileScreen * 0.5; // stand on the centered tile
-      ctx.imageSmoothingEnabled = false;
-      ctx.drawImage(charImg, 0, 0, fw, fh, W / 2 - drawW / 2, feetY - drawH, drawW, drawH);
-    }
-  }, [center, frameScale]);
+    if (charImg) drawPreviewCharacter(ctx, charImg, geo, display.tilemapSettings.characterSpriteZoom);
+  }, [center, mapWidthTiles, mapHeightTiles, display.gameResolution, displayTile]);
 
   React.useEffect(() => {
     if (mode === 'ingame') drawIngame();
@@ -227,15 +210,15 @@ export const ShakePreview: React.FC<Props> = ({ snapshotUrl, power, speed, durat
   const onFrameClick = (e: React.MouseEvent) => {
     if (mode !== 'ingame') return;
     const img = snapImgRef.current;
-    const fr = frameRef.current;
-    if (!img || !fr) return;
-    const rect = fr.getBoundingClientRect();
-    const { scale } = frameScale(img, rect.width, rect.height);
-    const cx = center?.x ?? img.naturalWidth / 2;
-    const cy = center?.y ?? img.naturalHeight / 2;
-    const nx = cx + (e.clientX - rect.left - rect.width / 2) / scale;
-    const ny = cy + (e.clientY - rect.top - rect.height / 2) / scale;
-    setCenter({ x: Math.max(0, Math.min(img.naturalWidth, nx)), y: Math.max(0, Math.min(img.naturalHeight, ny)) });
+    const cv = canvasRef.current;
+    if (!img || !cv) return;
+    const rect = cv.getBoundingClientRect();
+    // The canvas is laid out in CSS px but drawn in device px.
+    const geo = geoRef.current;
+    const toDevice = rect.width > 0 ? geo.width / rect.width : 1;
+    const dx = (e.clientX - rect.left) * toDevice;
+    const dy = (e.clientY - rect.top) * toDevice;
+    setCenter(centerFromClick(img, geo, dx, dy, center, mapWidthTiles, mapHeightTiles));
   };
 
   // The shake run — one pass per Play/Replay, never on mount or slider change.

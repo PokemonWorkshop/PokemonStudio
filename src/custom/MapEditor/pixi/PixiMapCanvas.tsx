@@ -627,6 +627,16 @@ type PixiMapCanvasProps = {
   zoom: number;
   onZoomChange: (zoom: number) => void;
   reloadKey?: number;
+  /** Unsaved bytes parked by a previous visit to this map; loaded instead of the file. */
+  pendingBytes?: Uint8Array | null;
+  /** Fired when parked bytes were loaded instead of the file — the map is dirty. */
+  onRestoredPending?: () => void;
+  /**
+   * Called just before the open map is torn down, so the parent can park unsaved
+   * edits. Hands back the tiledFilename this canvas ACTUALLY had loaded — the
+   * parent's props have already moved on to the incoming map by then.
+   */
+  onBeforeTeardown?: (loadedTiledFilename: string, serialize: () => Uint8Array | null) => void;
   onDirty: () => void;
   onLoaded: (state: LoadedState) => void;
   onHistoryChange?: () => void;
@@ -658,7 +668,7 @@ export const PixiMapCanvas = forwardRef<MapCanvasHandle, PixiMapCanvasProps>(
   function PixiMapCanvas(props, forwardedRef) {
     const {
       projectPath, tiledFilename, activeLayer, selectedLayers, selectedBrush, layerVisibility,
-      tool, showGrid, zoom, onZoomChange, reloadKey,
+      tool, showGrid, zoom, onZoomChange, reloadKey, pendingBytes, onBeforeTeardown, onRestoredPending,
       onDirty, onLoaded, onHistoryChange, onPaintCommit, onPickBrush, onJumpToLayer,
       onHoverCell, onSelectionChange, onTileSelectionCommit, onBeforePaint, eventsOverlay,
     } = props;
@@ -2059,7 +2069,12 @@ export const PixiMapCanvas = forwardRef<MapCanvasHandle, PixiMapCanvasProps>(
       return false;
     }, [applyBatch, onDirty, onHistoryChange]);
 
-    useImperativeHandle(forwardedRef, () => ({
+    // Captured so the load effect's teardown can serialize the map that is
+    // about to be disposed — that's the only moment the outgoing map's
+    // unsaved edits still exist anywhere.
+    const handleRef = useRef<MapCanvasHandle | null>(null);
+    useImperativeHandle(forwardedRef, () => {
+      const handle: MapCanvasHandle = {
       // A PNG data URL of just the tile layers (rootRef — NOT the overlay
       // container, so no grid/selection/event markers leak in), downscaled to
       // keep the tone-preview's per-pixel pass cheap. Uses the renderer's
@@ -2114,6 +2129,24 @@ export const PixiMapCanvas = forwardRef<MapCanvasHandle, PixiMapCanvasProps>(
       saveBytes: () => {
         const bytes = mapWasmRef.current?.save();
         if (!bytes) return null;
+        // TEMP diagnostic: report what the JS mirror holds for the metadata
+        // layers at the exact moment we serialize. If this disagrees with the
+        // file that lands on disk, the fault is in the rewrite/write; if it
+        // disagrees with what's on screen, the paint path never reached the
+        // mirror saveBytes reads.
+        try {
+          const dbgState = loadedRef.current;
+          (dbgState?.json.layers ?? []).forEach((l) => {
+            if (l.type !== 'tilelayer' || !/passage|systemtag|terrain/i.test(l.name)) return;
+            const arr = (l.data as number[]) ?? [];
+            const nz = arr.map((v, i) => [i, v >>> 0]).filter(([, v]) => v !== 0);
+            // eslint-disable-next-line no-console
+            console.log(`[save-diag] mirror "${l.name}" nonzero=${nz.length}`, nz.slice(0, 12));
+          });
+        } catch (e) {
+          // eslint-disable-next-line no-console
+          console.warn('[save-diag] failed', e);
+        }
         // The wasm bridge serializes tilesets using its internal firstgids,
         // which for tilesets loaded standalone (every fresh .tsx the bridge
         // opened on its own) are all "1" — colliding. Our cell data lives
@@ -2499,7 +2532,10 @@ export const PixiMapCanvas = forwardRef<MapCanvasHandle, PixiMapCanvasProps>(
           return false;
         }
       },
-    }), [doUndo, doRedo, rebuildSceneFromCurrentWasm, applyBatch]);
+      };
+      handleRef.current = handle;
+      return handle;
+    }, [doUndo, doRedo, rebuildSceneFromCurrentWasm, applyBatch]);
 
     // ----- coords + topmost helpers ----------------------------------------
 
@@ -3535,6 +3571,15 @@ export const PixiMapCanvas = forwardRef<MapCanvasHandle, PixiMapCanvasProps>(
 
     // ----- Load map + build scene graph ------------------------------------
 
+    // Held in a ref: the load effect must NOT re-run just because the parent
+    // re-created this callback.
+    const beforeTeardownRef = useRef(onBeforeTeardown);
+    beforeTeardownRef.current = onBeforeTeardown;
+    const restoredPendingRef = useRef(onRestoredPending);
+    restoredPendingRef.current = onRestoredPending;
+    const pendingBytesRef = useRef(pendingBytes);
+    pendingBytesRef.current = pendingBytes;
+
     useEffect(() => {
       let cancelled = false;
       let openedMap: TiledMap | null = null;
@@ -3552,6 +3597,16 @@ export const PixiMapCanvas = forwardRef<MapCanvasHandle, PixiMapCanvasProps>(
 
           const bundle = await readBundle(projectPath, tiledFilename);
           if (cancelled) return;
+
+          // Unsaved edits parked from an earlier visit win over what's on disk,
+          // so moving between maps keeps work in progress (RMXP behaviour).
+          const parked = pendingBytesRef.current;
+          if (parked && parked.byteLength > 0) {
+            const copy = new Uint8Array(parked);
+            bundle.map = { ...bundle.map, bytes: copy.buffer };
+            dbg('load', `using ${parked.byteLength} parked bytes for ${tiledFilename}`);
+            restoredPendingRef.current?.();
+          }
 
           setStatus('Parsing map in wasm…');
           openedMap = await TiledModule.openMapWithAssets(
@@ -4018,6 +4073,12 @@ export const PixiMapCanvas = forwardRef<MapCanvasHandle, PixiMapCanvasProps>(
 
       return () => {
         cancelled = true;
+        // Last moment the outgoing map still exists — let the parent park it.
+        try {
+          beforeTeardownRef.current?.(tiledFilename, () => handleRef.current?.saveBytes() ?? null);
+        } catch (e) {
+          console.warn('[map-editor] parking unsaved edits failed', e);
+        }
         mapWasmRef.current?.dispose();
         mapWasmRef.current = null;
         loadedRef.current = null;

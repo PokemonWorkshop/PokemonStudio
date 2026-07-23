@@ -626,7 +626,9 @@ export const decodeCommand = (
     case 103:
       return { ...base, text: `Input Number: variable [${asNum(p[0])}], ${asNum(p[1])} digit(s)` };
     case 106:
-      return { ...base, text: `Wait: ${asNum(p[0])} frame(s)` };
+      // One stored unit is 2 real frames = 1/30s (PSDK doubles it), so show
+      // the wall-clock duration alongside the raw frame count.
+      return { ...base, text: `Wait: ${asNum(p[0])} frame(s) (${(Number(p[0] ?? 0) / 30).toFixed(2)}s)` };
     case 108:
       return { ...base, text: `Comment: ${asStr(p[0])}` };
     case 408:
