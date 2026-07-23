@@ -4,7 +4,7 @@ import { StudioEventCommandData } from '@modelEntities/event/command';
 import { EVENT_COMMAND_START_VALIDATOR, START_TRIGGERS, StudioEventCommandStart } from '@modelEntities/event/commands/start';
 import { useNodeInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
 import { useZodForm } from '@src/hooks/useZodForm';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useEventActions } from '../common/EventContext';
 import { useCommandNode } from '../hooks/useCommandNode';
@@ -41,6 +41,7 @@ export const StartCommand = ({ id, data: { dialogsRef, command, comments }, sele
   const { Select } = useNodeInputAttrsWithLabel(START_EDITOR_SCHEMA, defaults);
   const { t } = useTranslation();
   const triggerOptions = useMemo(() => START_TRIGGERS.map((trigger) => ({ value: trigger, label: t(`event_command_trigger_${trigger}`) })), [t]);
+  const [trigger, setTrigger] = useState(defaults['trigger']);
 
   const onBlur = () => {
     const result = canClose() && getFormData();
@@ -51,6 +52,7 @@ export const StartCommand = ({ id, data: { dialogsRef, command, comments }, sele
 
   useEffect(() => {
     reload(commandData);
+    setTrigger(commandData['trigger']);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [command]);
 
@@ -65,7 +67,14 @@ export const StartCommand = ({ id, data: { dialogsRef, command, comments }, sele
       footerChildren={<PriorityStartCommand priority={commandData.priority} nodeId={id} dialogsRef={dialogsRef} />}
     >
       <InputFormContainer ref={formRef} onBlur={onBlur}>
-        <Select name="trigger" label={t(`event_command_trigger`)} options={triggerOptions} />
+        <Select
+          name="trigger"
+          label={t(`event_command_trigger`)}
+          options={triggerOptions}
+          onChange={(value) => setTrigger(value)}
+          value={trigger}
+          defaultValue={undefined}
+        />
       </InputFormContainer>
     </CommandNode>
   );
