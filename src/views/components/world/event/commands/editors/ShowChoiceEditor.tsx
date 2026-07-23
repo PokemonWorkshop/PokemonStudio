@@ -18,11 +18,12 @@ import {
   DropResult,
 } from '@hello-pangea/dnd';
 import { useDialogsRef } from '@hooks/useDialogsRef';
-import { EVENT_COMMAND_SHOW_CHOICE_VALIDATOR, StudioEventCommandShowChoice } from '@modelEntities/event/command';
+import { COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_SHOW_CHOICE_VALIDATOR, StudioEventCommandShowChoice } from '@modelEntities/event/command';
 import { useInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
 import { useZodForm } from '@src/hooks/useZodForm';
 import { findMultipleAvailableTextIdsEvent } from '@utils/ModelUtils';
 import { useGetProjectText, useSetProjectText } from '@utils/ReadingProjectText';
+import { useReactFlow, type Edge } from '@xyflow/react';
 import React, { forwardRef, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -69,7 +70,8 @@ const ChoiceRowContainer = styled.div<ChoiceRowContainerProps>`
 `;
 
 export const ShowChoiceEditor = forwardRef<EditorHandlingClose, EventEditorProps>(({ commandId: defaultCommandId, event }, ref) => {
-  const { command, updateCommand } = useCommandEditor<StudioEventCommandShowChoice>(event, defaultCommandId);
+  const { command, commandId, updateCommand } = useCommandEditor<StudioEventCommandShowChoice>(event, defaultCommandId);
+  const { setEdges } = useReactFlow();
   const { canClose, getFormData, defaults, formRef } = useZodForm(SHOW_CHOICE_EDITOR_SCHEMA, command, (data) => ({
     ...data,
     resultVariable: Number(data.resultVariable),
@@ -105,6 +107,39 @@ export const ShowChoiceEditor = forwardRef<EditorHandlingClose, EventEditorProps
     return canClose();
   };
 
+  const computeRemappedConnections = () => {
+    const originalCommand = event.commands[commandId];
+    if (!originalCommand) return null;
+
+    const originalChoices = command.choices;
+    if (originalChoices.length === choices.length && choices.every((c, i) => c === originalChoices[i])) {
+      return null;
+    }
+
+    const existingConnections = originalCommand.connections;
+    const newConnections = {} as typeof existingConnections;
+    const cancelConnection = Object.values(existingConnections).find((conn) => conn?.sourceHandle === 'Sright_0');
+    if (cancelConnection) {
+      const connId = COMMAND_CONNECTION_ID_VALIDATOR.parse(`${commandId}Sright_0-${cancelConnection.target}${cancelConnection.targetHandle}`);
+      newConnections[connId] = cancelConnection;
+    }
+
+    choices.forEach((textId, newIdx) => {
+      const origIdx = originalChoices.indexOf(textId);
+      if (origIdx === -1) return;
+
+      const oldHandleId = `Sright_${originalChoices.length - origIdx}`;
+      const newHandleId = `Sright_${choices.length - newIdx}`;
+      const connection = Object.values(existingConnections).find((conn) => conn?.sourceHandle === oldHandleId);
+      if (!connection) return;
+
+      const newConnId = COMMAND_CONNECTION_ID_VALIDATOR.parse(`${commandId}${newHandleId}-${connection.target}${connection.targetHandle}`);
+      newConnections[newConnId] = { ...connection, sourceHandle: newHandleId };
+    });
+
+    return newConnections;
+  };
+
   const onClose = () => {
     const result = canClose() && getFormData();
     if (!result || !result.success) return;
@@ -114,7 +149,25 @@ export const ShowChoiceEditor = forwardRef<EditorHandlingClose, EventEditorProps
       const input = inputRefs.current[index];
       if (input) setText(event.csvFileId, textId, input.value);
     });
-    updateCommand({ ...data, choices });
+
+    const remappedConnections = computeRemappedConnections();
+    if (remappedConnections !== null) {
+      updateCommand({ ...data, choices, connections: remappedConnections } as Partial<StudioEventCommandShowChoice>);
+      setEdges((currentEdges) => {
+        const otherEdges = currentEdges.filter((e) => e.source !== commandId);
+        const commandEdges: Edge[] = Object.entries(remappedConnections).map(([connId, conn]) => ({
+          id: `xy-edge__${connId}`,
+          source: commandId,
+          sourceHandle: conn!.sourceHandle,
+          target: conn!.target,
+          targetHandle: conn!.targetHandle,
+          selected: false,
+        }));
+        return [...otherEdges, ...commandEdges];
+      });
+    } else {
+      updateCommand({ ...data, choices });
+    }
   };
   useEditorHandlingClose(ref, onClose, canCloseEditor);
 
