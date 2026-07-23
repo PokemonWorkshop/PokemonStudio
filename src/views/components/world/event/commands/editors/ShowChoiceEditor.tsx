@@ -196,7 +196,7 @@ export const ShowChoiceEditor = forwardRef<EditorHandlingClose, EventEditorProps
   const handleAddChoice = () => {
     const [newId] = findMultipleAvailableTextIdsEvent(event, 0, 1, choices);
     setText(event.csvFileId, newId, '');
-    setChoices([...choices, newId]);
+    setTimeout(() => setChoices([...choices, newId]), 50);
   };
 
   return (
