@@ -9,10 +9,13 @@ import { CommandNodeProps } from './CommandNodeProps';
 const ChoiceLabelContainer = styled.div<{ isCancel: boolean }>`
   height: 32px;
   margin-right: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
+  margin-left: 10px;
+  line-height: 32px;
+  text-align: right;
   color: ${({ theme, isCancel }) => (isCancel ? theme.colors.text400 : theme.colors.text100)};
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 `;
 
 export const ShowChoiceCommand = ({ id, data: { dialogsRef: commandDialogsRef, command, comments, csvFileId }, selected }: CommandNodeProps) => {
