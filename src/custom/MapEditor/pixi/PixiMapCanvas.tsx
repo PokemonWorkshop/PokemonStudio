@@ -2129,24 +2129,6 @@ export const PixiMapCanvas = forwardRef<MapCanvasHandle, PixiMapCanvasProps>(
       saveBytes: () => {
         const bytes = mapWasmRef.current?.save();
         if (!bytes) return null;
-        // TEMP diagnostic: report what the JS mirror holds for the metadata
-        // layers at the exact moment we serialize. If this disagrees with the
-        // file that lands on disk, the fault is in the rewrite/write; if it
-        // disagrees with what's on screen, the paint path never reached the
-        // mirror saveBytes reads.
-        try {
-          const dbgState = loadedRef.current;
-          (dbgState?.json.layers ?? []).forEach((l) => {
-            if (l.type !== 'tilelayer' || !/passage|systemtag|terrain/i.test(l.name)) return;
-            const arr = (l.data as number[]) ?? [];
-            const nz = arr.map((v, i) => [i, v >>> 0]).filter(([, v]) => v !== 0);
-            // eslint-disable-next-line no-console
-            console.log(`[save-diag] mirror "${l.name}" nonzero=${nz.length}`, nz.slice(0, 12));
-          });
-        } catch (e) {
-          // eslint-disable-next-line no-console
-          console.warn('[save-diag] failed', e);
-        }
         // The wasm bridge serializes tilesets using its internal firstgids,
         // which for tilesets loaded standalone (every fresh .tsx the bridge
         // opened on its own) are all "1" — colliding. Our cell data lives
