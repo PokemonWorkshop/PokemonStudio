@@ -11,7 +11,12 @@ import { useLoaderRef } from '@utils/loaderContext';
 import { StudioShortcutActions, useShortcut } from '@hooks/useShortcuts';
 import { useDialogsRef } from '@hooks/useDialogsRef';
 import { SaveEditorAndDeletionKeys, SaveEditorOverlay } from '@components/save/SaveEditorOverlay';
-import { getMapEditorSaveTargets, getSaveShortcutOverride, subscribeMapEditorSaveTargets } from '@hooks/saveShortcutOverride';
+import {
+  getMapEditorSaveTargets,
+  getSaveShortcutOverride,
+  setProjectSaveRunner,
+  subscribeMapEditorSaveTargets,
+} from '@hooks/saveShortcutOverride';
 import { clearAllPendingEdits, getPendingEdits, subscribePendingEdits } from '@src/custom/MapEditor/pendingEdits';
 import { ConfirmDeleteDialog } from '@src/custom/MapEditor/ConfirmDeleteDialog';
 
@@ -169,6 +174,14 @@ export const SaveProjectButton = () => {
   const pendingEdits = useSyncExternalStore(subscribePendingEdits, getPendingEdits);
   const [closeGuard, setCloseGuard] = useState(false);
 
+  // Let the map editor's save dialog reach the project pipeline: writing map
+  // files alone does not make the change take effect.
+  React.useEffect(() => {
+    setProjectSaveRunner(() => void handleSave());
+    return () => setProjectSaveRunner(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMapsToSave, isDataToSave]);
+
   React.useEffect(() => {
     const onBeforeUnload = (e: BeforeUnloadEvent) => {
       if (getPendingEdits().length === 0) return;
@@ -194,15 +207,33 @@ export const SaveProjectButton = () => {
     dialogsRef.current?.openDialog('map_warning', true);
   };
 
-  /** Save all: the project pipeline plus whatever the open map has pending. */
-  const handleSaveAll = () => {
+  /**
+   * Save all: write the map/event files, then ALWAYS run the project pipeline.
+   *
+   * The pipeline is what reproduces the sequence that actually makes a map take
+   * effect — the same thing you get by pressing Ctrl+S (which writes the .tmx)
+   * and then hitting Save all. Gating it on `isDataToSave` broke exactly that:
+   * with no other project data dirty the pipeline was skipped, so saveMapInfo /
+   * saveRMXPMapInfo never ran and the map warning never appeared.
+   */
+  const handleSaveAll = async () => {
     setIsOpen(false);
-    // Events first, then maps: writing events rewrites Data/Map###.rxdata, and
-    // PSDK skips converting a map whose .rxdata is newer than its .tmx. Saving
-    // the .tmx last keeps the source newest so the conversion still runs.
-    if (mapTargets?.eventsDirty) mapTargets.saveEvents();
-    if (mapTargets?.mapDirty) mapTargets.saveMap();
-    if (isDataToSave) void handleSave();
+    // AWAIT the file writes before running the pipeline. Firing them off and
+    // immediately saving the project meant the pipeline ran against the state
+    // from before the map was written — which is why a single Save all did not
+    // take effect and a second one did.
+    //
+    // Events first, then maps: writing events rewrites Data/Map###.rxdata, so
+    // saving the .tmx last keeps the source newest.
+    // Anything unsaved in the map editor gets confirmed first: the same dialog
+    // the menu entries use, so "what am I about to write" is always an explicit
+    // choice rather than a silent side effect of Save all. The dialog carries
+    // on into the project pipeline itself once the files are written.
+    if (mapTargets?.mapDirty || mapTargets?.eventsDirty) {
+      mapTargets.openSaveDialog(true);
+      return;
+    }
+    await handleSave();
   };
 
   const runMenuAction = (enabled: boolean, action?: () => void) => {
@@ -238,7 +269,7 @@ export const SaveProjectButton = () => {
   return (
     <>
       <SplitContainer className={isOpen ? 'open' : undefined} onMouseLeave={() => setIsOpen(false)}>
-        <SaveProjectButtonContainer onMouseEnter={() => setIsOpen(true)} onClick={handleSaveAll} disabled={!anythingToSave}>
+        <SaveProjectButtonContainer onMouseEnter={() => setIsOpen(true)} onClick={() => void handleSaveAll()} disabled={!anythingToSave}>
           <BaseIcon color={theme.colors.navigationIconColor} size="s" icon="save" disabled={!anythingToSave} />
           <BadgeContainer>
             <Badge visible={anythingToSave} />
@@ -247,7 +278,7 @@ export const SaveProjectButton = () => {
         </SaveProjectButtonContainer>
         <SaveMenuContainer>
           <div className="save-menu">
-            <span className="entry" data-disabled={!anythingToSave} onClick={handleSaveAll}>
+            <span className="entry" data-disabled={!anythingToSave} onClick={() => void handleSaveAll()}>
               {t('save_all')}
               {anythingToSave && <PendingDot />}
             </span>
@@ -260,7 +291,7 @@ export const SaveProjectButton = () => {
               className="entry"
               data-disabled={!mapTargets?.mapDirty}
               title={outsideMapEditor}
-              onClick={() => runMenuAction(!!mapTargets?.mapDirty, mapTargets?.saveMap)}
+              onClick={() => runMenuAction(!!mapTargets?.mapDirty, () => mapTargets?.openSaveDialog(false))}
             >
               {t('save_maps')}
               {mapTargets?.mapDirty && <PendingDot />}
@@ -269,7 +300,7 @@ export const SaveProjectButton = () => {
               className="entry"
               data-disabled={!mapTargets?.eventsDirty}
               title={outsideMapEditor}
-              onClick={() => runMenuAction(!!mapTargets?.eventsDirty, mapTargets?.saveEvents)}
+              onClick={() => runMenuAction(!!mapTargets?.eventsDirty, () => mapTargets?.openSaveDialog(false))}
             >
               {t('save_events')}
               {mapTargets?.eventsDirty && <PendingDot />}

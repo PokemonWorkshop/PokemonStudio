@@ -239,4 +239,12 @@ registerReadRMXPEvents(ipcMain);
 registerConvertRMXPEventsToStudioEvents(ipcMain);
 
 ipcMain.on('get-md5-hash', (event, value: string) => (event.returnValue = crypto.createHash('md5').update(value, 'utf8').digest().toString('hex')));
+// Dev-only: expose the renderer over CDP so the Playwright driver in tools/
+// can attach and drive the UI. Opt-in via env var and never set in packaged
+// builds, so shipping behaviour is unchanged. Must be appended before the app
+// is ready — Chromium reads its switches during init.
+if (process.env.STUDIO_REMOTE_DEBUG) {
+  app.commandLine.appendSwitch('remote-debugging-port', process.env.STUDIO_REMOTE_DEBUG);
+}
+
 app.whenReady().then(createWindow).catch(log.error);

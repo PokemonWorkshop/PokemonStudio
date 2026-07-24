@@ -1931,12 +1931,13 @@
   "unsaved_maps_events": "events",
   "unsaved_maps_both": "map + events",
   "unsaved_maps_discard": "Close without saving",
-  "save_maps_dialog_title": "Save maps",
-  "save_maps_dialog_hint": "Pick what to write. A box is only tickable when that map has unsaved work of that kind.",
+  "save_maps_dialog_title": "Save map changes",
+  "save_maps_dialog_hint": "Tiles are written to the map's .tmx file. PSDK converts that .tmx into the Data/Map###.rxdata the game reads, the next time the game boots — so the file named below is what your change will end up in.",
   "save_maps_dialog_map": "Map",
   "save_maps_dialog_tiles": "Tiles",
   "save_maps_dialog_events": "Events",
   "save_maps_dialog_cancel": "Cancel",
   "save_maps_dialog_confirm": "Save {{count}} map(s)",
-  "save_maps_dialog_file": "Generates"
+  "save_maps_dialog_file": "Becomes",
+  "save_maps_dialog_writes": "Saves"
 }

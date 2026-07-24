@@ -46,6 +46,7 @@ import type { Sha1 } from '@modelEntities/sha1';
 import { PixiMapCanvas } from './pixi/PixiMapCanvas';
 import { setSaveShortcutOverride, setMapEditorSaveTargets } from '@hooks/saveShortcutOverride';
 import { clearPendingEdit, getPendingEdit, getPendingEdits, setPendingEdit, subscribePendingEdits } from './pendingEdits';
+import { runProjectSave } from '@hooks/saveShortcutOverride';
 import { buildEventsWritePayload } from './events/useMapEvents';
 import { SaveMapsDialog, type SaveMapRow, type SaveSelection } from './SaveMapsDialog';
 import { useMapUpdate } from '@hooks/useMapUpdate';
@@ -845,16 +846,15 @@ export const MapEditorPage = () => {
   const cleanHistoryDepthRef = useRef(0);
   const [saving, setSaving] = useState(false);
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
-  const [autoConvert, setAutoConvert] = useState<boolean>(loadAutoConvert);
+  // Set when the dialog was opened by "Save all", which must carry on into
+  // the project pipeline once the files are written.
+  const [saveDialogThenPipeline, setSaveDialogThenPipeline] = useState(false);
   // When the rxdata conversion is going to run, it refreshes each map's
   // sha1/mtime/tileMetadata itself (see the processor's updateMap step). Doing
   // it ourselves first makes the cached sha1 match the file we just wrote, so
   // auto_detection concludes "unchanged" and skips the map — leaving the game
   // one save behind. So suppress our refresh whenever we're about to convert.
   const skipCacheRefreshRef = useRef(false);
-  const autoConvertRef = useRef(autoConvert);
-  autoConvertRef.current = autoConvert;
-  const mapUpdate = useMapUpdate();
   // The map-update processor opens the loader and drives it to 3/3, but it's
   // the caller's job to close it — a no-op success callback leaves the
   // overlay stuck on the last step.
@@ -862,8 +862,6 @@ export const MapEditorPage = () => {
   // Read inside async save callbacks that outlive the render they started in.
   const globalStateRef = useRef(globalState);
   globalStateRef.current = globalState;
-  const mapUpdateRef = useRef(mapUpdate);
-  mapUpdateRef.current = mapUpdate;
   const [leftCollapsed, setLeftCollapsed] = useState(false);
   const [rightCollapsed, setRightCollapsed] = useState(false);
   // User-resizable sidebar widths. Loaded from localStorage so the
@@ -1330,8 +1328,8 @@ export const MapEditorPage = () => {
    * Failures are logged but never block the save flow — the .tmx is
    * already on disk; a stale cache only affects Studio's previews.
    */
-  const refreshStudioCacheFor = useCallback((dbSymbol: string, tiledFilename: string) => {
-    if (!projectPath || !tiledFilename || !dbSymbol) return;
+  const refreshStudioCacheFor = useCallback((dbSymbol: string, tiledFilename: string) => new Promise<void>((resolve) => {
+    if (!projectPath || !tiledFilename || !dbSymbol) return resolve();
     const tmxPath = `${projectPath.replaceAll('\\', '/')}/Data/Tiled/Maps/${tiledFilename}.tmx`;
     window.api.convertTiledMapToTileMetadata(
       { tmxPath },
@@ -1346,16 +1344,18 @@ export const MapEditorPage = () => {
           ...s,
           mapsModified: (s.mapsModified ?? []).filter((d) => d !== dbSymbol),
         }));
+        resolve();
       },
       ({ errorMessage }) => {
         console.warn('[tiled] tileMetadata refresh failed:', errorMessage);
+        resolve();
       },
     );
-  }, [projectPath, setStudioMap, setGlobalState]);
+  }), [projectPath, setStudioMap, setGlobalState]);
 
   const refreshStudioCacheForMap = useCallback(() => {
-    if (!map?.dbSymbol || !map.tiledFilename) return;
-    refreshStudioCacheFor(map.dbSymbol, map.tiledFilename);
+    if (!map?.dbSymbol || !map.tiledFilename) return Promise.resolve();
+    return refreshStudioCacheFor(map.dbSymbol, map.tiledFilename);
   }, [map?.dbSymbol, map?.tiledFilename, refreshStudioCacheFor]);
 
   // Reusable inner — add a tileset reference to the map by .tsx filename.
@@ -2093,7 +2093,7 @@ export const MapEditorPage = () => {
           mapsModified: (s.mapsModified ?? []).filter((d) => d !== map.dbSymbol),
         }));
       }
-      if (!skipCacheRefreshRef.current) refreshStudioCacheForMap();
+      await refreshStudioCacheForMap();
     } catch (e) {
       console.error('[tiled] save failed', e);
       // Could surface via a toast; for now console + leave dirty=true.
@@ -2109,47 +2109,6 @@ export const MapEditorPage = () => {
     setSaveShortcutOverride(() => { void onSave(); });
     return () => setSaveShortcutOverride(null);
   }, [onSave]);
-
-  /**
-   * Persist ONLY the map records, not the whole project.
-   *
-   * Refreshing a map's sha1/tileMetadata goes through setProjectDataValues,
-   * which marks the record dirty — so converting a map would otherwise leave
-   * "Save data" lit and force a full project write just to process one map.
-   * Writing the touched `maps/*` records directly, then dropping exactly those
-   * keys from savingData, keeps "Save data" meaning "I edited Pokémon/trainers".
-   */
-  const saveMapRecordsOnly = useCallback(
-    () =>
-      new Promise<void>((resolve) => {
-        const state = globalStateRef.current;
-        const entries = Array.from(state.savingData.map.entries()).filter(([savingPath]) => savingPath.startsWith('maps/'));
-        if (entries.length === 0 || !state.projectPath) return resolve();
-
-        const data = entries.map(([savingPath, savingAction]) => {
-          if (savingAction === 'DELETE') return { savingPath, data: undefined, savingAction };
-          const id = savingPath.split('/', 2)[1];
-          return { savingPath, data: JSON.stringify(state.projectData.maps[id], null, 2), savingAction };
-        });
-
-        window.api.saveProjectData(
-          { path: state.projectPath, data },
-          () => {
-            setGlobalState((st) => {
-              const next = new SavingMap(st.savingData.map);
-              entries.forEach(([savingPath]) => next.map.delete(savingPath));
-              return { ...st, savingData: next };
-            });
-            resolve();
-          },
-          ({ errorMessage }) => {
-            console.error('[tiled] saving map records failed', errorMessage);
-            resolve();
-          },
-        );
-      }),
-    [setGlobalState],
-  );
 
   /**
    * Park event edits as they happen.
@@ -2183,13 +2142,9 @@ export const MapEditorPage = () => {
    * you happen to be looking at — which is the whole thing we set out to fix.
    */
   const onSaveAllMaps = useCallback(async (only?: Set<string>) => {
-    const converted: DbSymbol[] = [];
-    const willConvert = autoConvertRef.current && !!getSetting('tiledPath');
-    skipCacheRefreshRef.current = willConvert;
     const wanted = (dbSymbol?: string) => !only || (!!dbSymbol && only.has(dbSymbol));
     if (dirtyRef.current && wanted(map?.dbSymbol)) {
       await onSave();
-      if (map?.dbSymbol) converted.push(map.dbSymbol as DbSymbol);
     }
     for (const edit of getPendingEdits()) {
       if (!edit.tiles || !wanted(edit.dbSymbol)) continue;
@@ -2199,8 +2154,7 @@ export const MapEditorPage = () => {
         // Update this map's cached sha1/mtime too. Without it the focus-time
         // "modified externally" check compares the file we just wrote against a
         // stale cache and reports a phantom outside edit.
-        if (!willConvert) refreshStudioCacheFor(edit.dbSymbol, edit.tiledFilename);
-        converted.push(edit.dbSymbol as DbSymbol);
+        await refreshStudioCacheFor(edit.dbSymbol, edit.tiledFilename);
       } catch (e) {
         console.error('[tiled] saving parked map failed', edit.dbSymbol, e);
       }
@@ -2209,29 +2163,12 @@ export const MapEditorPage = () => {
     // The .tmx files are on disk; now make the game's .rxdata match them.
     // Skipped silently when the Tiled CLI isn't configured — the save itself
     // already succeeded and shouldn't look like it failed.
-    skipCacheRefreshRef.current = false;
-    if (!willConvert || converted.length === 0) return;
-    mapUpdateRef.current(
-      { type: 'auto_detection', subsetDbSymbols: converted },
-      () => {
-        // Persist the refreshed map records so processing a map doesn't leave
-        // the project needing a full "Save data".
-        //
-        // Deferred to a macrotask on purpose: the processor calls onSuccess
-        // synchronously right after its setMap(), so React hasn't committed
-        // yet and globalStateRef still holds the PRE-update state. Reading it
-        // now would persist the OLD sha1/mtime — which is exactly what makes
-        // Studio think the map changed outside the app on the next launch.
-        setTimeout(() => {
-          void saveMapRecordsOnly().finally(() => loaderRef.current.close());
-        }, 0);
-      },
-      (errors, genericError) => {
-        errors.forEach((err) => window.api.log.error(`[Map update] ${err.filename}.tmx:`, err.errorMessage));
-        loaderRef.current.setError('updating_maps_error', genericError || 'Map conversion failed', true);
-      },
-    );
-  }, [onSave, projectPath, refreshStudioCacheFor, map?.dbSymbol, loaderRef, saveMapRecordsOnly]);
+    // Deliberately nothing else here. Writing the .tmx is all "Save maps"
+    // does now: the metadata refresh used to run after these writes resolved,
+    // re-dirtying project data just after the save pipeline had finished, so a
+    // single "Save all" never settled. "Save all" runs the pipeline instead,
+    // and that is the action to use before launching the game.
+  }, [onSave, projectPath, refreshStudioCacheFor]);
 
   // Latest hook value, read from callbacks that run outside render.
   const mapEventsRef = useRef(mapEvents);
@@ -2281,8 +2218,12 @@ export const MapEditorPage = () => {
   // again everywhere outside the map editor.
   useEffect(() => {
     setMapEditorSaveTargets({
-      saveMap: () => setSaveDialogOpen(true),
-      saveEvents: () => { void onSaveAllEvents(); },
+      saveMap: () => onSaveAllMaps(),
+      openSaveDialog: (thenProjectSave?: boolean) => {
+        setSaveDialogThenPipeline(!!thenProjectSave);
+        setSaveDialogOpen(true);
+      },
+      saveEvents: () => onSaveAllEvents(),
       mapDirty: dirty || pendingEdits.some((edit) => !!edit.tiles),
       eventsDirty: mapEvents.dirty || pendingEdits.some((edit) => !!edit.events),
     });
@@ -2324,8 +2265,11 @@ export const MapEditorPage = () => {
       // keeps the source newest so the conversion always runs.
       if (events.size > 0) await onSaveAllEvents(events);
       if (tiles.size > 0) await onSaveAllMaps(tiles);
+      // Writing the files is only half of it when this came from "Save all":
+      // the project pipeline is what makes the change take effect in game.
+      if (saveDialogThenPipeline) runProjectSave();
     },
-    [onSaveAllMaps, onSaveAllEvents],
+    [onSaveAllMaps, onSaveAllEvents, saveDialogThenPipeline],
   );
 
   return (
@@ -2390,17 +2334,6 @@ export const MapEditorPage = () => {
             ↷ Redo
           </DarkButton>
           <SaveBadge $dirty={dirty}>{dirty ? 'unsaved changes' : 'all changes saved'}</SaveBadge>
-          <label
-            style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, cursor: 'pointer', userSelect: 'none' }}
-            title="Refresh this map's Studio metadata (tile metadata + overview) right after saving, instead of clicking the map's dot. Does not build Data/Map###.rxdata — PSDK generates that when the game boots."
-          >
-            <input
-              type="checkbox"
-              checked={autoConvert}
-              onChange={(e) => { setAutoConvert(e.target.checked); saveAutoConvert(e.target.checked); }}
-            />
-            Refresh map metadata
-          </label>
           <PrimaryButton onClick={() => void onSaveAllMaps()} disabled={(!dirty && !pendingEdits.some((e) => !!e.tiles)) || saving}>
             {saving ? 'Saving…' : 'Save'}
           </PrimaryButton>

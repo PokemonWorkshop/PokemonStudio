@@ -21,10 +21,22 @@ type SaveOverride = () => void;
 
 /** What the map editor exposes to the app shell while it is open. */
 export type MapEditorSaveTargets = {
-  /** Write the open map's tiles. */
-  saveMap: () => void;
+  /**
+   * Write every pending map's tiles, no questions asked. This is the ACTION —
+   * "Save all" must call it directly, never the dialog, or Save all silently
+   * becomes a dialog-opener and the project save pipeline never runs.
+   */
+  saveMap: () => Promise<void>;
+  /**
+   * Ask which maps/events to write. Shared by "Save maps", "Save events" and
+   * "Save all" — one dialog for all three, so what gets written is always an
+   * explicit choice.
+   * @param thenProjectSave continue into the project pipeline after writing,
+   *   which is what makes the change take effect in game. Set by "Save all".
+   */
+  openSaveDialog: (thenProjectSave?: boolean) => void;
   /** Write the open map's events. */
-  saveEvents: () => void;
+  saveEvents: () => Promise<void>;
   /** Whether the open map has unsaved tile edits. */
   mapDirty: boolean;
   /** Whether the open map has unsaved event edits. */
@@ -45,6 +57,20 @@ export const getSaveShortcutOverride = (): SaveOverride | null => current;
  * Publish (or clear, with null) the map editor's save targets. Notifies the
  * save button so its menu enables/disables in step with the dirty flags.
  */
+/**
+ * The app shell's project-save pipeline, published so the map editor can run it
+ * after writing map files. Saving a map only takes effect once the pipeline
+ * (saveMapInfo / saveRMXPMapInfo) has run too, and that lives in the nav button
+ * — so the dialog needs a way to reach back for it.
+ */
+let projectSaveRunner: (() => void) | null = null;
+
+export const setProjectSaveRunner = (fn: (() => void) | null) => {
+  projectSaveRunner = fn;
+};
+
+export const runProjectSave = () => projectSaveRunner?.();
+
 export const setMapEditorSaveTargets = (next: MapEditorSaveTargets | null) => {
   targets = next;
   listeners.forEach((listener) => listener());

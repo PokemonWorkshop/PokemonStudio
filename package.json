@@ -80,7 +80,11 @@
     "package": "electron-forge package",
     "make": "node updater_i18n && electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "eslint --ext .ts,.tsx ."
+    "lint": "eslint --ext .ts,.tsx .",
+    "start:debug": "node updater_i18n && run-script-os",
+    "drive": "node tools/drive_studio.mjs",
+    "start:debug:win32": "chcp 65001 && set STUDIO_REMOTE_DEBUG=9222&& electron-forge start",
+    "start:debug:darwin:linux": "STUDIO_REMOTE_DEBUG=9222 electron-forge start"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.11.1",
@@ -112,6 +116,7 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "node-loader": "^2.1.0",
     "patch-package": "^8.0.1",
+    "playwright-core": "^1.61.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
     "vite": "^8.0.8",

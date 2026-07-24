@@ -66,7 +66,7 @@ const Table = styled.div`
 
 const Row = styled.div<{ $head?: boolean }>`
   display: grid;
-  grid-template-columns: 1fr 150px 80px 80px;
+  grid-template-columns: 1fr 160px 160px 80px 80px;
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
@@ -133,6 +133,12 @@ export const SaveMapsDialog = ({ rows, onCancel, onConfirm }: Props) => {
     return record ? getMapName(record) : dbSymbol;
   };
 
+  /** The file this save actually writes. */
+  const tmxName = (dbSymbol: string) => {
+    const record = maps[dbSymbol];
+    return record?.tiledFilename ? `${record.tiledFilename}.tmx` : '—';
+  };
+
   /** The file PSDK will regenerate from this map, so the row is traceable on disk. */
   const rxdataName = (dbSymbol: string) => {
     const record = maps[dbSymbol];
@@ -194,6 +200,7 @@ export const SaveMapsDialog = ({ rows, onCancel, onConfirm }: Props) => {
         <Table>
           <Row $head>
             <span>{t('save_maps_dialog_map')}</span>
+            <span>{t('save_maps_dialog_writes')}</span>
             <span>{t('save_maps_dialog_file')}</span>
             <span className="col">
               <label style={{ display: 'flex', gap: 4, alignItems: 'center', cursor: 'pointer' }}>
@@ -211,6 +218,7 @@ export const SaveMapsDialog = ({ rows, onCancel, onConfirm }: Props) => {
           {rows.map((row) => (
             <Row key={row.dbSymbol}>
               <span>{displayName(row.dbSymbol)}</span>
+              <span className="rxdata">{tmxName(row.dbSymbol)}</span>
               <span className="rxdata">{rxdataName(row.dbSymbol)}</span>
               <span className="col">
                 <input
