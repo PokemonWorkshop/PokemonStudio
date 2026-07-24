@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { playSound } from '@utils/sound';
 
 type DatabaseTabsBarContainerProps = {
   $autoWidth?: boolean;
@@ -107,6 +108,9 @@ export const DatabaseTabsBar = ({ currentTabIndex, tabs, onClick, autoWidth }: D
 
   const handleTabClick = (index: number, tab: TabType) => {
     if (tab.disabled) return;
+    // Outcome, not input: only the quietest cue, and only on an actual change —
+    // re-clicking the tab you're already on stays silent.
+    if (index !== currentTabIndex) playSound('whisper');
     onClick ? onClick(index) : navigate(tab.path);
   };
 

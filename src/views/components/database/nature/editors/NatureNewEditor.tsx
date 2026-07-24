@@ -13,6 +13,7 @@ import { DbSymbol } from '@modelEntities/dbSymbol';
 import { useSetProjectText } from '@utils/ReadingProjectText';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { TooltipWrapper } from '@ds/Tooltip';
+import { playSound } from '@utils/sound';
 import { InputFormContainer } from '@components/inputs/InputContainer';
 
 const ButtonContainer = styled.div`
@@ -43,6 +44,7 @@ export const NatureNewEditor = forwardRef<EditorHandlingClose, NatureNewEditorPr
     const newNature = createNature(natures, dbSymbol);
     setText(NATURE_NAME_TEXT_ID, newNature.id, name);
     setNature({ [dbSymbol]: newNature }, { nature: dbSymbol });
+    playSound('ready');
     closeDialog();
   };
 

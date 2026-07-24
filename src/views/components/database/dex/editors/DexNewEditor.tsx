@@ -16,6 +16,7 @@ import { cloneEntity } from '@utils/cloneEntity';
 import { useSetProjectText } from '@utils/ReadingProjectText';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { TooltipWrapper } from '@ds/Tooltip';
+import { playSound } from '@utils/sound';
 
 const DexImportInfo = styled.div`
   ${({ theme }) => theme.fonts.normalRegular};
@@ -54,6 +55,7 @@ export const DexNewEditor = forwardRef<EditorHandlingClose, DexNewEditorProps>((
     const newDex = createDex(allDex, dbSymbol, startIdRef.current.valueAsNumber, creatures);
     setText(newDex.csv.csvFileId, newDex.csv.csvTextIndex, dexName);
     setDex({ [dbSymbol]: newDex }, { dex: dbSymbol });
+    playSound('ready');
     onClose();
   };
 

@@ -19,6 +19,32 @@ export const BaseButtonStyle = styled.a.attrs<ButtonProps>((props) => ({
   font-size: 14px;
   user-select: none;
 
+  /*
+   * Press feedback. Nothing in Studio acknowledged a click before this, and
+   * every button in the app (and the map editor fork) inherits from here, so
+   * one rule covers the whole surface.
+   *
+   * 120ms sits at the fast end of the 100-160ms press band on purpose: these
+   * are pressed tens of times a day, and anything slower reads as lag rather
+   * than as feedback. Only transform and background-color are animated -- never
+   * the 'all' shorthand, which would sweep up layout properties.
+   */
+  transition: transform ${({ theme }) => theme.motion.durPress} ${({ theme }) => theme.motion.easeOut},
+    background-color ${({ theme }) => theme.motion.durPress} ease;
+
+  &:active:not([data-disabled]) {
+    transform: scale(0.97);
+  }
+
+  /* Honour the OS setting: keep the colour cue, drop the movement. */
+  @media (prefers-reduced-motion: reduce) {
+    transition: background-color ${({ theme }) => theme.motion.durPress} ease;
+
+    &:active:not([data-disabled]) {
+      transform: none;
+    }
+  }
+
   &[href] {
     text-decoration: none;
   }

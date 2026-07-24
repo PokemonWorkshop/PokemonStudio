@@ -129,6 +129,7 @@
     "@xyflow/react": "^12.10.2",
     "csv-parse": "^6.2.1",
     "csv-stringify": "^6.7.0",
+    "cuelume": "^0.1.2",
     "electron-is-dev": "^3.0.1",
     "electron-log": "^5.4.3",
     "electron-updater": "^6.8.3",

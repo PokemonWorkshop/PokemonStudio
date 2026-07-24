@@ -1,5 +1,6 @@
 import React, { ReactNode, useEffect } from 'react';
 import styled from 'styled-components';
+import { playSound } from '@utils/sound';
 import { EditorContainer, EditorWithCollapseContainer } from './EditorContainer';
 
 export const EditorOverlayContainer = styled.div`
@@ -72,10 +73,24 @@ type EditorOverlayProps = {
  */
 export const EditorOverlay = ({ currentEditor, editors, subEditor, onClose }: EditorOverlayProps) => {
   const isActive = currentEditor && editors[currentEditor];
+  const active = Boolean(isActive);
+
+  // This (v1) overlay slides in from the right just like EditorOverlayV2's
+  // right dialogs, so it sounds the same: `loading` on arrival, `release` on
+  // dismissal (Escape or clicking the dimmed backdrop).
+  useEffect(() => {
+    if (active) playSound('loading');
+  }, [active]);
+
+  const close = () => {
+    playSound('release');
+    onClose();
+  };
+
   useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
       // event.preventDefault();
-      if (event.key === 'Escape' && isActive) onClose();
+      if (event.key === 'Escape' && isActive) close();
     };
     window.addEventListener('keydown', handleKey);
 
@@ -84,7 +99,7 @@ export const EditorOverlay = ({ currentEditor, editors, subEditor, onClose }: Ed
 
   if (isActive) {
     return (
-      <EditorOverlayContainer className="active" onMouseDown={(event) => event.target === event.currentTarget && onClose()} tabIndex={-1}>
+      <EditorOverlayContainer className="active" onMouseDown={(event) => event.target === event.currentTarget && close()} tabIndex={-1}>
         {editors[currentEditor]}
         {subEditor}
       </EditorOverlayContainer>

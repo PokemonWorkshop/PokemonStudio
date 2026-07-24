@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGlobalState } from '@src/GlobalStateProvider';
+import { Toggle } from '@components/inputs';
 import type { MapEvent, MapEventPage } from './useMapEvents';
 import {
   composeEventName,
@@ -286,8 +287,7 @@ export const EventDialog = ({ event, mapEvents, onSave, onDelete, onClose, getMa
           <FieldCol title={t('me_events_shadowless_hint')}>
             <FieldLabel>{t('me_events_shadowless')}</FieldLabel>
             <CheckLabel style={{ height: 28 }}>
-              <input
-                type="checkbox"
+              <Toggle
                 checked={hasShadowlessTag(draft.name)}
                 onChange={(e) => commitDraft((prev) => ({ ...prev, name: setShadowlessTag(prev.name, e.target.checked) }))}
               />
@@ -391,7 +391,7 @@ export const EventDialog = ({ event, mapEvents, onSave, onDelete, onClose, getMa
                     )}
                   </GraphicPreview>
                   <CheckLabel style={{ marginTop: 6 }}>
-                    <input type="checkbox" checked={animatePreview} onChange={(e) => setAnimatePreview(e.target.checked)} />
+                    <Toggle checked={animatePreview} onChange={(e) => setAnimatePreview(e.target.checked)} />
                     {t('me_events_animate_preview')}
                   </CheckLabel>
                 </div>
@@ -517,11 +517,11 @@ export const EventDialog = ({ event, mapEvents, onSave, onDelete, onClose, getMa
             <SideBySide>
               <Block $grow>
                 <BlockTitle>{t('me_events_options')}</BlockTitle>
-                <Row><CheckLabel><input type="checkbox" checked={page.isWalkAnime} onChange={(e) => patchPage({ isWalkAnime: e.target.checked })} />{t('me_events_move_animation')}</CheckLabel></Row>
-                <Row><CheckLabel><input type="checkbox" checked={page.isStepAnime} onChange={(e) => patchPage({ isStepAnime: e.target.checked })} />{t('me_events_stop_animation')}</CheckLabel></Row>
-                <Row><CheckLabel><input type="checkbox" checked={page.isDirectionFix} onChange={(e) => patchPage({ isDirectionFix: e.target.checked })} />{t('me_events_direction_fix')}</CheckLabel></Row>
-                <Row><CheckLabel><input type="checkbox" checked={page.isThrough} onChange={(e) => patchPage({ isThrough: e.target.checked })} />{t('me_events_through')}</CheckLabel></Row>
-                <Row><CheckLabel><input type="checkbox" checked={page.isAlwaysOnTop} onChange={(e) => patchPage({ isAlwaysOnTop: e.target.checked })} />{t('me_events_always_on_top')}</CheckLabel></Row>
+                <Row><CheckLabel><Toggle checked={page.isWalkAnime} onChange={(e) => patchPage({ isWalkAnime: e.target.checked })} />{t('me_events_move_animation')}</CheckLabel></Row>
+                <Row><CheckLabel><Toggle checked={page.isStepAnime} onChange={(e) => patchPage({ isStepAnime: e.target.checked })} />{t('me_events_stop_animation')}</CheckLabel></Row>
+                <Row><CheckLabel><Toggle checked={page.isDirectionFix} onChange={(e) => patchPage({ isDirectionFix: e.target.checked })} />{t('me_events_direction_fix')}</CheckLabel></Row>
+                <Row><CheckLabel><Toggle checked={page.isThrough} onChange={(e) => patchPage({ isThrough: e.target.checked })} />{t('me_events_through')}</CheckLabel></Row>
+                <Row><CheckLabel><Toggle checked={page.isAlwaysOnTop} onChange={(e) => patchPage({ isAlwaysOnTop: e.target.checked })} />{t('me_events_always_on_top')}</CheckLabel></Row>
               </Block>
               <Block $grow>
                 <BlockTitle>{t('me_events_trigger')}</BlockTitle>

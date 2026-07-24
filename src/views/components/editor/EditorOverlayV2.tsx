@@ -3,6 +3,7 @@ import { DialogRefData } from '@hooks/useDialogsRef';
 import React, { forwardRef, PropsWithoutRef, ReactNode, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
+import { playSound } from '@utils/sound';
 
 export const BackDrop = styled.div`
   display: none; /* Hidden by default */
@@ -96,7 +97,11 @@ const animationKeys = {
 
 const animationOption = {
   duration: 200,
-  easing: 'ease-in',
+  // ease-out, not ease-in: an entering surface should leave immediately and
+  // settle gently. ease-in starts slow, which reads as the app having lagged --
+  // and this drives every editor dialog in Studio, so it is the most-felt
+  // transition in the product.
+  easing: 'cubic-bezier(0.23, 1, 0.32, 1)',
 } as const;
 
 const DIALOG_TOP_OFFSET = window.api.platform === 'win32' ? '26px' : '0px';
@@ -107,6 +112,10 @@ const DIALOG_TOP_CENTER = '50%';
 const DIALOG_TRANSFORM_NONE = 'translate(0%, 0)';
 
 const closeDialogWithAnimation = (dialog: HTMLDialogElement, backdrop: HTMLDivElement, isCenter: boolean, onFinish: () => void) => {
+  // The right-slide editor panel leaving — the counterpart to its `loading`
+  // open, whether dismissed by clicking out, Escape, or an inner close button.
+  // Centred pop-ups close silently (only their open is marked, with `bloom`).
+  if (!isCenter) playSound('release');
   const animation = dialog.animate(isCenter ? animationKeys.center.close : animationKeys.right.close, animationOption);
 
   animation.onfinish = () => {
@@ -131,6 +140,13 @@ const openDialogWithAnimation = (dialog: HTMLDialogElement, backdrop: HTMLDivEle
   dialog.addEventListener('cancel', onDialogCancel);
   dialog.classList.add('open');
   backdrop.classList.add('open');
+  // This drives every database editor + confirmation dialog in Studio. Two
+  // shapes, two cues: the right-slide editor panels read as content sliding in
+  // (`loading`), the centred pop-ups as a window appearing (`bloom`).
+  // Deliberately NOT shared with the Loader (its own loading/success/error
+  // cues) or the fork's map-editor dialogs (SaveMapsDialog, ConfirmDeleteDialog,
+  // etc.), which are custom-rendered outside this component and never reach here.
+  playSound(isCenter ? 'bloom' : 'loading');
   const animation = dialog.animate(isCenter ? animationKeys.center.open : animationKeys.right.open, animationOption);
 
   animation.onfinish = () => {

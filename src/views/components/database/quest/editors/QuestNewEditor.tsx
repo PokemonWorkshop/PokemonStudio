@@ -17,6 +17,7 @@ import {
 import { useGetProjectText, useSetProjectText } from '@utils/ReadingProjectText';
 import { createQuest } from '@utils/entityCreation';
 import { importQuestData } from '@utils/importEntityDataUtils';
+import { playSound } from '@utils/sound';
 import { TFunction } from 'i18next';
 import React, { forwardRef, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -90,6 +91,7 @@ export const QuestNewEditor = forwardRef<EditorHandlingClose, QuestNewEditorProp
     setText(QUEST_NAME_TEXT_ID, newQuest.id, name);
     setText(QUEST_DESCRIPTION_TEXT_ID, newQuest.id, descriptionRef.current.value);
     setQuest({ [newQuest.dbSymbol]: newQuest }, { quest: newQuest.dbSymbol });
+    playSound('ready');
     closeDialog();
   };
 

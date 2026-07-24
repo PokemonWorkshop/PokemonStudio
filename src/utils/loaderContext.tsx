@@ -1,4 +1,5 @@
 import { editorOverlayHidden } from '@components/editor/EditorOverlayV2';
+import { playSound } from '@utils/sound';
 import React, { createContext, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 
 type LoaderTitle =
@@ -99,6 +100,10 @@ const useLoaderContextService = (): LoaderContext => {
       editorOverlayHidden(false);
     },
     open: (thingInProgress: LoaderTitle, step: number, total: number, stepText: string) => {
+      // Loading a project is a multi-second operation the user often walks away
+      // from — mark its START so they know it's underway. Other loader openings
+      // (saving, importing) get their cue on completion instead.
+      if (thingInProgress === 'loading_project') playSound('loading');
       setLoaderState({
         ...loaderState,
         thingInProgress,
@@ -120,7 +125,10 @@ const useLoaderContextService = (): LoaderContext => {
         total,
         stepText,
       }),
-    setError: (errorTitle: LoaderErrorTitle, errorText: string, isLogsAvailable?: boolean, dynamicAction?: React.ReactNode) =>
+    setError: (errorTitle: LoaderErrorTitle, errorText: string, isLogsAvailable?: boolean, dynamicAction?: React.ReactNode) => {
+      // The one cue that must never be the ONLY signal — it always accompanies
+      // this visible error dialog, never replaces it.
+      playSound('error');
       setLoaderState({
         ...loaderState,
         errorTitle,
@@ -128,8 +136,12 @@ const useLoaderContextService = (): LoaderContext => {
         dynamicAction,
         isLogsAvailable: isLogsAvailable || false,
         isOpen: true,
-      }),
+      });
+    },
     setSuccess: (successTitle: LoaderSuccessTitle, successText: string) => {
+      // A finished import/update — occasional, and otherwise only announced by
+      // this dialog quietly appearing.
+      playSound('success');
       setLoaderState({
         ...loaderState,
         successTitle,

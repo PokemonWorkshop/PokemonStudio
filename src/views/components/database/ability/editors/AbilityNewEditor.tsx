@@ -13,6 +13,7 @@ import { createAbility } from '@utils/entityCreation';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { TooltipWrapper } from '@ds/Tooltip';
+import { playSound } from '@utils/sound';
 
 type Props = {
   closeDialog: () => void;
@@ -51,6 +52,7 @@ export const AbilityNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
     setText(ABILITY_NAME_TEXT_ID, newAbility.textId, name);
     setText(ABILITY_DESCRIPTION_TEXT_ID, newAbility.textId, descriptionRef.current.value);
     setAbility({ [dbSymbol]: newAbility }, { ability: dbSymbol });
+    playSound('ready');
     closeDialog();
   };
 

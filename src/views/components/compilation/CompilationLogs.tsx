@@ -8,6 +8,7 @@ import { useShowItemInFolder } from '@src/hooks/useShowItemInFolder';
 import { join } from '@utils/path';
 import { showNotification } from '@utils/showNotification';
 import { useLoaderRef } from '@utils/loaderContext';
+import { playSound } from '@utils/sound';
 import { CompilationLogsContainer, ProgressBarCompilationContainer } from './CompilationStyle';
 import { CopyButton } from '@components/Copy';
 import { ONLY_SHOW_ON_CHANGE_TEXT } from '@ds/Tooltip/TooltipContext';
@@ -75,6 +76,14 @@ export const CompilationLogs = ({ configuration }: CompilationLogsProps) => {
 
   useEffect(() => {
     if (logsRef.current) logsRef.current.scrollTop = logsRef.current.scrollHeight;
+  }, [exitCode]);
+
+  // A build is long and the user has usually looked away. Sound the outcome
+  // once it lands. The spawn-failure path (onFailure -> setError) sounds its own
+  // error, and leaves exitCode undefined, so it can't double up with this.
+  useEffect(() => {
+    if (exitCode === undefined) return;
+    playSound(exitCode === 0 ? 'success' : 'error');
   }, [exitCode]);
 
   return (

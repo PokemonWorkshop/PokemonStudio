@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLoaderRef } from '@utils/loaderContext';
 import { useProjectLoad } from '@hooks/useProjectLoad';
 import { useProjectNew } from '@hooks/useProjectNew';
+import { playSound } from '@utils/sound';
 import { useTranslation } from 'react-i18next';
 import type { NewProjectData } from '@hooks/useProjectNew/types';
 
@@ -29,6 +30,7 @@ export const NewProjectButton = ({ newProjectData, disabled, closeDialog }: NewP
           { projectDirName },
           () => {
             loaderRef.current.close();
+            playSound('sparkle');
             navigate('/dashboard');
           },
           ({ errorMessage }) => {

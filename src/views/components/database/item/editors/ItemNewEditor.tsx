@@ -31,6 +31,7 @@ import { SelectItem } from '@components/selects';
 import { importItemData } from '@utils/importEntityDataUtils';
 import { OptionSourceKey } from '@src/hooks/useSelectOptions';
 import { useNavigate } from 'react-router-dom';
+import { playSound } from '@utils/sound';
 import { ItemCategoryText } from './ItemCategoryText';
 
 const itemCategoryEntries = (t: TFunction) =>
@@ -106,6 +107,7 @@ export const ItemNewEditor = forwardRef<EditorHandlingClose, ItemNewEditorProps>
     setText(ITEM_DESCRIPTION_TEXT_ID, newItem.id, descriptionRef.current.value);
     setText(ITEM_PLURAL_NAME_TEXT_ID, newItem.id, namePluralRef.current.value);
     setItem({ [dbSymbol]: newItem }, { item: dbSymbol });
+    playSound('ready');
     if (from === 'items') navigate(`/database/items`);
     else navigate(`/database/items/techItemsTable`);
     closeDialog();

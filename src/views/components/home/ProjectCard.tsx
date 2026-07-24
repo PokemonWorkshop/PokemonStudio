@@ -12,6 +12,7 @@ import { Project } from '@utils/projectList';
 import { ResourceImage } from '@components/ResourceImage';
 import { useShowItemInFolder } from '@hooks/useShowItemInFolder';
 import { join } from '@utils/path';
+import { playSound } from '@utils/sound';
 import { RmxpMigrationDialog } from './RmxpMigrationDialog';
 
 const ProjectCardContainer = styled(ActiveContainer)`
@@ -51,23 +52,9 @@ const ProjectCardContainer = styled(ActiveContainer)`
 
     & button.clear-button,
     & button.folder-button {
-      position: absolute;
-      display: inline-block;
-      top: 16px;
-      height: 50px;
-      width: 52px;
-      background: none;
-      color: inherit;
-      border: none;
-      font: inherit;
-      outline: none;
-    }
-    .clear-button {
-      right: 16px;
-    }
-
-    .folder-button {
-      right: 60px;
+      opacity: 1;
+      transform: none;
+      pointer-events: auto;
     }
   }
 
@@ -75,12 +62,50 @@ const ProjectCardContainer = styled(ActiveContainer)`
     cursor: default;
   }
 
-  & button.clear-button {
-    display: none;
+  /*
+   * These used to be toggled with display, which is discrete and cannot
+   * transition -- so the buttons snapped into existence on hover. Kept laid out
+   * and hidden with opacity instead, which can. This is the first screen of
+   * every session, so it is worth the polish.
+   *
+   * The right-anchoring MUST live here in the base rule, not only under :hover.
+   * When it was hover-only the idle buttons fell back to their static (left)
+   * position, so on hover they visibly slid across to the right as they faded
+   * in -- and slid back on leave. Anchored in both states, only opacity and the
+   * 2px lift animate.
+   */
+  & button.clear-button,
+  & button.folder-button {
+    position: absolute;
+    display: inline-block;
+    top: 16px;
+    height: 50px;
+    width: 52px;
+    background: none;
+    color: inherit;
+    border: none;
+    font: inherit;
+    outline: none;
+    opacity: 0;
+    transform: translateY(-2px);
+    pointer-events: none;
+    transition: opacity 140ms ${({ theme }) => theme.motion.easeOut}, transform 140ms ${({ theme }) => theme.motion.easeOut};
   }
 
-  & button.folder-button {
-    display: none;
+  & .clear-button {
+    right: 16px;
+  }
+
+  & .folder-button {
+    right: 60px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    & button.clear-button,
+    & button.folder-button {
+      transform: none;
+      transition: opacity 140ms ease;
+    }
   }
 
   ${Code} {
@@ -125,6 +150,7 @@ export const ProjectCard = ({ project, onDeleteProjectToList, onUpdateProjectLis
       { projectDirName: project.projectPath },
       () => {
         loaderRef.current.close();
+        playSound('sparkle');
         navigate('/dashboard');
       },
       ({ errorMessage }) => {

@@ -16,6 +16,7 @@ import { DbSymbol } from '@modelEntities/dbSymbol';
 import { useSetProjectText } from '@utils/ReadingProjectText';
 import { findFirstAvailableId } from '@utils/ModelUtils';
 import { createZone } from '@utils/entityCreation';
+import { playSound } from '@utils/sound';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -46,6 +47,7 @@ export const ZoneNewEditor = forwardRef<EditorHandlingClose, ZoneNewEditorProps>
     setText(ZONE_NAME_TEXT_ID, id, name);
     setText(ZONE_DESCRIPTION_TEXT_ID, id, descriptionRef.current.value);
     setZone({ [dbSymbol]: zone }, { zone: dbSymbol });
+    playSound('ready');
 
     closeDialog();
   };

@@ -138,11 +138,25 @@ interface Calc {
 }
 
 declare module 'styled-components' {
+  /**
+   * Shared motion tokens. Kept in the theme so every transition in the app
+   * draws from the same three curves instead of inventing its own.
+   */
+  interface Motion {
+    easeOut: string;
+    easeInOut: string;
+    easeDrawer: string;
+    durPress: string;
+    durMenu: string;
+    durModal: string;
+  }
+
   export interface DefaultTheme {
     colors: Colors;
     fonts: Fonts;
     breakpoints: Breakpoints;
     sizes: Sizes;
     calc: Calc;
+    motion: Motion;
   }
 }

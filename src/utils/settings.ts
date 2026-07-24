@@ -1,9 +1,12 @@
 export type StudioSettings = {
   tiledPath: string;
+  /** Whether Studio plays interaction sounds. Persisted; honoured on boot by initSound(). */
+  soundEnabled: boolean;
 };
 
 const defaultSettings: StudioSettings = {
   tiledPath: '',
+  soundEnabled: true,
 };
 
 /**
@@ -14,7 +17,10 @@ export const getSettings = (): StudioSettings => {
   const settingsJson = localStorage.getItem('settings');
   if (!settingsJson) return defaultSettings;
 
-  return JSON.parse(settingsJson);
+  // Merge over defaults so a key added after the user's settings were first
+  // written (e.g. soundEnabled) still resolves to its default instead of
+  // undefined.
+  return { ...defaultSettings, ...JSON.parse(settingsJson) };
 };
 
 /**

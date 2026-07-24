@@ -3,6 +3,14 @@ import '@xyflow/react/dist/style.css';
 
 const GlobalStyle = createGlobalStyle`
   body {
+    /* Mirrors theme.motion so plain CSS blocks can use the same curves. */
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+    --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+    --dur-press: 120ms;
+    --dur-menu: 150ms;
+    --dur-modal: 200ms;
+
     position: relative;
     color: ${(props) => props.theme.colors.text100};
     height: 100vh;

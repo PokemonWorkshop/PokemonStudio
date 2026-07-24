@@ -183,7 +183,7 @@ export const useInputAttrsWithLabel = <T extends z.ZodRawShape>(schema: z.ZodObj
           </InputWithTopLabelContainer>
         );
       },
-      Toggle: ({ name, schemaKey, label, ...props }: ReactProps<typeof Toggle>) => {
+      Toggle: ({ name, schemaKey, label, ...props }: ReactPropsWithLabel<typeof Toggle>) => {
         const { type, required, ...attrs } = inputAttrs(schema, name, defaults, schemaKey);
         const defaultChecked = attrs.defaultValue === 'true';
         if (!label) return <Toggle {...attrs} {...props} defaultChecked={props.defaultChecked ?? defaultChecked} />;

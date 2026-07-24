@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useProjectMaps } from '@hooks/useProjectData';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
+import { Toggle } from '@components/inputs';
 
 /**
  * Fork-owned. Pick which pending maps to write, per kind.
@@ -31,6 +32,16 @@ const Scrim = styled.div`
   align-items: center;
   justify-content: center;
   z-index: 2000;
+  /*
+   * Entry only, via @starting-style -- no mount flag, no JS. These modals used
+   * to teleport in at full opacity while Studio's own EditorOverlayV2 dialogs
+   * fade, which made the fork's dialogs read as cheaper than the host app's.
+   */
+  transition: opacity ${({ theme }) => theme.motion.durModal} ease;
+
+  @starting-style {
+    opacity: 0;
+  }
 `;
 
 const Dialog = styled.div`
@@ -44,6 +55,27 @@ const Dialog = styled.div`
   background: ${({ theme }) => theme.colors.dark16};
   border: 1px solid ${({ theme }) => theme.colors.dark20};
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  /*
+   * Scales from 0.96, never from 0 -- a dialog growing from nothing reads as a
+   * zoom effect rather than as something arriving. Centred modals keep
+   * transform-origin at the centre; only trigger-anchored surfaces (menus)
+   * origin at their trigger.
+   */
+  transition: opacity ${({ theme }) => theme.motion.durModal} ${({ theme }) => theme.motion.easeOut},
+    transform ${({ theme }) => theme.motion.durModal} ${({ theme }) => theme.motion.easeOut};
+
+  @starting-style {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: opacity ${({ theme }) => theme.motion.durModal} ease;
+
+    @starting-style {
+      transform: none;
+    }
+  }
 `;
 
 const Title = styled.h3`
@@ -204,13 +236,13 @@ export const SaveMapsDialog = ({ rows, onCancel, onConfirm }: Props) => {
             <span>{t('save_maps_dialog_file')}</span>
             <span className="col">
               <label style={{ display: 'flex', gap: 4, alignItems: 'center', cursor: 'pointer' }}>
-                <input type="checkbox" checked={tilesCol.checked} disabled={tilesCol.disabled} onChange={(e) => toggleColumn('tiles', e.target.checked)} />
+                <Toggle checked={tilesCol.checked} disabled={tilesCol.disabled} onChange={(e) => toggleColumn('tiles', e.target.checked)} />
                 {t('save_maps_dialog_tiles')}
               </label>
             </span>
             <span className="col">
               <label style={{ display: 'flex', gap: 4, alignItems: 'center', cursor: 'pointer' }}>
-                <input type="checkbox" checked={eventsCol.checked} disabled={eventsCol.disabled} onChange={(e) => toggleColumn('events', e.target.checked)} />
+                <Toggle checked={eventsCol.checked} disabled={eventsCol.disabled} onChange={(e) => toggleColumn('events', e.target.checked)} />
                 {t('save_maps_dialog_events')}
               </label>
             </span>
@@ -221,16 +253,14 @@ export const SaveMapsDialog = ({ rows, onCancel, onConfirm }: Props) => {
               <span className="rxdata">{tmxName(row.dbSymbol)}</span>
               <span className="rxdata">{rxdataName(row.dbSymbol)}</span>
               <span className="col">
-                <input
-                  type="checkbox"
+                <Toggle
                   disabled={!row.hasTiles}
                   checked={row.hasTiles && !!selection[row.dbSymbol]?.tiles}
                   onChange={(e) => toggle(row.dbSymbol, 'tiles', e.target.checked)}
                 />
               </span>
               <span className="col">
-                <input
-                  type="checkbox"
+                <Toggle
                   disabled={!row.hasEvents}
                   checked={row.hasEvents && !!selection[row.dbSymbol]?.events}
                   onChange={(e) => toggle(row.dbSymbol, 'events', e.target.checked)}

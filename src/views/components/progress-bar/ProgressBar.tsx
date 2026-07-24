@@ -29,6 +29,23 @@ export const BlockProgressBar = styled.div`
 
   .progress::-webkit-progress-value {
     background: ${({ theme }) => theme.colors.primaryBase};
+
+    /*
+     * A compile is seven discrete steps, so without this the bar jumps ~14% at
+     * a time and a multi-minute build reads as a stuttering staircase.
+     *
+     * 400ms is past the 300ms UI budget deliberately: this is a rare,
+     * long-running readout, not an interaction response. inline-size is a
+     * layout property rather than transform/opacity, which is acceptable ONLY
+     * here -- a 12px-tall pseudo-element with no siblings, off any hot path,
+     * on a screen where nothing else moves. The transform-pure alternative
+     * means dropping <progress> and its native semantics, which is not worth it.
+     */
+    transition: inline-size 400ms ${({ theme }) => theme.motion.easeOut};
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
   }
 
   label {

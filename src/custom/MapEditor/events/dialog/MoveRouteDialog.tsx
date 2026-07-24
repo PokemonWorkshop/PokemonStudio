@@ -13,6 +13,7 @@ import {
   type RMXPMoveRoute,
   type WorkingMoveCommand,
 } from '../rmxpEventUtils';
+import { Toggle } from '@components/inputs';
 import { MapTilePicker } from './MapTilePicker';
 import { BlockTitle, CheckLabel, Dim, FooterBtn, OpBtn, Row, Scrim, SmallInput, SmallSelect } from './styles';
 import { AudioPicker, type AudioFile } from './AudioPicker';
@@ -351,11 +352,11 @@ export const MoveRouteDialog = ({ route, subject, systemNames, audioFiles, targe
             </Row>
             <div>
               <CheckLabel title={t('me_move_repeat_hint')}>
-                <input type="checkbox" checked={draft.isRepeat} onChange={(e) => setDraft((p) => ({ ...p, isRepeat: e.target.checked }))} />
+                <Toggle checked={draft.isRepeat} onChange={(e) => setDraft((p) => ({ ...p, isRepeat: e.target.checked }))} />
                 {t('me_move_repeat')}
               </CheckLabel>
               <CheckLabel title={t('me_move_skippable_hint')} style={{ marginTop: 4 }}>
-                <input type="checkbox" checked={draft.isSkippable} onChange={(e) => setDraft((p) => ({ ...p, isSkippable: e.target.checked }))} />
+                <Toggle checked={draft.isSkippable} onChange={(e) => setDraft((p) => ({ ...p, isSkippable: e.target.checked }))} />
                 {t('me_move_skippable')}
               </CheckLabel>
             </div>

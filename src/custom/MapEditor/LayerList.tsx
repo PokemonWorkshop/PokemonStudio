@@ -224,6 +224,27 @@ const ContextMenu = styled.div<{ $x: number; $y: number }>`
   padding: 4px 0;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
   min-width: 180px;
+  /*
+   * Grow from the point that opened it, so the menu reads as coming from the
+   * trigger rather than being pasted over the page. 150ms is the fast edge of
+   * the dropdown band -- these are opened often enough that slower would drag.
+   */
+  transform-origin: top left;
+  transition: opacity ${({ theme }) => theme.motion.durMenu} ${({ theme }) => theme.motion.easeOut},
+    transform ${({ theme }) => theme.motion.durMenu} ${({ theme }) => theme.motion.easeOut};
+
+  @starting-style {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: opacity ${({ theme }) => theme.motion.durMenu} ease;
+
+    @starting-style {
+      transform: none;
+    }
+  }
 `;
 
 const MenuItem = styled.button<{ $danger?: boolean }>`

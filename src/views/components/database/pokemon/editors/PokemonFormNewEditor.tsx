@@ -12,6 +12,7 @@ import { CREATURE_FORM_DESCRIPTION_TEXT_ID, CREATURE_FORM_NAME_TEXT_ID, CREATURE
 import { useGetEntityDescriptionText, useSetProjectText } from '@utils/ReadingProjectText';
 import { cloneEntity } from '@utils/cloneEntity';
 import { createCreatureForm } from '@utils/entityCreation';
+import { playSound } from '@utils/sound';
 import { TFunction } from 'i18next';
 import React, { forwardRef, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -77,6 +78,7 @@ export const PokemonFormNewEditor = forwardRef<EditorHandlingClose, Props>(({ cl
 
     setEvolutionIndex(0);
     setCreature({ [updatedCreature.dbSymbol]: updatedCreature }, { pokemon: { specie: updatedCreature.dbSymbol, form: newFormId } });
+    playSound('ready');
     closeDialog();
   };
 

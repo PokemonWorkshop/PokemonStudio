@@ -4,6 +4,10 @@ import theme from '@src/AppTheme';
 import React, { Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ThemeProvider } from 'styled-components';
+import { initSound } from '@utils/sound';
+
+// Apply the persisted sound preference before anything can play a cue.
+initSound();
 
 const TitleBarApp = () => {
   return (

@@ -37,6 +37,16 @@ const Backdrop = styled.div`
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  /*
+   * Entry only, via @starting-style -- no mount flag, no JS. These modals used
+   * to teleport in at full opacity while Studio's own EditorOverlayV2 dialogs
+   * fade, which made the fork's dialogs read as cheaper than the host app's.
+   */
+  transition: opacity ${({ theme }) => theme.motion.durModal} ease;
+
+  @starting-style {
+    opacity: 0;
+  }
 `;
 const Modal = styled.div`
   background: ${({ theme }) => theme.colors.dark14};
@@ -49,6 +59,27 @@ const Modal = styled.div`
   min-width: 540px;
   max-width: 720px;
   box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
+  /*
+   * Scales from 0.96, never from 0 -- a dialog growing from nothing reads as a
+   * zoom effect rather than as something arriving. Centred modals keep
+   * transform-origin at the centre; only trigger-anchored surfaces (menus)
+   * origin at their trigger.
+   */
+  transition: opacity ${({ theme }) => theme.motion.durModal} ${({ theme }) => theme.motion.easeOut},
+    transform ${({ theme }) => theme.motion.durModal} ${({ theme }) => theme.motion.easeOut};
+
+  @starting-style {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: opacity ${({ theme }) => theme.motion.durModal} ease;
+
+    @starting-style {
+      transform: none;
+    }
+  }
 `;
 const Header = styled.div`
   ${({ theme }) => theme.fonts.titlesHeadline6};

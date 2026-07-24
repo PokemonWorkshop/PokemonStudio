@@ -23,6 +23,7 @@ import { useSetProjectText } from '@utils/ReadingProjectText';
 import { TYPE_NAME_TEXT_ID } from '@modelEntities/type';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { TooltipWrapper } from '@ds/Tooltip';
+import { playSound } from '@utils/sound';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -57,6 +58,7 @@ export const TypeNewEditor = forwardRef<EditorHandlingClose, TypeNewEditorProps>
     const type = createType(dbSymbol, id, textId, colorRef.current.value);
     setText(TYPE_NAME_TEXT_ID, textId, name);
     setType({ [dbSymbol]: type }, { type: dbSymbol });
+    playSound('ready');
     if (from === 'type') navigate(`/database/types/${dbSymbol}`);
     else navigate(`/database/types/table`);
 

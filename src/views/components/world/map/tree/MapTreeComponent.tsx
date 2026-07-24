@@ -24,6 +24,7 @@ import { useProjectMaps } from '@hooks/useProjectData';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useLoaderRef } from '@utils/loaderContext';
 import { getSetting } from '@utils/settings';
+import { playSound } from '@utils/sound';
 import { showNotification } from '@utils/showNotification';
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { MAP_NAME_TEXT_ID } from '@modelEntities/map';
@@ -230,6 +231,9 @@ export const MapTreeComponent = ({ treeScrollbarRef }: MapTreeComponentProps) =>
             if (!item.data.mapDbSymbol || isFolder) return;
             if (isDeleted) return;
 
+            // Selecting a map in the list, same family as switching a tab.
+            // Only on an actual change, not re-clicking the open map.
+            if (item.data.mapDbSymbol !== currentMap) playSound('whisper');
             setCurrentMap({ map: item.data.mapDbSymbol });
             const targetMap = maps[item.data.mapDbSymbol];
             if (!targetMap?.tiledFilename && location.pathname === '/world/overview') {

@@ -26,6 +26,7 @@ import { createTrainer } from '@utils/entityCreation';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { TooltipWrapper } from '@ds/Tooltip';
 import { importTrainerData } from '@utils/importEntityDataUtils';
+import { playSound } from '@utils/sound';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -96,6 +97,7 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
     setText(TRAINER_NAME_TEXT_ID, newTrainer.id, name);
 
     setTrainer({ [newTrainer.dbSymbol]: newTrainer }, { trainer: newTrainer.dbSymbol });
+    playSound('ready');
     closeDialog();
   };
 

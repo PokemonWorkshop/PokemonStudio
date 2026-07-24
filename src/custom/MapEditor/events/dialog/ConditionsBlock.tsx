@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CONDITION_OPERATORS } from '../rmxpEventUtils';
 import type { MapEventPage } from '../useMapEvents';
+import { Toggle } from '@components/inputs';
 import { Block, BlockTitle, CheckLabel, Dim, Row, SmallInput, SmallSelect } from './styles';
 import { NamePicker, TrueFalse } from './fields';
 
@@ -25,7 +26,7 @@ export const ConditionsBlock = ({ condition, patchCondition, systemNames }: Prop
       <BlockTitle>{t('me_events_conditions')}</BlockTitle>
       <Row>
         <CheckLabel>
-          <input type="checkbox" checked={condition.isSwitch1} onChange={(e) => patchCondition({ isSwitch1: e.target.checked })} />
+          <Toggle checked={condition.isSwitch1} onChange={(e) => patchCondition({ isSwitch1: e.target.checked })} />
           {t('me_events_switch')}
         </CheckLabel>
         <NamePicker names={systemNames.switches} value={condition.switch1Id} disabled={!condition.isSwitch1} onChange={(id) => patchCondition({ switch1Id: id })} />
@@ -34,7 +35,7 @@ export const ConditionsBlock = ({ condition, patchCondition, systemNames }: Prop
       </Row>
       <Row>
         <CheckLabel>
-          <input type="checkbox" checked={condition.isSwitch2} onChange={(e) => patchCondition({ isSwitch2: e.target.checked })} />
+          <Toggle checked={condition.isSwitch2} onChange={(e) => patchCondition({ isSwitch2: e.target.checked })} />
           {t('me_events_switch')}
         </CheckLabel>
         <NamePicker names={systemNames.switches} value={condition.switch2Id} disabled={!condition.isSwitch2} onChange={(id) => patchCondition({ switch2Id: id })} />
@@ -43,7 +44,7 @@ export const ConditionsBlock = ({ condition, patchCondition, systemNames }: Prop
       </Row>
       <Row>
         <CheckLabel>
-          <input type="checkbox" checked={condition.isVariable} onChange={(e) => patchCondition({ isVariable: e.target.checked })} />
+          <Toggle checked={condition.isVariable} onChange={(e) => patchCondition({ isVariable: e.target.checked })} />
           {t('me_events_variable')}
         </CheckLabel>
         <NamePicker names={systemNames.variables} value={condition.variableId} disabled={!condition.isVariable} onChange={(id) => patchCondition({ variableId: id })} />
@@ -56,7 +57,7 @@ export const ConditionsBlock = ({ condition, patchCondition, systemNames }: Prop
       </Row>
       <Row>
         <CheckLabel>
-          <input type="checkbox" checked={condition.isSelfSwitch} onChange={(e) => patchCondition({ isSelfSwitch: e.target.checked })} />
+          <Toggle checked={condition.isSelfSwitch} onChange={(e) => patchCondition({ isSelfSwitch: e.target.checked })} />
           {t('me_events_self_switch')}
         </CheckLabel>
         <SmallInput type="text" value={condition.selfSwitch} disabled={!condition.isSelfSwitch} onChange={(e) => patchCondition({ selfSwitch: e.target.value })} title={t('me_events_self_switch_hint')} />
@@ -64,7 +65,7 @@ export const ConditionsBlock = ({ condition, patchCondition, systemNames }: Prop
       </Row>
       <Row>
         <CheckLabel title={t('me_events_cond_time_hint')}>
-          <input type="checkbox" checked={condition.timeCondition !== undefined} onChange={(e) => patchCondition({ timeCondition: e.target.checked ? 'day' : undefined })} />
+          <Toggle checked={condition.timeCondition !== undefined} onChange={(e) => patchCondition({ timeCondition: e.target.checked ? 'day' : undefined })} />
           {t('me_events_cond_time')}
         </CheckLabel>
         <Dim $off={condition.timeCondition === undefined}>{t('me_events_is')}</Dim>
@@ -76,7 +77,7 @@ export const ConditionsBlock = ({ condition, patchCondition, systemNames }: Prop
       </Row>
       <Row>
         <CheckLabel title={t('me_events_cond_script_hint')}>
-          <input type="checkbox" checked={condition.scriptCondition !== undefined} onChange={(e) => patchCondition({ scriptCondition: e.target.checked ? '' : undefined })} />
+          <Toggle checked={condition.scriptCondition !== undefined} onChange={(e) => patchCondition({ scriptCondition: e.target.checked ? '' : undefined })} />
           {t('me_events_cmd_script')}
         </CheckLabel>
         <SmallInput

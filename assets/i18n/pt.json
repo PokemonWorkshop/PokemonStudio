@@ -1398,6 +1398,8 @@
   "user_settings": "Configurações do usuário",
   "integrations": "Integrações",
   "map_management": "Gerenciar Mapa",
+  "sound_enabled": "Enable interaction sounds",
+  "sound_enabled_help": "Play short sounds when actions finish — saving, building, loading a project, switching tabs and similar. You can turn this off at any time.",
   "language_choice": "Escolha de idioma",
   "use_system_language": "Usar o idioma do sistema",
   "application_language": "Idioma do aplicativo",

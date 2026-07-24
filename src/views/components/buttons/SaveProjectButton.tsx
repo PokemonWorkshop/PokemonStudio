@@ -19,6 +19,7 @@ import {
 } from '@hooks/saveShortcutOverride';
 import { clearAllPendingEdits, getPendingEdits, subscribePendingEdits } from '@src/custom/MapEditor/pendingEdits';
 import { ConfirmDeleteDialog } from '@src/custom/MapEditor/ConfirmDeleteDialog';
+import { playSound } from '@utils/sound';
 
 /**
  * Fork-owned split button. Clicking it still does "save all"; hovering opens a
@@ -199,7 +200,12 @@ export const SaveProjectButton = () => {
     const skipMapWarning = localStorage.getItem('neverRemindMeMapModification') === 'true';
     if (skipMapWarning || !isMapsToSave) {
       save(
-        () => loaderRef.current.close(),
+        () => {
+          // Save completing is otherwise only signalled by the badge clearing —
+          // easy to miss. The failure path already sounds via setError.
+          playSound('success');
+          loaderRef.current.close();
+        },
         ({ errorMessage }) => loaderRef.current.setError('saving_project_error', errorMessage)
       );
       return;

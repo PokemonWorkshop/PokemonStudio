@@ -28,6 +28,7 @@ import { useSelectOptions } from '@hooks/useSelectOptions';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import { SelectPokemon } from '@components/selects/SelectPokemon';
 import { importCreatureData } from '@utils/importEntityDataUtils';
+import { playSound } from '@utils/sound';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -115,6 +116,7 @@ export const PokemonNewEditor = forwardRef<EditorHandlingClose, Props>(({ closeD
       setDex({ [editedDex.dbSymbol]: editedDex });
     }
     setEvolutionIndex(0);
+    playSound('ready');
     closeDialog();
   };
 

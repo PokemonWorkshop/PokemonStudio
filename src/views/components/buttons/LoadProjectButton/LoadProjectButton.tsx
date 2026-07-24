@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { SecondaryButton } from '../GenericButtons';
 import { useLoaderRef } from '@utils/loaderContext';
 import { useProjectLoad } from '@hooks/useProjectLoad';
+import { playSound } from '@utils/sound';
 import { useTranslation } from 'react-i18next';
 import { RmxpMigrationDialog } from '@components/home/RmxpMigrationDialog';
 
@@ -21,6 +22,7 @@ export const LoadProjectButton = ({ children }: LoadProjectButtonProps) => {
       { projectDirName },
       () => {
         loaderRef.current.close();
+        playSound('sparkle');
         navigate('/dashboard');
       },
       ({ errorMessage }) => loaderRef.current.setError('loading_project_error', errorMessage),

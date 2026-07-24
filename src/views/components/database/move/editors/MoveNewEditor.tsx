@@ -28,6 +28,7 @@ import { useInputAttrsWithLabel } from '@hooks/useInputAttrs';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import { SelectMove } from '@components/selects';
 import { importMoveData } from '@utils/importEntityDataUtils';
+import { playSound } from '@utils/sound';
 
 const moveCategoryEntries = (t: TFunction) =>
   MOVE_CATEGORIES.map((category) => ({ value: category, label: t(category) })).sort((a, b) => a.label.localeCompare(b.label));
@@ -95,6 +96,7 @@ export const MoveNewEditor = forwardRef<EditorHandlingClose, MoveNewEditorProps>
     setText(MOVE_CONTEST_DESCRIPTION_TEXT_ID, newMove.id, '');
 
     setMove({ [dbSymbol]: newMove }, { move: dbSymbol });
+    playSound('ready');
     closeDialog();
   };
 

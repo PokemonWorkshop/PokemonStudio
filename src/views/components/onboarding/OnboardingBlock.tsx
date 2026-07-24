@@ -16,6 +16,43 @@ const OnboardingBlockContainer = styled.div`
   ${({ theme }) => theme.fonts.normalRegular}
   user-select: none;
 
+  /*
+   * The three first-run cards hard-cut grey -> blue -> green, and two of those
+   * changes happen in front of the user in the same render as their click, so
+   * it read as a repaint glitch. Crossfading turns it into progress.
+   *
+   * 260ms is longer than the UI budget because this is the rare/first-time
+   * tier: it is seen once, it is the app's only real celebration, and the
+   * delight budget is spendable here and almost nowhere else.
+   */
+  transition: background-color 260ms ${({ theme }) => theme.motion.easeOut},
+    border-color 260ms ${({ theme }) => theme.motion.easeOut}, color 260ms ${({ theme }) => theme.motion.easeOut};
+
+  .title-done svg {
+    transform-origin: center;
+    /*
+     * A slight overshoot on the tick -- used here and nowhere else in Studio.
+     * It is earned by the frequency tier; anywhere more frequent it would wear
+     * out fast.
+     */
+    transition: opacity 320ms ${({ theme }) => theme.motion.easeOut}, transform 320ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    @starting-style {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .title-done svg {
+      transition: opacity 200ms ease;
+
+      @starting-style {
+        transform: none;
+      }
+    }
+  }
+
   @media ${({ theme }) => theme.breakpoints.dataBox422} {
     min-height: 196px;
   }

@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useGlobalState } from '@src/GlobalStateProvider';
+import { Toggle } from '@components/inputs';
 import { SelectPokemon } from '@components/selects/SelectPokemon';
 import { SelectItem } from '@components/selects/SelectItem';
 import { SelectMove } from '@components/selects/SelectMove';
@@ -197,7 +198,7 @@ export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, au
           <Dim style={{ display: 'block' }}>{resolveCsv(form.csvFile, form.csvLine) ?? t('me_events_text_csv_not_found')}</Dim>
           <Row>
             <CheckLabel>
-              <input type="checkbox" checked={showTranslations} onChange={(e) => setShowTranslations(e.target.checked)} />
+              <Toggle checked={showTranslations} onChange={(e) => setShowTranslations(e.target.checked)} />
               {t('me_events_show_translations')}
             </CheckLabel>
           </Row>
@@ -334,7 +335,7 @@ export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, au
                   <option value={1}>{t('me_events_pic_origin_center')}</option>
                 </SmallSelect>
                 <CheckLabel title={t('me_events_pic_by_variable_hint')}>
-                  <input type="checkbox" checked={form.picByVariable} onChange={(e) => setForm({ ...form, picByVariable: e.target.checked })} />
+                  <Toggle checked={form.picByVariable} onChange={(e) => setForm({ ...form, picByVariable: e.target.checked })} />
                   {t('me_events_pic_by_variable')}
                 </CheckLabel>
               </Row>
@@ -566,7 +567,7 @@ export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, au
             <Dim>{t('me_events_level')}</Dim>
             <SmallInput type="number" min={1} max={100} value={form.level} onChange={(e) => setForm({ ...form, level: clamp(Number(e.target.value) || 1, 1, 100) })} />
             <CheckLabel>
-              <input type="checkbox" checked={form.shiny} onChange={(e) => setForm({ ...form, shiny: e.target.checked })} />
+              <Toggle checked={form.shiny} onChange={(e) => setForm({ ...form, shiny: e.target.checked })} />
               {t('me_events_shiny')}
             </CheckLabel>
           </Row>
@@ -775,7 +776,7 @@ export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, au
             <Row>
               <Dim style={{ minWidth: 52 }} />
               <CheckLabel title={t('me_events_overlay_affix_hint')}>
-                <input type="checkbox" checked={form.overlayMapAffix} onChange={(e) => setForm({ ...form, overlayMapAffix: e.target.checked })} />
+                <Toggle checked={form.overlayMapAffix} onChange={(e) => setForm({ ...form, overlayMapAffix: e.target.checked })} />
                 {t('me_events_overlay_affix')}
               </CheckLabel>
               {form.overlayMapAffix && (
@@ -844,8 +845,7 @@ export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, au
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 12px', flex: 1, minWidth: 0 }}>
               {OVERLAY_SET_PARAMS.map((param) => (
                 <CheckLabel key={param}>
-                  <input
-                    type="checkbox"
+                  <Toggle
                     checked={form.overlaySetProps.includes(param)}
                     onChange={(e) =>
                       setForm({
@@ -999,7 +999,7 @@ export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, au
             <Row>
               {form.overlaySetProps.includes('mapAffix') && (
                 <CheckLabel title={t('me_events_overlay_affix_hint')}>
-                  <input type="checkbox" checked={form.overlayMapAffix} onChange={(e) => setForm({ ...form, overlayMapAffix: e.target.checked })} />
+                  <Toggle checked={form.overlayMapAffix} onChange={(e) => setForm({ ...form, overlayMapAffix: e.target.checked })} />
                   {t('me_events_overlay_affix')}
                 </CheckLabel>
               )}
@@ -1346,8 +1346,7 @@ export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, au
         <>
           <Row>
             <CheckLabel title={t('me_events_transfer_by_variable_hint')}>
-              <input
-                type="checkbox"
+              <Toggle
                 checked={form.transferByVariable}
                 onChange={(e) => setForm({ ...form, transferByVariable: e.target.checked })}
               />
@@ -1506,7 +1505,7 @@ export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, au
             </Row>
             <Row>
               <CheckLabel>
-                <input type="checkbox" checked={form.condElse} onChange={(e) => setForm({ ...form, condElse: e.target.checked })} />
+                <Toggle checked={form.condElse} onChange={(e) => setForm({ ...form, condElse: e.target.checked })} />
                 {t('me_events_cond_else')}
               </CheckLabel>
             </Row>
@@ -1559,7 +1558,7 @@ export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, au
           {(form.itemMode === 'add' || form.itemMode === 'pick') && (
             <Row>
               <CheckLabel title={t('me_events_delete_event_hint')}>
-                <input type="checkbox" checked={form.deleteEvent} onChange={(e) => setForm({ ...form, deleteEvent: e.target.checked })} />
+                <Toggle checked={form.deleteEvent} onChange={(e) => setForm({ ...form, deleteEvent: e.target.checked })} />
                 {t('me_events_delete_event_after')}
               </CheckLabel>
             </Row>
@@ -1586,7 +1585,7 @@ export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, au
               onChange={(e) => setForm({ ...form, level: clamp(Number(e.target.value) || 1, 1, 100) })}
             />
             <CheckLabel>
-              <input type="checkbox" checked={form.shiny} onChange={(e) => setForm({ ...form, shiny: e.target.checked })} />
+              <Toggle checked={form.shiny} onChange={(e) => setForm({ ...form, shiny: e.target.checked })} />
               {t('me_events_shiny')}
             </CheckLabel>
             <Dim>{t('me_events_nickname')}</Dim>
@@ -1614,11 +1613,11 @@ export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, au
           </MoveGrid>
           <Row>
             <CheckLabel>
-              <input type="checkbox" checked={form.customIvs} onChange={(e) => setForm({ ...form, customIvs: e.target.checked })} />
+              <Toggle checked={form.customIvs} onChange={(e) => setForm({ ...form, customIvs: e.target.checked })} />
               {t('me_events_custom_ivs')}
             </CheckLabel>
             <CheckLabel style={{ marginLeft: 10 }}>
-              <input type="checkbox" checked={form.customEvs} onChange={(e) => setForm({ ...form, customEvs: e.target.checked })} />
+              <Toggle checked={form.customEvs} onChange={(e) => setForm({ ...form, customEvs: e.target.checked })} />
               {t('me_events_custom_evs')}
             </CheckLabel>
           </Row>

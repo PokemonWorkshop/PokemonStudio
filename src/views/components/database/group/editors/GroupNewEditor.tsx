@@ -26,6 +26,7 @@ import { findFirstAvailableId } from '@utils/ModelUtils';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { TooltipWrapper } from '@ds/Tooltip';
 import { TextInputError } from '@components/inputs/Input';
+import { playSound } from '@utils/sound';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import { SelectGroup } from '@components/selects';
 import { importGroupData } from '@utils/importEntityDataUtils';
@@ -108,6 +109,7 @@ export const GroupNewEditor = forwardRef<EditorHandlingClose, GroupNewEditorProp
     group.customConditions = defineRelationCustomCondition(group.customConditions);
     setText(GROUP_NAME_TEXT_ID, group.id, name);
     setGroup({ [dbSymbol]: group }, { group: dbSymbol });
+    playSound('ready');
     closeDialog();
   };
 

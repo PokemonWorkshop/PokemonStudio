@@ -1,6 +1,12 @@
+import React, { forwardRef } from 'react';
 import styled from 'styled-components';
+import { playSound } from '@utils/sound';
 
-export const Toggle = styled.input.attrs(() => ({ type: 'checkbox' }))`
+/**
+ * The actual slider. Renamed from `Toggle` so the exported `Toggle` below can
+ * be a thin sound-playing wrapper around it without shadowing itself.
+ */
+const ToggleInput = styled.input.attrs(() => ({ type: 'checkbox' }))`
   appearance: none;
   width: 30px;
   height: 18px;
@@ -43,3 +49,34 @@ export const Toggle = styled.input.attrs(() => ({ type: 'checkbox' }))`
     background-color: ${({ theme }) => theme.colors.text500};
   }
 `;
+
+/**
+ * Studio's shared checkbox-styled toggle, centrally wired to play the
+ * `toggle` cue on every change. ~39 call sites render this component (some
+ * indirectly through `useInputAttrs`'s generated `Toggle` field), so the
+ * sound is added once here rather than at each call site.
+ *
+ * Forwards the ref to the underlying `<input>` (several editors read
+ * `ref.current.checked` on submit instead of using controlled state) and
+ * spreads every other prop — including `className` — straight through, so
+ * `styled(Toggle)` extensions keep working exactly as they did against the
+ * old bare `styled.input`.
+ *
+ * `type` is deliberately excluded from the prop type: `ToggleInput` always
+ * forces `type="checkbox"` via `.attrs()`, so there's nothing meaningful for
+ * a caller to pass there, and forwarding an arbitrary `HTMLInputTypeAttribute`
+ * through would conflict with that fixed `"checkbox"` attrs type.
+ */
+type ToggleProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'>;
+
+export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(({ onChange, ...props }, ref) => (
+  <ToggleInput
+    ref={ref}
+    {...props}
+    onChange={(event) => {
+      playSound('toggle');
+      onChange?.(event);
+    }}
+  />
+));
+Toggle.displayName = 'Toggle';

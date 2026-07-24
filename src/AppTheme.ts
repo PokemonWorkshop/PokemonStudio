@@ -158,6 +158,24 @@ const theme: DefaultTheme = {
     smallScreen: 'screen and (max-width: 1366px)',
     dataBox422: 'screen and (max-width: 1393px)',
   },
+  /**
+   * Motion tokens. Studio is a dense, keyboard-first authoring tool, so these
+   * are deliberately short — the job of motion here is to stop things
+   * teleporting, not to be noticed. Mirrored as CSS custom properties in
+   * AppGlobalStyle so plain CSS can reach them too.
+   *
+   * easeOut is the default for anything entering or responding to the user;
+   * easeInOut only for things that move and settle in place. Never ease-in on
+   * UI — it makes a response feel like it lagged.
+   */
+  motion: {
+    easeOut: 'cubic-bezier(0.23, 1, 0.32, 1)',
+    easeInOut: 'cubic-bezier(0.77, 0, 0.175, 1)',
+    easeDrawer: 'cubic-bezier(0.32, 0.72, 0, 1)',
+    durPress: '120ms',
+    durMenu: '150ms',
+    durModal: '200ms',
+  },
   sizes: {
     full: {
       min: 244,
