@@ -71,7 +71,7 @@ import { registerShowItemInFolder } from '../backendTasks/showFileInFolder';
 import { registerWriteProjectMetadata } from '../backendTasks/writeProjectMetadata';
 import { getLastPSDKVersion } from '../services/getLastPSDKVersion';
 import { getPSDKBinariesPath, getPSDKVersion } from '../services/getPSDKVersion';
-import { startPSDK, startPSDKDebug, startPSDKWorldmap } from '../services/startPSDK';
+import { startPSDK, startPSDKDebug, startPSDKFastDebug, startPSDKWorldmap } from '../services/startPSDK';
 import { updatePSDK } from '../services/updatePSDK';
 import MenuBuilder from './menu';
 
@@ -173,6 +173,7 @@ ipcMain.on('get-last-psdk-version', getLastPSDKVersion);
 ipcMain.on('update-psdk', updatePSDK);
 ipcMain.on('start-psdk', (_, projectPath: string) => startPSDK(projectPath));
 ipcMain.on('start-psdk-debug', (_, projectPath: string) => startPSDKDebug(projectPath));
+ipcMain.on('start-psdk-fast-debug', (_, projectPath: string) => startPSDKFastDebug(projectPath));
 ipcMain.on('start-psdk-worldmap', (_, projectPath: string) => startPSDKWorldmap(projectPath));
 ipcMain.on('external-window', (_, arg) => shell.openExternal(arg));
 registerGetStudioVersion(ipcMain);

@@ -1,6 +1,6 @@
 import React, { forwardRef, useState } from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 import { Editor } from '@components/editor';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
@@ -10,14 +10,14 @@ import { TagWithSelection } from '@components/Tag';
 
 import { useZonePage } from '@src/hooks/usePage';
 
-import { StudioGroup } from '@modelEntities/group';
 import { DbSymbol } from '@modelEntities/dbSymbol';
+import { StudioGroup } from '@modelEntities/group';
 
-import { padStr } from '@utils/PadStr';
-import { cloneEntity } from '@utils/cloneEntity';
-import { useUpdateZone } from './useUpdateZone';
 import { useUpdateGroup } from '@components/database/group/editors/useUpdateGroup';
+import { cloneEntity } from '@utils/cloneEntity';
 import { defineRelationCustomCondition } from '@utils/GroupUtils';
+import { padStr } from '@utils/PadStr';
+import { useUpdateZone } from './useUpdateZone';
 
 const MapsListContainer = styled.div`
   display: flex;
@@ -27,7 +27,7 @@ const MapsListContainer = styled.div`
 `;
 
 const mapIdIndexInGroup = (mapId: number, group: StudioGroup) =>
-  group.customConditions.filter((condition) => condition.type === 'mapId').findIndex((condition) => condition.value === mapId);
+  group.customConditions.findIndex((condition) => condition.type === 'mapId' && condition.value === mapId);
 
 const rejectedGroup = (wildGroups: string[], group: StudioGroup) => {
   const wildGroupsCopy = Object.assign([], wildGroups);
