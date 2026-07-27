@@ -1922,5 +1922,5 @@
   "assigning_tiled_maps_error": "Erreur lors de l'assignation des cartes Tiled",
   "max_trainer_party_size": "Nombre maximum de créatures dans l'équipe d'un dresseur",
   "add_trainer_party_max_size_to_settings": "Ajout de la taille maximale de l'équipe d'un dresseur aux paramètres du projet",
-  "move_custom_procedure_info": "This move uses a custom procedure. Its behavior is defined by the associated Ruby code in PSDK. Depending on its implementation, some data configured in Pokémon Studio may not be used."
+  "move_custom_procedure_info": "Cette attaque utilise une procédure personnalisée. Son comportement est défini par le code Ruby associé dans PSDK. Selon son implémentation, certaines données configurées dans Pokémon Studio peuvent ne pas être utilisées."
 }
