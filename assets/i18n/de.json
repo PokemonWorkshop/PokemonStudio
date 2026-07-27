@@ -1921,5 +1921,6 @@
   "assigning_tiled_maps_success": "Tiled maps successfully assigned",
   "assigning_tiled_maps_error": "Error while assigning Tiled maps",
   "max_trainer_party_size": "Max trainer party size",
-  "add_trainer_party_max_size_to_settings": "Add trainer party max size to settings"
+  "add_trainer_party_max_size_to_settings": "Add trainer party max size to settings",
+  "move_custom_procedure_info": "This move uses a custom procedure. Its behavior is defined by the associated Ruby code in PSDK. Depending on its implementation, some data configured in Pokémon Studio may not be used."
 }
