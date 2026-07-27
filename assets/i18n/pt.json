@@ -1921,5 +1921,19 @@
   "assigning_tiled_maps_success": "Tiled maps successfully assigned",
   "assigning_tiled_maps_error": "Error while assigning Tiled maps",
   "max_trainer_party_size": "Max trainer party size",
-  "add_trainer_party_max_size_to_settings": "Add trainer party max size to settings"
+  "add_trainer_party_max_size_to_settings": "Add trainer party max size to settings",
+  "keyboard_shortcuts": "Keyboard Shortcuts",
+  "shortcut_category_default": "Default shortcuts",
+  "shortcut_category_navigation": "Navigation",
+  "shortcut_category_miscellaneous": "Miscellaneous",
+  "shortcut_save_project": "Save Project Changes",
+  "shortcut_create_entry": "Create a new database entry",
+  "shortcut_copy_id": "Copy the selected database entry ID",
+  "shortcut_start_debug": "Start the game in debug mode",
+  "shortcut_navigate_list": "Navigate between items in a list",
+  "shortcut_navigate_secondary_list": "Navigate between items in a secondary list",
+  "shortcut_toggle_fullscreen": "Toggle Fullscreen",
+  "shortcut_minimize_window": "Minimize Window",
+  "shortcut_open_devtools": "Open Developer Tools",
+  "app_settings": "App Settings"
 }
