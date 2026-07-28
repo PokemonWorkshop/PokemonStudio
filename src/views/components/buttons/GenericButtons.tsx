@@ -95,6 +95,8 @@ export const DeleteNoBackground = styled(BaseButtonStyle)`
 
   &[data-disabled] {
     background-color: unset;
+    pointer-events: unset;
+    cursor: not-allowed;
   }
 `;
 

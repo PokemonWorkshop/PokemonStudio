@@ -40,6 +40,7 @@ const ChoiceList = styled.div`
   display: flex;
   flex-direction: column;
   user-select: none;
+  gap: 12px;
 `;
 
 type ChoiceRowContainerProps = {
@@ -52,9 +53,9 @@ const ChoiceRowContainer = styled.div<ChoiceRowContainerProps>`
   align-items: center;
   gap: 6px;
   box-sizing: border-box;
-  height: 40px;
+  height: 48px;
   padding: 0 8px;
-  margin: 0 -4px 8px -8px;
+  margin: 0 -4px 4px -8px;
   box-shadow: ${({ theme, isDragging }) => (isDragging ? `0 0 5px ${theme.colors.dark8}` : 'none')};
   background-color: ${({ theme, isDragging }) => (isDragging ? theme.colors.dark14 : 'transparent')};
   border-radius: ${({ isDragging }) => (isDragging ? '8px' : '0')};
@@ -66,6 +67,12 @@ const ChoiceRowContainer = styled.div<ChoiceRowContainerProps>`
     :hover {
       cursor: grab;
     }
+  }
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.dark18};
+    color: ${({ theme }) => theme.colors.text100};
+    border-radius: 8px;
   }
 `;
 
