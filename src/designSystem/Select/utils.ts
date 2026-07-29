@@ -3,7 +3,7 @@ import type { SelectOption } from './types';
 export const findOptionIndexOrZero = <Value extends string>(options: Readonly<SelectOption<Value>[]>, currentValue: Value | undefined) =>
   Math.max(
     0,
-    options.findIndex(({ value }) => value === currentValue)
+    options.findIndex(({ value }) => value === currentValue),
   );
 
 export const getSelectDefaultLabel = <Value extends string>(
@@ -11,7 +11,7 @@ export const getSelectDefaultLabel = <Value extends string>(
   defaultValue: string | undefined,
   options: Readonly<SelectOption<Value>[]>,
   currentValue: Value | undefined,
-  notFoundLabel: string | undefined
+  notFoundLabel: string | undefined,
 ) => {
   if (!value && !defaultValue) return '';
 
@@ -39,16 +39,17 @@ const POPOVER_ADJUSTMENT = 12;
 
 export const positionAndShowPopover = (anchorElement: HTMLElement, popoverElement: HTMLDivElement) => {
   const clientPos = anchorElement.getBoundingClientRect();
+  const offsetPos = { width: anchorElement.offsetWidth, height: anchorElement.offsetHeight };
 
   // TODO: Swap with CSS Anchor once it's available
   if (clientPos.top > window.innerHeight - SELECT_CLEARANCE - SELECT_SPACING) {
     popoverElement.style.top = '';
-    popoverElement.style.bottom = `${clientPos.height + SELECT_SPACING}px`;
+    popoverElement.style.bottom = `${offsetPos.height + SELECT_SPACING}px`;
   } else {
-    popoverElement.style.top = `${clientPos.height + SELECT_SPACING}px`;
+    popoverElement.style.top = `${offsetPos.height + SELECT_SPACING}px`;
     popoverElement.style.bottom = '';
   }
-  popoverElement.style.width = `${clientPos.width - POPOVER_ADJUSTMENT}px`;
+  popoverElement.style.width = `${offsetPos.width - POPOVER_ADJUSTMENT}px`;
   popoverElement.style.maxHeight = `${SELECT_CLEARANCE}px`;
   popoverElement.classList.add('visible');
 };

@@ -106,6 +106,10 @@ const theme: DefaultTheme = {
     oliveDark6: '#233014',
     oliveDark9: '#435C26',
     oliveDark11: '#5D8035',
+
+    emeraldDark6: '#153223',
+    emeraldDark9: '#226043',
+    emeraldDark11: '#2D865D',
   },
   fonts: {
     titlesStudio: `

@@ -1,6 +1,6 @@
 import type { StudioEventCommand, StudioEventCommandData, StudioEventCommandType } from '@modelEntities/event/command';
 import { StudioEvent } from '@modelEntities/event/event';
-import { findFirstAvailableTextIdEvent } from './ModelUtils';
+import { findFirstAvailablePriorityEvent, findFirstAvailableTextIdEvent } from './ModelUtils';
 
 const createShowMessageCommand = (event: StudioEvent) => {
   const { messageId, narratorId } = findFirstAvailableTextIdEvent(event, 0);
@@ -20,6 +20,11 @@ const createShowMessageCommand = (event: StudioEvent) => {
 };
 
 const insertScriptCommand = () => ({ script: '' });
+
+const startCommand = (event: StudioEvent) => {
+  const priority = findFirstAvailablePriorityEvent(event, 1);
+  return { trigger: 'key_press', priority };
+};
 
 const dummy = () => ({});
 
@@ -98,4 +103,5 @@ export const EventCommandCreation: Record<StudioEventCommandType, (event: Studio
     manage_map_panorama: dummy,
     change_battle_background: dummy,
     insert_script: insertScriptCommand,
+    start: startCommand,
   };

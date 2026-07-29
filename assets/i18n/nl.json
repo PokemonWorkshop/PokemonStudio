@@ -1792,6 +1792,7 @@
   "event_category_visual_effects": "Visual effects",
   "event_category_visual_environment": "Visual environment",
   "event_category_scripting": "Scripting",
+  "event_category_start": "Start",
   "event_command_show_message": "Show a message",
   "event_command_narrator_settings": "Narrator settings",
   "event_command_manage_message_box": "Manage message box",
@@ -1866,6 +1867,7 @@
   "event_command_change_battle_background": "Change battle background",
   "event_command_insert_script": "Insert a script",
   "event_command_complete_quest_helper": "Validates quest completion, distributes rewards and announces its end",
+  "event_command_start": "Start",
   "add_base_for_events": "Adding basic elements for events",
   "add_csv_for_event_folders": "Adding the CSV file for event folder names",
   "event_command_comment": "Comment",
@@ -1935,5 +1937,14 @@
   "shortcut_toggle_fullscreen": "Toggle Fullscreen",
   "shortcut_minimize_window": "Minimize Window",
   "shortcut_open_devtools": "Open Developer Tools",
-  "app_settings": "App Settings"
+  "app_settings": "App Settings",
+  "event_command_trigger": "Trigger",
+  "event_command_priority": "Priority",
+  "event_command_trigger_key_press": "Key action",
+  "event_command_trigger_contact": "Contact",
+  "event_command_trigger_overlap": "Overlap",
+  "event_command_trigger_before_transition": "Before Any Transition",
+  "event_command_trigger_called": "Called",
+  "event_command_trigger_parallel": "Runs in Parallel",
+  "event_command_trigger_cinematic": "Cutscene"
 }

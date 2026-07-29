@@ -3,11 +3,16 @@ import { NavigationDatabaseGroup } from '@components/database/navigation/Navigat
 import { NavigationDatabaseItem } from '@components/database/navigation/NavigationDatabaseItem';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+
+const NavigationSettingsStyle = styled(NavigationDatabaseStyle)`
+  min-width: 240px;
+`;
 
 export const SettingsNavigation = () => {
   const { t } = useTranslation();
   return (
-    <NavigationDatabaseStyle>
+    <NavigationSettingsStyle>
       <NavigationDatabaseGroup title={t('user_settings')}>
         <NavigationDatabaseItem path="/settings/language" label={t('language')} />
       </NavigationDatabaseGroup>
@@ -17,6 +22,6 @@ export const SettingsNavigation = () => {
       <NavigationDatabaseGroup title={t('integrations')}>
         <NavigationDatabaseItem path="/settings/maps" label={t('map_management')} />
       </NavigationDatabaseGroup>
-    </NavigationDatabaseStyle>
+    </NavigationSettingsStyle>
   );
 };

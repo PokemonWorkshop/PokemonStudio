@@ -1,7 +1,8 @@
 import { z } from 'zod';
 import { POSITIVE_OR_ZERO_INT } from '../common';
 import { DB_SYMBOL_VALIDATOR } from '../dbSymbol';
-import { COMMAND_ID_VALIDATOR, EVENT_COMMAND_VALIDATOR } from './command';
+import { EVENT_COMMAND_VALIDATOR } from './command';
+import { COMMAND_ID_VALIDATOR } from './globalCommand';
 
 const TEMPLATE_PARAMETER_NAME_VALIDATOR = z.string().brand('TemplateParameterName');
 
