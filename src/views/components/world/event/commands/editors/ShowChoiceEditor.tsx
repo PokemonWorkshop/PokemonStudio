@@ -194,6 +194,8 @@ export const ShowChoiceEditor = forwardRef<EditorHandlingClose, EventEditorProps
   };
 
   const handleDeleteChoice = (index: number) => () => {
+    if (choices.length <= 2) return;
+
     const updated = [...choices];
     updated.splice(index, 1);
     inputRefs.current.splice(index, 1);
