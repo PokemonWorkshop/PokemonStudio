@@ -2,7 +2,8 @@ import { Input, InputWithTopLabelContainer, Label, MultiLineInput } from '@compo
 import { InputFormContainer } from '@components/inputs/InputContainer';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 import { useDialogsRef } from '@hooks/useDialogsRef';
-import { CommandId, StudioEventCommandData, StudioEventCommandShowMessage } from '@modelEntities/event/command';
+import { StudioEventCommandData, StudioEventCommandShowMessage } from '@modelEntities/event/command';
+import type { CommandId } from '@modelEntities/event/globalCommand';
 import { useGetProjectText, useSetProjectText } from '@utils/ReadingProjectText';
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';

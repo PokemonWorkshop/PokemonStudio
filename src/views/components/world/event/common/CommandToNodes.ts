@@ -4,6 +4,7 @@ import type { CommandNodeProps } from '../commands/CommandNodeProps';
 import { DefaultCommand } from '../commands/DefaultCommand';
 import { InsertScriptCommand } from '../commands/InsertScriptCommand';
 import { ShowMessageCommand } from '../commands/ShowMessageCommand';
+import { StartCommand } from '../commands/StartCommand';
 import { ShadowNode } from './ShadowNode';
 
 export const CommandToNodes: Record<StudioEventCommandType | 'shadow_node', (props: CommandNodeProps) => JSX.Element> = {
@@ -80,5 +81,6 @@ export const CommandToNodes: Record<StudioEventCommandType | 'shadow_node', (pro
   manage_map_panorama: DefaultCommand,
   change_battle_background: DefaultCommand,
   insert_script: InsertScriptCommand,
+  start: StartCommand,
   shadow_node: ShadowNode,
 };
