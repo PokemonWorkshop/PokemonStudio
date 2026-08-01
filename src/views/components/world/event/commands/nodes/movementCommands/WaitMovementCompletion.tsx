@@ -95,6 +95,7 @@ export const WaitMovementCompletionCommand = ({ id, data: { dialogsRef, command,
           value={waitEvent}
           className="nodrag nowheel"
           onChange={onWaitAllEventChange}
+          defaultValue={undefined}
         />
 
         {waitEvent === 'some' && (
