@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { getText, useGetEntityNameText } from '@utils/ReadingProjectText';
@@ -21,6 +21,7 @@ import {
 import { isEditableConditional } from './conditions';
 import {
   BlockTitle,
+  BottomPane,
   CmdBody,
   CmdComment,
   CmdCont,
@@ -39,6 +40,7 @@ import {
   Row,
   SearchInput,
   SmallSelect,
+  SplitHandle,
 } from './dialog/styles';
 import { RubyCode } from './dialog/RubyCode';
 import { CommandForm } from './dialog/CommandForm';
@@ -77,6 +79,11 @@ import {
 
 let commandClipboardShared: WorkingCommand[] | null = null;
 
+/** Persisted height of the resizable bottom section (command form / picker). */
+const BOTTOM_HEIGHT_KEY = 'pokemonstudio.fork.eventEditor.bottomHeight';
+const DEFAULT_BOTTOM_HEIGHT = 300;
+const MIN_BOTTOM_HEIGHT = 160;
+
 type Props = {
   list: WorkingCommand[];
   setList: (list: WorkingCommand[]) => void;
@@ -91,9 +98,18 @@ type Props = {
   mapHeightTiles?: number;
   /** When set, the Call Common Event form shows an "Edit common events" button. */
   onEditCommonEvents?: () => void;
+  /**
+   * Map-event editor only: INSERTING a Create Berry Tree command scaffolds the
+   * full 2-page berry tree onto the host event instead of inserting the raw 355
+   * script. Absent in the common-event editor (it has no pages), where a
+   * berryTree command inserts as a plain `berry_tree(:sym, stage)` script line.
+   */
+  onBerryTreeSetup?: (itemSymbol: string, stage: number, includeInteraction: boolean) => void;
+  /** True when the host event dialog is maximised — widens the resize handle. */
+  expanded?: boolean;
 };
 
-export const CommandListEditor = ({ list, setList, systemNames, mapEvents, subjectName, getMapSnapshot, currentMapId, mapWidthTiles, mapHeightTiles, onEditCommonEvents }: Props) => {
+export const CommandListEditor = ({ list, setList, systemNames, mapEvents, subjectName, getMapSnapshot, currentMapId, mapWidthTiles, mapHeightTiles, onEditCommonEvents, onBerryTreeSetup, expanded }: Props) => {
   const { t } = useTranslation();
   const [{ projectPath, projectText, projectConfig, projectStudio }] = useGlobalState();
   const { projectDataValues: studioMaps } = useProjectMaps();
@@ -106,6 +122,47 @@ export const CommandListEditor = ({ list, setList, systemNames, mapEvents, subje
   const [cmdSearch, setCmdSearch] = useState('');
   const [dragChainIndex, setDragChainIndex] = useState<number | null>(null);
   const [dragOverChainIndex, setDragOverChainIndex] = useState<number | null>(null);
+
+  // Height of the resizable bottom section (command picker / command form), in
+  // px, driven by dragging the split handle in the command toolbar. Restored
+  // from localStorage so it survives across sessions.
+  const [bottomHeight, setBottomHeight] = useState(() => {
+    const saved = Number(localStorage.getItem(BOTTOM_HEIGHT_KEY));
+    return Number.isFinite(saved) && saved >= MIN_BOTTOM_HEIGHT ? saved : DEFAULT_BOTTOM_HEIGHT;
+  });
+  const bottomRef = useRef<HTMLDivElement>(null);
+  const bottomHeightRef = useRef(bottomHeight);
+  const splitDragRef = useRef<{ startY: number; startH: number; max: number } | null>(null);
+
+  const onSplitMove = useCallback((e: MouseEvent) => {
+    const drag = splitDragRef.current;
+    if (!drag) return;
+    // Dragging the handle up (negative delta) grows the bottom section.
+    const next = Math.max(MIN_BOTTOM_HEIGHT, Math.min(drag.max, drag.startH - (e.clientY - drag.startY)));
+    bottomHeightRef.current = next;
+    setBottomHeight(next);
+  }, []);
+  const onSplitUp = useCallback(() => {
+    splitDragRef.current = null;
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+    // Persist once, when the drag ends — not on every mousemove.
+    try {
+      localStorage.setItem(BOTTOM_HEIGHT_KEY, String(Math.round(bottomHeightRef.current)));
+    } catch {
+      /* storage unavailable — fine, it just won't persist */
+    }
+    window.removeEventListener('mousemove', onSplitMove);
+    window.removeEventListener('mouseup', onSplitUp);
+  }, [onSplitMove]);
+  useEffect(
+    () => () => {
+      // Belt-and-suspenders: drop listeners if we unmount mid-drag.
+      window.removeEventListener('mousemove', onSplitMove);
+      window.removeEventListener('mouseup', onSplitUp);
+    },
+    [onSplitMove, onSplitUp],
+  );
 
   const chains = useMemo(() => buildChains(list), [list]);
   const pageLabels = useMemo(() => collectLabels(list), [list]);
@@ -273,6 +330,15 @@ export const CommandListEditor = ({ list, setList, systemNames, mapEvents, subje
         next.splice(selChain.start, selChain.entries.length, ...fresh);
       }
     } else {
+      // Map event editor: inserting Create Berry Tree scaffolds the whole 2-page
+      // tree onto the host event instead of dropping the raw script. The
+      // common-event editor passes no callback, so berryTree inserts as a plain
+      // `berry_tree(:sym, stage)` command there. Edit mode (above) never scaffolds.
+      if (cmdForm.kind === 'berryTree' && onBerryTreeSetup) {
+        onBerryTreeSetup(cmdForm.itemSymbol, cmdForm.berryStage, cmdForm.berryIncludeInteraction);
+        setCmdForm(null);
+        return;
+      }
       const { index, indent } = insertionPoint();
       next.splice(index, 0, ...buildCommandsFromForm(cmdForm, indent));
     }
@@ -341,8 +407,13 @@ export const CommandListEditor = ({ list, setList, systemNames, mapEvents, subje
     if (kind === 'jump' && pageLabels.length > 0) form.text = pageLabels[0];
     if (kind === 'transfer' && currentMapId && currentMapId > 0) form.transferMapId = currentMapId;
     setCmdSel2(null);
-    setCmdPickerOpen(false);
-    setCmdSearch('');
+    // Set Move Route and Change Fog open their own modal on top of everything;
+    // keep the "Add command" picker open underneath so closing that modal drops
+    // the user back on the picker to add another command, rather than dismissing
+    // it. Every other command replaces the picker with its inline form.
+    const keepPicker = kind === 'moveRoute' || kind === 'changeFog';
+    setCmdPickerOpen(keepPicker);
+    if (!keepPicker) setCmdSearch('');
     setCmdForm(form);
   };
   const openChoicesEdit = (chain: CommandChain) => {
@@ -389,7 +460,7 @@ export const CommandListEditor = ({ list, setList, systemNames, mapEvents, subje
     { key: 'screen', kinds: ['tintScreen', 'screenFlash', 'weather', 'changeFog', 'fogTone', 'changeFogOpacity', 'mapOverlay', 'mapOverlaySet', 'changePanorama', 'changeBattleback', 'showPicture', 'movePicture', 'rotatePicture', 'erasePicture', 'pictureTone', 'screenShake', 'scrollMap', 'prepareTransition', 'executeTransition'] },
     { key: 'game', kinds: ['changeGold', 'transparent', 'eraseEvent', 'menuAccess', 'changeSaveAccess', 'changeEncounter', 'controlTimer', 'textOptions', 'windowskin', 'callMenu', 'callSave', 'gameOver', 'returnToTitle'] },
     { key: 'audio', kinds: ['playSe', 'playMe', 'playBgm', 'playBgs', 'fadeBgm', 'fadeBgs', 'stopSe', 'memorizeBgm', 'restoreBgm', 'battleBgm', 'battleEndMe'] },
-    { key: 'party', kinds: ['creature', 'item', 'berryTree', 'trainerBattle', 'wildBattle', 'healParty', 'learnMove', 'forgetMove', 'selectParty'] },
+    { key: 'party', kinds: ['creature', 'item', 'berryTree', 'berryTake', 'berryWater', 'berryPlant', 'berryInteraction', 'trainerBattle', 'wildBattle', 'healParty', 'learnMove', 'forgetMove', 'selectParty'] },
     { key: 'data', kinds: ['switch', 'variable', 'selfSwitch', 'inputNumber', 'buttonInput'] },
     { key: 'other', kinds: ['wait', 'script'] },
   ];
@@ -542,6 +613,25 @@ export const CommandListEditor = ({ list, setList, systemNames, mapEvents, subje
     [chains, selLo, selHi, cmdSel, decodeNames, resolveCsv, isCsvFile, moveLabel, dragChainIndex, dragOverChainIndex],
   );
 
+  // moveRoute/changeFog open their own modal dialogs, not the in-column form.
+  const inlineForm = !!cmdForm && cmdForm.kind !== 'moveRoute' && cmdForm.kind !== 'changeFog';
+  // While a modal command (moveRoute/changeFog) is open, cmdPickerOpen stays
+  // true but cmdForm is set — the picker is hidden behind the modal, so there's
+  // nothing to show in the bottom pane until the modal closes.
+  const hasBottom = (cmdPickerOpen && !cmdForm) || inlineForm;
+  const onSplitDown = (e: React.MouseEvent) => {
+    if (!hasBottom) return;
+    e.preventDefault();
+    const parentHeight = bottomRef.current?.parentElement?.clientHeight ?? 600;
+    // Leave room for the command list + toolbar above (never let the bottom eat
+    // the whole column).
+    splitDragRef.current = { startY: e.clientY, startH: bottomHeight, max: Math.max(MIN_BOTTOM_HEIGHT, parentHeight - 200) };
+    document.body.style.cursor = 'row-resize';
+    document.body.style.userSelect = 'none';
+    window.addEventListener('mousemove', onSplitMove);
+    window.addEventListener('mouseup', onSplitUp);
+  };
+
   return (
     <>
       <BlockTitle style={{ margin: 0 }}>{t('me_events_command_list')}</BlockTitle>
@@ -550,12 +640,14 @@ export const CommandListEditor = ({ list, setList, systemNames, mapEvents, subje
         <OpBtn onClick={() => { setCmdForm(null); setCmdSearch(''); setCmdPickerOpen((v) => !v); }} style={cmdPickerOpen ? { borderColor: '#7b6ef6' } : undefined}>
           + {t('me_events_add_command')}
         </OpBtn>
-        <span style={{ flex: 1 }} />
+        <SplitHandle $active={hasBottom} $expanded={expanded} onMouseDown={onSplitDown} title={hasBottom ? t('me_events_resize_section') : undefined} />
         <OpBtn onClick={openEdit} disabled={!canEditChain}>{t('me_events_cmd_edit')}</OpBtn>
         <OpBtn onClick={() => moveChain(-1)} disabled={isRange || !selChain || !isChainReorderable(selChain)}>↑</OpBtn>
         <OpBtn onClick={() => moveChain(1)} disabled={isRange || !selChain || !isChainReorderable(selChain)}>↓</OpBtn>
         <OpBtn onClick={deleteChain} disabled={isRange ? false : !selChain || !isChainDeletable(selChain)} $danger>{t('me_events_cmd_delete')}</OpBtn>
       </CmdToolbar>
+      {hasBottom && (
+        <BottomPane ref={bottomRef} style={{ height: bottomHeight }}>
       {cmdPickerOpen && !cmdForm && (
         <PickerPanel>
           <SearchInput
@@ -585,7 +677,7 @@ export const CommandListEditor = ({ list, setList, systemNames, mapEvents, subje
           })}
         </PickerPanel>
       )}
-      {cmdForm && cmdForm.kind !== 'moveRoute' && cmdForm.kind !== 'changeFog' && (
+      {inlineForm && (
         <CommandForm
           form={cmdForm}
           setForm={setCmdForm}
@@ -609,6 +701,8 @@ export const CommandListEditor = ({ list, setList, systemNames, mapEvents, subje
           currentMapId={currentMapId}
           onEditCommonEvents={onEditCommonEvents}
         />
+      )}
+        </BottomPane>
       )}
       {cmdForm?.kind === 'moveRoute' && (
         <MoveRouteDialog

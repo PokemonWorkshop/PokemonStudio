@@ -7,11 +7,11 @@ import { SelectPokemon } from '@components/selects/SelectPokemon';
 import { SelectItem } from '@components/selects/SelectItem';
 import { SelectMove } from '@components/selects/SelectMove';
 import { SelectNature } from '@components/selects/SelectNature';
-import { BlockTitle, CheckLabel, CmdGroupTitle, DIALOG_BODY_ATTR, Dim, FormArea, FormTextArea, OpBtn, Row, SmallInput, SmallSelect } from './styles';
+import { BlockTitle, CheckLabel, CmdGroupTitle, DIALOG_BODY_ATTR, Dim, FormActions, FormArea, FormScroll, FormTextArea, OpBtn, Row, SmallInput, SmallSelect } from './styles';
 import { ScriptEditor } from './ScriptEditor';
 import { NamePicker, OnOff } from './fields';
 import { DIRECTIONS } from '../rmxpEventUtils';
-import { AUDIO_KINDS, canSubmitForm, clamp, emptyChoice, emptyCond, isAudioKind, STAT_KEYS, VAR_OPS, type ChoiceEntry, type CmdForm, type CondEntry } from './commandModel';
+import { AUDIO_KINDS, BERRY_QUERY_SCRIPTS, canSubmitForm, clamp, emptyChoice, emptyCond, isAudioKind, STAT_KEYS, VAR_OPS, type ChoiceEntry, type CmdForm, type CondEntry } from './commandModel';
 import { AudioPicker, type AudioFile } from './AudioPicker';
 import { MapTilePicker } from './MapTilePicker';
 import { PicturePicker } from './PicturePicker';
@@ -27,6 +27,7 @@ import {
   isImageOverlayPreset,
   applyOverlayPresetDefaults,
   overlayParamsFromForm,
+  overlaySetParamsForPreview,
   waitFramesToSeconds,
   waitSecondsToFrames,
 } from './commandModel';
@@ -167,11 +168,18 @@ export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, au
   // Capture the map once when the form opens — it doesn't change while the
   // dialog is up, and the tone preview re-tints this same snapshot live.
   const [mapSnapshot] = useState<string | null>(() => getMapSnapshot?.() ?? null);
+  // Preview-only reference preset for the Adjust command (it has no preset of
+  // its own). Default to the first non-image preset so it renders without the
+  // user having to pick a fog graphic first.
+  const [overlaySetPreviewPreset, setOverlaySetPreviewPreset] = useState<string>(
+    () => OVERLAY_PRESETS.find((p) => !isImageOverlayPreset(p)) ?? OVERLAY_PRESETS[0]
+  );
   // The Transfer destination, if one is chosen — the tile picker renders it.
   const transferMap = projectMaps.find((m) => m.id === form.transferMapId);
 
   return (
     <FormArea>
+      <FormScroll>
       <BlockTitle style={{ margin: 0 }}>
         {form.mode === 'edit' ? t('me_events_cmd_edit') : t('me_events_cmd_insert')}: {t(`me_events_cmd_${form.kind === 'selfSwitch' ? 'self_switch' : form.kind}`)}
       </BlockTitle>
@@ -573,7 +581,14 @@ export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, au
           </Row>
         </>
       )}
-      {(form.kind === 'gameOver' || form.kind === 'callMenu' || form.kind === 'callSave' || form.kind === 'healParty') && (
+      {(form.kind === 'gameOver' ||
+        form.kind === 'callMenu' ||
+        form.kind === 'callSave' ||
+        form.kind === 'healParty' ||
+        form.kind === 'berryTake' ||
+        form.kind === 'berryWater' ||
+        form.kind === 'berryPlant' ||
+        form.kind === 'berryInteraction') && (
         <Row>
           <Dim $wrap>{t(`me_events_hint_${form.kind}`)}</Dim>
         </Row>
@@ -1046,6 +1061,26 @@ export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, au
             <Dim style={{ minWidth: 52 }} />
             <Dim $wrap>{t('me_events_overlay_adjust_hint')}</Dim>
           </Row>
+          <Row>
+            <Dim style={{ minWidth: 52 }}>{t('me_events_overlay_preview_as')}</Dim>
+            <SmallSelect value={overlaySetPreviewPreset} onChange={(e) => setOverlaySetPreviewPreset(e.target.value)}>
+              {OVERLAY_PRESETS.map((p) => (
+                <option key={p} value={p}>{t(`me_events_overlay_${p}`)}</option>
+              ))}
+            </SmallSelect>
+            <Dim $wrap>{t('me_events_overlay_preview_as_hint')}</Dim>
+          </Row>
+          <Row style={{ alignItems: 'flex-start' }}>
+            <Dim style={{ minWidth: 52, paddingTop: 4 }}>{t('me_events_overlay_preview')}</Dim>
+            <MapOverlayPreview
+              snapshotUrl={mapSnapshot}
+              preset={overlaySetPreviewPreset}
+              params={overlaySetParamsForPreview(form, overlaySetPreviewPreset)}
+              projectPath={projectPath ?? undefined}
+              mapWidthTiles={mapWidthTiles}
+              mapHeightTiles={mapHeightTiles}
+            />
+          </Row>
         </>
       )}
       {form.kind === 'berryTree' && (
@@ -1071,6 +1106,12 @@ export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, au
               <option value={3}>{t('me_events_berry_stage_3')}</option>
               <option value={4}>{t('me_events_berry_stage_4')}</option>
             </SmallSelect>
+          </Row>
+          <Row>
+            <CheckLabel title={t('me_events_berry_setup_interaction')}>
+              <Toggle checked={form.berryIncludeInteraction} onChange={(e) => setForm({ ...form, berryIncludeInteraction: e.target.checked })} />
+              {t('me_events_berry_setup_interaction')}
+            </CheckLabel>
           </Row>
           <Dim $wrap style={{ fontStyle: 'italic' }}>{t('me_events_berry_hint')}</Dim>
         </>
@@ -1497,7 +1538,19 @@ export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, au
                     <OpBtn $danger onClick={() => setForm({ ...form, conds: form.conds.filter((_, j) => j !== i) })}>✕</OpBtn>
                   )}
                 </Row>
-                {cond.type === 12 && <ScriptEditor value={cond.text} onChange={(text) => patchCond(i, { text })} autoFocus={i === 0} />}
+                {cond.type === 12 && (
+                  <>
+                    <ScriptEditor value={cond.text} onChange={(text) => patchCond(i, { text })} autoFocus={i === 0} />
+                    <Row>
+                      <Dim>{t('me_events_cond_berry_presets')}</Dim>
+                      {BERRY_QUERY_SCRIPTS.map((q) => (
+                        <OpBtn key={q} title={q} onClick={() => patchCond(i, { text: q })}>
+                          {q}
+                        </OpBtn>
+                      ))}
+                    </Row>
+                  </>
+                )}
               </React.Fragment>
             ))}
             <Row>
@@ -1657,10 +1710,11 @@ export const CommandForm = ({ form, setForm, onSubmit, onCancel, systemNames, au
           )}
         </>
       )}
-      <Row>
+      </FormScroll>
+      <FormActions>
         <OpBtn onClick={onSubmit} disabled={!canSubmitForm(form)}>{t('me_events_ok')}</OpBtn>
         <OpBtn onClick={onCancel}>{t('me_events_cancel')}</OpBtn>
-      </Row>
+      </FormActions>
       {tilePickerOpen && transferMap && (
         <MapTilePicker
           tiledFilename={transferMap.tiledFilename}

@@ -33,7 +33,8 @@ export type CmdFormKind =
   | 'exitEvent' | 'setEventLocation' | 'controlTimer' | 'inputNumber' | 'buttonInput'
   | 'changeSaveAccess' | 'changeEncounter' | 'trainerBattle' | 'wildBattle'
   | 'gameOver' | 'callMenu' | 'callSave' | 'textOptions' | 'windowskin' | 'battleEndMe'
-  | 'healParty' | 'learnMove' | 'forgetMove' | 'selectParty' | 'berryTree' | 'mapOverlay' | 'mapOverlaySet';
+  | 'healParty' | 'learnMove' | 'forgetMove' | 'selectParty' | 'berryTree' | 'mapOverlay' | 'mapOverlaySet'
+  | 'berryTake' | 'berryWater' | 'berryPlant' | 'berryInteraction';
 
 /** Audio-playing kinds → their RMXP code and the Audio/ folder to browse. */
 export const AUDIO_KINDS: Record<string, { code: number; folder: string }> = {
@@ -182,6 +183,8 @@ export type CmdForm = {
    * The berry itself reuses `itemSymbol`. Stage 0 = just planted … 4 = ripe.
    */
   berryStage: number;
+  /** Scaffold the interaction tree onto the action page (map-event scaffold only). */
+  berryIncludeInteraction: boolean;
   /**
    * Set Map Overlay — PSDK's start_overlay/stop_overlay presets. 'none' stops
    * the overlay. Everything after the preset is an attribute on the preset
@@ -359,6 +362,7 @@ export const emptyForm = (kind: CmdFormKind, mode: 'insert' | 'edit'): CmdForm =
   moveByVar: true, movePartyIndex: 1, moveSkill: '__undef__',
   // A ripe tree is what you usually want when placing one on a map.
   berryStage: 4,
+  berryIncludeInteraction: true,
   overlayPreset: 'fog', overlayImage: '__undef__', overlayOpacity: 1,
   overlayBlendMode: 0, overlayDistFactor: 1.5, overlaySampleColor: [204, 204, 204, 255],
   overlayDirectionX: 0, overlayDirectionY: 0, overlayMapAffix: false, overlayZoom: 0,
@@ -594,7 +598,15 @@ export const buildCommandsFromForm = (form: CmdForm, indent: number): WorkingCom
       // call_party_menu(var) stores the chosen party index in the variable.
       return buildTextChain(355, `call_party_menu(${form.id})`, indent);
     case 'berryTree':
-      return buildTextChain(355, `berry_tree(:${form.itemSymbol}, ${clamp(form.berryStage, 0, 4)})`, indent);
+      return buildTextChain(355, buildBerryTreeScript(form.itemSymbol, form.berryStage), indent);
+    case 'berryTake':
+      return buildTextChain(355, BERRY_TAKE_SCRIPT, indent);
+    case 'berryWater':
+      return buildTextChain(355, BERRY_WATER_SCRIPT, indent);
+    case 'berryPlant':
+      return buildTextChain(355, BERRY_PLANT_SCRIPT, indent);
+    case 'berryInteraction':
+      return buildBerryInteractionTree(indent);
     case 'mapOverlay':
       return buildTextChain(355, buildOverlayScript(form), indent);
     case 'mapOverlaySet':
@@ -954,6 +966,38 @@ export const overlayParamsFromForm = (form: CmdForm): OverlayParams => {
 };
 
 /**
+ * Preview params for the Adjust (mapOverlaySet) command, rendered against a
+ * chosen REFERENCE preset. The command retargets whatever overlay is already
+ * running, so it carries no preset of its own — the preview picks one purely to
+ * have something to draw.
+ *
+ * Only the properties the command actually changes (the ticked overlaySetProps,
+ * and only where the reference preset supports them) are applied. Everything
+ * else stays at that preset's defaults, standing in for "left however the
+ * running overlay had it". opacity/blendMode are universal, so they apply
+ * whenever ticked regardless of the preset's own param list.
+ */
+export const overlaySetParamsForPreview = (form: CmdForm, previewPreset: string): OverlayParams => {
+  const params = defaultOverlayParams(previewPreset);
+  const active = new Set(form.overlaySetProps);
+  const applies = (p: OverlayParam) => active.has(p) && (p === 'opacity' || p === 'blendMode' || overlaySupports(previewPreset, p));
+  if (applies('opacity')) params.opacity = clamp(form.overlayOpacity, 0, 1);
+  if (applies('blendMode')) params.blendMode = clamp(form.overlayBlendMode, 0, OVERLAY_BLEND_MODES.length - 1);
+  if (applies('distFactor')) params.distFactor = form.overlayDistFactor;
+  if (applies('sampleColor')) params.sampleColor = [...form.overlaySampleColor];
+  if (applies('direction1')) params.direction1 = [form.overlayDirectionX, form.overlayDirectionY];
+  if (applies('mapAffix')) params.mapAffix = form.overlayMapAffix;
+  if (applies('zoom')) params.zoom = form.overlayZoom;
+  if (applies('extraTexture') && form.overlayImage && form.overlayImage !== '__undef__') params.texture1Name = form.overlayImage;
+  if (applies('noiseTexture') && form.overlayNoiseTexture) params.texture1Name = form.overlayNoiseTexture;
+  if (applies('gradientTexture') && form.overlayGradientTexture) params.texture2Name = form.overlayGradientTexture;
+  if (applies('position') && form.overlayPositionMode !== 'default') {
+    params.position = form.overlayPositionMode === 'player' ? 'player' : [form.overlayPositionX, form.overlayPositionY];
+  }
+  return params;
+};
+
+/**
  * Wait (106) is stored in RMXP frames, and PSDK's `command_106` doubles the
  * stored value before counting it down once per 60 FPS frame
  * (`@wait_count = @parameters[0] * 2`). So ONE stored unit is 2 real frames —
@@ -1263,9 +1307,65 @@ const overlayFormFromScript = (script: string): CmdForm | null => {
   return form;
 };
 
+/**
+ * The exact script text the Create Berry Tree command emits, so the event-level
+ * "Set up Berry Tree" scaffold and the command share one source of truth.
+ */
+export const buildBerryTreeScript = (itemSymbol: string, stage: number): string => `berry_tree(:${itemSymbol}, ${clamp(stage, 0, 4)})`;
+
+// Berry-tree interaction helpers (project plugin). Each is a no-argument PSDK
+// interpreter call emitted as a 355 script line, exactly like berry_tree above.
+export const BERRY_TAKE_SCRIPT = 'berry_take';
+export const BERRY_WATER_SCRIPT = 'berry_water';
+export const BERRY_PLANT_SCRIPT = 'berry_plant_from_bag';
+// Berry queries usable as raw script conditions in a Conditional Branch.
+export const BERRY_QUERY_SCRIPTS = ['berry_here?', 'berry_ripe?', 'berry_watered?', 'berry_stage == 4'] as const;
+
+// Default, editable Show Message text baked into the Berry Tree Interaction
+// template. Kept in English (the map text lives in the saved data, not i18n);
+// the user edits the generated 101 commands afterwards.
+const BERRY_HARVEST_MESSAGE = 'The berries are ripe! You pick them.';
+const BERRY_GROWING_MESSAGE = 'This tree is still growing. You water it.';
+
+/**
+ * Berry Tree Interaction — expands on insert into a REAL, editable command tree
+ * (no black-box helper): two nested script-condition branches wrapping the berry
+ * action scripts and Show Message commands, in the canonical 3-state structure:
+ *
+ *   if berry_here?
+ *     if berry_ripe?      -> Show harvest msg + berry_take
+ *     else (growing)      -> Show growing msg + berry_water
+ *   else (empty soil)     -> berry_plant_from_bag
+ *
+ * The 111/411/412 indents follow the same rule as the Conditional command
+ * (markers at the opener's indent, bodies one deeper), so every generated chain
+ * round-trips through the editor's normal conditional / script / text machinery.
+ */
+export const buildBerryInteractionTree = (indent: number): WorkingCommand[] => {
+  const scriptCond = (expr: string, at: number): WorkingCommand => ({ code: 111, indent: at, parameters: [12, expr] });
+  const elseAt = (at: number): WorkingCommand => ({ code: 411, indent: at, parameters: [] });
+  const endAt = (at: number): WorkingCommand => ({ code: 412, indent: at, parameters: [] });
+  return [
+    scriptCond('berry_here?', indent),
+    scriptCond('berry_ripe?', indent + 1),
+    ...buildTextChain(101, BERRY_HARVEST_MESSAGE, indent + 2),
+    ...buildTextChain(355, BERRY_TAKE_SCRIPT, indent + 2),
+    elseAt(indent + 1),
+    ...buildTextChain(101, BERRY_GROWING_MESSAGE, indent + 2),
+    ...buildTextChain(355, BERRY_WATER_SCRIPT, indent + 2),
+    endAt(indent + 1),
+    elseAt(indent),
+    ...buildTextChain(355, BERRY_PLANT_SCRIPT, indent + 1),
+    endAt(indent),
+  ];
+};
+
 const BERRY_TREE_RE = /^berry_tree\(:(\w+),\s*(\d+)\)$/;
 const gameplayFormFromScript = (script: string): CmdForm | null => {
   if (HEAL_PARTY_RE.test(script)) return emptyForm('healParty', 'edit');
+  if (script === BERRY_TAKE_SCRIPT) return emptyForm('berryTake', 'edit');
+  if (script === BERRY_WATER_SCRIPT) return emptyForm('berryWater', 'edit');
+  if (script === BERRY_PLANT_SCRIPT) return emptyForm('berryPlant', 'edit');
   const berry = script.match(BERRY_TREE_RE);
   if (berry) { const f = emptyForm('berryTree', 'edit'); f.itemSymbol = berry[1]; f.berryStage = Number(berry[2]); return f; }
   if (OVERLAY_STOP_RE.test(script)) { const f = emptyForm('mapOverlay', 'edit'); f.overlayPreset = 'none'; return f; }

@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { Toggle } from '@components/inputs';
+import { playSound } from '@utils/sound';
 import type { MapEvent, MapEventPage } from './useMapEvents';
 import {
   composeEventName,
@@ -17,8 +18,10 @@ import {
   setZTag,
   stripNameTags,
   TRIGGERS,
+  buildTextChain,
   type WorkingCommand,
 } from './rmxpEventUtils';
+import { buildBerryTreeScript, buildBerryInteractionTree } from './dialog/commandModel';
 import { AnimatedCharacterPreview, CharacterSprite } from './CharacterSprite';
 import {
   Block,
@@ -101,9 +104,22 @@ let pageClipboardShared: MapEventPage | null = null;
 // only plain-param chains (the editable set) are copyable.
 let commandClipboardShared: WorkingCommand[] | null = null;
 
+/**
+ * A fresh, never-configured event: exactly one page whose command list holds
+ * nothing but the code-0 terminator and which has no character graphic set.
+ * That's the common "just created the event" case we can safely replace; any
+ * real content makes us append the scaffold instead of clobbering it.
+ */
+const isFreshSinglePage = (ev: MapEvent): boolean => {
+  if (ev.pages.length !== 1) return false;
+  const p = ev.pages[0];
+  const hasCommands = p.list.some((c) => c.code !== 0);
+  return !hasCommands && !p.graphic.characterName;
+};
+
 export const EventDialog = ({ event, mapEvents, onSave, onDelete, onClose, getMapSnapshot, currentMapId, mapWidthTiles, mapHeightTiles }: Props) => {
   const { t } = useTranslation();
-  const [{ projectPath }] = useGlobalState();
+  const [{ projectPath, projectData }] = useGlobalState();
   const { draft, commitDraft, undo, redo, canUndo, canRedo } = useEventDraft(event);
   const [pageIndex, setPageIndex] = useState(0);
   const [pageClipboard, setPageClipboard] = useState<MapEventPage | null>(pageClipboardShared);
@@ -132,10 +148,12 @@ export const EventDialog = ({ event, mapEvents, onSave, onDelete, onClose, getMa
       el.style.width = 'calc(100vw - 32px)';
       el.style.height = 'calc(100vh - 32px)';
       setExpanded(true);
+      playSound('sparkle');
     } else {
       el.style.width = preExpandSize.current?.width ?? '';
       el.style.height = preExpandSize.current?.height ?? '';
       setExpanded(false);
+      playSound('droplet');
     }
   };
   // Switch/variable NAMES from Data/System.rxdata for the condition pickers.
@@ -242,6 +260,64 @@ export const EventDialog = ({ event, mapEvents, onSave, onDelete, onClose, getMa
     commitDraft((prev) => ({ ...prev, pages }));
     const newIndex = pages.indexOf(viewed);
     if (newIndex >= 0) setPageIndex(newIndex);
+  };
+
+  // --- Set up Berry Tree scaffold --------------------------------------------
+  // The berry's own event charset (the graphicName we store on berry data), or
+  // '' when it has none — in which case we keep createEmptyPage's blank graphic.
+  const berryGraphicName = (dbSymbol: string): string => projectData.items[dbSymbol]?.berryData?.graphicName || '';
+
+  /**
+   * Build the two scaffold pages. Both carry the tree charset and idle-animate
+   * (isStepAnime — berry-tree-only, not the global page default).
+   *
+   * Page 1 (autorun, trigger 3): plants the tree via the same `berry_tree(...)`
+   * 355 script the command emits, then flips Self Switch A ON (123, ['A', 0] —
+   * 0 = ON), then the code-0 terminator.
+   * Page 2 (action button, trigger 0): gated on Self Switch A, same graphic,
+   * optionally the editable Berry Tree Interaction if/else tree at indent 0,
+   * always ending on the code-0 terminator.
+   */
+  const buildScaffoldPages = (dbSymbol: string, stage: number, includeInteraction: boolean): [MapEventPage, MapEventPage] => {
+    const name = berryGraphicName(dbSymbol);
+    const graphic = { ...createEmptyPage().graphic, ...(name ? { characterName: name } : {}) };
+    const page1: MapEventPage = {
+      ...createEmptyPage(),
+      trigger: 3,
+      isStepAnime: true,
+      graphic: { ...graphic },
+      list: [
+        ...buildTextChain(355, buildBerryTreeScript(dbSymbol, stage), 0),
+        { code: 123, indent: 0, parameters: ['A', 0] },
+        { code: 0, indent: 0, parameters: [] },
+      ],
+    };
+    const page2: MapEventPage = {
+      ...createEmptyPage(),
+      trigger: 0,
+      isStepAnime: true,
+      graphic: { ...graphic },
+      condition: { ...createEmptyPage().condition, isSelfSwitch: true, selfSwitch: 'A' },
+      list: includeInteraction
+        ? [...buildBerryInteractionTree(0), { code: 0, indent: 0, parameters: [] }]
+        : [{ code: 0, indent: 0, parameters: [] }],
+    };
+    return [page1, page2];
+  };
+
+  /**
+   * Scaffold the two berry-tree pages onto THIS event. Passed to the command
+   * list editor and fired when the user inserts a Create Berry Tree command
+   * (map-event editor only) — see CommandListEditor.submitForm.
+   */
+  const applyBerryTreeSetup = (dbSymbol: string, stage: number, includeInteraction: boolean) => {
+    if (!dbSymbol || dbSymbol === '__undef__') return;
+    const [page1, page2] = buildScaffoldPages(dbSymbol, stage, includeInteraction);
+    // Fresh empty event: replace it. Anything with real content: append the two
+    // pages rather than clobber the user's work (non-destructive by design).
+    const fresh = isFreshSinglePage(draft);
+    commitDraft((prev) => ({ ...prev, pages: fresh ? [page1, page2] : [...prev.pages, page1, page2] }));
+    setPageIndex(fresh ? 0 : draft.pages.length);
   };
 
   // The command list itself is edited by the shared CommandListEditor below.
@@ -552,6 +628,8 @@ export const EventDialog = ({ event, mapEvents, onSave, onDelete, onClose, getMa
               mapWidthTiles={mapWidthTiles}
               mapHeightTiles={mapHeightTiles}
               onEditCommonEvents={() => setCommonEventsOpen(true)}
+              onBerryTreeSetup={applyBerryTreeSetup}
+              expanded={expanded}
             />
           </RightColumn>
         </Body>

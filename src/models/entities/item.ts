@@ -23,6 +23,10 @@ export const BERRY_DATA_VALIDATOR = z.object({
   drainRate: POSITIVE_INT,
   naturalGiftPower: POSITIVE_INT,
   naturalGiftType: DB_SYMBOL_VALIDATOR,
+  // Fork: optional on-map event charset (graphics/characters) used when this
+  // berry is planted via a Create Berry Tree event command. Optional so berry
+  // JSON written before this field still validates.
+  graphicName: z.string().optional(),
 });
 export type StudioBerryData = z.infer<typeof BERRY_DATA_VALIDATOR>;
 

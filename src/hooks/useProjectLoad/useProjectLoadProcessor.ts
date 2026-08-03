@@ -10,6 +10,7 @@ import { generateSelectedIdentifier } from '@utils/generateSelectedIdentifier';
 import { useLoaderRef } from '@utils/loaderContext';
 import { addProjectToList, updateProjectStudio } from '@utils/projectList';
 import { getSetting, getSettings } from '@utils/settings';
+import { setActiveOnlineProject } from '@utils/onlineConfig';
 import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { deserializeProjectConfig } from './deserializeProjectConfig';
@@ -268,6 +269,9 @@ export const useProjectLoadProcessor = () => {
             mapsModified: state.mapsModified,
           };
           setGlobalState(globalState);
+          // Point the per-project Online config at this project before any
+          // online call can fire (onlineApi reads getOnlineConfig() outside React).
+          setActiveOnlineProject(state.preState.projectPath);
           buildSelectOptionsTextSourcesFromScratch(globalState);
           buildSelectOptionsFromScratch(globalState);
           addProjectToList({

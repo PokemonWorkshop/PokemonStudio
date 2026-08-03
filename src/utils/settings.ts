@@ -6,7 +6,9 @@ export type StudioSettings = {
 
 const defaultSettings: StudioSettings = {
   tiledPath: '',
-  soundEnabled: true,
+  // Off by default -- interaction sound is a minority taste, so it's opt-in via
+  // Settings > Sound rather than something every user has to discover and mute.
+  soundEnabled: false,
 };
 
 /**

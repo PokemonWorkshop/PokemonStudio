@@ -1,4 +1,4 @@
-import React, { forwardRef, useMemo, useRef, useState } from 'react';
+import React, { DragEventHandler, forwardRef, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Editor } from '@components/editor';
 import {
@@ -21,6 +21,10 @@ import { DbSymbol } from '@modelEntities/dbSymbol';
 import { InputNumber } from '@components/pokemonBattler/editors/InputNumber';
 import { SelectType } from '@components/selects';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
+import { ClearButtonOnlyIcon, EditButtonOnlyIcon } from '@components/buttons';
+import { CharacterSprite } from '@src/custom/MapEditor/events/CharacterSprite';
+import { useGlobalState } from '@src/GlobalStateProvider';
+import { useCopyFile } from '@hooks/useCopyFile';
 import styled from 'styled-components';
 
 const NaturalGiftInfo = styled.div`
@@ -35,10 +39,54 @@ const NaturalGiftInfoContainer = styled.div`
   gap: 4px;
 `;
 
+/**
+ * Resource-style charset control: a first-frame sprite preview on the left, the
+ * Edit / Clear affordances on the right. Mirrors IconInput's layout so it reads
+ * as a native Studio graphic-resource field, and accepts a dropped charset.
+ */
+const GraphicResourceContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  user-select: none;
+
+  & div.preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 72px;
+    border-radius: 8px;
+    background-color: ${({ theme }) => theme.colors.dark18};
+    border: 1px solid ${({ theme }) => theme.colors.dark20};
+    overflow: hidden;
+  }
+
+  & div.preview .empty {
+    ${({ theme }) => theme.fonts.normalSmall};
+    color: ${({ theme }) => theme.colors.text400};
+    text-align: center;
+    padding: 0 4px;
+  }
+
+  & div.buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+  }
+`;
+
+const CHARSET_EXTENSIONS = ['png', 'gif'];
+/** RMXP-style charset name: basename, forward slashes, extension stripped. */
+const toCharacterName = (filePath: string): string => filePath.replace(/\\/g, '/').replace(/^.*\//, '').replace(/\.(png|gif)$/i, '');
+
 const Firmnesses = ['very_soft', 'soft', 'hard', 'very_hard', 'super_hard'] as const;
 
 export const ItemBerriesDataEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { currentItem } = useItemPage();
+  const [{ projectPath }] = useGlobalState();
   const { t } = useTranslation();
   const item = cloneEntity(currentItem);
   const setItems = useUpdateItem(item);
@@ -47,6 +95,41 @@ export const ItemBerriesDataEditor = forwardRef<EditorHandlingClose>((_, ref) =>
   const [minMaxBerriesError, setMinMaxBerriesError] = useState<boolean>(false);
   const [firmness, setFirmness] = useState<string>(item.berryData ? item.berryData.firmness : 'very_soft');
   const firmnessesOptions = useMemo(() => Firmnesses.map((firmness) => ({ value: firmness, label: t(`firmness_${firmness}`) })), [t]);
+
+  // Event charset for this berry's tree. '' = use PSDK's default (derived from
+  // the item id at runtime). Set via the native character-graphic chooser or by
+  // dropping an image, exactly like Studio's other graphic-resource fields.
+  const [graphicName, setGraphicName] = useState<string>(item.berryData?.graphicName ?? '');
+  const copyFile = useCopyFile();
+
+  const pickCharacter = () => {
+    if (!projectPath) return;
+    window.api.chooseCharacterGraphic(
+      { projectPath },
+      ({ name }) => setGraphicName(name),
+      () => {
+        /* cancelled */
+      }
+    );
+  };
+
+  const onDropGraphic: DragEventHandler<HTMLDivElement> = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const dropped = Array.from(event.dataTransfer.files).find((file) => CHARSET_EXTENSIONS.includes(file.name.split('.').pop()?.toLowerCase() ?? ''));
+    if (!dropped) return;
+    const srcFile = window.api.getPathForFile(dropped);
+    copyFile(
+      { srcFile, destFolder: 'graphics/characters' },
+      ({ destFile }) => setGraphicName(toCharacterName(destFile)),
+      ({ errorMessage }) => window.api.log.error(errorMessage)
+    );
+  };
+
+  const onDragOverGraphic: DragEventHandler<HTMLDivElement> = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
 
   const sizeRef = useRef<HTMLInputElement>(null);
   const minYieldRef = useRef<HTMLInputElement>(null);
@@ -75,6 +158,7 @@ export const ItemBerriesDataEditor = forwardRef<EditorHandlingClose>((_, ref) =>
         drainRate: cleanNaNValue(drainRate, 1),
         naturalGiftType: naturalGiftType as DbSymbol,
         naturalGiftPower: cleanNaNValue(naturalGiftPower),
+        graphicName: graphicName || undefined,
       },
     };
 
@@ -197,6 +281,27 @@ export const ItemBerriesDataEditor = forwardRef<EditorHandlingClose>((_, ref) =>
               ref={naturalGiftPowerRef}
             />
           </InputWithLeftLabelContainer>
+        </InputGroupCollapse>
+        <InputGroupCollapse title={t('berries_event_data')} gap="16px">
+          <NaturalGiftInfoContainer>
+            <NaturalGiftInfo>{t('berries_event_graphic_info')}</NaturalGiftInfo>
+          </NaturalGiftInfoContainer>
+          <InputWithTopLabelContainer>
+            <Label htmlFor="berries-event-graphic">{t('berries_event_graphic')}</Label>
+            <GraphicResourceContainer onDrop={onDropGraphic} onDragOver={onDragOverGraphic}>
+              <div className="preview" title={graphicName || t('berries_event_graphic_default')}>
+                {projectPath && graphicName ? (
+                  <CharacterSprite projectPath={projectPath} characterName={graphicName} direction={2} pattern={0} fitW={64} fitH={64} maxScale={2} />
+                ) : (
+                  <span className="empty">{t('berries_event_graphic_default')}</span>
+                )}
+              </div>
+              <div className="buttons">
+                <EditButtonOnlyIcon disabled={!projectPath} onClick={projectPath ? pickCharacter : undefined} />
+                <ClearButtonOnlyIcon disabled={!graphicName} onClick={graphicName ? () => setGraphicName('') : undefined} />
+              </div>
+            </GraphicResourceContainer>
+          </InputWithTopLabelContainer>
         </InputGroupCollapse>
       </InputContainer>
     </Editor>

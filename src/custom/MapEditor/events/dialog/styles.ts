@@ -16,6 +16,27 @@ export const Scrim = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  /*
+   * The event editor is where a fangame dev spends most of their time, so its
+   * entrance earns a touch more than the standard modal fade: the backdrop
+   * eases in with a soft blur for depth. @starting-style fires only on mount.
+   */
+  backdrop-filter: blur(3px);
+  transition: opacity 200ms ease, backdrop-filter 200ms ease;
+
+  @starting-style {
+    opacity: 0;
+    backdrop-filter: blur(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    backdrop-filter: none;
+    transition: opacity 160ms ease;
+
+    @starting-style {
+      backdrop-filter: none;
+    }
+  }
 `;
 
 export const Dialog = styled.div`
@@ -35,6 +56,28 @@ export const Dialog = styled.div`
   overflow: hidden;
   ${({ theme }) => theme.fonts.normalRegular};
   color: ${({ theme }) => theme.colors.text100};
+
+  /*
+   * Smooth, slightly luxurious entrance: rise and settle from 96% with a strong
+   * ease-out (expo-like) so it decelerates gently into place. @starting-style
+   * only applies on mount, and toggleExpand/resize touch width+height (never
+   * transform), so this never fights the fullscreen or hand-resize behaviour.
+   */
+  transition: opacity 260ms cubic-bezier(0.16, 1, 0.3, 1), transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: center;
+
+  @starting-style {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: opacity 160ms ease;
+
+    @starting-style {
+      transform: none;
+    }
+  }
 
   /* Studio-themed scrollbars everywhere inside the dialog — the default OS
      bars read as jarringly bright against the dark chrome. */
@@ -306,7 +349,9 @@ export const CheckLabel = styled.label`
 
 export const CommandList = styled.div`
   flex: 1;
-  min-height: 0;
+  /* Keep a visible slice of the command context even while a command form is
+     open below it (the form takes an even share of the column). */
+  min-height: 120px;
   overflow-y: auto;
   border: 1px solid ${({ theme }) => theme.colors.dark22};
   border-radius: 8px;
@@ -370,6 +415,84 @@ export const FormArea = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+  /*
+   * Share the right column with the command list instead of growing without
+   * bound. A tall command (overlay + preview, a battle setup, EV editors) used
+   * to stretch this panel until it shoved the command list off the top or ran
+   * off the bottom of the window. Now it takes an even share of the column
+   * (flex 1 against the list's flex 1), its own content scrolls, and the
+   * OK/Cancel bar stays pinned — so the command context above is always in view
+   * and nothing needs the window resized.
+   */
+  flex: 1 1 0;
+  min-height: 0;
+`;
+
+/** The scrolling body of CommandForm; the OK/Cancel bar sits outside it. */
+export const FormScroll = styled.div`
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  /* Keep the scrollbar off the controls. */
+  padding-right: 2px;
+`;
+
+/** Pinned action bar at the bottom of CommandForm — never scrolls away. */
+export const FormActions = styled.div`
+  display: flex;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px solid ${({ theme }) => theme.colors.dark22};
+`;
+
+/**
+ * The user-resizable bottom section (command picker or command form). Its height
+ * is driven by an inline style the split handle updates; min/max keep the
+ * command list above it always visible and stop it overflowing the column.
+ */
+export const BottomPane = styled.div`
+  flex: 0 1 auto;
+  min-height: 160px;
+  max-height: calc(100% - 200px);
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+`;
+
+/**
+ * Sits in the command toolbar between "Add command" and "Edit". Drag it up or
+ * down to resize the bottom section. Inert (no grip, default cursor) when there
+ * is no bottom section open to resize.
+ */
+export const SplitHandle = styled.div<{ $active?: boolean; $expanded?: boolean }>`
+  flex: 1;
+  align-self: stretch;
+  min-width: 24px;
+  margin: 0 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: ${({ $active }) => ($active ? 'row-resize' : 'default')};
+
+  /* The visible grip. Wider in fullscreen (270) than in the windowed dialog
+     (90) — there's far more toolbar to span when the editor is maximised. */
+  &::before {
+    content: '';
+    width: ${({ $expanded }) => ($expanded ? 270 : 90)}px;
+    max-width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: ${({ theme, $active }) => ($active ? theme.colors.dark24 : 'transparent')};
+    transition: width 150ms ${({ theme }) => theme.motion.easeOut}, background 120ms ${({ theme }) => theme.motion.easeOut};
+  }
+
+  &:hover::before {
+    background: ${({ theme, $active }) => ($active ? theme.colors.primaryBase : 'transparent')};
+  }
 `;
 
 // --- command picker ("Add command" panel) --------------------------------------
@@ -382,7 +505,9 @@ export const PickerPanel = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
-  max-height: 280px;
+  /* Fills the resizable bottom pane and scrolls within it. */
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
 `;
 

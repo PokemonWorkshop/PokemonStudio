@@ -67,7 +67,7 @@ const HomePageComponent = () => {
         <BrandingActionContainer>
           <BrandingTitleContainer onClick={() => window.api.isDev && navigate('/designSystem/home')}>
             <StudioIcon />
-            <BrandingTitle>Pokémon Studio</BrandingTitle>
+            <BrandingTitle>Custom Pokémon Studio</BrandingTitle>
           </BrandingTitleContainer>
           <LoadProjectButton>{t('open_a_project')}</LoadProjectButton>
           <PrimaryButton onClick={() => dialogsRef.current?.openDialog('new_project')}>{t('new_project')}</PrimaryButton>
