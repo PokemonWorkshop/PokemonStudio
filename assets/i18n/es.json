@@ -1932,6 +1932,7 @@
   "assigning_tiled_maps_success": "Tiled maps successfully assigned",
   "assigning_tiled_maps_error": "Error while assigning Tiled maps",
   "max_trainer_party_size": "Max trainer party size",
+  "add_trainer_party_max_size_to_settings": "Add trainer party max size to settings",
   "keyboard_shortcuts": "Keyboard Shortcuts",
   "shortcut_category_default": "Default shortcuts",
   "shortcut_category_navigation": "Navigation",
@@ -1954,6 +1955,5 @@
   "event_command_trigger_before_transition": "Before Any Transition",
   "event_command_trigger_called": "Called",
   "event_command_trigger_parallel": "Runs in Parallel",
-  "event_command_trigger_cinematic": "Cutscene",
-  "add_trainer_party_max_size_to_settings": "Add trainer party max size to settings"
+  "event_command_trigger_cinematic": "Cutscene"
 }
