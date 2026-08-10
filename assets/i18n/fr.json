@@ -1946,5 +1946,6 @@
   "event_command_trigger_before_transition": "Avant toute transition",
   "event_command_trigger_called": "Appelé",
   "event_command_trigger_parallel": "Se déroule en parallèle",
-  "event_command_trigger_cinematic": "Cinématique"
+  "event_command_trigger_cinematic": "Cinématique",
+  "move_custom_procedure_info": "Cette attaque utilise une procédure personnalisée. Son comportement est défini par le code Ruby associé dans PSDK. Selon son implémentation, certaines données configurées dans Pokémon Studio peuvent ne pas être utilisées."
 }

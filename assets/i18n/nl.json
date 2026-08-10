@@ -1946,5 +1946,6 @@
   "event_command_trigger_before_transition": "Before Any Transition",
   "event_command_trigger_called": "Called",
   "event_command_trigger_parallel": "Runs in Parallel",
-  "event_command_trigger_cinematic": "Cutscene"
+  "event_command_trigger_cinematic": "Cutscene",
+  "move_custom_procedure_info": "This move uses a custom procedure. Its behavior is defined by the associated Ruby code in PSDK. Depending on its implementation, some data configured in Pokémon Studio may not be used."
 }
