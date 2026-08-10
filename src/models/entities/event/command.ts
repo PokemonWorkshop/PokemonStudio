@@ -1,26 +1,8 @@
 import { POSITIVE_OR_ZERO_INT } from '@modelEntities/common';
 import { z } from 'zod';
 import type { StudioEventCommandCategory } from './category';
-
-export const COMMAND_ID_VALIDATOR = z.string().brand('CommandId');
-export type CommandId = z.infer<typeof COMMAND_ID_VALIDATOR>;
-
-export const COMMAND_CONNECTION_ID_VALIDATOR = z.string().brand('ConnectionId');
-export type ConnectionId = z.infer<typeof COMMAND_CONNECTION_ID_VALIDATOR>;
-
-const EVENT_COMMAND_STUDIO_DATA_VALIDATOR = z.object({
-  x: z.number().int(),
-  y: z.number().int(),
-  comments: z.array(z.string()),
-});
-
-export const EVENT_COMMAND_CONNECTION_VALIDATOR = z.object({
-  sourceHandle: z.string(),
-  target: COMMAND_ID_VALIDATOR,
-  targetHandle: z.string(),
-});
-
-export type StudioEventCommandConnection = z.infer<typeof EVENT_COMMAND_CONNECTION_VALIDATOR>;
+import { EVENT_COMMAND_START_VALIDATOR } from './commands/start';
+import { COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_CONNECTION_VALIDATOR, EVENT_COMMAND_STUDIO_DATA_VALIDATOR } from './globalCommand';
 
 //#region Messages
 
@@ -150,6 +132,7 @@ export const EVENT_COMMAND_VALIDATOR = z.discriminatedUnion('type', [
   GENERIC_COMMAND('manage_map_panorama'),
   GENERIC_COMMAND('change_battle_background'),
   EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR,
+  EVENT_COMMAND_START_VALIDATOR,
 ]);
 
 export type StudioEventCommand = z.infer<typeof EVENT_COMMAND_VALIDATOR>;
@@ -262,4 +245,5 @@ export const COMMANDS_FROM_CATEGORY: Record<StudioEventCommandCategory, EventCom
     { commandType: 'change_battle_background' },
   ],
   scripting: [{ commandType: 'insert_script', enabled: true }],
+  start: [{ commandType: 'start', enabled: true }],
 };

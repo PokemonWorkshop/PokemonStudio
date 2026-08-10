@@ -17,9 +17,10 @@ type LoaderErrorTitle =
   | 'loading_project_error'
   | 'updating_psdk_error'
   | 'importing_tiled_maps_error'
+  | 'assigning_tiled_maps_error'
   | 'updating_maps_error'
   | 'compilation_project_error';
-type LoaderSuccessTitle = 'importing_tiled_maps_success' | 'update_maps';
+type LoaderSuccessTitle = 'importing_tiled_maps_success' | 'assigning_tiled_maps_success' | 'update_maps';
 
 type LoaderState = {
   thingInProgress: LoaderTitle;

@@ -1,28 +1,28 @@
-import type { StudioMove } from '@modelEntities/move';
-import {
-  getEntityNameTextUsingTextId,
-  getEntityNameText,
-  useGetEntityNameTextUsingTextId,
-  useGetEntityNameText,
-  useGetCreatureFormNameText,
-} from '@utils/ReadingProjectText';
-import { useProjectDataReadonly } from './useProjectData';
-import { useTextInfosReadonly } from './useTextInfos';
 import type { StudioDex } from '@modelEntities/dex';
-import type { StudioType } from '@modelEntities/type';
 import type { StudioItem } from '@modelEntities/item';
-import type { StudioNature } from '@modelEntities/nature';
 import type { StudioMap } from '@modelEntities/map';
+import type { StudioMove } from '@modelEntities/move';
+import type { StudioNature } from '@modelEntities/nature';
+import type { StudioType } from '@modelEntities/type';
 import { Language } from '@pages/texts/Translation.page';
 import { useGlobalState } from '@src/GlobalStateProvider';
+import { useLoaderRef } from '@utils/loaderContext';
+import { checkValidMaplink } from '@utils/MapLinkUtils';
+import { getMapOverviewPath, join } from '@utils/path';
+import {
+  getEntityNameText,
+  getEntityNameTextUsingTextId,
+  useGetCreatureFormNameText,
+  useGetEntityNameText,
+  useGetEntityNameTextUsingTextId,
+} from '@utils/ReadingProjectText';
+import { getSetting } from '@utils/settings';
+import { showNotification } from '@utils/showNotification';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { join, getMapOverviewPath } from '@utils/path';
-import { showNotification } from '@utils/showNotification';
 import { useGeneratingMapOverview } from './useGeneratingMapOverview';
-import { useLoaderRef } from '@utils/loaderContext';
-import { getSetting } from '@utils/settings';
-import { checkValidMaplink } from '@utils/MapLinkUtils';
+import { useProjectDataReadonly } from './useProjectData';
+import { useTextInfosReadonly } from './useTextInfos';
 
 export const useAbilityPage = () => {
   const { projectDataValues: abilities, selectedDataIdentifier: dbSymbol, state } = useProjectDataReadonly('abilities', 'ability');
@@ -114,8 +114,7 @@ export const useMapPage = () => {
     map,
     hasMap: dbSymbol !== '__undef__',
     hasMapModified: state.mapsModified.length !== 0,
-    isRMXPMode: !state.projectStudio.isTiledMode,
-    disabledOpenTiled: !state.projectStudio.isTiledMode || !map?.tiledFilename,
+    disabledOpenTiled: !map?.tiledFilename,
     state,
   };
 };
@@ -137,13 +136,14 @@ export const useDexPage = () => {
 export const useTypePage = () => {
   const { projectDataValues: types, selectedDataIdentifier: typeSelected } = useProjectDataReadonly('types', 'type');
   const getTypeName = useGetEntityNameTextUsingTextId();
-  const currentType: StudioType = types[typeSelected] || types[typeSelected];
+  const currentType: StudioType = types[typeSelected];
 
   return {
     types,
     typeDbSymbol: typeSelected,
     currentTypeName: getTypeName(currentType),
     currentType,
+    canBeDeleted: currentType.id <= 18,
   };
 };
 

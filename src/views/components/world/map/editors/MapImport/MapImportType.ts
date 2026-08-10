@@ -3,6 +3,6 @@ export type MapImportFiles = {
   filename: string;
   mapName: string;
   shouldBeImport: boolean;
-  mapId?: number;
+  dbSymbol?: string;
   error?: string;
 };

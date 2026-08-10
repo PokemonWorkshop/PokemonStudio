@@ -1,12 +1,11 @@
-import { MutableRefObject } from 'react';
+import { RefObject } from 'react';
 import type { MapImportError, MapImportFunctionBinding } from './types';
-import log from 'electron-log';
 
-export const fail = (binding: MutableRefObject<MapImportFunctionBinding>, mapImportError: MapImportError[], genericError?: string) => {
-  log.error(
-    'Failed to import the maps',
-    mapImportError.filter((err) => err.errorMessage)
+export const fail = (binding: RefObject<MapImportFunctionBinding>, mapImportError: MapImportError[], genericError?: string) => {
+  window.api.log.error(
+    'Failed to assign the maps',
+    mapImportError.filter((err) => err.errorMessage),
   );
-  if (genericError) log.error('Failed to import the maps: Generic error: ', genericError);
+  if (genericError) window.api.log.error('Failed to assign the maps: Generic error: ', genericError);
   binding.current.onFailure(mapImportError, genericError);
 };

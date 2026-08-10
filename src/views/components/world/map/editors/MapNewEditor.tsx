@@ -1,6 +1,7 @@
-import React, { forwardRef, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { DarkButton, PrimaryButton, SecondaryButton } from '@components/buttons';
 import { Editor, EditorWithCollapse } from '@components/editor';
+import { EditorChildWithSubEditorContainer, SubEditorContainer, SubEditorSeparator } from '@components/editor/EditorContainer';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import {
   FileInput,
   Input,
@@ -11,31 +12,30 @@ import {
   MultiLineInput,
   PaddedInputContainer,
 } from '@components/inputs';
-import { useProjectMapLinks, useProjectMaps } from '@hooks/useProjectData';
-import styled from 'styled-components';
-import { DarkButton, PrimaryButton, SecondaryButton } from '@components/buttons';
-import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID } from '@modelEntities/map';
-import { createMap, createMapInfo } from '@utils/entityCreation';
-import { useSetProjectText } from '@utils/ReadingProjectText';
-import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
-import { DropInput } from '@components/inputs/DropInput';
-import { basename } from '@utils/path';
-import { useNavigate } from 'react-router-dom';
 import { AUDIO_EXT } from '@components/inputs/AudioInput';
-import { cloneEntity } from '@utils/cloneEntity';
-import { useMapInfo } from '@hooks/useMapInfo';
-import { StudioMapInfoMap, StudioMapInfoValue } from '@modelEntities/mapInfo';
-import { addNewMapInfo, mapInfoNewMapWithParent } from '@utils/MapInfoUtils';
-import { EditorChildWithSubEditorContainer, SubEditorContainer, SubEditorSeparator } from '@components/editor/EditorContainer';
-import { MapImportEditorTitle, MapImportOverlay } from './MapImport/MapImportOverlay';
-import { useDialogsRef } from '@hooks/useDialogsRef';
-import { useUpdateMapModified } from './useUpdateMapModified';
-import { useMapCopy } from '@hooks/useMapCopy';
-import { useLoaderRef } from '@utils/loaderContext';
+import { DropInput } from '@components/inputs/DropInput';
 import { TextInputError } from '@components/inputs/Input';
+import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import { TooltipWrapper } from '@ds/Tooltip';
+import { useDialogsRef } from '@hooks/useDialogsRef';
+import { useMapCopy } from '@hooks/useMapCopy';
+import { useMapInfo } from '@hooks/useMapInfo';
+import { useProjectMapLinks, useProjectMaps } from '@hooks/useProjectData';
+import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID } from '@modelEntities/map';
+import { StudioMapInfoMap, StudioMapInfoValue } from '@modelEntities/mapInfo';
+import { cloneEntity } from '@utils/cloneEntity';
+import { createMap, createMapInfo } from '@utils/entityCreation';
+import { useLoaderRef } from '@utils/loaderContext';
+import { addNewMapInfo, mapInfoNewMapWithParent } from '@utils/MapInfoUtils';
 import { createMapLinkFromMainMapId } from '@utils/MapLinkUtils';
+import { basename } from '@utils/path';
+import { useSetProjectText } from '@utils/ReadingProjectText';
+import React, { forwardRef, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import { MapImportEditorTitle, MapImportOverlay } from './MapImport/MapImportOverlay';
+import { useUpdateMapModified } from './useUpdateMapModified';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -124,7 +124,7 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
       (genericError) => {
         setTimeout(() => loaderRef.current.setError('importing_tiled_maps_error', genericError, true), 200);
         closeDialog();
-      }
+      },
     );
   };
 
@@ -229,8 +229,8 @@ export const MapNewEditor = forwardRef<EditorHandlingClose, MapNewEditorProps>((
         </InputContainer>
         <SubEditorContainer>
           <SubEditorSeparator parentEditorHasScrollBar />
-          <Editor type="importation" title={t('import_tiled_maps')}>
-            <SecondaryButton onClick={() => dialogsRef.current?.openDialog('import', true)}>{t('import')}</SecondaryButton>
+          <Editor type="assigning" title={t('assign_tiled_maps')}>
+            <SecondaryButton onClick={() => dialogsRef.current?.openDialog('import', true)}>{t('assign')}</SecondaryButton>
           </Editor>
         </SubEditorContainer>
       </EditorChildWithSubEditorContainer>

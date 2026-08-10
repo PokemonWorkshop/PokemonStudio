@@ -100,6 +100,10 @@ interface Colors {
   oliveDark6: string;
   oliveDark9: string;
   oliveDark11: string;
+
+  emeraldDark6: string;
+  emeraldDark9: string;
+  emeraldDark11: string;
 }
 
 interface Fonts {

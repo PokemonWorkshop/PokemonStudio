@@ -26,12 +26,13 @@ export type ProjectLoadIntegrityFailureCallback = (count: number) => void;
 export type ProjectLoadStateObject =
   | { state: 'done' }
   | { state: 'choosingProjectFile' }
+  | { state: 'preCheckRmxpMode'; projectDirName: string }
+  | { state: 'migrateToTiledMode'; projectDirName: string }
   | { state: 'readingVersion'; projectDirName: string }
   | { state: 'readProjectMetadata'; projectDirName: string; studioVersion: string }
   | { state: 'migrateProjectData'; projectDirName: string; studioVersion: string; projectVersion: string }
   | { state: 'writeProjectMetadata'; projectDirName: string; studioVersion: string; projectMetaData: StudioProject }
   | { state: 'updateTextInfos'; projectDirName: string; studioVersion: string; projectMetaData: StudioProject }
-  | { state: 'RMXP2StudioMapsSync'; projectDirName: string; studioVersion: string; projectMetaData: StudioProject }
   | { state: 'readProjectConfigs'; projectDirName: string; studioVersion: string; projectMetaData: StudioProject }
   | {
       state: 'readProjectData';
@@ -73,8 +74,10 @@ export type ProjectLoadStateObject =
       lastPSDKVersion: PSDKVersion;
     }
   | { state: 'openProject'; preState: PreGlobalState };
+export type ProjectLoadRmxpMigrationCallback = (onContinue: () => void) => void;
 export type ProjectLoadFunctionBinding = {
   onSuccess: ProjectLoadSuccessCallback;
   onFailure: ProjectLoadFailureCallback;
   onIntegrityFailure: ProjectLoadIntegrityFailureCallback;
+  onRmxpMigration: ProjectLoadRmxpMigrationCallback;
 };

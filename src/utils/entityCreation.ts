@@ -2,6 +2,7 @@ import type { StudioAbility } from '@modelEntities/ability';
 import type { StudioCreature, StudioCreatureForm } from '@modelEntities/creature';
 import type { DbSymbol } from '@modelEntities/dbSymbol';
 import { DEX_DEFAULT_NAME_TEXT_ID, StudioDex, StudioDexCreature } from '@modelEntities/dex';
+import { CommandId } from '@modelEntities/event/globalCommand';
 import type { StudioCustomGroupCondition, StudioGroup, StudioGroupSystemTag, StudioGroupTool, StudioGroupVsType } from '@modelEntities/group';
 import { createExpandPokemonSetup, StudioGroupEncounter } from '@modelEntities/groupEncounter';
 import type { StudioItem, StudioItemStatusCondition } from '@modelEntities/item';
@@ -25,7 +26,7 @@ import type { StudioTrainer, StudioTrainerVsType } from '@modelEntities/trainer'
 import type { StudioType } from '@modelEntities/type';
 import type { StudioZone } from '@modelEntities/zone';
 import { ProjectData } from '@src/GlobalStateProvider';
-import { CommandId, StudioEventCommand } from '../models/entities/event/command';
+import { StudioEventCommand } from '../models/entities/event/command';
 import { EVENT_START_CSV_FILE_ID, StudioEvent } from '../models/entities/event/event';
 import { assertUnreachable } from './assertUnreachable';
 import { cloneEntity } from './cloneEntity';
@@ -170,10 +171,15 @@ export const createCreatureForm = (
   form: StudioCreatureForm,
   types: { type1: DbSymbol; type2: DbSymbol },
   newFormId: number,
+  inheritMoveSet = true,
 ) => {
   const formTextIdName = findFirstAvailableFormTextId(allPokemon, 0, 'name');
   const formTextIdDescription = findFirstAvailableFormTextId(allPokemon, 0, 'description');
-  return cloneEntity({ ...form, ...types, form: newFormId, formTextId: { name: formTextIdName, description: formTextIdDescription } });
+  const newForm = cloneEntity({ ...form, ...types, form: newFormId, formTextId: { name: formTextIdName, description: formTextIdDescription } });
+
+  if (!inheritMoveSet) newForm.moveSet = [];
+
+  return newForm;
 };
 
 /**

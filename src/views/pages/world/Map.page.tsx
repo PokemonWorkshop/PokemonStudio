@@ -9,7 +9,7 @@ import { useDialogsRef } from '@hooks/useDialogsRef';
 import { useMapPage } from '@hooks/usePage';
 import { MapEditorOverlay } from '@components/world/map/editors';
 import { MapEditorAndDeletionKeys } from '@components/world/map/editors/MapEditorOverlay';
-import { MapBreadcrumb, MapEmptyState, MapFrame, MapMusics, MapRMXP2StudioUpdate } from '@components/world/map';
+import { MapBreadcrumb, MapEmptyState, MapFrame, MapMusics } from '@components/world/map';
 import { DeleteButtonWithIcon, SecondaryButton } from '@components/buttons';
 import { BaseIcon } from '@components/icons/BaseIcon';
 import theme from '@src/AppTheme';
@@ -31,7 +31,7 @@ export const MapPageStyle = styled.div`
 export const MapPage = () => {
   const dialogsRef = useDialogsRef<MapEditorAndDeletionKeys>();
   const dialogsMapImportRef = useDialogsRef<MapImportEditorTitle>();
-  const { map, hasMap, isRMXPMode, disabledOpenTiled } = useMapPage();
+  const { map, hasMap, disabledOpenTiled } = useMapPage();
   const openTiled = useOpenTiled();
   const navigateMapLink = useNavigateMapLink();
   const { t } = useTranslation();
@@ -50,11 +50,10 @@ export const MapPage = () => {
                   { label: t('map'), path: '/world/overview', disabled: disabledOpenTiled },
                 ]}
               />
-              {isRMXPMode && <MapRMXP2StudioUpdate />}
             </DataBlockWrapper>
             <DataBlockWrapper>
-              <MapFrame map={map} dialogsRef={dialogsRef} disabled={isRMXPMode} />
-              <MapMusics map={map} dialogsRef={dialogsRef} disabled={isRMXPMode} />
+              <MapFrame map={map} dialogsRef={dialogsRef} disabled={false} />
+              <MapMusics map={map} dialogsRef={dialogsRef} disabled={false} />
             </DataBlockWrapper>
             <DataBlockWrapper>
               <DataBlockWithAction size="full" title={t('edition')} disabled={disabledOpenTiled}>
@@ -71,16 +70,14 @@ export const MapPage = () => {
               </DataBlockWithAction>
             </DataBlockWrapper>
             <DataBlockWrapper>
-              <DataBlockWithAction size="full" title={t('deletion')} disabled={isRMXPMode}>
-                <DeleteButtonWithIcon onClick={() => dialogsRef.current?.openDialog('deletion', true)} disabled={isRMXPMode}>
-                  {t('delete_this_map')}
-                </DeleteButtonWithIcon>
+              <DataBlockWithAction size="full" title={t('deletion')}>
+                <DeleteButtonWithIcon onClick={() => dialogsRef.current?.openDialog('deletion', true)}>{t('delete_this_map')}</DeleteButtonWithIcon>
               </DataBlockWithAction>
             </DataBlockWrapper>
           </PageDataConstrainerStyle>
         </PageContainerStyle>
       ) : (
-        !isRMXPMode && <MapEmptyState dialogsRef={dialogsRef} dialogsMapImportRef={dialogsMapImportRef} />
+        <MapEmptyState dialogsRef={dialogsRef} dialogsMapImportRef={dialogsMapImportRef} />
       )}
       <MapEditorOverlay ref={dialogsRef} />
       <MapImportOverlay ref={dialogsMapImportRef} closeParentDialog={() => {}} />

@@ -8,9 +8,7 @@ import { StudioTextInfo } from '@modelEntities/textInfo';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import { ChannelNames, sendProgress } from '@utils/BackendTask';
 import { StudioMapInfo } from '@modelEntities/mapInfo';
-import { DEFAULT_EVENT_TREE } from '@modelEntities/event/event-tree';
 import type { StudioEventTree } from '@modelEntities/event/event-tree';
-import { setLoadedMaps } from './studioMapToRMXPConversionFacilitator';
 import { parseJSON } from '@utils/json/parse';
 
 const projectDataKeys = [
@@ -94,8 +92,6 @@ const readProjectData = async (payload: ReadProjectDataInput, event: IpcMainEven
     Promise.resolve({ textInfos, mapInfo, eventTree } as ProjectDataFromBackEnd),
   );
 
-  // Store the loaded maps so the converter will know which maps changed
-  setLoadedMaps(projectData.maps.map((m) => m.data));
   log.info('read-project-data/success');
   return projectData;
 };

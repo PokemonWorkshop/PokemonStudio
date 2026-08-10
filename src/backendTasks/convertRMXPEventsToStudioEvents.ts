@@ -1,5 +1,5 @@
 import { DbSymbol } from '@modelEntities/dbSymbol';
-import type { CommandId, StudioEventCommand } from '@modelEntities/event/command';
+import type { StudioEventCommand } from '@modelEntities/event/command';
 import {
   EVENT_START_CSV_FILE_ID,
   type Appearance,
@@ -9,6 +9,7 @@ import {
   type LinkParameter,
   type MapEventLink,
 } from '@modelEntities/event/event';
+import type { CommandId } from '@modelEntities/event/globalCommand';
 import { StudioMap } from '@modelEntities/map';
 import { findFirstAvailableCsvFileId, findFirstAvailableId } from '@utils/ModelUtils';
 import log from 'electron-log';

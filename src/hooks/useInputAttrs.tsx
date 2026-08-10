@@ -12,7 +12,7 @@ import {
 } from '@components/inputs';
 import { DropInput } from '@components/inputs/DropInput';
 import { EmbeddedUnitInput } from '@components/inputs/EmbeddedUnitInput';
-import { Select } from '@ds/Select';
+import { NodeSelect, Select } from '@ds/Select';
 import { inputAttrs } from '@utils/inputAttrs';
 import { basename } from '@utils/path';
 import React, { useMemo, useRef, useState } from 'react';
@@ -247,6 +247,25 @@ export const useNodeInputAttrsWithLabel = <T extends z.ZodRawShape>(schema: z.Zo
           <InputWithTopLabelContainer>
             <Label>{label}</Label>
             <NodeMultiLineInput {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />
+          </InputWithTopLabelContainer>
+        );
+      },
+      Select: ({ name, schemaKey, label, labelLeft, ...props }: ReactPropsWithLabel<typeof Select>) => {
+        const { type, ...attrs } = inputAttrs(schema, name, defaults, schemaKey);
+        if (!label) return <NodeSelect {...attrs} {...props} />;
+
+        if (labelLeft)
+          return (
+            <InputWithLeftLabelContainer>
+              <Label>{label}</Label>
+              <NodeSelect {...attrs} {...props} />
+            </InputWithLeftLabelContainer>
+          );
+
+        return (
+          <InputWithTopLabelContainer>
+            <Label>{label}</Label>
+            <NodeSelect {...attrs} {...props} />
           </InputWithTopLabelContainer>
         );
       },

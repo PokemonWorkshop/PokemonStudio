@@ -1,15 +1,15 @@
-import { Background, Controls, ReactFlow, ReactFlowProvider } from '@xyflow/react';
 import { CommandLibrary } from '@components/world/event/commandLibrary/CommandLibrary';
 import { EventProvider } from '@components/world/event/common/EventContext';
-import type { CommandId } from '@modelEntities/event/command';
-import { CommandEditorAndDeletionKeys, CommandEditorOverlay } from './commands/editors/CommandEditorOverlay';
-import { useDialogsRef } from '@src/hooks/useDialogsRef';
-import { CommandToNodes } from './common/CommandToNodes';
 import { StudioEvent } from '@modelEntities/event/event';
+import type { CommandId } from '@modelEntities/event/globalCommand';
+import { useDialogsRef } from '@src/hooks/useDialogsRef';
+import { Background, Controls, ReactFlow, ReactFlowProvider } from '@xyflow/react';
+import React, { useMemo, useRef } from 'react';
+import styled from 'styled-components';
+import { CommandEditorAndDeletionKeys, CommandEditorOverlay } from './commands/editors/CommandEditorOverlay';
+import { CommandToNodes } from './common/CommandToNodes';
 import { CustomConnectionLineStyle, edgeTypes } from './common/CustomEdge';
 import { useEventFlow } from './hooks/useEventFlow';
-import styled from 'styled-components';
-import React, { useMemo, useRef } from 'react';
 
 const GRID_SIZE = 32;
 

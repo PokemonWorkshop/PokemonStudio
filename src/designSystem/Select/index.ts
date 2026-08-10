@@ -1,3 +1,4 @@
+export * from './NodeSelect';
 export * from './Select';
-export * from './useSelect';
 export * from './useRenderOptions';
+export * from './useSelect';
