@@ -354,6 +354,7 @@
   "battle_animation": "Auswirkungen der Schlacht",
   "battle_style": "Kampfstil",
   "screen_scale": "Auflösung",
+  "auto_run": "Auto Run",
   "language_message": "Diese Option wird automatisch verwaltet.",
   "no_inactive_option": "Keine inaktive Option",
   "no_active_option": "Keine aktive Option",

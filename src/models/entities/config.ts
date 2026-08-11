@@ -171,6 +171,7 @@ export const DEFAULT_GAME_OPTIONS = [
   'battle_animation',
   'battle_style',
   'screen_scale',
+  'auto_run',
 ] as const;
 
 export type DefaultGameOptions = (typeof DEFAULT_GAME_OPTIONS)[number];

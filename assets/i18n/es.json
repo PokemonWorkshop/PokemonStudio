@@ -354,6 +354,7 @@
   "battle_animation": "Efectos de combate",
   "battle_style": "Estilo de combate",
   "screen_scale": "Resolución",
+  "auto_run": "Auto Run",
   "language_message": "Esta opción se gestiona automáticamente.",
   "no_inactive_option": "Ninguna opción inactiva",
   "no_active_option": "No active option",
