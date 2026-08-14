@@ -1,5 +1,5 @@
 import type { StudioEvent } from '@modelEntities/event/event';
-import type { CommandId } from '@modelEntities/event/globalCommand';
+import { CommandId } from '../../../../../../models/entities/event/globalCommand';
 
 export type EventEditorProps = {
   commandId?: CommandId;

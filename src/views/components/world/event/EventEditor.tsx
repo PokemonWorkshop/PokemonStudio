@@ -4,7 +4,7 @@ import { StudioEvent } from '@modelEntities/event/event';
 import type { CommandId } from '@modelEntities/event/globalCommand';
 import { useDialogsRef } from '@src/hooks/useDialogsRef';
 import { Background, Controls, ReactFlow, ReactFlowProvider } from '@xyflow/react';
-import React, { useMemo, useRef } from 'react';
+import { default as React, useMemo, useRef } from 'react';
 import styled from 'styled-components';
 import { CommandEditorAndDeletionKeys, CommandEditorOverlay } from './commands/editors/CommandEditorOverlay';
 import { CommandToNodes } from './common/CommandToNodes';

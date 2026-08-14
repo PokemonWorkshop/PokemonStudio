@@ -37,6 +37,11 @@ export const EditorContainer = styled.div`
     background-color: ${(props) => props.theme.colors.dark15};
     border: 1px solid ${(props) => props.theme.colors.text400};
   }
+
+  .params {
+    color: ${(props) => props.theme.colors.text400};
+    ${(props) => props.theme.fonts.normalSmall};
+  }
 `;
 
 export const EditorWithCollapseContainer = styled(EditorContainer)`

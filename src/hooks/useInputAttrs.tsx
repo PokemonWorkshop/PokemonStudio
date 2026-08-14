@@ -17,6 +17,7 @@ import { inputAttrs } from '@utils/inputAttrs';
 import { basename } from '@utils/path';
 import React, { useMemo, useRef, useState } from 'react';
 import { z } from 'zod';
+import { MultiSelect } from '../designSystem/MultiSelect';
 
 type WithSchemaKeyAndName = {
   name: string;
@@ -183,6 +184,40 @@ export const useInputAttrsWithLabel = <T extends z.ZodRawShape>(schema: z.ZodObj
           </InputWithTopLabelContainer>
         );
       },
+      MultiSelect: ({
+        name,
+        schemaKey,
+        label,
+        defaultValue,
+        selectAllOption,
+        whenAllOptionSelected,
+        ...props
+      }: ReactPropsWithLabel<typeof MultiSelect>) => {
+        const { type, ...attrs } = inputAttrs(schema, name, defaults, schemaKey);
+        if (!label)
+          return (
+            <MultiSelect
+              {...attrs}
+              defaultValue={defaultValue}
+              {...props}
+              selectAllOption={selectAllOption}
+              whenAllOptionSelected={whenAllOptionSelected}
+            />
+          );
+
+        return (
+          <InputWithTopLabelContainer>
+            <Label>{label}</Label>
+            <MultiSelect
+              {...attrs}
+              {...props}
+              defaultValue={defaultValue}
+              selectAllOption={selectAllOption}
+              whenAllOptionSelected={whenAllOptionSelected}
+            />
+          </InputWithTopLabelContainer>
+        );
+      },
       Toggle: ({ name, schemaKey, label, ...props }: ReactProps<typeof Toggle>) => {
         const { type, required, ...attrs } = inputAttrs(schema, name, defaults, schemaKey);
         const defaultChecked = attrs.defaultValue === 'true';
@@ -266,6 +301,40 @@ export const useNodeInputAttrsWithLabel = <T extends z.ZodRawShape>(schema: z.Zo
           <InputWithTopLabelContainer>
             <Label>{label}</Label>
             <NodeSelect {...attrs} {...props} />
+          </InputWithTopLabelContainer>
+        );
+      },
+      MultiSelect: ({
+        name,
+        schemaKey,
+        label,
+        defaultValue,
+        selectAllOption,
+        whenAllOptionSelected,
+        ...props
+      }: ReactPropsWithLabel<typeof MultiSelect>) => {
+        const { type, ...attrs } = inputAttrs(schema, name, defaults, schemaKey);
+        if (!label)
+          return (
+            <MultiSelect
+              {...attrs}
+              defaultValue={defaultValue}
+              {...props}
+              selectAllOption={selectAllOption}
+              whenAllOptionSelected={whenAllOptionSelected}
+            />
+          );
+
+        return (
+          <InputWithTopLabelContainer>
+            <Label>{label}</Label>
+            <MultiSelect
+              {...attrs}
+              {...props}
+              defaultValue={defaultValue}
+              selectAllOption={selectAllOption}
+              whenAllOptionSelected={whenAllOptionSelected}
+            />
           </InputWithTopLabelContainer>
         );
       },

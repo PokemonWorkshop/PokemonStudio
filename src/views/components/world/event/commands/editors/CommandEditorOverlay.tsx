@@ -9,6 +9,7 @@ import { DefaultEditor } from './DefaultEditor';
 import { InsertScriptEditor } from './InsertScriptEditor';
 import { ShowMessageEditor } from './ShowMessageEditor';
 import { StartEditor } from './StartEditor';
+import { WaitMovementCompletionEditor } from './movementCommands/WaitMovementCompletion';
 
 export type CommandEditorAndDeletionKeys = StudioEventCommandType;
 export type CommandDialogsRef = React.RefObject<DialogRefData<CommandEditorAndDeletionKeys> | null>;
@@ -44,6 +45,7 @@ export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletion
       case 'teleport_event':
       case 'teleport_player':
       case 'wait_move_completion':
+        return <WaitMovementCompletionEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'manage_event_reappearance':
       case 'manage_path_finding':
       case 'manage_follow_me':
