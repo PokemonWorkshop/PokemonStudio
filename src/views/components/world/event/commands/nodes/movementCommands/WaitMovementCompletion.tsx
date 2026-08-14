@@ -66,6 +66,7 @@ export const WaitMovementCompletionCommand = ({ id, data: { dialogsRef, command,
     updateCommand({
       ...result.data,
       waitAllEvents: result.data.waitAllEvents === 'all',
+      waitById: waitEvent === 'all' ? [] : result.data.waitById,
     });
   };
 
@@ -78,6 +79,7 @@ export const WaitMovementCompletionCommand = ({ id, data: { dialogsRef, command,
     updateCommand({
       ...result.data,
       waitAllEvents: value === 'all',
+      waitById: waitEvent === 'all' ? [] : result.data.waitById,
     });
   };
 

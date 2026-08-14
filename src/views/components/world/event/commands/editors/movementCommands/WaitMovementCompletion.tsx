@@ -77,6 +77,7 @@ export const WaitMovementCompletionEditor = forwardRef<EditorHandlingClose, Even
     updateCommand({
       ...result.data,
       waitAllEvents: waitEvent === 'all',
+      waitById: waitEvent === 'all' ? [] : result.data.waitById,
       timeout: timeoutRef.current ? Number(timeoutRef.current.value) : result.data.timeout,
     });
   };
