@@ -354,6 +354,7 @@
   "battle_animation": "Animations de combat",
   "battle_style": "Style de combat",
   "screen_scale": "Résolution",
+  "auto_run": "Course Auto",
   "language_message": "Cette option est gérée automatiquement.",
   "no_inactive_option": "Aucune option inactive",
   "no_active_option": "Aucune option active",
