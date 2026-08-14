@@ -1,87 +1,13 @@
-import { POSITIVE_OR_ZERO_INT } from '@modelEntities/common';
 import { z } from 'zod';
 import type { StudioEventCommandCategory } from './category';
-
-export const COMMAND_ID_VALIDATOR = z.string().brand('CommandId');
-export type CommandId = z.infer<typeof COMMAND_ID_VALIDATOR>;
-
-export const COMMAND_CONNECTION_ID_VALIDATOR = z.string().brand('ConnectionId');
-export type ConnectionId = z.infer<typeof COMMAND_CONNECTION_ID_VALIDATOR>;
-
-const EVENT_COMMAND_STUDIO_DATA_VALIDATOR = z.object({
-  x: z.number().int(),
-  y: z.number().int(),
-  comments: z.array(z.string()),
-});
-
-export const EVENT_COMMAND_CONNECTION_VALIDATOR = z.object({
-  sourceHandle: z.string(),
-  target: COMMAND_ID_VALIDATOR,
-  targetHandle: z.string(),
-});
+import { COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_CONNECTION_VALIDATOR, EVENT_COMMAND_STUDIO_DATA_VALIDATOR } from './globalCommand';
+import { EVENT_COMMAND_SHOW_CHOICE_VALIDATOR } from './messageCommands/showChoice';
+import { EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR } from './messageCommands/showMessage';
+import { EVENT_COMMAND_WAIT_MOVEMENT_COMPLETION_VALIDATOR } from './movementCommands/waitMovementCompletion';
+import { EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR } from './scriptCommands/insertScript';
+import { EVENT_COMMAND_START_VALIDATOR } from './startCommands/start';
 
 export type StudioEventCommandConnection = z.infer<typeof EVENT_COMMAND_CONNECTION_VALIDATOR>;
-
-// #region Messages
-
-export const MESSAGE_BOX_POSITION_VALIDATOR = z.union([z.literal('top'), z.literal('middle'), z.literal('bottom')]);
-export type StudioMessageBoxPosition = z.infer<typeof MESSAGE_BOX_POSITION_VALIDATOR>;
-
-export const PORTRAIT_VALIDATOR = z.object({
-  image: z.string().default(''),
-  isMirrored: z.boolean().default(false),
-  position: z.number().int().default(0),
-  opacity: z.number().int().default(100),
-});
-export type StudioPortrait = z.infer<typeof PORTRAIT_VALIDATOR>;
-
-export const EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR = z.object({
-  type: z.literal('show_message'),
-  message: POSITIVE_OR_ZERO_INT,
-  allowSkipping: z.boolean().default(false),
-  narrator: POSITIVE_OR_ZERO_INT,
-  nameColor: z.string().default('#000000'),
-  showMessageBox: z.boolean().default(true),
-  messageBoxPosition: MESSAGE_BOX_POSITION_VALIDATOR.default('bottom'),
-  messageBoxAppearance: z.string().default(''),
-  lookAtThisEvent: z.boolean().default(false),
-  lookToOtherEvent: z.string().default('__undef__'),
-  minimap: z.string().default(''),
-  portraits: z.array(PORTRAIT_VALIDATOR).default([]),
-  connections: z.record(COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_CONNECTION_VALIDATOR),
-  studioData: EVENT_COMMAND_STUDIO_DATA_VALIDATOR,
-});
-
-export type StudioEventCommandShowMessage = z.infer<typeof EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR>;
-
-export const CHOICE_POSITION_VALIDATOR = z.union([z.literal('top'), z.literal('bottom')]);
-export type StudioChoicePosition = z.infer<typeof CHOICE_POSITION_VALIDATOR>;
-
-export const EVENT_COMMAND_SHOW_CHOICE_VALIDATOR = z.object({
-  type: z.literal('show_choice'),
-  choices: z.array(POSITIVE_OR_ZERO_INT),
-  choicePosition: CHOICE_POSITION_VALIDATOR.default('bottom'),
-  resultVariable: POSITIVE_OR_ZERO_INT.default(26), // Variable TMP_1 in RMXP
-  connections: z.record(COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_CONNECTION_VALIDATOR),
-  studioData: EVENT_COMMAND_STUDIO_DATA_VALIDATOR,
-});
-
-export type StudioEventCommandShowChoice = z.infer<typeof EVENT_COMMAND_SHOW_CHOICE_VALIDATOR>;
-
-// #endregion
-
-// #region Scripting
-
-export const EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR = z.object({
-  type: z.literal('insert_script'),
-  script: z.string().default(''),
-  connections: z.record(COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_CONNECTION_VALIDATOR),
-  studioData: EVENT_COMMAND_STUDIO_DATA_VALIDATOR,
-});
-
-export type StudioEventCommandInsertScript = z.infer<typeof EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR>;
-
-// #endregion
 
 const GENERIC_COMMAND = <T extends string>(type: T) =>
   z.object({
@@ -110,7 +36,7 @@ export const EVENT_COMMAND_VALIDATOR = z.discriminatedUnion('type', [
   GENERIC_COMMAND('move_event'),
   GENERIC_COMMAND('teleport_event'),
   GENERIC_COMMAND('teleport_player'),
-  GENERIC_COMMAND('wait_move_completion'),
+  EVENT_COMMAND_WAIT_MOVEMENT_COMPLETION_VALIDATOR,
   GENERIC_COMMAND('manage_event_reappearance'),
   GENERIC_COMMAND('manage_path_finding'),
   GENERIC_COMMAND('manage_follow_me'),
@@ -162,6 +88,7 @@ export const EVENT_COMMAND_VALIDATOR = z.discriminatedUnion('type', [
   GENERIC_COMMAND('manage_map_panorama'),
   GENERIC_COMMAND('change_battle_background'),
   EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR,
+  EVENT_COMMAND_START_VALIDATOR,
 ]);
 
 export type StudioEventCommand = z.infer<typeof EVENT_COMMAND_VALIDATOR>;
@@ -269,4 +196,5 @@ export const COMMANDS_FROM_CATEGORY: Record<StudioEventCommandCategory, EventCom
     { commandType: 'change_battle_background' },
   ],
   scripting: [{ commandType: 'insert_script', enabled: true }],
+  start: [{ commandType: 'start', enabled: true }],
 };

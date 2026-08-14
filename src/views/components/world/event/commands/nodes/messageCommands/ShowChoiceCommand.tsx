@@ -1,10 +1,11 @@
-import { StudioEventCommandData, StudioEventCommandShowChoice } from '@modelEntities/event/command';
+import type { StudioEventCommandData } from '@modelEntities/event/command';
+import type { StudioEventCommandShowChoice } from '@modelEntities/event/messageCommands/showChoice';
 import { useGetProjectText } from '@utils/ReadingProjectText';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { useCommandNode } from '../hooks/useCommandNode';
-import { CommandNodeProps } from './CommandNodeProps';
+import { useCommandNode } from '../../../hooks/useCommandNode';
+import { CommandNodeProps } from '../../CommandNodeProps';
 
 const ChoiceLabelContainer = styled.div<{ isCancel: boolean }>`
   height: 32px;

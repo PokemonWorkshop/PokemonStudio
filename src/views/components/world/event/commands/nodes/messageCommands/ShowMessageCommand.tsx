@@ -2,14 +2,16 @@ import { Input, InputWithTopLabelContainer, Label, MultiLineInput } from '@compo
 import { InputFormContainer } from '@components/inputs/InputContainer';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 import { useDialogsRef } from '@hooks/useDialogsRef';
-import { CommandId, StudioEventCommandData, StudioEventCommandShowMessage } from '@modelEntities/event/command';
+import type { StudioEventCommandData } from '@modelEntities/event/command';
+import type { CommandId } from '@modelEntities/event/globalCommand';
+import type { StudioEventCommandShowMessage } from '@modelEntities/event/messageCommands/showMessage';
 import { useGetProjectText, useSetProjectText } from '@utils/ReadingProjectText';
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
-import { useCommandNode } from '../hooks/useCommandNode';
-import { CommandNodeProps } from './CommandNodeProps';
-import { ShowMessageEditorTitle, ShowMessageOverlay } from './editors/ShowMessageOverlay';
+import { useCommandNode } from '../../../hooks/useCommandNode';
+import { CommandNodeProps } from '../../CommandNodeProps';
+import { ShowMessageEditorTitle, ShowMessageOverlay } from '../../editors/messageCommands/ShowMessageOverlay';
 
 const sharedInputStyles = css`
   background-color: rgba(255, 255, 255, 0.0001);

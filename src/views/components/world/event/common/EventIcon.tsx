@@ -10,6 +10,7 @@ import PlayerInteractionsIcon from '@assets/icons/global/player-interactions-ico
 import QuestsIcon from '@assets/icons/global/quests-icon.svg';
 import SaveIcon from '@assets/icons/global/save-icon.svg';
 import ScriptingIcon from '@assets/icons/global/scripting-icon.svg';
+import StartIcon from '@assets/icons/global/start-icon.svg';
 import VisualEffectsIcon from '@assets/icons/global/visual-effects-icon.svg';
 import VisualEnvironmentIcon from '@assets/icons/global/visual-environment-icon.svg';
 import type { StudioEventCommandCategory } from '@modelEntities/event/category';
@@ -31,7 +32,8 @@ export type EventIconColor =
   | 'cyanDark'
   | 'celadonDark'
   | 'peridotDark'
-  | 'oliveDark';
+  | 'oliveDark'
+  | 'emeraldDark';
 type EventIconContainerProps = {
   color: EventIconColor;
   size?: 's' | 'm';
@@ -85,6 +87,7 @@ export const IconsFromCategory: Record<StudioEventCommandCategory, EventIconData
   visual_effects: { icon: <VisualEffectsIcon />, color: 'celadonDark' },
   visual_environment: { icon: <VisualEnvironmentIcon />, color: 'oliveDark' },
   scripting: { icon: <ScriptingIcon />, color: 'goldDark' },
+  start: { icon: <StartIcon />, color: 'emeraldDark' },
 };
 
 export const IconsFromCommand: Record<StudioEventCommandType, EventIconData> = {
@@ -103,6 +106,7 @@ export const IconsFromCommand: Record<StudioEventCommandType, EventIconData> = {
   stop_event_execution: { icon: <FlowControlIcon />, color: 'magentaDark' },
   call_event: { icon: <FlowControlIcon />, color: 'magentaDark' },
   trigger_event: { icon: <FlowControlIcon />, color: 'magentaDark' },
+  start: { icon: <StartIcon />, color: 'emeraldDark' },
   change_event_parameters: { icon: <MovementIcon />, color: 'amethystDark' },
   move_event: { icon: <MovementIcon />, color: 'amethystDark' },
   teleport_event: { icon: <MovementIcon />, color: 'amethystDark' },

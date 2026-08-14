@@ -4,14 +4,18 @@ import { SecondaryNoBackground } from '@components/buttons';
 import { EditorWithCollapse } from '@components/editor';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { InputContainer, InputFormContainer, PaddedInputContainer } from '@components/inputs/InputContainer';
-import { EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR, PORTRAIT_VALIDATOR, StudioEventCommandShowMessage } from '@modelEntities/event/command';
+import {
+  EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR,
+  PORTRAIT_VALIDATOR,
+  StudioEventCommandShowMessage,
+} from '@modelEntities/event/messageCommands/showMessage';
 import { useInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
 import { useZodForm } from '@src/hooks/useZodForm';
 import React, { forwardRef, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { useCommandEditor } from '../../hooks/useCommandEditor';
-import { EventEditorProps } from './EventEditorProps';
+import { useCommandEditor } from '../../../hooks/useCommandEditor';
+import { EventEditorProps } from '../EventEditorProps';
 
 const InfoContainer = styled.span`
   ${({ theme }) => theme.fonts.normalSmall}

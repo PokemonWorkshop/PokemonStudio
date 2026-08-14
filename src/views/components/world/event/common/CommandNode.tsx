@@ -123,11 +123,20 @@ const CommandNodeContainer = styled.div<{ color: EventIconColor }>`
           cursor: pointer;
         }
 
+        .icon-container {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 16px;
+          height: 16px;
+        }
+
         .icon {
           color: #6c707b;
         }
 
         .count {
+          padding: 0px 2px;
           color: #b4b7c1;
         }
       }
@@ -159,22 +168,43 @@ const CommandNodeContainer = styled.div<{ color: EventIconColor }>`
   }
 `;
 
+const showDefaultHandles = (position: 'left' | 'right', defaultHandles?: DefaultHandles) => {
+  if (!defaultHandles) return true;
+
+  return defaultHandles[position];
+};
+
+type DefaultHandles = { left: boolean; right: boolean };
+
 type CommandNodeProps = {
   commandType: StudioEventCommandType;
   commentCount: number;
+  nodeId: string;
+  children: ReactNode;
   dialogsRef?: CommandDialogsRef;
   hasError?: boolean;
-  nodeId: string;
   selected?: boolean;
-  children: ReactNode;
   outputCount?: number;
+  footerChildren?: ReactNode;
+  defaultHandles?: DefaultHandles;
 };
 
-export const CommandNode = ({ commandType, commentCount, dialogsRef, hasError, nodeId, selected, children, outputCount }: CommandNodeProps) => {
+export const CommandNode = ({
+  commandType,
+  commentCount,
+  dialogsRef,
+  hasError,
+  nodeId,
+  selected,
+  outputCount,
+  defaultHandles,
+  children,
+  footerChildren,
+}: CommandNodeProps) => {
   const { setCurrentEditedNode } = useEventActions();
   const { isHandleConnected } = useHandleConnectionState(nodeId);
   const { t } = useTranslation();
-  const deployFooter = hasError || commentCount > 0;
+  const deployFooter = hasError || commentCount > 0 || !!footerChildren;
   const color = IconsFromCommand[commandType].color;
   const handleLeftIsConnected = isHandleConnected('Tleft_default', 'target');
   const handleRightIsConnected = isHandleConnected('Sright_default', 'source');
@@ -182,40 +212,43 @@ export const CommandNode = ({ commandType, commentCount, dialogsRef, hasError, n
 
   return (
     <>
-      <CustomHandle
-        color={color}
-        handleIsConnected={handleLeftIsConnected}
-        id="Tleft_default"
-        position={Position.Left}
-        type="target"
-        multiHandle={false}
-      />
-      {hasMultipleOutputs ? (
-        Array.from({ length: outputCount }, (_, i) => {
-          const handleId = `Sright_${i}`;
-          return (
-            <CustomHandle
-              key={handleId}
-              color={color}
-              handleIsConnected={isHandleConnected(handleId, 'source')}
-              id={handleId}
-              position={Position.Right}
-              type="source"
-              multiHandle={true}
-              index={i}
-            />
-          );
-        })
-      ) : (
+      {showDefaultHandles('left', defaultHandles) && (
         <CustomHandle
           color={color}
-          handleIsConnected={handleRightIsConnected}
-          id="Sright_default"
-          position={Position.Right}
-          type="source"
+          handleIsConnected={handleLeftIsConnected}
+          id="Tleft_default"
+          position={Position.Left}
+          type="target"
           multiHandle={false}
         />
       )}
+      {showDefaultHandles('right', defaultHandles) &&
+        (hasMultipleOutputs ? (
+          Array.from({ length: outputCount }, (_, i) => {
+            const handleId = `Sright_${i}`;
+            return (
+              <CustomHandle
+                key={handleId}
+                color={color}
+                handleIsConnected={isHandleConnected(handleId, 'source')}
+                id={handleId}
+                position={Position.Right}
+                type="source"
+                multiHandle={true}
+                index={i}
+              />
+            );
+          })
+        ) : (
+          <CustomHandle
+            color={color}
+            handleIsConnected={handleRightIsConnected}
+            id="Sright_default"
+            position={Position.Right}
+            type="source"
+            multiHandle={false}
+          />
+        ))}
       <CommandNodeContainer
         color={color}
         data-selected={selected}
@@ -245,6 +278,7 @@ export const CommandNode = ({ commandType, commentCount, dialogsRef, hasError, n
             <div />
           )}
           <div className="actions">
+            {footerChildren}
             {commentCount > 0 && (
               <div className="comments nodrag" onClick={(e) => e.stopPropagation()} onDoubleClick={(e) => e.stopPropagation()}>
                 <NoteIcon className="icon" />

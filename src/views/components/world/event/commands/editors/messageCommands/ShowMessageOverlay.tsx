@@ -1,7 +1,8 @@
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
 import { TranslationEditorWithCloseHandling } from '@components/editor/TranslationEditorWithCloseHandling';
-import { CommandId, StudioEventCommandShowMessage } from '@modelEntities/event/command';
 import { StudioEvent } from '@modelEntities/event/event';
+import type { CommandId } from '@modelEntities/event/globalCommand';
+import type { StudioEventCommandShowMessage } from '@modelEntities/event/messageCommands/showMessage';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import React from 'react';
 import { ShowMessagePortraitsEditor } from './ShowMessagePortraitsEditor';

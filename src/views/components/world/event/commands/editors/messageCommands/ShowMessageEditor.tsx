@@ -6,15 +6,15 @@ import { InputContainer, InputFormContainer, PaddedInputContainer } from '@compo
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 import { useDialogsRef } from '@hooks/useDialogsRef';
-import { EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR, StudioEventCommandShowMessage } from '@modelEntities/event/command';
+import { EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR, StudioEventCommandShowMessage } from '@modelEntities/event/messageCommands/showMessage';
 import { useInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
 import { useZodForm } from '@src/hooks/useZodForm';
 import { useGetProjectText, useSetProjectText } from '@utils/ReadingProjectText';
 import React, { forwardRef, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { useCommandEditor } from '../../hooks/useCommandEditor';
-import { EventEditorProps } from './EventEditorProps';
+import { useCommandEditor } from '../../../hooks/useCommandEditor';
+import { EventEditorProps } from '../EventEditorProps';
 import { ShowMessageEditorTitle, ShowMessageOverlay } from './ShowMessageOverlay';
 
 const SHOW_MESSAGE_EDITOR_SCHEMA = EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR.pick({

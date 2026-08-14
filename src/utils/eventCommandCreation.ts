@@ -1,6 +1,6 @@
 import type { StudioEventCommand, StudioEventCommandData, StudioEventCommandType } from '@modelEntities/event/command';
 import { StudioEvent } from '@modelEntities/event/event';
-import { findMultipleAvailableTextIdsEvent } from './ModelUtils';
+import { findFirstAvailablePriorityEvent, findMultipleAvailableTextIdsEvent } from './ModelUtils';
 
 const createShowMessageCommand = (event: StudioEvent) => {
   const ids = findMultipleAvailableTextIdsEvent(event, 0, 2, []);
@@ -28,7 +28,20 @@ const createShowChoiceCommand = (event: StudioEvent) => {
   };
 };
 
+export const createWaitMovementCompletionCommand = () => {
+  return {
+    waitAllEvents: false,
+    waitById: [],
+    timeout: 0,
+  };
+};
+
 const insertScriptCommand = () => ({ script: '' });
+
+const startCommand = (event: StudioEvent) => {
+  const priority = findFirstAvailablePriorityEvent(event, 1);
+  return { trigger: 'key_press', priority };
+};
 
 const dummy = () => ({});
 
@@ -53,7 +66,7 @@ export const EventCommandCreation: Record<StudioEventCommandType, (event: Studio
     move_event: dummy,
     teleport_event: dummy,
     teleport_player: dummy,
-    wait_move_completion: dummy,
+    wait_move_completion: createWaitMovementCompletionCommand,
     manage_event_reappearance: dummy,
     manage_path_finding: dummy,
     manage_follow_me: dummy,
@@ -105,4 +118,5 @@ export const EventCommandCreation: Record<StudioEventCommandType, (event: Studio
     manage_map_panorama: dummy,
     change_battle_background: dummy,
     insert_script: insertScriptCommand,
+    start: startCommand,
   };

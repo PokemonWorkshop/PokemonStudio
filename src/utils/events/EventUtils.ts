@@ -1,6 +1,7 @@
 import type { CommandDialogsRef } from '@components/world/event/commands/editors/CommandEditorOverlay';
-import type { CommandId, ConnectionId, StudioEventCommandConnection } from '@modelEntities/event/command';
+import type { StudioEventCommandConnection } from '@modelEntities/event/command';
 import type { StudioEvent } from '@modelEntities/event/event';
+import type { CommandId, ConnectionId } from '@modelEntities/event/globalCommand';
 import { findFirstAvailableId } from '@utils/ModelUtils';
 import type { Connection, Edge } from '@xyflow/react';
 

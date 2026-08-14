@@ -18,7 +18,8 @@ import {
   DropResult,
 } from '@hello-pangea/dnd';
 import { useDialogsRef } from '@hooks/useDialogsRef';
-import { COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_SHOW_CHOICE_VALIDATOR, StudioEventCommandShowChoice } from '@modelEntities/event/command';
+import { COMMAND_CONNECTION_ID_VALIDATOR } from '@modelEntities/event/globalCommand';
+import { EVENT_COMMAND_SHOW_CHOICE_VALIDATOR, StudioEventCommandShowChoice } from '@modelEntities/event/messageCommands/showChoice';
 import { useInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
 import { useZodForm } from '@src/hooks/useZodForm';
 import { findMultipleAvailableTextIdsEvent } from '@utils/ModelUtils';
@@ -27,8 +28,8 @@ import { useReactFlow, type Edge } from '@xyflow/react';
 import React, { forwardRef, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { useCommandEditor } from '../../hooks/useCommandEditor';
-import { EventEditorProps } from './EventEditorProps';
+import { useCommandEditor } from '../../../hooks/useCommandEditor';
+import { EventEditorProps } from '../EventEditorProps';
 import { ShowChoiceEditorTitle, ShowChoiceOverlay } from './ShowChoiceOverlay';
 
 const SHOW_CHOICE_EDITOR_SCHEMA = EVENT_COMMAND_SHOW_CHOICE_VALIDATOR.pick({

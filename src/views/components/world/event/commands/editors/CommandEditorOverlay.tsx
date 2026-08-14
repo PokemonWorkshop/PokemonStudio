@@ -1,13 +1,16 @@
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
 import { DialogRefData } from '@hooks/useDialogsRef';
-import type { CommandId, StudioEventCommandType } from '@modelEntities/event/command';
+import type { StudioEventCommandType } from '@modelEntities/event/command';
 import type { StudioEvent } from '@modelEntities/event/event';
+import type { CommandId } from '@modelEntities/event/globalCommand';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import React from 'react';
 import { DefaultEditor } from './DefaultEditor';
-import { InsertScriptEditor } from './InsertScriptEditor';
-import { ShowChoiceEditor } from './ShowChoiceEditor';
-import { ShowMessageEditor } from './ShowMessageEditor';
+import { ShowChoiceEditor } from './messageCommands/ShowChoiceEditor';
+import { ShowMessageEditor } from './messageCommands/ShowMessageEditor';
+import { WaitMovementCompletionEditor } from './movementCommands/WaitMovementCompletion';
+import { InsertScriptEditor } from './scriptCommands/InsertScriptEditor';
+import { StartEditor } from './startCommands/StartEditor';
 
 export type CommandEditorAndDeletionKeys = StudioEventCommandType;
 export type CommandDialogsRef = React.RefObject<DialogRefData<CommandEditorAndDeletionKeys> | null>;
@@ -42,6 +45,7 @@ export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletion
       case 'teleport_event':
       case 'teleport_player':
       case 'wait_move_completion':
+        return <WaitMovementCompletionEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'manage_event_reappearance':
       case 'manage_path_finding':
       case 'manage_follow_me':
@@ -95,6 +99,8 @@ export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletion
         return <DefaultEditor ref={handleCloseRef} />;
       case 'insert_script':
         return <InsertScriptEditor commandId={commandId} event={event} ref={handleCloseRef} />;
+      case 'start':
+        return <StartEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       default:
         return assertUnreachable(dialogToShow);
     }

@@ -168,3 +168,20 @@ export const findMultipleAvailableTextIdsEvent = (event: StudioEvent, startId: n
 
   return ids;
 };
+
+export const findFirstAvailablePriorityEvent = (event: StudioEvent, startId: number) => {
+  const commands = Object.values(event.commands).filter((command) => !!command && command.type === 'start');
+  if (commands.length === 0) return startId;
+
+  const idSet = commands
+    .reduce<number[]>((prev, { priority }) => [...prev, priority], [])
+    .filter((id, index, array) => index === array.indexOf(id)) // reject all duplicates
+    .sort((a, b) => a - b); // sort id by ascending order
+  // Since ids are ordered, if the first isn't the startId that means we need to fill the beginning of the list ;)
+  if (idSet[0] > startId) return startId;
+
+  const holeIndex = idSet.findIndex((id, index) => id !== index + startId);
+  if (holeIndex === -1) return idSet[idSet.length - 1] + 1;
+
+  return idSet[holeIndex - 1] + 1;
+};
