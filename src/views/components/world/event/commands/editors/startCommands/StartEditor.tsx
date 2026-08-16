@@ -3,14 +3,14 @@ import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/
 import { InputWithTopLabelContainer, Label } from '@components/inputs';
 import { InputFormContainer } from '@components/inputs/InputContainer';
 import { Select as DsSelect } from '@ds/Select';
-import { EVENT_COMMAND_START_VALIDATOR, START_TRIGGERS, StudioEventCommandStart } from '@modelEntities/event/commands/start';
 import { StudioEvent } from '@modelEntities/event/event';
+import { EVENT_COMMAND_START_VALIDATOR, START_TRIGGERS, StudioEventCommandStart } from '@modelEntities/event/startCommands/start';
 import { useInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
 import { useZodForm } from '@src/hooks/useZodForm';
 import React, { forwardRef, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useCommandEditor } from '../../hooks/useCommandEditor';
-import { EventEditorProps } from './EventEditorProps';
+import { useCommandEditor } from '../../../hooks/useCommandEditor';
+import { EventEditorProps } from '../EventEditorProps';
 
 const START_EDITOR_SCHEMA = EVENT_COMMAND_START_VALIDATOR.pick({ trigger: true, priority: true });
 

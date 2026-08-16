@@ -1,58 +1,13 @@
-import { POSITIVE_OR_ZERO_INT } from '@modelEntities/common';
 import { z } from 'zod';
 import type { StudioEventCommandCategory } from './category';
-import { EVENT_COMMAND_START_VALIDATOR } from './commands/start';
 import { COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_CONNECTION_VALIDATOR, EVENT_COMMAND_STUDIO_DATA_VALIDATOR } from './globalCommand';
-import { EVENT_COMMAND_WAIT_MOVEMENT_COMPLETION_VALIDATOR } from './movement/waitMovementCompletion';
+import { EVENT_COMMAND_SHOW_CHOICE_VALIDATOR } from './messageCommands/showChoice';
+import { EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR } from './messageCommands/showMessage';
+import { EVENT_COMMAND_WAIT_MOVEMENT_COMPLETION_VALIDATOR } from './movementCommands/waitMovementCompletion';
+import { EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR } from './scriptCommands/insertScript';
+import { EVENT_COMMAND_START_VALIDATOR } from './startCommands/start';
 
 export type StudioEventCommandConnection = z.infer<typeof EVENT_COMMAND_CONNECTION_VALIDATOR>;
-
-//#region Messages
-
-export const MESSAGE_BOX_POSITION_VALIDATOR = z.union([z.literal('top'), z.literal('middle'), z.literal('bottom')]);
-export type StudioMessageBoxPosition = z.infer<typeof MESSAGE_BOX_POSITION_VALIDATOR>;
-
-export const PORTRAIT_VALIDATOR = z.object({
-  image: z.string().default(''),
-  isMirrored: z.boolean().default(false),
-  position: z.number().int().default(0),
-  opacity: z.number().int().default(100),
-});
-export type StudioPortrait = z.infer<typeof PORTRAIT_VALIDATOR>;
-
-export const EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR = z.object({
-  type: z.literal('show_message'),
-  message: POSITIVE_OR_ZERO_INT,
-  allowSkipping: z.boolean().default(false),
-  narrator: POSITIVE_OR_ZERO_INT,
-  nameColor: z.string().default('#000000'),
-  showMessageBox: z.boolean().default(true),
-  messageBoxPosition: MESSAGE_BOX_POSITION_VALIDATOR.default('bottom'),
-  messageBoxAppearance: z.string().default(''),
-  lookAtThisEvent: z.boolean().default(false),
-  lookToOtherEvent: z.string().default('__undef__'),
-  minimap: z.string().default(''),
-  portraits: z.array(PORTRAIT_VALIDATOR).default([]),
-  connections: z.record(COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_CONNECTION_VALIDATOR),
-  studioData: EVENT_COMMAND_STUDIO_DATA_VALIDATOR,
-});
-
-export type StudioEventCommandShowMessage = z.infer<typeof EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR>;
-
-//#endregion
-
-//#region Scripting
-
-export const EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR = z.object({
-  type: z.literal('insert_script'),
-  script: z.string().default(''),
-  connections: z.record(COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_CONNECTION_VALIDATOR),
-  studioData: EVENT_COMMAND_STUDIO_DATA_VALIDATOR,
-});
-
-export type StudioEventCommandInsertScript = z.infer<typeof EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR>;
-
-//#endregion
 
 const GENERIC_COMMAND = <T extends string>(type: T) =>
   z.object({
@@ -63,9 +18,7 @@ const GENERIC_COMMAND = <T extends string>(type: T) =>
 
 export const EVENT_COMMAND_VALIDATOR = z.discriminatedUnion('type', [
   EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR,
-  GENERIC_COMMAND('narrator_settings'),
-  GENERIC_COMMAND('manage_message_box'),
-  GENERIC_COMMAND('show_choice'),
+  EVENT_COMMAND_SHOW_CHOICE_VALIDATOR,
   GENERIC_COMMAND('wait_key_press'),
   GENERIC_COMMAND('record_key_press'),
   GENERIC_COMMAND('input_creature_name'),
@@ -149,12 +102,7 @@ export type EventCommandForCategory = {
 };
 
 export const COMMANDS_FROM_CATEGORY: Record<StudioEventCommandCategory, EventCommandForCategory[]> = {
-  messages: [
-    { commandType: 'show_message', enabled: true },
-    { commandType: 'narrator_settings' },
-    { commandType: 'manage_message_box' },
-    { commandType: 'show_choice' },
-  ],
+  messages: [{ commandType: 'show_message', enabled: true }, { commandType: 'show_choice' }],
   player_interactions: [
     { commandType: 'wait_key_press' },
     { commandType: 'record_key_press' },

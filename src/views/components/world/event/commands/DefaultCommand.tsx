@@ -23,6 +23,7 @@ export const DefaultCommand = ({ id, data: { dialogsRef, command }, selected }: 
         position={Position.Right}
         type="source"
         style={{ top: '50px' }}
+        multiHandle={false}
       />
       <span>{date}</span>
     </CommandNode>

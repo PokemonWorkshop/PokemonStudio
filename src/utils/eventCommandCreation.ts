@@ -1,14 +1,13 @@
 import type { StudioEventCommand, StudioEventCommandData, StudioEventCommandType } from '@modelEntities/event/command';
 import { StudioEvent } from '@modelEntities/event/event';
-import { createWaitMovementCompletionCommand } from '../models/entities/event/movement/waitMovementCompletion';
-import { findFirstAvailablePriorityEvent, findFirstAvailableTextIdEvent } from './ModelUtils';
+import { findFirstAvailablePriorityEvent, findMultipleAvailableTextIdsEvent } from './ModelUtils';
 
 const createShowMessageCommand = (event: StudioEvent) => {
-  const { messageId, narratorId } = findFirstAvailableTextIdEvent(event, 0);
+  const ids = findMultipleAvailableTextIdsEvent(event, 0, 2, []);
   return {
-    message: messageId,
+    message: ids[0],
     allowSkipping: false,
-    narrator: narratorId,
+    narrator: ids[1],
     nameColor: '#000000',
     showMessageBox: true,
     messageBoxPosition: 'bottom',
@@ -17,6 +16,23 @@ const createShowMessageCommand = (event: StudioEvent) => {
     lookToOtherEvent: '__undef__',
     minimap: '',
     portraits: [],
+  };
+};
+
+const createShowChoiceCommand = (event: StudioEvent) => {
+  const ids = findMultipleAvailableTextIdsEvent(event, 0, 2, []);
+  return {
+    choices: [ids[0], ids[1]],
+    choicePosition: 'bottom',
+    resultVariable: 26,
+  };
+};
+
+export const createWaitMovementCompletionCommand = () => {
+  return {
+    waitAllEvents: false,
+    waitById: [],
+    timeout: 0,
   };
 };
 
@@ -32,9 +48,7 @@ const dummy = () => ({});
 export const EventCommandCreation: Record<StudioEventCommandType, (event: StudioEvent) => Omit<StudioEventCommandData<StudioEventCommand>, 'type'>> =
   {
     show_message: createShowMessageCommand,
-    narrator_settings: dummy,
-    manage_message_box: dummy,
-    show_choice: dummy,
+    show_choice: createShowChoiceCommand,
     wait_key_press: dummy,
     record_key_press: dummy,
     input_creature_name: dummy,

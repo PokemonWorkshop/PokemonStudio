@@ -1,7 +1,9 @@
-import { StudioEventCommand, StudioEventCommandData, StudioEventCommandShowMessage, StudioEventCommandType } from '@modelEntities/event/command';
-import { StudioEventCommandStart } from '@modelEntities/event/commands/start';
+import { StudioEventCommand, StudioEventCommandData, StudioEventCommandType } from '@modelEntities/event/command';
 import { StudioEvent } from '@modelEntities/event/event';
 import { CommandId } from '@modelEntities/event/globalCommand';
+import { StudioEventCommandShowChoice } from '@modelEntities/event/messageCommands/showChoice';
+import { StudioEventCommandShowMessage } from '@modelEntities/event/messageCommands/showMessage';
+import { StudioEventCommandStart } from '@modelEntities/event/startCommands/start';
 import { cloneEntity } from '@utils/cloneEntity';
 import { EventCommandCreation } from '@utils/eventCommandCreation';
 import {
@@ -25,6 +27,7 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import { DragEventHandler, RefObject, useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { CommandDialogsRef } from '../commands/editors/CommandEditorOverlay';
 import { useEventContext } from '../common/EventContext';
 import { useUpdateEvent } from './useUpdateEvent';
@@ -45,6 +48,7 @@ type ChangeToApplyEventsType = { type: 'position'; commandId: CommandId; positio
 export const useEventFlow = (event: StudioEvent, eventFlowRef?: RefObject<HTMLDivElement | null>, dialogsRef?: CommandDialogsRef) => {
   const { currentEditedNode, type, setCurrentEditedNode, setType } = useEventContext();
   const reactFlowInstance = useReactFlow();
+  const { t } = useTranslation();
   const [nodes, setNodes] = useNodesState<NodeEvent | NodeShadow>([
     { id: 'shadow_node', type: 'shadow_node', position: { x: 0, y: 0 }, data: {}, hidden: true },
     ...initCommandNodes(event, dialogsRef),
@@ -138,6 +142,12 @@ export const useEventFlow = (event: StudioEvent, eventFlowRef?: RefObject<HTMLDi
         const showMessageCommand = command as StudioEventCommandData<StudioEventCommandShowMessage>;
         setText(event.csvFileId, showMessageCommand.message, '');
         setText(event.csvFileId, showMessageCommand.narrator, '');
+      }
+
+      if (type === 'show_choice') {
+        const showChoiceCommand = command as StudioEventCommandData<StudioEventCommandShowChoice>;
+        setText(event.csvFileId, showChoiceCommand.choices[0], t(`event_command_yes`));
+        setText(event.csvFileId, showChoiceCommand.choices[1], t(`event_command_no`));
       }
 
       updateEvent({

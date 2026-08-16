@@ -184,6 +184,7 @@ type CommandNodeProps = {
   dialogsRef?: CommandDialogsRef;
   hasError?: boolean;
   selected?: boolean;
+  outputCount?: number;
   footerChildren?: ReactNode;
   defaultHandles?: DefaultHandles;
 };
@@ -195,6 +196,7 @@ export const CommandNode = ({
   hasError,
   nodeId,
   selected,
+  outputCount,
   defaultHandles,
   children,
   footerChildren,
@@ -206,15 +208,47 @@ export const CommandNode = ({
   const color = IconsFromCommand[commandType].color;
   const handleLeftIsConnected = isHandleConnected('Tleft_default', 'target');
   const handleRightIsConnected = isHandleConnected('Sright_default', 'source');
+  const hasMultipleOutputs = outputCount !== undefined && outputCount > 1;
 
   return (
     <>
       {showDefaultHandles('left', defaultHandles) && (
-        <CustomHandle color={color} handleIsConnected={handleLeftIsConnected} id="Tleft_default" position={Position.Left} type="target" />
+        <CustomHandle
+          color={color}
+          handleIsConnected={handleLeftIsConnected}
+          id="Tleft_default"
+          position={Position.Left}
+          type="target"
+          multiHandle={false}
+        />
       )}
-      {showDefaultHandles('right', defaultHandles) && (
-        <CustomHandle color={color} handleIsConnected={handleRightIsConnected} id="Sright_default" position={Position.Right} type="source" />
-      )}
+      {showDefaultHandles('right', defaultHandles) &&
+        (hasMultipleOutputs ? (
+          Array.from({ length: outputCount }, (_, i) => {
+            const handleId = `Sright_${i}`;
+            return (
+              <CustomHandle
+                key={handleId}
+                color={color}
+                handleIsConnected={isHandleConnected(handleId, 'source')}
+                id={handleId}
+                position={Position.Right}
+                type="source"
+                multiHandle={true}
+                index={i}
+              />
+            );
+          })
+        ) : (
+          <CustomHandle
+            color={color}
+            handleIsConnected={handleRightIsConnected}
+            id="Sright_default"
+            position={Position.Right}
+            type="source"
+            multiHandle={false}
+          />
+        ))}
       <CommandNodeContainer
         color={color}
         data-selected={selected}

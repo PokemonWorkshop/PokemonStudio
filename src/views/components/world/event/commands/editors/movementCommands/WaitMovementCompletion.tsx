@@ -1,17 +1,17 @@
 import { Editor } from '@components/editor';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { InputFormContainer } from '@components/inputs/InputContainer';
+import {
+  EVENT_COMMAND_WAIT_MOVEMENT_COMPLETION_VALIDATOR,
+  StudioEventWaitMovementCompletion,
+} from '@modelEntities/event/movementCommands/waitMovementCompletion';
 import { useInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
 import { useZodForm } from '@src/hooks/useZodForm';
 import React, { forwardRef, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import z from 'zod';
-import {
-  EVENT_COMMAND_WAIT_MOVEMENT_COMPLETION_VALIDATOR,
-  StudioEventWaitMovementCompletion,
-} from '../../../../../../../models/entities/event/movement/waitMovementCompletion';
-import { InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '../../../../../inputs';
 import { useCommandEditor } from '../../../hooks/useCommandEditor';
 import { useSharedOptions } from '../../sharedSelectOptions';
 import { EventEditorProps } from '../EventEditorProps';

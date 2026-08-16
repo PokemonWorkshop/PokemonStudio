@@ -13,7 +13,6 @@ import type { CommandId } from '@modelEntities/event/globalCommand';
 import { StudioMap } from '@modelEntities/map';
 import { findFirstAvailableCsvFileId, findFirstAvailableId } from '@utils/ModelUtils';
 import log from 'electron-log';
-import { CommandId } from '../models/entities/event/globalCommand';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import { readRMXPEvents, RMXPEvent } from './readRMXPEvents';
 

@@ -60,6 +60,7 @@ export type TranslationEditorTitle =
   | 'translation_form_description'
   | 'translation_message'
   | 'translation_narrator'
+  | 'translation_choice'
   | 'translation_custom_objective';
 
 type InputRefsType = Record<string, HTMLInputElement | HTMLTextAreaElement | null>;

@@ -1,15 +1,15 @@
 import PriorityIcon from '@assets/icons/global/priority-icon.svg';
 import { InputFormContainer } from '@components/inputs/InputContainer';
 import { StudioEventCommandData } from '@modelEntities/event/command';
-import { EVENT_COMMAND_START_VALIDATOR, START_TRIGGERS, StudioEventCommandStart } from '@modelEntities/event/commands/start';
+import { EVENT_COMMAND_START_VALIDATOR, START_TRIGGERS, StudioEventCommandStart } from '@modelEntities/event/startCommands/start';
 import { useNodeInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
 import { useZodForm } from '@src/hooks/useZodForm';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useEventActions } from '../common/EventContext';
-import { useCommandNode } from '../hooks/useCommandNode';
-import { CommandNodeProps } from './CommandNodeProps';
-import { CommandDialogsRef } from './editors/CommandEditorOverlay';
+import { useEventActions } from '../../../common/EventContext';
+import { useCommandNode } from '../../../hooks/useCommandNode';
+import { CommandNodeProps } from '../../CommandNodeProps';
+import { CommandDialogsRef } from '../../editors/CommandEditorOverlay';
 
 const START_EDITOR_SCHEMA = EVENT_COMMAND_START_VALIDATOR.pick({ trigger: true });
 

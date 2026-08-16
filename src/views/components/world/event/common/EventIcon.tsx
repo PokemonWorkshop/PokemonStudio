@@ -92,8 +92,6 @@ export const IconsFromCategory: Record<StudioEventCommandCategory, EventIconData
 
 export const IconsFromCommand: Record<StudioEventCommandType, EventIconData> = {
   show_message: { icon: <MessagesIcon />, color: 'cobaltDark' },
-  narrator_settings: { icon: <MessagesIcon />, color: 'cobaltDark' },
-  manage_message_box: { icon: <MessagesIcon />, color: 'cobaltDark' },
   show_choice: { icon: <MessagesIcon />, color: 'cobaltDark' },
   wait_key_press: { icon: <PlayerInteractionsIcon />, color: 'ceruleanDark' },
   record_key_press: { icon: <PlayerInteractionsIcon />, color: 'ceruleanDark' },

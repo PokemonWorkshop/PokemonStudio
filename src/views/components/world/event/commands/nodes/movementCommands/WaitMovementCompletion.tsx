@@ -1,14 +1,14 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import z from 'zod';
-import { useNodeInputAttrsWithLabel } from '../../../../../../../hooks/useInputAttrs';
-import { useZodForm } from '../../../../../../../hooks/useZodForm';
-import { StudioEventCommandData } from '../../../../../../../models/entities/event/command';
+import { InputFormContainer } from '@components/inputs/InputContainer';
+import type { StudioEventCommandData } from '@modelEntities/event/command';
 import {
   EVENT_COMMAND_WAIT_MOVEMENT_COMPLETION_VALIDATOR,
   StudioEventWaitMovementCompletion,
-} from '../../../../../../../models/entities/event/movement/waitMovementCompletion';
-import { InputFormContainer } from '../../../../../inputs/InputContainer';
+} from '@modelEntities/event/movementCommands/waitMovementCompletion';
+import { useNodeInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
+import { useZodForm } from '@src/hooks/useZodForm';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import z from 'zod';
 import { useEventData } from '../../../common/EventContext';
 import { useCommandNode } from '../../../hooks/useCommandNode';
 import { CommandNodeProps } from '../../CommandNodeProps';

@@ -6,10 +6,11 @@ import type { CommandId } from '@modelEntities/event/globalCommand';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import React from 'react';
 import { DefaultEditor } from './DefaultEditor';
-import { InsertScriptEditor } from './InsertScriptEditor';
-import { ShowMessageEditor } from './ShowMessageEditor';
-import { StartEditor } from './StartEditor';
+import { ShowChoiceEditor } from './messageCommands/ShowChoiceEditor';
+import { ShowMessageEditor } from './messageCommands/ShowMessageEditor';
 import { WaitMovementCompletionEditor } from './movementCommands/WaitMovementCompletion';
+import { InsertScriptEditor } from './scriptCommands/InsertScriptEditor';
+import { StartEditor } from './startCommands/StartEditor';
 
 export type CommandEditorAndDeletionKeys = StudioEventCommandType;
 export type CommandDialogsRef = React.RefObject<DialogRefData<CommandEditorAndDeletionKeys> | null>;
@@ -24,9 +25,8 @@ export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletion
     switch (dialogToShow) {
       case 'show_message':
         return <ShowMessageEditor commandId={commandId} event={event} ref={handleCloseRef} />;
-      case 'narrator_settings':
-      case 'manage_message_box':
       case 'show_choice':
+        return <ShowChoiceEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'wait_key_press':
       case 'record_key_press':
       case 'input_creature_name':

@@ -2,17 +2,16 @@ import type { StudioEventCommandType } from '@modelEntities/event/command';
 import { JSX } from 'react';
 import type { CommandNodeProps } from '../commands/CommandNodeProps';
 import { DefaultCommand } from '../commands/DefaultCommand';
-import { InsertScriptCommand } from '../commands/InsertScriptCommand';
+import { ShowChoiceCommand } from '../commands/nodes/messageCommands/ShowChoiceCommand';
+import { ShowMessageCommand } from '../commands/nodes/messageCommands/ShowMessageCommand';
 import { WaitMovementCompletionCommand } from '../commands/nodes/movementCommands/WaitMovementCompletion';
-import { ShowMessageCommand } from '../commands/ShowMessageCommand';
-import { StartCommand } from '../commands/StartCommand';
+import { InsertScriptCommand } from '../commands/nodes/scriptCommands/InsertScriptCommand';
+import { StartCommand } from '../commands/nodes/startCommands/StartCommand';
 import { ShadowNode } from './ShadowNode';
 
 export const CommandToNodes: Record<StudioEventCommandType | 'shadow_node', (props: CommandNodeProps) => JSX.Element> = {
   show_message: ShowMessageCommand,
-  narrator_settings: DefaultCommand,
-  manage_message_box: DefaultCommand,
-  show_choice: DefaultCommand,
+  show_choice: ShowChoiceCommand,
   wait_key_press: DefaultCommand,
   record_key_press: DefaultCommand,
   input_creature_name: DefaultCommand,

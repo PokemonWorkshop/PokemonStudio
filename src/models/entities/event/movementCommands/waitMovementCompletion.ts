@@ -13,11 +13,3 @@ export const EVENT_COMMAND_WAIT_MOVEMENT_COMPLETION_VALIDATOR = z.object({
 });
 
 export type StudioEventWaitMovementCompletion = z.infer<typeof EVENT_COMMAND_WAIT_MOVEMENT_COMPLETION_VALIDATOR>;
-
-export const createWaitMovementCompletionCommand = () => {
-  return {
-    waitAllEvents: false,
-    waitById: [],
-    timeout: 0,
-  };
-};
