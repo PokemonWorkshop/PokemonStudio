@@ -15,15 +15,17 @@ export const CONDITION_OPERATOR_LIST = [
   'not_have',
   'contains',
   'not_contain',
+  'regexp',
 ] as const;
 export type StudioConditionOperator = (typeof CONDITION_OPERATOR_LIST)[number];
 
-export type StudioConditionOperatorGroup = 'Boolean' | 'Number' | 'Enumerator' | 'Ownership' | 'CollectionMembership';
+export type StudioConditionOperatorGroup = 'Boolean' | 'Number' | 'Enumerator' | 'Ownership' | 'CollectionMembership' | 'String';
 
-export const CONDITION_OPERATOR_GROUPS: Readonly<Record<StudioConditionOperatorGroup, Readonly<StudioConditionOperator[]>>> = {
+export const CONDITION_OPERATOR_GROUPS: Record<StudioConditionOperatorGroup, StudioConditionOperator[]> = {
   Boolean: ['is_true', 'is_false'] as const,
   Number: ['equal', 'not_equal', 'less_than', 'less_than_or_equal', 'greater_than', 'greater_than_or_equal'] as const,
   Enumerator: ['is', 'is_not', 'is_one_of', 'is_not_one_of'] as const,
   Ownership: ['has', 'not_have'] as const,
   CollectionMembership: ['contains', 'not_contain'] as const,
+  String: ['is', 'is_not', 'is_one_of', 'is_not_one_of', 'regexp'] as const,
 } as const;
