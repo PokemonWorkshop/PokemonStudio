@@ -18,8 +18,8 @@ export const eventDirection: StudioCondition = {
   operators: CONDITION_OPERATOR_GROUPS['Enumerator'],
   subjectTypes: [
     {
-      type: 'entity',
-      entityKind: 'event',
+      type: 'database_reference',
+      referenceType: 'event',
     },
   ],
   valueTypes: [
@@ -32,7 +32,7 @@ export const eventDirection: StudioCondition = {
 
 export const playerPosition: StudioCondition = {
   dbSymbol: 'player_position' as DbSymbol,
-  operators: CONDITION_OPERATOR_GROUPS['CollectionMembership'],
+  operators: CONDITION_OPERATOR_GROUPS['Enumerator'],
   valueTypes: [
     {
       type: 'position',
@@ -42,11 +42,11 @@ export const playerPosition: StudioCondition = {
 
 export const eventPosition: StudioCondition = {
   dbSymbol: 'event_position' as DbSymbol,
-  operators: CONDITION_OPERATOR_GROUPS['CollectionMembership'],
+  operators: CONDITION_OPERATOR_GROUPS['Enumerator'],
   subjectTypes: [
     {
-      type: 'entity',
-      entityKind: 'event',
+      type: 'database_reference',
+      referenceType: 'event',
     },
   ],
   valueTypes: [
@@ -58,40 +58,40 @@ export const eventPosition: StudioCondition = {
 
 export const currentMap: StudioCondition = {
   dbSymbol: 'current_map' as DbSymbol,
-  operators: CONDITION_OPERATOR_GROUPS['CollectionMembership'],
+  operators: CONDITION_OPERATOR_GROUPS['Enumerator'],
   valueTypes: [
     {
-      type: 'entity',
-      entityKind: 'map',
+      type: 'database_reference',
+      referenceType: 'map',
     },
   ],
 };
 
 export const playerTerrainTag: StudioCondition = {
   dbSymbol: 'player_terrain_tag' as DbSymbol,
-  operators: CONDITION_OPERATOR_GROUPS['CollectionMembership'],
+  operators: CONDITION_OPERATOR_GROUPS['Enumerator'],
   valueTypes: [
     {
       type: 'enum',
-      enumValues: ['normal', 'water', 'ice', 'rock', 'grass', 'sand', 'mud', 'lava', 'snow'],
+      enumValues: ['none', '0', '1', '2', '3'],
     },
   ],
 };
 
 export const playerSystemTag: StudioCondition = {
   dbSymbol: 'player_system_tag' as DbSymbol,
-  operators: CONDITION_OPERATOR_GROUPS['CollectionMembership'],
+  operators: CONDITION_OPERATOR_GROUPS['Enumerator'],
   valueTypes: [
     {
       type: 'enum',
-      enumValues: ['indoor', 'outdoor', 'cave', 'dungeon', 'town', 'city', 'route', 'forest', 'mountain'],
+      enumValues: ['none', 'grass', 'TGrass', 'pond', 'sand'],
     },
   ],
 };
 
 export const zoneType: StudioCondition = {
   dbSymbol: 'zone_type' as DbSymbol,
-  operators: CONDITION_OPERATOR_GROUPS['CollectionMembership'],
+  operators: CONDITION_OPERATOR_GROUPS['Enumerator'],
   valueTypes: [
     {
       type: 'enum',

@@ -16,10 +16,13 @@ export const CONDITION_OPERATOR_LIST = [
   'contains',
   'not_contain',
   'regexp',
+  'is_pressed',
+  'is_held',
+  'is_released',
 ] as const;
 export type StudioConditionOperator = (typeof CONDITION_OPERATOR_LIST)[number];
 
-export type StudioConditionOperatorGroup = 'Boolean' | 'Number' | 'Enumerator' | 'Ownership' | 'CollectionMembership' | 'String';
+export type StudioConditionOperatorGroup = 'Boolean' | 'Number' | 'Enumerator' | 'Ownership' | 'CollectionMembership' | 'String' | 'Input';
 
 export const CONDITION_OPERATOR_GROUPS: Record<StudioConditionOperatorGroup, StudioConditionOperator[]> = {
   Boolean: ['is_true', 'is_false'] as const,
@@ -28,4 +31,5 @@ export const CONDITION_OPERATOR_GROUPS: Record<StudioConditionOperatorGroup, Stu
   Ownership: ['has', 'not_have'] as const,
   CollectionMembership: ['contains', 'not_contain'] as const,
   String: ['is', 'is_not', 'is_one_of', 'is_not_one_of', 'regexp'] as const,
+  Input: ['is_pressed', 'is_held', 'is_released'] as const,
 } as const;

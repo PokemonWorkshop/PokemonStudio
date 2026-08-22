@@ -7,8 +7,8 @@ export const itemOwned: StudioCondition = {
   operators: CONDITION_OPERATOR_GROUPS['Ownership'],
   valueTypes: [
     {
-      type: 'enum',
-      valueList: 'items',
+      type: 'database_reference',
+      referenceType: 'item',
     },
   ],
 };
@@ -18,8 +18,8 @@ export const itemCategoryOwned: StudioCondition = {
   operators: CONDITION_OPERATOR_GROUPS['Ownership'],
   valueTypes: [
     {
-      type: 'enum',
-      valueList: 'itemCategories',
+      type: 'database_reference',
+      referenceType: 'itemCategory',
     },
   ],
 };
@@ -29,8 +29,8 @@ export const itemQuantity: StudioCondition = {
   operators: CONDITION_OPERATOR_GROUPS['Number'],
   subjectTypes: [
     {
-      type: 'entity',
-      entityKind: 'item',
+      type: 'database_reference',
+      referenceType: 'item',
     },
   ],
   valueTypes: [

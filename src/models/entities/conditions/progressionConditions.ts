@@ -21,7 +21,6 @@ export const badgeCount: StudioCondition = {
     {
       type: 'number',
       minimum: 0,
-      maximum: 99,
       step: 1,
     },
   ],
@@ -42,8 +41,8 @@ export const bestiaryVariantActive: StudioCondition = {
   operators: CONDITION_OPERATOR_GROUPS['Enumerator'],
   valueTypes: [
     {
-      type: 'entity',
-      entityKind: 'bestiary',
+      type: 'database_reference',
+      referenceType: 'bestiary',
     },
   ],
 };
@@ -53,8 +52,8 @@ export const starterChosen: StudioCondition = {
   operators: CONDITION_OPERATOR_GROUPS['Enumerator'],
   valueTypes: [
     {
-      type: 'entity',
-      entityKind: 'creature',
+      type: 'database_reference',
+      referenceType: 'creature',
     },
   ],
 };

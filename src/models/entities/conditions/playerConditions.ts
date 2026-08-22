@@ -9,7 +9,6 @@ export const playerMoney: StudioCondition = {
     {
       type: 'number',
       minimum: 0,
-      maximum: 999999999,
       step: 1,
     },
   ],
@@ -22,7 +21,6 @@ export const stepCount: StudioCondition = {
     {
       type: 'number',
       minimum: 0,
-      maximum: 999999999,
       step: 1,
     },
   ],
@@ -33,10 +31,7 @@ export const playTime: StudioCondition = {
   operators: CONDITION_OPERATOR_GROUPS['Number'],
   valueTypes: [
     {
-      type: 'number',
-      minimum: 0,
-      maximum: 999999999,
-      step: 1,
+      type: 'time',
     },
   ],
 };
@@ -61,3 +56,7 @@ export const playerName: StudioCondition = {
     },
   ],
 };
+
+// export const playerGender: StudioCondition
+
+// export const gameLanguage : StudioCondition
