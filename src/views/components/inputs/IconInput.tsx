@@ -1,9 +1,10 @@
 import { ClearButtonOnlyIcon, EditButtonOnlyIcon } from '@components/buttons';
+import { ResourceImage } from '@components/ResourceImage';
+import { useChoosefile } from '@hooks/useChooseFile';
+import { useCopyFile } from '@hooks/useCopyFile';
+import { basename } from '@utils/path';
 import React, { DragEventHandler, useState } from 'react';
 import styled from 'styled-components';
-import { useChoosefile } from '@hooks/useChooseFile';
-import { ResourceImage } from '@components/ResourceImage';
-import { useCopyFile } from '@hooks/useCopyFile';
 
 type IconInputContainerProps = {
   borderless: boolean;
@@ -14,6 +15,16 @@ const IconInputContainer = styled.div<IconInputContainerProps>`
   flex-direction: row;
   justify-content: space-between;
   user-select: none;
+  min-width: 0;
+
+  & div.icon-name {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    padding-right: 4px;
+  }
 
   & div.icon {
     display: flex;
@@ -21,6 +32,8 @@ const IconInputContainer = styled.div<IconInputContainerProps>`
     width: 40px;
     height: 40px;
     justify-content: center;
+    flex-shrink: 0;
+    flex-grow: 0;
 
     ${({ theme, borderless }) =>
       !borderless &&
@@ -29,6 +42,13 @@ const IconInputContainer = styled.div<IconInputContainerProps>`
       box-sizing: border-box;
       border-radius: 100%;
     `}
+  }
+
+  & span.name {
+    ${({ theme }) => theme.fonts.normalRegular}
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   & div.icon > img {
@@ -93,7 +113,7 @@ export const IconInput = ({
             setFlipFlap((last) => !last);
           });
         },
-        ({ errorMessage }) => window.api.log.error(errorMessage)
+        ({ errorMessage }) => window.api.log.error(errorMessage),
       );
     }
   };
@@ -109,14 +129,17 @@ export const IconInput = ({
           setIsDialogOpen(false);
         });
       },
-      () => setIsDialogOpen(false)
+      () => setIsDialogOpen(false),
     );
   };
 
   return (
     <IconInputContainer onDrop={onDrop} onDragOver={onDragOver} borderless={borderless || false}>
-      <div className="icon">
-        <ResourceImage imagePathInProject={iconPathInProject} versionId={flipFlap ? 2 : 1} projectPath={projectPath} />
+      <div className="icon-name">
+        <div className="icon">
+          <ResourceImage imagePathInProject={iconPathInProject} versionId={flipFlap ? 2 : 1} projectPath={projectPath} />
+        </div>
+        <span className="name">{basename(iconPathInProject)}</span>
       </div>
       <div className="buttons">
         <EditButtonOnlyIcon disabled={isDialogOpen} onClick={isDialogOpen ? undefined : onClick} />
