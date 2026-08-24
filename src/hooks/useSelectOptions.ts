@@ -1,22 +1,23 @@
 import { SelectOption } from '@components/SelectCustom/SelectCustomPropsInterface';
 import { ABILITY_NAME_TEXT_ID } from '@modelEntities/ability';
 import { CREATURE_NAME_TEXT_ID } from '@modelEntities/creature';
+import { DEX_DEFAULT_NAME_TEXT_ID } from '@modelEntities/dex';
+import { EVENT_NAME_TEXT_ID } from '@modelEntities/event/event';
 import { GROUP_NAME_TEXT_ID } from '@modelEntities/group';
 import { ITEM_NAME_TEXT_ID, ITEM_POCKET_NAME_TEXT_ID } from '@modelEntities/item';
+import { MAP_NAME_TEXT_ID } from '@modelEntities/map';
 import { MOVE_NAME_TEXT_ID } from '@modelEntities/move';
 import { QUEST_NAME_TEXT_ID } from '@modelEntities/quest';
+import { TEXT_INFO_NAME_TEXT_ID } from '@modelEntities/textInfo';
+import { TRAINER_NAME_TEXT_ID } from '@modelEntities/trainer';
+import { TRAINER_CLASS_NAME_TEXT_ID } from '@modelEntities/trainerClass';
 import { TYPE_NAME_TEXT_ID } from '@modelEntities/type';
 import { ZONE_NAME_TEXT_ID } from '@modelEntities/zone';
-import { TEXT_INFO_NAME_TEXT_ID } from '@modelEntities/textInfo';
 import { State } from '@src/GlobalStateProvider';
 import { assertUnreachable } from '@utils/assertUnreachable';
+import { buildCreaturesListByDexOrder } from '@utils/buildCreaturesListByDexOrder';
 import { cloneEntity } from '@utils/cloneEntity';
 import { getText, pocketMapping } from '@utils/ReadingProjectText';
-import { DEX_DEFAULT_NAME_TEXT_ID } from '@modelEntities/dex';
-import { MAP_NAME_TEXT_ID } from '@modelEntities/map';
-import { TRAINER_CLASS_TEXT_ID, TRAINER_NAME_TEXT_ID } from '@modelEntities/trainer';
-import { buildCreaturesListByDexOrder } from '@utils/buildCreaturesListByDexOrder';
-import { EVENT_NAME_TEXT_ID } from '@modelEntities/event/event';
 
 // Note: Regexp to search all options in the code: (\{ value:|\{ label:)
 
@@ -44,6 +45,7 @@ const OPTION_SOURCE_KEYS = [
   'zones',
   'textInfos',
   'maps',
+  'trainerClasses',
   'trainers',
   'events',
 ] as const;
@@ -72,6 +74,7 @@ const OptionSources: Record<OptionSourceKey, SelectOption[]> = {
   zones: [],
   textInfos: [],
   maps: [],
+  trainerClasses: [],
   trainers: [],
   events: [],
 };
@@ -89,6 +92,7 @@ const TEXT_SOURCE_KEYS = [
   'zones',
   'textInfos',
   'maps',
+  'trainerClasses',
   'trainers',
   'events',
 ] as const;
@@ -117,6 +121,7 @@ const OptionToTextKey: Record<OptionSourceKey, TextSourceKey> = {
   zones: 'zones',
   textInfos: 'textInfos',
   maps: 'maps',
+  trainerClasses: 'trainerClasses',
   trainers: 'trainers',
   events: 'events',
 };
@@ -134,6 +139,7 @@ const OptionSourceGroups: Record<TextSourceKey, OptionSourceKey[]> = {
   zones: ['zones'],
   textInfos: ['textInfos'],
   maps: ['maps'],
+  trainerClasses: ['trainerClasses'],
   trainers: ['trainers'],
   events: ['events'],
 };
@@ -151,7 +157,8 @@ const TextFileIds: Record<TextSourceKey, number[]> = {
   zones: [ZONE_NAME_TEXT_ID],
   textInfos: [TEXT_INFO_NAME_TEXT_ID],
   maps: [MAP_NAME_TEXT_ID],
-  trainers: [TRAINER_CLASS_TEXT_ID, TRAINER_NAME_TEXT_ID],
+  trainerClasses: [TRAINER_CLASS_NAME_TEXT_ID],
+  trainers: [TRAINER_CLASS_NAME_TEXT_ID, TRAINER_NAME_TEXT_ID],
   events: [EVENT_NAME_TEXT_ID],
 };
 // Record holding the link between fileId and textSource
@@ -175,6 +182,7 @@ const TextSources: Record<TextSourceKey, SelectOption[]> = {
   zones: [],
   textInfos: [],
   maps: [],
+  trainerClasses: [],
   trainers: [],
   events: [],
 };
@@ -354,7 +362,7 @@ const buildSelectOptionsFromKey = (key: OptionSourceKey, state: State) => {
         .map((data) => adjustSelectOptionValue(originalObjects[data.id] || cloneEntity(originalObjects[0]), data.dbSymbol));
     case 'creatures':
       return buildCreaturesListByDexOrder(state).map((data) =>
-        adjustSelectOptionValue(originalObjects[data.id] || cloneEntity(originalObjects[0]), data.dbSymbol)
+        adjustSelectOptionValue(originalObjects[data.id] || cloneEntity(originalObjects[0]), data.dbSymbol),
       );
     case 'quests':
       return Object.values(state.projectData.quests)
@@ -375,6 +383,10 @@ const buildSelectOptionsFromKey = (key: OptionSourceKey, state: State) => {
         .map((data) => adjustSelectOptionValue(originalObjects[data.textId] || cloneEntity(originalObjects[0]), data.fileId.toString()));
     case 'maps':
       return Object.values(state.projectData.maps)
+        .sort((a, b) => a.id - b.id)
+        .map((data) => adjustSelectOptionValue(originalObjects[data.id] || cloneEntity(originalObjects[0]), data.dbSymbol));
+    case 'trainerClasses':
+      return Object.values(state.projectData.trainerClasses)
         .sort((a, b) => a.id - b.id)
         .map((data) => adjustSelectOptionValue(originalObjects[data.id] || cloneEntity(originalObjects[0]), data.dbSymbol));
     case 'trainers':

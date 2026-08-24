@@ -1,10 +1,10 @@
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { ProjectData, SelectedDataIdentifier, State, useGlobalState } from '@src/GlobalStateProvider';
+import { buildCreaturesListByDexOrder } from '@utils/buildCreaturesListByDexOrder';
 import { getEntityNameText, getEntityNameTextUsingTextId } from '@utils/ReadingProjectText';
 import { SavingMap, SavingTextMap } from '@utils/SavingUtils';
 import { buildTextUpdate, TextUpdate } from './updateProjectText';
 import { addSelectOption, removeSelectOption } from './useSelectOptions';
-import { buildCreaturesListByDexOrder } from '@utils/buildCreaturesListByDexOrder';
 
 const getPreviousDbSymbolById = (values: { id: number; dbSymbol: DbSymbol }[], currentId: number) => {
   const sortedValues = values.sort((a, b) => b.id - a.id);
@@ -18,7 +18,7 @@ const getPreviousDbSymbolByName = (values: (EntityTextIdWithDbSymbol | EntityIdW
   const sortedValues =
     'textId' in values[0]
       ? (values as EntityTextIdWithDbSymbol[]).sort((a, b) =>
-          getEntityNameTextUsingTextId(a, state).localeCompare(getEntityNameTextUsingTextId(b, state))
+          getEntityNameTextUsingTextId(a, state).localeCompare(getEntityNameTextUsingTextId(b, state)),
         )
       : (values as EntityIdWithDbSymbol[]).sort((a, b) => getEntityNameText(a, state).localeCompare(getEntityNameText(b, state)));
   const keys = sortedValues.map(({ dbSymbol }) => dbSymbol);
@@ -35,7 +35,7 @@ const getNextDbSymbolByName = (values: (EntityTextIdWithDbSymbol | EntityIdWithD
   const sortedValues =
     'textId' in values[0]
       ? (values as EntityTextIdWithDbSymbol[]).sort((a, b) =>
-          getEntityNameTextUsingTextId(a, state).localeCompare(getEntityNameTextUsingTextId(b, state))
+          getEntityNameTextUsingTextId(a, state).localeCompare(getEntityNameTextUsingTextId(b, state)),
         )
       : (values as EntityIdWithDbSymbol[]).sort((a, b) => getEntityNameText(a, state).localeCompare(getEntityNameText(b, state)));
   const keys = sortedValues.map(({ dbSymbol }) => dbSymbol);
@@ -78,7 +78,7 @@ export const getNextDbSymbolByDexOrder = (currentDbSymbol: string, state: State)
  */
 export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier extends keyof Omit<SelectedDataIdentifier, 'textInfo'>>(
   key: Key,
-  selected: SelectedIdentifier
+  selected: SelectedIdentifier,
 ) => {
   const [state, setState] = useGlobalState();
   const selectedDataIdentifier = state.selectedDataIdentifier[selected];
@@ -93,7 +93,7 @@ export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier
   const setProjectDataValues = (
     newDataValues: Partial<ProjectData[typeof key]>,
     newSelectedData?: Pick<SelectedDataIdentifier, typeof selected>,
-    textUpdates?: TextUpdate
+    textUpdates?: TextUpdate,
   ) => {
     const id = String(Object.keys(newDataValues)[0]);
     setState((currentState) => {
@@ -201,7 +201,7 @@ export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier
  */
 export const useProjectDataReadonly = <Key extends keyof ProjectData, SelectedIdentifier extends keyof Omit<SelectedDataIdentifier, 'textInfo'>>(
   key: Key,
-  selected: SelectedIdentifier
+  selected: SelectedIdentifier,
 ) => {
   const [state] = useGlobalState();
   const selectedDataIdentifier = state.selectedDataIdentifier[selected];
@@ -221,6 +221,8 @@ export const useProjectItems = () => useProjectData('items', 'item');
 export type UseProjectItemReturnType = ReturnType<typeof useProjectItems>;
 export const useProjectQuests = () => useProjectData('quests', 'quest');
 export type UseProjectQuestsReturnType = ReturnType<typeof useProjectQuests>;
+export const useProjectTrainerClasses = () => useProjectData('trainerClasses', 'trainerClass');
+export type UseProjectTrainerClassesReturnType = ReturnType<typeof useProjectTrainerClasses>;
 export const useProjectTrainers = () => useProjectData('trainers', 'trainer');
 export type UseProjectTrainersReturnType = ReturnType<typeof useProjectTrainers>;
 export const useProjectTypes = () => useProjectData('types', 'type');
