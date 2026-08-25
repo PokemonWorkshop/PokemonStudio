@@ -1,5 +1,3 @@
-// I'm pretty sure this component can be generalized
-
 import { Input, InputWithTopLabelContainer, Label, MultiLineInput } from '@components/inputs';
 import { TranslateInputContainer } from '@components/inputs/TranslateInputContainer';
 import { StudioTrainerClass, TRAINER_CLASS_DESCRIPTION_TEXT_ID, TRAINER_CLASS_NAME_TEXT_ID } from '@modelEntities/trainerClass';

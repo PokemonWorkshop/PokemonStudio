@@ -157,8 +157,8 @@ const TextFileIds: Record<TextSourceKey, number[]> = {
   zones: [ZONE_NAME_TEXT_ID],
   textInfos: [TEXT_INFO_NAME_TEXT_ID],
   maps: [MAP_NAME_TEXT_ID],
-  trainerClasses: [TRAINER_CLASS_NAME_TEXT_ID],
   trainers: [TRAINER_CLASS_NAME_TEXT_ID, TRAINER_NAME_TEXT_ID],
+  trainerClasses: [TRAINER_CLASS_NAME_TEXT_ID],
   events: [EVENT_NAME_TEXT_ID],
 };
 // Record holding the link between fileId and textSource
@@ -196,6 +196,27 @@ const getTextSource = (projectText: Parameters<typeof getText>[0], fileId: numbe
   return { value: '', label: getText(projectText, fileId, index) };
 };
 
+const buildTrainersTextSourceFromScratch = (state: State) => {
+  const projectText = {
+    texts: state.projectText,
+    languages: state.projectStudio.languagesTranslation,
+    defaultLanguage: state.projectConfig.language_config.defaultLanguage,
+  };
+  const trainers = Object.values(state.projectData.trainers).sort((a, b) => a.id - b.id);
+
+  TextSources['trainers'] = trainers.map((trainer) => {
+    const trainerName = getTextSource(projectText, TextFileIds['trainers'][1], trainer.id, []);
+    const trainerClass = state.projectData.trainerClasses[trainer.classSymbol];
+
+    return trainerClass
+      ? {
+          value: trainer.dbSymbol,
+          label: `${getTextSource(projectText, TextFileIds['trainers'][0], trainerClass.id, TextSources['trainerClasses']).label} ${trainerName.label}`,
+        }
+      : { value: trainer.dbSymbol, label: trainerName.label };
+  });
+};
+
 // Build a text source
 const buildTextSourceFromScratch = (key: TextSourceKey, state: State) => {
   const projectText = {
@@ -203,6 +224,12 @@ const buildTextSourceFromScratch = (key: TextSourceKey, state: State) => {
     languages: state.projectStudio.languagesTranslation,
     defaultLanguage: state.projectConfig.language_config.defaultLanguage,
   };
+
+  if (key === 'trainers') {
+    buildTrainersTextSourceFromScratch(state);
+    return;
+  }
+
   const fileIds = TextFileIds[key];
   const originalObjects = TextSources[key];
   if (fileIds.length === 0) {
@@ -237,10 +264,74 @@ export const buildSelectOptionsTextSourcesFromScratch = (state: State) => {
   TEXT_SOURCE_KEYS.forEach((key) => buildTextSourceFromScratch(key, state));
 };
 
+const updateTrainerClassesSelectOptionsTextSource = (textId: number, state: State) => {
+  const projectText = {
+    texts: state.projectText,
+    languages: state.projectStudio.languagesTranslation,
+    defaultLanguage: state.projectConfig.language_config.defaultLanguage,
+  };
+
+  const trainerClassName = getTextSource(projectText, TextFileIds['trainerClasses'][0], textId, TextSources['trainerClasses']);
+  TextSources['trainerClasses'][textId] = trainerClassName;
+
+  // Update select options for trainers that have this trainer class
+  const trainerClass = Object.values(state.projectData.trainerClasses).find((trainerClass) => trainerClass.id === textId);
+  const trainers = Object.values(state.projectData.trainers)
+    .sort((a, b) => a.id - b.id)
+    .filter((trainer) => trainer.classSymbol === trainerClass?.dbSymbol);
+
+  trainers.forEach((trainer) => {
+    const trainerName = getTextSource(projectText, TextFileIds['trainers'][1], trainer.id, []);
+    const option = { value: trainer.dbSymbol, label: `${trainerClassName.label} ${trainerName.label}` };
+    const index = TextSources['trainers'].findIndex((option) => option.value === trainer.dbSymbol);
+
+    if (index !== -1) {
+      TextSources['trainers'][index] = option;
+    }
+  });
+
+  OptionSources['trainers'] = buildSelectOptionsFromKey('trainers', state);
+};
+
+const updateTrainersSelectOptionsTextSource = (textId: number, state: State) => {
+  const projectText = {
+    texts: state.projectText,
+    languages: state.projectStudio.languagesTranslation,
+    defaultLanguage: state.projectConfig.language_config.defaultLanguage,
+  };
+  const trainer = Object.values(state.projectData.trainers).find((trainer) => trainer.id === textId);
+  if (!trainer) return;
+
+  const trainerClass = state.projectData.trainerClasses[trainer.classSymbol];
+  const trainerClassName = trainerClass
+    ? getTextSource(projectText, TextFileIds['trainers'][0], trainerClass.id, TextSources['trainerClasses'])
+    : { value: '', label: '' };
+  const name = getTextSource(projectText, TextFileIds['trainers'][1], textId, []);
+  const option = { value: trainer.dbSymbol, label: `${trainerClassName.label} ${name.label}` };
+  const index = TextSources['trainers'].findIndex((option) => option.value === trainer.dbSymbol);
+
+  if (index !== -1) {
+    TextSources['trainers'][index] = option;
+  }
+
+  OptionSources['trainers'] = buildSelectOptionsFromKey('trainers', state);
+};
+
 // Update a text source
 export const updateSelectOptionsTextSource = (fileId: number, textId: number, state: State) => {
   const key = TextFileIdsToSource[fileId];
   if (!key) return;
+
+  if (key === 'trainerClasses') {
+    updateTrainerClassesSelectOptionsTextSource(textId, state);
+    return;
+  }
+
+  if (key === 'trainers') {
+    updateTrainersSelectOptionsTextSource(textId, state);
+    return;
+  }
+
   const originalObjects = TextSources[key];
   const projectText = {
     texts: state.projectText,
