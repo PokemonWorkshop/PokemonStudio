@@ -2,7 +2,7 @@ import { useUpdateGroup } from '@components/database/group/editors/useUpdateGrou
 import { useUpdateTrainer } from '@components/database/trainer/editors/useUpdateTrainer';
 import { useGroupPage, useQuestPage, useTrainerPage } from '@hooks/usePage';
 import { useProjectPokemon } from '@hooks/useProjectData';
-import { useEffect, useMemo, useState } from 'react';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 import {
   StudioContestStats,
   StudioExpandPokemonSetup,
@@ -10,13 +10,13 @@ import {
   StudioIvEv,
   createExpandPokemonSetup,
 } from '@modelEntities/groupEncounter';
-import { DbSymbol } from '@modelEntities/dbSymbol';
 import { ProjectData } from '@src/GlobalStateProvider';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import { cleanExpandPokemonSetup } from '@utils/cleanNaNValue';
 import { cloneEntity } from '@utils/cloneEntity';
 import { createEncounter } from '@utils/entityCreation';
 import { useGetEntityNameText } from '@utils/ReadingProjectText';
+import { useEffect, useMemo, useState } from 'react';
 import { CurrentBattlerType, PokemonBattlerFrom } from './PokemonBattlerEditorOverlay';
 
 type RecordExpandPokemonSetupValue = number | string | DbSymbol | DbSymbol[] | StudioIvEv | StudioContestStats;
@@ -238,11 +238,11 @@ export const usePokemonBattler = ({ action, currentBattler, from }: Props) => {
     if (isNaN(encounter.randomEncounterChance) || notBetween(encounter.randomEncounterChance, 0, 100)) return false;
 
     const levelSetup = encounter.levelSetup;
-    if (levelSetup.kind === 'fixed' && (isNaN(levelSetup.level) || notBetween(levelSetup.level, 1, 100))) return false;
+    const pokemonMaxLevel = state.projectConfig.settings_config.pokemonMaxLevel;
+    if (levelSetup.kind === 'fixed' && (isNaN(levelSetup.level) || notBetween(levelSetup.level, 1, pokemonMaxLevel))) return false;
     else if (levelSetup.kind === 'minmax') {
       const minLevel = levelSetup.level.minimumLevel;
       const maxLevel = levelSetup.level.maximumLevel;
-      const pokemonMaxLevel = state.projectConfig.settings_config.pokemonMaxLevel;
       if (
         isNaN(minLevel) ||
         isNaN(maxLevel) ||
