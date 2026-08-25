@@ -107,7 +107,7 @@ export const useGetTextList = () => {
 export const useSetProjectText = () => {
   const [{ projectText: texts, projectConfig, projectStudio }, setState] = useGlobalState();
 
-  return (fileId: number, textId: number, text: string) => {
+  return (fileId: number, textId: number, text: string, forceRebuildOptions?: boolean) => {
     setState((currentState) => {
       const currentText = getText(
         { texts, languages: projectStudio.languagesTranslation, defaultLanguage: projectConfig.language_config.defaultLanguage },
@@ -116,6 +116,7 @@ export const useSetProjectText = () => {
         projectConfig.language_config.defaultLanguage,
       );
       if (currentText === text) {
+        if (forceRebuildOptions) updateSelectOptionsTextSource(fileId, textId, currentState);
         return currentState;
       }
       const change = getProjectTextChange(currentState.projectConfig.language_config.defaultLanguage, textId, fileId, text, currentState.projectText);

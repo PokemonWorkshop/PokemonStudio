@@ -79,7 +79,7 @@ export const TrainerFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const saveTexts = () => {
     if (!trainerNameRef.current) return;
 
-    setText(TRAINER_NAME_TEXT_ID, trainer.id, trainerNameRef.current.value);
+    setText(TRAINER_NAME_TEXT_ID, trainer.id, trainerNameRef.current.value, true);
   };
 
   const canClose = () => {
