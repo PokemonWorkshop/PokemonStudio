@@ -20,6 +20,7 @@ export const NavigationDatabase = () => {
       <NavigationDatabaseGroup title={t('level_design')}>
         <NavigationDatabaseItem path="/database/zones" label={t('zones')} />
         <NavigationDatabaseItem path="/database/groups" label={t('groups')} />
+        <NavigationDatabaseItem path="/database/trainerClasses" label={t('trainer_classes')} />
         <NavigationDatabaseItem path="/database/trainers" label={t('trainers')} />
         <NavigationDatabaseItem path="/database/quests" label={t('quests')} />
       </NavigationDatabaseGroup>

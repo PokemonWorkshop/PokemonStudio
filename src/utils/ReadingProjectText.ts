@@ -7,25 +7,26 @@ import {
   StudioCreatureForm,
 } from '@modelEntities/creature';
 import { StudioDex } from '@modelEntities/dex';
-import { GROUP_NAME_TEXT_ID } from '@modelEntities/group';
-import { ITEM_DESCRIPTION_TEXT_ID, ITEM_NAME_TEXT_ID, ITEM_PLURAL_NAME_TEXT_ID, ITEM_POCKET_NAME_TEXT_ID, StudioItem } from '@modelEntities/item';
-import { MOVE_CONTEST_DESCRIPTION_TEXT_ID, MOVE_DESCRIPTION_TEXT_ID, MOVE_NAME_TEXT_ID, StudioMove } from '@modelEntities/move';
-import { QUEST_DESCRIPTION_TEXT_ID, QUEST_NAME_TEXT_ID } from '@modelEntities/quest';
-import { TRAINER_NAME_TEXT_ID } from '@modelEntities/trainer';
-import { TYPE_NAME_TEXT_ID } from '@modelEntities/type';
-import { ZONE_DESCRIPTION_TEXT_ID, ZONE_NAME_TEXT_ID } from '@modelEntities/zone';
-import { State, ProjectText, TextsWithLanguageConfig, useGlobalState } from '@src/GlobalStateProvider';
-import { getProjectTextChange } from '../hooks/updateProjectText';
-import { updateSelectOptionsTextSource } from '../hooks/useSelectOptions';
-import { TEXT_INFO_DESCRIPTION_TEXT_ID, TEXT_INFO_NAME_TEXT_ID } from '@modelEntities/textInfo';
-import { SavingTextMap } from './SavingUtils';
-import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID } from '@modelEntities/map';
-import { MAP_INFO_FOLDER_NAME_TEXT_ID } from '@modelEntities/mapInfo';
-import { cloneEntity } from './cloneEntity';
-import { NATURE_NAME_TEXT_ID } from '@modelEntities/nature';
-import { useEffect } from 'react';
 import { EVENT_NAME_TEXT_ID } from '@modelEntities/event/event';
 import { EVENT_FOLDER_NAME_TEXT_ID } from '@modelEntities/event/event-tree';
+import { GROUP_NAME_TEXT_ID } from '@modelEntities/group';
+import { ITEM_DESCRIPTION_TEXT_ID, ITEM_NAME_TEXT_ID, ITEM_PLURAL_NAME_TEXT_ID, ITEM_POCKET_NAME_TEXT_ID, StudioItem } from '@modelEntities/item';
+import { MAP_DESCRIPTION_TEXT_ID, MAP_NAME_TEXT_ID } from '@modelEntities/map';
+import { MAP_INFO_FOLDER_NAME_TEXT_ID } from '@modelEntities/mapInfo';
+import { MOVE_CONTEST_DESCRIPTION_TEXT_ID, MOVE_DESCRIPTION_TEXT_ID, MOVE_NAME_TEXT_ID, StudioMove } from '@modelEntities/move';
+import { NATURE_NAME_TEXT_ID } from '@modelEntities/nature';
+import { QUEST_DESCRIPTION_TEXT_ID, QUEST_NAME_TEXT_ID } from '@modelEntities/quest';
+import { TEXT_INFO_DESCRIPTION_TEXT_ID, TEXT_INFO_NAME_TEXT_ID } from '@modelEntities/textInfo';
+import { TRAINER_NAME_TEXT_ID } from '@modelEntities/trainer';
+import { TRAINER_CLASS_DESCRIPTION_TEXT_ID, TRAINER_CLASS_NAME_TEXT_ID } from '@modelEntities/trainerClass';
+import { TYPE_NAME_TEXT_ID } from '@modelEntities/type';
+import { ZONE_DESCRIPTION_TEXT_ID, ZONE_NAME_TEXT_ID } from '@modelEntities/zone';
+import { ProjectText, State, TextsWithLanguageConfig, useGlobalState } from '@src/GlobalStateProvider';
+import { useEffect } from 'react';
+import { getProjectTextChange } from '../hooks/updateProjectText';
+import { updateSelectOptionsTextSource } from '../hooks/useSelectOptions';
+import { cloneEntity } from './cloneEntity';
+import { SavingTextMap } from './SavingUtils';
 
 type KeyProjectText = keyof ProjectText;
 
@@ -76,7 +77,7 @@ export const useGetProjectText = () => {
       { texts, languages: projectStudio.languagesTranslation, defaultLanguage: projectConfig.language_config.defaultLanguage },
       fileId,
       textId,
-      projectConfig.language_config.defaultLanguage
+      projectConfig.language_config.defaultLanguage,
     );
 };
 
@@ -106,15 +107,16 @@ export const useGetTextList = () => {
 export const useSetProjectText = () => {
   const [{ projectText: texts, projectConfig, projectStudio }, setState] = useGlobalState();
 
-  return (fileId: number, textId: number, text: string) => {
+  return (fileId: number, textId: number, text: string, forceRebuildOptions?: boolean) => {
     setState((currentState) => {
       const currentText = getText(
         { texts, languages: projectStudio.languagesTranslation, defaultLanguage: projectConfig.language_config.defaultLanguage },
         fileId,
         textId,
-        projectConfig.language_config.defaultLanguage
+        projectConfig.language_config.defaultLanguage,
       );
       if (currentText === text) {
+        if (forceRebuildOptions) updateSelectOptionsTextSource(fileId, textId, currentState);
         return currentState;
       }
       const change = getProjectTextChange(currentState.projectConfig.language_config.defaultLanguage, textId, fileId, text, currentState.projectText);
@@ -217,6 +219,7 @@ const ENTITY_TO_NAME_TEXT = {
   TechItem: ITEM_NAME_TEXT_ID,
   Move: MOVE_NAME_TEXT_ID,
   Quest: QUEST_NAME_TEXT_ID,
+  TrainerClass: TRAINER_CLASS_NAME_TEXT_ID,
   TrainerBattleSetup: TRAINER_NAME_TEXT_ID,
   Type: TYPE_NAME_TEXT_ID,
   Zone: ZONE_NAME_TEXT_ID,
@@ -255,7 +258,7 @@ export const getItemPocketText = (item: StudioItem, state: State): string => {
       defaultLanguage: state.projectConfig.language_config.defaultLanguage,
     },
     ITEM_POCKET_NAME_TEXT_ID,
-    pocketMapping[item.socket] ?? item.socket
+    pocketMapping[item.socket] ?? item.socket,
   );
 };
 export const useGetItemPocketText = () => {
@@ -305,6 +308,7 @@ const ENTITY_TO_DESCRIPTION_TEXT = {
   Zone: ZONE_DESCRIPTION_TEXT_ID,
   TextInfo: TEXT_INFO_DESCRIPTION_TEXT_ID,
   Map: MAP_DESCRIPTION_TEXT_ID,
+  TrainerClass: TRAINER_CLASS_DESCRIPTION_TEXT_ID,
 };
 
 export const useGetEntityDescriptionText = () => {
@@ -322,25 +326,25 @@ export const useGetEntityDescriptionTextUsingTextId = () => {
 
 export const getEntityNameText = (
   entity: { klass: keyof Omit<typeof ENTITY_TO_NAME_TEXT, 'Ability' | 'Type' | 'TextInfo' | 'MapInfoFolder'>; id: number },
-  { projectText: texts, projectConfig, projectStudio }: Pick<State, 'projectText' | 'projectConfig' | 'projectStudio'>
+  { projectText: texts, projectConfig, projectStudio }: Pick<State, 'projectText' | 'projectConfig' | 'projectStudio'>,
 ) => {
   return getText(
     { texts, languages: projectStudio.languagesTranslation, defaultLanguage: projectConfig.language_config.defaultLanguage },
     ENTITY_TO_NAME_TEXT[entity.klass],
     entity.id,
-    projectConfig.language_config.defaultLanguage
+    projectConfig.language_config.defaultLanguage,
   );
 };
 
 export const getEntityNameTextUsingTextId = (
   entity: { klass: 'Ability' | 'Type' | 'TextInfo' | 'MapInfoFolder'; textId: number },
-  { projectText: texts, projectConfig, projectStudio }: Pick<State, 'projectText' | 'projectConfig' | 'projectStudio'>
+  { projectText: texts, projectConfig, projectStudio }: Pick<State, 'projectText' | 'projectConfig' | 'projectStudio'>,
 ) => {
   return getText(
     { texts, languages: projectStudio.languagesTranslation, defaultLanguage: projectConfig.language_config.defaultLanguage },
     ENTITY_TO_NAME_TEXT[entity.klass],
     entity.textId,
-    projectConfig.language_config.defaultLanguage
+    projectConfig.language_config.defaultLanguage,
   );
 };
 
