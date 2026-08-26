@@ -17,7 +17,7 @@ import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import { readRMXPEvents, RMXPEvent } from './readRMXPEvents';
 
 type PartialStudioEvent = { dbSymbol: DbSymbol; id: number; csvFileId: number };
-export type RMXPEventsToStudioEventsInput = { projectPath: string; map: string; events: PartialStudioEvent[] };
+export type RMXPEventsToStudioEventsInput = { projectPath: string; map: string; events: string; eventId?: number };
 export type RMXPEventsToStudioEventsOutput = {};
 //export type RMXPEventsToStudioEventsOutput = { map: StudioMap, events: PartialStudioEvent[], newStudioEvents: unknown[]}
 
@@ -175,10 +175,11 @@ const createCustomEvent = (events: Record<string, PartialStudioEvent>, rmxpEvent
 
 export const convertRMXPEventsToStudioEvents = async (payload: RMXPEventsToStudioEventsInput): Promise<RMXPEventsToStudioEventsOutput> => {
   const map: StudioMap = JSON.parse(payload.map);
-  const rmxpEvents = await readRMXPEvents(payload.projectPath, map.id);
+  const rmxpEvents = await readRMXPEvents(payload.projectPath, map.id, payload.eventId);
   const newStudioEvents: CustomEvent[] = [];
   const newEventLinks: MapEventLink[] = [];
-  const events = Object.fromEntries(payload.events.map((event) => [event.dbSymbol, event]));
+  const eventsParsed: PartialStudioEvent[] = JSON.parse(payload.events);
+  const events = Object.fromEntries(eventsParsed.map((event) => [event.dbSymbol, event]));
 
   await rmxpEvents.reduce(async (lastPromise, rmxpEvent) => {
     await lastPromise;
@@ -191,8 +192,8 @@ export const convertRMXPEventsToStudioEvents = async (payload: RMXPEventsToStudi
   }, Promise.resolve());
 
   // TODO: don't forget to remove this later
-  log.info('======= Event link data in the map =======');
-  newEventLinks.forEach((e) => log.info(e));
+  //log.info('======= Event link data in the map =======');
+  //newEventLinks.forEach((e) => log.info(e));
   log.info('======= Events =======');
   newStudioEvents.forEach((e) => log.info(e));
 
