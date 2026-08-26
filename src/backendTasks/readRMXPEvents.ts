@@ -1,15 +1,15 @@
+import { padStr } from '@utils/PadStr';
+import { isRecord } from '@utils/rmxpUtils';
 import log from 'electron-log';
-import path from 'path';
 import fsPromise from 'fs/promises';
-import { isMarshalStandardObject, isMarshalHash, Marshal, MarshalHash } from 'ts-marshal';
+import path from 'path';
+import { isMarshalHash, isMarshalStandardObject, Marshal, MarshalHash } from 'ts-marshal';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
 import { isMapObject } from './readRMXPMap';
-import { isRecord } from '@utils/rmxpUtils';
-import { padStr } from '@utils/PadStr';
 
 // RMXP Documentation: https://www.rpg-maker.fr/dl/monos/aide/xp/index.html?page=source%2Frgss%2Frgss.html
 
-export type ReadRMXPEventInput = { projectPath: string; mapId: number };
+export type ReadRMXPEventInput = { projectPath: string; mapId: number; eventId?: number };
 export type ReadRMXPEventOutput = { rmxpEvents: RMXPEvent[] };
 
 export type RMXPEventPageCondition = {
@@ -325,23 +325,33 @@ const buildEventPages = (pages: EventPageData[]): RMXPEventPage[] => {
   }));
 };
 
+const buildRMXPEvent = (mapId: number, eventId: string, data: unknown): RMXPEvent | undefined => {
+  if (!isEventObject(data)) {
+    log.warn(`The event #${eventId} in the file Map${padStr(mapId, 3)}.rxdata is invalid.`);
+    return undefined;
+  }
+
+  log.info(`Read event #${data['@id']} (${data['@name']})`);
+  return { id: data['@id'], name: data['@name'], x: data['@x'], y: data['@y'], pages: buildEventPages(data['@pages']) };
+};
+
 const buildEvents = (eventHash: MarshalHash, mapId: number) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { __class, __extendedModules, __default, ...events } = eventHash;
   return Object.entries(events)
-    .map(([id, data]) => {
-      if (!isEventObject(data)) {
-        log.warn(`The event #${id} in the file Map${padStr(mapId, 3)}.rxdata is invalid.`);
-        return undefined;
-      }
-
-      log.info(`Read event #${data['@id']} (${data['@name']})`);
-      return { id: data['@id'], name: data['@name'], x: data['@x'], y: data['@y'], pages: buildEventPages(data['@pages']) };
-    })
+    .map(([id, data]) => buildRMXPEvent(mapId, id, data))
     .filter(<T>(data: T): data is Exclude<T, undefined> => !!data);
 };
 
-export const readRMXPEvents = async (projectPath: string, mapId: number): Promise<RMXPEvent[]> => {
+const buildEvent = (eventHash: MarshalHash, mapId: number, eventId: string) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { __class, __extendedModules, __default, ...events } = eventHash;
+  const data = events[eventId];
+  const rmxpEvent = buildRMXPEvent(mapId, eventId, data);
+  return [rmxpEvent].filter(<T>(data: T): data is Exclude<T, undefined> => !!data);
+};
+
+export const readRMXPEvents = async (projectPath: string, mapId: number, eventId?: number): Promise<RMXPEvent[]> => {
   const mapData = await fsPromise.readFile(path.join(projectPath, 'Data', `Map${padStr(mapId, 3)}.rxdata`));
   const marshalMapData = Marshal.load(mapData);
 
@@ -351,6 +361,7 @@ export const readRMXPEvents = async (projectPath: string, mapId: number): Promis
   const eventsData = marshalMapData['@events'];
   if (!isMarshalHash(eventsData)) throw new Error('Loaded object is not a Hash');
 
+  if (eventId) return buildEvent(eventsData, mapId, eventId.toString());
   return buildEvents(eventsData, mapId);
 };
 
