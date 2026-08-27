@@ -42,7 +42,7 @@ export const CONDITION_ENUM_VALUE_TYPE = CONDITION_VALUE_TYPE_BASE.extend({
 
 export const CONDITION_DATABASE_REFERENCE_VALUE_TYPE = CONDITION_VALUE_TYPE_BASE.extend({
   type: z.literal('database_reference'),
-  referenceType: z.enum(['event', 'map', 'bestiary', 'item', 'itemCategory', 'creature', 'move', 'ability', 'type', 'quest']),
+  referenceType: z.enum(['event', 'map', 'bestiary', 'item', 'itemCategory', 'creature', 'move', 'ability', 'type', 'quest', 'key']),
 });
 
 export const CONDITION_POSITION_VALUE_TYPE = CONDITION_VALUE_TYPE_BASE.extend({

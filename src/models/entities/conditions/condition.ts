@@ -15,7 +15,7 @@ import {
   playerTerrainTag,
   zoneType,
 } from './eventMapPositionConditions';
-import { KeyHoldDuration, repeatedInput } from './inputConditions';
+import { keyHoldDuration, repeatedInput } from './inputConditions';
 import { itemCategoryOwned, itemOwned, itemQuantity, repelActive } from './inventoryConditions';
 import { CONDITION_OPERATOR_GROUPS, CONDITION_OPERATOR_LIST } from './operators';
 import { playTime, playerMoney, playerName, playerState, stepCount } from './playerConditions';
@@ -119,7 +119,7 @@ export const CONDITIONS_FROM_CATEGORY: Record<StudioConditionCategory, Condition
     { condition: timeOfDay, minimumVersion: '3.1.0' },
   ],
   input: [
-    { condition: KeyHoldDuration, minimumVersion: '3.1.0' },
+    { condition: keyHoldDuration, minimumVersion: '3.1.0' },
     { condition: repeatedInput, minimumVersion: '3.1.0' },
   ],
   creature_party: [

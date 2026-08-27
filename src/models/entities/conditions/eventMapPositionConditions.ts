@@ -84,7 +84,7 @@ export const playerSystemTag: StudioCondition = {
   valueTypes: [
     {
       type: 'enum',
-      enumValues: ['none', 'grass', 'TGrass', 'pond', 'sand'],
+      enumValues: ['RegularGround', 'Grass', 'TallGrass', 'Cave', 'Mountain', 'Sand', 'Pond', 'Ocean', 'UnderWater', 'Snow', 'Ice', 'HeadButt'],
     },
   ],
 };

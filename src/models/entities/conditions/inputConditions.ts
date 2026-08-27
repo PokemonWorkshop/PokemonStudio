@@ -4,15 +4,22 @@ import { CONDITION_OPERATOR_GROUPS } from './operators';
 
 export const inputKey: StudioCondition = {
   dbSymbol: 'input_key' as DbSymbol,
-  operators: CONDITION_OPERATOR_GROUPS['Input'],
+  operators: CONDITION_OPERATOR_GROUPS['Enumerator'],
+  subjectTypes: [
+    {
+      type: 'database_reference',
+      referenceType: 'key',
+    },
+  ],
   valueTypes: [
     {
-      type: 'boolean',
+      type: 'enum',
+      enumValues: ['pressed', 'held', 'released'],
     },
   ],
 };
 
-export const KeyHoldDuration: StudioCondition = {
+export const keyHoldDuration: StudioCondition = {
   dbSymbol: 'key_hold_duration' as DbSymbol,
   operators: CONDITION_OPERATOR_GROUPS['Number'],
   valueTypes: [
