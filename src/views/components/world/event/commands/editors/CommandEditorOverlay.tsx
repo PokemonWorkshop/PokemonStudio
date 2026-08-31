@@ -9,6 +9,8 @@ import { DefaultEditor } from './DefaultEditor';
 import { ShowChoiceEditor } from './messageCommands/ShowChoiceEditor';
 import { ShowMessageEditor } from './messageCommands/ShowMessageEditor';
 import { WaitMovementCompletionEditor } from './movementCommands/WaitMovementCompletion';
+import { ManageAccessSaveMenuEditor } from './saveCommands/ManageAccessSaveMenuEditor';
+import { OpenSaveMenuEditor } from './saveCommands/OpenSaveMenuEditor';
 import { InsertScriptEditor } from './scriptCommands/InsertScriptEditor';
 import { StartEditor } from './startCommands/StartEditor';
 
@@ -63,7 +65,9 @@ export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletion
       case 'set_active_dex':
       case 'give_badge':
       case 'manage_access_save_menu':
+        return <ManageAccessSaveMenuEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'open_save_menu':
+        return <OpenSaveMenuEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'manage_autosave':
       case 'force_autosave':
       case 'force_save':

@@ -28,7 +28,7 @@ const createShowChoiceCommand = (event: StudioEvent) => {
   };
 };
 
-export const createWaitMovementCompletionCommand = () => {
+const createWaitMovementCompletionCommand = () => {
   return {
     waitAllEvents: false,
     waitById: [],
@@ -36,9 +36,13 @@ export const createWaitMovementCompletionCommand = () => {
   };
 };
 
-const insertScriptCommand = () => ({ script: '' });
+const createOpenSaveMenuCommand = () => ({});
 
-const startCommand = (event: StudioEvent) => {
+const createManageAccessSaveMenuCommand = () => ({ action: 'enable' });
+
+const createInsertScriptCommand = () => ({ script: '' });
+
+const createStartCommand = (event: StudioEvent) => {
   const priority = findFirstAvailablePriorityEvent(event, 1);
   return { trigger: 'key_press', priority };
 };
@@ -83,8 +87,8 @@ export const EventCommandCreation: Record<StudioEventCommandType, (event: Studio
     manage_dex: dummy,
     set_active_dex: dummy,
     give_badge: dummy,
-    manage_access_save_menu: dummy,
-    open_save_menu: dummy,
+    manage_access_save_menu: createManageAccessSaveMenuCommand,
+    open_save_menu: createOpenSaveMenuCommand,
     manage_autosave: dummy,
     force_autosave: dummy,
     force_save: dummy,
@@ -117,6 +121,6 @@ export const EventCommandCreation: Record<StudioEventCommandType, (event: Studio
     manage_map_fog: dummy,
     manage_map_panorama: dummy,
     change_battle_background: dummy,
-    insert_script: insertScriptCommand,
-    start: startCommand,
+    insert_script: createInsertScriptCommand,
+    start: createStartCommand,
   };
