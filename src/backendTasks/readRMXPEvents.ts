@@ -1,3 +1,12 @@
+import type {
+  RMXPEvent,
+  RMXPEventCommand,
+  RMXPEventPage,
+  RMXPEventPageCondition,
+  RMXPEventPageGraphic,
+  RMXPMoveCommand,
+  RMXPMoveRoute,
+} from '@utils/events/types';
 import { padStr } from '@utils/PadStr';
 import { isRecord } from '@utils/rmxpUtils';
 import log from 'electron-log';
@@ -9,71 +18,8 @@ import { isMapObject } from './readRMXPMap';
 
 // RMXP Documentation: https://www.rpg-maker.fr/dl/monos/aide/xp/index.html?page=source%2Frgss%2Frgss.html
 
-export type ReadRMXPEventInput = { projectPath: string; mapId: number; eventId?: number };
+export type ReadRMXPEventInput = { projectPath: string; mapId: number; eventIds?: number[] };
 export type ReadRMXPEventOutput = { rmxpEvents: RMXPEvent[] };
-
-export type RMXPEventPageCondition = {
-  isSwitch1: boolean;
-  isSwitch2: boolean;
-  isVariable: boolean;
-  isSelfSwitch: boolean;
-  switch1Id: number;
-  switch2Id: number;
-  variableId: number;
-  variableValue: number;
-  selfSwitch: string;
-};
-
-export type RMXPEventPageGraphic = {
-  tileId: number;
-  characterName: string;
-  characterHue: number;
-  direction: number;
-  pattern: number;
-  opacity: number;
-  blendType: number;
-};
-
-export type RMXPMoveCommand = {
-  code: number;
-  parameters: unknown[]; // Array containing the Move command arguments. The contents vary for each command.
-};
-
-export type RMXPMoveRoute = {
-  isRepeat: boolean;
-  isSkippable: boolean;
-  list: RMXPMoveCommand[];
-};
-
-export type RMXPEventCommand = {
-  code: number;
-  indent: number;
-  parameters: unknown[]; // Array containing the Event command arguments. The contents vary for each command.
-};
-
-export type RMXPEventPage = {
-  condition: RMXPEventPageCondition;
-  graphic: RMXPEventPageGraphic;
-  moveType: number;
-  moveSpeed: number;
-  moveFrequency: number;
-  moveRoute: RMXPMoveRoute;
-  isWalkAnime: boolean;
-  isStepAnime: boolean;
-  isDirectionFix: boolean;
-  isThrough: boolean;
-  isAlwaysOnTop: boolean;
-  trigger: number;
-  list: RMXPEventCommand[];
-};
-
-export type RMXPEvent = {
-  id: number;
-  name: string;
-  x: number;
-  y: number;
-  pages: RMXPEventPage[];
-};
 
 type EventPageConditionData = {
   '@switch1_valid': boolean;
@@ -348,10 +294,10 @@ const buildEvent = (eventHash: MarshalHash, mapId: number, eventId: string) => {
   const { __class, __extendedModules, __default, ...events } = eventHash;
   const data = events[eventId];
   const rmxpEvent = buildRMXPEvent(mapId, eventId, data);
-  return [rmxpEvent].filter(<T>(data: T): data is Exclude<T, undefined> => !!data);
+  return rmxpEvent;
 };
 
-export const readRMXPEvents = async (projectPath: string, mapId: number, eventId?: number): Promise<RMXPEvent[]> => {
+export const readRMXPEvents = async (projectPath: string, mapId: number, eventIds?: number[]): Promise<RMXPEvent[]> => {
   const mapData = await fsPromise.readFile(path.join(projectPath, 'Data', `Map${padStr(mapId, 3)}.rxdata`));
   const marshalMapData = Marshal.load(mapData);
 
@@ -361,14 +307,16 @@ export const readRMXPEvents = async (projectPath: string, mapId: number, eventId
   const eventsData = marshalMapData['@events'];
   if (!isMarshalHash(eventsData)) throw new Error('Loaded object is not a Hash');
 
-  if (eventId) return buildEvent(eventsData, mapId, eventId.toString());
+  if (eventIds) {
+    return eventIds.map((eventId) => buildEvent(eventsData, mapId, eventId.toString())).filter(<T>(data: T): data is Exclude<T, undefined> => !!data);
+  }
   return buildEvents(eventsData, mapId);
 };
 
 const readRMXPEventsBackendService = async (payload: ReadRMXPEventInput): Promise<ReadRMXPEventOutput> => {
   log.info('read-rmxp-events', payload);
 
-  const rmxpEvents = await readRMXPEvents(payload.projectPath, payload.mapId);
+  const rmxpEvents = await readRMXPEvents(payload.projectPath, payload.mapId, payload.eventIds);
 
   log.info('read-rmxp-events/success');
   return { rmxpEvents };
