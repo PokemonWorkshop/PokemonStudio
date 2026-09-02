@@ -1909,7 +1909,7 @@
   "event_command_choice_position": "Position du choix",
   "event_command_yes": "Oui",
   "event_command_no": "Non",
-  "event_command_no_parameters": "Cette commande n'a pas de paramètre.",
+  "event_command_no_parameters": "Cette instruction n'a pas de paramètre.",
   "event_command_action": "Action",
   "event_command_action_enable": "Autoriser",
   "event_command_action_disable": "Interdire",
