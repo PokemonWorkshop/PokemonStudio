@@ -5,6 +5,8 @@ import { DefaultCommand } from '../commands/DefaultCommand';
 import { ShowChoiceCommand } from '../commands/nodes/messageCommands/ShowChoiceCommand';
 import { ShowMessageCommand } from '../commands/nodes/messageCommands/ShowMessageCommand';
 import { WaitMovementCompletionCommand } from '../commands/nodes/movementCommands/WaitMovementCompletion';
+import { ManageAccessSaveMenuCommand } from '../commands/nodes/saveCommands/ManageAccessSaveMenuCommand';
+import { OpenSaveMenuCommand } from '../commands/nodes/saveCommands/OpenSaveMenuCommand';
 import { InsertScriptCommand } from '../commands/nodes/scriptCommands/InsertScriptCommand';
 import { StartCommand } from '../commands/nodes/startCommands/StartCommand';
 import { ShadowNode } from './ShadowNode';
@@ -46,8 +48,8 @@ export const CommandToNodes: Record<StudioEventCommandType | 'shadow_node', (pro
   manage_dex: DefaultCommand,
   set_active_dex: DefaultCommand,
   give_badge: DefaultCommand,
-  manage_access_save_menu: DefaultCommand,
-  open_save_menu: DefaultCommand,
+  manage_access_save_menu: ManageAccessSaveMenuCommand,
+  open_save_menu: OpenSaveMenuCommand,
   manage_autosave: DefaultCommand,
   force_autosave: DefaultCommand,
   force_save: DefaultCommand,
