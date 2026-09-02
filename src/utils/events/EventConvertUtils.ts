@@ -1,25 +1,9 @@
-import { DbSymbol } from '@modelEntities/dbSymbol';
-import type { StudioEventCommand } from '@modelEntities/event/command';
-import {
-  EVENT_START_CSV_FILE_ID,
-  type Appearance,
-  type CustomEvent,
-  type EventAppearance,
-  type EventTrigger,
-  type LinkParameter,
-  type MapEventLink,
-} from '@modelEntities/event/event';
-import type { CommandId } from '@modelEntities/event/globalCommand';
-import { StudioMap } from '@modelEntities/map';
-import { findFirstAvailableCsvFileId, findFirstAvailableId } from '@utils/ModelUtils';
-import log from 'electron-log';
-import { defineBackendServiceFunction } from './defineBackendServiceFunction';
-import { readRMXPEvents, RMXPEvent } from './readRMXPEvents';
-
-type PartialStudioEvent = { dbSymbol: DbSymbol; id: number; csvFileId: number };
-export type RMXPEventsToStudioEventsInput = { projectPath: string; map: string; events: string; eventId?: number };
-export type RMXPEventsToStudioEventsOutput = {};
-//export type RMXPEventsToStudioEventsOutput = { map: StudioMap, events: PartialStudioEvent[], newStudioEvents: unknown[]}
+import { StudioEventCommand } from '@modelEntities/event/command';
+import { Appearance, CustomEvent, EventAppearance, EventTrigger, LinkParameter, MapEventLink, StudioEvent } from '@modelEntities/event/event';
+import { CommandId } from '@modelEntities/event/globalCommand';
+import { ProjectData } from '@src/GlobalStateProvider';
+import { createEvent } from '@utils/entityCreation';
+import { RMXPEvent } from './types';
 
 const RMXP_TRIGGER_TO_STUDIO_TRIGGER: Record<number, EventTrigger> = {
   0: 'KeyPress', // action button
@@ -134,16 +118,11 @@ const createLinkParameters = (rmxpEvent: RMXPEvent, pageIndex: number): LinkPara
   };
 };
 
-const createNewEventLink = (events: Record<string, PartialStudioEvent>, rmxpEvent: RMXPEvent): MapEventLink => {
-  const id = findFirstAvailableId(events, 0);
-  const csvFileId = findFirstAvailableCsvFileId(events, EVENT_START_CSV_FILE_ID);
-  const dbSymbol = `event_${id}` as DbSymbol;
-  events[dbSymbol] = { dbSymbol, id, csvFileId };
-
+const createNewEventLink = (allEvents: ProjectData['events'], rmxpEvent: RMXPEvent, event: StudioEvent): MapEventLink => {
   return {
     conditions: [], // TODO:
     parameters: createLinkParameters(rmxpEvent, 0),
-    eventDbSymbol: dbSymbol,
+    eventDbSymbol: event.dbSymbol,
     defaultAppearance: createEventAppearance(rmxpEvent, 0),
     position: {
       x: rmxpEvent.x,
@@ -153,7 +132,7 @@ const createNewEventLink = (events: Record<string, PartialStudioEvent>, rmxpEven
   };
 };
 
-const getEventTriggers = (rmxpEvent: RMXPEvent): CustomEvent['triggers'] => {
+const getEventTriggers = (rmxpEvent: RMXPEvent): StudioEvent['triggers'] => {
   return rmxpEvent.pages.map(({ trigger, condition }) => ({
     type: RMXP_TRIGGER_TO_STUDIO_TRIGGER[trigger],
     conditions: [], // TODO: convert rmxp condition to studio condition
@@ -161,55 +140,11 @@ const getEventTriggers = (rmxpEvent: RMXPEvent): CustomEvent['triggers'] => {
   }));
 };
 
-const createCustomEvent = (events: Record<string, PartialStudioEvent>, rmxpEvent: RMXPEvent, eventIdentifier: PartialStudioEvent): CustomEvent => {
-  const csvFileId = findFirstAvailableCsvFileId(events, EVENT_START_CSV_FILE_ID);
+export const createCustomEvent = (allEvents: ProjectData['events'], rmxpEvent: RMXPEvent): CustomEvent => {
+  const newEvent = createEvent(allEvents);
   return {
-    dbSymbol: eventIdentifier.dbSymbol,
-    id: eventIdentifier.id,
-    csvFileId,
-    type: 'custom',
+    ...newEvent,
     triggers: getEventTriggers(rmxpEvent),
     commands: {} as Record<CommandId, StudioEventCommand>, // TODO: implement command lists
   };
 };
-
-export const convertRMXPEventsToStudioEvents = async (payload: RMXPEventsToStudioEventsInput): Promise<RMXPEventsToStudioEventsOutput> => {
-  const map: StudioMap = JSON.parse(payload.map);
-  const rmxpEvents = await readRMXPEvents(payload.projectPath, map.id, payload.eventId);
-  const newStudioEvents: CustomEvent[] = [];
-  const newEventLinks: MapEventLink[] = [];
-  const eventsParsed: PartialStudioEvent[] = JSON.parse(payload.events);
-  const events = Object.fromEntries(eventsParsed.map((event) => [event.dbSymbol, event]));
-
-  await rmxpEvents.reduce(async (lastPromise, rmxpEvent) => {
-    await lastPromise;
-
-    const newEventLink = createNewEventLink(events, rmxpEvent);
-    newEventLinks.push(newEventLink);
-
-    const newCustomEvent = createCustomEvent(events, rmxpEvent, events[newEventLink.eventDbSymbol]);
-    newStudioEvents.push(newCustomEvent);
-  }, Promise.resolve());
-
-  // TODO: don't forget to remove this later
-  //log.info('======= Event link data in the map =======');
-  //newEventLinks.forEach((e) => log.info(e));
-  log.info('======= Events =======');
-  newStudioEvents.forEach((e) => log.info(e));
-
-  return {};
-};
-
-const convertRMXPEventsToStudioEventsBackendService = async (payload: RMXPEventsToStudioEventsInput): Promise<RMXPEventsToStudioEventsOutput> => {
-  log.info('convert-rmxp-events-to-studio-events', { mapId: JSON.parse(payload.map).id });
-
-  const result = await convertRMXPEventsToStudioEvents(payload);
-
-  log.info('convert-rmxp-events-to-studio-events/success');
-  return result;
-};
-
-export const registerConvertRMXPEventsToStudioEvents = defineBackendServiceFunction(
-  'convert-rmxp-events-to-studio-events',
-  convertRMXPEventsToStudioEventsBackendService,
-);

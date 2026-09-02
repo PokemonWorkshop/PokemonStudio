@@ -4,6 +4,7 @@ import { InputFormContainer } from '@components/inputs/InputContainer';
 
 import { SelectMap } from '@components/selects';
 import { useProjectData, useProjectEvents } from '@src/hooks/useProjectData';
+import { createCustomEvent } from '@utils/events/EventConvertUtils';
 import React, { useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
@@ -32,6 +33,11 @@ export const ConvertEventsPage = () => {
   const map = maps[mapDbSymbol];
   const eventIdRef = useRef<HTMLInputElement>(null);
 
+  const getEventIds = () => {
+    if (eventIdRef.current?.valueAsNumber === undefined) return undefined;
+    return Number.isNaN(eventIdRef.current?.valueAsNumber) ? undefined : [eventIdRef.current?.valueAsNumber];
+  };
+
   // TODO: don't forget to create the new csv
   // const setNewProjectText = useNewProjectText();
   // setNewProjectText(event.csvFileId);
@@ -44,12 +50,36 @@ export const ConvertEventsPage = () => {
           <Label>RMXP event ID</Label>
           <Input type="number" ref={eventIdRef} min="0" step="1" />
         </InputWithLeftLabelContainer>
-        If empty, all events of the map are returned
+        If empty, all events of the map are read
         <PrimaryButton
           onClick={() =>
-            window.api.convertRMXPEventsToStudioEvents(
-              { events: JSON.stringify(events), map: JSON.stringify(map), projectPath, eventId: eventIdRef.current?.valueAsNumber },
-              () => setResult(`Success! (Map id: ${map.id})`),
+            window.api.readRMXPEvents(
+              { projectPath, mapId: map.id, eventIds: getEventIds() },
+              ({ rmxpEvents }) => {
+                console.log(rmxpEvents);
+                setResult(`Success! (Map id: ${map.id})`);
+              },
+              ({ errorMessage }) => {
+                console.error(errorMessage);
+                setResult(`Error! (Map id: ${map.id}) Read the console log`);
+              },
+            )
+          }
+        >
+          Read event(s)
+        </PrimaryButton>
+        <PrimaryButton
+          onClick={() =>
+            window.api.readRMXPEvents(
+              {
+                projectPath,
+                mapId: map.id,
+                eventIds: getEventIds(),
+              },
+              ({ rmxpEvents }) => {
+                if (rmxpEvents[0]) console.log(createCustomEvent(allEvents, rmxpEvents[0]));
+                setResult(`Success! (Map id: ${map.id})`);
+              },
               ({ errorMessage }) => {
                 console.error(errorMessage);
                 setResult(`Error! (Map id: ${map.id}) Read the console log`);
@@ -61,7 +91,7 @@ export const ConvertEventsPage = () => {
         </PrimaryButton>
         <span>{result}</span>
       </InputFormContainer>
-      Read the backend log to read the result
+      Result available in the console
     </ConvertEventsPageContainer>
   );
 };
