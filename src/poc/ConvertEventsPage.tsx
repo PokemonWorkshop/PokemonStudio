@@ -3,9 +3,9 @@ import { Input, InputWithLeftLabelContainer, Label } from '@components/inputs';
 import { InputFormContainer } from '@components/inputs/InputContainer';
 
 import { SelectMap } from '@components/selects';
-import { useProjectData, useProjectEvents } from '@src/hooks/useProjectData';
-import { createCustomEvent } from '@utils/events/EventConvertUtils';
-import React, { useMemo, useRef, useState } from 'react';
+import { useEventConvert } from '@hooks/useEventConvert.ts';
+import { useProjectMaps } from '@src/hooks/useProjectData';
+import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 
 const ConvertEventsPageContainer = styled.div`
@@ -24,14 +24,13 @@ const ConvertEventsPageContainer = styled.div`
 `;
 
 export const ConvertEventsPage = () => {
-  const { projectDataValues: maps, state } = useProjectData('maps', 'map');
-  const { projectDataValues: allEvents } = useProjectEvents();
+  const { projectDataValues: maps, state } = useProjectMaps();
   const projectPath = state.projectPath!;
   const [mapDbSymbol, setMapDbSymbol] = useState('map001');
   const [result, setResult] = useState('');
-  const events = useMemo(() => Object.values(allEvents), [allEvents]);
   const map = maps[mapDbSymbol];
   const eventIdRef = useRef<HTMLInputElement>(null);
+  const eventConvert = useEventConvert();
 
   const getEventIds = () => {
     if (eventIdRef.current?.valueAsNumber === undefined) return undefined;
@@ -70,17 +69,10 @@ export const ConvertEventsPage = () => {
         </PrimaryButton>
         <PrimaryButton
           onClick={() =>
-            window.api.readRMXPEvents(
-              {
-                projectPath,
-                mapId: map.id,
-                eventIds: getEventIds(),
-              },
-              ({ rmxpEvents }) => {
-                if (rmxpEvents[0]) console.log(createCustomEvent(allEvents, rmxpEvents[0]));
-                setResult(`Success! (Map id: ${map.id})`);
-              },
-              ({ errorMessage }) => {
+            eventConvert(
+              { mapId: map.id, eventIds: getEventIds() },
+              () => setResult(`Success! (Map id: ${map.id})`),
+              (errorMessage) => {
                 console.error(errorMessage);
                 setResult(`Error! (Map id: ${map.id}) Read the console log`);
               },
