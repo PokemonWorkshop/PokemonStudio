@@ -237,7 +237,7 @@ const buildParameters = (parameters: unknown[]): unknown[] => {
 const buildMoveCommand = (moveCommands: MoveCommandData[]): RMXPMoveCommand[] =>
   moveCommands.map((moveCommand) => ({
     code: moveCommand['@code'],
-    parameters: moveCommand['@parameters'],
+    parameters: buildParameters(moveCommand['@parameters']),
   }));
 
 const buildMoveRoute = (moveRoute: MoveRouteData): RMXPMoveRoute => ({
