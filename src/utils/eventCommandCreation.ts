@@ -37,8 +37,10 @@ const createWaitMovementCompletionCommand = () => {
 };
 
 const createOpenSaveMenuCommand = () => ({});
-
 const createManageAccessSaveMenuCommand = () => ({ action: 'enable' });
+
+const createReturnToTitleScreenCommand = () => ({});
+const createManageAccessMainMenuCommand = () => ({ action: 'enable' });
 
 const createInsertScriptCommand = () => ({ script: '' });
 
@@ -95,9 +97,9 @@ export const EventCommandCreation: Record<StudioEventCommandType, (event: Studio
     open_scene: dummy,
     open_shop: dummy,
     open_custom_scene: dummy,
-    manage_access_main_menu: dummy,
+    manage_access_main_menu: createManageAccessMainMenuCommand,
     trigger_game_over: dummy,
-    return_to_title_screen: dummy,
+    return_to_title_screen: createReturnToTitleScreenCommand,
     open_creature_shop: dummy,
     start_quest: dummy,
     display_hidden_objective: dummy,
