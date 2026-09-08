@@ -8,6 +8,8 @@ import type { Connection, Edge } from '@xyflow/react';
 const XY_EDGE = 'xy-edge__';
 const COMMAND = 'command_';
 
+export const EVENT_GRID_SIZE = 32;
+
 export const reactFlowEdgeToStudioConnection = (id: string): ConnectionId => {
   return id.replace(XY_EDGE, '') as ConnectionId;
 };

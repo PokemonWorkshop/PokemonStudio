@@ -1,16 +1,14 @@
-import { StudioEventCommand } from '@modelEntities/event/command';
-import { Appearance, CustomEvent, EventAppearance, EventTrigger, LinkParameter, MapEventLink, StudioEvent } from '@modelEntities/event/event';
-import { CommandId } from '@modelEntities/event/globalCommand';
+import { Appearance, EventAppearance, LinkParameter, MapEventLink, StudioEvent } from '@modelEntities/event/event';
+import { StudioEventTrigger } from '@modelEntities/event/startCommands/start';
 import { ProjectData } from '@src/GlobalStateProvider';
-import { createEvent } from '@utils/entityCreation';
 import { RMXPEvent } from './types';
 
-const RMXP_TRIGGER_TO_STUDIO_TRIGGER: Record<number, EventTrigger> = {
-  0: 'KeyPress', // action button
-  1: 'Contact', // contact with player
-  2: 'Overlap', // contact with event
-  3: 'Cinematic', // autorun
-  4: 'Parallel', // parallel processing
+export const RMXP_TRIGGER_TO_STUDIO_TRIGGER: Record<number, StudioEventTrigger> = {
+  0: 'key_press', // action button
+  1: 'contact', // contact with player
+  2: 'overlap', // contact with event
+  3: 'cinematic', // autorun
+  4: 'parallel', // parallel processing
 };
 
 // Based from Game_Event and Sprite_Characters PSDK scripts
@@ -132,7 +130,7 @@ const createNewEventLink = (allEvents: ProjectData['events'], rmxpEvent: RMXPEve
   };
 };
 
-const getEventTriggers = (rmxpEvent: RMXPEvent): StudioEvent['triggers'] => {
+/*const getEventTriggers = (rmxpEvent: RMXPEvent): StudioEvent['triggers'] => {
   return rmxpEvent.pages.map(({ trigger, condition }) => ({
     type: RMXP_TRIGGER_TO_STUDIO_TRIGGER[trigger],
     conditions: [], // TODO: convert rmxp condition to studio condition
@@ -147,4 +145,4 @@ export const createCustomEvent = (allEvents: ProjectData['events'], rmxpEvent: R
     triggers: getEventTriggers(rmxpEvent),
     commands: {} as Record<CommandId, StudioEventCommand>, // TODO: implement command lists
   };
-};
+};*/

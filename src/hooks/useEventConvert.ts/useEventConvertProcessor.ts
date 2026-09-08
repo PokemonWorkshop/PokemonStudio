@@ -4,9 +4,13 @@ import { DEFAULT_PROCESS_STATE, PROCESS_DONE_STATE, SpecialStateProcessors } fro
 import { useProjectEvents } from '@hooks/useProjectData';
 import { EVENT_NAME_TEXT_ID } from '@modelEntities/event/event';
 import { DEFAULT_EVENT_TREE, StudioEventTree } from '@modelEntities/event/event-tree';
+import { StudioEventCommandStart } from '@modelEntities/event/startCommands/start';
 import { ProjectData, useGlobalState } from '@src/GlobalStateProvider';
+import { cloneEntity } from '@utils/cloneEntity';
 import { createEvent } from '@utils/entityCreation';
+import { RMXP_TRIGGER_TO_STUDIO_TRIGGER } from '@utils/events/EventConvertUtils';
 import { addNewEventToEventTree } from '@utils/events/EventTreeUtils';
+import { EVENT_GRID_SIZE, getCommandId } from '@utils/events/EventUtils';
 import { useLoaderRef } from '@utils/loaderContext';
 import { useNewProjectText, useSetProjectText } from '@utils/ReadingProjectText';
 import { useMemo, useRef } from 'react';
@@ -74,7 +78,20 @@ export const useEventConvertProcessor = () => {
 
           const page = rmxpEvent.pages[pageIndex];
           const event = events[rmxpEventIdsToDbSymbols[rmxpEvent.id]];
-          // TODO: create trigger command
+          const commandId = getCommandId(event);
+          const command: StudioEventCommandStart = {
+            type: 'start',
+            connections: {},
+            priority: rmxpEvent.pages.length - pageIndex,
+            studioData: { comments: [], x: 0, y: pageIndex * EVENT_GRID_SIZE * 8 },
+            trigger: RMXP_TRIGGER_TO_STUDIO_TRIGGER[page.trigger],
+          };
+          const commands = cloneEntity({
+            ...event.commands,
+            [commandId]: command,
+          });
+
+          setEvent({ [event.dbSymbol]: { ...event, commands } });
           return setState({ state: 'createCommands', rmxpEvents, rmxpEventIdsToDbSymbols, eventIndex, pageIndex, commandIndex: 0 });
         });
       },
