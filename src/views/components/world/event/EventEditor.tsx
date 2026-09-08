@@ -3,6 +3,7 @@ import { EventProvider } from '@components/world/event/common/EventContext';
 import { StudioEvent } from '@modelEntities/event/event';
 import type { CommandId } from '@modelEntities/event/globalCommand';
 import { useDialogsRef } from '@src/hooks/useDialogsRef';
+import { EVENT_GRID_SIZE } from '@utils/events/EventUtils';
 import { Background, Controls, ReactFlow, ReactFlowProvider } from '@xyflow/react';
 import { default as React, useMemo, useRef } from 'react';
 import styled from 'styled-components';
@@ -10,8 +11,6 @@ import { CommandEditorAndDeletionKeys, CommandEditorOverlay } from './commands/e
 import { CommandToNodes } from './common/CommandToNodes';
 import { CustomConnectionLineStyle, edgeTypes } from './common/CustomEdge';
 import { useEventFlow } from './hooks/useEventFlow';
-
-const GRID_SIZE = 32;
 
 const EventEditorContainer = styled.div`
   display: flex;
@@ -75,10 +74,10 @@ const EventFlow = ({ event }: EventFlowProps) => {
           connectionLineStyle={CustomConnectionLineStyle}
           fitView
           snapToGrid
-          snapGrid={[GRID_SIZE, GRID_SIZE]}
+          snapGrid={[EVENT_GRID_SIZE, EVENT_GRID_SIZE]}
         >
           <Controls position="bottom-right" />
-          <Background gap={GRID_SIZE} offset={GRID_SIZE} color="#6c707b" />
+          <Background gap={EVENT_GRID_SIZE} offset={EVENT_GRID_SIZE} color="#6c707b" />
         </ReactFlow>
       </div>
       <CommandLibrary />
