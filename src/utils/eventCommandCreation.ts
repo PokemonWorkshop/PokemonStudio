@@ -28,7 +28,7 @@ const createShowChoiceCommand = (event: StudioEvent) => {
   };
 };
 
-const createWaitMovementCompletionCommand = () => {
+export const createWaitMovementCompletionCommand = () => {
   return {
     waitAllEvents: false,
     waitById: [],

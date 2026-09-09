@@ -8,7 +8,7 @@ import { StudioEventCommandStart } from '@modelEntities/event/startCommands/star
 import { ProjectData, useGlobalState } from '@src/GlobalStateProvider';
 import { cloneEntity } from '@utils/cloneEntity';
 import { createEvent } from '@utils/entityCreation';
-import { RMXP_TRIGGER_TO_STUDIO_TRIGGER } from '@utils/events/EventConvertUtils';
+import { convertCommand, RMXP_TRIGGER_TO_STUDIO_TRIGGER } from '@utils/events/EventConvertUtils';
 import { addNewEventToEventTree } from '@utils/events/EventTreeUtils';
 import { EVENT_GRID_SIZE, getCommandId } from '@utils/events/EventUtils';
 import { useLoaderRef } from '@utils/loaderContext';
@@ -104,8 +104,24 @@ export const useEventConvertProcessor = () => {
           }
 
           const event = events[rmxpEventIdsToDbSymbols[rmxpEvent.id]];
-          const rmxpCommand = page.list[commandIndex];
-          // TODO: convert rmxp command
+          const command = convertCommand(page, commandIndex);
+          if (!command) {
+            return setState({ state: 'createCommands', rmxpEvents, rmxpEventIdsToDbSymbols, eventIndex, pageIndex, commandIndex: ++commandIndex });
+          }
+
+          // TODO: improve the calculation of x
+          command.studioData = {
+            ...command.studioData,
+            x: EVENT_GRID_SIZE * 12 * Object.keys(event.commands).length,
+            y: pageIndex * EVENT_GRID_SIZE * 8,
+          };
+          const commandId = getCommandId(event);
+          const commands = cloneEntity({
+            ...event.commands,
+            [commandId]: command,
+          });
+
+          setEvent({ [event.dbSymbol]: { ...event, commands } });
           return setState({ state: 'createCommands', rmxpEvents, rmxpEventIdsToDbSymbols, eventIndex, pageIndex, commandIndex: ++commandIndex });
         });
       },
