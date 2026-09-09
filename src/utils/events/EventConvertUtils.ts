@@ -1,7 +1,10 @@
+import { StudioEventCommand } from '@modelEntities/event/command';
 import { Appearance, EventAppearance, LinkParameter, MapEventLink, StudioEvent } from '@modelEntities/event/event';
+import { StudioEventWaitMovementCompletion } from '@modelEntities/event/movementCommands/waitMovementCompletion';
 import { StudioEventTrigger } from '@modelEntities/event/startCommands/start';
 import { ProjectData } from '@src/GlobalStateProvider';
-import { RMXPEvent } from './types';
+import { createWaitMovementCompletionCommand } from '@utils/eventCommandCreation';
+import type { RMXPEvent, RMXPEventPage } from './types';
 
 export const RMXP_TRIGGER_TO_STUDIO_TRIGGER: Record<number, StudioEventTrigger> = {
   0: 'key_press', // action button
@@ -146,3 +149,23 @@ export const createCustomEvent = (allEvents: ProjectData['events'], rmxpEvent: R
     commands: {} as Record<CommandId, StudioEventCommand>, // TODO: implement command lists
   };
 };*/
+
+// RMXP command 210
+const convertWaitMouvementCompletionCommand = (): StudioEventWaitMovementCompletion => ({
+  type: 'wait_move_completion',
+  connections: {},
+  studioData: { x: 0, y: 0, comments: [] },
+  ...createWaitMovementCompletionCommand(),
+});
+
+const RMXPCommandToStudioCommand: Record<number, (params: unknown[]) => StudioEventCommand | undefined> = {
+  210: convertWaitMouvementCompletionCommand,
+};
+
+export const convertCommand = (page: RMXPEventPage, commandIndex: number): StudioEventCommand | undefined => {
+  const rmxpCommand = page.list[commandIndex];
+  const convert = RMXPCommandToStudioCommand[rmxpCommand.code];
+  if (!convert) return undefined;
+
+  return convert(rmxpCommand.parameters);
+};
