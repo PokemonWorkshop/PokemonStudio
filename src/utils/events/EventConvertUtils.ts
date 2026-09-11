@@ -1,9 +1,10 @@
 import { StudioEventCommand } from '@modelEntities/event/command';
 import { Appearance, EventAppearance, LinkParameter, MapEventLink, StudioEvent } from '@modelEntities/event/event';
-import { StudioEventWaitMovementCompletion } from '@modelEntities/event/movementCommands/waitMovementCompletion';
+import { StudioEventCommandWaitMovementCompletion } from '@modelEntities/event/movementCommands/waitMovementCompletion';
+import { StudioEventCommandInsertScript } from '@modelEntities/event/scriptCommands/insertScript';
 import { StudioEventTrigger } from '@modelEntities/event/startCommands/start';
 import { ProjectData } from '@src/GlobalStateProvider';
-import { createWaitMovementCompletionCommand } from '@utils/eventCommandCreation';
+import { createInsertScriptCommand, createWaitMovementCompletionCommand } from '@utils/eventCommandCreation';
 import type { RMXPEvent, RMXPEventPage } from './types';
 
 export const RMXP_TRIGGER_TO_STUDIO_TRIGGER: Record<number, StudioEventTrigger> = {
@@ -151,15 +152,26 @@ export const createCustomEvent = (allEvents: ProjectData['events'], rmxpEvent: R
 };*/
 
 // RMXP command 210
-const convertWaitMouvementCompletionCommand = (): StudioEventWaitMovementCompletion => ({
+const convertWaitMouvementCompletionCommand = (): StudioEventCommandWaitMovementCompletion => ({
   type: 'wait_move_completion',
   connections: {},
   studioData: { x: 0, y: 0, comments: [] },
   ...createWaitMovementCompletionCommand(),
 });
 
+const convertInsertScriptCommand = (params: unknown[]): StudioEventCommandInsertScript => {
+  const script = (params[0] as string) || '# unable to convert the script command';
+  return {
+    type: 'insert_script',
+    connections: {},
+    studioData: { x: 0, y: 0, comments: [] },
+    ...createInsertScriptCommand(script),
+  };
+};
+
 const RMXPCommandToStudioCommand: Record<number, (params: unknown[]) => StudioEventCommand | undefined> = {
   210: convertWaitMouvementCompletionCommand,
+  355: convertInsertScriptCommand,
 };
 
 export const convertCommand = (page: RMXPEventPage, commandIndex: number): StudioEventCommand | undefined => {

@@ -30,7 +30,7 @@ const createShowChoiceCommand = (event: StudioEvent) => {
 
 export const createWaitMovementCompletionCommand = () => {
   return {
-    waitAllEvents: false,
+    waitAllEvents: true,
     waitById: [],
     timeout: 0,
   };
@@ -40,7 +40,7 @@ const createOpenSaveMenuCommand = () => ({});
 
 const createManageAccessSaveMenuCommand = () => ({ action: 'enable' });
 
-const createInsertScriptCommand = () => ({ script: '' });
+export const createInsertScriptCommand = (script?: string) => ({ script: script || '' });
 
 const createStartCommand = (event: StudioEvent) => {
   const priority = findFirstAvailablePriorityEvent(event, 1);
