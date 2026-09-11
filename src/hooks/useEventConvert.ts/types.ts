@@ -1,6 +1,10 @@
 import type { DbSymbol } from '@modelEntities/dbSymbol';
 import type { RMXPEvent } from '@utils/events/types';
 
+type ConversionData = {
+  commandsPerPage: number[];
+};
+
 export type EventConvertFailureCallback = (errorMessage: string) => void;
 export type EventConvertSuccessCallback = (payload: Record<string, never>) => void;
 export type EventConvertStateObject =
@@ -13,6 +17,7 @@ export type EventConvertStateObject =
       rmxpEventIdsToDbSymbols: Record<number, DbSymbol>;
       eventIndex: number;
       pageIndex: number;
+      conversionData: ConversionData;
     }
   | {
       state: 'createCommands';
@@ -21,6 +26,7 @@ export type EventConvertStateObject =
       eventIndex: number;
       pageIndex: number;
       commandIndex: number;
+      conversionData: ConversionData;
     };
 export type EventConvertFunctionBinding = {
   onSuccess: EventConvertSuccessCallback;

@@ -46,7 +46,14 @@ export const useEventConvertProcessor = () => {
       createEvents: ({ rmxpEvents, rmxpEventIdsToDbSymbols, eventIndex }, setState) => {
         return toAsyncProcess(() => {
           if (rmxpEvents.length === eventIndex) {
-            return setState({ state: 'createTriggers', rmxpEvents, rmxpEventIdsToDbSymbols, eventIndex: 0, pageIndex: 0 });
+            return setState({
+              state: 'createTriggers',
+              rmxpEvents,
+              rmxpEventIdsToDbSymbols,
+              eventIndex: 0,
+              pageIndex: 0,
+              conversionData: { commandsPerPage: [] },
+            });
           }
           const rmxpEvent = rmxpEvents[eventIndex];
           const newEvent = createEvent(localEvents.current);
@@ -62,7 +69,7 @@ export const useEventConvertProcessor = () => {
           return setState({ state: 'createEvents', rmxpEvents, rmxpEventIdsToDbSymbols, eventIndex: ++eventIndex });
         });
       },
-      createTriggers: ({ rmxpEvents, rmxpEventIdsToDbSymbols, eventIndex, pageIndex }, setState) => {
+      createTriggers: ({ rmxpEvents, rmxpEventIdsToDbSymbols, eventIndex, pageIndex, conversionData }, setState) => {
         return toAsyncProcess(() => {
           if (rmxpEvents.length === eventIndex) {
             localEvents.current = { ...events };
@@ -73,7 +80,14 @@ export const useEventConvertProcessor = () => {
 
           const rmxpEvent = rmxpEvents[eventIndex];
           if (rmxpEvent.pages.length === pageIndex) {
-            return setState({ state: 'createTriggers', rmxpEvents, rmxpEventIdsToDbSymbols, eventIndex: ++eventIndex, pageIndex: 0 });
+            return setState({
+              state: 'createTriggers',
+              rmxpEvents,
+              rmxpEventIdsToDbSymbols,
+              eventIndex: ++eventIndex,
+              pageIndex: 0,
+              conversionData: { commandsPerPage: [] },
+            });
           }
 
           const page = rmxpEvent.pages[pageIndex];
@@ -90,29 +104,37 @@ export const useEventConvertProcessor = () => {
             ...event.commands,
             [commandId]: command,
           });
+          conversionData.commandsPerPage[pageIndex] = 1;
 
           setEvent({ [event.dbSymbol]: { ...event, commands } });
-          return setState({ state: 'createCommands', rmxpEvents, rmxpEventIdsToDbSymbols, eventIndex, pageIndex, commandIndex: 0 });
+          return setState({ state: 'createCommands', rmxpEvents, rmxpEventIdsToDbSymbols, eventIndex, pageIndex, commandIndex: 0, conversionData });
         });
       },
-      createCommands: ({ rmxpEvents, rmxpEventIdsToDbSymbols, eventIndex, pageIndex, commandIndex }, setState) => {
+      createCommands: ({ rmxpEvents, rmxpEventIdsToDbSymbols, eventIndex, pageIndex, commandIndex, conversionData }, setState) => {
         return toAsyncProcess(() => {
           const rmxpEvent = rmxpEvents[eventIndex];
           const page = rmxpEvent.pages[pageIndex];
           if (page.list.length === commandIndex) {
-            return setState({ state: 'createTriggers', rmxpEvents, rmxpEventIdsToDbSymbols, eventIndex, pageIndex: ++pageIndex });
+            return setState({ state: 'createTriggers', rmxpEvents, rmxpEventIdsToDbSymbols, eventIndex, pageIndex: ++pageIndex, conversionData });
           }
 
           const event = events[rmxpEventIdsToDbSymbols[rmxpEvent.id]];
           const command = convertCommand(page, commandIndex);
           if (!command) {
-            return setState({ state: 'createCommands', rmxpEvents, rmxpEventIdsToDbSymbols, eventIndex, pageIndex, commandIndex: ++commandIndex });
+            return setState({
+              state: 'createCommands',
+              rmxpEvents,
+              rmxpEventIdsToDbSymbols,
+              eventIndex,
+              pageIndex,
+              commandIndex: ++commandIndex,
+              conversionData,
+            });
           }
 
-          // TODO: improve the calculation of x
           command.studioData = {
             ...command.studioData,
-            x: EVENT_GRID_SIZE * 12 * Object.keys(event.commands).length,
+            x: EVENT_GRID_SIZE * 12 * conversionData.commandsPerPage[pageIndex],
             y: pageIndex * EVENT_GRID_SIZE * 8,
           };
           const commandId = getCommandId(event);
@@ -120,9 +142,18 @@ export const useEventConvertProcessor = () => {
             ...event.commands,
             [commandId]: command,
           });
+          conversionData.commandsPerPage[pageIndex]++;
 
           setEvent({ [event.dbSymbol]: { ...event, commands } });
-          return setState({ state: 'createCommands', rmxpEvents, rmxpEventIdsToDbSymbols, eventIndex, pageIndex, commandIndex: ++commandIndex });
+          return setState({
+            state: 'createCommands',
+            rmxpEvents,
+            rmxpEventIdsToDbSymbols,
+            eventIndex,
+            pageIndex,
+            commandIndex: ++commandIndex,
+            conversionData,
+          });
         });
       },
     }),

@@ -2,7 +2,7 @@ import { InputFormContainer } from '@components/inputs/InputContainer';
 import type { StudioEventCommandData } from '@modelEntities/event/command';
 import {
   EVENT_COMMAND_WAIT_MOVEMENT_COMPLETION_VALIDATOR,
-  StudioEventWaitMovementCompletion,
+  StudioEventCommandWaitMovementCompletion,
 } from '@modelEntities/event/movementCommands/waitMovementCompletion';
 import { useNodeInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
 import { useZodForm } from '@src/hooks/useZodForm';
@@ -22,9 +22,9 @@ const WAIT_EDITOR_SCHEMA = EVENT_COMMAND_WAIT_MOVEMENT_COMPLETION_VALIDATOR.pick
 });
 
 export const WaitMovementCompletionCommand = ({ id, data: { dialogsRef, command, comments }, selected }: CommandNodeProps) => {
-  const { CommandNode, updateCommand } = useCommandNode<StudioEventWaitMovementCompletion>(id);
+  const { CommandNode, updateCommand } = useCommandNode<StudioEventCommandWaitMovementCompletion>(id);
   const { globalStaticEvent } = useSharedOptions();
-  const { type: commandType, ...commandData } = command as StudioEventCommandData<StudioEventWaitMovementCompletion>;
+  const { type: commandType, ...commandData } = command as StudioEventCommandData<StudioEventCommandWaitMovementCompletion>;
   const { event } = useEventData();
 
   const commandDataForForm = useMemo(
