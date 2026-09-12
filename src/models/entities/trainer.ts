@@ -46,6 +46,7 @@ export const TRAINER_VALIDATOR = z.object({
   klass: z.literal('TrainerBattleSetup'),
   id: POSITIVE_OR_ZERO_INT,
   dbSymbol: DB_SYMBOL_VALIDATOR,
+  classSymbol: DB_SYMBOL_VALIDATOR,
   vsType: TRAINER_VS_TYPE,
   isCouple: z.boolean(),
   baseMoney: POSITIVE_OR_ZERO_INT,

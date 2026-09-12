@@ -1,13 +1,13 @@
 import { DbSymbol } from '@modelEntities/dbSymbol';
 import { SelectedDataIdentifier } from '@src/GlobalStateProvider';
 import log from 'electron-log';
-import { getEntityNameText, getEntityNameTextUsingTextId } from './ReadingProjectText';
 import type { PreGlobalState } from '../hooks/useProjectLoad/types';
 import { parseJSON } from './json/parse';
+import { getEntityNameText, getEntityNameTextUsingTextId } from './ReadingProjectText';
 
 const firstByNameUsingTextId = (
   data: Record<string, Parameters<typeof getEntityNameTextUsingTextId>[0] & { dbSymbol: DbSymbol }>,
-  state: PreGlobalState
+  state: PreGlobalState,
 ): string => {
   return Object.values(data).sort((a, b) => getEntityNameTextUsingTextId(a, state).localeCompare(getEntityNameTextUsingTextId(b, state)))[0].dbSymbol;
 };
@@ -34,7 +34,7 @@ const getSelectedIdentifier = <T extends keyof SelectedDataIdentifier>(
   preState: PreGlobalState,
   selectedFromStorage: SelectedDataIdentifier,
   key: T,
-  dataKey: keyof PreGlobalState['projectData']
+  dataKey: keyof PreGlobalState['projectData'],
 ): SelectedDataIdentifier[T] | undefined => {
   if (key === 'pokemon') {
     const identifier = selectedFromStorage.pokemon;
@@ -61,7 +61,7 @@ const getSelectedIdentifier = <T extends keyof SelectedDataIdentifier>(
   return undefined;
 };
 
-const getMapLinkIdentifierV2 =(selectedFromStorage: SelectedDataIdentifier, preState: PreGlobalState) => {
+const getMapLinkIdentifierV2 = (selectedFromStorage: SelectedDataIdentifier, preState: PreGlobalState) => {
   const identifier = selectedFromStorage.mapLink;
   const mapLinks = Object.values(preState.projectData.mapLinks);
 
@@ -91,6 +91,7 @@ export const generateSelectedIdentifier = (preState: PreGlobalState): SelectedDa
     move: getSelectedIdentifier(preState, selectedFromStorage, 'move', 'moves') || firstById(projectData.moves),
     item: getSelectedIdentifier(preState, selectedFromStorage, 'item', 'items') || firstById(projectData.items),
     quest: getSelectedIdentifier(preState, selectedFromStorage, 'quest', 'quests') || firstById(projectData.quests),
+    trainerClass: getSelectedIdentifier(preState, selectedFromStorage, 'trainerClass', 'trainerClasses') || firstById(projectData.trainerClasses),
     trainer: getSelectedIdentifier(preState, selectedFromStorage, 'trainer', 'trainers') || firstById(projectData.trainers),
     type: getSelectedIdentifier(preState, selectedFromStorage, 'type', 'types') || firstByNameUsingTextId(projectData.types, preState),
     zone: getSelectedIdentifier(preState, selectedFromStorage, 'zone', 'zones') || firstById(projectData.zones),
