@@ -118,7 +118,7 @@
   },
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",
-    "@pkmn/sim": "^0.10.7",
+    "@pkmn/sim": "^0.10.11",
     "@xyflow/react": "^12.10.2",
     "csv-parse": "^6.2.1",
     "csv-stringify": "^6.7.0",
