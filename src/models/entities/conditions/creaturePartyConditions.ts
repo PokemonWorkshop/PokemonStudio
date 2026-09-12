@@ -24,7 +24,7 @@ export const partyFull: StudioCondition = {
   ],
 };
 
-export const PCFull: StudioCondition = {
+export const pcFull: StudioCondition = {
   dbSymbol: 'pc_full' as DbSymbol,
   operators: CONDITION_OPERATOR_GROUPS['Boolean'],
   valueTypes: [

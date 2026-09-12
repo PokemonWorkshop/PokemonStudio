@@ -3,7 +3,7 @@ import { DB_SYMBOL_VALIDATOR, DbSymbol } from '../dbSymbol';
 import { battleRunning, wildEncounterAvailable } from './battleConditions';
 import { bestiaryCompleted, caughtCreatureCount, creatureCaught, creatureSeen, seenCreatureCount } from './bestiaryConditions';
 import { followMeActive, followMeLetsGoActive, followersCount } from './characterConditions';
-import { PCFull, creatureInPC, creatureInParty, partyFull, partySize } from './creaturePartyConditions';
+import { creatureInPC, creatureInParty, partyFull, partySize, pcFull } from './creaturePartyConditions';
 import { creatureInDayCare, creatureInDayCareCount, eggAvailable } from './dayCareConditions';
 import {
   currentMap,
@@ -127,7 +127,7 @@ export const CONDITIONS_FROM_CATEGORY: Record<StudioConditionCategory, Condition
     { condition: partyFull, minimumVersion: '3.2.0' },
     { condition: creatureInParty, minimumVersion: '3.1.0' },
     { condition: creatureInPC, minimumVersion: '3.1.0' },
-    { condition: PCFull, minimumVersion: '3.2.0' },
+    { condition: pcFull, minimumVersion: '3.2.0' },
   ],
   bestiary: [
     { condition: seenCreatureCount, minimumVersion: '3.1.0' },
