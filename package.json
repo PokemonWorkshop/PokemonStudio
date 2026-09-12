@@ -140,7 +140,7 @@
     "react-tracked": "^2.0.1",
     "react-virtualized": "^9.22.6",
     "run-script-os": "^1.1.6",
-    "styled-components": "^5.3.11",
+    "styled-components": "^6.5.3",
     "ts-marshal": "^0.0.11",
     "ts-tiled-converter": "^0.0.12",
     "zod": "^3.25.76"
