@@ -1,5 +1,7 @@
 import { z } from 'zod';
 import type { StudioEventCommandCategory } from './category';
+import { EVENT_COMMAND_MANAGE_ACCESS_MAIN_MENU_VALIDATOR } from './gameInterfaceCommands/manageAccessMainMenu';
+import { EVENT_COMMAND_RETURN_TO_TITLE_SCREEN_VALIDATOR } from './gameInterfaceCommands/returnToTitleScreen';
 import { COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_CONNECTION_VALIDATOR, EVENT_COMMAND_STUDIO_DATA_VALIDATOR } from './globalCommand';
 import { EVENT_COMMAND_SHOW_CHOICE_VALIDATOR } from './messageCommands/showChoice';
 import { EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR } from './messageCommands/showMessage';
@@ -63,9 +65,9 @@ export const EVENT_COMMAND_VALIDATOR = z.discriminatedUnion('type', [
   GENERIC_COMMAND('open_scene'),
   GENERIC_COMMAND('open_shop'),
   GENERIC_COMMAND('open_custom_scene'),
-  GENERIC_COMMAND('manage_access_main_menu'),
+  EVENT_COMMAND_MANAGE_ACCESS_MAIN_MENU_VALIDATOR,
   GENERIC_COMMAND('trigger_game_over'),
-  GENERIC_COMMAND('return_to_title_screen'),
+  EVENT_COMMAND_RETURN_TO_TITLE_SCREEN_VALIDATOR,
   GENERIC_COMMAND('open_creature_shop'),
   GENERIC_COMMAND('start_quest'),
   GENERIC_COMMAND('display_hidden_objective'),

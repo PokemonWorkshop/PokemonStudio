@@ -2,9 +2,11 @@ import type { StudioEventCommandType } from '@modelEntities/event/command';
 import { JSX } from 'react';
 import type { CommandNodeProps } from '../commands/CommandNodeProps';
 import { DefaultCommand } from '../commands/DefaultCommand';
+import { ManageAccessMainMenuCommand } from '../commands/nodes/gameInterfaceCommands/ManageAccessMainMenuCommand';
+import { ReturnToTitleScreenCommand } from '../commands/nodes/gameInterfaceCommands/ReturnToTitleScreenCommand';
 import { ShowChoiceCommand } from '../commands/nodes/messageCommands/ShowChoiceCommand';
 import { ShowMessageCommand } from '../commands/nodes/messageCommands/ShowMessageCommand';
-import { WaitMovementCompletionCommand } from '../commands/nodes/movementCommands/WaitMovementCompletion';
+import { WaitMovementCompletionCommand } from '../commands/nodes/movementCommands/WaitMovementCompletionCommand';
 import { ManageAccessSaveMenuCommand } from '../commands/nodes/saveCommands/ManageAccessSaveMenuCommand';
 import { OpenSaveMenuCommand } from '../commands/nodes/saveCommands/OpenSaveMenuCommand';
 import { InsertScriptCommand } from '../commands/nodes/scriptCommands/InsertScriptCommand';
@@ -56,9 +58,9 @@ export const CommandToNodes: Record<StudioEventCommandType | 'shadow_node', (pro
   open_scene: DefaultCommand,
   open_shop: DefaultCommand,
   open_custom_scene: DefaultCommand,
-  manage_access_main_menu: DefaultCommand,
+  manage_access_main_menu: ManageAccessMainMenuCommand,
   trigger_game_over: DefaultCommand,
-  return_to_title_screen: DefaultCommand,
+  return_to_title_screen: ReturnToTitleScreenCommand,
   open_creature_shop: DefaultCommand,
   start_quest: DefaultCommand,
   display_hidden_objective: DefaultCommand,
