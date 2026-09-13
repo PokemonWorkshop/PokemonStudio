@@ -56,8 +56,10 @@ export const migrateTrainerClassesToEntities = async (_: IpcMainEvent, projectPa
     if (uniqueRowsByKey.has(key)) return;
 
     const id = uniqueRowsByKey.size;
-    const dbSymbol = buildUniqueDbSymbol(row[nameColumnIndex] || '', id, usedSymbols);
-    uniqueRowsByKey.set(key, { row, trainerClass: { klass: 'TrainerClass', id, dbSymbol } });
+    const englishName = row[nameColumnIndex] || `Trainer Class ${id}`;
+    const translatedRow = row.map((name) => name || englishName);
+    const dbSymbol = buildUniqueDbSymbol(englishName, id, usedSymbols);
+    uniqueRowsByKey.set(key, { row: translatedRow, trainerClass: { klass: 'TrainerClass', id, dbSymbol } });
   });
 
   const trainerClasses = Array.from(uniqueRowsByKey.values());
