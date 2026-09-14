@@ -1,9 +1,5 @@
 import type { DbSymbol } from '@modelEntities/dbSymbol';
-import type { RMXPEvent } from '@utils/events/types';
-
-type ConversionData = {
-  commandsPerPage: number[];
-};
+import type { ConversionData, RMXPEvent } from '@utils/events/types';
 
 export type EventConvertFailureCallback = (errorMessage: string) => void;
 export type EventConvertSuccessCallback = (payload: Record<string, never>) => void;

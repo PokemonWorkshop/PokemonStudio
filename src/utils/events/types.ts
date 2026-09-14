@@ -1,3 +1,5 @@
+import type { CommandId } from '@modelEntities/event/globalCommand';
+
 export type RMXPEventPageCondition = {
   isSwitch1: boolean;
   isSwitch2: boolean;
@@ -59,4 +61,10 @@ export type RMXPEvent = {
   x: number;
   y: number;
   pages: RMXPEventPage[];
+};
+
+export type ConversionData = {
+  commandsPerPage: number[];
+  lastCommandId?: CommandId;
+  commandIds: CommandId[];
 };

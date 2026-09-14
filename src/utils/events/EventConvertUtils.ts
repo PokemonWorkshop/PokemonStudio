@@ -5,7 +5,7 @@ import { StudioEventCommandInsertScript } from '@modelEntities/event/scriptComma
 import { StudioEventTrigger } from '@modelEntities/event/startCommands/start';
 import { ProjectData } from '@src/GlobalStateProvider';
 import { createInsertScriptCommand, createWaitMovementCompletionCommand } from '@utils/eventCommandCreation';
-import type { RMXPEvent, RMXPEventPage } from './types';
+import type { ConversionData, RMXPEvent, RMXPEventPage } from './types';
 
 export const RMXP_TRIGGER_TO_STUDIO_TRIGGER: Record<number, StudioEventTrigger> = {
   0: 'key_press', // action button
@@ -159,6 +159,7 @@ const convertWaitMouvementCompletionCommand = (): StudioEventCommandWaitMovement
   ...createWaitMovementCompletionCommand(),
 });
 
+// RMXP command 355
 const convertInsertScriptCommand = (params: unknown[]): StudioEventCommandInsertScript => {
   const script = (params[0] as string) || '# unable to convert the script command';
   return {
@@ -169,15 +170,44 @@ const convertInsertScriptCommand = (params: unknown[]): StudioEventCommandInsert
   };
 };
 
-const RMXPCommandToStudioCommand: Record<number, (params: unknown[]) => StudioEventCommand | undefined> = {
+// RMXP command 655
+const convertInsertScriptMultilineCommand = (params: unknown[], command: StudioEventCommand): StudioEventCommandInsertScript => {
+  const insertScriptCommand = command as StudioEventCommandInsertScript;
+  const newScript = (params[0] as string) || '# unable to convert the script command';
+  return {
+    ...insertScriptCommand,
+    script: `${insertScriptCommand.script}\n${newScript}`,
+  };
+};
+
+const RMXPCommandToStudioCommand: Record<number, (params: unknown[]) => StudioEventCommand> = {
   210: convertWaitMouvementCompletionCommand,
   355: convertInsertScriptCommand,
 };
 
-export const convertCommand = (page: RMXPEventPage, commandIndex: number): StudioEventCommand | undefined => {
-  const rmxpCommand = page.list[commandIndex];
-  const convert = RMXPCommandToStudioCommand[rmxpCommand.code];
-  if (!convert) return undefined;
+const RMXPCommandMultilineToStudioCommand: Record<number, (params: unknown[], command: StudioEventCommand) => StudioEventCommand> = {
+  655: convertInsertScriptMultilineCommand,
+};
 
-  return convert(rmxpCommand.parameters);
+export const convertCommand = (
+  page: RMXPEventPage,
+  commandIndex: number,
+  commands: StudioEvent['commands'],
+  conversionData: ConversionData,
+): { command: StudioEventCommand; isNewCommand: boolean } | undefined => {
+  const rmxpCommand = page.list[commandIndex];
+  const convertCommand = RMXPCommandToStudioCommand[rmxpCommand.code];
+  if (convertCommand) {
+    const command = convertCommand(rmxpCommand.parameters);
+    return { command, isNewCommand: true };
+  }
+
+  const convertCommandMultiline = RMXPCommandMultilineToStudioCommand[rmxpCommand.code];
+  if (!convertCommandMultiline || !conversionData.lastCommandId) return undefined;
+
+  const lastCommand = commands[conversionData.lastCommandId];
+  if (!lastCommand) return undefined;
+
+  const commandMultiline = convertCommandMultiline(rmxpCommand.parameters, lastCommand);
+  return { command: commandMultiline, isNewCommand: false };
 };

@@ -4,13 +4,14 @@ import { DEFAULT_PROCESS_STATE, PROCESS_DONE_STATE, SpecialStateProcessors } fro
 import { useProjectEvents } from '@hooks/useProjectData';
 import { EVENT_NAME_TEXT_ID } from '@modelEntities/event/event';
 import { DEFAULT_EVENT_TREE, StudioEventTree } from '@modelEntities/event/event-tree';
+import type { CommandId } from '@modelEntities/event/globalCommand';
 import { StudioEventCommandStart } from '@modelEntities/event/startCommands/start';
 import { ProjectData, useGlobalState } from '@src/GlobalStateProvider';
 import { cloneEntity } from '@utils/cloneEntity';
 import { createEvent } from '@utils/entityCreation';
 import { convertCommand, RMXP_TRIGGER_TO_STUDIO_TRIGGER } from '@utils/events/EventConvertUtils';
 import { addNewEventToEventTree } from '@utils/events/EventTreeUtils';
-import { EVENT_GRID_SIZE, getCommandId } from '@utils/events/EventUtils';
+import { EVENT_GRID_SIZE, getCommandIdFromCommandIdList } from '@utils/events/EventUtils';
 import { useLoaderRef } from '@utils/loaderContext';
 import { useNewProjectText, useSetProjectText } from '@utils/ReadingProjectText';
 import { useMemo, useRef } from 'react';
@@ -52,7 +53,7 @@ export const useEventConvertProcessor = () => {
               rmxpEventIdsToDbSymbols,
               eventIndex: 0,
               pageIndex: 0,
-              conversionData: { commandsPerPage: [] },
+              conversionData: { commandsPerPage: [], commandIds: [] },
             });
           }
           const rmxpEvent = rmxpEvents[eventIndex];
@@ -86,13 +87,13 @@ export const useEventConvertProcessor = () => {
               rmxpEventIdsToDbSymbols,
               eventIndex: ++eventIndex,
               pageIndex: 0,
-              conversionData: { commandsPerPage: [] },
+              conversionData: { commandsPerPage: [], commandIds: [] },
             });
           }
 
           const page = rmxpEvent.pages[pageIndex];
           const event = events[rmxpEventIdsToDbSymbols[rmxpEvent.id]];
-          const commandId = getCommandId(event);
+          const commandId = getCommandIdFromCommandIdList(conversionData.commandIds) as CommandId;
           const command: StudioEventCommandStart = {
             type: 'start',
             connections: {},
@@ -105,6 +106,8 @@ export const useEventConvertProcessor = () => {
             [commandId]: command,
           });
           conversionData.commandsPerPage[pageIndex] = 1;
+          conversionData.lastCommandId = commandId;
+          conversionData.commandIds.push(commandId);
 
           setEvent({ [event.dbSymbol]: { ...event, commands } });
           return setState({ state: 'createCommands', rmxpEvents, rmxpEventIdsToDbSymbols, eventIndex, pageIndex, commandIndex: 0, conversionData });
@@ -119,8 +122,8 @@ export const useEventConvertProcessor = () => {
           }
 
           const event = events[rmxpEventIdsToDbSymbols[rmxpEvent.id]];
-          const command = convertCommand(page, commandIndex);
-          if (!command) {
+          const resultConvertCommand = convertCommand(page, commandIndex, event.commands, conversionData);
+          if (!resultConvertCommand || !conversionData.lastCommandId) {
             return setState({
               state: 'createCommands',
               rmxpEvents,
@@ -132,17 +135,24 @@ export const useEventConvertProcessor = () => {
             });
           }
 
-          command.studioData = {
-            ...command.studioData,
-            x: EVENT_GRID_SIZE * 12 * conversionData.commandsPerPage[pageIndex],
-            y: pageIndex * EVENT_GRID_SIZE * 8,
-          };
-          const commandId = getCommandId(event);
+          const { command, isNewCommand } = resultConvertCommand;
+          if (isNewCommand) {
+            command.studioData = {
+              ...command.studioData,
+              x: EVENT_GRID_SIZE * 12 * conversionData.commandsPerPage[pageIndex],
+              y: pageIndex * EVENT_GRID_SIZE * 8,
+            };
+          }
+          const commandId = isNewCommand ? (getCommandIdFromCommandIdList(conversionData.commandIds) as CommandId) : conversionData.lastCommandId;
           const commands = cloneEntity({
             ...event.commands,
             [commandId]: command,
           });
-          conversionData.commandsPerPage[pageIndex]++;
+          if (isNewCommand) {
+            conversionData.commandsPerPage[pageIndex]++;
+            conversionData.commandIds.push(commandId);
+          }
+          conversionData.lastCommandId = commandId;
 
           setEvent({ [event.dbSymbol]: { ...event, commands } });
           return setState({
