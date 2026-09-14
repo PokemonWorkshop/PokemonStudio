@@ -3,15 +3,15 @@ import { toAsyncProcess } from '@hooks/Helper';
 import { DEFAULT_PROCESS_STATE, PROCESS_DONE_STATE, SpecialStateProcessors } from '@hooks/useProcess';
 import { useProjectEvents } from '@hooks/useProjectData';
 import { EVENT_NAME_TEXT_ID } from '@modelEntities/event/event';
-import { DEFAULT_EVENT_TREE, StudioEventTree } from '@modelEntities/event/event-tree';
+import { DEFAULT_EVENT_TREE } from '@modelEntities/event/event-tree';
 import type { CommandId } from '@modelEntities/event/globalCommand';
 import { StudioEventCommandStart } from '@modelEntities/event/startCommands/start';
-import { ProjectData, useGlobalState } from '@src/GlobalStateProvider';
+import { useGlobalState } from '@src/GlobalStateProvider';
 import { cloneEntity } from '@utils/cloneEntity';
 import { createEvent } from '@utils/entityCreation';
 import { convertCommand, RMXP_TRIGGER_TO_STUDIO_TRIGGER } from '@utils/events/EventConvertUtils';
 import { addNewEventToEventTree } from '@utils/events/EventTreeUtils';
-import { EVENT_GRID_SIZE, getCommandIdFromCommandIdList } from '@utils/events/EventUtils';
+import { EVENT_GRID_SIZE, getCommandId } from '@utils/events/EventUtils';
 import { useLoaderRef } from '@utils/loaderContext';
 import { useNewProjectText, useSetProjectText } from '@utils/ReadingProjectText';
 import { useMemo, useRef } from 'react';
@@ -24,15 +24,13 @@ const DEFAULT_BINDING: EventConvertFunctionBinding = {
 };
 
 export const useEventConvertProcessor = () => {
-  const [state] = useGlobalState();
-  const { projectDataValues: events, setProjectDataValues: setEvent } = useProjectEvents();
-  const { eventTree, setEventTree } = useEventTree();
+  const [state, setGlobalState] = useGlobalState();
+  const { projectDataValues: events } = useProjectEvents();
+  const { eventTree } = useEventTree();
   const setText = useSetProjectText();
   const setNewProjectText = useNewProjectText();
   const loaderRef = useLoaderRef();
   const binding = useRef<EventConvertFunctionBinding>(DEFAULT_BINDING);
-  const localEvents = useRef<ProjectData['events']>({ ...events });
-  const localEventTree = useRef<StudioEventTree>({ ...eventTree });
 
   const processors: SpecialStateProcessors<EventConvertStateObject> = useMemo(
     () => ({
@@ -40,11 +38,18 @@ export const useEventConvertProcessor = () => {
       read: ({ mapId, eventIds }, setState) => {
         return window.api.readRMXPEvents(
           { projectPath: state.projectPath || '', mapId, eventIds },
-          ({ rmxpEvents }) => setState({ state: 'createEvents', rmxpEvents, rmxpEventIdsToDbSymbols: {}, eventIndex: 0 }),
+          ({ rmxpEvents }) =>
+            setState({
+              state: 'createEvents',
+              rmxpEvents,
+              rmxpEventIdsToDbSymbols: {},
+              eventIndex: 0,
+              preState: { events, eventTree, projectText: state.projectText },
+            }),
           handleFailure(setState, binding),
         );
       },
-      createEvents: ({ rmxpEvents, rmxpEventIdsToDbSymbols, eventIndex }, setState) => {
+      createEvents: ({ rmxpEvents, rmxpEventIdsToDbSymbols, eventIndex, preState }, setState) => {
         return toAsyncProcess(() => {
           if (rmxpEvents.length === eventIndex) {
             return setState({
@@ -53,28 +58,26 @@ export const useEventConvertProcessor = () => {
               rmxpEventIdsToDbSymbols,
               eventIndex: 0,
               pageIndex: 0,
-              conversionData: { commandsPerPage: [], commandIds: [] },
+              preState,
+              conversionData: { commandsPerPage: [] },
             });
           }
           const rmxpEvent = rmxpEvents[eventIndex];
-          const newEvent = createEvent(localEvents.current);
-          const currentEventTree = localEventTree.current ?? DEFAULT_EVENT_TREE;
+          const newEvent = createEvent(preState.events);
+          const currentEventTree = preState.eventTree ?? DEFAULT_EVENT_TREE;
           const dbSymbol = newEvent.dbSymbol;
-          localEvents.current = { ...localEvents.current, [dbSymbol]: newEvent };
-          localEventTree.current = addNewEventToEventTree(currentEventTree, dbSymbol, newEvent.id);
+          preState.events = { ...preState.events, [dbSymbol]: newEvent };
+          preState.eventTree = addNewEventToEventTree(currentEventTree, dbSymbol, newEvent.id);
           rmxpEventIdsToDbSymbols[rmxpEvent.id] = newEvent.dbSymbol;
-          setEventTree(addNewEventToEventTree(currentEventTree, dbSymbol, newEvent.id));
           setText(EVENT_NAME_TEXT_ID, newEvent.id, rmxpEvent.name);
           setNewProjectText(newEvent.csvFileId);
-          setEvent({ [dbSymbol]: { ...newEvent, klass: 'Event' } });
-          return setState({ state: 'createEvents', rmxpEvents, rmxpEventIdsToDbSymbols, eventIndex: ++eventIndex });
+          return setState({ state: 'createEvents', rmxpEvents, rmxpEventIdsToDbSymbols, eventIndex: ++eventIndex, preState });
         });
       },
-      createTriggers: ({ rmxpEvents, rmxpEventIdsToDbSymbols, eventIndex, pageIndex, conversionData }, setState) => {
+      createTriggers: ({ rmxpEvents, rmxpEventIdsToDbSymbols, eventIndex, pageIndex, preState, conversionData }, setState) => {
         return toAsyncProcess(() => {
           if (rmxpEvents.length === eventIndex) {
-            localEvents.current = { ...events };
-            localEventTree.current = { ...eventTree };
+            setGlobalState((gs) => ({ ...gs, projectData: { ...gs.projectData, events: preState.events }, eventTree: preState.eventTree }));
             binding.current.onSuccess({});
             return setState(DEFAULT_PROCESS_STATE);
           }
@@ -87,13 +90,14 @@ export const useEventConvertProcessor = () => {
               rmxpEventIdsToDbSymbols,
               eventIndex: ++eventIndex,
               pageIndex: 0,
-              conversionData: { commandsPerPage: [], commandIds: [] },
+              preState,
+              conversionData: { commandsPerPage: [] },
             });
           }
 
           const page = rmxpEvent.pages[pageIndex];
-          const event = events[rmxpEventIdsToDbSymbols[rmxpEvent.id]];
-          const commandId = getCommandIdFromCommandIdList(conversionData.commandIds) as CommandId;
+          const event = preState.events[rmxpEventIdsToDbSymbols[rmxpEvent.id]];
+          const commandId = getCommandId(event) as CommandId;
           const command: StudioEventCommandStart = {
             type: 'start',
             connections: {},
@@ -107,68 +111,59 @@ export const useEventConvertProcessor = () => {
           });
           conversionData.commandsPerPage[pageIndex] = 1;
           conversionData.lastCommandId = commandId;
-          conversionData.commandIds.push(commandId);
-
-          setEvent({ [event.dbSymbol]: { ...event, commands } });
-          return setState({ state: 'createCommands', rmxpEvents, rmxpEventIdsToDbSymbols, eventIndex, pageIndex, commandIndex: 0, conversionData });
-        });
-      },
-      createCommands: ({ rmxpEvents, rmxpEventIdsToDbSymbols, eventIndex, pageIndex, commandIndex, conversionData }, setState) => {
-        return toAsyncProcess(() => {
-          const rmxpEvent = rmxpEvents[eventIndex];
-          const page = rmxpEvent.pages[pageIndex];
-          if (page.list.length === commandIndex) {
-            return setState({ state: 'createTriggers', rmxpEvents, rmxpEventIdsToDbSymbols, eventIndex, pageIndex: ++pageIndex, conversionData });
-          }
-
-          const event = events[rmxpEventIdsToDbSymbols[rmxpEvent.id]];
-          const resultConvertCommand = convertCommand(page, commandIndex, event.commands, conversionData);
-          if (!resultConvertCommand || !conversionData.lastCommandId) {
-            return setState({
-              state: 'createCommands',
-              rmxpEvents,
-              rmxpEventIdsToDbSymbols,
-              eventIndex,
-              pageIndex,
-              commandIndex: ++commandIndex,
-              conversionData,
-            });
-          }
-
-          const { command, isNewCommand } = resultConvertCommand;
-          if (isNewCommand) {
-            command.studioData = {
-              ...command.studioData,
-              x: EVENT_GRID_SIZE * 12 * conversionData.commandsPerPage[pageIndex],
-              y: pageIndex * EVENT_GRID_SIZE * 8,
-            };
-          }
-          const commandId = isNewCommand ? (getCommandIdFromCommandIdList(conversionData.commandIds) as CommandId) : conversionData.lastCommandId;
-          const commands = cloneEntity({
-            ...event.commands,
-            [commandId]: command,
-          });
-          if (isNewCommand) {
-            conversionData.commandsPerPage[pageIndex]++;
-            conversionData.commandIds.push(commandId);
-          }
-          conversionData.lastCommandId = commandId;
-
-          setEvent({ [event.dbSymbol]: { ...event, commands } });
+          preState.events = { ...preState.events, [event.dbSymbol]: { ...event, commands } };
           return setState({
             state: 'createCommands',
             rmxpEvents,
             rmxpEventIdsToDbSymbols,
             eventIndex,
             pageIndex,
-            commandIndex: ++commandIndex,
+            commandIndex: 0,
+            preState,
+            conversionData,
+          });
+        });
+      },
+      createCommands: ({ rmxpEvents, rmxpEventIdsToDbSymbols, eventIndex, pageIndex, preState, conversionData }, setState) => {
+        return toAsyncProcess(() => {
+          const rmxpEvent = rmxpEvents[eventIndex];
+          const page = rmxpEvent.pages[pageIndex];
+
+          page.list.forEach((_, commandIndex) => {
+            const event = preState.events[rmxpEventIdsToDbSymbols[rmxpEvent.id]];
+            const resultConvertCommand = convertCommand(page, commandIndex, event.commands, conversionData);
+
+            if (!resultConvertCommand || !conversionData.lastCommandId) return;
+
+            const { command, isNewCommand } = resultConvertCommand;
+            if (isNewCommand) {
+              command.studioData = {
+                ...command.studioData,
+                x: EVENT_GRID_SIZE * 12 * conversionData.commandsPerPage[pageIndex],
+                y: pageIndex * EVENT_GRID_SIZE * 8,
+              };
+            }
+            const commandId = isNewCommand ? (getCommandId(event) as CommandId) : conversionData.lastCommandId;
+            const commands = cloneEntity({ ...event.commands, [commandId]: command });
+            if (isNewCommand) conversionData.commandsPerPage[pageIndex]++;
+            conversionData.lastCommandId = commandId;
+            preState.events = { ...preState.events, [event.dbSymbol]: { ...event, commands } };
+          });
+
+          return setState({
+            state: 'createTriggers',
+            rmxpEvents,
+            rmxpEventIdsToDbSymbols,
+            eventIndex,
+            pageIndex: ++pageIndex,
+            preState,
             conversionData,
           });
         });
       },
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [events, eventTree],
+    [],
   );
 
   return { processors, binding };

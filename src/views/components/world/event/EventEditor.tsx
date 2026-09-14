@@ -75,6 +75,8 @@ const EventFlow = ({ event }: EventFlowProps) => {
           fitView
           snapToGrid
           snapGrid={[EVENT_GRID_SIZE, EVENT_GRID_SIZE]}
+          minZoom={0.1}
+          maxZoom={1}
         >
           <Controls position="bottom-right" />
           <Background gap={EVENT_GRID_SIZE} offset={EVENT_GRID_SIZE} color="#6c707b" />

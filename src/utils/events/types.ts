@@ -66,5 +66,4 @@ export type RMXPEvent = {
 export type ConversionData = {
   commandsPerPage: number[];
   lastCommandId?: CommandId;
-  commandIds: CommandId[];
 };
