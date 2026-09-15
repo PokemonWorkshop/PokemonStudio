@@ -78,7 +78,7 @@ export const useEventConvertProcessor = () => {
         return toAsyncProcess(() => {
           const totalCommands = rmxpEvents.reduce((acc, event) => acc + event.pages.reduce((pageAcc, page) => pageAcc + page.list.length, 0), 0);
           let commandCount = 1;
-          rmxpEvents.forEach((rmxpEvent, eventIndex) => {
+          rmxpEvents.forEach((rmxpEvent) => {
             const conversionData: ConversionData = { commandsPerPage: [] };
 
             rmxpEvent.pages.forEach((page, pageIndex) => {
@@ -89,9 +89,9 @@ export const useEventConvertProcessor = () => {
               conversionData.lastCommandId = commandId;
               preState.events = { ...preState.events, [event.dbSymbol]: { ...event, commands } };
 
-              const commandProgression = (commandCount++ / totalCommands).toFixed(1);
               page.list.forEach((rmxpCommand) => {
-                loaderRef.current.setProgress(3, 3, `${t('create_commands')} (${eventIndex + 1}/${rmxpEvents.length}) ${commandProgression}%`);
+                const commandProgression = ((commandCount++ / totalCommands) * 100).toFixed(1);
+                loaderRef.current.setProgress(3, 3, `${t('convert_commands')} ${commandProgression}%`);
                 const updatedEvent = preState.events[rmxpEventIdsToDbSymbols[rmxpEvent.id]];
                 const resultConvertCommand = convertCommand(rmxpCommand, updatedEvent.commands, event, conversionData);
 
