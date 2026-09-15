@@ -1,7 +1,7 @@
 import type { DbSymbol } from '@modelEntities/dbSymbol';
 import { StudioEventTree } from '@modelEntities/event/event-tree';
 import { ProjectData, ProjectText } from '@src/GlobalStateProvider';
-import type { ConversionData, RMXPEvent } from '@utils/events/types';
+import type { RMXPEvent } from '@utils/events/types';
 
 export type PreStateEventConvert = {
   events: ProjectData['events'];
@@ -22,23 +22,10 @@ export type EventConvertStateObject =
       preState: PreStateEventConvert;
     }
   | {
-      state: 'createTriggers';
-      rmxpEvents: RMXPEvent[];
-      rmxpEventIdsToDbSymbols: Record<number, DbSymbol>;
-      eventIndex: number;
-      pageIndex: number;
-      preState: PreStateEventConvert;
-      conversionData: ConversionData;
-    }
-  | {
       state: 'createCommands';
       rmxpEvents: RMXPEvent[];
       rmxpEventIdsToDbSymbols: Record<number, DbSymbol>;
-      eventIndex: number;
-      pageIndex: number;
-      commandIndex: number;
       preState: PreStateEventConvert;
-      conversionData: ConversionData;
     };
 export type EventConvertFunctionBinding = {
   onSuccess: EventConvertSuccessCallback;
