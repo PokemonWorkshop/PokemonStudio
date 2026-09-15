@@ -14,6 +14,7 @@ import { ConversionData } from '@utils/events/types';
 import { useLoaderRef } from '@utils/loaderContext';
 import { useNewProjectText, useSetProjectText } from '@utils/ReadingProjectText';
 import { useMemo, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { handleFailure } from './helpers';
 import { EventConvertFunctionBinding, EventConvertStateObject } from './types';
 
@@ -30,11 +31,13 @@ export const useEventConvertProcessor = () => {
   const setNewProjectText = useNewProjectText();
   const loaderRef = useLoaderRef();
   const binding = useRef<EventConvertFunctionBinding>(DEFAULT_BINDING);
+  const { t } = useTranslation();
 
   const processors: SpecialStateProcessors<EventConvertStateObject> = useMemo(
     () => ({
       ...PROCESS_DONE_STATE,
       read: ({ mapId, eventIds }, setState) => {
+        loaderRef.current.open('converting_events', 1, 3, t('read_data_rmxp_maps'));
         return window.api.readRMXPEvents(
           { projectPath: state.projectPath || '', mapId, eventIds },
           ({ rmxpEvents }) =>
@@ -49,6 +52,7 @@ export const useEventConvertProcessor = () => {
         );
       },
       createEvents: ({ rmxpEvents, rmxpEventIdsToDbSymbols, eventIndex, preState }, setState) => {
+        loaderRef.current.setProgress(2, 3, `${t('create_events')} (${eventIndex + 1}/${rmxpEvents.length})`);
         return toAsyncProcess(() => {
           if (rmxpEvents.length === eventIndex) {
             return setState({
@@ -72,7 +76,9 @@ export const useEventConvertProcessor = () => {
       },
       createCommands: ({ rmxpEvents, rmxpEventIdsToDbSymbols, preState }, setState) => {
         return toAsyncProcess(() => {
-          rmxpEvents.forEach((rmxpEvent) => {
+          const totalCommands = rmxpEvents.reduce((acc, event) => acc + event.pages.reduce((pageAcc, page) => pageAcc + page.list.length, 0), 0);
+          let commandCount = 1;
+          rmxpEvents.forEach((rmxpEvent, eventIndex) => {
             const conversionData: ConversionData = { commandsPerPage: [] };
 
             rmxpEvent.pages.forEach((page, pageIndex) => {
@@ -83,7 +89,9 @@ export const useEventConvertProcessor = () => {
               conversionData.lastCommandId = commandId;
               preState.events = { ...preState.events, [event.dbSymbol]: { ...event, commands } };
 
+              const commandProgression = (commandCount++ / totalCommands).toFixed(1);
               page.list.forEach((rmxpCommand) => {
+                loaderRef.current.setProgress(3, 3, `${t('create_commands')} (${eventIndex + 1}/${rmxpEvents.length}) ${commandProgression}%`);
                 const updatedEvent = preState.events[rmxpEventIdsToDbSymbols[rmxpEvent.id]];
                 const resultConvertCommand = convertCommand(rmxpCommand, updatedEvent.commands, event, conversionData);
 

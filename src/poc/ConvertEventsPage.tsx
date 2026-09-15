@@ -5,6 +5,7 @@ import { InputFormContainer } from '@components/inputs/InputContainer';
 import { SelectMap } from '@components/selects';
 import { useEventConvert } from '@hooks/useEventConvert.ts';
 import { useProjectMaps } from '@src/hooks/useProjectData';
+import { useLoaderRef } from '@utils/loaderContext';
 import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 
@@ -31,6 +32,7 @@ export const ConvertEventsPage = () => {
   const map = maps[mapDbSymbol];
   const eventIdRef = useRef<HTMLInputElement>(null);
   const eventConvert = useEventConvert();
+  const loaderRef = useLoaderRef();
 
   const getEventIds = () => {
     if (eventIdRef.current?.valueAsNumber === undefined) return undefined;
@@ -71,8 +73,12 @@ export const ConvertEventsPage = () => {
           onClick={() =>
             eventConvert(
               { mapId: map.id, eventIds: getEventIds() },
-              () => setResult(`Success! (Map id: ${map.id})`),
+              () => {
+                loaderRef.current.close();
+                setResult(`Success! (Map id: ${map.id})`);
+              },
               (errorMessage) => {
+                loaderRef.current.setError('converting_events_error', errorMessage);
                 console.error(errorMessage);
                 setResult(`Error! (Map id: ${map.id}) Read the console log`);
               },
