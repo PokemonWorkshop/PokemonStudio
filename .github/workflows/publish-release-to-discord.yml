@@ -1,11 +1,38 @@
+name: Publish release changelog to Discord
+
+on:
+  release:
+    types: [released]
+
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Published stable release tag, for example v2.10.1'
+        required: true
+        type: string
+
+  workflow_call:
+    inputs:
+      release_tag:
+        description: 'Published stable release tag'
+        required: true
+        type: string
+    secrets:
+      DISCORD_CHANGELOG_WEBHOOK_URL:
+        required: true
+
 permissions:
   contents: read
+
+concurrency:
+  group: publish-release-to-discord-${{ inputs.release_tag || github.event.release.tag_name }}
+  cancel-in-progress: false
 
 jobs:
   publish:
     name: Publish changelog to Discord
-    if: ${{ !github.event.release.prerelease }}
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     permissions:
       contents: write
@@ -13,9 +40,6 @@ jobs:
     steps:
       - name: Checkout trusted publication code
         uses: actions/checkout@v7
-        with:
-          ref: ${{ github.event.repository.default_branch }}
-          persist-credentials: false
 
       - name: Setup NodeJS
         uses: actions/setup-node@v7
@@ -25,5 +49,6 @@ jobs:
       - name: Publish changelog
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.release_tag || github.event.release.tag_name }}
           DISCORD_CHANGELOG_WEBHOOK_URL: ${{ secrets.DISCORD_CHANGELOG_WEBHOOK_URL }}
         run: node scripts/release/publish-discord-changelog.mjs
