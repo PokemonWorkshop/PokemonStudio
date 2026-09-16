@@ -322,11 +322,11 @@ export async function main() {
     }
   }
 
-  if (release.draft && !envFlag('PUBLISH_DRAFTS')) {
+  if (release.draft) {
     throw new Error(`Release ${release.tag_name} is still a draft. Refusing to publish it.`);
   }
 
-  if (release.prerelease && !envFlag('PUBLISH_PRERELEASES')) {
+  if (release.prerelease) {
     console.log('Prerelease detected; Discord publication skipped.');
     return;
   }

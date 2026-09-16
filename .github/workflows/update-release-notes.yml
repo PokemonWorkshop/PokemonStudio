@@ -1,6 +1,23 @@
 name: Update Release Notes
 
 on:
+  push:
+    branches: [develop]
+
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Explicit release tag; empty means derive it from package.json'
+        required: false
+        type: string
+        default: ''
+
+      allow_missing_draft:
+        description: 'Succeed when no matching draft release exists'
+        required: false
+        type: boolean
+        default: false
+
   workflow_call:
     inputs:
       release_tag:
@@ -15,10 +32,18 @@ on:
         type: boolean
         default: false
 
+permissions:
+  contents: read
+
+concurrency:
+  group: update-release-notes-${{ inputs.release_tag || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   update:
     name: Update draft release notes
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     permissions:
       contents: write

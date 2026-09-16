@@ -34,20 +34,3 @@ jobs:
 
       - name: Package Studio
         uses: ./.github/actions/package_studio
-
-  update-release-notes:
-    name: Update draft release notes
-    needs: build
-    if: ${{ github.ref == 'refs/heads/develop' }}
-
-    concurrency:
-      group: update-release-notes-develop
-      cancel-in-progress: true
-
-    permissions:
-      contents: write
-      pull-requests: read
-
-    uses: ./.github/workflows/update-release-notes.yml
-    with:
-      allow_missing_draft: true
