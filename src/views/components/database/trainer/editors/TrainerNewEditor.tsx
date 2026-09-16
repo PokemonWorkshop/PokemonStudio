@@ -1,31 +1,32 @@
-import React, { ChangeEvent, forwardRef, useMemo, useRef, useState } from 'react';
 import { Editor } from '@components/editor';
+import React, { ChangeEvent, forwardRef, useMemo, useRef, useState } from 'react';
 
-import { useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
+import { DarkButton, PrimaryButton } from '@components/buttons';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { Input, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
 import { InputGroupCollapse } from '@components/inputs/InputContainerCollapse';
 import { SelectCustomSimple, SelectCustomWithInput } from '@components/SelectCustom';
-import { SelectTrainer } from '@components/selects';
-import styled from 'styled-components';
-import { padStr } from '@utils/PadStr';
+import { SelectTrainer, SelectTrainerClass } from '@components/selects';
+import { TooltipWrapper } from '@ds/Tooltip';
 import { useProjectTrainers } from '@hooks/useProjectData';
-import { DarkButton, PrimaryButton } from '@components/buttons';
+import { useSelectOptions } from '@hooks/useSelectOptions';
+import { DbSymbol } from '@modelEntities/dbSymbol';
 import {
-  StudioTrainerVsType,
   StudioTrainerAICategoryType,
+  StudioTrainerVsType,
   TRAINER_AI_CATEGORIES,
-  TRAINER_CLASS_TEXT_ID,
   TRAINER_DEFEAT_SENTENCE_TEXT_ID,
   TRAINER_NAME_TEXT_ID,
   TRAINER_VICTORY_SENTENCE_TEXT_ID,
   TRAINER_VS_TYPE_CATEGORIES,
 } from '@modelEntities/trainer';
-import { useSetProjectText, useGetProjectText, useCopyProjectText } from '@utils/ReadingProjectText';
 import { createTrainer } from '@utils/entityCreation';
-import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { TooltipWrapper } from '@ds/Tooltip';
 import { importTrainerData } from '@utils/importEntityDataUtils';
+import { padStr } from '@utils/PadStr';
+import { useCopyProjectText, useGetProjectText, useSetProjectText } from '@utils/ReadingProjectText';
+import { TFunction } from 'i18next';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -62,7 +63,8 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
   const aiOptions = useMemo(() => aiCategoryEntries(t), [t]);
   const vsTypeOptions = useMemo(() => vsTypeCategoryEntries(t), [t]);
   const [name, setName] = useState(''); // We can't use a ref because of the button behavior
-  const [trainerClass, setTrainerClass] = useState(''); // We can't use a ref because of the button behavior
+  const classOptions = useSelectOptions('trainerClasses');
+  const [classSymbol, setClassSymbol] = useState<DbSymbol>((classOptions[0]?.value || '__undef__') as DbSymbol);
   const [aiCategory, setAiCategory] = useState<StudioTrainerAICategoryType>('1');
   const [ai, setAi] = useState(1);
   const [vsType, setVsType] = useState<StudioTrainerVsType>(1);
@@ -79,14 +81,12 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
 
   useEditorHandlingClose(ref);
 
-  const classLockedByImport = importing && selectedTrainer !== '__undef__' && preserveTextData;
-
   const prefillFromTrainer = (dbSymbol: string) => {
     if (dbSymbol === '__undef__') return;
     const sourceTrainer = trainers[dbSymbol];
     // Keep whatever the user already typed as the name; the class is always synced since it's locked while preserving
     if (!name) setName(getText(TRAINER_NAME_TEXT_ID, sourceTrainer.id));
-    setTrainerClass(getText(TRAINER_CLASS_TEXT_ID, sourceTrainer.id));
+    setClassSymbol(sourceTrainer.classSymbol);
   };
 
   const onTrainerToImportChange = (dbSymbol: string) => {
@@ -112,19 +112,17 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
   const onClickNew = () => {
     if (!baseMoneyRef.current || !battleIdRef.current) return;
 
-    let newTrainer = createTrainer(trainers, ai, vsType, battleIdRef.current.valueAsNumber, baseMoneyRef.current.valueAsNumber);
+    let newTrainer = createTrainer(trainers, ai, vsType, battleIdRef.current.valueAsNumber, baseMoneyRef.current.valueAsNumber, classSymbol);
 
     if (importing && selectedTrainer !== '__undef__') {
       const sourceTrainer = trainers[selectedTrainer];
       if (preserveTextData) {
         preserveText(TRAINER_VICTORY_SENTENCE_TEXT_ID, sourceTrainer.id, newTrainer.id, getText(TRAINER_VICTORY_SENTENCE_TEXT_ID, sourceTrainer.id));
         preserveText(TRAINER_DEFEAT_SENTENCE_TEXT_ID, sourceTrainer.id, newTrainer.id, getText(TRAINER_DEFEAT_SENTENCE_TEXT_ID, sourceTrainer.id));
-        preserveText(TRAINER_CLASS_TEXT_ID, sourceTrainer.id, newTrainer.id, trainerClass);
         preserveText(TRAINER_NAME_TEXT_ID, sourceTrainer.id, newTrainer.id, name);
       } else {
         setText(TRAINER_VICTORY_SENTENCE_TEXT_ID, newTrainer.id, getText(TRAINER_VICTORY_SENTENCE_TEXT_ID, sourceTrainer.id));
         setText(TRAINER_DEFEAT_SENTENCE_TEXT_ID, newTrainer.id, getText(TRAINER_DEFEAT_SENTENCE_TEXT_ID, sourceTrainer.id));
-        setText(TRAINER_CLASS_TEXT_ID, newTrainer.id, trainerClass);
         setText(TRAINER_NAME_TEXT_ID, newTrainer.id, name);
       }
 
@@ -132,7 +130,6 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
     } else {
       setText(TRAINER_VICTORY_SENTENCE_TEXT_ID, newTrainer.id, '');
       setText(TRAINER_DEFEAT_SENTENCE_TEXT_ID, newTrainer.id, '');
-      setText(TRAINER_CLASS_TEXT_ID, newTrainer.id, trainerClass);
       setText(TRAINER_NAME_TEXT_ID, newTrainer.id, name);
     }
 
@@ -158,7 +155,7 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
     }
   };
 
-  const checkDisabled = () => !name || !trainerClass || !!baseMoneyError || !!battleIdError;
+  const checkDisabled = () => !name || classSymbol === '__undef__' || !!baseMoneyError || !!battleIdError;
 
   const handleTrainerAiLevelChange = (value: string) => {
     setAiCategory(value as StudioTrainerAICategoryType);
@@ -172,26 +169,11 @@ export const TrainerNewEditor = forwardRef<EditorHandlingClose, TrainerNewEditor
           <Label htmlFor="trainer-name" required>
             {t('trainer_name')}
           </Label>
-          <Input
-            type="text"
-            name="name"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            placeholder={t('example_trainer_name')}
-          />
+          <Input type="text" name="name" value={name} onChange={(event) => setName(event.target.value)} placeholder={t('example_trainer_name')} />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
-          <Label htmlFor="trainer-class" required>
-            {t('trainer_class')}
-          </Label>
-          <Input
-            type="text"
-            name="name"
-            value={trainerClass}
-            onChange={(event) => setTrainerClass(event.target.value)}
-            placeholder={t('example_trainer_class')}
-            disabled={classLockedByImport}
-          />
+          <Label>{t('trainer_class')}</Label>
+          <SelectTrainerClass dbSymbol={classSymbol} onChange={(dbSymbol) => setClassSymbol(dbSymbol as DbSymbol)} noLabel />
         </InputWithTopLabelContainer>
         <InputWithTopLabelContainer>
           <Label htmlFor="select-ai-level">{t('ai_level')}</Label>

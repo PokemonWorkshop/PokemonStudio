@@ -1,28 +1,29 @@
 import React from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import styled from 'styled-components';
-import { Routes, Route, Navigate } from 'react-router-dom';
 import { NavigationDatabase } from '../../../components/database/navigation/NavigationDatabase';
-import { PokemonPage } from '../Pokemon.page';
-import { MovePage } from '../Move.page';
-import { MoveContestPage } from '../Move.Contest.page';
-import { ItemPage } from '../Item.page';
-import { TechItemsTablePage } from '../TechItems.Table.page';
-import { TypePage } from '../Type.page';
-import { TypeMovesPage } from '../Type.Moves.page';
-import { TypePokemonPage } from '../Type.Pokemon.page';
-import { TypeTablePage } from '../Type.Table.page';
-import { MovePokemonPage } from '../Move.Pokemon.page';
-import { PokemonMovepoolPage } from '../Pokemon.Movepool.page';
 import { AbilityPage } from '../Ability.page';
 import { AbilityPokemonPage } from '../Ability.Pokemon.page';
-import { QuestPage } from '../Quest.page';
-import { TrainerPage } from '../Trainer.page';
-import { GroupPage } from '../Group.page';
-import { ZonePage } from '../Zone.page';
 import { DexPage } from '../Dex/Dex.page';
-import { PokemonResourcesPage } from '../Pokemon.Resources.page';
-import { TrainerResourcesPage } from '../Trainer.Resources.page';
+import { GroupPage } from '../Group.page';
+import { ItemPage } from '../Item.page';
+import { MoveContestPage } from '../Move.Contest.page';
+import { MovePage } from '../Move.page';
+import { MovePokemonPage } from '../Move.Pokemon.page';
 import { NaturePage } from '../Nature.page';
+import { PokemonMovepoolPage } from '../Pokemon.Movepool.page';
+import { PokemonPage } from '../Pokemon.page';
+import { PokemonResourcesPage } from '../Pokemon.Resources.page';
+import { QuestPage } from '../Quest.page';
+import { TechItemsTablePage } from '../TechItems.Table.page';
+import { TrainerPage } from '../Trainer.page';
+import { TrainerResourcesPage } from '../Trainer.Resources.page';
+import { TrainerClassPage } from '../TrainerClass.page';
+import { TypeMovesPage } from '../Type.Moves.page';
+import { TypePage } from '../Type.page';
+import { TypePokemonPage } from '../Type.Pokemon.page';
+import { TypeTablePage } from '../Type.Table.page';
+import { ZonePage } from '../Zone.page';
 
 const DatabasePageStyle = styled.div`
   display: flex;
@@ -49,6 +50,7 @@ const DatabasePageComponent = () => {
         <Route path="types/:typeDbSymbol/pokemon" element={<TypePokemonPage />} />
         <Route path="types/:typeDbSymbol?" element={<TypePage />} />
         <Route path="quests" element={<QuestPage />} />
+        <Route path="trainerClasses" element={<TrainerClassPage />} />
         <Route path="trainers" element={<TrainerPage />} />
         <Route path="trainers/resources" element={<TrainerResourcesPage />} />
         <Route path="groups" element={<GroupPage />} />

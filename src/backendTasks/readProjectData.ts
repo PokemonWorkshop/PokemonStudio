@@ -1,15 +1,15 @@
+import type { StudioEventTree } from '@modelEntities/event/event-tree';
+import { StudioMapInfo } from '@modelEntities/mapInfo';
+import { StudioTextInfo } from '@modelEntities/textInfo';
+import { ChannelNames, sendProgress } from '@utils/BackendTask';
+import { batchArray } from '@utils/batchArray';
+import { parseJSON } from '@utils/json/parse';
 import type { IpcMainEvent } from 'electron';
 import log from 'electron-log';
-import path from 'path';
 import fs from 'fs';
 import fsPromises from 'fs/promises';
-import { batchArray } from '@utils/batchArray';
-import { StudioTextInfo } from '@modelEntities/textInfo';
+import path from 'path';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
-import { ChannelNames, sendProgress } from '@utils/BackendTask';
-import { StudioMapInfo } from '@modelEntities/mapInfo';
-import type { StudioEventTree } from '@modelEntities/event/event-tree';
-import { parseJSON } from '@utils/json/parse';
 
 const projectDataKeys = [
   'abilities',
@@ -19,6 +19,7 @@ const projectDataKeys = [
   'moves',
   'pokemon',
   'quests',
+  'trainerClasses',
   'trainers',
   'types',
   'worldmaps',
