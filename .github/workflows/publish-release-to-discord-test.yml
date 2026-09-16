@@ -1,0 +1,56 @@
+name: Publish release changelog to Discord
+
+on:
+  push:
+    branches: ['cicd/generate-release-notes']
+
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Test release tag'
+        required: true
+        type: string
+        default: 'discord-changelog-test'
+
+  workflow_call:
+    inputs:
+      release_tag:
+        description: 'Test release tag'
+        required: true
+        type: string
+    secrets:
+      DISCORD_CHANGELOG_TEST_WEBHOOK_URL:
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: test-release-to-discord-${{ inputs.release_tag || 'discord-changelog-test' }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish changelog to Discord
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout trusted publication code
+        uses: actions/checkout@v7
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Publish changelog
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.release_tag || 'discord-changelog-test' }}
+          DISCORD_CHANGELOG_WEBHOOK_URL: ${{ secrets.DISCORD_CHANGELOG_TEST_WEBHOOK_URL }}
+          PUBLISH_DRAFTS: 'true'
+        run: node scripts/release/publish-discord-changelog.mjs

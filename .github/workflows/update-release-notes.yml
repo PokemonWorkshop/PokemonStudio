@@ -37,5 +37,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ inputs.release_tag }}
-          ALLOW_MISSING_DRAFT: ${{ inputs.allow_missing_draft }}
+          ALLOW_MISSING_DRAFT: ${{ github.event_name == 'push' && 'true' || inputs.allow_missing_draft }}
         run: node scripts/release/generate-release-notes.mjs
