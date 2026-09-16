@@ -1,13 +1,20 @@
+import process from 'node:process';
 import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import process from 'node:process';
 import { pathToFileURL } from 'node:url';
 
 const API_VERSION = process.env.GITHUB_API_VERSION || '2026-03-10';
 const API_BASE_URL = (process.env.GITHUB_API_URL || 'https://api.github.com').replace(/\/$/, '');
 const DISCORD_LIMIT = 2_000;
-const DISCORD_MARKER_PATTERN = /<!--\s*discord-publication:\s*(\{[\s\S]*?\})\s*-->/;
+const DISCORD_MARKER_PREFIX = '<!-- discord-publication:';
+const DISCORD_MARKER_SUFFIX = '-->';
+const RELEASE_MARKER_LINES = new Set([
+  '<!-- release-note:start -->',
+  '<!-- release-note:end -->',
+  '<!-- generated-changelog:start -->',
+  '<!-- generated-changelog:end -->',
+]);
 const GITHUB_BACKLOG_REMINDER =
   'As a reminder, you can check the [GitHub product backlog](https://github.com/orgs/PokemonWorkshop/projects/1/views/1) before suggesting any new idea or feature, or if you just want to follow the progression.';
 const DISCORD_BACKLOG_REMINDER =
@@ -65,7 +72,10 @@ async function githubApi(path, { method = 'GET', body } = {}) {
 
   if (!response.ok) {
     const detail = typeof payload === 'object' && payload?.message ? payload.message : text;
-    throw new HttpError(`GitHub API ${method} ${path} failed (${response.status}): ${detail}`, response.status);
+    throw new HttpError(
+      `GitHub API ${method} ${path} failed (${response.status}): ${detail}`,
+      response.status,
+    );
   }
 
   return payload;
@@ -73,24 +83,29 @@ async function githubApi(path, { method = 'GET', body } = {}) {
 
 function webhookEndpoint(webhookUrl, messageId, waitForResponse = false) {
   const url = new URL(webhookUrl);
-  url.pathname = `${url.pathname.replace(/\/$/, '')}${messageId ? `/messages/${encodeURIComponent(messageId)}` : ''}`;
+  url.pathname = `${url.pathname.replace(/\/$/, '')}${
+    messageId ? `/messages/${encodeURIComponent(messageId)}` : ''
+  }`;
   if (waitForResponse) url.searchParams.set('wait', 'true');
   return url;
 }
 
 async function discordApi(webhookUrl, { method, messageId, content }) {
-  const response = await fetch(webhookEndpoint(webhookUrl, messageId, method === 'POST'), {
-    method,
-    headers: content === undefined ? {} : { 'Content-Type': 'application/json' },
-    body:
-      content === undefined
-        ? undefined
-        : JSON.stringify({
-            content,
-            allowed_mentions: { parse: [] },
-            flags: 4,
-          }),
-  });
+  const response = await fetch(
+    webhookEndpoint(webhookUrl, messageId, method === 'POST'),
+    {
+      method,
+      headers: content === undefined ? {} : { 'Content-Type': 'application/json' },
+      body:
+        content === undefined
+          ? undefined
+          : JSON.stringify({
+              content,
+              allowed_mentions: { parse: [] },
+              flags: 4,
+            }),
+    },
+  );
 
   const text = await response.text();
   let payload = null;
@@ -128,9 +143,42 @@ function formatContributorNames(names) {
   return `${names.slice(0, -1).join(', ')} & ${names.at(-1)}`;
 }
 
+function discordPublicationMarkerJson(line) {
+  const trimmedLine = line.trim();
+  if (
+    !trimmedLine.startsWith(DISCORD_MARKER_PREFIX) ||
+    !trimmedLine.endsWith(DISCORD_MARKER_SUFFIX)
+  ) {
+    return null;
+  }
+
+  return trimmedLine
+    .slice(DISCORD_MARKER_PREFIX.length, -DISCORD_MARKER_SUFFIX.length)
+    .trim();
+}
+
+function removeDiscordPublicationMarkerLines(markdown) {
+  return markdown
+    .split(/\r?\n/)
+    .filter((line) => discordPublicationMarkerJson(line) === null)
+    .join('\n');
+}
+
+function removeInternalReleaseMarkerLines(markdown) {
+  return markdown
+    .split(/\r?\n/)
+    .filter((line) => {
+      const trimmedLine = line.trim();
+      return (
+        !RELEASE_MARKER_LINES.has(trimmedLine) &&
+        discordPublicationMarkerJson(line) === null
+      );
+    })
+    .join('\n');
+}
+
 export function toDiscordChangelog(releaseBody) {
-  let body = releaseBody.replace(DISCORD_MARKER_PATTERN, '');
-  body = body.replace(/<!--[\s\S]*?-->/g, '');
+  let body = removeInternalReleaseMarkerLines(releaseBody);
   body = body.replace('🏷️', ':label:');
 
   const contributorSection = findSection(body, 'New Contributors');
@@ -152,9 +200,15 @@ export function toDiscordChangelog(releaseBody) {
     body = `${body.slice(0, contributorSection.start)}${replacement}${body.slice(contributorSection.end)}`;
   }
 
-  body = body.replace(/\s+by\s+@[A-Za-z0-9-]+\s+in\s+https:\/\/github\.com\/[^/\s]+\/[^/\s]+\/pull\/(\d+)/g, ' (#$1)');
+  body = body.replace(
+    /\s+by\s+@[A-Za-z0-9-]+\s+in\s+https:\/\/github\.com\/[^/\s]+\/[^/\s]+\/pull\/(\d+)/g,
+    ' (#$1)',
+  );
   body = body.replace(GITHUB_BACKLOG_REMINDER, '');
-  body = body.replace(/(\*\*Full Changelog\*\*:\s*)<?(https:\/\/github\.com\/[^/\s]+\/[^/\s]+\/compare\/[^\s)>*]+)>?/, '$1<$2>');
+  body = body.replace(
+    /(\*\*Full Changelog\*\*:\s*)<?(https:\/\/github\.com\/[^/\s]+\/[^/\s]+\/compare\/[^\s)>*]+)>?/,
+    '$1<$2>',
+  );
 
   body = body.replace(/\n{3,}/g, '\n\n').trim();
   return `${body}\n\n${DISCORD_BACKLOG_REMINDER}`;
@@ -225,12 +279,22 @@ export function splitDiscordContent(content, limit = DISCORD_LIMIT) {
 }
 
 function parsePublicationMarker(body) {
-  const match = body.match(DISCORD_MARKER_PATTERN);
-  if (!match) return { messageIds: [], contentHash: '' };
+  const markerValues = body
+    .split(/\r?\n/)
+    .map(discordPublicationMarkerJson)
+    .filter((value) => value !== null);
+
+  if (!markerValues.length) return { messageIds: [], contentHash: '' };
+  if (markerValues.length > 1) {
+    throw new Error('The release notes contain multiple Discord publication markers.');
+  }
+
   try {
-    const marker = JSON.parse(match[1]);
+    const marker = JSON.parse(markerValues[0]);
     return {
-      messageIds: Array.isArray(marker.messageIds) ? marker.messageIds.filter((id) => typeof id === 'string') : [],
+      messageIds: Array.isArray(marker.messageIds)
+        ? marker.messageIds.filter((id) => typeof id === 'string')
+        : [],
       contentHash: typeof marker.contentHash === 'string' ? marker.contentHash : '',
     };
   } catch {
@@ -239,7 +303,7 @@ function parsePublicationMarker(body) {
 }
 
 function releaseBodyWithMarker(body, marker) {
-  const cleanBody = body.replace(DISCORD_MARKER_PATTERN, '').trimEnd();
+  const cleanBody = removeDiscordPublicationMarkerLines(body).trimEnd();
   return `${cleanBody}\n\n<!-- discord-publication: ${JSON.stringify(marker)} -->\n`;
 }
 
@@ -265,7 +329,10 @@ export async function main() {
   const contentHash = createHash('sha256').update(chunks.join('\0')).digest('hex');
   const previousMarker = parsePublicationMarker(release.body);
 
-  if (previousMarker.contentHash === contentHash && previousMarker.messageIds.length === chunks.length) {
+  if (
+    previousMarker.contentHash === contentHash &&
+    previousMarker.messageIds.length === chunks.length
+  ) {
     console.log('This changelog version has already been published to Discord.');
     return;
   }
@@ -317,7 +384,8 @@ export async function main() {
   console.log(`Published the changelog to Discord in ${chunks.length} message(s).`);
 }
 
-const isDirectExecution = process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href;
+const isDirectExecution =
+  process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href;
 if (isDirectExecution) {
   main().catch((error) => {
     console.error(error.stack || error.message);
