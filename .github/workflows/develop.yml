@@ -32,10 +32,22 @@ jobs:
         with:
           force_build_node_module: ${{ inputs.force_build_node_module || false }}
 
-      # # No linting because the team never actually agreed with any of those rules and eslint is 1000% of the time counter productive
-      # - name: Run linting
-      #   shell: bash
-      #   run: npm run lint
-
       - name: Package Studio
         uses: ./.github/actions/package_studio
+
+  update-release-notes:
+    name: Update draft release notes
+    needs: build
+    if: ${{ github.ref == 'refs/heads/develop' }}
+
+    concurrency:
+      group: update-release-notes-develop
+      cancel-in-progress: true
+
+    permissions:
+      contents: write
+      pull-requests: read
+
+    uses: ./.github/workflows/update-release-notes.yml
+    with:
+      allow_missing_draft: true
