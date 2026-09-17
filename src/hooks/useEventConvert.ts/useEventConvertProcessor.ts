@@ -13,6 +13,7 @@ import { EVENT_GRID_SIZE, getCommandId } from '@utils/events/EventUtils';
 import { ConversionData } from '@utils/events/types';
 import { useLoaderRef } from '@utils/loaderContext';
 import { useNewProjectText, useSetProjectText } from '@utils/ReadingProjectText';
+import { SavingMap } from '@utils/SavingUtils';
 import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { handleFailure } from './helpers';
@@ -46,7 +47,7 @@ export const useEventConvertProcessor = () => {
               rmxpEvents,
               rmxpEventIdsToDbSymbols: {},
               eventIndex: 0,
-              preState: { events, eventTree, projectText: state.projectText },
+              preState: { events, eventTree, projectText: state.projectText, savingData: state.savingData },
             }),
           handleFailure(setState, binding),
         );
@@ -68,6 +69,7 @@ export const useEventConvertProcessor = () => {
           const dbSymbol = newEvent.dbSymbol;
           preState.events = { ...preState.events, [dbSymbol]: newEvent };
           preState.eventTree = addNewEventToEventTree(currentEventTree, dbSymbol, newEvent.id);
+          preState.savingData = new SavingMap(preState.savingData.set({ key: 'events', id: dbSymbol }, 'UPDATE'));
           rmxpEventIdsToDbSymbols[rmxpEvent.id] = newEvent.dbSymbol;
           setText(EVENT_NAME_TEXT_ID, newEvent.id, rmxpEvent.name);
           setNewProjectText(newEvent.csvFileId);
@@ -113,7 +115,14 @@ export const useEventConvertProcessor = () => {
               });
             });
           });
-          setGlobalState((gs) => ({ ...gs, projectData: { ...gs.projectData, events: preState.events }, eventTree: preState.eventTree }));
+          setGlobalState((gs) => ({
+            ...gs,
+            projectData: { ...gs.projectData, events: preState.events },
+            selectedDataIdentifier: { ...gs.selectedDataIdentifier, event: Object.values(rmxpEventIdsToDbSymbols)[0] || '' },
+            eventTree: preState.eventTree,
+            savingEventTree: true,
+            savingData: preState.savingData,
+          }));
           binding.current.onSuccess({});
           return setState(DEFAULT_PROCESS_STATE);
         });

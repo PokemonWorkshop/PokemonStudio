@@ -2,11 +2,13 @@ import type { DbSymbol } from '@modelEntities/dbSymbol';
 import { StudioEventTree } from '@modelEntities/event/event-tree';
 import { ProjectData, ProjectText } from '@src/GlobalStateProvider';
 import type { RMXPEvent } from '@utils/events/types';
+import { SavingMap } from '@utils/SavingUtils';
 
 export type PreStateEventConvert = {
   events: ProjectData['events'];
   eventTree: StudioEventTree;
   projectText: ProjectText;
+  savingData: SavingMap;
 };
 
 export type EventConvertFailureCallback = (errorMessage: string) => void;
