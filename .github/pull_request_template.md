@@ -21,9 +21,15 @@ Before submitting this PR into the develop branch, please make sure:
 ## Changelog entry
 
 <!--
-Write one short sentence in English US for makers and players between the changelog entries.
-Describe the functional change, not its implementation.
-Leave empty only when using the changelog:skip label.
+Write one short sentence in English US for makers.
+Describe the functional effect of the change, not its technical implementation.
+
+Leave this section empty only when the pull request should use the
+changelog:skip label.
+
+Before merge, a reviewer or maintainer must apply exactly one category between addition, update, fix, or skip.
+Add changelog:notready when the change belongs to an unfinished version
+that is not ready for production use.
 -->
 
 <!-- changelog:start -->
