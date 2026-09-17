@@ -2,14 +2,20 @@ import type { StudioEventCommandType } from '@modelEntities/event/command';
 import { JSX } from 'react';
 import type { CommandNodeProps } from '../commands/CommandNodeProps';
 import { DefaultCommand } from '../commands/DefaultCommand';
-import { InsertScriptCommand } from '../commands/InsertScriptCommand';
+import { ManageAccessMainMenuCommand } from '../commands/nodes/gameInterfaceCommands/ManageAccessMainMenuCommand';
+import { ReturnToTitleScreenCommand } from '../commands/nodes/gameInterfaceCommands/ReturnToTitleScreenCommand';
+import { ShowChoiceCommand } from '../commands/nodes/messageCommands/ShowChoiceCommand';
+import { ShowMessageCommand } from '../commands/nodes/messageCommands/ShowMessageCommand';
+import { WaitMovementCompletionCommand } from '../commands/nodes/movementCommands/WaitMovementCompletionCommand';
+import { ManageAccessSaveMenuCommand } from '../commands/nodes/saveCommands/ManageAccessSaveMenuCommand';
+import { OpenSaveMenuCommand } from '../commands/nodes/saveCommands/OpenSaveMenuCommand';
+import { InsertScriptCommand } from '../commands/nodes/scriptCommands/InsertScriptCommand';
+import { StartCommand } from '../commands/nodes/startCommands/StartCommand';
 import { ShadowNode } from './ShadowNode';
 
 export const CommandToNodes: Record<StudioEventCommandType | 'shadow_node', (props: CommandNodeProps) => JSX.Element> = {
-  show_message: DefaultCommand,
-  narrator_settings: DefaultCommand,
-  manage_message_box: DefaultCommand,
-  show_choice: DefaultCommand,
+  show_message: ShowMessageCommand,
+  show_choice: ShowChoiceCommand,
   wait_key_press: DefaultCommand,
   record_key_press: DefaultCommand,
   input_creature_name: DefaultCommand,
@@ -27,7 +33,7 @@ export const CommandToNodes: Record<StudioEventCommandType | 'shadow_node', (pro
   move_event: DefaultCommand,
   teleport_event: DefaultCommand,
   teleport_player: DefaultCommand,
-  wait_move_completion: DefaultCommand,
+  wait_move_completion: WaitMovementCompletionCommand,
   manage_event_reappearance: DefaultCommand,
   manage_path_finding: DefaultCommand,
   manage_follow_me: DefaultCommand,
@@ -44,17 +50,17 @@ export const CommandToNodes: Record<StudioEventCommandType | 'shadow_node', (pro
   manage_dex: DefaultCommand,
   set_active_dex: DefaultCommand,
   give_badge: DefaultCommand,
-  manage_access_save_menu: DefaultCommand,
-  open_save_menu: DefaultCommand,
+  manage_access_save_menu: ManageAccessSaveMenuCommand,
+  open_save_menu: OpenSaveMenuCommand,
   manage_autosave: DefaultCommand,
   force_autosave: DefaultCommand,
   force_save: DefaultCommand,
   open_scene: DefaultCommand,
   open_shop: DefaultCommand,
   open_custom_scene: DefaultCommand,
-  manage_access_main_menu: DefaultCommand,
+  manage_access_main_menu: ManageAccessMainMenuCommand,
   trigger_game_over: DefaultCommand,
-  return_to_title_screen: DefaultCommand,
+  return_to_title_screen: ReturnToTitleScreenCommand,
   open_creature_shop: DefaultCommand,
   start_quest: DefaultCommand,
   display_hidden_objective: DefaultCommand,
@@ -79,5 +85,6 @@ export const CommandToNodes: Record<StudioEventCommandType | 'shadow_node', (pro
   manage_map_panorama: DefaultCommand,
   change_battle_background: DefaultCommand,
   insert_script: InsertScriptCommand,
+  start: StartCommand,
   shadow_node: ShadowNode,
 };

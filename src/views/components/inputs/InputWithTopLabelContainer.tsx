@@ -4,6 +4,7 @@ export const InputWithTopLabelContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+  min-width: 0;
 
   .helper {
     ${({ theme }) => theme.fonts.normalSmall};

@@ -1,33 +1,25 @@
-import React, { useEffect } from 'react';
-import { DataBlockWithAction, DataBlockWrapper } from '@components/database/dataBlocks';
-import { TypeControlBar } from '@components/database/type/TypeControlBar';
-import { TypeFrame } from '@components/database/type/TypeFrame';
-import { useNavigate } from 'react-router-dom';
-import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
-import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
-import { TypeEfficiencyData } from '@components/database/type/TypeEfficiencyData';
-import { TypeResistanceData } from '@components/database/type/TypeResistanceData';
 import { DarkButton, DeleteButtonWithIcon } from '@components/buttons';
-import { useTranslation } from 'react-i18next';
+import { DatabasePageStyle } from '@components/database/DatabasePageStyle';
+import { DataBlockWithAction, DataBlockWrapper } from '@components/database/dataBlocks';
 import { DataBlockWithTitleNoActive } from '@components/database/dataBlocks/DataBlockWithTitle';
+import { TypeEditorAndDeletionKeys, TypeEditorOverlay } from '@components/database/type/editors/TypeEditorOverlay';
+import { TypeControlBar } from '@components/database/type/TypeControlBar';
+import { TypeEfficiencyData } from '@components/database/type/TypeEfficiencyData';
+import { TypeFrame } from '@components/database/type/TypeFrame';
+import { TypeResistanceData } from '@components/database/type/TypeResistanceData';
+import { TooltipWrapper } from '@ds/Tooltip';
 import { useDialogsRef } from '@hooks/useDialogsRef';
 import { useTypePage } from '@hooks/usePage';
-import { TypeEditorAndDeletionKeys, TypeEditorOverlay } from '@components/database/type/editors/TypeEditorOverlay';
-import { useProjectTypes } from '@hooks/useProjectData';
-import { TooltipWrapper } from '@ds/Tooltip';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { PageContainerStyle, PageDataConstrainerStyle } from './PageContainerStyle';
 
 export const TypePage = () => {
   const dialogsRef = useDialogsRef<TypeEditorAndDeletionKeys>();
-  const { setProjectDataValues: setType } = useProjectTypes();
-  const { currentTypeName, currentType } = useTypePage();
+  const { currentTypeName, currentType, canBeDeleted } = useTypePage();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const canBeDeleted: boolean = currentType.id <= 18;
-
-  useEffect(() => {
-    if (!currentType) return;
-    setType({ [currentType.dbSymbol]: currentType }, { type: currentType.dbSymbol });
-  }, [currentType]);
 
   return (
     <DatabasePageStyle>

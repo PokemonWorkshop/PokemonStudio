@@ -38,7 +38,8 @@ export const NewProjectButton = ({ newProjectData, disabled, closeDialog }: NewP
           (count) => {
             closeDialog();
             loaderRef.current.setError('loading_project_error', t('integrity_message', { count }), true);
-          }
+          },
+          () => {}
         );
       },
       ({ errorMessage }) => {

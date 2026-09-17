@@ -1,15 +1,17 @@
-import { useEventActions } from '@components/world/event/common/EventContext';
-import type { StudioEventCommandType } from '@modelEntities/event/command';
-import { useTranslation } from 'react-i18next';
-import { CommandDialogsRef } from '../commands/editors/CommandEditorOverlay';
-import { EventIcon, IconsFromCommand, EventIconColor } from '@components/world/event/common/EventIcon';
-import { Position } from '@xyflow/react';
-import { useHandleConnectionState } from '@components/world/event/hooks/useHandleConnectionState';
-import { CustomHandle } from '@components/world/event/common/CustomHandle';
-import InfoIcon from '@assets/icons/notification/info.svg';
 import NoteIcon from '@assets/icons/global/note.svg';
+import InfoIcon from '@assets/icons/notification/info.svg';
+import { InputWithLeftLabelContainer, InputWithTopLabelContainer } from '@components/inputs';
+import { InputFormContainer } from '@components/inputs/InputContainer';
+import { CustomHandle } from '@components/world/event/common/CustomHandle';
+import { useEventActions } from '@components/world/event/common/EventContext';
+import { EventIcon, EventIconColor, IconsFromCommand } from '@components/world/event/common/EventIcon';
+import { useHandleConnectionState } from '@components/world/event/hooks/useHandleConnectionState';
+import type { StudioEventCommandType } from '@modelEntities/event/command';
+import { Position } from '@xyflow/react';
 import React, { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { CommandDialogsRef } from '../commands/editors/CommandEditorOverlay';
 
 const CommandNodeContainer = styled.div<{ color: EventIconColor }>`
   display: flex;
@@ -52,8 +54,16 @@ const CommandNodeContainer = styled.div<{ color: EventIconColor }>`
   .body {
     display: flex;
     flex-direction: column;
-    padding: 10px;
-    gap: 12px;
+    padding: 0px 4px 4px 4px;
+
+    ${InputFormContainer} {
+      gap: 0;
+    }
+
+    ${InputWithTopLabelContainer},
+    ${InputWithLeftLabelContainer} {
+      padding: 6px;
+    }
   }
 
   footer {
@@ -113,11 +123,20 @@ const CommandNodeContainer = styled.div<{ color: EventIconColor }>`
           cursor: pointer;
         }
 
+        .icon-container {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 16px;
+          height: 16px;
+        }
+
         .icon {
           color: #6c707b;
         }
 
         .count {
+          padding: 0px 2px;
           color: #b4b7c1;
         }
       }
@@ -149,29 +168,87 @@ const CommandNodeContainer = styled.div<{ color: EventIconColor }>`
   }
 `;
 
+const showDefaultHandles = (position: 'left' | 'right', defaultHandles?: DefaultHandles) => {
+  if (!defaultHandles) return true;
+
+  return defaultHandles[position];
+};
+
+type DefaultHandles = { left: boolean; right: boolean };
+
 type CommandNodeProps = {
   commandType: StudioEventCommandType;
   commentCount: number;
+  nodeId: string;
+  children: ReactNode;
   dialogsRef?: CommandDialogsRef;
   hasError?: boolean;
-  nodeId: string;
   selected?: boolean;
-  children: ReactNode;
+  outputCount?: number;
+  footerChildren?: ReactNode;
+  defaultHandles?: DefaultHandles;
 };
 
-export const CommandNode = ({ commandType, commentCount, dialogsRef, hasError, nodeId, selected, children }: CommandNodeProps) => {
+export const CommandNode = ({
+  commandType,
+  commentCount,
+  dialogsRef,
+  hasError,
+  nodeId,
+  selected,
+  outputCount,
+  defaultHandles,
+  children,
+  footerChildren,
+}: CommandNodeProps) => {
   const { setCurrentEditedNode } = useEventActions();
   const { isHandleConnected } = useHandleConnectionState(nodeId);
   const { t } = useTranslation();
-  const deployFooter = hasError || commentCount > 0;
+  const deployFooter = hasError || commentCount > 0 || !!footerChildren;
   const color = IconsFromCommand[commandType].color;
   const handleLeftIsConnected = isHandleConnected('Tleft_default', 'target');
   const handleRightIsConnected = isHandleConnected('Sright_default', 'source');
+  const hasMultipleOutputs = outputCount !== undefined && outputCount > 1;
 
   return (
     <>
-      <CustomHandle color={color} handleIsConnected={handleLeftIsConnected} id="Tleft_default" position={Position.Left} type="target" />
-      <CustomHandle color={color} handleIsConnected={handleRightIsConnected} id="Sright_default" position={Position.Right} type="source" />
+      {showDefaultHandles('left', defaultHandles) && (
+        <CustomHandle
+          color={color}
+          handleIsConnected={handleLeftIsConnected}
+          id="Tleft_default"
+          position={Position.Left}
+          type="target"
+          multiHandle={false}
+        />
+      )}
+      {showDefaultHandles('right', defaultHandles) &&
+        (hasMultipleOutputs ? (
+          Array.from({ length: outputCount }, (_, i) => {
+            const handleId = `Sright_${i}`;
+            return (
+              <CustomHandle
+                key={handleId}
+                color={color}
+                handleIsConnected={isHandleConnected(handleId, 'source')}
+                id={handleId}
+                position={Position.Right}
+                type="source"
+                multiHandle={true}
+                index={i}
+              />
+            );
+          })
+        ) : (
+          <CustomHandle
+            color={color}
+            handleIsConnected={handleRightIsConnected}
+            id="Sright_default"
+            position={Position.Right}
+            type="source"
+            multiHandle={false}
+          />
+        ))}
       <CommandNodeContainer
         color={color}
         data-selected={selected}
@@ -201,6 +278,7 @@ export const CommandNode = ({ commandType, commentCount, dialogsRef, hasError, n
             <div />
           )}
           <div className="actions">
+            {footerChildren}
             {commentCount > 0 && (
               <div className="comments nodrag" onClick={(e) => e.stopPropagation()} onDoubleClick={(e) => e.stopPropagation()}>
                 <NoteIcon className="icon" />

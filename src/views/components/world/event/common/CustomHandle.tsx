@@ -1,20 +1,23 @@
-import { EventIconColor } from './EventIcon';
-import { Handle, HandleType, Position } from '@xyflow/react';
 import PlusIcon from '@assets/icons/global/plus-icon.svg';
+import { Handle, HandleType, Position } from '@xyflow/react';
 import React from 'react';
 import styled from 'styled-components';
+import { EventIconColor } from './EventIcon';
 
 type CustomHandleContainerProps = {
   position: Position;
   color: EventIconColor;
+  multiHandle: boolean;
+  index?: number;
 };
 
 const CustomHandleContainer = styled.div<CustomHandleContainerProps>`
   position: absolute;
   width: 10px;
   height: 10px;
-  top: 16px;
   left: ${({ position }) => (position === 'left' ? '-9px' : '319px')};
+
+  ${({ multiHandle, index = 0 }) => (multiHandle ? `bottom: ${24 + 32 * index}px;` : `top: 16px;`)}
 
   .icon {
     position: relative;
@@ -164,11 +167,13 @@ type CustomHandleProps = {
   id?: string | null | undefined;
   hasUnlimitedConnection?: boolean;
   style?: React.CSSProperties;
+  multiHandle: boolean;
+  index?: number;
 };
 
-export const CustomHandle = ({ color, handleIsConnected, id, position, type, style }: CustomHandleProps) => {
+export const CustomHandle = ({ color, handleIsConnected, id, position, type, style, multiHandle, index }: CustomHandleProps) => {
   return (
-    <CustomHandleContainer position={position} color={color} data-connected={handleIsConnected} style={style}>
+    <CustomHandleContainer position={position} color={color} data-connected={handleIsConnected} style={style} multiHandle={multiHandle} index={index}>
       <Handle type={type} position={position} id={id} isConnectable={position == Position.Left || !handleIsConnected}>
         <span className="icon">
           <PlusIcon />

@@ -101,6 +101,7 @@ export const PlayButton = () => {
     const isShortcutEnabled = () => !document.querySelector('#dialogs')?.textContent;
     return {
       play: () => isShortcutEnabled() && startPSDKAndCloseMenu(window.api.startPSDKDebug),
+      fast_debug: () => isShortcutEnabled() && startPSDKAndCloseMenu(window.api.startPSDKFastDebug),
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.projectPath]);
@@ -118,7 +119,7 @@ export const PlayButton = () => {
         <div className="play-menu">
           <span onClick={() => startPSDKAndCloseMenu(window.api.startPSDK)}>{t('play_release_mode')}</span>
           <span onClick={() => startPSDKAndCloseMenu(window.api.startPSDKDebug)}>{t('play_debug_mode')}</span>
-          {!state.projectStudio.isTiledMode && <span onClick={() => startPSDKAndCloseMenu(window.api.startPSDKTags)}>{t('play_tags_mode')}</span>}
+          <span onClick={() => startPSDKAndCloseMenu(window.api.startPSDKFastDebug)}>{t('play_fast_debug_mode')}</span>
           <span onClick={() => startPSDKAndCloseMenu(window.api.startPSDKWorldmap)}>{t('play_worldmap_mode')}</span>
         </div>
       </PlayMenuButtonContainer>

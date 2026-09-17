@@ -2,11 +2,15 @@ import type { StudioAbility } from '@modelEntities/ability';
 import type { StudioCreature, StudioCreatureForm } from '@modelEntities/creature';
 import type { DbSymbol } from '@modelEntities/dbSymbol';
 import { DEX_DEFAULT_NAME_TEXT_ID, StudioDex, StudioDexCreature } from '@modelEntities/dex';
+import { CommandId } from '@modelEntities/event/globalCommand';
 import type { StudioCustomGroupCondition, StudioGroup, StudioGroupSystemTag, StudioGroupTool, StudioGroupVsType } from '@modelEntities/group';
 import { createExpandPokemonSetup, StudioGroupEncounter } from '@modelEntities/groupEncounter';
 import type { StudioItem, StudioItemStatusCondition } from '@modelEntities/item';
+import type { StudioMap, StudioMapAudio } from '@modelEntities/map';
+import type { StudioMapInfo, StudioMapInfoMap } from '@modelEntities/mapInfo';
 import type { StudioMapLink } from '@modelEntities/mapLink';
 import type { StudioMove, StudioMoveCategory, StudioMoveCondition } from '@modelEntities/move';
+import type { StudioNature } from '@modelEntities/nature';
 import type {
   StudioCreatureQuestCondition,
   StudioCreatureQuestConditionType,
@@ -17,21 +21,24 @@ import type {
   StudioQuestObjectiveType,
   StudioQuestResolution,
 } from '@modelEntities/quest';
+import type { StudioTextInfo } from '@modelEntities/textInfo';
 import type { StudioTrainer, StudioTrainerVsType } from '@modelEntities/trainer';
 import type { StudioType } from '@modelEntities/type';
 import type { StudioZone } from '@modelEntities/zone';
 import { ProjectData } from '@src/GlobalStateProvider';
+import { StudioEventCommand } from '../models/entities/event/command';
+import { EVENT_START_CSV_FILE_ID, StudioEvent } from '../models/entities/event/event';
 import { assertUnreachable } from './assertUnreachable';
-import { findFirstAvailableCustomObjectiveTextId, findFirstAvailableFormTextId, findFirstAvailableId, findFirstAvailableTextId } from './ModelUtils';
-import { padStr } from './PadStr';
-import type { StudioTextInfo } from '@modelEntities/textInfo';
-import type { StudioMap, StudioMapAudio } from '@modelEntities/map';
-import type { StudioMapInfo, StudioMapInfoMap } from '@modelEntities/mapInfo';
-import type { StudioNature } from '@modelEntities/nature';
-import { mapInfoFindFirstAvailableId, mapInfoFindFirstAvailableTextId } from './MapInfoUtils';
 import { cloneEntity } from './cloneEntity';
-import { CommandId, StudioEventCommand } from '../models/entities/event/command';
-import { CustomEvent, StudioEvent } from '../models/entities/event/event';
+import { mapInfoFindFirstAvailableId, mapInfoFindFirstAvailableTextId } from './MapInfoUtils';
+import {
+  findFirstAvailableCsvFileId,
+  findFirstAvailableCustomObjectiveTextId,
+  findFirstAvailableFormTextId,
+  findFirstAvailableId,
+  findFirstAvailableTextId,
+} from './ModelUtils';
+import { padStr } from './PadStr';
 
 /**
  * Create a new ability with default values
@@ -164,10 +171,15 @@ export const createCreatureForm = (
   form: StudioCreatureForm,
   types: { type1: DbSymbol; type2: DbSymbol },
   newFormId: number,
+  inheritMoveSet = true,
 ) => {
   const formTextIdName = findFirstAvailableFormTextId(allPokemon, 0, 'name');
   const formTextIdDescription = findFirstAvailableFormTextId(allPokemon, 0, 'description');
-  return cloneEntity({ ...form, ...types, form: newFormId, formTextId: { name: formTextIdName, description: formTextIdDescription } });
+  const newForm = cloneEntity({ ...form, ...types, form: newFormId, formTextId: { name: formTextIdName, description: formTextIdDescription } });
+
+  if (!inheritMoveSet) newForm.moveSet = [];
+
+  return newForm;
 };
 
 /**
@@ -615,10 +627,15 @@ export const createNature = (allNatures: ProjectData['natures'], dbSymbol: DbSym
   };
 };
 
-export const createEvent = (dbSymbol: DbSymbol, id: number): StudioEvent => {
+export const createEvent = (allEvents: ProjectData['events']): StudioEvent => {
+  const id = findFirstAvailableId(allEvents, 1);
+  const dbSymbol = `event_${id}` as DbSymbol;
+  const csvFileId = findFirstAvailableCsvFileId(allEvents, EVENT_START_CSV_FILE_ID);
+
   return {
     dbSymbol,
     id,
+    csvFileId,
     klass: 'Event',
     type: 'custom',
     triggers: [],

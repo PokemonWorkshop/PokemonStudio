@@ -2,28 +2,29 @@ import React, { forwardRef, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { Editor } from '@components/editor';
-import { StudioDropDown } from '@components/StudioDropDown';
 import { DarkButton, PrimaryButton } from '@components/buttons';
-import { MultiLineInput, InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
-import { SelectGroup, SelectTrainer } from '@components/selects';
-import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useUpdateTrainer } from '@components/database/trainer/editors/useUpdateTrainer';
 import { useUpdateGroup } from '@components/database/group/editors/useUpdateGroup';
+import { useUpdateTrainer } from '@components/database/trainer/editors/useUpdateTrainer';
+import { Editor } from '@components/editor';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { InputContainer, InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, MultiLineInput, Toggle } from '@components/inputs';
+import { SelectGroup, SelectTrainer } from '@components/selects';
+import { StudioDropDown } from '@components/StudioDropDown';
 
+import { useGroupPage, useTrainerPage } from '@hooks/usePage';
+import { useConfigSettings } from '@hooks/useProjectConfig';
+import { useProjectGroups, useProjectTrainers } from '@hooks/useProjectData';
 import { cloneEntity } from '@utils/cloneEntity';
 import { convertShowdownToStudio } from '@utils/showdownUtils';
-import { useProjectGroups, useProjectTrainers } from '@hooks/useProjectData';
-import { useGroupPage, useTrainerPage } from '@hooks/usePage';
 
-import { ProjectData } from '@src/GlobalStateProvider';
 import { StudioGroup } from '@modelEntities/group';
-import { StudioTrainer } from '@modelEntities/trainer';
 import { StudioGroupEncounter } from '@modelEntities/groupEncounter';
+import { StudioTrainer } from '@modelEntities/trainer';
+import { ProjectData } from '@src/GlobalStateProvider';
 
-import type { PokemonBattlerFrom } from './PokemonBattlerEditorOverlay';
-import { DbSymbol } from '@modelEntities/dbSymbol';
 import { TooltipWrapper } from '@ds/Tooltip';
+import { DbSymbol } from '@modelEntities/dbSymbol';
+import type { PokemonBattlerFrom } from './PokemonBattlerEditorOverlay';
 
 const ImportInfo = styled.div`
   ${({ theme }) => theme.fonts.normalRegular};
@@ -54,7 +55,7 @@ const getFirstDbSymbol = (
   groups: ProjectData['groups'],
   trainers: ProjectData['trainers'],
   group: StudioGroup,
-  trainer: StudioTrainer | null
+  trainer: StudioTrainer | null,
 ) => {
   const getFirstSymbol = (entities: ProjectData['groups'] | ProjectData['trainers'], currentSymbol: DbSymbol) => {
     if (!entities) return '__undef__';
@@ -84,10 +85,12 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
   const { projectDataValues: groups } = useProjectGroups();
   const { trainer } = useTrainerPage();
   const { group } = useGroupPage();
+  const { projectConfigValues: settings } = useConfigSettings();
 
   const updateTrainer = useUpdateTrainer(trainer);
   const currentTrainer = useMemo(() => (trainer ? cloneEntity(trainer) : null), [trainer]);
   const updateGroup = useUpdateGroup(group);
+  const maxPartySize = settings.trainerPartyMaxSize;
 
   const [selectedEntity, setSelectedEntity] = useState(getFirstDbSymbol(from, groups, trainers, group, currentTrainer));
   const [showdownEncounter, setShowdownEncounter] = useState<StudioGroupEncounter[]>([]);
@@ -96,6 +99,15 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
   const [error, setError] = useState<string>('');
 
   const SelectComponent = isGroup ? SelectGroup : SelectTrainer;
+  const getPartyLengthAfterImport = (incomingLength: number, overrideFlag: boolean) => {
+    if (overrideFlag) return incomingLength;
+    if (!currentTrainer) return incomingLength;
+    return currentTrainer.party.length + incomingLength;
+  };
+  const isWithinTrainerPartyLimit = (incomingLength: number, overrideFlag: boolean) => {
+    if (isGroup) return true;
+    return getPartyLengthAfterImport(incomingLength, overrideFlag) <= maxPartySize;
+  };
 
   const dropDownOptions = [
     { value: 'default', label: isGroup ? t('default_option_label_group') : t('default_option_label_trainer') },
@@ -110,8 +122,8 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
     if (convertedTeam.length === 0) {
       setShowdownEncounter([]);
       return setError(t('error_message'));
-    } else if (!isGroup && !override && currentTrainer && convertedTeam.length + currentTrainer.party.length > 6) {
-      setError(t('party_length_limit'));
+    } else if (!isWithinTrainerPartyLimit(convertedTeam.length, override)) {
+      setError(t('party_length_limit', { max: maxPartySize }));
     } else {
       setError('');
     }
@@ -123,35 +135,27 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
     setDropDownSelection(type);
     if (type === 'default' && !isGroup) {
       const lengthPartyToImport = trainers[selectedEntity].party.length;
-      setError(override || (currentTrainer && currentTrainer.party.length + lengthPartyToImport <= 6) ? '' : t('party_length_limit'));
+      setError(isWithinTrainerPartyLimit(lengthPartyToImport, override) ? '' : t('party_length_limit', { max: maxPartySize }));
     } else {
       setError('');
       setShowdownEncounter([]);
     }
   };
 
-  const canImport = (override: boolean) => {
-    if (isGroup || (override && dropDownSelection === 'default')) return true;
+  const canImport = (overrideFlag: boolean) => {
+    if (isGroup) return true;
     if (!currentTrainer) return false;
 
     if (dropDownSelection === 'showdown') {
-      const isInputValid = showdownEncounter.length > 0;
-      const exceedsPartyLimit = showdownEncounter.length + currentTrainer.party.length > 6;
-
-      return isInputValid && (!exceedsPartyLimit || override);
+      return showdownEncounter.length > 0 && isWithinTrainerPartyLimit(showdownEncounter.length, overrideFlag);
     }
 
-    const lengthPartyToImport = trainers[selectedEntity].party.length;
-    return currentTrainer.party.length + lengthPartyToImport <= 6;
+    return isWithinTrainerPartyLimit(trainers[selectedEntity].party.length, overrideFlag);
   };
 
   const handleSetOverride = (newValue: boolean) => {
     setOverride(newValue);
-    if (newValue) {
-      setError('');
-    } else {
-      setError(canImport(newValue) ? '' : t('party_length_limit'));
-    }
+    setError(canImport(newValue) ? '' : t('party_length_limit', { max: maxPartySize }));
   };
 
   const onClickImport = () => {
@@ -230,7 +234,9 @@ export const PokemonBattlerImport = forwardRef<EditorHandlingClose, PokemonBattl
           <Toggle name="override" checked={override} onChange={(event) => handleSetOverride(event.target.checked)} />
         </InputWithLeftLabelContainer>
         <ButtonContainer>
-          <TooltipWrapper data-tooltip={dropDownSelection === 'default' && !canImport(override) ? t('party_length_limit') : undefined}>
+          <TooltipWrapper
+            data-tooltip={dropDownSelection === 'default' && !canImport(override) ? t('party_length_limit', { max: maxPartySize }) : undefined}
+          >
             <PrimaryButton onClick={onClickImport} disabled={!canImport(override)}>
               {t('to_import')}
             </PrimaryButton>

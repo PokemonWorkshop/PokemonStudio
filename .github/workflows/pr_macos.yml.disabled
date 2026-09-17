@@ -14,6 +14,9 @@ on:
         default: false
         required: true
 
+permissions:
+  contents: read
+
 jobs:
   build:
     name: Build Studio
@@ -25,7 +28,7 @@ jobs:
         os: [macos-latest-xlarge]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
       - name: Setup Environment
         uses: ./.github/actions/setup_environment
         with:

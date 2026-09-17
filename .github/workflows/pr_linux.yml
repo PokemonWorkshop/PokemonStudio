@@ -14,6 +14,9 @@ on:
         default: false
         required: true
 
+permissions:
+  contents: read
+
 jobs:
   build:
     name: Build Studio
@@ -25,16 +28,11 @@ jobs:
         os: [ubuntu-latest]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
       - name: Setup Environment
         uses: ./.github/actions/setup_environment
         with:
           force_build_node_module: ${{ inputs.force_build_node_module || false }}
-
-      # # No linting because the team never actually agreed with any of those rules and eslint is 1000% of the time counter productive
-      # - name: Run linting
-      #   shell: bash
-      #   run: npm run lint
 
       - name: Package Studio
         uses: ./.github/actions/package_studio

@@ -1,0 +1,53 @@
+import type { StudioEventCommandData } from '@modelEntities/event/command';
+import type { StudioEventCommandShowChoice } from '@modelEntities/event/messageCommands/showChoice';
+import { useGetProjectText } from '@utils/ReadingProjectText';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+import { useCommandNode } from '../../../hooks/useCommandNode';
+import { CommandNodeProps } from '../../CommandNodeProps';
+
+const ChoiceLabelContainer = styled.div<{ isCancel: boolean }>`
+  height: 32px;
+  margin-right: 10px;
+  margin-left: 10px;
+  line-height: 32px;
+  text-align: right;
+  color: ${({ theme, isCancel }) => (isCancel ? theme.colors.text400 : theme.colors.text100)};
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+`;
+
+export const ShowChoiceCommand = ({ id, data: { dialogsRef: commandDialogsRef, command, comments, csvFileId }, selected }: CommandNodeProps) => {
+  const { CommandNode } = useCommandNode<StudioEventCommandShowChoice>(id);
+  const { type: commandType } = command as StudioEventCommandData<StudioEventCommandShowChoice>;
+  const showChoiceCommand = command as StudioEventCommandData<StudioEventCommandShowChoice>;
+  // We use the texts from the GlobalState, so updating the text of a ShowChoice command refreshes all ShowChoice commands in the event.
+  // This results in a loss of optimization, but the application's design does not allow for any other approach.
+  const getText = useGetProjectText();
+  const { t } = useTranslation();
+  const choiceTexts = showChoiceCommand.choices.map((id) => getText(csvFileId, id));
+
+  return (
+    <>
+      <CommandNode
+        commandType={commandType}
+        commentCount={comments.length}
+        dialogsRef={commandDialogsRef}
+        nodeId={id}
+        selected={selected}
+        outputCount={showChoiceCommand.choices.length + 1}
+      >
+        {showChoiceCommand.choices.map((_choice, idx) => (
+          <ChoiceLabelContainer key={idx} isCancel={false}>
+            {choiceTexts[idx]}
+          </ChoiceLabelContainer>
+        ))}
+        <ChoiceLabelContainer key="cancel" isCancel={true}>
+          {t(`event_command_cancellation`)}
+        </ChoiceLabelContainer>
+      </CommandNode>
+    </>
+  );
+};

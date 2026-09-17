@@ -1,5 +1,9 @@
-import { CommandId, StudioEventCommand, StudioEventCommandData, StudioEventCommandType } from '@modelEntities/event/command';
+import { StudioEventCommand, StudioEventCommandData, StudioEventCommandType } from '@modelEntities/event/command';
 import { StudioEvent } from '@modelEntities/event/event';
+import { CommandId } from '@modelEntities/event/globalCommand';
+import { StudioEventCommandShowChoice } from '@modelEntities/event/messageCommands/showChoice';
+import { StudioEventCommandShowMessage } from '@modelEntities/event/messageCommands/showMessage';
+import { StudioEventCommandStart } from '@modelEntities/event/startCommands/start';
 import { cloneEntity } from '@utils/cloneEntity';
 import { EventCommandCreation } from '@utils/eventCommandCreation';
 import {
@@ -9,6 +13,7 @@ import {
   reactFlowConnectionToStudioConnection,
   reactFlowEdgeToStudioConnection,
 } from '@utils/events/EventUtils';
+import { useSetProjectText } from '@utils/ReadingProjectText';
 import {
   addEdge,
   applyNodeChanges,
@@ -22,6 +27,7 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import { DragEventHandler, RefObject, useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { CommandDialogsRef } from '../commands/editors/CommandEditorOverlay';
 import { useEventContext } from '../common/EventContext';
 import { useUpdateEvent } from './useUpdateEvent';
@@ -32,6 +38,7 @@ type NodeData = {
   dialogsRef?: CommandDialogsRef;
   command: StudioEventCommandData<StudioEventCommand>;
   comments: string[];
+  csvFileId: number;
 };
 
 type NodeEvent = Node<NodeData, StudioEventCommandType>;
@@ -41,12 +48,14 @@ type ChangeToApplyEventsType = { type: 'position'; commandId: CommandId; positio
 export const useEventFlow = (event: StudioEvent, eventFlowRef?: RefObject<HTMLDivElement | null>, dialogsRef?: CommandDialogsRef) => {
   const { currentEditedNode, type, setCurrentEditedNode, setType } = useEventContext();
   const reactFlowInstance = useReactFlow();
+  const { t } = useTranslation();
   const [nodes, setNodes] = useNodesState<NodeEvent | NodeShadow>([
     { id: 'shadow_node', type: 'shadow_node', position: { x: 0, y: 0 }, data: {}, hidden: true },
     ...initCommandNodes(event, dialogsRef),
   ]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(initEdges(event));
   const updateEvent = useUpdateEvent(event);
+  const setText = useSetProjectText();
 
   const onConnect = useCallback(
     (connection: Connection) => {
@@ -104,7 +113,7 @@ export const useEventFlow = (event: StudioEvent, eventFlowRef?: RefObject<HTMLDi
       // check if the dropped element is valid
       if (!type) return;
 
-      const command = EventCommandCreation[type];
+      const command = EventCommandCreation[type](event);
       const id = getCommandId(event);
       const position = reactFlowInstance.screenToFlowPosition({
         x: eventDrop.clientX - 160,
@@ -114,7 +123,7 @@ export const useEventFlow = (event: StudioEvent, eventFlowRef?: RefObject<HTMLDi
         id,
         type,
         position,
-        data: { dialogsRef, command: { type, ...command } as StudioEventCommandData<StudioEventCommand>, comments: [] },
+        data: { dialogsRef, command: { type, ...command } as StudioEventCommandData<StudioEventCommand>, comments: [], csvFileId: event.csvFileId },
       };
       const shadowNode = reactFlowInstance.getNode(SHADOW_NODE_ID) as NodeShadow;
 
@@ -128,6 +137,18 @@ export const useEventFlow = (event: StudioEvent, eventFlowRef?: RefObject<HTMLDi
         ),
       );
       setType(undefined);
+
+      if (type === 'show_message') {
+        const showMessageCommand = command as StudioEventCommandData<StudioEventCommandShowMessage>;
+        setText(event.csvFileId, showMessageCommand.message, '');
+        setText(event.csvFileId, showMessageCommand.narrator, '');
+      }
+
+      if (type === 'show_choice') {
+        const showChoiceCommand = command as StudioEventCommandData<StudioEventCommandShowChoice>;
+        setText(event.csvFileId, showChoiceCommand.choices[0], t(`event_command_yes`));
+        setText(event.csvFileId, showChoiceCommand.choices[1], t(`event_command_no`));
+      }
 
       updateEvent({
         commands: {
@@ -167,6 +188,28 @@ export const useEventFlow = (event: StudioEvent, eventFlowRef?: RefObject<HTMLDi
     [event],
   );
 
+  const reorderPriorities = (commandsEdited: Partial<Record<CommandId, StudioEventCommand>>, nodes: (NodeEvent | NodeShadow)[]) => {
+    if (!nodes.some((n) => n.type === 'start')) return;
+
+    const changes = Object.entries(commandsEdited)
+      .filter(([, command]) => !!command && command.type === 'start')
+      .sort(([, a], [, b]) => (a as StudioEventCommandStart).priority - (b as StudioEventCommandStart).priority)
+      .map(([id, command], i) => {
+        const commandId = id as CommandId;
+        commandsEdited[commandId] = { ...(command as StudioEventCommandStart), priority: i + 1 };
+
+        const nodeEdited = reactFlowInstance.getNode(id) as NodeEvent;
+        if (!nodeEdited) return;
+
+        return { id, type: 'replace' as const, item: { ...nodeEdited, data: { ...nodeEdited.data, command: commandsEdited[commandId] } } };
+      })
+      .filter((change) => !!change);
+
+    if (changes.length > 0) {
+      setNodes((nds) => applyNodeChanges(changes, nds));
+    }
+  };
+
   const onBeforeDelete = useCallback(async () => {
     // prevent command deletion when the editor is opened
     return !document.querySelector('#dialogs')?.textContent;
@@ -182,6 +225,7 @@ export const useEventFlow = (event: StudioEvent, eventFlowRef?: RefObject<HTMLDi
 
         delete command.connections[reactFlowEdgeToStudioConnection(id)];
       });
+      reorderPriorities(commandsEdited, nodes);
       updateEvent({ commands: commandsEdited });
       return params;
     },
@@ -216,6 +260,51 @@ export const useEventFlow = (event: StudioEvent, eventFlowRef?: RefObject<HTMLDi
     [reactFlowInstance.getNodes, reactFlowInstance.getEdges],
   );
 
+  const updatePriorities = (currentNode: NodeEvent) => {
+    const dataCommand = currentNode.data.command;
+    if (dataCommand.type !== 'start') return;
+
+    const oldPriority = (dataCommand as StudioEventCommandData<StudioEventCommandStart>).priority;
+    const newPriority = (event.commands[currentNode.id as CommandId] as StudioEventCommandStart)?.priority;
+    if (!newPriority || oldPriority === newPriority) return;
+
+    const updatedCommands = { ...event.commands };
+
+    const changes = Object.entries(updatedCommands)
+      .map(([id, command]) => {
+        if (!command || command.type !== 'start') return;
+        if (id === currentNode.id) return;
+
+        const commandId = id as CommandId;
+        let needToBeUpdated = false;
+
+        if (newPriority < oldPriority) {
+          if (command.priority >= newPriority && command.priority < oldPriority) {
+            updatedCommands[commandId] = { ...command, priority: command.priority + 1 };
+            needToBeUpdated = true;
+          }
+        } else {
+          if (command.priority > oldPriority && command.priority <= newPriority) {
+            updatedCommands[commandId] = { ...command, priority: command.priority - 1 };
+            needToBeUpdated = true;
+          }
+        }
+
+        if (needToBeUpdated) {
+          const nodeEdited = reactFlowInstance.getNode(id) as NodeEvent;
+          if (!nodeEdited) return;
+
+          return { id, type: 'replace' as const, item: { ...nodeEdited, data: { ...nodeEdited.data, command: updatedCommands[commandId] } } };
+        }
+      })
+      .filter((changes) => !!changes);
+
+    if (changes.length > 0) {
+      setNodes((nds) => applyNodeChanges(changes, nds));
+    }
+    updateEvent({ commands: updatedCommands });
+  };
+
   useEffect(() => {
     if (!currentEditedNode) return;
 
@@ -229,6 +318,7 @@ export const useEventFlow = (event: StudioEvent, eventFlowRef?: RefObject<HTMLDi
         nds,
       ),
     );
+    updatePriorities(nodeEdited);
     setCurrentEditedNode(undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [event.commands]);

@@ -1,9 +1,10 @@
+import { PageWithMenu, PageWithMenuProps } from '@components/pages';
+import { SettingsNavigation } from '@components/settings';
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { SettingsNavigation } from '@components/settings';
-import { SettingsMapsPage } from './Settings.maps.page';
 import { SettingsLanguagePage } from './Settings.language.page';
-import { PageWithMenu, PageWithMenuProps } from '@components/pages';
+import { SettingsMapsPage } from './Settings.maps.page';
+import { SettingsShortcutsPage } from './Settings.shortcuts.page';
 
 const SettingsPageWithMenu = ({ children }: Omit<PageWithMenuProps, 'navigation'>) => (
   <PageWithMenu navigation={<SettingsNavigation />}>{children}</PageWithMenu>
@@ -26,6 +27,14 @@ const SettingsRouterComponent = () => {
         element={
           <SettingsPageWithMenu>
             <SettingsMapsPage />
+          </SettingsPageWithMenu>
+        }
+      />
+      <Route
+        path="shortcuts"
+        element={
+          <SettingsPageWithMenu>
+            <SettingsShortcutsPage />
           </SettingsPageWithMenu>
         }
       />

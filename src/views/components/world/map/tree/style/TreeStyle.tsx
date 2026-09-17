@@ -2,7 +2,6 @@ import styled from 'styled-components';
 
 type TreeContainerProps = {
   hideMapTree: boolean;
-  isTiledMode: boolean;
 };
 
 export const TreeContainer = styled.div<TreeContainerProps>`
@@ -13,7 +12,7 @@ export const TreeContainer = styled.div<TreeContainerProps>`
   .tree-scrollbar {
     overflow-y: scroll;
     margin-right: -9px;
-    height: calc(100vh - ${({ isTiledMode }) => (isTiledMode ? '253px' : '313px')});
+    height: calc(100vh - 253px);
     display: ${({ hideMapTree }) => (hideMapTree ? 'none' : 'block')};
 
     ::-webkit-scrollbar {

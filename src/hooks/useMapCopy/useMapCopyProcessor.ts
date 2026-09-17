@@ -31,7 +31,7 @@ export const useMapCopyProcessor = () => {
           }
 
           return mapImport(
-            { filesToImport: filesToImport, tiledFilesSrcPath: dirname(tmxFile), rmxpMapInfo: [], copyMode: true },
+            { filesToImport: filesToImport, tiledFilesSrcPath: dirname(tmxFile), copyMode: true },
             () => {
               binding.current.onSuccess({});
               return setState(DEFAULT_PROCESS_STATE);

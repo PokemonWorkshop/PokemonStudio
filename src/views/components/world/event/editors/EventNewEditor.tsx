@@ -1,21 +1,19 @@
-import React, { forwardRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Editor } from '@components/editor';
-import { Input, InputWithTopLabelContainer, Label } from '@components/inputs';
-import { useProjectEvents } from '@hooks/useProjectData';
-import styled from 'styled-components';
 import { DarkButton, PrimaryButton } from '@components/buttons';
-import { DbSymbol } from '@modelEntities/dbSymbol';
-import { useSetProjectText } from '@utils/ReadingProjectText';
+import { Editor } from '@components/editor';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { TooltipWrapper } from '@ds/Tooltip';
+import { Input, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { InputFormContainer } from '@components/inputs/InputContainer';
+import { useEventTree } from '@components/world/event/hooks/useEventTree';
+import { TooltipWrapper } from '@ds/Tooltip';
+import { useProjectEvents } from '@hooks/useProjectData';
 import { EVENT_NAME_TEXT_ID } from '@modelEntities/event/event';
 import { DEFAULT_EVENT_TREE, StudioEventTreeFolder } from '@modelEntities/event/event-tree';
 import { createEvent } from '@utils/entityCreation';
-import { useEventTree } from '@components/world/event/hooks/useEventTree';
 import { addNewEventToEventTree } from '@utils/events/EventTreeUtils';
-import { findFirstAvailableId } from '@utils/ModelUtils';
+import { useNewProjectText, useSetProjectText } from '@utils/ReadingProjectText';
+import React, { forwardRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -34,23 +32,24 @@ export const EventNewEditor = forwardRef<EditorHandlingClose, EventNewEditorProp
   const { eventTree, setEventTree } = useEventTree();
   const { t } = useTranslation();
   const setText = useSetProjectText();
+  const setNewProjectText = useNewProjectText();
   const [name, setName] = useState(``); // We use a state because synchronizing dbSymbol is easier with a state
 
   useEditorHandlingClose(ref);
 
   const onClickNew = () => {
     if (!name) return;
-    const eventIndex = findFirstAvailableId(events, 1);
 
-    const dbSymbol = `event_${eventIndex}` as DbSymbol;
-    const newEvent = createEvent(dbSymbol, eventIndex);
+    const newEvent = createEvent(events);
     const currentEventTree = eventTree ?? DEFAULT_EVENT_TREE;
+    const dbSymbol = newEvent.dbSymbol;
     if (eventParent) {
-      setEventTree(addNewEventToEventTree(currentEventTree, dbSymbol, eventIndex, eventParent.data.dbSymbol));
+      setEventTree(addNewEventToEventTree(currentEventTree, dbSymbol, newEvent.id, eventParent.data.dbSymbol));
     } else {
-      setEventTree(addNewEventToEventTree(currentEventTree, dbSymbol, eventIndex));
+      setEventTree(addNewEventToEventTree(currentEventTree, dbSymbol, newEvent.id));
     }
     setText(EVENT_NAME_TEXT_ID, newEvent.id, name);
+    setNewProjectText(newEvent.csvFileId);
     setEvent({ [dbSymbol]: { ...newEvent, klass: 'Event' } }, { event: dbSymbol });
     closeDialog();
   };

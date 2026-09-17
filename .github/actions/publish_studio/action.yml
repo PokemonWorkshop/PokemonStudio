@@ -19,7 +19,7 @@ runs:
         GITHUB_TOKEN: ${{ github.token }}
 
     - name: Save to Github Artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: studio_${{ env.BRANCH_NAME }}_${{ runner.os }}
         path: ./out/make

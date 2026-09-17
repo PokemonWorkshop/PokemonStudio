@@ -1,4 +1,4 @@
-import { Menu, shell, BrowserWindow, MenuItemConstructorOptions } from 'electron';
+import { BrowserWindow, Menu, MenuItemConstructorOptions, shell } from 'electron';
 
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
@@ -85,6 +85,13 @@ export default class MenuBuilder {
               this.mainWindow.webContents.send('request-shortcut', 'play');
             },
           },
+          {
+            label: 'Fast Debug Mode',
+            accelerator: 'CmdOrCtrl+Shift+P',
+            click: () => {
+              this.mainWindow.webContents.send('request-shortcut', 'fast_debug');
+            },
+          },
           { type: 'separator' },
           {
             label: 'Quit',
@@ -103,6 +110,15 @@ export default class MenuBuilder {
             accelerator: 'CmdOrCtrl+N',
             click: () => {
               this.mainWindow.webContents.send('request-shortcut', 'db_new');
+            },
+          },
+          {
+            label: 'Copy identifier',
+            accelerator: this.isDarwin ? 'Alt+Shift+C' : 'Ctrl+Shift+C',
+            click: (_, __, e) => {
+              if (!e.triggeredByAccelerator) {
+                this.mainWindow.webContents.send('request-shortcut', 'db_copy_identifier');
+              }
             },
           },
           { type: 'separator' },

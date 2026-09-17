@@ -1,6 +1,6 @@
 import i18next, { InitOptions } from 'i18next';
-import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
+import { initReactI18next } from 'react-i18next';
 
 import { languages } from '@root/package.json';
 

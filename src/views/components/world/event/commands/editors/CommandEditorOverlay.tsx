@@ -1,11 +1,20 @@
 import { defineEditorOverlay } from '@components/editor/EditorOverlayV2';
 import { DialogRefData } from '@hooks/useDialogsRef';
-import type { CommandId, StudioEventCommandType } from '@modelEntities/event/command';
+import type { StudioEventCommandType } from '@modelEntities/event/command';
 import type { StudioEvent } from '@modelEntities/event/event';
+import type { CommandId } from '@modelEntities/event/globalCommand';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import React from 'react';
 import { DefaultEditor } from './DefaultEditor';
-import { InsertScriptEditor } from './InsertScriptEditor';
+import { ManageAccessMainMenuEditor } from './gameInterfaceCommands/ManageAccessMainMenuEditor';
+import { ReturnToTitleScreenEditor } from './gameInterfaceCommands/ReturnToTitleScreenEditor';
+import { ShowChoiceEditor } from './messageCommands/ShowChoiceEditor';
+import { ShowMessageEditor } from './messageCommands/ShowMessageEditor';
+import { WaitMovementCompletionEditor } from './movementCommands/WaitMovementCompletionEditor';
+import { ManageAccessSaveMenuEditor } from './saveCommands/ManageAccessSaveMenuEditor';
+import { OpenSaveMenuEditor } from './saveCommands/OpenSaveMenuEditor';
+import { InsertScriptEditor } from './scriptCommands/InsertScriptEditor';
+import { StartEditor } from './startCommands/StartEditor';
 
 export type CommandEditorAndDeletionKeys = StudioEventCommandType;
 export type CommandDialogsRef = React.RefObject<DialogRefData<CommandEditorAndDeletionKeys> | null>;
@@ -19,9 +28,9 @@ export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletion
   (dialogToShow, handleCloseRef, closeDialog, { commandId, event }) => {
     switch (dialogToShow) {
       case 'show_message':
-      case 'narrator_settings':
-      case 'manage_message_box':
+        return <ShowMessageEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'show_choice':
+        return <ShowChoiceEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'wait_key_press':
       case 'record_key_press':
       case 'input_creature_name':
@@ -40,6 +49,7 @@ export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletion
       case 'teleport_event':
       case 'teleport_player':
       case 'wait_move_completion':
+        return <WaitMovementCompletionEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'manage_event_reappearance':
       case 'manage_path_finding':
       case 'manage_follow_me':
@@ -57,7 +67,9 @@ export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletion
       case 'set_active_dex':
       case 'give_badge':
       case 'manage_access_save_menu':
+        return <ManageAccessSaveMenuEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'open_save_menu':
+        return <OpenSaveMenuEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'manage_autosave':
       case 'force_autosave':
       case 'force_save':
@@ -65,8 +77,10 @@ export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletion
       case 'open_shop':
       case 'open_custom_scene':
       case 'manage_access_main_menu':
+        return <ManageAccessMainMenuEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'trigger_game_over':
       case 'return_to_title_screen':
+        return <ReturnToTitleScreenEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'open_creature_shop':
       case 'start_quest':
       case 'display_hidden_objective':
@@ -93,6 +107,8 @@ export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletion
         return <DefaultEditor ref={handleCloseRef} />;
       case 'insert_script':
         return <InsertScriptEditor commandId={commandId} event={event} ref={handleCloseRef} />;
+      case 'start':
+        return <StartEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       default:
         return assertUnreachable(dialogToShow);
     }

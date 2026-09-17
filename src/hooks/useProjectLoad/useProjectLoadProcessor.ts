@@ -1,26 +1,27 @@
+import { toAsyncProcess } from '@hooks/Helper';
+import { useDefaultTextInfoTranslation } from '@hooks/useDefaultTextInfoTranslation';
+import { DEFAULT_PROCESS_STATE, PROCESS_DONE_STATE, SpecialStateProcessors } from '@hooks/useProcess';
+import { buildSelectOptionsFromScratch, buildSelectOptionsTextSourcesFromScratch } from '@hooks/useSelectOptions';
+import { PROJECT_VALIDATOR, PROJECT_VERSION_VALIDATOR, StudioProject } from '@modelEntities/project';
 import { useGlobalState } from '@src/GlobalStateProvider';
+import i18n from '@src/i18n';
+import { SavingConfigMap, SavingMap, SavingTextMap } from '@utils/SavingUtils';
+import { generateSelectedIdentifier } from '@utils/generateSelectedIdentifier';
 import { useLoaderRef } from '@utils/loaderContext';
+import { addProjectToList, updateProjectStudio } from '@utils/projectList';
+import { getSetting, getSettings } from '@utils/settings';
 import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { ProjectLoadFunctionBinding, ProjectLoadStateObject } from './types';
-import { DEFAULT_PROCESS_STATE, PROCESS_DONE_STATE, SpecialStateProcessors } from '@hooks/useProcess';
-import { toAsyncProcess } from '@hooks/Helper';
-import { fail, handleFailure } from './helpers';
-import { PROJECT_VALIDATOR, PROJECT_VERSION_VALIDATOR } from '@modelEntities/project';
-import { useDefaultTextInfoTranslation } from '@hooks/useDefaultTextInfoTranslation';
-import i18n from '@src/i18n';
-import { SavingMap, SavingConfigMap, SavingTextMap } from '@utils/SavingUtils';
-import { generateSelectedIdentifier } from '@utils/generateSelectedIdentifier';
-import { addProjectToList, updateProjectStudio } from '@utils/projectList';
-import { buildSelectOptionsTextSourcesFromScratch, buildSelectOptionsFromScratch } from '@hooks/useSelectOptions';
-import { deserializeProjectData } from './deserializeProjectData';
 import { deserializeProjectConfig } from './deserializeProjectConfig';
-import { getSetting, getSettings } from '@utils/settings';
+import { deserializeProjectData } from './deserializeProjectData';
+import { fail, handleFailure } from './helpers';
+import type { ProjectLoadFunctionBinding, ProjectLoadStateObject } from './types';
 
 const DEFAULT_BINDING: ProjectLoadFunctionBinding = {
   onFailure: () => {},
   onIntegrityFailure: () => {},
   onSuccess: () => {},
+  onRmxpMigration: (_onContinue) => {},
 };
 
 const STEPS_TOTAL = 15;
@@ -32,17 +33,50 @@ export const useProjectLoadProcessor = () => {
   const { t } = useTranslation();
   const binding = useRef<ProjectLoadFunctionBinding>(DEFAULT_BINDING);
   const processors: SpecialStateProcessors<ProjectLoadStateObject> = useMemo(
+    // eslint-disable-next-line react-hooks/preserve-manual-memoization
     () => ({
       ...PROCESS_DONE_STATE,
       choosingProjectFile: (_, setState) => {
         loaderRef.current.open('loading_project', 0, 0, t('importing_project_choose_project'));
         return window.api.chooseProjectFileToOpen(
           { fileType: 'studio' },
-          ({ dirName }) => setState({ state: 'readingVersion', projectDirName: dirName }),
+          ({ dirName }) => setState({ state: 'preCheckRmxpMode', projectDirName: dirName }),
           () => {
             setState(DEFAULT_PROCESS_STATE);
             loaderRef.current.close();
-          }
+          },
+        );
+      },
+      preCheckRmxpMode: (state, setState) => {
+        loaderRef.current.open('loading_project', 0, 0, t('loading_project_meta'));
+        return window.api.readProjectMetadata(
+          { path: state.projectDirName },
+          ({ metaData }) => {
+            const isRmxpProject = (metaData as StudioProject & { isTiledMode: boolean }).isTiledMode === false;
+            if (isRmxpProject) {
+              loaderRef.current.close();
+              binding.current.onRmxpMigration(() => setState({ state: 'migrateToTiledMode', projectDirName: state.projectDirName }));
+            } else {
+              setState({ state: 'readingVersion', projectDirName: state.projectDirName });
+            }
+          },
+          handleFailure(setState, binding),
+        );
+      },
+      migrateToTiledMode: (state, setState) => {
+        loaderRef.current.open('loading_project', 0, 0, t('loading_project_rmxp_migration'));
+        return window.api.readProjectMetadata(
+          { path: state.projectDirName },
+          ({ metaData }) => {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { isTiledMode, ...metaDataWithoutTiledMode } = metaData as StudioProject & { isTiledMode: boolean };
+            return window.api.writeProjectMetadata(
+              { path: state.projectDirName, metaData: JSON.stringify(metaDataWithoutTiledMode, null, 2) },
+              () => setState({ state: 'readingVersion', projectDirName: state.projectDirName }),
+              handleFailure(setState, binding),
+            );
+          },
+          handleFailure(setState, binding),
         );
       },
       readingVersion: (state, setState) => {
@@ -51,7 +85,7 @@ export const useProjectLoadProcessor = () => {
         return window.api.getStudioVersion(
           {},
           (projectVersion) => setState({ ...state, state: 'readProjectMetadata', studioVersion: projectVersion.studioVersion }),
-          handleFailure(setState, binding)
+          handleFailure(setState, binding),
         );
       },
       readProjectMetadata: (state, setState) => {
@@ -70,13 +104,13 @@ export const useProjectLoadProcessor = () => {
                 return handleFailure(setState, binding)({ errorMessage: t('failed_deserialize') });
               }
               setState({ ...state, state: 'updateTextInfos', projectMetaData: projectMetaData.data });
-            } else if (projectVersion.data.studioVersion.localeCompare(state.studioVersion) === 1) {
+            } else if (projectVersion.data.studioVersion.localeCompare(state.studioVersion, undefined, { numeric: true }) === 1) {
               handleFailure(setState, binding)({ errorMessage: t('error_project_version') });
             } else {
               setState({ ...state, state: 'migrateProjectData', projectVersion: projectVersion.data.studioVersion });
             }
           },
-          handleFailure(setState, binding)
+          handleFailure(setState, binding),
         );
       },
       migrateProjectData: (state, setState) =>
@@ -88,35 +122,23 @@ export const useProjectLoadProcessor = () => {
           handleFailure(setState, binding),
           (payload) => {
             loaderRef.current.open('migrating_data', payload.step, payload.total, payload.stepText);
-          }
+          },
         ),
       writeProjectMetadata: (state, setState) => {
         loaderRef.current.open('loading_project', 4, STEPS_TOTAL, t('importing_project_writing_meta'));
         return window.api.writeProjectMetadata(
           { path: state.projectDirName, metaData: JSON.stringify(state.projectMetaData, null, 2) },
           () => setState({ ...state, state: 'updateTextInfos' }),
-          handleFailure(setState, binding)
+          handleFailure(setState, binding),
         );
       },
       updateTextInfos: (state, setState) => {
         loaderRef.current.setProgress(5, STEPS_TOTAL, t('loading_update_text_infos'));
         return window.api.updateTextInfos(
           { projectPath: state.projectDirName, currentLanguage: i18n.language, textInfoTranslation: defaultTextInfoTranslation() },
-          () => setState({ ...state, state: 'RMXP2StudioMapsSync' }),
-          handleFailure(setState, binding)
+          () => setState({ ...state, state: 'readProjectConfigs' }),
+          handleFailure(setState, binding),
         );
-      },
-      RMXP2StudioMapsSync: (state, setState) => {
-        if (state.projectMetaData.isTiledMode === false) {
-          loaderRef.current.setProgress(6, STEPS_TOTAL, t('loading_rmxp_to_studio_maps_sync'));
-          return window.api.RMXP2StudioMapsSync(
-            { projectPath: state.projectDirName },
-            () => setState({ ...state, state: 'readProjectConfigs' }),
-            handleFailure(setState, binding)
-          );
-        } else {
-          return toAsyncProcess(() => setState({ ...state, state: 'readProjectConfigs' }));
-        }
       },
       readProjectConfigs: (state, setState) => {
         loaderRef.current.setProgress(7, STEPS_TOTAL, t('loading_project_config'));
@@ -131,7 +153,7 @@ export const useProjectLoadProcessor = () => {
               fail(binding, error);
             }
           },
-          handleFailure(setState, binding)
+          handleFailure(setState, binding),
         );
       },
       readProjectData: (state, setState) => {
@@ -139,7 +161,7 @@ export const useProjectLoadProcessor = () => {
         return window.api.readProjectData(
           { path: state.projectDirName },
           (projectData) => setState({ ...state, state: 'readProjectText', projectData }),
-          handleFailure(setState, binding)
+          handleFailure(setState, binding),
         );
       },
       readProjectText: (state, setState) => {
@@ -147,7 +169,7 @@ export const useProjectLoadProcessor = () => {
         return window.api.readProjectTexts(
           { path: state.projectDirName },
           (projectTexts) => setState({ ...state, state: 'deserializeProjectData', projectTexts }),
-          handleFailure(setState, binding)
+          handleFailure(setState, binding),
         );
       },
       deserializeProjectData: (state, setState) => {
@@ -192,7 +214,7 @@ export const useProjectLoadProcessor = () => {
             tiledExecPath: getSetting('tiledPath'),
           },
           ({ dbSymbols }) => setState({ ...state, state: 'readCurrentPSDKVersion', mapsModified: dbSymbols }),
-          handleFailure(setState, binding)
+          handleFailure(setState, binding),
         );
       },
       readCurrentPSDKVersion: (state, setState) => {
@@ -227,7 +249,7 @@ export const useProjectLoadProcessor = () => {
       },
       finalizeGlobalState: (state, setState) => {
         return toAsyncProcess(() => {
-          loaderRef.current.setProgress(15, STEPS_TOTAL, t('loading_project_identifier'));
+          loaderRef.current.setProgress(14, STEPS_TOTAL, t('loading_project_identifier'));
           sessionStorage.clear(); // Clear the whole session storage when loading is done so we don't carry garbage from other projects
           const selectedDataIdentifier = generateSelectedIdentifier(state.preState);
           const globalState = {
@@ -266,7 +288,7 @@ export const useProjectLoadProcessor = () => {
         });
       },
     }),
-    []
+    [],
   );
 
   return { processors, binding };

@@ -1,26 +1,26 @@
 import React, { forwardRef, useState } from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
+import { DarkButton, PrimaryButton, SecondaryButton } from '@components/buttons';
 import { Editor } from '@components/editor';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { InputContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { SelectGroup } from '@components/selects';
-import { DarkButton, PrimaryButton, SecondaryButton } from '@components/buttons';
 import { TagWithSelection } from '@components/Tag';
 import { TooltipWrapper } from '@ds/Tooltip';
 
 import { useZonePage } from '@src/hooks/usePage';
 
+import { DbSymbol } from '@modelEntities/dbSymbol';
 import { StudioGroup } from '@modelEntities/group';
 import { StudioZone } from '@modelEntities/zone';
-import { DbSymbol } from '@modelEntities/dbSymbol';
 
-import { padStr } from '@utils/PadStr';
+import { useUpdateGroup } from '@components/database/group/editors/useUpdateGroup';
 import { cloneEntity } from '@utils/cloneEntity';
 import { defineRelationCustomCondition } from '@utils/GroupUtils';
+import { padStr } from '@utils/PadStr';
 import { useUpdateZone } from './useUpdateZone';
-import { useUpdateGroup } from '@components/database/group/editors/useUpdateGroup';
 
 const GroupContainer = styled.div`
   display: flex;
@@ -43,7 +43,7 @@ const ButtonContainer = styled.div`
 `;
 
 const mapIdIndexInGroup = (mapId: number, group: StudioGroup) =>
-  group.customConditions.filter((condition) => condition.type === 'mapId').findIndex((condition) => condition.value === mapId);
+  group.customConditions.findIndex((condition) => condition.type === 'mapId' && condition.value === mapId);
 
 const setAllTagsMapsOnByDefault = (group: StudioGroup, zone: StudioZone) => {
   zone.maps.forEach((mapId) => {

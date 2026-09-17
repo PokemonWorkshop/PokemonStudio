@@ -14,22 +14,21 @@ jobs:
     name: Build Studio
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
+
+    permissions:
+      contents: write
+
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
       - name: Setup Environment
         uses: ./.github/actions/setup_environment
         with:
           force_build_node_module: ${{ inputs.force_build_node_module || false }}
-
-      # # No linting because the team never actually agreed with any of those rules and eslint is 1000% of the time counter productive
-      # - name: Run linting
-      #   shell: bash
-      #   run: npm run lint
 
       - name: Publish Studio
         uses: ./.github/actions/publish_studio

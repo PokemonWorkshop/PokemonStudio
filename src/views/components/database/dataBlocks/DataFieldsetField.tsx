@@ -2,7 +2,7 @@ import { IClickable } from '@hooks/useShortcutNavigation';
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 
-/* eslint-disable react/require-default-props */
+// eslint-disable react/require-default-props
 type FieldSize = 's' | 'm';
 
 type FieldsetProps = {
@@ -65,7 +65,7 @@ export const FieldData = styled.span<FieldDataProps>`
   }
 `;
 
-const FieldCode = styled.span`
+export const FieldCode = styled.span`
   border-radius: 4px;
   padding: 4px 8px;
   ${(props) => props.theme.fonts.codeRegular};

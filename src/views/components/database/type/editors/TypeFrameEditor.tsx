@@ -67,7 +67,7 @@ export const TypeFrameEditor = forwardRef<EditorHandlingClose>((_, ref) => {
         </InputWithTopLabelContainer>
         <InputWithColorLabelContainer>
           <Label htmlFor="color">{t('color')}</Label>
-          <Input type="color" name="color" defaultValue={color} onBlur={(event) => setColor(event.target.value)} />
+          <Input type="color" name="color" defaultValue={color} onChange={(event) => setColor(event.target.value)} />
         </InputWithColorLabelContainer>
         <InputWithLeftLabelContainer>
           <Label htmlFor="preview">{t('preview')}</Label>

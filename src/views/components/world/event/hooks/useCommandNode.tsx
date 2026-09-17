@@ -1,8 +1,9 @@
 import { useEventActions } from '@components/world/event/common/EventContext';
-import { CommandNode } from '../common/CommandNode';
-import { CommandId, StudioEventCommand } from '@modelEntities/event/command';
+import { StudioEventCommand } from '@modelEntities/event/command';
+import { CommandId } from '@modelEntities/event/globalCommand';
 import { cloneEntity } from '@utils/cloneEntity';
 import { useCallback } from 'react';
+import { CommandNode } from '../common/CommandNode';
 
 export const useCommandNode = <T extends StudioEventCommand>(id: string) => {
   const { setCurrentEditedNode, updateEvent } = useEventActions();

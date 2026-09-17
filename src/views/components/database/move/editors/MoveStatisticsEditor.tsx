@@ -1,39 +1,41 @@
-import React, { forwardRef, useMemo } from 'react';
 import { Editor } from '@components/editor';
-import { useTranslation } from 'react-i18next';
-import { MOVE_BATTLE_STAGE_MOD_LIST, StudioBattleStageMod, StudioMove } from '@modelEntities/move';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useMovePage } from '@hooks/usePage';
-import { useUpdateMove } from './useUpdateMove';
-import { useZodForm } from '@hooks/useZodForm';
-import { cloneEntity } from '@utils/cloneEntity';
-import { STATISTIC_EDITOR_SCHEMA } from './MoveStatisticsEditor/StatisticEditorSchema';
-import { BattleStageModEditor } from './MoveStatisticsEditor/BattleStageModEditor';
 import { InputFormContainer } from '@components/inputs/InputContainer';
+import { useMovePage } from '@hooks/usePage';
+import { useZodForm } from '@hooks/useZodForm';
+import { MOVE_BATTLE_STAGE_MOD_LIST, StudioBattleStageMod, StudioMove } from '@modelEntities/move';
+import React, { forwardRef, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { BattleStageModEditor } from './MoveStatisticsEditor/BattleStageModEditor';
+import { MoveStatisticsFormData, STATISTIC_EDITOR_SCHEMA } from './MoveStatisticsEditor/StatisticEditorSchema';
+import { useUpdateMove } from './useUpdateMove';
 
-const initBattleStageMods = (move: StudioMove): StudioMove => {
-  const battleStagsMods = MOVE_BATTLE_STAGE_MOD_LIST.reduce<StudioBattleStageMod[]>((prev, stageMod) => {
-    const modificator = move.battleStageMod.find(({ battleStage }) => battleStage === stageMod)?.modificator;
-    prev.push({ battleStage: stageMod, modificator: modificator ?? 0 });
-    return prev;
-  }, []);
-  const moveWithBattleStageMods = cloneEntity(move);
-  moveWithBattleStageMods.battleStageMod = battleStagsMods;
-  return moveWithBattleStageMods;
-};
+const moveBattleStageToUI = (move: StudioMove): MoveStatisticsFormData => ({
+  battleStages: MOVE_BATTLE_STAGE_MOD_LIST.map((stage) => ({
+    type: stage,
+    value: move.battleStageMod.find(({ battleStage }) => battleStage === stage)?.modificator ?? 0,
+  })),
+});
+
+const uiToMoveBattleStage = ({ battleStages }: MoveStatisticsFormData): StudioBattleStageMod[] =>
+  battleStages
+    .filter(({ value }) => value !== 0)
+    .map(({ type: stage, value: modificator }) => ({
+      battleStage: stage,
+      modificator: modificator,
+    }));
 
 export const MoveStatisticsEditor = forwardRef<EditorHandlingClose>((_, ref) => {
   const { t } = useTranslation();
   const { move } = useMovePage();
   const updateMove = useUpdateMove(move);
-  const moveWithBattleStageMods = useMemo(() => initBattleStageMods(move), [move]);
-  const { canClose, getFormData, onInputTouched, defaults, formRef } = useZodForm(STATISTIC_EDITOR_SCHEMA, moveWithBattleStageMods);
+  const formData = useMemo(() => moveBattleStageToUI(move), [move]);
+  const { canClose, getFormData, onInputTouched, defaults, formRef } = useZodForm(STATISTIC_EDITOR_SCHEMA, formData);
 
   const onClose = () => {
     const result = canClose() && getFormData();
     if (result && result.success) {
-      const battleStageMods = result.data.battleStageMod.filter(({ modificator }) => modificator !== 0);
-      updateMove({ battleStageMod: battleStageMods });
+      updateMove({ battleStageMod: uiToMoveBattleStage(result.data) });
     }
   };
 

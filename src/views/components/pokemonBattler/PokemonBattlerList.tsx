@@ -1,18 +1,19 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import { DataBlockEditorContainer } from '@components/editor/DataBlockEditorStyle';
 import { DarkButtonImportResponsive, SecondaryButtonWithPlusIconResponsive } from '@components/buttons';
-import { PokemonBattler } from './PokemonBattler';
-import { useTranslation } from 'react-i18next';
+import { DataBlockEditorContainer } from '@components/editor/DataBlockEditorStyle';
 import { StudioGroupEncounter } from '@modelEntities/groupEncounter';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+import { PokemonBattler } from './PokemonBattler';
 
-import { useDialogsRef } from '@hooks/useDialogsRef';
-import { PokemonBattlerEditorOverlay } from './editors';
-import type { CurrentBattlerType, PokemonBattlerEditorAndDeletionKeys, PokemonBattlerFrom } from './editors/PokemonBattlerEditorOverlay';
-import { assertUnreachable } from '@utils/assertUnreachable';
-import { useTrainerPage } from '@hooks/usePage';
 import { Tag } from '@components/Tag';
 import { DarkButtonReOrderResponsive } from '@components/buttons/DarkButtonWithPlusIcon';
+import { useDialogsRef } from '@hooks/useDialogsRef';
+import { useTrainerPage } from '@hooks/usePage';
+import { useConfigSettings } from '@hooks/useProjectConfig';
+import { assertUnreachable } from '@utils/assertUnreachable';
+import { PokemonBattlerEditorOverlay } from './editors';
+import type { CurrentBattlerType, PokemonBattlerEditorAndDeletionKeys, PokemonBattlerFrom } from './editors/PokemonBattlerEditorOverlay';
 
 type PokemonBattlerListProps = {
   title: string;
@@ -68,6 +69,7 @@ export const PokemonBattlerList = ({ title, encounters, disabledImport, from }: 
   const dialogsRef = useDialogsRef<PokemonBattlerEditorAndDeletionKeys>();
   const { t } = useTranslation();
   const { trainer } = useTrainerPage();
+  const { projectConfigValues: settings } = useConfigSettings();
   const [currentBattler, setCurrentBattler] = useState<CurrentBattlerType>({ index: 0, kind: undefined });
 
   const importText = () => {
@@ -111,7 +113,7 @@ export const PokemonBattlerList = ({ title, encounters, disabledImport, from }: 
           <SecondaryButtonWithPlusIconResponsive
             onClick={() => dialogsRef.current?.openDialog('new')}
             data-tooltip-responsive={t('add_creature')}
-            disabled={from === 'trainer' && trainer.party.length >= 6}
+            disabled={from === 'trainer' && trainer.party.length >= settings.trainerPartyMaxSize}
           >
             {t('add_creature')}
           </SecondaryButtonWithPlusIconResponsive>

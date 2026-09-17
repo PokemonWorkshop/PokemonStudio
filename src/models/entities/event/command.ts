@@ -1,35 +1,17 @@
-import type { StudioEventCommandCategory } from './category';
 import { z } from 'zod';
-
-export const COMMAND_ID_VALIDATOR = z.string().brand('CommandId');
-export type CommandId = z.infer<typeof COMMAND_ID_VALIDATOR>;
-
-export const COMMAND_CONNECTION_ID_VALIDATOR = z.string().brand('ConnectionId');
-export type ConnectionId = z.infer<typeof COMMAND_CONNECTION_ID_VALIDATOR>;
-
-// TODO: change for z.number().int() if we use snapToGrid in the event editor
-const EVENT_COMMAND_STUDIO_DATA_VALIDATOR = z.object({
-  x: z.number(),
-  y: z.number(),
-  comments: z.array(z.string()),
-});
-
-export const EVENT_COMMAND_CONNECTION_VALIDATOR = z.object({
-  sourceHandle: z.string(),
-  target: COMMAND_ID_VALIDATOR,
-  targetHandle: z.string(),
-});
+import type { StudioEventCommandCategory } from './category';
+import { EVENT_COMMAND_MANAGE_ACCESS_MAIN_MENU_VALIDATOR } from './gameInterfaceCommands/manageAccessMainMenu';
+import { EVENT_COMMAND_RETURN_TO_TITLE_SCREEN_VALIDATOR } from './gameInterfaceCommands/returnToTitleScreen';
+import { COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_CONNECTION_VALIDATOR, EVENT_COMMAND_STUDIO_DATA_VALIDATOR } from './globalCommand';
+import { EVENT_COMMAND_SHOW_CHOICE_VALIDATOR } from './messageCommands/showChoice';
+import { EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR } from './messageCommands/showMessage';
+import { EVENT_COMMAND_WAIT_MOVEMENT_COMPLETION_VALIDATOR } from './movementCommands/waitMovementCompletion';
+import { EVENT_COMMAND_MANAGE_ACCESS_SAVE_MENU_VALIDATOR } from './saveCommands/manageAccessSaveMenu';
+import { EVENT_COMMAND_OPEN_SAVE_MENU_VALIDATOR } from './saveCommands/openSaveMenu';
+import { EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR } from './scriptCommands/insertScript';
+import { EVENT_COMMAND_START_VALIDATOR } from './startCommands/start';
 
 export type StudioEventCommandConnection = z.infer<typeof EVENT_COMMAND_CONNECTION_VALIDATOR>;
-
-export const EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR = z.object({
-  type: z.literal('insert_script'),
-  script: z.string().default(''),
-  connections: z.record(COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_CONNECTION_VALIDATOR),
-  studioData: EVENT_COMMAND_STUDIO_DATA_VALIDATOR,
-});
-
-export type StudioEventCommandInsertScript = z.infer<typeof EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR>;
 
 const GENERIC_COMMAND = <T extends string>(type: T) =>
   z.object({
@@ -39,10 +21,8 @@ const GENERIC_COMMAND = <T extends string>(type: T) =>
   });
 
 export const EVENT_COMMAND_VALIDATOR = z.discriminatedUnion('type', [
-  GENERIC_COMMAND('show_message'),
-  GENERIC_COMMAND('narrator_settings'),
-  GENERIC_COMMAND('manage_message_box'),
-  GENERIC_COMMAND('show_choice'),
+  EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR,
+  EVENT_COMMAND_SHOW_CHOICE_VALIDATOR,
   GENERIC_COMMAND('wait_key_press'),
   GENERIC_COMMAND('record_key_press'),
   GENERIC_COMMAND('input_creature_name'),
@@ -60,7 +40,7 @@ export const EVENT_COMMAND_VALIDATOR = z.discriminatedUnion('type', [
   GENERIC_COMMAND('move_event'),
   GENERIC_COMMAND('teleport_event'),
   GENERIC_COMMAND('teleport_player'),
-  GENERIC_COMMAND('wait_move_completion'),
+  EVENT_COMMAND_WAIT_MOVEMENT_COMPLETION_VALIDATOR,
   GENERIC_COMMAND('manage_event_reappearance'),
   GENERIC_COMMAND('manage_path_finding'),
   GENERIC_COMMAND('manage_follow_me'),
@@ -77,17 +57,17 @@ export const EVENT_COMMAND_VALIDATOR = z.discriminatedUnion('type', [
   GENERIC_COMMAND('manage_dex'),
   GENERIC_COMMAND('set_active_dex'),
   GENERIC_COMMAND('give_badge'),
-  GENERIC_COMMAND('manage_access_save_menu'),
-  GENERIC_COMMAND('open_save_menu'),
+  EVENT_COMMAND_MANAGE_ACCESS_SAVE_MENU_VALIDATOR,
+  EVENT_COMMAND_OPEN_SAVE_MENU_VALIDATOR,
   GENERIC_COMMAND('manage_autosave'),
   GENERIC_COMMAND('force_autosave'),
   GENERIC_COMMAND('force_save'),
   GENERIC_COMMAND('open_scene'),
   GENERIC_COMMAND('open_shop'),
   GENERIC_COMMAND('open_custom_scene'),
-  GENERIC_COMMAND('manage_access_main_menu'),
+  EVENT_COMMAND_MANAGE_ACCESS_MAIN_MENU_VALIDATOR,
   GENERIC_COMMAND('trigger_game_over'),
-  GENERIC_COMMAND('return_to_title_screen'),
+  EVENT_COMMAND_RETURN_TO_TITLE_SCREEN_VALIDATOR,
   GENERIC_COMMAND('open_creature_shop'),
   GENERIC_COMMAND('start_quest'),
   GENERIC_COMMAND('display_hidden_objective'),
@@ -112,6 +92,7 @@ export const EVENT_COMMAND_VALIDATOR = z.discriminatedUnion('type', [
   GENERIC_COMMAND('manage_map_panorama'),
   GENERIC_COMMAND('change_battle_background'),
   EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR,
+  EVENT_COMMAND_START_VALIDATOR,
 ]);
 
 export type StudioEventCommand = z.infer<typeof EVENT_COMMAND_VALIDATOR>;
@@ -125,12 +106,7 @@ export type EventCommandForCategory = {
 };
 
 export const COMMANDS_FROM_CATEGORY: Record<StudioEventCommandCategory, EventCommandForCategory[]> = {
-  messages: [
-    { commandType: 'show_message', enabled: true },
-    { commandType: 'narrator_settings' },
-    { commandType: 'manage_message_box' },
-    { commandType: 'show_choice' },
-  ],
+  messages: [{ commandType: 'show_message', enabled: true }, { commandType: 'show_choice' }],
   player_interactions: [
     { commandType: 'wait_key_press' },
     { commandType: 'record_key_press' },
@@ -224,4 +200,5 @@ export const COMMANDS_FROM_CATEGORY: Record<StudioEventCommandCategory, EventCom
     { commandType: 'change_battle_background' },
   ],
   scripting: [{ commandType: 'insert_script', enabled: true }],
+  start: [{ commandType: 'start', enabled: true }],
 };

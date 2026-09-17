@@ -1,22 +1,22 @@
+import { DarkButton, PrimaryButton } from '@components/buttons';
+import { Editor } from '@components/editor';
+import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
+import { InputWithLeftLabelContainer, InputWithTopLabelContainer, Label, Toggle } from '@components/inputs';
+import { Input, MultiLineInput, TextInputError } from '@components/inputs/Input';
+import { InputFormContainer } from '@components/inputs/InputContainer';
+import { Select } from '@ds/Select';
+import { useCreaturePage } from '@hooks/usePage';
+import { useProjectPokemon } from '@hooks/useProjectData';
+import { useZodForm } from '@hooks/useZodForm';
+import { CREATURE_FORM_DESCRIPTION_TEXT_ID, CREATURE_FORM_NAME_TEXT_ID, CREATURE_FORM_VALIDATOR, StudioCreature } from '@modelEntities/creature';
+import { useGetEntityDescriptionText, useSetProjectText } from '@utils/ReadingProjectText';
+import { cloneEntity } from '@utils/cloneEntity';
+import { createCreatureForm } from '@utils/entityCreation';
+import { TFunction } from 'i18next';
 import React, { forwardRef, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
-import { Editor } from '@components/editor';
-import { InputWithTopLabelContainer, Label } from '@components/inputs';
 import styled from 'styled-components';
-import { DarkButton, PrimaryButton } from '@components/buttons';
-import { Input, MultiLineInput, TextInputError } from '@components/inputs/Input';
-import { useProjectPokemon } from '@hooks/useProjectData';
-import { cloneEntity } from '@utils/cloneEntity';
-import { CREATURE_FORM_DESCRIPTION_TEXT_ID, CREATURE_FORM_NAME_TEXT_ID, CREATURE_FORM_VALIDATOR, StudioCreature } from '@modelEntities/creature';
-import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
-import { useCreaturePage } from '@hooks/usePage';
-import { useZodForm } from '@hooks/useZodForm';
-import { InputFormContainer } from '@components/inputs/InputContainer';
 import { TypeFields } from './InformationEditor/TypeFields';
-import { Select } from '@ds/Select';
-import { useGetEntityDescriptionText, useSetProjectText } from '@utils/ReadingProjectText';
-import { createCreatureForm } from '@utils/entityCreation';
 
 export const FormCategories = ['classic', 'mega-evolution'] as const;
 export type FormCategory = (typeof FormCategories)[number];
@@ -57,6 +57,7 @@ export const PokemonFormNewEditor = forwardRef<EditorHandlingClose, Props>(({ cl
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const newFormId = findFirstFormNotUsed(creature, formCategory);
   const [formName, setFormName] = useState(creatureName);
+  const [inheritMoveSet, setInheritMoveSet] = useState(true);
 
   useEditorHandlingClose(ref);
 
@@ -64,7 +65,7 @@ export const PokemonFormNewEditor = forwardRef<EditorHandlingClose, Props>(({ cl
     const data = getFormData();
     if (data.success == false || !descriptionRef.current) return;
 
-    const newForm = createCreatureForm(creatures, form, data.data, newFormId);
+    const newForm = createCreatureForm(creatures, form, data.data, newFormId, inheritMoveSet);
     if (newFormId <= 29 && creatures[form.babyDbSymbol]?.forms.find((f) => f.form === newFormId)) newForm.babyForm = newFormId;
 
     const updatedCreature = cloneEntity(creature);
@@ -99,6 +100,10 @@ export const PokemonFormNewEditor = forwardRef<EditorHandlingClose, Props>(({ cl
             <TextInputError>{t(formCategory === 'classic' ? 'error_classic_form' : 'error_mega_evolution_form')}</TextInputError>
           ) : null}
         </InputWithTopLabelContainer>
+        <InputWithLeftLabelContainer>
+          <Label>{t('inherit_movepool')}</Label>
+          <Toggle checked={inheritMoveSet} onChange={(event) => setInheritMoveSet(event.currentTarget.checked)} />
+        </InputWithLeftLabelContainer>
         <TypeFields form={form} defaults={defaults} />
         <ButtonContainer>
           <PrimaryButton onClick={onClickNew} disabled={isDisabled}>

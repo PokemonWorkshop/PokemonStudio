@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { NavigationDatabaseStyle } from '@components/database/navigation/NavigationDatabase/NavigationDatabaseStyle';
 import { NavigationDatabaseItem } from '@components/database/navigation/NavigationDatabaseItem';
 import { MapMenu } from './map';
-import { useProjectStudio } from '@root/src/hooks/useProjectStudio';
 import { useLocation } from 'react-router-dom/dist';
 import { EventMenu } from './event/EventMenu';
 
@@ -16,16 +15,10 @@ const WorldNavigationStyle = styled.div`
   min-width: 320px;
 `;
 
-const WorlMapsEventDiv = styled.div<{ $showBorder?: boolean }>`
+const WorlMapsEventDiv = styled.div`
   display: flex;
   flex-direction: row;
   gap: 8px;
-  ${({ $showBorder, theme }) =>
-    $showBorder &&
-    `
-    border-bottom: 1px solid ${theme.colors.dark20};
-    padding-bottom: 8px;
-  `}
 `;
 
 const WorldBuildingNavigationStyle = styled(NavigationDatabaseStyle)`
@@ -34,16 +27,14 @@ const WorldBuildingNavigationStyle = styled(NavigationDatabaseStyle)`
 `;
 
 export const WorldNavigation = () => {
-  const { projectStudioValues } = useProjectStudio();
   const { t } = useTranslation();
   const location = useLocation();
-  const isTiledMode = projectStudioValues.isTiledMode;
   const isMapPage = !!location.pathname.match(/^\/world\/(map|overview|maplink)/);
 
   const routeLinks = {
     events: '/world/events',
     map: '/world/map',
-    maplink: `/world/maplink${isTiledMode ? '2' : ''}`,
+    maplink: '/world/maplink2',
   };
 
   const getMenuComponent = (pathname: string) => {
@@ -61,13 +52,10 @@ export const WorldNavigation = () => {
   return (
     <WorldNavigationStyle>
       <WorldBuildingNavigationStyle>
-        <WorlMapsEventDiv $showBorder={(location.pathname === routeLinks.map || location.pathname === routeLinks.maplink) && !isTiledMode}>
+        <WorlMapsEventDiv>
           <NavigationDatabaseItem path={routeLinks.map} label={t('maps')} activeForced={isMapPage} />
           <NavigationDatabaseItem path={routeLinks.events} label={t('events')} />
         </WorlMapsEventDiv>
-        {(location.pathname === routeLinks.map || location.pathname === routeLinks.maplink) && !isTiledMode && (
-          <NavigationDatabaseItem path={routeLinks.maplink} label={t('maplinks')} />
-        )}
       </WorldBuildingNavigationStyle>
 
       {getMenuComponent(location.pathname)}

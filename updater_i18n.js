@@ -50,7 +50,13 @@ const i18nDir = './assets/i18n';
 const languages = require('./package.json').languages || {};
 
 try {
-  const baseJson = JSON.parse(fs.readFileSync(basePath, 'utf-8'));
+  const baseContent = fs.readFileSync(basePath, 'utf-8');
+  const baseJson = JSON.parse(baseContent);
+
+  const normalizedBaseContent = `${JSON.stringify(baseJson, null, 2)}\n`;
+  if (baseContent !== normalizedBaseContent) {
+    fs.writeFileSync(basePath, normalizedBaseContent, 'utf-8');
+  }
 
   const allLangs = Object.keys(languages);
   const activeLangs = allLangs.filter((lang) => languages[lang]['active']);
@@ -70,7 +76,7 @@ try {
     }
 
     if (syncJson(baseJson, targetJson) || isNewFile) {
-      fs.writeFileSync(targetPath, JSON.stringify(targetJson, null, 2), 'utf-8');
+      fs.writeFileSync(targetPath, `${JSON.stringify(targetJson, null, 2)}\n`, 'utf-8');
       console.log(`✅ ${lang}.json ${isNewFile ? 'created' : 'updated'} (ACTIVE).`);
     } else {
       console.log(`✅ ${lang}.json is already up-to-date (ACTIVE).`);
@@ -89,7 +95,7 @@ try {
     }
 
     if (syncJson(baseJson, targetJson)) {
-      fs.writeFileSync(targetPath, JSON.stringify(targetJson, null, 2), 'utf-8');
+      fs.writeFileSync(targetPath, `${JSON.stringify(targetJson, null, 2)}\n`, 'utf-8');
       console.log(`📝 ${lang}.json updated (INACTIVE).`);
     }
   });

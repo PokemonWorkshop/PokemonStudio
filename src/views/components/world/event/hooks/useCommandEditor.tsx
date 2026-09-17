@@ -1,5 +1,6 @@
-import type { CommandId, StudioEventCommand } from '@modelEntities/event/command';
+import type { StudioEventCommand } from '@modelEntities/event/command';
 import type { StudioEvent } from '@modelEntities/event/event';
+import type { CommandId } from '@modelEntities/event/globalCommand';
 import { useMemo } from 'react';
 import { useCommandNode } from './useCommandNode';
 
@@ -17,6 +18,7 @@ export const useCommandEditor = <T extends StudioEventCommand>(event: StudioEven
 
   return {
     command: commandData as Omit<T, 'type' | 'connections' | 'studioData'>,
+    commandId,
     updateCommand,
   };
 };

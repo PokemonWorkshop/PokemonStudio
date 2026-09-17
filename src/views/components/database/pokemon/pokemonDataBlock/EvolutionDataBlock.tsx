@@ -1,11 +1,11 @@
-import { useGetEntityNameText } from '@utils/ReadingProjectText';
+import { CONTROL, useKeyPress } from '@hooks/useKeyPress';
 import { useProjectPokemon } from '@hooks/useProjectData';
+import { usePokemonShortcutNavigation } from '@hooks/useShortcutNavigation';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataBlockWithTitlePagination, DataFieldsetField, DataGrid } from '../../dataBlocks';
 import { PokemonDataProps } from '../PokemonDataPropsInterface';
-import { CONTROL, useKeyPress } from '@hooks/useKeyPress';
-import { usePokemonShortcutNavigation } from '@hooks/useShortcutNavigation';
 
 type EvolutionDataBlockProps = {
   evolutionIndex: number;
@@ -63,7 +63,10 @@ export const EvolutionDataBlock = ({ pokemonWithForm, evolutionIndex, setEvoluti
             disabled={evolution?.dbSymbol === '__undef__'}
             clickable={{
               isClickable,
-              callback: () => shortcutNavigation(evolution?.dbSymbol || currentCreature.dbSymbol, evolution?.form),
+              callback: () => {
+                shortcutNavigation(evolution?.dbSymbol || currentCreature.dbSymbol, evolution?.form);
+                setEvolutionIndex(0);
+              },
             }}
           />
           {minLevel !== undefined && <DataFieldsetField label={t('at_level')} data={minLevel.toString()} />}

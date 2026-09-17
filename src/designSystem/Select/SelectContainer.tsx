@@ -164,3 +164,56 @@ export const SelectContainer = styled.div`
     }
   }
 `;
+
+export const NodeSelectContainer = styled(SelectContainer)`
+  height: 32px;
+
+  & svg {
+    top: calc((100% - 9px) / 2);
+
+    &.disabled {
+      color: #4f525b;
+    }
+  }
+
+  & input {
+    background-color: #202225;
+    border: 1px solid #383a40;
+    height: 32px;
+
+    &:disabled {
+      cursor: not-allowed;
+      filter: opacity(100%);
+      color: #4f525b;
+      border: 1px solid #25262a;
+      background-color: rgb(192, 193, 227, 0.03);
+    }
+  }
+
+  &:has(.visible) {
+    & input {
+      background-color: #202225; // TODO: set the right color
+    }
+  }
+
+  & > .select-popover {
+    background-color: #202225;
+    border: 1px solid #383a40;
+  }
+
+  // TODO: update colors
+  & .select-list {
+    & span:hover:not(.current) {
+      background-color: ${({ theme }) => theme.colors.dark22};
+    }
+
+    & span.highlighted:not(.current) {
+      background-color: ${({ theme }) => theme.colors.dark16};
+    }
+
+    & span.current {
+      color: ${({ theme }) => theme.colors.text100};
+      background: ${({ theme }) => theme.colors.dark23};
+    }
+  }
+`;

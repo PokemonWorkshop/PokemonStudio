@@ -1,8 +1,8 @@
-import { Input, MultiLineInput } from '@components/inputs';
-import { ClearInputContainer, ClearInputProps, useClearInput } from './ClearInput';
 import ClearIcon from '@assets/icons/global/clear-tag-icon.svg';
-import styled, { css } from 'styled-components';
+import { Input, MultiLineInput } from '@components/inputs';
 import React, { forwardRef } from 'react';
+import styled, { css } from 'styled-components';
+import { ClearInputContainer, ClearInputProps, useClearInput } from './ClearInput';
 
 const sharedInputStyles = css`
   background-color: rgba(255, 255, 255, 0.0001);

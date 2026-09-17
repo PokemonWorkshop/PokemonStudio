@@ -1,3 +1,4 @@
+import { normalize } from '@utils/normalize';
 import {
   ChangeEventHandler,
   FocusEventHandler,
@@ -9,10 +10,9 @@ import {
   useRef,
   useState,
 } from 'react';
+import type { List } from 'react-virtualized/dist/es/List';
 import { RenderOptionRef, SelectOption } from './types';
 import { getNotFoundExclusionPattern, getSelectDefaultLabel, positionAndShowPopover } from './utils';
-import type { List } from 'react-virtualized/dist/es/List';
-import { normalize } from '@utils/normalize';
 
 export type SelectProps<Value extends string, ChooseValue extends string> = {
   options: Readonly<SelectOption<Value>[]>;

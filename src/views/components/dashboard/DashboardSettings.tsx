@@ -1,11 +1,11 @@
-import React, { useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { InputWithLeftLabelContainer, Input, Label, Toggle, InputContainer } from '@components/inputs';
+import { Input, InputContainer, InputWithLeftLabelContainer, Label, Toggle } from '@components/inputs';
 import { PageEditor } from '@components/pages';
 import { useConfigSettings } from '@hooks/useProjectConfig';
-import styled from 'styled-components';
 import { cleaningSettingsNaNValues } from '@utils/cleanNaNValue';
 import { cloneEntity } from '@utils/cloneEntity';
+import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 const UnlimitedItemsInfoContainer = styled.span`
   ${({ theme }) => theme.fonts.normalSmall}
@@ -17,12 +17,16 @@ export const DashboardSettings = () => {
   const { projectConfigValues: settings, setProjectConfigValues: setSettings } = useConfigSettings();
   const [maxLevel, setMaxLevel] = useState(settings.pokemonMaxLevel);
   const [maxItemCount, setMaxBagItemCount] = useState(settings.maxBagItemCount);
+  const [baseStatMaxValue, setBaseStatMaxValue] = useState(settings.baseStatMaxValue);
+  const [trainerPartyMaxSize, setTrainerPartyMaxSize] = useState(settings.trainerPartyMaxSize);
   const currentEditedSettings = useMemo(() => cloneEntity(settings), [settings]);
 
   const updateSettingsConfig = () => {
     cleaningSettingsNaNValues(currentEditedSettings);
     setMaxLevel(currentEditedSettings.pokemonMaxLevel);
     setMaxBagItemCount(currentEditedSettings.maxBagItemCount);
+    setBaseStatMaxValue(currentEditedSettings.baseStatMaxValue);
+    setTrainerPartyMaxSize(currentEditedSettings.trainerPartyMaxSize);
     setSettings(currentEditedSettings);
   };
 
@@ -36,6 +40,32 @@ export const DashboardSettings = () => {
     const level = parseInt(event.target.value);
     if (level < 1 || level > 9999) return event.preventDefault();
     currentEditedSettings.pokemonMaxLevel = level;
+    updateSettingsConfig();
+  };
+
+  const onChangeBaseStatMaxValue = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const baseStatMax = parseInt(event.target.value);
+    if (baseStatMax < 1 || baseStatMax > 9999) return event.preventDefault();
+    setBaseStatMaxValue(baseStatMax);
+  };
+
+  const onBlurBaseStatMaxValue = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const baseStatMax = parseInt(event.target.value);
+    if (baseStatMax < 1 || baseStatMax > 9999) return event.preventDefault();
+    currentEditedSettings.baseStatMaxValue = baseStatMax;
+    updateSettingsConfig();
+  };
+
+  const onChangeTrainerPartyMaxSize = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const trainerPartyMaxSize = parseInt(event.target.value);
+    if (trainerPartyMaxSize < 1 || trainerPartyMaxSize > 99) return event.preventDefault();
+    setTrainerPartyMaxSize(trainerPartyMaxSize);
+  };
+
+  const onBlurTrainerPartyMaxSize = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const trainerPartyMaxSize = parseInt(event.target.value);
+    if (trainerPartyMaxSize < 1 || trainerPartyMaxSize > 99) return event.preventDefault();
+    currentEditedSettings.trainerPartyMaxSize = trainerPartyMaxSize;
     updateSettingsConfig();
   };
 
@@ -66,6 +96,32 @@ export const DashboardSettings = () => {
             onChange={onChangeMaxLevel}
             onBlur={onBlurMaxLevel}
             placeholder="100"
+          />
+        </InputWithLeftLabelContainer>
+        <InputWithLeftLabelContainer>
+          <Label htmlFor="max-base-stat-value">{t('max_base_stat_value')}</Label>
+          <Input
+            type="number"
+            name="max-base-stat-value"
+            min="1"
+            max="9999"
+            value={isNaN(baseStatMaxValue) ? '' : baseStatMaxValue}
+            onChange={onChangeBaseStatMaxValue}
+            onBlur={onBlurBaseStatMaxValue}
+            placeholder="999"
+          />
+        </InputWithLeftLabelContainer>
+        <InputWithLeftLabelContainer>
+          <Label htmlFor="max-trainer-party-size">{t('max_trainer_party_size')}</Label>
+          <Input
+            type="number"
+            name="max-trainer-party-size"
+            min="1"
+            max="99"
+            value={isNaN(trainerPartyMaxSize) ? '' : trainerPartyMaxSize}
+            onChange={onChangeTrainerPartyMaxSize}
+            onBlur={onBlurTrainerPartyMaxSize}
+            placeholder="6"
           />
         </InputWithLeftLabelContainer>
         <InputWithLeftLabelContainer>

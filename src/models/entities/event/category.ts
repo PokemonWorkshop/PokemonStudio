@@ -9,6 +9,7 @@ export const STUDIO_EVENT_COMMAND_CATEGORY_LIST = [
   'player_interactions',
   'audio',
   'visual_effects',
+  'start',
   'quests',
   'visual_environment',
   'save',

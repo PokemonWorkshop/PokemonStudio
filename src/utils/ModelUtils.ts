@@ -1,3 +1,4 @@
+import { StudioEvent } from '@modelEntities/event/event';
 import { StudioTextInfo } from '@modelEntities/textInfo';
 import { StudioTrainerAdditionalDialogs } from '@modelEntities/trainer';
 import { ProjectData } from '@src/GlobalStateProvider';
@@ -8,7 +9,7 @@ import { ProjectData } from '@src/GlobalStateProvider';
  * @returns The text id
  */
 export const findFirstAvailableTextId = (
-  allData: ProjectData['abilities'] | ProjectData['types'] | StudioTextInfo[] | StudioTrainerAdditionalDialogs[]
+  allData: ProjectData['abilities'] | ProjectData['types'] | StudioTextInfo[] | StudioTrainerAdditionalDialogs[],
 ) => {
   const textIdSet = Object.values(allData)
     .map(({ textId }) => textId) // Fetch all ids
@@ -108,4 +109,79 @@ export const findFirstAvailableCustomObjectiveTextId = (allQuests: ProjectData['
   if (holeIndex === -1) return textIdSet[textIdSet.length - 1] + 1;
 
   return textIdSet[holeIndex - 1] + 1;
+};
+
+export const findFirstAvailableCsvFileId = (allData: Record<string, { csvFileId: number }>, startId: number) => {
+  const values = Object.values(allData);
+  if (values.length === 0) return startId;
+
+  const idSet = values
+    .map(({ csvFileId }) => csvFileId) // Fetch all csvFileIds
+    .filter((id, index, array) => index === array.indexOf(id)) // reject all duplicates
+    .sort((a, b) => a - b); // sort id by ascending order
+  // Since ids are ordered, if the first isn't the startId that means we need to fill the beginning of the list ;)
+  if (idSet[0] > startId) return startId;
+
+  const holeIndex = idSet.findIndex((id, index) => id !== index + startId);
+  if (holeIndex === -1) return idSet[idSet.length - 1] + 1;
+
+  return idSet[holeIndex - 1] + 1;
+};
+
+export const findFirstAvailableTextIdEvent = (event: StudioEvent, startId: number, excludeIds?: number[]) => {
+  const commands = Object.values(event.commands).filter(
+    (command) => !!command && (command.type === 'show_message' || command.type === 'show_choice'),
+  );
+  if (commands.length === 0) return startId;
+
+  const idSet = commands
+    .reduce<number[]>((prev, command) => {
+      const ids = [...prev];
+      if (command.type === 'show_message') {
+        ids.push(command.message, command.narrator);
+      }
+      if (command.type === 'show_choice') {
+        command.choices.forEach((id) => ids.push(id));
+      }
+      return ids;
+    }, [])
+    .concat(excludeIds ?? [])
+    .filter((id, index, array) => index === array.indexOf(id)) // reject all duplicates
+    .sort((a, b) => a - b) // sort id by ascending order
+    .filter((id) => id >= startId); // only consider IDs at or above startId
+  // Since ids are ordered, if there's no id at startId that means we can use startId
+  if (idSet.length === 0 || idSet[0] > startId) return startId;
+
+  const holeIndex = idSet.findIndex((id, index) => id !== index + startId);
+  if (holeIndex === -1) return idSet[idSet.length - 1] + 1;
+
+  return idSet[holeIndex - 1] + 1;
+};
+
+export const findMultipleAvailableTextIdsEvent = (event: StudioEvent, startId: number, times: number, excludeIds?: number[]) => {
+  const ids = [];
+
+  while (ids.length < times) {
+    const id = findFirstAvailableTextIdEvent(event, startId + ids.length, [...ids, ...(excludeIds ?? [])]);
+    ids.push(id);
+  }
+
+  return ids;
+};
+
+export const findFirstAvailablePriorityEvent = (event: StudioEvent, startId: number) => {
+  const commands = Object.values(event.commands).filter((command) => !!command && command.type === 'start');
+  if (commands.length === 0) return startId;
+
+  const idSet = commands
+    .reduce<number[]>((prev, { priority }) => [...prev, priority], [])
+    .filter((id, index, array) => index === array.indexOf(id)) // reject all duplicates
+    .sort((a, b) => a - b); // sort id by ascending order
+  // Since ids are ordered, if the first isn't the startId that means we need to fill the beginning of the list ;)
+  if (idSet[0] > startId) return startId;
+
+  const holeIndex = idSet.findIndex((id, index) => id !== index + startId);
+  if (holeIndex === -1) return idSet[idSet.length - 1] + 1;
+
+  return idSet[holeIndex - 1] + 1;
 };

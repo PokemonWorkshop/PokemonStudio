@@ -1,4 +1,9 @@
-import type { ProjectLoadFailureCallback, ProjectLoadIntegrityFailureCallback, ProjectLoadSuccessCallback } from './types';
+import type {
+  ProjectLoadFailureCallback,
+  ProjectLoadIntegrityFailureCallback,
+  ProjectLoadRmxpMigrationCallback,
+  ProjectLoadSuccessCallback,
+} from './types';
 import { DEFAULT_PROCESS_STATE, useProcess } from '@hooks/useProcess';
 import { useProjectLoadProcessor } from './useProjectLoadProcessor';
 
@@ -10,9 +15,10 @@ export const useProjectLoad = () => {
     payload: { projectDirName?: string },
     onSuccess: ProjectLoadSuccessCallback,
     onFailure: ProjectLoadFailureCallback,
-    onIntegrityFailure: ProjectLoadIntegrityFailureCallback
+    onIntegrityFailure: ProjectLoadIntegrityFailureCallback,
+    onRmxpMigration: ProjectLoadRmxpMigrationCallback,
   ) => {
-    binding.current = { onFailure, onIntegrityFailure, onSuccess };
-    setState(payload.projectDirName ? { state: 'readingVersion', projectDirName: payload.projectDirName } : { state: 'choosingProjectFile' });
+    binding.current = { onFailure, onIntegrityFailure, onSuccess, onRmxpMigration };
+    setState(payload.projectDirName ? { state: 'preCheckRmxpMode', projectDirName: payload.projectDirName } : { state: 'choosingProjectFile' });
   };
 };

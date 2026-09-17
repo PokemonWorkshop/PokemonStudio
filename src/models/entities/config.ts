@@ -15,7 +15,7 @@ export const CREDIT_CONFIG_VALIDATOR = z.object({
     z.object({
       title: z.string(),
       name: z.string(),
-    })
+    }),
   ),
   gameCredits: z.string(),
 });
@@ -105,6 +105,8 @@ export const SETTINGS_CONFIG_VALIDATOR = z.object({
   isUseBattleCamera3d: z.boolean(),
   showContestSummaryPage: z.boolean(),
   showRibbonsSummaryPage: z.boolean(),
+  baseStatMaxValue: POSITIVE_INT.max(9999).default(999),
+  trainerPartyMaxSize: POSITIVE_INT.max(99).default(6),
 });
 export type StudioSettingConfig = z.infer<typeof SETTINGS_CONFIG_VALIDATOR>;
 
@@ -169,6 +171,7 @@ export const DEFAULT_GAME_OPTIONS = [
   'battle_animation',
   'battle_style',
   'screen_scale',
+  'auto_run',
 ] as const;
 
 export type DefaultGameOptions = (typeof DEFAULT_GAME_OPTIONS)[number];
