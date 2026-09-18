@@ -100,7 +100,7 @@
     "@types/yauzl": "^2.10.3",
     "@typescript-eslint/eslint-plugin": "^8.70.0",
     "@typescript-eslint/parser": "^8.6.0",
-    "@vitejs/plugin-react": "^6.0.1",
+    "@vitejs/plugin-react": "^6.1.1",
     "app-builder-lib": "^26.15.3",
     "electron": "^41.2.0",
     "eslint": "^9.39.4",
