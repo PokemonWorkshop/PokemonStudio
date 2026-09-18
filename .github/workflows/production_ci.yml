@@ -1,5 +1,7 @@
 name: Production - CI Build
 
+run-name: Build Pokémon Studio ${{ inputs.release_tag }}
+
 on:
   workflow_dispatch:
     inputs:
@@ -8,6 +10,18 @@ on:
         type: boolean
         default: true
         required: true
+
+      release_tag:
+        description: 'Draft release tag, for example v2.10.1'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-release-${{ inputs.release_tag }}
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -24,7 +38,9 @@ jobs:
         os: [ubuntu-latest, windows-latest]
 
     steps:
-      - uses: actions/checkout@v7
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
       - name: Setup Environment
         uses: ./.github/actions/setup_environment
         with:
@@ -32,3 +48,16 @@ jobs:
 
       - name: Publish Studio
         uses: ./.github/actions/publish_studio
+
+  update-release-notes:
+    name: Update draft release notes
+    needs: build
+
+    permissions:
+      contents: write
+      pull-requests: read
+
+    uses: ./.github/workflows/update-release-notes.yml
+    with:
+      release_tag: ${{ inputs.release_tag }}
+      allow_missing_draft: false
