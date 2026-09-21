@@ -1,14 +1,14 @@
+import { PROJECT_VALIDATOR, StudioProject } from '@modelEntities/project';
+import i18n from '@src/i18n';
+import { MIGRATION_CONFIG } from '@src/migrations/migrationConfig';
+import { ChannelNames, sendProgress } from '@utils/BackendTask';
+import { parseJSON } from '@utils/json/parse';
+import type { StudioSettings } from '@utils/settings';
 import { IpcMainEvent } from 'electron';
 import log from 'electron-log';
 import fsPromises from 'fs/promises';
 import path from 'path';
 import { defineBackendServiceFunction } from './defineBackendServiceFunction';
-import { ChannelNames, sendProgress } from '@utils/BackendTask';
-import { PROJECT_VALIDATOR, StudioProject } from '@modelEntities/project';
-import type { StudioSettings } from '@utils/settings';
-import { parseJSON } from '@utils/json/parse';
-import { MIGRATION_CONFIG } from '@src/migrations/migrationConfig';
-import i18n from '@src/i18n';
 
 export type MigrationTask = (event: IpcMainEvent, projectPath: string, studioSettings?: StudioSettings) => Promise<void>;
 
@@ -18,7 +18,9 @@ export type MigrateDataOutput = { projectStudio: StudioProject };
 const migrateData = async (payload: MigrateDataInput, event: IpcMainEvent, channels: ChannelNames) => {
   log.info('migrate-data', `Current project version: ${payload.projectVersion}`);
 
-  const migrationFound = MIGRATION_CONFIG.filter((migration) => migration.version.localeCompare(payload.projectVersion) !== -1);
+  const migrationFound = MIGRATION_CONFIG.filter(
+    (migration) => migration.version.localeCompare(payload.projectVersion, undefined, { numeric: true }) !== -1,
+  );
   if (migrationFound.length > 0) {
     log.info('migrate-data', `Found ${migrationFound.length} migrations`);
     await migrationFound.reduce(async (prev, curr, index) => {
