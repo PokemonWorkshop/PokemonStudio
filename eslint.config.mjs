@@ -18,7 +18,7 @@ const cleanGlobals = (g) => Object.fromEntries(Object.entries(g).filter(([key]) 
 
 export default defineConfig([
   {
-    ignores: ['eslint.config.mjs', 'out/**/*', 'psdk-binaries/**/*', '.vite/**/*', 'config/**/*'],
+    ignores: ['eslint.config.mjs', 'out/**/*', 'psdk-binaries/**/*', '.vite/**/*', 'config/**/*', 'scripts/**/*'],
     extends: fixupConfigRules(
       compat.extends(
         'eslint:recommended',
