@@ -122,7 +122,7 @@
     "csv-parse": "^6.2.1",
     "csv-stringify": "^6.8.3",
     "electron-is-dev": "^3.0.1",
-    "electron-log": "^5.4.3",
+    "electron-log": "^5.4.4",
     "electron-updater": "^6.8.9",
     "extract-zip": "^2.0.1",
     "i18next": "^26.0.3",
