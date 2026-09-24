@@ -1258,6 +1258,7 @@
   "migrating_data": "Migração dos dados do projeto...",
   "importing_tiled_maps": "Importando mapas do Tiled em andamento…",
   "updating_maps": "Atualizando mapas em andamento…",
+  "converting_events": "Converting events in progress…",
   "creating_project_error": "Erro na criação do projeto",
   "importing_project_error": "Erro na importação do projeto",
   "saving_project_error": "Erro na salvação do projeto",
@@ -1267,6 +1268,7 @@
   "importing_tiled_maps_error": "Erro ao importar mapas do Tiled",
   "updating_maps_error": "Erro ao atualizar mapas",
   "compilation_project_error": "Erro ao compilar o projeto",
+  "converting_events_error": "Error while converting events",
   "importing_tiled_maps_success": "Mapas do Tiled importados com sucesso",
   "step": "Etapa {{step}}/{{total}} :",
   "loading_project_meta": "Carragamento dos metadados",
@@ -2039,5 +2041,7 @@
   "event_command_trigger_called": "Called",
   "event_command_trigger_parallel": "Runs in Parallel",
   "event_command_trigger_cinematic": "Cutscene",
-  "move_custom_procedure_info": "This move uses a custom procedure. Its behavior is defined by the associated Ruby code in PSDK. Depending on its implementation, some data configured in Pokémon Studio may not be used."
+  "move_custom_procedure_info": "This move uses a custom procedure. Its behavior is defined by the associated Ruby code in PSDK. Depending on its implementation, some data configured in Pokémon Studio may not be used.",
+  "create_events": "Create events…",
+  "convert_commands": "Conversion of commands…"
 }

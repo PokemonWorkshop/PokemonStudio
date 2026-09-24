@@ -2,7 +2,6 @@
 
 import { registerCheckDownloadNewProject } from '@src/backendTasks/checkDownloadNewProject';
 import { registerCheckMapsModified } from '@src/backendTasks/checkMapsModified';
-import { registerConvertRMXPEventsToStudioEvents } from '@src/backendTasks/convertRMXPEventsToStudioEvents';
 import { registerConvertTiledMapToTileMetadata } from '@src/backendTasks/convertTiledMapToTileMetadata';
 import { registerCopyTiledFiles } from '@src/backendTasks/copyTiledFiles';
 import { registerDownloadFile } from '@src/backendTasks/downloadFile';
@@ -203,7 +202,6 @@ registerStartCompilation(ipcMain);
 registerSaveCompilationLogs(ipcMain);
 registerSynchronizeLanguage(ipcMain);
 registerReadRMXPEvents(ipcMain);
-registerConvertRMXPEventsToStudioEvents(ipcMain);
 
 ipcMain.on('get-md5-hash', (event, value: string) => (event.returnValue = crypto.createHash('md5').update(value, 'utf8').digest().toString('hex')));
 app.whenReady().then(createWindow).catch(log.error);

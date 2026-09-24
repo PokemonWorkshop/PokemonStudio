@@ -28,9 +28,9 @@ const createShowChoiceCommand = (event: StudioEvent) => {
   };
 };
 
-const createWaitMovementCompletionCommand = () => {
+export const createWaitMovementCompletionCommand = () => {
   return {
-    waitAllEvents: false,
+    waitAllEvents: true,
     waitById: [],
     timeout: 0,
   };
@@ -42,7 +42,7 @@ const createManageAccessSaveMenuCommand = () => ({ action: 'enable' });
 const createReturnToTitleScreenCommand = () => ({});
 const createManageAccessMainMenuCommand = () => ({ action: 'enable' });
 
-const createInsertScriptCommand = () => ({ script: '' });
+export const createInsertScriptCommand = (_: StudioEvent, script?: string) => ({ script: script || '' });
 
 const createStartCommand = (event: StudioEvent) => {
   const priority = findFirstAvailablePriorityEvent(event, 1);
