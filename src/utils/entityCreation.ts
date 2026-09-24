@@ -23,6 +23,7 @@ import type {
 } from '@modelEntities/quest';
 import type { StudioTextInfo } from '@modelEntities/textInfo';
 import type { StudioTrainer, StudioTrainerVsType } from '@modelEntities/trainer';
+import type { StudioTrainerClass } from '@modelEntities/trainerClass';
 import type { StudioType } from '@modelEntities/type';
 import type { StudioZone } from '@modelEntities/zone';
 import { ProjectData } from '@src/GlobalStateProvider';
@@ -345,12 +346,22 @@ export const createEncounter = (isWild: boolean): StudioGroupEncounter => ({
   ],
 });
 
+export const createTrainerClass = (allTrainerClasses: ProjectData['trainerClasses'], dbSymbol: DbSymbol): StudioTrainerClass => {
+  const id = findFirstAvailableId(allTrainerClasses, 0);
+  return {
+    klass: 'TrainerClass',
+    id,
+    dbSymbol,
+  };
+};
+
 export const createTrainer = (
   allTrainers: ProjectData['trainers'],
   ai: number,
   vsType: StudioTrainerVsType,
   battleId: number,
   baseMoney: number,
+  classSymbol: DbSymbol,
 ): StudioTrainer => {
   const id = findFirstAvailableId(allTrainers, 0);
   const dbSymbol = `trainer_${id}` as DbSymbol;
@@ -358,6 +369,7 @@ export const createTrainer = (
     klass: 'TrainerBattleSetup',
     id,
     dbSymbol,
+    classSymbol,
     vsType,
     isCouple: false,
     baseMoney,
