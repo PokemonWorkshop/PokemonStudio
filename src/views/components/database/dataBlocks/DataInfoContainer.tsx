@@ -24,6 +24,7 @@ export const DataInfoContainerHeaderTitle = styled.div`
   flex-direction: row;
   align-items: baseline;
   gap: 12px;
+  height: 49px;
 
   & span.data-id {
     color: ${(props) => props.theme.colors.text400};

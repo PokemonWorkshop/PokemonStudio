@@ -15,6 +15,7 @@ export const InputContainer = styled.div<InputContainerProps>`
   display: flex;
   flex-direction: column;
   gap: ${({ size }) => (size ? sizes[size] : '24px')};
+  min-width: 0;
 `;
 
 export const InputFormContainer = styled.form<InputContainerProps>`

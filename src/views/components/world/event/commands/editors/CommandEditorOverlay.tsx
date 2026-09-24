@@ -6,9 +6,13 @@ import type { CommandId } from '@modelEntities/event/globalCommand';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import React from 'react';
 import { DefaultEditor } from './DefaultEditor';
+import { ManageAccessMainMenuEditor } from './gameInterfaceCommands/ManageAccessMainMenuEditor';
+import { ReturnToTitleScreenEditor } from './gameInterfaceCommands/ReturnToTitleScreenEditor';
 import { ShowChoiceEditor } from './messageCommands/ShowChoiceEditor';
 import { ShowMessageEditor } from './messageCommands/ShowMessageEditor';
-import { WaitMovementCompletionEditor } from './movementCommands/WaitMovementCompletion';
+import { WaitMovementCompletionEditor } from './movementCommands/WaitMovementCompletionEditor';
+import { ManageAccessSaveMenuEditor } from './saveCommands/ManageAccessSaveMenuEditor';
+import { OpenSaveMenuEditor } from './saveCommands/OpenSaveMenuEditor';
 import { InsertScriptEditor } from './scriptCommands/InsertScriptEditor';
 import { StartEditor } from './startCommands/StartEditor';
 
@@ -63,7 +67,9 @@ export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletion
       case 'set_active_dex':
       case 'give_badge':
       case 'manage_access_save_menu':
+        return <ManageAccessSaveMenuEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'open_save_menu':
+        return <OpenSaveMenuEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'manage_autosave':
       case 'force_autosave':
       case 'force_save':
@@ -71,8 +77,10 @@ export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletion
       case 'open_shop':
       case 'open_custom_scene':
       case 'manage_access_main_menu':
+        return <ManageAccessMainMenuEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'trigger_game_over':
       case 'return_to_title_screen':
+        return <ReturnToTitleScreenEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'open_creature_shop':
       case 'start_quest':
       case 'display_hidden_objective':

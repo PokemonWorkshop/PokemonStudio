@@ -1,9 +1,13 @@
 import { z } from 'zod';
 import type { StudioEventCommandCategory } from './category';
+import { EVENT_COMMAND_MANAGE_ACCESS_MAIN_MENU_VALIDATOR } from './gameInterfaceCommands/manageAccessMainMenu';
+import { EVENT_COMMAND_RETURN_TO_TITLE_SCREEN_VALIDATOR } from './gameInterfaceCommands/returnToTitleScreen';
 import { COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_CONNECTION_VALIDATOR, EVENT_COMMAND_STUDIO_DATA_VALIDATOR } from './globalCommand';
 import { EVENT_COMMAND_SHOW_CHOICE_VALIDATOR } from './messageCommands/showChoice';
 import { EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR } from './messageCommands/showMessage';
 import { EVENT_COMMAND_WAIT_MOVEMENT_COMPLETION_VALIDATOR } from './movementCommands/waitMovementCompletion';
+import { EVENT_COMMAND_MANAGE_ACCESS_SAVE_MENU_VALIDATOR } from './saveCommands/manageAccessSaveMenu';
+import { EVENT_COMMAND_OPEN_SAVE_MENU_VALIDATOR } from './saveCommands/openSaveMenu';
 import { EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR } from './scriptCommands/insertScript';
 import { EVENT_COMMAND_START_VALIDATOR } from './startCommands/start';
 
@@ -53,17 +57,17 @@ export const EVENT_COMMAND_VALIDATOR = z.discriminatedUnion('type', [
   GENERIC_COMMAND('manage_dex'),
   GENERIC_COMMAND('set_active_dex'),
   GENERIC_COMMAND('give_badge'),
-  GENERIC_COMMAND('manage_access_save_menu'),
-  GENERIC_COMMAND('open_save_menu'),
+  EVENT_COMMAND_MANAGE_ACCESS_SAVE_MENU_VALIDATOR,
+  EVENT_COMMAND_OPEN_SAVE_MENU_VALIDATOR,
   GENERIC_COMMAND('manage_autosave'),
   GENERIC_COMMAND('force_autosave'),
   GENERIC_COMMAND('force_save'),
   GENERIC_COMMAND('open_scene'),
   GENERIC_COMMAND('open_shop'),
   GENERIC_COMMAND('open_custom_scene'),
-  GENERIC_COMMAND('manage_access_main_menu'),
+  EVENT_COMMAND_MANAGE_ACCESS_MAIN_MENU_VALIDATOR,
   GENERIC_COMMAND('trigger_game_over'),
-  GENERIC_COMMAND('return_to_title_screen'),
+  EVENT_COMMAND_RETURN_TO_TITLE_SCREEN_VALIDATOR,
   GENERIC_COMMAND('open_creature_shop'),
   GENERIC_COMMAND('start_quest'),
   GENERIC_COMMAND('display_hidden_objective'),
