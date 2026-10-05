@@ -145,6 +145,7 @@ export const IconsFromCommand: Record<StudioEventCommandType, EventIconData> = {
   validate_quest_objectives: { icon: <QuestsIcon />, color: 'peridotDark' },
   display_quest_progress: { icon: <QuestsIcon />, color: 'peridotDark' },
   complete_quest: { icon: <QuestsIcon />, color: 'peridotDark' },
+  fail_quest: { icon: <QuestsIcon />, color: 'peridotDark' },
   play_sound: { icon: <AudioIcon />, color: 'cyanDark' },
   stop_current_sound: { icon: <AudioIcon />, color: 'cyanDark' },
   change_default_sound: { icon: <AudioIcon />, color: 'cyanDark' },

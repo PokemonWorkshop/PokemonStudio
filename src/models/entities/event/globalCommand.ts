@@ -17,3 +17,6 @@ export const EVENT_COMMAND_CONNECTION_VALIDATOR = z.object({
   target: COMMAND_ID_VALIDATOR,
   targetHandle: z.string(),
 });
+
+export const TOGGLE_VALUES_VALIDATOR = z.union([z.literal('enable'), z.literal('disable'), z.literal('toggle')]);
+export type StudioToggleValue = z.infer<typeof TOGGLE_VALUES_VALIDATOR>;
