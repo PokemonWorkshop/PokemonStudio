@@ -1,5 +1,15 @@
+import { TrainerCategory } from '@components/categories';
+import { ResourceImage } from '@components/ResourceImage';
+import { CONTROL, useKeyPress } from '@hooks/useKeyPress';
+import { useProjectTrainerClasses } from '@hooks/useProjectData';
+import { useShortcutNavigation } from '@hooks/useShortcutNavigation';
+import { getTrainerMoney, StudioTrainer, TRAINER_AI_CATEGORIES } from '@modelEntities/trainer';
+import { padStr } from '@utils/PadStr';
+import { trainerResourcePath } from '@utils/path';
+import { useGetEntityNameText } from '@utils/ReadingProjectText';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 import {
   DataBlockContainer,
   DataFieldsetField,
@@ -8,13 +18,6 @@ import {
   DataInfoContainerHeader,
   DataInfoContainerHeaderTitle,
 } from '../dataBlocks';
-import styled from 'styled-components';
-import { padStr } from '@utils/PadStr';
-import { TrainerCategory } from '@components/categories';
-import { useGetEntityNameText, useGetProjectText } from '@utils/ReadingProjectText';
-import { getTrainerMoney, StudioTrainer, TRAINER_AI_CATEGORIES, TRAINER_CLASS_TEXT_ID } from '@modelEntities/trainer';
-import { trainerResourcePath } from '@utils/path';
-import { ResourceImage } from '@components/ResourceImage';
 import { TrainerDialogsRef } from './editors/TrainerEditorOverlay';
 
 type TrainerFrameProps = {
@@ -86,10 +89,15 @@ const TrainerSpriteContainer = styled.div`
 export const TrainerFrame = ({ trainer, dialogsRef }: TrainerFrameProps) => {
   const { t } = useTranslation();
   const getTrainerName = useGetEntityNameText();
-  const getText = useGetProjectText();
-  const trainerClass = getText(TRAINER_CLASS_TEXT_ID, trainer.id);
-  const trainerName = `${trainerClass} ${getTrainerName(trainer)}`;
+  const { projectDataValues: trainerClasses } = useProjectTrainerClasses();
+  const trainerClass = trainerClasses[trainer.classSymbol];
+  const trainerClassName = trainerClass ? getTrainerName(trainerClasses[trainer.classSymbol]) : t('trainer_class_deleted');
+  const trainerName = getTrainerName(trainer);
+  const trainerFullName = `${trainerClassName} ${trainerName}`;
   const aiLevelName = trainer.ai > TRAINER_AI_CATEGORIES.length ? 'custom' : TRAINER_AI_CATEGORIES[trainer.ai - 1].label;
+
+  const isClickable: boolean = useKeyPress(CONTROL);
+  const shortcutTrainerClassNavigation = useShortcutNavigation('trainerClasses', 'trainerClass', '/database/trainerClasses/');
 
   return (
     <DataBlockContainer size="full" onClick={() => dialogsRef.current?.openDialog('frame')}>
@@ -98,7 +106,7 @@ export const TrainerFrame = ({ trainer, dialogsRef }: TrainerFrameProps) => {
           <DataInfoContainerHeader>
             <DataInfoContainerHeaderTitle>
               <h1>
-                {trainerName}
+                {trainerClass ? trainerFullName : trainerName}
                 <span className="data-id">#{padStr(trainer.id, 3)}</span>
               </h1>
             </DataInfoContainerHeaderTitle>
@@ -106,7 +114,12 @@ export const TrainerFrame = ({ trainer, dialogsRef }: TrainerFrameProps) => {
             {trainer.vsType === 3 && <TrainerCategory category="triple">{t('vs_type3')}</TrainerCategory>}
           </DataInfoContainerHeader>
           <TrainerSubInfoContainer>
-            <DataFieldsetField label={t('trainer_class')} data={trainerClass} />
+            <DataFieldsetField
+              label={t('trainer_class')}
+              data={trainerClassName}
+              error={!trainerClass}
+              clickable={{ isClickable: isClickable && !!trainerClass, callback: () => shortcutTrainerClassNavigation(trainer.classSymbol) }}
+            />
             <DataFieldsetField label={t('ai_level')} data={t(aiLevelName)} />
             <DataFieldsetField label={t('money_given')} data={`${getTrainerMoney(trainer)} P$`} />
           </TrainerSubInfoContainer>

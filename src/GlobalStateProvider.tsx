@@ -1,7 +1,4 @@
-import { useState } from 'react';
-import { createContainer } from 'react-tracked';
-import { SavingConfigMap, SavingMap, SavingTextMap } from '@utils/SavingUtils';
-import type { PSDKVersion } from '@services/getPSDKVersion';
+import type { StudioAbility } from '@modelEntities/ability';
 import type {
   SoundDesignConfig,
   StudioCreditConfig,
@@ -16,25 +13,29 @@ import type {
   StudioSettingConfig,
   StudioTextConfig,
 } from '@modelEntities/config';
-import type { StudioAbility } from '@modelEntities/ability';
-import type { StudioDex } from '@modelEntities/dex';
 import type { StudioCreature } from '@modelEntities/creature';
-import type { StudioItem } from '@modelEntities/item';
-import type { StudioMove } from '@modelEntities/move';
-import type { StudioGroup } from '@modelEntities/group';
-import type { StudioTrainer } from '@modelEntities/trainer';
-import type { StudioMapLink } from '@modelEntities/mapLink';
-import type { StudioZone } from '@modelEntities/zone';
-import type { StudioType } from '@modelEntities/type';
-import type { StudioQuest } from '@modelEntities/quest';
-import type { StudioProject, StudioProjectLanguageTranslation } from '@modelEntities/project';
-import type { StudioTextInfo } from '@modelEntities/textInfo';
-import type { StudioMap } from '@modelEntities/map';
 import type { DbSymbol } from '@modelEntities/dbSymbol';
-import type { StudioMapInfo } from '@modelEntities/mapInfo';
-import type { StudioNature } from '@modelEntities/nature';
+import type { StudioDex } from '@modelEntities/dex';
 import type { StudioEvent } from '@modelEntities/event/event';
 import { DEFAULT_EVENT_TREE, type StudioEventTree } from '@modelEntities/event/event-tree';
+import type { StudioGroup } from '@modelEntities/group';
+import type { StudioItem } from '@modelEntities/item';
+import type { StudioMap } from '@modelEntities/map';
+import type { StudioMapInfo } from '@modelEntities/mapInfo';
+import type { StudioMapLink } from '@modelEntities/mapLink';
+import type { StudioMove } from '@modelEntities/move';
+import type { StudioNature } from '@modelEntities/nature';
+import type { StudioProject, StudioProjectLanguageTranslation } from '@modelEntities/project';
+import type { StudioQuest } from '@modelEntities/quest';
+import type { StudioTextInfo } from '@modelEntities/textInfo';
+import type { StudioTrainer } from '@modelEntities/trainer';
+import type { StudioTrainerClass } from '@modelEntities/trainerClass';
+import type { StudioType } from '@modelEntities/type';
+import type { StudioZone } from '@modelEntities/zone';
+import type { PSDKVersion } from '@services/getPSDKVersion';
+import { SavingConfigMap, SavingMap, SavingTextMap } from '@utils/SavingUtils';
+import { useState } from 'react';
+import { createContainer } from 'react-tracked';
 
 export interface ProjectData {
   items: {
@@ -48,6 +49,9 @@ export interface ProjectData {
   };
   quests: {
     [quest: string]: StudioQuest;
+  };
+  trainerClasses: {
+    [trainerClass: string]: StudioTrainerClass;
   };
   trainers: {
     [trainer: string]: StudioTrainer;
@@ -123,6 +127,7 @@ export type SelectedDataIdentifier = {
   move: string;
   item: string;
   quest: string;
+  trainerClass: string;
   trainer: string;
   type: string;
   zone: string;
@@ -169,6 +174,7 @@ const initialState = {
     move: 'pound',
     item: 'master_ball',
     quest: 'quest_0',
+    trainerClass: 'youngster',
     trainer: 'trainer_0',
     type: 'normal',
     zone: 'zone_0',

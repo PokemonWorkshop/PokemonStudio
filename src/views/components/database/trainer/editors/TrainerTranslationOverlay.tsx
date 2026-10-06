@@ -3,20 +3,14 @@ import { TranslationEditorWithCloseHandling } from '@components/editor/Translati
 import {
   StudioTrainer,
   TRAINER_ADDITIONAL_DIALOGS_TEXT_ID,
-  TRAINER_CLASS_TEXT_ID,
   TRAINER_DEFEAT_SENTENCE_TEXT_ID,
   TRAINER_NAME_TEXT_ID,
   TRAINER_VICTORY_SENTENCE_TEXT_ID,
 } from '@modelEntities/trainer';
 import { assertUnreachable } from '@utils/assertUnreachable';
-import type { TrainerDialogAdditionalDialogs } from './TrainerDialogEditor/useTrainerDialog';
 import React from 'react';
-export type TrainerTranslationEditorTitle =
-  | 'translation_name'
-  | 'translation_class'
-  | 'translation_victory'
-  | 'translation_defeat'
-  | 'translation_additional_dialog';
+import type { TrainerDialogAdditionalDialogs } from './TrainerDialogEditor/useTrainerDialog';
+export type TrainerTranslationEditorTitle = 'translation_name' | 'translation_victory' | 'translation_defeat' | 'translation_additional_dialog';
 
 type Props = {
   onClose: () => void;
@@ -32,12 +26,11 @@ export const TrainerTranslationOverlay = defineEditorOverlay<TrainerTranslationE
   (dialogToShow, handleCloseRef, closeDialog, { onClose, trainer, additionalDialog }) => {
     switch (dialogToShow) {
       case 'translation_name':
-      case 'translation_class':
         return (
           <TranslationEditorWithCloseHandling
             title={dialogToShow}
             nameTextId={TRAINER_NAME_TEXT_ID}
-            fileId={dialogToShow === 'translation_name' ? TRAINER_NAME_TEXT_ID : TRAINER_CLASS_TEXT_ID}
+            fileId={TRAINER_NAME_TEXT_ID}
             textIndex={trainer.id}
             isMultiline={false}
             closeDialog={closeDialog}
@@ -75,5 +68,5 @@ export const TrainerTranslationOverlay = defineEditorOverlay<TrainerTranslationE
       default:
         return assertUnreachable(dialogToShow);
     }
-  }
+  },
 );
