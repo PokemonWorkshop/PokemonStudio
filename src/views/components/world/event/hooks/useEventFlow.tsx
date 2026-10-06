@@ -6,14 +6,18 @@ import { StudioEventCommandShowMessage } from '@modelEntities/event/messageComma
 import { StudioEventCommandStart } from '@modelEntities/event/startCommands/start';
 import { cloneEntity } from '@utils/cloneEntity';
 import { EventCommandCreation } from '@utils/eventCommandCreation';
+import { getEventClipboard, setEventClipboard, type EventClipboardEntry } from '@utils/events/EventClipboard';
 import {
+  buildEdges,
   getCommandId,
+  getCommandIds,
   initCommandNodes,
   initEdges,
   reactFlowConnectionToStudioConnection,
   reactFlowEdgeToStudioConnection,
 } from '@utils/events/EventUtils';
-import { useSetProjectText } from '@utils/ReadingProjectText';
+import { findMultipleAvailablePriorityEvent, findMultipleAvailableTextIdsEvent } from '@utils/ModelUtils';
+import { useCopyProjectText, useSetProjectText } from '@utils/ReadingProjectText';
 import {
   addEdge,
   applyNodeChanges,
@@ -26,13 +30,20 @@ import {
   useNodesState,
   useReactFlow,
 } from '@xyflow/react';
-import { DragEventHandler, RefObject, useCallback, useEffect } from 'react';
+import { DragEventHandler, RefObject, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CommandDialogsRef } from '../commands/editors/CommandEditorOverlay';
 import { useEventContext } from '../common/EventContext';
 import { useUpdateEvent } from './useUpdateEvent';
 
 const SHADOW_NODE_ID = 'shadow_node';
+const GRID_SIZE = 32;
+
+const isEditableTarget = (target: EventTarget | null) => {
+  if (!(target instanceof HTMLElement)) return false;
+  if (target.isContentEditable) return true;
+  return ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName);
+};
 
 type NodeData = {
   dialogsRef?: CommandDialogsRef;
@@ -56,6 +67,8 @@ export const useEventFlow = (event: StudioEvent, eventFlowRef?: RefObject<HTMLDi
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(initEdges(event));
   const updateEvent = useUpdateEvent(event);
   const setText = useSetProjectText();
+  const copyProjectText = useCopyProjectText();
+  const lastCursorScreenPositionRef = useRef<{ x: number; y: number } | null>(null);
 
   const onConnect = useCallback(
     (connection: Connection) => {
@@ -233,6 +246,138 @@ export const useEventFlow = (event: StudioEvent, eventFlowRef?: RefObject<HTMLDi
     [event],
   );
 
+  const onCopy = useCallback(() => {
+    const selectedNodes = reactFlowInstance.getNodes().filter((node) => node.type !== 'shadow_node' && node.selected) as NodeEvent[];
+    if (selectedNodes.length === 0) return;
+
+    const selectedIds = new Set(selectedNodes.map((node) => node.id as CommandId));
+    const entries = selectedNodes.reduce<EventClipboardEntry[]>((prev, node) => {
+      const command = event.commands[node.id as CommandId];
+      if (!command) return prev;
+
+      const clonedCommand = cloneEntity(command);
+      const connections = Object.entries(clonedCommand.connections).reduce<StudioEventCommand['connections']>((acc, [connectionId, connection]) => {
+        if (!connection || !selectedIds.has(connection.target)) return acc;
+        return { ...acc, [connectionId]: connection };
+      }, {});
+
+      prev.push({ originalId: node.id as CommandId, command: { ...clonedCommand, connections } });
+      return prev;
+    }, []);
+
+    if (entries.length === 0) return;
+    setEventClipboard({ sourceCsvFileId: event.csvFileId, entries });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [event]);
+
+  const onPaste = useCallback(() => {
+    if (document.querySelector('#dialogs')?.textContent) return;
+
+    const clipboard = getEventClipboard();
+    if (!clipboard || clipboard.entries.length === 0) return;
+
+    const containerRect = eventFlowRef?.current?.getBoundingClientRect();
+    const fallbackScreenPosition = containerRect
+      ? { x: containerRect.left + containerRect.width / 2, y: containerRect.top + containerRect.height / 2 }
+      : { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+    const pastePosition = reactFlowInstance.screenToFlowPosition(lastCursorScreenPositionRef.current ?? fallbackScreenPosition);
+
+    const minX = Math.min(...clipboard.entries.map(({ command }) => command.studioData.x));
+    const minY = Math.min(...clipboard.entries.map(({ command }) => command.studioData.y));
+
+    const newIds = getCommandIds(event, clipboard.entries.length);
+    const idMapping = new Map<CommandId, CommandId>(clipboard.entries.map(({ originalId }, index) => [originalId, newIds[index]]));
+
+    const startCommandCount = clipboard.entries.filter(({ command }) => command.type === 'start').length;
+    const newStartPriorities = startCommandCount > 0 ? findMultipleAvailablePriorityEvent(event, 1, startCommandCount) : [];
+    let nextStartPriorityIndex = 0;
+
+    const usedTextIds: number[] = [];
+    const textsToDuplicate: { srcTextId: number; destTextId: number }[] = [];
+
+    const newCommands = clipboard.entries.map(({ command: originalCommand }, index) => {
+      const newId = newIds[index];
+      const position = {
+        x: Math.round((pastePosition.x + (originalCommand.studioData.x - minX)) / GRID_SIZE) * GRID_SIZE,
+        y: Math.round((pastePosition.y + (originalCommand.studioData.y - minY)) / GRID_SIZE) * GRID_SIZE,
+      };
+
+      const connections = Object.values(originalCommand.connections).reduce<StudioEventCommand['connections']>((acc, connection) => {
+        if (!connection) return acc;
+        const newTarget = idMapping.get(connection.target);
+        if (!newTarget) return acc;
+
+        const newConnectionId = reactFlowConnectionToStudioConnection({
+          source: newId,
+          sourceHandle: connection.sourceHandle,
+          target: newTarget,
+          targetHandle: connection.targetHandle,
+        });
+        return { ...acc, [newConnectionId]: { ...connection, target: newTarget } };
+      }, {});
+
+      let overrides: Partial<StudioEventCommand> = {};
+
+      if (originalCommand.type === 'show_message') {
+        const [newMessageId, newNarratorId] = findMultipleAvailableTextIdsEvent(event, 0, 2, usedTextIds);
+        usedTextIds.push(newMessageId, newNarratorId);
+        textsToDuplicate.push(
+          { srcTextId: originalCommand.message, destTextId: newMessageId },
+          { srcTextId: originalCommand.narrator, destTextId: newNarratorId },
+        );
+        overrides = { message: newMessageId, narrator: newNarratorId };
+      } else if (originalCommand.type === 'show_choice') {
+        const choiceAmount = originalCommand.choices.length;
+        const newChoiceIds = findMultipleAvailableTextIdsEvent(event, 0, choiceAmount, usedTextIds);
+        usedTextIds.push(...newChoiceIds);
+        textsToDuplicate.push(...originalCommand.choices.map((choiceId, i) => ({ srcTextId: choiceId, destTextId: newChoiceIds[i] })));
+        overrides = { choices: newChoiceIds };
+      } else if (originalCommand.type === 'start') {
+        overrides = { priority: newStartPriorities[nextStartPriorityIndex++] };
+      }
+
+      const command = {
+        ...cloneEntity(originalCommand),
+        ...overrides,
+        connections,
+        studioData: { ...originalCommand.studioData, ...position },
+      } as StudioEventCommand;
+
+      return { id: newId, command };
+    });
+
+    textsToDuplicate.forEach(({ srcTextId, destTextId }) => {
+      setText(event.csvFileId, destTextId, '');
+      copyProjectText({ fileId: clipboard.sourceCsvFileId, textId: srcTextId + 1 }, { fileId: event.csvFileId, textId: destTextId + 1 });
+    });
+
+    const newNodes: NodeEvent[] = newCommands.map(({ id, command }) => ({
+      id,
+      type: command.type,
+      position: { x: command.studioData.x, y: command.studioData.y },
+      data: { dialogsRef, command, comments: command.studioData.comments, csvFileId: event.csvFileId },
+      selected: true,
+    }));
+
+    const newEdges = newCommands.reduce<Edge[]>((prev, { id, command }) => [...prev, ...buildEdges(id, command.connections)], []);
+
+    const deselectPreviousSelection = reactFlowInstance
+      .getNodes()
+      .filter((node) => node.selected)
+      .map((node) => ({ id: node.id, type: 'select' as const, selected: false }));
+
+    setNodes((nds) => applyNodeChanges([...deselectPreviousSelection, ...newNodes.map((item) => ({ type: 'add' as const, item }))], nds));
+    setEdges((eds) => [...eds, ...newEdges]);
+
+    updateEvent({
+      commands: {
+        ...event.commands,
+        ...Object.fromEntries(newCommands.map(({ id, command }) => [id, command])),
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [event, dialogsRef]);
+
   // Documentation: https://reactflow.dev/examples/interaction/prevent-cycles
   const isValidConnection = useCallback(
     (connection: Edge | Connection) => {
@@ -346,6 +491,31 @@ export const useEventFlow = (event: StudioEvent, eventFlowRef?: RefObject<HTMLDi
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [event.dbSymbol]);
+
+  useEffect(() => {
+    const handlePointerMove = (pointerEvent: MouseEvent) => {
+      lastCursorScreenPositionRef.current = { x: pointerEvent.clientX, y: pointerEvent.clientY };
+    };
+
+    const handleKeyDown = (keyboardEvent: KeyboardEvent) => {
+      if (!(keyboardEvent.ctrlKey || keyboardEvent.metaKey) || isEditableTarget(keyboardEvent.target)) return;
+
+      const key = keyboardEvent.key.toLowerCase();
+      if (key === 'c') {
+        onCopy();
+      } else if (key === 'v') {
+        keyboardEvent.preventDefault();
+        onPaste();
+      }
+    };
+
+    window.addEventListener('mousemove', handlePointerMove);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('mousemove', handlePointerMove);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onCopy, onPaste]);
 
   return {
     currentEditedNode,

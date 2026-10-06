@@ -19,13 +19,16 @@ export const reactFlowConnectionToStudioConnection = (connection: Connection): C
   return `${source}${sourceHandle}-${target}${targetHandle}` as ConnectionId;
 };
 
-export const getCommandIdFromCommandIdList = (commandIds: CommandId[]) => {
-  const record = commandIds
+const buildCommandIdRecord = (commandIds: CommandId[]) =>
+  commandIds
     .map((key) => key.replace(COMMAND, ''))
     .reduce<Record<string, { id: number }>>((acc, key) => {
       acc[key] = { id: Number(key) };
       return acc;
     }, {});
+
+export const getCommandIdFromCommandIdList = (commandIds: CommandId[]) => {
+  const record = buildCommandIdRecord(commandIds);
   const id = findFirstAvailableId(record, 0);
   return `${COMMAND}${id}`;
 };
@@ -33,6 +36,17 @@ export const getCommandIdFromCommandIdList = (commandIds: CommandId[]) => {
 export const getCommandId = (event: StudioEvent) => {
   const commandIds = Object.keys(event.commands) as CommandId[];
   return getCommandIdFromCommandIdList(commandIds);
+};
+
+export const getCommandIds = (event: StudioEvent, count: number): CommandId[] => {
+  const commandIds = Object.keys(event.commands) as CommandId[];
+  const record = buildCommandIdRecord(commandIds);
+
+  const ids: number[] = [];
+  while (ids.length < count) {
+    ids.push(findFirstAvailableId(record, 0, ids));
+  }
+  return ids.map((id) => `${COMMAND}${id}` as CommandId);
 };
 
 export const initCommandNodes = (event: StudioEvent, dialogsRef?: CommandDialogsRef) => {
@@ -44,7 +58,7 @@ export const initCommandNodes = (event: StudioEvent, dialogsRef?: CommandDialogs
   }));
 };
 
-const buildEdges = (commandId: CommandId, connections: Partial<Record<ConnectionId, StudioEventCommandConnection>>) => {
+export const buildEdges = (commandId: CommandId, connections: Partial<Record<ConnectionId, StudioEventCommandConnection>>) => {
   return Object.entries(connections).reduce<Edge[]>((prev, [id, connection]) => {
     if (!connection) return prev;
 

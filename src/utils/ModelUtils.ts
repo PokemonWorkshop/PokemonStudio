@@ -132,7 +132,7 @@ export const findFirstAvailableTextIdEvent = (event: StudioEvent, startId: numbe
   const commands = Object.values(event.commands).filter(
     (command) => !!command && (command.type === 'show_message' || command.type === 'show_choice'),
   );
-  if (commands.length === 0) return startId;
+  if (commands.length === 0 && (!excludeIds || excludeIds.length === 0)) return startId;
 
   const idSet = commands
     .reduce<number[]>((prev, command) => {
@@ -169,19 +169,32 @@ export const findMultipleAvailableTextIdsEvent = (event: StudioEvent, startId: n
   return ids;
 };
 
-export const findFirstAvailablePriorityEvent = (event: StudioEvent, startId: number) => {
+export const findFirstAvailablePriorityEvent = (event: StudioEvent, startId: number, excludeIds?: number[]) => {
   const commands = Object.values(event.commands).filter((command) => !!command && command.type === 'start');
-  if (commands.length === 0) return startId;
+  if (commands.length === 0 && (!excludeIds || excludeIds.length === 0)) return startId;
 
   const idSet = commands
     .reduce<number[]>((prev, { priority }) => [...prev, priority], [])
+    .concat(excludeIds ?? [])
     .filter((id, index, array) => index === array.indexOf(id)) // reject all duplicates
-    .sort((a, b) => a - b); // sort id by ascending order
-  // Since ids are ordered, if the first isn't the startId that means we need to fill the beginning of the list ;)
-  if (idSet[0] > startId) return startId;
+    .sort((a, b) => a - b) // sort id by ascending order
+    .filter((id) => id >= startId); // only consider IDs at or above startId
+  // Since ids are ordered, if there's no id at startId that means we can use startId
+  if (idSet.length === 0 || idSet[0] > startId) return startId;
 
   const holeIndex = idSet.findIndex((id, index) => id !== index + startId);
   if (holeIndex === -1) return idSet[idSet.length - 1] + 1;
 
   return idSet[holeIndex - 1] + 1;
+};
+
+export const findMultipleAvailablePriorityEvent = (event: StudioEvent, startId: number, times: number, excludeIds?: number[]) => {
+  const ids = [];
+
+  while (ids.length < times) {
+    const id = findFirstAvailablePriorityEvent(event, startId, [...ids, ...(excludeIds ?? [])]);
+    ids.push(id);
+  }
+
+  return ids;
 };
