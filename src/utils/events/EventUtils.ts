@@ -8,6 +8,8 @@ import type { Connection, Edge } from '@xyflow/react';
 const XY_EDGE = 'xy-edge__';
 const COMMAND = 'command_';
 
+export const EVENT_GRID_SIZE = 32;
+
 export const reactFlowEdgeToStudioConnection = (id: string): ConnectionId => {
   return id.replace(XY_EDGE, '') as ConnectionId;
 };
@@ -17,14 +19,20 @@ export const reactFlowConnectionToStudioConnection = (connection: Connection): C
   return `${source}${sourceHandle}-${target}${targetHandle}` as ConnectionId;
 };
 
-export const getCommandId = (event: StudioEvent) => {
-  const keys = Object.keys(event.commands).map((key) => key.replace(COMMAND, ''));
-  const record = keys.reduce<Record<string, { id: number }>>((acc, key) => {
-    acc[key] = { id: Number(key) };
-    return acc;
-  }, {});
+export const getCommandIdFromCommandIdList = (commandIds: CommandId[]) => {
+  const record = commandIds
+    .map((key) => key.replace(COMMAND, ''))
+    .reduce<Record<string, { id: number }>>((acc, key) => {
+      acc[key] = { id: Number(key) };
+      return acc;
+    }, {});
   const id = findFirstAvailableId(record, 0);
   return `${COMMAND}${id}`;
+};
+
+export const getCommandId = (event: StudioEvent) => {
+  const commandIds = Object.keys(event.commands) as CommandId[];
+  return getCommandIdFromCommandIdList(commandIds);
 };
 
 export const initCommandNodes = (event: StudioEvent, dialogsRef?: CommandDialogsRef) => {

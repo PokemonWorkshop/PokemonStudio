@@ -9,7 +9,8 @@ type LoaderTitle =
   | 'updating_psdk'
   | 'migrating_data'
   | 'importing_tiled_maps'
-  | 'updating_maps';
+  | 'updating_maps'
+  | 'converting_events';
 type LoaderErrorTitle =
   | 'creating_project_error'
   | 'importing_project_error'
@@ -19,7 +20,8 @@ type LoaderErrorTitle =
   | 'importing_tiled_maps_error'
   | 'assigning_tiled_maps_error'
   | 'updating_maps_error'
-  | 'compilation_project_error';
+  | 'compilation_project_error'
+  | 'converting_events_error';
 type LoaderSuccessTitle = 'importing_tiled_maps_success' | 'assigning_tiled_maps_success' | 'update_maps';
 
 type LoaderState = {

@@ -4,7 +4,7 @@ import { InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '
 import { InputFormContainer } from '@components/inputs/InputContainer';
 import {
   EVENT_COMMAND_WAIT_MOVEMENT_COMPLETION_VALIDATOR,
-  StudioEventWaitMovementCompletion,
+  StudioEventCommandWaitMovementCompletion,
 } from '@modelEntities/event/movementCommands/waitMovementCompletion';
 import { useInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
 import { useZodForm } from '@src/hooks/useZodForm';
@@ -30,7 +30,7 @@ const WAIT_MOVEMENT_COMPLETION_EDITOR_SCHEMA = EVENT_COMMAND_WAIT_MOVEMENT_COMPL
 });
 
 export const WaitMovementCompletionEditor = forwardRef<EditorHandlingClose, EventEditorProps>(({ commandId: defaultCommandId, event }, ref) => {
-  const { command, updateCommand } = useCommandEditor<StudioEventWaitMovementCompletion>(event, defaultCommandId);
+  const { command, updateCommand } = useCommandEditor<StudioEventCommandWaitMovementCompletion>(event, defaultCommandId);
   const commandDataForForm = useMemo(
     () => ({
       ...command,

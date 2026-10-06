@@ -1258,6 +1258,7 @@
   "migrating_data": "Migration des données du projet…",
   "importing_tiled_maps": "Importation des cartes Tiled en cours…",
   "updating_maps": "Mise à jour des cartes en cours…",
+  "converting_events": "Conversion des événements en cours…",
   "creating_project_error": "Erreur lors de la création du projet",
   "importing_project_error": "Erreur lors de l'import du projet",
   "saving_project_error": "Erreur lors de la sauvegarde du projet",
@@ -1267,6 +1268,7 @@
   "importing_tiled_maps_error": "Erreur lors de l'importation des cartes Tiled",
   "updating_maps_error": "Erreur lors de la mise à jour des cartes",
   "compilation_project_error": "Erreur lors de la compilation du projet",
+  "converting_events_error": "Erreur lors de la conversion des événements",
   "importing_tiled_maps_success": "Cartes Tiled importées avec succès",
   "step": "Étape {{step}}/{{total}} :",
   "loading_project_meta": "Chargement des métadonnées",
@@ -2039,5 +2041,7 @@
   "event_command_trigger_called": "Appelé",
   "event_command_trigger_parallel": "Se déroule en parallèle",
   "event_command_trigger_cinematic": "Cinématique",
-  "move_custom_procedure_info": "Cette attaque utilise une procédure personnalisée. Son comportement est défini par le code Ruby associé dans PSDK. Selon son implémentation, certaines données configurées dans Pokémon Studio peuvent ne pas être utilisées."
+  "move_custom_procedure_info": "Cette attaque utilise une procédure personnalisée. Son comportement est défini par le code Ruby associé dans PSDK. Selon son implémentation, certaines données configurées dans Pokémon Studio peuvent ne pas être utilisées.",
+  "create_events": "Création des événements…",
+  "convert_commands": "Conversion des commandes…"
 }
