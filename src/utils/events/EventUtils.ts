@@ -19,13 +19,13 @@ export const reactFlowConnectionToStudioConnection = (connection: Connection): C
   return `${source}${sourceHandle}-${target}${targetHandle}` as ConnectionId;
 };
 
-const buildCommandIdRecord = (commandIds: CommandId[]) =>
-  commandIds
-    .map((key) => key.replace(COMMAND, ''))
-    .reduce<Record<string, { id: number }>>((acc, key) => {
-      acc[key] = { id: Number(key) };
-      return acc;
-    }, {});
+const buildCommandIdRecord = (commandIds: CommandId[]) => {
+  const recordKeys = commandIds.map((key) => key.replace(COMMAND, ''));
+  return recordKeys.reduce<Record<string, { id: number }>>((acc, key) => {
+    acc[key] = { id: Number(key) };
+    return acc;
+  }, {});
+};
 
 export const getCommandIdFromCommandIdList = (commandIds: CommandId[]) => {
   const record = buildCommandIdRecord(commandIds);
