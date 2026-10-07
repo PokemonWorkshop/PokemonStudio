@@ -1,8 +1,8 @@
 import { Editor } from '@components/editor';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { InputFormContainer } from '@components/inputs/InputContainer';
-import { EVENT_COMMAND_COMPLETE_QUEST_VALIDATOR, StudioEventCommandCompleteQuest } from '@modelEntities/event/questCommands/completeQuest';
 import { useSelectOptions } from '@hooks/useSelectOptions';
+import { EVENT_COMMAND_COMPLETE_QUEST_VALIDATOR, StudioEventCommandCompleteQuest } from '@modelEntities/event/questCommands/completeQuest';
 import { useInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
 import { useZodForm } from '@src/hooks/useZodForm';
 import React, { forwardRef } from 'react';
@@ -30,7 +30,7 @@ export const CompleteQuestEditor = forwardRef<EditorHandlingClose, EventEditorPr
   return (
     <Editor type="edit" title={t('event_command_complete_quest')}>
       <InputFormContainer ref={formRef}>
-        <MultiSelect name="quests" label={t('event_command_quests_to_complete')} options={questOptions} value={command.quests} />
+        <MultiSelect name="quests" label={t('event_command_quests_to_complete')} options={questOptions} value={command.quests} required />
       </InputFormContainer>
     </Editor>
   );
