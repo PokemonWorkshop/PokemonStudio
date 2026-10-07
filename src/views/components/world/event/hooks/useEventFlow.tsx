@@ -9,6 +9,7 @@ import { EventCommandCreation } from '@utils/eventCommandCreation';
 import { getEventClipboard, setEventClipboard, type EventClipboardEntry } from '@utils/events/EventClipboard';
 import {
   buildEdges,
+  EVENT_GRID_SIZE,
   getCommandId,
   getCommandIds,
   initCommandNodes,
@@ -37,7 +38,6 @@ import { useEventContext } from '../common/EventContext';
 import { useUpdateEvent } from './useUpdateEvent';
 
 const SHADOW_NODE_ID = 'shadow_node';
-const GRID_SIZE = 32;
 
 const isEditableTarget = (target: EventTarget | null) => {
   if (!(target instanceof HTMLElement)) return false;
@@ -298,8 +298,8 @@ export const useEventFlow = (event: StudioEvent, eventFlowRef?: RefObject<HTMLDi
     const newCommands = clipboard.entries.map(({ command: originalCommand }, index) => {
       const newId = newIds[index];
       const position = {
-        x: Math.round((pastePosition.x + (originalCommand.studioData.x - minX)) / GRID_SIZE) * GRID_SIZE,
-        y: Math.round((pastePosition.y + (originalCommand.studioData.y - minY)) / GRID_SIZE) * GRID_SIZE,
+        x: Math.round((pastePosition.x + (originalCommand.studioData.x - minX)) / EVENT_GRID_SIZE) * EVENT_GRID_SIZE,
+        y: Math.round((pastePosition.y + (originalCommand.studioData.y - minY)) / EVENT_GRID_SIZE) * EVENT_GRID_SIZE,
       };
 
       const connections = Object.values(originalCommand.connections).reduce<StudioEventCommand['connections']>((acc, connection) => {
