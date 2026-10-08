@@ -1,11 +1,12 @@
 import { Editor } from '@components/editor';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { InputFormContainer } from '@components/inputs/InputContainer';
+import type { MultiSelectValidation } from '@ds/MultiSelect';
 import { useSelectOptions } from '@hooks/useSelectOptions';
 import { EVENT_COMMAND_START_QUEST_VALIDATOR, StudioEventCommandStartQuest } from '@modelEntities/event/questCommands/startQuest';
 import { useInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
 import { useZodForm } from '@src/hooks/useZodForm';
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCommandEditor } from '../../../hooks/useCommandEditor';
 import { EventEditorProps } from '../EventEditorProps';
@@ -18,19 +19,32 @@ export const StartQuestEditor = forwardRef<EditorHandlingClose, EventEditorProps
   const { MultiSelect } = useInputAttrsWithLabel(START_QUEST_EDITOR_SCHEMA, defaults);
   const { t } = useTranslation();
   const questOptions = useSelectOptions('quests');
+  const validationRef = useRef<MultiSelectValidation>(null);
+
+  const canCloseEditor = () => {
+    if (!validationRef.current?.validate()) return false;
+    return canClose();
+  };
 
   const onClose = () => {
-    const result = canClose() && getFormData();
+    const result = canCloseEditor() && getFormData();
     if (!result || !result.success) return;
 
     updateCommand(result.data);
   };
-  useEditorHandlingClose(ref, onClose, canClose);
+  useEditorHandlingClose(ref, onClose, canCloseEditor);
 
   return (
     <Editor type="edit" title={t('event_command_start_quest')}>
       <InputFormContainer ref={formRef}>
-        <MultiSelect name="quests" label={t('event_command_quests_to_start')} options={questOptions} value={command.quests} required />
+        <MultiSelect
+          name="quests"
+          label={t('event_command_quests_to_start')}
+          options={questOptions}
+          value={command.quests}
+          validationRef={validationRef}
+          required
+        />
       </InputFormContainer>
     </Editor>
   );

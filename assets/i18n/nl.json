@@ -1955,6 +1955,7 @@
   "add_csv_for_event_folders": "Adding the CSV file for event folder names",
   "event_command_quests_to_start": "Quests to start",
   "event_command_quests_to_complete": "Quests to complete",
+  "multiselect_selection_required": "Select at least one option.",
   "event_command_quests_to_fail": "Quests to fail",
   "event_command_comment": "Comment",
   "event_command_script": "Script",

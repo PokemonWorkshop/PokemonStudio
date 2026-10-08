@@ -2,6 +2,7 @@ import { Editor } from '@components/editor';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { InputFormContainer } from '@components/inputs/InputContainer';
+import type { MultiSelectValidation } from '@ds/MultiSelect';
 import {
   EVENT_COMMAND_WAIT_MOVEMENT_COMPLETION_VALIDATOR,
   StudioEventCommandWaitMovementCompletion,
@@ -39,9 +40,10 @@ export const WaitMovementCompletionEditor = forwardRef<EditorHandlingClose, Even
     [command.waitAllEvents, command.waitById, command.timeout],
   );
   const { globalStaticEvent } = useSharedOptions();
-  const { canClose, getFormData, getRawFormData, defaults, formRef } = useZodForm(WAIT_MOVEMENT_COMPLETION_EDITOR_SCHEMA, commandDataForForm);
+  const { canClose, getFormData, defaults, formRef } = useZodForm(WAIT_MOVEMENT_COMPLETION_EDITOR_SCHEMA, commandDataForForm);
   const { EmbeddedUnitInput, Select, MultiSelect } = useInputAttrsWithLabel(WAIT_MOVEMENT_COMPLETION_EDITOR_SCHEMA, defaults);
   const timeoutRef = useRef<HTMLInputElement>(null);
+  const validationRef = useRef<MultiSelectValidation>(null);
   const { t } = useTranslation();
 
   const [waitEvent, setWaitEvent] = useState<string>(command.waitAllEvents ? 'all' : 'some');
@@ -65,13 +67,14 @@ export const WaitMovementCompletionEditor = forwardRef<EditorHandlingClose, Even
     [event?.dbSymbol],
   );
 
-  const onClose = () => {
-    const rawData = getRawFormData();
-    const waitById = (rawData.waitById as string[] | undefined) ?? [];
-    const waitByIdIsInvalid = waitEvent === 'some' && waitById.length === 0;
-    if (waitByIdIsInvalid) return;
+  const canCloseWithWaitById = () => {
+    if (waitEvent === 'some' && !validationRef.current?.validate()) return false;
 
-    const result = canClose() && getFormData();
+    return canClose();
+  };
+
+  const onClose = () => {
+    const result = canCloseWithWaitById() && getFormData();
     if (!result || !result.success) return;
 
     updateCommand({
@@ -82,13 +85,6 @@ export const WaitMovementCompletionEditor = forwardRef<EditorHandlingClose, Even
     });
   };
 
-  const canCloseWithWaitById = () => {
-    const rawData = getRawFormData();
-    const waitById = (rawData.waitById as string[] | undefined) ?? [];
-    if (waitEvent === 'some' && waitById.length === 0) return false;
-
-    return canClose();
-  };
   useEditorHandlingClose(ref, onClose, canCloseWithWaitById);
 
   return (
@@ -108,6 +104,7 @@ export const WaitMovementCompletionEditor = forwardRef<EditorHandlingClose, Even
             label={t('event_command_wait_move_completion_multiselect_label')}
             options={eventToWaitOptions}
             value={command.waitById}
+            validationRef={validationRef}
             required
           />
         )}
