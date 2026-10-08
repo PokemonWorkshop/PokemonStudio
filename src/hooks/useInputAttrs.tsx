@@ -207,7 +207,7 @@ export const useInputAttrsWithLabel = <T extends z.ZodRawShape>(schema: z.ZodObj
 
         return (
           <InputWithTopLabelContainer>
-            <Label>{label}</Label>
+            <Label required={props.required ?? attrs.required}>{label}</Label>
             <MultiSelect
               {...attrs}
               {...props}

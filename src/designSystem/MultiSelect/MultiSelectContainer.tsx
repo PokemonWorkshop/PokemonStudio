@@ -1,5 +1,17 @@
 import styled from 'styled-components';
 
+export const MultiSelectField = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+`;
+
+export const MultiSelectError = styled.span`
+  ${({ theme }) => theme.fonts.normalSmall};
+  color: ${({ theme }) => theme.colors.dangerBase};
+`;
+
 export const MultiSelectContainer = styled.div`
   display: flex;
   position: relative;

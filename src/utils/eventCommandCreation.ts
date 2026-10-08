@@ -42,6 +42,10 @@ const createManageAccessSaveMenuCommand = () => ({ action: 'enable' });
 const createReturnToTitleScreenCommand = () => ({});
 const createManageAccessMainMenuCommand = () => ({ action: 'enable' });
 
+const createStartQuestCommand = () => ({ quests: [] });
+const createCompleteQuestCommand = () => ({ quests: [] });
+const createFailQuestCommand = () => ({ quests: [] });
+
 export const createInsertScriptCommand = (_: StudioEvent, script?: string) => ({ script: script || '' });
 
 const createStartCommand = (event: StudioEvent) => {
@@ -101,11 +105,12 @@ export const EventCommandCreation: Record<StudioEventCommandType, (event: Studio
     trigger_game_over: dummy,
     return_to_title_screen: createReturnToTitleScreenCommand,
     open_creature_shop: dummy,
-    start_quest: dummy,
+    start_quest: createStartQuestCommand,
     display_hidden_objective: dummy,
     validate_quest_objectives: dummy,
     display_quest_progress: dummy,
-    complete_quest: dummy,
+    complete_quest: createCompleteQuestCommand,
+    fail_quest: createFailQuestCommand,
     play_sound: dummy,
     stop_current_sound: dummy,
     change_default_sound: dummy,
