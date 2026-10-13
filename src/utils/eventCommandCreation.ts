@@ -46,6 +46,9 @@ const createStartQuestCommand = () => ({ quests: [] });
 const createCompleteQuestCommand = () => ({ quests: [] });
 const createFailQuestCommand = () => ({ quests: [] });
 
+const createMemorizeBackgroundSoundsCommand = () => ({ channels: ['bgm', 'bgs'] });
+const createRestoreBackgroundSoundsCommand = () => ({ channels: ['bgm', 'bgs'] });
+
 export const createInsertScriptCommand = (_: StudioEvent, script?: string) => ({ script: script || '' });
 
 const createStartCommand = (event: StudioEvent) => {
@@ -114,8 +117,8 @@ export const EventCommandCreation: Record<StudioEventCommandType, (event: Studio
     play_sound: dummy,
     stop_current_sound: dummy,
     change_default_sound: dummy,
-    memorize_background_sounds: dummy,
-    restore_background_sounds: dummy,
+    memorize_background_sounds: createMemorizeBackgroundSoundsCommand,
+    restore_background_sounds: createRestoreBackgroundSoundsCommand,
     play_creature_cry: dummy,
     change_screen_tone: dummy,
     display_animation: dummy,
