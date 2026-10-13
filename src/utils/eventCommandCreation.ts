@@ -1,8 +1,9 @@
 import type { StudioEventCommand, StudioEventCommandData, StudioEventCommandType } from '@modelEntities/event/command';
 import { StudioEvent } from '@modelEntities/event/event';
+import { AudioBackgroundChannel } from '@modelEntities/event/globalCommand';
 import { findFirstAvailablePriorityEvent, findMultipleAvailableTextIdsEvent } from './ModelUtils';
 
-const createShowMessageCommand = (event: StudioEvent) => {
+export const createShowMessageCommand = (event: StudioEvent) => {
   const ids = findMultipleAvailableTextIdsEvent(event, 0, 2, []);
   return {
     message: ids[0],
@@ -19,7 +20,7 @@ const createShowMessageCommand = (event: StudioEvent) => {
   };
 };
 
-const createShowChoiceCommand = (event: StudioEvent) => {
+export const createShowChoiceCommand = (event: StudioEvent) => {
   const ids = findMultipleAvailableTextIdsEvent(event, 0, 2, []);
   return {
     choices: [ids[0], ids[1]],
@@ -36,18 +37,18 @@ export const createWaitMovementCompletionCommand = () => {
   };
 };
 
-const createOpenSaveMenuCommand = () => ({});
-const createManageAccessSaveMenuCommand = () => ({ action: 'enable' });
+export const createOpenSaveMenuCommand = () => ({});
+export const createManageAccessSaveMenuCommand = () => ({ action: 'enable' });
 
-const createReturnToTitleScreenCommand = () => ({});
-const createManageAccessMainMenuCommand = () => ({ action: 'enable' });
+export const createReturnToTitleScreenCommand = () => ({});
+export const createManageAccessMainMenuCommand = () => ({ action: 'enable' });
 
-const createStartQuestCommand = () => ({ quests: [] });
-const createCompleteQuestCommand = () => ({ quests: [] });
-const createFailQuestCommand = () => ({ quests: [] });
+export const createStartQuestCommand = () => ({ quests: [] });
+export const createCompleteQuestCommand = () => ({ quests: [] });
+export const createFailQuestCommand = () => ({ quests: [] });
 
-const createMemorizeBackgroundSoundsCommand = () => ({ channels: ['bgm', 'bgs'] });
-const createRestoreBackgroundSoundsCommand = () => ({ channels: ['bgm', 'bgs'] });
+export const createMemorizeBackgroundSoundsCommand = () => ({ channels: ['bgm', 'bgs'] as AudioBackgroundChannel[] });
+export const createRestoreBackgroundSoundsCommand = () => ({ channels: ['bgm', 'bgs'] as AudioBackgroundChannel[] });
 
 export const createInsertScriptCommand = (_: StudioEvent, script?: string) => ({ script: script || '' });
 

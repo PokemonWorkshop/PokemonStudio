@@ -6,20 +6,33 @@ import {
 import type { StudioEventCommandData } from '@modelEntities/event/command';
 import { useNodeInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
 import { useZodForm } from '@src/hooks/useZodForm';
-import React, { useMemo, useState } from 'react';
+import { TFunction } from 'i18next';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCommandNode } from '../../../hooks/useCommandNode';
 import { CommandNodeProps } from '../../CommandNodeProps';
 
 const RESTORE_BACKGROUND_SOUNDS_EDITOR_SCHEMA = EVENT_COMMAND_RESTORE_BACKGROUND_SOUNDS_VALIDATOR.pick({ channels: true });
 
+const updateCommandTitle = (channels: string[], t: TFunction) => {
+  if (channels.includes('bgm') && channels.includes('bgs')) {
+    return t('event_command_restore_background_sounds');
+  } else if (channels.includes('bgm')) {
+    return t('event_command_restore_bgm');
+  } else if (channels.includes('bgs')) {
+    return t('event_command_restore_bgs');
+  } else {
+    return t('event_command_restore_background_sounds');
+  }
+};
+
 export const RestoreBackgroundSoundsCommand = ({ id, data: { dialogsRef, command, comments }, selected }: CommandNodeProps) => {
   const { CommandNode, updateCommand } = useCommandNode<StudioEventCommandRestoreBackgroundSounds>(id);
   const { type: commandType, ...commandData } = command as StudioEventCommandData<StudioEventCommandRestoreBackgroundSounds>;
-  const { canClose, getFormData, defaults, formRef } = useZodForm(RESTORE_BACKGROUND_SOUNDS_EDITOR_SCHEMA, commandData);
+  const { canClose, getFormData, reload, defaults, formRef } = useZodForm(RESTORE_BACKGROUND_SOUNDS_EDITOR_SCHEMA, commandData);
   const { MultiSelect } = useNodeInputAttrsWithLabel(RESTORE_BACKGROUND_SOUNDS_EDITOR_SCHEMA, defaults);
   const { t } = useTranslation();
-  const [title, setTitle] = useState(t('event_command_restore_background_sounds'));
+  const [title, setTitle] = useState(updateCommandTitle(commandData.channels, t));
 
   const options = useMemo(() => {
     return [
@@ -35,17 +48,11 @@ export const RestoreBackgroundSoundsCommand = ({ id, data: { dialogsRef, command
     updateCommand(result.data);
   };
 
-  const updateCommandTitle = (channels: string[]) => {
-    if (channels.includes('bgm') && channels.includes('bgs')) {
-      setTitle(t('event_command_restore_background_sounds'));
-    } else if (channels.includes('bgm')) {
-      setTitle(t('event_command_restore_bgm'));
-    } else if (channels.includes('bgs')) {
-      setTitle(t('event_command_restore_bgs'));
-    } else {
-      setTitle(t('event_command_restore_background_sounds'));
-    }
-  };
+  useEffect(() => {
+    reload(commandData);
+    setTitle(updateCommandTitle(commandData.channels, t));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [commandData]);
 
   return (
     <CommandNode
@@ -63,7 +70,6 @@ export const RestoreBackgroundSoundsCommand = ({ id, data: { dialogsRef, command
           options={options}
           value={commandData.channels}
           className="nodrag nowheel"
-          onChange={(value) => updateCommandTitle(value)}
         />
       </InputFormContainer>
     </CommandNode>
