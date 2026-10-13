@@ -13,6 +13,9 @@ import { ShowMessageEditor } from './messageCommands/ShowMessageEditor';
 import { WaitMovementCompletionEditor } from './movementCommands/WaitMovementCompletionEditor';
 import { ManageAccessSaveMenuEditor } from './saveCommands/ManageAccessSaveMenuEditor';
 import { OpenSaveMenuEditor } from './saveCommands/OpenSaveMenuEditor';
+import { CompleteQuestEditor } from './questCommands/CompleteQuestEditor';
+import { FailQuestEditor } from './questCommands/FailQuestEditor';
+import { StartQuestEditor } from './questCommands/StartQuestEditor';
 import { InsertScriptEditor } from './scriptCommands/InsertScriptEditor';
 import { StartEditor } from './startCommands/StartEditor';
 
@@ -82,11 +85,9 @@ export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletion
       case 'return_to_title_screen':
         return <ReturnToTitleScreenEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'open_creature_shop':
-      case 'start_quest':
       case 'display_hidden_objective':
       case 'validate_quest_objectives':
       case 'display_quest_progress':
-      case 'complete_quest':
       case 'play_sound':
       case 'stop_current_sound':
       case 'change_default_sound':
@@ -105,6 +106,12 @@ export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletion
       case 'manage_map_panorama':
       case 'change_battle_background':
         return <DefaultEditor ref={handleCloseRef} />;
+      case 'start_quest':
+        return <StartQuestEditor commandId={commandId} event={event} ref={handleCloseRef} />;
+      case 'complete_quest':
+        return <CompleteQuestEditor commandId={commandId} event={event} ref={handleCloseRef} />;
+      case 'fail_quest':
+        return <FailQuestEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'insert_script':
         return <InsertScriptEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'start':

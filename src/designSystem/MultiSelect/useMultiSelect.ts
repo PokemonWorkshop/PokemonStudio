@@ -2,6 +2,7 @@ import {
   FocusEventHandler,
   InputHTMLAttributes,
   KeyboardEventHandler,
+  Ref,
   useEffect,
   useImperativeHandle,
   useLayoutEffect,
@@ -9,11 +10,15 @@ import {
   useRef,
   useState,
 } from 'react';
-import { RenderOptionRef, MultiSelectOption } from './types';
-import { findOptionIndices, getNotFoundExclusionPattern, getSelectDefaultLabel, positionAndShowPopover } from './utils';
-import type { List } from 'react-virtualized/dist/es/List';
-import { ValueType } from './useRenderOptions';
 import { useTranslation } from 'react-i18next';
+import type { List } from 'react-virtualized/dist/es/List';
+import { MultiSelectOption, RenderOptionRef } from './types';
+import { ValueType } from './useRenderOptions';
+import { findOptionIndices, getNotFoundExclusionPattern, getSelectDefaultLabel, positionAndShowPopover } from './utils';
+
+export type MultiSelectValidation = {
+  validate: () => boolean;
+};
 
 export type MultiSelectProps<Value extends ValueType, ChooseValue extends Value> = {
   options: Readonly<MultiSelectOption<Value>[]>;
@@ -26,6 +31,8 @@ export type MultiSelectProps<Value extends ValueType, ChooseValue extends Value>
   disabled?: boolean;
   selectAllOption?: string;
   whenAllOptionSelected?: string;
+  validationRef?: Ref<MultiSelectValidation>;
+  validationErrorMessage?: string;
 } & Omit<InputHTMLAttributes<HTMLTextAreaElement>, 'min' | 'max' | 'value' | 'onChange' | 'type' | 'multiple' | 'list' | 'checked'>;
 
 export const defaultSelectAllValue = 'ALL' as const;
@@ -41,6 +48,8 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
   disabled: disabledFromOutside,
   selectAllOption,
   whenAllOptionSelected,
+  validationRef,
+  validationErrorMessage,
   ...props
 }: MultiSelectProps<Value, ChooseValue>) => {
   const { t } = useTranslation();
@@ -58,6 +67,19 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
   const [isInvalid, setIsInvalid] = useState(false);
 
   useImperativeHandle(optionRef, () => currentValues, [currentValues]);
+
+  useImperativeHandle(
+    validationRef,
+    () => ({
+      validate: () => {
+        const valid = currentValues.length > 0;
+        setIsInvalid(!valid);
+        return valid;
+      },
+    }),
+    [currentValues],
+  );
+
   useEffect(() => {
     if (inputRef.current) {
       const concatenatedValues = currentValues.map((value) => value.toString()).join(', ');
@@ -249,6 +271,8 @@ export const useMultiSelect = <Value extends ValueType, ChooseValue extends Valu
     inputRef,
     popoverRef,
     listRef,
+    isInvalid,
+    validationErrorMessage,
     inputProps: {
       ...props,
       disabled,

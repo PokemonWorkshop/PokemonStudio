@@ -66,7 +66,7 @@ const displayTooltipData = (container: HTMLElement, target: HTMLElement) => {
     } else {
       container.innerText = `Failed to fetch content of #${dataset.tooltipId}`;
     }
-  } else if (target instanceof HTMLInputElement) {
+  } else if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
     container.innerText = target.value;
   } else {
     container.innerText = target.innerText;
