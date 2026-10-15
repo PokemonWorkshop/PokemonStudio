@@ -160,6 +160,23 @@ export const useItemPage = () => {
   };
 };
 
+export const useTrainerClassPage = () => {
+  const {
+    projectDataValues: trainerClasses,
+    selectedDataIdentifier: trainerClassSelected,
+    state,
+  } = useProjectDataReadonly('trainerClasses', 'trainerClass');
+  const trainerClass = trainerClasses[trainerClassSelected];
+  const trainerClassName = getEntityNameText(trainerClass, state);
+
+  return {
+    trainerClass,
+    trainerClassName,
+    trainerClasses,
+    cannotDelete: Object.keys(trainerClasses).length <= 1,
+  };
+};
+
 export const useTrainerPage = () => {
   const { projectDataValues: trainers, selectedDataIdentifier: trainerSelected, state } = useProjectDataReadonly('trainers', 'trainer');
   const trainer = trainers[trainerSelected];
