@@ -145,7 +145,7 @@ export const useProjectData = <Key extends keyof ProjectData, SelectedIdentifier
         savingData: new SavingMap(currentState.savingData.set({ key, id: String(identifier) }, 'DELETE')),
       };
       // Remove the text
-      if (key !== 'mapLinks' && key !== 'natures') removeSelectOption(key === 'pokemon' ? 'creatures' : key, String(identifier));
+      if (key !== 'mapLinks' && key !== 'natures') removeSelectOption(key === 'pokemon' ? 'creatures' : key, String(identifier), newState);
       return newState;
     });
   };

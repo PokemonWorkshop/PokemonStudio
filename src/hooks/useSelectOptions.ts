@@ -196,24 +196,26 @@ const getTextSource = (projectText: Parameters<typeof getText>[0], fileId: numbe
   return { value: '', label: getText(projectText, fileId, index) };
 };
 
+const buildTrainerOption = (projectText: Parameters<typeof getText>[0], trainer: State['projectData']['trainers'][string], state: State) => {
+  const trainerName = getTextSource(projectText, TextFileIds['trainers'][1], trainer.id, []);
+  const trainerClass = state.projectData.trainerClasses[trainer.classSymbol];
+  const trainerClassName = trainerClass
+    ? getTextSource(projectText, TextFileIds['trainers'][0], trainerClass.id, TextSources['trainerClasses']).label
+    : '';
+
+  return { value: trainer.dbSymbol, label: `${trainerClassName} ${trainerName.label}`.trim() };
+};
+
 const buildTrainersTextSourceFromScratch = (state: State) => {
   const projectText = {
     texts: state.projectText,
     languages: state.projectStudio.languagesTranslation,
     defaultLanguage: state.projectConfig.language_config.defaultLanguage,
   };
-  const trainers = Object.values(state.projectData.trainers).sort((a, b) => a.id - b.id);
 
-  TextSources['trainers'] = trainers.map((trainer) => {
-    const trainerName = getTextSource(projectText, TextFileIds['trainers'][1], trainer.id, []);
-    const trainerClass = state.projectData.trainerClasses[trainer.classSymbol];
-
-    return trainerClass
-      ? {
-          value: trainer.dbSymbol,
-          label: `${getTextSource(projectText, TextFileIds['trainers'][0], trainerClass.id, TextSources['trainerClasses']).label} ${trainerName.label}`,
-        }
-      : { value: trainer.dbSymbol, label: trainerName.label };
+  TextSources['trainers'] = [];
+  Object.values(state.projectData.trainers).forEach((trainer) => {
+    TextSources['trainers'][trainer.id] = buildTrainerOption(projectText, trainer, state);
   });
 };
 
@@ -281,13 +283,7 @@ const updateTrainerClassesSelectOptionsTextSource = (textId: number, state: Stat
     .filter((trainer) => trainer.classSymbol === trainerClass?.dbSymbol);
 
   trainers.forEach((trainer) => {
-    const trainerName = getTextSource(projectText, TextFileIds['trainers'][1], trainer.id, []);
-    const option = { value: trainer.dbSymbol, label: `${trainerClassName.label} ${trainerName.label}` };
-    const index = TextSources['trainers'].findIndex((option) => option.value === trainer.dbSymbol);
-
-    if (index !== -1) {
-      TextSources['trainers'][index] = option;
-    }
+    TextSources['trainers'][trainer.id] = buildTrainerOption(projectText, trainer, state);
   });
 
   OptionSources['trainers'] = buildSelectOptionsFromKey('trainers', state);
@@ -302,18 +298,7 @@ const updateTrainersSelectOptionsTextSource = (textId: number, state: State) => 
   const trainer = Object.values(state.projectData.trainers).find((trainer) => trainer.id === textId);
   if (!trainer) return;
 
-  const trainerClass = state.projectData.trainerClasses[trainer.classSymbol];
-  const trainerClassName = trainerClass
-    ? getTextSource(projectText, TextFileIds['trainers'][0], trainerClass.id, TextSources['trainerClasses'])
-    : { value: '', label: '' };
-  const name = getTextSource(projectText, TextFileIds['trainers'][1], textId, []);
-  const option = { value: trainer.dbSymbol, label: `${trainerClassName.label} ${name.label}` };
-  const index = TextSources['trainers'].findIndex((option) => option.value === trainer.dbSymbol);
-
-  if (index !== -1) {
-    TextSources['trainers'][index] = option;
-  }
-
+  TextSources['trainers'][trainer.id] = buildTrainerOption(projectText, trainer, state);
   OptionSources['trainers'] = buildSelectOptionsFromKey('trainers', state);
 };
 
@@ -504,13 +489,19 @@ export const buildSelectOptionsFromScratch = (state: State) => {
 // Add new option
 export const addSelectOption = (key: TextSourceKey, state: State) => {
   // TODO: Possible optimization
+  if (key === 'trainers') buildTrainersTextSourceFromScratch(state);
   OptionSourceGroups[key].forEach((optionKey) => (OptionSources[optionKey] = buildSelectOptionsFromKey(optionKey, state)));
 };
 
 // Remove an option
-export const removeSelectOption = (key: TextSourceKey, optionValue: string) => {
+export const removeSelectOption = (key: TextSourceKey, optionValue: string, state: State) => {
   // TODO: Possible optimization
   OptionSourceGroups[key].forEach((optionKey) => (OptionSources[optionKey] = OptionSources[optionKey].filter(({ value }) => value !== optionValue)));
+
+  if (key === 'trainerClasses') {
+    buildTrainersTextSourceFromScratch(state);
+    OptionSources['trainers'] = buildSelectOptionsFromKey('trainers', state);
+  }
 };
 
 export const useSelectOptions = (key: OptionSourceKey) => {
