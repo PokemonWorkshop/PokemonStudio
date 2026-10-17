@@ -187,6 +187,7 @@ type CommandNodeProps = {
   outputCount?: number;
   footerChildren?: ReactNode;
   defaultHandles?: DefaultHandles;
+  titleOverride?: string;
 };
 
 export const CommandNode = ({
@@ -200,6 +201,7 @@ export const CommandNode = ({
   defaultHandles,
   children,
   footerChildren,
+  titleOverride,
 }: CommandNodeProps) => {
   const { setCurrentEditedNode } = useEventActions();
   const { isHandleConnected } = useHandleConnectionState(nodeId);
@@ -261,7 +263,7 @@ export const CommandNode = ({
           <div className="content">
             <header>
               <EventIcon icon={{ type: 'command', command: commandType }} />
-              <span className="title">{t(`event_command_${commandType}`)}</span>
+              {titleOverride ? <span className="title">{titleOverride}</span> : <span className="title">{t(`event_command_${commandType}`)}</span>}
             </header>
             <div className="body">{children}</div>
           </div>

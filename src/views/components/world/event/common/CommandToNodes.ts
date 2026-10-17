@@ -2,6 +2,8 @@ import type { StudioEventCommandType } from '@modelEntities/event/command';
 import { JSX } from 'react';
 import type { CommandNodeProps } from '../commands/CommandNodeProps';
 import { DefaultCommand } from '../commands/DefaultCommand';
+import { MemorizeBackgroundSoundsCommand } from '../commands/nodes/audioCommands/MemorizeBackgroundSoundsCommand';
+import { RestoreBackgroundSoundsCommand } from '../commands/nodes/audioCommands/RestoreBackgroundSoundsCommand';
 import { ManageAccessMainMenuCommand } from '../commands/nodes/gameInterfaceCommands/ManageAccessMainMenuCommand';
 import { ReturnToTitleScreenCommand } from '../commands/nodes/gameInterfaceCommands/ReturnToTitleScreenCommand';
 import { ShowChoiceCommand } from '../commands/nodes/messageCommands/ShowChoiceCommand';
@@ -74,8 +76,8 @@ export const CommandToNodes: Record<StudioEventCommandType | 'shadow_node', (pro
   play_sound: DefaultCommand,
   stop_current_sound: DefaultCommand,
   change_default_sound: DefaultCommand,
-  memorize_background_sounds: DefaultCommand,
-  restore_background_sounds: DefaultCommand,
+  memorize_background_sounds: MemorizeBackgroundSoundsCommand,
+  restore_background_sounds: RestoreBackgroundSoundsCommand,
   play_creature_cry: DefaultCommand,
   change_screen_tone: DefaultCommand,
   display_animation: DefaultCommand,
