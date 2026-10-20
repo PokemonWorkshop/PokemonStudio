@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { EVENT_COMMAND_MEMORIZE_BACKGROUND_SOUNDS_VALIDATOR } from './audioCommands/memorizeBackgroundSounds';
+import { EVENT_COMMAND_RESTORE_BACKGROUND_SOUNDS_VALIDATOR } from './audioCommands/restoreBackgroundSounds';
 import type { StudioEventCommandCategory } from './category';
 import { EVENT_COMMAND_MANAGE_ACCESS_MAIN_MENU_VALIDATOR } from './gameInterfaceCommands/manageAccessMainMenu';
 import { EVENT_COMMAND_RETURN_TO_TITLE_SCREEN_VALIDATOR } from './gameInterfaceCommands/returnToTitleScreen';
@@ -81,8 +83,8 @@ export const EVENT_COMMAND_VALIDATOR = z.discriminatedUnion('type', [
   GENERIC_COMMAND('play_sound'),
   GENERIC_COMMAND('stop_current_sound'),
   GENERIC_COMMAND('change_default_sound'),
-  GENERIC_COMMAND('memorize_background_sounds'),
-  GENERIC_COMMAND('restore_background_sounds'),
+  EVENT_COMMAND_MEMORIZE_BACKGROUND_SOUNDS_VALIDATOR,
+  EVENT_COMMAND_RESTORE_BACKGROUND_SOUNDS_VALIDATOR,
   GENERIC_COMMAND('play_creature_cry'),
   GENERIC_COMMAND('change_screen_tone'),
   GENERIC_COMMAND('display_animation'),

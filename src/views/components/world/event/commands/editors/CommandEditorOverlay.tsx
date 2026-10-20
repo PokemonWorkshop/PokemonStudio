@@ -5,17 +5,19 @@ import type { StudioEvent } from '@modelEntities/event/event';
 import type { CommandId } from '@modelEntities/event/globalCommand';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import React from 'react';
+import { MemorizeBackgroundSoundsEditor } from './audioCommands/MemorizeBackgroundSoundsEditor';
+import { RestoreBackgroundSoundsEditor } from './audioCommands/RestoreBackgroundSoundsEditor';
 import { DefaultEditor } from './DefaultEditor';
 import { ManageAccessMainMenuEditor } from './gameInterfaceCommands/ManageAccessMainMenuEditor';
 import { ReturnToTitleScreenEditor } from './gameInterfaceCommands/ReturnToTitleScreenEditor';
 import { ShowChoiceEditor } from './messageCommands/ShowChoiceEditor';
 import { ShowMessageEditor } from './messageCommands/ShowMessageEditor';
 import { WaitMovementCompletionEditor } from './movementCommands/WaitMovementCompletionEditor';
-import { ManageAccessSaveMenuEditor } from './saveCommands/ManageAccessSaveMenuEditor';
-import { OpenSaveMenuEditor } from './saveCommands/OpenSaveMenuEditor';
 import { CompleteQuestEditor } from './questCommands/CompleteQuestEditor';
 import { FailQuestEditor } from './questCommands/FailQuestEditor';
 import { StartQuestEditor } from './questCommands/StartQuestEditor';
+import { ManageAccessSaveMenuEditor } from './saveCommands/ManageAccessSaveMenuEditor';
+import { OpenSaveMenuEditor } from './saveCommands/OpenSaveMenuEditor';
 import { InsertScriptEditor } from './scriptCommands/InsertScriptEditor';
 import { StartEditor } from './startCommands/StartEditor';
 
@@ -92,7 +94,9 @@ export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletion
       case 'stop_current_sound':
       case 'change_default_sound':
       case 'memorize_background_sounds':
+        return <MemorizeBackgroundSoundsEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'restore_background_sounds':
+        return <RestoreBackgroundSoundsEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'play_creature_cry':
       case 'change_screen_tone':
       case 'display_animation':
