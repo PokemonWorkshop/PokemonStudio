@@ -1,6 +1,6 @@
 import type { StudioEventCommand, StudioEventCommandData, StudioEventCommandType } from '@modelEntities/event/command';
 import { StudioEvent } from '@modelEntities/event/event';
-import { AudioBackgroundChannel } from '@modelEntities/event/globalCommand';
+import { AudioBackgroundChannel, AudioChannel } from '@modelEntities/event/globalCommand';
 import { findFirstAvailablePriorityEvent, findMultipleAvailableTextIdsEvent } from './ModelUtils';
 
 export const createShowMessageCommand = (event: StudioEvent) => {
@@ -49,6 +49,10 @@ export const createFailQuestCommand = () => ({ quests: [] });
 
 export const createMemorizeBackgroundSoundsCommand = () => ({ channels: ['bgm', 'bgs'] as AudioBackgroundChannel[] });
 export const createRestoreBackgroundSoundsCommand = () => ({ channels: ['bgm', 'bgs'] as AudioBackgroundChannel[] });
+export const createStopSoundsCommand = (_: StudioEvent, channels?: AudioChannel[], fadeTime?: number) => ({
+  channels: channels || (['bgm', 'bgs'] as AudioChannel[]),
+  fadeTime: fadeTime ?? 1,
+});
 
 export const createInsertScriptCommand = (_: StudioEvent, script?: string) => ({ script: script || '' });
 
@@ -116,7 +120,7 @@ export const EventCommandCreation: Record<StudioEventCommandType, (event: Studio
     complete_quest: createCompleteQuestCommand,
     fail_quest: createFailQuestCommand,
     play_sound: dummy,
-    stop_current_sound: dummy,
+    stop_sounds: createStopSoundsCommand,
     change_default_sound: dummy,
     memorize_background_sounds: createMemorizeBackgroundSoundsCommand,
     restore_background_sounds: createRestoreBackgroundSoundsCommand,
