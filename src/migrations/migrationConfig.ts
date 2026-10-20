@@ -26,6 +26,7 @@ import { migrateHeadbutt } from './migrateHeadbutt';
 import { migrateMapLinks } from './migrateMapLinks';
 import { migrateNaturesToEntities } from './migrateNaturesToEntities';
 import { migrateQuestsEarnings } from './migrateQuestsEarnings';
+import { migrateTrainerClassesToEntities } from './migrateTrainerClassesToEntities';
 import { migrateUndefinedBreedingGroupToUnknown } from './migrateUndefinedBreedingGroupToUnknown';
 import { migrationV2 } from './migrationV2';
 
@@ -196,5 +197,10 @@ export const MIGRATION_CONFIG: MigrateConfigType[] = [
     migration: addTrainerPartyMaxSizeToSettings,
     version: '2.9.1',
     message: 'add_trainer_party_max_size_to_settings',
+  },
+  {
+    migration: migrateTrainerClassesToEntities,
+    version: '2.10.0',
+    message: 'migrate_trainer_classes',
   },
 ];
