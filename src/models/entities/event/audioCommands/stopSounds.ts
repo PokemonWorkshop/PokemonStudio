@@ -1,4 +1,4 @@
-import { POSITIVE_OR_ZERO_INT } from '@modelEntities/common';
+import { POSITIVE_OR_ZERO_FLOAT } from '@modelEntities/common';
 import { z } from 'zod';
 import {
   AUDIO_CHANNEL_VALIDATOR,
@@ -12,7 +12,7 @@ export const EVENT_COMMAND_STOP_SOUNDS_VALIDATOR = z.object({
   connections: z.record(COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_CONNECTION_VALIDATOR),
   studioData: EVENT_COMMAND_STUDIO_DATA_VALIDATOR,
   channels: z.array(AUDIO_CHANNEL_VALIDATOR),
-  fadeTime: POSITIVE_OR_ZERO_INT.min(1).max(60),
+  fadeTime: POSITIVE_OR_ZERO_FLOAT.min(0.1).max(60).step(0.1),
 });
 
 export type StudioEventCommandStopSounds = z.infer<typeof EVENT_COMMAND_STOP_SOUNDS_VALIDATOR>;

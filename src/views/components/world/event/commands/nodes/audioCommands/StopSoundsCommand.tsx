@@ -15,6 +15,10 @@ const updateCommandTitle = (channels: string[], t: TFunction) => {
   if (channels.length === 1) {
     const channel = channels[0];
     return t(`event_command_stop_${channel}`);
+  } else if (channels.length === 2 && channels.includes('bgs') && channels.includes('se')) {
+    return t('event_command_stop_sound');
+  } else if (channels.length === 2 && channels.includes('bgm') && channels.includes('me')) {
+    return t('event_command_stop_music');
   } else {
     return t('event_command_stop_sounds');
   }

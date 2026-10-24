@@ -1933,6 +1933,8 @@
   "event_command_fail_quest": "Fail a quest",
   "event_command_play_sound": "Play a sound",
   "event_command_stop_sounds": "Stop sounds or music",
+  "event_command_stop_sound": "Stop sounds",
+  "event_command_stop_music": "Stop music",
   "event_command_stop_bgm": "Stop background music",
   "event_command_stop_bgs": "Stop background sound",
   "event_command_stop_me": "Stop music effects",

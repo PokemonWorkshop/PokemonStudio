@@ -55,7 +55,7 @@ export const StopSoundsEditor = forwardRef<EditorHandlingClose, EventEditorProps
 
   return (
     <Editor type="edit" title={t('event_command_stop_sounds')}>
-      <InputFormContainer ref={formRef}>
+      <InputFormContainer ref={formRef} onSubmit={(e) => e.preventDefault()}>
         <InputContainer size="xs">
           <MultiSelect
             name="channels"
