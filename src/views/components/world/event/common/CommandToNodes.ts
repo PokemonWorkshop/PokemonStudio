@@ -3,6 +3,7 @@ import { JSX } from 'react';
 import type { CommandNodeProps } from '../commands/CommandNodeProps';
 import { DefaultCommand } from '../commands/DefaultCommand';
 import { MemorizeBackgroundSoundsCommand } from '../commands/nodes/audioCommands/MemorizeBackgroundSoundsCommand';
+import { PlaySoundCommand } from '../commands/nodes/audioCommands/PlaySoundCommand';
 import { RestoreBackgroundSoundsCommand } from '../commands/nodes/audioCommands/RestoreBackgroundSoundsCommand';
 import { StopSoundsCommand } from '../commands/nodes/audioCommands/StopSoundsCommand';
 import { ManageAccessMainMenuCommand } from '../commands/nodes/gameInterfaceCommands/ManageAccessMainMenuCommand';
@@ -74,7 +75,7 @@ export const CommandToNodes: Record<StudioEventCommandType | 'shadow_node', (pro
   display_quest_progress: DefaultCommand,
   complete_quest: CompleteQuestCommand,
   fail_quest: FailQuestCommand,
-  play_sound: DefaultCommand,
+  play_sound: PlaySoundCommand,
   stop_sounds: StopSoundsCommand,
   change_default_sound: DefaultCommand,
   memorize_background_sounds: MemorizeBackgroundSoundsCommand,

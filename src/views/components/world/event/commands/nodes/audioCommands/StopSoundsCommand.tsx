@@ -1,6 +1,7 @@
 import { InputFormContainer } from '@components/inputs/InputContainer';
 import { EVENT_COMMAND_STOP_SOUNDS_VALIDATOR, StudioEventCommandStopSounds } from '@modelEntities/event/audioCommands/stopSounds';
 import type { StudioEventCommandData } from '@modelEntities/event/command';
+import type { AudioChannel } from '@modelEntities/event/globalCommand';
 import { useNodeInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
 import { useZodForm } from '@src/hooks/useZodForm';
 import { TFunction } from 'i18next';
@@ -11,7 +12,7 @@ import { CommandNodeProps } from '../../CommandNodeProps';
 
 const STOP_SOUNDS_EDITOR_SCHEMA = EVENT_COMMAND_STOP_SOUNDS_VALIDATOR.pick({ channels: true });
 
-const updateCommandTitle = (channels: string[], t: TFunction) => {
+const updateCommandTitle = (channels: AudioChannel[], t: TFunction) => {
   if (channels.length === 1) {
     const channel = channels[0];
     return t(`event_command_stop_${channel}`);

@@ -6,6 +6,7 @@ import type { CommandId } from '@modelEntities/event/globalCommand';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import React from 'react';
 import { MemorizeBackgroundSoundsEditor } from './audioCommands/MemorizeBackgroundSoundsEditor';
+import { PlaySoundEditor } from './audioCommands/PlaySoundEditor';
 import { RestoreBackgroundSoundsEditor } from './audioCommands/RestoreBackgroundSoundsEditor';
 import { StopSoundsEditor } from './audioCommands/stopSoundsEditor';
 import { DefaultEditor } from './DefaultEditor';
@@ -92,6 +93,7 @@ export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletion
       case 'validate_quest_objectives':
       case 'display_quest_progress':
       case 'play_sound':
+        return <PlaySoundEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'stop_sounds':
         return <StopSoundsEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'change_default_sound':
