@@ -4,6 +4,7 @@ import { DropInput, FileInput, InputWithTopLabelContainer, Label } from '@compon
 import { AUDIO_EXT } from '@components/inputs/AudioInput';
 import { InputFormContainer } from '@components/inputs/InputContainer';
 import { EVENT_COMMAND_PLAY_SOUND_VALIDATOR, StudioEventCommandPlaySound } from '@modelEntities/event/audioCommands/playSound';
+import { useGlobalState } from '@src/GlobalStateProvider';
 import { useInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
 import { useZodForm } from '@src/hooks/useZodForm';
 import { basename } from '@utils/path';
@@ -18,10 +19,10 @@ export const PlaySoundEditor = forwardRef<EditorHandlingClose, EventEditorProps>
   const { command, updateCommand } = useCommandEditor<StudioEventCommandPlaySound>(event, defaultCommandId);
   const { canClose, getFormData, defaults, formRef } = useZodForm(PLAY_SOUND_EDITOR_SCHEMA, command);
   const { EmbeddedUnitInput, Input, Select } = useInputAttrsWithLabel(PLAY_SOUND_EDITOR_SCHEMA, defaults);
+  const [{ projectPath }] = useGlobalState();
   const { t } = useTranslation();
-  const [soundName, setSoundName] = useState(defaults['filename']);
-  const [channel, setChannel] = useState(defaults['channel']);
-  const soundNameRef = useRef<HTMLInputElement>(null);
+  const [filename, setFilename] = useState(defaults['filename']);
+  const filenameRef = useRef<HTMLInputElement>(null);
 
   const options = useMemo(() => {
     return [
@@ -32,11 +33,16 @@ export const PlaySoundEditor = forwardRef<EditorHandlingClose, EventEditorProps>
     ];
   }, [t]);
 
-  const onChangeSound = (name: string) => {
-    if (!soundNameRef.current) return;
+  const onChangeSound = (filepath: string) => {
+    if (!filenameRef.current || !projectPath) return;
 
-    setSoundName(name);
-    soundNameRef.current.value = name;
+    // TODO: doesn't work because the implemented copy logic does not take subfolders into account
+    /*console.log(filepath);
+    const newFilename = filepath.replaceAll(projectPath, '');
+    console.log(newFilename);*/
+    const newFilename = basename(filepath);
+    setFilename(newFilename);
+    filenameRef.current.value = newFilename;
   };
 
   const onClose = () => {
@@ -50,23 +56,23 @@ export const PlaySoundEditor = forwardRef<EditorHandlingClose, EventEditorProps>
   return (
     <Editor type="edit" title={t('event_command_play_sound')}>
       <InputFormContainer ref={formRef} onSubmit={(e) => e.preventDefault()}>
-        <Select name="channel" label={t(`event_command_channel_to_play`)} options={options} onChange={(value) => setChannel(value)} />
-        <Input name="filename" ref={soundNameRef} style={{ display: 'none' }} />
+        <Select name="channel" label={t(`event_command_channel_to_play`)} options={options} />
+        <Input name="filename" ref={filenameRef} style={{ display: 'none' }} />
         <InputWithTopLabelContainer>
           <Label required>{t('event_command_audio_file')}</Label>
-          {!soundName ? (
+          {!filename ? (
             <DropInput
               name={t('event_command_audio_file')}
               extensions={AUDIO_EXT}
-              destFolderToCopy={`audio/${channel}`}
-              onFileChoosen={(filePath) => onChangeSound(basename(filePath))}
+              destFolderToCopy="audio"
+              onFileChoosen={(filePath) => onChangeSound(filePath)}
             />
           ) : (
             <FileInput
-              filePath={`audio/${channel}/${soundName}`}
+              filePath={`audio/${filename}`}
               name={t('event_command_audio_file')}
               extensions={AUDIO_EXT}
-              onFileChoosen={(filePath) => onChangeSound(basename(filePath))}
+              onFileChoosen={(filePath) => onChangeSound(filePath)}
               onFileClear={() => onChangeSound('')}
               noIcon
             />

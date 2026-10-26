@@ -1,9 +1,10 @@
 import { StudioEventCommandMemorizeBackgroundSounds } from '@modelEntities/event/audioCommands/memorizeBackgroundSounds';
+import { StudioEventCommandPlaySound } from '@modelEntities/event/audioCommands/playSound';
 import { StudioEventCommandRestoreBackgroundSounds } from '@modelEntities/event/audioCommands/restoreBackgroundSounds';
 import { StudioEventCommandStopSounds } from '@modelEntities/event/audioCommands/stopSounds';
 import { StudioEventCommand } from '@modelEntities/event/command';
 import { Appearance, EventAppearance, LinkParameter, MapEventLink, StudioEvent } from '@modelEntities/event/event';
-import { CommandId } from '@modelEntities/event/globalCommand';
+import { AudioChannel, CommandId } from '@modelEntities/event/globalCommand';
 import { StudioEventCommandWaitMovementCompletion } from '@modelEntities/event/movementCommands/waitMovementCompletion';
 import { StudioEventCommandInsertScript } from '@modelEntities/event/scriptCommands/insertScript';
 import { StudioEventCommandStart, StudioEventTrigger } from '@modelEntities/event/startCommands/start';
@@ -11,6 +12,7 @@ import { ProjectData } from '@src/GlobalStateProvider';
 import {
   createInsertScriptCommand,
   createMemorizeBackgroundSoundsCommand,
+  createPlaySoundCommand,
   createRestoreBackgroundSoundsCommand,
   createStopSoundsCommand,
   createWaitMovementCompletionCommand,
@@ -162,6 +164,21 @@ export const createCustomEvent = (allEvents: ProjectData['events'], rmxpEvent: R
   };
 };*/
 
+// Utility function to convert commands 241, 245, 249, and 250
+const convertPlaySoundCommand = (_: StudioEvent, channel: AudioChannel, params: unknown[]): StudioEventCommandPlaySound => {
+  const commandData = (params[0] as Array<string | number>) || [100, '', 100];
+  const filename = (commandData[1] as string) || '';
+  const volume = (commandData[0] as number) || 100;
+  const pitch = (commandData[2] as number) || 100;
+  // TODO: add filename extension
+  return {
+    type: 'play_sound',
+    connections: {},
+    studioData: { x: 0, y: 0, comments: [] },
+    ...createPlaySoundCommand(_, channel, `${channel}/${filename}`, volume, pitch),
+  };
+};
+
 // RMXP command 210
 const convertWaitMovementCompletionCommand = (): StudioEventCommandWaitMovementCompletion => ({
   type: 'wait_move_completion',
@@ -169,6 +186,11 @@ const convertWaitMovementCompletionCommand = (): StudioEventCommandWaitMovementC
   studioData: { x: 0, y: 0, comments: [] },
   ...createWaitMovementCompletionCommand(),
 });
+
+// RMXP commands 241
+const convertPlaySoundCommandBGM = (_: StudioEvent, params: unknown[]): StudioEventCommandPlaySound => {
+  return convertPlaySoundCommand(_, 'bgm', params);
+};
 
 // RMXP commands 242
 const convertStopSoundsCommandBGM = (_: StudioEvent, params: unknown[]): StudioEventCommandStopSounds => {
@@ -181,7 +203,12 @@ const convertStopSoundsCommandBGM = (_: StudioEvent, params: unknown[]): StudioE
   };
 };
 
-// RMXP commands 246
+// RMXP command 245
+const convertPlaySoundCommandBGS = (_: StudioEvent, params: unknown[]): StudioEventCommandPlaySound => {
+  return convertPlaySoundCommand(_, 'bgs', params);
+};
+
+// RMXP command 246
 const convertStopSoundsCommandBGS = (_: StudioEvent, params: unknown[]): StudioEventCommandStopSounds => {
   const fadeTime = (params[0] as number) || 1;
   return {
@@ -208,7 +235,17 @@ const convertRestoreBackgroundSoundsCommand = (): StudioEventCommandRestoreBackg
   ...createRestoreBackgroundSoundsCommand(),
 });
 
-// RMXP commands 251
+// RMXP command 249
+const convertPlaySoundCommandME = (_: StudioEvent, params: unknown[]): StudioEventCommandPlaySound => {
+  return convertPlaySoundCommand(_, 'me', params);
+};
+
+// RMXP command 250
+const convertPlaySoundCommandSE = (_: StudioEvent, params: unknown[]): StudioEventCommandPlaySound => {
+  return convertPlaySoundCommand(_, 'se', params);
+};
+
+// RMXP command 251
 const convertStopSoundsCommandSE = (_: StudioEvent): StudioEventCommandStopSounds => ({
   type: 'stop_sounds',
   connections: {},
@@ -239,10 +276,14 @@ const convertInsertScriptMultilineCommand = (_: StudioEvent, params: unknown[], 
 
 const RMXPCommandToStudioCommand: Record<number, (event: StudioEvent, params: unknown[]) => StudioEventCommand> = {
   210: convertWaitMovementCompletionCommand,
+  241: convertPlaySoundCommandBGM,
   242: convertStopSoundsCommandBGM,
+  245: convertPlaySoundCommandBGS,
   246: convertStopSoundsCommandBGS,
   247: convertMemorizeBackgroundSoundsCommand,
   248: convertRestoreBackgroundSoundsCommand,
+  249: convertPlaySoundCommandME,
+  250: convertPlaySoundCommandSE,
   251: convertStopSoundsCommandSE,
   355: convertInsertScriptCommand,
 };

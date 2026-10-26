@@ -8,13 +8,13 @@ import { useTranslation } from 'react-i18next';
 import { useCommandNode } from '../../../hooks/useCommandNode';
 import { CommandNodeProps } from '../../CommandNodeProps';
 
-const PLAY_SOUND_EDITOR_SCHEMA = EVENT_COMMAND_PLAY_SOUND_VALIDATOR.pick({ channel: true });
+const PLAY_SOUND_EDITOR_SCHEMA = EVENT_COMMAND_PLAY_SOUND_VALIDATOR.pick({ channel: true, filename: true });
 
 export const PlaySoundCommand = ({ id, data: { dialogsRef, command, comments }, selected }: CommandNodeProps) => {
   const { CommandNode, updateCommand } = useCommandNode<StudioEventCommandPlaySound>(id);
   const { type: commandType, ...commandData } = command as StudioEventCommandData<StudioEventCommandPlaySound>;
   const { canClose, getFormData, reload, defaults, formRef } = useZodForm(PLAY_SOUND_EDITOR_SCHEMA, commandData);
-  const { Select } = useNodeInputAttrsWithLabel(PLAY_SOUND_EDITOR_SCHEMA, defaults);
+  const { Input, Select } = useNodeInputAttrsWithLabel(PLAY_SOUND_EDITOR_SCHEMA, defaults);
   const { t } = useTranslation();
   const [channel, setChannel] = useState(defaults['channel']);
 
@@ -58,6 +58,7 @@ export const PlaySoundCommand = ({ id, data: { dialogsRef, command, comments }, 
           value={channel}
           defaultValue={undefined}
         />
+        <Input name="filename" label={t('event_command_audio_file')} disabled />
       </InputFormContainer>
     </CommandNode>
   );
