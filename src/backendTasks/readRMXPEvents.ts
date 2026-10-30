@@ -1,3 +1,4 @@
+import { AudioChannel } from '@modelEntities/event/globalCommand';
 import type {
   RMXPEvent,
   RMXPEventCommand,
@@ -10,6 +11,7 @@ import type {
 import { padStr } from '@utils/PadStr';
 import { isRecord } from '@utils/rmxpUtils';
 import log from 'electron-log';
+import fs from 'fs';
 import fsPromise from 'fs/promises';
 import path from 'path';
 import { isMarshalHash, isMarshalStandardObject, Marshal, MarshalHash } from 'ts-marshal';
@@ -20,6 +22,8 @@ import { isMapObject } from './readRMXPMap';
 
 export type ReadRMXPEventInput = { projectPath: string; mapId: number; eventIds?: number[] };
 export type ReadRMXPEventOutput = { rmxpEvents: RMXPEvent[] };
+
+const AUDIO_EXT = ['aac', 'flac', 'mid', 'midi', 'mp3', 'ogg', 'wav'] as const;
 
 type EventPageConditionData = {
   '@switch1_valid': boolean;
@@ -193,6 +197,38 @@ const isEventObject = (object: unknown): object is EventData =>
   Array.isArray(object['@pages']) &&
   object['@pages'].reduce<boolean>((prev, page) => prev && isEventPageObject(page), true);
 
+const audioCommandCodeToAudioChannel: Record<number, AudioChannel> = { 241: 'bgm', 245: 'bgs', 249: 'me', 250: 'se' };
+
+const searchAudioFileExtension = (name: string, type: AudioChannel, projectPath: string) => {
+  const filePath = path.join(projectPath, 'audio', type, name);
+  const extFound = AUDIO_EXT.find((ext) => fs.existsSync(`${filePath}.${ext}`));
+  if (!extFound) {
+    log.warn('extension not found for the audio file:', name);
+    return name;
+  }
+  return path.join(`${name}.${extFound}`);
+};
+
+// Update the event to add the file extensions for commands that use resources
+const mutateEventFileExtensions = (event: RMXPEvent | undefined, projectPath: string) => {
+  if (!event) return;
+
+  event.pages.forEach((page) =>
+    page.list.forEach((command) => {
+      const code = command.code;
+      // audio commands
+      if ([241, 245, 249, 250].includes(code)) {
+        const parameter = command.parameters[0] as Array<string | number>;
+        if (!parameter || !Array.isArray(parameter)) return;
+
+        const name = parameter[1] as string;
+        parameter[1] = searchAudioFileExtension(name, audioCommandCodeToAudioChannel[code], projectPath);
+      }
+      // TODO: image command(s) for png
+    }),
+  );
+};
+
 const buildCondition = (condition: EventPageConditionData): RMXPEventPageCondition => ({
   isSwitch1: condition['@switch1_valid'],
   isSwitch2: condition['@switch2_valid'],
@@ -289,11 +325,12 @@ const buildEvents = (eventHash: MarshalHash, mapId: number) => {
     .filter(<T>(data: T): data is Exclude<T, undefined> => !!data);
 };
 
-const buildEvent = (eventHash: MarshalHash, mapId: number, eventId: string) => {
+const buildEvent = (eventHash: MarshalHash, mapId: number, eventId: string, projectPath: string) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { __class, __extendedModules, __default, ...events } = eventHash;
   const data = events[eventId];
   const rmxpEvent = buildRMXPEvent(mapId, eventId, data);
+  mutateEventFileExtensions(rmxpEvent, projectPath);
   return rmxpEvent;
 };
 
@@ -308,7 +345,9 @@ export const readRMXPEvents = async (projectPath: string, mapId: number, eventId
   if (!isMarshalHash(eventsData)) throw new Error('Loaded object is not a Hash');
 
   if (eventIds) {
-    return eventIds.map((eventId) => buildEvent(eventsData, mapId, eventId.toString())).filter(<T>(data: T): data is Exclude<T, undefined> => !!data);
+    return eventIds
+      .map((eventId) => buildEvent(eventsData, mapId, eventId.toString(), projectPath))
+      .filter(<T>(data: T): data is Exclude<T, undefined> => !!data);
   }
   return buildEvents(eventsData, mapId);
 };
