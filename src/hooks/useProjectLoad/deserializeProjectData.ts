@@ -1,20 +1,21 @@
 import { ABILITY_VALIDATOR } from '@modelEntities/ability';
 import { CREATURE_VALIDATOR } from '@modelEntities/creature';
 import { DEX_VALIDATOR } from '@modelEntities/dex';
+import { EVENT_VALIDATOR } from '@modelEntities/event/event';
 import { GROUP_VALIDATOR } from '@modelEntities/group';
 import { ITEM_VALIDATOR } from '@modelEntities/item';
 import { MAP_VALIDATOR } from '@modelEntities/map';
 import { MAP_LINK_VALIDATOR } from '@modelEntities/mapLink';
 import { MOVE_VALIDATOR } from '@modelEntities/move';
+import { NATURE_VALIDATOR } from '@modelEntities/nature';
 import { QUEST_VALIDATOR } from '@modelEntities/quest';
 import { TRAINER_VALIDATOR } from '@modelEntities/trainer';
+import { TRAINER_CLASS_VALIDATOR } from '@modelEntities/trainerClass';
 import { TYPE_VALIDATOR } from '@modelEntities/type';
 import { ZONE_VALIDATOR } from '@modelEntities/zone';
-import { NATURE_VALIDATOR } from '@modelEntities/nature';
-import { EVENT_VALIDATOR } from '@modelEntities/event/event';
 import type { ProjectData } from '@src/GlobalStateProvider';
 import { zodDataToEntries } from '@utils/SerializationUtils';
-import { countZodDiscriminatedDataIntegrityFailure, countZodDataIntegrityFailure } from './helpers';
+import { countZodDataIntegrityFailure, countZodDiscriminatedDataIntegrityFailure } from './helpers';
 import type { ProjectLoadStateObject } from './types';
 
 export const deserializeProjectData = (state: Extract<ProjectLoadStateObject, { state: 'deserializeProjectData' }>) => {
@@ -25,6 +26,7 @@ export const deserializeProjectData = (state: Extract<ProjectLoadStateObject, { 
     moves: zodDataToEntries(countZodDataIntegrityFailure(state.projectData.moves, MOVE_VALIDATOR, integrityFailureCount)),
     pokemon: zodDataToEntries(countZodDataIntegrityFailure(state.projectData.pokemon, CREATURE_VALIDATOR, integrityFailureCount)),
     quests: zodDataToEntries(countZodDataIntegrityFailure(state.projectData.quests, QUEST_VALIDATOR, integrityFailureCount)),
+    trainerClasses: zodDataToEntries(countZodDataIntegrityFailure(state.projectData.trainerClasses, TRAINER_CLASS_VALIDATOR, integrityFailureCount)),
     trainers: zodDataToEntries(countZodDataIntegrityFailure(state.projectData.trainers, TRAINER_VALIDATOR, integrityFailureCount)),
     types: zodDataToEntries(countZodDataIntegrityFailure(state.projectData.types, TYPE_VALIDATOR, integrityFailureCount)),
     zones: zodDataToEntries(countZodDataIntegrityFailure(state.projectData.zones, ZONE_VALIDATOR, integrityFailureCount)),
