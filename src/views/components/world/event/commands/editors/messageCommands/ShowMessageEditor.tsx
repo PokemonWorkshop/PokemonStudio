@@ -107,7 +107,7 @@ export const ShowMessageEditor = forwardRef<EditorHandlingClose, EventEditorProp
 
   return (
     <EditorWithCollapse type="edit" title={t(`event_command_show_message`)}>
-      <InputFormContainer ref={formRef} size="m">
+      <InputFormContainer ref={formRef} size="m" onSubmit={(e) => e.preventDefault()}>
         <PaddedInputContainer>
           <InputContainer size="xxs">
             <InputWithTopLabelContainer>

@@ -1,8 +1,9 @@
 import type { StudioEventCommand, StudioEventCommandData, StudioEventCommandType } from '@modelEntities/event/command';
 import { StudioEvent } from '@modelEntities/event/event';
+import { AudioBackgroundChannel, AudioChannel } from '@modelEntities/event/globalCommand';
 import { findFirstAvailablePriorityEvent, findMultipleAvailableTextIdsEvent } from './ModelUtils';
 
-const createShowMessageCommand = (event: StudioEvent) => {
+export const createShowMessageCommand = (event: StudioEvent) => {
   const ids = findMultipleAvailableTextIdsEvent(event, 0, 2, []);
   return {
     message: ids[0],
@@ -19,7 +20,7 @@ const createShowMessageCommand = (event: StudioEvent) => {
   };
 };
 
-const createShowChoiceCommand = (event: StudioEvent) => {
+export const createShowChoiceCommand = (event: StudioEvent) => {
   const ids = findMultipleAvailableTextIdsEvent(event, 0, 2, []);
   return {
     choices: [ids[0], ids[1]],
@@ -28,21 +29,32 @@ const createShowChoiceCommand = (event: StudioEvent) => {
   };
 };
 
-const createWaitMovementCompletionCommand = () => {
+export const createWaitMovementCompletionCommand = () => {
   return {
-    waitAllEvents: false,
+    waitAllEvents: true,
     waitById: [],
     timeout: 0,
   };
 };
 
-const createOpenSaveMenuCommand = () => ({});
-const createManageAccessSaveMenuCommand = () => ({ action: 'enable' });
+export const createOpenSaveMenuCommand = () => ({});
+export const createManageAccessSaveMenuCommand = () => ({ action: 'enable' });
 
-const createReturnToTitleScreenCommand = () => ({});
-const createManageAccessMainMenuCommand = () => ({ action: 'enable' });
+export const createReturnToTitleScreenCommand = () => ({});
+export const createManageAccessMainMenuCommand = () => ({ action: 'enable' });
 
-const createInsertScriptCommand = () => ({ script: '' });
+export const createStartQuestCommand = () => ({ quests: [] });
+export const createCompleteQuestCommand = () => ({ quests: [] });
+export const createFailQuestCommand = () => ({ quests: [] });
+
+export const createMemorizeBackgroundSoundsCommand = () => ({ channels: ['bgm', 'bgs'] as AudioBackgroundChannel[] });
+export const createRestoreBackgroundSoundsCommand = () => ({ channels: ['bgm', 'bgs'] as AudioBackgroundChannel[] });
+export const createStopSoundsCommand = (_: StudioEvent, channels?: AudioChannel[], fadeTime?: number) => ({
+  channels: channels || (['bgm', 'bgs'] as AudioChannel[]),
+  fadeTime: fadeTime ?? 1,
+});
+
+export const createInsertScriptCommand = (_: StudioEvent, script?: string) => ({ script: script || '' });
 
 const createStartCommand = (event: StudioEvent) => {
   const priority = findFirstAvailablePriorityEvent(event, 1);
@@ -101,16 +113,17 @@ export const EventCommandCreation: Record<StudioEventCommandType, (event: Studio
     trigger_game_over: dummy,
     return_to_title_screen: createReturnToTitleScreenCommand,
     open_creature_shop: dummy,
-    start_quest: dummy,
+    start_quest: createStartQuestCommand,
     display_hidden_objective: dummy,
     validate_quest_objectives: dummy,
     display_quest_progress: dummy,
-    complete_quest: dummy,
+    complete_quest: createCompleteQuestCommand,
+    fail_quest: createFailQuestCommand,
     play_sound: dummy,
-    stop_current_sound: dummy,
+    stop_sounds: createStopSoundsCommand,
     change_default_sound: dummy,
-    memorize_background_sounds: dummy,
-    restore_background_sounds: dummy,
+    memorize_background_sounds: createMemorizeBackgroundSoundsCommand,
+    restore_background_sounds: createRestoreBackgroundSoundsCommand,
     play_creature_cry: dummy,
     change_screen_tone: dummy,
     display_animation: dummy,

@@ -11,7 +11,6 @@ import type { CheckMapModifiedInput, CheckMapModifiedOutput } from './backendTas
 import type { ChooseFileInput, ChooseFileOutput } from './backendTasks/chooseFile';
 import type { ChooseProjectFileToOpenInput } from './backendTasks/chooseProjectFileToOpen';
 import type { ConfigureNewProjectInput } from './backendTasks/configureNewProject';
-import type { RMXPEventsToStudioEventsInput, RMXPEventsToStudioEventsOutput } from './backendTasks/convertRMXPEventsToStudioEvents';
 import type { ConvertTMXInput } from './backendTasks/convertTiledMapToTileMetadata';
 import type { CopyFileInput } from './backendTasks/copyFile';
 import type { CopyTiledFilesInput, CopyTiledFilesOutput } from './backendTasks/copyTiledFiles';
@@ -160,7 +159,6 @@ contextBridge.exposeInMainWorld('api', {
   saveCompilationLogs: defineBackendTask(ipcRenderer, 'save-compilation-logs'),
   synchronizeLanguage: defineBackendTask(ipcRenderer, 'synchronize-language'),
   readRMXPEvents: defineBackendTask(ipcRenderer, 'read-rmxp-events'),
-  convertRMXPEventsToStudioEvents: defineBackendTask(ipcRenderer, 'convert-rmxp-events-to-studio-events'),
 });
 
 type AnyObj = Record<string, never>;
@@ -255,7 +253,6 @@ declare global {
       saveCompilationLogs: BackendTaskWithGenericErrorAndNoProgress<SaveCompilationLogsInput, AnyObj>;
       synchronizeLanguage: BackendTaskWithGenericErrorAndNoProgress<SynchronizeLanguageInput, AnyObj>;
       readRMXPEvents: BackendTaskWithGenericErrorAndNoProgress<ReadRMXPEventInput, ReadRMXPEventOutput>;
-      convertRMXPEventsToStudioEvents: BackendTaskWithGenericErrorAndNoProgress<RMXPEventsToStudioEventsInput, RMXPEventsToStudioEventsOutput>;
     };
   }
 }

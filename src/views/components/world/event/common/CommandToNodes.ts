@@ -2,11 +2,17 @@ import type { StudioEventCommandType } from '@modelEntities/event/command';
 import { JSX } from 'react';
 import type { CommandNodeProps } from '../commands/CommandNodeProps';
 import { DefaultCommand } from '../commands/DefaultCommand';
+import { MemorizeBackgroundSoundsCommand } from '../commands/nodes/audioCommands/MemorizeBackgroundSoundsCommand';
+import { RestoreBackgroundSoundsCommand } from '../commands/nodes/audioCommands/RestoreBackgroundSoundsCommand';
+import { StopSoundsCommand } from '../commands/nodes/audioCommands/StopSoundsCommand';
 import { ManageAccessMainMenuCommand } from '../commands/nodes/gameInterfaceCommands/ManageAccessMainMenuCommand';
 import { ReturnToTitleScreenCommand } from '../commands/nodes/gameInterfaceCommands/ReturnToTitleScreenCommand';
 import { ShowChoiceCommand } from '../commands/nodes/messageCommands/ShowChoiceCommand';
 import { ShowMessageCommand } from '../commands/nodes/messageCommands/ShowMessageCommand';
 import { WaitMovementCompletionCommand } from '../commands/nodes/movementCommands/WaitMovementCompletionCommand';
+import { CompleteQuestCommand } from '../commands/nodes/questCommands/completeQuestCommand';
+import { FailQuestCommand } from '../commands/nodes/questCommands/failQuestCommand';
+import { StartQuestCommand } from '../commands/nodes/questCommands/startQuestCommand';
 import { ManageAccessSaveMenuCommand } from '../commands/nodes/saveCommands/ManageAccessSaveMenuCommand';
 import { OpenSaveMenuCommand } from '../commands/nodes/saveCommands/OpenSaveMenuCommand';
 import { InsertScriptCommand } from '../commands/nodes/scriptCommands/InsertScriptCommand';
@@ -62,16 +68,17 @@ export const CommandToNodes: Record<StudioEventCommandType | 'shadow_node', (pro
   trigger_game_over: DefaultCommand,
   return_to_title_screen: ReturnToTitleScreenCommand,
   open_creature_shop: DefaultCommand,
-  start_quest: DefaultCommand,
+  start_quest: StartQuestCommand,
   display_hidden_objective: DefaultCommand,
   validate_quest_objectives: DefaultCommand,
   display_quest_progress: DefaultCommand,
-  complete_quest: DefaultCommand,
+  complete_quest: CompleteQuestCommand,
+  fail_quest: FailQuestCommand,
   play_sound: DefaultCommand,
-  stop_current_sound: DefaultCommand,
+  stop_sounds: StopSoundsCommand,
   change_default_sound: DefaultCommand,
-  memorize_background_sounds: DefaultCommand,
-  restore_background_sounds: DefaultCommand,
+  memorize_background_sounds: MemorizeBackgroundSoundsCommand,
+  restore_background_sounds: RestoreBackgroundSoundsCommand,
   play_creature_cry: DefaultCommand,
   change_screen_tone: DefaultCommand,
   display_animation: DefaultCommand,

@@ -84,7 +84,7 @@ export const ShowMessageCommand = ({ id, data: { dialogsRef: commandDialogsRef, 
   return (
     <>
       <CommandNode commandType={commandType} commentCount={comments.length} dialogsRef={commandDialogsRef} nodeId={id} selected={selected}>
-        <InputFormContainer onBlur={onBlur}>
+        <InputFormContainer onBlur={onBlur} onSubmit={(e) => e.preventDefault()}>
           <InputWithTopLabelContainer>
             <Label htmlFor="narrator">{t('event_command_narrator')}</Label>
             <TranslateInputContainer onTranslateClick={handleTranslateNarratorClick}>

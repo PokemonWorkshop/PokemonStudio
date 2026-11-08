@@ -1,4 +1,7 @@
 import { z } from 'zod';
+import { EVENT_COMMAND_MEMORIZE_BACKGROUND_SOUNDS_VALIDATOR } from './audioCommands/memorizeBackgroundSounds';
+import { EVENT_COMMAND_RESTORE_BACKGROUND_SOUNDS_VALIDATOR } from './audioCommands/restoreBackgroundSounds';
+import { EVENT_COMMAND_STOP_SOUNDS_VALIDATOR } from './audioCommands/stopSounds';
 import type { StudioEventCommandCategory } from './category';
 import { EVENT_COMMAND_MANAGE_ACCESS_MAIN_MENU_VALIDATOR } from './gameInterfaceCommands/manageAccessMainMenu';
 import { EVENT_COMMAND_RETURN_TO_TITLE_SCREEN_VALIDATOR } from './gameInterfaceCommands/returnToTitleScreen';
@@ -6,6 +9,9 @@ import { COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_CONNECTION_VALIDATOR, EV
 import { EVENT_COMMAND_SHOW_CHOICE_VALIDATOR } from './messageCommands/showChoice';
 import { EVENT_COMMAND_SHOW_MESSAGE_VALIDATOR } from './messageCommands/showMessage';
 import { EVENT_COMMAND_WAIT_MOVEMENT_COMPLETION_VALIDATOR } from './movementCommands/waitMovementCompletion';
+import { EVENT_COMMAND_COMPLETE_QUEST_VALIDATOR } from './questCommands/completeQuest';
+import { EVENT_COMMAND_FAIL_QUEST_VALIDATOR } from './questCommands/failQuest';
+import { EVENT_COMMAND_START_QUEST_VALIDATOR } from './questCommands/startQuest';
 import { EVENT_COMMAND_MANAGE_ACCESS_SAVE_MENU_VALIDATOR } from './saveCommands/manageAccessSaveMenu';
 import { EVENT_COMMAND_OPEN_SAVE_MENU_VALIDATOR } from './saveCommands/openSaveMenu';
 import { EVENT_COMMAND_INSERT_SCRIPT_VALIDATOR } from './scriptCommands/insertScript';
@@ -69,16 +75,17 @@ export const EVENT_COMMAND_VALIDATOR = z.discriminatedUnion('type', [
   GENERIC_COMMAND('trigger_game_over'),
   EVENT_COMMAND_RETURN_TO_TITLE_SCREEN_VALIDATOR,
   GENERIC_COMMAND('open_creature_shop'),
-  GENERIC_COMMAND('start_quest'),
+  EVENT_COMMAND_START_QUEST_VALIDATOR,
   GENERIC_COMMAND('display_hidden_objective'),
   GENERIC_COMMAND('validate_quest_objectives'),
   GENERIC_COMMAND('display_quest_progress'),
-  GENERIC_COMMAND('complete_quest'),
+  EVENT_COMMAND_COMPLETE_QUEST_VALIDATOR,
+  EVENT_COMMAND_FAIL_QUEST_VALIDATOR,
   GENERIC_COMMAND('play_sound'),
-  GENERIC_COMMAND('stop_current_sound'),
+  EVENT_COMMAND_STOP_SOUNDS_VALIDATOR,
   GENERIC_COMMAND('change_default_sound'),
-  GENERIC_COMMAND('memorize_background_sounds'),
-  GENERIC_COMMAND('restore_background_sounds'),
+  EVENT_COMMAND_MEMORIZE_BACKGROUND_SOUNDS_VALIDATOR,
+  EVENT_COMMAND_RESTORE_BACKGROUND_SOUNDS_VALIDATOR,
   GENERIC_COMMAND('play_creature_cry'),
   GENERIC_COMMAND('change_screen_tone'),
   GENERIC_COMMAND('display_animation'),
@@ -175,10 +182,11 @@ export const COMMANDS_FROM_CATEGORY: Record<StudioEventCommandCategory, EventCom
     { commandType: 'validate_quest_objectives' },
     { commandType: 'display_quest_progress' },
     { commandType: 'complete_quest', helper: true },
+    { commandType: 'fail_quest' },
   ],
   audio: [
     { commandType: 'play_sound' },
-    { commandType: 'stop_current_sound' },
+    { commandType: 'stop_sounds' },
     { commandType: 'change_default_sound' },
     { commandType: 'memorize_background_sounds' },
     { commandType: 'restore_background_sounds' },

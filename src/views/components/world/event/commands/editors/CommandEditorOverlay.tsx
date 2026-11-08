@@ -5,12 +5,18 @@ import type { StudioEvent } from '@modelEntities/event/event';
 import type { CommandId } from '@modelEntities/event/globalCommand';
 import { assertUnreachable } from '@utils/assertUnreachable';
 import React from 'react';
+import { MemorizeBackgroundSoundsEditor } from './audioCommands/MemorizeBackgroundSoundsEditor';
+import { RestoreBackgroundSoundsEditor } from './audioCommands/RestoreBackgroundSoundsEditor';
+import { StopSoundsEditor } from './audioCommands/stopSoundsEditor';
 import { DefaultEditor } from './DefaultEditor';
 import { ManageAccessMainMenuEditor } from './gameInterfaceCommands/ManageAccessMainMenuEditor';
 import { ReturnToTitleScreenEditor } from './gameInterfaceCommands/ReturnToTitleScreenEditor';
 import { ShowChoiceEditor } from './messageCommands/ShowChoiceEditor';
 import { ShowMessageEditor } from './messageCommands/ShowMessageEditor';
 import { WaitMovementCompletionEditor } from './movementCommands/WaitMovementCompletionEditor';
+import { CompleteQuestEditor } from './questCommands/CompleteQuestEditor';
+import { FailQuestEditor } from './questCommands/FailQuestEditor';
+import { StartQuestEditor } from './questCommands/StartQuestEditor';
 import { ManageAccessSaveMenuEditor } from './saveCommands/ManageAccessSaveMenuEditor';
 import { OpenSaveMenuEditor } from './saveCommands/OpenSaveMenuEditor';
 import { InsertScriptEditor } from './scriptCommands/InsertScriptEditor';
@@ -82,16 +88,17 @@ export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletion
       case 'return_to_title_screen':
         return <ReturnToTitleScreenEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'open_creature_shop':
-      case 'start_quest':
       case 'display_hidden_objective':
       case 'validate_quest_objectives':
       case 'display_quest_progress':
-      case 'complete_quest':
       case 'play_sound':
-      case 'stop_current_sound':
+      case 'stop_sounds':
+        return <StopSoundsEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'change_default_sound':
       case 'memorize_background_sounds':
+        return <MemorizeBackgroundSoundsEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'restore_background_sounds':
+        return <RestoreBackgroundSoundsEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'play_creature_cry':
       case 'change_screen_tone':
       case 'display_animation':
@@ -105,6 +112,12 @@ export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletion
       case 'manage_map_panorama':
       case 'change_battle_background':
         return <DefaultEditor ref={handleCloseRef} />;
+      case 'start_quest':
+        return <StartQuestEditor commandId={commandId} event={event} ref={handleCloseRef} />;
+      case 'complete_quest':
+        return <CompleteQuestEditor commandId={commandId} event={event} ref={handleCloseRef} />;
+      case 'fail_quest':
+        return <FailQuestEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'insert_script':
         return <InsertScriptEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'start':

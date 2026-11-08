@@ -2,9 +2,10 @@ import { Editor } from '@components/editor';
 import { EditorHandlingClose, useEditorHandlingClose } from '@components/editor/useHandleCloseEditor';
 import { InputWithLeftLabelContainer, InputWithTopLabelContainer, Label } from '@components/inputs';
 import { InputFormContainer } from '@components/inputs/InputContainer';
+import type { MultiSelectValidation } from '@ds/MultiSelect';
 import {
   EVENT_COMMAND_WAIT_MOVEMENT_COMPLETION_VALIDATOR,
-  StudioEventWaitMovementCompletion,
+  StudioEventCommandWaitMovementCompletion,
 } from '@modelEntities/event/movementCommands/waitMovementCompletion';
 import { useInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
 import { useZodForm } from '@src/hooks/useZodForm';
@@ -30,7 +31,7 @@ const WAIT_MOVEMENT_COMPLETION_EDITOR_SCHEMA = EVENT_COMMAND_WAIT_MOVEMENT_COMPL
 });
 
 export const WaitMovementCompletionEditor = forwardRef<EditorHandlingClose, EventEditorProps>(({ commandId: defaultCommandId, event }, ref) => {
-  const { command, updateCommand } = useCommandEditor<StudioEventWaitMovementCompletion>(event, defaultCommandId);
+  const { command, updateCommand } = useCommandEditor<StudioEventCommandWaitMovementCompletion>(event, defaultCommandId);
   const commandDataForForm = useMemo(
     () => ({
       ...command,
@@ -39,9 +40,10 @@ export const WaitMovementCompletionEditor = forwardRef<EditorHandlingClose, Even
     [command.waitAllEvents, command.waitById, command.timeout],
   );
   const { globalStaticEvent } = useSharedOptions();
-  const { canClose, getFormData, getRawFormData, defaults, formRef } = useZodForm(WAIT_MOVEMENT_COMPLETION_EDITOR_SCHEMA, commandDataForForm);
+  const { canClose, getFormData, defaults, formRef } = useZodForm(WAIT_MOVEMENT_COMPLETION_EDITOR_SCHEMA, commandDataForForm);
   const { EmbeddedUnitInput, Select, MultiSelect } = useInputAttrsWithLabel(WAIT_MOVEMENT_COMPLETION_EDITOR_SCHEMA, defaults);
   const timeoutRef = useRef<HTMLInputElement>(null);
+  const validationRef = useRef<MultiSelectValidation>(null);
   const { t } = useTranslation();
 
   const [waitEvent, setWaitEvent] = useState<string>(command.waitAllEvents ? 'all' : 'some');
@@ -65,13 +67,14 @@ export const WaitMovementCompletionEditor = forwardRef<EditorHandlingClose, Even
     [event?.dbSymbol],
   );
 
-  const onClose = () => {
-    const rawData = getRawFormData();
-    const waitById = (rawData.waitById as string[] | undefined) ?? [];
-    const waitByIdIsInvalid = waitEvent === 'some' && waitById.length === 0;
-    if (waitByIdIsInvalid) return;
+  const canCloseWithWaitById = () => {
+    if (waitEvent === 'some' && !validationRef.current?.validate()) return false;
 
-    const result = canClose() && getFormData();
+    return canClose();
+  };
+
+  const onClose = () => {
+    const result = canCloseWithWaitById() && getFormData();
     if (!result || !result.success) return;
 
     updateCommand({
@@ -82,18 +85,11 @@ export const WaitMovementCompletionEditor = forwardRef<EditorHandlingClose, Even
     });
   };
 
-  const canCloseWithWaitById = () => {
-    const rawData = getRawFormData();
-    const waitById = (rawData.waitById as string[] | undefined) ?? [];
-    if (waitEvent === 'some' && waitById.length === 0) return false;
-
-    return canClose();
-  };
   useEditorHandlingClose(ref, onClose, canCloseWithWaitById);
 
   return (
     <Editor type="edit" title={t('event_command_wait_move_completion')}>
-      <InputFormContainer ref={formRef}>
+      <InputFormContainer ref={formRef} onSubmit={(e) => e.preventDefault()}>
         <Select
           name="waitAllEvents"
           label={t('event_command_wait_move_completion_select')}
@@ -108,6 +104,7 @@ export const WaitMovementCompletionEditor = forwardRef<EditorHandlingClose, Even
             label={t('event_command_wait_move_completion_multiselect_label')}
             options={eventToWaitOptions}
             value={command.waitById}
+            validationRef={validationRef}
             required
           />
         )}
