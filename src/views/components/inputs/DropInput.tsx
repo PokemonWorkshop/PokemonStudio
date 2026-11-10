@@ -1,9 +1,9 @@
-import React, { DragEventHandler, useState } from 'react';
-import styled from 'styled-components';
 import FileDrop from '@assets/icons/global/drop.svg';
-import { useTranslation } from 'react-i18next';
 import { useChoosefile } from '@hooks/useChooseFile';
 import { useCopyFile } from '@hooks/useCopyFile';
+import React, { DragEventHandler, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 export const DropInputContainer = styled.div`
   display: flex;
@@ -74,6 +74,7 @@ type DropInputProps = {
   name: string;
   extensions: string[];
   showAcceptedFormat?: true;
+  includeSubfolders?: true;
   onFileChoosen: (filePath: string) => void;
 };
 
@@ -85,6 +86,7 @@ export const DropInput = ({
   name,
   extensions,
   showAcceptedFormat,
+  includeSubfolders,
   onFileChoosen,
 }: DropInputProps) => {
   const { t } = useTranslation();
@@ -103,11 +105,11 @@ export const DropInput = ({
       onFileChoosen(acceptedFilesPath);
     } else {
       copyFile(
-        { srcFile: acceptedFilesPath, destFolder: destFolderToCopy },
+        { srcFile: acceptedFilesPath, destFolder: destFolderToCopy, includeSubfolders },
         ({ destFile }) => {
           setTimeout(() => onFileChoosen(destFile));
         },
-        ({ errorMessage }) => window.api.log.error(errorMessage)
+        ({ errorMessage }) => window.api.log.error(errorMessage),
       );
     }
   };
@@ -115,14 +117,14 @@ export const DropInput = ({
   const onClick = async () => {
     setIsDialogOpen(true);
     chooseFile(
-      { name, extensions, destFolderToCopy },
+      { name, extensions, destFolderToCopy, includeSubfolders },
       ({ path }) => {
         setTimeout(() => {
           onFileChoosen(path);
           setIsDialogOpen(false);
         });
       },
-      () => setIsDialogOpen(false)
+      () => setIsDialogOpen(false),
     );
   };
 

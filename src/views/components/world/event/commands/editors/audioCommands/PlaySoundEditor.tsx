@@ -7,7 +7,7 @@ import { EVENT_COMMAND_PLAY_SOUND_VALIDATOR, StudioEventCommandPlaySound } from 
 import { useGlobalState } from '@src/GlobalStateProvider';
 import { useInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
 import { useZodForm } from '@src/hooks/useZodForm';
-import { basename } from '@utils/path';
+import { join, relative } from '@utils/path';
 import React, { forwardRef, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCommandEditor } from '../../../hooks/useCommandEditor';
@@ -36,11 +36,9 @@ export const PlaySoundEditor = forwardRef<EditorHandlingClose, EventEditorProps>
   const onChangeSound = (filepath: string) => {
     if (!filenameRef.current || !projectPath) return;
 
-    // TODO: doesn't work because the implemented copy logic does not take subfolders into account
-    /*console.log(filepath);
-    const newFilename = filepath.replaceAll(projectPath, '');
-    console.log(newFilename);*/
-    const newFilename = basename(filepath);
+    const newFilename = relative(join(projectPath, 'audio'), filepath);
+    if (!newFilename) return;
+
     setFilename(newFilename);
     filenameRef.current.value = newFilename;
   };
@@ -66,14 +64,17 @@ export const PlaySoundEditor = forwardRef<EditorHandlingClose, EventEditorProps>
               extensions={AUDIO_EXT}
               destFolderToCopy="audio"
               onFileChoosen={(filePath) => onChangeSound(filePath)}
+              includeSubfolders
             />
           ) : (
             <FileInput
               filePath={`audio/${filename}`}
               name={t('event_command_audio_file')}
               extensions={AUDIO_EXT}
+              destFolderToCopy="audio"
               onFileChoosen={(filePath) => onChangeSound(filePath)}
               onFileClear={() => onChangeSound('')}
+              includeSubfolders
               noIcon
             />
           )}

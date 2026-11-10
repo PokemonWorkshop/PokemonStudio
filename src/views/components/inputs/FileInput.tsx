@@ -1,13 +1,13 @@
-import React, { DragEventHandler, useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { ClearButtonOnlyIcon, EditButtonOnlyIcon } from '@components/buttons';
-import { basename, join } from '@utils/path';
-import { showNotification } from '@utils/showNotification';
-import { useTranslation } from 'react-i18next';
-import { useChoosefile } from '@hooks/useChooseFile';
 import ImageIcon from '@assets/icons/global/image.svg';
-import { useGlobalState } from '@src/GlobalStateProvider';
+import { ClearButtonOnlyIcon, EditButtonOnlyIcon } from '@components/buttons';
+import { useChoosefile } from '@hooks/useChooseFile';
 import { useCopyFile } from '@hooks/useCopyFile';
+import { useGlobalState } from '@src/GlobalStateProvider';
+import { basename, dirname, join, relative } from '@utils/path';
+import { showNotification } from '@utils/showNotification';
+import React, { DragEventHandler, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 const FileInputContainer = styled.div`
   display: flex;
@@ -60,6 +60,23 @@ const onDragOver: DragEventHandler<HTMLDivElement> = (event) => {
   event.stopPropagation();
 };
 
+export const getDisplayPath = (filePath: string, destFolder?: string, showFullPath?: boolean, includeSubfolders?: boolean): string => {
+  if (showFullPath) return filePath;
+
+  const filename = basename(filePath);
+  if (!destFolder) return filename;
+
+  if (includeSubfolders) {
+    const srcFileDirname = dirname(filePath);
+    const relativeDir = relative(destFolder, srcFileDirname);
+    if (!relativeDir) return filename;
+
+    return `${relativeDir}/${filename}`;
+  }
+
+  return filename;
+};
+
 type FileInputProps = {
   filePath: string;
   name: string;
@@ -68,6 +85,7 @@ type FileInputProps = {
   isAbsolutePath?: true;
   noIcon?: true;
   showFullPath?: true;
+  includeSubfolders?: true;
   onFileChoosen: (filePath: string) => void;
   onFileClear: () => void;
 };
@@ -85,6 +103,7 @@ export const FileInput = ({
   isAbsolutePath,
   noIcon,
   showFullPath,
+  includeSubfolders,
   onFileChoosen,
   onFileClear,
 }: FileInputProps) => {
@@ -106,11 +125,11 @@ export const FileInput = ({
       onFileChoosen(acceptedFilesPath);
     } else {
       copyFile(
-        { srcFile: acceptedFilesPath, destFolder: destFolderToCopy },
+        { srcFile: acceptedFilesPath, destFolder: destFolderToCopy, includeSubfolders },
         ({ destFile }) => {
           setTimeout(() => onFileChoosen(destFile));
         },
-        ({ errorMessage }) => window.api.log.error(errorMessage)
+        ({ errorMessage }) => window.api.log.error(errorMessage),
       );
     }
   };
@@ -118,14 +137,14 @@ export const FileInput = ({
   const onClick = async () => {
     setIsDialogOpen(true);
     chooseFile(
-      { name, extensions, destFolderToCopy },
+      { name, extensions, destFolderToCopy, includeSubfolders },
       ({ path }) => {
         setTimeout(() => {
           onFileChoosen(path);
           setIsDialogOpen(false);
         });
       },
-      () => setIsDialogOpen(false)
+      () => setIsDialogOpen(false),
     );
   };
 
@@ -138,7 +157,7 @@ export const FileInput = ({
       ({ errorMessage }) => {
         setError(true);
         showNotification('danger', t('error'), errorMessage);
-      }
+      },
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filePath]);
@@ -151,7 +170,11 @@ export const FileInput = ({
             <ImageIcon />
           </div>
         )}
-        {error ? <span className="error">{t('no_file_found')}</span> : <span>{showFullPath ? filePath : basename(filePath)}</span>}
+        {error ? (
+          <span className="error">{t('no_file_found')}</span>
+        ) : (
+          <span>{getDisplayPath(filePath, destFolderToCopy, showFullPath, includeSubfolders)}</span>
+        )}
       </div>
       <div className="buttons">
         <EditButtonOnlyIcon disabled={isDialogOpen} onClick={isDialogOpen ? undefined : onClick} />
