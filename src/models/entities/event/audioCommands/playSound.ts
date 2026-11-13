@@ -12,7 +12,7 @@ export const EVENT_COMMAND_PLAY_SOUND_VALIDATOR = z.object({
   connections: z.record(COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_CONNECTION_VALIDATOR),
   studioData: EVENT_COMMAND_STUDIO_DATA_VALIDATOR,
   channel: AUDIO_CHANNEL_VALIDATOR,
-  filename: z.string(),
+  filename: z.string().default(''),
   volume: POSITIVE_OR_ZERO_INT.max(100),
   pitch: POSITIVE_INT.min(50).max(150),
 });

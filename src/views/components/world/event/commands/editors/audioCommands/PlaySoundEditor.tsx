@@ -36,11 +36,17 @@ export const PlaySoundEditor = forwardRef<EditorHandlingClose, EventEditorProps>
   const onChangeSound = (filepath: string) => {
     if (!filenameRef.current || !projectPath) return;
 
-    const newFilename = relative(join(projectPath, 'audio'), filepath);
-    if (!newFilename) return;
+    if (filepath) {
+      const newFilename = relative(join(projectPath, 'audio'), filepath);
+      if (!newFilename) return;
 
-    setFilename(newFilename);
-    filenameRef.current.value = newFilename;
+      setFilename(newFilename);
+      filenameRef.current.value = newFilename;
+      return;
+    }
+
+    setFilename(filepath);
+    filenameRef.current.value = filepath;
   };
 
   const onClose = () => {
@@ -57,7 +63,7 @@ export const PlaySoundEditor = forwardRef<EditorHandlingClose, EventEditorProps>
         <Select name="channel" label={t(`event_command_channel_to_play`)} options={options} />
         <Input name="filename" ref={filenameRef} style={{ display: 'none' }} />
         <InputWithTopLabelContainer>
-          <Label required>{t('event_command_audio_file')}</Label>
+          <Label>{t('event_command_audio_file')}</Label>
           {!filename ? (
             <DropInput
               name={t('event_command_audio_file')}
