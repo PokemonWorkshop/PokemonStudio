@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { EVENT_COMMAND_MEMORIZE_BACKGROUND_SOUNDS_VALIDATOR } from './audioCommands/memorizeBackgroundSounds';
+import { EVENT_COMMAND_PLAY_SOUND_VALIDATOR } from './audioCommands/playSound';
 import { EVENT_COMMAND_RESTORE_BACKGROUND_SOUNDS_VALIDATOR } from './audioCommands/restoreBackgroundSounds';
 import { EVENT_COMMAND_STOP_SOUNDS_VALIDATOR } from './audioCommands/stopSounds';
 import type { StudioEventCommandCategory } from './category';
@@ -81,7 +82,7 @@ export const EVENT_COMMAND_VALIDATOR = z.discriminatedUnion('type', [
   GENERIC_COMMAND('display_quest_progress'),
   EVENT_COMMAND_COMPLETE_QUEST_VALIDATOR,
   EVENT_COMMAND_FAIL_QUEST_VALIDATOR,
-  GENERIC_COMMAND('play_sound'),
+  EVENT_COMMAND_PLAY_SOUND_VALIDATOR,
   EVENT_COMMAND_STOP_SOUNDS_VALIDATOR,
   GENERIC_COMMAND('change_default_sound'),
   EVENT_COMMAND_MEMORIZE_BACKGROUND_SOUNDS_VALIDATOR,

@@ -4,6 +4,7 @@ import {
   StudioEventCommandRestoreBackgroundSounds,
 } from '@modelEntities/event/audioCommands/restoreBackgroundSounds';
 import type { StudioEventCommandData } from '@modelEntities/event/command';
+import type { AudioBackgroundChannel } from '@modelEntities/event/globalCommand';
 import { useNodeInputAttrsWithLabel } from '@src/hooks/useInputAttrs';
 import { useZodForm } from '@src/hooks/useZodForm';
 import { TFunction } from 'i18next';
@@ -14,7 +15,7 @@ import { CommandNodeProps } from '../../CommandNodeProps';
 
 const RESTORE_BACKGROUND_SOUNDS_EDITOR_SCHEMA = EVENT_COMMAND_RESTORE_BACKGROUND_SOUNDS_VALIDATOR.pick({ channels: true });
 
-const updateCommandTitle = (channels: string[], t: TFunction) => {
+const updateCommandTitle = (channels: AudioBackgroundChannel[], t: TFunction) => {
   if (channels.includes('bgm') && channels.includes('bgs')) {
     return t('event_command_restore_background_sounds');
   } else if (channels.includes('bgm')) {

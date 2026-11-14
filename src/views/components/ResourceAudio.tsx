@@ -26,10 +26,19 @@ export const ResourceAudio = ({ audioPathInProject, versionId, className, fallba
   // fallback is not added to deps on purpose: there's no reason to update fallback if wanted audio did not update
   const audioSrc = useMemo(
     () => buildAudioSrc(audioPathInProject, projectPath || currentProjectPath || '', versionId, fallback),
-    [audioPathInProject, versionId, currentProjectPath, projectPath]
+    [audioPathInProject, versionId, currentProjectPath, projectPath],
   );
-
-  return <audio controls src={audioSrc} className={className} />;
+  return (
+    <audio
+      controls
+      src={audioSrc}
+      className={className}
+      onError={(e) => {
+        const { error } = e.currentTarget;
+        window.api.log.error('audio error', error?.code, error?.message);
+      }}
+    />
+  );
 };
 
 export const useResourceAudioSrc = (audioPathInProject: string, versionId?: number, fallback?: string, projectPath?: string) => {
@@ -37,6 +46,6 @@ export const useResourceAudioSrc = (audioPathInProject: string, versionId?: numb
   // fallback is not added to deps on purpose: there's no reason to update fallback if wanted audio did not update
   return useMemo(
     () => buildAudioSrc(audioPathInProject, projectPath || currentProjectPath || '', versionId, fallback),
-    [audioPathInProject, currentProjectPath, projectPath]
+    [audioPathInProject, currentProjectPath, projectPath],
   );
 };

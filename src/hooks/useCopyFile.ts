@@ -1,14 +1,15 @@
 import { useGlobalState } from '@src/GlobalStateProvider';
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { basename, dirname, join } from '@utils/path';
 import { showNotification } from '@utils/showNotification';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 type CopyFileFailureCallback = (error: { errorMessage: string }) => void;
 type CopyFileSuccessCallback = (payload: { destFile: string }) => void;
 type CopyFilePayload = {
   srcFile: string;
   destFolder: string;
+  includeSubfolders?: boolean;
 };
 
 type CopyFileStateObject = { state: 'done' } | { state: 'copyFile'; payload: CopyFilePayload };
@@ -23,11 +24,18 @@ export const useCopyFile = () => {
     if (state.state !== 'copyFile') return;
 
     const srcFileDirname = dirname(state.payload.srcFile).replaceAll('\\', '/');
-    if (srcFileDirname === join(globalState.projectPath || '', state.payload.destFolder).replaceAll('\\', '/')) {
+    const destFolderPath = join(globalState.projectPath || '', state.payload.destFolder).replaceAll('\\', '/');
+
+    const isAlreadyInPlace = state.payload.includeSubfolders
+      ? srcFileDirname === destFolderPath || srcFileDirname.startsWith(`${destFolderPath}/`)
+      : srcFileDirname === destFolderPath;
+
+    if (isAlreadyInPlace) {
       setState({ state: 'done' });
       callbacks?.onSuccess({ destFile: state.payload.srcFile });
       return;
     }
+
     const filename = basename(state.payload.srcFile);
     const destFile = join(globalState.projectPath || '', state.payload.destFolder, filename);
     return window.api.copyFile(
@@ -45,7 +53,7 @@ export const useCopyFile = () => {
       ({ errorMessage }) => {
         setState({ state: 'done' });
         callbacks?.onFailure({ errorMessage });
-      }
+      },
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state, callbacks]);
