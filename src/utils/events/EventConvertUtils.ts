@@ -168,9 +168,8 @@ export const createCustomEvent = (allEvents: ProjectData['events'], rmxpEvent: R
 const convertPlaySoundCommand = (_: StudioEvent, channel: AudioChannel, params: unknown[]): StudioEventCommandPlaySound => {
   const commandData = (params[0] as Array<string | number>) || [100, '', 100];
   const filename = (commandData[1] as string) || '';
-  const volume = (commandData[0] as number) || 100;
+  const volume = (commandData[0] as number) ?? 100;
   const pitch = (commandData[2] as number) || 100;
-  // TODO: add filename extension
   return {
     type: 'play_sound',
     connections: {},

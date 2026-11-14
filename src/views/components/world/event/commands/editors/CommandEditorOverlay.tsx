@@ -55,6 +55,7 @@ export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletion
       case 'move_event':
       case 'teleport_event':
       case 'teleport_player':
+        return <DefaultEditor ref={handleCloseRef} />;
       case 'wait_move_completion':
         return <WaitMovementCompletionEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'manage_event_reappearance':
@@ -73,6 +74,7 @@ export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletion
       case 'manage_dex':
       case 'set_active_dex':
       case 'give_badge':
+        return <DefaultEditor ref={handleCloseRef} />;
       case 'manage_access_save_menu':
         return <ManageAccessSaveMenuEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'open_save_menu':
@@ -83,20 +85,24 @@ export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletion
       case 'open_scene':
       case 'open_shop':
       case 'open_custom_scene':
+        return <DefaultEditor ref={handleCloseRef} />;
       case 'manage_access_main_menu':
         return <ManageAccessMainMenuEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'trigger_game_over':
+        return <DefaultEditor ref={handleCloseRef} />;
       case 'return_to_title_screen':
         return <ReturnToTitleScreenEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'open_creature_shop':
       case 'display_hidden_objective':
       case 'validate_quest_objectives':
       case 'display_quest_progress':
+        return <DefaultEditor ref={handleCloseRef} />;
       case 'play_sound':
         return <PlaySoundEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'stop_sounds':
         return <StopSoundsEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'change_default_sound':
+        return <DefaultEditor ref={handleCloseRef} />;
       case 'memorize_background_sounds':
         return <MemorizeBackgroundSoundsEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'restore_background_sounds':

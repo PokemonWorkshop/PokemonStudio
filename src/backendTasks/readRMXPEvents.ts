@@ -349,7 +349,10 @@ export const readRMXPEvents = async (projectPath: string, mapId: number, eventId
       .map((eventId) => buildEvent(eventsData, mapId, eventId.toString(), projectPath))
       .filter(<T>(data: T): data is Exclude<T, undefined> => !!data);
   }
-  return buildEvents(eventsData, mapId);
+
+  const events = buildEvents(eventsData, mapId);
+  events.forEach((event) => mutateEventFileExtensions(event, projectPath));
+  return events;
 };
 
 const readRMXPEventsBackendService = async (payload: ReadRMXPEventInput): Promise<ReadRMXPEventOutput> => {
