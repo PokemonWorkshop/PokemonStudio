@@ -89,7 +89,7 @@ export const WaitMovementCompletionEditor = forwardRef<EditorHandlingClose, Even
 
   return (
     <Editor type="edit" title={t('event_command_wait_move_completion')}>
-      <InputFormContainer ref={formRef}>
+      <InputFormContainer ref={formRef} onSubmit={(e) => e.preventDefault()}>
         <Select
           name="waitAllEvents"
           label={t('event_command_wait_move_completion_select')}

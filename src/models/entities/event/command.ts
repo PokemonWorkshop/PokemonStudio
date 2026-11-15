@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { EVENT_COMMAND_MEMORIZE_BACKGROUND_SOUNDS_VALIDATOR } from './audioCommands/memorizeBackgroundSounds';
 import { EVENT_COMMAND_RESTORE_BACKGROUND_SOUNDS_VALIDATOR } from './audioCommands/restoreBackgroundSounds';
+import { EVENT_COMMAND_STOP_SOUNDS_VALIDATOR } from './audioCommands/stopSounds';
 import type { StudioEventCommandCategory } from './category';
 import { EVENT_COMMAND_MANAGE_ACCESS_MAIN_MENU_VALIDATOR } from './gameInterfaceCommands/manageAccessMainMenu';
 import { EVENT_COMMAND_RETURN_TO_TITLE_SCREEN_VALIDATOR } from './gameInterfaceCommands/returnToTitleScreen';
@@ -81,7 +82,7 @@ export const EVENT_COMMAND_VALIDATOR = z.discriminatedUnion('type', [
   EVENT_COMMAND_COMPLETE_QUEST_VALIDATOR,
   EVENT_COMMAND_FAIL_QUEST_VALIDATOR,
   GENERIC_COMMAND('play_sound'),
-  GENERIC_COMMAND('stop_current_sound'),
+  EVENT_COMMAND_STOP_SOUNDS_VALIDATOR,
   GENERIC_COMMAND('change_default_sound'),
   EVENT_COMMAND_MEMORIZE_BACKGROUND_SOUNDS_VALIDATOR,
   EVENT_COMMAND_RESTORE_BACKGROUND_SOUNDS_VALIDATOR,
@@ -185,7 +186,7 @@ export const COMMANDS_FROM_CATEGORY: Record<StudioEventCommandCategory, EventCom
   ],
   audio: [
     { commandType: 'play_sound' },
-    { commandType: 'stop_current_sound' },
+    { commandType: 'stop_sounds' },
     { commandType: 'change_default_sound' },
     { commandType: 'memorize_background_sounds' },
     { commandType: 'restore_background_sounds' },

@@ -7,6 +7,7 @@ import { assertUnreachable } from '@utils/assertUnreachable';
 import React from 'react';
 import { MemorizeBackgroundSoundsEditor } from './audioCommands/MemorizeBackgroundSoundsEditor';
 import { RestoreBackgroundSoundsEditor } from './audioCommands/RestoreBackgroundSoundsEditor';
+import { StopSoundsEditor } from './audioCommands/stopSoundsEditor';
 import { DefaultEditor } from './DefaultEditor';
 import { ManageAccessMainMenuEditor } from './gameInterfaceCommands/ManageAccessMainMenuEditor';
 import { ReturnToTitleScreenEditor } from './gameInterfaceCommands/ReturnToTitleScreenEditor';
@@ -91,7 +92,8 @@ export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletion
       case 'validate_quest_objectives':
       case 'display_quest_progress':
       case 'play_sound':
-      case 'stop_current_sound':
+      case 'stop_sounds':
+        return <StopSoundsEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'change_default_sound':
       case 'memorize_background_sounds':
         return <MemorizeBackgroundSoundsEditor commandId={commandId} event={event} ref={handleCloseRef} />;

@@ -80,6 +80,10 @@ If you want to contribute to the Pokémon Studio development by testing new feat
 - Go to the `Files changed` tab and click `Review changes.`
 - Write a comment depending on the success of the test: Comment, Approve or Request changes.
 
+### For the documentation
+
+If you want to contribute to the Pokémon Studio documentation, read the [documentation contribution guide](docs/contributing.md).
+
 ## How to make suggestions
 
 You can [join our Discord](https://discord.gg/0noB0gBDd91B8pMk) to make suggestions about the Pokémon Studio development.
