@@ -12,4 +12,4 @@ export const EVENT_COMMAND_WAIT_MOVEMENT_COMPLETION_VALIDATOR = z.object({
   studioData: EVENT_COMMAND_STUDIO_DATA_VALIDATOR,
 });
 
-export type StudioEventWaitMovementCompletion = z.infer<typeof EVENT_COMMAND_WAIT_MOVEMENT_COMPLETION_VALIDATOR>;
+export type StudioEventCommandWaitMovementCompletion = z.infer<typeof EVENT_COMMAND_WAIT_MOVEMENT_COMPLETION_VALIDATOR>;

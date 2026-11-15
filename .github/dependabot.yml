@@ -9,8 +9,16 @@ updates:
     directory: '/'
     schedule:
       interval: 'weekly'
+    labels:
+      - 'dependencies'
+      - 'javascript'
+      - 'changelog:skip'
 
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
       interval: 'weekly'
+    labels:
+      - 'dependencies'
+      - 'github_actions'
+      - 'changelog:skip'

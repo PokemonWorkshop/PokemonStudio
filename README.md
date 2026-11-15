@@ -7,7 +7,7 @@ Pokémon Studio is a standalone software allowing people to create their monster
 - editing and translating game texts,
 - updating [Pokémon SDK](https://gitlab.com/pokemonsdk/pokemonsdk) (game engine & starter kit),
 - managing maps and map links from Tiled to PSDK format through a dedicated converter called [ts-tiled-converter](https://github.com/NuriYuri/ts-tiled-converter),
-- manage events (coming with [version 3.0](https://github.com/PokemonWorkshop/PokemonStudio/wiki/V3-Doc-Product-Vision)).
+- manage events (coming with [version 3.0](docs/design/foundations/vision.md)).
 
 [![Weblate translation status](https://hosted.weblate.org/widget/pokemon-studio/svg-badge.svg)](https://hosted.weblate.org/engage/pokemon-studio/?utm_source=widget)
 
@@ -16,6 +16,7 @@ Pokémon Studio is a standalone software allowing people to create their monster
 - License: [English](LICENSE.md) - [Français](LICENSE-FR.md)
 - [GitHub project](https://github.com/users/PokemonWorkshop/projects/1)
 - [Pokémon Studio Wiki](https://github.com/PokemonWorkshop/PokemonStudio/wiki)
+- [Pokémon Studio documentation](docs/README.md)
 - [Pokémon Studio Figma](https://www.figma.com/file/xglOHHLb96zfPMTXd3v8i9/Pok%C3%A9mon-Studio)
 
 ## Important notice
