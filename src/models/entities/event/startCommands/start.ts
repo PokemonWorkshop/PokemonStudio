@@ -13,6 +13,7 @@ export const TRIGGER_VALIDATOR = z.union([
   z.literal('parallel'),
   z.literal('cinematic'),
 ]);
+export type StudioEventTrigger = z.infer<typeof TRIGGER_VALIDATOR>;
 
 export const EVENT_COMMAND_START_VALIDATOR = z.object({
   type: z.literal('start'),

@@ -1,0 +1,308 @@
+# Pokémon Studio release and changelog process
+
+This document describes how pull request changelog metadata is validated, how draft release notes are generated, and how a published release is announced on Discord.
+
+The goals of this process are to:
+
+- keep changelog entries useful for users and developers
+- detect missing or ambiguous metadata before a release is published
+- avoid manually copying or rewriting release notes
+- publish a stable release to Discord only once
+- keep the release process maintainable for a volunteer project.
+
+## Responsibilities
+
+| Role                | Responsibility                                                                                        |
+| ------------------- | ----------------------------------------------------------------------------------------------------- |
+| Pull request author | Write an accurate, user-facing changelog entry, or explain why the pull request should be skipped.    |
+| Reviewer            | Verify that the entry matches the behavior delivered by the pull request.                             |
+| Maintainer          | Apply exactly one changelog category before merge and add `changelog:notready` when appropriate.      |
+| Release manager     | Verify the generated draft, run the production build, and publish the stable release.                 |
+| Automation          | Validate pull request metadata, update the draft release, and publish the final changelog to Discord. |
+
+Contributors who cannot manage labels are not expected to apply them themselves. A reviewer or maintainer must apply the appropriate labels before merge.
+
+## Pull request requirements
+
+Every pull request merged into `develop` must be classified for the release changelog.
+
+### Changelog entry
+
+The pull request author must write one short sentence between the markers in the pull request template:
+
+```html
+<!-- changelog:start -->
+Describe the functional change here.
+<!-- changelog:end -->
+```
+
+The entry must:
+
+- be written in English US
+- describe the functional effect for makers or players
+- use clear and concise language
+- only describe behavior that is actually included in the pull request
+- avoid implementation details unless they are necessary to understand the change.
+
+Good examples:
+
+```text
+Add a command that waits for movement to finish
+Fix a crash when quickly opening a type page
+Show the selected filename in icon fields
+```
+
+Avoid implementation-focused entries such as:
+
+```text
+Refactor the condition registry architecture
+Update several React components
+Change the internal JSON serialization method
+```
+
+When a pull request has no user-facing effect, leave the content between the markers empty and ask a maintainer to apply `changelog:skip` or apply it yourself if you have the necessary permissions.
+
+### Changelog labels
+
+Before merge, every pull request must have exactly one category label:
+
+| Label                | Usage                                                                |
+| -------------------- | -------------------------------------------------------------------- |
+| `changelog:addition` | Introduces a new user-facing feature or capability.                  |
+| `changelog:update`   | Changes or improves existing user-facing behavior.                   |
+| `changelog:fix`      | Fixes incorrect user-facing behavior.                                |
+| `changelog:skip`     | Contains no user-facing change and must not appear in the changelog. |
+
+A pull request must never have multiple category labels.
+
+`changelog:notready` is an optional supplementary label. It places an entry in the section dedicated to unfinished features that are not ready for production use. It does not replace a category label.
+
+For example, an unfinished new feature must have both:
+
+- `changelog:addition`
+- `changelog:notready`.
+
+Do not add `changelog:notready` to a pull request using `changelog:skip`.
+
+### Review checklist
+
+Before approving or merging a pull request, verify that:
+
+- the changelog entry matches the actual functional change
+- the entry does not promise behavior that is not implemented
+- exactly one category label is present
+- `changelog:notready` is present when the change is unavailable in production
+- an empty changelog entry is only accepted with `changelog:skip`
+- a pull request using `changelog:skip` does not contain a user-facing changelog entry.
+
+Missing or conflicting metadata can prevent the draft release notes from being generated.
+
+## Changelog structure
+
+Entries are grouped in the following order:
+
+1. `:new: Additions`
+2. `:arrows_counterclockwise: Updated`
+3. `:white_check_mark: Fixed`
+
+Pull requests carrying `changelog:notready` are placed under:
+
+```text
+:soon: Version 3 changes - Not ready for production use
+```
+
+This section is omitted entirely when no non-skipped pull request uses `changelog:notready`.
+
+Pull requests using `changelog:skip` are not displayed.
+
+## Draft release notes generation
+
+The release notes are generated by:
+
+```text
+scripts/release/generate-release-notes.mjs
+```
+
+The `Update Release Notes` workflow can be triggered:
+
+- automatically by a push to `develop`
+- manually with `workflow_dispatch`
+- from another workflow with `workflow_call`
+- by the production build after all build jobs succeed.
+
+### How the generator works
+
+The generator:
+
+1. reads the version from `package.json`
+2. uses `RELEASE_TAG` when explicitly provided, otherwise derives `vA.B.C` from the package version
+3. verifies that the release tag matches the package version
+4. finds the corresponding GitHub release, including draft releases
+5. refuses to modify a published release unless missing drafts are explicitly allowed
+6. asks GitHub to generate the default release notes for the release target
+7. extracts only the pull requests returned by GitHub
+8. validates the labels and changelog entry of every included pull request
+9. groups valid entries by category and production readiness
+10. replaces the generated portion of the draft release description.
+
+The script never introduces a pull request that is absent from GitHub's generated release notes. The final user-facing changelog can be a subset of GitHub's result because pull requests using `changelog:skip` are removed.
+
+The standard workflow relies on GitHub's automatic previous-tag selection. Maintainers must check the generated **Full Changelog** comparison before publication, especially if releases or tags were created out of order.
+
+### Behavior when no draft exists
+
+For automatic pushes to `develop`, `ALLOW_MISSING_DRAFT` is enabled. The workflow succeeds without changing anything when:
+
+- no release matches the current package version; or
+- the matching release is already published.
+
+This prevents ordinary development commits from failing outside a release period.
+
+Manual and production executions use strict behavior by default. They fail when the expected draft is missing or has already been published.
+
+### Validation failures
+
+The draft is not partially updated when validation fails. All reported pull requests must be corrected before rerunning the workflow.
+
+Because labels and pull request descriptions are read from the GitHub API, correcting them does not require a new commit. The failed job can be rerun after the metadata is fixed.
+
+## Manual content and internal markers
+
+The release description contains markers used by the automation.
+
+### Manual release note
+
+The only manually maintained part of the release description belongs between:
+
+```html
+<!-- release-note:start -->
+<!-- release-note:end -->
+```
+
+This content is preserved when the draft is regenerated. Use it for exceptional release-level information, such as a migration warning or an important compatibility note.
+
+Content manually written outside these markers may be replaced the next time the release notes workflow runs.
+
+### Generated changelog
+
+The generated content is delimited by:
+
+```html
+<!-- generated-changelog:start -->
+<!-- generated-changelog:end -->
+```
+
+Do not manually edit this section. Correct the pull request entry or labels and rerun the workflow instead.
+
+### Discord publication state
+
+After publication, the Discord workflow stores message identifiers and a content hash in:
+
+```html
+<!-- discord-publication: ... -->
+```
+
+Do not edit or remove this marker. It allows safe retries and prevents duplicate Discord messages.
+
+## Production release procedure
+
+1. Create a draft GitHub release for `vA.B.C` targeting the intended release branch or commit.
+2. Update `package.json` so its version is exactly `A.B.C`.
+3. Ensure every pull request included by GitHub satisfies the changelog requirements.
+4. Verify that the draft release notes workflow completes successfully.
+5. Review the generated categories, the Version 3 section when present, and the **Full Changelog** comparison.
+6. Run the production build workflow with the matching release tag.
+7. Confirm that all build jobs and the final draft update succeed.
+8. Publish the release as a stable release, not as a prerelease.
+9. Verify the automatic Discord publication.
+
+Do not manually copy and rewrite the generated changelog for Discord.
+
+## Discord publication
+
+The Discord changelog is published by:
+
+```text
+scripts/release/publish-discord-changelog.mjs
+```
+
+The `Publish release changelog to Discord` workflow runs automatically for the GitHub release activity type `released`. It can also be called manually or from another workflow for recovery purposes.
+
+### Publication safeguards
+
+The publisher:
+
+- accepts only a published stable release
+- retrieves the release by event identifier or by an explicit release tag
+- removes internal release markers from the Discord content
+- replaces long pull request attribution links with `(#123)` references
+- compacts the new-contributors section
+- prevents Discord mentions with `allowed_mentions`
+- suppresses automatic link embeds
+- splits content into messages of at most 2,000 characters
+- updates previously published messages when the changelog changes
+- deletes obsolete extra messages when a revised changelog becomes shorter
+- stores message identifiers and a content hash in the release description.
+
+Rerunning the publisher with unchanged content does not create duplicate messages.
+
+### Webhook configuration
+
+The production workflow uses the repository secret:
+
+```text
+DISCORD_CHANGELOG_WEBHOOK_URL
+```
+
+The secret must contain a standard Discord incoming webhook URL:
+
+```text
+https://discord.com/api/webhooks/WEBHOOK_ID/WEBHOOK_TOKEN
+```
+
+Do not:
+
+- commit the webhook URL to the repository
+- print it in workflow logs
+- append `/github` to the URL
+- reuse a temporary test-channel webhook in production.
+
+The `/github` endpoint expects an unmodified GitHub webhook payload and is incompatible with the custom Discord publisher.
+
+## What contributors and maintainers must not do
+
+- Do not merge a pull request without exactly one changelog category.
+- Do not combine two category labels.
+- Do not use `changelog:notready` as the only changelog label.
+- Do not use `changelog:skip` for a user-facing change merely to make validation pass.
+- Do not write implementation-only changelog entries for makers and players.
+- Do not describe unfinished or planned behavior as already available.
+- Do not manually edit generated release sections.
+- Do not modify or remove the Discord publication marker.
+- Do not publish the draft before the production build and final notes update succeed.
+- Do not publish a prerelease when a stable Discord announcement is expected.
+- Do not expose Discord webhook URLs in code, logs, issues, pull requests, or documentation.
+
+## Troubleshooting
+
+| Error or symptom                                                | Cause                                                                              | Resolution                                                                                           |
+| --------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `expected exactly one changelog category label`                 | A pull request has no category or multiple categories.                             | Apply exactly one of `changelog:addition`, `changelog:update`, `changelog:fix`, or `changelog:skip`. |
+| `no text found between changelog markers`                       | A categorized pull request has no changelog entry.                                 | Add a functional entry or use `changelog:skip` when there is no user-facing change.                  |
+| Release tag does not match `package.json`                       | The selected tag and package version differ.                                       | Correct the package version or the release tag.                                                      |
+| No matching release is found                                    | The draft does not exist or uses another tag.                                      | Create the draft or correct the selected tag.                                                        |
+| The matching release is already published                       | The generator was run after publication.                                           | Do not regenerate published notes; confirm that the intended draft tag is being used.                |
+| The Version 3 section is missing                                | No included pull request uses `changelog:notready`.                                | This is expected; add the label only when functionally appropriate.                                  |
+| Old pull requests appear in the changelog                       | GitHub selected an unexpected previous tag.                                        | Check the release comparison and the repository's tag and release history before publishing.         |
+| Discord returns an error mentioning `sender`                    | The webhook URL points to the GitHub-compatible `/github` endpoint.                | Use the standard webhook URL without `/github`.                                                      |
+| Discord creates duplicate messages                              | The publication marker was removed, corrupted, or belongs to another test release. | Restore the marker when possible and avoid testing with a production release.                        |
+| A Discord retry reports that the changelog is already published | The content hash and stored message identifiers already match.                     | No action is required.                                                                               |
+
+## Recovery rules
+
+- Fix pull request labels and descriptions at their source, then rerun the failed release-notes job.
+- Prefer rerunning a failed job over adding an empty commit.
+- Use the manual Discord workflow only for an already published stable release.
+- A Discord rerun is safe while the publication marker remains intact.
+- If a Discord webhook URL is exposed, delete or rotate the webhook immediately and update the repository secret.
+- If release history or tags were altered, verify the comparison range manually before publishing.
