@@ -53,6 +53,12 @@ export const createStopSoundsCommand = (_: StudioEvent, channels?: AudioChannel[
   channels: channels || (['bgm', 'bgs'] as AudioChannel[]),
   fadeTime: fadeTime ?? 1,
 });
+export const createPlaySoundCommand = (_: StudioEvent, channel?: AudioChannel, filename?: string, volume?: number, pitch?: number) => ({
+  channel: channel ?? 'se',
+  filename: filename ?? '',
+  volume: volume ?? 100,
+  pitch: pitch ?? 100,
+});
 
 export const createInsertScriptCommand = (_: StudioEvent, script?: string) => ({ script: script || '' });
 
@@ -119,7 +125,7 @@ export const EventCommandCreation: Record<StudioEventCommandType, (event: Studio
     display_quest_progress: dummy,
     complete_quest: createCompleteQuestCommand,
     fail_quest: createFailQuestCommand,
-    play_sound: dummy,
+    play_sound: createPlaySoundCommand,
     stop_sounds: createStopSoundsCommand,
     change_default_sound: dummy,
     memorize_background_sounds: createMemorizeBackgroundSoundsCommand,
