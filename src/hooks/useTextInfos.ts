@@ -35,7 +35,7 @@ export const useTextInfos = () => {
           addSelectOption('textInfos', newState);
         }
         if (newTextInfosValues.length < currentState.textInfos.length) {
-          removeSelectOption('textInfos', String(currentState.selectedDataIdentifier.textInfo));
+          removeSelectOption('textInfos', String(currentState.selectedDataIdentifier.textInfo), newState);
         }
         return newState;
       });

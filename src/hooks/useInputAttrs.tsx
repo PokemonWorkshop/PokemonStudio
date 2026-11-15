@@ -134,14 +134,14 @@ export const useInputAttrsWithLabel = <T extends z.ZodRawShape>(schema: z.ZodObj
 
         if (labelLeft)
           return (
-            <InputWithLeftLabelContainer>
+            <InputWithLeftLabelContainer style={props.style}>
               <Label>{label}</Label>
               <EmbeddedUnitInput lang="en" {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />
             </InputWithLeftLabelContainer>
           );
 
         return (
-          <InputWithTopLabelContainer>
+          <InputWithTopLabelContainer style={props.style}>
             <Label>{label}</Label>
             <EmbeddedUnitInput lang="en" {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />
           </InputWithTopLabelContainer>

@@ -20,3 +20,12 @@ export const EVENT_COMMAND_CONNECTION_VALIDATOR = z.object({
 
 export const TOGGLE_VALUES_VALIDATOR = z.union([z.literal('enable'), z.literal('disable'), z.literal('toggle')]);
 export type StudioToggleValue = z.infer<typeof TOGGLE_VALUES_VALIDATOR>;
+
+export const AUDIO_BACKGROUND_CHANNEL_VALIDATOR = z.union([z.literal('bgm'), z.literal('bgs')]);
+export type AudioBackgroundChannel = z.infer<typeof AUDIO_BACKGROUND_CHANNEL_VALIDATOR>;
+
+export const AUDIO_EFFECT_CHANNEL_VALIDATOR = z.union([z.literal('se'), z.literal('me')]);
+export type AudioEffectChannel = z.infer<typeof AUDIO_EFFECT_CHANNEL_VALIDATOR>;
+
+export const AUDIO_CHANNEL_VALIDATOR = z.union([AUDIO_BACKGROUND_CHANNEL_VALIDATOR, AUDIO_EFFECT_CHANNEL_VALIDATOR]);
+export type AudioChannel = z.infer<typeof AUDIO_CHANNEL_VALIDATOR>;
