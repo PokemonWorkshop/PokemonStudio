@@ -101,7 +101,7 @@ export const TrainerFrame = ({ trainer, dialogsRef }: TrainerFrameProps) => {
 
   return (
     <DataBlockContainer size="full" onClick={() => dialogsRef.current?.openDialog('frame')}>
-      <DataGridTrainer columns="440px minmax(min-content, 1024px)" gap="24px">
+      <DataGridTrainer columns="700px minmax(min-content, 1024px)" gap="24px">
         <TrainerInfoContainer>
           <DataInfoContainerHeader>
             <DataInfoContainerHeaderTitle>

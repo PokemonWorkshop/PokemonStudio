@@ -200,7 +200,7 @@ export const MIGRATION_CONFIG: MigrateConfigType[] = [
   },
   {
     migration: migrateTrainerClassesToEntities,
-    version: '2.10.0',
+    version: '2.11.0',
     message: 'migrate_trainer_classes',
   },
 ];
