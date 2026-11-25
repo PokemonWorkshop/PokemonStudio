@@ -1,6 +1,6 @@
 import { StudioCreature, StudioCreatureForm } from '@modelEntities/creature';
-import { assertUnreachable } from './assertUnreachable';
 import { StudioTrainer } from '@modelEntities/trainer';
+import { assertUnreachable } from './assertUnreachable';
 
 export const join = (...strs: string[]): string => {
   return strs.reduce((previousValue, str, index) => {
@@ -50,6 +50,20 @@ export const dirname = (str: string | undefined): string => {
   const strSplited = str.replaceAll('\\', '/').split('/');
   strSplited.pop();
   return strSplited.join('/');
+};
+
+export const relative = (from: string, to: string): string | null => {
+  const normalizedFrom = from.replaceAll('\\', '/').replace(/\/$/, '');
+  const normalizedTo = to.replaceAll('\\', '/').replace(/\/$/, '');
+
+  if (normalizedFrom === normalizedTo) return '';
+
+  const prefix = `${normalizedFrom}/`;
+  if (normalizedTo.startsWith(prefix)) {
+    return normalizedTo.slice(prefix.length);
+  }
+
+  return null;
 };
 
 export type CreatureFormResourcesFemalePath =

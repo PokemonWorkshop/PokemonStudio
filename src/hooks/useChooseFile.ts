@@ -7,6 +7,7 @@ type ChooseFilePayload = {
   name: string;
   extensions: string[];
   destFolderToCopy?: string;
+  includeSubfolders?: true;
 };
 
 type ChooseFileStateObject =
@@ -34,7 +35,7 @@ export const useChoosefile = () => {
           () => {
             setState({ state: 'done' });
             callbacks?.onFailure();
-          }
+          },
         );
       case 'copyFile': {
         if (state.payload.destFolderToCopy === undefined) {
@@ -43,7 +44,7 @@ export const useChoosefile = () => {
           return;
         }
         return copyFile(
-          { srcFile: state.chosenFile, destFolder: state.payload.destFolderToCopy },
+          { srcFile: state.chosenFile, destFolder: state.payload.destFolderToCopy, includeSubfolders: state.payload.includeSubfolders },
           ({ destFile }) => {
             setState({ state: 'done' });
             callbacks?.onSuccess({ path: destFile });
@@ -51,7 +52,7 @@ export const useChoosefile = () => {
           ({ errorMessage }) => {
             setState({ state: 'done' });
             callbacks?.onFailure({ errorMessage });
-          }
+          },
         );
       }
     }
