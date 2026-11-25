@@ -3,6 +3,7 @@ import { Input, MultiLineInput } from '@components/inputs';
 import React, { forwardRef } from 'react';
 import styled, { css } from 'styled-components';
 import { ClearInputContainer, ClearInputProps, useClearInput } from './ClearInput';
+import { EmbeddedUnitInput } from './EmbeddedUnitInput';
 
 const sharedInputStyles = css`
   background-color: rgba(255, 255, 255, 0.0001);
@@ -25,6 +26,21 @@ const NodeMultiLineInputContainer = styled(MultiLineInput)`
   min-height: 76px;
 `;
 
+const NodeEmbeddedUnitInputContainer = styled(EmbeddedUnitInput)`
+  ${sharedInputStyles}
+  height: 32px;
+
+  & ${Input} {
+    padding-right: ${({ offsetUnit }) => offsetUnit ?? '33px'};
+    background-color: unset;
+  }
+
+  && span {
+    right: 12px;
+    top: 7px;
+  }
+`;
+
 const stopPropagation = (e: React.MouseEvent) => e.stopPropagation();
 
 export const NodeInput = ({ className, ...props }: React.ComponentProps<typeof Input>) => (
@@ -33,6 +49,15 @@ export const NodeInput = ({ className, ...props }: React.ComponentProps<typeof I
 
 export const NodeMultiLineInput = ({ className, ...props }: React.ComponentProps<typeof MultiLineInput>) => (
   <NodeMultiLineInputContainer {...props} className={`nodrag ${className ?? ''}`.trim()} onClick={stopPropagation} onDoubleClick={stopPropagation} />
+);
+
+export const NodeEmbeddedUnitInput = ({ className, ...props }: React.ComponentProps<typeof EmbeddedUnitInput>) => (
+  <NodeEmbeddedUnitInputContainer
+    {...props}
+    className={`nodrag ${className ?? ''}`.trim()}
+    onClick={stopPropagation}
+    onDoubleClick={stopPropagation}
+  />
 );
 
 export const NodeClearInput = forwardRef<HTMLInputElement, ClearInputProps>((props, ref) => {

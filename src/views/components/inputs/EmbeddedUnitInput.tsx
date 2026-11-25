@@ -27,10 +27,12 @@ type EmbeddedUnitInputProps = {
   offsetUnit?: string;
 } & InputHTMLAttributes<HTMLInputElement>;
 
-export const EmbeddedUnitInput = forwardRef<HTMLInputElement | null, EmbeddedUnitInputProps>(({ unit, offsetUnit, ...props }, inputRef) => (
-  <EmbeddedUnitInputContainer offsetUnit={offsetUnit}>
-    <Input {...props} ref={inputRef} />
-    <span>{unit ?? '%'}</span>
-  </EmbeddedUnitInputContainer>
-));
+export const EmbeddedUnitInput = forwardRef<HTMLInputElement | null, EmbeddedUnitInputProps>(
+  ({ unit, offsetUnit, className, ...props }, inputRef) => (
+    <EmbeddedUnitInputContainer offsetUnit={offsetUnit} className={className}>
+      <Input {...props} ref={inputRef} />
+      <span>{unit ?? '%'}</span>
+    </EmbeddedUnitInputContainer>
+  ),
+);
 EmbeddedUnitInput.displayName = 'EmbeddedUnitInput';

@@ -2022,6 +2022,7 @@
   "event_command_fade_time": "Durée de fondu",
   "event_command_channel_to_play": "Canal audio",
   "event_command_audio_file": "Fichier audio",
+  "event_command_audio_file_placeholder": "Aucun fichier audio sélectionné",
   "bottom": "En bas",
   "top": "En haut",
   "middle": "Au milieu",

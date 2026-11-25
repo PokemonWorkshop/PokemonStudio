@@ -54,7 +54,7 @@ export const createStopSoundsCommand = (_: StudioEvent, channels?: AudioChannel[
   fadeTime: fadeTime ?? 1,
 });
 export const createPlaySoundCommand = (_: StudioEvent, channel?: AudioChannel, filename?: string, volume?: number, pitch?: number) => ({
-  channel: channel ?? 'se',
+  channel: channel ?? 'bgm',
   filename: filename ?? '',
   volume: volume ?? 100,
   pitch: pitch ?? 100,

@@ -2022,6 +2022,7 @@
   "event_command_fade_time": "Fading time",
   "event_command_channel_to_play": "Audio channel",
   "event_command_audio_file": "Audio file",
+  "event_command_audio_file_placeholder": "No audio file selected",
   "bottom": "Bottom",
   "top": "Top",
   "middle": "Middle",

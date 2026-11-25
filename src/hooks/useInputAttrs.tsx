@@ -12,6 +12,7 @@ import {
 } from '@components/inputs';
 import { DropInput } from '@components/inputs/DropInput';
 import { EmbeddedUnitInput } from '@components/inputs/EmbeddedUnitInput';
+import { NodeEmbeddedUnitInput } from '@components/inputs/NodeInput';
 import { NodeSelect, Select } from '@ds/Select';
 import { inputAttrs } from '@utils/inputAttrs';
 import { basename } from '@utils/path';
@@ -264,6 +265,24 @@ export const useNodeInputAttrsWithLabel = <T extends z.ZodRawShape>(schema: z.Zo
           <InputWithTopLabelContainer>
             <Label>{label}</Label>
             <NodeInput {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />
+          </InputWithTopLabelContainer>
+        );
+      },
+      EmbeddedUnitInput: ({ name, schemaKey, label, labelLeft, ...props }: ReactPropsWithLabel<typeof EmbeddedUnitInput>) => {
+        if (!label) return <NodeEmbeddedUnitInput lang="en" {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />;
+
+        if (labelLeft)
+          return (
+            <InputWithLeftLabelContainer style={props.style}>
+              <Label>{label}</Label>
+              <NodeEmbeddedUnitInput lang="en" {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />
+            </InputWithLeftLabelContainer>
+          );
+
+        return (
+          <InputWithTopLabelContainer style={props.style}>
+            <Label>{label}</Label>
+            <NodeEmbeddedUnitInput lang="en" {...inputAttrs(schema, name, defaults, schemaKey)} {...props} />
           </InputWithTopLabelContainer>
         );
       },
