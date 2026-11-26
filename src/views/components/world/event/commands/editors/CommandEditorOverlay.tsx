@@ -10,6 +10,7 @@ import { PlaySoundEditor } from './audioCommands/PlaySoundEditor';
 import { RestoreBackgroundSoundsEditor } from './audioCommands/RestoreBackgroundSoundsEditor';
 import { StopSoundsEditor } from './audioCommands/stopSoundsEditor';
 import { DefaultEditor } from './DefaultEditor';
+import { StopEventExecutionEditor } from './flowControlCommands/StopEventExecutionEditor';
 import { ManageAccessMainMenuEditor } from './gameInterfaceCommands/ManageAccessMainMenuEditor';
 import { ReturnToTitleScreenEditor } from './gameInterfaceCommands/ReturnToTitleScreenEditor';
 import { ShowChoiceEditor } from './messageCommands/ShowChoiceEditor';
@@ -48,7 +49,6 @@ export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletion
       case 'manage_conditions':
       case 'go_to':
       case 'wait_for_set_time':
-      case 'stop_event_execution':
       case 'call_event':
       case 'trigger_event':
       case 'change_event_parameters':
@@ -56,6 +56,8 @@ export const CommandEditorOverlay = defineEditorOverlay<CommandEditorAndDeletion
       case 'teleport_event':
       case 'teleport_player':
         return <DefaultEditor ref={handleCloseRef} />;
+      case 'stop_event_execution':
+        return <StopEventExecutionEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'wait_move_completion':
         return <WaitMovementCompletionEditor commandId={commandId} event={event} ref={handleCloseRef} />;
       case 'manage_event_reappearance':

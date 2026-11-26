@@ -1891,7 +1891,7 @@
   "event_command_manage_conditions": "Gérer des conditions",
   "event_command_go_to": "Ajouter un saut vers une autre commande",
   "event_command_wait_for_set_time": "Attendre un certain temps",
-  "event_command_stop_event_execution": "Stopper l'exécution de l'évènement",
+  "event_command_stop_event_execution": "Stopper l'exécution de l'événement",
   "event_command_call_event": "Appeler un événement",
   "event_command_trigger_event": "Déclencher un événement",
   "event_command_change_event_parameters": "Changer les paramètres de l'événement",
