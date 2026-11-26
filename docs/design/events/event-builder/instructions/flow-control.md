@@ -40,9 +40,9 @@ Wait for duration lets users pause a sequence for a given number of seconds.
 
 ## Stop event execution
 
-> 🚧 **This instruction is still being explored.**
+Stop event execution ends the current event as soon as the sequence reaches the instruction.
 
-Stop event execution lets users stop the current event when the sequence reaches the instruction.
+Stop event execution has no parameters. The node has no output handle.
 
 ## Call event
 

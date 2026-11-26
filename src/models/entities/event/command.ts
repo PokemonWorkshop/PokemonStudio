@@ -4,6 +4,7 @@ import { EVENT_COMMAND_PLAY_SOUND_VALIDATOR } from './audioCommands/playSound';
 import { EVENT_COMMAND_RESTORE_BACKGROUND_SOUNDS_VALIDATOR } from './audioCommands/restoreBackgroundSounds';
 import { EVENT_COMMAND_STOP_SOUNDS_VALIDATOR } from './audioCommands/stopSounds';
 import type { StudioEventCommandCategory } from './category';
+import { EVENT_COMMAND_STOP_EVENT_EXECUTION_VALIDATOR } from './flowControlCommands/stopEventExecution';
 import { EVENT_COMMAND_MANAGE_ACCESS_MAIN_MENU_VALIDATOR } from './gameInterfaceCommands/manageAccessMainMenu';
 import { EVENT_COMMAND_RETURN_TO_TITLE_SCREEN_VALIDATOR } from './gameInterfaceCommands/returnToTitleScreen';
 import { COMMAND_CONNECTION_ID_VALIDATOR, EVENT_COMMAND_CONNECTION_VALIDATOR, EVENT_COMMAND_STUDIO_DATA_VALIDATOR } from './globalCommand';
@@ -40,7 +41,7 @@ export const EVENT_COMMAND_VALIDATOR = z.discriminatedUnion('type', [
   GENERIC_COMMAND('manage_conditions'),
   GENERIC_COMMAND('go_to'),
   GENERIC_COMMAND('wait_for_set_time'),
-  GENERIC_COMMAND('stop_event_execution'),
+  EVENT_COMMAND_STOP_EVENT_EXECUTION_VALIDATOR,
   GENERIC_COMMAND('call_event'),
   GENERIC_COMMAND('trigger_event'),
   GENERIC_COMMAND('change_event_parameters'),

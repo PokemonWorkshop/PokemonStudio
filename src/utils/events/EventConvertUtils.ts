@@ -4,6 +4,7 @@ import { StudioEventCommandRestoreBackgroundSounds } from '@modelEntities/event/
 import { StudioEventCommandStopSounds } from '@modelEntities/event/audioCommands/stopSounds';
 import { StudioEventCommand } from '@modelEntities/event/command';
 import { Appearance, EventAppearance, LinkParameter, MapEventLink, StudioEvent } from '@modelEntities/event/event';
+import type { StudioEventCommandStopEventExecution } from '@modelEntities/event/flowControlCommands/stopEventExecution';
 import { AudioChannel, CommandId } from '@modelEntities/event/globalCommand';
 import { StudioEventCommandWaitMovementCompletion } from '@modelEntities/event/movementCommands/waitMovementCompletion';
 import { StudioEventCommandInsertScript } from '@modelEntities/event/scriptCommands/insertScript';
@@ -14,6 +15,7 @@ import {
   createMemorizeBackgroundSoundsCommand,
   createPlaySoundCommand,
   createRestoreBackgroundSoundsCommand,
+  createStopEventExecutionCommand,
   createStopSoundsCommand,
   createWaitMovementCompletionCommand,
 } from '@utils/eventCommandCreation';
@@ -178,6 +180,14 @@ const convertPlaySoundCommand = (_: StudioEvent, channel: AudioChannel, params: 
   };
 };
 
+// RMXP command 115
+const convertStopEventExecutionCommand = (): StudioEventCommandStopEventExecution => ({
+  type: 'stop_event_execution',
+  connections: {},
+  studioData: { x: 0, y: 0, comments: [] },
+  ...createStopEventExecutionCommand(),
+});
+
 // RMXP command 210
 const convertWaitMovementCompletionCommand = (): StudioEventCommandWaitMovementCompletion => ({
   type: 'wait_move_completion',
@@ -274,6 +284,7 @@ const convertInsertScriptMultilineCommand = (_: StudioEvent, params: unknown[], 
 };
 
 const RMXPCommandToStudioCommand: Record<number, (event: StudioEvent, params: unknown[]) => StudioEventCommand> = {
+  115: convertStopEventExecutionCommand,
   210: convertWaitMovementCompletionCommand,
   241: convertPlaySoundCommandBGM,
   242: convertStopSoundsCommandBGM,

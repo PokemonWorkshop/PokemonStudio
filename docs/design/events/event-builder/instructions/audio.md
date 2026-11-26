@@ -19,9 +19,27 @@ The game's music and sounds play on four channels, which the instructions of thi
 
 ## Play audio
 
-> 🚧 **This instruction is still being explored.**
+Play audio lets users play an audio file on one of the four audio channels.
 
-Play audio lets users play music or a sound.
+### Parameters
+
+| Parameter | Description |
+| --- | --- |
+| Audio channel | The channel to play on. The default is Background music. |
+| Audio file | The file to play. Select a file from the project or import one in the instruction editor. |
+| Volume | The playback volume from 0% to 100%. The default is 100%. |
+| Pitch | The playback pitch from 50% to 150%. The default is 100%, which preserves the original pitch. |
+
+### Node
+
+The node's body shows these fields in order.
+
+1. Audio channel
+2. Audio file
+3. Volume
+4. Pitch
+
+The audio file is read-only on the node. Double-click the node to open the instruction editor and change the file.
 
 ## Stop audio
 

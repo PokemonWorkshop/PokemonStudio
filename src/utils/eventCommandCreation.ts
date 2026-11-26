@@ -29,6 +29,8 @@ export const createShowChoiceCommand = (event: StudioEvent) => {
   };
 };
 
+export const createStopEventExecutionCommand = () => ({});
+
 export const createWaitMovementCompletionCommand = () => {
   return {
     waitAllEvents: true,
@@ -83,7 +85,7 @@ export const EventCommandCreation: Record<StudioEventCommandType, (event: Studio
     manage_conditions: dummy,
     go_to: dummy,
     wait_for_set_time: dummy,
-    stop_event_execution: dummy,
+    stop_event_execution: createStopEventExecutionCommand,
     call_event: dummy,
     trigger_event: dummy,
     change_event_parameters: dummy,

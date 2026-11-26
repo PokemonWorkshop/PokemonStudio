@@ -6,6 +6,7 @@ import { MemorizeBackgroundSoundsCommand } from '../commands/nodes/audioCommands
 import { PlaySoundCommand } from '../commands/nodes/audioCommands/PlaySoundCommand';
 import { RestoreBackgroundSoundsCommand } from '../commands/nodes/audioCommands/RestoreBackgroundSoundsCommand';
 import { StopSoundsCommand } from '../commands/nodes/audioCommands/StopSoundsCommand';
+import { StopEventExecutionCommand } from '../commands/nodes/flowControlCommands/StopEventExecutionCommand';
 import { ManageAccessMainMenuCommand } from '../commands/nodes/gameInterfaceCommands/ManageAccessMainMenuCommand';
 import { ReturnToTitleScreenCommand } from '../commands/nodes/gameInterfaceCommands/ReturnToTitleScreenCommand';
 import { ShowChoiceCommand } from '../commands/nodes/messageCommands/ShowChoiceCommand';
@@ -33,7 +34,7 @@ export const CommandToNodes: Record<StudioEventCommandType | 'shadow_node', (pro
   manage_conditions: DefaultCommand,
   go_to: DefaultCommand,
   wait_for_set_time: DefaultCommand,
-  stop_event_execution: DefaultCommand,
+  stop_event_execution: StopEventExecutionCommand,
   call_event: DefaultCommand,
   trigger_event: DefaultCommand,
   change_event_parameters: DefaultCommand,
